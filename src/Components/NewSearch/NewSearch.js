@@ -53,6 +53,13 @@ const NewSearch = () => {
         }
     };
 
+    const msg = new SpeechSynthesisUtterance();
+    function speak_text(message) {
+      msg.text = message;
+      console.log(msg)
+      window.speechSynthesis.speak(msg);
+    }
+
     function handleKeyPress(event) {
       if (event.key === 'Enter') {
         handleSubmit(event);
@@ -115,7 +122,7 @@ const NewSearch = () => {
 
 
     return (
-        <div className='container-fluid bg-white'>
+        <div className="container-fluid bg-white">
                         {pageLoading ? (
                 <div className="loading-overlay">
                     <FiLoader className="loading-icon big-loader" />
@@ -161,7 +168,7 @@ const NewSearch = () => {
                                                 }}>
                                                     <IoCopyOutline />
                                                 </button>
-                                                <button className="generator-icon"><FaVolumeHigh /></button>
+                                                <button className="generator-icon" onClick={() => speak_text(model.answers)}><FaVolumeHigh /></button>
                                                 <button className="generator-icon"><IoMdAddCircleOutline /></button>
                                             </div>
                                             <div id="copy-tooltip" className="tooltip">Copied!</div>
@@ -208,8 +215,8 @@ const NewSearch = () => {
                         )}
                     </div>
                 </div>
-                <div className='col-lg-1'></div>
-                <div className='col-lg-3'>
+                <div className='col-md-2'></div>
+                <div className='col-md-2 '>
                     <div className='find'>
                         <div className='find-flex'>
                             <span className='findicon'><LuSearch size={18} /></span>

@@ -6,8 +6,11 @@
     margin: 36vh 15% 36vh 15%;
 }
 .Landing-signup{
-    margin-top: 89vh;
-    margin-bottom: 3.1vh;
+    /*margin-top: 89vh;*/
+    /*margin-bottom: 3.1vh;*/
+    position: fixed;
+    bottom: 0;
+    padding-bottom: 20px;
 }
 .Landing-signup-text{
     text-decoration: none !important;
@@ -25,8 +28,8 @@
     margin-left: 30px !important;
 }
 .Landing-container{
-    height: 100vh !important;
-    background-color: black !important;
+    /*height: 100vh !important;*/
+    /*background-color: black !important;*/
     padding: 6px !important;
     padding-bottom: 10px !important;
 }
@@ -35,5 +38,5 @@
     border-radius: 10px !important;
     margin-left: 2px;
     margin-right: 2px;
-    height: 98.5vh;
+    /*height: 98.5vh;*/
 }

@@ -103,8 +103,8 @@ class ControlledEditor extends Component {
                 <div className="tool-bar">
                     <button className='showtoolbar' hidden={clicked} onClick={this.toggleToolbar}><div className='cus-button' ><BiWrench size={50} /></div></button>
                     <button className='showtoolbarLeft' hidden={!clicked} onClick={this.toggleToolbarHide}><div className='cus-button' onClick={this.addStar}><IoIosArrowForward  size={17} /></div></button>
-                    <button className='showtoolbarLeft' hidden={!clicked}><div className='cus-button' onClick={this.saveHandout}><TbLocation size={17} /></div></button>
-                    <button className='showtoolbarLeft' hidden={!clicked} ><div className='cus-button' onClick={this.addStar}> <HiInboxArrowDown size={17} /></div></button>
+                    <button className='showtoolbarLeft' hidden={!clicked}><div className='cus-button' onClick={this.addStar}><TbLocation size={17} /></div></button>
+                    <button className='showtoolbarLeft' hidden={!clicked} ><div className='cus-button' onClick={this.saveHandout}> <HiInboxArrowDown size={17} /></div></button>
                 </div></div>
                 <Editor
                     toolbarHidden={!clicked}
@@ -136,7 +136,6 @@ class ControlledEditor extends Component {
                       <button className="generator-icon"><GrDislike /></button>
                       <button className="generator-icon"><IoCopyOutline /></button>
                       <button className="generator-icon"><FaVolumeHigh /></button>
-                      <button className="generator-icon"><IoMdAddCircleOutline /></button>
                   </div>
                 </div>
                  

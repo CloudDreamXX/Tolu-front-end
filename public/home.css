@@ -1,5 +1,5 @@
 .home{
-    background-color: #2e2e2e !important;
+    background-color: #ffffff !important;
     padding: 10px 22px 10px 22px !important;
     height: 100vh;
 
@@ -158,7 +158,7 @@ input[type="search"]::-webkit-search-cancel-button {
     color: #514f4f !important;
     margin-bottom: 30px !important;
     margin-left: -15px !important;
-    height: 450px;
+    height: 550px;
     overflow: auto;
 }
 .dashed-line {
@@ -214,6 +214,7 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .tooltip {
     position: absolute;
+    top: 0;
     transform: translate(-50%, calc(-100% - 15px)); /* Position above the button with a margin */
     background-color: rgba(0, 0, 0, 0.8); /* Black background with opacity */
     color: #fff; /* White text */
@@ -427,10 +428,14 @@ input[type="search"]:focus {
 .link-popup{
     height: auto !important;
 }
-
+.findicon-home{
+    position: relative;
+    top: 9px;
+    left: 34px;
+}
 .main-box{
     background-color: white !important;
-    border-radius: 10px !important;
+    /* border-radius: 10px !important; */
     top: 0 !important;
     height: 98vh;
     overflow-y: auto;

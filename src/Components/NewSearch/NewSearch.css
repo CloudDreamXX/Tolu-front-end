@@ -20,9 +20,9 @@
 .maintop{
     margin-top: 30px;
 }
-input[type="search"]{
-    border: none !important;
-}
+/*input[type="search"]{*/
+/*    border: none !important;*/
+/*}*/
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -48,6 +48,14 @@ input[type="search"]{
     font-weight: 400;
 }
 
+.findicon{
+    position: relative;
+    top: 9px;
+    left: 34px;
+}
+.finditalic{
+    font-style: italic;
+}
 .find{
     border-left: 1px solid rgb(239, 239, 239) !important;
     box-shadow: -3px 0px  rgba(239, 239, 239, 0.5) !important;
@@ -55,15 +63,13 @@ input[type="search"]{
     height: 100%;
     padding: 40px 4vh 40px 4vh !important;
     color: #8D8484 !important;
-    font-weight: bold !important;
+    /* font-weight: bold !important; */
 }
 .find-flex{
     display: flex;
-    justify-content: center;
+    /* justify-content: left; */
     margin-bottom: 40px;
-}
-.finditalic{
-    font-style: italic;
+    margin-left: -30px;
 }
 
 .findhistory{
@@ -72,20 +78,15 @@ input[type="search"]{
 }
 
 
-.findicon{
-    position: relative;
-    top: 9px;
-    left: 34px;
-}
 
 .find input[type="search"] {
     color: #151515;
-    border-radius: 30px;
+    border-radius: 25px;
     padding:20px 10px 20px 38px !important ;
     height: 40px;
     border: 1px solid #b1b1b1 !important;
     width: 100%;
-    font-size: medium ;
+    font-size: small ;
   }
 
 .col1{
@@ -132,6 +133,10 @@ input[type="search"]{
     font-size: 14px;
     opacity: 0; /* Initially hidden */
     transition: opacity 0.3s ease; /* Smooth transition */
+}
+.custom-col-lg-3 {
+    flex: 0 0 20%; /* Reduces the width from 25% to 20% */
+    max-width: 20%; /* Ensures the max width does not exceed 20% */
 }
 
 .display{

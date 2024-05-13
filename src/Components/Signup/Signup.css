@@ -44,3 +44,7 @@
     margin-bottom: 40px;
 
 }
+
+.form-control:focus{
+    border-bottom: 1px solid #c0bfbf !important;
+}
