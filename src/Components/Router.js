@@ -1,46 +1,85 @@
-import React from "react";
-import Navbar from "./Navbar";
-import Error from "./Error";
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Layout } from "antd";
+
 import Home from "./Home";
 import SideBar from "./SideBar";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { Layout } from "antd";
-import Footer from './Footer'
+import LandingPage from "./LandingPage/LandingPage";
+import Login from "./Login/Login";
+import NewSearch from "./NewSearch/NewSearch";
+import { Signup } from "./Signup/Signup";
+import Error from "./Error";
+import Footer from './Footer';
+
 const { Content } = Layout;
 
-let accessMode = localStorage.getItem("Role");
+const useToken = () => {
+    const [token, setToken] = useState(localStorage.getItem("token"));
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            setToken(localStorage.getItem("token"));
+        };
+
+        // Set up the initial token state and listen for changes on localStorage
+        handleStorageChange();
+        window.addEventListener('storage', handleStorageChange);
+
+        // Cleanup listener on component unmount
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
+    return token;
+};
+
+const ProtectedRoute = ({ children }) => {
+    const token = useToken();
+    return token ? (
+        <Layout>
+            <SideBar />
+            <Content style={{ padding: '0 00px' }}>{children}</Content>
+        </Layout>
+    ) : <Navigate to="/" replace />;
+};
 
 const Router = () => {
-  const select = useSelector((st) => st.accessmode.value);
+    const select = useSelector((st) => st.accessmode.value);
+    const token = useToken();
 
-  useEffect(() => {
-    accessMode = localStorage.getItem("Role");
-  }, [select]);
+    useEffect(() => {
+        // Potentially handle Redux state changes or other side effects
+    }, [select, token]);
 
-  let collapse = useSelector((state) => state.collapse.value);
-  console.log(" collapse : ",collapse)
-
-  return (
-      <>
-      <BrowserRouter>
-        <Layout className={collapse ? "cus-hide" : ""} style={{ background:"#FFFF" }}> 
-       <Navbar/>
-       <Layout>
-       <SideBar  />
-        <Routes>
-     
-            <Route path="/" element={<Home />}></Route>
-        
-          <Route path="*" element={<Error />}></Route>
-          </Routes> 
-          </Layout>
-          </Layout>
-      </BrowserRouter>
-
-    </>
-  );
+    return (
+        <BrowserRouter>
+            <Layout style={{ background: "#FFFF" }}>
+                <Content >
+                    <Routes>
+                        <Route path="/auth" element={<Login />} />
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/handouts" element={
+                            <ProtectedRoute>
+                                <Home />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/newsearch" element={
+                            <ProtectedRoute>
+                                <NewSearch />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="*" element={
+                            <ProtectedRoute>
+                                <Error />
+                            </ProtectedRoute>
+                        } />
+                    </Routes>
+                </Content>
+                <Footer />
+            </Layout>
+        </BrowserRouter>
+    );
 };
 
 export default Router;

@@ -1,0 +1,39 @@
+.landingmain{
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    margin: 36vh 15% 36vh 15%;
+}
+.Landing-signup{
+    margin-top: 89vh;
+    margin-bottom: 3.1vh;
+}
+.Landing-signup-text{
+    text-decoration: none !important;
+    color: #292929 !important;
+    font-size: small;
+}
+.Landing-signup-text-margin{
+    margin-top: 10px !important;
+    margin-left: 30px !important;
+}
+.btn-dark{
+    width: 135px !important;
+    border-radius: 30px !important;
+    color: #e3e0e0 !important;
+    margin-left: 30px !important;
+}
+.Landing-container{
+    height: 100vh !important;
+    background-color: black !important;
+    padding: 6px !important;
+    padding-bottom: 10px !important;
+}
+.Landing-row{
+    background-color: white !important;
+    border-radius: 10px !important;
+    margin-left: 2px;
+    margin-right: 2px;
+    height: 98.5vh;
+}
