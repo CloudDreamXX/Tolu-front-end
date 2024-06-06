@@ -13,6 +13,19 @@
     padding: 5px 20px 20px 20px;
     margin-bottom: 20px !important;
 }
+.loading-icons {
+  animation: spin 1s linear infinite; /* Apply animation */
+  margin-top: 45% !important;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .mainpage-top{
     margin-top: 35px !important;
 }
@@ -57,24 +70,21 @@
     font-style: italic;
 }
 .find{
-    border-left: 1px solid rgb(239, 239, 239) !important;
-    box-shadow: -3px 0px  rgba(239, 239, 239, 0.5) !important;
     width: 100%;
-    height: 100%;
-    padding: 40px 4vh 40px 4vh !important;
+    padding-left: 13px;
     color: #8D8484 !important;
     /* font-weight: bold !important; */
 }
 .find-flex{
     display: flex;
     /* justify-content: left; */
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     margin-left: -30px;
 }
 
 .findhistory{
-  margin-left: 30px !important;
-  margin-top: 15px !important;
+  margin-top: 10px !important;
+    padding: 2px 2px 2px 4px;
 }
 
 
@@ -169,4 +179,26 @@
 
 .vita{
     background-color: #79DBBD;
+}
+.category-title{
+    font-size: 12px;
+    margin-left: -10px;
+    margin-top: 5px;
+    margin-bottom: -5px;
+    font-style: italic;
+}
+
+.category-title:not(.first-title) {
+    margin-top: 15px;
+}
+.findhistory:hover {
+    background: #e5dddd;
+    border-radius: 5px;
+    color: black;
+    cursor: pointer;
+}
+.findhistory:active {
+    background: #c2b7b7;
+    border-radius: 5px;
+    color: black;
 }

@@ -15,6 +15,29 @@ import {FaArrowRotateLeft, FaVolumeHigh} from "react-icons/fa6";
 import {GrDislike} from "react-icons/gr";
 import {IoCopyOutline} from "react-icons/io5";
 
+class CustomOption extends Component {
+  static propTypes = {
+    onChange: PropTypes.func,
+    editorState: PropTypes.object,
+    clicked: PropTypes.bool,
+    toggleToolbar: PropTypes.func,
+    toggleToolbarHide: PropTypes.func,
+    addStar: PropTypes.func,
+    saveHandout: PropTypes.func
+  };
+
+
+  render() {
+    const { clicked, toggleToolbarHide, addStar, saveHandout } = this.props;
+    return (<>
+            <div className='rdw-link-wrapper no-color' hidden={!clicked} data-tooltip-content="save" data-tooltip-id="saveHandoutTooltip"><div className='rdw-option-wrapper' title="save" onClick={saveHandout}> <HiInboxArrowDown size={17} /></div></div>
+            <div className='rdw-link-wrapper no-color' hidden={!clicked} data-tooltip-content="share" data-tooltip-id="saveHandoutTooltip"><div className='rdw-option-wrapper' title="share" onClick={addStar}><TbLocation size={17} /></div></div>
+            <div className='rdw-link-wrapper no-color' hidden={!clicked} onClick={toggleToolbarHide}><div className='rdw-option-wrapper' onClick={addStar}><IoIosArrowForward  size={17} /></div></div>
+        </>
+    );
+  }
+}
+
 class ControlledEditor extends Component {
     constructor(props) {
       super(props);
@@ -80,7 +103,7 @@ class ControlledEditor extends Component {
 
     try {
         // Directly pass the object as the argument
-        const response = await this.props.createHandouts({ content: textContent }); 
+        const response = await this.props.createHandouts({ content: textContent });
         if (response.payload && response.payload.status === 201) {
             window.alert("Handout successfully saved!");
         } else {
@@ -100,12 +123,10 @@ class ControlledEditor extends Component {
             <div className='editor'>
                 <div className="position-relative">
                  <div className='canvas' ><button className="generator-icon"><IoMdAddCircleOutline className="solid"/></button>New canvas</div>
-                <div className="tool-bar">
-                    <button className='showtoolbar' hidden={clicked} onClick={this.toggleToolbar}><div className='cus-button' ><BiWrench size={50} /></div></button>
-                    <button className='showtoolbarLeft' hidden={!clicked} onClick={this.toggleToolbarHide}><div className='cus-button' onClick={this.addStar}><IoIosArrowForward  size={17} /></div></button>
-                    <button className='showtoolbarLeft' hidden={!clicked}><div className='cus-button' onClick={this.addStar}><TbLocation size={17} /></div></button>
-                    <button className='showtoolbarLeft' hidden={!clicked} ><div className='cus-button' onClick={this.saveHandout}> <HiInboxArrowDown size={17} /></div></button>
-                </div></div>
+                    <div className="tool-bar">
+                        <button className='showtoolbar' hidden={clicked} onClick={this.toggleToolbar}><div className='cus-button' ><BiWrench size={50} /></div></button>
+                    </div>
+                </div>
                 <Editor
                     toolbarHidden={!clicked}
                     editorState={editorState}
@@ -113,11 +134,18 @@ class ControlledEditor extends Component {
                     editorClassName={clicked ? "editor-classh" : "editor-class"}
                     placeholder={editorState.getCurrentContent().hasText() ? null : placeholderText} // Conditionally render placeholder
                     toolbarClassName="toolbar-class"
+                    toolbarCustomButtons={[<CustomOption
+                        clicked={this.state.clicked}
+                        toggleToolbarHide={this.toggleToolbarHide}
+                        addStar={this.addStar}
+                        saveHandout={this.saveHandout}
+                    />
+                    ]}
                     // readOnly={true}
                     toolbar={{
-                        options: ['link', 'image'],
+                        options: ['image','link'],
                         image: {
-                            className: "no-color",
+                          className: "no-color",
                           uploadCallback: this.uploadImageCallBack,
                           alt: { present: true, mandatory: false },
                         },
@@ -130,7 +158,7 @@ class ControlledEditor extends Component {
                     onEditorStateChange={this.onEditorStateChange}
                     handleDroppedFiles={this.handleFileDrop}
                 />
-                <hr className="dashed-line"/>
+                <hr className={clicked ? "col-dashed-line" : "dashed-line"}/>
                   <div style={{marginLeft: "12px"}}>
                   <button className="generator-icon" ><FaArrowRotateLeft /></button>
                       <button className="generator-icon"><GrDislike /></button>
@@ -138,12 +166,13 @@ class ControlledEditor extends Component {
                       <button className="generator-icon"><FaVolumeHigh /></button>
                   </div>
                 </div>
-                 
+
         );
     }
 }
 const mapDispatchToProps = {
   createHandouts
 };
+
 
 export default connect(null, mapDispatchToProps)(ControlledEditor);

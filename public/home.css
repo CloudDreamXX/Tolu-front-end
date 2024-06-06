@@ -14,11 +14,12 @@
 }
 
 .side{
-    color: #79DBBD !important;
+    color: #79DBBD;
     margin-left: 50px !important;
     margin-top: 10px !important;
     font-size: 18px;
 }
+
 .vita-heading{
     color: #ECDEFA !important;
     margin-left: 50px !important;
@@ -26,6 +27,10 @@
     margin-bottom: 20px !important;
     font-size: 25px;
 }
+.no-arrow-dropdown .ant-dropdown-trigger {
+  display: none;
+}
+
 .plus-icon {
     /*padding: 0 5px;*/
     right: 20px;
@@ -78,6 +83,7 @@
     border-radius: 30px !important;
     background-color: #2e2e2e !important;
     color:  #79DBBD !important;
+    width: 130px;
 }
 .account-position{
     display: flex;
@@ -104,6 +110,8 @@ input[type="search"]::-webkit-search-cancel-button {
 .box1{
     background-color: #2e2e2e !important;
     padding: 8px 4px 6px 4px !important;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 
@@ -226,14 +234,20 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 .up-icon{
-   color :  white  !important;
-    border: 1px solid #D3D3D3 !important;
-    background-color: #D3D3D3 !important;
-    border-radius: 30px !important;
-    padding: 0px 3px 3px 3px !important;
-    font-size: large;
+    border: none;
+    background: white !important;
+    /*padding: 0px 3px 3px 3px !important;*/
 }
-
+.icon-style{
+    color: #D3D3D3 !important;
+    margin-top: 45% !important;
+}
+.dropdown-toggle::after{
+    display: none;
+}
+.find_his{
+    margin-left: -5px;
+}
 .button-container {
     /*height: 100%;*/
     display: flex;
@@ -260,7 +274,10 @@ input[type="search"] {
 
 .search-history {
     overflow: auto;
-    height: 100%;
+    border-left: 1px solid rgb(239, 239, 239) !important;
+    box-shadow: -3px 0px  rgba(239, 239, 239, 0.5) !important;
+    padding: 40px 3vh 40px 2vh !important;
+
 }
 .search-query{
     border: none !important;
@@ -269,6 +286,9 @@ input[type="search"] {
     width: 90%;
     outline: none;
     resize: none;
+}
+.rdw-editor-toolbar{
+    direction: rtl;
 }
 
   input[type="search"]::placeholder {
@@ -305,11 +325,11 @@ input[type="search"]:focus {
     background-color: white !important;
     border: none !important;
     color: #707070 !important;
-   margin-bottom: 47px !important;
+   margin-bottom: 33px !important;
    padding-top: 6px !important;
    padding-bottom: 6px !important;
    position: relative;
-   left:90%;
+   left:84%;
 }
 
 
@@ -468,7 +488,7 @@ input[type="search"]:focus {
 }
 
 .editor-class{
-    margin-top: 0px !important;
+    margin-top: -28px !important;
 }
 
 .editor-classh{
@@ -479,16 +499,27 @@ input[type="search"]:focus {
 /*    min-height: 30vh !important;*/
 /*}*/
 .wrapper-class{
-    margin-top: -52px;
-    max-height: 550px !important;
-    overflow: auto;
+    margin-top: -8px;
+    max-height: 621px !important;
+}
+.vertical_line{
+  border-left: 1px solid green;
 }
 
 .rdw-option-wrapper{
     border: none !important;
     background-color: #79DBBD !important;
 }
-
+.col-dashed-line{
+    width: 90%;
+    height: 1px;
+    color: #4e4d4d;
+    /*margin: 20px 0;*/
+    margin-left: 23px;
+    margin-right: 20px;
+    border-style: dashed;
+    margin-top: 81px;
+}
 .DraftEditor-editorContainer {
     line-height: 0.9;
 }

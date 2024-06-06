@@ -1,22 +1,21 @@
-import React, { useState } from "react";
-import { GrAttachment } from "react-icons/gr";
+import React, { useState, useRef, useEffect } from "react";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import { IoCopyOutline } from "react-icons/io5";
 import { FaVolumeHigh } from "react-icons/fa6";
-import { GrDislike } from "react-icons/gr";
 import { FiLoader } from "react-icons/fi";
 import { LuSearch } from "react-icons/lu";
 import { BiDislike } from "react-icons/bi";
 import { BiSolidDislike } from "react-icons/bi";
 import { AiOutlineLoading } from 'react-icons/ai';
-import { IoMdAddCircleOutline, IoMdSearch } from "react-icons/io"
-import { IoArrowForwardSharp } from "react-icons/io5";
-import { useDispatch } from 'react-redux';
+import { IoVolumeMuteSharp } from "react-icons/io5";
+import { IoArrowForwardCircleSharp } from "react-icons/io5";
+import { useDispatch,useSelector} from 'react-redux';
 import { AISearch, dislikeResponse } from "../ReduxToolKit/Slice/userSlice";
 import Editor from './Editor';
+import SearchHistory from "./SearchHistory";
+
 
 const Home = () => {
-  const [searchHistory, setSearchHistory] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [models, setModels] = useState([]);
@@ -24,20 +23,66 @@ const Home = () => {
   const [searched, setSearched] = useState(false);
   const [dislikedResults, setDislikedResults] = useState({});
   const [pageLoading, setPageLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const dispatch = useDispatch();
+  const scrollableDivRef = useRef(null);
+  const [speaking, setSpeaking] = useState(false);  // State to track if it's currently speaking
+  const edit_text=useSelector((state)=>state.editable_text.value)
+
+  useEffect(()=>{
+    if(edit_text){
+      setModels(prevModels => [...prevModels, edit_text]);
+    //  setModels([...models,edit_text])
+    }
+  },[])
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setSpeaking(false);
+  };
+  const [chatId, setChatId] = useState(null);
+
+  // Function to handle starting the speech
+  const startSpeaking = (message) => {
+    if (window.speechSynthesis.speaking) {
+      stopSpeaking(); // Optional: stop if already speaking when asked to speak again
+    }
+    const msg = new SpeechSynthesisUtterance(message);
+    msg.onend = () => {
+      console.log("Finished speaking...");
+      setSpeaking(false);
+    };
+    msg.onerror = (event) => {
+      console.error("SpeechSynthesisUtterance.onerror", event.error);
+      setSpeaking(false);
+    };
+    setSpeaking(true);
+    window.speechSynthesis.speak(msg);
+  };
+
+
 
   const handleSubmit = async () => {
     if (!searchQuery) return;
     setLoading(true);
     try {
-      const response = await dispatch(AISearch({ user_prompt: searchQuery })).unwrap();
+      const response = await dispatch(AISearch({
+        user_prompt: searchQuery,
+        is_new: !searched,
+        chat_id: models.length !== 0 ? chatId : '',
+        regenerate_id: ""
+      })).unwrap();
       const newEntry = {
         questions: searchQuery,
         answers: response.results.reply,
-        result_id: response.searched_result_id
+        result_id: response.searched_result_id,
+        chat_id: response.chat_id
       };
+      if (models.length === 0){
+          setChatId(response.chat_id);
+      }
+
       setModels(prevModels => [...prevModels, newEntry]);
-      setSearchHistory(prevHistory => [...prevHistory, searchQuery]);
       setSearched(true);
       setSearchQuery("");
     } catch (error) {
@@ -60,8 +105,6 @@ const Home = () => {
     }
   };
 
-  const [copied, setCopied] = useState(false);
-
   function handleCopyResponse(text) {
     navigator.clipboard.writeText(text)
       .then(() => {
@@ -81,15 +124,21 @@ const Home = () => {
     }
   }
 
-  const handleRegenerate = async (index, originalQuery) => {
+  const handleRegenerate = async (index, originalQuery, result_id) => {
     setPageLoading(true);
     setRefreshingIndices(prev => ({ ...prev, [index]: true }));
     try {
-      const response = await dispatch(AISearch({ user_prompt: originalQuery })).unwrap();
+      const response = await dispatch(AISearch({
+        user_prompt: originalQuery,
+        is_new: false,
+        chat_id: chatId,
+        regenerate_id: result_id
+      })).unwrap();
       const updatedEntry = {
         questions: originalQuery,
         answers: response.results.reply,
-        result_id: response.searched_result_id
+        result_id: response.searched_result_id,
+        chat_id: chatId
       };
       setModels(models => models.map((model, idx) => idx === index ? updatedEntry : model));
     } catch (error) {
@@ -111,7 +160,7 @@ const Home = () => {
           <div className="col-md-5">
             <div className="box2">
 
-              {!searched || models.length === 0 ? (
+              {models.length === 0 ? (
                 <>
                   <div className="headertext">Top 5 searches this week</div>
                   <div className="gen-btn">
@@ -155,45 +204,58 @@ const Home = () => {
                 </>
               ) : (
                 <>
-                  <h3>Search Results:</h3>
-                  {models.map((model, index) => (
-                    <><div key={index}>
-                      <div className='main-div'>
-                        <div className='display'><div className='user circle'></div><span className='text'> You</span></div>
-                        <div className='ques-ans'> {model.questions}</div>
-                      </div>
-                      <div className='main-div'>
-                        <div className='display'><div className='vita circle'></div><span className='text'> Vita Guide</span></div>
-                        <div className='ques-ans'> {model.answers}</div>
-                      </div>
-                    </div><hr className="dashed-line" /><div style={{ marginLeft: "12px" }}>
-                        <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions)}>
-                          {refreshingIndices[index] ? <AiOutlineLoading className="loading-icon" /> : <FaArrowRotateLeft />}
-                        </button>
-                        {dislikedResults[model.result_id] ?
-                          <button className="generator-icon"><BiSolidDislike /></button> :
-                          <button className="generator-icon" onClick={() => handleDislike(model.result_id)}><BiDislike /></button>
-                        }
-                        <button className="generator-icon" onClick={(event) => {
-                          handleCopyResponse(model.answers);
-                          const tooltip = document.getElementById('copy-tooltip');
-                          const buttonRect = event.target.getBoundingClientRect();
-                          tooltip.style.top = `${buttonRect.top + 80}px`;
-                          tooltip.style.left = `${buttonRect.left + 20}px`;
-                          tooltip.style.opacity = 1;
-                          tooltip.style.opacity = 1;
-                          setTimeout(() => {
-                            tooltip.style.opacity = 0;
-                          }, 2000); // Hide tooltip after 2 seconds
-                        }}>
-                          <IoCopyOutline />
-                        </button>
-                        <button className="generator-icon"><FaVolumeHigh /></button>
-                        <button className="generator-icon"><IoMdAddCircleOutline /></button>
-                      </div>
-                      <div id="copy-tooltip" className="tooltip">Copied!</div>
-                    </>
-                  ))}
+                  <div ref={scrollableDivRef} className='main-div-height'>
+                    <h3>Search Results:</h3>
+                    {models.map((model, index) => (
+                      <><div key={index}>
+                        <div className='main-div'>
+                          <div className='display'><div className='user circle'></div><span className='text'> You</span></div>
+                          <div className='ques-ans'> {model.questions}</div>
+                        </div>
+                        <div className='main-div'>
+                          <div className='display'><div className='vita circle'></div><span className='text'> Vita Guide</span></div>
+                          <div className='ques-ans'> {model.answers}</div>
+                        </div>
+                      </div><hr className="dashed-line" /><div style={{ marginLeft: "12px" }}>
+                          <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions, model.result_id)}>
+                            {refreshingIndices[index] ? <FiLoader className="loading-icon" /> : <FaArrowRotateLeft />}
+                          </button>
+                          {dislikedResults[model.result_id] ?
+                            <button className="generator-icon"><BiSolidDislike /></button> :
+                            <button className="generator-icon" onClick={() => handleDislike(model.result_id)}><BiDislike /></button>
+                          }
+                          <button className="generator-icon" onClick={(event) => {
+                            handleCopyResponse(model.answers);
+                            const tooltip = document.getElementById('copy-tooltip');
+                            const buttonRect = event.target.getBoundingClientRect();
+                            tooltip.style.top = `${buttonRect.top + 80}px`;
+                            tooltip.style.left = `${buttonRect.left + 20}px`;
+                            tooltip.style.opacity = 1;
+                            tooltip.style.opacity = 1;
+                            setTimeout(() => {
+                              tooltip.style.opacity = 0;
+                            }, 2000);
+                          }}>
+                            <IoCopyOutline />
+                          </button>
+                          {
+                            speaking ? (
+                              <button className="generator-icon" onClick={stopSpeaking}>
+                                <IoVolumeMuteSharp className="loading-icon" />
+                              </button>
+                            ) : (
+                              <button className="generator-icon" onClick={() => startSpeaking(model.answers)}>
+                                <FaVolumeHigh />
+                              </button>
+                            )
+                          }
+
+
+                        </div>
+                        <div id="copy-tooltip" className="tooltip">Copied!</div>
+                      </>
+                    ))}
+                  </div>
                 </>
               )}
 
@@ -208,7 +270,7 @@ const Home = () => {
                 />
                 <div className="button-container">
                   <button onClick={handleSubmit} className="up-icon">
-                    {loading ? <AiOutlineLoading /> : <IoArrowForwardSharp />}
+                    {loading ? <AiOutlineLoading size={35} className="loading-icons"/> :  <IoArrowForwardCircleSharp size={35} className="icon-style" />}
                   </button>
                 </div>
               </div>
@@ -217,26 +279,12 @@ const Home = () => {
             </div>
 
           </div>
-          <div className="col-md-5 box3">
+          <div className="col-md-5">
             <Editor />
           </div>
+          <SearchHistory is_new={models.length === 0} setModels={setModels} setChatId={setChatId}/>
 
-          <div className="col-md-2 search-history">
-            <div className='col-md-2'></div>
-            {/* <div className='col-md-2 '> */}
-              <div className='find'>
-                <div className='find-flex'>
-                  <span className='findicon'><LuSearch size={18} /></span>
-                  <input type='search' placeholder='Find' />
-                </div>
-                <div>
-                  {searchHistory.map((item, index) => (
-                    <div key={index} className="findhistory">{item}</div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+        </div>
 
 
         // </div>

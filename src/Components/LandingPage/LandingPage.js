@@ -1,6 +1,5 @@
 import React from 'react'
-import { IoArrowForwardSharp } from "react-icons/io5";
-import { GrAttachment } from "react-icons/gr";
+import { IoArrowForwardCircleSharp } from "react-icons/io5";
 import { useState,useEffect,useRef } from 'react';
 import { Link } from "react-router-dom";
 import './LandingPage.css'
@@ -89,7 +88,7 @@ let LandingPage = () => {
                     <form onSubmit={handleSubmit} className="d-flex">
                         {/*<input type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " />*/}
                         <textarea className="search-query" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " rows={3} onKeyDown={(e) => handleKeyPress(e)} />
-                        <div className="button-container" > <button type="submit" className="up-icon" ><IoArrowForwardSharp /></button></div>
+                        <div className="button-container" > <button type="submit" className="up-icon" ><IoArrowForwardCircleSharp size={35} className="icon-style" /></button></div>
                         {/*<div><button className="gen-button"><GrAttachment /> Attach</button></div>*/}
                     </form>
                 </div> 
@@ -110,7 +109,7 @@ let LandingPage = () => {
                    <form onSubmit={handleSubmit} className="d-flex">
                      {/*<input type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " />*/}
                      <textarea className="search-query" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " rows={3} onKeyDown={(e) => handleKeyPress(e)} />
-                     <div className="button-container" > <button className="up-icon" ><IoArrowForwardSharp /></button></div>
+                     <div className="button-container" > <button className="up-icon" > <IoArrowForwardCircleSharp size={35} className="icon-style" /></button></div>
                      {/*<div><button type="submit" className="gen-button"><GrAttachment /> Attach</button></div>*/}
                    </form>
                     </div> 

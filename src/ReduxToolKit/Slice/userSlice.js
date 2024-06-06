@@ -17,13 +17,12 @@ export const login = createAsyncThunk(
   );
   export const createUser = createAsyncThunk(
     "user/createUser",
-    async ({ name, email, password, navigate }, { rejectWithValue }) => {
+    async ({ name, email, password, type, role, location, num_clients,dob, priority}, { rejectWithValue }) => {
       try {
-        const response = await api.signUp({ name, email, password });
+        const response = await api.signUp({ name, email, password, type, role, location, num_clients,dob, priority});
         // Navigate to home page on success
-        navigate('/home');
 
-        return { response, navigate };
+        return { response };
       } catch (error) {
         let message = "Failed to sign up.";
         // Handle error as previously described
@@ -31,11 +30,48 @@ export const login = createAsyncThunk(
       }
     }
   );
+  export const findUser = createAsyncThunk(
+    "user/findUser",
+    async ({ email }, { rejectWithValue }) => {
+      try {
+        const response = await api.finduser({ email});
+        // Navigate to home page on success
+
+        return { response };
+      } catch (error) {
+        let message = "internal server error";
+        // Handle error as previously described
+        return rejectWithValue(message);
+      }
+    }
+  );
   export const AISearch = createAsyncThunk(
     "aisearch",
-    async ({ user_prompt}) => {
+    async ({ user_prompt, is_new, chat_id, regenerate_id }) => {
       try {
-        const response = await api.getAISearch({ user_prompt});
+        const response = await api.getAISearch({ user_prompt, is_new, chat_id, regenerate_id});
+        return response;
+      } catch (error) {
+        return error.response;
+      }
+    }
+  );
+  export const GetSearchHistory = createAsyncThunk(
+    "searched-result",
+    async () => {
+      try {
+        const response = await api.getSearchHistory();
+        return response;
+      } catch (error) {
+        return error.response;
+      }
+    }
+  );
+  export const GetSession = createAsyncThunk(
+    "session",
+    async ({chat_id}) => {
+      try {
+        const response = await api.getSessionResult({chat_id});
         return response;
       } catch (error) {
         return error.response;
@@ -76,10 +112,13 @@ export const login = createAsyncThunk(
     name: "",
     lastName: "",
     email: "",
+    searchresults: {},
     handoutcontent:{},
+    sessioncontent:{},
     error: "",
     loading: false,
-    dislike: false
+    dislike: false,
+    userexist: false,
   };
   
   export const UserSlice = createSlice({
@@ -106,11 +145,21 @@ export const login = createAsyncThunk(
         .addCase(createUser.fulfilled, (state, action) => {
           state.loading = false;
           localStorage.setItem("token", action.payload?.response?.accessToken);
-          action.payload.navigate();
         })
         .addCase(createUser.rejected, (state, action) => {
           state.loading = false;
           state.error = action.payload; 
+        })
+        .addCase(findUser.pending, (state) => {
+          state.loading = true;
+        })
+        .addCase(findUser.fulfilled, (state, action) => {
+          state.userexist = action.payload.response;
+          state.loading = false;
+        })
+        .addCase(findUser.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
         })
         .addCase(createHandouts.pending, (state) => {
           state.loading = true;
@@ -120,6 +169,28 @@ export const login = createAsyncThunk(
           state.loading = false;
         })
         .addCase(createHandouts.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        })
+       .addCase(GetSearchHistory.pending, (state) => {
+          state.loading = true;
+        })
+        .addCase(GetSearchHistory.fulfilled, (state, action) => {
+          state.searchresults = action.payload.response;
+          state.loading = false;
+        })
+        .addCase(GetSearchHistory.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        })
+        .addCase(GetSession.pending, (state) => {
+          state.loading = true;
+        })
+        .addCase(GetSession.fulfilled, (state, action) => {
+          state.sessioncontent = action.payload.response;
+          state.loading = false;
+        })
+        .addCase(GetSession.rejected, (state, action) => {
           state.loading = false;
           state.error = action.payload;
         })

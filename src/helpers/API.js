@@ -37,10 +37,20 @@ API.interceptors.request.use((req) => {
   export const signUp = async (payload) => {
     return handleRequest("post", "/user/signup", payload);
   };
+  export const finduser = async (payload) => {
+    const { email } = payload;
+    return handleRequest("get", `/user-exist/${email}`);
+  };
   
   export const getAISearch = async (payload) => {
-    const { user_prompt } = payload;
-    return handleRequest("get", `/ai-search/${user_prompt}`);
+    return handleRequest("post", `/ai-search`, payload);
+  };
+  export const getSearchHistory = async () => {
+    return handleRequest("get", `/searched-result/history`);
+  };
+  export const getSessionResult = async (payload) => {
+    const { chat_id } = payload;
+    return handleRequest("get", `/session/${chat_id}`);
   };
   export const createHandout = async (payload) => {
     return handleRequest("post", "/handout/create", payload);

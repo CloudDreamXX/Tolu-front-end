@@ -1,97 +1,156 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { createUser } from '../../ReduxToolKit/Slice/userSlice';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
 import "./Signup.css";
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button'
+import {Welcome} from "./SignupComponents/Welcome";
+import SideBar from "../SideBar";
+import {Layout} from "antd";
+import {AccountType} from "./SignupComponents/AccountType";
+import {Link, useNavigate} from "react-router-dom";
+import {Info} from "./SignupComponents/Info";
+import {PractitionerType} from "./SignupComponents/PractitionerType";
+import {PersonInfo} from "./SignupComponents/PersonInfo";
+import {AccountDetail} from "./SignupComponents/AccountDetail";
+import {Priority} from "./SignupComponents/Priority";
+import {useDispatch, useSelector} from "react-redux";
+import {createUser, findUser, GetSession} from "../../ReduxToolKit/Slice/userSlice";
+import Home from "../Home";
+import {toast} from "react-toastify";
+
 
 export const Signup = () => {
-  const [name, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-
   const dispatch = useDispatch();
+  const [role, setRole] = useState("");
+  const [type, setType] = useState("");
+  const [page, setPage] = useState(1);
+  const [showError, setShowError] = useState(false);
+  const [personalInfo, setPersonalInfo] = useState({});
+  const [err, setErr] = useState("");
   const navigate = useNavigate();
-  const { error, loading } = useSelector(state => state.user);
+  const { Content } = Layout;
+  const [triggerNext, setTriggerNext] = useState(false);
+  const error = useSelector((state) => state.user.error);
+  useEffect(() => {
+    error && toast.error(error?.Message);
+    if (error){
+      setShowError(true);
+    }
+  }, [error]);
+
+  const handleNext = async () => {
+    if (page === 5) {
+      const existingUser = await dispatch(findUser({email: personalInfo.email})).unwrap()
+      if (existingUser?.response?.success) {
+        setErr("User already exist");
+      } else {
+        setPage(page + 1);
+      }
+    }
+    else if (page === 6) {
+          await dispatch(createUser({
+            name: personalInfo.name,
+            email: personalInfo.email,
+            password: personalInfo.password,
+            type: type,
+            role: role,
+            location: personalInfo.location,
+            num_clients: personalInfo.numClients,
+            dob: personalInfo.dob,
+            priority: personalInfo.priority
+          }));
+      navigate("/newsearch", { state: { showInfo: true } }); // Pass showInfo as state
+
+    } else {
+        setPage(page + 1);
+    }
 
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Basic client-side validation
-    if (!name.trim() || !email.trim() || !password.trim()) {
-      console.error('Please fill all the fields.');
-      return;
+  };
+  useEffect(() => {
+    if (triggerNext) {
+      handleNext();
+      setTriggerNext(false);
     }
-    if (password !== confirm) {
-      console.error('Passwords do not match.');
-      return;
-    }
-    // Dispatch the action to create a user
-    dispatch(createUser({
-      name,
-      email,
-      password,
-      navigate: () => navigate("/newsearch") 
-    }));
+  }, [triggerNext, personalInfo]);
+  const handleErrorClose = () => {
+    setShowError(false);
+    navigate("/");
   };
 
-  return (
-    <div className='container-fluid bg-white'>
-      <div className='signup-body'>
-        <div className='row'>
-          <div className='col-lg-4'></div>
-          <div className='col-lg-4 signup-box'>
-            <h1 className='heading'>Sign Up</h1>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="form-control"
-                  id="Text1"
-                  placeholder="Enter User Name"
-                />
-              </div>
-              <div className="form-group">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="form-control"
-                  id="Email1"
-                  placeholder="Enter Email"
-                />
-              </div>
-              <div className="form-group">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="form-control"
-                  id="Password1"
-                  placeholder="Password"
-                />
-              </div>
-              <div className="form-group">
-                <input
-                  type="password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  className="form-control"
-                  id="ConfirmPassword1"
-                  placeholder="Confirm Password"
-                />
-              </div>
-              <button type="submit" className="btn btn-secondary" disabled={loading}>
-                {loading ? 'Signing Up...' : 'Sign Up'}
-              </button>
-            </form>
-            {error && <span className='error-text'>Error: {error}</span>}
-          </div>
-          <div className='col-lg-4'></div>
+
+return (
+    <>
+      <Modal visible={showError} onHide={handleErrorClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{error?.Message || "An error occurred"}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleErrorClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {page === 1 && (
+        <div className='container-fluid bg-white'>
+          <Welcome
+              handleNext={handleNext}
+          />
         </div>
-      </div>
-    </div>
+      )}
+      { (page >=2 && page <=6) && (
+        <Layout>
+          <SideBar className="sidebar-disabled"/>
+          <Content style={{ padding: '0 00px', height: "100vh" }}>
+            <div className='container-fluid bg-white main-content' style={{ height: "100vh" }}>
+              <div className='row' style={{ height: "100vh" }}>
+                    <div className='col-lg-2' style={{ height: "100vh" }}>
+                        <div className='signin'>
+                        <div className='signin_margin_text' > Already have an account ? <Link className='signin_text' to="/auth"> Sign in</Link></div>
+                        </div>
+                    </div>
+                    <div className='col-lg-6' style={{width: "70%", height: "100vh"}}>
+                      {page === 2 && <AccountType
+                        setRole={setRole}
+                        role={role}
+                        handleNext={handleNext}
+                      />
+                      }
+                      {page === 3 && <PractitionerType
+                        type={type}
+                        setType={setType}
+                        handleNext={handleNext}
+                      />
+                      }
+                      {
+                        page === 4 && <PersonInfo
+                          personalInfo={personalInfo}
+                          setPersonalInfo={setPersonalInfo}
+                          handleNext={handleNext}
+                      />
+                      }
+                      {
+                        page === 5 && <AccountDetail
+                          personalInfo={personalInfo}
+                          setPersonalInfo={setPersonalInfo}
+                          setTriggerNext={setTriggerNext}
+                          err={err}
+                      />
+                      }
+                      {
+                        page === 6 && <Priority
+                          personalInfo={personalInfo}
+                          setPersonalInfo={setPersonalInfo}
+                          setTriggerNext={setTriggerNext}
+                      />
+                      }
+
+                    </div>
+              </div>
+            </div>
+          </Content>
+        </Layout>
+      )}
+        </>
   );
 };

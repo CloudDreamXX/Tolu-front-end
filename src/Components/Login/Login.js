@@ -32,7 +32,10 @@ const Login = () => {
           <div className='col-lg-4'></div>
           <div className='col-lg-4 signup-box'>
             <h1 className="heading">VITA GUIDE</h1>
+              <div style={{display: "flex", flexDirection: "column", justifyItems: "center", textAlign: "center"}}>
             <h1 className='heading' style={{color: "#0f6efd", fontSize: "25px"}}>Sign In</h1>
+                          {error && <span className='error-text' style={{marginTop: "-10px", marginBottom: "5px"}}>Error: {error}</span>}
+                  </div>
                     <Form
                       name="normal_login"
                       className="login-form"
