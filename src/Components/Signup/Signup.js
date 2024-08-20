@@ -16,6 +16,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {createUser, findUser, GetSession} from "../../ReduxToolKit/Slice/userSlice";
 import Home from "../Home";
 import {toast} from "react-toastify";
+import Onboarding from "../..Components/../onboarding";
 
 
 export const Signup = () => {
@@ -46,7 +47,7 @@ export const Signup = () => {
         setPage(page + 1);
       }
     }
-    else if (page === 6) {
+    else if (page === 4) {
           await dispatch(createUser({
             name: personalInfo.name,
             email: personalInfo.email,
@@ -58,7 +59,7 @@ export const Signup = () => {
             dob: personalInfo.dob,
             priority: personalInfo.priority
           }));
-      navigate("/newsearch", { state: { showInfo: true } }); // Pass showInfo as state
+      navigate("/Onboarding", { state: { showInfo: true } }); // Pass showInfo as state
 
     } else {
         setPage(page + 1);
@@ -110,26 +111,27 @@ return (
                         </div>
                     </div>
                     <div className='col-lg-6' style={{width: "70%", height: "100vh"}}>
-                      {page === 2 && <AccountType
-                        setRole={setRole}
-                        role={role}
-                        handleNext={handleNext}
-                      />
-                      }
-                      {page === 3 && <PractitionerType
-                        type={type}
-                        setType={setType}
-                        handleNext={handleNext}
-                      />
-                      }
-                      {
-                        page === 4 && <PersonInfo
+                      {page === 2 && <PersonInfo
                           personalInfo={personalInfo}
                           setPersonalInfo={setPersonalInfo}
                           handleNext={handleNext}
+                    />
+                      }
+                      {page === 3 && <AccountDetail
+                        personalInfo={personalInfo}
+                        setPersonalInfo={setPersonalInfo}
+                        setTriggerNext={setTriggerNext}
+                        err={err}
                       />
                       }
                       {
+                        page === 4 && <Priority
+                        personalInfo={personalInfo}
+                        setPersonalInfo={setPersonalInfo}
+                        setTriggerNext={setTriggerNext}
+                      />
+                      }
+                      {/* {
                         page === 5 && <AccountDetail
                           personalInfo={personalInfo}
                           setPersonalInfo={setPersonalInfo}
@@ -143,7 +145,7 @@ return (
                           setPersonalInfo={setPersonalInfo}
                           setTriggerNext={setTriggerNext}
                       />
-                      }
+                      } */}
 
                     </div>
               </div>

@@ -45,6 +45,17 @@ export const login = createAsyncThunk(
       }
     }
   );
+//   export const Onboard = createAsyncThunk(
+//     "user/onboarding",
+//     async (payload, { rejectWithValue }) => {
+//       try {
+//         const response = await api.onboarding(payload);
+//         return response;
+//       } catch (error) {
+//         return rejectWithValue(error.response.data);
+//       }
+//     }
+// );
   export const AISearch = createAsyncThunk(
     "aisearch",
     async ({ user_prompt, is_new, chat_id, regenerate_id }) => {
@@ -103,10 +114,10 @@ export const login = createAsyncThunk(
     }
 );
 
-  
 
-  
-  
+
+
+
 
   const initialState = {
     name: "",
@@ -120,7 +131,7 @@ export const login = createAsyncThunk(
     dislike: false,
     userexist: false,
   };
-  
+
   export const UserSlice = createSlice({
     name: "auth",
     initialState,
@@ -137,7 +148,7 @@ export const login = createAsyncThunk(
         })
         .addCase(login.rejected, (state, action) => {
           state.loading = false;
-          state.error = action.payload; 
+          state.error = action.payload;
         })
         .addCase(createUser.pending, (state) => {
           state.loading = true;
@@ -148,7 +159,7 @@ export const login = createAsyncThunk(
         })
         .addCase(createUser.rejected, (state, action) => {
           state.loading = false;
-          state.error = action.payload; 
+          state.error = action.payload;
         })
         .addCase(findUser.pending, (state) => {
           state.loading = true;
@@ -207,7 +218,7 @@ export const login = createAsyncThunk(
         });
     },
   });
-  
+
 
 // Export userSlice actions and reducer
 export const {} = UserSlice.actions;

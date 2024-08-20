@@ -43,8 +43,7 @@ export const Welcome = ({handleNext}) => {
                   <h2 className="welcome-signin"><button className='sign_link' onClick={() => navigete('/auth')}>Sign in </button>
                  or<button className="welcome_link welcome-signin" onClick={handleNext}>
                     Create a new account
-                </button><
-            /h2>
+                </button></h2>
             {pills_text.map((pill, index) => {
                 let random=(index%6)+1;
                 let class_name="col"+random.toString();

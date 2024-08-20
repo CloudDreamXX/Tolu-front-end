@@ -103,7 +103,7 @@ export const AccountDetail = ({personalInfo, setPersonalInfo, setTriggerNext, er
                 </div>
             </form>
           </div>
-                                              </div>
+        </div>
 
         </div>
 

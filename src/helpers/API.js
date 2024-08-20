@@ -1,7 +1,10 @@
-import React from "react";
+// import React from "react";
 import axios from "axios";
 
-const baseURL = process.env.REACT_APP_BASE_URL;
+// const baseURL = process.env.REACT_APP_BASE_URL;
+const baseURL = "http://localhost:8000";
+// const baseURL = "https://a1ea-39-34-145-40.ngrok-free.app";
+
 
 const API = axios.create({
   baseURL: baseURL,
@@ -14,7 +17,7 @@ API.interceptors.request.use((req) => {
     }
     return req;
   });
-  
+
   const handleRequest = async (method, endpoint, payload) => {
     try {
       const response = await API[method](endpoint, payload);
@@ -29,11 +32,11 @@ API.interceptors.request.use((req) => {
       throw error;
     }
   };
-  
+
   export const login = async (payload) => {
     return handleRequest("post", "/user/login", payload);
   };
-  
+
   export const signUp = async (payload) => {
     return handleRequest("post", "/user/signup", payload);
   };
@@ -41,7 +44,10 @@ API.interceptors.request.use((req) => {
     const { email } = payload;
     return handleRequest("get", `/user-exist/${email}`);
   };
-  
+  // export const onboarding = async (payload) => {
+  //   return handleRequest("post", "/user/onboarding", payload);
+  // };
+
   export const getAISearch = async (payload) => {
     return handleRequest("post", `/ai-search`, payload);
   };

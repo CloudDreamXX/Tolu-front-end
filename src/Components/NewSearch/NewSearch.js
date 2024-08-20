@@ -111,7 +111,7 @@ const NewSearch = () => {
                 })).unwrap();
                 const newEntry = {
                     questions: searchQuery,
-                    answers: response.results.reply,
+                    answers: String(response.results.reply),
                     result_id: response.searched_result_id,
                     chat_id: response.chat_id
                 };
@@ -190,7 +190,7 @@ const NewSearch = () => {
                                                 </div>
                                                 <div className='main-div'>
                                                     <div className='display'><div className='vita circle'></div><span className='text'> Vita Guide</span></div>
-                                                    <div className='ques-ans'> {model.answers}</div>
+                                                    <div className='ques-ans' dangerouslySetInnerHTML={{ __html: model.answers }} />
                                                 </div>
                                                 <div className="button-group" style={{ marginLeft: "12px" }}>
                                                     <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions, model.result_id)}>
