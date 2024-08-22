@@ -1,9 +1,8 @@
 // import React from "react";
 import axios from "axios";
 
-// const baseURL = process.env.REACT_APP_BASE_URL;
-const baseURL = "http://localhost:8000";
-// const baseURL = "https://a1ea-39-34-145-40.ngrok-free.app";
+const baseURL = process.env.REACT_APP_BASE_URL;
+// const baseURL = "http://localhost:8000";
 
 
 const API = axios.create({
