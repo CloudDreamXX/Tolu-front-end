@@ -1,5 +1,6 @@
 // import React from "react";
 import axios from "axios";
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 // const baseURL = "http://localhost:8000";
@@ -48,7 +49,8 @@ API.interceptors.request.use((req) => {
   // };
 
   export const getAISearch = async (payload) => {
-    return handleRequest("post", `/ai-search`, payload);
+    const response = await API.post(`/ai-search`, payload);
+    return response.data;
   };
   export const getSearchHistory = async () => {
     return handleRequest("get", `/searched-result/history`);

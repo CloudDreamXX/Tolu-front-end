@@ -59,7 +59,7 @@ export const Signup = () => {
             dob: personalInfo.dob,
             priority: personalInfo.priority
           }));
-      navigate("/Onboarding", { state: { showInfo: true } }); // Pass showInfo as state
+      navigate("/newsearch", { state: { showInfo: true } }); // Pass showInfo as state
 
     } else {
         setPage(page + 1);

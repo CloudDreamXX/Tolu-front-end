@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import { IoArrowForwardCircleSharp } from "react-icons/io5";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import { IoCopyOutline } from "react-icons/io5";
@@ -11,14 +11,24 @@ import { IoMdAddCircleOutline } from "react-icons/io"
 import { IoVolumeMuteSharp } from "react-icons/io5";
 import { LuSearch } from "react-icons/lu";
 import { AiOutlineLoading } from 'react-icons/ai';
-import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { AISearch, dislikeResponse } from '../../ReduxToolKit/Slice/userSlice';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 import './NewSearch.css'
 import SearchHistory from "../SearchHistory";
-import {Info} from "../Signup/SignupComponents/Info";
+import { Info } from "../Signup/SignupComponents/Info";
 import { edit_text } from '../../ReduxToolKit/Slice/EditedText';
 import { useNavigate } from 'react-router-dom';
+import { getAISearch } from '../../helpers/API';
+import axios from "axios";
+
+const baseURL = process.env.REACT_APP_BASE_URL;
+// const baseURL = "http://localhost:8000";
+
+
+const API = axios.create({
+  baseURL: baseURL,
+});
 
 const NewSearch = () => {
     const buttonarray = ["Chronic Symptoms", "Women's Health", "Exercise", "Lifestyle", "Supplements", "Lab Test", "Herbs", "Foods", "and More..."];
@@ -31,7 +41,7 @@ const NewSearch = () => {
     const [models, setModels] = useState([]);
     const [dislikedResults, setDislikedResults] = useState({});
     const [speaking, setSpeaking] = useState(false);  // State to track if it's currently speaking
-    const navigate =  useNavigate();
+    const navigate = useNavigate();
 
     const stopSpeaking = () => {
         window.speechSynthesis.cancel();
@@ -55,17 +65,17 @@ const NewSearch = () => {
         setSpeaking(true);
         window.speechSynthesis.speak(msg);
     };
-   useEffect(() => {
-    if (location.state?.showInfo) {
-      setShowInfo(true);
-      navigate("/newsearch", { state: { showInfo: false } });
-    }
-  }, [location]);
+
+    useEffect(() => {
+        if (location.state?.showInfo) {
+            setShowInfo(true);
+            navigate("/newsearch", { state: { showInfo: false } });
+        }
+    }, [location]);
 
     const dispatch = useDispatch();
     const scrollableDivRef = useRef(null);
     const [chatId, setChatId] = useState(null);
-
 
     useEffect(() => {
         scrollToBottom();
@@ -91,7 +101,6 @@ const NewSearch = () => {
         }
     };
 
-
     function handleKeyPress(event) {
         if (event.key === 'Enter') {
             handleSubmit(event);
@@ -102,28 +111,76 @@ const NewSearch = () => {
         event.preventDefault();
         if (searchQuery) {
             setLoading(true);
+
+            let newEntry = {
+                questions: searchQuery,
+                answers: '',
+                result_id: '',
+                chat_id: ''
+            };
+
+            setModels(prevModels => [...prevModels, newEntry]);
+
             try {
-                const response = await dispatch(AISearch({
-                    user_prompt: searchQuery,
-                    is_new: models.length === 0,
-                    chat_id: models.length !== 0 ? chatId : '',
-                    regenerate_id: ''
-                })).unwrap();
-                const newEntry = {
-                    questions: searchQuery,
-                    answers: String(response.results.reply),
-                    result_id: response.searched_result_id,
-                    chat_id: response.chat_id
-                };
-                if (models.length === 0) {
-                    setChatId(response.chat_id)
-                }
-                setModels(prevModels => [...prevModels, newEntry]);
-                setSearchQuery("");
+                await fetchEventSource(`${baseURL}ai-search/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                        'Accept': 'text/event-stream',
+                    },
+                    body: JSON.stringify({
+                        user_prompt: searchQuery,
+                        is_new: models.length === 0,
+                        chat_id: models.length !== 0 ? chatId : '',
+                        regenerate_id: ''
+                    }),
+                    onopen(response) {
+                        if (response.ok && response.status === 200) {
+                            console.log("Connection made ", response);
+                        } else if (
+                            response.status >= 400 &&
+                            response.status < 500 &&
+                            response.status !== 429
+                        ) {
+                            console.log("Client-side error ", response);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                    },
+                    onmessage(event) {
+                        try {
+                            const data = JSON.parse(event.data);
+                            newEntry = {
+                                ...newEntry,
+                                answers: newEntry.answers + (data.reply || ''),
+                                result_id: data.result_id || newEntry.result_id,
+                                chat_id: data.chat_id || newEntry.chat_id
+                            };
+
+                            setModels(prevModels => {
+                                const updatedModels = [...prevModels];
+                                updatedModels[updatedModels.length - 1] = newEntry;
+                                return updatedModels;
+                            });
+                        } catch (error) {
+                            console.error('Error parsing event data:', error);
+                        }
+                    },
+                    onclose() {
+                        console.log("Connection closed by the server");
+                        setLoading(false);
+                    },
+                    onerror(err) {
+                        console.log("There was an error from server", err);
+                        setLoading(false);
+                    },
+                });
+
+                setSearchQuery('');
             } catch (error) {
                 console.error('Failed to fetch AI Search:', error);
+                setLoading(false);
             }
-            setLoading(false);
         }
     };
     const [copied, setCopied] = useState(false);
@@ -146,7 +203,7 @@ const NewSearch = () => {
         setRefreshingIndices(prev => ({ ...prev, [index]: true }));
         try {
             const response = await dispatch(AISearch({
-                user_prompt: originalQuery ,
+                user_prompt: originalQuery,
                 is_new: false,
                 chat_id: chatId,
                 regenerate_id: result_id
@@ -165,7 +222,6 @@ const NewSearch = () => {
         setRefreshingIndices(prev => ({ ...prev, [index]: false }));
     };
 
-
     return (<>
         {showInfo && <Info showInfo={showInfo} setShowInfo={setShowInfo} />}
         <div className="container-fluid bg-white">
@@ -182,7 +238,6 @@ const NewSearch = () => {
                                 <>
                                     <div ref={scrollableDivRef} className='main-div-height'>
                                         {models.map((model, index) => (
-
                                             <React.Fragment key={index}>
                                                 <div className='main-div'>
                                                     <div className='display'><div className='user circle'></div><span className='text'> You</span></div>
@@ -225,26 +280,23 @@ const NewSearch = () => {
                                                             </button>
                                                         )
                                                     }
-                                                    <button className="generator-icon" onClick={(event)=> {
-                                                    dispatch(edit_text(model));
-                                                    navigate('/handouts')
-                                                }}><IoMdAddCircleOutline /></button>
+                                                    <button className="generator-icon" onClick={(event) => {
+                                                        dispatch(edit_text(model));
+                                                        navigate('/handouts')
+                                                    }}><IoMdAddCircleOutline /></button>
                                                 </div>
                                                 <div id="copy-tooltip" className="tooltip">Copied!</div>
-
                                             </React.Fragment>
                                         ))}
                                     </div>
                                     <div className="main-search mainpage-top">
                                         <form onSubmit={handleSubmit} className="d-flex">
-                                            {/*<input type="search" className='input-form' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " />*/}
                                             <textarea className="search-query" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " rows={3} onKeyDown={(e) => handleKeyPress(e)} />
                                             <div className="button-container">
                                                 <button onClick={handleSubmit} className="up-icon">
-                                                    {loading ? <AiOutlineLoading className="loading-icons" size={35}/> :  <IoArrowForwardCircleSharp size={35} className="icon-style" />}
+                                                    {loading ? <AiOutlineLoading className="loading-icons" size={35} /> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
                                                 </button>
                                             </div>
-
                                         </form>
                                     </div>
                                 </>
@@ -259,27 +311,24 @@ const NewSearch = () => {
                                     </div>
                                     <div className="main-search maintop">
                                         <form onSubmit={handleSubmit} className="d-flex">
-                                            {/*<input type="search" className='input-form' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " />*/}
                                             <textarea className="search-query" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " rows={3} onKeyDown={(e) => handleKeyPress(e)} />
                                             <div className="button-container">
                                                 <button onClick={handleSubmit} className="up-icon">
-                                                    {loading ? <AiOutlineLoading className="loading-icons" size={35}/> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
+                                                    {loading ? <AiOutlineLoading className="loading-icons" size={35} /> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
                                                 </button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-
                             )}
                         </div>
                     </div>
                     <div className='col-md-2'></div>
-                    <SearchHistory is_new={models.length===0} setModels={setModels} setChatId={setChatId}/>
+                    <SearchHistory is_new={models.length === 0} setModels={setModels} setChatId={setChatId} />
                 </div>
             )}
         </div>
-        </>
-    )
+    </>)
 }
 
 export default NewSearch;
