@@ -9,7 +9,7 @@ import { BiSolidDislike } from "react-icons/bi";
 import { useLocation } from 'react-router-dom';
 import { IoMdAddCircleOutline } from "react-icons/io"
 import { IoVolumeMuteSharp } from "react-icons/io5";
-import { LuSearch } from "react-icons/lu";
+// import { LuSearch } from "react-icons/lu";
 import { AiOutlineLoading } from 'react-icons/ai';
 import { useDispatch } from 'react-redux';
 import { AISearch, dislikeResponse } from '../../ReduxToolKit/Slice/userSlice';
@@ -19,12 +19,9 @@ import SearchHistory from "../SearchHistory";
 import { Info } from "../Signup/SignupComponents/Info";
 import { edit_text } from '../../ReduxToolKit/Slice/EditedText';
 import { useNavigate } from 'react-router-dom';
-import { getAISearch } from '../../helpers/API';
 import axios from "axios";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-// const baseURL = "http://localhost:8000";
-
 
 const API = axios.create({
   baseURL: baseURL,
@@ -42,6 +39,10 @@ const NewSearch = () => {
     const [dislikedResults, setDislikedResults] = useState({});
     const [speaking, setSpeaking] = useState(false);  // State to track if it's currently speaking
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const scrollableDivRef = useRef(null);
+    const [chatId, setChatId] = useState(null);
+    const [copied, setCopied] = useState(false);
 
     const stopSpeaking = () => {
         window.speechSynthesis.cancel();
@@ -72,10 +73,6 @@ const NewSearch = () => {
             navigate("/newsearch", { state: { showInfo: false } });
         }
     }, [location]);
-
-    const dispatch = useDispatch();
-    const scrollableDivRef = useRef(null);
-    const [chatId, setChatId] = useState(null);
 
     useEffect(() => {
         scrollToBottom();
@@ -183,7 +180,6 @@ const NewSearch = () => {
             }
         }
     };
-    const [copied, setCopied] = useState(false);
 
     function handleCopyResponse(text) {
         navigator.clipboard.writeText(text)

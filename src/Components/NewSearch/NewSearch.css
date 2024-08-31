@@ -42,7 +42,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.7); 
+    background-color: rgba(255, 255, 255, 0.7);
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center;     /* Center vertically */
@@ -156,7 +156,8 @@
 
 .ques-ans{
     padding: 2px 7px 20px 45px;
-    font-size: medium;
+    /* font-size: medium; */
+    font-family: 'Noto Sans'
 }
 
 .text{
