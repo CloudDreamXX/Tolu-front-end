@@ -16,7 +16,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {createUser, findUser, GetSession} from "../../ReduxToolKit/Slice/userSlice";
 import Home from "../Home";
 import {toast} from "react-toastify";
-import Onboarding from "../..Components/../onboarding";
+// import Onboarding from "../..Components/../onboarding";
 
 
 export const Signup = () => {

@@ -151,8 +151,11 @@ const NewSearch = () => {
                                 ...newEntry,
                                 answers: newEntry.answers + (data.reply || ''),
                                 result_id: data.result_id || newEntry.result_id,
-                                chat_id: data.chat_id || newEntry.chat_id
+                                chat_id: data.chat_id || chatId
                             };
+                            if (!chatId && data.chat_id) {
+                                setChatId(data.chat_id);  // Set chatId if it's not set and we receive it
+                            }
 
                             setModels(prevModels => {
                                 const updatedModels = [...prevModels];
