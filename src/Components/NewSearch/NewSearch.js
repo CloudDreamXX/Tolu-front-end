@@ -54,7 +54,9 @@ const NewSearch = () => {
         if (window.speechSynthesis.speaking) {
             stopSpeaking(); // Optional: stop if already speaking when asked to speak again
         }
-        const msg = new SpeechSynthesisUtterance(message);
+        // Remove HTML tags from the message
+        const plainTextMessage = message.replace(/<\/?[^>]+(>|$)/g, "");
+        const msg = new SpeechSynthesisUtterance(plainTextMessage);
         msg.onend = () => {
             console.log("Finished speaking...");
             setSpeaking(false);
@@ -185,7 +187,8 @@ const NewSearch = () => {
     };
 
     function handleCopyResponse(text) {
-        navigator.clipboard.writeText(text)
+        const plainText = text.replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML tags
+        navigator.clipboard.writeText(plainText)
             .then(() => {
                 setCopied(true);
                 setTimeout(() => {

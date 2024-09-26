@@ -9,14 +9,14 @@ import LandingPage from "./LandingPage/LandingPage";
 import Login from "./Login/Login";
 import NewSearch from "./NewSearch/NewSearch";
 import { Signup } from "./Signup/Signup";
-import Onboarding from "./onboarding";
-import HealthConcerns from './HealthConcerns';
-import LifestyleDetails from './LifeStyleDetails';
-import HealthAndWellness from './HealthAndWellness';
-import HealthPatternTracking from "./HealthPattern";
-import LearningQuiz from "./LearningQuiz";
-import RewardSystem from "./RewardSystem";
-import ThankYouOnboarding from "./ThankYouOnboarding";
+// import Onboarding from "./onboarding";
+// import HealthConcerns from './HealthConcerns';
+// import LifestyleDetails from './LifeStyleDetails';
+// import HealthAndWellness from './HealthAndWellness';
+// import HealthPatternTracking from "./HealthPattern";
+// import LearningQuiz from "./LearningQuiz";
+// import RewardSystem from "./RewardSystem";
+// import ThankYouOnboarding from "./ThankYouOnboarding";
 import Error from "./Error";
 import Footer from './Footer';
 
@@ -67,14 +67,14 @@ const Router = () => {
                         <Route path="/auth" element={<Login />} />
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/signup" element={<Signup />} />
-                        <Route path="/onboarding" element={<Onboarding />} />
+                        {/* <Route path="/onboarding" element={<Onboarding />} />
                         <Route path="/health-concerns" element={<HealthConcerns />} />
                         <Route path="/LifestyleDetails" element={<LifestyleDetails />} />
                         <Route path="/HealthAndWellness" element={<HealthAndWellness />} />
                         <Route path="/HealthPatternTracking" element={<HealthPatternTracking />} />
                         <Route path="/LearningQuiz" element={<LearningQuiz />} />
                         <Route path="/RewardSystem" element={<RewardSystem />} />
-                        <Route path="/ThankYouOnboarding" element={<ThankYouOnboarding />} />
+                        <Route path="/ThankYouOnboarding" element={<ThankYouOnboarding />} /> */}
                         <Route path="/handouts" element={
                             <ProtectedRoute>
                                 <Home />
