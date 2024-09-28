@@ -65,3 +65,7 @@ API.interceptors.request.use((req) => {
   export const DislikeResponse = async(payload) =>{
     return handleRequest("post", "/searched-result/rating", payload)
   }
+  export const updateChatTitle = async (payload) => {
+    const { chat_id, new_title } = payload;
+    return handleRequest("put", `/update-chat-title`, { chat_id, new_title });
+  };

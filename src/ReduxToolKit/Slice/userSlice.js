@@ -56,6 +56,20 @@ export const login = createAsyncThunk(
 //       }
 //     }
 // );
+
+export const updateChatTitle = createAsyncThunk(
+  "user/updateChatTitle",
+  async ({ chat_id, new_title }, { rejectWithValue }) => {
+    try {
+      const response = await api.updateChatTitle({ chat_id, new_title });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+
   export const AISearch = createAsyncThunk(
     "aisearch",
     async ({ user_prompt, is_new, chat_id, regenerate_id }) => {
@@ -130,6 +144,7 @@ export const login = createAsyncThunk(
     loading: false,
     dislike: false,
     userexist: false,
+    chatTitleUpdated: false,
   };
 
   export const UserSlice = createSlice({
@@ -215,6 +230,19 @@ export const login = createAsyncThunk(
         .addCase(dislikeResponse.rejected, (state, action) => {
           state.loading = false;
           state.error = action.payload;
+        })
+        .addCase(updateChatTitle.pending, (state) => {
+          state.loading = true;
+          state.chatTitleUpdated = false;
+        })
+        .addCase(updateChatTitle.fulfilled, (state, action) => {
+          state.loading = false;
+          state.chatTitleUpdated = true;
+        })
+        .addCase(updateChatTitle.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+          state.chatTitleUpdated = false;
         });
     },
   });
