@@ -20,6 +20,7 @@ import { Info } from "../Signup/SignupComponents/Info";
 import { edit_text } from '../../ReduxToolKit/Slice/EditedText';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { FaImage } from 'react-icons/fa';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -43,6 +44,8 @@ const NewSearch = () => {
     const scrollableDivRef = useRef(null);
     const [chatId, setChatId] = useState(null);
     const [copied, setCopied] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const fileInputRef = useRef(null);
 
     const stopSpeaking = () => {
         window.speechSynthesis.cancel();
@@ -106,6 +109,15 @@ const NewSearch = () => {
         }
     }
 
+    const handleImageUpload = (event) => {
+        const file = event.target.files[0];
+        if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+            setSelectedImage(file);
+        } else {
+            alert("Please select a valid JPG or PNG image.");
+        }
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (searchQuery) {
@@ -121,19 +133,24 @@ const NewSearch = () => {
             setModels(prevModels => [...prevModels, newEntry]);
 
             try {
+                const formData = new FormData();
+                formData.append('chat_message', JSON.stringify({
+                    user_prompt: searchQuery,
+                    is_new: models.length === 0,
+                    chat_id: models.length !== 0 ? chatId : '',
+                    regenerate_id: ''
+                }));
+                if (selectedImage) {
+                    formData.append('image', selectedImage);
+                }
+
                 await fetchEventSource(`${baseURL}ai-search/`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem("token")}`,
                         'Accept': 'text/event-stream',
                     },
-                    body: JSON.stringify({
-                        user_prompt: searchQuery,
-                        is_new: models.length === 0,
-                        chat_id: models.length !== 0 ? chatId : '',
-                        regenerate_id: ''
-                    }),
+                    body: formData,
                     onopen(response) {
                         if (response.ok && response.status === 200) {
                             console.log("Connection made ", response);
@@ -171,6 +188,7 @@ const NewSearch = () => {
                     onclose() {
                         console.log("Connection closed by the server");
                         setLoading(false);
+                        setSelectedImage(null);
                     },
                     onerror(err) {
                         console.log("There was an error from server", err);
@@ -264,7 +282,6 @@ const NewSearch = () => {
                                                         tooltip.style.top = `${buttonRect.top + 80}px`;
                                                         tooltip.style.left = `${buttonRect.left + 20}px`;
                                                         tooltip.style.opacity = 1;
-                                                        tooltip.style.opacity = 1;
                                                         setTimeout(() => {
                                                             tooltip.style.opacity = 0;
                                                         }, 2000);
@@ -293,6 +310,23 @@ const NewSearch = () => {
                                     </div>
                                     <div className="main-search mainpage-top">
                                         <form onSubmit={handleSubmit} className="d-flex">
+                                            <div className="image-upload-container">
+                                                <input
+                                                    type="file"
+                                                    accept="image/jpeg,image/png"
+                                                    onChange={handleImageUpload}
+                                                    style={{ display: 'none' }}
+                                                    ref={fileInputRef}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => fileInputRef.current.click()}
+                                                    className="image-upload-button"
+                                                >
+                                                    <FaImage />
+                                                    {selectedImage && <span className="image-selected-indicator"></span>}
+                                                </button>
+                                            </div>
                                             <textarea className="search-query" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " rows={3} onKeyDown={(e) => handleKeyPress(e)} />
                                             <div className="button-container">
                                                 <button onClick={handleSubmit} className="up-icon">
@@ -308,11 +342,28 @@ const NewSearch = () => {
                                         {buttonarray.map((button, index) => {
                                             let random = (index % 6) + 1;
                                             let class_name = "col" + random.toString();
-                                            return (<button className={`${class_name} main-button`} >{button}</button>)
+                                            return (<button key={index} className={`${class_name} main-button`} >{button}</button>)
                                         })}
                                     </div>
                                     <div className="main-search maintop">
                                         <form onSubmit={handleSubmit} className="d-flex">
+                                            <div className="image-upload-container">
+                                                <input
+                                                    type="file"
+                                                    accept="image/jpeg,image/png"
+                                                    onChange={handleImageUpload}
+                                                    style={{ display: 'none' }}
+                                                    ref={fileInputRef}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => fileInputRef.current.click()}
+                                                    className="image-upload-button"
+                                                >
+                                                    <FaImage />
+                                                    {selectedImage && <span className="image-selected-indicator"></span>}
+                                                </button>
+                                            </div>
                                             <textarea className="search-query" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " rows={3} onKeyDown={(e) => handleKeyPress(e)} />
                                             <div className="button-container">
                                                 <button onClick={handleSubmit} className="up-icon">

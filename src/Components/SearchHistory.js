@@ -158,7 +158,7 @@ const SearchHistory = ({ is_new, setModels, setChatId }) => {
                             left: contextMenu.x,
                             padding: '6px 12px',
                             fontSize: '12px',
-                            backgroundColor: '#f0f0f0',
+                            backgroundColor: '#ffe2e0',
                             border: '1px solid #ccc',
                             borderRadius: '15px',
                             cursor: 'pointer',

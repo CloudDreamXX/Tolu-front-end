@@ -203,3 +203,37 @@
     border-radius: 5px;
     color: black;
 }
+
+.image-upload-container {
+    position: relative;
+    margin-right: 10px;
+  }
+
+  .image-upload-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #666;
+    padding: 5px;
+    transition: color 0.3s ease;
+  }
+
+  .image-upload-button:hover {
+    color: #333;
+  }
+
+  .image-selected-indicator {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+  }
+
+  .main-search form {
+    display: flex;
+    align-items: center;
+  }
