@@ -125,6 +125,7 @@ const NewSearch = () => {
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
+        console.log("Image removed"); // Debugging log
     };
 
     const handleSubmit = async (event) => {
@@ -151,6 +152,7 @@ const NewSearch = () => {
                 }));
                 if (selectedImage) {
                     formData.append('image', selectedImage);
+                    console.log("Image appended to form data:", selectedImage.name);
                 }
 
                 await fetchEventSource(`${baseURL}ai-search/`, {
@@ -206,6 +208,10 @@ const NewSearch = () => {
                 });
 
                 setSearchQuery('');
+                setSelectedImage(null); // Reset selected image after submission
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""; // Reset file input
+                }
             } catch (error) {
                 console.error('Failed to fetch AI Search:', error);
                 setLoading(false);
@@ -296,6 +302,7 @@ const NewSearch = () => {
             </div>
         </form>
     );
+
 
     return (
         <>
