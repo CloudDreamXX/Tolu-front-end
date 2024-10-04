@@ -21,6 +21,7 @@ import { edit_text } from '../../ReduxToolKit/Slice/EditedText';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { FaImage } from 'react-icons/fa';
+import { IoMdClose } from "react-icons/io";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -115,6 +116,14 @@ const NewSearch = () => {
             setSelectedImage(file);
         } else {
             alert("Please select a valid JPG or PNG image.");
+        }
+    };
+
+    const handleRemoveImage = (e) => {
+        e.stopPropagation(); // Prevent the click from triggering the file input
+        setSelectedImage(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
         }
     };
 
@@ -346,32 +355,50 @@ const NewSearch = () => {
                                         })}
                                     </div>
                                     <div className="main-search maintop">
-                                        <form onSubmit={handleSubmit} className="d-flex">
-                                            <div className="image-upload-container">
-                                                <input
-                                                    type="file"
-                                                    accept="image/jpeg,image/png"
-                                                    onChange={handleImageUpload}
-                                                    style={{ display: 'none' }}
-                                                    ref={fileInputRef}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => fileInputRef.current.click()}
-                                                    className="image-upload-button"
-                                                >
-                                                    <FaImage />
-                                                    {selectedImage && <span className="image-selected-indicator"></span>}
-                                                </button>
-                                            </div>
-                                            <textarea className="search-query" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " rows={3} onKeyDown={(e) => handleKeyPress(e)} />
-                                            <div className="button-container">
-                                                <button onClick={handleSubmit} className="up-icon">
-                                                    {loading ? <AiOutlineLoading className="loading-icons" size={35} /> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
+                <form onSubmit={handleSubmit} className="d-flex">
+                    <div className="image-upload-container">
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png"
+                            onChange={handleImageUpload}
+                            style={{ display: 'none' }}
+                            ref={fileInputRef}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current.click()}
+                            className="image-upload-button"
+                        >
+                            {selectedImage ? (
+                                <>
+                                    <FaImage style={{ color: 'blue' }} />
+                                    <span
+                                        className="image-remove-indicator"
+                                        onClick={handleRemoveImage}
+                                    >
+                                        <IoMdClose />
+                                    </span>
+                                </>
+                            ) : (
+                                <FaImage />
+                            )}
+                        </button>
+                    </div>
+                    <textarea
+                        className="search-query"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Ask anything... "
+                        rows={3}
+                        onKeyDown={(e) => handleKeyPress(e)}
+                    />
+                    <div className="button-container">
+                        <button type="submit" className="up-icon">
+                            {loading ? <AiOutlineLoading className="loading-icons" size={35} /> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
+                        </button>
+                    </div>
+                </form>
+            </div>
                                 </div>
                             )}
                         </div>

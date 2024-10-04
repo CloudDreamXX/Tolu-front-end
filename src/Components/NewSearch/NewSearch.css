@@ -207,9 +207,9 @@
 .image-upload-container {
     position: relative;
     margin-right: 10px;
-  }
+}
 
-  .image-upload-button {
+.image-upload-button {
     background: none;
     border: none;
     cursor: pointer;
@@ -217,21 +217,39 @@
     color: #666;
     padding: 5px;
     transition: color 0.3s ease;
-  }
+}
 
-  .image-upload-button:hover {
+.image-upload-button:hover {
     color: #333;
-  }
+}
 
-  .image-selected-indicator {
+.image-remove-indicator {
     position: absolute;
     top: -5px;
     right: -5px;
-    width: 10px;
-    height: 10px;
-    background-color: #4CAF50;
+    width: 16px;
+    height: 16px;
+    background-color: #fff;
     border-radius: 50%;
-  }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.image-remove-indicator svg {
+    font-size: 12px;
+    color: #666;
+}
+
+.image-remove-indicator:hover {
+    background-color: #f0f0f0;
+}
+
+.image-remove-indicator:hover svg {
+    color: #333;
+}
 
   .main-search form {
     display: flex;
