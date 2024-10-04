@@ -251,164 +251,146 @@ const NewSearch = () => {
         setRefreshingIndices(prev => ({ ...prev, [index]: false }));
     };
 
-    return (<>
-        {showInfo && <Info showInfo={showInfo} setShowInfo={setShowInfo} />}
-        <div className="container-fluid bg-white">
-            {pageLoading ? (
-                <div className="loading-overlay">
-                    <FiLoader className="loading-icon big-loader" />
-                </div>
-            ) : (
-                <div className='row'>
-                    <div className='col-lg-1'></div>
-                    <div className='col-lg-7'>
-                        <div className='searchpage-main'>
-                            {models.length > 0 ? (
-                                <>
-                                    <div ref={scrollableDivRef} className='main-div-height'>
-                                        {models.map((model, index) => (
-                                            <React.Fragment key={index}>
-                                                <div className='main-div'>
-                                                    <div className='display'><div className='user circle'></div><span className='text'> You</span></div>
-                                                    <div className='ques-ans'> {model.questions}</div>
-                                                </div>
-                                                <div className='main-div'>
-                                                    <div className='display'><div className='vita circle'></div><span className='text'> Vita Guide</span></div>
-                                                    <div className='ques-ans' dangerouslySetInnerHTML={{ __html: model.answers }} />
-                                                </div>
-                                                <div className="button-group" style={{ marginLeft: "12px" }}>
-                                                    <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions, model.result_id)}>
-                                                        {refreshingIndices[index] ? <AiOutlineLoading className="loading-icons" /> : <FaArrowRotateLeft />}
-                                                    </button>
-                                                    {dislikedResults[model.result_id] ?
-                                                        <button className="generator-icon"><BiSolidDislike /></button> :
-                                                        <button className="generator-icon" onClick={() => handleDislike(model.result_id)}><BiDislike /></button>
-                                                    }
-                                                    <button className="generator-icon" onClick={(event) => {
-                                                        handleCopyResponse(model.answers);
-                                                        const tooltip = document.getElementById('copy-tooltip');
-                                                        const buttonRect = event.target.getBoundingClientRect();
-                                                        tooltip.style.top = `${buttonRect.top + 80}px`;
-                                                        tooltip.style.left = `${buttonRect.left + 20}px`;
-                                                        tooltip.style.opacity = 1;
-                                                        setTimeout(() => {
-                                                            tooltip.style.opacity = 0;
-                                                        }, 2000);
-                                                    }}>
-                                                        <IoCopyOutline />
-                                                    </button>
-                                                    {
-                                                        speaking ? (
-                                                            <button className="generator-icon" onClick={stopSpeaking}>
-                                                                <IoVolumeMuteSharp className="loading-icon" />
-                                                            </button>
-                                                        ) : (
-                                                            <button className="generator-icon" onClick={() => startSpeaking(model.answers)}>
-                                                                <FaVolumeHigh />
-                                                            </button>
-                                                        )
-                                                    }
-                                                    <button className="generator-icon" onClick={(event) => {
-                                                        dispatch(edit_text(model));
-                                                        navigate('/handouts')
-                                                    }}><IoMdAddCircleOutline /></button>
-                                                </div>
-                                                <div id="copy-tooltip" className="tooltip">Copied!</div>
-                                            </React.Fragment>
-                                        ))}
-                                    </div>
-                                    <div className="main-search mainpage-top">
-                                        <form onSubmit={handleSubmit} className="d-flex">
-                                            <div className="image-upload-container">
-                                                <input
-                                                    type="file"
-                                                    accept="image/jpeg,image/png"
-                                                    onChange={handleImageUpload}
-                                                    style={{ display: 'none' }}
-                                                    ref={fileInputRef}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => fileInputRef.current.click()}
-                                                    className="image-upload-button"
-                                                >
-                                                    <FaImage />
-                                                    {selectedImage && <span className="image-selected-indicator"></span>}
-                                                </button>
-                                            </div>
-                                            <textarea className="search-query" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Ask anything... " rows={3} onKeyDown={(e) => handleKeyPress(e)} />
-                                            <div className="button-container">
-                                                <button onClick={handleSubmit} className="up-icon">
-                                                    {loading ? <AiOutlineLoading className="loading-icons" size={35} /> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className='main'>
-                                    <div>
-                                        {buttonarray.map((button, index) => {
-                                            let random = (index % 6) + 1;
-                                            let class_name = "col" + random.toString();
-                                            return (<button key={index} className={`${class_name} main-button`} >{button}</button>)
-                                        })}
-                                    </div>
-                                    <div className="main-search maintop">
-                <form onSubmit={handleSubmit} className="d-flex">
-                    <div className="image-upload-container">
-                        <input
-                            type="file"
-                            accept="image/jpeg,image/png"
-                            onChange={handleImageUpload}
-                            style={{ display: 'none' }}
-                            ref={fileInputRef}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => fileInputRef.current.click()}
-                            className="image-upload-button"
-                        >
-                            {selectedImage ? (
-                                <>
-                                    <FaImage style={{ color: 'blue' }} />
-                                    <span
-                                        className="image-remove-indicator"
-                                        onClick={handleRemoveImage}
-                                    >
-                                        <IoMdClose />
-                                    </span>
-                                </>
-                            ) : (
-                                <FaImage />
-                            )}
-                        </button>
-                    </div>
-                    <textarea
-                        className="search-query"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Ask anything... "
-                        rows={3}
-                        onKeyDown={(e) => handleKeyPress(e)}
-                    />
-                    <div className="button-container">
-                        <button type="submit" className="up-icon">
-                            {loading ? <AiOutlineLoading className="loading-icons" size={35} /> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
-                        </button>
-                    </div>
-                </form>
+    const renderSearchForm = () => (
+        <form onSubmit={handleSubmit} className="d-flex">
+            <div className="image-upload-container">
+                <input
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={handleImageUpload}
+                    style={{ display: 'none' }}
+                    ref={fileInputRef}
+                />
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current.click()}
+                    className="image-upload-button"
+                >
+                    {selectedImage ? (
+                        <>
+                            <FaImage style={{ color: 'blue' }} />
+                            <span
+                                className="image-remove-indicator"
+                                onClick={handleRemoveImage}
+                            >
+                                <IoMdClose />
+                            </span>
+                        </>
+                    ) : (
+                        <FaImage />
+                    )}
+                </button>
             </div>
-                                </div>
-                            )}
-                        </div>
+            <textarea
+                className="search-query"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Ask anything... "
+                rows={3}
+                onKeyDown={(e) => handleKeyPress(e)}
+            />
+            <div className="button-container">
+                <button type="submit" className="up-icon">
+                    {loading ? <AiOutlineLoading className="loading-icons" size={35} /> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
+                </button>
+            </div>
+        </form>
+    );
+
+    return (
+        <>
+            {showInfo && <Info showInfo={showInfo} setShowInfo={setShowInfo} />}
+            <div className="container-fluid bg-white">
+                {pageLoading ? (
+                    <div className="loading-overlay">
+                        <FiLoader className="loading-icon big-loader" />
                     </div>
-                    <div className='col-md-2'></div>
-                    <SearchHistory is_new={models.length === 0} setModels={setModels} setChatId={setChatId} />
-                </div>
-            )}
-        </div>
-    </>)
+                ) : (
+                    <div className='row'>
+                        <div className='col-lg-1'></div>
+                        <div className='col-lg-7'>
+                            <div className='searchpage-main'>
+                                {models.length > 0 ? (
+                                    <>
+                                        <div ref={scrollableDivRef} className='main-div-height'>
+                                            {models.map((model, index) => (
+                                                <React.Fragment key={index}>
+                                                    <div className='main-div'>
+                                                        <div className='display'><div className='user circle'></div><span className='text'> You</span></div>
+                                                        <div className='ques-ans'> {model.questions}</div>
+                                                    </div>
+                                                    <div className='main-div'>
+                                                        <div className='display'><div className='vita circle'></div><span className='text'> Vita Guide</span></div>
+                                                        <div className='ques-ans' dangerouslySetInnerHTML={{ __html: model.answers }} />
+                                                    </div>
+                                                    <div className="button-group" style={{ marginLeft: "12px" }}>
+                                                        <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions, model.result_id)}>
+                                                            {refreshingIndices[index] ? <AiOutlineLoading className="loading-icons" /> : <FaArrowRotateLeft />}
+                                                        </button>
+                                                        {dislikedResults[model.result_id] ?
+                                                            <button className="generator-icon"><BiSolidDislike /></button> :
+                                                            <button className="generator-icon" onClick={() => handleDislike(model.result_id)}><BiDislike /></button>
+                                                        }
+                                                        <button className="generator-icon" onClick={(event) => {
+                                                            handleCopyResponse(model.answers);
+                                                            const tooltip = document.getElementById('copy-tooltip');
+                                                            const buttonRect = event.target.getBoundingClientRect();
+                                                            tooltip.style.top = `${buttonRect.top + 80}px`;
+                                                            tooltip.style.left = `${buttonRect.left + 20}px`;
+                                                            tooltip.style.opacity = 1;
+                                                            setTimeout(() => {
+                                                                tooltip.style.opacity = 0;
+                                                            }, 2000);
+                                                        }}>
+                                                            <IoCopyOutline />
+                                                        </button>
+                                                        {
+                                                            speaking ? (
+                                                                <button className="generator-icon" onClick={stopSpeaking}>
+                                                                    <IoVolumeMuteSharp className="loading-icon" />
+                                                                </button>
+                                                            ) : (
+                                                                <button className="generator-icon" onClick={() => startSpeaking(model.answers)}>
+                                                                    <FaVolumeHigh />
+                                                                </button>
+                                                            )
+                                                        }
+                                                        <button className="generator-icon" onClick={(event) => {
+                                                            dispatch(edit_text(model));
+                                                            navigate('/handouts')
+                                                        }}><IoMdAddCircleOutline /></button>
+                                                    </div>
+                                                    <div id="copy-tooltip" className="tooltip">Copied!</div>
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                        <div className="main-search mainpage-top">
+                                            {renderSearchForm()}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className='main'>
+                                        <div>
+                                            {buttonarray.map((button, index) => {
+                                                let random = (index % 6) + 1;
+                                                let class_name = "col" + random.toString();
+                                                return (<button key={index} className={`${class_name} main-button`} >{button}</button>)
+                                            })}
+                                        </div>
+                                        <div className="main-search maintop">
+                                            {renderSearchForm()}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className='col-md-2'></div>
+                        <SearchHistory is_new={models.length === 0} setModels={setModels} setChatId={setChatId} />
+                    </div>
+                )}
+            </div>
+        </>
+    );
 }
 
 export default NewSearch;
