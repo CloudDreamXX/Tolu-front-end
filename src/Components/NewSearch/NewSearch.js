@@ -19,15 +19,15 @@ import SearchHistory from "../SearchHistory";
 import { Info } from "../Signup/SignupComponents/Info";
 import { edit_text } from '../../ReduxToolKit/Slice/EditedText';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+// import axios from "axios";
 import { FaImage } from 'react-icons/fa';
 import { IoMdClose } from "react-icons/io";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
-const API = axios.create({
-  baseURL: baseURL,
-});
+// const API = axios.create({
+//   baseURL: baseURL,
+// });
 
 const NewSearch = () => {
     const buttonarray = ["Chronic Symptoms", "Women's Health", "Exercise", "Lifestyle", "Supplements", "Lab Test", "Herbs", "Foods", "and More..."];
@@ -109,6 +109,24 @@ const NewSearch = () => {
             handleSubmit(event);
         }
     }
+
+    useEffect(() => {
+        const handlePaste = (event) => {
+            const items = event.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const blob = items[i].getAsFile();
+                    setSelectedImage(blob);
+                    break;
+                }
+            }
+        };
+
+        document.addEventListener('paste', handlePaste);
+        return () => {
+            document.removeEventListener('paste', handlePaste);
+        };
+    }, []);
 
     const handleImageUpload = (event) => {
         const file = event.target.files[0];
@@ -291,7 +309,7 @@ const NewSearch = () => {
                 className="search-query"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ask anything... "
+                placeholder="Ask anything..."
                 rows={3}
                 onKeyDown={(e) => handleKeyPress(e)}
             />
