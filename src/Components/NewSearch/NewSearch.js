@@ -9,7 +9,6 @@ import { BiSolidDislike } from "react-icons/bi";
 import { useLocation } from 'react-router-dom';
 import { IoMdAddCircleOutline } from "react-icons/io"
 import { IoVolumeMuteSharp } from "react-icons/io5";
-// import { LuSearch } from "react-icons/lu";
 import { AiOutlineLoading } from 'react-icons/ai';
 import { useDispatch } from 'react-redux';
 import { AISearch, dislikeResponse } from '../../ReduxToolKit/Slice/userSlice';
@@ -19,15 +18,10 @@ import SearchHistory from "../SearchHistory";
 import { Info } from "../Signup/SignupComponents/Info";
 import { edit_text } from '../../ReduxToolKit/Slice/EditedText';
 import { useNavigate } from 'react-router-dom';
-// import axios from "axios";
-import { FaImage } from 'react-icons/fa';
 import { IoMdClose } from "react-icons/io";
+import { FaFileUpload } from 'react-icons/fa';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-
-// const API = axios.create({
-//   baseURL: baseURL,
-// });
 
 const NewSearch = () => {
     const buttonarray = ["Chronic Symptoms", "Women's Health", "Exercise", "Lifestyle", "Supplements", "Lab Test", "Herbs", "Foods", "and More..."];
@@ -45,8 +39,8 @@ const NewSearch = () => {
     const scrollableDivRef = useRef(null);
     const [chatId, setChatId] = useState(null);
     const [copied, setCopied] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
     const fileInputRef = useRef(null);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const stopSpeaking = () => {
         window.speechSynthesis.cancel();
@@ -116,7 +110,7 @@ const NewSearch = () => {
             for (let i = 0; i < items.length; i++) {
                 if (items[i].type.indexOf('image') !== -1) {
                     const blob = items[i].getAsFile();
-                    setSelectedImage(blob);
+                    setSelectedFile(blob);
                     break;
                 }
             }
@@ -128,23 +122,25 @@ const NewSearch = () => {
         };
     }, []);
 
-    const handleImageUpload = (event) => {
+    const handleFileUpload = (event) => {
         const file = event.target.files[0];
-        if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
-            setSelectedImage(file);
-        } else {
-            alert("Please select a valid JPG or PNG image.");
+        if (file) {
+            if (file.type === "application/pdf" || file.type === "image/jpeg" || file.type === "image/png") {
+                setSelectedFile(file);
+            } else {
+                alert("Please select a valid PDF or image file (JPEG/PNG).");
+            }
         }
     };
 
-    const handleRemoveImage = (e) => {
-        e.stopPropagation(); // Prevent the click from triggering the file input
-        setSelectedImage(null);
+    const handleRemoveFile = (e) => {
+        e.stopPropagation();
+        setSelectedFile(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
-        console.log("Image removed"); // Debugging log
     };
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -168,10 +164,16 @@ const NewSearch = () => {
                     chat_id: models.length !== 0 ? chatId : '',
                     regenerate_id: ''
                 }));
-                if (selectedImage) {
-                    formData.append('image', selectedImage);
-                    console.log("Image appended to form data:", selectedImage.name);
+
+                if (selectedFile) {
+                    if (selectedFile.type === "application/pdf") {
+                        formData.append('pdf', selectedFile);
+                    } else {
+                        formData.append('image', selectedFile);
+                    }
+                    console.log("File appended to form data:", selectedFile.name);
                 }
+
 
                 await fetchEventSource(`${baseURL}ai-search/`, {
                     method: 'POST',
@@ -217,7 +219,7 @@ const NewSearch = () => {
                     onclose() {
                         console.log("Connection closed by the server");
                         setLoading(false);
-                        setSelectedImage(null);
+                        setSelectedFile(null);
                     },
                     onerror(err) {
                         console.log("There was an error from server", err);
@@ -226,7 +228,7 @@ const NewSearch = () => {
                 });
 
                 setSearchQuery('');
-                setSelectedImage(null); // Reset selected image after submission
+                setSelectedFile(null);
                 if (fileInputRef.current) {
                     fileInputRef.current.value = ""; // Reset file input
                 }
@@ -277,32 +279,32 @@ const NewSearch = () => {
 
     const renderSearchForm = () => (
         <form onSubmit={handleSubmit} className="d-flex">
-            <div className="image-upload-container">
+            <div className="file-upload-container">
                 <input
                     type="file"
-                    accept="image/jpeg,image/png"
-                    onChange={handleImageUpload}
+                    accept="image/jpeg,image/png,application/pdf"
+                    onChange={handleFileUpload}
                     style={{ display: 'none' }}
                     ref={fileInputRef}
                 />
                 <button
                     type="button"
                     onClick={() => fileInputRef.current.click()}
-                    className="image-upload-button"
+                    className="file-upload-button"
                 >
-                    {selectedImage ? (
-                        <>
-                            <FaImage style={{ color: 'blue' }} />
-                            <span
-                                className="image-remove-indicator"
-                                onClick={handleRemoveImage}
-                            >
-                                <IoMdClose />
-                            </span>
-                        </>
-                    ) : (
-                        <FaImage />
-                    )}
+                {selectedFile ? (
+                <>
+                <FaFileUpload style={{ color: 'blue' }} />
+                <span
+                className="file-remove-indicator"
+                onClick={handleRemoveFile}
+                >
+                <IoMdClose />
+                </span>
+                </>
+                ) : (
+                <FaFileUpload />
+                )}
                 </button>
             </div>
             <textarea
@@ -320,7 +322,6 @@ const NewSearch = () => {
             </div>
         </form>
     );
-
 
     return (
         <>
