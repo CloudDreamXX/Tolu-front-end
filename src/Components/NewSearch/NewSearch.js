@@ -41,6 +41,7 @@ const NewSearch = () => {
     const [copied, setCopied] = useState(false);
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [showWelcome, setShowWelcome] = useState(true);
 
     const stopSpeaking = () => {
         window.speechSynthesis.cancel();
@@ -132,6 +133,21 @@ const NewSearch = () => {
             }
         }
     };
+
+    const renderWelcomeMessage = () => (
+        <div className="welcome-popup-overlay">
+            <div className="welcome-popup">
+                <h2>Welcome to VITA AI</h2>
+                <p>
+                    Where personalized wellness is at the heart of your journey! To help us provide the most accurate insights and support, we encourage you to share critical details like your age, gender, current symptoms, and any diagnosed conditions. The more we know, the more tailored your experience will be. Together, we can create a wellness path that's unique to you.
+                </p>
+                <p><strong>How can I help you today?</strong></p>
+                <button className="close-welcome" onClick={() => setShowWelcome(false)}>
+                    Get Started
+                </button>
+            </div>
+        </div>
+    );
 
     const handleRemoveFile = (e) => {
         e.stopPropagation();
@@ -326,6 +342,7 @@ const NewSearch = () => {
     return (
         <>
             {showInfo && <Info showInfo={showInfo} setShowInfo={setShowInfo} />}
+            {showWelcome && renderWelcomeMessage()}
             <div className="container-fluid bg-white">
                 {pageLoading ? (
                     <div className="loading-overlay">
