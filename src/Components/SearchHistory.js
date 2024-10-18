@@ -3,13 +3,44 @@ import { LuSearch } from "react-icons/lu";
 import { useDispatch } from "react-redux";
 import { GetSearchHistory, GetSession, updateChatTitle } from "../ReduxToolKit/Slice/userSlice";
 
-const SearchHistory = ({ is_new, setModels, setChatId }) => {
+const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
     const dispatch = useDispatch();
     const [searchHistories, setSearchHistories] = useState([]);
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, chatId: null });
     const [renamingChatId, setRenamingChatId] = useState(null);
     const renameInputRef = useRef(null);
+
+    const fetchSearchHistory = async () => {
+        try {
+            const response = await dispatch(GetSearchHistory()).unwrap();
+            setSearchHistories(response.history);
+        } catch (error) {
+            console.error('Error fetching search history:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSearchHistory();
+    }, [is_new, dispatch]);
+
+    // New useEffect to handle latest chat updates
+    useEffect(() => {
+        if (latestChat) {
+            // Check if the chat already exists in history
+            const chatExists = searchHistories.some(hist => hist.chat_id === latestChat.chat_id);
+
+            if (!chatExists) {
+                // Add the new chat to the history
+                setSearchHistories(prev => [{
+                    chat_id: latestChat.chat_id,
+                    query: latestChat.query,
+                    chat_title: latestChat.chat_title || latestChat.query,
+                    created_at: new Date().toISOString()
+                }, ...prev]);
+            }
+        }
+    }, [latestChat]);
 
     useEffect(() => {
         const fetchData = async () => {

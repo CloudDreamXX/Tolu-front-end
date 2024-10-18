@@ -47,6 +47,7 @@ const NewSearch = () => {
     const [selectedResultId, setSelectedResultId] = useState(null);
     const [feedbackError, setFeedbackError] = useState(null);
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+    const [latestChat, setLatestChat] = useState(null);
 
 
     const stopSpeaking = () => {
@@ -280,8 +281,13 @@ const NewSearch = () => {
                                 result_id: data.result_id || newEntry.result_id,
                                 chat_id: data.chat_id || chatId
                             };
-                            if (!chatId && data.chat_id) {
-                                setChatId(data.chat_id);  // Set chatId if it's not set and we receive it
+                            if (data.chat_id && !chatId) {
+                                setLatestChat({
+                                    chat_id: data.chat_id,
+                                    query: searchQuery,
+                                    chat_title: searchQuery
+                                });
+                                setChatId(data.chat_id);
                             }
 
                             setModels(prevModels => {
@@ -513,7 +519,7 @@ const NewSearch = () => {
                             </div>
                         </div>
                         <div className='col-md-2'></div>
-                        <SearchHistory is_new={models.length === 0} setModels={setModels} setChatId={setChatId} />
+                        <SearchHistory is_new={models.length === 0} setModels={setModels} setChatId={setChatId} latestChat={latestChat} />
                     </div>
                 )}
             </div>
