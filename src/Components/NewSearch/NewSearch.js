@@ -9,8 +9,8 @@ import { useLocation } from 'react-router-dom';
 import { IoMdAddCircleOutline } from "react-icons/io"
 import { IoVolumeMuteSharp } from "react-icons/io5";
 import { AiOutlineLoading } from 'react-icons/ai';
-import { useDispatch, useSelector } from 'react-redux';
-import { AISearch, rateResponse, reportResponse, clearReportStatus } from '../../ReduxToolKit/Slice/userSlice';
+import { useDispatch } from 'react-redux';
+import { AISearch, rateResponse, reportResponse } from '../../ReduxToolKit/Slice/userSlice';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import './NewSearch.css'
 import SearchHistory from "../SearchHistory";
@@ -278,7 +278,7 @@ const NewSearch = () => {
                             newEntry = {
                                 ...newEntry,
                                 answers: newEntry.answers + (data.reply || ''),
-                                result_id: data.result_id || newEntry.result_id,
+                                result_id: data.searched_result_id || newEntry.searched_result_id,
                                 chat_id: data.chat_id || chatId
                             };
                             if (data.chat_id && !chatId) {
