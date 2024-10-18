@@ -4,14 +4,13 @@ import { FaArrowRotateLeft } from "react-icons/fa6";
 import { IoCopyOutline } from "react-icons/io5";
 import { FaVolumeHigh } from "react-icons/fa6";
 import { FiLoader } from "react-icons/fi";
-import { BiDislike } from "react-icons/bi";
-import { BiSolidDislike } from "react-icons/bi";
+import { BiLike, BiSolidLike, BiDislike, BiSolidDislike } from "react-icons/bi";
 import { useLocation } from 'react-router-dom';
 import { IoMdAddCircleOutline } from "react-icons/io"
 import { IoVolumeMuteSharp } from "react-icons/io5";
 import { AiOutlineLoading } from 'react-icons/ai';
-import { useDispatch } from 'react-redux';
-import { AISearch, dislikeResponse } from '../../ReduxToolKit/Slice/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AISearch, rateResponse, reportResponse, clearReportStatus } from '../../ReduxToolKit/Slice/userSlice';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import './NewSearch.css'
 import SearchHistory from "../SearchHistory";
@@ -20,6 +19,7 @@ import { edit_text } from '../../ReduxToolKit/Slice/EditedText';
 import { useNavigate } from 'react-router-dom';
 import { IoMdClose } from "react-icons/io";
 import { FaFileUpload } from 'react-icons/fa';
+import FeedbackModal from '../FeedbackModal';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -32,7 +32,6 @@ const NewSearch = () => {
     const location = useLocation();
     const [showInfo, setShowInfo] = useState(location.state?.showInfo || false);
     const [models, setModels] = useState([]);
-    const [dislikedResults, setDislikedResults] = useState({});
     const [speaking, setSpeaking] = useState(false);  // State to track if it's currently speaking
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -42,6 +41,13 @@ const NewSearch = () => {
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [showWelcome, setShowWelcome] = useState(true);
+    const [likedResults, setLikedResults] = useState({});
+    const [dislikedResults, setDislikedResults] = useState({});
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+    const [selectedResultId, setSelectedResultId] = useState(null);
+    const [feedbackError, setFeedbackError] = useState(null);
+    const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+
 
     const stopSpeaking = () => {
         window.speechSynthesis.cancel();
@@ -85,19 +91,74 @@ const NewSearch = () => {
         }
     };
 
-    const handleDislike = async (result_id) => {
-        console.log(result_id)
+    const handleRating = async (result_id, rating) => {
         const payload = {
-            result_id: result_id,
-            vote: true
+          result_id: result_id,
+          vote: rating
         };
+
         try {
-            await dispatch(dislikeResponse(payload)).unwrap();
-            setDislikedResults(prev => ({ ...prev, [result_id]: true }));
+          await dispatch(rateResponse(payload)).unwrap();
+          if (rating === 'liked') {
+            setLikedResults(prev => ({ ...prev, [result_id]: true }));
+            setDislikedResults(prev => {
+              const newState = { ...prev };
+              delete newState[result_id];
+              return newState;
+            });
+          }
         } catch (error) {
-            console.error('Failed to submit dislike:', error);
+          console.error('Failed to submit rating:', error);
         }
-    };
+      };
+
+      const handleDislike = (result_id) => {
+        setSelectedResultId(result_id);
+        setShowFeedbackModal(true);
+        setFeedbackError(null);
+      };
+
+      const handleFeedbackSubmit = async (feedback) => {
+        setIsSubmittingFeedback(true);
+        setFeedbackError(null);
+
+        try {
+          // First submit the report
+          await dispatch(reportResponse({
+            result_id: selectedResultId,
+            feedback: feedback
+          })).unwrap();
+
+          // Then submit the dislike
+          await dispatch(rateResponse({
+            result_id: selectedResultId,
+            vote: 'disliked'
+          })).unwrap();
+
+          // Update local state
+          setDislikedResults(prev => ({ ...prev, [selectedResultId]: true }));
+          setLikedResults(prev => {
+            const newState = { ...prev };
+            delete newState[selectedResultId];
+            return newState;
+          });
+
+          // Close modal and clean up
+          setShowFeedbackModal(false);
+          setSelectedResultId(null);
+        } catch (error) {
+          setFeedbackError(error.message || 'Failed to submit feedback. Please try again.');
+        } finally {
+          setIsSubmittingFeedback(false);
+        }
+      };
+
+      const handleFeedbackModalClose = () => {
+        setShowFeedbackModal(false);
+        setSelectedResultId(null);
+        setFeedbackError(null);
+      };
+
 
     function handleKeyPress(event) {
         if (event.key === 'Enter') {
@@ -370,10 +431,34 @@ const NewSearch = () => {
                                                         <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions, model.result_id)}>
                                                             {refreshingIndices[index] ? <AiOutlineLoading className="loading-icons" /> : <FaArrowRotateLeft />}
                                                         </button>
-                                                        {dislikedResults[model.result_id] ?
-                                                            <button className="generator-icon"><BiSolidDislike /></button> :
-                                                            <button className="generator-icon" onClick={() => handleDislike(model.result_id)}><BiDislike /></button>
-                                                        }
+                                                        {likedResults[model.result_id] ? (
+            <button className="generator-icon liked">
+              <BiSolidLike />
+            </button>
+          ) : (
+            <button
+              className="generator-icon"
+              onClick={() => handleRating(model.result_id, 'liked')}
+              disabled={dislikedResults[model.result_id]}
+            >
+              <BiLike />
+            </button>
+          )}
+
+          {dislikedResults[model.result_id] ? (
+            <button className="generator-icon disliked">
+              <BiSolidDislike />
+            </button>
+          ) : (
+            <button
+              className="generator-icon"
+              onClick={() => handleDislike(model.result_id)}
+              disabled={likedResults[model.result_id]}
+            >
+              <BiDislike />
+            </button>
+          )}
+
                                                         <button className="generator-icon" onClick={(event) => {
                                                             handleCopyResponse(model.answers);
                                                             const tooltip = document.getElementById('copy-tooltip');
@@ -432,6 +517,13 @@ const NewSearch = () => {
                     </div>
                 )}
             </div>
+            <FeedbackModal
+        isOpen={showFeedbackModal}
+        onClose={handleFeedbackModalClose}
+        onSubmit={handleFeedbackSubmit}
+        loading={isSubmittingFeedback}
+        error={feedbackError}
+      />
         </>
     );
 }

@@ -61,9 +61,12 @@ API.interceptors.request.use((req) => {
   };
   export const createHandout = async (payload) => {
     return handleRequest("post", "/handout/create", payload);
-};
-  export const DislikeResponse = async(payload) =>{
-    return handleRequest("post", "/searched-result/rating", payload)
+  };
+  export const rateResponse = async(payload) => {
+    return handleRequest("post", "/searched-result/rating", payload);
+  }
+  export const reportResult = async(payload) => {
+    return handleRequest("post", "/searched-result/report", payload);
   }
   export const updateChatTitle = async (payload) => {
     const { chat_id, new_title } = payload;

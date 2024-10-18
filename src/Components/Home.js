@@ -4,13 +4,14 @@ import { IoCopyOutline } from "react-icons/io5";
 import { FaVolumeHigh } from "react-icons/fa6";
 import { FiLoader } from "react-icons/fi";
 import { LuSearch } from "react-icons/lu";
-import { BiDislike } from "react-icons/bi";
-import { BiSolidDislike } from "react-icons/bi";
+// import { BiDislike } from "react-icons/bi";
+// import { BiSolidDislike } from "react-icons/bi";
+import { BiLike, BiSolidLike, BiDislike, BiSolidDislike } from "react-icons/bi";
 import { AiOutlineLoading } from 'react-icons/ai';
 import { IoVolumeMuteSharp } from "react-icons/io5";
 import { IoArrowForwardCircleSharp } from "react-icons/io5";
 import { useDispatch,useSelector} from 'react-redux';
-import { AISearch, dislikeResponse } from "../ReduxToolKit/Slice/userSlice";
+import { AISearch, rateResponse } from "../ReduxToolKit/Slice/userSlice";
 import Editor from './Editor';
 import SearchHistory from "./SearchHistory";
 
@@ -22,6 +23,7 @@ const Home = () => {
   const [refreshingIndices, setRefreshingIndices] = useState({});
   const [searched, setSearched] = useState(false);
   const [dislikedResults, setDislikedResults] = useState({});
+  const [likedResults, setLikedResults] = useState({});
   const [pageLoading, setPageLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const dispatch = useDispatch();
@@ -91,17 +93,44 @@ const Home = () => {
       setLoading(false);
     }
   };
-  const handleDislike = async (result_id) => {
-    console.log(result_id)
+  // const handleDislike = async (result_id) => {
+  //   console.log(result_id)
+  //   const payload = {
+  //     result_id: result_id,
+  //     vote: true
+  //   };
+  //   try {
+  //     await dispatch(dislikeResponse(payload)).unwrap();
+  //     setDislikedResults(prev => ({ ...prev, [result_id]: true }));
+  //   } catch (error) {
+  //     console.error('Failed to submit dislike:', error);
+  //   }
+  // };
+  const handleRating = async (result_id, rating) => {
     const payload = {
       result_id: result_id,
-      vote: true
+      vote: rating
     };
+
     try {
-      await dispatch(dislikeResponse(payload)).unwrap();
-      setDislikedResults(prev => ({ ...prev, [result_id]: true }));
+      await dispatch(rateResponse(payload)).unwrap();
+      if (rating === 'liked') {
+        setLikedResults(prev => ({ ...prev, [result_id]: true }));
+        setDislikedResults(prev => {
+          const newState = { ...prev };
+          delete newState[result_id];
+          return newState;
+        });
+      } else {
+        setDislikedResults(prev => ({ ...prev, [result_id]: true }));
+        setLikedResults(prev => {
+          const newState = { ...prev };
+          delete newState[result_id];
+          return newState;
+        });
+      }
     } catch (error) {
-      console.error('Failed to submit dislike:', error);
+      console.error('Failed to submit rating:', error);
     }
   };
 
@@ -220,10 +249,37 @@ const Home = () => {
                           <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions, model.result_id)}>
                             {refreshingIndices[index] ? <FiLoader className="loading-icon" /> : <FaArrowRotateLeft />}
                           </button>
-                          {dislikedResults[model.result_id] ?
+                          {/* {dislikedResults[model.result_id] ?
                             <button className="generator-icon"><BiSolidDislike /></button> :
                             <button className="generator-icon" onClick={() => handleDislike(model.result_id)}><BiDislike /></button>
-                          }
+                          } */}
+                          {likedResults[model.result_id] ? (
+        <button className="generator-icon liked">
+          <BiSolidLike />
+        </button>
+      ) : (
+        <button
+          className="generator-icon"
+          onClick={() => handleRating(model.result_id, 'liked')}
+          disabled={dislikedResults[model.result_id]}
+        >
+          <BiLike />
+        </button>
+      )}
+
+      {dislikedResults[model.result_id] ? (
+        <button className="generator-icon disliked">
+          <BiSolidDislike />
+        </button>
+      ) : (
+        <button
+          className="generator-icon"
+          onClick={() => handleRating(model.result_id, 'disliked')}
+          disabled={likedResults[model.result_id]}
+        >
+          <BiDislike />
+        </button>
+      )}
                           <button className="generator-icon" onClick={(event) => {
                             handleCopyResponse(model.answers);
                             const tooltip = document.getElementById('copy-tooltip');

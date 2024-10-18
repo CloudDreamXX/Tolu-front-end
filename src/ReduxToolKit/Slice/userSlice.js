@@ -69,6 +69,21 @@ export const updateChatTitle = createAsyncThunk(
   }
 );
 
+export const reportResponse = createAsyncThunk(
+  "user/reportResponse",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await api.reportResult({
+        result_id: payload.result_id,
+        report: payload.feedback
+      });
+      return response;
+    } catch (error) {
+      const message = error.response?.data?.detail || "An unknown error occurred";
+      return rejectWithValue(message);
+    }
+  }
+);
 
   export const AISearch = createAsyncThunk(
     "aisearch",
@@ -115,22 +130,19 @@ export const updateChatTitle = createAsyncThunk(
       }
     }
   );
-  export const dislikeResponse = createAsyncThunk(
-    "user/dislikeResponse",
-    async (payload, { rejectWithValue }) => {
-        try {
-            const response = await api.DislikeResponse(payload);
-            return response;
-        } catch (error) {
-            const message = error.response?.data?.detail || "An unknown error occurred";
-            return rejectWithValue(message);
-        }
+
+export const rateResponse = createAsyncThunk(
+  "user/rateResponse",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await api.rateResponse(payload);
+      return { response, rating: payload.vote };
+    } catch (error) {
+      const message = error.response?.data?.detail || "An unknown error occurred";
+      return rejectWithValue(message);
     }
+  }
 );
-
-
-
-
 
 
   const initialState = {
@@ -142,15 +154,21 @@ export const updateChatTitle = createAsyncThunk(
     sessioncontent:{},
     error: "",
     loading: false,
-    dislike: false,
+    likedResults: {},
+    dislikedResults: {},
     userexist: false,
     chatTitleUpdated: false,
+    reportSubmitted: false,
+    reportError: null,
   };
 
   export const UserSlice = createSlice({
     name: "auth",
     initialState,
-    reducers: {},
+    reducers: {clearReportStatus: (state) => {
+      state.reportSubmitted = false;
+      state.reportError = null;
+    }},
     extraReducers: (builder) => {
       builder
         .addCase(login.pending, (state) => {
@@ -220,14 +238,20 @@ export const updateChatTitle = createAsyncThunk(
           state.loading = false;
           state.error = action.payload;
         })
-        .addCase(dislikeResponse.pending, (state) => {
+        .addCase(rateResponse.pending, (state) => {
           state.loading = true;
         })
-        .addCase(dislikeResponse.fulfilled, (state, action) => {
+        .addCase(rateResponse.fulfilled, (state, action) => {
           state.loading = false;
-          state.dislike = true
+          if (action.payload.rating === 'liked') {
+            state.likedResults[action.payload.response.result_id] = true;
+            delete state.dislikedResults[action.payload.response.result_id];
+          } else if (action.payload.rating === 'disliked') {
+            state.dislikedResults[action.payload.response.result_id] = true;
+            delete state.likedResults[action.payload.response.result_id];
+          }
         })
-        .addCase(dislikeResponse.rejected, (state, action) => {
+        .addCase(rateResponse.rejected, (state, action) => {
           state.loading = false;
           state.error = action.payload;
         })
@@ -243,11 +267,24 @@ export const updateChatTitle = createAsyncThunk(
           state.loading = false;
           state.error = action.payload;
           state.chatTitleUpdated = false;
+        })
+        .addCase(reportResponse.pending, (state) => {
+          state.loading = true;
+          state.reportSubmitted = false;
+          state.reportError = null;
+        })
+        .addCase(reportResponse.fulfilled, (state) => {
+          state.loading = false;
+          state.reportSubmitted = true;
+        })
+        .addCase(reportResponse.rejected, (state, action) => {
+          state.loading = false;
+          state.reportError = action.payload;
         });
     },
   });
 
 
 // Export userSlice actions and reducer
-export const {} = UserSlice.actions;
+export const { clearReportStatus } = UserSlice.actions;
 export default UserSlice.reducer;
