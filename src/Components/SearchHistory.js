@@ -3,9 +3,10 @@ import { LuSearch } from "react-icons/lu";
 import { useDispatch } from "react-redux";
 import { GetSearchHistory, GetSession, updateChatTitle } from "../ReduxToolKit/Slice/userSlice";
 
-const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
+const SearchHistory = ({ is_new, setModels, setChatId, latestChat, isStandalone = false, onHistorySelect }) => {
     const dispatch = useDispatch();
     const [searchHistories, setSearchHistories] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, chatId: null });
     const [renamingChatId, setRenamingChatId] = useState(null);
@@ -24,14 +25,11 @@ const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
         fetchSearchHistory();
     }, [is_new, dispatch]);
 
-    // New useEffect to handle latest chat updates
     useEffect(() => {
         if (latestChat) {
-            // Check if the chat already exists in history
             const chatExists = searchHistories.some(hist => hist.chat_id === latestChat.chat_id);
 
             if (!chatExists) {
-                // Add the new chat to the history
                 setSearchHistories(prev => [{
                     chat_id: latestChat.chat_id,
                     query: latestChat.query,
@@ -43,22 +41,23 @@ const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
     }, [latestChat]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await dispatch(GetSearchHistory()).unwrap();
-                setSearchHistories(response.history);
-            } catch (error) {
-                console.error('Error fetching search history:', error);
-            }
-        };
-        fetchData();
-    }, [is_new, dispatch]);
-
-    useEffect(() => {
         const handleClickOutside = () => setContextMenu({ visible: false, x: 0, y: 0, chatId: null });
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
+
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value.toLowerCase());
+    };
+
+    const filterHistories = (histories) => {
+        if (!searchTerm) return histories;
+
+        return histories.filter(item =>
+            (item.chat_title?.toLowerCase().includes(searchTerm) ||
+             item.query.toLowerCase().includes(searchTerm))
+        );
+    };
 
     const handleHistory = async (chat_id) => {
         try {
@@ -69,24 +68,29 @@ const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
                 result_id: result.id,
                 chat_id: result.chat_id,
             }));
-            setModels(searchResults);
-            setChatId(chat_id);
-            setSelectedChatId(chat_id);
+
+            if (isStandalone && onHistorySelect) {
+                onHistorySelect(searchResults, chat_id);
+            } else {
+                setModels(searchResults);
+                setChatId(chat_id);
+                setSelectedChatId(chat_id);
+            }
         } catch (error) {
             console.error('Error fetching search history:', error);
         }
-    }
+    };
 
     const handleContextMenu = (e, chat_id) => {
         e.preventDefault();
         setContextMenu({ visible: true, x: e.clientX, y: e.clientY, chatId: chat_id });
-    }
+    };
 
     const handleRenameClick = () => {
         setRenamingChatId(contextMenu.chatId);
         setContextMenu({ visible: false, x: 0, y: 0, chatId: null });
         setTimeout(() => renameInputRef.current?.focus(), 0);
-    }
+    };
 
     const handleRename = async (chat_id, newTitle) => {
         if (newTitle.trim()) {
@@ -100,7 +104,7 @@ const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
             }
         }
         setRenamingChatId(null);
-    }
+    };
 
     const categorizeDates = (date) => {
         const today = new Date();
@@ -118,37 +122,51 @@ const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
         }
     };
 
-    const groupedHistories = {};
-    searchHistories.forEach((item) => {
-        const category = categorizeDates(item.created_at);
-        if (!groupedHistories[category]) {
-            groupedHistories[category] = [];
-        }
-        groupedHistories[category].push(item);
-    });
+    const groupAndFilterHistories = () => {
+        const filteredHistories = filterHistories(searchHistories);
+        const grouped = {};
+
+        filteredHistories.forEach((item) => {
+            const category = categorizeDates(item.created_at);
+            if (!grouped[category]) {
+                grouped[category] = [];
+            }
+            grouped[category].push(item);
+        });
+
+        return grouped;
+    };
+
+    const groupedHistories = groupAndFilterHistories();
 
     return (
-        <>
-            <div className="col-md-2 search-history">
-                <div className='col-md-2'></div>
-                <div className='find'>
-                    <div className='find-flex'>
-                        <span className='findicon'><LuSearch size={18} /></span>
-                        <input type='search' placeholder='Find' />
+        <div className="w-full">
+            <div className="max-w-3xl mx-auto">
+                <div className='find mb-6'>
+                    <div className='find-flex bg-gray-100 rounded-lg p-2 flex items-center'>
+                        <span className='findicon px-3'><LuSearch size={18} /></span>
+                        <input
+                            type='search'
+                            placeholder='Find'
+                            value={searchTerm}
+                            onChange={handleSearch}
+                            className="w-full bg-transparent outline-none px-2 py-1"
+                        />
                     </div>
-                    <div className="find-his" style={{ marginTop: "-10px" }}>
+                    <div className="find-his mt-4">
                         {Object.entries(groupedHistories).map(([category, histories]) => (
-                            <div key={category}>
-                                <div className={`category-title ${category === 0 ? ' first-title' : ''}`}>{category}</div>
+                            <div key={category} className="mb-6">
+                                <div className="category-title text-sm text-gray-500 font-medium mb-2">
+                                    {category}
+                                </div>
                                 {histories.map((historyItem, index) => (
                                     <div
                                         key={index}
+                                        className="findhistory p-3 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                                         style={{
-                                            marginLeft: "-8px",
                                             backgroundColor: selectedChatId === historyItem.chat_id ? '#e0e0e0' : 'transparent',
                                             cursor: 'pointer'
                                         }}
-                                        className="findhistory"
                                         onClick={() => handleHistory(historyItem.chat_id)}
                                         onContextMenu={(e) => handleContextMenu(e, historyItem.chat_id)}
                                     >
@@ -158,9 +176,12 @@ const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
                                                 defaultValue={historyItem.chat_title || historyItem.query}
                                                 onBlur={(e) => handleRename(historyItem.chat_id, e.target.value)}
                                                 onKeyPress={(e) => e.key === 'Enter' && handleRename(historyItem.chat_id, e.target.value)}
+                                                className="w-full p-1 border rounded"
                                             />
                                         ) : (
-                                            historyItem.chat_title || historyItem.query
+                                            <div className="truncate">
+                                                {historyItem.chat_title || historyItem.query}
+                                            </div>
                                         )}
                                     </div>
                                 ))}
@@ -173,7 +194,6 @@ const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
                 <div
                     style={{
                         position: 'fixed',
-                        // top: contextMenu.y,
                         left: contextMenu.x,
                         background: 'white',
                         border: '1px solid #ccc',
@@ -202,7 +222,7 @@ const SearchHistory = ({ is_new, setModels, setChatId, latestChat }) => {
                     </button>
                 </div>
             )}
-        </>
+        </div>
     );
 };
 

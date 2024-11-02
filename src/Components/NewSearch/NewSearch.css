@@ -215,7 +215,8 @@
     cursor: pointer;
     font-size: 24px;
     color: #666;
-    padding: 5px;
+    padding: 0px;
+    padding-top: 50px;
     transition: color 0.3s ease;
 }
 
@@ -303,3 +304,89 @@
   .close-welcome:hover {
     background-color: #0056b3;
   }
+
+  .show-images-button {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: white;
+    color: black;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 100;
+}
+
+.show-images-button:hover {
+    background-color: gray;
+}
+
+.show-videos-button {
+    position: fixed;
+    right: 20px;
+    top: 60%;
+    transform: translateY(-50%);
+    background-color:white;
+    color: black;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 100;
+}
+
+.show-videos-button:hover {
+    background-color: gray;
+}
+
+.delete-chat-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      padding: 8px 16px;
+      color: black;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: absolute;
+      top: 5px;
+      left: 500px;
+    }
+
+    .delete-chat-button:hover {
+      background-color: gray;
+      color: white;
+    }
+
+    .delete-chat-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .new-search-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      padding: 8px 16px;
+      color: black;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: absolute;
+      top: 5px;
+      left: 350px;
+    }
+
+    .new-search-button:hover {
+      background-color: gray;
+      color: white;
+    }
+
+    .new-search-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }

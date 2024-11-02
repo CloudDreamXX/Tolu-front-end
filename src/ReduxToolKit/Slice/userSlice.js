@@ -69,6 +69,19 @@ export const updateChatTitle = createAsyncThunk(
   }
 );
 
+export const deleteChat = createAsyncThunk(
+  "user/deleteChat",
+  async (chatId, { rejectWithValue }) => {
+    try {
+      const response = await api.deleteChat(chatId);
+      return { chatId, response };
+    } catch (error) {
+      const message = error.response?.data?.detail || "Failed to delete chat";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 export const reportResponse = createAsyncThunk(
   "user/reportResponse",
   async (payload, { rejectWithValue }) => {
@@ -85,17 +98,17 @@ export const reportResponse = createAsyncThunk(
   }
 );
 
-  export const AISearch = createAsyncThunk(
-    "aisearch",
-    async ({ user_prompt, is_new, chat_id, regenerate_id }) => {
-      try {
-        const response = await api.getAISearch({ user_prompt, is_new, chat_id, regenerate_id});
-        return response;
-      } catch (error) {
-        return error.response;
-      }
+export const AISearch = createAsyncThunk(
+  "aisearch",
+  async ({ user_prompt, is_new, chat_id, regenerate_id }) => {
+    try {
+      const response = await api.getAISearch({ user_prompt, is_new, chat_id, regenerate_id});
+      return response;
+    } catch (error) {
+      return error.response;
     }
-  );
+  }
+);
   export const GetSearchHistory = createAsyncThunk(
     "searched-result",
     async () => {
@@ -144,6 +157,20 @@ export const rateResponse = createAsyncThunk(
   }
 );
 
+export const getUserProfile = createAsyncThunk(
+  "user/getUserProfile", // Changed action type to be more specific
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.getUserProfile();
+      return response; // This should now contain the user profile data
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to fetch profile"
+      );
+    }
+  }
+);
+
 
   const initialState = {
     name: "",
@@ -160,6 +187,11 @@ export const rateResponse = createAsyncThunk(
     chatTitleUpdated: false,
     reportSubmitted: false,
     reportError: null,
+    userProfile: null,
+    profileLoading: false,
+    profileError: null,
+    chatDeletionStatus: 'idle',
+    chatDeletionError: null,
   };
 
   export const UserSlice = createSlice({
@@ -167,7 +199,10 @@ export const rateResponse = createAsyncThunk(
     initialState,
     reducers: {clearReportStatus: (state) => {
       state.reportSubmitted = false;
-      state.reportError = null;
+      state.reportError = null;},
+      clearChatDeletionStatus: (state) => {
+      state.chatDeletionStatus = 'idle';
+      state.chatDeletionError = null;
     }},
     extraReducers: (builder) => {
       builder
@@ -182,6 +217,18 @@ export const rateResponse = createAsyncThunk(
         .addCase(login.rejected, (state, action) => {
           state.loading = false;
           state.error = action.payload;
+        })
+        .addCase(deleteChat.pending, (state) => {
+          state.chatDeletionStatus = 'loading';
+          state.chatDeletionError = null;
+        })
+        .addCase(deleteChat.fulfilled, (state) => {
+          state.chatDeletionStatus = 'succeeded';
+          state.chatDeletionError = null;
+        })
+        .addCase(deleteChat.rejected, (state, action) => {
+          state.chatDeletionStatus = 'failed';
+          state.chatDeletionError = action.payload;
         })
         .addCase(createUser.pending, (state) => {
           state.loading = true;
@@ -226,6 +273,20 @@ export const rateResponse = createAsyncThunk(
         .addCase(GetSearchHistory.rejected, (state, action) => {
           state.loading = false;
           state.error = action.payload;
+        })
+        .addCase(getUserProfile.pending, (state) => {
+          state.profileLoading = true;
+          state.profileError = null;
+        })
+        .addCase(getUserProfile.fulfilled, (state, action) => {
+          state.profileLoading = false;
+          state.userProfile = action.payload;
+          state.profileError = null;
+        })
+        .addCase(getUserProfile.rejected, (state, action) => {
+          state.profileLoading = false;
+          state.profileError = action.payload;
+          state.userProfile = null;
         })
         .addCase(GetSession.pending, (state) => {
           state.loading = true;

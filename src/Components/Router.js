@@ -9,6 +9,8 @@ import LandingPage from "./LandingPage/LandingPage";
 import Login from "./Login/Login";
 import NewSearch from "./NewSearch/NewSearch";
 import { Signup } from "./Signup/Signup";
+import SearchHistoryPage from "./SearchHistoryPage";
+import ProfilePage from "./ProfilePage";
 // import Onboarding from "./onboarding";
 // import HealthConcerns from './HealthConcerns';
 // import LifestyleDetails from './LifeStyleDetails';
@@ -67,6 +69,8 @@ const Router = () => {
                         <Route path="/auth" element={<Login />} />
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/signup" element={<Signup />} />
+                        <Route path="/search-history" element={<SearchHistoryPage />} />
+                        <Route path="/profile" element= {<ProfilePage />} />
                         {/* <Route path="/onboarding" element={<Onboarding />} />
                         <Route path="/health-concerns" element={<HealthConcerns />} />
                         <Route path="/LifestyleDetails" element={<LifestyleDetails />} />

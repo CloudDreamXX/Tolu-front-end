@@ -1,0 +1,195 @@
+/* .sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 8px;
+  color: #fff;
+} */
+
+.toggle-btn {
+  color: #666;  /* Changed to a neutral gray */
+  background: transparent;
+  border: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.05);  /* Lighter hover state */
+}
+
+.box1 {
+  background: #fff;  /* Changed to white background */
+  min-height: 100vh;
+  position: fixed;
+  left: 0;
+  transition: all 0.3s ease;
+  border-right: 1px solid #f0f0f0;  /* Added subtle border */
+}
+
+.side {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #fff;
+  background: #fff;
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;  /* Modern system font stack */
+  font-size: 14px;
+}
+
+.side svg {
+  min-width: 20px;
+  margin-right: 12px;
+  color: #000;
+}
+
+.sidetext {
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  font-weight: 400;  /* Regular font weight */
+  color: #000;
+}
+
+.account {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 16px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+}
+
+/* Add styles for the contact support button */
+.contact-support {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 8px;  /* Smaller padding than account button */
+  border-top: 1px solid #f0f0f0;
+  margin-top: 8px;  /* Add space between buttons */
+}
+
+/* Additional styles to match the image */
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 0.5px;
+}
+
+.side:hover {
+  background-color: #f5f5f5;  /* Light gray hover state */
+}
+
+.history-dropdown-btn {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  transition: background-color 0.3s;
+}
+
+.history-dropdown-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-arrow {
+  margin-left: auto;
+  font-size: 20px;
+}
+
+.recent-history-dropdown {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.history-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 10px;
+}
+
+.history-toggle-btn {
+  padding: 0 4px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+}
+
+.history-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.history-category {
+  margin-bottom: 16px;
+}
+
+.history-date-label {
+  font-size: 12px;
+  color: #666;
+  padding: 4px 16px;
+  margin-bottom: 4px;
+}
+
+.recent-history-list {
+  padding: 8px 0;
+}
+
+.recent-history-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-history-item:hover {
+  background-color: #f5f5f5;
+}
+
+.recent-history-item.active {
+  background-color: #e6f4ff;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.collapsed-header {
+  width: 100%;
+}
+
+.collapsed-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.vita-heading {
+  white-space: nowrap;  /* Prevents text wrapping */
+  padding-left: 30px;
+  font-weight: bold;
+}
+
+.v-heading {
+  white-space: nowrap;  /* Prevents text wrapping */
+  padding-left: 20px;
+  font-weight: bold;
+}

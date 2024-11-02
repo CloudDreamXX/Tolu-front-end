@@ -8,12 +8,12 @@ import { useState } from "react";
 function Navbar() {
   const [collapsed, setCollapsed] = useState(false);
   const dispatch=useDispatch();
-  
+
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
     dispatch(COLLAPSE(!collapsed));
   };
-  
+
 
   return (
     <div className="container-fluid">
@@ -21,8 +21,8 @@ function Navbar() {
         <div className="col-md-12">
           <div className="navbar">
             <div className="nav-text">
-           <button className="navbar-button" onClick={toggleCollapsed}><IoMdMenu size={30} /> </button> 
-            <Link to="/" className="navbar-span">V I T A GUIDE </Link>
+           <button className="navbar-button" onClick={toggleCollapsed}><IoMdMenu size={30} /> </button>
+            <Link to="/" className="navbar-span">VITAI </Link>
             </div>
           </div>
         </div>

@@ -72,3 +72,16 @@ API.interceptors.request.use((req) => {
     const { chat_id, new_title } = payload;
     return handleRequest("put", `/update-chat-title`, { chat_id, new_title });
   };
+
+  export const getUserProfile = async () => {
+    try {
+      const response = await API.get("/user/profile");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  export const deleteChat = async (chatId) => {
+    return handleRequest("delete", `/chat/${chatId}`);
+  };
