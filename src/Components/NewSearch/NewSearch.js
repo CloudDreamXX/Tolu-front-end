@@ -51,7 +51,7 @@ const NewSearch = () => {
     const [selectedResultId, setSelectedResultId] = useState(null);
     const [feedbackError, setFeedbackError] = useState(null);
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
-    const [setLatestChat] = useState(null);
+    const [latestChat, setLatestChat] = useState(null);
     const [isDeletingChat, setIsDeletingChat] = useState(false);
     const shouldShowWelcome = showWelcome && models.length === 0;
 
@@ -246,7 +246,7 @@ const NewSearch = () => {
                 questions: searchQuery,
                 answers: '',
                 result_id: '',
-                chat_id: '',
+                chat_id: models.length === 0 ? null : chatId, // Set chatId to null for the first query
                 attachedFile: selectedFile
             };
 
@@ -256,8 +256,8 @@ const NewSearch = () => {
                 const formData = new FormData();
                 formData.append('chat_message', JSON.stringify({
                     user_prompt: searchQuery,
-                    is_new: models.length === 0,
-                    chat_id: models.length !== 0 ? chatId : '',
+                    is_new: models.length === 0, // Indicate if it's a new chat
+                    chat_id: models.length !== 0 ? chatId : '', // Pass an empty string for the first query
                     regenerate_id: ''
                 }));
 
