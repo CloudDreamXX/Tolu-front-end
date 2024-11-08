@@ -1,8 +1,7 @@
 .empty-search-container {
   width: 100%;
-  max-width: 1600%;
   margin: 0 auto;
-  padding: 16px;  /* Reduced from 20px */
+  padding: 20px;  /* Reduced from 20px */
 }
 
 .questions-title {
@@ -16,16 +15,17 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;  /* Reduced from 20px */
-  width: 100%;
+  width: 110%;
   margin-bottom: 16px;  /* Added margin for show more button */
 }
 
 .preset-question-button {
   width: 100%;
-  padding: 0px 5px;
+  padding: 0px 6px;
   background-color: white;
   border: 1px solid #e0e0e0;
-  text-align: center;
+  border-radius: 4px;
+  text-align: left;
   color: #4a4a4a;
   font-size: 14px;  /* Reduced from 16px */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);

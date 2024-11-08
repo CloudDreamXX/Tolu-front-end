@@ -223,6 +223,20 @@ const NewSearch = () => {
         return null;
     };
 
+    const renderQuestion = (question, file) => {
+        return (
+            <div>
+                <div>{question}</div>
+                {file && (
+                    <div className="file-attachment">
+                        <IoMdAttach />
+                        <span>{file.name}</span>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (searchQuery) {
@@ -232,7 +246,8 @@ const NewSearch = () => {
                 questions: searchQuery,
                 answers: '',
                 result_id: '',
-                chat_id: ''
+                chat_id: '',
+                attachedFile: selectedFile
             };
 
             setModels(prevModels => [...prevModels, newEntry]);
@@ -499,8 +514,8 @@ const NewSearch = () => {
 
 
       const renderSearchForm = () => (
-        <form onSubmit={handleSubmit} className="d-flex">
-            <div className="file-upload-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: '50px', marginTop: '0px' }}>
+        <form onSubmit={handleSubmit} className="d-flex search-form-container">
+            <div className="file-upload-container">
                 <input
                     type="file"
                     accept="image/jpeg,image/png,application/pdf"
@@ -508,28 +523,25 @@ const NewSearch = () => {
                     style={{ display: 'none' }}
                     ref={fileInputRef}
                 />
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <button
-                        type="button"
-                        onClick={() => fileInputRef.current.click()}
-                        className="file-upload-button"
-                    >
-                        {selectedFile ? (
-                            <>
-                                <IoMdAttach style={{ color: 'blue' }} />
-                                <span
-                                    className="file-remove-indicator"
-                                    onClick={handleRemoveFile}
-                                >
-                                    <IoMdClose />
-                                </span>
-                            </>
-                        ) : (
-                            <IoMdAttach />
-                        )}
-                    </button>
-                    <span style={{ fontSize: '8px' }}>Upload</span>
-                </div>
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current.click()}
+                    className="file-upload-button"
+                >
+                    {selectedFile ? (
+                        <>
+                            <IoMdAttach style={{ color: 'blue' }} />
+                            <span
+                                className="file-remove-indicator"
+                                onClick={handleRemoveFile}
+                            >
+                                <IoMdClose />
+                            </span>
+                        </>
+                    ) : (
+                        <IoMdAttach />
+                    )}
+                </button>
             </div>
             <textarea
                 className="search-query"
@@ -540,12 +552,21 @@ const NewSearch = () => {
                 onKeyDown={(e) => handleKeyPress(e)}
             />
             <div className="button-container">
-                <button type="submit" className="up-icon">
-                    {loading ? <AiOutlineLoading className="loading-icons" size={35} /> : <IoArrowForwardCircleSharp size={35} className="icon-style" />}
+                <button
+                    type="submit"
+                    className={`up-icon ${searchQuery.trim() ? 'active' : ''}`}
+                    disabled={!searchQuery.trim()}
+                >
+                    {loading ? (
+                        <AiOutlineLoading className="loading-icons" size={35} />
+                    ) : (
+                        <IoArrowForwardCircleSharp size={35} className="icon-style" />
+                    )}
                 </button>
             </div>
         </form>
     );
+
     return (
         <>
             {showInfo && <Info showInfo={showInfo} setShowInfo={setShowInfo} />}
@@ -568,7 +589,7 @@ const NewSearch = () => {
                                                 <React.Fragment key={index}>
                                                     <div className='main-div'>
                                                         <div className='display'><div className='user circle'></div><span className='text'> Question</span></div>
-                                                        <div className='ques-ans'> {model.questions}</div>
+                                                        <div className='ques-ans'> {renderQuestion(model.questions, model.attachedFile)}</div>
                                                     </div>
                                                     <div className='main-div'>
                                                         <div className='display'><div className='vita circle'></div><span className='text'> Answer</span></div>

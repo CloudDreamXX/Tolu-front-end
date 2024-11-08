@@ -20,9 +20,9 @@ const SearchHistoryPage = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <SideBar />
             <Layout>
-                <div className="bg-white h-full">
-                    <div className="p-6">
-                        <h2 className="text-2xl font-semibold mb-4">Search History</h2>
+                <div style={{ backgroundColor: 'white', height: '100%' }}>
+                    <div style={{ padding: '1.5rem', width: '50%' }}>
+                        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>Search History</h2>
                         <SearchHistory
                             is_new={false}
                             setModels={(results) => {}}

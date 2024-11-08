@@ -73,7 +73,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
   const fetchRecentHistory = async () => {
     try {
       const response = await dispatch(GetSearchHistory()).unwrap();
-      setRecentHistory(response.history.slice(0, 10));
+      setRecentHistory(response.history.slice(0, 5));
     } catch (error) {
       console.error('Error fetching recent history:', error);
     }
@@ -152,8 +152,8 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
       collapsible
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
-      width={260}
-      collapsedWidth={80}
+      width={230}
+      collapsedWidth={60}
       className={`box1 ${className ? className : ''}`}
       trigger={null}
       theme="light"
@@ -164,7 +164,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
       <h3 className="vita-heading">VITAI</h3>
       <Button
         type="text"
-        icon={<GoSidebarCollapse />}
+        icon={ <GoSidebarCollapse size={20} />}
         onClick={() => setCollapsed(!collapsed)}
         className="toggle-btn"
       />
@@ -175,7 +175,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
         <h3 className="v-heading">V</h3>
         <Button
           type="text"
-          icon={<GoSidebarCollapse />}
+          icon={<GoSidebarCollapse size={20} />}
           onClick={() => setCollapsed(!collapsed)}
           className="toggle-btn"
         />
@@ -235,41 +235,23 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
         </div>
       </div>
 
-      <div className="btn-group account-position">
-        <Dropdown
-          menu={{ items: accountItems }}
-          placement="bottomCenter"
-          arrow={true}
-          overlayStyle={{
-            width: "150px",
-            textAlign: "center",
-            borderRadius: "20px",
-          }}
-        >
-          <Button className="account dropdown-toggle" type="button">
-  {collapsed ? (
+<div className="bottom-buttons">
+  <Dropdown
+    menu={{ items: accountItems }}
+    placement="bottomCenter"
+    arrow={true}
+  >
+    <Button
+    className="account dropdown-toggle"
+    type="button"
+    style={{ cursor: 'pointer' }}
+    title="My Account"
+  >
     <FaUserCircle />
-  ) : (
-    <>
-      <svg
-        style={{ marginLeft: "0px", marginBottom: "0px" }}
-        stroke="black"
-        fill="black"
-        strokeWidth="0"
-        viewBox="0 0 496 512"
-        height="1em"
-        width="2em"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"></path>
-      </svg>
-      {userProfile?.name || 'My Account'}
-    </>
-  )}
-</Button>
-        </Dropdown>
-      </div>
-      <Button
+    {!collapsed && <span className="sidetext">{userProfile?.name || 'My Account'}</span>}
+  </Button>
+</Dropdown>
+<Button
   className="contact-support dropdown-toggle"
   type="button"
   style={{ cursor: 'pointer' }}
@@ -278,6 +260,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
   <MdSupportAgent />
   {!collapsed && <span className="sidetext">Contact Support</span>}
 </Button>
+</div>
     </Sider>
   );
 };
