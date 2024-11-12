@@ -24,6 +24,8 @@ import { CiImageOn } from "react-icons/ci";
 import { MdFeaturedVideo } from "react-icons/md";
 import { LuArrowRightFromLine } from "react-icons/lu";
 import { IoMdAttach } from "react-icons/io";
+import { PostSearchBar } from './SearchComponents';
+import { MdOutlineMessage } from "react-icons/md";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -101,13 +103,13 @@ const NewSearch = () => {
 
 
     // clicking the search result in sidebar or search history page will open in new search page
-            useEffect(() => {
-    if (location.state?.searchResults) {
-        setModels(location.state.searchResults);
-        setChatId(location.state.selectedChatId);
-        // Clear the location state to prevent re-loading on refresh
-        navigate(location.pathname, { replace: true });
-    }
+    useEffect(() => {
+        if (location.state?.searchResults) {
+            setModels(location.state.searchResults);
+            setChatId(location.state.selectedChatId);
+            // Clear the location state to prevent re-loading on refresh
+            navigate(location.pathname, { replace: true });
+        }
     }, [location.state]);
 
 
@@ -150,21 +152,21 @@ const NewSearch = () => {
         if (!chatId || isDeletingChat) return;
 
         if (window.confirm('Are you sure you want to delete this chat? This action cannot be undone.')) {
-          setIsDeletingChat(true);
-          try {
-            await dispatch(deleteChat(chatId)).unwrap();
-            navigate('/search-history', { replace: true });
-            window.location.reload();
-          } catch (error) {
-            console.error('Failed to delete chat:', error);
-            alert('Failed to delete chat. Please try again.');
-          } finally {
-            setIsDeletingChat(false);
-          }
+            setIsDeletingChat(true);
+            try {
+                await dispatch(deleteChat(chatId)).unwrap();
+                navigate('/search-history', { replace: true });
+                window.location.reload();
+            } catch (error) {
+                console.error('Failed to delete chat:', error);
+                alert('Failed to delete chat. Please try again.');
+            } finally {
+                setIsDeletingChat(false);
+            }
         }
-      };
+    };
 
-      const renderWelcomeMessage = () => (
+    const renderWelcomeMessage = () => (
         <div className="welcome-popup-overlay">
             <div className="welcome-popup">
                 <h2>Welcome to VITA AI</h2>
@@ -314,8 +316,8 @@ const NewSearch = () => {
                             setModels(prevModels => {
                                 const updatedModels = [...prevModels];
                                 updatedModels[updatedModels.length - 1] = newEntry;
-                            return updatedModels;
-                        });
+                                return updatedModels;
+                            });
                         } catch (error) {
                             console.error('Error parsing event data:', error);
                         }
@@ -441,298 +443,269 @@ const NewSearch = () => {
 
     const handlePresetQuestion = (question) => {
         setSearchQuery(question);
-        handleSubmit({ preventDefault: () => {} });
-      };
+        handleSubmit({ preventDefault: () => { } });
+    };
 
-      const handleRating = async (result_id, rating) => {
+    const handleRating = async (result_id, rating) => {
         const payload = {
-          result_id: result_id,
-          vote: rating
+            result_id: result_id,
+            vote: rating
         };
 
         try {
-          await dispatch(rateResponse(payload)).unwrap();
-          if (rating === 'liked') {
-            setLikedResults(prev => ({ ...prev, [result_id]: true }));
-            setDislikedResults(prev => {
-              const newState = { ...prev };
-              delete newState[result_id];
-              return newState;
-            });
-          }
+            await dispatch(rateResponse(payload)).unwrap();
+            if (rating === 'liked') {
+                setLikedResults(prev => ({ ...prev, [result_id]: true }));
+                setDislikedResults(prev => {
+                    const newState = { ...prev };
+                    delete newState[result_id];
+                    return newState;
+                });
+            }
         } catch (error) {
-          console.error('Failed to submit rating:', error);
+            console.error('Failed to submit rating:', error);
         }
-      };
+    };
 
-      const handleDislike = (result_id) => {
+    const handleDislike = (result_id) => {
         setSelectedResultId(result_id);
         setShowFeedbackModal(true);
         setFeedbackError(null);
-      };
+    };
 
-      const handleFeedbackSubmit = async (feedback) => {
+    const handleFeedbackSubmit = async (feedback) => {
         setIsSubmittingFeedback(true);
         setFeedbackError(null);
 
         try {
-          // First submit the report
-          await dispatch(reportResponse({
-            result_id: selectedResultId,
-            feedback: feedback
-          })).unwrap();
+            // First submit the report
+            await dispatch(reportResponse({
+                result_id: selectedResultId,
+                feedback: feedback
+            })).unwrap();
 
-          // Then submit the dislike
-          await dispatch(rateResponse({
-            result_id: selectedResultId,
-            vote: 'disliked'
-          })).unwrap();
+            // Then submit the dislike
+            await dispatch(rateResponse({
+                result_id: selectedResultId,
+                vote: 'disliked'
+            })).unwrap();
 
-          // Update local state
-          setDislikedResults(prev => ({ ...prev, [selectedResultId]: true }));
-          setLikedResults(prev => {
-            const newState = { ...prev };
-            delete newState[selectedResultId];
-            return newState;
-          });
+            // Update local state
+            setDislikedResults(prev => ({ ...prev, [selectedResultId]: true }));
+            setLikedResults(prev => {
+                const newState = { ...prev };
+                delete newState[selectedResultId];
+                return newState;
+            });
 
-          // Close modal and clean up
-          setShowFeedbackModal(false);
-          setSelectedResultId(null);
+            // Close modal and clean up
+            setShowFeedbackModal(false);
+            setSelectedResultId(null);
         } catch (error) {
-          setFeedbackError(error.message || 'Failed to submit feedback. Please try again.');
+            setFeedbackError(error.message || 'Failed to submit feedback. Please try again.');
         } finally {
-          setIsSubmittingFeedback(false);
+            setIsSubmittingFeedback(false);
         }
-      };
+    };
 
-      const handleFeedbackModalClose = () => {
+    const handleFeedbackModalClose = () => {
         setShowFeedbackModal(false);
         setSelectedResultId(null);
         setFeedbackError(null);
-      };
+    };
 
 
-      const renderSearchForm = () => (
-        <form onSubmit={handleSubmit} className="d-flex search-form-container">
-            <div className="file-upload-container">
-                <input
-                    type="file"
-                    accept="image/jpeg,image/png,application/pdf"
-                    onChange={handleFileUpload}
-                    style={{ display: 'none' }}
-                    ref={fileInputRef}
-                />
-                <button
-                    type="button"
-                    onClick={() => fileInputRef.current.click()}
-                    className="file-upload-button"
-                >
-                    {selectedFile ? (
-                        <>
-                            <IoMdAttach style={{ color: 'blue' }} />
-                            <span
-                                className="file-remove-indicator"
-                                onClick={handleRemoveFile}
-                            >
-                                <IoMdClose />
-                            </span>
-                        </>
-                    ) : (
-                        <IoMdAttach />
-                    )}
-                </button>
-            </div>
-            <textarea
-                className="search-query"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ask anything..."
-                rows={3}
-                onKeyDown={(e) => handleKeyPress(e)}
-            />
-            <div className="button-container">
-                <button
-                    type="submit"
-                    className={`up-icon ${searchQuery.trim() ? 'active' : ''}`}
-                    disabled={!searchQuery.trim()}
-                >
-                    {loading ? (
-                        <AiOutlineLoading className="loading-icons" size={35} />
-                    ) : (
-                        <IoArrowForwardCircleSharp size={35} className="icon-style" />
-                    )}
-                </button>
-            </div>
-        </form>
-    );
+    const renderSearchBar = () => {
+        const props = {
+            searchQuery,
+            setSearchQuery,
+            loading,
+            handleSubmit,
+            selectedFile,
+            handleFileUpload,
+            handleRemoveFile,
+            fileInputRef
+        };
+
+        return models.length > 0 ? (
+            <PostSearchBar {...props} />
+        ) : (
+            <PostSearchBar {...props} />
+        );
+    };
 
     return (
         <>
             {showInfo && <Info showInfo={showInfo} setShowInfo={setShowInfo} />}
             {renderDeleteButton()}
-            {shouldShowWelcome  && renderWelcomeMessage()}
-            <div className="container-fluid bg-white">
-                {pageLoading ? (
-                    <div className="loading-overlay">
-                        <FiLoader className="loading-icon big-loader" />
-                    </div>
-                ) : (
-                    <div className='row'>
-                        <div className='col-lg-1'></div>
-                        <div className='col-lg-7'>
-                            <div className='searchpage-main'>
-                                {models.length > 0 ? (
-                                    <>
-                                        <div ref={scrollableDivRef} className='main-div-height'>
-                                            {models.map((model, index) => (
-                                                <React.Fragment key={index}>
-                                                    <div className='main-div'>
-                                                        <div className='display'><div className='user circle'></div><span className='text'> Question</span></div>
-                                                        <div className='ques-ans'> {renderQuestion(model.questions, model.attachedFile)}</div>
-                                                    </div>
-                                                    <div className='main-div'>
-                                                        <div className='display'><div className='vita circle'></div><span className='text'> Answer</span></div>
-                                                        <div className='ques-ans' dangerouslySetInnerHTML={{ __html: model.answers }} />
-                                                    </div>
-                                                    <div className="button-group" style={{ marginLeft: "12px" }}>
-                                                    <button className="generator-icon" onClick={(event) => {
-                                                            handleCopyResponse(model.answers);
-                                                            const tooltip = document.getElementById('copy-tooltip');
-                                                            const buttonRect = event.target.getBoundingClientRect();
-                                                            tooltip.style.top = `${buttonRect.top + 80}px`;
-                                                            tooltip.style.left = `${buttonRect.left + 20}px`;
-                                                            tooltip.style.opacity = 1;
-                                                            setTimeout(() => {
-                                                                tooltip.style.opacity = 0;
-                                                            }, 2000);
-                                                        }}>
-                                                            <IoCopyOutline />
-                                                            <span STYLE="font-size:4mm">      Copy</span>
-                                                        </button>
-                                                        {
-                                                            speaking ? (
-                                                                <button className="generator-icon" onClick={stopSpeaking}>
-                                                                    <IoVolumeMuteSharp className="loading-icon" />
+            {shouldShowWelcome && renderWelcomeMessage()}
+            <div id="wrapper">
+                <div className="container-fluid bg-white">
+                    {pageLoading ? (
+                        <div className="loading-overlay">
+                            <FiLoader className="loading-icon big-loader" />
+                        </div>
+                    ) : (
+                        <div className='row'>
+                            <div className='col-lg-1'></div>
+                            <div className='col-lg-7'>
+                                <div className='searchpage-main'>
+                                    {models.length > 0 ? (
+                                        <>
+                                            <div class="button-area"></div>
+                                            <div ref={scrollableDivRef} className='main-div-height'>
+                                                {models.map((model, index) => (
+                                                    <React.Fragment key={index}>
+                                                        <div className='main-div'>
+                                                            <div className='display'><MdOutlineMessage size={18}/><span className='text'>&nbsp; Question</span></div>
+                                                            <div className='ques-ans'> {renderQuestion(model.questions, model.attachedFile)}</div>
+                                                        </div>
+                                                        <div className='main-div'>
+                                                            <div className='display'><MdOutlineMessage size={18}/><span className='text'>&nbsp; Answer</span></div>
+                                                            <div className='ques-ans' dangerouslySetInnerHTML={{ __html: model.answers }} />
+                                                        </div>
+                                                        <div className="button-group" style={{ marginLeft: "12px" }}>
+                                                            <button className="generator-icon" onClick={(event) => {
+                                                                handleCopyResponse(model.answers);
+                                                                const tooltip = document.getElementById('copy-tooltip');
+                                                                const buttonRect = event.target.getBoundingClientRect();
+                                                                tooltip.style.top = `${buttonRect.top + 80}px`;
+                                                                tooltip.style.left = `${buttonRect.left + 20}px`;
+                                                                tooltip.style.opacity = 1;
+                                                                setTimeout(() => {
+                                                                    tooltip.style.opacity = 0;
+                                                                }, 2000);
+                                                            }}>
+                                                                <IoCopyOutline />
+                                                                <span STYLE="font-size:4mm">      Copy</span>
+                                                            </button>
+                                                            {
+                                                                speaking ? (
+                                                                    <button className="generator-icon" onClick={stopSpeaking}>
+                                                                        <IoVolumeMuteSharp className="loading-icon" />
+                                                                    </button>
+                                                                ) : (
+                                                                    <button className="generator-icon" onClick={() => startSpeaking(model.answers)}>
+                                                                        <FaVolumeHigh />
+                                                                        <span STYLE="font-size:4mm">      Read</span>
+                                                                    </button>
+                                                                )
+                                                            }
+
+                                                            {likedResults[model.result_id] ? (
+                                                                <button className="generator-icon liked">
+                                                                    <BiSolidLike />
                                                                 </button>
                                                             ) : (
-                                                                <button className="generator-icon" onClick={() => startSpeaking(model.answers)}>
-                                                                    <FaVolumeHigh />
-                                                                    <span STYLE="font-size:4mm">      Read</span>
+                                                                <button
+                                                                    className="generator-icon"
+                                                                    onClick={() => handleRating(model.result_id, 'liked')}
+                                                                    disabled={dislikedResults[model.result_id]}
+                                                                >
+                                                                    <BiLike />
+                                                                    <span STYLE="font-size:4mm">      Like</span>
                                                                 </button>
-                                                            )
-                                                        }
+                                                            )}
 
-                                                        {likedResults[model.result_id] ? (
-            <button className="generator-icon liked">
-              <BiSolidLike />
-            </button>
-          ) : (
-            <button
-              className="generator-icon"
-              onClick={() => handleRating(model.result_id, 'liked')}
-              disabled={dislikedResults[model.result_id]}
-            >
-              <BiLike />
-              <span STYLE="font-size:4mm">      Like</span>
-            </button>
-          )}
-
-          {dislikedResults[model.result_id] ? (
-            <button className="generator-icon disliked">
-              <BiSolidDislike />
-            </button>
-          ) : (
-            <button
-              className="generator-icon"
-              onClick={() => handleDislike(model.result_id)}
-              disabled={likedResults[model.result_id]}
-            >
-              <BiDislike />
-              <span STYLE="font-size:4mm">      Dislike</span>
-            </button>
-          )}
+                                                            {dislikedResults[model.result_id] ? (
+                                                                <button className="generator-icon disliked">
+                                                                    <BiSolidDislike />
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    className="generator-icon"
+                                                                    onClick={() => handleDislike(model.result_id)}
+                                                                    disabled={likedResults[model.result_id]}
+                                                                >
+                                                                    <BiDislike />
+                                                                    <span STYLE="font-size:4mm">      Dislike</span>
+                                                                </button>
+                                                            )}
 
 
-                                                        <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions, model.result_id)}>
-                                                            {refreshingIndices[index] ? <AiOutlineLoading className="loading-icons" /> : <FaArrowRotateLeft />}
-                                                            <span STYLE="font-size:4mm">      Redo</span>
-                                                        </button>
-                                                        {/* <button className="generator-icon" onClick={(event) => {
+                                                            <button className="generator-icon" onClick={() => handleRegenerate(index, model.questions, model.result_id)}>
+                                                                {refreshingIndices[index] ? <AiOutlineLoading className="loading-icons" /> : <FaArrowRotateLeft />}
+                                                                <span STYLE="font-size:4mm">      Redo</span>
+                                                            </button>
+                                                            {/* <button className="generator-icon" onClick={(event) => {
                                                             dispatch(edit_text(model));
                                                             navigate('/handouts')
                                                         }}><IoMdAddCircleOutline /></button> */}
-                                                    </div>
-                                                    <div id="copy-tooltip" className="tooltip">Copied!</div>
-                                                </React.Fragment>
-                                            ))}
-                                        </div>
-                                        <div className="main-search mainpage-top">
-                                            {renderSearchForm()}
-                                        </div>
+                                                        </div>
+                                                        <div id="copy-tooltip" className="tooltip">Copied!</div>
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                            <div className="main-search mainpage-top">
+                                                {renderSearchBar()}
+                                            </div>
 
-                                    </>
-                                ) : (
-                                    <div className='main'>
-                                        {/* <div>
+                                        </>
+                                    ) : (
+                                        <div className='main'>
+                                            {/* <div>
                                             {buttonarray.map((button, index) => {
                                                 let random = (index % 6) + 1;
                                                 let class_name = "col" + random.toString();
                                                 return (<button key={index} className={`${class_name} main-button`} >{button}</button>)
                                             })}
                                         </div> */}
-                                        <div className="main-search maintop">
-                                            {renderSearchForm()}
+                                            <div className="main-search maintop">
+                                                {renderSearchBar()}
+                                            </div>
+                                            <EmptySearchState onQuestionSelect={handlePresetQuestion} />
                                         </div>
-                                        <EmptySearchState onQuestionSelect={handlePresetQuestion} />
-                                    </div>
-                                )}
+                                    )}
+                                </div>
                             </div>
+
+                            {/* <SearchHistory is_new={models.length === 0} setModels={setModels} setChatId={setChatId} latestChat={latestChat} /> */}
                         </div>
+                    )}
+                </div>
+                <FeedbackModal
+                    isOpen={showFeedbackModal}
+                    onClose={handleFeedbackModalClose}
+                    onSubmit={handleFeedbackSubmit}
+                    loading={isSubmittingFeedback}
+                    error={feedbackError}
+                />
+                    {models.length > 0 && (
+                        <div class="buttons-container">
+                        <button
+                            className="show-images-button"
+                            onClick={() => {
+                                const lastQuery = models[models.length - 1].questions.trim();
+                                if (lastQuery) {
+                                    window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(lastQuery)}`, '_blank');
+                                }
+                            }}
+                        >
+                            <CiImageOn size={15} />
+                            {'Related images\n'}
+                            <LuArrowRightFromLine size={15} />
+                        </button>
+                        </div>
+                    )}
 
-                        {/* <SearchHistory is_new={models.length === 0} setModels={setModels} setChatId={setChatId} latestChat={latestChat} /> */}
-                    </div>
-                )}
-            </div>
-            <FeedbackModal
-        isOpen={showFeedbackModal}
-        onClose={handleFeedbackModalClose}
-        onSubmit={handleFeedbackSubmit}
-        loading={isSubmittingFeedback}
-        error={feedbackError}
-      />
-
-{models.length > 0 && (
-    <button
-        className="show-images-button"
-        onClick={() => {
-            const lastQuery = models[models.length - 1].questions.trim();
-            if (lastQuery) {
-                window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(lastQuery)}`, '_blank');
-            }
-        }}
-    >
-        <CiImageOn size={15} />
-        {'Related images\n'}
-        <LuArrowRightFromLine size={15} />
-    </button>
-)}
-
-{models.length > 0 && (
-    <button
-        className="show-videos-button"
-        onClick={() => {
-            const lastQuery = models[models.length - 1].questions.trim();
-            if (lastQuery) {
-                window.open(`https://www.google.com/search?${encodeURIComponent(lastQuery)}=en&q=${encodeURIComponent(lastQuery)}&tbm=vid`, '_blank');
-            }
-        }}
-    >
-        <MdFeaturedVideo size={15} />
-        {'Related Videos\n'}
-        <LuArrowRightFromLine size={15} />
-    </button>
-)}
+                    {models.length > 0 && (
+                        <div class="buttons-container">
+                        <button
+                            className="show-videos-button"
+                            onClick={() => {
+                                const lastQuery = models[models.length - 1].questions.trim();
+                                if (lastQuery) {
+                                    window.open(`https://www.google.com/search?${encodeURIComponent(lastQuery)}=en&q=${encodeURIComponent(lastQuery)}&tbm=vid`, '_blank');
+                                }
+                            }}
+                        >
+                            <MdFeaturedVideo size={15} />
+                            {'Related Videos\n'}
+                            <LuArrowRightFromLine size={15} />
+                        </button>
+                        </div>
+                    )}
+                </div>
         </>
     );
 }

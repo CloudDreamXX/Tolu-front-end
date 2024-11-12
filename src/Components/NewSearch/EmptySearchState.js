@@ -10,7 +10,10 @@ const EmptySearchState = ({ onQuestionSelect }) => {
       "What lifestyle changes can reduce inflammation?",
       "What are the advantages and disadvantages of HRT?",
       "How to balance hormones naturally?",
-      "What supplements help with menopause symptoms?"
+      "What supplements help with menopause symptoms?",
+      "What are the best exercises during menopause?",
+      "How to manage stress?"
+
     ];
 
     const additionalQuestions = [
@@ -24,7 +27,7 @@ const EmptySearchState = ({ onQuestionSelect }) => {
 
     return (
       <div className="empty-search-container">
-        <h2 className="questions-title"> <BsLightbulb /> Things to ask</h2>
+        <h2 className="questions-title"> <BsLightbulb size={18}/> Things to ask</h2>
         <div className="preset-questions-grid">
           {displayedQuestions.map((question, index) => (
             <button

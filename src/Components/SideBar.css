@@ -1,9 +1,14 @@
+
+.box1, .box1 * {
+  background-color: #fff9f9;
+}
+
 .toggle-btn {
+  display: flexbox;
   color: #666;
   background: transparent;
   border: none;
-  padding: 4px;
-  display: flex;
+  margin-top: 30%;
   align-items: center;
   justify-content: center;
 }
@@ -13,12 +18,12 @@
 }
 
 .box1 {
-  background: #fff;
+  flex: 1;
+  background: #fff9f9;
   position: fixed;
   left: 0;
   transition: all 0.3s ease;
   border-right: 1px solid #f0f0f0;
-  display: flex;
   flex-direction: column;
   height: 100vh;
 }
@@ -26,8 +31,8 @@
 .side {
   align-items: center;
   padding: 8px 8px;
-  color: #fff;
-  background: #fff;
+  color: #fff9f9;
+  background: #fff9f9;
   transition: all 0.3s ease;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
@@ -92,6 +97,7 @@
 .history-section {
   display: flex;
   flex-direction: column;
+  color: #fff9f9;
 }
 
 .history-header {
@@ -120,16 +126,19 @@
   align-items: center;
   padding: 4px 4px;
   margin-left: 15px;
+  background-color: #fff9f9;
 }
 
 .collapsed-header {
   width: 100%;
+  background-color: #fff9f9;
 }
 
 .collapsed-content {
   display: flex;
   flex-direction: column;
   align-items: left;
+  background-color: #fff9f9;
 }
 
 .vita-heading {
@@ -150,7 +159,7 @@
 /* Add hover effects for the bottom buttons */
 .account:hover,
 .contact-support:hover {
-  background-color: #f5f5f5;
+  background-color: #fff9f9;
 }
 
 .bottom-buttons {
@@ -159,7 +168,7 @@
   left: 20px;
   right: 4px;
   text-align: left;
-  background: #fff;
+  background: #fff9f9;
   border-top: 1px solid #f0f0f0;
 }
 

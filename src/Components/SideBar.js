@@ -9,6 +9,8 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdSupportAgent } from "react-ic
 import { useDispatch, useSelector } from "react-redux";
 import { GetSearchHistory, GetSession, getUserProfile } from "../ReduxToolKit/Slice/userSlice";
 import './SideBar.css';
+import { FaRegArrowAltCircleRight } from "react-icons/fa";
+import { FaRegArrowAltCircleLeft } from "react-icons/fa";
 
 const { Sider } = Layout;
 
@@ -156,7 +158,6 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
       collapsedWidth={60}
       className={`box1 ${className ? className : ''}`}
       trigger={null}
-      theme="light"
     >
 <div className="sidebar-header">
   {!collapsed ? (
@@ -164,7 +165,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
       <h3 className="vita-heading">VITAI</h3>
       <Button
         type="text"
-        icon={ <GoSidebarCollapse size={20} />}
+        icon={ <FaRegArrowAltCircleLeft size={20} />}
         onClick={() => setCollapsed(!collapsed)}
         className="toggle-btn"
       />
@@ -175,7 +176,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
         <h3 className="v-heading">V</h3>
         <Button
           type="text"
-          icon={<GoSidebarCollapse size={20} />}
+          icon={<FaRegArrowAltCircleRight size={20} />}
           onClick={() => setCollapsed(!collapsed)}
           className="toggle-btn"
         />
@@ -183,7 +184,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
     </div>
   )}
 </div>
-      <div className={`mt-5 ${className ? "sidebar_text" : ''}`}>
+      <div className={`mt-4 ${className ? "sidebar_text" : ''}`}>
         <div
           className={`text-decor side ${isActive('/newsearch') ? 'active' : ''}`}
           onClick={handleNewSearch}
