@@ -24,7 +24,7 @@
 
 .button-area {
     width: 100vh;
-    height: 30px;
+    height: 0vh;
     border-bottom: 1px solid #ddd;
     display: flex;
     align-items: center;
@@ -32,7 +32,6 @@
     margin-bottom: 20px;
     position: sticky;
 }
-
 
 .searchpage-main{
     margin-top: 20px; /* Reduced from 40px */
@@ -191,12 +190,11 @@
 
 .main-div-height{
     height: 77vh !important;
-    overflow: auto;
+    overflow-y: scroll;
     width: 100vh;
 }
 .main-div{
     color: #707070;
-    padding-top: 0px;
 }
 
 .user{
@@ -296,7 +294,7 @@
 
   .show-images-button {
       position: absolute;
-      right: 60px;
+      right: 22vh;
       bottom: 5%;
       transform: translateY(-50%);
       background-color: white;
@@ -318,7 +316,7 @@
 
   .show-videos-button {
       position: absolute;
-      right: 55px;
+      right: 22vh;
       bottom: 0%;
       transform: translateY(-50%);
       background-color: white;
@@ -336,18 +334,18 @@
   }
 
 .delete-chat-button {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: none;
-      padding: 8px 16px;
-      color: black;
-      background: #fff;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: absolute;
-      top: 0px;
-      left: 500px;
+    display: flex;
+    align-items: center;
+    padding: 0.5%;
+    gap: 6px;
+    border: none;
+    color: black;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: absolute;
+    top: 2vh;
+    left: 85vh;
     }
 
     .delete-chat-button:hover {
@@ -363,22 +361,22 @@
     .new-search-button {
       display: flex;
       align-items: center;
-      gap: 8px;
+      padding: 0.5%;
+      gap: 6px;
       border: none;
-      padding: 8px 8px;
       color: black;
       background: #fff;
       cursor: pointer;
       transition: all 0.2s ease;
-      position: absolute;
-      top: 0px;
-      left: 350px;
+      position: relative;
+      top: 2vh;
+      margin-left: 30vh;
     }
 
     .new-search-button:hover {
       background-color: gray;
       color: white;
-    } */
+    }
 
 
     .file-upload-button {

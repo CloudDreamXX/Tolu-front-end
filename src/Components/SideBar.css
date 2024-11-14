@@ -4,23 +4,21 @@
 }
 
 .toggle-btn {
-  display: flexbox;
+  display: flex;
   color: #666;
   background: transparent;
   border: none;
-  margin-top: 30%;
+  margin-left: auto;
   align-items: center;
-  justify-content: center;
 }
 
 .toggle-btn:hover {
   background: rgba(0, 0, 0, 0.05);
 }
-
 .box1 {
   flex: 1;
   background: #fff9f9;
-  position: fixed;
+  position: relative;
   left: 0;
   transition: all 0.3s ease;
   border-right: 1px solid #f0f0f0;
@@ -30,65 +28,44 @@
 
 .side {
   align-items: center;
-  padding: 8px 8px;
+  width: auto;
   color: #fff9f9;
   background: #fff9f9;
   transition: all 0.3s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
 }
 
 .side svg {
-  min-width: 20px;
-  height: 24px;
-  margin-right: -20px;
+  min-width: 1.5rem;
+  height: 1.25rem;
+  margin-right: -5px;
   margin-left: 20px;
   color: #000;
+  justify-content: center;
 }
 
 .sidetext {
   opacity: 1;
   transition: opacity 0.3s ease;
-  font-weight: 400;
+  font-weight: 500;
   color: #000;
-  line-height: 24px;
+  line-height: 1rem;
+  border: 1px solid #f0f0f0;
 }
 
-/* Adjust account section */
-.account {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 12px 12px;
-  border-top: 1px solid #f0f0f0;
-  margin-bottom: 15px;
-}
-
-/* Adjust contact support button */
 .contact-support {
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 8px 8px;
-  margin-right: 30px;
+  margin-top: 1rem;
   border: 1px solid white;
 }
-
-/* Make account and support icons consistent */
-.account svg,
 .contact-support svg {
-  min-width: 20px;
-  height: 20px;
+  width: 1.5rem;
+  height: 1.5rem;
   margin-right: 0px;
 }
-
-/* .logo {
-  font-size: 24px;
-  font-weight: 700;
-  color: #000;
-  letter-spacing: 0.5px;
-} */
 
 .side:hover {
   background-color: #f5f5f5;
@@ -132,6 +109,7 @@
 .collapsed-header {
   width: 100%;
   background-color: #fff9f9;
+  align-items: center;
 }
 
 .collapsed-content {
@@ -150,7 +128,6 @@
 
 .v-heading {
   white-space: nowrap;
-  padding-left: 12px;
   font-weight: bold;
   margin: 0;
   color: #000;
@@ -165,11 +142,12 @@
 .bottom-buttons {
   position: absolute;
   bottom: 0px;
-  left: 20px;
-  right: 4px;
+  left: 0;
+  right: 0;
   text-align: left;
   background: #fff9f9;
   border-top: 1px solid #f0f0f0;
+  padding: 8px;
 }
 
 .history-toggle-btn:hover {
@@ -191,8 +169,60 @@
   padding: 8px 0;
 }
 
+.account-dropdown-toggle {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  border: 2px solid #bab9b9;
+  border-radius: 50px;
+  padding: 8px;
+}
+
+.account-text {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  font-weight: 500;
+  color: #000;
+  line-height: 2rem;
+  margin-left: 1.5rem;
+}
+
+.history-search {
+  margin: 5px 10px;
+  padding: 0.5rem 1.5rem; /* Adjust padding for better alignment */
+  width: 90%;
+  display: flex;
+  align-items: center;
+  border: 2px solid #bab9b9; /* Light border color */
+  border-radius: 50px; /* Rounded corners */
+  background-color: #f8f8f8; /* Light gray background */
+  outline: none; /* Remove default outline */
+}
+
+
+.search-icon {
+  flex:1;
+  position: sticky;
+  left: 10px; /* Adjust based on your layout */
+  color: #000;
+  font-size: 18px; /* Adjust size as needed */
+  pointer-events: none; /* Prevent icon from capturing clicks */
+}
+
+.recent-history-item-container {
+  position: relative;
+  width: 100%;
+}
+
+.context-menu {
+  background: gray;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  outline-color: gray;
+}
+
 .recent-history-item {
-  padding: 8px 16px;
+  padding: 8px 8px;
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;
@@ -209,3 +239,128 @@
   background-color: lightgray;
 }
 
+.recent-history-list {
+  max-height: calc(5 * 40px); /* Height of 5 items (assuming each item is 40px) */
+  overflow-y: hidden;
+  overflow-x: hidden;
+  padding-right: 5px; /* Add some padding for the scrollbar */
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+.history-section {
+  display: flex;
+}
+
+.recent-history-item {
+  height: 32px;
+  line-height: 32px;
+  padding: 0 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-category {
+  padding: 5px 0;
+}
+
+.history-date-label {
+  padding: 5px 15px;
+  font-weight: 500;
+  color: #666;
+  background-color: #f5f5f5;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* Make sure input fits within the scrollable area */
+.rename-input {
+  margin: 4px 10px;
+  width: 90%;
+  margin: 2px 10px;
+  border-radius: 4px;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 10px;
+  width: 100%;
+}
+
+
+/* Center icons when sidebar is collapsed */
+.ant-layout-sider-collapsed .side {
+  justify-content: center;
+  padding: 80;
+}
+
+.ant-layout-sider-collapsed .side svg {
+  margin: 0;
+}
+
+/* Add these styles to your SideBar.css file */
+.fixed-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh !important;
+  overflow: hidden;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.history-section {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.recent-history-list {
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.bottom-buttons {
+  margin-top: auto;
+  padding-bottom: 16px;
+}
+
+/* Ensure the main content adjusts for the fixed sidebar */
+.ant-layout {
+  padding-left: 60px; /* Width when collapsed */
+}
+
+.ant-layout:has(.fixed-sidebar:not(.ant-layout-sider-collapsed)) {
+  padding-left: 100px; /* Width when expanded */
+}

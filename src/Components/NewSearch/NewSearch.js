@@ -24,7 +24,7 @@ import { CiImageOn } from "react-icons/ci";
 import { MdFeaturedVideo } from "react-icons/md";
 import { LuArrowRightFromLine } from "react-icons/lu";
 import { IoMdAttach } from "react-icons/io";
-import { PostSearchBar } from './SearchComponents';
+import { PostSearchBar, PreSearchBar } from './SearchComponents';
 import { MdOutlineMessage } from "react-icons/md";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
@@ -217,7 +217,7 @@ const NewSearch = () => {
                         title="Delete this chat"
                     >
                         <RiDeleteBin2Line size={15} />
-                        {isDeletingChat ? 'Deleting...' : 'Delete Chat'}
+                        {isDeletingChat ? 'Deleting...' : 'Delete'}
                     </button>
                 </div>
             );
@@ -530,7 +530,7 @@ const NewSearch = () => {
         return models.length > 0 ? (
             <PostSearchBar {...props} />
         ) : (
-            <PostSearchBar {...props} />
+            <PreSearchBar {...props} />
         );
     };
 
@@ -549,10 +549,10 @@ const NewSearch = () => {
                         <div className='row'>
                             <div className='col-lg-1'></div>
                             <div className='col-lg-7'>
-                                <div className='searchpage-main'>
+                            <div className='searchpage-main'>
+                            <div></div>
                                     {models.length > 0 ? (
                                         <>
-                                            <div class="button-area"></div>
                                             <div ref={scrollableDivRef} className='main-div-height'>
                                                 {models.map((model, index) => (
                                                     <React.Fragment key={index}>
@@ -564,7 +564,7 @@ const NewSearch = () => {
                                                             <div className='display'><MdOutlineMessage size={18}/><span className='text'>&nbsp; Answer</span></div>
                                                             <div className='ques-ans' dangerouslySetInnerHTML={{ __html: model.answers }} />
                                                         </div>
-                                                        <div className="button-group" style={{ marginLeft: "12px" }}>
+                                                        <div className="button-group" style={{ marginLeft: "10vh", marginBottom: "10vh" }}>
                                                             <button className="generator-icon" onClick={(event) => {
                                                                 handleCopyResponse(model.answers);
                                                                 const tooltip = document.getElementById('copy-tooltip');
@@ -577,7 +577,7 @@ const NewSearch = () => {
                                                                 }, 2000);
                                                             }}>
                                                                 <IoCopyOutline />
-                                                                <span STYLE="font-size:4mm">      Copy</span>
+                                                                <span STYLE="font-size:4mm">Copy</span>
                                                             </button>
                                                             {
                                                                 speaking ? (
@@ -671,7 +671,7 @@ const NewSearch = () => {
                     error={feedbackError}
                 />
                     {models.length > 0 && (
-                        <div class="buttons-container">
+                        <div>
                         <button
                             className="show-images-button"
                             onClick={() => {
@@ -689,7 +689,7 @@ const NewSearch = () => {
                     )}
 
                     {models.length > 0 && (
-                        <div class="buttons-container">
+                        <div>
                         <button
                             className="show-videos-button"
                             onClick={() => {
@@ -705,7 +705,7 @@ const NewSearch = () => {
                         </button>
                         </div>
                     )}
-                </div>
+                    </div>
         </>
     );
 }

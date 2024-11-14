@@ -10,7 +10,7 @@
 
 .main-search {
   width: 100vh;
-  max-width: 960px;
+  max-width: 100vh;
   margin: 0 auto;
   border: 2px solid #d9d9d9;
 }
@@ -19,16 +19,14 @@
   margin-top: 40px;
 }
 
-/* .search-form-container {
-  display: flex;
-  align-items: flex-start;
+.search-form-container-post {
   gap: 10px;
   background: #fff;
-  border-radius: 15px;
-  padding: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
-} */
+  padding: 0vw;
+
+}
 
 /* .file-upload-container {
   display: flex;
