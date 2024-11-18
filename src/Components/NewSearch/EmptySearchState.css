@@ -52,13 +52,13 @@
   /* Add grid constraints */
   grid-template-columns: repeat(2, minmax(200px, 1fr));
   /* Prevent content reflow */
-  min-width: 200px;
+  min-width: 100px;
 }
 
 .preset-question-button {
   width: 100%;
   min-height: 28px; /* Add minimum height */
-  padding: 2px 2px;
+  padding: 0.5rem 0.5rem;
   background-color: white;
   border: 2px solid #d9d9d9;
   border-radius: 8px;

@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Layout, Dropdown, Button, Input, Menu } from "antd";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SlNote } from "react-icons/sl";
 import { RxCounterClockwiseClock } from "react-icons/rx";
-import { FaRegArrowAltCircleRight, FaRegArrowAltCircleLeft, FaSearch, FaRegUserCircle } from "react-icons/fa";
-import { MdSupportAgent } from "react-icons/md";
+import { FaRegArrowAltCircleRight, FaRegArrowAltCircleLeft, FaRegUserCircle, FaUserEdit } from "react-icons/fa";
+import { MdSupportAgent, MdLogout } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { GetSearchHistory, GetSession, getUserProfile, updateChatTitle } from "../ReduxToolKit/Slice/userSlice";
 import './SideBar.css';
+import { IoSearch } from "react-icons/io5";
 
 const { Sider } = Layout;
 
@@ -20,6 +21,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
   const [newTitle, setNewTitle] = useState('');
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, chatId: null });
   const renameInputRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -92,8 +94,8 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
   const filterHistories = (histories) => {
     if (!searchTerm) return histories;
     return histories.filter(item =>
-      (item.chat_title?.toLowerCase().includes(searchTerm) ||
-       item.query.toLowerCase().includes(searchTerm))
+    (item.chat_title?.toLowerCase().includes(searchTerm) ||
+      item.query.toLowerCase().includes(searchTerm))
     );
   };
 
@@ -191,19 +193,55 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
     setShowRecentHistory(!showRecentHistory);
   };
 
-  const accountItems = [
-    {
-      key: "1",
-      label: "Edit Profile",
-      style: { borderRadius: "0px" },
-      onClick: () => navigate("/profile"),
-    },
-    {
-      key: "2",
-      label: "Logout",
-      onClick: handleLogout,
-    },
-  ];
+  const handleSearchIconClick = () => {
+    setCollapsed(false);
+    // Use setTimeout to ensure the search input is rendered before focusing
+    setTimeout(() => {
+      if (searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    }, 100);
+  };
+
+  const accountItems = () => {
+    if (collapsed) {
+      return [
+        {
+          key: "1",
+          label: (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <FaUserEdit size={20} />
+            </div>
+          ),
+          style: { borderRadius: "0px" },
+          onClick: () => navigate("/profile"),
+        },
+        {
+          key: "2",
+          label: (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <MdLogout size={20} />
+            </div>
+          ),
+          onClick: handleLogout,
+        },
+      ];
+    } else {
+      return [
+        {
+          key: "1",
+          label: "Edit Profile",
+          style: { borderRadius: "0px" },
+          onClick: () => navigate("/profile"),
+        },
+        {
+          key: "2",
+          label: "Logout",
+          onClick: handleLogout,
+        },
+      ];
+    }
+  };
 
   const groupedHistory = filterHistories(recentHistory).reduce((groups, item) => {
     const category = categorizeDates(item.created_at);
@@ -233,35 +271,48 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
       }}
     >
       <div className="sidebar-content" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <div className="sidebar-header">
-          {!collapsed ? (
-            <>
-              <h3 className="vita-heading">VITAI</h3>
-              <Button
-                type="text"
-                icon={<FaRegArrowAltCircleLeft size={20} />}
-                onClick={() => setCollapsed(!collapsed)}
-                className="toggle-btn"
-              />
-            </>
-          ) : (
-            <div className="collapsed-header">
-              <div className="collapsed-content">
-                <h3 className="v-heading">V</h3>
-                <Button
-                  type="text"
-                  icon={<FaRegArrowAltCircleRight size={20} />}
-                  onClick={() => setCollapsed(!collapsed)}
-                  className="toggle-btn"
-                />
-              </div>
-            </div>
-          )}
+      <div className="sidebar-header">
+  {!collapsed ? (
+    <>
+      <h3 className="vita-heading">VITAI</h3>
+      <Button
+        type="text"
+        icon={<FaRegArrowAltCircleLeft size={20} />}
+        onClick={() => setCollapsed(!collapsed)}
+        className="toggle-btn"
+      />
+    </>
+  ) : (
+    <div className="collapsed-header">
+      <div className="collapsed-content">
+        <h3 className="v-heading">V</h3>
+        <Button
+          type="text"
+          icon={<FaRegArrowAltCircleRight size={20} />}
+          onClick={() => setCollapsed(!collapsed)}
+          className="toggle-btn"
+        />
+      </div>
+    </div>
+  )}
+
         </div>
 
-        {!collapsed && (
+        {collapsed ? (
+          <div className="mt-4">
+            <div
+              className="side"
+              onClick={handleSearchIconClick}
+              style={{ cursor: 'pointer' }}
+              title="Search Chats"
+            >
+              <IoSearch size={20} />
+            </div>
+          </div>
+        ) : (
           <div className="history-search-container">
             <input
+              ref={searchInputRef}
               type="text"
               placeholder="Chat Search"
               className="history-search"
@@ -331,7 +382,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
 
         <div className="bottom-buttons" style={{ marginTop: 'auto' }}>
           <Dropdown
-            menu={{ items: accountItems }}
+            menu={{ items: accountItems() }}
             placement="bottomCenter"
             arrow={true}
           >
@@ -367,8 +418,11 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
             style={{ cursor: 'pointer' }}
             title="Contact Support"
           >
-            <MdSupportAgent />
-            {!collapsed && <span className="sidetext">Contact Support</span>}
+            {collapsed ? (
+              <MdSupportAgent size={25} />
+            ) : (
+              <span className="sidetext">Contact Support</span>
+            )}
           </Button>
         </div>
       </div>

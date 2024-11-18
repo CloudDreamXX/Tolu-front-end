@@ -155,7 +155,7 @@ const NewSearch = () => {
             setIsDeletingChat(true);
             try {
                 await dispatch(deleteChat(chatId)).unwrap();
-                navigate('/search-history', { replace: true });
+                navigate('/newsearch', { replace: true });
                 window.location.reload();
             } catch (error) {
                 console.error('Failed to delete chat:', error);
@@ -547,7 +547,7 @@ const NewSearch = () => {
                         </div>
                     ) : (
                         <div className='row'>
-                            <div className='col-lg-1'></div>
+                            <div className='col-lg-4'></div>
                             <div className='col-lg-7'>
                             <div className='searchpage-main'>
                             <div></div>
@@ -671,7 +671,7 @@ const NewSearch = () => {
                     error={feedbackError}
                 />
                     {models.length > 0 && (
-                        <div>
+                        <div className='action-buttons-group'>
                         <button
                             className="show-images-button"
                             onClick={() => {
@@ -689,7 +689,7 @@ const NewSearch = () => {
                     )}
 
                     {models.length > 0 && (
-                        <div>
+                        <div className='action-buttons-group'>
                         <button
                             className="show-videos-button"
                             onClick={() => {

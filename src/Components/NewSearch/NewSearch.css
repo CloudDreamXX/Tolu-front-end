@@ -1,7 +1,8 @@
 #wrapper {
     margin-left:auto;
     margin-right:auto;
-    width:960px;
+    width:100%;
+    color: #fff;
 }
 
 .main{
@@ -36,7 +37,8 @@
 .searchpage-main{
     margin-top: 20px; /* Reduced from 40px */
     margin-right: 50px;
-    width: 88%;
+    width: 100vh;
+    height: 100vh;
 }
 
 .loading-icons {
@@ -293,10 +295,8 @@
   }
 
   .show-images-button {
-      position: absolute;
-      right: 22vh;
-      bottom: 5%;
-      transform: translateY(-50%);
+      position: sticky;
+      transform: translateY(-650%);
       background-color: white;
       color: black;
       padding: 5px 5px;
@@ -308,6 +308,7 @@
       flex-direction: row;
       align-items: center;
       min-width: fit-content;
+      margin-left: 85%;
   }
 
   .show-images-button:hover {
@@ -315,10 +316,9 @@
   }
 
   .show-videos-button {
-      position: absolute;
-      right: 22vh;
-      bottom: 0%;
-      transform: translateY(-50%);
+      position: sticky;
+      transform: translateY(-600%);
+      margin-left: 85%;
       background-color: white;
       color: black;
       padding: 5px 5px;
@@ -343,9 +343,9 @@
     background: #fff;
     cursor: pointer;
     transition: all 0.2s ease;
-    position: absolute;
-    top: 2vh;
-    left: 85vh;
+    position: sticky;
+    margin-left: 3%;
+    margin-top: 2%;
     }
 
     .delete-chat-button:hover {
@@ -368,9 +368,9 @@
       background: #fff;
       cursor: pointer;
       transition: all 0.2s ease;
-      position: relative;
-      top: 2vh;
-      margin-left: 30vh;
+      position: sticky;
+      margin-left: 33.5%;
+      margin-top: 2%;
     }
 
     .new-search-button:hover {
@@ -415,3 +415,9 @@
         color: #0066cc;
     }
 
+
+    .action-buttons-group {
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+    }

@@ -8,8 +8,9 @@
   color: #666;
   background: transparent;
   border: none;
+  padding-right: 1.5rem;
   margin-left: auto;
-  align-items: center;
+  margin-top: 1rem;
 }
 
 .toggle-btn:hover {
@@ -26,6 +27,7 @@
   height: 100vh;
 }
 
+/* Base icon positioning */
 .side {
   align-items: center;
   width: auto;
@@ -34,6 +36,8 @@
   transition: all 0.3s ease;
   font-size: 12px;
   display: flex;
+  padding: 8px 16px; /* Add consistent padding */
+  position: relative; /* For consistent icon positioning */
 }
 
 .side svg {
@@ -60,11 +64,28 @@
   align-items: center;
   margin-top: 1rem;
   border: 1px solid white;
+  padding: 8px 16px;
+  justify-content: flex-start; /* Align content to the left */
 }
+
+.contact-support .sidetext {
+  margin-left: 0; /* Remove any left margin when showing text */
+}
+
+/* Adjust the icon alignment when collapsed */
+.ant-layout-sider-collapsed .contact-support {
+  justify-content: center; /* Center the icon when collapsed */
+  padding: 8px 0;
+}
+
+.ant-layout-sider-collapsed .contact-support svg {
+  margin: 0; /* Remove any margins on the icon when collapsed */
+}
+
 .contact-support svg {
-  width: 1.5rem;
+  width: 2rem;
   height: 1.5rem;
-  margin-right: 0px;
+  position: sticky;
 }
 
 .side:hover {
@@ -98,11 +119,10 @@
 }
 
 .sidebar-header {
-  display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 4px;
   margin-left: 15px;
+  margin-top: -0.5rem;
   background-color: #fff9f9;
 }
 
@@ -129,7 +149,7 @@
 .v-heading {
   white-space: nowrap;
   font-weight: bold;
-  margin: 0;
+  margin-left: 0.25rem;
   color: #000;
 }
 
@@ -169,14 +189,27 @@
   padding: 8px 0;
 }
 
+/* Account dropdown specific styles */
 .account-dropdown-toggle {
-  width: 100%;
+  width: 90%; /* Account for padding */
   height: auto;
-  display: flex;
   align-items: center;
   border: 2px solid #bab9b9;
   border-radius: 50px;
-  padding: 8px;
+  padding: 0.25rem;
+  margin: 0px;
+  position: sticky;
+  z-index: 10;
+}
+
+/* Adjust the icon alignment when collapsed */
+.ant-layout-sider-collapsed .account-dropdown-toggle {
+  justify-content: center; /* Center the icon when collapsed */
+  padding: 8px 0;
+}
+
+.ant-layout-sider-collapsed .account-dropdown-toggle svg {
+  margin: 0; /* Remove any margins on the icon when collapsed */
 }
 
 .account-text {
@@ -189,10 +222,11 @@
 }
 
 .history-search {
-  margin: 5px 10px;
+  margin: 0.5rem 0.5rem;
   padding: 0.5rem 1.5rem; /* Adjust padding for better alignment */
   width: 90%;
   display: flex;
+  margin-top: 1rem;
   align-items: center;
   border: 2px solid #bab9b9; /* Light border color */
   border-radius: 50px; /* Rounded corners */
@@ -256,20 +290,6 @@
   border-radius: 3px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* For Firefox */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1;
-}
 
 .history-section {
   display: flex;
@@ -314,17 +334,6 @@
   width: 100%;
 }
 
-
-/* Center icons when sidebar is collapsed */
-.ant-layout-sider-collapsed .side {
-  justify-content: center;
-  padding: 80;
-}
-
-.ant-layout-sider-collapsed .side svg {
-  margin: 0;
-}
-
 /* Add these styles to your SideBar.css file */
 .fixed-sidebar {
   position: fixed;
@@ -356,11 +365,127 @@
   padding-bottom: 16px;
 }
 
-/* Ensure the main content adjusts for the fixed sidebar */
-.ant-layout {
-  padding-left: 60px; /* Width when collapsed */
+/* Collapsed state adjustments */
+.ant-layout-sider-collapsed .side {
+  padding: 8px 0; /* Reduce padding when collapsed */
+  justify-content: center;
 }
 
-.ant-layout:has(.fixed-sidebar:not(.ant-layout-sider-collapsed)) {
-  padding-left: 100px; /* Width when expanded */
+.ant-layout-sider-collapsed .side svg {
+  position: static; /* Reset position when collapsed */
+  margin: 0; /* Remove margins */
+}
+
+.ant-layout-sider-collapsed .sidetext {
+  display: none; /* Hide text when collapsed */
+}
+
+/* Add these styles to your existing SideBar.css */
+
+/* Search icon positioning */
+.search-icon {
+  position: absolute;
+  left: 16px;
+  color: #000;
+  font-size: 18px;
+  pointer-events: none;
+}
+
+.side:hover .search-icon {
+  color: #000;
+}
+
+.history-search-container {
+  padding: 0 8px;
+  margin-top: 8px;
+}
+
+.history-search:focus {
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  outline: none;
+}
+
+/* ... (keep all existing styles before .sidebar-content) ... */
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.history-section {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Critical for nested flex scrolling */
+}
+
+.recent-history-list {
+  flex: 1;
+  overflow-y: auto;
+  /* Calculate height by subtracting header + bottom buttons */
+  max-height: calc(100vh - 250px); /* Adjust this value based on your header and bottom button heights */
+  padding-bottom: 16px; /* Add some padding at the bottom */
+  margin-bottom: 0; /* Remove margin to prevent overflow */
+}
+
+.bottom-buttons {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff9f9;
+  border-top: 1px solid #f0f0f0;
+  padding: 8px;
+  margin-top: auto;
+  z-index: 10; /* Ensure buttons stay above scrolling content */
+}
+
+/* Ensure history items don't overflow */
+.history-category {
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.recent-history-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #000;
+}
+
+/* Add a fade effect before the bottom buttons */
+.history-section::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(transparent, #fff9f9);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Adjust scrollbar to not interfere with bottom buttons */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+  margin-bottom: 100px; /* Add margin to prevent scrollbar from going behind buttons */
 }
