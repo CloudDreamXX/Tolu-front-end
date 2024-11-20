@@ -12,13 +12,13 @@ const EmptySearchState = ({ onQuestionSelect }) => {
       "How to balance hormones naturally?",
       "What supplements help with menopause symptoms?",
       "What are the best exercises during menopause?",
-      "How to manage stress?"
+      "How can I manage stress effectively?"
 
     ];
 
     const additionalQuestions = [
-      "What are the best exercises during menopause?",
-      "How to manage stress?"
+      "Are protein supplements safe for daily use?",
+      "What are the symptoms of anxiety disorder?"
     ];
 
     const displayedQuestions = showMore

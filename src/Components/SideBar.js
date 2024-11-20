@@ -262,7 +262,7 @@ const SideBar = ({ className, setModels, setChatId, latestChat }) => {
       className={`box1 fixed-sidebar ${className ? className : ''}`}
       trigger={null}
       style={{
-        position: 'fixed',
+        position: 'sticky',
         left: 0,
         top: 0,
         height: '100vh',

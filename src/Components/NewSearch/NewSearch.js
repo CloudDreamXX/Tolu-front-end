@@ -547,7 +547,7 @@ const NewSearch = () => {
                         </div>
                     ) : (
                         <div className='row'>
-                            <div className='col-lg-4'></div>
+                            <div className='col-lg-3'></div>
                             <div className='col-lg-7'>
                             <div className='searchpage-main'>
                             <div></div>
@@ -564,7 +564,7 @@ const NewSearch = () => {
                                                             <div className='display'><MdOutlineMessage size={18}/><span className='text'>&nbsp; Answer</span></div>
                                                             <div className='ques-ans' dangerouslySetInnerHTML={{ __html: model.answers }} />
                                                         </div>
-                                                        <div className="button-group" style={{ marginLeft: "10vh", marginBottom: "10vh" }}>
+                                                        <div className="button-group" style={{ }}>
                                                             <button className="generator-icon" onClick={(event) => {
                                                                 handleCopyResponse(model.answers);
                                                                 const tooltip = document.getElementById('copy-tooltip');

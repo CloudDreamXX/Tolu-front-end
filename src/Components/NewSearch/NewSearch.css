@@ -6,21 +6,25 @@
 }
 
 .main{
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: #fff;
-    margin: 17vh 15% 17vh 15%;
+    margin: 100px 150px 20px 0px; /* Top Right Bottom Left */
+    width: 100vh;
 }
 
 .main-search{
-    border: 1px solid #b1b1b1;
+    border: 2px solid #d9d9d9;
     border-radius: 10px;
     margin-bottom: 8px !important;
     position: sticky; /* Make it stick to the top */
     bottom: 0;         /* Position at the top */
     background: #fff; /* Ensure background is solid */
     z-index: 10;    /* Keep it above other content */
+    width: 100vh;
+    max-width: 100vh;
 }
 
 .button-area {
@@ -291,7 +295,6 @@
     border-radius: 15px;
     padding: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
   }
 
   .show-images-button {
@@ -369,7 +372,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
       position: sticky;
-      margin-left: 33.5%;
+      margin-left: 25%;
       margin-top: 2%;
     }
 
@@ -421,3 +424,4 @@
         display: flex;
         align-items: center;
     }
+
