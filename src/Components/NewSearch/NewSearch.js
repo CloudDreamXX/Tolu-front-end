@@ -280,6 +280,7 @@ const NewSearch = () => {
                         'Accept': 'text/event-stream',
                     },
                     body: formData,
+                    openWhenHidden: true,
                     onopen(response) {
                         if (response.ok && response.status === 200) {
                             console.log("Connection made ", response);
@@ -327,6 +328,7 @@ const NewSearch = () => {
                         setLoading(false);
                         setSelectedFile(null);
                     },
+
                     onerror(err) {
                         console.log("There was an error from server", err);
                         setLoading(false);
