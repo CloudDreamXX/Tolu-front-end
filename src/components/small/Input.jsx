@@ -1,8 +1,12 @@
 // eslint-disable-next-line react/prop-types
-const Input = ({ type = "text", label, ...rest }) => {
+const Input = ({ style, type = "text", label, ...rest }) => {
   return (
     <div>
-      <label className="text-base md:text-lg text-textColor/80 pb-1 block">
+      <label
+        className={`${
+          style ? style : "text-base md:text-lg text-textColor/80 pb-1 block"
+        }`}
+      >
         {label}
       </label>
       <input

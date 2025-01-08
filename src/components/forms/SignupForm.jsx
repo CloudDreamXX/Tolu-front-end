@@ -34,9 +34,46 @@ const SignupForm = () => {
       </div>
       <div className="lg:col-span-6">
         <Input
+          label="Last name"
+          placeholder="Last Name"
+          name="lastName"
+          onChange={formDataChangeHandler}
+        />
+      </div>
+      <div className="lg:col-span-6">
+        <Input
           label="Nick name"
           placeholder="Nick Name"
           name="nickName"
+          onChange={formDataChangeHandler}
+        />
+      </div>
+      <div className="lg:col-span-6">
+        <Dropdown
+          defaultText="Select"
+          label="Gender"
+          options={[
+            { option: "Male", value: "male" },
+            { option: "Female", value: "female" },
+          ]}
+        />
+      </div>
+
+      <div className="lg:col-span-6">
+        <Input
+          label="Phone number"
+          placeholder="number"
+          type="tel"
+          name="phoneNumber"
+          onChange={formDataChangeHandler}
+        />
+      </div>
+
+      <div className="lg:col-span-6">
+        <Input
+          label="Nationality"
+          placeholder="nationality"
+          name="nationality"
           onChange={formDataChangeHandler}
         />
       </div>
@@ -55,34 +92,7 @@ const SignupForm = () => {
           onClick={() => setVerifyEmail(false)}
         />
       </div>
-      <div className="lg:col-span-6">
-        <Input
-          label="Phone number"
-          placeholder="phone"
-          type="tel"
-          name="phoneNumber"
-          onChange={formDataChangeHandler}
-        />
-      </div>
-      <div className="lg:col-span-6">
-        <Dropdown
-          defaultText="Select"
-          label="Gender"
-          options={[
-            { option: "Male", value: "male" },
-            { option: "Female", value: "female" },
-          ]}
-        />
-      </div>
-      <div className="lg:col-span-6">
-        <Input
-          label="Nationality"
-          placeholder="nationality"
-          name="nationality"
-          onChange={formDataChangeHandler}
-        />
-      </div>
-      <div className="lg:col-span-6">
+      {/* <div className="lg:col-span-6">
         <Input
           label="Date"
           placeholder="Date of birth"
@@ -90,7 +100,7 @@ const SignupForm = () => {
           type="date"
           onChange={formDataChangeHandler}
         />
-      </div>
+      </div> */}
       <div
         className={`lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 ${
           verifyEmail ? "opacity-50" : "opacity-100"
