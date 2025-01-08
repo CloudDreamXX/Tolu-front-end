@@ -17,7 +17,7 @@ const SignupForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="py-5 px-5 sm:py-[25px] lg:py-[35px] sm:px-[35px] border-2 border-primary/10 rounded-[20px] mt-6 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6"
+      className="bg-transparent shadow-md backdrop-blur-[20px] py-5 px-5 sm:py-[25px] lg:py-[30px] sm:px-[35px] border-2 border-primary/10 rounded-[20px] mt-6 grid grid-cols-1 lg:grid-cols-12 gap-4 "
     >
       <div className="lg:col-span-12 flex justify-center">
         <h5 className="text-xl md:text-[32px] bg-gradientText text-transparent bg-clip-text font-extrabold leading-none">

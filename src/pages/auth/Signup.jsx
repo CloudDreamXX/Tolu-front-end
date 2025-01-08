@@ -4,15 +4,15 @@ import SignupForm from "../../components/forms/SignupForm";
 
 const Signup = () => {
   return (
-    <section className="w-full bg-white py-5 md:py-[44px] min-h-screen bg-[url('src/assets/images/auth/layout-bg.png')] bg-no-repeat bg-left-top bg-contain">
-      <section className="container mx-auto flex flex-col justify-between gap-20 sm:gap-8 h-full">
-        <div className="flex justify-end">
-          <div className="flex items-center gap-4 w-full sm:w-auto px-4">
+    <section className="w-full bg-white py-5 md:py-[30px] min-h-screen lg:h-screen  bg-[url('src/assets/images/auth/layout-bg.png')] bg-no-repeat bg-left-top bg-contain">
+      <section className="container mx-auto flex flex-col gap-20 sm:gap-10 h-full">
+        <div className="flex justify-end ">
+          <div className="flex items-center gap-4 w-full sm:w-auto ">
             <Button text="Login" bg="bg-white text-primary" />
             <Button text="Sign Up" />
           </div>
         </div>
-        <div className="mx-auto w-full lg:w-[1200px]">
+        <div className="mx-auto w-full lg:w-[1100px]">
           <div className="flex justify-center">
             <img src={logo} alt="logo" className="w-[130px]" />
           </div>
