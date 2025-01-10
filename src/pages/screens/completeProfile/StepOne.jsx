@@ -1,3 +1,5 @@
+import axios from "axios";
+
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import Mcq from "../../../components/questions/mcq/Mcq";
@@ -38,9 +40,32 @@ const StepOne = ({ setCurrentStep }) => {
     setIsFormValid(allRequiredFilled);
   }, [answers]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        date_of_birth: answers[0],
+        birth_gender: answers[1],
+        current_gender: answers[2],
+        pronouns: answers[3],
+        heritage: answers[4],
+        primary_language: answers[5],
+        partner_pronouns: answers[6],
+        partner_status: answers[7] === "Yes" ? "Has partner" : "No partner",
+        blood_type: answers[8] || null,
+        children_details: answers[9],
+        height_and_weight: answers[10] || null,
+      };
+
+      const response = await axios.post(
+        "https://search.vitai.health:8000/personal-information",
+        payload
+      );
+
+      console.log("Data submitted successfully:", response.data);
+    } catch (error) {
+      console.error("Error submitting data:", error.response || error.message);
+    }
     setCurrentStep((prevStep) => prevStep + 1);
-    console.log(answers);
   };
 
   return (
