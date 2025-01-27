@@ -1,5 +1,5 @@
 import Button from "../../components/small/Button";
-import logo from "../../assets/images/logo.png";
+// import logo from "../../assets/images/logo.png";
 import SignupForm from "../../components/forms/SignupForm";
 
 const Signup = () => {
@@ -14,7 +14,7 @@ const Signup = () => {
         </div>
         <div className="mx-auto w-full lg:w-[1100px]">
           <div className="flex justify-center">
-            <img src={logo} alt="logo" className="w-[130px]" />
+            {/* <img src={logo} alt="logo" className="w-[130px]" /> */}
           </div>
           <SignupForm />
         </div>
