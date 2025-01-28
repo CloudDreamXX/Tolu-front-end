@@ -5,6 +5,8 @@ import CompleteProfile from "./pages/screens/completeProfile/CompleteProfile";
 import Chat from "./pages/screens/chat/Chat";
 import Library from "./pages/user/library/library";
 import User from "./pages/user";
+import Admin from "./pages/admin";
+import AddBlog from "./pages/admin/addBlog/AddBlog";
 
 function App() {
   return (
@@ -16,6 +18,9 @@ function App() {
         <Route path="chat" element={<Chat />} />
         <Route path="/user" element={<User />}>
           <Route index element={<Library />} />
+        </Route>
+        <Route path="/admin" element={<Admin />}>
+          <Route index element={<AddBlog />} />
         </Route>
       </Routes>
     </BrowserRouter>

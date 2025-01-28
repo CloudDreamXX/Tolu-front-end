@@ -9,20 +9,24 @@ import { Link, useLocation } from "react-router-dom";
 // //   BookedIcon,
 // //   FreeSlotsIcon,
 // // } from "../../assets/svgs/Icon";
-import Aside from "../aside/Aside";
+// import Aside from "../aside/Aside";
 import Notification from "./Notification";
 import { IoHomeOutline } from "react-icons/io5";
 import { IoLibraryOutline } from "react-icons/io5";
 import { CiShop } from "react-icons/ci";
 import { MdHistory } from "react-icons/md";
 import { FaHeadset } from "react-icons/fa";
-import { HeaderChevronIcon } from "../../assets/svgs/Icon";
+// import { HeaderChevronIcon } from "../../assets/svgs/Icon";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
+import Aside from "../../../../layout/aside/Aside";
+// import Aside from "../aside/Aside";
+
+import { IoIosSearch } from "react-icons/io";
 
 
 
-const Header = () => {
+const AdminHeader = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
@@ -78,11 +82,10 @@ const Header = () => {
 
   // Function to return classes dynamically based on active index
   const getClassNames = (index) => {
-    return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${
-      index === activeIndex
+    return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${index === activeIndex
         ? 'border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2' // Active styles
         : 'border-2 border-transparent shadow-none p-2' // Default styles
-    }`;
+      }`;
   };
 
 
@@ -101,39 +104,16 @@ const Header = () => {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <ul className="flex space-x-4">
-            {/* MY Space Item */}
-            <li className={getClassNames(0)} onClick={() => handleClick(0)}>
-              <a href="#" className="flex items-center gap-3">
-                <IoHomeOutline />
-                <span>MY Space</span>
-              </a>
-            </li>
-
-            {/* Search Item */}
-            <li className={getClassNames(1)} onClick={() => handleClick(1)}>
-              <a href="#" className="flex items-center gap-3">
-                <IoLibraryOutline />
-                <span>Search</span>
-              </a>
-            </li>
-
-            {/* Notifications Item */}
-            <li className={getClassNames(2)} onClick={() => handleClick(2)}>
-              <a href="#" className="flex items-center gap-3">
-                <CiShop />
-                <span>Notifications</span>
-              </a>
-            </li>
-
-            {/* Profile Item */}
-            <li className={getClassNames(3)} onClick={() => handleClick(3)}>
-              <a href="#" className="flex items-center gap-3">
-                <MdHistory />
-                <span>Profile</span>
-              </a>
-            </li>
-          </ul>
+          <div className="relative w-full max-w-xs">
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full pl-10 pr-4 py-2 shadow-[#7090B014] border border-[#ACACAC] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#1D1D1F99]">
+              <IoIosSearch className="text-2xl font-bold" />
+            </span>
+          </div>
         </div>
 
 
@@ -189,11 +169,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      {/* <div className="flex flex-wrap items-center gap-4">
-        <h2 className="text-lg md:text-2xl text-white font-semibold capitalize basis-[30%]">
-          {["admin", "manager", "user"].includes(pageName) ? "Dashboard" : pageName}
-        </h2>
-      </div> */}
+      
       <div
         className={`block xl:hidden fixed w-full h-full inset-0 bg-[#00000071] z-50 transition-all duration-500 ${mobileNav
           ? "visible opacity-100"
@@ -212,7 +188,7 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default AdminHeader;
 
 const Profile = () => {
   return (
