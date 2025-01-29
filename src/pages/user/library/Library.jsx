@@ -9,7 +9,6 @@ import ModalManager from './components/ModalManager';
 function Library() {
   const [isFocused, setIsFocused] = useState(false);
   const [value, setValue] = useState("");
-  // const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [dropdownData, setDropdownData] = useState([]);
   console.log("iou8y7t6utudychg", dropdownData);
@@ -85,11 +84,48 @@ function Library() {
     { title: "GraphQL for Beginners", date: "2025-03-05", topics: 6 },
     { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
     { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
-    { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
+    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
+    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
+    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
+    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
+    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
   ];
   useEffect(() => {
     setModalOpen(true)
   }, [])
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleInputChange = (value) => {
+    setInputValue(value);
+};
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+    console.log('File selected:', file);
+  };
+
+  const handleFileCardClick = () => {
+    document.getElementById('file-input').click();
+  };
+
+
+  const handleSubmitValue = (value) => {
+    alert(`Submitted Value: ${value}`);
+  };
+
+  const handleFileUpload = (file) => {
+    console.log("Uploaded File:", file.name);
+    alert(`File Uploaded: ${file.name}`);
+  };
+
+
+
 
   return (
     <>
@@ -97,8 +133,11 @@ function Library() {
         <ModalManager
           setModalOpen={setModalOpen}
           setDropdownData={setDropdownData}
+          closeModal={closeModal}
+
         />
       )}
+
       <div className='w-full h-full p-2'>
         <div className="grid gap-6 h-[400px] overflow-y-auto sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           {cardsData.map((card, index) => (
@@ -113,10 +152,7 @@ function Library() {
           ))}
         </div>
 
-
-
-        <div className="grid gap-4 gap-y-8 mt-8 h-[400px] overflow-y-auto  sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 ">
-          {/* <AnimationCard title="Neuro System Health" date="22-02-2025" topics={10} /> */}
+        <div className="grid gap-4 gap-y-10 mt-8 h-[400px] overflow-y-auto xs:grid-cols-1 xs:p-16 md:p-0  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 ">
           {webinars.map((webinar, index) => (
             <AnimationCard
               key={`webinar-${index}`}
@@ -126,21 +162,17 @@ function Library() {
             />
           ))}
         </div>
-        {/* <div className="flex justify-center items-center h-screen bg-gray-100"> */}
-        {/* <LibraryInput placeholder="Ask anything..." /> */}
+
         <section className='w-full flex items-center justify-center '>
-
           <div className='"w-[90%] sm:w-[85%] md:w-[75%] lg:w-[80%]"'>
-
             <LibraryInput
-              placeholder="Search here..."
-            // width="w-[90%] sm:w-[85%] md:w-[75%] lg:w-[80%]"
-            // height="h-[125px]"
+              placeholder="Ask anything..."
+              onChangeValue={handleInputChange}
+              onSubmitValue={handleSubmitValue}
+              onFileUpload={handleFileUpload}
             />
           </div>
         </section>
-
-        {/* </div> */}
       </div>
     </>
 

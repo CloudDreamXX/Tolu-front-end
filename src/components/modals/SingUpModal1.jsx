@@ -39,8 +39,8 @@ const SingUpModal1 = ({
                             key={index}
                             onClick={() => onCategoryClick(category)}
                             className={`p-2 border-2 rounded-full text-center cursor-pointer transition ${selectedCategories.includes(category)
-                                    ? "bg-[#EEEEEE] text-[#252525B2] border-4 border-[#2525254D]"
-                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                ? "bg-[#EEEEEE] text-[#252525B2] border-4 border-[#2525254D]"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                 }`}
                         >
                             {category}
@@ -52,13 +52,13 @@ const SingUpModal1 = ({
                 <div className="flex flex-col items-end">
                     <button
                         className={`mt-6 w-[100px] p-3 rounded-lg font-semibold ${selectedCategories.length >= 2
-                                ? "bg-blue-500 text-white hover:bg-blue-600"
-                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
                             }`}
                         disabled={selectedCategories.length < 2}
                         onClick={onNext}
                     >
-                        Next
+                        Finish
                     </button>
                 </div>
             </div>

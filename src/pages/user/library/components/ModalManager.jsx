@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import Modal from './Modal';  // Assuming Modal is in the same directory
+import Modal from './StepperModal';  
+import StepperModal from './StepperModal';
 
-const ModalManager = ({ setModalOpen, setDropdownData }) => {
+const ModalManager = ({ setModalOpen, setDropdownData,closeModal }) => {
     const [modalIndex, setModalIndex] = useState(0);
     const [dropdowns, setDropdowns] = useState(Array(7).fill(''));
 
     const handleAction = (data) => {
-        // Set the dropdown data in the parent component
         setDropdownData(data);
-        console.log('Final Dropdown Data:', data); // Data can also be sent to an API or stored
+        console.log('Final Dropdown Data:', data);
 
-        // Close the modal manager
         setModalOpen(false);
     };
 
     return (
         <div>
-            <Modal
+            <StepperModal
                 modalIndex={modalIndex}
                 handleAction={handleAction}
                 setModalIndex={setModalIndex}
                 dropdowns={dropdowns}
+                closeModal={closeModal}
                 setDropdowns={setDropdowns}
             />
         </div>

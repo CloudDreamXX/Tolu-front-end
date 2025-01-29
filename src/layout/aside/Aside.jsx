@@ -11,10 +11,10 @@ import { TbLogout2 } from "react-icons/tb";
 const Aside = () => {
   const [isAsideOpen, setIsAsideOpen] = useState(false);
   const { pathname } = useLocation();
-  const [activeDropdown, setActiveDropdown] = useState(null); 
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const toggleDropdown = (section) => {
-    setActiveDropdown((prev) => (prev === section ? null : section)); 
+    setActiveDropdown((prev) => (prev === section ? null : section));
   };
 
   const bodySystem = [
@@ -505,14 +505,14 @@ const Aside = () => {
   ];
 
 
-  
+
   const [supplementsChecked, setSupplementsChecked] = useState([]);
   const [foodsChecked, setFoodsChecked] = useState([]);
   const [exercisesChecked, setExercisesChecked] = useState([]);
   const [bodySystemChecked, setBodySystemChecked] = useState([]);
   const [symptomsChecked, setSymptomsChecked] = useState([]);
   const [conditionsChecked, setConditionsChecked] = useState([]);
-  const [testChecked, setTestCheck]=useState([]);
+  const [testChecked, setTestCheck] = useState([]);
   const [herbsAndSupplementsChecked, setHerbsAndSupplementsChecked] = useState([]);
 
   const asideToggleHandler = () => {
@@ -532,68 +532,71 @@ const Aside = () => {
         </h6>
       </div>
       <div
-        className={`hidden xl:block absolute top-10 cursor-pointer transition-all duration-300 ${isAsideOpen ? "rotate-180 right-[-13%]" : "rotate-0 right-[-5%]"
+        className={`hidden xl:block absolute top-18 cursor-pointer transition-all duration-300 ${isAsideOpen ? "rotate-180 right-[-13%]" : "rotate-0 right-[-5%]"
           }`}
         onClick={asideToggleHandler}
       >
         <ArrowIcon />
       </div>
-      <div className="flex flex-col p-2 w-full  justify-between h-full">
-        <div
-          className={`flex flex-col   justify-center gap-2 overflow-hidden ${isAsideOpen ? "items-center" : "items-start"
-            }`}
-        >
-          <div className="p-4 w-full">
-            <AsideDropDown
-              name="Body System"
-              options={bodySystem}
-              onCheckedChange={(values) => setBodySystemChecked(values)}
-            />
-            <AsideDropDown
-              name="Symptoms"
-              options={allSymptoms}
-              onCheckedChange={(values) => setSymptomsChecked(values)}
-            />
-            <AsideDropDown
-              name="Condition"
-              options={conditions}
-              onCheckedChange={(values) => setConditionsChecked(values)}
-            />
-            <AsideDropDown
-              name="Supplements"
-              options={conditions}
-              onCheckedChange={(values) => setSupplementsChecked(values)}
-            />
-            <AsideDropDown
-              name="Foods"
-              options={healthProtocols}
-              onCheckedChange={(values) => setFoodsChecked(values)}
-            />
-            <AsideDropDown
-              name="Exercises"
-              options={lifestyleChanges}
-              onCheckedChange={(values) => setExercisesChecked(values)}
-            />
-            <AsideDropDown
-              name="Lab Tests"
-              options={tests}
-              onCheckedChange={(values) => setTestCheck(values)}
-            />
-            <AsideDropDown
-              name="Herbs"
-              options={herbsAndSupplements}
-              onCheckedChange={(values) => setHerbsAndSupplementsChecked(values)}
-            />
+      {!isAsideOpen && (
+
+        <div className="flex flex-col p-2 w-full  justify-between h-full">
+          <div
+            className={`flex flex-col   justify-center gap-2 overflow-hidden ${isAsideOpen ? "items-center" : "items-start"
+              }`}
+          >
+            <div className="p-4 w-full">
+              <AsideDropDown
+                name="Body System"
+                options={bodySystem}
+                onCheckedChange={(values) => setBodySystemChecked(values)}
+              />
+              <AsideDropDown
+                name="Symptoms"
+                options={allSymptoms}
+                onCheckedChange={(values) => setSymptomsChecked(values)}
+              />
+              <AsideDropDown
+                name="Condition"
+                options={conditions}
+                onCheckedChange={(values) => setConditionsChecked(values)}
+              />
+              <AsideDropDown
+                name="Supplements"
+                options={conditions}
+                onCheckedChange={(values) => setSupplementsChecked(values)}
+              />
+              <AsideDropDown
+                name="Foods"
+                options={healthProtocols}
+                onCheckedChange={(values) => setFoodsChecked(values)}
+              />
+              <AsideDropDown
+                name="Exercises"
+                options={lifestyleChanges}
+                onCheckedChange={(values) => setExercisesChecked(values)}
+              />
+              <AsideDropDown
+                name="Lab Tests"
+                options={tests}
+                onCheckedChange={(values) => setTestCheck(values)}
+              />
+              <AsideDropDown
+                name="Herbs"
+                options={herbsAndSupplements}
+                onCheckedChange={(values) => setHerbsAndSupplementsChecked(values)}
+              />
+
+            </div>
 
           </div>
-
+          <div className="flex mb-4 items-center justify-center ">
+            <Button className={" !bg-white !border-[1px] border-[#008FF633] shadow-[0px_4px_6px_#7090B01F]   text-[#ACACAC]"} text="Log Out" width="w-full" >
+              <TbLogout2 />
+            </Button>
+          </div>
         </div>
-        <div className="flex mb-4 items-center justify-center ">
-          <Button className={"bg-[#FFFFFF] border-[4px] border-[#008FF633] shadow-[0px_4px_6px_#7090B01F]  border-none text-[#ACACAC]"} text="Log Out"  width="w-full" >
-            <TbLogout2/>
-          </Button>
-        </div>
-      </div>
+      )}
 
     </div>
   );

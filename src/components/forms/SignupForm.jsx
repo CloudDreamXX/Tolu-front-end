@@ -69,12 +69,9 @@ const SignupForm = () => {
   const handleNext = () => {
 
     alert(`Selected categories: ${selectedCategories.join(", ")}`);
-    setIsModalOpen2(true);  
+    // setIsModalOpen2(true);  
+    handleClose()
   };
-
-
-
-
 
   return (
     <>
@@ -87,10 +84,10 @@ const SignupForm = () => {
         onNext={handleNext}
       />}
 
-      {isModalOpen2&& <SignUpModal2
+      {/* {isModalOpen2&& <SignUpModal2
       isOpen={isModalOpen2}
       onClose={() => setIsModalOpen(false)}
-      />}
+      />} */}
       <form
         onSubmit={handleSubmit}
         className="bg-transparent shadow-md backdrop-blur-[20px] py-5 px-5 sm:py-[25px] lg:py-[30px] sm:px-[35px] border-2 border-primary/10 rounded-[20px] mt-6 grid grid-cols-1 lg:grid-cols-12 gap-4 "

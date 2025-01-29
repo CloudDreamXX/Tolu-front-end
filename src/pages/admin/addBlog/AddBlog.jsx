@@ -5,9 +5,9 @@ import FileCard from './components/FileCard';
 import { PiChatsCircle } from 'react-icons/pi';
 import InfoCard from './components/InfoCard';
 import { useDispatch, useSelector } from 'react-redux';
-// import Modal from '../../user/library/components/Modal';
 import { setSidebarData } from '../../../redux/slice/sidebarSlice';
 import Modal from '../../../components/modals/Modal';
+import Button from '../../../components/small/Button';
 
 function AddBlog() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,8 +24,6 @@ function AddBlog() {
     const openInstructionModal = () => setIsInstructionModalOpen(true);
     const closeInstructionModal = () => setIsInstructionModalOpen(false);
 
-
-
     useEffect(() => {
         if (sidebarData) {
             openModal();
@@ -33,16 +31,12 @@ function AddBlog() {
     }, [sidebarData]);
 
     const handleFolderSubmit = () => {
-        // Handle form submission
         if (newFolder.trim()) {
-            // Dispatch action to add the new folder to the sidebar data
             dispatch(setSidebarData({ ...sidebarData, folders: [...sidebarData.folders, newFolder] }));
-            setNewFolder('');  // Clear input field
-            closeModal();  // Close the modal after adding
+            setNewFolder('');
+            closeModal();
         }
     };
-
-
 
     const [inputValue, setInputValue] = useState("");
 
@@ -50,27 +44,32 @@ function AddBlog() {
         setInputValue(value);
     };
 
-
-
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setSelectedFile(file);
         console.log('File selected:', file);
-        // You can call an API or handle file upload logic here
     };
 
     const handleFileCardClick = () => {
-        document.getElementById('file-input').click(); // Trigger file input click
+        document.getElementById('file-input').click();
     };
 
 
+    const handleSubmitValue = (value) => {
+        alert(`Submitted Valuekhgjyfyyg: ${value}`);
+        setInputValue('');
+    };
 
+    const handleFileUpload = (file) => {
+        console.log("Uploaded File:", file.name);
+        alert(`File Uploaded: ${file.name}`);
+    };
 
     return (
         <>
-            <Modal isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Create New Folder</h1>}>
+            <Modal className={'w-[300px]'} isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Create New Folder</h1>}>
                 <input
                     type="text"
                     placeholder="Enter folder name"
@@ -78,53 +77,45 @@ function AddBlog() {
                     onChange={(e) => setNewFolder(e.target.value)}
                     className="mt-4 px-4 py-2 border rounded"
                 />
-                <section>
-
-                    <button
-                        onClick={handleFolderSubmit}
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                    >
-                        Add
-                    </button>
-                    <button
+                <section className='flex justify-end mt-8 gap-3'>
+                    <Button
+                        className={"!bg-[#8E8E8E]  text-white "}
+                        text="Cancel"
                         onClick={closeModal}
-                        className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded"
-                    >
-                        Cancel
-                    </button>
+                    />
+                    <Button
+                        className={"!bg-[#B6B6B6] text-[#1D1D1F99]  "}
+                        text="Add Folder"
+                        onClick={handleFolderSubmit}
+                    />
                 </section>
             </Modal>
-            <Modal isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add instructions</h1>}>
+
+            <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add instructions</h1>}>
                 <textarea className="w-full mt-4 h-40 p-4 border rounded" placeholder="Enter instructions here..." />
-                <section className='flex justify-end'>
-                    <button
-                        onClick={closeInstructionModal}
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                    >
-                        Save
-                    </button>
-                    <button
-                        onClick={closeInstructionModal}
-                        className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded"
-                    >
-                        Cancel
-                    </button>
+                <section className='flex justify-end gap-2 mt-4'>
+                    <Button
+                        className={"!bg-[#8E8E8E]  text-white "}
+                        text="Close" onClick={closeInstructionModal} />
+                    <Button
+                        className={"!bg-[#B6B6B6] text-[#1D1D1F99] "}
+                        text="Add Instructions" onClick={openInstructionModal} />
                 </section>
-            </Modal  >
+            </Modal>
 
             {/* Main Content */}
-            <div className="w-full px-36 flex-col h-full flex justify-center items-center">
+            <div className="w-full xs:px-4 md:px-36 flex-col h-full flex justify-center items-center">
                 <section className="w-full flex justify-between pl-4 mb-5 items-start">
                     <h1 className="text-3xl font-semibold">
                         Perimenopause and Menopause
                     </h1>
                 </section>
 
-                {/* Input Component */}
-                {/* <LibraryInput placeholder="Ask anything..." /> */}
                 <LibraryInput
-                    placeholder="Enter text here"
-                    onChangeValue={handleInputChange}  // Pass handler here
+                    placeholder="Enter Prompt..."
+                    onChangeValue={handleInputChange}
+                    onSubmitValue={handleSubmitValue}
+                    onFileUpload={handleFileUpload}
                 />
 
                 {/* File Cards */}
@@ -134,19 +125,18 @@ function AddBlog() {
                             <FileCard
                                 title="Add Files"
                                 description="Chats in this project can access file content"
-                                Icon={CgFileAdd} // Passing the icon component as a prop
+                                Icon={CgFileAdd}
                             />
                         </div>
                         <input
                             id="file-input"
                             type="file"
                             onChange={handleFileChange}
-                            style={{ display: 'none' }} // Hide the default file input
+                            style={{ display: 'none' }}
                         />
                         {selectedFile && <p>Selected File: {selectedFile.name}</p>}
                     </section>
                     <section className='w-full cursor-pointer' onClick={openInstructionModal}>
-
                         <FileCard
                             title="Instructions"
                             description="Chats in this project can access file content"

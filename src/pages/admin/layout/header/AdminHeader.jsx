@@ -83,8 +83,8 @@ const AdminHeader = () => {
   // Function to return classes dynamically based on active index
   const getClassNames = (index) => {
     return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${index === activeIndex
-        ? 'border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2' // Active styles
-        : 'border-2 border-transparent shadow-none p-2' // Default styles
+      ? 'border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2' // Active styles
+      : 'border-2 border-transparent shadow-none p-2' // Default styles
       }`;
   };
 
@@ -92,7 +92,7 @@ const AdminHeader = () => {
 
 
   return (
-    <header className="h-[200px] sm:h-[100px] p-4 flex flex-col justify-between gap-6">
+    <header className="h-[200px] shadow-[#008FF60A] bg-white border sm:h-[100px] p-4 flex flex-col justify-between gap-6">
       <div className="flex items-center justify-between gap-6">
         <div className=" block xl:hidden">
           <div
@@ -115,18 +115,6 @@ const AdminHeader = () => {
             </span>
           </div>
         </div>
-
-
-        {/* <div>
-          uyftc iuiyf
-        </div> */}
-
-
-
-
-
-
-
         <div className="flex items-center justify-between gap-4 xl:gap-6">
 
           <div className="bg-[#CBCBCB] w-[40px] h-[40px] py-2  rounded-full flex items-center justify-center gap-2">
@@ -169,7 +157,7 @@ const AdminHeader = () => {
           </div>
         </div>
       </div>
-      
+
       <div
         className={`block xl:hidden fixed w-full h-full inset-0 bg-[#00000071] z-50 transition-all duration-500 ${mobileNav
           ? "visible opacity-100"
