@@ -4,6 +4,10 @@ import Button from "../small/Button";
 import Dropdown from "../small/Dropdown";
 import SingUpModal1 from "../modals/SingUpModal1";
 import SignUpModal2 from "../modals/SignUpModal2";
+import { useLoginMutation, useSignUpMutation } from "../../redux/apis/apiSlice";
+import { setCredentials } from "../../redux/slice/authSlice";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({});
@@ -15,12 +19,45 @@ const SignupForm = () => {
   const formDataChangeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  const handleSubmit = (e) => {
+  const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
+  console.log("user", user ,"token",token);
+  const dispatch = useDispatch();
+  // const [login] = useLoginMutation();
+  const [signUp] = useSignUpMutation();
+  const [login] = useLoginMutation();
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      // const userData = { email, password };
+      const userData = {
+        email: "ttttbttett@example.com",
+        password: "Admin@12345",
+        name: "John Doee",
+        dob: "1990-01-01",
+        role: "Practitioner Account",
+        type: "Psychologist",
+        location: "New York",
+        num_clients: "10",
+        priority: ["High"]
+      }
+      const response = await login(userData).unwrap()
+      console.log("response", response);
+
+      dispatch(setCredentials(response)); // Store user & token in Redux
+      toast.success("SignUp Successful");
+
+      // alert(` Successful!`);
+    } catch (error) {
+      console.error('Authentication failed:', error);
+      toast.error("SignUp Failed");
+    }
+
+
     console.log("form", formData);
-    setIsModalOpen(true);
-    alert("Form submitted successfully");
+    // setIsModalOpen(true);
+    // alert("Form submitted successfully");
   };
 
 
@@ -162,8 +199,9 @@ const SignupForm = () => {
           <Button
             text="Verify email"
             width="w-full"
+            type="button" // Add this line to prevent form submission
             onClick={(event) => {
-              event.stopPropagation(); // Stop the event from propagating
+              event.stopPropagation(); // Stop event propagation
               setVerifyEmail(false); // Update the verifyEmail state
             }}
           />

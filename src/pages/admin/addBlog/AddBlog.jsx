@@ -8,21 +8,42 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSidebarData } from '../../../redux/slice/sidebarSlice';
 import Modal from '../../../components/modals/Modal';
 import Button from '../../../components/small/Button';
+import { useAiLearningSearchMutation } from '../../../redux/apis/apiSlice';
+import toast from 'react-hot-toast';
 
 function AddBlog() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
     const [newFolder, setNewFolder] = useState('');
+    const [aiLearningSearch, { isLoading }] = useAiLearningSearchMutation();
     const dispatch = useDispatch();
-
+    const [messages, setMessages] = useState([]);
+    const [instruction, setInstruction] = useState(null);
     const sidebarData = useSelector((state) => state.sidebar.data);
-    console.log("Sidebar data:", sidebarData);
-
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => { dispatch(setSidebarData(false)); setIsModalOpen(false) };
-
     const openInstructionModal = () => setIsInstructionModalOpen(true);
     const closeInstructionModal = () => setIsInstructionModalOpen(false);
+    const [inputValue, setInputValue] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
+
+
+    const handleInstructionChange = (e) => {
+        setInstruction(e.target.value);
+    };
+
+    const addInstruction = () => {
+        console.log(instruction);
+        closeInstructionModal();
+    };
+
+    const handleNewReply = (newReply, question) => {
+        const newMessage = {
+            question: question,  // Replace with actual question if needed
+            reply: newReply,
+        };
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+    };
 
     useEffect(() => {
         if (sidebarData) {
@@ -38,34 +59,91 @@ function AddBlog() {
         }
     };
 
-    const [inputValue, setInputValue] = useState("");
-
     const handleInputChange = (value) => {
         setInputValue(value);
     };
-
-    const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setSelectedFile(file);
         console.log('File selected:', file);
+        toast.success(`File Uploaded: ${file.name}`);
     };
-
+    const handleFileUpload = (file) => {
+        console.log("Uploaded File:", file.name);
+        // const file = event.target.files[0];
+        setSelectedFile(file);
+        toast.success(`File Uploaded: ${file.name}`);
+    };
     const handleFileCardClick = () => {
         document.getElementById('file-input').click();
     };
 
+    const handleSubmitValue = async (value) => {
+        try {
+            const formData = new FormData();
+            formData.append("chat_message", JSON.stringify({
+                // user_prompt: "What's my name?",
+                user_prompt: value,
+                is_new: true,
+                regenerate_id: null,
+                instructions: instruction
+            }));
+            if (selectedFile) {
+                const fileType = selectedFile.type;
 
-    const handleSubmitValue = (value) => {
-        alert(`Submitted Valuekhgjyfyyg: ${value}`);
-        setInputValue('');
+                if (fileType === "application/pdf") {
+                    console.log("Checking pdf", selectedFile)
+                    formData.append("pdf", selectedFile);
+                } else if (fileType.startsWith("image")) {
+                    console.log("Checking image", selectedFile)
+                    formData.append("image", selectedFile);
+                } else {
+                    console.log("Please select a valid PDF or image file.");
+                    return;
+                }
+            }
+            const response = await aiLearningSearch(formData);
+
+
+            if (typeof response.error.data === "string") {
+
+                try {
+                    const cleanedData = response.error.data
+                        .replace(/^data:\s*/, '')
+                        .replace(/^\s*[\r\n]+/, '')
+                        .replace(/[\r\n]+$/, '')
+                        .trim();
+                    const dataObjects = cleanedData.split(/\s*data:\s*/).filter(item => item.trim() !== '');
+                    const parsedDataArray = dataObjects.map(item => {
+                        try {
+                            return JSON.parse(item);
+                        } catch (e) {
+                            console.error("Error parsing individual object:", e);
+                            return null;
+                        }
+                    }).filter(item => item !== null);
+                    const replies = parsedDataArray.map(item => item.reply).join(' ');
+                    handleNewReply(replies, value)
+                    setSelectedFile(null)
+                    setInstruction(null)
+                } catch (e) {
+                    console.error("Error parsing JSON:", e);
+                    toast.error("Invalid JSON response");
+                }
+            } else {
+                console.log("Unexpected response format:", response.error.data);
+            }
+
+        } catch (error) {
+            console.error('Request failed:', error);
+            toast.error("Request Failed");
+        }
     };
 
-    const handleFileUpload = (file) => {
-        console.log("Uploaded File:", file.name);
-        alert(`File Uploaded: ${file.name}`);
-    };
+
+
+
 
     return (
         <>
@@ -92,14 +170,23 @@ function AddBlog() {
             </Modal>
 
             <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add instructions</h1>}>
-                <textarea className="w-full mt-4 h-40 p-4 border rounded" placeholder="Enter instructions here..." />
-                <section className='flex justify-end gap-2 mt-4'>
+                <textarea
+                    className="w-full mt-4 h-40 p-4 border rounded"
+                    placeholder="Enter instructions here..."
+                    value={instruction}
+                    onChange={handleInstructionChange}
+                />
+                <section className="flex justify-end gap-2 mt-4">
                     <Button
-                        className={"!bg-[#8E8E8E]  text-white "}
-                        text="Close" onClick={closeInstructionModal} />
+                        className={"!bg-[#8E8E8E] text-white "}
+                        text="Close"
+                        onClick={closeInstructionModal}
+                    />
                     <Button
                         className={"!bg-[#B6B6B6] text-[#1D1D1F99] "}
-                        text="Add Instructions" onClick={openInstructionModal} />
+                        text="Add Instructions"
+                        onClick={addInstruction}
+                    />
                 </section>
             </Modal>
 
@@ -116,8 +203,19 @@ function AddBlog() {
                     onChangeValue={handleInputChange}
                     onSubmitValue={handleSubmitValue}
                     onFileUpload={handleFileUpload}
-                />
+                    isLoading={isLoading}
 
+                />
+                {messages.length > 0 && (
+                    <section className='bg-red-100 w-full m-4 rounded-lg p-4'>
+                        {messages.map((message, index) => (
+                            <div key={index}>
+                                <p><strong>Question:</strong> {message.question}</p>
+                                <p><strong>Reply:</strong> {message.reply}</p>
+                            </div>
+                        ))}
+                    </section>
+                )}
                 {/* File Cards */}
                 <div className="flex  h-30 xs:flex-col sm:flex-col md:flex-row gap-4 mt-7  w-full">
                     <section className="w-full cursor-pointer">

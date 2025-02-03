@@ -1,0 +1,61 @@
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+const apiUrl = import.meta.env.VITE_API_URL;
+console.log("API URL:", apiUrl);
+
+export const apiSlice = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({
+    baseUrl: apiUrl,
+    prepareHeaders: (headers, { getState }) => {
+      let token = getState().auth.token; // Get token from Redux store
+
+      if (!token) {
+        token = localStorage.getItem("token"); // Fallback to localStorage
+      }
+
+      console.log("API Slice Token:", token);
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`); // Set Bearer Token
+      }
+
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    signUp: builder.mutation({
+      query: (userData) => ({
+        url: '/user/signup',
+        method: 'POST',
+        body: userData,
+      }),
+    }),
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: '/user/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
+    aiLearningSearch: builder.mutation({
+      query: (searchQuery) => ({
+        url: '/ai-learning-search',
+        method: 'POST',
+        body: searchQuery,
+      }),
+      // onQueryStarted: async (searchQuery, { dispatch, queryFulfilled }) => {
+      //   try {
+      //     const response = await queryFulfilled;
+      //     // Log the response data
+      //     console.log("AI Learning Search Response:", response.data);
+      //   } catch (error) {
+      //     console.error("Error in AI Learning Search:", error);
+      //   }
+      // },
+
+    }),
+  }),
+});
+
+export const { useSignUpMutation, useLoginMutation, useAiLearningSearchMutation } = apiSlice;

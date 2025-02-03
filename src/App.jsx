@@ -7,6 +7,8 @@ import Library from "./pages/user/library/library";
 import User from "./pages/user";
 import Admin from "./pages/admin";
 import AddBlog from "./pages/admin/addBlog/AddBlog";
+import { Toaster } from "react-hot-toast";
+import LibraryTopicDetails from "./pages/admin/libraryTopicDetails/LibraryTopicDetails";
 
 function App() {
   return (
@@ -21,8 +23,12 @@ function App() {
         </Route>
         <Route path="/admin" element={<Admin />}>
           <Route index element={<AddBlog />} />
+          <Route path="library-topic-details" element={<LibraryTopicDetails />} />
+
         </Route>
       </Routes>
+      <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
+
     </BrowserRouter>
   );
 }
