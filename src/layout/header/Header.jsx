@@ -104,7 +104,7 @@ const Header = () => {
           <ul className="flex space-x-4">
             {/* MY Space Item */}
             <li className={getClassNames(0)} onClick={() => handleClick(0)}>
-              <a href="#" className="flex items-center gap-3">
+              <a href="/user" className="flex items-center gap-3">
                 <IoHomeOutline />
                 <span>MY Space</span>
               </a>
@@ -112,7 +112,7 @@ const Header = () => {
 
             {/* Search Item */}
             <li className={getClassNames(1)} onClick={() => handleClick(1)}>
-              <a href="#" className="flex items-center gap-3">
+              <a href="/user/chat" className="flex items-center gap-3">
                 <IoLibraryOutline />
                 <span>Search</span>
               </a>
@@ -128,7 +128,7 @@ const Header = () => {
 
             {/* Profile Item */}
             <li className={getClassNames(3)} onClick={() => handleClick(3)}>
-              <a href="#" className="flex items-center gap-3">
+              <a href="/user/profile" className="flex items-center gap-3">
                 <MdHistory />
                 <span>Profile</span>
               </a>

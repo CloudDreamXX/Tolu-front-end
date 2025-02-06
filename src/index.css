@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  --primary: rgb(0, 143, 246);
+  --primary: rgb(152, 153, 155);
   --text-color: #1D1D1F99;
   --nunito-text: "Nunito", serif;
 }

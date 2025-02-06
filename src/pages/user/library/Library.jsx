@@ -102,7 +102,7 @@ function Library() {
 
   const handleInputChange = (value) => {
     setInputValue(value);
-};
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];

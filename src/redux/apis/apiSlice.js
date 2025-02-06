@@ -55,7 +55,74 @@ export const apiSlice = createApi({
       // },
 
     }),
+    findUser: builder.query({
+      query: (email) => `/user-exist/${email}`,
+    }),
+    getAISearch: builder.mutation({
+      query: (payload) => ({
+        url: '/ai-search',
+        method: 'POST',
+        body: payload,
+      }),
+    }),
+    getSearchHistory: builder.query({
+      query: () => '/searched-result/history',
+    }),
+    getSessionResult: builder.query({
+      query: (chat_id) => `/session/${chat_id}`,
+    }),
+    createHandout: builder.mutation({
+      query: (payload) => ({
+        url: '/handout/create',
+        method: 'POST',
+        body: payload,
+      }),
+    }),
+    rateResponse: builder.mutation({
+      query: (payload) => ({
+        url: '/searched-result/rating',
+        method: 'POST',
+        body: payload,
+      }),
+    }),
+    reportResult: builder.mutation({
+      query: (payload) => ({
+        url: '/searched-result/report',
+        method: 'POST',
+        body: payload,
+      }),
+    }),
+    updateChatTitle: builder.mutation({
+      query: ({ chat_id, new_title }) => ({
+        url: '/update-chat-title',
+        method: 'PUT',
+        body: { chat_id, new_title },
+      }),
+    }),
+    getUserProfile: builder.query({
+      query: () => '/user/profile',
+    }),
+    deleteChat: builder.mutation({
+      query: (chatId) => ({
+        url: `/chat/${chatId}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
-export const { useSignUpMutation, useLoginMutation, useAiLearningSearchMutation } = apiSlice;
+export const {
+  useSignUpMutation,
+  useLoginMutation,
+  useAiLearningSearchMutation,
+  useFindUserQuery,
+  useGetAISearchMutation,
+  useGetSearchHistoryQuery,
+  useGetSessionResultQuery,
+  useCreateHandoutMutation,
+  useRateResponseMutation,
+  useReportResultMutation,
+  useUpdateChatTitleMutation,
+  useGetUserProfileQuery,
+  useDeleteChatMutation,
+} = apiSlice;

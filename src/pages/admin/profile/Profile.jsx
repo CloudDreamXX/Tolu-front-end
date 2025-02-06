@@ -1,0 +1,188 @@
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+// import { getUserProfile } from '../ReduxToolKit/Slice/userSlice';
+import { FaRegUserCircle } from 'react-icons/fa';
+// import { section } from 'antd';
+// import SideBar from './SideBar';
+import { LuArrowRightFromLine } from "react-icons/lu";
+import { IoIosArrowDown } from "react-icons/io";
+import { useGetUserProfileQuery } from '../../../redux/apis/apiSlice';
+function Profile() {
+    const [activeTab, setActiveTab] = useState('Contact Info');
+    const tabs = ['Contact Info', 'Health Profile', 'Subscription'];
+    const dispatch = useDispatch();
+    const { data: userProfile, isLoading: profileLoading, error: profileError } = useGetUserProfileQuery();
+    console.log("userProfile",userProfile)
+    // const { userProfile, profileLoading, profileError } = useSelector((state) => ({
+    //   userProfile: state.user?.userProfile,
+    //   profileLoading: state.user?.profileLoading,
+    //   profileError: state.user?.profileError
+    // }));
+
+    // useEffect(() => {
+    //   dispatch(getUserProfile());
+    // }, [dispatch]);
+
+    if (profileLoading) {
+        return <div>Loading...</div>;
+    }
+
+    // if (profileError) {
+    //     return <div>Error: {profileError}</div>;
+    // }
+
+    return (
+        <section className="min-h-[calc(100vh-200px)] ">
+            {/* <SideBar /> */}
+            <section>
+                <section className=" bg-gray-100 pt-6">
+                    <div className="max-w-6xl mx-auto p-6">
+                        {/* Tab Navigation */}
+                        <div className="mb-8 flex gap-8">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`text-gray-600 ${activeTab === tab ? 'font-semibold text-gray-900' : 'text-gray-400'}`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* section Area */}
+                        <div className="bg-transparent rounded-lg mb-8 p-6">
+                            {/* Contact Info Tab */}
+                            {activeTab === 'Contact Info' && (
+                                <div className="flex flex-col gap-8">
+                                    {/* User Info Card */}
+                                    <div className="bg-white border-2 border-gray-300 rounded-lg p-6 flex justify-between items-center">
+                                        <div className="flex-shrink-0">
+                                            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                                <FaRegUserCircle className="text-black" size={30} />
+                                            </div>
+                                        </div>
+                                        <div className="flex-grow ml-4">
+                                            <h2 className="font-medium text-gray-900">{userProfile?.name || ''}</h2>
+                                            <p className="text-gray-500 text-sm">{userProfile?.email || ''}</p>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button className="border border-gray-300 bg-white rounded-full py-1 px-4 text-sm">Free</button>
+                                            <span className="py-1 px-3 bg-gray-100 text-gray-600 text-sm rounded-full">Upgrade</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Info Buttons Container */}
+                                    <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden mt-4">
+                                        <button className="w-full py-4 px-6 flex justify-between items-center hover:bg-gray-50">
+                                            <span>Privacy Policy</span>
+                                            <LuArrowRightFromLine />
+                                        </button>
+
+                                        <button className="w-full py-4 px-6 flex justify-between items-center hover:bg-gray-50">
+                                            <span>Terms of use</span>
+                                            <LuArrowRightFromLine />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Profile Tab */}
+                            {activeTab === 'Health Profile' && userProfile && (
+                                <div className="flex flex-col gap-8">
+                                    {/* Updated Profile Header */}
+                                    <div className="bg-white border-2 border-gray-300 rounded-lg p-4 mb-4 flex items-center gap-4">
+                                        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                            <FaRegUserCircle className="text-black" size={30} />
+                                        </div>
+                                        <div className="flex-grow">
+                                            <h2 className="text-gray-900 text-sm font-medium">{userProfile.name || ''}</h2>
+                                            <p className="text-gray-500 text-sm">{userProfile.email || ''}</p>
+                                        </div>
+                                        <div className="flex-shrink-0">
+                                            <button>
+                                                <IoIosArrowDown size={20} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-8">
+                                        <h3 className="text-gray-500 font-semibold text-xs mb-4">Health status</h3>
+                                        <div className="bg-white border-2 border-gray-300 rounded-lg">
+                                            <div className="space-y-4">
+                                                {['Diagnosis', 'Occurring Symptoms', 'Medicine', 'Supplements',
+                                                    'Health Coaches', 'Healthcare Providers', 'Lab tests'].map((item) => (
+                                                        <button key={item} className="w-full py-4 px-6 flex justify-between items-center hover:bg-gray-50">
+                                                            <span>{item}</span>
+                                                            <IoIosArrowDown size={20} />
+                                                        </button>
+                                                    ))}
+                                            </div>
+                                        </div>
+
+                                        <h3 className="text-gray-500 font-semibold text-xs mb-4">Lifestyle and Environmental Exposure</h3>
+                                        <div className="bg-white border-2 border-gray-300 rounded-lg">
+                                            <div className="space-y-4">
+                                                {['Diet and Nutrition', 'Lifestyle', 'Environmental exposure', 'Support Network'].map((item) => (
+                                                    <button key={item} className="w-full py-4 px-6 flex justify-between items-center hover:bg-gray-50">
+                                                        <span>{item}</span>
+                                                        <IoIosArrowDown size={20} />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <h3 className="text-gray-500 font-semibold text-xs mb-4">Health History and Symptom Assessment</h3>
+                                        <div className="bg-white border-2 border-gray-300 rounded-lg">
+                                            <div className="space-y-4">
+                                                {['Family Health History', 'Health Timeline', 'Genetic Predispositions'].map((item) => (
+                                                    <button key={item} className="w-full py-4 px-6 flex justify-between items-center hover:bg-gray-50">
+                                                        <span>{item}</span>
+                                                        <IoIosArrowDown size={20} />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Subscription Tab */}
+                            {activeTab === 'Subscription' && (
+                                <div className="bg-white border-2 border-gray-300 rounded-lg p-6 mb-8">
+                                    {/* Individual Plan - Role 3 */}
+                                    <div className="flex justify-between items-center border-b-2 border-gray-300 py-4">
+                                        <div>
+                                            <h3 className="text-gray-900 font-medium">Individual (Free)</h3>
+                                            <p className="text-gray-500 text-sm">Limited to 10 searches a day.</p>
+                                        </div>
+                                        {userProfile?.role === 3 ? (
+                                            <span className="text-gray-700 font-semibold">Current plan</span>
+                                        ) : (
+                                            <span className="py-1 px-3 bg-gray-100 text-gray-600 text-sm rounded-full">Choose</span>
+                                        )}
+                                    </div>
+
+                                    {/* Provider Plan with 10 Search Limit - Role 1 */}
+                                    <div className="flex justify-between items-center py-4">
+                                        <div>
+                                            <h3 className="text-gray-900 font-medium">Provider</h3>
+                                            <p className="text-gray-500 text-sm">10 searches a day.</p>
+                                        </div>
+                                        {userProfile?.role === 1 ? (
+                                            <span className="text-gray-700 font-semibold">Current plan</span>
+                                        ) : (
+                                            <span className="py-1 px-3 bg-gray-100 text-gray-600 text-sm rounded-full">Choose</span>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </section>
+    );
+}
+
+export default Profile

@@ -1,43 +1,42 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
+import LibraryInput from "../../user/library/components/LibraryInput";
+import Button from "../../../components/small/Button";
+import { GrSearchAdvanced, GrRefresh, GrGallery } from "react-icons/gr";
+import { HiOutlineChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
+import { RiAccountCircleFill } from "react-icons/ri";
+import { BsCopy } from "react-icons/bs";
+import { FaRegShareFromSquare } from "react-icons/fa6";
+import { CiVolumeHigh } from "react-icons/ci";
+import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
+import { MdVideoLibrary } from "react-icons/md";
 
 const MainChat = () => {
-  const scrollContainerRef = useRef(null);
   const lastItemRef = useRef(null);
-  const [chats, setChats] = useState([]); // Mocked chats array
+  const [chats, setChats] = useState([]);
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
-    if (lastItemRef.current)
+    if (lastItemRef.current) {
       lastItemRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [chats, lastItemRef]);
+    }
+  }, [chats]);
 
-  const startRecording = () => {
-    setIsRecording(true);
-    console.log("Recording started (mocked)");
-  };
-
-  const stopRecording = () => {
-    setIsRecording(false);
-    console.log("Recording stopped (mocked)");
-  };
-
-  const submitHandler = (inputText) => {
+  const handleSubmitValue = (inputText) => {
     if (!inputText.trim()) return;
     setIsLoading(true);
 
-    // Mocked chat handling
     setTimeout(() => {
-      const newChat = {
-        question: inputText,
-        summary: "This is a mocked summary of the answer.",
-        detailed_answer: "This is a mocked detailed answer to the question.",
-        source: "Mocked Source",
-        audio: null, // No audio for the mock
-      };
-      setChats([...chats, newChat]);
+      setChats((prevChats) => [
+        ...prevChats,
+        {
+          question: inputText,
+          summary: "This is a mocked summary of the answer.",
+          detailed_answer: "This is a mocked detailed answer to the question. ",
+          source: "Mocked Source",
+          audio: null,
+        },
+      ]);
       setText("");
       setIsLoading(false);
     }, 1000);
@@ -46,81 +45,67 @@ const MainChat = () => {
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && !isLoading) {
       event.preventDefault();
-      submitHandler(text);
+      handleSubmitValue(text);
     }
   };
 
+  const handleInputChange = (value) => {
+    setText(value);
+  };
+
   return (
-    <div
-      className={`flex gap-2 grow h-full p-0 sm:p-2 md:p-4 lg:p-6 mt-12 sm:mt-0`}
-    >
+    <div className="flex gap-2 grow p-0 sm:p-2 md:p-4 lg:p-6 mt-12 sm:mt-0">
       <div className="flex items-end w-full">
-        <div className="text-center flex flex-col gap-7 items-center w-full h-full">
-          <div
-            className={`my-2 p-2 w-full flex-1 scroll-0 ${
-              chats?.length > 0 ? "h-[400px]" : "h-0"
-            } overflow-y-auto`}
-          >
+        <div className="text-center flex flex-col h-[75vh] gap-7 items-center w-full">
+          <div className={`my-2 p-2 w-full flex-1 overflow-y-auto ${chats.length ? "h-[400px]" : "h-0"}`}>
             {isLoading ? (
-              <div className="flex items-center justify-center h-[380px] object-cover overflow-y-hidden">
-                loader
-              </div>
+              <div className="flex items-center justify-center h-[380px]">Loading...</div>
             ) : (
-              chats?.length > 0 && (
-                <div className="flex flex-col">
-                  {chats?.map((chat, i) => (
-                    <div className="h-full" ref={scrollContainerRef} key={i}>
-                      <QuestionAnswer
-                        lastItemRef={
-                          i === chats.length - 1 ? lastItemRef : null
-                        }
-                        i={i}
-                        length={chats.length - 1}
-                        chat={chat}
-                      />
-                    </div>
-                  ))}
-                </div>
+              chats.length > 0 && (
+                <>
+                  <section className="flex gap-8 ">
+                    <h2 className="font-bold text-4xl">Chat</h2>
+                    <Button text="New Search" className="text-xs font-normal !h-9">
+                      <GrSearchAdvanced />
+                    </Button>
+                    <Button text="Deleted Search" className="border text-xs font-normal !h-9">
+                      <HiOutlineChatBubbleOvalLeftEllipsis />
+                    </Button>
+                  </section>
+
+                  <div className="flex flex-col">
+                    {chats.map((chat, i) => (
+                      <QuestionAnswer key={i} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
+                    ))}
+                  </div>
+                </>
               )
             )}
           </div>
-          <div className="w-full">
-            {/* TextField Container */}
-            <div className="text-secondaryGray w-full flex items-center justify-between p-4 h-[75px] border-[1px] rounded-lg shadow-chatsShadow my-3">
-              <input
-                value={text}
-                onKeyDown={handleKeyDown}
-                onChange={(e) => setText(e.target.value)}
-                type="text"
-                placeholder="Ask anything..."
-                className="w-full border-none outline-none"
-              />
-              <div className="flex items-center gap-3">
-                <button
-                  className={`disabled:cursor-not-allowed disabled:opacity-20 ${
-                    isRecording ? "recording" : ""
-                  }`}
-                  onClick={isRecording ? stopRecording : startRecording}
-                >
-                  mic
-                </button>
-                <button
-                  className="disabled:cursor-not-allowed disabled:opacity-20"
-                  disabled={isLoading}
-                  type="submit"
-                  onClick={() => submitHandler(text)}
-                >
-                  send arrow
-                </button>
+          {!chats.length && (
+
+            <section>
+              <div className="lg:col-span-12 flex justify-center">
+                <h5 className="text-xl md:text-[32px] text-primary font-extrabold ">
+                  Hi Coach! How can i help you today?
+                </h5>
               </div>
-            </div>
-            <div className="hidden flex-col justify-center lg:flex-row gap-2  lg:flex">
-              <ChatFeature detail="Customized Intake From" />
-              <ChatFeature detail="Customize Client Handout" />
-              <ChatFeature detail="Create Client’s Timeline" />
-              <ChatFeature detail="Map Client’s Symptoms" />
-              <ChatFeature detail="Compare supplements" />
-            </div>
+            </section>
+          )}
+          <div className="w-full">
+            <LibraryInput
+              placeholder="Enter Prompt..."
+              onChangeValue={handleInputChange}
+              onSubmitValue={handleSubmitValue}
+              isLoading={isLoading}
+            />
+            {!chats.length && (
+              <div className="hidden flex-col justify-center lg:flex-row gap-2 mt-8 lg:flex">
+                {["Customized Intake Form", "Customize Client Handout", "Create Client’s Timeline", "Map Client’s Symptoms", "Compare Supplements"].map((detail) => (
+                  <ChatFeature key={detail} detail={detail} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -128,63 +113,49 @@ const MainChat = () => {
   );
 };
 
-export default MainChat;
+const ChatFeature = ({ detail }) => (
+  <button className="flex gap-1 items-center border-[1px] border-primaryLight py-2 px-3 rounded-md shadow-md shadow-[#008ff630]">
+    <p className="text-xs text-secondaryGray text-start">{detail}</p>
+  </button>
+);
+const QuestionAnswer = ({ chat, lastItemRef }) => (
+  <section ref={lastItemRef} className="flex flex-col mt-6 gap-6 h-full">
+    <section className="flex w-full  items-center space-x-6">
+      <section className="w-full pl-14  space-y-6">
+        <div className="w-full flex items-center gap-6">
+          <RiAccountCircleFill className="text-5xl" />
+          <div className="shadow-md rounded-lg h-16 w-full text-start p-4">{chat.question}</div>
+        </div>
 
-const ChatFeature = ({ detail }) => {
-  return (
-    <button className="flex gap-1 items-center border-[1px] border-primaryLight py-2 px-3 rounded-md shadow-md shadow-[#008ff630]">
-      <p className="text-xs text-secondaryGray text-start">{detail}</p>
-    </button>
-  );
-};
+        <div className="flex w-full relative gap-5 items-center group">
+          {/* Left side icons, hidden by default and shown on hover */}
+          <div className="text-2xl absolute flex flex-col gap-2 text-primary  left-[-30px]  items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            {[BsCopy, FaRegShareFromSquare, CiVolumeHigh, AiOutlineLike, AiOutlineDislike, GrRefresh].map((Icon, index) => (
+              <IconWrapper key={index}>
+                <Icon fontSize={12} />
+              </IconWrapper>
+            ))}
+          </div>
 
-const QuestionAnswer = ({ chat, i, length, lastItemRef }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  return (
-    <section
-      ref={i === length ? lastItemRef : null}
-      className="flex flex-col gap-6 h-full"
-    >
-      <div className="flex items-center gap-3">
-        assisstantuser
-        <p className="text-xs md:text-sm text-primaryDark p-2 md:px-4 md:py-3 text-start border-[1px] rounded-md w-full">
-          {chat?.question}
-        </p>
-      </div>
-      <div className="flex items-start justify-start gap-3 relative px-0 md:px-7">
-        <div className="flex flex-col items-center">
-          <div
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className="cursor-pointer mt-10"
-          >
-            citedfileicon
-            {isHovered && <HoverInfo data={chat?.source} />}
+          {/* Answer Section */}
+          <div className=" shadow-md text-start p-4 rounded-lg border-primary w-full">
+            {chat.detailed_answer}
           </div>
         </div>
-        <div className="p-2 md:p-4 text-xs md:text-sm leading-[20px] rounded-3xl text-primaryDark text-justify">
-          <h4 className="text-base font-bold text-primaryDark mt-3">
-            Summary:
-          </h4>
-          <p className="p-2 md:p-4 text-xs md:text-sm leading-[20px] rounded-3xl text-primaryDark text-justify">
-            {chat?.summary}
-          </p>
-          <h4 className="text-base font-bold text-primaryDark">
-            Detailed Answer:
-          </h4>
-          <p className="p-2 md:p-4 text-xs md:text-sm leading-[20px] rounded-3xl text-primaryDark text-justify">
-            {chat?.detailed_answer}
-          </p>
-        </div>
+      </section>
+
+      <div className="flex flex-col gap-4 text-2xl text-primary">
+        <GrGallery />
+        <MdVideoLibrary />
       </div>
     </section>
-  );
-};
+  </section>
+);
 
-const HoverInfo = ({ data }) => {
-  return (
-    <div className="absolute min-w-max transform p-2 md:p-4 bg-primaryLight text-white border rounded-md shadow-lg z-50 text-justify">
-      <h3 className="font-bold text-base">{data}</h3>
-    </div>
-  );
-};
+const IconWrapper = ({ children }) => (
+  <div className="w-[20px] bg-gray-200 h-[20px] shadow-xl rounded-xl flex items-center justify-center">
+    {children}
+  </div>
+);
+
+export default MainChat;
