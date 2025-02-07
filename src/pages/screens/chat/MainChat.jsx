@@ -9,12 +9,24 @@ import { FaRegShareFromSquare } from "react-icons/fa6";
 import { CiVolumeHigh } from "react-icons/ci";
 import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
 import { MdVideoLibrary } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import { setNewChat } from "../../../redux/slice/chatSlice";
 
 const MainChat = () => {
   const lastItemRef = useRef(null);
   const [chats, setChats] = useState([]);
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const newChat = useSelector((state) => state.chat.newChat); 
+    useEffect(() => {
+        if (newChat) {
+            setChats([]);            
+            setText("");
+            dispatch(setNewChat(false)); 
+        }
+    }, [newChat, dispatch]);
 
   useEffect(() => {
     if (lastItemRef.current) {

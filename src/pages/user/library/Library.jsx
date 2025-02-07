@@ -128,7 +128,9 @@ function Library() {
 
 
   return (
-    <>
+
+    <div className='w-full h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)] p-2'>
+
       {modalOpen && (
         <ModalManager
           setModalOpen={setModalOpen}
@@ -137,9 +139,11 @@ function Library() {
 
         />
       )}
+      <div className='h-[450px] overflow-auto'>
 
-      <div className='w-full h-full p-2'>
+        {/* <div className='w-full h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)] overflow-auto p-2'> */}
         <div className="grid gap-6 h-[400px] overflow-y-auto sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+
           {cardsData.map((card, index) => (
             <Cards
               key={index}
@@ -152,7 +156,7 @@ function Library() {
           ))}
         </div>
 
-        <div className="grid gap-4 gap-y-10 mt-8 h-[400px] overflow-y-auto xs:grid-cols-1 xs:p-16 md:p-0  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 ">
+        <div className="grid gap-4 gap-y-10 mt-8 h-[250px] overflow-y-auto xs:grid-cols-1 xs:p-16 md:p-0  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 ">
           {webinars.map((webinar, index) => (
             <AnimationCard
               key={`webinar-${index}`}
@@ -162,19 +166,22 @@ function Library() {
             />
           ))}
         </div>
-
-        <section className='w-full flex items-center justify-center '>
-          <div className='"w-[90%] sm:w-[85%] md:w-[75%] lg:w-[80%]"'>
-            <LibraryInput
-              placeholder="Ask anything..."
-              onChangeValue={handleInputChange}
-              onSubmitValue={handleSubmitValue}
-              onFileUpload={handleFileUpload}
-            />
-          </div>
-        </section>
       </div>
-    </>
+
+      {/* </div> */}
+      <section className='w-full pt-4 flex items-center justify-center '>
+        <div className='"w-[90%] sm:w-[85%] md:w-[75%] lg:w-[80%]"'>
+          <LibraryInput
+            placeholder="Ask anything..."
+            onChangeValue={handleInputChange}
+            onSubmitValue={handleSubmitValue}
+            onFileUpload={handleFileUpload}
+          />
+        </div>
+      </section>
+    </div>
+
+
 
   )
 }

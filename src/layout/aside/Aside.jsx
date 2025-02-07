@@ -31,13 +31,14 @@ const Aside = () => {
         return (
           <Chat />
         );
-      case "/profile":
+      case "/user/profile":
         return (
-          <AsideDropDown
-            name="Profile Settings"
-            options={[]}
-            onCheckedChange={() => { }} // Replace with actual data when needed
-          />
+          <Chat/>
+          // <AsideDropDown
+          //   name="Profile Settings"
+          //   options={[]}
+          //   onCheckedChange={() => { }} // Replace with actual data when needed
+          // />
         );
       case "/settings":
         return (

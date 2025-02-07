@@ -5,6 +5,7 @@ import { IoIosArrowDropleftCircle } from "react-icons/io";
 // import MainChat from "./MainChat";
 // import ChatHistory from "./ChatHistory";
 import MainChat from '../../screens/chat/MainChat';
+import { useSelector } from "react-redux";
 
 function Chat() {
 
@@ -14,6 +15,8 @@ function Chat() {
     const [isRecording, setIsRecording] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [text, setText] = useState("");
+    const newChat = useSelector((state) => state.chat.newChat); // Access newChat state
+    console.log("sdfghjkl",newChat);
 
     const startRecording = () => {
         console.log("Recording started");
@@ -65,16 +68,16 @@ function Chat() {
         <div className="h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)]  flex items-end">
 
             <MainChat
-                chats={chats}
-                isLoading={isLoading}
-                isRecording={isRecording}
-                setText={setText}
-                startRecording={startRecording}
-                stopRecording={stopRecording}
-                submitHandler={submitHandler}
-                text={text}
-                handleKeyDown={handleKeyDown}
-                isChatHistoryLoading={false}
+                // chats={chats}
+                // isLoading={isLoading}
+                // isRecording={isRecording}
+                // setText={setText}
+                // startRecording={startRecording}
+                // stopRecording={stopRecording}
+                // submitHandler={submitHandler}
+                // text={text}
+                // handleKeyDown={handleKeyDown}
+                // isChatHistoryLoading={false}
             />
 
 

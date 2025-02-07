@@ -482,9 +482,27 @@ const bodySystem = [
     "Gut and Stomach Health",
     "Heart and Blood Flow",
     "Inflammation and Immunity",
-  ];
+];
+const dummyChatHistory = [
+    // Today's Chats
+    { thread_id: 1, title: "Chat about AI", timestamp: new Date() },
+    { thread_id: 2, title: "React vs Angular", timestamp: new Date() },
+
+    // Yesterday's Chats
+    { thread_id: 3, title: "Learning Redux", timestamp: new Date(Date.now() - 86400000) },
+    { thread_id: 4, title: "Database Optimization", timestamp: new Date(Date.now() - 86400000) },
+
+    // Last 7 Days Chats
+    { thread_id: 5, title: "GraphQL vs REST", timestamp: new Date(Date.now() - 2 * 86400000) },
+    { thread_id: 6, title: "Microservices Architecture", timestamp: new Date(Date.now() - 3 * 86400000) },
+    { thread_id: 7, title: "Docker and Kubernetes", timestamp: new Date(Date.now() - 5 * 86400000) },
+
+    // Earlier Chats
+    { thread_id: 8, title: "Node.js Performance Tips", timestamp: new Date(Date.now() - 10 * 86400000) },
+    { thread_id: 9, title: "TypeScript Best Practices", timestamp: new Date(Date.now() - 15 * 86400000) },
+];
 
 
 
 
-export { allSymptoms, conditions, tests, herbsAndSupplements, healthProtocols, lifestyleChanges,bodySystem }
+export { allSymptoms, conditions, tests, herbsAndSupplements, healthProtocols, lifestyleChanges, bodySystem, dummyChatHistory }

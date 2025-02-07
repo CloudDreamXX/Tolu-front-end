@@ -7,12 +7,14 @@ import { FaRegUserCircle } from 'react-icons/fa';
 import { LuArrowRightFromLine } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
 import { useGetUserProfileQuery } from '../../../redux/apis/apiSlice';
+import Button from '../../../components/small/Button';
+import ContactInfo from './components/ContactInfo';
 function Profile() {
     const [activeTab, setActiveTab] = useState('Contact Info');
     const tabs = ['Contact Info', 'Health Profile', 'Subscription'];
     const dispatch = useDispatch();
     const { data: userProfile, isLoading: profileLoading, error: profileError } = useGetUserProfileQuery();
-    console.log("userProfile",userProfile)
+    console.log("userProfile", userProfile)
     // const { userProfile, profileLoading, profileError } = useSelector((state) => ({
     //   userProfile: state.user?.userProfile,
     //   profileLoading: state.user?.profileLoading,
@@ -32,10 +34,10 @@ function Profile() {
     // }
 
     return (
-        <section className="min-h-[calc(100vh-200px)] ">
+        <section className="h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)]  overflow-auto ">
             {/* <SideBar /> */}
             <section>
-                <section className=" bg-gray-100 pt-6">
+                <section className="  pt-6">
                     <div className="max-w-6xl mx-auto p-6">
                         {/* Tab Navigation */}
                         <div className="mb-8 flex gap-8">
@@ -55,35 +57,9 @@ function Profile() {
                             {/* Contact Info Tab */}
                             {activeTab === 'Contact Info' && (
                                 <div className="flex flex-col gap-8">
-                                    {/* User Info Card */}
-                                    <div className="bg-white border-2 border-gray-300 rounded-lg p-6 flex justify-between items-center">
-                                        <div className="flex-shrink-0">
-                                            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                                                <FaRegUserCircle className="text-black" size={30} />
-                                            </div>
-                                        </div>
-                                        <div className="flex-grow ml-4">
-                                            <h2 className="font-medium text-gray-900">{userProfile?.name || ''}</h2>
-                                            <p className="text-gray-500 text-sm">{userProfile?.email || ''}</p>
-                                        </div>
-                                        <div className="flex gap-3">
-                                            <button className="border border-gray-300 bg-white rounded-full py-1 px-4 text-sm">Free</button>
-                                            <span className="py-1 px-3 bg-gray-100 text-gray-600 text-sm rounded-full">Upgrade</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Info Buttons Container */}
-                                    <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden mt-4">
-                                        <button className="w-full py-4 px-6 flex justify-between items-center hover:bg-gray-50">
-                                            <span>Privacy Policy</span>
-                                            <LuArrowRightFromLine />
-                                        </button>
-
-                                        <button className="w-full py-4 px-6 flex justify-between items-center hover:bg-gray-50">
-                                            <span>Terms of use</span>
-                                            <LuArrowRightFromLine />
-                                        </button>
-                                    </div>
+                                    <section>
+                                        <ContactInfo tabs={tabs} activeTab={activeTab}userProfile={userProfile} />
+                                    </section>
                                 </div>
                             )}
 
