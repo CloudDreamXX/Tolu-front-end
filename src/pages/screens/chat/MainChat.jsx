@@ -9,8 +9,9 @@ import { FaRegShareFromSquare } from "react-icons/fa6";
 import { CiVolumeHigh } from "react-icons/ci";
 import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
 import { MdVideoLibrary } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import { setNewChat } from "../../../redux/slice/chatSlice";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { useGetAISearchMutation } from "../../../redux/apis/apiSlice";
+import toast from "react-hot-toast";
 
 const MainChat = () => {
   const lastItemRef = useRef(null);
@@ -18,41 +19,180 @@ const MainChat = () => {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const dispatch = useDispatch();
-  const newChat = useSelector((state) => state.chat.newChat); 
-    useEffect(() => {
-        if (newChat) {
-            setChats([]);            
-            setText("");
-            dispatch(setNewChat(false)); 
-        }
-    }, [newChat, dispatch]);
-
   useEffect(() => {
     if (lastItemRef.current) {
       lastItemRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chats]);
 
-  const handleSubmitValue = (inputText) => {
-    if (!inputText.trim()) return;
+  // const handleSubmitValue = (inputText) => {
+  //   if (!inputText.trim()) return;
+  //   setIsLoading(true);
+
+  //   setTimeout(() => {
+  //     setChats((prevChats) => [
+  //       ...prevChats,
+  //       {
+  //         question: inputText,
+  //         summary: "This is a mocked summary of the answer.",
+  //         detailed_answer: "This is a mocked detailed answer to the question. ",
+  //         source: "Mocked Source",
+  //         audio: null,
+  //       },
+  //     ]);
+  //     setText("");
+  //     setIsLoading(false);
+  //   }, 1000);
+  // };
+
+
+
+
+
+  const [pageLoading, setPageLoading] = useState(false);
+  // Controls loading state for the page.
+
+  const [refreshingIndices, setRefreshingIndices] = useState({});
+  // Keeps track of which item indices are refreshing.
+
+  const [models, setModels] = useState([]);
+  // Stores the list of chat entries (questions & answers).
+
+
+
+  const [getAISearchMutation, loading] = useGetAISearchMutation();
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
+  const [getAISearch, { data, error }] = useGetAISearchMutation();
+
+  // Handle file selection
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    setSelectedFile(file);
+    toast.success(`File Uploaded: ${file.name}`);
+    console.log("File selected:", file);
+  };
+
+  // Handle file upload (if using an external component)
+  const handleFileUpload = (file) => {
+    if (!file) return;
+    setSelectedFile(file);
+    toast.success(`File Uploaded: ${file.name}`);
+    console.log("Uploaded File:", file.name);
+  };
+
+
+  // const handleSubmitValue = async () => {
+  //   setIsLoading(true);
+
+  //   // ✅ Validate file selection (File is now mandatory)
+  //   if (!selectedFile) {
+  //     toast.error("Please select a file before submitting.");
+  //     console.log("No file selected.");
+  //     setIsLoading(false);
+  //     return;
+  //   }
+
+  //   // ✅ Validate file type
+  //   const fileType = selectedFile.type;
+  //   if (!(fileType === "application/pdf" || fileType.startsWith("image"))) {
+  //     toast.error("Invalid file type. Only PDFs and images are allowed.");
+  //     console.log("Invalid file type:", fileType);
+  //     setIsLoading(false);
+  //     return;
+  //   }
+
+  //   // ✅ Correct Payload Structure
+  //   const payload = {
+  //     chat_message: {
+  //       user_prompt: "What's my name?",
+  //       is_new: true,
+  //       regenerate_id: null,
+  //       instructions: "Write random responses to whatever I ask.",
+  //     },
+  //     file: selectedFile, // ✅ File is included
+  //   };
+
+  //   try {
+  //     const response = await getAISearch(payload); // ✅ Send corrected payload
+  //     console.log("Success:", response);
+  //     setChats(response)
+
+  //   } catch (error) {
+  //     console.error("Error sending request:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  console.log("chats", chats)
+
+
+
+  const handleSubmitValue = async () => {
     setIsLoading(true);
 
-    setTimeout(() => {
-      setChats((prevChats) => [
-        ...prevChats,
-        {
-          question: inputText,
-          summary: "This is a mocked summary of the answer.",
-          detailed_answer: "This is a mocked detailed answer to the question. ",
-          source: "Mocked Source",
-          audio: null,
-        },
-      ]);
-      setText("");
+    // if (!selectedFile) {
+    //   toast.error("Please select a file before submitting.");
+    //   setIsLoading(false);
+    //   // return;
+    // }
+
+    // const fileType = selectedFile.type;
+    // if (!(fileType === "application/pdf" || fileType.startsWith("image"))) {
+    //   toast.error("Invalid file type. Only PDFs and images are allowed.");
+    //   setIsLoading(false);
+    //   // return;
+    // }
+
+
+    if (selectedFile) {
+      const fileType = selectedFile.type;
+      if (!(fileType === "application/pdf" || fileType.startsWith("image"))) {
+        toast.error("Invalid file type. Only PDFs and images are allowed.");
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    const payload = {
+      chat_message: {
+        user_prompt: text, // Use the input text
+        is_new: true,
+        regenerate_id: null,
+        instructions: "Write random responses to whatever I ask.",
+      },
+      file: selectedFile,
+    };
+
+    try {
+      const response = await getAISearch(payload);
+
+      if (response.data) {
+        console.log("resiukgyffchgvjhhugyjgv", response);
+        setChats((prevChats) => [
+          ...prevChats,
+          {
+            question: text, // Store user question
+            detailed_answer: response.data.answers || "No answer available.",
+            summary: response.data.result_id || "No summary provided.",
+            source: response.chat_id || "Unknown source",
+            audio: response.data.audio || null,
+          },
+        ]);
+        setText(""); // Clear input
+      } else {
+        toast.error("No response from AI search.");
+      }
+    } catch (error) {
+      console.error("Error sending request:", error);
+      toast.error("Failed to fetch response.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
+
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && !isLoading) {
@@ -109,6 +249,7 @@ const MainChat = () => {
               placeholder="Enter Prompt..."
               onChangeValue={handleInputChange}
               onSubmitValue={handleSubmitValue}
+              onFileUpload={handleFileUpload}
               isLoading={isLoading}
             />
             {!chats.length && (
