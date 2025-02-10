@@ -29,16 +29,12 @@ const Aside = () => {
         );
       case "/user/chat":
         return (
-          <Chat />
+          <Chat isAsideOpen={isAsideOpen} />
         );
       case "/user/profile":
         return (
-          <Chat/>
-          // <AsideDropDown
-          //   name="Profile Settings"
-          //   options={[]}
-          //   onCheckedChange={() => { }} // Replace with actual data when needed
-          // />
+          <Chat />
+          
         );
       case "/settings":
         return (
@@ -78,9 +74,9 @@ const Aside = () => {
         <ArrowIcon />
       </div>
       {!isAsideOpen && (
-        <div className="h-full  py-8 flex px-2 flex-col items-center justify-between ">
+        <div className="h-full  py-8 flex px-2 flex-col items-center justify-between  transition-all duration-700 ">
 
-         { renderComponentBasedOnRoute()}
+          {renderComponentBasedOnRoute()}
 
           {/* <Button className={" !bg-white !border-[1px] border-[#008FF633] shadow-[0px_4px_6px_#7090B01F]   text-[#ACACAC]"} text="Log Out" width="w-full" >
             <TbLogout2 />

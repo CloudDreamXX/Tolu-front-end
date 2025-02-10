@@ -1,190 +1,91 @@
+
 import { useEffect, useRef, useState } from "react";
 import LibraryInput from "../../user/library/components/LibraryInput";
 import Button from "../../../components/small/Button";
-import { GrSearchAdvanced, GrRefresh, GrGallery } from "react-icons/gr";
+import { GrSearchAdvanced } from "react-icons/gr";
 import { HiOutlineChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
-import { RiAccountCircleFill } from "react-icons/ri";
-import { BsCopy } from "react-icons/bs";
-import { FaRegShareFromSquare } from "react-icons/fa6";
-import { CiVolumeHigh } from "react-icons/ci";
-import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
-import { MdVideoLibrary } from "react-icons/md";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { useGetAISearchMutation } from "../../../redux/apis/apiSlice";
+import { useGetAISearchMutation, useGetSearchHistoryQuery } from "../../../redux/apis/apiSlice";
 import toast from "react-hot-toast";
+import QuestionAnswer from "./components/QuestionAnswer";
+import { useDispatch, useSelector } from "react-redux";
+import { setNewChat } from "../../../redux/slice/chatSlice";
 
 const MainChat = () => {
   const lastItemRef = useRef(null);
   const [chats, setChats] = useState([]);
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [getAISearch] = useGetAISearchMutation();
+  const selectedChatId = useSelector((state) => state.chat.selectedChatId);
+  const newChatPage = useSelector((state) => state.chat.newChat);
+  const { data } = useGetSearchHistoryQuery()
+  const filteredData = data?.history?.filter((item) => item.chat_id === selectedChatId) || [];
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    setChats(filteredData)
+  }, [selectedChatId])
+  
+  const newChat = () => {
+    setChats([]);
+    setText()
+    setSelectedFile()
+    dispatch(setNewChat(false))
+  }
+  
+  useEffect(() => {
+    if (newChatPage) {
+      newChat()
+      setIsLoading(false)
+      setText("")
+      setSelectedFile(null)
+      toast.success("New Chat Started")
+    }
+  }, [newChatPage])
+
 
   useEffect(() => {
     if (lastItemRef.current) {
-      lastItemRef.current.scrollIntoView({ behavior: "smooth" });
+      lastItemRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   }, [chats]);
 
-  // const handleSubmitValue = (inputText) => {
-  //   if (!inputText.trim()) return;
-  //   setIsLoading(true);
-
-  //   setTimeout(() => {
-  //     setChats((prevChats) => [
-  //       ...prevChats,
-  //       {
-  //         question: inputText,
-  //         summary: "This is a mocked summary of the answer.",
-  //         detailed_answer: "This is a mocked detailed answer to the question. ",
-  //         source: "Mocked Source",
-  //         audio: null,
-  //       },
-  //     ]);
-  //     setText("");
-  //     setIsLoading(false);
-  //   }, 1000);
-  // };
-
-
-
-
-
-  const [pageLoading, setPageLoading] = useState(false);
-  // Controls loading state for the page.
-
-  const [refreshingIndices, setRefreshingIndices] = useState({});
-  // Keeps track of which item indices are refreshing.
-
-  const [models, setModels] = useState([]);
-  // Stores the list of chat entries (questions & answers).
-
-
-
-  const [getAISearchMutation, loading] = useGetAISearchMutation();
-
-  const [selectedFile, setSelectedFile] = useState(null);
-  // const [isLoading, setIsLoading] = useState(false);
-  const [getAISearch, { data, error }] = useGetAISearchMutation();
-
-  // Handle file selection
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (!file) return;
-    setSelectedFile(file);
-    toast.success(`File Uploaded: ${file.name}`);
-    console.log("File selected:", file);
+    if (file) {
+      setSelectedFile(file);
+      toast.success(`File Uploaded: ${file.name}`);
+    }
   };
-
-  // Handle file upload (if using an external component)
-  const handleFileUpload = (file) => {
-    if (!file) return;
-    setSelectedFile(file);
-    toast.success(`File Uploaded: ${file.name}`);
-    console.log("Uploaded File:", file.name);
-  };
-
-
-  // const handleSubmitValue = async () => {
-  //   setIsLoading(true);
-
-  //   // ✅ Validate file selection (File is now mandatory)
-  //   if (!selectedFile) {
-  //     toast.error("Please select a file before submitting.");
-  //     console.log("No file selected.");
-  //     setIsLoading(false);
-  //     return;
-  //   }
-
-  //   // ✅ Validate file type
-  //   const fileType = selectedFile.type;
-  //   if (!(fileType === "application/pdf" || fileType.startsWith("image"))) {
-  //     toast.error("Invalid file type. Only PDFs and images are allowed.");
-  //     console.log("Invalid file type:", fileType);
-  //     setIsLoading(false);
-  //     return;
-  //   }
-
-  //   // ✅ Correct Payload Structure
-  //   const payload = {
-  //     chat_message: {
-  //       user_prompt: "What's my name?",
-  //       is_new: true,
-  //       regenerate_id: null,
-  //       instructions: "Write random responses to whatever I ask.",
-  //     },
-  //     file: selectedFile, // ✅ File is included
-  //   };
-
-  //   try {
-  //     const response = await getAISearch(payload); // ✅ Send corrected payload
-  //     console.log("Success:", response);
-  //     setChats(response)
-
-  //   } catch (error) {
-  //     console.error("Error sending request:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  console.log("chats", chats)
-
-
 
   const handleSubmitValue = async () => {
-    setIsLoading(true);
-
-    // if (!selectedFile) {
-    //   toast.error("Please select a file before submitting.");
-    //   setIsLoading(false);
-    //   // return;
-    // }
-
-    // const fileType = selectedFile.type;
-    // if (!(fileType === "application/pdf" || fileType.startsWith("image"))) {
-    //   toast.error("Invalid file type. Only PDFs and images are allowed.");
-    //   setIsLoading(false);
-    //   // return;
-    // }
-
-
-    if (selectedFile) {
-      const fileType = selectedFile.type;
-      if (!(fileType === "application/pdf" || fileType.startsWith("image"))) {
-        toast.error("Invalid file type. Only PDFs and images are allowed.");
-        setIsLoading(false);
-        return;
-      }
+    if (!text.trim()) {
+      toast.error("Please enter a message before submitting.");
+      return;
     }
 
-    const payload = {
-      chat_message: {
-        user_prompt: text, // Use the input text
-        is_new: true,
-        regenerate_id: null,
-        instructions: "Write random responses to whatever I ask.",
-      },
-      file: selectedFile,
-    };
+    if (selectedFile && !["application/pdf", "image"].some(type => selectedFile.type.startsWith(type))) {
+      toast.error("Invalid file type. Only PDFs and images are allowed.");
+      return;
+    }
+
+    const newChat = { question: text, detailed_answer: "", summary: "Streaming...", source: "Streaming...", audio: null };
+    setChats((prevChats) => [...prevChats, newChat]);
+    setIsLoading(true);
 
     try {
-      const response = await getAISearch(payload);
-
-      if (response.data) {
-        console.log("resiukgyffchgvjhhugyjgv", response);
-        setChats((prevChats) => [
-          ...prevChats,
-          {
-            question: text, // Store user question
-            detailed_answer: response.data.answers || "No answer available.",
-            summary: response.data.result_id || "No summary provided.",
-            source: response.chat_id || "Unknown source",
-            audio: response.data.audio || null,
-          },
-        ]);
-        setText(""); // Clear input
-      } else {
-        toast.error("No response from AI search.");
-      }
+      await getAISearch({
+        chat_message: { user_prompt: text, is_new: true, regenerate_id: null, instructions: "Write random responses." },
+        file: selectedFile || null,
+        onMessage: (streamingText) => {
+          setChats((prevChats) => {
+            const updatedChats = [...prevChats];
+            updatedChats[updatedChats.length - 1].detailed_answer = streamingText;
+            return updatedChats;
+          });
+        },
+      });
     } catch (error) {
       console.error("Error sending request:", error);
       toast.error("Failed to fetch response.");
@@ -193,26 +94,12 @@ const MainChat = () => {
     }
   };
 
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !isLoading) {
-      event.preventDefault();
-      handleSubmitValue(text);
-    }
-  };
-
-  const handleInputChange = (value) => {
-    setText(value);
-  };
-
   return (
     <div className="flex gap-2 grow p-0 sm:p-2 md:p-4 lg:p-6 mt-12 sm:mt-0">
       <div className="flex items-end w-full">
         <div className="text-center flex flex-col h-[75vh] gap-7 items-center w-full">
           <div className={`my-2 p-2 w-full flex-1 overflow-y-auto ${chats.length ? "h-[400px]" : "h-0"}`}>
-            {isLoading ? (
-              <div className="flex items-center justify-center h-[380px]">Loading...</div>
-            ) : (
+            {
               chats.length > 0 && (
                 <>
                   <section className="flex gap-8 ">
@@ -224,22 +111,21 @@ const MainChat = () => {
                       <HiOutlineChatBubbleOvalLeftEllipsis />
                     </Button>
                   </section>
-
                   <div className="flex flex-col">
                     {chats.map((chat, i) => (
                       <QuestionAnswer key={i} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
                     ))}
                   </div>
+
                 </>
               )
-            )}
+            }
           </div>
           {!chats.length && (
-
             <section>
               <div className="lg:col-span-12 flex justify-center">
                 <h5 className="text-xl md:text-[32px] text-primary font-extrabold ">
-                  Hi Coach! How can i help you today?
+                  Hi Coach! How can I help you today?
                 </h5>
               </div>
             </section>
@@ -247,9 +133,9 @@ const MainChat = () => {
           <div className="w-full">
             <LibraryInput
               placeholder="Enter Prompt..."
-              onChangeValue={handleInputChange}
+              onChangeValue={setText}
               onSubmitValue={handleSubmitValue}
-              onFileUpload={handleFileUpload}
+              onFileUpload={handleFileChange}
               isLoading={isLoading}
             />
             {!chats.length && (
@@ -270,45 +156,6 @@ const ChatFeature = ({ detail }) => (
   <button className="flex gap-1 items-center border-[1px] border-primaryLight py-2 px-3 rounded-md shadow-md shadow-[#008ff630]">
     <p className="text-xs text-secondaryGray text-start">{detail}</p>
   </button>
-);
-const QuestionAnswer = ({ chat, lastItemRef }) => (
-  <section ref={lastItemRef} className="flex flex-col mt-6 gap-6 h-full">
-    <section className="flex w-full  items-center space-x-6">
-      <section className="w-full pl-14  space-y-6">
-        <div className="w-full flex items-center gap-6">
-          <RiAccountCircleFill className="text-5xl" />
-          <div className="shadow-md rounded-lg h-16 w-full text-start p-4">{chat.question}</div>
-        </div>
-
-        <div className="flex w-full relative gap-5 items-center group">
-          {/* Left side icons, hidden by default and shown on hover */}
-          <div className="text-2xl absolute flex flex-col gap-2 text-primary  left-[-30px]  items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            {[BsCopy, FaRegShareFromSquare, CiVolumeHigh, AiOutlineLike, AiOutlineDislike, GrRefresh].map((Icon, index) => (
-              <IconWrapper key={index}>
-                <Icon fontSize={12} />
-              </IconWrapper>
-            ))}
-          </div>
-
-          {/* Answer Section */}
-          <div className=" shadow-md text-start p-4 rounded-lg border-primary w-full">
-            {chat.detailed_answer}
-          </div>
-        </div>
-      </section>
-
-      <div className="flex flex-col gap-4 text-2xl text-primary">
-        <GrGallery />
-        <MdVideoLibrary />
-      </div>
-    </section>
-  </section>
-);
-
-const IconWrapper = ({ children }) => (
-  <div className="w-[20px] bg-gray-200 h-[20px] shadow-xl rounded-xl flex items-center justify-center">
-    {children}
-  </div>
 );
 
 export default MainChat;
