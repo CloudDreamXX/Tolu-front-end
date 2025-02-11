@@ -16,7 +16,7 @@ const QuestionAnswer = ({ chat }) => {
 
     return (
         // <section ref={lastItemRef} className="flex flex-col mt-6 gap-6 h-full overflow-y-auto">
-        <section ref={lastItemRef} className="flex flex-col mt-6 gap-6 h-full overflow-y-auto">
+        <section ref={lastItemRef} className="flex flex-col mt-6 gap-6  ">
             <div className="flex w-full items-center space-x-6">
                 <div className="w-full pl-14 space-y-6">
                     <div className="w-full flex items-center gap-6">

@@ -5,16 +5,16 @@ import { MdHistory } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { setNewChat } from "../../../redux/slice/chatSlice";
 
-const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, historyClickHandler }) => {
+const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, chatIdHandler }) => {
   const dispatch = useDispatch();
   const [showHistory, setShowHistory] = useState(true);
-  console.log("isAsideOpen", !isAsideOpen)
+  // console.log("isAsideOpen", !isAsideOpen)
   const newChatHandler = () => {
     dispatch(setNewChat(true));
   };
   useEffect(() => {
     setShowHistory(false)
-    console.log("history toggled", !isAsideOpen)
+    // console.log("history toggled", !isAsideOpen)
   }, [isAsideOpen])
 
   const toggleHistory = () => {
@@ -79,7 +79,7 @@ const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, historyClickHandler 
                   chats.map((chat) => (
                     <p
                       key={chat.chat_id}
-                      onClick={() => historyClickHandler(chat.chat_id)}
+                      onClick={() => chatIdHandler(chat.chat_id)}
                       className="px-4 py-2 bg-transparent mt-2 text-primaryDark rounded-md text-xs md:text-sm truncate w-[246px] xl:w-full
                      hover:bg-[#17171718] cursor-pointer"
                     >

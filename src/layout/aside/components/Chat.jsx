@@ -1,14 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ChatHistory from '../../../pages/screens/chat/ChatHistory'
 import { useGetSearchHistoryQuery } from '../../../redux/apis/apiSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedChatId } from '../../../redux/slice/chatSlice';
+import { setNewChat, setRefetchHistory, setSelectedChatId } from '../../../redux/slice/chatSlice';
+import toast from 'react-hot-toast';
 
 function Chat({ isAsideOpen }) {
     const [chats, setChats] = useState([]);
     const selectedChatId = useSelector((state) => state.chat.selectedChatId);
-    console.log("selectedChatId", selectedChatId);
-    const { data, error, isLoading } = useGetSearchHistoryQuery(selectedChatId);
+    // console.log("selectedChatId", selectedChatId);
+    const { data, error, isLoading, refetch } = useGetSearchHistoryQuery();
+    const refetchHistory = useSelector((state) => state.chat.refetchHistory);
+    // console.log(`Refetching`, refetchHistory)
+    console.log("isLoading", data);
 
     const dispatch = useDispatch()
     const newChatHandler = () => {
@@ -17,12 +21,18 @@ function Chat({ isAsideOpen }) {
             setChartData([]);
         }
     };
-    const selectedChatIdHandler = (value) => {
+    const chatIdHandler = (value) => {
         dispatch(setSelectedChatId(value))
-        console.log("value: " + value);
+        // console.log("value: " + value);
     }
 
-
+    useEffect(() => {
+        toast.error(error)
+    }, [error])
+    useEffect(() => {
+        refetch()
+        dispatch(setRefetchHistory(false));
+    }, [refetchHistory])
     return (
         <div className='flex  flex-col w-full'>
 
@@ -31,7 +41,7 @@ function Chat({ isAsideOpen }) {
                 newChatHandler={newChatHandler}
                 chatHistory={data}
                 isLoading={isLoading}
-                historyClickHandler={selectedChatIdHandler}
+                chatIdHandler={chatIdHandler}
             />
         </div>
     )

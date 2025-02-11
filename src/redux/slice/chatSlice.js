@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   newChat: false, // Initial state
   chatHistory: "",
-  selectedChatId: "" // Selected chat ID for chat history
+  selectedChatId: "",// Selected chat ID for chat history
+  refetchHistory: false
 };
 
 const chatSlice = createSlice({
@@ -18,9 +19,12 @@ const chatSlice = createSlice({
     },
     setSelectedChatId: (state, action) => {
       state.selectedChatId = action.payload;
+    },
+    setRefetchHistory: (state, action) => {
+      state.refetchHistory = action.payload;
     }
   },
 });
 
-export const { setNewChat, setSelectedChatId } = chatSlice.actions;
+export const { setNewChat, setSelectedChatId, setRefetchHistory } = chatSlice.actions;
 export default chatSlice;

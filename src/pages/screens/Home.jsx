@@ -5,9 +5,9 @@ const Home = () => {
   const { data } = useGetUserProfileQuery()
   // const { data: setChats } = useGetSearchHistoryQuery()
   const { data: section } = useGetSessionResultQuery()
-  console.log("data", data);
+  // console.log("data", data);
   // console.log("setChats", setChats);
-  console.log("section", section);
+  // console.log("section", section);
   const handleSubmitValue = (value) => {
     alert(`Submitted Value: ${value}`);
   };

@@ -14,16 +14,7 @@ function Profile() {
     const tabs = ['Contact Info', 'Health Profile', 'Subscription'];
     const dispatch = useDispatch();
     const { data: userProfile, isLoading: profileLoading, error: profileError } = useGetUserProfileQuery();
-    console.log("userProfile", userProfile)
-    // const { userProfile, profileLoading, profileError } = useSelector((state) => ({
-    //   userProfile: state.user?.userProfile,
-    //   profileLoading: state.user?.profileLoading,
-    //   profileError: state.user?.profileError
-    // }));
 
-    // useEffect(() => {
-    //   dispatch(getUserProfile());
-    // }, [dispatch]);
 
     if (profileLoading) {
         return <div>Loading...</div>;
