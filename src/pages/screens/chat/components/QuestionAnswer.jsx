@@ -1,16 +1,45 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import DOMPurify from "dompurify";
-import { RiAccountCircleFill } from "react-icons/ri";
+// import { RiAccountCircleFill } from "react-icons/ri";
 import { BsCopy } from "react-icons/bs";
 import { FaRegShareFromSquare } from "react-icons/fa6";
 import { CiVolumeHigh } from "react-icons/ci";
 import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
 import { MdVideoLibrary } from "react-icons/md";
 import { GrGallery, GrRefresh } from "react-icons/gr";
-
-const QuestionAnswer = ({ chat }) => {
+import { RiAccountCircleFill } from "react-icons/ri";
+import { FaRegEdit, FaTimes } from "react-icons/fa";
+const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
     const lastItemRef = useRef(null);
     const containsHtml = /<\/?[a-z][\s\S]*>/i.test(chat.detailed_answer);
+
+    // const lastItemRef = useRef(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [title, setTitle] = useState(`${chat.question || ""} ${chat.query || ""}`);
+    const [prevTitle, setPrevTitle] = useState(title); // Store previous title
+    const inputRef = useRef(null);
+    useEffect(() => {
+        if (isEditing) {
+            inputRef.current?.focus();
+        }
+    }, [isEditing]);
+
+    // Handle title update on "Enter" key or blur
+    const handleTitleUpdate = async () => {
+        setIsEditing(false);
+        if (title.trim() !== prevTitle) {
+            await handleUpdateChatTitle(chat?.chat_id, title);
+            setPrevTitle(title); // Update previous title after successful update
+        }
+    };
+
+    // Handle cancel update and revert to previous title
+    const handleCancelUpdate = () => {
+        setTitle(prevTitle);
+        setIsEditing(false);
+    };
+
+
     const icons = [BsCopy, FaRegShareFromSquare, CiVolumeHigh, AiOutlineLike, AiOutlineDislike, GrRefresh];
     const sanitizedHTML = DOMPurify.sanitize(chat.answer);
 
@@ -19,12 +48,34 @@ const QuestionAnswer = ({ chat }) => {
         <section ref={lastItemRef} className="flex flex-col mt-6 gap-6  ">
             <div className="flex w-full items-center space-x-6">
                 <div className="w-full pl-14 space-y-6">
-                    <div className="w-full flex items-center gap-6">
+                    {/* <div className="w-full flex items-center gap-6">
                         <RiAccountCircleFill className="text-5xl" />
                         <div className="shadow-md rounded-lg h-16 w-full text-start p-4">
                             {`${chat.question ? chat.question : ""} ${chat.query ? ` ${chat.query}` : ""}`}
 
                         </div>
+                    </div> */}
+                    <div className="shadow-md flex items-center justify-between rounded-lg h-16 w-full text-start p-4">
+                        {isEditing ? (
+                            <div className="flex w-full items-center gap-3">
+                                <input
+                                    ref={inputRef}
+                                    type="text"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    onBlur={handleTitleUpdate}
+                                    onKeyDown={(e) => e.key === "Enter" && handleTitleUpdate()}
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+                                />
+                                {/* Cancel button - appears only in edit mode */}
+                                <FaTimes onClick={handleCancelUpdate} className="cursor-pointer text-red-500" />
+                            </div>
+                        ) : (
+                            <section>{title}</section>
+                        )}
+                        <section onClick={() => setIsEditing(true)} className="cursor-pointer">
+                            <FaRegEdit />
+                        </section>
                     </div>
 
                     <div className="flex w-full relative gap-5 items-center group">

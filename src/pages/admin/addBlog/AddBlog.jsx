@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import LibraryInput from '../../user/library/components/LibraryInput';
 import { CgFileAdd } from 'react-icons/cg';
 import FileCard from './components/FileCard';
@@ -10,12 +10,14 @@ import Modal from '../../../components/modals/Modal';
 import Button from '../../../components/small/Button';
 import { useAiLearningSearchMutation } from '../../../redux/apis/apiSlice';
 import toast from 'react-hot-toast';
+import DOMPurify from "dompurify";
+import QuestionAnswer from '../../screens/chat/components/QuestionAnswer';
 
 function AddBlog() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
     const [newFolder, setNewFolder] = useState('');
-    const [aiLearningSearch, { isLoading }] = useAiLearningSearchMutation();
+    const [aiLearningSearch] = useAiLearningSearchMutation();
     const dispatch = useDispatch();
     const [messages, setMessages] = useState([]);
     const [instruction, setInstruction] = useState(null);
@@ -27,11 +29,17 @@ function AddBlog() {
     const [inputValue, setInputValue] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
 
+    const [chats, setChats] = useState([]);
+    const [text, setText] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    // const [selectedFile, setSelectedFile] = useState(null);
+    const lastItemRef = useRef(null);
 
     const handleInstructionChange = (e) => {
         setInstruction(e.target.value);
     };
 
+    // console.log("chats", chats)
     const addInstruction = () => {
         console.log(instruction);
         closeInstructionModal();
@@ -79,69 +87,42 @@ function AddBlog() {
         document.getElementById('file-input').click();
     };
 
-    const handleSubmitValue = async (value) => {
+    const handleSubmitValue = async (text) => {
+        if (!text.trim()) {
+            toast.error("Please enter a message before submitting.");
+            return;
+        }
+
+        if (selectedFile && !["application/pdf", "image"].some(type => selectedFile.type.startsWith(type))) {
+            toast.error("Invalid file type. Only PDFs and images are allowed.");
+            return;
+        }
+
+        const newChat = { question: text, detailed_answer: "", summary: "Streaming...", source: "Streaming...", audio: null };
+        setChats((prevChats) => [...prevChats, newChat]);
+        setIsLoading(true);
+
         try {
-            const formData = new FormData();
-            formData.append("chat_message", JSON.stringify({
-                // user_prompt: "What's my name?",
-                user_prompt: value,
-                is_new: true,
-                regenerate_id: null,
-                instructions: instruction
-            }));
-            if (selectedFile) {
-                const fileType = selectedFile.type;
-
-                if (fileType === "application/pdf") {
-                    console.log("Checking pdf", selectedFile)
-                    formData.append("pdf", selectedFile);
-                } else if (fileType.startsWith("image")) {
-                    console.log("Checking image", selectedFile)
-                    formData.append("image", selectedFile);
-                } else {
-                    console.log("Please select a valid PDF or image file.");
-                    return;
-                }
-            }
-            const response = await aiLearningSearch(formData);
-
-
-            if (typeof response.error.data === "string") {
-
-                try {
-                    const cleanedData = response.error.data
-                        .replace(/^data:\s*/, '')
-                        .replace(/^\s*[\r\n]+/, '')
-                        .replace(/[\r\n]+$/, '')
-                        .trim();
-                    const dataObjects = cleanedData.split(/\s*data:\s*/).filter(item => item.trim() !== '');
-                    const parsedDataArray = dataObjects.map(item => {
-                        try {
-                            return JSON.parse(item);
-                        } catch (e) {
-                            console.error("Error parsing individual object:", e);
-                            return null;
-                        }
-                    }).filter(item => item !== null);
-                    const replies = parsedDataArray.map(item => item.reply).join(' ');
-                    handleNewReply(replies, value)
-                    setSelectedFile(null)
-                    setInstruction(null)
-                } catch (e) {
-                    console.error("Error parsing JSON:", e);
-                    toast.error("Invalid JSON response");
-                }
-            } else {
-                console.log("Unexpected response format:", response.error.data);
-            }
-
+            await aiLearningSearch({
+                chat_message: { user_prompt: text, is_new: true, regenerate_id: null, instructions: "Write random responses." },
+                file: selectedFile || null,
+                onMessage: (streamingText) => {
+                    setChats((prevChats) => {
+                        const updatedChats = [...prevChats];
+                        updatedChats[updatedChats.length - 1].detailed_answer = streamingText;
+                        return updatedChats;
+                    });
+                },
+            });
         } catch (error) {
-            console.error('Request failed:', error);
-            toast.error("Request Failed");
+            console.error("Error sending request:", error);
+            toast.error("Failed to fetch response.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
-
+    const containsHtml = /<\/?[a-z][\s\S]*>/i.test(chats.detailed_answer);
 
 
 
@@ -206,16 +187,40 @@ function AddBlog() {
                     isLoading={isLoading}
 
                 />
-                {messages.length > 0 && (
-                    <section className='bg-red-100 w-full m-4 rounded-lg p-4'>
-                        {messages.map((message, index) => (
-                            <div key={index}>
-                                <p><strong>Question:</strong> {message.question}</p>
-                                <p><strong>Reply:</strong> {message.reply}</p>
-                            </div>
+                {chats.length > 0 && (
+
+                    <section className='w-full max-h-[400px] mt-4 overflow-auto'>
+
+                        {chats.map((chat, i) => (
+                            <QuestionAnswer key={i} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
                         ))}
                     </section>
                 )}
+                {/* {chats.length > 0 && (
+                    <section className='bg-red-100 w-full m-4 rounded-lg p-4'>
+                        {chats.length > 0 && (
+                            <section className='bg-red-100 w-full m-4 rounded-lg p-4'>
+                                {chats.map((message, index) => {
+                                    const hasHtml = /<\/?[a-z][\s\S]*>/i.test(message.detailed_answer);
+                                    return (
+                                        <div key={index} className="mb-4">
+                                            <p className="font-bold">Question:</p>
+                                            <p>{message.question}</p>
+
+                                            <p className="font-bold mt-2">Reply:</p>
+                                            {hasHtml ? (
+                                                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.detailed_answer) }} />
+                                            ) : (
+                                                <p>{message.detailed_answer}</p>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </section>
+                        )}
+
+                    </section>
+                )} */}
                 {/* File Cards */}
                 <div className="flex  h-30 xs:flex-col sm:flex-col md:flex-row gap-4 mt-7  w-full">
                     <section className="w-full cursor-pointer">

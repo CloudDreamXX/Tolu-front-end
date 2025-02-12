@@ -1,50 +1,46 @@
-import React, { useEffect, useState } from 'react'
-import ChatHistory from '../../../pages/screens/chat/ChatHistory'
+import React, { useEffect } from 'react';
+import ChatHistory from '../../../pages/screens/chat/ChatHistory';
 import { useGetSearchHistoryQuery } from '../../../redux/apis/apiSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { setNewChat, setRefetchHistory, setSelectedChatId } from '../../../redux/slice/chatSlice';
+import { setRefetchHistory, setSelectedChatId } from '../../../redux/slice/chatSlice';
 import toast from 'react-hot-toast';
 
 function Chat({ isAsideOpen }) {
-    const [chats, setChats] = useState([]);
-    const selectedChatId = useSelector((state) => state.chat.selectedChatId);
-    // console.log("selectedChatId", selectedChatId);
     const { data, error, isLoading, refetch } = useGetSearchHistoryQuery();
     const refetchHistory = useSelector((state) => state.chat.refetchHistory);
-    // console.log(`Refetching`, refetchHistory)
-    console.log("isLoading", data);
+    const dispatch = useDispatch();
 
-    const dispatch = useDispatch()
-    const newChatHandler = () => {
-        if (chats.length > 0) {
-            setChats([]);
-            setChartData([]);
-        }
+    // Handle chat selection
+    const chatIdHandler = (chatId) => {
+        dispatch(setSelectedChatId(chatId));
     };
-    const chatIdHandler = (value) => {
-        dispatch(setSelectedChatId(value))
-        // console.log("value: " + value);
-    }
 
+    // Show error if API fails
     useEffect(() => {
-        toast.error(error)
-    }, [error])
+        if (error) {
+            toast.error("Failed to load chat history");
+        }
+    }, [error]);
+
+    // Refetch chat history when `refetchHistory` flag changes
     useEffect(() => {
-        refetch()
-        dispatch(setRefetchHistory(false));
-    }, [refetchHistory])
+        if (refetchHistory) {
+            refetch();
+            dispatch(setRefetchHistory(false));
+        }
+    }, [refetchHistory, refetch, dispatch]);
+
     return (
-        <div className='flex  flex-col w-full'>
-
+        <div className='flex flex-col w-full'>
             <ChatHistory
                 isAsideOpen={isAsideOpen}
-                newChatHandler={newChatHandler}
+                newChatHandler={() => {}} // Removed unnecessary state handling
                 chatHistory={data}
                 isLoading={isLoading}
                 chatIdHandler={chatIdHandler}
             />
         </div>
-    )
+    );
 }
 
-export default Chat
+export default Chat;

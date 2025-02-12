@@ -34,7 +34,7 @@ const Aside = () => {
       case "/user/profile":
         return (
           <Chat />
-          
+
         );
       case "/settings":
         return (

@@ -4,7 +4,7 @@ import LibraryInput from "../../user/library/components/LibraryInput";
 import Button from "../../../components/small/Button";
 import { GrSearchAdvanced } from "react-icons/gr";
 import { HiOutlineChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
-import { useDeleteChatMutation, useGetAISearchMutation, useGetSearchHistoryQuery } from "../../../redux/apis/apiSlice";
+import { useDeleteChatMutation, useGetAISearchMutation, useGetSearchHistoryQuery, useUpdateChatTitleMutation } from "../../../redux/apis/apiSlice";
 import toast from "react-hot-toast";
 import QuestionAnswer from "./components/QuestionAnswer";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +12,8 @@ import { setNewChat, setRefetchHistory } from "../../../redux/slice/chatSlice";
 
 const MainChat = () => {
   const lastItemRef = useRef(null);
+  // const lastItemRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [chats, setChats] = useState([]);
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,26 +30,23 @@ const MainChat = () => {
   const [inputValue, setInputValue] = useState("");
   const [lastChat, setLatestChat] = useState()
 
-  
-  
+
+
   const newChat = () => {
     setChats([]);
     setText()
-    // setSelectedFile()
     dispatch(setNewChat(false))
   }
-  // console.log("New chat", newChatPage)
   useEffect(() => {
     if (newChatPage) {
       newChat()
       setChatId('')
       setIsLoading(false)
       setText("")
-      // setSelectedFile(null)
       toast.success("New Chat Started")
     }
   }, [newChatPage])
-  
+
   useEffect(() => {
     setChats(filteredData)
   }, [selectedChatId])
@@ -83,31 +82,33 @@ const MainChat = () => {
   };
 
   const handleRemoveFile = () => {
-    setSelectedFile(null); 
-    fileInputRef.current.value = ""; 
+    setSelectedFile(null);
+    fileInputRef.current.value = "";
   };
 
- 
+
   const handleFileUpload = (file) => {
     setSelectedFile(file);
     console.log("Selected File:", file);
   };
 
-
-
-
   const handleInputSubmit = async () => {
-    if (!inputValue.trim()) {
+    console.log("Enter", inputValue)
+    console.log("Submitting:", inputValueRef.current);
+    const input = inputValue.trim() || inputValueRef.current.trim();
+    console.log("Enter refffff", input)
+    if (!input.trim()) {
       toast.error("Please enter a message before submitting.");
       return;
     }
+    console.log("Enter a message", input);
     if (selectedFile && !["application/pdf", "image"].some(type => selectedFile.type.startsWith(type))) {
       toast.error("Invalid file type. Only PDFs and images are allowed.");
       return;
     }
     setIsLoading(true);
     let newEntry = {
-      question: inputValue,
+      question: input,
       detailed_answer: "",
       summary: "Streaming...",
       source: "Streaming...",
@@ -121,7 +122,7 @@ const MainChat = () => {
     try {
       const response = await getAISearch({
         chat_message: {
-          user_prompt: inputValue,
+          user_prompt: input,
           is_new: !chatId, // If there's no chat ID, it's a new chat
           chat_id: chatId?.chat_id || "", // Use existing chat ID if available
           regenerate_id: "",
@@ -165,11 +166,34 @@ const MainChat = () => {
       setIsLoading(false);
       setText("");
       setSelectedFile(null);
+      setInputValue("");
       if (fileInputRef.current) {
         fileInputRef.current.value = ""; // Reset file input
       }
     }
   };
+  const inputValueRef = useRef(inputValue);
+
+  useEffect(() => {
+    inputValueRef.current = inputValue;
+  }, [inputValue]);
+
+  const [updateChatTitle, { isLoading: titleLoading }] = useUpdateChatTitleMutation();
+  const handleUpdateChatTitle = async (chatId, newTitle) => {
+    try {
+      const response = await updateChatTitle({ chat_id: chatId, new_title: newTitle }).unwrap();
+      setInputValue(newTitle);
+      inputValueRef.current = newTitle; // Also update ref
+      toast.success(response.message)// // Call handleInputSubmit after updating title
+      setInputValue(newTitle); // Ensure inputValue is set for handleInputSubmit
+      setChats([])
+      handleInputSubmit();
+    } catch (err) {
+      console.error("Error updating chat title:", err);
+    }
+  };
+
+
 
   return (
     <div className="flex gap-2 grow p-0 sm:p-2 md:p-4 lg:p-6 mt-12 sm:mt-0">
@@ -192,10 +216,9 @@ const MainChat = () => {
                   </section>
                   <div className="flex flex-col">
                     {chats.map((chat, i) => (
-                      <QuestionAnswer key={i} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
+                      <QuestionAnswer handleUpdateChatTitle={handleUpdateChatTitle} key={i} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
                     ))}
                   </div>
-
                 </>
               )
             }
