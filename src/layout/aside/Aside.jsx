@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";  // Import useLocation
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom"; // Import useLocation
 import { ArrowIcon } from "../../assets/svgs/Icon";
 import AsideDropDown from "./AsideDropDown";
-import Button from "../../components/small/Button";
-import { TbLogout2 } from "react-icons/tb";
-import { allSymptoms, bodySystem, conditions, healthProtocols, herbsAndSupplements, lifestyleChanges, tests } from "../../assets/data";
-import ChatHistory from "../../pages/screens/chat/ChatHistory";
 import Dashboard from "./components/Dashboard";
 import Chat from "./components/chat";
 

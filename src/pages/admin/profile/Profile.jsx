@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-// import { getUserProfile } from '../ReduxToolKit/Slice/userSlice';
+import React, { useState } from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
-// import { section } from 'antd';
-// import SideBar from './SideBar';
-import { LuArrowRightFromLine } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
+import { useDispatch } from 'react-redux';
 import { useGetUserProfileQuery } from '../../../redux/apis/apiSlice';
-import Button from '../../../components/small/Button';
 import ContactInfo from './components/ContactInfo';
 function Profile() {
     const [activeTab, setActiveTab] = useState('Contact Info');
@@ -25,7 +20,7 @@ function Profile() {
     // }
 
     return (
-        <section className="h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)]  overflow-auto ">
+        <section className="h-[calc(100vh-150px)] custom-scroll overflow-auto ">
             {/* <SideBar /> */}
             <section>
                 <section className="  pt-6">

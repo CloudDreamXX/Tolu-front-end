@@ -1,9 +1,8 @@
 
 import { useEffect, useState } from "react";
-import { IoIosArrowDropleftCircle } from "react-icons/io";
 
-import MainChat from '../../screens/chat/MainChat';
 import { useSelector } from "react-redux";
+import MainChat from '../../screens/chat/MainChat';
 
 function Chat() {
 
@@ -61,7 +60,7 @@ function Chat() {
     }, []);
 
     return (
-        <div className="h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)]  flex items-end">
+        <div className="h-[calc(100vh-150px)]  flex items-end">
             <MainChat
             // chats={chats}
             // isLoading={isLoading}

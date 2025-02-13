@@ -1,28 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { IoChevronForwardOutline, IoLogOutOutline } from "react-icons/io5";
-import { Link, useLocation } from "react-router-dom";
-// // import {
-// //   RingIcon,
-//   HeaderChevronIcon,
-// //   HamburgerIcon,
-// //   BuildingIcon,
-// //   BookedIcon,
-// //   FreeSlotsIcon,
-// // } from "../../assets/svgs/Icon";
-// import Aside from "../aside/Aside";
-import Notification from "./Notification";
-import { IoHomeOutline } from "react-icons/io5";
-import { IoLibraryOutline } from "react-icons/io5";
-import { CiShop } from "react-icons/ci";
-import { MdHistory } from "react-icons/md";
 import { FaHeadset } from "react-icons/fa";
-// import { HeaderChevronIcon } from "../../assets/svgs/Icon";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoMenu } from "react-icons/io5";
+import { IoIosArrowDown, IoIosSearch } from "react-icons/io";
+import { IoChevronForwardOutline, IoLogOutOutline, IoMenu } from "react-icons/io5";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Aside from "../../../../layout/aside/Aside";
-// import Aside from "../aside/Aside";
-
-import { IoIosSearch } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../../redux/slice/authSlice";
+import toast from "react-hot-toast";
 
 
 
@@ -37,6 +21,8 @@ const AdminHeader = () => {
   const page = pathSplit[pathSplit.length - 1];
   const pageName = page.split("-").join(" ");
 
+  const user = JSON.parse(localStorage.getItem("user")); // Get user data from localStorage
+  console.log(user);
   const mobileNavHandler = () => setMobileNav(!mobileNav);
 
   const notificationOpenHandler = (e) => {
@@ -130,8 +116,8 @@ const AdminHeader = () => {
               />
             </div>
             <div>
-              <p className="  text-sm font-bold text-black">Kate Smith</p>
-              <p className="text-[9px] font-normal text-black">Kate@gamil.com</p>
+              <p className="text-sm font-bold text-black">{user.name || "Name"}</p>
+              <p className="text-[9px] font-normal text-black">{user.email || "Email"}</p>
             </div>
             <div
               className="flex items-center gap-2 text-[#CBCBCB] text-2xl font-semibold cursor-pointer"
@@ -179,13 +165,22 @@ const AdminHeader = () => {
 export default AdminHeader;
 
 const Profile = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout())
+    toast.success("logged out successfully")
+    localStorage.clear(); // 🛠 Clear everything instead of removing one by one
+    window.location.replace("/auth");
+  }
   return (
     <div className="w-full">
       <Link to="profile" className="flex items-center justify-between gap-4 px-2 py-2 border-b bg-white rounded-t-md hover:bg-[#b6feef]">
         <h6 className="text-[13px] font-medium">My Profile</h6>
         <IoChevronForwardOutline fontSize={18} />
       </Link>
-      <div className="flex items-center justify-between gap-4 px-2 py-2 cursor-pointer bg-white rounded-b-md hover:bg-[#b6feef]">
+      <div onClick={handleLogout} className="flex items-center justify-between gap-4 px-2 py-2 cursor-pointer rounded-b-md hover:bg-[#b6feef]">
         <h6 className="text-[13px] font-medium">Logout</h6>
         <IoLogOutOutline fontSize={18} />
       </div>

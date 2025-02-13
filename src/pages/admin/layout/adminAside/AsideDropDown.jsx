@@ -37,7 +37,7 @@ const AsideDropDown = ({ name, options, onCheckedChange }) => {
 
             {/* Dropdown Content */}
             {isDropdownOpen && (
-                <div className="p-2 max-h-96 overflow-auto">
+                <div className="p-2 max-h-96 custom-scroll overflow-auto">
                     {/* Search Input */}
                     <input
                         className="w-full p-1 border rounded"

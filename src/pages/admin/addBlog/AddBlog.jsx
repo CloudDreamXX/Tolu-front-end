@@ -1,17 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import LibraryInput from '../../user/library/components/LibraryInput';
+import toast from 'react-hot-toast';
 import { CgFileAdd } from 'react-icons/cg';
-import FileCard from './components/FileCard';
 import { PiChatsCircle } from 'react-icons/pi';
-import InfoCard from './components/InfoCard';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSidebarData } from '../../../redux/slice/sidebarSlice';
 import Modal from '../../../components/modals/Modal';
 import Button from '../../../components/small/Button';
 import { useAiLearningSearchMutation } from '../../../redux/apis/apiSlice';
-import toast from 'react-hot-toast';
-import DOMPurify from "dompurify";
+import { setSidebarData } from '../../../redux/slice/sidebarSlice';
 import QuestionAnswer from '../../screens/chat/components/QuestionAnswer';
+import LibraryInput from '../../user/library/components/LibraryInput';
+import FileCard from './components/FileCard';
+import InfoCard from './components/InfoCard';
 
 function AddBlog() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -189,7 +188,7 @@ function AddBlog() {
                 />
                 {chats.length > 0 && (
 
-                    <section className='w-full max-h-[400px] mt-4 overflow-auto'>
+                    <section className='w-full max-h-[400px] mt-4 custom-scroll overflow-auto'>
 
                         {chats.map((chat, i) => (
                             <QuestionAnswer key={i} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />

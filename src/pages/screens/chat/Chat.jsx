@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 
-import MainChat from "./MainChat";
 import ChatHistory from "./ChatHistory";
+import MainChat from "./MainChat";
 
 const Chat = () => {
   const [chats, setChats] = useState([]);

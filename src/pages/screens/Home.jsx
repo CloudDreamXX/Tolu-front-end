@@ -1,5 +1,5 @@
 import Header from "../../components/layout/Header";
-import { useGetSearchHistoryQuery, useGetSessionResultQuery, useGetUserProfileQuery } from "../../redux/apis/apiSlice";
+import { useGetSessionResultQuery, useGetUserProfileQuery } from "../../redux/apis/apiSlice";
 import LibraryInput from "../user/library/components/LibraryInput";
 const Home = () => {
   const { data } = useGetUserProfileQuery()

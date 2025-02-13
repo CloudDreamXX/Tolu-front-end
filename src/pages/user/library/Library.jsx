@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import Cards from './components/Cards'
+import React, { useEffect, useState } from 'react';
 import AnimationCard from './components/AnimationCard';
-import { FaArrowUp } from "react-icons/fa6";
-import { GrAttachment } from "react-icons/gr";
+import Cards from './components/Cards';
 import LibraryInput from './components/LibraryInput';
 import ModalManager from './components/ModalManager';
 
@@ -11,7 +9,7 @@ function Library() {
   const [value, setValue] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [dropdownData, setDropdownData] = useState([]);
-  console.log("iou8y7t6utudychg", dropdownData);
+  // console.log("iou8y7t6utudychg", dropdownData);
 
   const cardsData = [
     {
@@ -91,7 +89,7 @@ function Library() {
     // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
   ];
   useEffect(() => {
-    setModalOpen(true)
+    setModalOpen(false)
   }, [])
 
   const closeModal = () => {
@@ -125,11 +123,11 @@ function Library() {
   };
 
 
-
+  // h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)] lg:h-screen
 
   return (
 
-    <div className='w-full h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)] p-2'>
+    <div className='w-full h-[calc(100vh-150px)] bg-white relative  '>
 
       {modalOpen && (
         <ModalManager
@@ -139,7 +137,7 @@ function Library() {
 
         />
       )}
-      <div className='h-[450px] overflow-auto'>
+      <div className='h-[450px] lg:h-[80%] custom-scroll overflow-auto'>
 
         {/* <div className='w-full h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)] overflow-auto p-2'> */}
         <div className="grid gap-6 h-[400px] overflow-y-auto sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
@@ -169,7 +167,7 @@ function Library() {
       </div>
 
       {/* </div> */}
-      <section className='w-full pt-4 flex items-center justify-center '>
+      <section className='w-full  top-2 pt-4 flex items-center justify-center '>
         <div className='"w-[90%] sm:w-[85%] md:w-[75%] lg:w-[80%]"'>
           <LibraryInput
             placeholder="Ask anything..."

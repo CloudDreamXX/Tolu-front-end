@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { BiSolidEdit } from "react-icons/bi";
-import { MdHistory } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { MdHistory } from "react-icons/md";
+import { useDispatch } from "react-redux";
 import { setNewChat } from "../../../redux/slice/chatSlice";
 
 const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, chatIdHandler }) => {
@@ -58,7 +58,7 @@ const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, chatIdHandler }) => 
       </section>
 
       {/* Show history only if toggled */}
-      <section className="h-screen overflow-auto">
+      <section className="h-screen custom-scroll overflow-auto">
         {showHistory && (
           <div className="space-y-2 mt-2">
             {Object.entries(categorizedChats).map(([key, chats]) => (

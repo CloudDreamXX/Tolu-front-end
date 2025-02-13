@@ -15,3 +15,29 @@
   box-sizing: border-box;
   font-family: var(--nunito-text);
 }
+/* .custom-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  color: red;
+  background: #ffffff66;
+  border-radius: 20px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: white;
+  border-radius: 20px;
+} */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  border-radius: 20px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: #ffffff66; /* Light background */
+  border-radius: 20px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: var(--primary); /* Better contrast */
+  border-radius: 20px;
+}

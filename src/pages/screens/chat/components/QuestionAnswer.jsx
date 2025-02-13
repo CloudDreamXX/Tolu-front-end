@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from "react";
 import DOMPurify from "dompurify";
-// import { RiAccountCircleFill } from "react-icons/ri";
+import { useEffect, useRef, useState } from "react";
+import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
 import { BsCopy } from "react-icons/bs";
-import { FaRegShareFromSquare } from "react-icons/fa6";
 import { CiVolumeHigh } from "react-icons/ci";
-import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
-import { MdVideoLibrary } from "react-icons/md";
-import { GrGallery, GrRefresh } from "react-icons/gr";
-import { RiAccountCircleFill } from "react-icons/ri";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
+import { FaRegShareFromSquare } from "react-icons/fa6";
+import { GrGallery, GrRefresh } from "react-icons/gr";
+import { MdVideoLibrary } from "react-icons/md";
 const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
     const lastItemRef = useRef(null);
     const containsHtml = /<\/?[a-z][\s\S]*>/i.test(chat.detailed_answer);
@@ -55,7 +53,7 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
 
                         </div>
                     </div> */}
-                    <div className="shadow-md flex items-center justify-between rounded-lg h-16 w-full text-start p-4">
+                    <div className="shadow-md flex items-center justify-between gap-4 rounded-lg h-16 w-full text-start p-4">
                         {isEditing ? (
                             <div className="flex w-full items-center gap-3">
                                 <input

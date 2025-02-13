@@ -2,17 +2,17 @@ import { useState } from "react";
 import Input from "../small/Input";
 import Button from "../small/Button";
 import { useLoginMutation } from "../../redux/apis/apiSlice";
-import { setCredentials } from "../../redux/slice/authSlice";
+import { setCredentials, setUser } from "../../redux/slice/authSlice";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { useNavigate, useRoutes } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
   const [login] = useLoginMutation();
-  // const router = useRoutes();
   const navigate = useNavigate();
+
   const formDataChangeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -21,11 +21,23 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       const response = await login(formData).unwrap();
-      dispatch(setCredentials(response)); // Store user & token in Redux
-      toast.success("Login Successful");
-      //   router.push("/user")
-      navigate("/user"); // Redirect to /user page
 
+      // Store user & token in Redux
+      dispatch(setCredentials(response));
+
+      // Set user type based on email
+      const email = response.user?.email;
+      const userType = {
+        role: email === "admin@example.com" ? "admin" : "user",
+      };
+
+      dispatch(setUser({ email }));
+      localStorage.setItem("userType", JSON.stringify(userType));
+
+      toast.success("Login Successful");
+
+      // Redirect based on user role
+      navigate(userType.role === "admin" ? "/admin" : "/user");
     } catch (error) {
       console.error("Login failed:", error);
       toast.error("Login Failed");
@@ -33,11 +45,10 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex w-full h-screen lg:h-[500px]  items-center justify-center">
-
+    <div className="flex w-full h-screen lg:h-[500px] items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="bg-transparent w-full max-w-3xl  p-4 shadow-md backdrop-blur-[20px]  border-2 border-primary/10 rounded-[20px] mt-6 space-y-6  gap-4"
+        className="bg-transparent w-full max-w-3xl p-4 shadow-md backdrop-blur-[20px] border-2 border-primary/10 rounded-[20px] mt-6 space-y-6 gap-4"
       >
         <div className="text-center">
           <h5 className="text-xl md:text-[32px] bg-gradientText text-transparent bg-clip-text font-extrabold leading-none">
@@ -58,10 +69,9 @@ const LoginForm = () => {
           name="password"
           onChange={formDataChangeHandler}
         />
-        <Button  text="Login" type="submit" width="w-full" />
+        <Button text="Login" type="submit" width="w-full" />
       </form>
     </div>
-
   );
 };
 

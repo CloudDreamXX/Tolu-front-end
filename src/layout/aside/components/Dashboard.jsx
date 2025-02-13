@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { bodySystem, allSymptoms, conditions, healthProtocols, herbsAndSupplements, lifestyleChanges, tests } from '../../../assets/data';
+import React, { useState } from 'react';
+import { allSymptoms, bodySystem, conditions, healthProtocols, herbsAndSupplements, lifestyleChanges, tests } from '../../../assets/data';
 import AsideDropDown from '../AsideDropDown';
 
 function Dashboard() {

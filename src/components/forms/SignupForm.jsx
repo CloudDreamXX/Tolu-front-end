@@ -4,7 +4,7 @@ import Button from "../small/Button";
 import Dropdown from "../small/Dropdown";
 import SingUpModal1 from "../modals/SingUpModal1";
 import { useLoginMutation, useSignUpMutation } from "../../redux/apis/apiSlice";
-import { setCredentials } from "../../redux/slice/authSlice";
+import { setCredentials, setUser } from "../../redux/slice/authSlice";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -32,11 +32,26 @@ const SignupForm = () => {
     try {
       const userData = { ...formData, priority: ["High"] };
       const response = await signUp(userData).unwrap();
+      console.log("response",response)
       dispatch(setCredentials(response));
       toast.success("SignUp Successful");
-      navigate("/user"); // Redirect to /user page
+
+      const email = response.user?.email;
+      const userType = {
+        role: email === "admin@example.com" ? "admin" : "user",
+      };
+      console.log("usertype",userType);
+      dispatch(setUser({ email }));
+      localStorage.setItem("userType", JSON.stringify(userType));
+
+      toast.success("Login Successful");
+
+      // Redirect based on user role
+      navigate(userType.role === "admin" ? "/admin" : "/user");
+
 
     } catch (error) {
+      console.error("Signup failed:", error);
       toast.error("SignUp Failed");
     }
   };

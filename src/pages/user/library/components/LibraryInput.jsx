@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
-import { GrAttachment } from "react-icons/gr";
+import React, { useRef, useState } from "react";
 import { FaArrowUp, FaTimes } from "react-icons/fa";
+import { GrAttachment } from "react-icons/gr";
 
 function LibraryInput({
   placeholder,

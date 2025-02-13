@@ -1,14 +1,15 @@
 
 import { useEffect, useRef, useState } from "react";
-import LibraryInput from "../../user/library/components/LibraryInput";
-import Button from "../../../components/small/Button";
+import toast from "react-hot-toast";
 import { GrSearchAdvanced } from "react-icons/gr";
 import { HiOutlineChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
-import { useDeleteChatMutation, useGetAISearchMutation, useGetSearchHistoryQuery, useUpdateChatTitleMutation } from "../../../redux/apis/apiSlice";
-import toast from "react-hot-toast";
-import QuestionAnswer from "./components/QuestionAnswer";
 import { useDispatch, useSelector } from "react-redux";
+import Button from "../../../components/small/Button";
+import { useDeleteChatMutation, useGetAISearchMutation, useGetSearchHistoryQuery, useUpdateChatTitleMutation } from "../../../redux/apis/apiSlice";
 import { setNewChat, setRefetchHistory } from "../../../redux/slice/chatSlice";
+import LibraryInput from "../../user/library/components/LibraryInput";
+import QuestionAnswer from "./components/QuestionAnswer";
+import { SlEnvelopeOpen } from "react-icons/sl";
 
 const MainChat = () => {
   const lastItemRef = useRef(null);
@@ -177,11 +178,14 @@ const MainChat = () => {
   useEffect(() => {
     inputValueRef.current = inputValue;
   }, [inputValue]);
-
+  console.log("selectdisabled", selectedChatId)
   const [updateChatTitle, { isLoading: titleLoading }] = useUpdateChatTitleMutation();
   const handleUpdateChatTitle = async (chatId, newTitle) => {
     try {
       const response = await updateChatTitle({ chat_id: chatId, new_title: newTitle }).unwrap();
+      const editChatTitle = chatId || selectedChatId;
+      console.log("editChatTitle", editChatTitle)
+      setChatId(editChatTitle)
       setInputValue(newTitle);
       inputValueRef.current = newTitle; // Also update ref
       toast.success(response.message)// // Call handleInputSubmit after updating title

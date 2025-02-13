@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { AiOutlinePlus } from "react-icons/ai";
+import { FaRegFolderOpen } from "react-icons/fa";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { IoIosArrowDown } from "react-icons/io";
+import { TbLogout2 } from "react-icons/tb";
+import { TfiWrite } from "react-icons/tfi";
 import { useDispatch } from 'react-redux';
 import { ArrowIcon } from '../../../../../assets/svgs/Icon';
-import { TbLogout2 } from "react-icons/tb";
-
-import { IoIosArrowDown } from "react-icons/io";
-import { TfiWrite } from "react-icons/tfi";
-import { FaRegFolderOpen } from "react-icons/fa";
-import { AiOutlinePlus } from "react-icons/ai";
-import { HiDotsHorizontal } from "react-icons/hi";
 // import { useDispatch } from "react-redux";
 import Button from '../../../../../components/small/Button';
 import { setSidebarData } from '../../../../../redux/slice/sidebarSlice';
@@ -102,9 +101,9 @@ function LibraryDashboardSideBar() {
                                 </div>
                                 {showDropdown && (
                                     <>
-                                        <div className="dropdown-content  h-[370px] overflow-auto">
+                                        <div className="dropdown-content  h-[370px] custom-scroll overflow-auto">
                                             {projects.map((project, index) => (
-                                                <div key={index} className="project-item  overflow-auto  text-[#393838]">
+                                                <div key={index} className="project-item custom-scroll  overflow-auto  text-[#393838]">
                                                     <div className="text-[#393838] folders">
                                                         {project.folders.slice(0, showMore[project.name] ? project.folders.length : 7).map((folder, folderIndex) => (
                                                             <div key={folderIndex} className="folder-item">
@@ -122,7 +121,7 @@ function LibraryDashboardSideBar() {
                                                                     <span className="plus-icon cursor-pointer"><AiOutlinePlus onClick={addArticlesHandler} /></span>
                                                                 </div>
                                                                 {selectedFolder === folder && (
-                                                                    <div className="folder-content  overflow-auto  ml-4 ">
+                                                                    <div className="folder-content custom-scroll  overflow-auto  ml-4 ">
                                                                         <ul className="p-2 space-y-3">
                                                                             {/* <li className=" rounded-lg p-1 text-[#393838] text-sm font-semibold hover:bg-[#E0E0E0] transition-all duration-300">Brain Fog Post-Hysteron</li> */}
                                                                             <li className=" rounded-lg p-1 text-[#393838] text-sm font-semibold hover:bg-[#E0E0E0] transition-all duration-300">Brain Fog Post-Hysteron</li>

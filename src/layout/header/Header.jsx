@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate, useNavigation } from "react-router-dom";
 import { IoChevronForwardOutline, IoLogOutOutline } from "react-icons/io5";
-import { Link, useLocation } from "react-router-dom";
 // // import {
 // //   RingIcon,
 //   HeaderChevronIcon,
@@ -19,7 +19,9 @@ import { FaHeadset } from "react-icons/fa";
 import { HeaderChevronIcon } from "../../assets/svgs/Icon";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
-
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/slice/authSlice";
+import toast from "react-hot-toast";
 
 
 const Header = () => {
@@ -32,7 +34,8 @@ const Header = () => {
   const pathSplit = pathname.split("/");
   const page = pathSplit[pathSplit.length - 1];
   const pageName = page.split("-").join(" ");
-
+  const user = JSON.parse(localStorage.getItem("user")); // Get user data from localStorage
+  console.log(user);
   const mobileNavHandler = () => setMobileNav(!mobileNav);
 
   const notificationOpenHandler = (e) => {
@@ -78,18 +81,17 @@ const Header = () => {
 
   // Function to return classes dynamically based on active index
   const getClassNames = (index) => {
-    return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${
-      index === activeIndex
-        ? 'border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2' // Active styles
-        : 'border-2 border-transparent shadow-none p-2' // Default styles
-    }`;
+    return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${index === activeIndex
+      ? 'border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2' // Active styles
+      : 'border-2 border-transparent shadow-none p-2' // Default styles
+      }`;
   };
 
 
 
 
   return (
-    <header className="h-[200px] sm:h-[100px] p-4 flex flex-col justify-between gap-6">
+    <header className=" fixed z-40 bg-gray-50  w-[calc(100%-220px)] h-[100px] p-4 flex flex-col justify-between gap-6">
       <div className="flex items-center justify-between gap-6">
         <div className=" block xl:hidden">
           <div
@@ -162,8 +164,8 @@ const Header = () => {
               />
             </div>
             <div>
-              <p className="  text-sm font-bold text-black">Kate Smith</p>
-              <p className="text-[9px] font-normal text-black">Kate@gamil.com</p>
+              <p className="text-sm font-bold text-black">{user.name || "Name"}</p>
+              <p className="text-[9px] font-normal text-black">{user.email || "Email"}</p>
             </div>
             <div
               className="flex items-center gap-2 text-[#CBCBCB] text-2xl font-semibold cursor-pointer"
@@ -215,13 +217,22 @@ const Header = () => {
 export default Header;
 
 const Profile = () => {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const handleLogout = () => {
+    dispatch(logout())
+    toast.success("logged out successfully")
+    localStorage.clear(); // 🛠 Clear everything instead of removing one by one
+    window.location.replace("/auth");
+  }
   return (
     <div className="w-full">
       <Link to="profile" className="flex items-center justify-between gap-4 px-2 py-2 border-b bg-white rounded-t-md hover:bg-[#b6feef]">
         <h6 className="text-[13px] font-medium">My Profile</h6>
         <IoChevronForwardOutline fontSize={18} />
       </Link>
-      <div className="flex items-center justify-between gap-4 px-2 py-2 cursor-pointer bg-white rounded-b-md hover:bg-[#b6feef]">
+      <div onClick={handleLogout} className="flex items-center justify-between gap-4 px-2 py-2 cursor-pointer bg-white rounded-b-md hover:bg-[#b6feef]">
         <h6 className="text-[13px] font-medium">Logout</h6>
         <IoLogOutOutline fontSize={18} />
       </div>

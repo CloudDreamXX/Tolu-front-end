@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 console.log("API URL:", apiUrl);
@@ -20,7 +20,7 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     signUp: builder.mutation({
       query: (userData) => ({
-        url: "/user/signup",
+        url: "/user/signup?",
         method: "POST",
         body: userData,
       }),
