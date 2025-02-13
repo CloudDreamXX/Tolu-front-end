@@ -305,7 +305,7 @@ const SignupForm = () => {
       )}
       <form
         onSubmit={handleSubmit}
-        className="bg-transparent  w-[500px]    max-w-7xl  shadow-md backdrop-blur-[20px] p-4 border-2 border-primary/10 rounded-[20px] m-6 grid grid-cols-1  gap-4"
+        className="bg-transparent w-full max-w-3xl p-4 shadow-md backdrop-blur-[20px] border-2 border-primary/10 rounded-[20px] mt-6 space-y-6 gap-4"
       >
         <div className="lg:col-span-12 flex justify-center">
           <h5 className="text-xl md:text-[32px]  text-primary font-extrabold leading-none">
