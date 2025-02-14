@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 const Main = () => {
   return (
-    <div className="  bg-white pt-28  p-2 ">
+    <div className="bg-white px-4 h-{calc(100% - 70px)">
       <Outlet />
     </div>
   );

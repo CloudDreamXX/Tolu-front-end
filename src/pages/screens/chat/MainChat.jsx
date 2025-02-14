@@ -153,7 +153,7 @@ const MainChat = () => {
         const updatedChats = [...prevChats];
         updatedChats[updatedChats.length - 1] = {
           ...updatedChats[updatedChats.length - 1],
-          result_id: response.data.result_id || updatedChats[updatedChats.length - 1].result_id,
+          result_id: response?.data?.result_id || updatedChats[updatedChats.length - 1]?.result_id,
           chat_id: response.data.chat_id || updatedChats[updatedChats.length - 1].chat_id,
         };
         return updatedChats;
@@ -200,9 +200,9 @@ const MainChat = () => {
 
 
   return (
-    <div className="flex gap-2 grow p-0 sm:p-2 md:p-4 lg:p-6 mt-12 sm:mt-0">
+    <div className="flex gap-2 grow ">
       <div className="flex items-end w-full">
-        <div className="text-center flex flex-col h-[75vh] gap-7 items-center w-full">
+        <div className="text-center flex flex-col h-[90vh] gap-7 items-center w-full">
           <div className={`my-2 p-2 w-full flex-1 overflow-y-auto ${chats.length ? "h-[400px]" : "h-0"}`}>
             {
               chats.length > 0 && (

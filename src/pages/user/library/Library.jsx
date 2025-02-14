@@ -127,7 +127,7 @@ function Library() {
 
   return (
 
-    <div className='w-full h-[calc(100vh-150px)] bg-white relative  '>
+    <div className='w-full h-full pt-4 bg-white relative  '>
 
       {modalOpen && (
         <ModalManager

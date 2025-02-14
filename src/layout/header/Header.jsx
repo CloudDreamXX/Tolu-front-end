@@ -80,18 +80,30 @@ const Header = () => {
   };
 
   // Function to return classes dynamically based on active index
-  const getClassNames = (index) => {
-    return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${index === activeIndex
-      ? 'border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2' // Active styles
-      : 'border-2 border-transparent shadow-none p-2' // Default styles
+  // const getClassNames = (index) => {
+  //   return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${index === activeIndex
+  //     ? 'border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2' // Active styles
+  //     : 'border-2 border-transparent shadow-none p-2' // Default styles
+  //     }`;
+  // };
+  const navItems = [
+    { id: 0, name: "MY Space", path: "/user", icon: <IoHomeOutline /> },
+    { id: 1, name: "Library", path: "/user/library", icon: <IoLibraryOutline /> },
+    { id: 2, name: "Health Shop", path: "#", icon: <CiShop /> },
+    { id: 3, name: "Search History", path: "/user/chat", icon: <MdHistory /> }
+  ];
+
+  const getClassNames = (path) => {
+    return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${location.pathname === path
+        ? "border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2"
+        : "border-2 border-transparent shadow-none p-2"
       }`;
   };
 
 
 
-
   return (
-    <header className=" fixed z-40 bg-gray-50  w-[calc(100%-220px)] h-[100px] p-4 flex flex-col justify-between gap-6">
+    <header className="sticky top-0 left-0 w-full z-40 bg-gray-50 h-[70px] p-4 flex flex-col justify-between gap-6">
       <div className="flex items-center justify-between gap-6">
         <div className=" block xl:hidden">
           <div
@@ -104,50 +116,16 @@ const Header = () => {
         </div>
         <div className="flex justify-between items-center">
           <ul className="flex space-x-4">
-            {/* MY Space Item */}
-            <li className={getClassNames(0)} onClick={() => handleClick(0)}>
-              <a href="/user" className="flex items-center gap-3">
-                <IoHomeOutline />
-                <span>MY Space</span>
-              </a>
-            </li>
-
-            {/* Search Item */}
-            <li className={getClassNames(1)} onClick={() => handleClick(1)}>
-              <a href="/user/chat" className="flex items-center gap-3">
-                <IoLibraryOutline />
-                <span>Search</span>
-              </a>
-            </li>
-
-            {/* Notifications Item */}
-            <li className={getClassNames(2)} onClick={() => handleClick(2)}>
-              <a href="#" className="flex items-center gap-3">
-                <CiShop />
-                <span>Notifications</span>
-              </a>
-            </li>
-
-            {/* Profile Item */}
-            <li className={getClassNames(3)} onClick={() => handleClick(3)}>
-              <a href="/user/profile" className="flex items-center gap-3">
-                <MdHistory />
-                <span>Profile</span>
-              </a>
-            </li>
+            {navItems.map((item) => (
+              <li key={item.id} className={getClassNames(item.path)}>
+                <a href={item.path} className="flex items-center gap-3">
+                  {item.icon}
+                  <span>{item.name}</span>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
-
-
-        {/* <div>
-          uyftc iuiyf
-        </div> */}
-
-
-
-
-
-
 
         <div className="flex items-center justify-between gap-4 xl:gap-6">
 
@@ -191,11 +169,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      {/* <div className="flex flex-wrap items-center gap-4">
-        <h2 className="text-lg md:text-2xl text-white font-semibold capitalize basis-[30%]">
-          {["admin", "manager", "user"].includes(pageName) ? "Dashboard" : pageName}
-        </h2>
-      </div> */}
+
       <div
         className={`block xl:hidden fixed w-full h-full inset-0 bg-[#00000071] z-50 transition-all duration-500 ${mobileNav
           ? "visible opacity-100"
@@ -235,31 +209,6 @@ const Profile = () => {
       <div onClick={handleLogout} className="flex items-center justify-between gap-4 px-2 py-2 cursor-pointer bg-white rounded-b-md hover:bg-[#b6feef]">
         <h6 className="text-[13px] font-medium">Logout</h6>
         <IoLogOutOutline fontSize={18} />
-      </div>
-    </div>
-  );
-};
-
-const HeaderData = ({ data }) => {
-  return (
-    <div className="flex flex-wrap items-center justify-center sm:justify-between gap-4 md:gap-8 bg-[#FFFFFFCC] rounded-lg py-2 px-4">
-      <div className="flex items-center gap-1">
-        {/* <BuildingIcon /> */}
-        <h6 className="text-[10px] sm:text-sm font-medium text-[#414141]">
-          Total Number of Parking Slots: <span className="font-bold">1204</span>
-        </h6>
-      </div>
-      <div className="flex items-center gap-1">
-        {/* <BookedIcon /> */}
-        <h6 className="text-[10px] sm:text-sm font-medium text-[#414141]">
-          Booked: <span className="font-bold">440</span>
-        </h6>
-      </div>
-      <div className="flex items-center gap-1">
-        {/* <FreeSlotsIcon /> */}
-        <h6 className="text-[10px] sm:text-sm font-medium text-[#414141]">
-          Free Slots: <span className="font-bold">1204</span>
-        </h6>
       </div>
     </div>
   );

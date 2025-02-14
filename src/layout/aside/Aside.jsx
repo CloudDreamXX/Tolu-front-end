@@ -4,6 +4,7 @@ import { ArrowIcon } from "../../assets/svgs/Icon";
 import AsideDropDown from "./AsideDropDown";
 import Dashboard from "./components/Dashboard";
 import Chat from "./components/Chat";
+import MySpaceSideBar from "./components/MySpaceSideBar";
 
 const Aside = () => {
   const [isAsideOpen, setIsAsideOpen] = useState(false);
@@ -20,6 +21,10 @@ const Aside = () => {
   const renderComponentBasedOnRoute = () => {
     switch (pathname) {
       case "/user":
+        return (
+          <MySpaceSideBar isAsideOpen={isAsideOpen} />
+        );
+      case "/user/library":
         return (
           <Dashboard />
         );
@@ -64,19 +69,17 @@ const Aside = () => {
         <h6 className="text-3xl font-bold text-black">VITAI</h6>
       </div>
       <div
-        className={`hidden xl:block absolute top-18 cursor-pointer transition-all duration-300 ${isAsideOpen ? "rotate-180 right-[-13%]" : "rotate-0 right-[-5%]"} `}
+        className={`hidden xl:block absolute top-18 cursor-pointer transition-all text-primary duration-300 ${isAsideOpen ? "rotate-180 right-[-13%]" : "rotate-0 right-[-5%]"} `}
         onClick={asideToggleHandler}
       >
         <ArrowIcon />
       </div>
       {!isAsideOpen && (
-        <div className="h-full  py-8 flex px-2 flex-col items-center justify-between  transition-all duration-700 ">
+        <div className="h-full  py-8 flex px-4 flex-col items-center justify-between  transition-all duration-700 ">
 
           {renderComponentBasedOnRoute()}
 
-          {/* <Button className={" !bg-white !border-[1px] border-[#008FF633] shadow-[0px_4px_6px_#7090B01F]   text-[#ACACAC]"} text="Log Out" width="w-full" >
-            <TbLogout2 />
-          </Button> */}
+          
         </div>
       )}
     </div>

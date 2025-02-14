@@ -60,7 +60,7 @@ function Chat() {
     }, []);
 
     return (
-        <div className="h-[calc(100vh-150px)]  flex items-end">
+        <div className="h-full flex items-end">
             <MainChat
             // chats={chats}
             // isLoading={isLoading}

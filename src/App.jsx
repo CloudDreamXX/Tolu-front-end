@@ -5,18 +5,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "./redux/slice/authSlice";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingScreen from "./components/LoadingScreen";
+// import MySpace from "./pages/user/mySpace/MySpace";
 
 // Lazy Loaded Components
-const Admin = lazy(() => import("./pages/Admin"));
+const Admin = lazy(() => import("./pages/admin"));
 const AddBlog = lazy(() => import("./pages/admin/addBlog/AddBlog"));
 const LibraryTopicDetails = lazy(() => import("./pages/admin/libraryTopicDetails/LibraryTopicDetails"));
 const Profile = lazy(() => import("./pages/admin/profile/Profile"));
-const User = lazy(() => import("./pages/User"));
+const User = lazy(() => import("./pages/user"));
 const Chat = lazy(() => import("./pages/user/chat&search/Chat"));
 const Library = lazy(() => import("./pages/user/library/Library"));
 const Signup = lazy(() => import("./pages/auth/Signup"));
 const Home = lazy(() => import("./pages/screens/Home"));
 const CompleteProfile = lazy(() => import("./pages/screens/completeProfile/CompleteProfile"));
+const MySpace = lazy(() => import("./pages/user/mySpace/MySpace"));
 
 // A separate component to handle routes and listen for location changes
 function AppRoutes() {
@@ -44,7 +46,8 @@ function AppRoutes() {
       {/* User Routes */}
       <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
         <Route path="/user" element={<User />}>
-          <Route index element={<Library />} />
+          <Route path="library" element={<Library />} />
+          <Route index element={<MySpace />} />
           <Route path="chat" element={<Chat />} />
           <Route path="profile" element={<Profile />} />
         </Route>

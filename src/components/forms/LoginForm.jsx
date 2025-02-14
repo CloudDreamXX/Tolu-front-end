@@ -48,10 +48,10 @@ const LoginForm = () => {
     <div className="flex w-full h-screen lg:h-[500px] items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="bg-transparent w-full max-w-3xl p-4 shadow-md backdrop-blur-[20px] border-2 border-primary/10 rounded-[20px] mt-6 space-y-6 gap-4"
+        className="bg-transparent w-full max-w-3xl p-8 shadow-md backdrop-blur-[20px] border-2 border-primary/10 rounded-[20px] mt-6 space-y-6 gap-4"
       >
         <div className="text-center">
-          <h5 className="text-xl md:text-[32px] bg-gradientText text-transparent bg-clip-text font-extrabold leading-none">
+          <h5 className="text-xl md:text-[32px] text-primary font-extrabold leading-none">
             Login
           </h5>
         </div>
@@ -69,7 +69,21 @@ const LoginForm = () => {
           name="password"
           onChange={formDataChangeHandler}
         />
+        <div class="flex items-center justify-between  w-full">
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"></input>
+            <span class="text-gray-700">Remember Me</span>
+          </label>
+        </div>
+        <section className="flex w-full justify-end">
+
+          <a href="#" class="text-blue-600 hover:underline">Forgot Password?</a>
+        </section>
         <Button text="Login" type="submit" width="w-full" />
+
+
+
+
       </form>
     </div>
   );

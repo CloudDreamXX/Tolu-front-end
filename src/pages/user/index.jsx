@@ -10,7 +10,7 @@ const User = () => {
         <div className="hidden xl:block z-50 ">
           <Aside />
         </div>
-        <div className="w-[100%] pb-1 scroll-to-top overflow-y-scroll custom-scroll">
+        <div className="w-[100%] h-screen overflow-y-scroll custom-scroll">
           <Header />
           <Main />
         </div>
