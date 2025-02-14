@@ -7,10 +7,10 @@ import {
   AiOutlineLike,
 } from "react-icons/ai";
 import { BsCopy } from "react-icons/bs";
-import { CiVolumeHigh, CiVolumeMute } from "react-icons/ci";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
-import { FaRegShareFromSquare } from "react-icons/fa6";
+import { FaRegShareFromSquare, FaVolumeHigh } from "react-icons/fa6";
 import { GrGallery, GrRefresh } from "react-icons/gr";
+import { IoVolumeMute } from "react-icons/io5";
 import { MdVideoLibrary } from "react-icons/md";
 const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
   const lastItemRef = useRef(null);
@@ -92,7 +92,7 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
       icon: FaRegShareFromSquare,
       action: () => alert("Share functionality here"),
     },
-    { icon: speaking ? CiVolumeMute : CiVolumeHigh, action: handleSpeak },
+    { icon: speaking ? IoVolumeMute : FaVolumeHigh, action: handleSpeak },
     { icon: liked ? AiFillLike : AiOutlineLike, action: handleLike },
     {
       icon: disliked ? AiFillDislike : AiOutlineDislike,
