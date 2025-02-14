@@ -17,11 +17,12 @@ import { CiShop } from "react-icons/ci";
 import { MdHistory } from "react-icons/md";
 import { FaHeadset } from "react-icons/fa";
 import { HeaderChevronIcon } from "../../assets/svgs/Icon";
-import { IoIosArrowDown } from "react-icons/io";
+// import { IoIosArrowDown } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/slice/authSlice";
 import toast from "react-hot-toast";
+import { IoIosArrowDown, IoIosSearch } from "react-icons/io";
 
 
 const Header = () => {
@@ -90,21 +91,28 @@ const Header = () => {
     { id: 0, name: "MY Space", path: "/user", icon: <IoHomeOutline /> },
     { id: 1, name: "Library", path: "/user/library", icon: <IoLibraryOutline /> },
     { id: 2, name: "Health Shop", path: "#", icon: <CiShop /> },
-    { id: 3, name: "Search History", path: "/user/chat", icon: <MdHistory /> }
+    // { id: 3, name: "Search History", path: "/user/chat", icon: <MdHistory /> }
   ];
 
   const getClassNames = (path) => {
     return `flex items-center text-center text-base font-normal rounded-lg gap-3 ${location.pathname === path
-        ? "border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2"
-        : "border-2 border-transparent shadow-none p-2"
+      ? "border-2 border-[#25252526] shadow-md shadow-[#00000026] p-2"
+      : "border-2 border-transparent shadow-none p-2"
       }`;
   };
+  const location = useLocation();
+
+  const [searchBar, setSearchBar] = useState(false);
+
+  useEffect(() => {
+    setSearchBar(location.pathname === "/user/library"); // Only show on "/user"
+  }, [location.pathname]); // Runs when the route changes
 
 
 
   return (
-    <header className="sticky top-0 left-0 w-full z-40 bg-gray-50 h-[70px] p-4 flex flex-col justify-between gap-6">
-      <div className="flex items-center justify-between gap-6">
+    <header className="sticky top-0 left-0 w-full z-40 py-2 bg-gray-50  h-[70px]  flex flex-col justify-between gap-6">
+      <div className="flex items-center   justify-between gap-6">
         <div className=" block xl:hidden">
           <div
             className="bg-primary p-2 rounded-md cursor-pointer block xl:hidden"
@@ -125,7 +133,20 @@ const Header = () => {
               </li>
             ))}
           </ul>
+
         </div>
+        {searchBar &&
+          <div className="relative  ">
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full pl-10 pr-4 py-2 shadow-[#7090B014] border border-[#ACACAC] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#1D1D1F99]">
+              <IoIosSearch className="text-2xl font-bold" />
+            </span>
+          </div>
+        }
 
         <div className="flex items-center justify-between gap-4 xl:gap-6">
 
