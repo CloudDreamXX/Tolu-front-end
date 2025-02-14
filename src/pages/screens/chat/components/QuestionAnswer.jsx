@@ -7,6 +7,7 @@ import {
   AiOutlineLike,
 } from "react-icons/ai";
 import { BsCopy } from "react-icons/bs";
+import { CiVolumeHigh } from "react-icons/ci";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
 import { FaRegShareFromSquare, FaVolumeHigh } from "react-icons/fa6";
 import { GrGallery, GrRefresh } from "react-icons/gr";
@@ -15,7 +16,6 @@ import { MdVideoLibrary } from "react-icons/md";
 const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
   const lastItemRef = useRef(null);
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(chat.detailed_answer);
-  const sanitizedHTML = DOMPurify.sanitize(chat.answer);
 
   // const lastItemRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -28,6 +28,27 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
   const [disliked, setDisliked] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current?.focus();
+    }
+  }, [isEditing]);
+
+  // Handle title update on "Enter" key or blur
+  const handleTitleUpdate = async () => {
+    setIsEditing(false);
+    if (title.trim() !== prevTitle) {
+      await handleUpdateChatTitle(chat?.chat_id, title);
+      setPrevTitle(title); // Update previous title after successful update
+    }
+  };
+
+  // Handle cancel update and revert to previous title
+  const handleCancelUpdate = () => {
+    setTitle(prevTitle);
+    setIsEditing(false);
+  };
 
   const handleLike = () => {
     setLiked(!liked);
@@ -71,21 +92,6 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
     }
   };
 
-  // Handle title update on "Enter" key or blur
-  const handleTitleUpdate = async () => {
-    setIsEditing(false);
-    if (title.trim() !== prevTitle) {
-      await handleUpdateChatTitle(chat?.chat_id, title);
-      setPrevTitle(title); // Update previous title after successful update
-    }
-  };
-
-  // Handle cancel update and revert to previous title
-  const handleCancelUpdate = () => {
-    setTitle(prevTitle);
-    setIsEditing(false);
-  };
-
   const icons = [
     { icon: BsCopy, action: handleCopy, isCopyIcon: true },
     {
@@ -100,25 +106,12 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
     },
     { icon: GrRefresh, action: () => alert("Refresh functionality here") },
   ];
-
-  useEffect(() => {
-    if (isEditing) {
-      inputRef.current?.focus();
-    }
-  }, [isEditing]);
+  const sanitizedHTML = DOMPurify.sanitize(chat.answer);
 
   return (
-    // <section ref={lastItemRef} className="flex flex-col mt-6 gap-6 h-full overflow-y-auto">
     <section ref={lastItemRef} className="flex flex-col mt-6 gap-6  ">
       <div className="flex w-full items-center space-x-6">
         <div className="w-full pl-14 space-y-6">
-          {/* <div className="w-full flex items-center gap-6">
-                        <RiAccountCircleFill className="text-5xl" />
-                        <div className="shadow-md rounded-lg h-16 w-full text-start p-4">
-                            {`${chat.question ? chat.question : ""} ${chat.query ? ` ${chat.query}` : ""}`}
-
-                        </div>
-                    </div> */}
           <div className="shadow-md flex items-center justify-between gap-4 rounded-lg h-16 w-full text-start p-4">
             {isEditing ? (
               <div className="flex w-full items-center gap-3">
@@ -171,7 +164,7 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle }) => {
                     fontFamily: "Arial, sans-serif",
                     lineHeight: "1.6",
                     maxWidth: "800px",
-                    margin: "0 auto",
+                    margin: "0 ",
                     padding: "20px",
                     color: "#333",
                   }}

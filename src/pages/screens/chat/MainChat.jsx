@@ -5,7 +5,7 @@ import { GrSearchAdvanced } from "react-icons/gr";
 import { HiOutlineChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../../components/small/Button";
-import { useDeleteChatMutation, useGetAISearchMutation, useGetSearchHistoryQuery, useUpdateChatTitleMutation } from "../../../redux/apis/apiSlice";
+import { useDeleteChatMutation, useGetAISearchMutation, useGetSearchHistoryQuery, useGetSessionResultQuery, useUpdateChatTitleMutation } from "../../../redux/apis/apiSlice";
 import { setNewChat, setRefetchHistory } from "../../../redux/slice/chatSlice";
 import LibraryInput from "../../user/library/components/LibraryInput";
 import QuestionAnswer from "./components/QuestionAnswer";
@@ -20,9 +20,16 @@ const MainChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [getAISearch, { error: aiSearchError }] = useGetAISearchMutation();
+  // const [data:new { error: aiSearchError }] = useGetSessionResultQuery();
   const [deleteChat, { isError }] = useDeleteChatMutation();
 
+
   const selectedChatId = useSelector((state) => state.chat.selectedChatId);
+  // const { data: session, error } = useGetSessionResultQuery(selectedChatId);
+  const { data: session, error } = useGetSessionResultQuery(selectedChatId, {
+    skip: !selectedChatId,  // Skip API call if selectedChatId is null or undefined
+  });
+  console.log(" session", session?.search_results)
   const newChatPage = useSelector((state) => state.chat.newChat);
   const { data, error: historyError } = useGetSearchHistoryQuery()
   const filteredData = data?.history?.filter((item) => item.chat_id === selectedChatId) || [];
@@ -31,6 +38,7 @@ const MainChat = () => {
   const [inputValue, setInputValue] = useState("");
   const [lastChat, setLatestChat] = useState()
 
+  const sessionData = session?.search_results || []
 
 
   const newChat = () => {
@@ -48,16 +56,43 @@ const MainChat = () => {
     }
   }, [newChatPage])
 
-  useEffect(() => {
-    setChats(filteredData)
-  }, [selectedChatId])
 
+  console.log("filterdata", filteredData)
+  console.log("chats", chats)
   useEffect(() => {
     if (lastItemRef.current) {
       lastItemRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   }, [chats]);
 
+  // const datanew = [
+  //   {
+  //     "id": "cc803bd8-c219-4b90-9a8b-826f1a7d0be0",
+  //     "user_id": "256b3613-69d0-45ec-bfc1-bc749bf3d4db",
+  //     "chat_id": "050e9a00-97f8-46dd-a4fc-15fbf7e73f9c",
+  //     "query": "ha;ll0",
+  //     "answer": "<div style=\"font-family: Arial, sans-serif;\">\n    <h1 style=\"font-size: 20px; font-weight: bold;\">Welcome to Your Menopause Journey</h1>\n\n    <h2 style=\"font-size: 18px; font-weight: bold; margin-top: 20px;\">Understanding the Challenges</h2>\n    <p style=\"font-size: 16px; line-height: 1.5;\">Menopause can be a challenging time, with a variety of symptoms that affect each woman differently. It's important to acknowledge these struggles and approach them with compassion and understanding. You're not alone, and there are many ways to support your health during this transition.</p>\n\n    <h2 style=\"font-size: 18px; font-weight: bold; margin-top: 20px;\">Holistic Health Approaches</h2>\n    <ul style=\"font-size: 16px; line-height: 1.5;\">\n        <li>Nutrition: Incorporate a balanced diet rich in whole foods, including fruits, vegetables, lean proteins, and healthy fats. Omega-3 fatty acids and phytoestrogens can be particularly beneficial. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6520821/\" target=\"_blank\">Reference</a></li>\n        <li>Stress Management: Practice mindfulness, meditation, or yoga to help manage stress levels and improve overall well-being. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5783374/\" target=\"_blank\">Reference</a></li>\n        <li>Movement: Engage in regular physical activity, such as walking, swimming, or strength training, to support bone health and mood. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2991639/\" target=\"_blank\">Reference</a></li>\n        <li>Environment: Create a calming environment at home and work to reduce stress and improve sleep quality. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6418391/\" target=\"_blank\">Reference</a></li>\n        <li>Digestion: Support gut health with probiotics and fiber-rich foods to aid digestion and nutrient absorption. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6521026/\" target=\"_blank\">Reference</a></li>\n    </ul>\n\n    <h2 style=\"font-size: 18px; font-weight: bold; margin-top: 20px;\">Personalize Your Investigation</h2>\n    <ol style=\"font-size: 16px; line-height: 1.5;\">\n        <li>What specific symptoms are you experiencing during menopause?</li>\n        <li>Have you tried any holistic approaches before, and what was your experience?</li>\n    </ol>\n</div>",
+  //     "liked": null,
+  //     "reported": 0,
+  //     "feedback": "N/A",
+  //     "active": true,
+  //     "created_at": "2025-02-14T09:54:48.753754",
+  //     "chat_title": "ha;ll0"
+  //   },
+  //   {
+  //     "id": "cc803bd8-c219-4b90-9a8b-826f1a7d0be0",
+  //     "user_id": "256b3613-69d0-45ec-bfc1-bc749bf3d4db",
+  //     "chat_id": "050e9a00-97f8-46dd-a4fc-15fbf7e73f9c",
+  //     "query": "ha;ll0",
+  //     "answer": "<div style=\"font-family: Arial, sans-serif;\">\n    <h1 style=\"font-size: 20px; font-weight: bold;\">Welcome to Your Menopause Journey</h1>\n\n    <h2 style=\"font-size: 18px; font-weight: bold; margin-top: 20px;\">Understanding the Challenges</h2>\n    <p style=\"font-size: 16px; line-height: 1.5;\">Menopause can be a challenging time, with a variety of symptoms that affect each woman differently. It's important to acknowledge these struggles and approach them with compassion and understanding. You're not alone, and there are many ways to support your health during this transition.</p>\n\n    <h2 style=\"font-size: 18px; font-weight: bold; margin-top: 20px;\">Holistic Health Approaches</h2>\n    <ul style=\"font-size: 16px; line-height: 1.5;\">\n        <li>Nutrition: Incorporate a balanced diet rich in whole foods, including fruits, vegetables, lean proteins, and healthy fats. Omega-3 fatty acids and phytoestrogens can be particularly beneficial. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6520821/\" target=\"_blank\">Reference</a></li>\n        <li>Stress Management: Practice mindfulness, meditation, or yoga to help manage stress levels and improve overall well-being. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5783374/\" target=\"_blank\">Reference</a></li>\n        <li>Movement: Engage in regular physical activity, such as walking, swimming, or strength training, to support bone health and mood. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2991639/\" target=\"_blank\">Reference</a></li>\n        <li>Environment: Create a calming environment at home and work to reduce stress and improve sleep quality. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6418391/\" target=\"_blank\">Reference</a></li>\n        <li>Digestion: Support gut health with probiotics and fiber-rich foods to aid digestion and nutrient absorption. <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6521026/\" target=\"_blank\">Reference</a></li>\n    </ul>\n\n    <h2 style=\"font-size: 18px; font-weight: bold; margin-top: 20px;\">Personalize Your Investigation</h2>\n    <ol style=\"font-size: 16px; line-height: 1.5;\">\n        <li>What specific symptoms are you experiencing during menopause?</li>\n        <li>Have you tried any holistic approaches before, and what was your experience?</li>\n    </ol>\n</div>",
+  //     "liked": null,
+  //     "reported": 0,
+  //     "feedback": "N/A",
+  //     "active": true,
+  //     "created_at": "2025-02-14T09:54:48.753754",
+  //     "chat_title": "ha;ll0"
+  //   },
+  // ]
   const handleDelete = async () => {
     const chatToDelete = chatId?.chat_id || selectedChatId;
 
@@ -197,6 +232,12 @@ const MainChat = () => {
     }
   };
 
+  // Run when session data is available
+  useEffect(() => {
+    if (session?.search_results?.length > 0) {
+      setChats(session.search_results); // Set chats when session has data
+    }
+  }, [session]); // Depend on session
 
 
   return (
@@ -231,7 +272,7 @@ const MainChat = () => {
             <section>
               <div className="lg:col-span-12 flex justify-center">
                 <h5 className="text-xl md:text-[32px] text-primary font-extrabold ">
-                  Hi Coach! How can I help you today?
+                  Hi! How can I help you today?
                 </h5>
               </div>
             </section>
@@ -247,13 +288,6 @@ const MainChat = () => {
               selectedFile={selectedFile}
               isLoading={isLoading} // Can be set to `true` when processing
             />
-            {!chats.length && (
-              <div className="hidden flex-col justify-center lg:flex-row gap-2 mt-8 lg:flex">
-                {["Customized Intake Form", "Customize Client Handout", "Create Client’s Timeline", "Map Client’s Symptoms", "Compare Supplements"].map((detail) => (
-                  <ChatFeature key={detail} detail={detail} />
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
