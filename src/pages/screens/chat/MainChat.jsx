@@ -232,12 +232,12 @@ const MainChat = () => {
     }
   };
 
- // Run when session data is available
-useEffect(() => {
-  if (session?.search_results?.length > 0) {
-    setChats(session.search_results); // Set chats when session has data
-  }
-}, [session]); // Depend on session
+  // Run when session data is available
+  useEffect(() => {
+    if (session?.search_results?.length > 0) {
+      setChats(session.search_results); // Set chats when session has data
+    }
+  }, [session]); // Depend on session
 
 
   return (
@@ -272,7 +272,7 @@ useEffect(() => {
             <section>
               <div className="lg:col-span-12 flex justify-center">
                 <h5 className="text-xl md:text-[32px] text-primary font-extrabold ">
-                  Hi Coach! How can I help you today?
+                  Hi! How can I help you today?
                 </h5>
               </div>
             </section>
@@ -288,13 +288,6 @@ useEffect(() => {
               selectedFile={selectedFile}
               isLoading={isLoading} // Can be set to `true` when processing
             />
-            {!chats.length && (
-              <div className="hidden flex-col justify-center lg:flex-row gap-2 mt-8 lg:flex">
-                {["Customized Intake Form", "Customize Client Handout", "Create Client’s Timeline", "Map Client’s Symptoms", "Compare Supplements"].map((detail) => (
-                  <ChatFeature key={detail} detail={detail} />
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
