@@ -7,13 +7,13 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingScreen from "./components/LoadingScreen";
 
 // Lazy Loaded Components
-const Admin = lazy(() => import("./pages/admin"));
+const Admin = lazy(() => import("./pages/Admin"));
 const AddBlog = lazy(() => import("./pages/admin/addBlog/AddBlog"));
 const LibraryTopicDetails = lazy(() => import("./pages/admin/libraryTopicDetails/LibraryTopicDetails"));
 const Profile = lazy(() => import("./pages/admin/profile/Profile"));
-const User = lazy(() => import("./pages/user"));
+const User = lazy(() => import("./pages/User"));
 const Chat = lazy(() => import("./pages/user/chat&search/Chat"));
-const Library = lazy(() => import("./pages/user/library/library"));
+const Library = lazy(() => import("./pages/user/library/Library"));
 const Signup = lazy(() => import("./pages/auth/Signup"));
 const Home = lazy(() => import("./pages/screens/Home"));
 const CompleteProfile = lazy(() => import("./pages/screens/completeProfile/CompleteProfile"));

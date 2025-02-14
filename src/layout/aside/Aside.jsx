@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"; // Import useLocation
 import { ArrowIcon } from "../../assets/svgs/Icon";
 import AsideDropDown from "./AsideDropDown";
 import Dashboard from "./components/Dashboard";
-import Chat from "./components/chat";
+import Chat from "./components/Chat";
 
 const Aside = () => {
   const [isAsideOpen, setIsAsideOpen] = useState(false);
