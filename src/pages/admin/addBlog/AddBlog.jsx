@@ -5,65 +5,112 @@ import { PiChatsCircle } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
 import Modal from '../../../components/modals/Modal';
 import Button from '../../../components/small/Button';
-import { useAiLearningSearchMutation } from '../../../redux/apis/apiSlice';
-import { setSidebarData } from '../../../redux/slice/sidebarSlice';
+import { useAddNewFolderMutation, useAiLearningSearchMutation, useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
+// import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
 import QuestionAnswer from '../../screens/chat/components/QuestionAnswer';
 import LibraryInput from '../../user/library/components/LibraryInput';
 import FileCard from './components/FileCard';
 import InfoCard from './components/InfoCard';
+import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
+import DOMPurify from 'dompurify';
+import DynamicContent from './components/DynamicContent';
 
 function AddBlog() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
-    const [newFolder, setNewFolder] = useState('');
-    const [aiLearningSearch] = useAiLearningSearchMutation();
-    const dispatch = useDispatch();
+    const [addFolder, setAddNewFolder] = useState('');
+    const [addFolderDescription, setAddFolderDescription] = useState('');
     const [messages, setMessages] = useState([]);
     const [instruction, setInstruction] = useState(null);
-    const sidebarData = useSelector((state) => state.sidebar.data);
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => { dispatch(setSidebarData(false)); setIsModalOpen(false) };
-    const openInstructionModal = () => setIsInstructionModalOpen(true);
-    const closeInstructionModal = () => setIsInstructionModalOpen(false);
     const [inputValue, setInputValue] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
-
     const [chats, setChats] = useState([]);
     const [text, setText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    // const [selectedFile, setSelectedFile] = useState(null);
+
+    const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
+    const [addNewFolder, { isLoading: addNewFolderLoading }] = useAddNewFolderMutation();
+    const [aiLearningSearch] = useAiLearningSearchMutation();
+    const { data: allFolders } = useGetFolderStructureQuery();
+    const dispatch = useDispatch();
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => {
+        dispatch(setAddFolderData({ folderId: null, add: false })); // Assuming you want to set the selected folder ID here
+        ; setIsModalOpen(false)
+    };
+
+    const openInstructionModal = () => setIsInstructionModalOpen(true);
+    const closeInstructionModal = () => setIsInstructionModalOpen(false);
+
     const lastItemRef = useRef(null);
 
     const handleInstructionChange = (e) => {
         setInstruction(e.target.value);
     };
 
-    // console.log("chats", chats)
+
+    function findFolderById(folders, id) {
+        // Check if folders is valid and iterable
+        if (!Array.isArray(folders)) return null;
+
+        for (const folder of folders) {
+            if (folder.id === id) {
+                return folder; // Return the folder if the ID matches
+            }
+            // Check if subfolders is valid before recursion
+            if (Array.isArray(folder.subfolders) && folder.subfolders.length > 0) {
+                const result = findFolderById(folder.subfolders, id);
+                if (result) return result; // Return if found in subfolders
+            }
+        }
+        return null; // Return null if not found
+    }
+
+    // Ensure that `addNewFolderState.folderId` and `allFolders` are available before calling the function
+    const folder = allFolders && addNewFolderState?.folderId
+        ? findFolderById(allFolders.folders, addNewFolderState.folderId)
+        : null;
+    const content = folder?.content;
+    console.log("folder", folder);
     const addInstruction = () => {
         console.log(instruction);
         closeInstructionModal();
     };
 
-    const handleNewReply = (newReply, question) => {
-        const newMessage = {
-            question: question,  // Replace with actual question if needed
-            reply: newReply,
-        };
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-    };
 
-    useEffect(() => {
-        if (sidebarData) {
-            openModal();
-        }
-    }, [sidebarData]);
 
-    const handleFolderSubmit = () => {
-        if (newFolder.trim()) {
-            dispatch(setSidebarData({ ...sidebarData, folders: [...sidebarData.folders, newFolder] }));
-            setNewFolder('');
-            closeModal();
+    const handleFolderSubmit = async () => {
+        // Check if folder name and folder id are provided
+        if (!addFolder.trim() || !addNewFolderState?.folderId) {
+            toast.error("Both folder name and folder ID are required!"); // Show toast if either is missing
+            return; // Exit the function early
         }
+
+        try {
+            const { data, error } = await addNewFolder({
+                name: addFolder,
+                description: addFolderDescription,
+                parent_folder_id: addNewFolderState?.folderId,
+            });
+
+            if (error) {
+                console.log("Error adding folder:", error);
+                toast.error("Failed to add folder!"); // Show toast for failure
+            } else {
+                console.log("Folder added successfully", data?.message);
+                toast.success(data?.message); // Show success toast
+            }
+        } catch (error) {
+            console.error("API call failed:", error);
+            toast.error("An error occurred while adding the folder!");
+        }
+
+        // Reset the form and close the modal
+        setAddNewFolder('');
+        setAddFolderDescription('');
+        dispatch(setAddFolderData({ folderId: null, add: false }));
+        closeModal();
     };
 
     const handleInputChange = (value) => {
@@ -105,6 +152,7 @@ function AddBlog() {
             await aiLearningSearch({
                 chat_message: { user_prompt: text, is_new: true, regenerate_id: null, instructions: "Write random responses." },
                 file: selectedFile || null,
+                folder_id: addNewFolderState?.folderId || null,
                 onMessage: (streamingText) => {
                     setChats((prevChats) => {
                         const updatedChats = [...prevChats];
@@ -124,17 +172,57 @@ function AddBlog() {
     const containsHtml = /<\/?[a-z][\s\S]*>/i.test(chats.detailed_answer);
 
 
+    // const DynamicContent = ({ content }) => {
+    //     // Sanitize the incoming HTML content using DOMPurify
+    //     const sanitizedContent = DOMPurify.sanitize(content);
+
+    //     return (
+    //         <div
+    //             // Render the sanitized content inside the div
+    //             dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+    //         />
+    //     );
+    // };
+    useEffect(() => {
+        if (addNewFolderState?.add) {
+            openModal();
+        }
+    }, [addNewFolderState?.add]);
+
+    const [topicModalOpen, setTopicModalOpen] = useState(false); // State for modal visibility
+    const [selectedItem, setSelectedItem] = useState(null); // State to store the selected item
+
+    // Handle InfoCard click
+    const handleCardClick = (item) => {
+        setSelectedItem(item); // Set the selected item
+        setTopicModalOpen(true); // Open the modal
+    };
+
+
+
+
 
     return (
-        <>
-            <Modal className={'w-[300px]'} isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Create New Folder</h1>}>
-                <input
-                    type="text"
-                    placeholder="Enter folder name"
-                    value={newFolder}
-                    onChange={(e) => setNewFolder(e.target.value)}
-                    className="mt-4 px-4 py-2 border rounded"
-                />
+        <div className=''>
+            <Modal className={''} isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Create New Folder</h1>}>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+
+                    <input
+                        type="text"
+                        placeholder="Enter folder name"
+                        value={addFolder}
+                        onChange={(e) => setAddNewFolder(e.target.value)}
+                        className="mt-4 px-4 py-2 border rounded"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Description"
+                        value={addFolderDescription}
+                        onChange={(e) => setAddFolderDescription(e.target.value)}
+                        className="mt-4 px-4 py-2 border rounded"
+                    />
+                </div>
+
                 <section className='flex justify-end mt-8 gap-3'>
                     <Button
                         className={"!bg-[#8E8E8E]  text-white "}
@@ -169,12 +257,21 @@ function AddBlog() {
                     />
                 </section>
             </Modal>
-
+            <Modal
+                className={'w-[500px] lg:w-[700px] max-h-[600px] custom-scroll  overflow-auto '}
+                isOpen={topicModalOpen}
+                onClose={() => setTopicModalOpen(false)}
+                title={<h1 className="text-xl font-bold">Topic Details</h1>}
+            >
+                <section className="mt-4 overflow-auto">
+                    {selectedItem} {/* Pass content to DynamicContent */}
+                </section>
+            </Modal>
             {/* Main Content */}
             <div className="w-full xs:px-4 md:px-36 flex-col h-full flex justify-center items-center">
                 <section className="w-full flex justify-between pl-4 mb-5 items-start">
                     <h1 className="text-3xl font-semibold">
-                        Perimenopause and Menopause
+                        {folder?.name || 'Select a folder'}
                     </h1>
                 </section>
 
@@ -195,31 +292,7 @@ function AddBlog() {
                         ))}
                     </section>
                 )}
-                {/* {chats.length > 0 && (
-                    <section className='bg-red-100 w-full m-4 rounded-lg p-4'>
-                        {chats.length > 0 && (
-                            <section className='bg-red-100 w-full m-4 rounded-lg p-4'>
-                                {chats.map((message, index) => {
-                                    const hasHtml = /<\/?[a-z][\s\S]*>/i.test(message.detailed_answer);
-                                    return (
-                                        <div key={index} className="mb-4">
-                                            <p className="font-bold">Question:</p>
-                                            <p>{message.question}</p>
 
-                                            <p className="font-bold mt-2">Reply:</p>
-                                            {hasHtml ? (
-                                                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.detailed_answer) }} />
-                                            ) : (
-                                                <p>{message.detailed_answer}</p>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </section>
-                        )}
-
-                    </section>
-                )} */}
                 {/* File Cards */}
                 <div className="flex  h-30 xs:flex-col sm:flex-col md:flex-row gap-4 mt-7  w-full">
                     <section className="w-full cursor-pointer">
@@ -250,39 +323,33 @@ function AddBlog() {
                 <section className="w-full pl-4 mt-7 items-start justify-start">
                     <section className="w-full flex justify-between items-center">
                         <h2 className="text-base font-semibold text-center">
-                            Chats in this project
+                            Topics in this folder
                         </h2>
                     </section>
-                    <section className="w-full mt-4 space-y-8 pt-6">
-                        <InfoCard
-                            Icon={PiChatsCircle}
-                            title="Brain Fog Post-Hysterectomy"
-                            description="The link between brain fog and hysterectomy"
-                        />
-                        <InfoCard
-                            Icon={PiChatsCircle}
-                            title="Brain Fog Post-Hysterectomy"
-                            description="The link between brain fog and hysterectomy"
-                        />
-                        <InfoCard
-                            Icon={PiChatsCircle}
-                            title="Brain Fog Post-Hysterectomy"
-                            description="The link between brain fog and hysterectomy"
-                        />
-                        <InfoCard
-                            Icon={PiChatsCircle}
-                            title="Brain Fog Post-Hysterectomy"
-                            description="The link between brain fog and hysterectomy"
-                        />
-                        <InfoCard
-                            Icon={PiChatsCircle}
-                            title="Brain Fog Post-Hysterectomy"
-                            description="The link between brain fog and hysterectomy"
-                        />
+                    <section className="w-full mt-2 space-y-6 pt-6">
+                        {(!folder?.content?.length) ? (
+                            <div className="ml-6 text-gray-500 text-lg font-bold">No topics available</div>
+                        ) : (
+                            <>
+                                {content?.map((item) => {
+                                    return (
+
+                                        <InfoCard
+                                            Icon={PiChatsCircle}
+                                            key={item.id}
+                                            // Icon={item.Icon}
+                                            title={item.title}
+                                            handleCardClick={handleCardClick}  // Add onClick to each InfoCard
+                                            description={<DynamicContent content={item.content} />}
+                                        />
+                                    )
+                                })}
+                            </>
+                        )}
                     </section>
                 </section>
             </div>
-        </>
+        </div>
     );
 }
 

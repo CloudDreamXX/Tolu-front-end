@@ -4,6 +4,7 @@ import Header from "../../layout/header/Header";
 import Main from "../../layout/Main";
 
 const User = () => {
+
   return (
     <section className="w-full relative user-dashboard h-screen overflow-hidden bg-[#f5f7fb] z-[0]">
       <div className="flex flex-col-2 h-full">

@@ -9,7 +9,10 @@ import { useDispatch } from 'react-redux';
 import { ArrowIcon } from '../../../../../assets/svgs/Icon';
 // import { useDispatch } from "react-redux";
 import Button from '../../../../../components/small/Button';
-import { setSidebarData } from '../../../../../redux/slice/sidebarSlice';
+// import { setAddFolderData, setSidebarData } from '../../../../../redux/slice/sidebarSlice';
+import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
+import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
+import FolderTree from '../../../addBlog/components/FolderTree';
 
 
 function LibraryDashboardSideBar() {
@@ -19,7 +22,8 @@ function LibraryDashboardSideBar() {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState(null);
     const [showMore, setShowMore] = useState({});
-
+    const { data: allFolders } = useGetFolderStructureQuery()
+    console.log("allFolders", allFolders)
     const projects = [
         { name: 'Project A', folders: ['Perimenopause and menopa... 1', 'Perimenopause and menopa... 2', 'Perimenopause and menopa... 3', 'Perimenopause and menopa... 4', 'Perimenopause and menopa... 5', 'Perimenopause and menopa... 6', 'Perimenopause and menopa... 7',] },
         // { name: 'Project B', folders: ['Folder 1', 'Folder 2'] },
@@ -54,10 +58,17 @@ function LibraryDashboardSideBar() {
         dispatch(setSidebarData(e.target.value));  // Update state
     };
 
-    const addArticlesHandler = () => {
-        dispatch(setSidebarData(true));  // Update with add functionality
+    // const addArticlesHandler = (id) => {
+    //     console.log("id", id)
+    //     dispatch(setSidebarData(true));  // Update with add functionality
+    // };
+    const addArticlesHandler = (event, id) => {
+        console.log("addArticlesHandler", id)
+        event.stopPropagation(); // Stops the event from propagating to parent elements
+        dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
+        // Handle any other logic related to stopping pagination, etc.
     };
-
+    
 
     return (
 
@@ -101,49 +112,11 @@ function LibraryDashboardSideBar() {
                                 </div>
                                 {showDropdown && (
                                     <>
-                                        <div className="dropdown-content  h-[370px] custom-scroll overflow-auto">
-                                            {projects.map((project, index) => (
-                                                <div key={index} className="project-item custom-scroll  overflow-auto  text-[#393838]">
-                                                    <div className="text-[#393838] folders">
-                                                        {project.folders.slice(0, showMore[project.name] ? project.folders.length : 7).map((folder, folderIndex) => (
-                                                            <div key={folderIndex} className="folder-item">
-                                                                <div
-                                                                    className={`text-[#393838] text-sm font-normal flex justify-between items-center rounded-lg p-4 h-[20px] w-full mb-2 folder-name ${selectedFolder === folder ? 'bg-[#ACACAC]' : ''
-                                                                        }`}
-                                                                    onClick={() => handleFolderClick(folder)}
-                                                                >
-                                                                    <div className="flex gap-2">
-                                                                        <span className="text-[#393838] folder-icon">
-                                                                            <FaRegFolderOpen />
-                                                                        </span>
-                                                                        <span className="text-[#393838] cursor-pointer truncate w-[150px]">{folder}</span>
-                                                                    </div>
-                                                                    <span className="plus-icon cursor-pointer"><AiOutlinePlus onClick={addArticlesHandler} /></span>
-                                                                </div>
-                                                                {selectedFolder === folder && (
-                                                                    <div className="folder-content custom-scroll  overflow-auto  ml-4 ">
-                                                                        <ul className="p-2 space-y-3">
-                                                                            {/* <li className=" rounded-lg p-1 text-[#393838] text-sm font-semibold hover:bg-[#E0E0E0] transition-all duration-300">Brain Fog Post-Hysteron</li> */}
-                                                                            <li className=" rounded-lg p-1 text-[#393838] text-sm font-semibold hover:bg-[#E0E0E0] transition-all duration-300">Brain Fog Post-Hysteron</li>
-                                                                            <li className=" rounded-lg p-1 text-[#393838] text-sm font-semibold hover:bg-[#E0E0E0] transition-all duration-300">Brain Fog Post-Hysteron</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                        {project.folders.length > 7 && !showMore[project.name] && (
-                                                            <div className="text-[#393838] flex gap-2 items-center text-sm cursor-pointer" onClick={() => handleShowMoreToggle(project.name)}>
-                                                                <HiDotsHorizontal className="text-2xl text-[#A4A4A4]" /> Show more
-                                                            </div>
-                                                        )}
-                                                        {project.folders.length > 5 && showMore[project.name] && (
-                                                            <div className="text-[#393838] flex gap-2 items-center text-sm cursor-pointer" onClick={() => handleShowMoreToggle(project.name)}>
-                                                                <HiDotsHorizontal className="text-2xl text-[#A4A4A4]" /> Show less
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
+                                        <div className="dropdown-content  h-[370px] custom-scroll  overflow-auto">
+                                            <FolderTree allFolders={allFolders} addArticlesHandler={addArticlesHandler} />
+
+
+
                                         </div>
                                         <div className="mt-4">
                                             <text className="text-sm font-semibold text-[#444444]">

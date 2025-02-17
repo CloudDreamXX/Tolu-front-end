@@ -43,7 +43,9 @@ export const apiSlice = createApi({
             // ✅ Create FormData instance
             const formData = new FormData();
             formData.append("chat_message", JSON.stringify(payload.chat_message));
-
+            if (payload.folder_id) {
+              formData.append("folder_id", payload.folder_id);
+            }
             if (payload.file) {
               const fileType = payload.file.type;
               if (fileType === "application/pdf") {
@@ -212,6 +214,25 @@ export const apiSlice = createApi({
         method: "DELETE",
       }),
     }),
+    getFolderStructure: builder.query({
+      query: () => "/folders/structure",
+      providesTags: [{ type: "Folders", id: "LIST" }],
+    }),
+    addNewFolder: builder.mutation({
+      query: ({ name, description, parent_folder_id }) => ({
+        url: '/folders/create', // Change to the correct API endpoint
+        method: 'POST',
+        body: { name, description, parent_folder_id },
+      }),
+      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+    }),
+    addFolderContent: builder.mutation({
+      query: ({ title, content, query, folder_id }) => ({
+        url: '/folders/save-content',
+        method: 'POST',
+        body: { title, content, query, folder_id },
+      }),
+    }),
   }),
 });
 
@@ -229,4 +250,7 @@ export const {
   useUpdateChatTitleMutation,
   useGetUserProfileQuery,
   useDeleteChatMutation,
+  useGetFolderStructureQuery,
+  useAddNewFolderMutation,
+  useAddFolderContentMutation,
 } = apiSlice;
