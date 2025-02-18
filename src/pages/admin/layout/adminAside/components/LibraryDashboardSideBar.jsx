@@ -13,6 +13,9 @@ import Button from '../../../../../components/small/Button';
 import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
 import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
 import FolderTree from '../../../addBlog/components/FolderTree';
+import toast from 'react-hot-toast';
+import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
+import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
 
 
 function LibraryDashboardSideBar() {
@@ -22,13 +25,11 @@ function LibraryDashboardSideBar() {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState(null);
     const [showMore, setShowMore] = useState({});
-    const { data: allFolders, isLoading, isError, error } = useGetFolderStructureQuery();
-    console.log("allFolders", allFolders)
+    const { data: allFolders, isLoading, isError, error, isSuccess, refetch } = useGetFolderStructureQuery();
     useEffect(() => {
-        if (isError) {
-            console.error("Error fetching folders:", error);
-        }
-    }, [isError, error]); // Add dependencies to avoid unnecessary re-renders
+        apiErrorHandler(isError, error, isSuccess, "Topic loaded successfully!");
+    }, [isError, error, isSuccess]);
+    useAutoRefetchOnReconnect(refetch);
 
 
 
@@ -104,7 +105,7 @@ function LibraryDashboardSideBar() {
                         <div className="p-4 w-full">
                             <div className="flex gap-2 mb-8 items-center ">
                                 <TfiWrite />
-                                <text className="text-[#393838]">Feedback</text>
+                                <span className="text-[#393838]">Feedback</span>
                             </div>
                             <div className="project-container">
                                 <div className="project-name flex mb-4 justify-between items-center rounded-lg cursor-pointer p-2 hover:bg-[#E0E0E0] transition-all duration-300" onClick={handleDropdownToggle}>

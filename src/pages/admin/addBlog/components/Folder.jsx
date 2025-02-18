@@ -454,6 +454,12 @@ const Folder = ({
         setActiveContextMenu(null); // Reset active folder
     };
 
+    
+    const contentHandler = (item) => {
+        console.log("Clicked on content item:", item);
+    }
+
+
     return (
         <div className="relative">
             {/* Folder Name */}
@@ -543,8 +549,11 @@ const Folder = ({
 
                             {/* Render Files Inside Folder */}
                             {folder.content?.map((file, index) => (
-                                <div key={index} className="ml-6 text-gray-700 text-sm">
-                                    📄 {file.title}
+                                <div key={index} className="ml-6 truncate w-[100px] cursor-pointer hover:bg-gray-200 text-gray-700 text-sm">
+                                    <section onClick={() => contentHandler(file.id)}>
+
+                                        📄 {file.title}
+                                    </section>
                                 </div>
                             ))}
                         </>

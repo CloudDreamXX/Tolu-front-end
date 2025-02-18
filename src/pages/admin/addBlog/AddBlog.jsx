@@ -14,6 +14,9 @@ import InfoCard from './components/InfoCard';
 import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
 import DOMPurify from 'dompurify';
 import DynamicContent from './components/DynamicContent';
+// import Input from "../small/Input";
+import Input from "../../../components/small/Input";
+import CustomInput from '../../../components/small/CustomInput';
 
 function AddBlog() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -239,11 +242,13 @@ function AddBlog() {
                     });
                 },
             });
+            setSelectedFile(null);
         } catch (error) {
             console.error("Error sending request:", error);
             toast.error("Failed to fetch response.");
         } finally {
             setIsLoading(false);
+            
         }
     };
 
@@ -385,6 +390,97 @@ function AddBlog() {
                     </section>
                 </section>
             </Modal>
+            {/* <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add personalize topic</h1>}>
+                <section className='h-[400px] custom-scroll overflow-auto'>
+                    <section className='flex gap-4 mb-4'>
+
+                        <section className='text-2xl font-medium'>
+                            Health Status
+                        </section>
+                        <section className='flex gap-4 '>
+                            <button className='hover:underline cursor-pointer '>Edit</button>
+                            <button className='hover:underline cursor-pointer '>Save</button>
+
+                        </section>
+
+                    </section>
+                    <section className='space-y-7'>
+
+                        <CustomInput
+                            className=''
+                            type="text"
+                            label="Current health concerns or symptoms (Multiple choice drop down)"
+                            placeholder="Fatigue, Insomnia, Weight Gain"
+                            name="instruction"
+                        // onChange={formDataChangeHandler}
+                        />
+                        <CustomInput
+                            className='mt-2'
+                            type="text"
+                            label="Current health concerns or symptoms (Multiple choice drop down)"
+                            placeholder="Fatigue, Insomnia, Weight Gain"
+                            name="instruction"
+                        // onChange={formDataChangeHandler}
+                        />
+                        <CustomInput
+                            className='mt-2'
+                            type="text"
+                            label="Current health concerns or symptoms (Multiple choice drop down)"
+                            placeholder="Fatigue, Insomnia, Weight Gain"
+                            name="instruction"
+                        // onChange={formDataChangeHandler}
+                        />
+                        <CustomInput
+                            className='mt-2'
+                            type="text"
+                            label="Current health concerns or symptoms (Multiple choice drop down)"
+                            placeholder="Fatigue, Insomnia, Weight Gain"
+                            name="instruction"
+                        // onChange={formDataChangeHandler}
+                        />
+                        <CustomInput
+                            className='mt-2'
+                            type="text"
+                            label="Current health concerns or symptoms (Multiple choice drop down)"
+                            placeholder="Fatigue, Insomnia, Weight Gain"
+                            name="instruction"
+                        // onChange={formDataChangeHandler}
+                        />
+                        <CustomInput
+                            className='mt-2'
+                            type="text"
+                            label="Current health concerns or symptoms (Multiple choice drop down)"
+                            placeholder="Fatigue, Insomnia, Weight Gain"
+                            name="instruction"
+                        // onChange={formDataChangeHandler}
+                        />
+                    </section>
+                    <section className='flex gap-4 mt-4 mb-4'>
+
+                        <section className='text-2xl font-medium'>
+                            Lifestyle & Habits
+                        </section>
+                        <section className='flex gap-4 '>
+                            <button className='hover:underline cursor-pointer '>Edit</button>
+                            <button className='hover:underline cursor-pointer '>Save</button>
+
+                        </section>
+
+                    </section>
+                    <section>
+                        <CustomInput
+                            className='mt-2'
+                            type="text"
+                            label="Current health concerns or symptoms (Multiple choice drop down)"
+                            placeholder="Fatigue, Insomnia, Weight Gain"
+                            name="instruction"
+                        // onChange={formDataChangeHandler}
+                        />
+                    </section>
+
+                </section>
+            </Modal> */}
+
             {/* Main Content */}
             <div className="w-full xs:px-4 md:px-36 flex-col h-full flex justify-center items-center">
                 <section className="w-full flex justify-between  p-2 mb-5 items-start">
