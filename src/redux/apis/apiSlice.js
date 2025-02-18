@@ -100,6 +100,7 @@ export const apiSlice = createApi({
           return { error: "Request failed: " + error.message };
         }
       },
+      invalidatesTags: [{ type: "Folders", id: "LIST" }],
     }),
     findUser: builder.query({
       query: (email) => `/user-exist/${email}`,
@@ -226,6 +227,26 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: "Folders", id: "LIST" }],
     }),
+
+    editFolderById: builder.mutation({
+      query: ({ folderId, newName }) => ({
+        url: `folders/rename-folder`,
+        method: 'PUT',
+        body: { folder_id: folderId, new_name: newName },
+      }),
+      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+    }),
+
+
+    deleteFolderById: builder.mutation({
+      query: (folderId) => ({
+        url: `folders/delete-folder`,
+        method: 'DELETE',
+        body: { folder_id: folderId, force_delete: true },
+
+      }),
+      invalidatesTags: [{ type: "Folders", id: "LIST", }],
+    }),
     addFolderContent: builder.mutation({
       query: ({ title, content, query, folder_id }) => ({
         url: '/folders/save-content',
@@ -233,6 +254,24 @@ export const apiSlice = createApi({
         body: { title, content, query, folder_id },
       }),
     }),
+
+    editContentById: builder.mutation({
+      query: ({ contentId, newTitle }) => ({
+        url: `folders/rename-content`,
+        method: 'PUT',
+        body: { content_id: contentId, new_title: newTitle },
+      }),
+      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+    }),
+
+    deleteContentById: builder.mutation({
+      query: (contentId) => ({
+        url: `folders/delete-content`,
+        method: 'DELETE',
+        body: { content_id: contentId },
+      }),
+      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+    })
   }),
 });
 
@@ -253,4 +292,8 @@ export const {
   useGetFolderStructureQuery,
   useAddNewFolderMutation,
   useAddFolderContentMutation,
+  useDeleteFolderByIdMutation,
+  useDeleteContentByIdMutation,
+  useEditFolderByIdMutation,
+  useEditContentByIdMutation
 } = apiSlice;

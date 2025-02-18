@@ -25,7 +25,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   addFolder: {
-    folderId: null,
+    folderId: "d0dae127-e89e-4923-8bbd-d9c6416228e9",
     add: false,
   },
 };

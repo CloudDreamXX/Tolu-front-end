@@ -103,9 +103,9 @@ const AdminHeader = () => {
         </div>
         <div className="flex items-center justify-between gap-4 xl:gap-6">
 
-          <div className="bg-[#CBCBCB] w-[40px] h-[40px] py-2  rounded-full flex items-center justify-center gap-2">
+          {/* <div className="bg-[#CBCBCB] w-[40px] h-[40px] py-2  rounded-full flex items-center justify-center gap-2">
             <FaHeadset className="text-white" />
-          </div>
+          </div> */}
           <div className="bg-[#ffffff80] py-2 px-5 rounded-lg flex items-center justify-center gap-2 relative">
             <div className="w-[42px] h-[42px] bg-[#CBCBCB] flex justify-center items-center rounded-full overflow-hidden">
 

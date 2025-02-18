@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaRegFolderOpen } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -22,12 +22,15 @@ function LibraryDashboardSideBar() {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState(null);
     const [showMore, setShowMore] = useState({});
-    const { data: allFolders } = useGetFolderStructureQuery()
+    const { data: allFolders, isLoading, isError, error } = useGetFolderStructureQuery();
     console.log("allFolders", allFolders)
-    const projects = [
-        { name: 'Project A', folders: ['Perimenopause and menopa... 1', 'Perimenopause and menopa... 2', 'Perimenopause and menopa... 3', 'Perimenopause and menopa... 4', 'Perimenopause and menopa... 5', 'Perimenopause and menopa... 6', 'Perimenopause and menopa... 7',] },
-        // { name: 'Project B', folders: ['Folder 1', 'Folder 2'] },
-    ];
+    useEffect(() => {
+        if (isError) {
+            console.error("Error fetching folders:", error);
+        }
+    }, [isError, error]); // Add dependencies to avoid unnecessary re-renders
+
+
 
     const asideToggleHandler = () => {
         setIsAsideOpen(!isAsideOpen);
@@ -68,7 +71,7 @@ function LibraryDashboardSideBar() {
         dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
         // Handle any other logic related to stopping pagination, etc.
     };
-    
+
 
     return (
 
@@ -105,20 +108,20 @@ function LibraryDashboardSideBar() {
                             </div>
                             <div className="project-container">
                                 <div className="project-name flex mb-4 justify-between items-center rounded-lg cursor-pointer p-2 hover:bg-[#E0E0E0] transition-all duration-300" onClick={handleDropdownToggle}>
-                                    <span className="text-[#393838] text-sm font-semibold">Projects</span>
+                                    <span className="text-[#393838] text-sm font-semibold">Topic</span>
                                     <span className={`text-[#393838]  dropdown-icon transition-all duration-400 ${showDropdown ? 'rotate-180' : 'rotate-0'}`}>
                                         <IoIosArrowDown />
                                     </span>
                                 </div>
                                 {showDropdown && (
                                     <>
-                                        <div className="dropdown-content  h-[370px] custom-scroll  overflow-auto">
+                                        <div className="dropdown-content  h-[720px] custom-scroll   overflow-auto">
                                             <FolderTree allFolders={allFolders} addArticlesHandler={addArticlesHandler} />
 
 
 
                                         </div>
-                                        <div className="mt-4">
+                                        {/* <div className="mt-4">
                                             <text className="text-sm font-semibold text-[#444444]">
                                                 Previous 7 Days
                                             </text>
@@ -135,16 +138,11 @@ function LibraryDashboardSideBar() {
                                                 </div>
                                                 <span className="plus-icon cursor-pointer"><AiOutlinePlus onClick={addArticlesHandler} /></span>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </>
                                 )}
                             </div>
                         </div>
-                    </div>
-                    <div className="flex mb-4 items-center justify-center ">
-                        <Button className={" !bg-white !border-[1px] border-[#008FF633] shadow-[0px_4px_6px_#7090B01F]   text-[#ACACAC]"} text="Log Out" width="w-full" >
-                            <TbLogout2 />
-                        </Button>
                     </div>
                 </div>
             )}
