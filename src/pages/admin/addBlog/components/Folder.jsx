@@ -354,17 +354,23 @@
 // };
 
 // export default Folder;
+
 import { FaRegFolderOpen, FaRegFolder } from "react-icons/fa";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useState, useRef, useEffect } from "react";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { useDeleteFolderByIdMutation, useEditFolderByIdMutation } from "../../../../redux/apis/apiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setAddFolderData, setContentId } from "../../../../redux/slice/sidebarSlice";
+import { useNavigate } from "react-router-dom";
+import ContentItem from "../../../../components/ContentItem";
+import FolderItem from "../../../../components/FolderItem";
 
 const Folder = ({
     folder,
     openFolders,
     toggleFolder,
-    addArticlesHandler,
+    // addArticlesHandler,
     level,
     activeContextMenu,
     setActiveContextMenu,
@@ -377,7 +383,17 @@ const Folder = ({
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState(folder.name);
     const inputRef = useRef(null);
+     
+    // const dispatch = useDispatch()
 
+    const addArticlesHandler = ( id) => {
+        console.log("addArticlesHandler", id)
+        // event.stopPropagation(); // Stops the event from propagating to parent elements
+        dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
+        // Handle any other logic related to stopping pagination, etc.
+    };
+    const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
+    console.log("addNewFolderState",addNewFolderState)
     // Ensure the context menu closes when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -454,22 +470,28 @@ const Folder = ({
         setActiveContextMenu(null); // Reset active folder
     };
 
-    
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const contentHandler = (item) => {
         console.log("Clicked on content item:", item);
-    }
+        dispatch(setContentId(item));
+        navigate(`/admin/library-topic-details`);
 
+
+    }
+    const contentId = useSelector((state) => state.sidebar.contentId);
+    // console.log("contentId", contentId)
 
     return (
         <div className="relative">
             {/* Folder Name */}
             <div
-                className={`flex justify-between items-center cursor-pointer rounded-lg p-2 mb-2 ${isOpen ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-200 hover:bg-gray-400"
+                className={`flex justify-between items-center cursor-pointer rounded-lg pl-2 mb-2 ${isOpen ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-200 hover:bg-gray-400"
                     }`}
-                onContextMenu={handleContextMenu}
-                onClick={() => toggleFolder(folder.id, level)}
+            // onContextMenu={handleContextMenu}
+            // onClick={() => toggleFolder(folder.id, level)}
             >
-                <div className="flex gap-2 items-center">
+                <div onClick={() => toggleFolder(folder.id, level)} className="flex gap-2 w-full p-2  items-center">
                     {/* Folder Icon */}
                     <span className="text-gray-700">
                         {isOpen ? <FaRegFolderOpen /> : <FaRegFolder />}
@@ -490,14 +512,15 @@ const Folder = ({
                         <span className="truncate w-[100px]">{folder.name}</span>
                     )}
                 </div>
+                <FolderItem content={folder} onDelete={handleDelete} onAdd={addArticlesHandler} setIsEditing={setIsEditing} />
                 {/* Add Content Button */}
-                <span className="cursor-pointer">
+                {/* <span className="cursor-pointer">
                     <AiOutlinePlus onClick={(event) => addArticlesHandler(event, folder.id)} />
-                </span>
+                </span> */}
             </div>
 
             {/* Context Menu */}
-            {contextMenuPosition && activeContextMenu === folder.id && (
+            {/* {contextMenuPosition && activeContextMenu === folder.id && (
                 <div
                     className="fixed z-20 context-menu bg-white shadow-md border rounded-lg p-2 text-sm space-y-2"
                     style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}
@@ -520,7 +543,7 @@ const Folder = ({
                         Delete
                     </div>
                 </div>
-            )}
+            )} */}
 
             {/* Render Subfolders & Files (If Open) */}
             {isOpen && (
@@ -548,12 +571,12 @@ const Folder = ({
                             ))}
 
                             {/* Render Files Inside Folder */}
-                            {folder.content?.map((file, index) => (
-                                <div key={index} className="ml-6 truncate w-[100px] cursor-pointer hover:bg-gray-200 text-gray-700 text-sm">
-                                    <section onClick={() => contentHandler(file.id)}>
-
-                                        📄 {file.title}
-                                    </section>
+                            {folder.content?.map((content, index) => (
+                                <div key={index} className="ml-6  w-40 cursor-pointer hover:bg-gray-200 text-gray-700 text-sm">
+                                    {/* <section onClick={() => contentHandler(content)}> */}
+                                    {/* 📄 {content.title} */}
+                                    <ContentItem content={content} />
+                                    {/* </section> */}
                                 </div>
                             ))}
                         </>

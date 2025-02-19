@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "./redux/slice/authSlice";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingScreen from "./components/LoadingScreen";
+import CoachesAddTopic from "./pages/coaches/coachesAddTopic/CoachesAddTopic";
+import Coaches from "./pages/coaches";
 // import MySpace from "./pages/user/mySpace/MySpace";
 
 // Lazy Loaded Components
@@ -36,8 +38,39 @@ function AppRoutes() {
   }, [location.pathname, dispatch]);
 
   return (
+    // <Routes>
+    //   {/* Guest & Public Routes (Accessible if NOT logged in) */}
+    //   <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
+    //     <Route path="/auth" element={<Signup />} />
+    //     <Route path="/" element={<Home />} />
+    //   </Route>
+
+    //   {/* User Routes */}
+    //   <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+    //     <Route path="/user" element={<User />}>
+    //       <Route path="library" element={<Library />} />
+    //       <Route index element={<MySpace />} />
+    //       <Route path="chat" element={<Chat />} />
+    //       <Route path="profile" element={<Profile />} />
+    //     </Route>
+    //   </Route>
+
+    //   {/* Admin Routes */}
+    //   <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+    //     <Route path="/admin" element={<Admin />}>
+    //       <Route index element={<AddBlog />} />
+    //       <Route path="library-topic-details" element={<LibraryTopicDetails />} />
+    //     </Route>
+    //   </Route>
+
+    //   {/* Complete Profile (Accessible to both user and admin) */}
+    //   <Route element={<ProtectedRoute allowedRoles={["user", "admin"]} />}>
+    //     <Route path="/complete-profile" element={<CompleteProfile />} />
+    //   </Route>
+    // </Routes>
+
     <Routes>
-      {/* Guest & Public Routes (Accessible if NOT logged in) */}
+      {/* Guest Routes */}
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
         <Route path="/auth" element={<Signup />} />
         <Route path="/" element={<Home />} />
@@ -61,8 +94,16 @@ function AppRoutes() {
         </Route>
       </Route>
 
-      {/* Complete Profile (Accessible to both user and admin) */}
-      <Route element={<ProtectedRoute allowedRoles={["user", "admin"]} />}>
+      {/* Instructor Routes */}
+      <Route element={<ProtectedRoute allowedRoles={["coaches"]} />}>
+        <Route path="/coaches" element={<Coaches />}>
+          {/* <Route path="library-topic-details" element={<LibraryTopicDetails />} /> */}
+          <Route index element={<  CoachesAddTopic />} />
+        </Route>
+      </Route>
+
+      {/* Complete Profile */}
+      <Route element={<ProtectedRoute allowedRoles={["user", "admin", "instructor"]} />}>
         <Route path="/complete-profile" element={<CompleteProfile />} />
       </Route>
     </Routes>

@@ -39,7 +39,7 @@ const sidebarSlice = createSlice({
       state.addFolder = { ...action.payload };
     },
     setContentId: (state, action) => {
-      state.contentId.folderId = action.payload;
+      state.contentId = action.payload;
     }
   },
 });

@@ -17,32 +17,69 @@ const LoginForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await login(formData).unwrap();
+
+  //     // Store user & token in Redux
+  //     dispatch(setCredentials(response));
+
+  //     // Set user type based on email
+  //     const email = response.user?.email;
+  //     const userType = {
+  //       role: email === "admin@example.com" ? "admin" : "user",
+  //     };
+
+  //     dispatch(setUser({ email }));
+  //     localStorage.setItem("userType", JSON.stringify(userType));
+
+  //     toast.success("Login Successful");
+
+  //     // Redirect based on user role
+  //     navigate(userType.role === "admin" ? "/admin" : "/user");
+  //   } catch (error) {
+  //     console.error("Login failed:", error);
+  //     toast.error("Login Failed");
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await login(formData).unwrap();
-
-      // Store user & token in Redux
+  
       dispatch(setCredentials(response));
-
-      // Set user type based on email
+  
       const email = response.user?.email;
       const userType = {
-        role: email === "admin@example.com" ? "admin" : "user",
+        role: email === "admin@example.com" 
+          ? "admin" 
+          : email === "test@example.com"
+          ? "coaches"
+          : "user",
       };
-
+  
       dispatch(setUser({ email }));
       localStorage.setItem("userType", JSON.stringify(userType));
-
+  
       toast.success("Login Successful");
-
+  
       // Redirect based on user role
-      navigate(userType.role === "admin" ? "/admin" : "/user");
+      navigate(
+        userType.role === "admin" 
+          ? "/admin"
+          : userType.role === "coaches"
+          ? "/coaches"
+          : "/user"
+      );
     } catch (error) {
       console.error("Login failed:", error);
       toast.error("Login Failed");
     }
   };
+  
 
   return (
     <div className="flex w-full h-screen lg:h-[500px] items-center justify-center">

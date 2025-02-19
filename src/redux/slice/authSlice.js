@@ -12,12 +12,16 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const email = action.payload?.email || null; // Get email  from payload
+      const email = action.payload?.email || null; // Get email from payload
       if (!email) {
         state.userType = { role: "guest" }; // If no email, set as guest
       } else {
         state.userType = {
-          role: email === "admin@example.com" ? "admin" : "user",
+          role: email === "admin@example.com"
+            ? "admin"
+            : email === "test@example.com"
+              ? "coaches"
+              : "user",
         };
       }
       localStorage.setItem("userType", JSON.stringify(state.userType));

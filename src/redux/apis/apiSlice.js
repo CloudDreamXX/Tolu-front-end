@@ -263,6 +263,14 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: "Folders", id: "LIST" }],
     }),
+    moveContent: builder.mutation({
+      query: ({ content_id, target_folder_id }) => ({
+        url: `folders/move-content`,
+        method: 'POST',
+        body: { content_id, target_folder_id },
+      }),
+      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+    }),
 
     deleteContentById: builder.mutation({
       query: (contentId) => ({
@@ -295,5 +303,6 @@ export const {
   useDeleteFolderByIdMutation,
   useDeleteContentByIdMutation,
   useEditFolderByIdMutation,
-  useEditContentByIdMutation
+  useEditContentByIdMutation,
+  useMoveContentMutation,
 } = apiSlice;

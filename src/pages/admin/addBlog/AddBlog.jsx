@@ -79,7 +79,6 @@ function AddBlog() {
             const response = await editContent({ contentId: selectedItem.contentId, newTitle }).unwrap();
             toast.success(response.message);
             console.log("Content renamed successfully", response);
-            setTopicModalOpen(false)
             setIsEditing(false);
         } catch (error) {
             console.error("Error renaming content:", error);
@@ -150,7 +149,7 @@ function AddBlog() {
         ? findFolderById(allFolders.folders, addNewFolderState.folderId)
         : null;
     const content = folder?.content;
-    console.log("folder", folder);
+    // console.log("folder", folder);
     const addInstruction = () => {
         console.log(instruction);
         closeInstructionModal();
@@ -283,7 +282,7 @@ function AddBlog() {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const userType = JSON.parse(localStorage.getItem("userType"));
-    console.log("userType", userType && userType.role === "admin");
+    // console.log("userType", userType && userType.role === "admin");
 
     useEffect(() => {
         if (userType && userType.role === "admin") {
