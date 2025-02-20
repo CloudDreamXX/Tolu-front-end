@@ -1,11 +1,11 @@
 import { useState } from "react";
-import Input from "../small/Input";
-import Button from "../small/Button";
-import { useLoginMutation } from "../../redux/apis/apiSlice";
-import { setCredentials, setUser } from "../../redux/slice/authSlice";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../../redux/apis/apiSlice";
+import { setCredentials, setUser } from "../../redux/slice/authSlice";
+import Button from "../small/Button";
+import Input from "../small/Input";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -16,34 +16,6 @@ const LoginForm = () => {
   const formDataChangeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await login(formData).unwrap();
-
-  //     // Store user & token in Redux
-  //     dispatch(setCredentials(response));
-
-  //     // Set user type based on email
-  //     const email = response.user?.email;
-  //     const userType = {
-  //       role: email === "admin@example.com" ? "admin" : "user",
-  //     };
-
-  //     dispatch(setUser({ email }));
-  //     localStorage.setItem("userType", JSON.stringify(userType));
-
-  //     toast.success("Login Successful");
-
-  //     // Redirect based on user role
-  //     navigate(userType.role === "admin" ? "/admin" : "/user");
-  //   } catch (error) {
-  //     console.error("Login failed:", error);
-  //     toast.error("Login Failed");
-  //   }
-  // };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,7 +52,6 @@ const LoginForm = () => {
     }
   };
   
-
   return (
     <div className="flex w-full h-screen lg:h-[500px] items-center justify-center">
       <form
@@ -113,14 +84,9 @@ const LoginForm = () => {
           </label>
         </div>
         <section className="flex w-full justify-end">
-
           <a href="#" class="text-blue-600 hover:underline">Forgot Password?</a>
         </section>
         <Button text="Login" type="submit" width="w-full" />
-
-
-
-
       </form>
     </div>
   );

@@ -3,15 +3,11 @@ import { IoIosArrowDown } from "react-icons/io";
 
 import { TfiWrite } from "react-icons/tfi";
 import { useDispatch } from 'react-redux';
-import { ArrowIcon } from '../../../../../assets/svgs/Icon';
-// import { useDispatch } from "react-redux";
-// import { setAddFolderData, setSidebarData } from '../../../../../redux/slice/sidebarSlice';
 import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
 import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
 import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
 import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
 import FolderTree from '../../../../admin/addBlog/components/FolderTree';
-// import FolderTree from '../../../addBlog/components/FolderTree';
 
 function CoachesLibraryTopicDetailsAside() {
 
@@ -51,33 +47,20 @@ function CoachesLibraryTopicDetailsAside() {
         [projectName]: !prevState[projectName],
       }));
     };
-    // const addArticlesHandler = () => {
-  
-    // }
-  
+   
     const dispatch = useDispatch();
   
     const handleDropdownChange = (e) => {
       dispatch(setSidebarData(e.target.value));  // Update state
     };
   
-    // const addArticlesHandler = (id) => {
-    //     console.log("id", id)
-    //     dispatch(setSidebarData(true));  // Update with add functionality
-    // };
+  
     const addArticlesHandler = (event, id) => {
-      console.log("addArticlesHandler", id)
       event.stopPropagation(); // Stops the event from propagating to parent elements
       dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
       // Handle any other logic related to stopping pagination, etc.
     };
   
-  
-
-
-
-
-
     return (
         <div className="flex flex-col  w-full  justify-between h-full">
             <div

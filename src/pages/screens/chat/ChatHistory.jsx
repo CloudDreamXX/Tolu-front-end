@@ -8,13 +8,11 @@ import { setNewChat } from "../../../redux/slice/chatSlice";
 const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, chatIdHandler }) => {
   const dispatch = useDispatch();
   const [showHistory, setShowHistory] = useState(true);
-  // console.log("isAsideOpen", !isAsideOpen)
   const newChatHandler = () => {
     dispatch(setNewChat(true));
   };
   useEffect(() => {
     setShowHistory(false)
-    // console.log("history toggled", !isAsideOpen)
   }, [isAsideOpen])
 
   const toggleHistory = () => {

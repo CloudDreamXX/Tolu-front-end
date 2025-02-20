@@ -9,7 +9,6 @@ function Library() {
   const [value, setValue] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [dropdownData, setDropdownData] = useState([]);
-  // console.log("iou8y7t6utudychg", dropdownData);
 
   const cardsData = [
     {
@@ -82,11 +81,6 @@ function Library() {
     { title: "GraphQL for Beginners", date: "2025-03-05", topics: 6 },
     { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
     { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
-    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
-    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
-    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
-    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
-    // { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
   ];
   useEffect(() => {
     setModalOpen(false)
@@ -105,7 +99,6 @@ function Library() {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
-    console.log('File selected:', file);
   };
 
   const handleFileCardClick = () => {
@@ -118,7 +111,6 @@ function Library() {
   };
 
   const handleFileUpload = (file) => {
-    console.log("Uploaded File:", file.name);
     alert(`File Uploaded: ${file.name}`);
   };
 

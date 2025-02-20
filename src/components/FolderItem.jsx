@@ -1,13 +1,7 @@
-import React from 'react'
-import { useState, useRef, useEffect } from "react";
-import { FaEllipsisV, FaRegFolder } from "react-icons/fa";
-import Modal from "./modals/Modal";
-import { useGetFolderStructureQuery, useMoveContentMutation } from "../redux/apis/apiSlice";
-import Button from "./small/Button";
-import toast from "react-hot-toast";
+import React, { useEffect, useRef, useState } from 'react';
+import { FaEllipsisV } from "react-icons/fa";
 function FolderItem({ content, onAdd, onDelete, setIsEditing }) {
 
-    console.log("content", content)
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState(null);
@@ -56,27 +50,6 @@ function FolderItem({ content, onAdd, onDelete, setIsEditing }) {
 
     return (
         <>
-            {/* Move Content Modal */}
-            {/* <Modal isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Move Content</h1>}>
-        <p>Please select a folder:</p>
-        {isLoading ? (
-            <p>Loading folders...</p>
-        ) : (
-            folderList.map((folder) => (
-                <div
-                    key={folder.id}
-                    onClick={() => setSelectedFolder(folder.id)}
-                    className={`flex gap-2 p-2 rounded-lg cursor-pointer ${selectedFolder === folder.id ? "bg-primary text-white" : "bg-white"}`}
-                >
-                    <FaRegFolder /> {folder.name}
-                </div>
-            ))
-        )}
-        <section className="flex justify-end gap-2 mt-4">
-            <Button className="bg-gray-500 text-white" text="Close" onClick={closeModal} />
-            <Button className="bg-blue-500 text-white" text="Move" disabled={!selectedFolder} onClick={handleMoveContent} />
-        </section>
-    </Modal> */}
 
             {/* Content Item */}
             <div className="flex items-center justify-between p-2  border-gray-300 relative">

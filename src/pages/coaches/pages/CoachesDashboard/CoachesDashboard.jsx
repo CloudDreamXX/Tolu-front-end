@@ -3,16 +3,16 @@ import toast from 'react-hot-toast';
 import { CgFileAdd } from 'react-icons/cg';
 import { PiChatsCircle } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
-import { useAddNewFolderMutation, useAiLearningSearchMutation, useDeleteContentByIdMutation, useDeleteFolderByIdMutation, useEditContentByIdMutation, useEditFolderByIdMutation, useGetFolderStructureQuery } from '../../../../redux/apis/apiSlice';
-import { setAddFolderData } from '../../../../redux/slice/sidebarSlice';
-import QuestionAnswer from '../../../screens/chat/components/QuestionAnswer';
-import LibraryInput from '../../../user/library/components/LibraryInput';
 import Modal from '../../../../components/modals/Modal';
 import Button from '../../../../components/small/Button';
+import CustomInput from '../../../../components/small/CustomInput';
+import { useAddNewFolderMutation, useAiLearningSearchMutation, useDeleteContentByIdMutation, useDeleteFolderByIdMutation, useEditContentByIdMutation, useEditFolderByIdMutation, useGetFolderStructureQuery } from '../../../../redux/apis/apiSlice';
+import { setAddFolderData } from '../../../../redux/slice/sidebarSlice';
 import DynamicContent from '../../../admin/addBlog/components/DynamicContent';
 import FileCard from '../../../admin/addBlog/components/FileCard';
 import InfoCard from '../../../admin/addBlog/components/InfoCard';
-import CustomInput from '../../../../components/small/CustomInput';
+import QuestionAnswer from '../../../screens/chat/components/QuestionAnswer';
+import LibraryInput from '../../../user/library/components/LibraryInput';
 
 function CoachesDashboard() {
 
@@ -76,7 +76,6 @@ function CoachesDashboard() {
             if (!selectedItem?.contentId) return;
             const response = await editContent({ contentId: selectedItem.contentId, newTitle }).unwrap();
             toast.success(response.message);
-            console.log("Content renamed successfully", response);
             setIsEditing(false);
         } catch (error) {
             console.error("Error renaming content:", error);
@@ -90,7 +89,6 @@ function CoachesDashboard() {
             const response = await deleteContent(selectedItem.contentId).unwrap();
             toast.success(response.message);
 
-            console.log("Content deleted successfully");
             setTopicModalOpen(false);
         } catch (error) {
             console.error("Error deleting content:", error);
@@ -142,14 +140,11 @@ function CoachesDashboard() {
         return null; // Return null if not found
     }
 
-    // Ensure that `addNewFolderState.folderId` and `allFolders` are available before calling the function
     const folder = allFolders && addNewFolderState?.folderId
         ? findFolderById(allFolders.folders, addNewFolderState.folderId)
         : null;
     const content = folder?.content;
-    // console.log("folder", folder);
     const addInstruction = () => {
-        console.log(instruction);
         closeInstructionModal();
     };
 
@@ -198,11 +193,9 @@ function CoachesDashboard() {
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setSelectedFile(file);
-        console.log('File selected:', file);
         toast.success(`File Uploaded: ${file.name}`);
     };
     const handleFileUpload = (file) => {
-        console.log("Uploaded File:", file.name);
         // const file = event.target.files[0];
         setSelectedFile(file);
         toast.success(`File Uploaded: ${file.name}`);
@@ -267,7 +260,6 @@ function CoachesDashboard() {
 
     // Handle InfoCard click
     const handleCardClick = (item) => {
-        console.log("Item clicked:", item);
         setSelectedItem(item);
         setNewTitle(item.title);
         setTopicModalOpen(true);
@@ -280,7 +272,6 @@ function CoachesDashboard() {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const userType = JSON.parse(localStorage.getItem("userType"));
-    // console.log("userType", userType && userType.role === "admin");
 
     useEffect(() => {
         if (userType && userType.role === "admin") {
@@ -565,7 +556,6 @@ function CoachesDashboard() {
                         ) : (
                             <>
                                 {content?.map((item) => {
-                                    // console.log("ksfhwgigefee", item)
                                     return (
 
                                         <InfoCard

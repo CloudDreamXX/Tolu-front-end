@@ -32,24 +32,15 @@ function AddBlog() {
     const [addNewFolder, { isLoading: addNewFolderLoading }] = useAddNewFolderMutation();
     const [aiLearningSearch] = useAiLearningSearchMutation();
     const { data: allFolders } = useGetFolderStructureQuery();
-
-
-
-    ////////////
-
     const [folderId, setFolderId] = useState("");
     const [contentId, setContentId] = useState("");
     const [newName, setNewName] = useState("");
     const [newTitle, setNewTitle] = useState("");
     const [title, setTitle] = useState("");
-    // const [content, setContent] = useState("");
-
-
     const [editFolder] = useEditFolderByIdMutation();
     const [deleteFolder] = useDeleteFolderByIdMutation();
     const [editContent] = useEditContentByIdMutation();
     const [deleteContent] = useDeleteContentByIdMutation();
-
     const handleEditFolder = async () => {
         try {
             await editFolder({ folderId, newName }).unwrap();
@@ -146,9 +137,7 @@ function AddBlog() {
         ? findFolderById(allFolders.folders, addNewFolderState.folderId)
         : null;
     const content = folder?.content;
-    // console.log("folder", folder);
     const addInstruction = () => {
-        console.log(instruction);
         closeInstructionModal();
     };
 
@@ -197,12 +186,9 @@ function AddBlog() {
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setSelectedFile(file);
-        console.log('File selected:', file);
         toast.success(`File Uploaded: ${file.name}`);
     };
     const handleFileUpload = (file) => {
-        console.log("Uploaded File:", file.name);
-        // const file = event.target.files[0];
         setSelectedFile(file);
         toast.success(`File Uploaded: ${file.name}`);
     };
@@ -255,18 +241,9 @@ function AddBlog() {
         }
     }, [addNewFolderState?.add]);
 
-    // const [topicModalOpen, setTopicModalOpen] = useState(false); // State for modal visibility
-    // const [selectedItem, setSelectedItem] = useState(null); // State to store the selected item
-
-
-
     const [selectedItem, setSelectedItem] = useState(null);
     const [topicModalOpen, setTopicModalOpen] = useState(false);
-    // const [newTitle, setNewTitle] = useState("");
-
-    // Handle InfoCard click
     const handleCardClick = (item) => {
-        console.log("Item clicked:", item);
         setSelectedItem(item);
         setNewTitle(item.title);
         setTopicModalOpen(true);
@@ -279,7 +256,6 @@ function AddBlog() {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const userType = JSON.parse(localStorage.getItem("userType"));
-    // console.log("userType", userType && userType.role === "admin");
 
     useEffect(() => {
         if (userType && userType.role === "admin") {
@@ -492,15 +468,6 @@ function AddBlog() {
 
                     </section>
                 </section>
-
-                {/* <LibraryInput
-                    placeholder="Enter Prompt..."
-                    onChangeValue={handleInputChange}
-                    onSubmitValue={handleSubmitValue}
-                    onFileUpload={handleFileUpload}
-                    isLoading={isLoading}
-
-                /> */}
                 <LibraryInput
                     placeholder="Enter text or upload a file"
                     onChangeValue={handleInputChange}
@@ -560,7 +527,6 @@ function AddBlog() {
                         ) : (
                             <>
                                 {content?.map((item) => {
-                                    // console.log("ksfhwgigefee", item)
                                     return (
 
                                         <InfoCard

@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaHeadset } from "react-icons/fa";
+import toast from "react-hot-toast";
 import { IoIosArrowDown, IoIosSearch } from "react-icons/io";
 import { IoChevronForwardOutline, IoLogOutOutline, IoMenu } from "react-icons/io5";
+import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Aside from "../../../../layout/aside/Aside";
-import { useDispatch } from "react-redux";
 import { logout } from "../../../../redux/slice/authSlice";
-import toast from "react-hot-toast";
 
 
 
@@ -22,7 +21,6 @@ const AdminHeader = () => {
   const pageName = page.split("-").join(" ");
 
   const user = JSON.parse(localStorage.getItem("user")); // Get user data from localStorage
-  console.log(user);
   const mobileNavHandler = () => setMobileNav(!mobileNav);
 
   const notificationOpenHandler = (e) => {

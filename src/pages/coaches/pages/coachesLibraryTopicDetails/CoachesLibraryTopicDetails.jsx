@@ -4,14 +4,11 @@ import { AiOutlineMenuFold } from "react-icons/ai";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { useSelector } from 'react-redux';
-// import { useEditContentByIdMutation } from '../../../redux/apis/apiSlice';
-// import DynamicContent from '../addBlog/components/DynamicContent';
+import { useSearchParams } from 'react-router-dom';
 import { useAiLearningSearchMutation, useEditContentByIdMutation, useGetContentByIdMutation } from '../../../../redux/apis/apiSlice';
 import DynamicContent from '../../../admin/addBlog/components/DynamicContent';
-import LibraryInput from '../../../user/library/components/LibraryInput';
-import { useParams, useSearchParams } from 'react-router-dom';
 import QuestionAnswer from '../../../screens/chat/components/QuestionAnswer';
+import LibraryInput from '../../../user/library/components/LibraryInput';
 
 function CoachesLibraryTopicDetails() {
 
@@ -21,7 +18,6 @@ function CoachesLibraryTopicDetails() {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent] = useEditContentByIdMutation();
   const [inputValue, setInputValue] = useState("");
-  // const [selectedFile, setSelectedFile] = useState(null);
   const [chats, setChats] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,7 +25,6 @@ function CoachesLibraryTopicDetails() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const userType = JSON.parse(localStorage.getItem("userType"));
-  // console.log("userType", userType && userType.role === "admin");
 
   useEffect(() => {
     if (userType && userType.role === "admin") {
@@ -38,9 +33,6 @@ function CoachesLibraryTopicDetails() {
   }, [userType]);  // Ensure useEffect runs when userType changes
 
   const lastItemRef = useRef(null);
-  // console.log("contentId", contentId)
-
-  // const [searchParams] = useSearchParams();
   const [searchParams] = useSearchParams();
 
   // Get values from query parameters
@@ -64,7 +56,6 @@ function CoachesLibraryTopicDetails() {
       toast.error(error.message || "Failed to rename content");
     }
   };
-  // const { data, error, isLoading } = useGetContentByIdMutation(contentId?.id);
 
 
   const [getContentById, { data, error, isLoading: contentLoading }] = useGetContentByIdMutation();

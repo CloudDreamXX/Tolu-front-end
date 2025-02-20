@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useNavigation } from "react-router-dom";
 import { IoChevronForwardOutline, IoLogOutOutline } from "react-icons/io5";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // // import {
 // //   RingIcon,
 //   HeaderChevronIcon,
@@ -9,20 +9,16 @@ import { IoChevronForwardOutline, IoLogOutOutline } from "react-icons/io5";
 // //   BookedIcon,
 // //   FreeSlotsIcon,
 // // } from "../../assets/svgs/Icon";
-import Aside from "../aside/Aside";
-import Notification from "./Notification";
-import { IoHomeOutline } from "react-icons/io5";
-import { IoLibraryOutline } from "react-icons/io5";
 import { CiShop } from "react-icons/ci";
-import { MdHistory } from "react-icons/md";
 import { FaHeadset } from "react-icons/fa";
-import { HeaderChevronIcon } from "../../assets/svgs/Icon";
+import { IoHomeOutline, IoLibraryOutline } from "react-icons/io5";
+import Aside from "../aside/Aside";
 // import { IoIosArrowDown } from "react-icons/io";
+import toast from "react-hot-toast";
+import { IoIosArrowDown, IoIosSearch } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/slice/authSlice";
-import toast from "react-hot-toast";
-import { IoIosArrowDown, IoIosSearch } from "react-icons/io";
 
 
 const Header = () => {
@@ -36,7 +32,6 @@ const Header = () => {
   const page = pathSplit[pathSplit.length - 1];
   const pageName = page.split("-").join(" ");
   const user = JSON.parse(localStorage.getItem("user")); // Get user data from localStorage
-  console.log(user);
   const mobileNavHandler = () => setMobileNav(!mobileNav);
 
   const notificationOpenHandler = (e) => {

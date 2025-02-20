@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { CiUser } from "react-icons/ci";
+import { IoIosArrowDown, IoIosArrowUp, IoIosSearch } from "react-icons/io";
+import { MdHistory } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetSearchHistoryQuery } from '../../../redux/apis/apiSlice';
 import { setNewChat, setRefetchHistory, setSelectedChatId } from '../../../redux/slice/chatSlice';
-import { BiSolidEdit } from "react-icons/bi";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { MdHistory } from "react-icons/md";
-import { CiUser } from "react-icons/ci";
-import Input from '../../../components/small/Input';
-import {  IoIosSearch } from "react-icons/io";
-import toast from 'react-hot-toast';
 
 // import { useDispatch } from "react-redux";
 function MySpaceSideBar({ isAsideOpen }) {
@@ -41,13 +38,11 @@ function MySpaceSideBar({ isAsideOpen }) {
     }, [refetchHistory, refetch, dispatch]);
     // const dispatch = useDispatch();
     const [showHistory, setShowHistory] = useState(true);
-    // console.log("isAsideOpen", !isAsideOpen)
     const newChatHandler = () => {
         dispatch(setNewChat(true));
     };
     useEffect(() => {
         setShowHistory(false)
-        // console.log("history toggled", !isAsideOpen)
     }, [isAsideOpen])
 
     const toggleHistory = () => {

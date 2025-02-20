@@ -7,7 +7,6 @@ import {
   AiOutlineLike,
 } from "react-icons/ai";
 import { BsCopy } from "react-icons/bs";
-import { CiVolumeHigh } from "react-icons/ci";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
 import { FaRegShareFromSquare, FaVolumeHigh } from "react-icons/fa6";
 import { GrGallery, GrRefresh } from "react-icons/gr";
@@ -28,7 +27,6 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) =>
   const [disliked, setDisliked] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [copied, setCopied] = useState(false);
-  console.log("role", isAdmin)
 
   useEffect(() => {
     if (isEditing) {

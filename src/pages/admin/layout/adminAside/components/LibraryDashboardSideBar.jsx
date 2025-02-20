@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { AiOutlinePlus } from "react-icons/ai";
-import { FaRegFolderOpen } from "react-icons/fa";
-import { HiDotsHorizontal } from "react-icons/hi";
 import { IoIosArrowDown } from "react-icons/io";
-import { TbLogout2 } from "react-icons/tb";
 import { TfiWrite } from "react-icons/tfi";
 import { useDispatch } from 'react-redux';
 import { ArrowIcon } from '../../../../../assets/svgs/Icon';
 // import { useDispatch } from "react-redux";
-import Button from '../../../../../components/small/Button';
 // import { setAddFolderData, setSidebarData } from '../../../../../redux/slice/sidebarSlice';
+import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
+import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
 import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
 import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
 import FolderTree from '../../../addBlog/components/FolderTree';
-import toast from 'react-hot-toast';
-import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
-import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
 
 
 function LibraryDashboardSideBar() {
@@ -62,12 +56,8 @@ function LibraryDashboardSideBar() {
         dispatch(setSidebarData(e.target.value));  // Update state
     };
 
-    // const addArticlesHandler = (id) => {
-    //     console.log("id", id)
-    //     dispatch(setSidebarData(true));  // Update with add functionality
-    // };
+    
     const addArticlesHandler = (event, id) => {
-        console.log("addArticlesHandler", id)
         event.stopPropagation(); // Stops the event from propagating to parent elements
         dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
         // Handle any other logic related to stopping pagination, etc.

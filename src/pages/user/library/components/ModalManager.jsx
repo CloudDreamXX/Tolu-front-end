@@ -7,7 +7,6 @@ const ModalManager = ({ setModalOpen, setDropdownData,closeModal }) => {
 
     const handleAction = (data) => {
         setDropdownData(data);
-        console.log('Final Dropdown Data:', data);
 
         setModalOpen(false);
     };
