@@ -95,10 +95,10 @@ function CoachesDashboardAside() {
 
 
   return (
-    <div className="flex flex-col p-2 w-full  justify-between h-full">
+    <div className="flex flex-col p-2 w-full    h-full">
 
       <div
-        className={`flex flex-col   justify-center gap-2 overflow-hidden ${isAsideOpen ? "items-center" : "items-start"
+        className={`flex flex-col   h-full  gap-2 overflow-hidden ${isAsideOpen ? "items-center" : "items-start"
           }`}
       >
         <div className="p-4 w-full">

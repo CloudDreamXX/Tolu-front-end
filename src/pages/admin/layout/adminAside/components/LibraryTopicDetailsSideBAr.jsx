@@ -1,19 +1,16 @@
-import { IoIosArrowDown } from "react-icons/io";
-import { TbLogout2 } from "react-icons/tb";
 import React, { useEffect, useState } from 'react';
+import { IoIosArrowDown } from "react-icons/io";
 
 import { TfiWrite } from "react-icons/tfi";
 import { useDispatch } from 'react-redux';
 import { ArrowIcon } from '../../../../../assets/svgs/Icon';
 // import { useDispatch } from "react-redux";
-import Button from '../../../../../components/small/Button';
 // import { setAddFolderData, setSidebarData } from '../../../../../redux/slice/sidebarSlice';
+import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
+import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
 import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
 import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
 import FolderTree from '../../../addBlog/components/FolderTree';
-import toast from 'react-hot-toast';
-import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
-import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
 
 
 // Reusable Section Component

@@ -3,19 +3,20 @@ import toast from 'react-hot-toast';
 import { CgFileAdd } from 'react-icons/cg';
 import { PiChatsCircle } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
-import Modal from '../../../components/modals/Modal';
-import Button from '../../../components/small/Button';
-import { useAddNewFolderMutation, useAiLearningSearchMutation, useDeleteContentByIdMutation, useDeleteFolderByIdMutation, useEditContentByIdMutation, useEditFolderByIdMutation, useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
-// import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
-import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
-import QuestionAnswer from '../../screens/chat/components/QuestionAnswer';
-import LibraryInput from '../../user/library/components/LibraryInput';
-import DynamicContent from './components/DynamicContent';
-import FileCard from './components/FileCard';
-import InfoCard from './components/InfoCard';
-// import Input from "../small/Input";
+import { useAddNewFolderMutation, useAiLearningSearchMutation, useDeleteContentByIdMutation, useDeleteFolderByIdMutation, useEditContentByIdMutation, useEditFolderByIdMutation, useGetFolderStructureQuery } from '../../../../redux/apis/apiSlice';
+import { setAddFolderData } from '../../../../redux/slice/sidebarSlice';
+import QuestionAnswer from '../../../screens/chat/components/QuestionAnswer';
+import LibraryInput from '../../../user/library/components/LibraryInput';
+import Modal from '../../../../components/modals/Modal';
+import Button from '../../../../components/small/Button';
+import DynamicContent from '../../../admin/addBlog/components/DynamicContent';
+import FileCard from '../../../admin/addBlog/components/FileCard';
+import InfoCard from '../../../admin/addBlog/components/InfoCard';
+import CustomInput from '../../../../components/small/CustomInput';
 
-function AddBlog() {
+function CoachesDashboard() {
+
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
     const [addFolder, setAddNewFolder] = useState('');
@@ -244,7 +245,7 @@ function AddBlog() {
             toast.error("Failed to fetch response.");
         } finally {
             setIsLoading(false);
-            
+
         }
     };
 
@@ -288,6 +289,10 @@ function AddBlog() {
     }, [userType]);  // Ensure useEffect runs when userType changes
 
 
+
+
+
+
     return (
         <div className=''>
             <Modal className={''} isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Create New Folder</h1>}>
@@ -323,7 +328,7 @@ function AddBlog() {
                 </section>
             </Modal>
 
-            <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add personalize topic</h1>}>
+            {/* <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add personalize topic</h1>}>
                 <textarea
                     className="w-full mt-4 h-40 p-4 border rounded"
                     placeholder="Enter personalize topic here..."
@@ -342,7 +347,7 @@ function AddBlog() {
                         onClick={addInstruction}
                     />
                 </section>
-            </Modal>
+            </Modal> */}
 
             <Modal
                 className="w-[500px] lg:w-[700px] max-h-[600px] custom-scroll overflow-auto"
@@ -386,7 +391,7 @@ function AddBlog() {
                     </section>
                 </section>
             </Modal>
-            {/* <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add personalize topic</h1>}>
+            <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add personalize topic</h1>}>
                 <section className='h-[400px] custom-scroll overflow-auto'>
                     <section className='flex gap-4 mb-4'>
 
@@ -475,7 +480,7 @@ function AddBlog() {
                     </section>
 
                 </section>
-            </Modal> */}
+            </Modal>
 
             {/* Main Content */}
             <div className="w-full xs:px-4 md:px-36 flex-col h-full flex justify-center items-center">
@@ -580,7 +585,7 @@ function AddBlog() {
                 </section>
             </div>
         </div>
-    );
+    )
 }
 
-export default AddBlog;
+export default CoachesDashboard

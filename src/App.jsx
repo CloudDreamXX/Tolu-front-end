@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "./redux/slice/authSlice";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingScreen from "./components/LoadingScreen";
-import CoachesAddTopic from "./pages/coaches/coachesAddTopic/CoachesAddTopic";
 import Coaches from "./pages/coaches";
+import CoachesDashboard from "./pages/coaches/pages/CoachesDashboard/CoachesDashboard";
+import CoachesLibraryTopicDetails from "./pages/coaches/pages/coachesLibraryTopicDetails/coachesLibraryTopicDetails";
 // import MySpace from "./pages/user/mySpace/MySpace";
 
 // Lazy Loaded Components
@@ -97,8 +98,8 @@ function AppRoutes() {
       {/* Instructor Routes */}
       <Route element={<ProtectedRoute allowedRoles={["coaches"]} />}>
         <Route path="/coaches" element={<Coaches />}>
-          {/* <Route path="library-topic-details" element={<LibraryTopicDetails />} /> */}
-          <Route index element={<  CoachesAddTopic />} />
+          <Route index element={<  CoachesDashboard />} />
+          <Route path="coaches-library-topic-details" element={<CoachesLibraryTopicDetails />} />
         </Route>
       </Route>
 

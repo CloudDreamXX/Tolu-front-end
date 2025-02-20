@@ -96,25 +96,47 @@
 // };
 
 // export default LibraryTopicDetails;
-import React, { useState } from 'react';
-import { FiSend } from "react-icons/fi";
-import { FaSave, FaHeadphonesAlt } from "react-icons/fa";
-import { CiEdit, CiCalendarDate, CiClock2 } from "react-icons/ci";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { IoReturnUpBackOutline } from "react-icons/io5";
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useEditContentByIdMutation } from '../../../redux/apis/apiSlice';
-import DynamicContent from '../addBlog/components/DynamicContent';
+import { AiOutlineMenuFold } from "react-icons/ai";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
-import { AiOutlineMenuFold } from "react-icons/ai";
+import { RiDeleteBinLine } from "react-icons/ri";
+import { useSelector } from 'react-redux';
+import { useEditContentByIdMutation, useGetContentByIdMutation } from '../../../redux/apis/apiSlice';
+import DynamicContent from '../addBlog/components/DynamicContent';
+import { useSearchParams } from 'react-router-dom';
 
 const LibraryTopicDetails = () => {
   const contentId = useSelector((state) => state.sidebar.contentId);
   const [newTitle, setNewTitle] = useState(contentId?.title || '');
   const [isEditing, setIsEditing] = useState(false);
   const [editContent] = useEditContentByIdMutation();
+  const [searchParams] = useSearchParams();
+
+  // Get values from query parameters
+  const id = searchParams.get("id");
+  const folderId = searchParams.get("folderId");
+
+  console.log("ID:", id, "Folder ID:", folderId);
+
+
+  const [getContentById, { data, error, isLoading: contentLoading }] = useGetContentByIdMutation();
+
+  const fetchContent = async () => {
+    try {
+      await getContentById(id).unwrap(); // Call API and unwrap response
+
+    } catch (err) {
+      console.error("Error fetching content:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchContent()
+  }, [id])
+  console.log("data", data);
+
 
   const handleEditContent = async () => {
     if (!contentId?.id) {
@@ -160,7 +182,7 @@ const LibraryTopicDetails = () => {
         </section>
         <section className="flex flex-col custom-scroll overflow-auto mt-[24px]">
           <section className="text-[#1D1D1F99] text-xl font-medium">
-            <DynamicContent content={contentId?.content} />
+            <DynamicContent content={data?.content} />
           </section>
         </section>
       </div>

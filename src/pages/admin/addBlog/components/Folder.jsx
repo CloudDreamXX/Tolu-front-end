@@ -383,17 +383,17 @@ const Folder = ({
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState(folder.name);
     const inputRef = useRef(null);
-     
+
     // const dispatch = useDispatch()
 
-    const addArticlesHandler = ( id) => {
+    const addArticlesHandler = (id) => {
         console.log("addArticlesHandler", id)
         // event.stopPropagation(); // Stops the event from propagating to parent elements
         dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
         // Handle any other logic related to stopping pagination, etc.
     };
     const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
-    console.log("addNewFolderState",addNewFolderState)
+    console.log("addNewFolderState", addNewFolderState)
     // Ensure the context menu closes when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -513,39 +513,9 @@ const Folder = ({
                     )}
                 </div>
                 <FolderItem content={folder} onDelete={handleDelete} onAdd={addArticlesHandler} setIsEditing={setIsEditing} />
-                {/* Add Content Button */}
-                {/* <span className="cursor-pointer">
-                    <AiOutlinePlus onClick={(event) => addArticlesHandler(event, folder.id)} />
-                </span> */}
+
             </div>
 
-            {/* Context Menu */}
-            {/* {contextMenuPosition && activeContextMenu === folder.id && (
-                <div
-                    className="fixed z-20 context-menu bg-white shadow-md border rounded-lg p-2 text-sm space-y-2"
-                    style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}
-                >
-                    <div
-                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded"
-                        onClick={() => {
-                            setIsEditing(true);
-                            setTimeout(() => inputRef.current?.focus(), 0);
-                        }}
-                    >
-                        <FiEdit className="text-blue-600" />
-                        Edit
-                    </div>
-                    <div
-                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded"
-                        onClick={() => handleDelete(folder.id)} // Pass folder id to delete handler
-                    >
-                        <FiTrash2 className="text-red-600" />
-                        Delete
-                    </div>
-                </div>
-            )} */}
-
-            {/* Render Subfolders & Files (If Open) */}
             {isOpen && (
                 <div className="ml-2 border-l-2 border-gray-300 pl-2">
                     {(!folder.subfolders?.length && !folder.content?.length) ? (
@@ -575,7 +545,7 @@ const Folder = ({
                                 <div key={index} className="ml-6  w-40 cursor-pointer hover:bg-gray-200 text-gray-700 text-sm">
                                     {/* <section onClick={() => contentHandler(content)}> */}
                                     {/* 📄 {content.title} */}
-                                    <ContentItem content={content} />
+                                    <ContentItem content={content} folderId={folder.id}/>
                                     {/* </section> */}
                                 </div>
                             ))}

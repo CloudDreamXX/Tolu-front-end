@@ -333,10 +333,10 @@ import { useDeleteContentByIdMutation, useEditContentByIdMutation, useGetFolderS
 import Button from "./small/Button";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { setContentId } from "../redux/slice/sidebarSlice";
 
-const ContentItem = ({ content, onAdd, onDelete }) => {
+const ContentItem = ({ content, folderId, onAdd, onDelete }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -423,15 +423,33 @@ const ContentItem = ({ content, onAdd, onDelete }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+    const currentPath = location.pathname;
+    // const navigate = useNavigate();
+    // const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const userType = localStorage.getItem("userType");
+    // const currentPath = location.pathname;
     const contentHandler = (item) => {
         console.log("Clicked on content item:", item);
         dispatch(setContentId(item));
-    
-        // Only navigate if the current path is different
-        if (location.pathname !== "/admin/library-topic-details") {
-            navigate(`/admin/library-topic-details`);
+
+
+        if (currentPath === "/admin/library-topic-details") {
+            // Update the query parameter instead of navigating
+            setSearchParams({ id: item.id, folderId: folderId });
+        } else if (currentPath === "/coaches/coaches-library-topic-details") {
+            // Update the query parameter instead of navigating
+            setSearchParams({ id: item.id, folderId: folderId });
+        } else if (currentPath === "/admin") {
+            navigate(`/admin/library-topic-details?id=${item.id}&folderId=${folderId}`);
+        } else if (currentPath === "/coaches") {
+            navigate(`/coaches/coaches-library-topic-details?id=${item.id}&folderId=${folderId}`);
         }
+
     };
+    console.log("content", content)
+    console.log("folderId", folderId)
+
 
     return (
         <>
@@ -457,7 +475,7 @@ const ContentItem = ({ content, onAdd, onDelete }) => {
                         onKeyDown={(e) => e.key === "Enter" && handleEditContent(content.id)} // Pass folder id on Enter key press
                         ref={inputRef} className="w-36 border p-1" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus />
                 ) : (
-                    <section className="truncate  w-28"  onClick={() => contentHandler(content)}>
+                    <section className="truncate  w-28" onClick={() => contentHandler(content)}>
 
 
                         <span className="">📄 {content.title}</span>

@@ -7,6 +7,7 @@ const CustomInput = ({ style, type = "text", label, ...rest }) => {
     setInputValue(e.target.value);
   };
 
+  
   return (
     <div className="">
       <div className="flex flex-col space-y-3">

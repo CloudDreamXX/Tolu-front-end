@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { ArrowIcon } from "../../../../assets/svgs/Icon";
 import CoachesDashboardAside from './components/CoachesDashboardAside';
+import CoachesLibraryTopicDetailsAside from './components/CoachesLibraryTopicDetailsAside';
 
 function CoachesAside() {
 
@@ -21,9 +22,9 @@ function CoachesAside() {
         return (
           <CoachesDashboardAside isAsideOpen={isAsideOpen} />
         );
-      case "/user/library":
+      case "/coaches/coaches-library-topic-details":
         return (
-          <Dashboard />
+          <CoachesLibraryTopicDetailsAside />
         );
       case "/user/chat":
         return (

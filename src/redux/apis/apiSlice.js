@@ -219,6 +219,23 @@ export const apiSlice = createApi({
       query: () => "/folders/structure",
       providesTags: [{ type: "Folders", id: "LIST" }],
     }),
+    // getContentById: builder.query({
+    //   query: (contentId) => ({
+    //     url: `/content/retrieve`,
+    //     method: "GET",
+    //     body: { content_id: contentId },
+    //   }),
+    //   providesTags: [{ type: "Folders", id: "LIST" }],
+    // }),
+    getContentById: builder.mutation({
+      query: (contentId) => ({
+        url: "/content/retrieve",
+        method: "POST",
+        body: { content_id: contentId },
+      }),
+      providesTags: [{ type: "Folders", id: "LIST" }],
+    }),
+
     addNewFolder: builder.mutation({
       query: ({ name, description, parent_folder_id }) => ({
         url: '/folders/create', // Change to the correct API endpoint
@@ -305,4 +322,5 @@ export const {
   useEditFolderByIdMutation,
   useEditContentByIdMutation,
   useMoveContentMutation,
+  useGetContentByIdMutation
 } = apiSlice;
