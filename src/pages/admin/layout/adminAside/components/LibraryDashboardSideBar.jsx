@@ -11,8 +11,18 @@ import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
 import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
 import FolderTree from '../../../addBlog/components/FolderTree';
 
+import { FaRegFolder, FaRegFolderOpen } from "react-icons/fa";
+import ContentTree from '../../../addBlog/components/ContentTree';
 
 function LibraryDashboardSideBar() {
+
+
+
+
+
+
+
+
 
 
     const [isAsideOpen, setIsAsideOpen] = useState(false);
@@ -25,6 +35,7 @@ function LibraryDashboardSideBar() {
     }, [isError, error, isSuccess]);
     useAutoRefetchOnReconnect(refetch);
 
+    console.log("allFolders", allFolders);
 
 
     const asideToggleHandler = () => {
@@ -56,7 +67,7 @@ function LibraryDashboardSideBar() {
         dispatch(setSidebarData(e.target.value));  // Update state
     };
 
-    
+
     const addArticlesHandler = (event, id) => {
         event.stopPropagation(); // Stops the event from propagating to parent elements
         dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
@@ -87,17 +98,17 @@ function LibraryDashboardSideBar() {
             </div>
             {!isAsideOpen && (
 
-                <div className="flex flex-col p-2 w-full  justify-between h-full">
+                <div className="flex flex-col p-2 w-full overflow-auto  justify-between h-full">
                     <div
-                        className={`flex flex-col   justify-center gap-2 overflow-hidden ${isAsideOpen ? "items-center" : "items-start"
+                        className={`flex flex-col  justify-center gap-2 overflow-auto ${isAsideOpen ? "items-center" : "items-start"
                             }`}
                     >
                         <div className="p-4 w-full">
-                            <div className="flex gap-2 mb-8 items-center ">
+                            {/* <div className="flex gap-2 mb-8 items-center ">
                                 <TfiWrite />
                                 <span className="text-[#393838]">Feedback</span>
-                            </div>
-                            <div className="project-container">
+                            </div> */}
+                            <div className="project-container h-full">
                                 <div className="project-name flex mb-4 justify-between items-center rounded-lg cursor-pointer p-2 hover:bg-[#E0E0E0] transition-all duration-300" onClick={handleDropdownToggle}>
                                     <span className="text-[#393838] text-sm font-semibold">Topic</span>
                                     <span className={`text-[#393838]  dropdown-icon transition-all duration-400 ${showDropdown ? 'rotate-180' : 'rotate-0'}`}>
@@ -106,30 +117,19 @@ function LibraryDashboardSideBar() {
                                 </div>
                                 {showDropdown && (
                                     <>
-                                        <div className="dropdown-content  h-[720px] custom-scroll   overflow-auto">
+                                        <div className="dropdown-content   custom-scroll   overflow-auto">
                                             <FolderTree allFolders={allFolders} addArticlesHandler={addArticlesHandler} />
 
 
 
                                         </div>
-                                        {/* <div className="mt-4">
+                                        <div className="mt-4">
                                             <text className="text-sm font-semibold text-[#444444]">
-                                                Previous 7 Days
+                                                SAVED TOPICS
                                             </text>
-                                            <div
-                                                className={`text-[#393838] text-sm font-normal flex justify-between items-center rounded-lg p-4 h-[20px] w-full mb-2 folder-name 
-                          }`}
-                                                onClick={() => handleFolderClick(folder)}
-                                            >
-                                                <div className="flex gap-2">
-                                                    <span className="text-[#393838] folder-icon">
-                                                        <FaRegFolderOpen />
-                                                    </span>
-                                                    <span className="text-[#393838] truncate w-[100px]">Perimenopause and menopa...</span>
-                                                </div>
-                                                <span className="plus-icon cursor-pointer"><AiOutlinePlus onClick={addArticlesHandler} /></span>
-                                            </div>
-                                        </div> */}
+                                            <ContentTree allFolders={allFolders} addArticlesHandler={addArticlesHandler} />
+                                            
+                                        </div>
                                     </>
                                 )}
                             </div>
