@@ -103,7 +103,7 @@ function LibraryDashboardSideBar() {
                         className={`flex flex-col  justify-center gap-2 overflow-auto ${isAsideOpen ? "items-center" : "items-start"
                             }`}
                     >
-                        <div className="p-4 w-full">
+                        <div className="p-4 h-full w-full">
                             {/* <div className="flex gap-2 mb-8 items-center ">
                                 <TfiWrite />
                                 <span className="text-[#393838]">Feedback</span>

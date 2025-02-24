@@ -11,6 +11,7 @@ import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconn
 import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
 import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
 import FolderTree from '../../../addBlog/components/FolderTree';
+import ContentTree from '../../../addBlog/components/ContentTree';
 
 
 // Reusable Section Component
@@ -72,7 +73,7 @@ function LibraryTopicDetailsSideBAr() {
     dispatch(setSidebarData(e.target.value));  // Update state
   };
 
-  
+
   const addArticlesHandler = (event, id) => {
     event.stopPropagation(); // Stops the event from propagating to parent elements
     dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
@@ -82,7 +83,7 @@ function LibraryTopicDetailsSideBAr() {
 
 
   return (
-    
+
     <div
       className={`h-full border-[#008FF614] border-r-2 bg-white py-8 relative transition-all duration-500 rounded-lg xl:rounded-[0] 
         ${isAsideOpen ? "w-[90px]" : "w-[280px]"} shadow-md shadow-[#7090B024]`}
@@ -108,7 +109,7 @@ function LibraryTopicDetailsSideBAr() {
             className={`flex flex-col   justify-center gap-2 overflow-hidden ${isAsideOpen ? "items-center" : "items-start"
               }`}
           >
-            <div className="p-4 w-full">
+            <div className="p-4 h-full overflow-auto w-full">
               <div className="flex gap-2 mb-8 items-center ">
                 <TfiWrite />
                 <span className="text-[#393838]">Feedback</span>
@@ -122,30 +123,19 @@ function LibraryTopicDetailsSideBAr() {
                 </div>
                 {showDropdown && (
                   <>
-                    <div className="dropdown-content  h-[720px] custom-scroll   overflow-auto">
+                    <div className="dropdown-content  custom-scroll   overflow-auto">
                       <FolderTree allFolders={allFolders} addArticlesHandler={addArticlesHandler} />
 
 
 
                     </div>
-                    {/* <div className="mt-4">
-                                            <text className="text-sm font-semibold text-[#444444]">
-                                                Previous 7 Days
-                                            </text>
-                                            <div
-                                                className={`text-[#393838] text-sm font-normal flex justify-between items-center rounded-lg p-4 h-[20px] w-full mb-2 folder-name 
-                          }`}
-                                                onClick={() => handleFolderClick(folder)}
-                                            >
-                                                <div className="flex gap-2">
-                                                    <span className="text-[#393838] folder-icon">
-                                                        <FaRegFolderOpen />
-                                                    </span>
-                                                    <span className="text-[#393838] truncate w-[100px]">Perimenopause and menopa...</span>
-                                                </div>
-                                                <span className="plus-icon cursor-pointer"><AiOutlinePlus onClick={addArticlesHandler} /></span>
-                                            </div>
-                                        </div> */}
+                    <div className="mt-4">
+                      <text className="text-sm font-semibold text-[#444444]">
+                        SAVED TOPICS
+                      </text>
+                      <ContentTree allFolders={allFolders} addArticlesHandler={addArticlesHandler} />
+
+                    </div>
                   </>
                 )}
               </div>

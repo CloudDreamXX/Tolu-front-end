@@ -7,7 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingScreen from "./components/LoadingScreen";
 import Coaches from "./pages/coaches";
 import CoachesDashboard from "./pages/coaches/pages/CoachesDashboard/CoachesDashboard";
-import CoachesLibraryTopicDetails from "./pages/coaches/pages/coachesLibraryTopicDetails/coachesLibraryTopicDetails";
+import CoachesLibraryTopicDetails from "./pages/coaches/pages/coachesLibraryTopicDetails/CoachesLibraryTopicDetails";
 // import MySpace from "./pages/user/mySpace/MySpace";
 
 // Lazy Loaded Components

@@ -152,7 +152,7 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
                     </section>
                 )}
 
-                {/* <button ref={buttonRef} onClick={() => setIsMenuOpen((prev) => !prev)} className="p-2 text-gray-600 hover:text-gray-800">
+                <button ref={buttonRef} onClick={() => setIsMenuOpen((prev) => !prev)} className="p-2 text-gray-600 hover:text-gray-800">
                     <FaEllipsisV />
                 </button>
                 {isMenuOpen && (
@@ -161,7 +161,7 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
                         <button onClick={() => { setIsEditing(true); setIsMenuOpen(false); }} className="block w-full text-left px-4 py-2 hover:bg-gray-200">Rename</button>
                         <button onClick={() => { handleDeleteContent(), setIsMenuOpen(false); }} className="block w-full text-left px-4 py-2 hover:bg-red-200 text-red-600">Delete</button>
                     </div>
-                )} */}
+                )}
             </div>
         </>
     );
