@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Dropdown from "../../../../../components/small/Dropdown";
 import Input from "../../../../../components/small/Input";
@@ -37,9 +38,8 @@ const PersonalizeModal = () => {
     health_approach_preference: "",
   });
 
-  const { data } = useGetHealthHistoryQuery();
-  const [createHealth, { isLoading, isSuccess }] =
-    useCreateHealthHistoryMutation();
+  const { data, isLoading: isLoadingHealth } = useGetHealthHistoryQuery();
+  const [createHealth, { isLoading }] = useCreateHealthHistoryMutation();
 
   const handleChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -114,7 +114,9 @@ const PersonalizeModal = () => {
   console.log("formData", formData);
   console.log("health data", data);
 
-  return (
+  return isLoadingHealth ? (
+    <span className="text-base">Loading...</span>
+  ) : (
     <form onSubmit={handleSubmit}>
       {/* Basic Information */}
       <Heading title="Basic Information" mt={false} />
@@ -146,7 +148,6 @@ const PersonalizeModal = () => {
       <DropdownField
         label="Current health concerns or symptoms"
         name="current_health_concerns"
-        multiple
         options={[
           { label: "Fatigue", value: "fatigue" },
           { label: "Irregular periods", value: "irregular_periods" },
@@ -160,7 +161,6 @@ const PersonalizeModal = () => {
       <DropdownField
         label="Diagnosed medical conditions"
         name="diagnosed_conditions"
-        multiple
         options={[
           { label: "Hypothyroidism", value: "hypothyroidism" },
           { label: "Crohn's", value: "crohns" },
@@ -173,7 +173,6 @@ const PersonalizeModal = () => {
       <DropdownField
         label="Medications"
         name="medications"
-        multiple
         options={[
           { label: "Synthroid (Levothyroxine) 50 mcg", value: "synthroid" },
           { label: "Statin", value: "statin" },
@@ -185,7 +184,6 @@ const PersonalizeModal = () => {
       <DropdownField
         label="Supplements"
         name="supplements"
-        multiple
         options={[
           { label: "Vitamin D", value: "vitamin_d" },
           { label: "Omega-3", value: "omega_3" },
@@ -197,7 +195,6 @@ const PersonalizeModal = () => {
       <DropdownField
         label="Known allergies or intolerances"
         name="allergies_intolerances"
-        multiple
         options={[
           { label: "Gluten", value: "gluten" },
           { label: "Dairy", value: "dairy" },
@@ -209,7 +206,6 @@ const PersonalizeModal = () => {
       <DropdownField
         label="Family health history"
         name="family_health_history"
-        multiple
         options={[
           { label: "Heart disease", value: "heart_disease" },
           { label: "Cancer", value: "cancer" },
@@ -224,7 +220,6 @@ const PersonalizeModal = () => {
       <DropdownField
         label="Are you on any specific diet?"
         name="specific_diet"
-        multiple
         options={[
           { label: "Keto", value: "keto" },
           { label: "Vegan", value: "vegan" },
@@ -409,13 +404,19 @@ const PersonalizeModal = () => {
         I agree to the privacy policy and understand how my data will be used.
       </label>
       <div className="mt-5 lg:mt-8 flex justify-center">
-        <Button type="submit" text="Save & Submit" className="text-white" />
+        <Button
+          type="submit"
+          text={isLoading ? "Submitting..." : "Save & Submit"}
+          disabled={isLoading}
+          className="text-white"
+        />
       </div>
     </form>
   );
 };
 
 // Controlled text input component that uses the passed value.
+// eslint-disable-next-line react/prop-types
 const FormField = ({ label, name, placeholder, value, handleChange, note }) => {
   const onChange = (e) => {
     handleChange(name, e.target.value);
@@ -442,17 +443,13 @@ const FormField = ({ label, name, placeholder, value, handleChange, note }) => {
 const DropdownField = ({
   label,
   name,
-  options,
-  multiple = false,
+  options = false,
   value,
   handleChange,
 }) => {
   const onSelectHandler = (option) => {
     handleChange(name, option.value);
   };
-
-  // Determine if a value exists for showing the checkmark.
-  const hasValue = multiple ? Array.isArray(value) && value.length > 0 : value;
 
   return (
     <div className="mt-4 lg:mt-6 flex items-center gap-4">
@@ -463,7 +460,7 @@ const DropdownField = ({
         defaultText={value ? value : "Select"}
         value={value}
       />
-      {hasValue && (
+      {value && value.length > 0 && (
         <IoCheckmarkCircle className="text-[40px] text-[#393838] mt-7" />
       )}
     </div>

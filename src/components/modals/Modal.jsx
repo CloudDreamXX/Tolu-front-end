@@ -10,8 +10,9 @@ const Modal = ({ isOpen, title, onClose, children, className, height }) => {
       onClick={onClose}
     >
       <div
-        className={`bg-white p-6 rounded-lg  min-w-7  max-w-full overflow-y-scroll custom-scroll ${
-          height ? height : "h-full"
+        style={{ maxHeight: "-webkit-fill-available" }}
+        className={`bg-white p-6 rounded-lg  min-w-7 h-auto max-w-full overflow-y-scroll custom-scroll ${
+          height ? height : ""
         } ${className}`}
         onClick={(e) => e.stopPropagation()}
       >

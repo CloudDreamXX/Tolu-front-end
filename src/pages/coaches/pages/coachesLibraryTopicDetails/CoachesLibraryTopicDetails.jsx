@@ -327,14 +327,15 @@ function CoachesLibraryTopicDetails() {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={<h1 className="text-xl font-bold">Move Content</h1>}
+        title={<h1 className="text-xl font-bold">Post Content</h1>}
       >
-        <p>Please select a folder:</p>
+        <p className="mb-3">Please select a folder</p>
         {allFolderss?.map((item) => (
           <div
             key={item.id}
             onClick={() => setSelectedFolder(item.id)}
-            className={`flex gap-2 p-2 rounded-lg ${selectedFolder === item.id
+            className={`flex cursor-pointer hover:bg-gray-200 mt-3 items-center gap-2 p-2 rounded-lg ${
+              selectedFolder === item.id
                 ? "bg-primary text-white"
                 : "bg-gray-100"
               }`}
@@ -377,21 +378,25 @@ function CoachesLibraryTopicDetails() {
                 </section>
               </div>
               <section className="flex flex-col gap-4 mt-5 text-primary">
-                <section>
+                <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
                   <AiOutlineMenuFold
                     onClick={() => setIsModalOpen(true)}
-                    className="hover:text-black cursor-pointer"
+                    className="hover:text-black cursor-pointer text-lg"
                   />
                 </section>
-                <IoIosSave
-                  className="hover:text-black  cursor-pointer"
-                //  onClick={handleEditContent}
-                />
-                <section className="relative">
-                  <FaRegEdit
-                    className="hover:text-black cursor-pointer"
-                    onClick={() => setIsEditing(!isEditing)}
+                <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
+                  <IoIosSave
+                    className="hover:text-black  cursor-pointer text-lg"
+                    //  onClick={handleEditContent}
                   />
+                </section>
+                <section className="relative">
+                  <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
+                    <FaRegEdit
+                      className="hover:text-black cursor-pointer text-lg"
+                      onClick={() => setIsEditing(!isEditing)}
+                    />
+                  </section>
                   {isEditing && (
                     <section  ref={dropdownRef} className="absolute w-[150px] top-5 left-[-10px] bg-white shadow-lg rounded-lg">
                       <section
@@ -413,7 +418,9 @@ function CoachesLibraryTopicDetails() {
                     </section>
                   )}
                 </section>
-                <RiDeleteBinLine className="hover:text-black cursor-pointer" />
+                <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
+                  <RiDeleteBinLine className="hover:text-black cursor-pointer text-lg" />
+                </section>
               </section>
             </section>
 
