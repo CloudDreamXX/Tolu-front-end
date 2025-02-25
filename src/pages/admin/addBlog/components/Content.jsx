@@ -27,7 +27,7 @@ const Content = ({
 
 console.log("level",level)
     const addArticlesHandler = (id) => {
-        dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
+        // dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
     };
     const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
     useEffect(() => {

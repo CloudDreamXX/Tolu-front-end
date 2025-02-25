@@ -76,7 +76,7 @@ function CoachesAside() {
         <ArrowIcon />
       </div>
       {!isAsideOpen && (
-        <div className="h-full  py-8 flex px-4 flex-col items-center justify-between  transition-all duration-700 ">
+        <div className="h-full overflow-auto  py-8 flex px-4 flex-col items-center justify-between  transition-all duration-700 ">
 
           {renderComponentBasedOnRoute()}
 

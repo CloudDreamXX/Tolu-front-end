@@ -122,33 +122,52 @@ function CoachesDashboard() {
         setInstruction(e.target.value);
     };
 
-
     function findFolderById(folders, id) {
-        // Check if folders is valid and iterable
-        if (!Array.isArray(folders)) return null;
+        // Check if folders is a valid array
+        if (!Array.isArray(folders)) {
+            console.warn("Invalid folders array:", folders);
+            return null;
+        }
+        // Check if id is valid (non-null, non-undefined)
+        if (!id) {
+            console.warn("Invalid folder id:", id);
+            return null;
+        }
 
         for (const folder of folders) {
-            if (folder.id === id) {
-                return folder; // Return the folder if the ID matches
+            //   console.log("Checking folder:", folder?.id);
+            if (folder?.id === id) {
+                return folder; // Folder found
             }
-            // Check if subfolders is valid before recursion
-            if (Array.isArray(folder.subfolders) && folder.subfolders.length > 0) {
+            if (Array.isArray(folder?.subfolders) && folder.subfolders.length > 0) {
                 const result = findFolderById(folder.subfolders, id);
-                if (result) return result; // Return if found in subfolders
+                if (result) return result;
             }
         }
-        return null; // Return null if not found
+        return null; // Folder not found
     }
 
-    const folder = allFolders && addNewFolderState?.folderId
-        ? findFolderById(allFolders.folders, addNewFolderState.folderId)
-        : null;
-    const content = folder?.content;
+    // Ensure allFolders and addNewFolderState exist and have the expected properties
+    const folder =
+        allFolders?.posted_topics && addNewFolderState?.folderId
+            ? findFolderById(allFolders.posted_topics, addNewFolderState.folderId)
+            : null;
+
+    const content = folder?.content ?? []; // Use an empty array if folder.content is undefined
+
+
+    useEffect(() => {
+        if (allFolders?.posted_topics && addNewFolderState?.folderId) {
+            const folderFromPosted = findFolderById(allFolders.posted_topics, addNewFolderState.folderId);
+            console.log("Found folder in posted_topics:", folderFromPosted);
+        } else {
+            console.warn("Missing allFolders.posted_topics or addNewFolderState.folderId");
+        }
+    }, [allFolders, addNewFolderState]);
+
     const addInstruction = () => {
         closeInstructionModal();
     };
-
-
 
     const handleFolderSubmit = async () => {
         // Check if folder name and folder id are provided

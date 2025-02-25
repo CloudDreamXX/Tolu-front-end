@@ -29,6 +29,7 @@ const Folder = ({
         dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
     };
     const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
+    console.log("addNewFolderState", addNewFolderState);
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!event.target.closest('.context-menu')) {

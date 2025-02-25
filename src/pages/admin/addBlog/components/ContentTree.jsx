@@ -18,10 +18,10 @@ const ContentTree = ({ allFolders, addArticlesHandler }) => {
             ...prev,
             [level]: prev[level] === id ? null : id, // Toggle folder open/close
         }));
-        dispatch(setAddFolderData({
-            folderId: id,
-            add: false
-        }));
+        // dispatch(setAddFolderData({
+        //     folderId: id,
+        //     add: false
+        // }));
     };
 
     return (

@@ -5,8 +5,8 @@ import { FaRegEdit } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
-import { useAiLearningSearchMutation, useEditContentByIdMutation, useGetContentByIdMutation } from '../../../redux/apis/apiSlice';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAiLearningSearchMutation, useEditContentByIdMutation, useGetContentByIdMutation, useGetFolderStructureQuery, useMoveContentMutation } from '../../../redux/apis/apiSlice';
 import DynamicContent from '../addBlog/components/DynamicContent';
 import Modal from '../../../components/modals/Modal';
 import { Editor } from 'primereact/editor';
@@ -15,6 +15,7 @@ import useAutoRefetchOnReconnect from '../../../api/useAutoRefetchOnReconnect';
 import { apiErrorHandler } from '../../../api/apiErrorHandler';
 import LibraryInput from '../../user/library/components/LibraryInput';
 import QuestionAnswer from '../../screens/chat/components/QuestionAnswer';
+import { FaEllipsisV, FaRegFolder } from "react-icons/fa";
 
 const LibraryTopicDetails = () => {
   const contentId = useSelector((state) => state.sidebar.contentId);
@@ -22,13 +23,35 @@ const LibraryTopicDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent] = useEditContentByIdMutation();
   const [getContentById, { data, isError, error, isSuccess, refetch }] = useGetContentByIdMutation();
+  const [moveContent, { isLoading: isMoving }] = useMoveContentMutation();
+  const { data: allFolders } = useGetFolderStructureQuery();
+
   const [isEditModal, setIsEditModal] = useState(false);
   const [editingField, setEditingField] = useState(''); // To identify whether editing title or content
+  const [selectedFolder, setSelectedFolder] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const navigate = useNavigate();
+  // Get values from query parameters
+  const id = searchParams.get("id");
   const [editData, setEditData] = useState({
     title: '',
     content: ''
   });
+
+  const openEditModal = (field) => {
+    setEditingField(field);
+    setIsEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModal(false);
+    setEditingField('');
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedFolder(null);
+  };
 
 
   useEffect(() => {
@@ -46,10 +69,6 @@ const LibraryTopicDetails = () => {
     }))
   })
 
-  console.log("editData", editData)
-  console.log("data", data)
-  // Get values from query parameters
-  const id = searchParams.get("id");
 
   // Fetch content by ID
   const fetchContent = async () => {
@@ -96,28 +115,15 @@ const LibraryTopicDetails = () => {
     }
   };
 
-  // Modal Handlers
-  const openEditModal = (field) => {
-    setEditingField(field);
-    setIsEditModal(true);
-  };
-
-  const closeEditModal = () => {
-    setIsEditModal(false);
-    setEditingField('');
-  };
-
   ///for input
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [chats, setChats] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const lastItemRef = useRef(null);
-
   const [isLoading, setIsLoading] = useState(false);
   const [aiLearningSearch] = useAiLearningSearchMutation();
   const [isAdmin, setIsAdmin] = useState(false);
-
   const userType = JSON.parse(localStorage.getItem("userType"));
 
   useEffect(() => {
@@ -125,7 +131,6 @@ const LibraryTopicDetails = () => {
       setIsAdmin(true);
     }
   }, [userType]);  // Ensure useEffect runs when userType changes
-
 
 
   const handleInputChange = (value) => {
@@ -178,6 +183,54 @@ const LibraryTopicDetails = () => {
     setSelectedFile(null);
     fileInputRef.current.value = "";
   };
+  //end input functionally
+
+
+  const handleMoveContent = async () => {
+    if (!selectedFolder) return toast.error("Please select a folder.");
+    // if (content.current_folder_id === selectedFolder) return toast.error("Content is already in this folder.");
+
+    try {
+      const response = await moveContent({ content_id: id, target_folder_id: selectedFolder }).unwrap();
+      toast.success(response.message);
+      closeModal();
+      navigate("/admin")
+
+    } catch (error) {
+      toast.error(error?.data?.message || "Error moving content.");
+    }
+  };
+
+
+
+  //get the all folder from the api 
+  function getAllFolders(folderList, result = []) {
+    if (!Array.isArray(folderList)) {
+      console.error("Invalid input: folderList is not an array", folderList);
+      return result;
+    }
+
+    folderList.forEach((folder) => {
+      // Add the current folder to the result list
+      result.push({
+        id: folder.id,
+        name: folder.name,
+        description: folder.description,
+        creator_id: folder.creator_id,
+        created_at: folder.created_at,
+      });
+
+      // Check for subfolders and call recursively
+      if (folder.subfolders && Array.isArray(folder.subfolders)) {
+        getAllFolders(folder.subfolders, result);
+      }
+    });
+
+    return result;
+  }
+
+  const allFolderss = getAllFolders(allFolders?.posted_topics);
+
 
 
   return (
@@ -228,7 +281,18 @@ const LibraryTopicDetails = () => {
           />
         </section>
       </Modal>
-
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Move Content</h1>}>
+        <p>Please select a folder:</p>
+        {allFolderss?.map((item) => (
+          <div key={item.id} onClick={() => setSelectedFolder(item.id)} className={`flex gap-2 p-2 rounded-lg ${selectedFolder === item.id ? "bg-primary text-white" : "bg-gray-100"}`}>
+            <FaRegFolder /> {item.name}
+          </div>
+        ))}
+        <div className="flex justify-end gap-2 mt-4">
+          <Button className="bg-gray-400 text-white" text="Close" onClick={closeModal} />
+          <Button className="bg-blue-500 text-white" text="Move" disabled={!selectedFolder || isMoving} onClick={handleMoveContent} />
+        </div>
+      </Modal>
       {/* Main UI */}
       <section className=' h-[calc(100vh-130px)] flex flex-col items-center'>
         <div className="h-[90%] custom-scroll mb-2 overflow-auto">
@@ -250,7 +314,7 @@ const LibraryTopicDetails = () => {
               <section className='flex flex-col gap-4 mt-5 text-primary'>
                 <section>
 
-                  <AiOutlineMenuFold className='hover:text-black cursor-pointer' />
+                  <AiOutlineMenuFold onClick={() => setIsModalOpen(true)} className='hover:text-black cursor-pointer' />
                 </section>
                 <IoIosSave className='hover:text-black  cursor-pointer'
                 //  onClick={handleEditContent}
