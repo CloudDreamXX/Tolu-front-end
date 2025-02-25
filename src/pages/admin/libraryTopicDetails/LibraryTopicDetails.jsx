@@ -39,6 +39,24 @@ const LibraryTopicDetails = () => {
     content: ''
   });
 
+
+  const dropdownRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsEditing(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
   const openEditModal = (field) => {
     setEditingField(field);
     setIsEditModal(true);
@@ -294,7 +312,7 @@ const LibraryTopicDetails = () => {
         </div>
       </Modal>
       {/* Main UI */}
-      <section className=' h-[calc(100vh-130px)] flex flex-col items-center'>
+      <section className=' h-[calc(100vh-90px)] flex flex-col items-center'>
         {isError && <div className="text-red-500 flex items-center h-[90%]">{error?.data?.message || "An error occurred"}</div>}
         {!isError &&
           <div className="h-[90%] custom-scroll mb-2 overflow-auto">
@@ -330,7 +348,7 @@ const LibraryTopicDetails = () => {
                       <FaRegEdit className='hover:text-black cursor-pointer text-lg' onClick={() => setIsEditing(!isEditing)} />
                     </section>
                     {isEditing && (
-                      <section className='absolute w-[150px] top-5 left-0 bg-white shadow-lg rounded-lg'>
+                      <section ref={dropdownRef} className='absolute w-[150px] top-5 left-[-10px] bg-white shadow-lg rounded-lg'>
                         <section
                           onClick={() => { openEditModal('title'), setIsEditing(false) }}
                           className='w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary'
