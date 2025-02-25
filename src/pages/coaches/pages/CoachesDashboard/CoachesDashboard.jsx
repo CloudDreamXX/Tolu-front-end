@@ -439,6 +439,7 @@ function CoachesDashboard() {
         </section>
       </Modal>
       <Modal
+        height="h-full"
         className="w-[800px]"
         isOpen={isInstructionModalOpen}
         onClose={closeInstructionModal}
@@ -518,7 +519,10 @@ function CoachesDashboard() {
           >
             <FileCard
               title="Instructions"
-              description={isAdmin && "Insert your instructions to attach with prompt" || !isAdmin && "Personalize your content using client data" }
+              description={
+                (isAdmin && "Insert your instructions to attach with prompt") ||
+                (!isAdmin && "Personalize your content using client data")
+              }
             />
           </section>
         </div>
