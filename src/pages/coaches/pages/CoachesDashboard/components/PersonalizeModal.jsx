@@ -38,7 +38,11 @@ const PersonalizeModal = () => {
     health_approach_preference: "",
   });
 
-  const { data, isLoading: isLoadingHealth } = useGetHealthHistoryQuery();
+  const {
+    data,
+    isLoading: isLoadingHealth,
+    refetch,
+  } = useGetHealthHistoryQuery();
   const [createHealth, { isLoading }] = useCreateHealthHistoryMutation();
 
   const handleChange = (name, value) => {
@@ -65,6 +69,7 @@ const PersonalizeModal = () => {
     try {
       await createHealth(dataToSend).unwrap();
       toast.success("Health history saved successfully!");
+      refetch();
     } catch (error) {
       toast.error("Submission failed. Please try again");
       console.log("error while submitting form", error);
