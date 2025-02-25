@@ -435,7 +435,7 @@ const LibraryTopicDetails = () => {
               )}
             </div>
           </div>
-        )}
+        }
         <section className="w-[90%] ">
           <LibraryInput
             placeholder="Enter text or upload a file"
@@ -445,7 +445,7 @@ const LibraryTopicDetails = () => {
             handleRemoveFile={handleRemoveFile}
             setSelectedFile={setSelectedFile}
             selectedFile={selectedFile}
-            isLoading={isLoading} // Can be set to `true` when processing
+            isLoading={isLoading} 
           />
         </section>
       </section>
