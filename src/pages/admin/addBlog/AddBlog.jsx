@@ -157,10 +157,26 @@ function AddBlog() {
             console.warn("Missing allFolders.posted_topics or addNewFolderState.folderId");
         }
     }, [allFolders, addNewFolderState]);
-    const addInstruction = () => {
-        closeInstructionModal();
-    };
 
+    const addInstruction = () => {
+        if (instruction.trim() !== '') {
+            // Add your logic to save the instruction
+            console.log("Added instruction:", instruction);
+            if (instruction) {
+                localStorage.setItem('instruction', instruction);
+            }
+    
+
+            // Clear the input after adding
+           
+
+            // Close the modal
+            closeInstructionModal();
+        }
+    };
+    
+    const instructionslocal = localStorage.getItem('instruction');
+    console.log('content',instructionslocal)
 
 
     const handleFolderSubmit = async () => {
@@ -233,7 +249,7 @@ function AddBlog() {
 
         try {
             await aiLearningSearch({
-                chat_message: { user_prompt: text, is_new: true, regenerate_id: null, instructions: instruction },
+                chat_message: { user_prompt: text, is_new: true, regenerate_id: null, instructions: instructionslocal },
                 file: selectedFile || null,
                 folder_id: addNewFolderState?.folderId || null,
                 onMessage: (streamingText) => {
@@ -529,8 +545,8 @@ function AddBlog() {
                     <section className='w-full cursor-pointer' onClick={openInstructionModal}>
                         <FileCard
                             title="Instructions"
-                            description={isAdmin && "Insert your instructions to attach with prompt" || !isAdmin && "Personalize your content using client data" }
-                            />
+                            description={isAdmin && "Insert your instructions to attach with prompt" || !isAdmin && "Personalize your content using client data"}
+                        />
                     </section>
                 </div>
 
