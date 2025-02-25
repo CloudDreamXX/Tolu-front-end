@@ -474,7 +474,7 @@ function AddBlog() {
             </Modal> */}
 
             {/* Main Content */}
-            <div className="w-full xs:px-4 md:px-36 flex-col h-full flex justify-center items-center">
+            <div className="w-full xs:px-4 md:px-36 flex-col h-full pt-10 flex justify-center items-center">
                 <section className="w-full flex justify-between  p-2 mb-5 items-start">
                     <h1 className="text-3xl font-semibold">
                         {folder?.name || 'Select a folder'}
@@ -528,9 +528,9 @@ function AddBlog() {
                     </section>
                     <section className='w-full cursor-pointer' onClick={openInstructionModal}>
                         <FileCard
-                            title="Personalize the topic"
-                            description="Chats in this project can access file content"
-                        />
+                            title="Instructions"
+                            description={isAdmin && "Insert your instructions to attach with prompt" || !isAdmin && "Personalize your content using client data" }
+                            />
                     </section>
                 </div>
 

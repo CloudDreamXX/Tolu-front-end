@@ -22,7 +22,7 @@ const LibraryTopicDetails = () => {
   const [searchParams] = useSearchParams();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent] = useEditContentByIdMutation();
-  const [getContentById, { data, isError, error, isSuccess, refetch }] = useGetContentByIdMutation();
+  const [getContentById, { data, isError, isLoading: getContentLoading, error, isSuccess, refetch }] = useGetContentByIdMutation();
   const [moveContent, { isLoading: isMoving }] = useMoveContentMutation();
   const { data: allFolders } = useGetFolderStructureQuery();
 
@@ -281,10 +281,10 @@ const LibraryTopicDetails = () => {
           />
         </section>
       </Modal>
-      <Modal isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Move Content</h1>}>
-        <p>Please select a folder:</p>
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Post Content</h1>}>
+        <p>Please select a folder</p>
         {allFolderss?.map((item) => (
-          <div key={item.id} onClick={() => setSelectedFolder(item.id)} className={`flex gap-2 p-2 rounded-lg ${selectedFolder === item.id ? "bg-primary text-white" : "bg-gray-100"}`}>
+          <div key={item.id} onClick={() => setSelectedFolder(item.id)} className={`flex cursor-pointer hover:bg-gray-200 mt-3 items-center gap-2 p-2 rounded-lg ${selectedFolder === item.id ? "bg-primary text-white" : "bg-gray-100"}`}>
             <FaRegFolder /> {item.name}
           </div>
         ))}
@@ -295,67 +295,77 @@ const LibraryTopicDetails = () => {
       </Modal>
       {/* Main UI */}
       <section className=' h-[calc(100vh-130px)] flex flex-col items-center'>
-        <div className="h-[90%] custom-scroll mb-2 overflow-auto">
+        {isError && <div className="text-red-500 flex items-center h-[90%]">{error?.data?.message || "An error occurred"}</div>}
+        {!isError &&
+          <div className="h-[90%] custom-scroll mb-2 overflow-auto">
 
-          <div className="w-full flex flex-col justify-center overflow-auto">
-            {/* Content Display Section */}
-            <section className='flex justify-center overflow-auto h gap-4'>
+            <div className="w-full flex flex-col justify-center overflow-auto">
+              {/* Content Display Section */}
+              <section className='flex justify-center overflow-auto h gap-4'>
 
-              <div className="custom-scroll overflow-auto w-[80%]  flex flex-col border mt-5  shadow-[#8484850A] rounded-lg p-4 text-black">
-                <section className="flex flex-col  mt-[24px]">
-                  <section className="text-3xl font-bold">Title</section>
-                  <h1 className="text-3xl mb-6 text-[#1D1D1F99] font-bold">{editData.title || 'No title'}</h1>
-                  <section className="text-3xl font-bold">Content</section>
-                  <section className="text-[#1D1D1F99] text-xl font-medium">
-                    <DynamicContent content={editData.content || 'No content'} />
+                <div className="custom-scroll overflow-auto w-[80%]  flex flex-col border mt-5  shadow-[#8484850A] rounded-lg p-4 text-black">
+                  <section className="flex flex-col  mt-[24px]">
+                    <section className="text-3xl font-bold">Title</section>
+                    <h1 className="text-3xl mb-6 text-[#1D1D1F99] font-bold">{editData.title || 'No title'}</h1>
+                    <section className="text-3xl font-bold">Content</section>
+                    <section className="text-[#1D1D1F99] text-xl font-medium">
+                      <DynamicContent content={editData.content || 'No content'} />
+                    </section>
+                  </section>
+                </div>
+                <section className='flex flex-col gap-4 mt-5 text-primary'>
+                  <section className='flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center' >
+
+                    <AiOutlineMenuFold onClick={() => setIsModalOpen(true)} className='hover:text-black cursor-pointer text-lg' />
+                  </section>
+                  <section className='flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center' >
+
+                    <IoIosSave className='hover:text-black  cursor-pointer text-lg'
+                    //  onClick={handleEditContent}
+                    />
+                  </section>
+                  <section className='relative'>
+                    <section className='flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center' >
+
+                      <FaRegEdit className='hover:text-black cursor-pointer text-lg' onClick={() => setIsEditing(!isEditing)} />
+                    </section>
+                    {isEditing && (
+                      <section className='absolute w-[150px] top-5 left-0 bg-white shadow-lg rounded-lg'>
+                        <section
+                          onClick={() => { openEditModal('title'), setIsEditing(false) }}
+                          className='w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary'
+                        >
+                          Edit Title
+                        </section>
+                        <section
+                          onClick={() => { openEditModal('content'), setIsEditing(false) }}
+                          className='w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary'
+                        >
+                          Edit Content
+                        </section>
+                      </section>
+                    )}
+                  </section>
+                  <section className='flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center'>
+
+                    <RiDeleteBinLine className='hover:text-black cursor-pointer text-lg' />
                   </section>
                 </section>
-              </div>
-              <section className='flex flex-col gap-4 mt-5 text-primary'>
-                <section>
-
-                  <AiOutlineMenuFold onClick={() => setIsModalOpen(true)} className='hover:text-black cursor-pointer' />
-                </section>
-                <IoIosSave className='hover:text-black  cursor-pointer'
-                //  onClick={handleEditContent}
-                />
-                <section className='relative'>
-                  <FaRegEdit className='hover:text-black cursor-pointer' onClick={() => setIsEditing(!isEditing)} />
-                  {isEditing && (
-                    <section className='absolute w-[150px] top-5 left-0 bg-white shadow-lg rounded-lg'>
-                      <section
-                        onClick={() => { openEditModal('title'), setIsEditing(false) }}
-                        className='w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary'
-                      >
-                        Edit Title
-                      </section>
-                      <section
-                        onClick={() => { openEditModal('content'), setIsEditing(false) }}
-                        className='w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary'
-                      >
-                        Edit Content
-                      </section>
-                    </section>
-                  )}
-                </section>
-                <RiDeleteBinLine className='hover:text-black cursor-pointer' />
               </section>
-            </section>
 
-            {chats.length > 0 && (
+              {chats.length > 0 && (
 
-              <section className='w-full  pb-2 mt-4 custom-scroll overflow-auto'>
+                <section className='w-full  pb-2 mt-4 custom-scroll overflow-auto'>
 
-                {chats.map((chat, i) => (
-                  <QuestionAnswer key={i} setIsAdmin={setIsAdmin} isAdmin={isAdmin} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
-                ))}
-              </section>
-            )}
+                  {chats.map((chat, i) => (
+                    <QuestionAnswer key={i} setIsAdmin={setIsAdmin} isAdmin={isAdmin} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
+                  ))}
+                </section>
+              )}
+            </div>
           </div>
-        </div>
+        }
         <section className="w-[90%] ">
-
-
           <LibraryInput
             placeholder="Enter text or upload a file"
             onChangeValue={handleInputChange}
