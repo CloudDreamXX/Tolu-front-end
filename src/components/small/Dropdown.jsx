@@ -1,8 +1,15 @@
-
 import { useEffect, useRef, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 
-const Dropdown = ({ options = [], defaultText = "Select", onSelect, label, width, mainClassName, readOnly = false }) => {
+const Dropdown = ({
+  options = [],
+  defaultText = "Select",
+  onSelect,
+  label,
+  width,
+  mainClassName,
+  readOnly = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(null);
   const dropdownRef = useRef(null);
@@ -32,26 +39,38 @@ const Dropdown = ({ options = [], defaultText = "Select", onSelect, label, width
   }, []);
 
   useEffect(() => {
-    setSelected(null)
-  }, [defaultText === 'Select Name'])
+    setSelected(null);
+  }, [defaultText === "Select Name"]);
 
   return (
     <div className={`relative ${width ? width : "w-full"}`} ref={dropdownRef}>
-      {label && <label className="text-xs md:text-sm text-secondaryGray mb-1 block">{label}</label>}
+      {label && (
+        <label className="text-base md:text-lg text-secondaryGray mb-1 block">
+          {label}
+        </label>
+      )}
       <button
         type="button"
         aria-expanded={isOpen}
         aria-label={`Dropdown for ${label || "options"}`}
-        className={`w-full h-[45px] px-4 border ${readOnly ? "cursor-not-allowed" : "border-[#E0E0E9]"
-          } ${mainClassName} rounded-lg  text-sm text-[#383838E5] flex items-center justify-between`}
+        className={`w-full h-[50px] px-4 border ${
+          readOnly ? "cursor-not-allowed" : "border-[#E0E0E9]"
+        } ${mainClassName} rounded-lg  text-sm text-[#383838E5] flex items-center justify-between`}
         onClick={() => !readOnly && setIsOpen(!isOpen)}
         disabled={readOnly}
       >
         <span className="text-sm text-[#383838E5] capitalize">
           {selected ? selected.label || selected.option : defaultText}
         </span>
-        <div className={`transition-all duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}>
-          <GoChevronDown fontSize={20} color={readOnly ? "#999999" : "#292D3280"} />
+        <div
+          className={`transition-all duration-300 ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+        >
+          <GoChevronDown
+            fontSize={20}
+            color={readOnly ? "#999999" : "#292D3280"}
+          />
         </div>
       </button>
       {isOpen && !readOnly && (

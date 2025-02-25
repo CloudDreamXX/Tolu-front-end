@@ -6,14 +6,14 @@
 
 :root {
   --primary: rgb(152, 153, 155);
-  --text-color: #1D1D1F99;
+  --text-color: #1d1d1f99;
   --nunito-text: "Nunito", serif;
 }
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: var(--nunito-text);
+  font-family: var(--nunito-text) !important;
 }
 /* .custom-scroll::-webkit-scrollbar {
   width: 6px;

@@ -42,7 +42,10 @@ export const apiSlice = createApi({
 
             // ✅ Create FormData instance
             const formData = new FormData();
-            formData.append("chat_message", JSON.stringify(payload.chat_message));
+            formData.append(
+              "chat_message",
+              JSON.stringify(payload.chat_message)
+            );
             // if (payload.folder_id) {
             //   formData.append("folder_id", payload.folder_id);
             // }
@@ -53,7 +56,9 @@ export const apiSlice = createApi({
               } else if (fileType.startsWith("image")) {
                 formData.append("image", payload.file);
               } else {
-                reject({ error: "Invalid file type. Only PDF and images are allowed." });
+                reject({
+                  error: "Invalid file type. Only PDF and images are allowed.",
+                });
                 return;
               }
             }
@@ -77,7 +82,8 @@ export const apiSlice = createApi({
 
                   // ✅ Update UI as new data arrives
                   result.answers += data.reply || "";
-                  result.result_id = data.searched_result_id || result.result_id;
+                  result.result_id =
+                    data.searched_result_id || result.result_id;
                   result.chat_id = data.chat_id || result.chat_id;
 
                   // ✅ Call the update function
@@ -115,7 +121,10 @@ export const apiSlice = createApi({
 
             // ✅ Create FormData instance
             const formData = new FormData();
-            formData.append("chat_message", JSON.stringify(payload.chat_message));
+            formData.append(
+              "chat_message",
+              JSON.stringify(payload.chat_message)
+            );
 
             if (payload.file) {
               const fileType = payload.file.type;
@@ -124,7 +133,9 @@ export const apiSlice = createApi({
               } else if (fileType.startsWith("image")) {
                 formData.append("image", payload.file);
               } else {
-                reject({ error: "Invalid file type. Only PDF and images are allowed." });
+                reject({
+                  error: "Invalid file type. Only PDF and images are allowed.",
+                });
                 return;
               }
             }
@@ -148,7 +159,8 @@ export const apiSlice = createApi({
 
                   // ✅ Update UI as new data arrives
                   result.answers += data.reply || "";
-                  result.result_id = data.searched_result_id || result.result_id;
+                  result.result_id =
+                    data.searched_result_id || result.result_id;
                   result.chat_id = data.chat_id || result.chat_id;
 
                   // ✅ Call the update function
@@ -219,7 +231,6 @@ export const apiSlice = createApi({
       query: () => "/folders/structure",
       providesTags: [{ type: "Folders", id: "LIST" }],
     }),
-    
     getContentById: builder.mutation({
       query: (contentId) => ({
         url: "/content/retrieve",
@@ -228,70 +239,72 @@ export const apiSlice = createApi({
       }),
       providesTags: [{ type: "Folders", id: "LIST" }],
     }),
-
     addNewFolder: builder.mutation({
       query: ({ name, description, parent_folder_id }) => ({
-        url: '/folders/create', // Change to the correct API endpoint
-        method: 'POST',
+        url: "/folders/create", // Change to the correct API endpoint
+        method: "POST",
         body: { name, description, parent_folder_id },
       }),
       invalidatesTags: [{ type: "Folders", id: "LIST" }],
     }),
-
     editFolderById: builder.mutation({
       query: ({ folderId, newName }) => ({
         url: `folders/rename-folder`,
-        method: 'PUT',
+        method: "PUT",
         body: { folder_id: folderId, new_name: newName },
       }),
       invalidatesTags: [{ type: "Folders", id: "LIST" }],
     }),
-
-
     deleteFolderById: builder.mutation({
       query: (folderId) => ({
         url: `folders/delete-folder`,
-        method: 'DELETE',
+        method: "DELETE",
         body: { folder_id: folderId, force_delete: true },
-
       }),
-      invalidatesTags: [{ type: "Folders", id: "LIST", }],
+      invalidatesTags: [{ type: "Folders", id: "LIST" }],
     }),
     addFolderContent: builder.mutation({
       query: ({ title, content, query, folder_id }) => ({
-        url: '/folders/save-content',
-        method: 'POST',
+        url: "/folders/save-content",
+        method: "POST",
         body: { title, content, query, folder_id },
       }),
     }),
-
     editContentById: builder.mutation({
       query: ({ content_id, new_title, new_content, new_query }) => ({
         url: `folders/rename-content`,
-        method: 'PUT',
-        body: {  content_id, new_title,new_content,new_query },
+        method: "PUT",
+        body: { content_id, new_title, new_content, new_query },
       }),
-      
+
       invalidatesTags: [{ type: "Folders", id: "LIST" }],
     }),
     moveContent: builder.mutation({
       query: ({ content_id, target_folder_id }) => ({
         url: `folders/move-content`,
-        method: 'POST',
+        method: "POST",
         body: { content_id, target_folder_id },
       }),
       invalidatesTags: [{ type: "Folders", id: "LIST" }],
     }),
-
     deleteContentById: builder.mutation({
       query: (contentId) => ({
         url: `folders/delete-content`,
-        method: 'DELETE',
+        method: "DELETE",
         body: { content_id: contentId },
       }),
       invalidatesTags: [{ type: "Folders", id: "LIST" }],
-    })
-
+    }),
+    getHealthHistory: builder.query({
+      query: () => `/health-history`,
+    }),
+    createHealthHistory: builder.mutation({
+      query: (formData) => ({
+        url: "/health-history",
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 });
 
@@ -317,5 +330,7 @@ export const {
   useEditFolderByIdMutation,
   useEditContentByIdMutation,
   useMoveContentMutation,
-  useGetContentByIdMutation
+  useGetContentByIdMutation,
+  useGetHealthHistoryQuery,
+  useCreateHealthHistoryMutation,
 } = apiSlice;

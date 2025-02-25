@@ -1,22 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
-import toast from 'react-hot-toast';
+import React, { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { AiOutlineMenuFold } from "react-icons/ai";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { useSelector } from 'react-redux';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
 // import { useAiLearningSearchMutation, useEditContentByIdMutation, useGetContentByIdMutation, useGetFolderStructureQuery, useMoveContentMutation } from '../../../redux/apis/apiSlice';
 import { FaEllipsisV, FaRegFolder } from "react-icons/fa";
-import { Editor } from 'primereact/editor';
-import { useAiLearningSearchMutation, useEditContentByIdMutation, useGetContentByIdMutation, useGetFolderStructureQuery, useMoveContentMutation } from '../../../../redux/apis/apiSlice';
-import useAutoRefetchOnReconnect from '../../../../api/useAutoRefetchOnReconnect';
-import Modal from '../../../../components/modals/Modal';
-import Button from '../../../../components/small/Button';
-import DynamicContent from '../../../admin/addBlog/components/DynamicContent';
-import QuestionAnswer from '../../../screens/chat/components/QuestionAnswer';
-import LibraryInput from '../../../user/library/components/LibraryInput';
-import { apiErrorHandler } from '../../../../api/apiErrorHandler';
+import { Editor } from "primereact/editor";
+import {
+  useAiLearningSearchMutation,
+  useEditContentByIdMutation,
+  useGetContentByIdMutation,
+  useGetFolderStructureQuery,
+  useMoveContentMutation,
+} from "../../../../redux/apis/apiSlice";
+import useAutoRefetchOnReconnect from "../../../../api/useAutoRefetchOnReconnect";
+import Modal from "../../../../components/modals/Modal";
+import Button from "../../../../components/small/Button";
+import DynamicContent from "../../../admin/addBlog/components/DynamicContent";
+import QuestionAnswer from "../../../screens/chat/components/QuestionAnswer";
+import LibraryInput from "../../../user/library/components/LibraryInput";
+import { apiErrorHandler } from "../../../../api/apiErrorHandler";
 // import DynamicContent from '../addBlog/components/DynamicContent';
 // import Modal from '../../../components/modals/Modal';
 // import Button from '../../../components/small/Button';
@@ -30,22 +36,23 @@ function CoachesLibraryTopicDetails() {
   const [searchParams] = useSearchParams();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent] = useEditContentByIdMutation();
-  const [getContentById, { data, isError, error, isSuccess, refetch }] = useGetContentByIdMutation();
+  const [getContentById, { data, isError, error, isSuccess, refetch }] =
+    useGetContentByIdMutation();
   const [moveContent, { isLoading: isMoving }] = useMoveContentMutation();
   const { data: allFolders } = useGetFolderStructureQuery();
 
   const [isEditModal, setIsEditModal] = useState(false);
-  const [editingField, setEditingField] = useState(''); // To identify whether editing title or content
+  const [editingField, setEditingField] = useState(""); // To identify whether editing title or content
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // const { data: healthData } = useGetUserHealthHistoryQuery();
-console.log("healthData",healthData)
+  // console.log("healthData",healthData)
   const navigate = useNavigate();
   // Get values from query parameters
   const id = searchParams.get("id");
   const [editData, setEditData] = useState({
-    title: '',
-    content: ''
+    title: "",
+    content: "",
   });
 
   const openEditModal = (field) => {
@@ -55,29 +62,26 @@ console.log("healthData",healthData)
 
   const closeEditModal = () => {
     setIsEditModal(false);
-    setEditingField('');
+    setEditingField("");
   };
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedFolder(null);
   };
 
-
   useEffect(() => {
     apiErrorHandler(isError, error, isSuccess, "Content loaded successfully!");
   }, [isError, error, isSuccess]);
   useAutoRefetchOnReconnect(refetch);
 
-  const closeContentHandle = (() => {
+  const closeContentHandle = () => {
     closeEditModal();
     setEditData((prev) => ({
       ...prev,
-      content: data?.content || '',
-      title: data?.title || '',
-
-    }))
-  })
-
+      content: data?.content || "",
+      title: data?.title || "",
+    }));
+  };
 
   // Fetch content by ID
   const fetchContent = async () => {
@@ -85,8 +89,8 @@ console.log("healthData",healthData)
       const response = await getContentById(id).unwrap();
       if (response) {
         setEditData({
-          title: response.title || '',
-          content: response.content || '',
+          title: response.title || "",
+          content: response.content || "",
         });
       }
     } catch (err) {
@@ -97,8 +101,6 @@ console.log("healthData",healthData)
   useEffect(() => {
     fetchContent();
   }, [id]);
-
-
 
   // Save edited content
   const handleEditContent = async () => {
@@ -139,8 +141,7 @@ console.log("healthData",healthData)
     if (userType && userType.role === "admin") {
       setIsAdmin(true);
     }
-  }, [userType]);  // Ensure useEffect runs when userType changes
-
+  }, [userType]); // Ensure useEffect runs when userType changes
 
   const handleInputChange = (value) => {
     setInputValue(value);
@@ -151,24 +152,41 @@ console.log("healthData",healthData)
       return;
     }
 
-    if (selectedFile && !["application/pdf", "image"].some(type => selectedFile.type.startsWith(type))) {
+    if (
+      selectedFile &&
+      !["application/pdf", "image"].some((type) =>
+        selectedFile.type.startsWith(type)
+      )
+    ) {
       toast.error("Invalid file type. Only PDFs and images are allowed.");
       return;
     }
 
-    const newChat = { question: text, detailed_answer: "", summary: "Streaming...", source: "Streaming...", audio: null };
+    const newChat = {
+      question: text,
+      detailed_answer: "",
+      summary: "Streaming...",
+      source: "Streaming...",
+      audio: null,
+    };
     setChats((prevChats) => [...prevChats, newChat]);
     setIsLoading(true);
 
     try {
       await aiLearningSearch({
-        chat_message: { user_prompt: text, is_new: true, regenerate_id: null, instructions: "instruction" },
+        chat_message: {
+          user_prompt: text,
+          is_new: true,
+          regenerate_id: null,
+          instructions: "instruction",
+        },
         file: selectedFile || null,
         // folder_id: addNewFolderState?.folderId || null,
         onMessage: (streamingText) => {
           setChats((prevChats) => {
             const updatedChats = [...prevChats];
-            updatedChats[updatedChats.length - 1].detailed_answer = streamingText;
+            updatedChats[updatedChats.length - 1].detailed_answer =
+              streamingText;
             return updatedChats;
           });
         },
@@ -179,7 +197,6 @@ console.log("healthData",healthData)
       toast.error("Failed to fetch response.");
     } finally {
       setIsLoading(false);
-
     }
   };
 
@@ -194,25 +211,24 @@ console.log("healthData",healthData)
   };
   //end input functionally
 
-
   const handleMoveContent = async () => {
     if (!selectedFolder) return toast.error("Please select a folder.");
     // if (content.current_folder_id === selectedFolder) return toast.error("Content is already in this folder.");
 
     try {
-      const response = await moveContent({ content_id: id, target_folder_id: selectedFolder }).unwrap();
+      const response = await moveContent({
+        content_id: id,
+        target_folder_id: selectedFolder,
+      }).unwrap();
       toast.success(response.message);
       closeModal();
-      navigate("/admin")
-
+      navigate("/admin");
     } catch (error) {
       toast.error(error?.data?.message || "Error moving content.");
     }
   };
 
-
-
-  //get the all folder from the api 
+  //get the all folder from the api
   function getAllFolders(folderList, result = []) {
     if (!Array.isArray(folderList)) {
       console.error("Invalid input: folderList is not an array", folderList);
@@ -240,7 +256,6 @@ console.log("healthData",healthData)
 
   const allFolderss = getAllFolders(allFolders?.posted_topics);
 
-
   return (
     <>
       {/* Modal for editing title or content */}
@@ -248,9 +263,13 @@ console.log("healthData",healthData)
         className="w-[800px] max-h-[600px] overflow-auto"
         isOpen={isEditModal}
         onClose={closeEditModal}
-        title={<h1 className="text-xl font-bold">Edit {editingField === 'title' ? 'Title' : 'Content'}</h1>}
+        title={
+          <h1 className="text-xl font-bold">
+            Edit {editingField === "title" ? "Title" : "Content"}
+          </h1>
+        }
       >
-        {editingField === 'title' ? (
+        {editingField === "title" ? (
           <input
             type="text"
             value={editData.title}
@@ -265,7 +284,7 @@ console.log("healthData",healthData)
           />
         ) : (
           <Editor
-            style={{ height: '320px' }}
+            style={{ height: "320px" }}
             value={editData.content}
             onTextChange={(e) =>
               setEditData((prev) => ({
@@ -276,7 +295,6 @@ console.log("healthData",healthData)
           />
         )}
         <section className="flex justify-end gap-4 mt-4">
-
           <Button
             className={"!bg-[#8E8E8E] text-white "}
             text="Close"
@@ -289,81 +307,116 @@ console.log("healthData",healthData)
           />
         </section>
       </Modal>
-      <Modal isOpen={isModalOpen} onClose={closeModal} title={<h1 className="text-xl font-bold">Move Content</h1>}>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={<h1 className="text-xl font-bold">Move Content</h1>}
+      >
         <p>Please select a folder:</p>
         {allFolderss?.map((item) => (
-          <div key={item.id} onClick={() => setSelectedFolder(item.id)} className={`flex gap-2 p-2 rounded-lg ${selectedFolder === item.id ? "bg-primary text-white" : "bg-gray-100"}`}>
+          <div
+            key={item.id}
+            onClick={() => setSelectedFolder(item.id)}
+            className={`flex gap-2 p-2 rounded-lg ${
+              selectedFolder === item.id
+                ? "bg-primary text-white"
+                : "bg-gray-100"
+            }`}
+          >
             <FaRegFolder /> {item.name}
           </div>
         ))}
         <div className="flex justify-end gap-2 mt-4">
-          <Button className="bg-gray-400 text-white" text="Close" onClick={closeModal} />
-          <Button className="bg-blue-500 text-white" text="Move" disabled={!selectedFolder || isMoving} onClick={handleMoveContent} />
+          <Button
+            className="bg-gray-400 text-white"
+            text="Close"
+            onClick={closeModal}
+          />
+          <Button
+            className="bg-blue-500 text-white"
+            text="Move"
+            disabled={!selectedFolder || isMoving}
+            onClick={handleMoveContent}
+          />
         </div>
       </Modal>
       {/* Main UI */}
-      <section className=' h-[calc(100vh-130px)] flex flex-col items-center'>
+      <section className=" h-[calc(100vh-130px)] flex flex-col items-center">
         <div className="h-[90%] custom-scroll mb-2 overflow-auto">
-
           <div className="w-full flex flex-col justify-center overflow-auto">
             {/* Content Display Section */}
-            <section className='flex justify-center overflow-auto h gap-4'>
-
+            <section className="flex justify-center overflow-auto h gap-4">
               <div className="custom-scroll overflow-auto w-[80%]  flex flex-col border mt-5  shadow-[#8484850A] rounded-lg p-4 text-black">
                 <section className="flex flex-col  mt-[24px]">
                   <section className="text-3xl font-bold">Title</section>
-                  <h1 className="text-3xl mb-6 text-[#1D1D1F99] font-bold">{editData.title || 'No title'}</h1>
+                  <h1 className="text-3xl mb-6 text-[#1D1D1F99] font-bold">
+                    {editData.title || "No title"}
+                  </h1>
                   <section className="text-3xl font-bold">Content</section>
                   <section className="text-[#1D1D1F99] text-xl font-medium">
-                    <DynamicContent content={editData.content || 'No content'} />
+                    <DynamicContent
+                      content={editData.content || "No content"}
+                    />
                   </section>
                 </section>
               </div>
-              <section className='flex flex-col gap-4 mt-5 text-primary'>
+              <section className="flex flex-col gap-4 mt-5 text-primary">
                 <section>
-
-                  <AiOutlineMenuFold onClick={() => setIsModalOpen(true)} className='hover:text-black cursor-pointer' />
+                  <AiOutlineMenuFold
+                    onClick={() => setIsModalOpen(true)}
+                    className="hover:text-black cursor-pointer"
+                  />
                 </section>
-                <IoIosSave className='hover:text-black  cursor-pointer'
-                //  onClick={handleEditContent}
+                <IoIosSave
+                  className="hover:text-black  cursor-pointer"
+                  //  onClick={handleEditContent}
                 />
-                <section className='relative'>
-                  <FaRegEdit className='hover:text-black cursor-pointer' onClick={() => setIsEditing(!isEditing)} />
+                <section className="relative">
+                  <FaRegEdit
+                    className="hover:text-black cursor-pointer"
+                    onClick={() => setIsEditing(!isEditing)}
+                  />
                   {isEditing && (
-                    <section className='absolute w-[150px] top-5 left-0 bg-white shadow-lg rounded-lg'>
+                    <section className="absolute w-[150px] top-5 left-0 bg-white shadow-lg rounded-lg">
                       <section
-                        onClick={() => { openEditModal('title'), setIsEditing(false) }}
-                        className='w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary'
+                        onClick={() => {
+                          openEditModal("title"), setIsEditing(false);
+                        }}
+                        className="w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary"
                       >
                         Edit Title
                       </section>
                       <section
-                        onClick={() => { openEditModal('content'), setIsEditing(false) }}
-                        className='w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary'
+                        onClick={() => {
+                          openEditModal("content"), setIsEditing(false);
+                        }}
+                        className="w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary"
                       >
                         Edit Content
                       </section>
                     </section>
                   )}
                 </section>
-                <RiDeleteBinLine className='hover:text-black cursor-pointer' />
+                <RiDeleteBinLine className="hover:text-black cursor-pointer" />
               </section>
             </section>
 
             {chats.length > 0 && (
-
-              <section className='w-full  pb-2 mt-4 custom-scroll overflow-auto'>
-
+              <section className="w-full  pb-2 mt-4 custom-scroll overflow-auto">
                 {chats.map((chat, i) => (
-                  <QuestionAnswer key={i} setIsAdmin={setIsAdmin} isAdmin={isAdmin} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
+                  <QuestionAnswer
+                    key={i}
+                    setIsAdmin={setIsAdmin}
+                    isAdmin={isAdmin}
+                    chat={chat}
+                    lastItemRef={i === chats.length - 1 ? lastItemRef : null}
+                  />
                 ))}
               </section>
             )}
           </div>
         </div>
         <section className="w-[90%] ">
-
-
           <LibraryInput
             placeholder="Enter text or upload a file"
             onChangeValue={handleInputChange}
@@ -376,10 +429,8 @@ console.log("healthData",healthData)
           />
         </section>
       </section>
-
     </>
-
-  )
+  );
 }
 
-export default CoachesLibraryTopicDetails
+export default CoachesLibraryTopicDetails;
