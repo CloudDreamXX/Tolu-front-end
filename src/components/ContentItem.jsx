@@ -12,36 +12,23 @@ import {
 import { setContentId } from "../redux/slice/sidebarSlice";
 import Modal from "./modals/Modal";
 import Button from "./small/Button";
+import FolderSelection from "./FolderSelection";
+import EditContent from "./EditContent";
 
-const ContentItem = ({ content, folderId, onAdd, onDelete }) => {
+const ContentItem = ({ content, folderId }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [newName, setNewName] = useState(content.title);
-
-  const menuRef = useRef(null);
-  const buttonRef = useRef(null);
-  const inputRef = useRef(null);
-
+  const [editContent] = useEditContentByIdMutation();
+  const [editModal, setEditModal] = useState(false);
+  const [deleteContent] = useDeleteContentByIdMutation();
   const { data: allFolders, isLoading } = useGetFolderStructureQuery();
   const [moveContent, { isLoading: isMoving }] = useMoveContentMutation();
-  const [editContent] = useEditContentByIdMutation();
-  const [deleteContent] = useDeleteContentByIdMutation();
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
 
   // Extract all folders recursively
-  const getAllFolders = (data) => {
-    let folders = [];
-    const traverse = (foldersArray) => {
-      foldersArray.forEach((folder) => {
-        folders.push({ id: folder.id, name: folder.name });
-        if (folder.subfolders?.length) traverse(folder.subfolders);
-      });
-    };
-    if (data?.folders) traverse(data.folders);
-    return folders;
-  };
-  const folderList = allFolders ? getAllFolders(allFolders) : [];
+
 
   // Move content to selected folder
   const handleMoveContent = async () => {
@@ -61,26 +48,10 @@ const ContentItem = ({ content, folderId, onAdd, onDelete }) => {
     }
   };
 
-  // Edit content name
-  const handleEditContent = async () => {
-    try {
-      const response = await editContent({
-        contentId: content.id,
-        newTitle: newName,
-      }).unwrap();
-      toast.success(response.message);
-      setIsEditing(false);
-    } catch (error) {
-      toast.error("Error renaming content.");
-    }
-  };
-
-  // Delete content
   const handleDeleteContent = async () => {
     try {
       await deleteContent(content.id).unwrap();
       toast.success("Content deleted successfully.");
-      // onDelete(content);
     } catch (error) {
       toast.error("Error deleting content.");
     }
@@ -91,6 +62,8 @@ const ContentItem = ({ content, folderId, onAdd, onDelete }) => {
     setIsModalOpen(false);
     setSelectedFolder(null);
   };
+
+  const closeEditModalHandle = () => setEditModal(false);
 
   // Close dropdown menu on outside click
   useEffect(() => {
@@ -110,19 +83,15 @@ const ContentItem = ({ content, folderId, onAdd, onDelete }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
-  // const navigate = useNavigate();
-  // const location = useLocation();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const userType = localStorage.getItem("userType");
-  // const currentPath = location.pathname;
   const contentHandler = (item) => {
     dispatch(setContentId(item));
 
     if (currentPath === "/admin/library-topic-details") {
-      // Update the query parameter instead of navigating
       setSearchParams({ id: item.id, folderId: folderId });
     } else if (currentPath === "/coaches/coaches-library-topic-details") {
-      // Update the query parameter instead of navigating
       setSearchParams({ id: item.id, folderId: folderId });
     } else if (currentPath === "/admin") {
       navigate(
@@ -137,63 +106,37 @@ const ContentItem = ({ content, folderId, onAdd, onDelete }) => {
 
   return (
     <>
-      {/* Move Content Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
         title={<h1 className="text-xl font-bold">Move Content</h1>}
       >
-        <p className="mb-3">Please select a folder:</p>
-        {folderList.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => setSelectedFolder(item.id)}
-            className={`flex gap-2 p-2 rounded-lg ${
-              selectedFolder === item.id
-                ? "bg-primary text-white"
-                : "bg-gray-100"
-            }`}
-          >
-            <FaRegFolder /> {item.name}
-          </div>
-        ))}
-        <div className="flex justify-end gap-2 mt-4">
-          <Button
-            className="bg-gray-400 text-white"
-            text="Close"
-            onClick={closeModal}
-          />
-          <Button
-            className="bg-blue-500 text-white"
-            text="Move"
-            disabled={!selectedFolder || isMoving}
-            onClick={handleMoveContent}
-          />
-        </div>
+        <FolderSelection
+          selectedFolder={selectedFolder}
+          setSelectedFolder={setSelectedFolder}
+          folders={allFolders?.posted_topics}
+          closeModal={closeModal}
+          handleMoveContent={handleMoveContent}
+          isMoving={isMoving}
+        />
+      </Modal>
+      <Modal
+        isOpen={editModal}
+        onClose={closeEditModalHandle}
+        title={<h1 className="text-xl font-bold">Edit Content</h1>}
+      >
+        <EditContent content={content} closeEditModalHandle={closeEditModalHandle} />
       </Modal>
 
       {/* Content Item */}
       <div className="flex items-center justify-between p-2 border-b border-gray-300 relative">
-        {isEditing ? (
-          <input
-            onBlur={() => handleEditContent(content.id)} // Pass content id on blur
-            onKeyDown={(e) =>
-              e.key === "Enter" && handleEditContent(content.id)
-            } // Pass folder id on Enter key press
-            ref={inputRef}
-            className="w-36 border p-1"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            autoFocus
-          />
-        ) : (
-          <section
-            className="truncate  w-28"
-            onClick={() => contentHandler(content)}
-          >
-            <span className="">📄 {content.title}</span>
-          </section>
-        )}
+
+
+        <section className="truncate  w-28"
+          onClick={() => contentHandler(content)}
+        >
+          <span className="">📄 {content.title}</span>
+        </section>
 
         {/* Dropdown Menu */}
         <button
@@ -219,14 +162,13 @@ const ContentItem = ({ content, folderId, onAdd, onDelete }) => {
             </button>
             <button
               onClick={() => {
-                setIsEditing(true);
+                setEditModal(true);
                 setIsMenuOpen(false);
               }}
               className="block w-full text-left px-4 py-2 hover:bg-gray-200"
             >
               Rename
             </button>
-            {/* <button onClick={() => { onAdd(content); setIsMenuOpen(false); }} className="block w-full text-left px-4 py-2 hover:bg-gray-200">Add</button> */}
             <button
               onClick={() => {
                 handleDeleteContent(), setIsMenuOpen(false);

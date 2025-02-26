@@ -23,6 +23,7 @@ import DynamicContent from "../../../admin/addBlog/components/DynamicContent";
 import QuestionAnswer from "../../../screens/chat/components/QuestionAnswer";
 import LibraryInput from "../../../user/library/components/LibraryInput";
 import { apiErrorHandler } from "../../../../api/apiErrorHandler";
+import FolderSelection from "../../../../components/FolderSelection";
 // import DynamicContent from '../addBlog/components/DynamicContent';
 // import Modal from '../../../components/modals/Modal';
 // import Button from '../../../components/small/Button';
@@ -329,7 +330,7 @@ function CoachesLibraryTopicDetails() {
         onClose={closeModal}
         title={<h1 className="text-xl font-bold">Post Content</h1>}
       >
-        <p className="mb-3">Please select a folder</p>
+        {/* <p className="mb-3">Please select a folder</p>
         {allFolderss?.map((item) => (
           <div
             key={item.id}
@@ -355,7 +356,15 @@ function CoachesLibraryTopicDetails() {
             disabled={!selectedFolder || isMoving}
             onClick={handleMoveContent}
           />
-        </div>
+        </div> */}
+        <FolderSelection
+          selectedFolder={selectedFolder}
+          setSelectedFolder={setSelectedFolder}
+          folders={allFolderss}
+          closeModal={closeModal}
+          handleMoveContent={handleMoveContent}
+          isMoving={isMoving}
+        />
       </Modal>
       {/* Main UI */}
       <section className=" h-[calc(100vh-90px)] flex flex-col items-center">
@@ -387,7 +396,7 @@ function CoachesLibraryTopicDetails() {
                 <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
                   <IoIosSave
                     className="hover:text-black  cursor-pointer text-lg"
-                    //  onClick={handleEditContent}
+                  //  onClick={handleEditContent}
                   />
                 </section>
                 <section className="relative">
@@ -398,7 +407,7 @@ function CoachesLibraryTopicDetails() {
                     />
                   </section>
                   {isEditing && (
-                    <section  ref={dropdownRef} className="absolute w-[150px] top-5 left-[-10px] bg-white shadow-lg rounded-lg">
+                    <section ref={dropdownRef} className="absolute w-[150px] top-5 left-[-10px] bg-white shadow-lg rounded-lg">
                       <section
                         onClick={() => {
                           openEditModal("title"), setIsEditing(false);

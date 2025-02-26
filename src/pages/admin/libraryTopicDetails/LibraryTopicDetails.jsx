@@ -22,6 +22,7 @@ import { apiErrorHandler } from "../../../api/apiErrorHandler";
 import LibraryInput from "../../user/library/components/LibraryInput";
 import QuestionAnswer from "../../screens/chat/components/QuestionAnswer";
 import { FaEllipsisV, FaRegFolder } from "react-icons/fa";
+import FolderSelection from "../../../components/FolderSelection";
 
 const LibraryTopicDetails = () => {
   const contentId = useSelector((state) => state.sidebar.contentId);
@@ -266,6 +267,8 @@ const LibraryTopicDetails = () => {
   }
 
   const allFolderss = getAllFolders(allFolders?.posted_topics);
+  // const [isMoving, setIsMoving] = useState(false);
+  // const [selectedFolder, setSelectedFolder] = useState(null);
 
   return (
     <>
@@ -323,33 +326,14 @@ const LibraryTopicDetails = () => {
         onClose={closeModal}
         title={<h1 className="text-xl font-bold">Post Content</h1>}
       >
-        <p className="mb-3">Please select a folder</p>
-        {allFolderss?.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => setSelectedFolder(item.id)}
-            className={`flex cursor-pointer hover:bg-gray-200 mt-3 items-center gap-2 p-2 rounded-lg ${
-              selectedFolder === item.id
-                ? "bg-primary text-white"
-                : "bg-gray-100"
-            }`}
-          >
-            <FaRegFolder /> {item.name}
-          </div>
-        ))}
-        <div className="flex justify-end gap-2 mt-4">
-          <Button
-            className="bg-gray-400 text-white"
-            text="Close"
-            onClick={closeModal}
-          />
-          <Button
-            className="bg-blue-500 text-white"
-            text="Move"
-            disabled={!selectedFolder || isMoving}
-            onClick={handleMoveContent}
-          />
-        </div>
+        <FolderSelection
+          selectedFolder={selectedFolder}
+          setSelectedFolder={setSelectedFolder}
+          folders={allFolders?.posted_topics}
+          closeModal={closeModal}
+          handleMoveContent={handleMoveContent}
+          isMoving={isMoving}
+        />
       </Modal>
       {/* Main UI */}
       <section className=' h-[calc(100vh-90px)] flex flex-col items-center'>
@@ -383,7 +367,7 @@ const LibraryTopicDetails = () => {
                   <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
                     <IoIosSave
                       className="hover:text-black  cursor-pointer text-lg"
-                      //  onClick={handleEditContent}
+                    //  onClick={handleEditContent}
                     />
                   </section>
                   <section className="relative">
@@ -445,7 +429,7 @@ const LibraryTopicDetails = () => {
             handleRemoveFile={handleRemoveFile}
             setSelectedFile={setSelectedFile}
             selectedFile={selectedFile}
-            isLoading={isLoading} 
+            isLoading={isLoading}
           />
         </section>
       </section>
