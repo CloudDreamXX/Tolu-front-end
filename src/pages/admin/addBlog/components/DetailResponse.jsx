@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setDetailResponse } from '../../../../redux/slice/sidebarSlice';
+import HtmlContent from '../../../../components/htmlToText';
 
 function DetailResponse({ chat, removeChat, updateChat }) {
   // const [isEditing, setIsEditing] = useState(false);
@@ -85,7 +86,7 @@ function DetailResponse({ chat, removeChat, updateChat }) {
       title: chat?.question || "",
     }));
   };
-    const handleEditContent = async () => {
+  const handleEditContent = async () => {
     if (!chat?.chat_id) {
       toast.error("No content selected!");
       return;
@@ -204,24 +205,21 @@ function DetailResponse({ chat, removeChat, updateChat }) {
           isMoving={isMoving}
         />
       </Modal>
-      <section className="flex justify-center w-full overflow-auto h gap-4">
+      <section className="flex justify-center w-full  overflow-auto h gap-4">
+        <section className="flex justify-center w-full  overflow-auto h gap-4">
+          <div className="custom-scroll overflow-auto w-[80%] flex  flex-col mt-5 shadow-[#8484850A] rounded-lg p-4 text-black">
+            <section className="flex flex-col  mt-[24px]">
+              <div className="border p-4 rounded-2xl w-[70%] max-w-max ml-auto bg-[#f5f5f5]">
+                <h1 className="text-base md:text-lg text-[#1D1D1F99] font-bold">
+                  {chat.question || "No title"}
+                </h1>
+              </div>
+              <div className="border p-4 rounded-2xl w-[70%]  max-w-max mr-auto mt-5">
+                <section className="text-[#1D1D1F99] text-xl font-medium">
 
-        <section className="flex justify-center w-full overflow-auto h gap-4">
-          <div className="custom-scroll overflow-auto w-[80%] flex flex-col border mt-5  shadow-[#8484850A] rounded-lg p-4 text-black">
-            <section className="flex flex-col w-full mt-[24px]">
-              <section className="text-3xl font-bold">Title</section>
-              <h1 className="text-3xl mb-6 text-[#1D1D1F99] font-bold">
-                {chat.question || "No title"}
-
-              </h1>
-              <section className="text-3xl font-bold">Content</section>
-              <section className="text-[#1D1D1F99] text-xl font-medium">
-                <DynamicContent
-                  content={chat.
-                    detailed_answer || "No content"}
-                />
-
-              </section>
+                  <HtmlContent contents={chat.detailed_answer} />
+                </section>
+              </div>
             </section>
           </div>
           <section className="flex flex-col gap-4 mt-5 text-primary">

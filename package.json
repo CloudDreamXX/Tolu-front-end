@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "^2.5.1",
     "axios": "^1.7.9",
     "dompurify": "^3.2.4",
+    "html-react-parser": "^5.2.2",
     "html-to-text": "^9.0.5",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.2",

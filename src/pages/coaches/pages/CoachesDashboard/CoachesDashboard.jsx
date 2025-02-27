@@ -22,6 +22,7 @@ import InfoCard from "../../../admin/addBlog/components/InfoCard";
 import QuestionAnswer from "../../../screens/chat/components/QuestionAnswer";
 import LibraryInput from "../../../user/library/components/LibraryInput";
 import PersonalizeModal from "./components/PersonalizeModal";
+import HtmlContent from "../../../../components/htmlToText";
 
 function CoachesDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -550,7 +551,7 @@ function CoachesDashboard() {
                       title={item.title}
                       contentId={item.id}
                       handleCardClick={handleCardClick} // Add onClick to each InfoCard
-                      description={<DynamicContent content={item.content} />}
+                      description={<HtmlContent contents={item.content} />}
                     />
                   );
                 })}

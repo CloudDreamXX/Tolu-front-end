@@ -23,6 +23,7 @@ import LibraryInput from "../../user/library/components/LibraryInput";
 import QuestionAnswer from "../../screens/chat/components/QuestionAnswer";
 import { FaEllipsisV, FaRegFolder } from "react-icons/fa";
 import FolderSelection from "../../../components/FolderSelection";
+import HtmlContent from "../../../components/htmlToText";
 
 const LibraryTopicDetails = () => {
   const contentId = useSelector((state) => state.sidebar.contentId);
@@ -336,25 +337,26 @@ const LibraryTopicDetails = () => {
         />
       </Modal>
       {/* Main UI */}
-      <section className=' h-[calc(100vh-90px)] flex flex-col items-center'>
+      <section className=' h-[calc(100vh-90px)] w-full flex flex-col items-center'>
         {isError && <div className="text-red-500 flex items-center h-[90%]">{error?.data?.message || "An error occurred"}</div>}
         {!isError &&
-          <div className="h-[90%] custom-scroll mb-2 overflow-auto">
+          <div className="h-[90%] w-full custom-scroll mb-2 overflow-auto">
             <div className="w-full flex flex-col justify-center overflow-auto">
               {/* Content Display Section */}
-              <section className="flex justify-center overflow-auto h gap-4">
-                <div className="custom-scroll overflow-auto w-[80%]  flex flex-col border mt-5  shadow-[#8484850A] rounded-lg p-4 text-black">
-                  <section className="flex flex-col  mt-[24px]">
-                    <section className="text-3xl font-bold">Title</section>
-                    <h1 className="text-3xl mb-6 text-[#1D1D1F99] font-bold">
-                      {editData.title || "No title"}
-                    </h1>
-                    <section className="text-3xl font-bold">Content</section>
-                    <section className="text-[#1D1D1F99] text-xl font-medium">
-                      <DynamicContent
-                        content={editData.content || "No content"}
-                      />
-                    </section>
+              <section className="flex justify-center w-full  overflow-auto h gap-4">
+                <div className="custom-scroll overflow-auto w-[80%]  flex  flex-col mt-5 shadow-[#8484850A] rounded-lg p-4 text-black">
+                  <section className="flex flex-col   mt-[24px]">
+                    <div className="border p-4 rounded-2xl w-[70%] max-w-max ml-auto bg-[#f5f5f5]">
+                      <h1 className="text-base md:text-lg text-[#1D1D1F99] font-bold">
+                        {editData.title || "No title"}
+                      </h1>
+                    </div>
+                    <div className="border p-4 rounded-2xl w-[70%] max-w-max mr-auto mt-5">
+                      <section className="text-[#1D1D1F99] text-xl font-medium">
+                       
+                        <HtmlContent contents={editData.content} />
+                      </section>
+                    </div>
                   </section>
                 </div>
                 <section className="flex flex-col gap-4 mt-5 text-primary">

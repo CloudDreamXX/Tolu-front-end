@@ -21,6 +21,7 @@ import { MdEdit } from "react-icons/md";
 import { SketchPicker } from "react-color";
 import FolderWithColorPicker from '../../../components/FolderWithColorPicker';
 import EditFolder from '../../../components/EditFolder';
+import HtmlContent from '../../../components/htmlToText';
 
 
 // import Input from "../small/Input";
@@ -558,7 +559,7 @@ function AddBlog() {
                                                 title={item.title}
                                                 contentId={item.id}
                                                 handleCardClick={handleCardClick}  // Add onClick to each InfoCard
-                                                description={<DynamicContent content={item.content} />}
+                                                description={<HtmlContent contents={item.content} />}
                                             />
                                         )
                                     })}
@@ -572,7 +573,7 @@ function AddBlog() {
             {detailResponse && (
                 <>
                     <section className='h-[calc(100vh-90px)] w-full flex flex-col items-center'>
-                        <section className="h-[90%] custom-scroll mb-2 overflow-auto">
+                        <section className="h-[90%] custom-scroll w-full mb-2 overflow-auto">
 
                             {chats.map((chat, i) => (
 
