@@ -102,6 +102,7 @@ function LibraryDashboardSideBar() {
                   className="project-name flex mb-4 justify-between items-center rounded-lg cursor-pointer p-2 hover:bg-[#E0E0E0] transition-all duration-300"
                   onClick={handleDropdownToggle}
                 >
+                  
                   <span className="text-[#393838] text-sm font-semibold">
                     Topic
                   </span>

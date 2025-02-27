@@ -79,13 +79,13 @@ export const apiSlice = createApi({
               onmessage(event) {
                 try {
                   const data = JSON.parse(event.data);
-
                   // ✅ Update UI as new data arrives
                   result.answers += data.reply || "";
                   result.result_id =
-                    data.searched_result_id || result.result_id;
-                  result.chat_id = data.chat_id || result.chat_id;
-
+                  data.searched_result_id || result.result_id;
+                  result.chat_id = data.chat_id || data.saved_content_id || result.chat_id;
+                  result.folder_id = data.folder_id || result.folder_id;
+                  
                   // ✅ Call the update function
                   if (payload.onMessage) {
                     payload.onMessage(result.answers);

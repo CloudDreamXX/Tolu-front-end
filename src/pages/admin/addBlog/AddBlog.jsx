@@ -7,12 +7,22 @@ import Modal from '../../../components/modals/Modal';
 import Button from '../../../components/small/Button';
 import { useAddNewFolderMutation, useAiLearningSearchMutation, useDeleteContentByIdMutation, useDeleteFolderByIdMutation, useEditContentByIdMutation, useEditFolderByIdMutation, useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
 // import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
-import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
+import { setAddFolderData, setDetailResponse } from '../../../redux/slice/sidebarSlice';
 import QuestionAnswer from '../../screens/chat/components/QuestionAnswer';
 import LibraryInput from '../../user/library/components/LibraryInput';
 import DynamicContent from './components/DynamicContent';
 import FileCard from './components/FileCard';
 import InfoCard from './components/InfoCard';
+import LibraryTopicDetails from '../libraryTopicDetails/LibraryTopicDetails';
+import DetailResponse from './components/DetailResponse';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { FaRegFolder, FaRegFolderOpen } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
+import { SketchPicker } from "react-color";
+import FolderWithColorPicker from '../../../components/FolderWithColorPicker';
+import EditFolder from '../../../components/EditFolder';
+
+
 // import Input from "../small/Input";
 
 function AddBlog() {
@@ -27,11 +37,31 @@ function AddBlog() {
     const [chats, setChats] = useState([]);
     const [text, setText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isChat, setIsChat] = useState(false)
 
     const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
+    const detailResponse = useSelector((state) => state.sidebar.detailResponse);
+
+    useEffect(() => {
+        if (!detailResponse) {
+            setChats([])
+        }
+    }, [detailResponse]);
+
+    const removeChat = (chatId) => {
+        setChats(chats.filter(chat => chat?.chat_id !== chatId));
+    };
+    const updateChat = (updatedChat) => {
+        setChats(prevChats =>
+            prevChats.map(chat =>
+                chat.chat_id === updatedChat.chat_id ? { ...chat, ...updatedChat } : chat
+            )
+        );
+    };
+
     const [addNewFolder, { isLoading: addNewFolderLoading }] = useAddNewFolderMutation();
     const [aiLearningSearch] = useAiLearningSearchMutation();
-    const { data: allFolders } = useGetFolderStructureQuery();
+    const { data: allFolders, refetch } = useGetFolderStructureQuery();
     const [folderId, setFolderId] = useState("");
     const [contentId, setContentId] = useState("");
     const [newName, setNewName] = useState("");
@@ -41,13 +71,28 @@ function AddBlog() {
     const [deleteFolder] = useDeleteFolderByIdMutation();
     const [editContent] = useEditContentByIdMutation();
     const [deleteContent] = useDeleteContentByIdMutation();
-    const handleEditFolder = async () => {
-        try {
-            await editFolder({ folderId, newName }).unwrap();
-            console.log("Folder renamed successfully");
-        } catch (error) {
-            console.error("Error renaming folder:", error);
+    // const dispatch = useDispatch();
+    const location = useLocation();
+
+    useEffect(() => {
+        dispatch(setDetailResponse(false));
+    }, [location.pathname]); // Runs when the route (pathname) changes
+
+
+
+    const handleEditFolder = async (folderId) => {
+        if (newName.trim() !== folder.name) {
+
+            try {
+                await editFolder({ folderId, newName }).unwrap();
+                console.log("Folder renamed successfully");
+            } catch (error) {
+                console.error("Error renaming folder:", error);
+            }
         }
+        // setIsEditing(false);
+        // setContextMenuPosition(null); // Close menu after edit
+        // setActiveContextMenu(null); // Reset active folder
     };
 
     const handleDeleteFolder = async () => {
@@ -87,12 +132,6 @@ function AddBlog() {
         }
     };
 
-
-
-    ////
-
-
-
     const dispatch = useDispatch();
 
     const openModal = () => setIsModalOpen(true);
@@ -128,7 +167,6 @@ function AddBlog() {
         }
 
         for (const folder of folders) {
-            //   console.log("Checking folder:", folder?.id);
             if (folder?.id === id) {
                 return folder; // Folder found
             }
@@ -148,7 +186,6 @@ function AddBlog() {
 
     const content = folder?.content ?? []; // Use an empty array if folder.content is undefined
 
-
     useEffect(() => {
         if (allFolders?.posted_topics && addNewFolderState?.folderId) {
             const folderFromPosted = findFolderById(allFolders.posted_topics, addNewFolderState.folderId);
@@ -165,18 +202,17 @@ function AddBlog() {
             if (instruction) {
                 localStorage.setItem('instruction', instruction);
             }
-    
+
 
             // Clear the input after adding
-           
+
 
             // Close the modal
             closeInstructionModal();
         }
     };
-    
+
     const instructionslocal = localStorage.getItem('instruction');
-    console.log('content',instructionslocal)
 
 
     const handleFolderSubmit = async () => {
@@ -187,11 +223,13 @@ function AddBlog() {
         }
 
         try {
+
             const { data, error } = await addNewFolder({
                 name: addFolder,
                 description: addFolderDescription,
                 parent_folder_id: addNewFolderState?.folderId,
             });
+            console.log("refetch:", refetch);
 
             if (error) {
                 console.log("Error adding folder:", error);
@@ -248,7 +286,9 @@ function AddBlog() {
         setIsLoading(true);
 
         try {
-            await aiLearningSearch({
+            // setIsChat(true)
+            dispatch(setDetailResponse(true));
+            const { data } = await aiLearningSearch({
                 chat_message: { user_prompt: text, is_new: true, regenerate_id: null, instructions: instructionslocal },
                 file: selectedFile || null,
                 folder_id: addNewFolderState?.folderId || null,
@@ -260,10 +300,22 @@ function AddBlog() {
                     });
                 },
             });
+            const chatId = data.chat_id;
+            const folderId = data.folder_id || addNewFolderState?.folderId;
+
+            setChats((prevChats) => {
+                const updatedChats = [...prevChats];
+                updatedChats[updatedChats.length - 1].chat_id = chatId;
+                updatedChats[updatedChats.length - 1].folder_id = folderId;  // Update folder_id here
+                return updatedChats;
+            });
             setSelectedFile(null);
         } catch (error) {
             console.error("Error sending request:", error);
             toast.error("Failed to fetch response.");
+
+            dispatch(setDetailResponse(false));
+
         } finally {
             setIsLoading(false);
 
@@ -292,12 +344,26 @@ function AddBlog() {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const userType = JSON.parse(localStorage.getItem("userType"));
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (userType && userType.role === "admin") {
             setIsAdmin(true);
         }
     }, [userType]);  // Ensure useEffect runs when userType changes
+    useEffect(() => {
+        if (chats.length === 0) {
+            dispatch(setDetailResponse(false));
+            navigate('/admin');
+        }
+    }, [chats, dispatch, navigate]);
+
+
+
+    const [editFolderModalOpen, setEditFolderModalOpen] = useState(false);
+    const editFolderModal = () => setEditFolderModalOpen(true);
+    const closeEditFolderModal = () => setEditFolderModalOpen(false);
+
 
 
     return (
@@ -398,100 +464,138 @@ function AddBlog() {
                     </section>
                 </section>
             </Modal>
-            
+            <Modal className="w-[500px]" isOpen={editFolderModalOpen} onClose={closeEditFolderModal} title={<h1 className="text-xl font-bold">Edit Folder</h1>}>
+                <EditFolder folder={folder} closeEditFolderModal={closeEditFolderModal} />
+            </Modal>
 
             {/* Main Content */}
-            <div className="w-full xs:px-4 md:px-36 flex-col h-full pt-10 flex justify-center items-center">
-                <section className="w-full flex justify-between  p-2 mb-5 items-start">
-                    <h1 className="text-3xl font-semibold">
-                        {folder?.name || 'Select a folder'}
-                    </h1>
-                    <section>
-                        <Button
-                            className="!bg-[#B6B6B6] text-[#1D1D1F99] "
-                            text="Clear Topics"
-                            onClick={clearTopicHandle}
-                        />
+            {!detailResponse && (
 
-                    </section>
-                </section>
-                <LibraryInput
-                    placeholder="Enter text or upload a file"
-                    onChangeValue={handleInputChange}
-                    onSubmitValue={handleInputSubmit}
-                    onFileUpload={handleFileUpload}
-                    handleRemoveFile={handleRemoveFile}
-                    setSelectedFile={setSelectedFile}
-                    selectedFile={selectedFile}
-                    isLoading={isLoading} // Can be set to `true` when processing
-                />
-                {chats.length > 0 && (
+                <div className="w-full xs:px-4 md:px-36 flex-col h-full pt-10 flex justify-center items-center">
+                    <section className="w-full flex justify-between  p-2 mb-5 items-start">
+                        <h1 className="text-3xl flex items-center gap-2 font-semibold">
+                            <FolderWithColorPicker folderId={folder?.id} />
+                            {folder?.name || 'Select a folder'}
+                            <section className="cursor-pointer" onClick={editFolderModal}>
 
-                    <section className='w-full  pb-2 mt-4 custom-scroll overflow-auto'>
-
-                        {chats.map((chat, i) => (
-                            <QuestionAnswer key={i} setIsAdmin={setIsAdmin} isAdmin={isAdmin} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
-                        ))}
-                    </section>
-                )}
-
-                {/* File Cards */}
-                <div className="flex  h-30 xs:flex-col sm:flex-col md:flex-row gap-4 mt-7  w-full">
-                    <section className="w-full cursor-pointer">
-                        <div onClick={handleFileCardClick}>
-                            <FileCard
-                                title="Add Files"
-                                description="Chats in this project can access file content"
-                                Icon={CgFileAdd}
+                                <MdEdit className='text-primary text-base' />
+                            </section>
+                        </h1>
+                        <section>
+                            <Button
+                                className="!bg-[#B6B6B6] text-[#1D1D1F99] "
+                                text="Clear Topics"
+                                onClick={clearTopicHandle}
                             />
-                        </div>
-                        <input
-                            id="file-input"
-                            type="file"
-                            onChange={handleFileChange}
-                            style={{ display: 'none' }}
-                        />
-                        {selectedFile && <p>Selected File: {selectedFile.name}</p>}
+
+                        </section>
                     </section>
-                    <section className='w-full cursor-pointer' onClick={openInstructionModal}>
-                        <FileCard
-                            title="Instructions"
-                            description={isAdmin && "Insert your instructions to attach with prompt" || !isAdmin && "Personalize your content using client data"}
-                        />
+                    <LibraryInput
+                        placeholder="Enter text or upload a file"
+                        onChangeValue={handleInputChange}
+                        onSubmitValue={handleInputSubmit}
+                        onFileUpload={handleFileUpload}
+                        handleRemoveFile={handleRemoveFile}
+                        setSelectedFile={setSelectedFile}
+                        selectedFile={selectedFile}
+                        isLoading={isLoading} // Can be set to `true` when processing
+                    />
+                    {/* {chats.length > 0 && (
+
+                        <section className='w-full  pb-2 mt-4 custom-scroll overflow-auto'>
+
+                            {chats.map((chat, i) => (
+                                <QuestionAnswer key={i} setIsAdmin={setIsAdmin} isAdmin={isAdmin} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
+                            ))}
+                        </section>
+                    )} */}
+
+                    {/* File Cards */}
+                    <div className="flex  h-30 xs:flex-col sm:flex-col md:flex-row gap-4 mt-7  w-full">
+                        <section className="w-full cursor-pointer">
+                            <div onClick={handleFileCardClick}>
+                                <FileCard
+                                    title="Add Files"
+                                    description="Chats in this project can access file content"
+                                    Icon={CgFileAdd}
+                                />
+                            </div>
+                            <input
+                                id="file-input"
+                                type="file"
+                                onChange={handleFileChange}
+                                style={{ display: 'none' }}
+                            />
+                            {selectedFile && <p>Selected File: {selectedFile.name}</p>}
+                        </section>
+                        <section className='w-full cursor-pointer' onClick={openInstructionModal}>
+                            <FileCard
+                                title="Instructions"
+                                description={isAdmin && "Insert your instructions to attach with prompt" || !isAdmin && "Personalize your content using client data"}
+                            />
+                        </section>
+                    </div>
+
+                    {/* Info Cards Section */}
+                    <section className="w-full pl-4 mt-7 items-start justify-start">
+                        <section className="w-full flex justify-between items-center">
+                            <h2 className="text-base font-semibold text-center">
+                                Topics in this folder
+                            </h2>
+                        </section>
+                        <section className="w-full mt-2 space-y-6 pt-6">
+                            {(!folder?.content?.length) ? (
+                                <div className="ml-6 text-gray-500 text-lg font-bold">No topics available</div>
+                            ) : (
+                                <>
+                                    {content?.map((item) => {
+                                        return (
+
+                                            <InfoCard
+                                                Icon={PiChatsCircle}
+                                                key={item.id}
+                                                // Icon={item.Icon}
+                                                title={item.title}
+                                                contentId={item.id}
+                                                handleCardClick={handleCardClick}  // Add onClick to each InfoCard
+                                                description={<DynamicContent content={item.content} />}
+                                            />
+                                        )
+                                    })}
+                                </>
+                            )}
+                        </section>
                     </section>
                 </div>
+            )}
 
-                {/* Info Cards Section */}
-                <section className="w-full pl-4 mt-7 items-start justify-start">
-                    <section className="w-full flex justify-between items-center">
-                        <h2 className="text-base font-semibold text-center">
-                            Topics in this folder
-                        </h2>
-                    </section>
-                    <section className="w-full mt-2 space-y-6 pt-6">
-                        {(!folder?.content?.length) ? (
-                            <div className="ml-6 text-gray-500 text-lg font-bold">No topics available</div>
-                        ) : (
-                            <>
-                                {content?.map((item) => {
-                                    return (
+            {detailResponse && (
+                <>
+                    <section className='h-[calc(100vh-90px)] w-full flex flex-col items-center'>
+                        <section className="h-[90%] custom-scroll mb-2 overflow-auto">
 
-                                        <InfoCard
-                                            Icon={PiChatsCircle}
-                                            key={item.id}
-                                            // Icon={item.Icon}
-                                            title={item.title}
-                                            contentId={item.id}
-                                            handleCardClick={handleCardClick}  // Add onClick to each InfoCard
-                                            description={<DynamicContent content={item.content} />}
-                                        />
-                                    )
-                                })}
-                            </>
-                        )}
+                            {chats.map((chat, i) => (
+
+                                <DetailResponse key={i} setIsAdmin={setIsAdmin} chat={chat} removeChat={removeChat} updateChat={updateChat} />
+                            ))}
+                        </section>
+
+                        <section className='w-full'>
+                            <LibraryInput
+                                placeholder="Enter text or upload a file"
+                                onChangeValue={handleInputChange}
+                                onSubmitValue={handleInputSubmit}
+                                onFileUpload={handleFileUpload}
+                                handleRemoveFile={handleRemoveFile}
+                                setSelectedFile={setSelectedFile}
+                                selectedFile={selectedFile}
+                                isLoading={isLoading} // Can be set to `true` when processing
+                            />
+                        </section>
                     </section>
-                </section>
-            </div>
+
+                </>
+            )}
         </div>
     );
 }

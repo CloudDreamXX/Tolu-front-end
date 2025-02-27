@@ -115,6 +115,7 @@ function LibraryTopicDetailsSideBAr() {
                 <span className="text-[#393838]">Feedback</span>
               </div>
               <div className="project-container">
+
                 <div className="project-name flex mb-4 justify-between items-center rounded-lg cursor-pointer p-2 hover:bg-[#E0E0E0] transition-all duration-300" onClick={handleDropdownToggle}>
                   <span className="text-[#393838] text-sm font-semibold">Topic</span>
                   <span className={`text-[#393838]  dropdown-icon transition-all duration-400 ${showDropdown ? 'rotate-180' : 'rotate-0'}`}>

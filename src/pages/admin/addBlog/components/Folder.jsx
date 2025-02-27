@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ContentItem from "../../../../components/ContentItem";
 import FolderItem from "../../../../components/FolderItem";
 import { useDeleteFolderByIdMutation, useEditFolderByIdMutation } from "../../../../redux/apis/apiSlice";
-import { setAddFolderData, setContentId } from "../../../../redux/slice/sidebarSlice";
+import { setAddFolderData, setContentId, setDetailResponse } from "../../../../redux/slice/sidebarSlice";
 
 const Folder = ({
     folder,
@@ -24,12 +24,11 @@ const Folder = ({
     const [newName, setNewName] = useState(folder.name);
     const inputRef = useRef(null);
 
-
     const addArticlesHandler = (id) => {
         dispatch(setAddFolderData({ folderId: id, add: true })); // Assuming you want to set the selected folder ID here
+        dispatch(setDetailResponse(false));
     };
     const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
-    console.log("addNewFolderState", addNewFolderState);
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!event.target.closest('.context-menu')) {
@@ -64,7 +63,7 @@ const Folder = ({
     // Handle edit folder name
     const handleEdit = async (folderId) => {
         if (newName.trim() !== folder.name) {
-            
+
             try {
                 await editFolder({ folderId, newName }).unwrap();
                 console.log("Folder renamed successfully");
@@ -99,6 +98,13 @@ const Folder = ({
     }
     const contentId = useSelector((state) => state.sidebar.contentId);
 
+    const folderColorById = useSelector((state) =>
+        state.folderColor.folderColors.find((f) => f.folderId === folder?.id)
+    );
+
+    // Use the folder's iconColor if found, otherwise fallback to a default color
+   const iconColor = folderColorById ? folderColorById.iconColor : "#000000";
+
     return (
         <div className="relative">
             {/* Folder Name */}
@@ -108,8 +114,14 @@ const Folder = ({
             >
                 <div onClick={() => toggleFolder(folder.id, level)} className="flex gap-2 w-full p-2  items-center">
                     {/* Folder Icon */}
-                    <span className="text-gray-700">
-                        {isOpen ? <FaRegFolderOpen /> : <FaRegFolder />}
+                    <span className="text-iconColor"
+                    style={{ color: iconColor }}
+                    >
+                        {isOpen ? (
+                            <FaRegFolderOpen className="text-iconColor" />
+                        ) : (
+                            <FaRegFolder className="text-iconColor" />
+                        )}
                     </span>
 
                     {/* Editable Input Field */}
@@ -158,7 +170,7 @@ const Folder = ({
                             {/* Render Files Inside Folder */}
                             {folder.content?.map((content, index) => (
                                 <div key={index} className="ml-6  w-40 cursor-pointer hover:bg-gray-200 text-gray-700 text-sm">
-                                    <ContentItem content={content} folderId={folder.id}/>
+                                    <ContentItem content={content} folderId={folder.id} />
                                 </div>
                             ))}
                         </>

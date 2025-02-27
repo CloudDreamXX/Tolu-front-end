@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setAddFolderData } from "../../../../redux/slice/sidebarSlice";
+import { setAddFolderData, setDetailResponse } from "../../../../redux/slice/sidebarSlice";
 import Folder from "./Folder";
 
 const FolderTree = ({ allFolders, addArticlesHandler }) => {
@@ -19,6 +19,8 @@ const FolderTree = ({ allFolders, addArticlesHandler }) => {
             folderId: id,
             add: false
         }));
+        dispatch(setDetailResponse(false));
+
     };
 
     return (

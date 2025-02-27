@@ -1,34 +1,13 @@
-// // sidebarSlice.js
-// import { createSlice } from '@reduxjs/toolkit';
-
-// const initialState = {
-//   addFolder: {
-//     folderId: null,
-//     add: false
-//   },
-// };
-
-// const sidebarSlice = createSlice({
-//   name: 'sidebar',
-//   initialState,
-//   reducers: {
-//     setAddFolderData: (state, action) => {
-//       state.addFolder = { ...action.payload };
-//     },
-//   },
-// });
-
-// export const { setAddFolderData } = sidebarSlice.actions;
-// export default sidebarSlice.reducer;
-// sidebarSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   addFolder: {
-    folderId: "80cd48f4-aeab-477f-a3a4-0d2f12cbdb70",
+    folderId: "22426b86-8e6f-414a-ab2f-5e5fb579482b",
     add: false,
   },
   contentId: null,
+  detailResponse: false,
+ 
 };
 
 const sidebarSlice = createSlice({
@@ -40,9 +19,13 @@ const sidebarSlice = createSlice({
     },
     setContentId: (state, action) => {
       state.contentId = action.payload;
-    }
+    },
+    setDetailResponse: (state, action) => {
+      state.detailResponse = action.payload;
+    },
+    
   },
 });
 
-export const { setAddFolderData , setContentId} = sidebarSlice.actions;  // Export setAddFolderData here
+export const { setAddFolderData, setContentId, setDetailResponse  } = sidebarSlice.actions;
 export default sidebarSlice.reducer;
