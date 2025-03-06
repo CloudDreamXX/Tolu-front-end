@@ -71,7 +71,7 @@ function LibraryDashboardSideBar() {
 
   return (
     <div
-      className={`h-full border-[#008FF614] border-r-2 bg-white py-8 relative transition-all duration-500 rounded-lg xl:rounded-[0] 
+      className={`h-full border-[#008FF614] border-r-2 bg-white py-8 relative transition-all duration-500 rounded-lg xl:rounded-[0]
         ${isAsideOpen ? "w-[90px]" : "w-[280px]"} shadow-md shadow-[#7090B024]`}
     >
       <div className="flex items-center gap-1 justify-center overflow-hidden px-4">
@@ -102,7 +102,7 @@ function LibraryDashboardSideBar() {
                   className="project-name flex mb-4 justify-between items-center rounded-lg cursor-pointer p-2 hover:bg-[#E0E0E0] transition-all duration-300"
                   onClick={handleDropdownToggle}
                 >
-                  
+
                   <span className="text-[#393838] text-sm font-semibold">
                     Topic
                   </span>
@@ -122,7 +122,7 @@ function LibraryDashboardSideBar() {
                         addArticlesHandler={addArticlesHandler}
                       />
                     </div>
-                    <div className="mt-4">
+                    {/* <div className="mt-4">
                       <text className="text-sm font-semibold text-[#444444]">
                         SAVED TOPICS
                       </text>
@@ -130,7 +130,7 @@ function LibraryDashboardSideBar() {
                         allFolders={allFolders}
                         addArticlesHandler={addArticlesHandler}
                       />
-                    </div>
+                    </div> */}
                   </>
                 )}
               </div>

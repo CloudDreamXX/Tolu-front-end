@@ -353,7 +353,7 @@ const LibraryTopicDetails = () => {
                     </div>
                     <div className="border p-4 rounded-2xl w-[70%] max-w-max mr-auto mt-5">
                       <section className="text-[#1D1D1F99] text-xl font-medium">
-                       
+
                         <HtmlContent contents={editData.content} />
                       </section>
                     </div>

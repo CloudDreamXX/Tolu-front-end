@@ -11,19 +11,19 @@ function EditFolder({ folder, closeEditFolderModal }) {
 
 
     const handleEditFolder = async () => {
-        // if (newTitle.trim() !== folder.name) {
+        if (newTitle.trim() !== folder.name) {
         console.log("yes")
-        // try {
-        //     const res = await editFolder({ folderId: folder?.id, newName: newTitle }).unwrap();
-        //     toast.success(res.message)
-        //     closeEditFolderModal()
-        // } catch (error) {
-        //     console.error("Error renaming folder:", error);
-        // }
-        // }
-        // setIsEditing(false);
-        // setContextMenuPosition(null); // Close menu after edit
-        // setActiveContextMenu(null); // Reset active folder
+        try {
+            const res = await editFolder({ folderId: folder?.id, newName: newTitle }).unwrap();
+            toast.success(res.message)
+            closeEditFolderModal()
+        } catch (error) {
+            console.error("Error renaming folder:", error);
+        }
+        }
+        setIsEditing(false);
+        setContextMenuPosition(null); // Close menu after edit
+        setActiveContextMenu(null); // Reset active folder
     };
 
     return (

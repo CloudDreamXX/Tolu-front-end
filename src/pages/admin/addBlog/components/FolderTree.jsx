@@ -25,7 +25,7 @@ const FolderTree = ({ allFolders, addArticlesHandler }) => {
 
     return (
         <div className="p-1 custom-scroll rounded-lg">
-            {allFolders?.posted_topics?.map((folder) => (
+            {allFolders?.saved_topics?.map((folder) => (
                 <Folder
                     key={folder.id}
                     folder={folder}
@@ -39,6 +39,20 @@ const FolderTree = ({ allFolders, addArticlesHandler }) => {
                     setContextMenuPosition={setContextMenuPosition}
                 />
             ))}
+            {allFolders?.posted_topics?.map((folder) => (
+            <Folder
+                key={folder.id}
+                folder={folder}
+                openFolders={openFolders}
+                toggleFolder={toggleFolder}
+                addArticlesHandler={addArticlesHandler}
+                level={0} // Root level
+                activeContextMenu={activeContextMenu}
+                setActiveContextMenu={setActiveContextMenu}
+                contextMenuPosition={contextMenuPosition}
+                setContextMenuPosition={setContextMenuPosition}
+            />
+        ))}
         </div>
     );
 };

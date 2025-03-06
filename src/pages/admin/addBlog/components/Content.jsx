@@ -64,7 +64,7 @@ console.log("level",level)
     // Handle edit folder name
     const handleEdit = async (folderId) => {
         if (newName.trim() !== folder.name) {
-            
+
             try {
                 await editFolder({ folderId, newName }).unwrap();
                 console.log("Folder renamed successfully");
@@ -127,7 +127,7 @@ console.log("level",level)
                         <span className="truncate w-[100px]">{folder.name}</span>
                     )}
                 </div>
-                {/* <FolderItem content={folder} onDelete={handleDelete} onAdd={addArticlesHandler} setIsEditing={setIsEditing} /> */}
+                <FolderItem content={folder} onDelete={handleDelete} onAdd={addArticlesHandler} setIsEditing={setIsEditing} />
 
             </div>
 

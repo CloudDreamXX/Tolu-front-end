@@ -179,22 +179,30 @@ function AddBlog() {
         return null; // Folder not found
     }
 
-    // Ensure allFolders and addNewFolderState exist and have the expected properties
-    const folder =
-        allFolders?.posted_topics && addNewFolderState?.folderId
-            ? findFolderById(allFolders.posted_topics, addNewFolderState.folderId)
-            : null;
+// Ensure allFolders and addNewFolderState exist and have the expected properties
+const folder =
+    addNewFolderState?.folderId
+        ? findFolderById(allFolders?.posted_topics || [], addNewFolderState.folderId) ||
+          findFolderById(allFolders?.saved_topics || [], addNewFolderState.folderId)
+        : null;
+const content = folder?.content ?? []; // Use an empty array if folder.content is undefined
 
-    const content = folder?.content ?? []; // Use an empty array if folder.content is undefined
+useEffect(() => {
+    if (addNewFolderState?.folderId) {
+        const folderFromPosted = findFolderById(allFolders?.posted_topics || [], addNewFolderState.folderId);
+        const folderFromSaved = findFolderById(allFolders?.saved_topics || [], addNewFolderState.folderId);
 
-    useEffect(() => {
-        if (allFolders?.posted_topics && addNewFolderState?.folderId) {
-            const folderFromPosted = findFolderById(allFolders.posted_topics, addNewFolderState.folderId);
+        if (folderFromPosted) {
             console.log("Found folder in posted_topics:", folderFromPosted);
+        } else if (folderFromSaved) {
+            console.log("Found folder in saved_topics:", folderFromSaved);
         } else {
-            console.warn("Missing allFolders.posted_topics or addNewFolderState.folderId");
+            console.warn("Folder not found in either posted_topics or saved_topics");
         }
-    }, [allFolders, addNewFolderState]);
+    } else {
+        console.warn("Missing addNewFolderState.folderId");
+    }
+}, [allFolders, addNewFolderState]);
 
     const addInstruction = () => {
         if (instruction.trim() !== '') {
@@ -402,7 +410,7 @@ function AddBlog() {
                 </section>
             </Modal>
 
-            <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add personalize topic</h1>}>
+            <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add instructions</h1>}>
                 <textarea
                     className="w-full mt-4 h-40 p-4 border rounded"
                     placeholder="Enter personalize topic here..."
@@ -417,7 +425,7 @@ function AddBlog() {
                     />
                     <Button
                         className={"!bg-[#B6B6B6] text-[#1D1D1F99] "}
-                        text="Add personalize topic"
+                        text="Save instructions"
                         onClick={addInstruction}
                     />
                 </section>
@@ -516,8 +524,8 @@ function AddBlog() {
                         <section className="w-full cursor-pointer">
                             <div onClick={handleFileCardClick}>
                                 <FileCard
-                                    title="Add Files"
-                                    description="Chats in this project can access file content"
+                                    title="Add files"
+                                    description="Increase the accuracy for the AI response by adding files"
                                     Icon={CgFileAdd}
                                 />
                             </div>
@@ -532,7 +540,7 @@ function AddBlog() {
                         <section className='w-full cursor-pointer' onClick={openInstructionModal}>
                             <FileCard
                                 title="Instructions"
-                                description={isAdmin && "Insert your instructions to attach with prompt" || !isAdmin && "Personalize your content using client data"}
+                                description={isAdmin && "Insert your instructions to refine the AI response" || !isAdmin && "Personalize your content using client data"}
                             />
                         </section>
                     </div>
