@@ -46,9 +46,9 @@ export const apiSlice = createApi({
               "chat_message",
               JSON.stringify(payload.chat_message)
             );
-            // if (payload.folder_id) {
-            //   formData.append("folder_id", payload.folder_id);
-            // }
+            if (payload.folder_id) {
+              formData.append("folder_id", payload.folder_id);
+            }
             if (payload.file) {
               const fileType = payload.file.type;
               if (fileType === "application/pdf") {
@@ -85,7 +85,7 @@ export const apiSlice = createApi({
                   data.searched_result_id || result.result_id;
                   result.chat_id = data.chat_id || data.saved_content_id || result.chat_id;
                   result.folder_id = data.folder_id || result.folder_id;
-                  
+
                   // ✅ Call the update function
                   if (payload.onMessage) {
                     payload.onMessage(result.answers);
