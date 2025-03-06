@@ -3,6 +3,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { TfiWrite } from "react-icons/tfi";
 import { useDispatch } from "react-redux";
 import { ArrowIcon } from "../../../../../assets/svgs/Icon";
+import { BsChatDots } from "react-icons/bs";
 // import { useDispatch } from "react-redux";
 // import { setAddFolderData, setSidebarData } from '../../../../../redux/slice/sidebarSlice';
 import { apiErrorHandler } from "../../../../../api/apiErrorHandler";
@@ -57,6 +58,10 @@ function LibraryDashboardSideBar() {
 
   // }
 
+    const navigateToAdmin = () => {
+      navigate('/admin');
+    };
+
   const dispatch = useDispatch();
 
   const handleDropdownChange = (e) => {
@@ -97,6 +102,14 @@ function LibraryDashboardSideBar() {
                                 <TfiWrite />
                                 <span className="text-[#393838]">Feedback</span>
                             </div> */}
+              {/* New Chat Button */}
+                            <div
+                              className="flex gap-2 mb-4 items-center cursor-pointer hover:bg-[#E0E0E0] p-2 rounded-lg transition-all duration-300"
+                              onClick={navigateToAdmin}
+                            >
+                              <BsChatDots />
+                              <span className="text-[#393838]">New Chat</span>
+                            </div>
               <div className="project-container h-full">
                 <div
                   className="project-name flex mb-4 justify-between items-center rounded-lg cursor-pointer p-2 hover:bg-[#E0E0E0] transition-all duration-300"
