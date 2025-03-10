@@ -40,6 +40,20 @@ const ContentTree = ({ allFolders, addArticlesHandler }) => {
                     setContextMenuPosition={setContextMenuPosition}
                 />
             ))}
+            {allFolders?.unpublished_topics?.map((folder) => (
+                <Content
+                    key={folder.id}
+                    folder={folder}
+                    openFolders={openFolders}
+                    toggleFolder={toggleFolder}
+                    addArticlesHandler={addArticlesHandler}
+                    level={0} // Root level
+                    activeContextMenu={activeContextMenu}
+                    setActiveContextMenu={setActiveContextMenu}
+                    contextMenuPosition={contextMenuPosition}
+                    setContextMenuPosition={setContextMenuPosition}
+                />
+            ))}
         </div>
     );
 };

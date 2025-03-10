@@ -178,6 +178,9 @@ console.log("instruction",instruction)
         if (!folder && Array.isArray(allFolders.saved_topics)) {
             folder = findFolderById(allFolders.saved_topics, folderId);
         }
+        if (!folder && Array.isArray(allFolders.unpublished_topics)) {
+            folder = findFolderById(allFolders.unpublished_topics, folderId);
+        }
         return folder;
     }
 
