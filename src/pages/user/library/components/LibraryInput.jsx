@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { FaArrowUp, FaTimes } from "react-icons/fa";
 import { GrAttachment } from "react-icons/gr";
+import Modal from "../../../../components/modals/Modal";
+import AddFiles from "../../../admin/addBlog/components/AddFiles";
 
 function LibraryInput({
   placeholder,
@@ -12,10 +14,20 @@ function LibraryInput({
   handleRemoveFile,  // Callback when a file is uploaded
   isLoading,
   selectedFile,
-  setSelectedFile    // Prop to indicate loading state
+  setSelectedFile,    // Prop to indicate loading state
+
+  fetchFile,
+  folder,
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [value, setValue] = useState("");
+  const [addFile ,setAddFile]= useState(false);
+  const openAddFileModal=()=>{
+    setAddFile(true);
+  }
+  const closeAddFilesModal=()=>{
+    setAddFile(false);
+  }
   // const [selectedFile, setSelectedFile] = useState(null); // Store selected file
   const fileInputRef = useRef(null); // Ref for file input
 
@@ -68,62 +80,74 @@ function LibraryInput({
   };
 
   return (
-    <div className="relative flex flex-col items-center w-full">
-      {/* Floating Label */}
-      <label
-        className={`absolute text-gray-500 transition-all duration-300 ${isFocused || value ? "text-xs text-gray-700 top-2" : "text-base top-4"} ${width === "w-full" ? "left-6" : width === "sm:w-3/4" ? "left-10" : "left-16"}`}
-      >
-        {placeholder}
-      </label>
-
-      {/* Input Field */}
-      <input
-        type="text"
-        className={`${width} ${height} p-4 pt-6 border-2 border-[#008FF614] bg-white shadow-[#7090B024] rounded-xl focus:outline-none transition-all`}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        value={value}
-        disabled={isLoading}
-      />
-
-      {/* Hidden File Input */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        onChange={handleFileChange}
-      />
-
-      {/* Icons Container */}
-      <div
-        className={`absolute flex space-x-2 text-gray-500 transition-all duration-300 ${width === "w-full" ? "right-6" : width === "sm:w-3/4" ? "right-10" : "right-16"} bottom-4`}
-      >
-        {/* File Icon / Remove File Icon */}
-        <div
-          className="w-[36px] h-[36px] bg-white border border-[#767779] rounded-full flex justify-center items-center cursor-pointer"
-          onClick={selectedFile ? handleRemoveFile : handleFileUploadClick} // Toggle between upload/remove
+    <>
+      <Modal className="w-[500px]" isOpen={addFile} onClose={closeAddFilesModal} title={<h1 className="text-xl font-bold">Add Files</h1>}>
+        <AddFiles
+          fetchFile={fetchFile}
+          folder={folder}
+          setSelectedFile={setSelectedFile}
+          selectedFile={selectedFile}
+        />
+      </Modal>
+      <div className="relative flex flex-col items-center w-full">
+        {/* Floating Label */}
+        <label
+          className={`absolute text-gray-500 transition-all duration-300 ${isFocused || value ? "text-xs text-gray-700 top-2" : "text-base top-4"} ${width === "w-full" ? "left-6" : width === "sm:w-3/4" ? "left-10" : "left-16"}`}
         >
-          {selectedFile ? (
-            <FaTimes className="text-red-500" /> // Cross icon if file is selected
-          ) : (
-            <GrAttachment className="text-[#767779]" /> // File icon if no file
-          )}
-        </div>
+          {placeholder}
+        </label>
 
-        {/* Arrow Icon (Submit Button) */}
-        <button
+        {/* Input Field */}
+        <input
+          type="text"
+          className={`${width} ${height} p-4 pt-6 border-2 border-[#008FF614] bg-white shadow-[#7090B024] rounded-xl focus:outline-none transition-all`}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          value={value}
           disabled={isLoading}
-          onClick={handleSubmit}
-          className={`w-[36px] h-[36px] rounded-full flex justify-center items-center transition-all duration-200 
+        />
+
+        {/* Hidden File Input */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileChange}
+        />
+
+        {/* Icons Container */}
+        <div
+          className={`absolute flex space-x-2 text-gray-500 transition-all duration-300 ${width === "w-full" ? "right-6" : width === "sm:w-3/4" ? "right-10" : "right-16"} bottom-4`}
+        >
+          {/* File Icon / Remove File Icon */}
+          <div
+            className="w-[36px] h-[36px] bg-white border border-[#767779] rounded-full flex justify-center items-center cursor-pointer"
+            // onClick={selectedFile ? handleRemoveFile : handleFileUploadClick} // Toggle between upload/remove
+            onClick={openAddFileModal}
+          >
+            {/* {selectedFile ? (
+              <FaTimes className="text-red-500" /> // Cross icon if file is selected
+            ) : ( */}
+              <GrAttachment className="text-[#767779]" />
+            {/* )} */}
+          </div>
+
+          {/* Arrow Icon (Submit Button) */}
+          <button
+            disabled={isLoading}
+            onClick={handleSubmit}
+            className={`w-[36px] h-[36px] rounded-full flex justify-center items-center transition-all duration-200
             ${isLoading ? "bg-gray-400 cursor-not-allowed blur-sm" : "bg-[#767779] cursor-pointer"}
           `}
-        >
-          <FaArrowUp className={`text-white ${isLoading ? "opacity-50" : ""}`} />
-        </button>
+          >
+            <FaArrowUp className={`text-white ${isLoading ? "opacity-50" : ""}`} />
+          </button>
+        </div>
       </div>
-    </div>
+    </>
+
   );
 }
 

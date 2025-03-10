@@ -49,19 +49,25 @@ export const apiSlice = createApi({
             if (payload.folder_id) {
               formData.append("folder_id", payload.folder_id);
             }
-            if (payload.file) {
-              const fileType = payload.file.type;
-              if (fileType === "application/pdf") {
-                formData.append("pdf", payload.file);
-              } else if (fileType.startsWith("image")) {
-                formData.append("image", payload.file);
-              } else {
-                reject({
-                  error: "Invalid file type. Only PDF and images are allowed.",
-                });
-                return;
-              }
+            // if (payload.files) {
+            //   const fileType = payload.file.type;
+            //   if (fileType === "application/pdf") {
+            //     formData.append("pdf", payload.file);
+            //   } else if (fileType.startsWith("image")) {
+            //     formData.append("image", payload.file);
+            //   } else {
+            //     reject({
+            //       error: "Invalid file type. Only PDF and images are allowed.",
+            //     });
+            //     return;
+            //   }
+            // }
+            if (payload.files && payload.files.length > 0) {
+              payload.files.forEach(file => {
+                formData.append("files", file);
+              });
             }
+
 
             // ✅ Use fetchEventSource for real-time streaming
             fetchEventSource(`${apiUrl}/ai-learning-search`, {
@@ -71,6 +77,7 @@ export const apiSlice = createApi({
                 Accept: "text/event-stream",
               },
               body: formData,
+              openWhenHidden: true,
               onopen(response) {
                 if (!response.ok) {
                   reject({ error: `HTTP error! status: ${response.status}` });
@@ -82,7 +89,7 @@ export const apiSlice = createApi({
                   // ✅ Update UI as new data arrives
                   result.answers += data.reply || "";
                   result.result_id =
-                  data.searched_result_id || result.result_id;
+                    data.searched_result_id || result.result_id;
                   result.chat_id = data.chat_id || data.saved_content_id || result.chat_id;
                   result.folder_id = data.folder_id || result.folder_id;
 
@@ -98,6 +105,8 @@ export const apiSlice = createApi({
                 resolve({ data: result });
               },
               onerror(err) {
+                console.error("SSE connection error:", err);
+                controller.abort(); // Abort the fetch request
                 reject({ error: `SSE failed: ${err.message}` });
               },
             });
@@ -148,6 +157,7 @@ export const apiSlice = createApi({
                 Accept: "text/event-stream",
               },
               body: formData,
+              openWhenHidden: true,
               onopen(response) {
                 if (!response.ok) {
                   reject({ error: `HTTP error! status: ${response.status}` });
@@ -231,6 +241,9 @@ export const apiSlice = createApi({
       query: () => "/folders/structure",
       providesTags: [{ type: "Folders", id: "LIST" }],
     }),
+    getAllPostedContent: builder.query({
+      query: () => "/content/posted",
+    }),
     getContentById: builder.mutation({
       query: (contentId) => ({
         url: "/content/retrieve",
@@ -254,6 +267,15 @@ export const apiSlice = createApi({
         body: { folder_id: folderId, new_name: newName },
       }),
       invalidatesTags: [{ type: "Folders", id: "LIST" }],
+    }),
+    updateFolderContent: builder.mutation({
+      query: ({ folder_id, files_to_delete }) => ({
+        url: '/update-folder-content',
+        method: 'PUT',
+        body: { folder_id: folder_id, files_to_delete: files_to_delete, }
+      }),
+      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+
     }),
     deleteFolderById: builder.mutation({
       query: (folderId) => ({
@@ -333,4 +355,6 @@ export const {
   useGetContentByIdMutation,
   useGetHealthHistoryQuery,
   useCreateHealthHistoryMutation,
+  useGetAllPostedContentQuery,
+  useUpdateFolderContentMutation,
 } = apiSlice;

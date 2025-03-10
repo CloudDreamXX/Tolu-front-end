@@ -1,8 +1,8 @@
 import React from 'react';
 
-const FileCard = ({ title, description, Icon }) => {
+const FileCard = ({ title, description, Icon ,openAddFileModal }) => {
     return (
-        <div className="w-full justify-between flex px-6 py-3 items-center border-2 border-[#008FF614] bg-white shadow-[#7090B024] rounded-2xl">
+        <div onClick={openAddFileModal} className="w-full justify-between flex px-6 py-3 items-center border-2 border-[#008FF614] bg-white shadow-[#7090B024] rounded-2xl">
             <div>
                 <div>
                     <p className="text-lg font-medium text-[#1D1D1FB2]">{title}</p>

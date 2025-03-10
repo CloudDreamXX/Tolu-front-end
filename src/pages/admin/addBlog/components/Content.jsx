@@ -20,7 +20,7 @@ const Content = ({
     editFolderHandler,
     deleteFolderHandler
 }) => {
-    const isOpen = openFolders[level] === folder.id;
+    const isOpen = openFolders[level] && openFolders[level].id === folder.id;
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState(folder.name);
     const inputRef = useRef(null);
@@ -103,10 +103,11 @@ console.log("level",level)
         <div className="relative">
             {/* Folder Name */}
             <div
-                className={`flex justify-between items-center cursor-pointer rounded-lg pl-2 mb-2 ${isOpen ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-200 hover:bg-gray-400"
-                    }`}
+                className={`flex justify-between items-center cursor-pointer rounded-lg pl-2 mb-2 ${
+                    isOpen ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-200 hover:bg-gray-400"
+                }`}
             >
-                <div onClick={() => toggleFolder(folder.id, level)} className="flex gap-2 w-full p-2  items-center">
+                <div onClick={() => toggleFolder(folder, level)} className="flex gap-2 w-full p-2  items-center">
                     {/* Folder Icon */}
                     <span className="text-gray-700">
                         {isOpen ? <FaRegFolderOpen /> : <FaRegFolder />}
@@ -119,16 +120,23 @@ console.log("level",level)
                             className="p-1 border rounded w-full"
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
-                            onBlur={() => handleEdit(folder.id)} // Pass folder id on blur
-                            onKeyDown={(e) => e.key === "Enter" && handleEdit(folder.id)} // Pass folder id on Enter key press
+                            onBlur={() => handleEdit(folder.id)}
+                            onKeyDown={(e) => e.key === "Enter" && handleEdit(folder.id)}
                             autoFocus
                         />
                     ) : (
                         <span className="truncate w-[100px]">{folder.name}</span>
                     )}
-                </div>
-                <FolderItem content={folder} onDelete={handleDelete} onAdd={addArticlesHandler} setIsEditing={setIsEditing} />
 
+                </div>
+                {/* {!level == 0 && ( */}
+                    <FolderItem
+                        content={folder}
+                        onDelete={handleDelete}
+                        onAdd={() => dispatch(setAddFolderData({ folderId: folder.id, add: true }))}
+                        setIsEditing={setIsEditing}
+                    />
+                {/* )} */}
             </div>
 
             {isOpen && (
@@ -144,7 +152,9 @@ console.log("level",level)
                                     folder={subfolder}
                                     openFolders={openFolders}
                                     toggleFolder={toggleFolder}
-                                    addArticlesHandler={addArticlesHandler}
+                                    addArticlesHandler={() =>
+                                        dispatch(setAddFolderData({ folderId: subfolder.id, add: true }))
+                                    }
                                     level={level + 1} // Increase level for nested folders
                                     activeContextMenu={activeContextMenu}
                                     setActiveContextMenu={setActiveContextMenu}
@@ -157,8 +167,11 @@ console.log("level",level)
 
                             {/* Render Files Inside Folder */}
                             {folder.content?.map((content, index) => (
-                                <div key={index} className="ml-6  w-40 cursor-pointer hover:bg-gray-200 text-gray-700 text-sm">
-                                    <SaveContentItems content={content} folderId={folder.id}/>
+                                <div
+                                    key={index}
+                                    className="ml-6 w-40 cursor-pointer hover:bg-gray-200 text-gray-700 text-sm"
+                                >
+                                    <SaveContentItems content={content} folderId={folder.id} />
                                 </div>
                             ))}
                         </>

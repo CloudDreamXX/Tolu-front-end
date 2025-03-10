@@ -5,7 +5,7 @@ import { PiChatsCircle } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
 import Modal from '../../../components/modals/Modal';
 import Button from '../../../components/small/Button';
-import { useAddNewFolderMutation, useAiLearningSearchMutation, useDeleteContentByIdMutation, useDeleteFolderByIdMutation, useEditContentByIdMutation, useEditFolderByIdMutation, useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
+import { useAddNewFolderMutation, useAiLearningSearchMutation, useDeleteContentByIdMutation, useDeleteFolderByIdMutation, useEditContentByIdMutation, useEditFolderByIdMutation, useGetAllPostedContentQuery, useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
 // import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
 import { setAddFolderData, setDetailResponse } from '../../../redux/slice/sidebarSlice';
 import QuestionAnswer from '../../screens/chat/components/QuestionAnswer';
@@ -22,6 +22,9 @@ import { SketchPicker } from "react-color";
 import FolderWithColorPicker from '../../../components/FolderWithColorPicker';
 import EditFolder from '../../../components/EditFolder';
 import HtmlContent from '../../../components/htmlToText';
+import AddFiles from './components/AddFiles';
+import { FaTimes } from 'react-icons/fa'; // Import the close icon from react-icons
+import AddInstruction from './components/AddInstruction';
 
 
 // import Input from "../small/Input";
@@ -31,18 +34,25 @@ function AddBlog() {
     const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
     const [addFolder, setAddNewFolder] = useState('');
     const [addFolderDescription, setAddFolderDescription] = useState('');
-    const [messages, setMessages] = useState([]);
     const [instruction, setInstruction] = useState(null);
     const [inputValue, setInputValue] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFile, setSelectedFile] = useState([]);
+    const [editFolderModalOpen, setEditFolderModalOpen] = useState(false);
+    const editFolderModal = () => setEditFolderModalOpen(true);
+    const closeEditFolderModal = () => setEditFolderModalOpen(false);
+    const folderName = useSelector((state) => state.sidebar.folderName);
+    const [addFilesModal, setAddFilesModal] = useState(false);
     const [chats, setChats] = useState([]);
-    const [text, setText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [isChat, setIsChat] = useState(false)
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [topicModalOpen, setTopicModalOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
+    const userType = JSON.parse(localStorage.getItem("userType"));
+    const navigate = useNavigate();
     const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
     const detailResponse = useSelector((state) => state.sidebar.detailResponse);
-
     useEffect(() => {
         if (!detailResponse) {
             setChats([])
@@ -63,48 +73,15 @@ function AddBlog() {
     const [addNewFolder, { isLoading: addNewFolderLoading }] = useAddNewFolderMutation();
     const [aiLearningSearch] = useAiLearningSearchMutation();
     const { data: allFolders, refetch } = useGetFolderStructureQuery();
-    const [folderId, setFolderId] = useState("");
-    const [contentId, setContentId] = useState("");
-    const [newName, setNewName] = useState("");
     const [newTitle, setNewTitle] = useState("");
-    const [title, setTitle] = useState("");
-    const [editFolder] = useEditFolderByIdMutation();
-    const [deleteFolder] = useDeleteFolderByIdMutation();
     const [editContent] = useEditContentByIdMutation();
     const [deleteContent] = useDeleteContentByIdMutation();
-    // const dispatch = useDispatch();
     const location = useLocation();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(setDetailResponse(false));
     }, [location.pathname]); // Runs when the route (pathname) changes
-
-
-
-    const handleEditFolder = async (folderId) => {
-        if (newName.trim() !== folder.name) {
-
-            try {
-                await editFolder({ folderId, newName }).unwrap();
-                console.log("Folder renamed successfully");
-            } catch (error) {
-                console.error("Error renaming folder:", error);
-            }
-        }
-        // setIsEditing(false);
-        // setContextMenuPosition(null); // Close menu after edit
-        // setActiveContextMenu(null); // Reset active folder
-    };
-
-    const handleDeleteFolder = async () => {
-        try {
-            await deleteFolder(folderId).unwrap();
-            console.log("Folder deleted successfully");
-        } catch (error) {
-            console.error("Error deleting folder:", error);
-        }
-    };
-
 
 
     const handleEditContent = async () => {
@@ -133,11 +110,9 @@ function AddBlog() {
         }
     };
 
-    const dispatch = useDispatch();
-
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => {
-        dispatch(setAddFolderData({ folderId: null, add: false })); // Assuming you want to set the selected folder ID here
+        dispatch(setAddFolderData({ folderId: null, add: false }));
         ; setIsModalOpen(false)
     };
 
@@ -147,14 +122,11 @@ function AddBlog() {
         setInstruction(null);
     };
 
-
-    const lastItemRef = useRef(null);
+console.log("instruction",instruction)
 
     const handleInstructionChange = (e) => {
         setInstruction(e.target.value);
     };
-
-
     function findFolderById(folders, id) {
         // Check if folders is a valid array
         if (!Array.isArray(folders)) {
@@ -166,7 +138,6 @@ function AddBlog() {
             console.warn("Invalid folder id:", id);
             return null;
         }
-
         for (const folder of folders) {
             if (folder?.id === id) {
                 return folder; // Folder found
@@ -179,30 +150,39 @@ function AddBlog() {
         return null; // Folder not found
     }
 
-// Ensure allFolders and addNewFolderState exist and have the expected properties
-const folder =
-    addNewFolderState?.folderId
-        ? findFolderById(allFolders?.posted_topics || [], addNewFolderState.folderId) ||
-          findFolderById(allFolders?.saved_topics || [], addNewFolderState.folderId)
-        : null;
-const content = folder?.content ?? []; // Use an empty array if folder.content is undefined
+    const folder =
+        allFolders && addNewFolderState?.folderId
+            ? findFolderById(allFolders, addNewFolderState.folderId)
+            : null;
 
-useEffect(() => {
-    if (addNewFolderState?.folderId) {
-        const folderFromPosted = findFolderById(allFolders?.posted_topics || [], addNewFolderState.folderId);
-        const folderFromSaved = findFolderById(allFolders?.saved_topics || [], addNewFolderState.folderId);
-
-        if (folderFromPosted) {
+    useEffect(() => {
+        if (allFolders && addNewFolderState?.folderId) {
+            const folderFromPosted = findFolderById(allFolders, addNewFolderState.folderId);
             console.log("Found folder in posted_topics:", folderFromPosted);
-        } else if (folderFromSaved) {
-            console.log("Found folder in saved_topics:", folderFromSaved);
         } else {
-            console.warn("Folder not found in either posted_topics or saved_topics");
+            console.warn("Missing allFolders or addNewFolderState.folderId");
         }
-    } else {
-        console.warn("Missing addNewFolderState.folderId");
+    }, [allFolders, addNewFolderState]);
+
+    function findFolderByIdInAllTopics(allFolders, folderId) {
+        if (!allFolders || !folderId) {
+            console.warn("Invalid data or folderId", { allFolders, folderId });
+            return null;
+        }
+        // Search in posted_topics first
+        let folder = Array.isArray(allFolders.posted_topics)
+            ? findFolderById(allFolders.posted_topics, folderId)
+            : null;
+
+        // If not found, search in saved_topics
+        if (!folder && Array.isArray(allFolders.saved_topics)) {
+            folder = findFolderById(allFolders.saved_topics, folderId);
+        }
+        return folder;
     }
-}, [allFolders, addNewFolderState]);
+
+    const folderFound = findFolderByIdInAllTopics(allFolders, addNewFolderState.folderId);
+    const content = folderFound?.content ?? [];
 
     const addInstruction = () => {
         if (instruction.trim() !== '') {
@@ -211,18 +191,11 @@ useEffect(() => {
             if (instruction) {
                 localStorage.setItem('instruction', instruction);
             }
-
-
-            // Clear the input after adding
-
-
-            // Close the modal
             closeInstructionModal();
         }
     };
 
     const instructionslocal = localStorage.getItem('instruction');
-
 
     const handleFolderSubmit = async () => {
         // Check if folder name and folder id are provided
@@ -284,9 +257,13 @@ useEffect(() => {
             toast.error("Please enter a message before submitting.");
             return;
         }
+        // if (selectedFile && !["application/pdf", "image"].some(type => selectedFile.type.startsWith(type))) {
+        //     toast.error("Invalid file type. Only PDFs and images are allowed.");
+        //     return;
+        // }
 
-        if (selectedFile && !["application/pdf", "image"].some(type => selectedFile.type.startsWith(type))) {
-            toast.error("Invalid file type. Only PDFs and images are allowed.");
+        if (!selectedFile || selectedFile.size === 0) {
+            toast.error("File is empty or not provided.");
             return;
         }
 
@@ -299,8 +276,8 @@ useEffect(() => {
             dispatch(setDetailResponse(true));
             const { data } = await aiLearningSearch({
                 chat_message: { user_prompt: text, is_new: true, regenerate_id: null, instructions: instructionslocal },
-                file: selectedFile || null,
-                folder_id: addNewFolderState?.folderId || null,
+                files: selectedFile || null,
+                folder_id: folderFound?.id || null,
                 onMessage: (streamingText) => {
                     setChats((prevChats) => {
                         const updatedChats = [...prevChats];
@@ -338,8 +315,6 @@ useEffect(() => {
         }
     }, [addNewFolderState?.add]);
 
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [topicModalOpen, setTopicModalOpen] = useState(false);
     const handleCardClick = (item) => {
         setSelectedItem(item);
         setNewTitle(item.title);
@@ -347,13 +322,10 @@ useEffect(() => {
     };
     const clearTopicHandle = () => {
         setChats([])
+        dispatch(setDetailResponse(false));
     }
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
 
-    const userType = JSON.parse(localStorage.getItem("userType"));
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (userType && userType.role === "admin") {
@@ -368,12 +340,12 @@ useEffect(() => {
     }, [chats, dispatch, navigate]);
 
 
-
-    const [editFolderModalOpen, setEditFolderModalOpen] = useState(false);
-    const editFolderModal = () => setEditFolderModalOpen(true);
-    const closeEditFolderModal = () => setEditFolderModalOpen(false);
-
-
+    const openAddFileModal = () => {
+        setAddFilesModal(true);
+    }
+    const closeAddFilesModal = () => {
+        setAddFilesModal(false);
+    }
 
     return (
         <div className=''>
@@ -409,28 +381,14 @@ useEffect(() => {
                     />
                 </section>
             </Modal>
-
             <Modal className="w-[800px]" isOpen={isInstructionModalOpen} onClose={closeInstructionModal} title={<h1 className="text-xl font-bold">Add instructions</h1>}>
-                <textarea
-                    className="w-full mt-4 h-40 p-4 border rounded"
-                    placeholder="Enter personalize topic here..."
-                    value={instruction}
-                    onChange={handleInstructionChange}
+                <AddInstruction
+                    handleInstructionChange={handleInstructionChange}
+                    closeInstructionModal={closeInstructionModal}
+                    addInstruction={addInstruction}
+                    instruction={instruction}
                 />
-                <section className="flex justify-end gap-2 mt-4">
-                    <Button
-                        className={"!bg-[#8E8E8E] text-white "}
-                        text="Close"
-                        onClick={closeInstructionModal}
-                    />
-                    <Button
-                        className={"!bg-[#B6B6B6] text-[#1D1D1F99] "}
-                        text="Save instructions"
-                        onClick={addInstruction}
-                    />
-                </section>
             </Modal>
-
             <Modal
                 className="w-[500px] lg:w-[700px] max-h-[600px] custom-scroll overflow-auto"
                 isOpen={topicModalOpen}
@@ -476,17 +434,21 @@ useEffect(() => {
             <Modal className="w-[500px]" isOpen={editFolderModalOpen} onClose={closeEditFolderModal} title={<h1 className="text-xl font-bold">Edit Folder</h1>}>
                 <EditFolder folder={folder} closeEditFolderModal={closeEditFolderModal} />
             </Modal>
-
-            {/* Main Content */}
+            <Modal className="w-[500px]" isOpen={addFilesModal} onClose={closeAddFilesModal} title={<h1 className="text-xl font-bold">Add Files</h1>}>
+                <AddFiles
+                    fetchFile={folderFound?.file_names}
+                    folder={folderFound}
+                    setSelectedFile={setSelectedFile}
+                    selectedFile={selectedFile}
+                />
+            </Modal>
             {!detailResponse && (
-
                 <div className="w-full xs:px-4 md:px-36 flex-col h-full pt-10 flex justify-center items-center">
                     <section className="w-full flex justify-between  p-2 mb-5 items-start">
-                        <h1 className="text-3xl flex items-center gap-2 font-semibold">
+                        <h1 className="text-xl capitalize flex items-center gap-2 font-semibold">
                             <FolderWithColorPicker folderId={folder?.id} />
-                            {folder?.name || 'Select a folder'}
+                            {folderName?.toLowerCase() || 'Select a folder'}
                             <section className="cursor-pointer" onClick={editFolderModal}>
-
                                 <MdEdit className='text-primary text-base' />
                             </section>
                         </h1>
@@ -496,7 +458,6 @@ useEffect(() => {
                                 text="Clear Topics"
                                 onClick={clearTopicHandle}
                             />
-
                         </section>
                     </section>
                     <LibraryInput
@@ -508,23 +469,17 @@ useEffect(() => {
                         setSelectedFile={setSelectedFile}
                         selectedFile={selectedFile}
                         isLoading={isLoading} // Can be set to `true` when processing
+                        fetchFile={folderFound?.file_names}
+                        folder={folderFound}
+
                     />
-                    {/* {chats.length > 0 && (
-
-                        <section className='w-full  pb-2 mt-4 custom-scroll overflow-auto'>
-
-                            {chats.map((chat, i) => (
-                                <QuestionAnswer key={i} setIsAdmin={setIsAdmin} isAdmin={isAdmin} chat={chat} lastItemRef={i === chats.length - 1 ? lastItemRef : null} />
-                            ))}
-                        </section>
-                    )} */}
-
-                    {/* File Cards */}
                     <div className="flex  h-30 xs:flex-col sm:flex-col md:flex-row gap-4 mt-7  w-full">
-                        <section className="w-full cursor-pointer">
-                            <div onClick={handleFileCardClick}>
+                        <section className="w-full  cursor-pointer">
+                            <div
+                            >
                                 <FileCard
-                                    title="Add files"
+                                    openAddFileModal={openAddFileModal}
+                                    title="Add Files"
                                     description="Increase the accuracy for the AI response by adding files"
                                     Icon={CgFileAdd}
                                 />
@@ -535,17 +490,14 @@ useEffect(() => {
                                 onChange={handleFileChange}
                                 style={{ display: 'none' }}
                             />
-                            {selectedFile && <p>Selected File: {selectedFile.name}</p>}
                         </section>
                         <section className='w-full cursor-pointer' onClick={openInstructionModal}>
                             <FileCard
                                 title="Instructions"
-                                description={isAdmin && "Insert your instructions to refine the AI response" || !isAdmin && "Personalize your content using client data"}
+                                description={isAdmin && "Insert your instructions to refine the AI response" || !isAdmin && "Insert your instructions to refine the AI response"}
                             />
                         </section>
                     </div>
-
-                    {/* Info Cards Section */}
                     <section className="w-full pl-4 mt-7 items-start justify-start">
                         <section className="w-full flex justify-between items-center">
                             <h2 className="text-base font-semibold text-center">
@@ -553,7 +505,7 @@ useEffect(() => {
                             </h2>
                         </section>
                         <section className="w-full mt-2 space-y-6 pt-6">
-                            {(!folder?.content?.length) ? (
+                            {(!folderFound?.content?.length) ? (
                                 <div className="ml-6 text-gray-500 text-lg font-bold">No topics available</div>
                             ) : (
                                 <>
@@ -577,18 +529,14 @@ useEffect(() => {
                     </section>
                 </div>
             )}
-
             {detailResponse && (
                 <>
                     <section className='h-[calc(100vh-90px)] w-full flex flex-col items-center'>
                         <section className="h-[90%] custom-scroll w-full mb-2 overflow-auto">
-
                             {chats.map((chat, i) => (
-
                                 <DetailResponse key={i} setIsAdmin={setIsAdmin} chat={chat} removeChat={removeChat} updateChat={updateChat} />
                             ))}
                         </section>
-
                         <section className='w-full'>
                             <LibraryInput
                                 placeholder="Enter text or upload a file"
@@ -599,10 +547,11 @@ useEffect(() => {
                                 setSelectedFile={setSelectedFile}
                                 selectedFile={selectedFile}
                                 isLoading={isLoading} // Can be set to `true` when processing
+                                fetchFile={folderFound?.file_names}
+                                folder={folderFound}
                             />
                         </section>
                     </section>
-
                 </>
             )}
         </div>
