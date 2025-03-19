@@ -77,14 +77,14 @@ const LoginForm = () => {
           name="password"
           onChange={formDataChangeHandler}
         />
-        <div class="flex items-center justify-between  w-full">
-          <label class="flex items-center space-x-2">
+        <div className="flex items-center justify-between  w-full">
+          <label className="flex items-center space-x-2">
             <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"></input>
-            <span class="text-gray-700">Remember Me</span>
+            <span className="text-gray-700">Remember Me</span>
           </label>
         </div>
         <section className="flex w-full justify-end">
-          <a href="#" class="text-blue-600 hover:underline">Forgot Password?</a>
+          <a href="#" className="text-blue-600 hover:underline">Forgot Password?</a>
         </section>
         <Button text="Login" type="submit" width="w-full" />
       </form>

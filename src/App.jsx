@@ -23,6 +23,11 @@ const Home = lazy(() => import("./pages/screens/Home"));
 const CompleteProfile = lazy(() => import("./pages/screens/completeProfile/CompleteProfile"));
 const MySpace = lazy(() => import("./pages/user/mySpace/MySpace"));
 
+// new pages
+const Blog = lazy(() => import("./pages/admin/Blog"));
+const Folder = lazy(() => import("./pages/admin/Folder"));
+const BlogLayout = lazy(() => import("./layout/BlogLayout"));
+
 // A separate component to handle routes and listen for location changes
 function AppRoutes() {
   const location = useLocation();
@@ -92,6 +97,20 @@ function AppRoutes() {
         <Route path="/admin" element={<Admin />}>
           <Route index element={<AddBlog />} />
           <Route path="library-topic-details" element={<LibraryTopicDetails />} />
+        </Route>
+      </Route>
+      
+      <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+        <Route path="/admin" element={<Admin />}>
+          <Route index element={<AddBlog />} />
+          <Route path="library-topic-details" element={<LibraryTopicDetails />} />
+        </Route>
+      </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+        <Route path="/admin2" element={<BlogLayout />}>
+          <Route index element={<Blog />} />
+          <Route path="folder/:folderId" element={<Folder />} />
         </Route>
       </Route>
 
