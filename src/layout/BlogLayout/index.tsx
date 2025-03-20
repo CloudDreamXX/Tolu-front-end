@@ -2,7 +2,7 @@ import { Outlet, useParams } from 'react-router-dom';
 import BlogTitle from '../../shared/ui/BlogTitle';
 import { useGetFolderStructureQuery } from '../../redux/apis/apiSlice';
 import { findPublishedContent } from '../../utils/excludePublishedContent';
-import { findFolderById } from '../../utils/findFolderById';
+import { findFolderById } from '../../utils/findById';
 import AdminAside from "../../pages/admin/layout/adminAside/AdminAside";
 import AdminHeader from "../../pages/admin/layout/header/AdminHeader";
 

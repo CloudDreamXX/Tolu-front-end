@@ -24,9 +24,10 @@ const CompleteProfile = lazy(() => import("./pages/screens/completeProfile/Compl
 const MySpace = lazy(() => import("./pages/user/mySpace/MySpace"));
 
 // new pages
-const Blog = lazy(() => import("./pages/admin/Blog"));
+const LibraryAdmin = lazy(() => import("./pages/admin/Library"));
 const Folder = lazy(() => import("./pages/admin/Folder"));
 const BlogLayout = lazy(() => import("./layout/BlogLayout"));
+const Topic = lazy(() => import("./pages/admin/Topic"));
 
 // A separate component to handle routes and listen for location changes
 function AppRoutes() {
@@ -99,18 +100,19 @@ function AppRoutes() {
           <Route path="library-topic-details" element={<LibraryTopicDetails />} />
         </Route>
       </Route>
-      
-      <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-        <Route path="/admin" element={<Admin />}>
-          <Route index element={<AddBlog />} />
-          <Route path="library-topic-details" element={<LibraryTopicDetails />} />
+
+      <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
+        <Route path="/admin2" element={<BlogLayout />}>
+          <Route index element={<LibraryAdmin />} />
+          <Route path="folder/:folderId" element={<Folder />} />
         </Route>
       </Route>
 
-      <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+      <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
         <Route path="/admin2" element={<BlogLayout />}>
-          <Route index element={<Blog />} />
+          <Route index element={<LibraryAdmin />} />
           <Route path="folder/:folderId" element={<Folder />} />
+          <Route path="topic/:topicId" element={<Topic />} />
         </Route>
       </Route>
 

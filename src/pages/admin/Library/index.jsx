@@ -1,34 +1,33 @@
-import { useParams } from 'react-router-dom';
 import DynamicList from '../../../shared/ui/DynamicList';
 import { useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
 import { findPublishedContent } from '../../../utils/excludePublishedContent';
-import { findFolderById } from '../../../utils/findFolderById';
+import { mock } from './mock';
 
-function Folder() {
-    const { folderId } = useParams();
+function Library() {
     const { data: allFolders } = useGetFolderStructureQuery();
-    const publishedContent = findPublishedContent(allFolders);
-    const folder = findFolderById(publishedContent, folderId);
+    const publishedContent = findPublishedContent(allFolders || mock);
+    const { subfolders, content } = publishedContent || {};
 
     return (
         <div className="flex flex-col gap-6">
             <DynamicList 
                 title="Subfolders" 
-                items={folder?.subfolders || []} 
+                items={subfolders || []} 
                 initialCount={8} 
                 increment={4}
-                type="inside"
-                linkTo={`/admin2/folder`}
+                type="main"
+                linkTo="/admin2/folder"
             />
             <DynamicList 
-                title="Content" 
-                items={folder?.content || []}
+                title="Content Category" 
+                items={content || []}
                 initialCount={6} 
                 increment={3}
-                type="inside"
+                type="main"
+                linkTo="/admin2/topic"
             />
         </div>
     );
 }
 
-export default Folder;
+export default Library;

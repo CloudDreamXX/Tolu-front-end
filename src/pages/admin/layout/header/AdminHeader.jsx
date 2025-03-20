@@ -114,8 +114,8 @@ const AdminHeader = () => {
               />
             </div>
             <div>
-              <p className="text-sm font-bold text-black">{user.name || "Name"}</p>
-              <p className="text-[9px] font-normal text-black">{user.email || "Email"}</p>
+              <p className="text-sm font-bold text-black">{user?.name || "Name"}</p>
+              <p className="text-[9px] font-normal text-black">{user?.email || "Email"}</p>
             </div>
             <div
               className="flex items-center gap-2 text-[#CBCBCB] text-2xl font-semibold cursor-pointer"

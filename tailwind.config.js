@@ -28,7 +28,7 @@ export default {
       fontSize: {
         'h1': ['32px', { lineHeight: '1.25', fontWeight: '700' }],
         'h2': ['28px', { lineHeight: '1.25', fontWeight: '700' }],
-        'h3': ['24px', { lineHeight: '1.25', fontWeight: '700' }],
+        'h3': ['20px', { lineHeight: '1.25', fontWeight: '700' }],
         'h4': ['20px', { lineHeight: '1.25', fontWeight: '700' }],
         'h5': ['16px', { lineHeight: '1.25', fontWeight: '700' }],
         'p': ['14px', { lineHeight: '1.5', fontWeight: '500' }],
