@@ -10,14 +10,10 @@ export const findFolderById = (folder, id) => {
 
 export const findTopicById = (folder, id) => {
     if (!folder) return null;
-
-    // Проверяем content
     if (folder.content) {
         const foundTopic = folder.content.find(item => item.id === id);
         if (foundTopic) return foundTopic;
     }
-
-    // Проверяем subfolders рекурсивно
     if (folder.subfolders) {
         for (let subfolder of folder.subfolders) {
             const found = findTopicById(subfolder, id);
@@ -27,4 +23,3 @@ export const findTopicById = (folder, id) => {
 
     return null;
 };
-
