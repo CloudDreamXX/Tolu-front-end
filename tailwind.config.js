@@ -13,6 +13,7 @@ export default {
         accent: '#008FF6',
         stroke: '#DBDEE1',
         contentBg: '#DBDEE1',
+        error: '#FF0000',
       },
       backgroundImage: {
         gradientText: "linear-gradient(90deg, #008FF6 0%, #926DFB 53.5%, #E34ECB 81.5%, #F44F16 100%)",
@@ -27,7 +28,7 @@ export default {
       },
       fontSize: {
         'h1': ['32px', { lineHeight: '1.25', fontWeight: '700' }],
-        'h2': ['28px', { lineHeight: '1.25', fontWeight: '700' }],
+        'h2': ['24px', { lineHeight: '1.25', fontWeight: '700' }],
         'h3': ['20px', { lineHeight: '1.25', fontWeight: '700' }],
         'h4': ['20px', { lineHeight: '1.25', fontWeight: '700' }],
         'h5': ['16px', { lineHeight: '1.25', fontWeight: '700' }],

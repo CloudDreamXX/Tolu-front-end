@@ -4,6 +4,8 @@ import { findPublishedContent } from '../../../utils/excludePublishedContent';
 import { findTopicById } from '../../../utils/findById';
 import { mock } from '../Library/mock';
 import EmptyBlock from '../../../shared/ui/EmptyBlock';
+import TopicMetric from '../../../shared/ui/TopicMetric';
+import DocsTable from '../../../shared/ui/DocsTable';
 
 function Topic() {
     const { topicId } = useParams();
@@ -13,13 +15,15 @@ function Topic() {
 
     if (!topic) {
         return <EmptyBlock />;
-    }
+    } 
 
     return (
-        <div className="p-6 flex flex-col gap-6 bg-white shadow rounded-md">
-            <h1 className="text-2xl font-bold">{topic.title}</h1>
-            <p className="text-sm text-gray-500">Created: {new Date(topic.created_at).toLocaleDateString()}</p>
-            <div className="prose max-w-full" dangerouslySetInnerHTML={{ __html: topic.content }} />
+        <div className='flex flex-col gap-4'>
+            <TopicMetric date={topic.created_at} author={topic.creator_id} />
+            {/* {topic?.files?.lenght > 0 &&
+                <DocsTable />
+            } */}
+            <DocsTable />
         </div>
     );
 }

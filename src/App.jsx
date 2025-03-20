@@ -28,6 +28,7 @@ const LibraryAdmin = lazy(() => import("./pages/admin/Library"));
 const Folder = lazy(() => import("./pages/admin/Folder"));
 const BlogLayout = lazy(() => import("./layout/BlogLayout"));
 const Topic = lazy(() => import("./pages/admin/Topic"));
+const Document = lazy(() => import("./pages/admin/Document"));
 
 // A separate component to handle routes and listen for location changes
 function AppRoutes() {
@@ -113,6 +114,7 @@ function AppRoutes() {
           <Route index element={<LibraryAdmin />} />
           <Route path="folder/:folderId" element={<Folder />} />
           <Route path="topic/:topicId" element={<Topic />} />
+          <Route path="document/:docId" element={<Document />} />
         </Route>
       </Route>
 

@@ -4,6 +4,7 @@ import { useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
 import { findPublishedContent } from '../../../utils/excludePublishedContent';
 import { findFolderById } from '../../../utils/findById';
 import EmptyBlock from '../../../shared/ui/EmptyBlock';
+import DocsTable from '../../../shared/ui/DocsTable';
 import { mock } from '../Library/mock';
 
 function Folder() {
@@ -11,6 +12,8 @@ function Folder() {
     const { data: allFolders } = useGetFolderStructureQuery();
     const publishedContent = findPublishedContent(allFolders || mock);
     const folder = findFolderById(publishedContent, folderId);
+    console.log(folder.file_count);
+    
 
     return (
         <div className="flex flex-col gap-6">
@@ -33,6 +36,9 @@ function Folder() {
                     type="inside"
                     linkTo="/admin2/topic"
                 />
+            }
+            {folder.file_count > 0 &&
+                <DocsTable />
             }
             {folder?.subfolders.length === 0 && folder?.content.length === 0 &&
                 <EmptyBlock />
