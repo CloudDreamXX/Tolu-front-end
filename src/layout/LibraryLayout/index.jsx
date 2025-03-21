@@ -6,6 +6,7 @@ import { findPublishedContent } from '../../utils/excludePublishedContent';
 import { getTitleData } from '../../utils/findById';
 import AdminAside from "../../pages/admin/layout/adminAside/AdminAside";
 import AdminHeader from "../../pages/admin/layout/header/AdminHeader";
+import HealthForm from '../../features/healthForm/components/HealthForm';
 
 function LibraryLayout() {
     const { folderId, topicId } = useParams();
@@ -13,7 +14,7 @@ function LibraryLayout() {
     const { data: allFolders } = useGetFolderStructureQuery();
     const publishedContent = findPublishedContent(allFolders);
     const isNewDocRoute = location.pathname.includes('/newdoc');
-
+    const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState("Published Content");
     const [description, setDescription] = useState("Repository for posted and published content");
     const [breadcrumbs, setBreadcrumbs] = useState([{ name: "Posted Topics", path: "/admin2" }]);
@@ -41,6 +42,7 @@ function LibraryLayout() {
                     </div>
                 </div>
             </div>
+           <HealthForm isOpen={isOpen} />
         </section>
     );
 }
