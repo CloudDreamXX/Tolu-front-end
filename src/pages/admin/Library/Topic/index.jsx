@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
-import { useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
-import { findPublishedContent } from '../../../utils/excludePublishedContent';
-import { findTopicById } from '../../../utils/findById';
-import { mock } from '../Library/mock';
-import EmptyBlock from '../../../shared/ui/EmptyBlock';
-import TopicMetric from '../../../shared/ui/TopicMetric';
-import DocsTable from '../../../shared/ui/DocsTable';
+import { useGetFolderStructureQuery } from '../../../../redux/apis/apiSlice';
+import { findPublishedContent } from '../../../../utils/excludePublishedContent';
+import { findTopicById } from '../../../../utils/findById';
+import { mock } from '../../Library/mock';
+import EmptyBlock from '../../../../shared/ui/EmptyBlock';
+import TopicMetric from '../../../../shared/ui/TopicMetric';
+import DocsTable from '../../../../shared/ui/DocsTable';
 
 function Topic() {
     const { topicId } = useParams();

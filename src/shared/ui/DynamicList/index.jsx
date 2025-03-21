@@ -13,13 +13,11 @@ function DynamicList({
     initialCount, 
     increment, 
     type,
-    linkTo = ''
+    linkTo
 }) {
     const [visibleCount, setVisibleCount] = useState(initialCount);
     const visibleItems = loadMoreItems(items, visibleCount, 0);
-    console.log(visibleItems);
-    
-    
+
     return (
         <div className="flex flex-col w-full gap-6">
             <div className="flex w-full justify-between items-center">
@@ -30,19 +28,11 @@ function DynamicList({
                 "grid gap-4",
                 title === "Subfolders" ? "grid-cols-4" : "grid-cols-3"
             )}>
-                {title === "Subfolders" ? (
-                    visibleItems.map((item) => (
-                        <Link key={item.id} to={`/admin2/folder/${item.id}`}>
-                            <FolderCard item={item} />
-                        </Link>
-                    ))
-                ) : (
-                    visibleItems.map((item) => (  
-                        <Link key={item.id} to={`/admin2/topic/${item.id}`}>
-                            <Card item={item} />
-                        </Link>
-                    ))
-                )}
+                {visibleItems.map((item) => (
+                    <Link key={item.id} to={typeof linkTo === "function" ? linkTo(item) : linkTo}>
+                        {title === "Subfolders" ? <FolderCard item={item} /> : <Card item={item} />}
+                    </Link>
+                ))}
             </div>
             {visibleCount < items.length && (
                 <div className='w-full flex justify-end'>

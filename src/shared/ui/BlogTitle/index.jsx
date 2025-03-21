@@ -1,18 +1,31 @@
+import { Link } from 'react-router-dom';
 import { Title } from "../Title";
 import { TbEdit } from "react-icons/tb";
 
-function BlogTitle({ title }) {
+function BlogTitle({ title, description, breadcrumbs }) {
   return (
     <div className="flex flex-col items-start gap-2">
+        {breadcrumbs.length > 0 && (
+            <nav aria-label="breadcrumb">
+                <ol className="flex items-center gap-2">
+                    {breadcrumbs.map((crumb, index) => (
+                        <li key={index} className="flex items-center gap-2">
+                            {crumb.path ? (
+                                <Link to={crumb.path} className="text-blue-500">{crumb.name}</Link>
+                            ) : (
+                                <span>{crumb.name}</span>
+                            )}
+                            {index < breadcrumbs.length - 1 && <span>/</span>}
+                        </li>
+                    ))}
+                </ol>
+            </nav>
+        )}
         <div className="flex items-center gap-2">
             <TbEdit className="w-9 h-9 cursor-pointer" />
             <Title title={title} />
         </div>
-        <p className="text-p">
-            {title === 'Published Content'
-                ? "All content moved to this folder will be published in the library and visible to all or selected readers. You cannot edit your content once it is moved to this folder."
-                : "This folder contains specific categorized content. You can browse subfolders or view individual files."}
-        </p>
+        {description && <p className="text-p">{description}</p>}
     </div>
   );
 }

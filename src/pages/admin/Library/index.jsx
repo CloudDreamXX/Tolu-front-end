@@ -16,7 +16,7 @@ function Library() {
                 initialCount={8} 
                 increment={4}
                 type="main"
-                linkTo="/admin2/folder"
+                linkTo={(item) => `/admin2/folder/${item.id}`}
             />
             <DynamicList 
                 title="Content Category" 
@@ -24,7 +24,7 @@ function Library() {
                 initialCount={6} 
                 increment={3}
                 type="main"
-                linkTo="/admin2/topic"
+                linkTo={(item) => `/admin2/folder/${item.folderId}/topic/${item.id}`}
             />
         </div>
     );

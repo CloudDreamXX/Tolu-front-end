@@ -25,10 +25,10 @@ const MySpace = lazy(() => import("./pages/user/mySpace/MySpace"));
 
 // new pages
 const LibraryAdmin = lazy(() => import("./pages/admin/Library"));
-const Folder = lazy(() => import("./pages/admin/Folder"));
+const Folder = lazy(() => import("./pages/admin/Library/Folder"));
 const BlogLayout = lazy(() => import("./layout/BlogLayout"));
-const Topic = lazy(() => import("./pages/admin/Topic"));
-const Document = lazy(() => import("./pages/admin/Document"));
+const Topic = lazy(() => import("./pages/admin/Library/Topic"));
+const Document = lazy(() => import("./pages/admin/Library/Document"));
 
 // A separate component to handle routes and listen for location changes
 function AppRoutes() {
@@ -113,7 +113,7 @@ function AppRoutes() {
         <Route path="/admin2" element={<BlogLayout />}>
           <Route index element={<LibraryAdmin />} />
           <Route path="folder/:folderId" element={<Folder />} />
-          <Route path="topic/:topicId" element={<Topic />} />
+          <Route path="folder/:folderId/topic/:topicId" element={<Topic />} />
           <Route path="document/:docId" element={<Document />} />
         </Route>
       </Route>
