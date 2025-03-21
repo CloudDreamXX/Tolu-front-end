@@ -23,3 +23,22 @@ export const findTopicById = (folder, id) => {
 
     return null;
 };
+
+export const getBreadcrumbs = (publishedContent, folderId, topicId, docId) => {
+    let breadcrumbs = [{ name: "Library", path: "/admin2" }];
+  
+    if (!publishedContent) return breadcrumbs;
+
+    const folder = folderId ? findFolderById(publishedContent, folderId) : null;
+    const topic = topicId ? findTopicById(publishedContent, topicId) : null;
+
+    if (folder) {
+        breadcrumbs.push({ name: folder.name, path: `/admin2/folder/${folderId}` });
+    }
+
+    if (topic) {
+        breadcrumbs.push({ name: topic.title, path: `/admin2/folder/${folderId}/topic/${topicId}` });
+    }
+
+    return breadcrumbs;
+};

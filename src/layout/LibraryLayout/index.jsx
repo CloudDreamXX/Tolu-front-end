@@ -6,14 +6,16 @@ import { findFolderById, findTopicById } from '../../utils/findById';
 import AdminAside from "../../pages/admin/layout/adminAside/AdminAside";
 import AdminHeader from "../../pages/admin/layout/header/AdminHeader";
 
-function BlogLayout() {
+function LibraryLayout() {
     const { folderId, topicId } = useParams();
     const { data: allFolders } = useGetFolderStructureQuery();
     const publishedContent = findPublishedContent(allFolders);
+    const isNewDocRoute = location.pathname.includes('/newdoc');
 
     let title = "Published Content";
     let description = "Repository for posted and published content";
     let breadcrumbs = [{ name: "Posted Topics", path: "/admin2" }];
+    let titleType = "";
 
     if (folderId) {
         const folder = findFolderById(publishedContent, folderId);
@@ -21,6 +23,7 @@ function BlogLayout() {
             title = folder.name;
             description = folder.description || "";
             breadcrumbs.push({ name: folder.name, path: `/admin2/folder/${folderId}` });
+            titleType = "folder";
         }
     }
 
@@ -30,6 +33,7 @@ function BlogLayout() {
             title = topic.title;
             description = "";
             breadcrumbs.push({ name: topic.title });
+            titleType = "topic";
         }
     }
 
@@ -42,7 +46,7 @@ function BlogLayout() {
                 <div className="w-[100%] h-screen bg-contentBg overflow-y-scroll custom-scroll">
                     <AdminHeader />
                     <div className="p-4 lg:p-8 w-full flex flex-col gap-6">
-                        <BlogTitle title={title} description={description} breadcrumbs={breadcrumbs} />
+                        {!isNewDocRoute && <BlogTitle title={title} titleType={titleType} description={description} breadcrumbs={breadcrumbs} />}
                         <Outlet />
                     </div>
                 </div>
@@ -51,4 +55,4 @@ function BlogLayout() {
     );
 }
 
-export default BlogLayout;
+export default LibraryLayout;

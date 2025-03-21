@@ -3,6 +3,7 @@ import { FiPlus } from "react-icons/fi";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { BsStars } from "react-icons/bs";
 import { HiOutlineUpload } from "react-icons/hi";
+import { LuFolderInput } from "react-icons/lu";
 
 function Button({ name, icon, onClick, type }) {
     return (
@@ -10,8 +11,8 @@ function Button({ name, icon, onClick, type }) {
             className={classnames(
                 "flex items-center justify-center px-8 py-3 rounded-full",
                 {
-                    "bg-btnBg text-accent": type === "action" || type === "create" || type === "upload",
-                    "bg-accent text-white": type === "primary",
+                    "bg-btnBg text-accent": type === "action" || type === "create" || type === "upload" || type === "move",
+                    "bg-accent text-white": type === "primary" || type === "unpublish",
                     "bg-transparent text-gray-500": type === "load",
                 }
             )}
@@ -22,6 +23,8 @@ function Button({ name, icon, onClick, type }) {
             {type === "load" && <FiPlus className="mr-2" />}
             {type === "create" && <BsStars className="mr-2" />}
             {type === "upload" && <HiOutlineUpload className="mr-2" />}
+            {type === "move" && <LuFolderInput className="mr-2" />}
+            {type === "unpublish" && ''}
             {name}
         </button>
     );

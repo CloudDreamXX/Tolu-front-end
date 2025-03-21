@@ -1,13 +1,19 @@
-import DocActions from "../../../shared/ui/DocActions";
+import DocActions from "../../../../shared/ui/DocActions";
+import { mock } from "./mock";
+import LibraryInput from '../../../user/library/components/LibraryInput';
 
 function Document() {
   return (
     <div className="w-full flex flex-row-reverse gap-6 h-full">
       <DocActions />
-      <div className="w-full flex flex-col gap-2">
-        <div className="bg-white w-full p-6 h-full">
-          text
+      <div className="flex flex-col gap-2">
+        <div className="w-full flex flex-col gap-6 bg-white p-6 h-full rounded-2xl">
+          <h1 className="text-h1">Understanding menopause symptoms</h1>
+          <div className="" dangerouslySetInnerHTML={{ __html: mock }} />
         </div>
+        <LibraryInput
+          placeholder="Ask anything..."
+        />
       </div>
     </div>
   );

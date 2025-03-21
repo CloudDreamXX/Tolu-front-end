@@ -12,6 +12,7 @@ export default {
         btnBg: '#008FF610',
         accent: '#008FF6',
         stroke: '#DBDEE1',
+        stroke2: '#E8EAEC',
         contentBg: '#DBDEE1',
         error: '#FF0000',
       },
