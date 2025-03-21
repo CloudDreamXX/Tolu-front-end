@@ -27,7 +27,7 @@ function Select({ text, options, onSelect }) {
                 )} />
             </button>
             {isOpen && (
-                <ul className="absolute w-full mt-2 bg-white border rounded-lg">
+                <ul className="absolute w-full mt-2 bg-white border rounded-lg z-10">
                     {options.map((option, index) => (
                         <li
                             key={index}
