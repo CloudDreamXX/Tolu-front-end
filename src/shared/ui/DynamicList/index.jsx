@@ -20,13 +20,13 @@ function DynamicList({
 
     return (
         <div className="flex flex-col w-full gap-6">
-            <div className="flex w-full justify-between items-center">
+            <div className="flex flex-col sm:flex-row w-full justify-between sm:items-center">
                 <h2 className="text-h2">{title}</h2>
                 <ListActions isSearch={type === 'main'} type={type} />
             </div>
             <div className={classNames(
                 "grid gap-4",
-                title === "Subfolders" ? "grid-cols-4" : "grid-cols-3"
+                title === "Subfolders" ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
             )}>
                 {visibleItems.map((item) => (
                     <Link key={item.id} to={typeof linkTo === "function" ? linkTo(item) : linkTo}>

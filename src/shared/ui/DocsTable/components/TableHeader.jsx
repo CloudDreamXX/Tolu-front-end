@@ -11,9 +11,9 @@ function TableHeader() {
         : "/admin2/library/new-doc";
 
     return (
-        <div className="w-full justify-between flex items-center">
+        <div className="w-full justify-between flex flex-col sm:flex-row sm:items-center">
             <h2 className="text-h2">Documents</h2>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <Button name="Upload" type="upload" onClick={() => {}} />
                 <Link to={createContentLink}>
                     <Button name="Create Content" type="create" />

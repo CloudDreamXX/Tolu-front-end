@@ -35,31 +35,31 @@ function DocsTable() {
   const nav = useNavigate();
 
   return (
-    <div className="w-full flex flex-col gap-6 mx-auto mt-6 overflow-hidden">
+    <div className="w-full flex flex-col gap-6 mx-auto mt-6 overflow-auto sm:overflow-hidden">
       <TableHeader />
       <table className="w-full border-separate border-spacing-y-2">
         <thead>
           <tr className="text-left rounded-lg">
             <th className="p-4 gap-2 relative">
-              <span className="relative">
+              <span className="relative whitespace-nowrap">
                 Document name
                 <LiaSortSolid className="w-4 h-4 cursor-pointer absolute top-0.5 -right-6" />
               </span>
             </th>
             <th className="p-4 gap-2 relative">
-              <span className="relative">
+              <span className="relative whitespace-nowrap">
                 File size
                 <LiaSortSolid className="w-4 h-4 cursor-pointer absolute top-0.5 -right-6" />
               </span>
             </th>
             <th className="p-4 gap-2 relative">
-              <span className="relative">
+              <span className="relative whitespace-nowrap">
                 Type
                 <LiaSortSolid className="w-4 h-4 cursor-pointer absolute top-0.5 -right-6" />
               </span>
             </th>
             <th className="p-4 gap-2 relative">
-              <span className="relative">
+              <span className="relative whitespace-nowrap">
                 Date
                 <LiaSortSolid className="w-4 h-4 cursor-pointer absolute top-0.5 -right-6" />
               </span>

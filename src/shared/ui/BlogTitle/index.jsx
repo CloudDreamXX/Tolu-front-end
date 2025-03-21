@@ -11,7 +11,7 @@ function BlogTitle({ title, titleType, description, breadcrumbs }) {
         {breadcrumbs.length > 0 && title !== "Published Content" &&
             <Breadcrumbs breadcrumbs={breadcrumbs} />
         }
-        <div className="flex items-center w-full justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center w-full justify-between">
           <div className="flex items-center gap-2">
             {showIcon(titleType)}
             <Title title={title} />

@@ -13,14 +13,14 @@ function Search({ onSearch }) {
     }, [searchTerm, onSearch]);
 
     return (
-        <div className="relative">
+        <div className="relative w-full sm:w-fit">
             <FiSearch className="absolute top-3.5 left-3 w-5 h-5 text-gray-500" />
             <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="p-3 pl-8 border border-stroke rounded-full"
+                className="p-3 pl-8 border border-stroke rounded-full w-full sm:w-fit"
             />
         </div>
     );

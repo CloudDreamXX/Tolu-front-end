@@ -4,7 +4,7 @@ import LibraryInput from '../../../user/library/components/LibraryInput';
 
 function Document() {
   return (
-    <div className="w-full flex flex-row-reverse gap-6 h-full">
+    <div className="w-full flex flex-col sm:flex-row-reverse gap-6 h-full">
       <DocActions />
       <div className="flex flex-col gap-2">
         <div className="w-full flex flex-col gap-6 bg-white p-6 h-full rounded-2xl">

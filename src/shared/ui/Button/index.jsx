@@ -9,7 +9,7 @@ function Button({ name, icon, onClick, type }) {
     return (
         <button 
             className={classnames(
-                "flex items-center justify-center px-8 py-3 rounded-full",
+                "flex w-full sm:w-fit items-center justify-center px-8 py-3 rounded-full",
                 {
                     "bg-btnBg text-accent": type === "action" || type === "create" || type === "upload" || type === "move",
                     "bg-accent text-white": type === "primary" || type === "unpublish",
