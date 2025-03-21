@@ -6,7 +6,7 @@ function Search({ onSearch }) {
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            onSearch(searchTerm);
+            if(onSearch) {onSearch(searchTerm);}
         }, 1000);
 
         return () => clearTimeout(delayDebounceFn);

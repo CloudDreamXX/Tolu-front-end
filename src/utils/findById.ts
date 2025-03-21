@@ -24,7 +24,7 @@ export const findTopicById = (folder, id) => {
     return null;
 };
 
-export const getBreadcrumbs = (publishedContent, folderId, topicId, docId) => {
+export const getBreadcrumbs = (publishedContent, folderId, topicId) => {
     let breadcrumbs = [{ name: "Library", path: "/admin2" }];
   
     if (!publishedContent) return breadcrumbs;
@@ -41,4 +41,33 @@ export const getBreadcrumbs = (publishedContent, folderId, topicId, docId) => {
     }
 
     return breadcrumbs;
+};
+
+export const getTitleData = (publishedContent, folderId, topicId) => {
+    let title = "Published Content";
+    let description = "Repository for posted and published content";
+    let breadcrumbs = [{ name: "Posted Topics", path: "/admin2" }];
+    let titleType = "";
+
+    if (folderId) {
+        const folder = findFolderById(publishedContent, folderId);
+        if (folder) {
+            title = folder.name;
+            description = folder.description || "";
+            breadcrumbs.push({ name: folder.name, path: `/admin2/folder/${folderId}` });
+            titleType = "folder";
+        }
+    }
+
+    if (topicId) {
+        const topic = findTopicById(publishedContent, topicId);
+        if (topic) {
+            title = topic.title;
+            description = "";
+            breadcrumbs.push({ name: topic.title });
+            titleType = "topic";
+        }
+    }
+
+    return { title, description, breadcrumbs, titleType };
 };

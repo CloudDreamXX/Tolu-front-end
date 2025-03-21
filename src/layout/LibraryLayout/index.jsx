@@ -1,41 +1,31 @@
-import { Outlet, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Outlet, useParams, useLocation } from 'react-router-dom';
 import BlogTitle from '../../shared/ui/BlogTitle';
 import { useGetFolderStructureQuery } from '../../redux/apis/apiSlice';
 import { findPublishedContent } from '../../utils/excludePublishedContent';
-import { findFolderById, findTopicById } from '../../utils/findById';
+import { getTitleData } from '../../utils/findById';
 import AdminAside from "../../pages/admin/layout/adminAside/AdminAside";
 import AdminHeader from "../../pages/admin/layout/header/AdminHeader";
 
 function LibraryLayout() {
     const { folderId, topicId } = useParams();
+    const location = useLocation();
     const { data: allFolders } = useGetFolderStructureQuery();
     const publishedContent = findPublishedContent(allFolders);
     const isNewDocRoute = location.pathname.includes('/newdoc');
 
-    let title = "Published Content";
-    let description = "Repository for posted and published content";
-    let breadcrumbs = [{ name: "Posted Topics", path: "/admin2" }];
-    let titleType = "";
+    const [title, setTitle] = useState("Published Content");
+    const [description, setDescription] = useState("Repository for posted and published content");
+    const [breadcrumbs, setBreadcrumbs] = useState([{ name: "Posted Topics", path: "/admin2" }]);
+    const [titleType, setTitleType] = useState("");
 
-    if (folderId) {
-        const folder = findFolderById(publishedContent, folderId);
-        if (folder) {
-            title = folder.name;
-            description = folder.description || "";
-            breadcrumbs.push({ name: folder.name, path: `/admin2/folder/${folderId}` });
-            titleType = "folder";
-        }
-    }
-
-    if (topicId) {
-        const topic = findTopicById(publishedContent, topicId);
-        if (topic) {
-            title = topic.title;
-            description = "";
-            breadcrumbs.push({ name: topic.title });
-            titleType = "topic";
-        }
-    }
+    useEffect(() => {
+        const { title, description, breadcrumbs, titleType } = getTitleData(publishedContent, folderId, topicId);
+        setTitle(title);
+        setDescription(description);
+        setBreadcrumbs(breadcrumbs);
+        setTitleType(titleType);
+    }, [publishedContent, folderId, topicId]);
 
     return (
         <section className="w-full relative user-dashboard h-screen overflow-hidden bg-[#f5f7fb] z-[0]">
