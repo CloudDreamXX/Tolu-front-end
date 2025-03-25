@@ -15,20 +15,19 @@ function HealthForm({ isOpen, onClose, onSubmit }) {
     const handleNext = (data) => {
         setFormData((prev) => ({ ...prev, ...data }));
         if (currentStep < stepConfig.length - 1) {
-            setCurrentStep((prev) => prev + 1);
+          setCurrentStep((prev) => prev + 1);
         } else {
-            onSubmit(formData);
-            onClose();
+          console.log("Submitted Data:", { ...formData, ...data });
+          onClose();
         }
-    };
+      };
+      
 
     const handleBack = () => {
         if (currentStep > 0) {
             setCurrentStep((prev) => prev - 1);
         }
-    };
-
-    console.log(formData);    
+    };   
 
     return (
         <Modal

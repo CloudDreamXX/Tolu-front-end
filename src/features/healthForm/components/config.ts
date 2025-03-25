@@ -72,3 +72,5 @@ export const diagnosedConditions = [
     points: ["test31", "test32", "test33", "test34", "test35"],
   },
 ];
+
+export const allergiesOptions = ["Pollen", "Nuts", "Dairy", "Gluten", "Seafood"];
