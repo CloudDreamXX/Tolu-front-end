@@ -12,7 +12,7 @@ function Button({ name, icon, onClick, type }) {
                 "flex w-full sm:w-fit items-center justify-center px-8 py-3 rounded-full",
                 {
                     "bg-btnBg text-accent": type === "action" || type === "create" || type === "upload" || type === "move",
-                    "bg-accent text-white": type === "primary" || type === "unpublish",
+                    "bg-accent text-white sm:w-full": type === "primary" || type === "unpublish" || type === "default",
                     "bg-transparent text-gray-500": type === "load",
                 }
             )}
