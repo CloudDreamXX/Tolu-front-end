@@ -5,8 +5,9 @@ import Badge from "../Badge";
 import TableHeader from "./components/TableHeader";
 import { useNavigate } from "react-router-dom";
 import { sortDocsByValue } from "../../../utils/sort/sortDocsByValue";
+import { uploadFile } from "../../../utils/uploadFile";
 
-const docs = [
+const initialDocs = [
   {
     id: 1,
     name: "Managing low libido naturally",
@@ -39,6 +40,7 @@ const docs = [
 
 function DocsTable() {
   const nav = useNavigate();
+  const [docs, setDocs] = useState(initialDocs);
   const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" });
 
   const handleSort = (key) => {
@@ -50,9 +52,18 @@ function DocsTable() {
 
   const sortedDocs = sortDocsByValue(docs, sortConfig.key, sortConfig.direction);
 
+  const handleUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const newDoc = uploadFile(file);
+      setDocs((prevDocs) => [newDoc, ...prevDocs]);
+      event.target.value = "";
+    }
+  };  
+
   return (
     <div className="w-full flex flex-col gap-6 mx-auto mt-6 overflow-auto sm:overflow-hidden">
-      <TableHeader />
+      <TableHeader onUpload={handleUpload} />
       <table className="w-full border-separate border-spacing-y-2">
         <thead>
           <tr className="text-left rounded-lg">
