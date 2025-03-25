@@ -110,3 +110,27 @@ export const mock = {
     },
   ],
 };
+
+export const topics = [
+  'Menopause',
+  'Perimenopause',
+  'Depression',
+  'Weight Loss',
+  'Women’s Health',
+  'Hormone Replacement Therapy',
+  'Bone Health',
+  'Brainfog Management',
+  'Natural Remedies',
+  'Autoimmune Diseases',
+  'Sleep Management',
+  'Kidney Stone',
+  'Digestive Health',
+  'Managing Anxiety Naturally',
+  'IBS',
+  'Reproductive Health',
+  'Boosting Immune System',
+  'Nutrition & Lifestyle',
+  'Managing Cravings',
+  'Managing Inflammations',
+  'Others',
+];

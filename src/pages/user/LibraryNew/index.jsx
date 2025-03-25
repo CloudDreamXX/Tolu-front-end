@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { mock } from "./mock";
+import { mock, topics } from "./mock";
 import { IoBookOutline } from "react-icons/io5";
 import { Title } from "../../../shared/ui/Title";
 import ListAccordion from "../../../shared/ui/ListAccordion";
 import AIInput from "../../../shared/ui/AIInput";
 import Modal from "../../../shared/ui/Modal";
+import BadgeTopic from "../../../shared/ui/BadgeTopic";
+import Button from "../../../shared/ui/Button";
 
 function LibraryNew() {
   const sections = [
@@ -13,6 +15,14 @@ function LibraryNew() {
     { title: "Explore new topics", items: mock.recomendationsTopics },
   ];
 	const [expModal, setExpModal] = useState(false);
+	const [activeTopics, setActiveTopics] = useState([]);
+	const toggleTopic = (topic) => {
+    setActiveTopics((prev) =>
+      prev.includes(topic)
+        ? prev.filter((t) => t !== topic)
+        : [...prev, topic]
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -41,8 +51,26 @@ function LibraryNew() {
 					className="w-full max-w-[993px]"
 					isOpen={expModal}
 					onClose={() => setExpModal(false)}
+					title="Personalize Your Experience"
+					description="Choose at least 2 topics that interest you to receive tailored content."
 				>
-					<div>modal</div>
+					{topics.map((topic, index) => (
+						<BadgeTopic 
+							key={index} 
+							topic={topic} 
+							active={activeTopics.includes(topic)}
+							onClick={() => toggleTopic(topic)}
+						/>
+					))}
+					{activeTopics.length >= 2 &&
+						<div className="w-full flex max-w-48 justify-center">
+							<Button
+								name="Apply"
+								type="default"
+								onClick={() => setExpModal(false)}
+							/>
+						</div>
+					}
 				</Modal>
 			}
     </div>
