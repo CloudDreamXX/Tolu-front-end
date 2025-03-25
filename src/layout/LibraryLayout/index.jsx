@@ -14,7 +14,11 @@ function LibraryLayout() {
     const { data: allFolders } = useGetFolderStructureQuery();
     const publishedContent = findPublishedContent(allFolders);
     const isNewDocRoute = location.pathname.includes('/newdoc');
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(() => {
+        const storedValue = localStorage.getItem('healthFormIsOpen');
+        return storedValue === null ? true : JSON.parse(storedValue);
+    });
+
     const [title, setTitle] = useState("Published Content");
     const [description, setDescription] = useState("Repository for posted and published content");
     const [breadcrumbs, setBreadcrumbs] = useState([{ name: "Posted Topics", path: "/admin2" }]);
@@ -27,6 +31,10 @@ function LibraryLayout() {
         setBreadcrumbs(breadcrumbs);
         setTitleType(titleType);
     }, [publishedContent, folderId, topicId]);
+
+    useEffect(() => {
+        localStorage.setItem('healthFormIsOpen', JSON.stringify(isOpen));
+    }, [isOpen]);
 
     return (
         <section className="w-full relative user-dashboard h-screen overflow-hidden bg-[#f5f7fb] z-[0]">
