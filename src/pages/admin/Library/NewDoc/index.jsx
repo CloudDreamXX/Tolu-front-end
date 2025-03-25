@@ -13,7 +13,7 @@ function NewDoc() {
     return (
         <div className="w-full flex justify-center items-center h-full">
             <div className="w-full h-full max-w-7xl flex flex-col gap-2">
-                <div className="w-full flex flex-col rounded-2xl bg-white p-6">
+                <div className="w-full flex flex-col rounded-2xl bg-white p-6 max-h-[80vh] overflow-y-auto">
                     <div className='flex flex-col gap-2'>
                         <div className='flex w-full justify-between items-start'>
                             <Breadcrumbs breadcrumbs={[

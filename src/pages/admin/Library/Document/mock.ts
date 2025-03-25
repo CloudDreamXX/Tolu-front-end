@@ -30,6 +30,38 @@ export const mock = `<div style="font-family: Arial, sans-serif; line-height: 1.
     <li><strong>Scientific Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/26405698/" target="_blank">"Maca for improving sexual function"</a> – Reviews the potential benefits of maca root on sexual health.</li>
   </ul>
 
+  <h2 style="font-size: 18px; font-weight: bold; margin-top: 20px;">Additional Resources</h2>
+
+  <ul style="font-size: 16px;">
+    <li><strong>Book:</strong> "The Hormone Cure" by Dr. Sara Gottfried – Offers practical advice on balancing hormones naturally.</li>
+    <li><strong>Website:</strong> <a href="https://www.menopause.org" target="_blank">North American Menopause Society</a> – Evidence-based information on menopause and sexual health.</li>
+    <li><strong>Scientific Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/26405698/" target="_blank">"Maca for improving sexual function"</a> – Reviews the potential benefits of maca root on sexual health.</li>
+  </ul>
+
+  <h2 style="font-size: 18px; font-weight: bold; margin-top: 20px;">Additional Resources</h2>
+
+  <ul style="font-size: 16px;">
+    <li><strong>Book:</strong> "The Hormone Cure" by Dr. Sara Gottfried – Offers practical advice on balancing hormones naturally.</li>
+    <li><strong>Website:</strong> <a href="https://www.menopause.org" target="_blank">North American Menopause Society</a> – Evidence-based information on menopause and sexual health.</li>
+    <li><strong>Scientific Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/26405698/" target="_blank">"Maca for improving sexual function"</a> – Reviews the potential benefits of maca root on sexual health.</li>
+  </ul>
+
+  <h2 style="font-size: 18px; font-weight: bold; margin-top: 20px;">Additional Resources</h2>
+
+  <ul style="font-size: 16px;">
+    <li><strong>Book:</strong> "The Hormone Cure" by Dr. Sara Gottfried – Offers practical advice on balancing hormones naturally.</li>
+    <li><strong>Website:</strong> <a href="https://www.menopause.org" target="_blank">North American Menopause Society</a> – Evidence-based information on menopause and sexual health.</li>
+    <li><strong>Scientific Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/26405698/" target="_blank">"Maca for improving sexual function"</a> – Reviews the potential benefits of maca root on sexual health.</li>
+  </ul>
+
+  <h2 style="font-size: 18px; font-weight: bold; margin-top: 20px;">Additional Resources</h2>
+
+  <ul style="font-size: 16px;">
+    <li><strong>Book:</strong> "The Hormone Cure" by Dr. Sara Gottfried – Offers practical advice on balancing hormones naturally.</li>
+    <li><strong>Website:</strong> <a href="https://www.menopause.org" target="_blank">North American Menopause Society</a> – Evidence-based information on menopause and sexual health.</li>
+    <li><strong>Scientific Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/26405698/" target="_blank">"Maca for improving sexual function"</a> – Reviews the potential benefits of maca root on sexual health.</li>
+  </ul>
+
   <p>Remember, you're not alone on this journey. Taking small, intentional steps every day can help restore your libido and enhance your overall well-being during menopause.</p>
 
 </div>`;
