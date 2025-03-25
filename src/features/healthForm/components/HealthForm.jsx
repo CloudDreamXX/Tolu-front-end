@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "../../../shared/ui/Modal";
+import ModalStep from "../../../shared/ui/ModalStep";
 import { stepConfig } from "./config";
 
 function HealthForm({ isOpen, onClose, onSubmit }) {
@@ -30,7 +30,7 @@ function HealthForm({ isOpen, onClose, onSubmit }) {
     };   
 
     return (
-        <Modal
+        <ModalStep
             title={stepConfig[currentStep].title}
             description={stepConfig[currentStep].description}
             isOpen={isOpen}
@@ -45,7 +45,7 @@ function HealthForm({ isOpen, onClose, onSubmit }) {
                 data={formData}
                 setData={(data) => setFormData((prev) => ({ ...prev, ...data }))}
             />
-        </Modal>
+        </ModalStep>
     );
 }
 
