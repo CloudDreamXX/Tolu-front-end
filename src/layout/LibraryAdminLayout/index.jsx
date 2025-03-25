@@ -6,18 +6,13 @@ import { findPublishedContent } from '../../utils/excludePublishedContent';
 import { getTitleData } from '../../utils/findById';
 import AdminAside from "../../pages/admin/layout/adminAside/AdminAside";
 import AdminHeader from "../../pages/admin/layout/header/AdminHeader";
-import HealthForm from '../../features/healthForm/components/HealthForm';
 
-function LibraryLayout() {
+function LibraryAdminLayout() {
     const { folderId, topicId } = useParams();
     const location = useLocation();
     const { data: allFolders } = useGetFolderStructureQuery();
     const publishedContent = findPublishedContent(allFolders);
     const isNewDocRoute = location.pathname.includes('/newdoc');
-    const [isOpen, setIsOpen] = useState(() => {
-        const storedValue = localStorage.getItem('healthFormIsOpen');
-        return storedValue === null ? true : JSON.parse(storedValue);
-    });
 
     const [title, setTitle] = useState("Published Content");
     const [description, setDescription] = useState("Repository for posted and published content");
@@ -32,9 +27,6 @@ function LibraryLayout() {
         setTitleType(titleType);
     }, [publishedContent, folderId, topicId]);
 
-    useEffect(() => {
-        localStorage.setItem('healthFormIsOpen', JSON.stringify(isOpen));
-    }, [isOpen]);
 
     return (
         <section className="w-full relative user-dashboard h-screen overflow-hidden bg-[#f5f7fb] z-[0]">
@@ -50,9 +42,8 @@ function LibraryLayout() {
                     </div>
                 </div>
             </div>
-            <HealthForm isOpen={isOpen} onClose={() => setIsOpen(false)} />
         </section>
     );
 }
 
-export default LibraryLayout;
+export default LibraryAdminLayout;

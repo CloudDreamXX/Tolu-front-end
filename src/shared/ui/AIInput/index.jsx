@@ -22,6 +22,7 @@ function AIInput({
 	type,
   fetchFile,
   folder,
+  setExpModal,
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [value, setValue] = useState("");
@@ -49,6 +50,10 @@ function AIInput({
         onFileUpload(file);
       }
     }
+  };
+
+  const openExpModal = () => {
+    setExpModal(true);
   };
 
   return (
@@ -112,7 +117,7 @@ function AIInput({
               </div>
               <div
                 className="w-[36px] h-[36px] bg-contentBg rounded-full flex justify-center items-center cursor-pointer"
-                onClick={openAddFileModal}
+                onClick={openExpModal}
               >
                 <GoGear className="text-black" />
               </div>
