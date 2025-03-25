@@ -11,8 +11,7 @@ function SymptomsSelect({ data, setData }) {
     const [selected, setSelected] = useState(data.symptoms || []);
     
     useEffect(() => {
-        setData({ symptoms: selected });
-        console.log(data);        
+        setData({ symptoms: selected });      
     }, [selected]);
 
     const toggleSelect = () => {

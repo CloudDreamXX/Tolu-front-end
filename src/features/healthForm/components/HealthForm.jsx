@@ -28,6 +28,8 @@ function HealthForm({ isOpen, onClose, onSubmit }) {
         }
     };
 
+    console.log(formData);    
+
     return (
         <Modal
             title={stepConfig[currentStep].title}
