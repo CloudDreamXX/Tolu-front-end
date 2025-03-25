@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import LibraryInput from '../../../user/library/components/LibraryInput';
+import AIInput from '../../../../shared/ui/AIInput';
 import Button from '../../../../shared/ui/Button';
 import HelpSection from '../../../../shared/ui/HelpSection';
 import Breadcrumbs from '../../../../shared/ui/Breadcrumbs';
@@ -30,8 +29,9 @@ function NewDoc() {
                     <HelpSection sectionTitle="Hi, how can I help you?" tips={tips} />
                 </div>
                 <div className="w-full flex flex-col rounded-2xl bg-white">
-                    <LibraryInput
-                        placeholder="Enter prompt..."
+                    <AIInput
+                        placeholder="Ask anything..."
+                        type="admin-new-doc"
                     />
                 </div>
             </div>            

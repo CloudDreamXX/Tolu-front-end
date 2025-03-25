@@ -1,6 +1,6 @@
 import DocActions from "../../../../shared/ui/DocActions";
 import { mock } from "./mock";
-import LibraryInput from '../../../user/library/components/LibraryInput';
+import AIInput from '../../../../shared/ui/AIInput';
 
 function Document() {
   return (
@@ -11,8 +11,9 @@ function Document() {
           <h1 className="text-h1">Understanding menopause symptoms</h1>
           <div className="" dangerouslySetInnerHTML={{ __html: mock }} />
         </div>
-        <LibraryInput
+        <AIInput
           placeholder="Ask anything..."
+          type="admin-doc-opened"
         />
       </div>
     </div>
