@@ -12,7 +12,7 @@ function FolderCard({item}) {
 
     return (
         <div
-            className="flex flex-col gap-5 relative bg-white sm:bg-transparent bg-cover bg-center bg-no-repeat pl-4 pr-10 pt-10 pb-4 rounded-xl"
+            className="flex flex-col gap-5 relative bg-white sm:bg-transparent bg-cover bg-left-top bg-no-repeat pl-4 pr-10 pt-10 pb-4 rounded-xl"
             style={{ backgroundImage: `url(${FolderBg})` }}
         >
             <BsThreeDotsVertical className="absolute top-12 right-4 cursor-pointer" />
