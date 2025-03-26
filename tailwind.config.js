@@ -15,6 +15,7 @@ export default {
         stroke2: '#E8EAEC',
         contentBg: '#DBDEE1',
         error: '#FF0000',
+        success: '#38B000',
       },
       backgroundImage: {
         gradientText: "linear-gradient(90deg, #008FF6 0%, #926DFB 53.5%, #E34ECB 81.5%, #F44F16 100%)",

@@ -7,6 +7,7 @@ import AIInput from "../../../shared/ui/AIInput";
 import Modal from "../../../shared/ui/Modal";
 import BadgeTopic from "../../../shared/ui/BadgeTopic";
 import Button from "../../../shared/ui/Button";
+import StatusForm from "../../../shared/ui/StatusForm";
 
 function LibraryNew() {
   const sections = [
@@ -15,6 +16,7 @@ function LibraryNew() {
     { title: "Explore new topics", items: mock.recomendationsTopics, type: 'topic' },
   ];
 	const [expModal, setExpModal] = useState(false);
+	const [statusModal, setStatusModal] = useState(false);
 	const [activeTopics, setActiveTopics] = useState([]);
 	const toggleTopic = (topic) => {
     setActiveTopics((prev) =>
@@ -28,7 +30,7 @@ function LibraryNew() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-start gap-2">
         <div className="flex flex-col sm:flex-row sm:items-center w-full justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={() => setStatusModal(true)}>
             <IoBookOutline className="w-9 h-9" />
             <Title title="Library" />
           </div>
@@ -71,6 +73,15 @@ function LibraryNew() {
 							/>
 						</div>
 					}
+				</Modal>
+			}
+			{ statusModal && 
+				<Modal
+					className="w-full max-w-[993px]"
+					isOpen={statusModal}
+					onClose={() => setStatusModal(false)}
+				>
+					<StatusForm />
 				</Modal>
 			}
     </div>

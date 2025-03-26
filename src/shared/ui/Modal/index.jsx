@@ -42,12 +42,12 @@ function Modal({
         onClick={(e) => e.stopPropagation()}
         tabIndex={-1}
       >
-        <div className="flex flex-col gap-3 items-center">
-          {title && <h2 className="text-2xl font-bold text-center">{title}</h2>}
-          {description && (
-            <p className="text-base font-semibold text-center">{description}</p>
-          )}
-        </div>
+        {(title || description) && (
+          <div className="flex flex-col gap-3 items-center">
+            {title && <h2 className="text-2xl font-bold text-center">{title}</h2>}
+            {description && <p className="text-base font-semibold text-center">{description}</p>}
+          </div>
+        )}
         <div className="flex gap-4 items-center justify-center flex-wrap">
 					{children}
 				</div>

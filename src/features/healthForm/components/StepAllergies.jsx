@@ -46,7 +46,6 @@ function StepAllergies({ data, setData }) {
           )}
         />
       </div>
-
       <div
         className={classNames(
           "absolute top-14 left-0 w-full bg-white z-50 border border-stroke rounded-2xl p-6 flex flex-col gap-4",
