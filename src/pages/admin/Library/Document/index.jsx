@@ -1,5 +1,5 @@
-import DocActions from "../../../../shared/ui/DocActions";
-import { mock } from "./mock";
+import DocActions from '../../../../shared/ui/DocActions';
+import { mock } from './mock';
 import AIInput from '../../../../shared/ui/AIInput';
 
 function Document() {
@@ -11,10 +11,7 @@ function Document() {
           <h1 className="text-h1">Understanding menopause symptoms</h1>
           <div className="" dangerouslySetInnerHTML={{ __html: mock }} />
         </div>
-        <AIInput
-          placeholder="Ask anything..."
-          type="admin-doc-opened"
-        />
+        <AIInput placeholder="Ask anything..." type="admin-doc-opened" />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
-import AIInput from "../../../shared/ui/AIInput";
-import PostContainer from "../../../shared/ui/PostContainer";
-import { postMock } from "./mock";
+import AIInput from '../../../shared/ui/AIInput';
+import PostContainer from '../../../shared/ui/PostContainer';
+import { postMock } from './mock';
 
 function Post() {
   return (
@@ -10,10 +10,7 @@ function Post() {
         content={postMock.content}
         info={postMock.info}
       />
-      <AIInput 
-        placeholder="Ask anything..."
-        type="user"
-      />
+      <AIInput placeholder="Ask anything..." type="user" />
     </div>
   );
 }

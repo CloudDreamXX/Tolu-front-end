@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
-import { TfiWrite } from "react-icons/tfi";
-import { useDispatch } from "react-redux";
-import { ArrowIcon } from "../../../../../assets/svgs/Icon";
-import { BsChatDots } from "react-icons/bs";
+import React, { useEffect, useState } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
+import { TfiWrite } from 'react-icons/tfi';
+import { useDispatch } from 'react-redux';
+import { ArrowIcon } from '../../../../../assets/svgs/Icon';
+import { BsChatDots } from 'react-icons/bs';
 // import { useDispatch } from "react-redux";
 // import { setAddFolderData, setSidebarData } from '../../../../../redux/slice/sidebarSlice';
-import { apiErrorHandler } from "../../../../../api/apiErrorHandler";
-import useAutoRefetchOnReconnect from "../../../../../api/useAutoRefetchOnReconnect";
-import { useGetFolderStructureQuery } from "../../../../../redux/apis/apiSlice";
-import { setAddFolderData } from "../../../../../redux/slice/sidebarSlice";
-import FolderTree from "../../../addBlog/components/FolderTree";
+import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
+import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
+import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
+import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
+import FolderTree from '../../../addBlog/components/FolderTree';
 
-import { FaRegFolder, FaRegFolderOpen } from "react-icons/fa";
-import ContentTree from "../../../addBlog/components/ContentTree";
+import { FaRegFolder, FaRegFolderOpen } from 'react-icons/fa';
+import ContentTree from '../../../addBlog/components/ContentTree';
 
 function LibraryDashboardSideBar() {
   const [isAsideOpen, setIsAsideOpen] = useState(false);
@@ -29,11 +29,11 @@ function LibraryDashboardSideBar() {
     refetch,
   } = useGetFolderStructureQuery();
   useEffect(() => {
-    apiErrorHandler(isError, error, isSuccess, "Topic loaded successfully!");
+    apiErrorHandler(isError, error, isSuccess, 'Topic loaded successfully!');
   }, [isError, error, isSuccess]);
   useAutoRefetchOnReconnect(refetch);
 
-  console.log("allFolders", allFolders);
+  console.log('allFolders', allFolders);
 
   const asideToggleHandler = () => {
     setIsAsideOpen(!isAsideOpen);
@@ -58,9 +58,9 @@ function LibraryDashboardSideBar() {
 
   // }
 
-    const navigateToAdmin = () => {
-      navigate('/admin');
-    };
+  const navigateToAdmin = () => {
+    navigate('/admin');
+  };
 
   const dispatch = useDispatch();
 
@@ -77,14 +77,14 @@ function LibraryDashboardSideBar() {
   return (
     <div
       className={`h-full border-[#008FF614] border-r-2 bg-white py-8 relative transition-all duration-500 rounded-lg xl:rounded-[0]
-        ${isAsideOpen ? "w-[90px]" : "w-[280px]"} shadow-md shadow-[#7090B024]`}
+        ${isAsideOpen ? 'w-[90px]' : 'w-[280px]'} shadow-md shadow-[#7090B024]`}
     >
       <div className="flex items-center gap-1 justify-center overflow-hidden px-4">
         <h6 className="text-3xl font-bold text-black ">VITAI</h6>
       </div>
       <div
         className={`hidden xl:block absolute top-15 cursor-pointer transition-all duration-300 ${
-          isAsideOpen ? "rotate-180 right-[-13%]" : "rotate-0 right-[-5%]"
+          isAsideOpen ? 'rotate-180 right-[-13%]' : 'rotate-0 right-[-5%]'
         }`}
         onClick={asideToggleHandler}
       >
@@ -94,7 +94,7 @@ function LibraryDashboardSideBar() {
         <div className="flex flex-col p-2 w-full overflow-auto  justify-between h-full">
           <div
             className={`flex flex-col  justify-center gap-2 overflow-auto custom-scroll ${
-              isAsideOpen ? "items-center" : "items-start"
+              isAsideOpen ? 'items-center' : 'items-start'
             }`}
           >
             <div className="p-4 h-full w-full">
@@ -103,25 +103,24 @@ function LibraryDashboardSideBar() {
                                 <span className="text-[#393838]">Feedback</span>
                             </div> */}
               {/* New Chat Button */}
-                            <div
-                              className="flex gap-2 mb-4 items-center cursor-pointer hover:bg-[#E0E0E0] p-2 rounded-lg transition-all duration-300"
-                              onClick={navigateToAdmin}
-                            >
-                              <BsChatDots />
-                              <span className="text-[#393838]">New Chat</span>
-                            </div>
+              <div
+                className="flex gap-2 mb-4 items-center cursor-pointer hover:bg-[#E0E0E0] p-2 rounded-lg transition-all duration-300"
+                onClick={navigateToAdmin}
+              >
+                <BsChatDots />
+                <span className="text-[#393838]">New Chat</span>
+              </div>
               <div className="project-container h-full">
                 <div
                   className="project-name flex mb-4 justify-between items-center rounded-lg cursor-pointer p-2 hover:bg-[#E0E0E0] transition-all duration-300"
                   onClick={handleDropdownToggle}
                 >
-
                   <span className="text-[#393838] text-sm font-semibold">
                     Topic
                   </span>
                   <span
                     className={`text-[#393838]  dropdown-icon transition-all duration-400 ${
-                      showDropdown ? "rotate-180" : "rotate-0"
+                      showDropdown ? 'rotate-180' : 'rotate-0'
                     }`}
                   >
                     <IoIosArrowDown />

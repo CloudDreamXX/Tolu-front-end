@@ -1,14 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
-import { FaRegFolderOpen } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
-import { SketchPicker } from "react-color";
-import { useSelector, useDispatch } from "react-redux";
-import { setFolderColor } from "../redux/slice/folderColorSlice"; // adjust the path as needed
+import React, { useState, useRef, useEffect } from 'react';
+import { FaRegFolderOpen } from 'react-icons/fa';
+import { MdEdit } from 'react-icons/md';
+import { SketchPicker } from 'react-color';
+import { useSelector, useDispatch } from 'react-redux';
+import { setFolderColor } from '../redux/slice/folderColorSlice'; // adjust the path as needed
 
 // Define your default colors
-const defaultIconColor = "#000000";
-const defaultBgColor = "rgba(0, 0, 0, 0.2)";
-
+const defaultIconColor = '#000000';
+const defaultBgColor = 'rgba(0, 0, 0, 0.2)';
 
 const FolderWithColorPicker = ({ folderId }) => {
   const dispatch = useDispatch();
@@ -17,10 +16,7 @@ const FolderWithColorPicker = ({ folderId }) => {
   const folder = useSelector((state) =>
     state.folderColor.folderColors.find((f) => f.folderId === folderId)
   );
-  const allFolder = useSelector((state) =>
-    state.folderColor.folderColors
-  );
-
+  const allFolder = useSelector((state) => state.folderColor.folderColors);
 
   // If the folder is not yet in the state, add it with default colors
   useEffect(() => {
@@ -44,9 +40,12 @@ const FolderWithColorPicker = ({ folderId }) => {
 
   // Helper to generate a low-opacity background color from a hex value
   const getLowOpacityColor = (hex, opacity = 0.2) => {
-    let normalizedHex = hex.replace("#", "");
+    let normalizedHex = hex.replace('#', '');
     if (normalizedHex.length === 3) {
-      normalizedHex = normalizedHex.split("").map((ch) => ch + ch).join("");
+      normalizedHex = normalizedHex
+        .split('')
+        .map((ch) => ch + ch)
+        .join('');
     }
     const r = parseInt(normalizedHex.substring(0, 2), 16);
     const g = parseInt(normalizedHex.substring(2, 4), 16);
@@ -63,13 +62,13 @@ const FolderWithColorPicker = ({ folderId }) => {
     };
 
     if (showPicker) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showPicker]);
 
@@ -106,8 +105,14 @@ const FolderWithColorPicker = ({ folderId }) => {
 
       {/* Color Picker */}
       {showPicker && (
-        <div ref={pickerRef} className="absolute top-full mt-2 left-0 z-50 shadow-lg">
-          <SketchPicker color={iconColor} onChangeComplete={handleColorChangeComplete} />
+        <div
+          ref={pickerRef}
+          className="absolute top-full mt-2 left-0 z-50 shadow-lg"
+        >
+          <SketchPicker
+            color={iconColor}
+            onChangeComplete={handleColorChangeComplete}
+          />
         </div>
       )}
     </div>

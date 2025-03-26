@@ -1,38 +1,38 @@
-import { useRef, useState } from "react";
-import { FaArrowUp } from "react-icons/fa";
-import { GoGear } from "react-icons/go";
-import { IoPaperPlaneOutline } from "react-icons/io5";
-import { GrAttachment } from "react-icons/gr";
-import Modal from "../../../components/modals/Modal";
-import AddFiles from "../../../pages/admin/addBlog/components/AddFiles";
-import { types } from "./utils";
-import classNames from "classnames";
+import { useRef, useState } from 'react';
+import { FaArrowUp } from 'react-icons/fa';
+import { GoGear } from 'react-icons/go';
+import { IoPaperPlaneOutline } from 'react-icons/io5';
+import { GrAttachment } from 'react-icons/gr';
+import Modal from '../../../components/modals/Modal';
+import AddFiles from '../../../pages/admin/addBlog/components/AddFiles';
+import { types } from './utils';
+import classNames from 'classnames';
 
 function AIInput({
   placeholder,
-  width = "w-full",
-  height = "h-[125px]",
-  onChangeValue,  // Callback for input value change
-  onSubmitValue,  // Callback for returning typed value
+  width = 'w-full',
+  height = 'h-[125px]',
+  onChangeValue, // Callback for input value change
+  onSubmitValue, // Callback for returning typed value
   onFileUpload,
-  handleRemoveFile,  // Callback when a file is uploaded
+  handleRemoveFile, // Callback when a file is uploaded
   isLoading,
   selectedFile,
-  setSelectedFile,    // Prop to indicate loading state
-	type,
+  setSelectedFile, // Prop to indicate loading state
+  type,
   fetchFile,
   folder,
   setExpModal,
 }) {
   const [isFocused, setIsFocused] = useState(false);
-  const [value, setValue] = useState("");
-  const [addFile ,setAddFile]= useState(false);
-  const openAddFileModal=()=>{
+  const [value, setValue] = useState('');
+  const [addFile, setAddFile] = useState(false);
+  const openAddFileModal = () => {
     setAddFile(true);
-  }
-  const closeAddFilesModal=()=>{
+  };
+  const closeAddFilesModal = () => {
     setAddFile(false);
-  }
+  };
   const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
@@ -58,7 +58,12 @@ function AIInput({
 
   return (
     <>
-      <Modal className="w-[500px]" isOpen={addFile} onClose={closeAddFilesModal} title={<h1 className="text-xl font-bold">Add Files</h1>}>
+      <Modal
+        className="w-[500px]"
+        isOpen={addFile}
+        onClose={closeAddFilesModal}
+        title={<h1 className="text-xl font-bold">Add Files</h1>}
+      >
         <AddFiles
           fetchFile={fetchFile}
           folder={folder}
@@ -68,7 +73,7 @@ function AIInput({
       </Modal>
       <div className="relative flex flex-col items-center w-full">
         <label
-          className={`absolute text-gray-500 transition-all duration-300 ${isFocused || value ? "text-xs text-gray-700 top-2" : "text-base top-4"} ${width === "w-full" ? "left-6" : width === "sm:w-3/4" ? "left-10" : "left-16"}`}
+          className={`absolute text-gray-500 transition-all duration-300 ${isFocused || value ? 'text-xs text-gray-700 top-2' : 'text-base top-4'} ${width === 'w-full' ? 'left-6' : width === 'sm:w-3/4' ? 'left-10' : 'left-16'}`}
         >
           {placeholder}
         </label>
@@ -89,21 +94,23 @@ function AIInput({
           onChange={handleFileChange}
         />
         <div
-          className={`absolute flex space-x-2 text-gray-500 transition-all duration-300 ${width === "w-full" ? "right-6" : width === "sm:w-3/4" ? "right-10" : "right-16"} bottom-4`}
+          className={`absolute flex space-x-2 text-gray-500 transition-all duration-300 ${width === 'w-full' ? 'right-6' : width === 'sm:w-3/4' ? 'right-10' : 'right-16'} bottom-4`}
         >
           <button
             disabled={isLoading}
             // onClick={handleSubmit}
             className={`w-[36px] h-[36px] rounded-full flex justify-center items-center transition-all duration-200
-            ${isLoading ? "bg-gray-400 cursor-not-allowed blur-sm" : "bg-black cursor-pointer"}
+            ${isLoading ? 'bg-gray-400 cursor-not-allowed blur-sm' : 'bg-black cursor-pointer'}
           `}
           >
-            <IoPaperPlaneOutline className={`text-white w-5 h-5 ${isLoading ? "opacity-50" : ""}`} />
+            <IoPaperPlaneOutline
+              className={`text-white w-5 h-5 ${isLoading ? 'opacity-50' : ''}`}
+            />
           </button>
         </div>
-				<div
+        <div
           className={classNames(
-            "absolute left-6 bottom-2 flex items-center space-x-2",
+            'absolute left-6 bottom-2 flex items-center space-x-2',
             { hidden: !type }
           )}
         >
@@ -134,7 +141,6 @@ function AIInput({
         </div>
       </div>
     </>
-
   );
 }
 

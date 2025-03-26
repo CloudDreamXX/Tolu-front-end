@@ -1,6 +1,6 @@
-import Main from "./layout/Main";
-import AdminAside from "./layout/adminAside/AdminAside";
-import AdminHeader from "./layout/header/AdminHeader";
+import Main from './layout/Main';
+import AdminAside from './layout/adminAside/AdminAside';
+import AdminHeader from './layout/header/AdminHeader';
 
 const Admin = () => {
   return (
@@ -19,5 +19,3 @@ const Admin = () => {
 };
 
 export default Admin;
-
-

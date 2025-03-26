@@ -1,18 +1,18 @@
-import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const apiUrl = import.meta.env.VITE_API_URL;
-console.log("API URL:", apiUrl);
+console.log('API URL:', apiUrl);
 
 export const apiSlice = createApi({
-  reducerPath: "api",
+  reducerPath: 'api',
   baseQuery: fetchBaseQuery({
     baseUrl: apiUrl,
     prepareHeaders: (headers, { getState }) => {
-      let token = getState().auth.token || localStorage.getItem("token");
-      console.log("API Slice Token:", token);
+      let token = getState().auth.token || localStorage.getItem('token');
+      console.log('API Slice Token:', token);
       if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
+        headers.set('Authorization', `Bearer ${token}`);
       }
       return headers;
     },
@@ -20,34 +20,34 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     signUp: builder.mutation({
       query: (userData) => ({
-        url: "/user/signup?",
-        method: "POST",
+        url: '/user/signup?',
+        method: 'POST',
         body: userData,
       }),
     }),
     login: builder.mutation({
       query: (credentials) => ({
-        url: "/user/login",
-        method: "POST",
+        url: '/user/login',
+        method: 'POST',
         body: credentials,
       }),
     }),
     aiLearningSearch: builder.mutation({
       queryFn: async (payload, _queryApi, _extraOptions, baseQuery) => {
         try {
-          const token = localStorage.getItem("token");
+          const token = localStorage.getItem('token');
 
           return new Promise((resolve, reject) => {
-            let result = { answers: "", result_id: "", chat_id: "" };
+            let result = { answers: '', result_id: '', chat_id: '' };
 
             // ✅ Create FormData instance
             const formData = new FormData();
             formData.append(
-              "chat_message",
+              'chat_message',
               JSON.stringify(payload.chat_message)
             );
             if (payload.folder_id) {
-              formData.append("folder_id", payload.folder_id);
+              formData.append('folder_id', payload.folder_id);
             }
             // if (payload.files) {
             //   const fileType = payload.file.type;
@@ -63,18 +63,17 @@ export const apiSlice = createApi({
             //   }
             // }
             if (payload.files && payload.files.length > 0) {
-              payload.files.forEach(file => {
-                formData.append("files", file);
+              payload.files.forEach((file) => {
+                formData.append('files', file);
               });
             }
 
-
             // ✅ Use fetchEventSource for real-time streaming
             fetchEventSource(`${apiUrl}/ai-learning-search`, {
-              method: "POST",
+              method: 'POST',
               headers: {
                 Authorization: `Bearer ${token}`,
-                Accept: "text/event-stream",
+                Accept: 'text/event-stream',
               },
               body: formData,
               openWhenHidden: true,
@@ -87,10 +86,11 @@ export const apiSlice = createApi({
                 try {
                   const data = JSON.parse(event.data);
                   // ✅ Update UI as new data arrives
-                  result.answers += data.reply || "";
+                  result.answers += data.reply || '';
                   result.result_id =
                     data.searched_result_id || result.result_id;
-                  result.chat_id = data.chat_id || data.saved_content_id || result.chat_id;
+                  result.chat_id =
+                    data.chat_id || data.saved_content_id || result.chat_id;
                   result.folder_id = data.folder_id || result.folder_id;
 
                   // ✅ Call the update function
@@ -98,24 +98,24 @@ export const apiSlice = createApi({
                     payload.onMessage(result.answers);
                   }
                 } catch (error) {
-                  console.error("Error parsing SSE event:", error);
+                  console.error('Error parsing SSE event:', error);
                 }
               },
               onclose() {
                 resolve({ data: result });
               },
               onerror(err) {
-                console.error("SSE connection error:", err);
+                console.error('SSE connection error:', err);
                 controller.abort(); // Abort the fetch request
                 reject({ error: `SSE failed: ${err.message}` });
               },
             });
           });
         } catch (error) {
-          return { error: "Request failed: " + error.message };
+          return { error: 'Request failed: ' + error.message };
         }
       },
-      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+      invalidatesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     findUser: builder.query({
       query: (email) => `/user-exist/${email}`,
@@ -123,27 +123,27 @@ export const apiSlice = createApi({
     getAISearch: builder.mutation({
       queryFn: async (payload, _queryApi, _extraOptions, baseQuery) => {
         try {
-          const token = localStorage.getItem("token");
+          const token = localStorage.getItem('token');
 
           return new Promise((resolve, reject) => {
-            let result = { answers: "", result_id: "", chat_id: "" };
+            let result = { answers: '', result_id: '', chat_id: '' };
 
             // ✅ Create FormData instance
             const formData = new FormData();
             formData.append(
-              "chat_message",
+              'chat_message',
               JSON.stringify(payload.chat_message)
             );
 
             if (payload.file) {
               const fileType = payload.file.type;
-              if (fileType === "application/pdf") {
-                formData.append("pdf", payload.file);
-              } else if (fileType.startsWith("image")) {
-                formData.append("image", payload.file);
+              if (fileType === 'application/pdf') {
+                formData.append('pdf', payload.file);
+              } else if (fileType.startsWith('image')) {
+                formData.append('image', payload.file);
               } else {
                 reject({
-                  error: "Invalid file type. Only PDF and images are allowed.",
+                  error: 'Invalid file type. Only PDF and images are allowed.',
                 });
                 return;
               }
@@ -151,10 +151,10 @@ export const apiSlice = createApi({
 
             // ✅ Use fetchEventSource for real-time streaming
             fetchEventSource(`${apiUrl}/ai-search`, {
-              method: "POST",
+              method: 'POST',
               headers: {
                 Authorization: `Bearer ${token}`,
-                Accept: "text/event-stream",
+                Accept: 'text/event-stream',
               },
               body: formData,
               openWhenHidden: true,
@@ -168,7 +168,7 @@ export const apiSlice = createApi({
                   const data = JSON.parse(event.data);
 
                   // ✅ Update UI as new data arrives
-                  result.answers += data.reply || "";
+                  result.answers += data.reply || '';
                   result.result_id =
                     data.searched_result_id || result.result_id;
                   result.chat_id = data.chat_id || result.chat_id;
@@ -178,7 +178,7 @@ export const apiSlice = createApi({
                     payload.onMessage(result.answers);
                   }
                 } catch (error) {
-                  console.error("Error parsing SSE event:", error);
+                  console.error('Error parsing SSE event:', error);
                 }
               },
               onclose() {
@@ -190,140 +190,139 @@ export const apiSlice = createApi({
             });
           });
         } catch (error) {
-          return { error: "Request failed: " + error.message };
+          return { error: 'Request failed: ' + error.message };
         }
       },
     }),
     getSearchHistory: builder.query({
-      query: () => "/searched-result/history",
+      query: () => '/searched-result/history',
     }),
     getSessionResult: builder.query({
       query: (chat_id) => `/session/${chat_id}`,
     }),
     createHandout: builder.mutation({
       query: (payload) => ({
-        url: "/handout/create",
-        method: "POST",
+        url: '/handout/create',
+        method: 'POST',
         body: payload,
       }),
     }),
     rateResponse: builder.mutation({
       query: (payload) => ({
-        url: "/searched-result/rating",
-        method: "POST",
+        url: '/searched-result/rating',
+        method: 'POST',
         body: payload,
       }),
     }),
     reportResult: builder.mutation({
       query: (payload) => ({
-        url: "/searched-result/report",
-        method: "POST",
+        url: '/searched-result/report',
+        method: 'POST',
         body: payload,
       }),
     }),
     updateChatTitle: builder.mutation({
       query: ({ chat_id, new_title }) => ({
-        url: "/update-chat-title",
-        method: "PUT",
+        url: '/update-chat-title',
+        method: 'PUT',
         body: { chat_id, new_title },
       }),
     }),
     getUserProfile: builder.query({
-      query: () => "/user/profile",
+      query: () => '/user/profile',
     }),
     deleteChat: builder.mutation({
       query: (chatId) => ({
         url: `/chat/${chatId}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
     }),
     getFolderStructure: builder.query({
-      query: () => "/folders/structure",
-      providesTags: [{ type: "Folders", id: "LIST" }],
+      query: () => '/folders/structure',
+      providesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     getAllPostedContent: builder.query({
-      query: () => "/content/posted",
+      query: () => '/content/posted',
     }),
     getContentById: builder.mutation({
       query: (contentId) => ({
-        url: "/content/retrieve",
-        method: "POST",
+        url: '/content/retrieve',
+        method: 'POST',
         body: { content_id: contentId },
       }),
-      providesTags: [{ type: "Folders", id: "LIST" }],
+      providesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     addNewFolder: builder.mutation({
       query: ({ name, description, parent_folder_id }) => ({
-        url: "/folders/create", // Change to the correct API endpoint
-        method: "POST",
+        url: '/folders/create', // Change to the correct API endpoint
+        method: 'POST',
         body: { name, description, parent_folder_id },
       }),
-      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+      invalidatesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     editFolderById: builder.mutation({
       query: ({ folderId, newName }) => ({
         url: `folders/rename-folder`,
-        method: "PUT",
+        method: 'PUT',
         body: { folder_id: folderId, new_name: newName },
       }),
-      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+      invalidatesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     updateFolderContent: builder.mutation({
       query: ({ folder_id, files_to_delete }) => ({
         url: '/update-folder-content',
         method: 'PUT',
-        body: { folder_id: folder_id, files_to_delete: files_to_delete, }
+        body: { folder_id: folder_id, files_to_delete: files_to_delete },
       }),
-      invalidatesTags: [{ type: "Folders", id: "LIST" }],
-
+      invalidatesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     deleteFolderById: builder.mutation({
       query: (folderId) => ({
         url: `folders/delete-folder`,
-        method: "DELETE",
+        method: 'DELETE',
         body: { folder_id: folderId, force_delete: true },
       }),
-      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+      invalidatesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     addFolderContent: builder.mutation({
       query: ({ title, content, query, folder_id }) => ({
-        url: "/folders/save-content",
-        method: "POST",
+        url: '/folders/save-content',
+        method: 'POST',
         body: { title, content, query, folder_id },
       }),
     }),
     editContentById: builder.mutation({
       query: ({ content_id, new_title, new_content, new_query }) => ({
         url: `folders/rename-content`,
-        method: "PUT",
+        method: 'PUT',
         body: { content_id, new_title, new_content, new_query },
       }),
 
-      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+      invalidatesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     moveContent: builder.mutation({
       query: ({ content_id, target_folder_id }) => ({
         url: `folders/move-content`,
-        method: "POST",
+        method: 'POST',
         body: { content_id, target_folder_id },
       }),
-      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+      invalidatesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     deleteContentById: builder.mutation({
       query: (contentId) => ({
         url: `folders/delete-content`,
-        method: "DELETE",
+        method: 'DELETE',
         body: { content_id: contentId },
       }),
-      invalidatesTags: [{ type: "Folders", id: "LIST" }],
+      invalidatesTags: [{ type: 'Folders', id: 'LIST' }],
     }),
     getHealthHistory: builder.query({
       query: () => `/health-history`,
     }),
     createHealthHistory: builder.mutation({
       query: (formData) => ({
-        url: "/health-history",
-        method: "POST",
+        url: '/health-history',
+        method: 'POST',
         body: formData,
       }),
     }),

@@ -9,6 +9,6 @@ function PostInfo({ source, date }) {
       </div>
     </div>
   );
-};
+}
 
 export default PostInfo;

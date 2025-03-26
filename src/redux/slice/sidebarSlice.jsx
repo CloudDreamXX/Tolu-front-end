@@ -2,12 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   addFolder: {
-    folderId: "22426b86-8e6f-414a-ab2f-5e5fb579482b",
+    folderId: '22426b86-8e6f-414a-ab2f-5e5fb579482b',
     add: false,
   },
   contentId: null,
   detailResponse: false,
-  folderName: null
+  folderName: null,
 };
 
 const sidebarSlice = createSlice({
@@ -23,12 +23,16 @@ const sidebarSlice = createSlice({
     setDetailResponse: (state, action) => {
       state.detailResponse = action.payload;
     },
-    setFolderName:(state, action) => {
+    setFolderName: (state, action) => {
       state.folderName = action.payload;
-    }
-
+    },
   },
 });
 
-export const { setAddFolderData, setContentId, setDetailResponse,setFolderName } = sidebarSlice.actions;
+export const {
+  setAddFolderData,
+  setContentId,
+  setDetailResponse,
+  setFolderName,
+} = sidebarSlice.actions;
 export default sidebarSlice.reducer;

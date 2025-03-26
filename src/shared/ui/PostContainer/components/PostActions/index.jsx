@@ -1,5 +1,5 @@
-import { MdAccessTime } from "react-icons/md";
-import Button from "../../../Button";
+import { MdAccessTime } from 'react-icons/md';
+import Button from '../../../Button';
 
 function PostActions({ read }) {
   return (
@@ -9,13 +9,10 @@ function PostActions({ read }) {
         <span className="text-base font-semibold">{read} mins read</span>
       </div>
       <div className="flex items-center gap-2.5 text-sm font-medium">
-        <Button 
-          name="Play"
-          type="play"
-        />
+        <Button name="Play" type="play" />
       </div>
     </div>
   );
-};
+}
 
 export default PostActions;

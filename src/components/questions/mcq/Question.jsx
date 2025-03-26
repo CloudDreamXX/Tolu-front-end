@@ -1,9 +1,9 @@
 // eslint-disable-next-line react/prop-types
-const Question = ({ style, type = "text", isRequired, label, ...rest }) => {
+const Question = ({ style, type = 'text', isRequired, label, ...rest }) => {
   return (
     <div>
       <label className="block font-bold text-lg leading-5 sm:leading-7 mb-2">
-        {label}{" "}
+        {label}{' '}
         {isRequired ? (
           <span className="text-red-500 text-lg font-[600]">*</span>
         ) : (

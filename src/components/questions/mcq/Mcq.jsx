@@ -9,9 +9,9 @@ const Mcq = ({
   onChange,
 }) => {
   return (
-    <div style={{ marginBottom: "20px" }}>
+    <div style={{ marginBottom: '20px' }}>
       <label className="block font-bold text-lg leading-5 sm:leading-7 mb-2">
-        {question}{" "}
+        {question}{' '}
         {isRequired ? (
           <span className="text-red-500 text-lg font-[600]">*</span>
         ) : (

@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   userType: null, // Initially, no user is logged in
-  user: JSON.parse(localStorage.getItem('user')) || null,  // Load user from localStorage
-  token: localStorage.getItem('token') || null,  // Load token from localStorage
+  user: JSON.parse(localStorage.getItem('user')) || null, // Load user from localStorage
+  token: localStorage.getItem('token') || null, // Load token from localStorage
   isLoading: true, //
 };
 
@@ -14,17 +14,18 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       const email = action.payload?.email || null; // Get email from payload
       if (!email) {
-        state.userType = { role: "guest" }; // If no email, set as guest
+        state.userType = { role: 'guest' }; // If no email, set as guest
       } else {
         state.userType = {
-          role: email === "admin@example.com"
-            ? "admin"
-            : email === "test@example.com"
-              ? "coaches"
-              : "user",
+          role:
+            email === 'admin@example.com'
+              ? 'admin'
+              : email === 'test@example.com'
+                ? 'coaches'
+                : 'user',
         };
       }
-      localStorage.setItem("userType", JSON.stringify(state.userType));
+      localStorage.setItem('userType', JSON.stringify(state.userType));
     },
     setCredentials: (state, action) => {
       state.user = action.payload.user;
@@ -43,10 +44,11 @@ const authSlice = createSlice({
       localStorage.removeItem('userType');
     },
     setLoading: (state, action) => {
-      state.isLoading = action.payload
-    }
+      state.isLoading = action.payload;
+    },
   },
 });
 
-export const { setCredentials, logout, setUser, setLoading } = authSlice.actions;
+export const { setCredentials, logout, setUser, setLoading } =
+  authSlice.actions;
 export default authSlice.reducer;

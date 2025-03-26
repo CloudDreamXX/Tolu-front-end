@@ -1,5 +1,5 @@
-import SymptomsSelect from "./SymptomsSelect";
-import { IoClose } from "react-icons/io5";
+import SymptomsSelect from './SymptomsSelect';
+import { IoClose } from 'react-icons/io5';
 
 function StepSymptoms({ data, setData }) {
   return (

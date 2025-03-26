@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import profileIncompletePic from "../../../assets/images/profile-incomplete.png";
+import profileIncompletePic from '../../../assets/images/profile-incomplete.png';
 
 const IncompleteProfileMessage = ({
   title,
@@ -16,7 +16,7 @@ const IncompleteProfileMessage = ({
     >
       <div
         className={`bg-white flex flex-col items-center rounded-md shadow-lg p-4 md:p-6 overflow-y-auto custom-scroll h-fit max-h-full space-y-3 ${
-          width ? width : "w-[300px] lg:w-[400px] xl:w-[500px]"
+          width ? width : 'w-[300px] lg:w-[400px] xl:w-[500px]'
         }`}
         onClick={(e) => e.stopPropagation()}
       >

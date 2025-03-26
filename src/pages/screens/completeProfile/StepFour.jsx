@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
-import Mcq from "../../../components/questions/mcq/Mcq";
-import Button from "../../../components/small/Button";
+import { useState } from 'react';
+import Mcq from '../../../components/questions/mcq/Mcq';
+import Button from '../../../components/small/Button';
 // import { questions } from "./questions";
-import ConfirmAlert from "../../../components/small/ConfirmAlert";
+import ConfirmAlert from '../../../components/small/ConfirmAlert';
 
 const StepFour = ({ setCurrentStep }) => {
   const [isConfirmAlert, setIsConfirmAlert] = useState(false);

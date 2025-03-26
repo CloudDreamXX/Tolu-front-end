@@ -8,24 +8,24 @@ import TopicMetric from '../../../../shared/ui/TopicMetric';
 import DocsTable from '../../../../shared/ui/DocsTable';
 
 function Topic() {
-    const { topicId } = useParams();
-    const { data: allFolders } = useGetFolderStructureQuery();
-    const publishedContent = findPublishedContent(allFolders || mock);
-    const topic = findTopicById(publishedContent, topicId);   
+  const { topicId } = useParams();
+  const { data: allFolders } = useGetFolderStructureQuery();
+  const publishedContent = findPublishedContent(allFolders || mock);
+  const topic = findTopicById(publishedContent, topicId);
 
-    if (!topic) {
-        return <EmptyBlock />;
-    } 
+  if (!topic) {
+    return <EmptyBlock />;
+  }
 
-    return (
-        <div className='flex flex-col gap-4'>
-            <TopicMetric date={topic.created_at} author={topic.creator_id} />
-            {/* {topic?.files?.lenght > 0 &&
+  return (
+    <div className="flex flex-col gap-4">
+      <TopicMetric date={topic.created_at} author={topic.creator_id} />
+      {/* {topic?.files?.lenght > 0 &&
                 <DocsTable />
             } */}
-            <DocsTable />
-        </div>
-    );
+      <DocsTable />
+    </div>
+  );
 }
 
 export default Topic;

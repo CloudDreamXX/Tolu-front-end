@@ -1,6 +1,5 @@
-import { formatDate } from "../../../utils/format/formatDate";
-import { MdAccessTime } from "react-icons/md";
-
+import { formatDate } from '../../../utils/format/formatDate';
+import { MdAccessTime } from 'react-icons/md';
 
 function CardPost({ item }) {
   const { author, content, date, time, title } = item;
@@ -21,10 +20,10 @@ function CardPost({ item }) {
             <span className="text-p-md">{formatDate(date)}</span>
           </div>
         </div>
-				<div className="flex w-full items-center gap-2">
-					<MdAccessTime className="w-6 h-6" />
-					<span className="text-p-md">{time} mins reading left</span>
-				</div>
+        <div className="flex w-full items-center gap-2">
+          <MdAccessTime className="w-6 h-6" />
+          <span className="text-p-md">{time} mins reading left</span>
+        </div>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ function AddFiles({ setSelectedFile, selectedFile, fetchFile, folder }) {
     try {
       await deleteFile({
         folder_id: folder.id,
-        files_to_delete: [index]
+        files_to_delete: [index],
       }).unwrap();
       toast.success('File deleted successfully');
       setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
@@ -23,7 +23,9 @@ function AddFiles({ setSelectedFile, selectedFile, fetchFile, folder }) {
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     setSelectedFile((prevFiles) => [...prevFiles, ...files]);
-    toast.success(`${files.length} File${files.length > 1 ? 's' : ''} Uploaded`);
+    toast.success(
+      `${files.length} File${files.length > 1 ? 's' : ''} Uploaded`
+    );
   };
 
   const handleFileCardClick = () => {
@@ -49,14 +51,19 @@ function AddFiles({ setSelectedFile, selectedFile, fetchFile, folder }) {
         onChange={handleFileChange}
         style={{ display: 'none' }}
       />
-      <section className='flex flex-col gap-2'>
-
+      <section className="flex flex-col gap-2">
         {selectedFile?.length > 0 && (
           <ul className="mt-4 space-y-2">
             {selectedFile.map((file, index) => (
-              <li key={index} className="flex items-center justify-between p-2 border rounded-md">
+              <li
+                key={index}
+                className="flex items-center justify-between p-2 border rounded-md"
+              >
                 <span>{file.name}</span>
-                <button onClick={() => removeFile(index)} className="text-red-500 hover:text-red-700">
+                <button
+                  onClick={() => removeFile(index)}
+                  className="text-red-500 hover:text-red-700"
+                >
                   <FaTimes />
                 </button>
               </li>
@@ -64,9 +71,12 @@ function AddFiles({ setSelectedFile, selectedFile, fetchFile, folder }) {
           </ul>
         )}
         {fetchFile?.length > 0 && (
-          <ul className=' space-y-2'>
+          <ul className=" space-y-2">
             {fetchFile.map((file, index) => (
-              <li key={index} className="flex items-center justify-between p-2 border rounded-md">
+              <li
+                key={index}
+                className="flex items-center justify-between p-2 border rounded-md"
+              >
                 <span>{file.filename}</span>
                 <button
                   onClick={() => deleteFileHandler(index)}
@@ -81,7 +91,6 @@ function AddFiles({ setSelectedFile, selectedFile, fetchFile, folder }) {
           </ul>
         )}
       </section>
-
     </section>
   );
 }

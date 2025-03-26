@@ -1,9 +1,9 @@
-import { useState } from "react";
-import StepOne from "./StepOne";
-import StepTwo from "./StepTwo";
-import StepThree from "./StepThree";
-import StepFour from "./StepFour";
-import Header from "../../../components/layout/Header";
+import { useState } from 'react';
+import StepOne from './StepOne';
+import StepTwo from './StepTwo';
+import StepThree from './StepThree';
+import StepFour from './StepFour';
+import Header from '../../../components/layout/Header';
 
 const CompleteProfile = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -26,20 +26,20 @@ const CompleteProfile = () => {
 
   const steps = [
     {
-      label: "Health Status",
-      num: "step 1",
+      label: 'Health Status',
+      num: 'step 1',
     },
     {
-      label: "Life Style and Environmental Exposure",
-      num: "step 2",
+      label: 'Life Style and Environmental Exposure',
+      num: 'step 2',
     },
     {
-      label: "Health History and Symptom Assessment",
-      num: "step 3",
+      label: 'Health History and Symptom Assessment',
+      num: 'step 3',
     },
     {
-      label: "Body System Health",
-      num: "step 4",
+      label: 'Body System Health',
+      num: 'step 4',
     },
   ];
   return (
@@ -55,8 +55,8 @@ const CompleteProfile = () => {
               <div
                 key={index}
                 className={`flex items-center  cursor-default  ${
-                  currentStep >= index ? "opacity-100" : "opacity-50"
-                } ${index < steps.length - 1 ? "" : ""}`}
+                  currentStep >= index ? 'opacity-100' : 'opacity-50'
+                } ${index < steps.length - 1 ? '' : ''}`}
               >
                 <div className="flex flex-col  items-start text-primary ">
                   <p className="capitalize font-[700] text-xs">{step.num}</p>

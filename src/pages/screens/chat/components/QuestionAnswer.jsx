@@ -1,25 +1,30 @@
-import DOMPurify from "dompurify";
-import { useEffect, useRef, useState } from "react";
+import DOMPurify from 'dompurify';
+import { useEffect, useRef, useState } from 'react';
 import {
   AiFillDislike,
   AiFillLike,
   AiOutlineDislike,
   AiOutlineLike,
-} from "react-icons/ai";
-import { BsCopy } from "react-icons/bs";
-import { FaRegEdit, FaTimes } from "react-icons/fa";
-import { FaRegShareFromSquare, FaVolumeHigh } from "react-icons/fa6";
-import { GrGallery, GrRefresh } from "react-icons/gr";
-import { IoVolumeMute } from "react-icons/io5";
-import { MdVideoLibrary } from "react-icons/md";
-const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) => {
+} from 'react-icons/ai';
+import { BsCopy } from 'react-icons/bs';
+import { FaRegEdit, FaTimes } from 'react-icons/fa';
+import { FaRegShareFromSquare, FaVolumeHigh } from 'react-icons/fa6';
+import { GrGallery, GrRefresh } from 'react-icons/gr';
+import { IoVolumeMute } from 'react-icons/io5';
+import { MdVideoLibrary } from 'react-icons/md';
+const QuestionAnswer = ({
+  chat,
+  handleUpdateChatTitle,
+  setIsAdmin,
+  isAdmin,
+}) => {
   const lastItemRef = useRef(null);
   const containsHtml = /<\/?[a-z][\s\S]*>/i.test(chat.detailed_answer);
 
   // const lastItemRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(
-    `${chat.question || ""} ${chat.query || ""}`
+    `${chat.question || ''} ${chat.query || ''}`
   );
   const [prevTitle, setPrevTitle] = useState(title); // Store previous title
   const inputRef = useRef(null);
@@ -61,7 +66,7 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) =>
 
   const handleCopy = () => {
     // Create a temporary element to extract text
-    const tempElement = document.createElement("div");
+    const tempElement = document.createElement('div');
     tempElement.innerHTML = chat.answer || chat.detailed_answer; // Convert HTML to DOM
     const plainText = tempElement.innerText || tempElement.textContent; // Extract only text
 
@@ -71,7 +76,7 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) =>
         setCopied(true);
         setTimeout(() => setCopied(false), 1000);
       })
-      .catch((err) => console.error("Failed to copy:", err));
+      .catch((err) => console.error('Failed to copy:', err));
   };
 
   const handleSpeak = () => {
@@ -95,7 +100,7 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) =>
     { icon: BsCopy, action: handleCopy, isCopyIcon: true },
     {
       icon: FaRegShareFromSquare,
-      action: () => alert("Share functionality here"),
+      action: () => alert('Share functionality here'),
     },
     { icon: speaking ? IoVolumeMute : FaVolumeHigh, action: handleSpeak },
     { icon: liked ? AiFillLike : AiOutlineLike, action: handleLike },
@@ -103,7 +108,7 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) =>
       icon: disliked ? AiFillDislike : AiOutlineDislike,
       action: handleDislike,
     },
-    { icon: GrRefresh, action: () => alert("Refresh functionality here") },
+    { icon: GrRefresh, action: () => alert('Refresh functionality here') },
   ];
   const sanitizedHTML = DOMPurify.sanitize(chat.answer);
 
@@ -111,45 +116,48 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) =>
     <section ref={lastItemRef} className="flex flex-col mt-6 gap-6  ">
       <div className="flex w-full items-center space-x-6">
         <div className="w-full pl-14 space-y-6">
-         {!isAdmin&& <div className="shadow-md flex items-center justify-between gap-4 rounded-lg h-16 w-full text-start p-4">
-            {isEditing ? (
-              <div className="flex w-full items-center gap-3">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  onBlur={handleTitleUpdate}
-                  onKeyDown={(e) => e.key === "Enter" && handleTitleUpdate()}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
-                />
-                <FaTimes
-                  onClick={handleCancelUpdate}
-                  className="cursor-pointer text-red-500"
-                />
-              </div>
-            ) : (
-              <section>{title}</section>
-            )}
-            <section
-              onClick={() => setIsEditing(true)}
-              className="cursor-pointer"
-            >
-              <FaRegEdit />
-            </section>
-          </div>
-}
+          {!isAdmin && (
+            <div className="shadow-md flex items-center justify-between gap-4 rounded-lg h-16 w-full text-start p-4">
+              {isEditing ? (
+                <div className="flex w-full items-center gap-3">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    onBlur={handleTitleUpdate}
+                    onKeyDown={(e) => e.key === 'Enter' && handleTitleUpdate()}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+                  />
+                  <FaTimes
+                    onClick={handleCancelUpdate}
+                    className="cursor-pointer text-red-500"
+                  />
+                </div>
+              ) : (
+                <section>{title}</section>
+              )}
+              <section
+                onClick={() => setIsEditing(true)}
+                className="cursor-pointer"
+              >
+                <FaRegEdit />
+              </section>
+            </div>
+          )}
           <div className="flex w-full relative gap-5 items-center group">
             {/* Floating Icons on Hover */}
             {!isAdmin && (
-
               <div className="text-2xl absolute flex flex-col gap-2 text-primary left-[-30px] items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 {icons.map(({ icon: Icon, action, isCopyIcon }, index) => (
                   <IconWrapper key={index} onClick={action}>
                     <Icon
                       fontSize={12}
-                      className={`${isCopyIcon && copied ? "text-[#008FF6]" : "text-[#1B2559]"
-                        }`}
+                      className={`${
+                        isCopyIcon && copied
+                          ? 'text-[#008FF6]'
+                          : 'text-[#1B2559]'
+                      }`}
                     />
                   </IconWrapper>
                 ))}
@@ -161,12 +169,12 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) =>
               {chat.answer ? (
                 <div
                   style={{
-                    fontFamily: "Arial, sans-serif",
-                    lineHeight: "1.6",
-                    maxWidth: "800px",
-                    margin: "0 ",
-                    padding: "20px",
-                    color: "#333",
+                    fontFamily: 'Arial, sans-serif',
+                    lineHeight: '1.6',
+                    maxWidth: '800px',
+                    margin: '0 ',
+                    padding: '20px',
+                    color: '#333',
                   }}
                 >
                   <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />
@@ -185,7 +193,6 @@ const QuestionAnswer = ({ chat, handleUpdateChatTitle, setIsAdmin, isAdmin }) =>
         </div>
 
         {!isAdmin && (
-
           <div className="flex flex-col gap-4 text-2xl text-primary">
             <GrGallery />
             <MdVideoLibrary />

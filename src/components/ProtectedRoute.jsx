@@ -1,4 +1,4 @@
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate } from 'react-router-dom';
 
 // const ProtectedRoute = ({ allowedRoles }) => {
 //   // Read authentication data synchronously
@@ -34,15 +34,14 @@ import { Outlet, Navigate } from "react-router-dom";
 //   return <Navigate to={role === "admin" ? "/admin" : "/user"} replace />;
 // };
 
-
 const ProtectedRoute = ({ allowedRoles }) => {
-  const token = localStorage.getItem("token");
-  const userType = localStorage.getItem("userType")
-    ? JSON.parse(localStorage.getItem("userType"))
+  const token = localStorage.getItem('token');
+  const userType = localStorage.getItem('userType')
+    ? JSON.parse(localStorage.getItem('userType'))
     : null;
 
   if (!token || !userType) {
-    if (allowedRoles.includes("guest")) {
+    if (allowedRoles.includes('guest')) {
       return <Outlet />;
     }
     return <Navigate to="/auth" replace />;
@@ -50,16 +49,33 @@ const ProtectedRoute = ({ allowedRoles }) => {
 
   const role = userType.role;
 
-  if (allowedRoles.includes("guest")) {
-    return <Navigate to={role === "admin" ? "/admin" : role === "coaches" ? "/coaches" : "/user"} replace />;
+  if (allowedRoles.includes('guest')) {
+    return (
+      <Navigate
+        to={
+          role === 'admin'
+            ? '/admin'
+            : role === 'coaches'
+              ? '/coaches'
+              : '/user'
+        }
+        replace
+      />
+    );
   }
 
   if (allowedRoles.includes(role)) {
     return <Outlet />;
   }
 
-  return <Navigate to={role === "admin" ? "/admin" : role === "coaches" ? "/coaches" : "/user"} replace />;
+  return (
+    <Navigate
+      to={
+        role === 'admin' ? '/admin' : role === 'coaches' ? '/coaches' : '/user'
+      }
+      replace
+    />
+  );
 };
-
 
 export default ProtectedRoute;

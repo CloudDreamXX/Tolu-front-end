@@ -1,7 +1,7 @@
-import classNames from "classnames";
-import { useState } from "react";
-import { IoEyeOutline } from "react-icons/io5";
-import { IoChevronDown } from "react-icons/io5";
+import classNames from 'classnames';
+import { useState } from 'react';
+import { IoEyeOutline } from 'react-icons/io5';
+import { IoChevronDown } from 'react-icons/io5';
 
 function Select({ text, options, onSelect }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,8 +23,8 @@ function Select({ text, options, onSelect }) {
         {selected}
         <IoChevronDown
           className={classNames(
-            "text-lg transition-transform duration-300",
-            isOpen ? "transform rotate-180" : ""
+            'text-lg transition-transform duration-300',
+            isOpen ? 'transform rotate-180' : ''
           )}
         />
       </button>

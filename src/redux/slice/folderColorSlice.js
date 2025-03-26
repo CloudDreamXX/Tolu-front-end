@@ -1,11 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  folderColors: [] // start with an empty array so folders are added dynamically
+  folderColors: [], // start with an empty array so folders are added dynamically
 };
 
 const folderColorSlice = createSlice({
-  name: "folderColor",
+  name: 'folderColor',
   initialState,
   reducers: {
     // This action either updates a folder's colors if it exists,

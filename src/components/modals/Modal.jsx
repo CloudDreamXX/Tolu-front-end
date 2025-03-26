@@ -1,5 +1,5 @@
-import React from "react";
-import { IoClose } from "react-icons/io5";
+import React from 'react';
+import { IoClose } from 'react-icons/io5';
 
 const Modal = ({ isOpen, title, onClose, children, className, height }) => {
   if (!isOpen) return null;
@@ -10,9 +10,9 @@ const Modal = ({ isOpen, title, onClose, children, className, height }) => {
       onClick={onClose}
     >
       <div
-        style={{ maxHeight: "-webkit-fill-available" }}
+        style={{ maxHeight: '-webkit-fill-available' }}
         className={`bg-white p-6 rounded-lg  min-w-7 h-auto max-w-full overflow-y-scroll custom-scroll ${
-          height ? height : ""
+          height ? height : ''
         } ${className}`}
         onClick={(e) => e.stopPropagation()}
       >

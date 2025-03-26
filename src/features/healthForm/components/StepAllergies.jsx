@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import classNames from "classnames";
-import { IoChevronDown } from "react-icons/io5";
-import { allergiesOptions } from "./config";
-import Search from "../../../shared/ui/Search";
-import Button from "../../../shared/ui/Button";
+import { useState, useEffect } from 'react';
+import classNames from 'classnames';
+import { IoChevronDown } from 'react-icons/io5';
+import { allergiesOptions } from './config';
+import Search from '../../../shared/ui/Search';
+import Button from '../../../shared/ui/Button';
 
 function StepAllergies({ data, setData }) {
   const [showSelect, setShowSelect] = useState(false);
@@ -37,18 +37,17 @@ function StepAllergies({ data, setData }) {
         className="cursor-pointer flex items-center justify-between w-full border border-stroke rounded-full p-3 pr-4"
       >
         <span className="truncate w-[90%]">
-          {selected.length > 0 ? selected.join(", ") : "Select Allergies"}
+          {selected.length > 0 ? selected.join(', ') : 'Select Allergies'}
         </span>
         <IoChevronDown
-          className={classNames(
-            "transition-transform duration-300",
-            { "rotate-180": showSelect }
-          )}
+          className={classNames('transition-transform duration-300', {
+            'rotate-180': showSelect,
+          })}
         />
       </div>
       <div
         className={classNames(
-          "absolute top-14 left-0 w-full bg-white z-50 border border-stroke rounded-2xl p-6 flex flex-col gap-4",
+          'absolute top-14 left-0 w-full bg-white z-50 border border-stroke rounded-2xl p-6 flex flex-col gap-4',
           { hidden: !showSelect }
         )}
       >

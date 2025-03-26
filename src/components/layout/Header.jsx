@@ -1,6 +1,6 @@
-import logo from "../../assets/images/logo.png";
-import callIcon from "../../assets/images/home/callIcon.png";
-import { Link } from "react-router-dom";
+import logo from '../../assets/images/logo.png';
+import callIcon from '../../assets/images/home/callIcon.png';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (

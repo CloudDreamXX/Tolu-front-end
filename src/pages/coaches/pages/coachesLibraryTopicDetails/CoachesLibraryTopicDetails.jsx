@@ -1,30 +1,30 @@
-import React, { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import { AiOutlineMenuFold } from "react-icons/ai";
-import { FaRegEdit } from "react-icons/fa";
-import { IoIosSave } from "react-icons/io";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { AiOutlineMenuFold } from 'react-icons/ai';
+import { FaRegEdit } from 'react-icons/fa';
+import { IoIosSave } from 'react-icons/io';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import { useSelector } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 // import { useAiLearningSearchMutation, useEditContentByIdMutation, useGetContentByIdMutation, useGetFolderStructureQuery, useMoveContentMutation } from '../../../redux/apis/apiSlice';
-import { FaEllipsisV, FaRegFolder } from "react-icons/fa";
-import { Editor } from "primereact/editor";
+import { FaEllipsisV, FaRegFolder } from 'react-icons/fa';
+import { Editor } from 'primereact/editor';
 import {
   useAiLearningSearchMutation,
   useEditContentByIdMutation,
   useGetContentByIdMutation,
   useGetFolderStructureQuery,
   useMoveContentMutation,
-} from "../../../../redux/apis/apiSlice";
-import useAutoRefetchOnReconnect from "../../../../api/useAutoRefetchOnReconnect";
-import Modal from "../../../../components/modals/Modal";
-import Button from "../../../../components/small/Button";
-import DynamicContent from "../../../admin/addBlog/components/DynamicContent";
-import QuestionAnswer from "../../../screens/chat/components/QuestionAnswer";
-import LibraryInput from "../../../user/library/components/LibraryInput";
-import { apiErrorHandler } from "../../../../api/apiErrorHandler";
-import FolderSelection from "../../../../components/FolderSelection";
-import HtmlContent from "../../../../components/htmlToText";
+} from '../../../../redux/apis/apiSlice';
+import useAutoRefetchOnReconnect from '../../../../api/useAutoRefetchOnReconnect';
+import Modal from '../../../../components/modals/Modal';
+import Button from '../../../../components/small/Button';
+import DynamicContent from '../../../admin/addBlog/components/DynamicContent';
+import QuestionAnswer from '../../../screens/chat/components/QuestionAnswer';
+import LibraryInput from '../../../user/library/components/LibraryInput';
+import { apiErrorHandler } from '../../../../api/apiErrorHandler';
+import FolderSelection from '../../../../components/FolderSelection';
+import HtmlContent from '../../../../components/htmlToText';
 // import DynamicContent from '../addBlog/components/DynamicContent';
 // import Modal from '../../../components/modals/Modal';
 // import Button from '../../../components/small/Button';
@@ -44,17 +44,17 @@ function CoachesLibraryTopicDetails() {
   const { data: allFolders } = useGetFolderStructureQuery();
 
   const [isEditModal, setIsEditModal] = useState(false);
-  const [editingField, setEditingField] = useState(""); // To identify whether editing title or content
+  const [editingField, setEditingField] = useState(''); // To identify whether editing title or content
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // const { data: healthData } = useGetUserHealthHistoryQuery();
   // console.log("healthData",healthData)
   const navigate = useNavigate();
   // Get values from query parameters
-  const id = searchParams.get("id");
+  const id = searchParams.get('id');
   const [editData, setEditData] = useState({
-    title: "",
-    content: "",
+    title: '',
+    content: '',
   });
 
   const openEditModal = (field) => {
@@ -64,7 +64,7 @@ function CoachesLibraryTopicDetails() {
 
   const closeEditModal = () => {
     setIsEditModal(false);
-    setEditingField("");
+    setEditingField('');
   };
   const closeModal = () => {
     setIsModalOpen(false);
@@ -72,7 +72,7 @@ function CoachesLibraryTopicDetails() {
   };
 
   useEffect(() => {
-    apiErrorHandler(isError, error, isSuccess, "Content loaded successfully!");
+    apiErrorHandler(isError, error, isSuccess, 'Content loaded successfully!');
   }, [isError, error, isSuccess]);
   useAutoRefetchOnReconnect(refetch);
 
@@ -80,8 +80,8 @@ function CoachesLibraryTopicDetails() {
     closeEditModal();
     setEditData((prev) => ({
       ...prev,
-      content: data?.content || "",
-      title: data?.title || "",
+      content: data?.content || '',
+      title: data?.title || '',
     }));
   };
 
@@ -91,12 +91,12 @@ function CoachesLibraryTopicDetails() {
       const response = await getContentById(id).unwrap();
       if (response) {
         setEditData({
-          title: response.title || "",
-          content: response.content || "",
+          title: response.title || '',
+          content: response.content || '',
         });
       }
     } catch (err) {
-      console.error("Error fetching content:", err);
+      console.error('Error fetching content:', err);
     }
   };
 
@@ -107,7 +107,7 @@ function CoachesLibraryTopicDetails() {
   // Save edited content
   const handleEditContent = async () => {
     if (!data?.id) {
-      toast.error("No content selected!");
+      toast.error('No content selected!');
       return;
     }
 
@@ -119,12 +119,12 @@ function CoachesLibraryTopicDetails() {
         new_query: data?.query, // Assuming query remains unchanged
       }).unwrap();
 
-      toast.success(response.message || "Content updated successfully");
+      toast.success(response.message || 'Content updated successfully');
       setIsEditing(false);
       setIsEditModal(false);
     } catch (error) {
-      console.error("Error updating content:", error);
-      toast.error(error.message || "Failed to update content");
+      console.error('Error updating content:', error);
+      toast.error(error.message || 'Failed to update content');
     }
   };
 
@@ -132,13 +132,12 @@ function CoachesLibraryTopicDetails() {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [chats, setChats] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const lastItemRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [aiLearningSearch] = useAiLearningSearchMutation();
   const [isAdmin, setIsAdmin] = useState(false);
-  const userType = JSON.parse(localStorage.getItem("userType"));
-
+  const userType = JSON.parse(localStorage.getItem('userType'));
 
   const dropdownRef = useRef(null);
 
@@ -150,14 +149,14 @@ function CoachesLibraryTopicDetails() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   useEffect(() => {
-    if (userType && userType.role === "admin") {
+    if (userType && userType.role === 'admin') {
       setIsAdmin(true);
     }
   }, [userType]); // Ensure useEffect runs when userType changes
@@ -167,25 +166,25 @@ function CoachesLibraryTopicDetails() {
   };
   const handleInputSubmit = async (text) => {
     if (!text.trim()) {
-      toast.error("Please enter a message before submitting.");
+      toast.error('Please enter a message before submitting.');
       return;
     }
 
     if (
       selectedFile &&
-      !["application/pdf", "image"].some((type) =>
+      !['application/pdf', 'image'].some((type) =>
         selectedFile.type.startsWith(type)
       )
     ) {
-      toast.error("Invalid file type. Only PDFs and images are allowed.");
+      toast.error('Invalid file type. Only PDFs and images are allowed.');
       return;
     }
 
     const newChat = {
       question: text,
-      detailed_answer: "",
-      summary: "Streaming...",
-      source: "Streaming...",
+      detailed_answer: '',
+      summary: 'Streaming...',
+      source: 'Streaming...',
       audio: null,
     };
     setChats((prevChats) => [...prevChats, newChat]);
@@ -197,7 +196,7 @@ function CoachesLibraryTopicDetails() {
           user_prompt: text,
           is_new: true,
           regenerate_id: null,
-          instructions: "instruction",
+          instructions: 'instruction',
         },
         file: selectedFile || null,
         // folder_id: addNewFolderState?.folderId || null,
@@ -212,8 +211,8 @@ function CoachesLibraryTopicDetails() {
       });
       setSelectedFile(null);
     } catch (error) {
-      console.error("Error sending request:", error);
-      toast.error("Failed to fetch response.");
+      console.error('Error sending request:', error);
+      toast.error('Failed to fetch response.');
     } finally {
       setIsLoading(false);
     }
@@ -226,12 +225,12 @@ function CoachesLibraryTopicDetails() {
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
-    fileInputRef.current.value = "";
+    fileInputRef.current.value = '';
   };
   //end input functionally
 
   const handleMoveContent = async () => {
-    if (!selectedFolder) return toast.error("Please select a folder.");
+    if (!selectedFolder) return toast.error('Please select a folder.');
     // if (content.current_folder_id === selectedFolder) return toast.error("Content is already in this folder.");
 
     try {
@@ -241,16 +240,16 @@ function CoachesLibraryTopicDetails() {
       }).unwrap();
       toast.success(response.message);
       closeModal();
-      navigate("/admin");
+      navigate('/admin');
     } catch (error) {
-      toast.error(error?.data?.message || "Error moving content.");
+      toast.error(error?.data?.message || 'Error moving content.');
     }
   };
 
   //get the all folder from the api
   function getAllFolders(folderList, result = []) {
     if (!Array.isArray(folderList)) {
-      console.error("Invalid input: folderList is not an array", folderList);
+      console.error('Invalid input: folderList is not an array', folderList);
       return result;
     }
 
@@ -284,11 +283,11 @@ function CoachesLibraryTopicDetails() {
         onClose={closeEditModal}
         title={
           <h1 className="text-xl font-bold">
-            Edit {editingField === "title" ? "Title" : "Content"}
+            Edit {editingField === 'title' ? 'Title' : 'Content'}
           </h1>
         }
       >
-        {editingField === "title" ? (
+        {editingField === 'title' ? (
           <input
             type="text"
             value={editData.title}
@@ -303,7 +302,7 @@ function CoachesLibraryTopicDetails() {
           />
         ) : (
           <Editor
-            style={{ height: "320px" }}
+            style={{ height: '320px' }}
             value={editData.content}
             onTextChange={(e) =>
               setEditData((prev) => ({
@@ -315,12 +314,12 @@ function CoachesLibraryTopicDetails() {
         )}
         <section className="flex justify-end gap-4 mt-4">
           <Button
-            className={"!bg-[#8E8E8E] text-white "}
+            className={'!bg-[#8E8E8E] text-white '}
             text="Close"
             onClick={closeContentHandle}
           />
           <Button
-            className={"!bg-[#B6B6B6] text-[#1D1D1F99] "}
+            className={'!bg-[#B6B6B6] text-[#1D1D1F99] '}
             text="Save Changes"
             onClick={handleEditContent}
           />
@@ -373,22 +372,20 @@ function CoachesLibraryTopicDetails() {
           <div className="w-full flex flex-col justify-center overflow-auto">
             {/* Content Display Section */}
             <section className="flex justify-center  h gap-4">
-              
               <div className="custom-scroll overflow-auto w-[80%]  flex  flex-col mt-5 shadow-[#8484850A] rounded-lg p-4 text-black">
-                  <section className="flex flex-col   mt-[24px]">
-                    <div className="border p-4 rounded-2xl w-[70%] max-w-max ml-auto bg-[#f5f5f5]">
-                      <h1 className="text-base md:text-lg text-[#1D1D1F99] font-bold">
-                        {editData.title || "No title"}
-                      </h1>
-                    </div>
-                    <div className="border p-4 rounded-2xl w-[70%] max-w-max mr-auto mt-5">
-                      <section className="text-[#1D1D1F99] text-xl font-medium">
-                       
-                        <HtmlContent contents={editData.content} />
-                      </section>
-                    </div>
-                  </section>
-                </div>
+                <section className="flex flex-col   mt-[24px]">
+                  <div className="border p-4 rounded-2xl w-[70%] max-w-max ml-auto bg-[#f5f5f5]">
+                    <h1 className="text-base md:text-lg text-[#1D1D1F99] font-bold">
+                      {editData.title || 'No title'}
+                    </h1>
+                  </div>
+                  <div className="border p-4 rounded-2xl w-[70%] max-w-max mr-auto mt-5">
+                    <section className="text-[#1D1D1F99] text-xl font-medium">
+                      <HtmlContent contents={editData.content} />
+                    </section>
+                  </div>
+                </section>
+              </div>
               <section className="flex flex-col gap-4 mt-5 text-primary">
                 <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
                   <AiOutlineMenuFold
@@ -399,7 +396,7 @@ function CoachesLibraryTopicDetails() {
                 <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
                   <IoIosSave
                     className="hover:text-black  cursor-pointer text-lg"
-                  //  onClick={handleEditContent}
+                    //  onClick={handleEditContent}
                   />
                 </section>
                 <section className="relative">
@@ -410,10 +407,13 @@ function CoachesLibraryTopicDetails() {
                     />
                   </section>
                   {isEditing && (
-                    <section ref={dropdownRef} className="absolute w-[150px] top-5 left-[-10px] bg-white shadow-lg rounded-lg">
+                    <section
+                      ref={dropdownRef}
+                      className="absolute w-[150px] top-5 left-[-10px] bg-white shadow-lg rounded-lg"
+                    >
                       <section
                         onClick={() => {
-                          openEditModal("title"), setIsEditing(false);
+                          openEditModal('title'), setIsEditing(false);
                         }}
                         className="w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary"
                       >
@@ -421,7 +421,7 @@ function CoachesLibraryTopicDetails() {
                       </section>
                       <section
                         onClick={() => {
-                          openEditModal("content"), setIsEditing(false);
+                          openEditModal('content'), setIsEditing(false);
                         }}
                         className="w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary"
                       >

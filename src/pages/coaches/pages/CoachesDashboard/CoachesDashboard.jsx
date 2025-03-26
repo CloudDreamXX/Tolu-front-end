@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import { CgFileAdd } from "react-icons/cg";
-import { PiChatsCircle } from "react-icons/pi";
-import { useDispatch, useSelector } from "react-redux";
-import Modal from "../../../../components/modals/Modal";
-import Button from "../../../../components/small/Button";
-import CustomInput from "../../../../components/small/CustomInput";
+import React, { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { CgFileAdd } from 'react-icons/cg';
+import { PiChatsCircle } from 'react-icons/pi';
+import { useDispatch, useSelector } from 'react-redux';
+import Modal from '../../../../components/modals/Modal';
+import Button from '../../../../components/small/Button';
+import CustomInput from '../../../../components/small/CustomInput';
 import {
   useAddNewFolderMutation,
   useAiLearningSearchMutation,
@@ -14,27 +14,27 @@ import {
   useEditContentByIdMutation,
   useEditFolderByIdMutation,
   useGetFolderStructureQuery,
-} from "../../../../redux/apis/apiSlice";
-import { setAddFolderData } from "../../../../redux/slice/sidebarSlice";
-import DynamicContent from "../../../admin/addBlog/components/DynamicContent";
-import FileCard from "../../../admin/addBlog/components/FileCard";
-import InfoCard from "../../../admin/addBlog/components/InfoCard";
-import QuestionAnswer from "../../../screens/chat/components/QuestionAnswer";
-import LibraryInput from "../../../user/library/components/LibraryInput";
-import PersonalizeModal from "./components/PersonalizeModal";
-import HtmlContent from "../../../../components/htmlToText";
+} from '../../../../redux/apis/apiSlice';
+import { setAddFolderData } from '../../../../redux/slice/sidebarSlice';
+import DynamicContent from '../../../admin/addBlog/components/DynamicContent';
+import FileCard from '../../../admin/addBlog/components/FileCard';
+import InfoCard from '../../../admin/addBlog/components/InfoCard';
+import QuestionAnswer from '../../../screens/chat/components/QuestionAnswer';
+import LibraryInput from '../../../user/library/components/LibraryInput';
+import PersonalizeModal from './components/PersonalizeModal';
+import HtmlContent from '../../../../components/htmlToText';
 
 function CoachesDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
-  const [addFolder, setAddNewFolder] = useState("");
-  const [addFolderDescription, setAddFolderDescription] = useState("");
+  const [addFolder, setAddNewFolder] = useState('');
+  const [addFolderDescription, setAddFolderDescription] = useState('');
   const [messages, setMessages] = useState([]);
   const [instruction, setInstruction] = useState(null);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [chats, setChats] = useState([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const addNewFolderState = useSelector((state) => state.sidebar.addFolder);
@@ -45,11 +45,11 @@ function CoachesDashboard() {
 
   ////////////
 
-  const [folderId, setFolderId] = useState("");
-  const [contentId, setContentId] = useState("");
-  const [newName, setNewName] = useState("");
-  const [newTitle, setNewTitle] = useState("");
-  const [title, setTitle] = useState("");
+  const [folderId, setFolderId] = useState('');
+  const [contentId, setContentId] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newTitle, setNewTitle] = useState('');
+  const [title, setTitle] = useState('');
   // const [content, setContent] = useState("");
 
   const [editFolder] = useEditFolderByIdMutation();
@@ -60,18 +60,18 @@ function CoachesDashboard() {
   const handleEditFolder = async () => {
     try {
       await editFolder({ folderId, newName }).unwrap();
-      console.log("Folder renamed successfully");
+      console.log('Folder renamed successfully');
     } catch (error) {
-      console.error("Error renaming folder:", error);
+      console.error('Error renaming folder:', error);
     }
   };
 
   const handleDeleteFolder = async () => {
     try {
       await deleteFolder(folderId).unwrap();
-      console.log("Folder deleted successfully");
+      console.log('Folder deleted successfully');
     } catch (error) {
-      console.error("Error deleting folder:", error);
+      console.error('Error deleting folder:', error);
     }
   };
 
@@ -85,7 +85,7 @@ function CoachesDashboard() {
       toast.success(response.message);
       setIsEditing(false);
     } catch (error) {
-      console.error("Error renaming content:", error);
+      console.error('Error renaming content:', error);
       toast.error(error.message);
     }
   };
@@ -98,7 +98,7 @@ function CoachesDashboard() {
 
       setTopicModalOpen(false);
     } catch (error) {
-      console.error("Error deleting content:", error);
+      console.error('Error deleting content:', error);
     }
   };
 
@@ -127,12 +127,12 @@ function CoachesDashboard() {
   function findFolderById(folders, id) {
     // Check if folders is a valid array
     if (!Array.isArray(folders)) {
-      console.warn("Invalid folders array:", folders);
+      console.warn('Invalid folders array:', folders);
       return null;
     }
     // Check if id is valid (non-null, non-undefined)
     if (!id) {
-      console.warn("Invalid folder id:", id);
+      console.warn('Invalid folder id:', id);
       return null;
     }
 
@@ -163,10 +163,10 @@ function CoachesDashboard() {
         allFolders.posted_topics,
         addNewFolderState.folderId
       );
-      console.log("Found folder in posted_topics:", folderFromPosted);
+      console.log('Found folder in posted_topics:', folderFromPosted);
     } else {
       console.warn(
-        "Missing allFolders.posted_topics or addNewFolderState.folderId"
+        'Missing allFolders.posted_topics or addNewFolderState.folderId'
       );
     }
   }, [allFolders, addNewFolderState]);
@@ -178,7 +178,7 @@ function CoachesDashboard() {
   const handleFolderSubmit = async () => {
     // Check if folder name and folder id are provided
     if (!addFolder.trim() || !addNewFolderState?.folderId) {
-      toast.error("Both folder name and folder ID are required!"); // Show toast if either is missing
+      toast.error('Both folder name and folder ID are required!'); // Show toast if either is missing
       return; // Exit the function early
     }
 
@@ -190,20 +190,20 @@ function CoachesDashboard() {
       });
 
       if (error) {
-        console.log("Error adding folder:", error);
-        toast.error("Failed to add folder!"); // Show toast for failure
+        console.log('Error adding folder:', error);
+        toast.error('Failed to add folder!'); // Show toast for failure
       } else {
-        console.log("Folder added successfully", data?.message);
+        console.log('Folder added successfully', data?.message);
         toast.success(data?.message); // Show success toast
       }
     } catch (error) {
-      console.error("API call failed:", error);
-      toast.error("An error occurred while adding the folder!");
+      console.error('API call failed:', error);
+      toast.error('An error occurred while adding the folder!');
     }
 
     // Reset the form and close the modal
-    setAddNewFolder("");
-    setAddFolderDescription("");
+    setAddNewFolder('');
+    setAddFolderDescription('');
     dispatch(setAddFolderData({ folderId: null, add: false }));
     closeModal();
   };
@@ -213,7 +213,7 @@ function CoachesDashboard() {
   };
   const handleRemoveFile = () => {
     setSelectedFile(null);
-    fileInputRef.current.value = "";
+    fileInputRef.current.value = '';
   };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -226,30 +226,30 @@ function CoachesDashboard() {
     toast.success(`File Uploaded: ${file.name}`);
   };
   const handleFileCardClick = () => {
-    document.getElementById("file-input").click();
+    document.getElementById('file-input').click();
   };
 
   const handleInputSubmit = async (text) => {
     if (!text.trim()) {
-      toast.error("Please enter a message before submitting.");
+      toast.error('Please enter a message before submitting.');
       return;
     }
 
     if (
       selectedFile &&
-      !["application/pdf", "image"].some((type) =>
+      !['application/pdf', 'image'].some((type) =>
         selectedFile.type.startsWith(type)
       )
     ) {
-      toast.error("Invalid file type. Only PDFs and images are allowed.");
+      toast.error('Invalid file type. Only PDFs and images are allowed.');
       return;
     }
 
     const newChat = {
       question: text,
-      detailed_answer: "",
-      summary: "Streaming...",
-      source: "Streaming...",
+      detailed_answer: '',
+      summary: 'Streaming...',
+      source: 'Streaming...',
       audio: null,
     };
     setChats((prevChats) => [...prevChats, newChat]);
@@ -276,8 +276,8 @@ function CoachesDashboard() {
       });
       setSelectedFile(null);
     } catch (error) {
-      console.error("Error sending request:", error);
-      toast.error("Failed to fetch response.");
+      console.error('Error sending request:', error);
+      toast.error('Failed to fetch response.');
     } finally {
       setIsLoading(false);
     }
@@ -309,10 +309,10 @@ function CoachesDashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const userType = JSON.parse(localStorage.getItem("userType"));
+  const userType = JSON.parse(localStorage.getItem('userType'));
 
   useEffect(() => {
-    if (userType && userType.role === "admin") {
+    if (userType && userType.role === 'admin') {
       setIsAdmin(true);
     }
   }, [userType]); // Ensure useEffect runs when userType changes
@@ -320,7 +320,7 @@ function CoachesDashboard() {
   return (
     <div className="">
       <Modal
-        className={""}
+        className={''}
         isOpen={isModalOpen}
         onClose={closeModal}
         title={<h1 className="text-xl font-bold">Create New Folder</h1>}
@@ -344,12 +344,12 @@ function CoachesDashboard() {
 
         <section className="flex justify-end mt-8 gap-3">
           <Button
-            className={"!bg-[#8E8E8E]  text-white "}
+            className={'!bg-[#8E8E8E]  text-white '}
             text="Cancel"
             onClick={closeModal}
           />
           <Button
-            className={"!bg-[#B6B6B6] text-[#1D1D1F99]  "}
+            className={'!bg-[#B6B6B6] text-[#1D1D1F99]  '}
             text="Add Folder"
             onClick={handleFolderSubmit}
           />
@@ -453,7 +453,7 @@ function CoachesDashboard() {
       <div className="w-full xs:px-4 md:px-36 flex-col pt-10 h-full flex justify-center items-center">
         <section className="w-full flex justify-between  p-2 mb-5 items-start">
           <h1 className="text-3xl font-semibold">
-            {folder?.name || "Select a folder"}
+            {folder?.name || 'Select a folder'}
           </h1>
           <section>
             <Button
@@ -510,7 +510,7 @@ function CoachesDashboard() {
               id="file-input"
               type="file"
               onChange={handleFileChange}
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
             />
             {selectedFile && <p>Selected File: {selectedFile.name}</p>}
           </section>
@@ -521,8 +521,8 @@ function CoachesDashboard() {
             <FileCard
               title="Instructions"
               description={
-                (isAdmin && "Insert your instructions to attach with prompt") ||
-                (!isAdmin && "Personalize your content using client data")
+                (isAdmin && 'Insert your instructions to attach with prompt') ||
+                (!isAdmin && 'Personalize your content using client data')
               }
             />
           </section>

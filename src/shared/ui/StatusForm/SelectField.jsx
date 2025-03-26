@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
-import classNames from "classnames";
-import { IoChevronDown } from "react-icons/io5";
-import { FaCircleCheck } from "react-icons/fa6";
+import { useState, useEffect, useRef } from 'react';
+import classNames from 'classnames';
+import { IoChevronDown } from 'react-icons/io5';
+import { FaCircleCheck } from 'react-icons/fa6';
 
-const mockOptions = ["Option A", "Option B", "Option C"];
+const mockOptions = ['Option A', 'Option B', 'Option C'];
 
 const SelectField = ({ label, value = [], setValue }) => {
   const [show, setShow] = useState(false);
@@ -18,15 +18,15 @@ const SelectField = ({ label, value = [], setValue }) => {
       setValue([...value, option]);
     }
   };
-  
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
         setShow(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
@@ -38,12 +38,12 @@ const SelectField = ({ label, value = [], setValue }) => {
             onClick={toggleDropdown}
             className="cursor-pointer flex items-center justify-between w-full border border-stroke rounded-full p-3 pr-4"
           >
-            <span className="truncate w-[90%]" title={value.join(", ")}>
-              {value.length > 0 ? value.join(", ") : "Select options"}
+            <span className="truncate w-[90%]" title={value.join(', ')}>
+              {value.length > 0 ? value.join(', ') : 'Select options'}
             </span>
             <IoChevronDown
-              className={classNames("transition-transform duration-300", {
-                "rotate-180": show,
+              className={classNames('transition-transform duration-300', {
+                'rotate-180': show,
               })}
             />
           </div>
@@ -55,9 +55,9 @@ const SelectField = ({ label, value = [], setValue }) => {
                   key={option}
                   onClick={() => handleSelect(option)}
                   className={classNames(
-                    "cursor-pointer hover:bg-gray-100 rounded-lg px-3 py-2 flex justify-between items-center",
+                    'cursor-pointer hover:bg-gray-100 rounded-lg px-3 py-2 flex justify-between items-center',
                     {
-                      "bg-btnBg": value.includes(option),
+                      'bg-btnBg': value.includes(option),
                     }
                   )}
                 >

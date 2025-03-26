@@ -1,9 +1,9 @@
-import { formatDate } from "../../../utils/format/formatDate";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { HiOutlineHashtag } from "react-icons/hi";
-import { CiFileOn } from "react-icons/ci";
-import { IoBookOutline } from "react-icons/io5";
-import { CiBookmark } from "react-icons/ci";
+import { formatDate } from '../../../utils/format/formatDate';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { HiOutlineHashtag } from 'react-icons/hi';
+import { CiFileOn } from 'react-icons/ci';
+import { IoBookOutline } from 'react-icons/io5';
+import { CiBookmark } from 'react-icons/ci';
 
 function Card({ item }) {
   const {
@@ -12,8 +12,8 @@ function Card({ item }) {
     fileCount,
     docCount,
     created_at: date,
-    saved = "12,467",
-    views = "33,374 read",
+    saved = '12,467',
+    views = '33,374 read',
   } = item;
   const filesCount = fileCount ?? docCount ?? 0;
 

@@ -1,19 +1,19 @@
-import axios from "axios";
+import axios from 'axios';
 
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
-import Mcq from "../../../components/questions/mcq/Mcq";
-import Question from "../../../components/questions/mcq/Question";
-import Button from "../../../components/small/Button";
-import { stepOneQuestions } from "./questions";
-import IncompleteProfileMessage from "./IncompleteProfileMessage";
+import { useState, useEffect } from 'react';
+import Mcq from '../../../components/questions/mcq/Mcq';
+import Question from '../../../components/questions/mcq/Question';
+import Button from '../../../components/small/Button';
+import { stepOneQuestions } from './questions';
+import IncompleteProfileMessage from './IncompleteProfileMessage';
 
 const StepOne = ({ setCurrentStep }) => {
   const [isConfirmAlert, setIsConfirmAlert] = useState(false);
 
   const [answers, setAnswers] = useState(() => {
     return stepOneQuestions.reduce((acc, question, index) => {
-      acc[index] = "";
+      acc[index] = '';
       return acc;
     }, {});
   });
@@ -50,20 +50,20 @@ const StepOne = ({ setCurrentStep }) => {
         heritage: answers[4],
         primary_language: answers[5],
         partner_pronouns: answers[6],
-        partner_status: answers[7] === "Yes" ? "Has partner" : "No partner",
+        partner_status: answers[7] === 'Yes' ? 'Has partner' : 'No partner',
         blood_type: answers[8] || null,
         children_details: answers[9],
         height_and_weight: answers[10] || null,
       };
 
       const response = await axios.post(
-        "https://search.vitai.health:8000/personal-information",
+        'https://search.vitai.health:8000/personal-information',
         payload
       );
 
-      console.log("Data submitted successfully:", response.data);
+      console.log('Data submitted successfully:', response.data);
     } catch (error) {
-      console.error("Error submitting data:", error.response || error.message);
+      console.error('Error submitting data:', error.response || error.message);
     }
     setCurrentStep((prevStep) => prevStep + 1);
   };
@@ -73,7 +73,7 @@ const StepOne = ({ setCurrentStep }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {stepOneQuestions.map((question, i) => (
           <section key={i} className="shadow-md rounded-lg p-4">
-            {question?.questionType === "text" ? (
+            {question?.questionType === 'text' ? (
               <Question
                 label={question.question}
                 placeholder={question?.placeholder}
@@ -81,7 +81,7 @@ const StepOne = ({ setCurrentStep }) => {
                 isRequired={question?.isRequired}
                 value={answers[i]}
                 onChange={(e) => handleAnswerChange(i, e.target.value)}
-                type={question.type || "text"}
+                type={question.type || 'text'}
               />
             ) : (
               <Mcq

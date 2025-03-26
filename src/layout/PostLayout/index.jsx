@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
-import Aside from "../aside/Aside";
-import Header from "../header/Header";
-import Tray from "../../shared/ui/Tray";
-import { trayMock } from "./mock";
-import Button from "../../shared/ui/Button";
+import { useEffect, useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import Aside from '../aside/Aside';
+import Header from '../header/Header';
+import Tray from '../../shared/ui/Tray';
+import { trayMock } from './mock';
+import Button from '../../shared/ui/Button';
 
 function PostLayout() {
   return (
@@ -16,7 +16,7 @@ function PostLayout() {
         <div className="w-[100%] h-screen bg-contentBg overflow-y-scroll custom-scroll">
           <Header />
           <div className="flex flex-col md:gap-4 p-4 lg:p-6 w-full">
-            <Button 
+            <Button
               name="Back"
               type="back"
               onClick={() => window.history.back()}

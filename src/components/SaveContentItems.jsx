@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import { FaEllipsisV, FaRegFolder } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { FaEllipsisV, FaRegFolder } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useDeleteContentByIdMutation,
   useEditContentByIdMutation,
   useGetFolderStructureQuery,
   useMoveContentMutation,
-} from "../redux/apis/apiSlice";
-import { setContentId } from "../redux/slice/sidebarSlice";
-import Modal from "./modals/Modal";
-import Button from "./small/Button";
+} from '../redux/apis/apiSlice';
+import { setContentId } from '../redux/slice/sidebarSlice';
+import Modal from './modals/Modal';
+import Button from './small/Button';
 
 const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,9 +45,9 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
 
   // Move content to selected folder
   const handleMoveContent = async () => {
-    if (!selectedFolder) return toast.error("Please select a folder.");
+    if (!selectedFolder) return toast.error('Please select a folder.');
     if (content.current_folder_id === selectedFolder)
-      return toast.error("Content is already in this folder.");
+      return toast.error('Content is already in this folder.');
 
     try {
       const response = await moveContent({
@@ -57,7 +57,7 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
       toast.success(response.message);
       closeModal();
     } catch (error) {
-      toast.error(error?.data?.message || "Error moving content.");
+      toast.error(error?.data?.message || 'Error moving content.');
     }
   };
 
@@ -71,7 +71,7 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
       toast.success(response.message);
       setIsEditing(false);
     } catch (error) {
-      toast.error("Error renaming content.");
+      toast.error('Error renaming content.');
     }
   };
 
@@ -79,10 +79,10 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
   const handleDeleteContent = async () => {
     try {
       await deleteContent(content.id).unwrap();
-      toast.success("Content deleted successfully.");
+      toast.success('Content deleted successfully.');
       // onDelete(content);
     } catch (error) {
-      toast.error("Error deleting content.");
+      toast.error('Error deleting content.');
     }
   };
 
@@ -102,8 +102,8 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
         setIsMenuOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const dispatch = useDispatch();
@@ -113,22 +113,22 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
   // const navigate = useNavigate();
   // const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const userType = localStorage.getItem("userType");
+  const userType = localStorage.getItem('userType');
   // const currentPath = location.pathname;
   const contentHandler = (item) => {
     dispatch(setContentId(item));
 
-    if (currentPath === "/admin/library-topic-details") {
+    if (currentPath === '/admin/library-topic-details') {
       // Update the query parameter instead of navigating
       setSearchParams({ id: item.id, folderId: folderId });
-    } else if (currentPath === "/coaches/coaches-library-topic-details") {
+    } else if (currentPath === '/coaches/coaches-library-topic-details') {
       // Update the query parameter instead of navigating
       setSearchParams({ id: item.id, folderId: folderId });
-    } else if (currentPath === "/admin") {
+    } else if (currentPath === '/admin') {
       navigate(
         `/admin/library-topic-details?id=${item.id}&folderId=${folderId}`
       );
-    } else if (currentPath === "/coaches") {
+    } else if (currentPath === '/coaches') {
       navigate(
         `/coaches/coaches-library-topic-details?id=${item.id}&folderId=${folderId}`
       );
@@ -150,8 +150,8 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
             onClick={() => setSelectedFolder(item.id)}
             className={`flex gap-2 p-2 rounded-lg ${
               selectedFolder === item.id
-                ? "bg-primary text-white"
-                : "bg-gray-100"
+                ? 'bg-primary text-white'
+                : 'bg-gray-100'
             }`}
           >
             <FaRegFolder /> {item.name}
@@ -178,7 +178,7 @@ const SaveContentItems = ({ content, folderId, onAdd, onDelete }) => {
           <input
             onBlur={() => handleEditContent(content.id)} // Pass content id on blur
             onKeyDown={(e) =>
-              e.key === "Enter" && handleEditContent(content.id)
+              e.key === 'Enter' && handleEditContent(content.id)
             } // Pass folder id on Enter key press
             ref={inputRef}
             className="w-36 border p-1"

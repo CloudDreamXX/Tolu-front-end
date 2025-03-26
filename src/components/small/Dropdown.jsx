@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { GoChevronDown } from "react-icons/go";
+import { useEffect, useRef, useState } from 'react';
+import { GoChevronDown } from 'react-icons/go';
 
 const Dropdown = ({
   options = [],
-  defaultText = "Select",
+  defaultText = 'Select',
   onSelect,
   label,
   width,
@@ -28,22 +28,22 @@ const Dropdown = ({
       }
     };
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === 'Escape') setIsOpen(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
   useEffect(() => {
     setSelected(null);
-  }, [defaultText === "Select Name"]);
+  }, [defaultText === 'Select Name']);
 
   return (
-    <div className={`relative ${width ? width : "w-full"}`} ref={dropdownRef}>
+    <div className={`relative ${width ? width : 'w-full'}`} ref={dropdownRef}>
       {label && (
         <label className="text-base md:text-lg text-secondaryGray mb-1 block">
           {label}
@@ -52,9 +52,9 @@ const Dropdown = ({
       <button
         type="button"
         aria-expanded={isOpen}
-        aria-label={`Dropdown for ${label || "options"}`}
+        aria-label={`Dropdown for ${label || 'options'}`}
         className={`w-full h-[50px] px-4 border ${
-          readOnly ? "cursor-not-allowed" : "border-[#E0E0E9]"
+          readOnly ? 'cursor-not-allowed' : 'border-[#E0E0E9]'
         } ${mainClassName} rounded-lg  text-sm text-[#383838E5] flex items-center justify-between`}
         onClick={() => !readOnly && setIsOpen(!isOpen)}
         disabled={readOnly}
@@ -64,12 +64,12 @@ const Dropdown = ({
         </span>
         <div
           className={`transition-all duration-300 ${
-            isOpen ? "rotate-180" : "rotate-0"
+            isOpen ? 'rotate-180' : 'rotate-0'
           }`}
         >
           <GoChevronDown
             fontSize={20}
-            color={readOnly ? "#999999" : "#292D3280"}
+            color={readOnly ? '#999999' : '#292D3280'}
           />
         </div>
       </button>

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import Button from "../Button";
-import SelectField from "./SelectField";
+import { useState } from 'react';
+import Button from '../Button';
+import SelectField from './SelectField';
 
 function StatusForm({ setStatusModal }) {
   const [concerns, setConcerns] = useState([]);
@@ -26,21 +26,49 @@ function StatusForm({ setStatusModal }) {
           />
         </label>
 
-        <SelectField label="Current health concerns or symptoms" value={concerns} setValue={setConcerns} />
-        <SelectField label="Diagnosed medical conditions" value={conditions} setValue={setConditions} />
-        <SelectField label="Supplements (Type)" value={supplements} setValue={setSupplements} />
-        <SelectField label="Known allergies or intolerances" value={allergies} setValue={setAllergies} />
-        <SelectField label="Family health history" value={family} setValue={setFamily} />
+        <SelectField
+          label="Current health concerns or symptoms"
+          value={concerns}
+          setValue={setConcerns}
+        />
+        <SelectField
+          label="Diagnosed medical conditions"
+          value={conditions}
+          setValue={setConditions}
+        />
+        <SelectField
+          label="Supplements (Type)"
+          value={supplements}
+          setValue={setSupplements}
+        />
+        <SelectField
+          label="Known allergies or intolerances"
+          value={allergies}
+          setValue={setAllergies}
+        />
+        <SelectField
+          label="Family health history"
+          value={family}
+          setValue={setFamily}
+        />
       </div>
 
       <div className="flex flex-col gap-4 md:gap-6">
         <h2 className="text-xl font-bold">Lifestyle & Habits</h2>
-        <SelectField label="Are you on any specific diet?" value={diet} setValue={setDiet} />
+        <SelectField
+          label="Are you on any specific diet?"
+          value={diet}
+          setValue={setDiet}
+        />
       </div>
 
       <div className="w-full flex justify-end">
         <div className="w-full max-w-[170px]">
-          <Button name="Save & submit" type="default" onClick={() => setStatusModal(false)} />
+          <Button
+            name="Save & submit"
+            type="default"
+            onClick={() => setStatusModal(false)}
+          />
         </div>
       </div>
     </div>
