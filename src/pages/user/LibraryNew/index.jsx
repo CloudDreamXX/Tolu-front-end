@@ -10,9 +10,9 @@ import Button from "../../../shared/ui/Button";
 
 function LibraryNew() {
   const sections = [
-    { title: "Continue Reading", items: mock.continue },
-    { title: "Personalized for you", items: mock.recomendationsPosts },
-    { title: "Explore new topics", items: mock.recomendationsTopics },
+    { title: "Continue Reading", items: mock.continue, type: 'post' },
+    { title: "Personalized for you", items: mock.recomendationsPosts, type: 'post' },
+    { title: "Explore new topics", items: mock.recomendationsTopics, type: 'topic' },
   ];
 	const [expModal, setExpModal] = useState(false);
 	const [activeTopics, setActiveTopics] = useState([]);
@@ -34,9 +34,9 @@ function LibraryNew() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-4 md:gap-12">
         {sections.map((section, index) => (
-          <ListAccordion key={index} title={section.title} items={section.items} />
+          <ListAccordion key={index} title={section.title} items={section.items} type={section.type} />
         ))}
 				<div className="w-full max-w-screen-xl mx-auto">
 					<AIInput

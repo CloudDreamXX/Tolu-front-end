@@ -32,6 +32,8 @@ const Document = lazy(() => import("./pages/admin/Library/Document"));
 const NewDoc = lazy(() => import("./pages/admin/Library/NewDoc"));
 const LibraryUserLayout = lazy(() => import("./layout/LibraryUserLayout"));
 const LibraryNew = lazy(() => import("./pages/user/LibraryNew"));
+const PostLayout = lazy(() => import("./layout/PostLayout"));
+const Post = lazy(() => import("./pages/user/Post"));
 
 // A separate component to handle routes and listen for location changes
 function AppRoutes() {
@@ -100,6 +102,12 @@ function AppRoutes() {
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
         <Route path="/librarynew" element={<LibraryUserLayout />}>
           <Route index element={<LibraryNew />} />
+        </Route>
+      </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
+        <Route path="/post/:postName" element={<PostLayout />}>
+          <Route index element={<Post />} />
         </Route>
       </Route>
 
