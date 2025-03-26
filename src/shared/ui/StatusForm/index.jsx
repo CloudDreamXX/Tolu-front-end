@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "../Button";
 import SelectField from "./SelectField";
 
-function StatusForm() {
+function StatusForm({ setStatusModal }) {
   const [concerns, setConcerns] = useState([]);
   const [conditions, setConditions] = useState([]);
   const [supplements, setSupplements] = useState([]);
@@ -40,7 +40,7 @@ function StatusForm() {
 
       <div className="w-full flex justify-end">
         <div className="w-full max-w-[170px]">
-          <Button name="Save & submit" type="default" />
+          <Button name="Save & submit" type="default" onClick={() => setStatusModal(false)} />
         </div>
       </div>
     </div>

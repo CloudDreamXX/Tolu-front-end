@@ -81,7 +81,7 @@ function LibraryNew() {
 					isOpen={statusModal}
 					onClose={() => setStatusModal(false)}
 				>
-					<StatusForm />
+					<StatusForm setStatusModal={setStatusModal} />
 				</Modal>
 			}
     </div>
