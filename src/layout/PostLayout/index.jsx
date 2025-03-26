@@ -15,13 +15,13 @@ function PostLayout() {
         </div>
         <div className="w-[100%] h-screen bg-contentBg overflow-y-scroll custom-scroll">
           <Header />
-          <div className="flex flex-col gap-4 p-4 lg:p-6 w-full">
+          <div className="flex flex-col md:gap-4 p-4 lg:p-6 w-full">
             <Button 
               name="Back"
               type="back"
               onClick={() => window.history.back()}
             />
-            <div className="w-full flex gap-4">
+            <div className="w-full flex flex-col md:flex-row gap-4">
               <Outlet />
               <Tray trayItems={trayMock} />
             </div>
