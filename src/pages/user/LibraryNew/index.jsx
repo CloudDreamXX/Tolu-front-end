@@ -36,11 +36,11 @@ function LibraryNew() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4 md:gap-12">
+      <div className="flex flex-col gap-4 md:gap-12 relative min-h-[78vh]">
         {sections.map((section, index) => (
           <ListAccordion key={index} title={section.title} items={section.items} type={section.type} />
         ))}
-				<div className="w-full max-w-screen-xl mx-auto">
+				<div className="w-full max-w-screen-xl mx-auto mt-auto">
 					<AIInput
 						placeholder="Ask anything..."
 						type="user"
