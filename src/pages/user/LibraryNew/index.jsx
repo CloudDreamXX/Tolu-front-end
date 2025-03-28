@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { mock, topics } from './mock';
+import { topics, sections } from './mock';
 import { IoBookOutline } from 'react-icons/io5';
 import { Title } from '../../../shared/ui/Title';
 import ListAccordion from '../../../shared/ui/ListAccordion';
@@ -10,19 +10,6 @@ import Button from '../../../shared/ui/Button';
 import StatusForm from '../../../shared/ui/StatusForm';
 
 function LibraryNew() {
-  const sections = [
-    { title: 'Continue Reading', items: mock.continue, type: 'post' },
-    {
-      title: 'Personalized for you',
-      items: mock.recomendationsPosts,
-      type: 'post',
-    },
-    {
-      title: 'Explore new topics',
-      items: mock.recomendationsTopics,
-      type: 'topic',
-    },
-  ];
   const [expModal, setExpModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
   const [activeTopics, setActiveTopics] = useState([]);

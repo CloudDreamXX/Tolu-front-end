@@ -6,6 +6,7 @@ import { apiSlice } from './slice/apiSlice';
 import authReducer from './slice/authSlice';
 import chatSlice from './slice/chatSlice';
 import folderColorReducer from '../store/slice/folderColorSlice';
+import adminDataReducer from './slice/adminDataSlice';
 
 // import chatReducer from '../slice/chatSlice';
 
@@ -17,6 +18,7 @@ const store = configureStore({
     chat: chatSlice.reducer,
     folderColor: folderColorReducer,
     // aiLearningSearch:aiLearningSearchReducer,
+    adminData: adminDataReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>

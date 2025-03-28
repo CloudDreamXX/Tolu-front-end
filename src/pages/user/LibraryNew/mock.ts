@@ -111,6 +111,20 @@ export const mock = {
   ],
 };
 
+export const sections = [
+  { title: 'Continue Reading', items: mock.continue, type: 'post' },
+  {
+    title: 'Personalized for you',
+    items: mock.recomendationsPosts,
+    type: 'post',
+  },
+  {
+    title: 'Explore new topics',
+    items: mock.recomendationsTopics,
+    type: 'topic',
+  },
+];
+
 export const topics = [
   'Menopause',
   'Perimenopause',
