@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Aside from '../../../../layout/aside/Aside';
 import { logout } from '../../../../app/store/slice/authSlice';
+import { authService } from '../../../../app/services/auth.service';
 
 const AdminHeader = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -21,6 +22,22 @@ const AdminHeader = () => {
   const pathSplit = pathname.split('/');
   const page = pathSplit[pathSplit.length - 1];
   const pageName = page.split('-').join(' ');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const email = 'admin2@example.com';
+        const userExistence = await authService.checkUserExistence(email);
+        console.log('User Existence:', userExistence);
+        const userProfile = await authService.getUserProfile();
+        console.log('User Profile:', userProfile);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const user = JSON.parse(localStorage.getItem('user')); // Get user data from localStorage
   const mobileNavHandler = () => setMobileNav(!mobileNav);
