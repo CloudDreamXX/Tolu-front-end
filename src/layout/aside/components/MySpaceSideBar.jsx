@@ -4,12 +4,12 @@ import { CiUser } from 'react-icons/ci';
 import { IoIosArrowDown, IoIosArrowUp, IoIosSearch } from 'react-icons/io';
 import { MdHistory } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGetSearchHistoryQuery } from '../../../redux/apis/apiSlice';
+import { useGetSearchHistoryQuery } from '../../../app/store/slice/apiSlice';
 import {
   setNewChat,
   setRefetchHistory,
   setSelectedChatId,
-} from '../../../redux/slice/chatSlice';
+} from '../../../app/store/slice/chatSlice';
 
 // import { useDispatch } from "react-redux";
 function MySpaceSideBar({ isAsideOpen }) {

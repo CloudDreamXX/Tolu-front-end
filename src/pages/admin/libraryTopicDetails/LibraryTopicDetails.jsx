@@ -12,7 +12,7 @@ import {
   useGetContentByIdMutation,
   useGetFolderStructureQuery,
   useMoveContentMutation,
-} from '../../../redux/apis/apiSlice';
+} from '../../../app/store/slice/apiSlice';
 import DynamicContent from '../addBlog/components/DynamicContent';
 import Modal from '../../../components/modals/Modal';
 import { Editor } from 'primereact/editor';

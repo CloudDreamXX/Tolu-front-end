@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
 import { useDispatch } from 'react-redux';
-import { useGetUserProfileQuery } from '../../../redux/apis/apiSlice';
+import { useGetUserProfileQuery } from '../../../app/store/slice/apiSlice';
 import ContactInfo from './components/ContactInfo';
 function Profile() {
   const [activeTab, setActiveTab] = useState('Contact Info');

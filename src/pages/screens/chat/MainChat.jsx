@@ -10,8 +10,11 @@ import {
   useGetSearchHistoryQuery,
   useGetSessionResultQuery,
   useUpdateChatTitleMutation,
-} from '../../../redux/apis/apiSlice';
-import { setNewChat, setRefetchHistory } from '../../../redux/slice/chatSlice';
+} from '../../../app/store/slice/apiSlice';
+import {
+  setNewChat,
+  setRefetchHistory,
+} from '../../../app/store/slice/chatSlice';
 import LibraryInput from '../../user/library/components/LibraryInput';
 import QuestionAnswer from './components/QuestionAnswer';
 

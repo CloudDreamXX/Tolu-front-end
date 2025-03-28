@@ -1,13 +1,14 @@
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
-import Button from '../small/Button';
-import Input from '../small/Input';
-
-import { useSignUpMutation } from '../../redux/apis/apiSlice';
-import { setCredentials, setUser } from '../../redux/slice/authSlice';
-
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../app/services/auth.service';
+import { setCredentials, setUser } from '../../app/store/slice/authSlice';
+import { getUserType, navigateByUserType, signupFormFields } from './utils';
+import Button from '../small/Button';
+import Input from '../small/Input';
+import SingUpModal1 from '../../components/modals/SingUpModal1';
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({});
@@ -17,7 +18,6 @@ const SignupForm = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
   const dispatch = useDispatch();
-  const [signUp] = useSignUpMutation();
   const navigate = useNavigate();
 
   const formDataChangeHandler = (e) => {
@@ -26,8 +26,6 @@ const SignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       setConfirmPasswordError('Passwords do not match');
       return;
@@ -42,29 +40,27 @@ const SignupForm = () => {
         role: 'user',
         location: 'location',
       };
-      const response = await signUp(userData).unwrap();
+
+      const response = await authService.signUp(userData);
       dispatch(setCredentials(response));
-      toast.success('SignUp Successful');
 
       const email = response.user?.email;
-      const userType = {
-        role: email === 'admin@example.com' ? 'admin' : 'user',
-      };
+      const userType = getUserType(email);
 
-      localStorage.setItem('userType', JSON.stringify(userType));
       dispatch(setUser({ email }));
-
-      navigate(userType.role === 'admin' ? '/admin' : '/user');
+      localStorage.setItem('userType', JSON.stringify(userType));
+      toast.success('SignUp Successful');
+      navigateByUserType(navigate, userType.role);
     } catch (error) {
       console.error('Signup failed:', error);
-      toast.error('SignUp Failed');
+      toast.error(error || 'SignUp Failed');
     }
   };
 
   return (
     <>
       {isModalOpen && (
-        <SignUpModal1
+        <SingUpModal1
           isModalOpen={isModalOpen}
           selectedCategories={selectedCategories}
           onClose={() => setIsModalOpen(false)}
@@ -75,22 +71,12 @@ const SignupForm = () => {
         className="bg-transparent w-full max-w-3xl p-8 shadow-md backdrop-blur-[20px] border-2 border-primary/10 rounded-[20px] mt-6 space-y-6 gap-4"
       >
         <div className="lg:col-span-12 flex justify-center">
-          <h5 className="text-xl md:text-[32px]  text-primary font-extrabold leading-none">
+          <h5 className="text-xl md:text-[32px] text-primary font-extrabold leading-none">
             Sign up
           </h5>
         </div>
-        {[
-          { name: 'name', label: 'Full Name', type: 'text' },
-          { name: 'email', label: 'Email', type: 'email' },
-          { name: 'dob', label: 'Date of Birth', type: 'date' },
-          { name: 'password', label: 'Password', type: 'password' },
-          {
-            name: 'confirmPassword',
-            label: 'Confirm Password',
-            type: 'password',
-          },
-        ].map(({ name, label, type }) => (
-          <div key={name} className="lg:col-span-12 ">
+        {signupFormFields.map(({ name, label, type }) => (
+          <div key={name} className="lg:col-span-12">
             <Input
               label={label}
               placeholder={label}

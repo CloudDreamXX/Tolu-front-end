@@ -3,7 +3,7 @@ import { BiSolidEdit } from 'react-icons/bi';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { MdHistory } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
-import { setNewChat } from '../../../redux/slice/chatSlice';
+import { setNewChat } from '../../../app/store/slice/chatSlice';
 
 const ChatHistory = ({
   chatHistory,

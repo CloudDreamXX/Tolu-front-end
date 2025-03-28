@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useGetFolderStructureQuery } from '../../../../redux/apis/apiSlice';
+import { useGetFolderStructureQuery } from '../../../../app/store/slice/apiSlice';
 import { findPublishedContent } from '../../../../utils/excludePublishedContent';
 import { findTopicById } from '../../../../utils/findById';
 import { mock } from '../../Library/mock';

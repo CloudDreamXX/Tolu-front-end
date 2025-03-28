@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useParams, useLocation } from 'react-router-dom';
 import BlogTitle from '../../shared/ui/BlogTitle';
-import { useGetFolderStructureQuery } from '../../redux/apis/apiSlice';
+import { useGetFolderStructureQuery } from '../../app/store/slice/apiSlice';
 import { findPublishedContent } from '../../utils/excludePublishedContent';
 import { getTitleData } from '../../utils/findById';
 import AdminAside from '../../pages/admin/layout/adminAside/AdminAside';

@@ -7,7 +7,7 @@ import Button from '../../../../../components/small/Button';
 import {
   useCreateHealthHistoryMutation,
   useGetHealthHistoryQuery,
-} from '../../../../../redux/apis/apiSlice';
+} from '../../../../../app/store/slice/apiSlice';
 import toast from 'react-hot-toast';
 
 const PersonalizeModal = () => {

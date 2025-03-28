@@ -2,15 +2,15 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useLoginMutation } from '../../redux/apis/apiSlice';
-import { setCredentials, setUser } from '../../redux/slice/authSlice';
+import { authService } from '../../app/services/auth.service';
+import { setCredentials, setUser } from '../../app/store/slice/authSlice';
 import Button from '../small/Button';
 import Input from '../small/Input';
+import { getUserType, navigateByUserType } from './utils';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const dispatch = useDispatch();
-  const [login] = useLoginMutation();
   const navigate = useNavigate();
 
   const formDataChangeHandler = (e) => {
@@ -20,36 +20,21 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await login(formData).unwrap();
-
+      const response = await authService.login(formData);
       dispatch(setCredentials(response));
 
       const email = response.user?.email;
-      const userType = {
-        role:
-          email === 'admin@example.com'
-            ? 'admin'
-            : email === 'test@example.com'
-              ? 'coaches'
-              : 'user',
-      };
+      const userType = getUserType(email);
 
       dispatch(setUser({ email }));
       localStorage.setItem('userType', JSON.stringify(userType));
 
       toast.success('Login Successful');
 
-      // Redirect based on user role
-      navigate(
-        userType.role === 'admin'
-          ? '/admin'
-          : userType.role === 'coaches'
-            ? '/coaches'
-            : '/user'
-      );
+      navigateByUserType(navigate, userType.role);
     } catch (error) {
       console.error('Login failed:', error);
-      toast.error('Login Failed');
+      toast.error(error || 'Login Failed');
     }
   };
 
@@ -78,7 +63,7 @@ const LoginForm = () => {
           name="password"
           onChange={formDataChangeHandler}
         />
-        <div className="flex items-center justify-between  w-full">
+        <div className="flex items-center justify-between w-full">
           <label className="flex items-center space-x-2">
             <input
               type="checkbox"

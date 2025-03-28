@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Input from './small/Input';
 import Button from './small/Button';
-import { useEditFolderByIdMutation } from '../redux/apis/apiSlice';
+import { useEditFolderByIdMutation } from '../app/store/slice/apiSlice';
 import toast from 'react-hot-toast';
 
 function EditFolder({ folder, closeEditFolderModal }) {

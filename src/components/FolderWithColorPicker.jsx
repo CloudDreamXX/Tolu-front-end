@@ -3,7 +3,7 @@ import { FaRegFolderOpen } from 'react-icons/fa';
 import { MdEdit } from 'react-icons/md';
 import { SketchPicker } from 'react-color';
 import { useSelector, useDispatch } from 'react-redux';
-import { setFolderColor } from '../redux/slice/folderColorSlice'; // adjust the path as needed
+import { setFolderColor } from '../app/store/slice/folderColorSlice'; // adjust the path as needed
 
 // Define your default colors
 const defaultIconColor = '#000000';

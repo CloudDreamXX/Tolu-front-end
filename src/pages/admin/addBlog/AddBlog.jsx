@@ -14,12 +14,12 @@ import {
   useEditFolderByIdMutation,
   useGetAllPostedContentQuery,
   useGetFolderStructureQuery,
-} from '../../../redux/apis/apiSlice';
-// import { setAddFolderData } from '../../../redux/slice/sidebarSlice';
+} from '../../../app/store/slice/apiSlice';
+// import { setAddFolderData } from '../../../app/store/slice/sidebarSlice';
 import {
   setAddFolderData,
   setDetailResponse,
-} from '../../../redux/slice/sidebarSlice';
+} from '../../../app/store/slice/sidebarSlice';
 import QuestionAnswer from '../../screens/chat/components/QuestionAnswer';
 import LibraryInput from '../../user/library/components/LibraryInput';
 import DynamicContent from './components/DynamicContent';

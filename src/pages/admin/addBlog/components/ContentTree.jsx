@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setAddFolderData } from '../../../../redux/slice/sidebarSlice';
+import { setAddFolderData } from '../../../../app/store/slice/sidebarSlice';
 import Folder from './Folder';
 import Content from './Content';
 

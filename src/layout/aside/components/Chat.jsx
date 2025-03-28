@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import ChatHistory from '../../../pages/screens/chat/ChatHistory';
-import { useGetSearchHistoryQuery } from '../../../redux/apis/apiSlice';
+import { useGetSearchHistoryQuery } from '../../../app/store/slice/apiSlice';
 import {
   setRefetchHistory,
   setSelectedChatId,
-} from '../../../redux/slice/chatSlice';
+} from '../../../app/store/slice/chatSlice';
 
 function Chat({ isAsideOpen }) {
   const { data, error, isLoading, refetch } = useGetSearchHistoryQuery();

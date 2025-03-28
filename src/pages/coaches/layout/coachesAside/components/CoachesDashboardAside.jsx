@@ -4,8 +4,8 @@ import { TfiWrite } from 'react-icons/tfi';
 import { useDispatch } from 'react-redux';
 import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
 import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
-import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
-import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
+import { useGetFolderStructureQuery } from '../../../../../app/store/slice/apiSlice';
+import { setAddFolderData } from '../../../../../app/store/slice/sidebarSlice';
 import FolderTree from '../../../../admin/addBlog/components/FolderTree';
 import ContentTree from '../../../../admin/addBlog/components/ContentTree';
 

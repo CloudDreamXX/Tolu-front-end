@@ -11,7 +11,7 @@ import Aside from '../../../../layout/aside/Aside';
 import { useDispatch } from 'react-redux';
 // import { logout } from "../../../../redux/slice/authSlice";
 import toast from 'react-hot-toast';
-import { logout } from '../../../../redux/slice/authSlice';
+import { logout } from '../../../../app/store/slice/authSlice';
 
 function CoachesHeader() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);

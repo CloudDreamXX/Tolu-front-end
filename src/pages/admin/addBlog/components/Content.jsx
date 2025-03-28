@@ -7,11 +7,11 @@ import FolderItem from '../../../../components/FolderItem';
 import {
   useDeleteFolderByIdMutation,
   useEditFolderByIdMutation,
-} from '../../../../redux/apis/apiSlice';
+} from '../../../../app/store/slice/apiSlice';
 import {
   setAddFolderData,
   setContentId,
-} from '../../../../redux/slice/sidebarSlice';
+} from '../../../../app/store/slice/sidebarSlice';
 import SaveContentItems from '../../../../components/SaveContentItems';
 
 const Content = ({

@@ -1,5 +1,5 @@
 import DynamicList from '../../../shared/ui/DynamicList';
-import { useGetFolderStructureQuery } from '../../../redux/apis/apiSlice';
+import { useGetFolderStructureQuery } from '../../../app/store/slice/apiSlice';
 import { findPublishedContent } from '../../../utils/excludePublishedContent';
 import { mock } from './mock';
 

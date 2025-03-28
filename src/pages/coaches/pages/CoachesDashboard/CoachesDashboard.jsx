@@ -14,8 +14,8 @@ import {
   useEditContentByIdMutation,
   useEditFolderByIdMutation,
   useGetFolderStructureQuery,
-} from '../../../../redux/apis/apiSlice';
-import { setAddFolderData } from '../../../../redux/slice/sidebarSlice';
+} from '../../../../app/store/slice/apiSlice';
+import { setAddFolderData } from '../../../../app/store/slice/sidebarSlice';
 import DynamicContent from '../../../admin/addBlog/components/DynamicContent';
 import FileCard from '../../../admin/addBlog/components/FileCard';
 import InfoCard from '../../../admin/addBlog/components/InfoCard';

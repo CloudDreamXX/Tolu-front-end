@@ -5,7 +5,7 @@
 // import ContentItem from "../../../../components/ContentItem";
 // import FolderItem from "../../../../components/FolderItem";
 // import { useDeleteFolderByIdMutation, useEditFolderByIdMutation } from "../../../../redux/apis/apiSlice";
-// import { setAddFolderData, setContentId, setDetailResponse } from "../../../../redux/slice/sidebarSlice";
+// import { setAddFolderData, setContentId, setDetailResponse } from "../../../../app/store/slice/sidebarSlice";
 
 // const Folder = ({
 //     folder,
@@ -194,12 +194,12 @@ import FolderItem from '../../../../components/FolderItem';
 import {
   useDeleteFolderByIdMutation,
   useEditFolderByIdMutation,
-} from '../../../../redux/apis/apiSlice';
+} from '../../../../app/store/slice/apiSlice';
 import {
   setAddFolderData,
   setContentId,
   setDetailResponse,
-} from '../../../../redux/slice/sidebarSlice';
+} from '../../../../app/store/slice/sidebarSlice';
 
 const Folder = ({
   folder,

@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '../../../../components/small/Button';
 import { FaTimes } from 'react-icons/fa';
 import toast from 'react-hot-toast';
-import { useUpdateFolderContentMutation } from '../../../../redux/apis/apiSlice';
+import { useUpdateFolderContentMutation } from '../../../../app/store/slice/apiSlice';
 
 function AddFiles({ setSelectedFile, selectedFile, fetchFile, folder }) {
   const [deleteFile, { isLoading, error }] = useUpdateFolderContentMutation();

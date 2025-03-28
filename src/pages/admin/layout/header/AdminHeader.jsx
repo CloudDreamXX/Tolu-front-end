@@ -9,7 +9,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Aside from '../../../../layout/aside/Aside';
-import { logout } from '../../../../redux/slice/authSlice';
+import { logout } from '../../../../app/store/slice/authSlice';
 
 const AdminHeader = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);

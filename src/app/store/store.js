@@ -1,12 +1,11 @@
 // store.js
 import { configureStore } from '@reduxjs/toolkit';
 // import sidebarReducer from './sidebarSlice';
-import sidebarReducer from '../slice/sidebarSlice';
-import { apiSlice } from '../apis/apiSlice';
-import authReducer from '../slice/authSlice';
-import chatSlice from '../slice/chatSlice';
-import folderColorReducer from '../slice/folderColorSlice';
-// import folderColorReducer from "./redux/slice/folderColorSlice"; // adjust the path as needed
+import sidebarReducer from './slice/sidebarSlice';
+import { apiSlice } from './slice/apiSlice';
+import authReducer from './slice/authSlice';
+import chatSlice from './slice/chatSlice';
+import folderColorReducer from '../store/slice/folderColorSlice';
 
 // import chatReducer from '../slice/chatSlice';
 

@@ -8,8 +8,8 @@ import {
   useEditContentByIdMutation,
   useGetFolderStructureQuery,
   useMoveContentMutation,
-} from '../redux/apis/apiSlice';
-import { setContentId } from '../redux/slice/sidebarSlice';
+} from '../app/store/slice/apiSlice';
+import { setContentId } from '../app/store/slice/sidebarSlice';
 import Modal from './modals/Modal';
 import Button from './small/Button';
 import FolderSelection from './FolderSelection';

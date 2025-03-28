@@ -2,7 +2,7 @@ import Header from '../../components/layout/Header';
 import {
   useGetSessionResultQuery,
   useGetUserProfileQuery,
-} from '../../redux/apis/apiSlice';
+} from '../../app/store/slice/apiSlice';
 import LibraryInput from '../user/library/components/LibraryInput';
 const Home = () => {
   const { data } = useGetUserProfileQuery();

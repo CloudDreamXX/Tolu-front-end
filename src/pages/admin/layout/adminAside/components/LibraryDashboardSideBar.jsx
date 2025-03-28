@@ -5,11 +5,11 @@ import { useDispatch } from 'react-redux';
 import { ArrowIcon } from '../../../../../assets/svgs/Icon';
 import { BsChatDots } from 'react-icons/bs';
 // import { useDispatch } from "react-redux";
-// import { setAddFolderData, setSidebarData } from '../../../../../redux/slice/sidebarSlice';
+// import { setAddFolderData, setSidebarData } from '../../../../../app/store/slice/sidebarSlice';
 import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
 import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
-import { useGetFolderStructureQuery } from '../../../../../redux/apis/apiSlice';
-import { setAddFolderData } from '../../../../../redux/slice/sidebarSlice';
+import { useGetFolderStructureQuery } from '../../../../../app/store/slice/apiSlice';
+import { setAddFolderData } from '../../../../../app/store/slice/sidebarSlice';
 import FolderTree from '../../../addBlog/components/FolderTree';
 
 import { FaRegFolder, FaRegFolderOpen } from 'react-icons/fa';

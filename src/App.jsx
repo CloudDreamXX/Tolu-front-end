@@ -2,7 +2,7 @@ import { Toaster } from 'react-hot-toast';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { Suspense, lazy, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoading } from './redux/slice/authSlice';
+import { setLoading } from './app/store/slice/authSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoadingScreen from './components/LoadingScreen';
 import Coaches from './pages/coaches';

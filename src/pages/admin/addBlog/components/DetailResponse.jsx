@@ -11,13 +11,13 @@ import {
   useEditContentByIdMutation,
   useGetFolderStructureQuery,
   useMoveContentMutation,
-} from '../../../../redux/apis/apiSlice';
+} from '../../../../app/store/slice/apiSlice';
 import useAutoRefetchOnReconnect from '../../../../api/useAutoRefetchOnReconnect';
 import Button from '../../../../components/small/Button';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setDetailResponse } from '../../../../redux/slice/sidebarSlice';
+import { setDetailResponse } from '../../../../app/store/slice/sidebarSlice';
 import HtmlContent from '../../../../components/htmlToText';
 
 function DetailResponse({ chat, removeChat, updateChat }) {

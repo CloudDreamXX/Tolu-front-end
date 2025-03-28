@@ -4,7 +4,7 @@ import {
   setAddFolderData,
   setDetailResponse,
   setFolderName,
-} from '../../../../redux/slice/sidebarSlice';
+} from '../../../../app/store/slice/sidebarSlice';
 import Folder from './Folder';
 import { useNavigate } from 'react-router-dom';
 

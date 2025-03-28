@@ -15,7 +15,7 @@ import {
   useGetContentByIdMutation,
   useGetFolderStructureQuery,
   useMoveContentMutation,
-} from '../../../../redux/apis/apiSlice';
+} from '../../../../app/store/slice/apiSlice';
 import useAutoRefetchOnReconnect from '../../../../api/useAutoRefetchOnReconnect';
 import Modal from '../../../../components/modals/Modal';
 import Button from '../../../../components/small/Button';

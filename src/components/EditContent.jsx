@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Input from './small/Input';
 import Button from './small/Button';
-import { useEditContentByIdMutation } from '../redux/apis/apiSlice';
+import { useEditContentByIdMutation } from '../app/store/slice/apiSlice';
 import toast from 'react-hot-toast';
 function EditContent({ content, closeEditModalHandle }) {
   const [newTitle, setNewTitle] = useState(content.title);
