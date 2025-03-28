@@ -18,7 +18,7 @@ import toast from 'react-hot-toast';
 import { IoIosArrowDown, IoIosSearch } from 'react-icons/io';
 import { IoMenu } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
-import { logout } from '../../app/slice/authSlice';
+import { logout } from '../../app/store/slice/authSlice';
 
 const Header = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);

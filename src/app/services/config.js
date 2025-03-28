@@ -1,4 +1,4 @@
-const API_ROUTES = {
+export const API_ROUTES = {
   USER: {
     EXIST: '/user-exist/{email}',
     SIGNUP: '/user/signup',
@@ -7,6 +7,65 @@ const API_ROUTES = {
     PROFILE: '/user/profile',
     DELETE_ACCOUNT: '/user/delete-account',
   },
+  AI: {
+    SEARCH: '/ai-search/',
+    LEARNING_SEARCH: '/ai-learning-search/',
+    PERSONALIZED_SEARCH: '/ai-personalized-search/',
+    UPDATE_CHAT_TITLE: '/update-chat-title',
+    UPDATE_FOLDER_CONTENT: '/update-folder-content',
+    DELETE_CHAT: '/chat/{chat_id}',
+  },
+  SEARCH: {
+    HISTORY: '/searched-result/history',
+    SESSION: '/session/{chat_id}',
+    ADMIN_SESSION: '/admin-session/{chat_id}',
+    PERSONALIZED_SESSION: '/personalized-session/{reference_content_id}',
+    RATING: '/searched-result/rating',
+    REPORT: '/searched-result/report',
+  },
+  HANDOUTS: {
+    ALL: '/handout/all',
+    CREATE: '/handout/create',
+    EDIT: '/handout/edit',
+    DELETE: '/handout/delete/{id}',
+  },
+  FOLDERS: {
+    CREATE: '/folders/create',
+    SAVE_CONTENT: '/folders/save-content',
+    STRUCTURE: '/folders/structure',
+    POSTED_STRUCTURE: '/folders/posted-structure',
+    MOVE_CONTENT: '/folders/move-content',
+    DELETE_CONTENT: '/folders/delete-content',
+    DELETE_FOLDER: '/folders/delete-folder',
+    RENAME_CONTENT: '/folders/rename-content',
+    RENAME_FOLDER: '/folders/rename-folder',
+  },
+  CONTENT: {
+    PUBLISHED: '/content/published',
+    RETRIEVE: '/content/retrieve',
+    STATUS: '/content/status',
+    CONTENT_STATUS: '/content/{content_id}/status',
+    BY_STATUS: '/content/by-status/{status}',
+    CONTENT_BY_ID: '/content/{content_id}',
+  },
+  HEALTH_HISTORY: {
+    GET: '/health-history',
+    POST: '/health-history',
+  },
+  PRACTITIONER: {
+    CREATE_CLIENT: '/practitioner/create-client',
+    MANAGED_CLIENTS: '/practitioner/managed-clients',
+    SWITCH_CLIENT: '/practitioner/switch-client',
+  },
 };
 
-export default API_ROUTES;
+export const EXCLUDE_TOKEN_ENDPOINTS = [
+  '/user/login',
+  '/user/signup',
+  '/ai-search/',
+  '/ai-learning-search/',
+  '/ai-personalized-search/',
+  '/update-chat-title',
+  '/update-folder-content',
+  '/chat/{chat_id}',
+];
