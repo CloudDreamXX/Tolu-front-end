@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance';
-import API_ROUTES from './config';
+import { API_ROUTES } from './config';
 
 export class searchService {
   static async getSearchHistory(clientId, managedClientId) {

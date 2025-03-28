@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance';
-import API_ROUTES from './config';
+import { API_ROUTES } from './config';
 
 export class authService {
   static async signUp(userData) {
