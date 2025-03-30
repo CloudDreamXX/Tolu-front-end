@@ -1,19 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { AiOutlineMenuFold } from "react-icons/ai";
-import { FaRegEdit } from "react-icons/fa";
-import { IoIosSave } from "react-icons/io";
-import { RiDeleteBinLine } from "react-icons/ri";
+import React, { useEffect, useRef, useState } from 'react';
+import { AiOutlineMenuFold } from 'react-icons/ai';
+import { FaRegEdit } from 'react-icons/fa';
+import { IoIosSave } from 'react-icons/io';
+import { RiDeleteBinLine } from 'react-icons/ri';
 import DynamicContent from './DynamicContent';
 import Modal from '../../../../components/modals/Modal';
 import FolderSelection from '../../../../components/FolderSelection';
-import { Editor } from "primereact/editor";
-import { useEditContentByIdMutation, useGetFolderStructureQuery, useMoveContentMutation } from '../../../../redux/apis/apiSlice';
+import { Editor } from 'primereact/editor';
+import {
+  useEditContentByIdMutation,
+  useGetFolderStructureQuery,
+  useMoveContentMutation,
+} from '../../../../app/store/slice/apiSlice';
 import useAutoRefetchOnReconnect from '../../../../api/useAutoRefetchOnReconnect';
 import Button from '../../../../components/small/Button';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setDetailResponse } from '../../../../redux/slice/sidebarSlice';
+import { setDetailResponse } from '../../../../app/store/slice/sidebarSlice';
 import HtmlContent from '../../../../components/htmlToText';
 
 function DetailResponse({ chat, removeChat, updateChat }) {
@@ -23,12 +27,12 @@ function DetailResponse({ chat, removeChat, updateChat }) {
   const [moveContent, { isLoading: isMoving }] = useMoveContentMutation();
   const { data: allFolders } = useGetFolderStructureQuery();
   const [isEditModal, setIsEditModal] = useState(false);
-  const [editingField, setEditingField] = useState(""); // To identify whether editing title or content
+  const [editingField, setEditingField] = useState(''); // To identify whether editing title or content
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editData, setEditData] = useState({
-    title: "",
-    content: "",
+    title: '',
+    content: '',
   });
 
   const dropdownRef = useRef(null);
@@ -42,22 +46,20 @@ function DetailResponse({ chat, removeChat, updateChat }) {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   useEffect(() => {
     if (chat) {
       setEditData({
-        title: chat?.question || "",
-        content: chat?.detailed_answer || "",
+        title: chat?.question || '',
+        content: chat?.detailed_answer || '',
       });
     }
-  }, [chat])
-
-
+  }, [chat]);
 
   const openEditModal = (field) => {
     setEditingField(field);
@@ -66,7 +68,7 @@ function DetailResponse({ chat, removeChat, updateChat }) {
 
   const closeEditModal = () => {
     setIsEditModal(false);
-    setEditingField("");
+    setEditingField('');
   };
   const closeModal = () => {
     setIsModalOpen(false);
@@ -82,29 +84,31 @@ function DetailResponse({ chat, removeChat, updateChat }) {
     closeEditModal();
     setEditData((prev) => ({
       ...prev,
-      content: chat?.detailed_answer || "",
-      title: chat?.question || "",
+      content: chat?.detailed_answer || '',
+      title: chat?.question || '',
     }));
   };
   const handleEditContent = async () => {
     if (!chat?.chat_id) {
-      toast.error("No content selected!");
+      toast.error('No content selected!');
       return;
     }
 
     // Determine final values: if the new title or content is empty, use the previous data.
-    const finalTitle = editData.title.trim() === '' ? chat.question : editData.title.trim();
-    const finalContent = editData.content.trim() === '' ? chat.detailed_answer : editData.content;
+    const finalTitle =
+      editData.title.trim() === '' ? chat.question : editData.title.trim();
+    const finalContent =
+      editData.content.trim() === '' ? chat.detailed_answer : editData.content;
 
     try {
       const response = await editContent({
         content_id: chat.chat_id,
         new_title: finalTitle, // Use final title
         new_content: finalContent, // Use final content
-        new_query: chat.question,  // Assuming query remains unchanged
+        new_query: chat.question, // Assuming query remains unchanged
       }).unwrap();
 
-      toast.success(response.message || "Content updated successfully");
+      toast.success(response.message || 'Content updated successfully');
 
       // Update parent's state with the new (or fallback) values.
       updateChat({
@@ -116,13 +120,13 @@ function DetailResponse({ chat, removeChat, updateChat }) {
       setIsEditing(false);
       setIsEditModal(false);
     } catch (error) {
-      console.error("Error updating content:", error);
-      toast.error(error.message || "Failed to update content");
+      console.error('Error updating content:', error);
+      toast.error(error.message || 'Failed to update content');
     }
   };
 
   const handleMoveContent = async () => {
-    if (!selectedFolder) return toast.error("Please select a folder.");
+    if (!selectedFolder) return toast.error('Please select a folder.');
     // if (content.current_folder_id === selectedFolder) return toast.error("Content is already in this folder.");
 
     try {
@@ -136,10 +140,9 @@ function DetailResponse({ chat, removeChat, updateChat }) {
       // dispatch(setDetailResponse(false));
       // navigate("/admin");
     } catch (error) {
-      toast.error(error?.data?.message || "Error moving content.");
+      toast.error(error?.data?.message || 'Error moving content.');
     }
   };
-
 
   return (
     <div>
@@ -149,11 +152,11 @@ function DetailResponse({ chat, removeChat, updateChat }) {
         onClose={closeEditModal}
         title={
           <h1 className="text-xl font-bold">
-            Edit {editingField === "title" ? "Title" : "Content"}
+            Edit {editingField === 'title' ? 'Title' : 'Content'}
           </h1>
         }
       >
-        {editingField === "title" ? (
+        {editingField === 'title' ? (
           <input
             type="text"
             value={editData.title}
@@ -168,7 +171,7 @@ function DetailResponse({ chat, removeChat, updateChat }) {
           />
         ) : (
           <Editor
-            style={{ height: "320px" }}
+            style={{ height: '320px' }}
             value={editData.content}
             onTextChange={(e) =>
               setEditData((prev) => ({
@@ -180,12 +183,12 @@ function DetailResponse({ chat, removeChat, updateChat }) {
         )}
         <section className="flex justify-end gap-4 mt-4">
           <Button
-            className={"!bg-[#8E8E8E] text-white "}
+            className={'!bg-[#8E8E8E] text-white '}
             text="Close"
             onClick={closeContentHandle}
           />
           <Button
-            className={"!bg-[#B6B6B6] text-[#1D1D1F99] "}
+            className={'!bg-[#B6B6B6] text-[#1D1D1F99] '}
             text="Save Changes"
             onClick={handleEditContent}
           />
@@ -211,12 +214,11 @@ function DetailResponse({ chat, removeChat, updateChat }) {
             <section className="flex flex-col  mt-[24px]">
               <div className="border p-4 rounded-2xl w-[70%] max-w-max ml-auto bg-[#f5f5f5]">
                 <h1 className="text-base md:text-lg text-[#1D1D1F99] font-bold">
-                  {chat.question || "No title"}
+                  {chat.question || 'No title'}
                 </h1>
               </div>
               <div className="border p-4 rounded-2xl w-[70%]  max-w-max mr-auto mt-5">
                 <section className="text-[#1D1D1F99] text-xl font-medium">
-
                   <HtmlContent contents={chat.detailed_answer} />
                 </section>
               </div>
@@ -232,7 +234,7 @@ function DetailResponse({ chat, removeChat, updateChat }) {
             <section className="flex  shadow-lg  rounded-3xl w-12 h-9 items-center justify-center">
               <IoIosSave
                 className="hover:text-black  cursor-pointer text-lg"
-              //  onClick={handleEditContent}
+                //  onClick={handleEditContent}
               />
             </section>
             <section className="relative">
@@ -243,10 +245,13 @@ function DetailResponse({ chat, removeChat, updateChat }) {
                 />
               </section>
               {isEditing && (
-                <section ref={dropdownRef} className='absolute w-[150px] top-5 left-[-10px] bg-white shadow-lg rounded-lg'>
+                <section
+                  ref={dropdownRef}
+                  className="absolute w-[150px] top-5 left-[-10px] bg-white shadow-lg rounded-lg"
+                >
                   <section
                     onClick={() => {
-                      openEditModal("title"), setIsEditing(false);
+                      openEditModal('title'), setIsEditing(false);
                     }}
                     className="w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary"
                   >
@@ -254,7 +259,7 @@ function DetailResponse({ chat, removeChat, updateChat }) {
                   </section>
                   <section
                     onClick={() => {
-                      openEditModal("content"), setIsEditing(false);
+                      openEditModal('content'), setIsEditing(false);
                     }}
                     className="w-full p-2 text-white flex items-center cursor-pointer justify-center hover:bg-gray-500 bg-primary"
                   >
@@ -270,7 +275,7 @@ function DetailResponse({ chat, removeChat, updateChat }) {
         </section>
       </section>
     </div>
-  )
+  );
 }
 
-export default DetailResponse
+export default DetailResponse;

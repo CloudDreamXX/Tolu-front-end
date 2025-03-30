@@ -3,11 +3,10 @@ import Button from '../../../../components/small/Button';
 // import Button from './Button'; // Adjust the import path as needed
 
 const AddInstruction = ({
-    handleInstructionChange ,
-    closeInstructionModal,
-    addInstruction,
-    instruction,
-
+  handleInstructionChange,
+  closeInstructionModal,
+  addInstruction,
+  instruction,
 }) => {
   // Handler for text area changes – uses parent's state setter
 

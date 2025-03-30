@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { IoIosArrowDropleftCircle } from "react-icons/io";
+import { useEffect, useState } from 'react';
+import { IoIosArrowDropleftCircle } from 'react-icons/io';
 
-import ChatHistory from "./ChatHistory";
-import MainChat from "./MainChat";
+import ChatHistory from './ChatHistory';
+import MainChat from './MainChat';
 
 const Chat = () => {
   const [chats, setChats] = useState([]);
@@ -10,30 +10,30 @@ const Chat = () => {
   const [isChatHistoryOpen, setIsChatHistoryOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
 
   const startRecording = () => {
-    console.log("Recording started");
+    console.log('Recording started');
     setIsRecording(true);
   };
 
   const stopRecording = () => {
-    console.log("Recording stopped");
+    console.log('Recording stopped');
     setIsRecording(false);
   };
 
   const submitHandler = (textToSubmit) => {
     setIsLoading(true);
-    console.log("Submitting text:", textToSubmit);
+    console.log('Submitting text:', textToSubmit);
     setTimeout(() => {
       const fakeResponse = {
         question: textToSubmit,
-        summary: "This is a fake response for the submitted query.",
-        detailed_answer: "Here is a more detailed answer for the query.",
+        summary: 'This is a fake response for the submitted query.',
+        detailed_answer: 'Here is a more detailed answer for the query.',
         chart_data: null,
       };
       setChats((prevChats) => [...prevChats, fakeResponse]);
-      setText("");
+      setText('');
       setIsLoading(false);
     }, 1000);
   };
@@ -46,7 +46,7 @@ const Chat = () => {
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !isLoading) {
+    if (event.key === 'Enter' && !isLoading) {
       event.preventDefault();
       submitHandler(text);
     }
@@ -61,7 +61,7 @@ const Chat = () => {
     <div className="w-full flex h-[calc(100vh-54px)] md:h-[calc(100vh-88px)] relative p-2 sm:p-4 xl:p-0">
       <div
         className={`shadow-chatAsideShadow bg-white xl:basis-[20%] xl:static absolute z-[99] top-0 h-screen transform xl:transform-none transition-all duration-500 border ${
-          isChatHistoryOpen ? "translate-x-0 w-[280px]" : "-translate-x-[19rem]"
+          isChatHistoryOpen ? 'translate-x-0 w-[280px]' : '-translate-x-[19rem]'
         }`}
       >
         <div className="absolute top-3 right-0 text-primary">

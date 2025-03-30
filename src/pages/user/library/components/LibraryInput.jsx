@@ -1,33 +1,33 @@
-import React, { useRef, useState } from "react";
-import { FaArrowUp, FaTimes } from "react-icons/fa";
-import { GrAttachment } from "react-icons/gr";
-import Modal from "../../../../components/modals/Modal";
-import AddFiles from "../../../admin/addBlog/components/AddFiles";
+import React, { useRef, useState } from 'react';
+import { FaArrowUp, FaTimes } from 'react-icons/fa';
+import { GrAttachment } from 'react-icons/gr';
+import Modal from '../../../../components/modals/Modal';
+import AddFiles from '../../../admin/addBlog/components/AddFiles';
 
 function LibraryInput({
   placeholder,
-  width = "w-full",
-  height = "h-[125px]",
-  onChangeValue,  // Callback for input value change
-  onSubmitValue,  // Callback for returning typed value
+  width = 'w-full',
+  height = 'h-[125px]',
+  onChangeValue, // Callback for input value change
+  onSubmitValue, // Callback for returning typed value
   onFileUpload,
-  handleRemoveFile,  // Callback when a file is uploaded
+  handleRemoveFile, // Callback when a file is uploaded
   isLoading,
   selectedFile,
-  setSelectedFile,    // Prop to indicate loading state
+  setSelectedFile, // Prop to indicate loading state
 
   fetchFile,
   folder,
 }) {
   const [isFocused, setIsFocused] = useState(false);
-  const [value, setValue] = useState("");
-  const [addFile ,setAddFile]= useState(false);
-  const openAddFileModal=()=>{
+  const [value, setValue] = useState('');
+  const [addFile, setAddFile] = useState(false);
+  const openAddFileModal = () => {
     setAddFile(true);
-  }
-  const closeAddFilesModal=()=>{
+  };
+  const closeAddFilesModal = () => {
     setAddFile(false);
-  }
+  };
   // const [selectedFile, setSelectedFile] = useState(null); // Store selected file
   const fileInputRef = useRef(null); // Ref for file input
 
@@ -71,7 +71,7 @@ function LibraryInput({
 
   // Handle Enter key press to submit
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       if (!isLoading) {
         handleSubmit();
@@ -81,7 +81,12 @@ function LibraryInput({
 
   return (
     <>
-      <Modal className="w-[500px]" isOpen={addFile} onClose={closeAddFilesModal} title={<h1 className="text-xl font-bold">Add Files</h1>}>
+      <Modal
+        className="w-[500px]"
+        isOpen={addFile}
+        onClose={closeAddFilesModal}
+        title={<h1 className="text-xl font-bold">Add Files</h1>}
+      >
         <AddFiles
           fetchFile={fetchFile}
           folder={folder}
@@ -92,7 +97,7 @@ function LibraryInput({
       <div className="relative flex flex-col items-center w-full">
         {/* Floating Label */}
         <label
-          className={`absolute text-gray-500 transition-all duration-300 ${isFocused || value ? "text-xs text-gray-700 top-2" : "text-base top-4"} ${width === "w-full" ? "left-6" : width === "sm:w-3/4" ? "left-10" : "left-16"}`}
+          className={`absolute text-gray-500 transition-all duration-300 ${isFocused || value ? 'text-xs text-gray-700 top-2' : 'text-base top-4'} ${width === 'w-full' ? 'left-6' : width === 'sm:w-3/4' ? 'left-10' : 'left-16'}`}
         >
           {placeholder}
         </label>
@@ -119,7 +124,7 @@ function LibraryInput({
 
         {/* Icons Container */}
         <div
-          className={`absolute flex space-x-2 text-gray-500 transition-all duration-300 ${width === "w-full" ? "right-6" : width === "sm:w-3/4" ? "right-10" : "right-16"} bottom-4`}
+          className={`absolute flex space-x-2 text-gray-500 transition-all duration-300 ${width === 'w-full' ? 'right-6' : width === 'sm:w-3/4' ? 'right-10' : 'right-16'} bottom-4`}
         >
           {/* File Icon / Remove File Icon */}
           <div
@@ -130,7 +135,7 @@ function LibraryInput({
             {/* {selectedFile ? (
               <FaTimes className="text-red-500" /> // Cross icon if file is selected
             ) : ( */}
-              <GrAttachment className="text-[#767779]" />
+            <GrAttachment className="text-[#767779]" />
             {/* )} */}
           </div>
 
@@ -139,15 +144,16 @@ function LibraryInput({
             disabled={isLoading}
             onClick={handleSubmit}
             className={`w-[36px] h-[36px] rounded-full flex justify-center items-center transition-all duration-200
-            ${isLoading ? "bg-gray-400 cursor-not-allowed blur-sm" : "bg-[#767779] cursor-pointer"}
+            ${isLoading ? 'bg-gray-400 cursor-not-allowed blur-sm' : 'bg-[#767779] cursor-pointer'}
           `}
           >
-            <FaArrowUp className={`text-white ${isLoading ? "opacity-50" : ""}`} />
+            <FaArrowUp
+              className={`text-white ${isLoading ? 'opacity-50' : ''}`}
+            />
           </button>
         </div>
       </div>
     </>
-
   );
 }
 

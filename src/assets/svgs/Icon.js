@@ -1,5 +1,5 @@
-import ParkingIcon from "./landing/ParkingIcon";
-import ArrowIcon from "./default/ArrowIcon";
+import ParkingIcon from './landing/ParkingIcon';
+import ArrowIcon from './default/ArrowIcon';
 
 // import UsersIcon from "./landing/UsersIcon";
 // import CitiesIcon from "./landing/CitiesIcon";
@@ -26,7 +26,7 @@ import ArrowIcon from "./default/ArrowIcon";
 // import ParkingFilledIcon from "./aside/ParkingFilledIcon";
 // import WalletIcon from "./aside/WalletIcon";
 // import WalletFilledIcon from "./aside/WalletFilledIcon";
-import HeaderChevronIcon from "./header/HeaderChevronIcon";
+import HeaderChevronIcon from './header/HeaderChevronIcon';
 // import RingIcon from "./header/RingIcon";
 // import HamburgerIcon from "./header/HamburgerIcon";
 // import BuildingIcon from "./header/BuildingIcon";

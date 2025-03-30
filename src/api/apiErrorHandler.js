@@ -1,42 +1,46 @@
 // import { toast } from "react-toastify";
 
-import toast from "react-hot-toast";
+import toast from 'react-hot-toast';
 
-export const apiErrorHandler = (isError, error, isSuccess, successMessage = "Request successful!", refetch) => {
-    if (isSuccess) {
-        toast.success(successMessage);
+export const apiErrorHandler = (
+  isError,
+  error,
+  isSuccess,
+  successMessage = 'Request successful!',
+  refetch
+) => {
+  if (isSuccess) {
+    toast.success(successMessage);
+  }
+
+  if (isError) {
+    console.error('API Error:', error);
+
+    if (!navigator.onLine) {
+      toast.error('No internet connection. Please check your network.');
+
+      // Auto refetch when internet reconnects
+      const handleOnline = () => {
+        console.log('Internet reconnected! Refetching data...');
+        toast.info('Internet reconnected! Fetching latest data...');
+        refetch();
+        window.removeEventListener('online', handleOnline);
+      };
+
+      window.addEventListener('online', handleOnline);
+    } else if (error?.response?.status >= 500) {
+      toast.error('Server error! Please try again later.');
+    } else if (error?.response?.status === 404) {
+      toast.error('Requested data not found.');
+    } else if (error?.response?.status === 401) {
+      toast.error('Unauthorized! Please log in again.');
+    } else if (error?.response?.status === 400) {
+      toast.error('Invalid request. Please check your input.');
+    } else {
+      toast.error(error?.message || 'Something went wrong!');
     }
-
-    if (isError) {
-        console.error("API Error:", error);
-
-        if (!navigator.onLine) {
-            toast.error("No internet connection. Please check your network.");
-
-            // Auto refetch when internet reconnects
-            const handleOnline = () => {
-                console.log("Internet reconnected! Refetching data...");
-                toast.info("Internet reconnected! Fetching latest data...");
-                refetch();
-                window.removeEventListener("online", handleOnline);
-            };
-
-            window.addEventListener("online", handleOnline);
-        } else if (error?.response?.status >= 500) {
-            toast.error("Server error! Please try again later.");
-        } else if (error?.response?.status === 404) {
-            toast.error("Requested data not found.");
-        } else if (error?.response?.status === 401) {
-            toast.error("Unauthorized! Please log in again.");
-        } else if (error?.response?.status === 400) {
-            toast.error("Invalid request. Please check your input.");
-        } else {
-            toast.error(error?.message || "Something went wrong!");
-        }
-    }
+  }
 };
-
-
 
 // /// for add api
 // import { useAddFolderMutation } from "../yourApiService";
@@ -63,9 +67,7 @@ export const apiErrorHandler = (isError, error, isSuccess, successMessage = "Req
 
 // export default AddFolderComponent;
 
-
-
-//  //for put and patch api 
+//  //for put and patch api
 //  import { useUpdateFolderMutation } from "../yourApiService";
 // import { apiErrorHandler } from "../middleware/apiMiddleware";
 
@@ -114,7 +116,7 @@ export const apiErrorHandler = (isError, error, isSuccess, successMessage = "Req
 // };
 
 // export default DeleteFolderComponent;
-// // for fetch api 
+// // for fetch api
 // import { useGetFolderStructureQuery } from "../yourApiService";
 // import { apiErrorHandler } from "../middleware/apiMiddleware";
 // import useAutoRefetchOnReconnect from "../hooks/useAutoRefetchOnReconnect";

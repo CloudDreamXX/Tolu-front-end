@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
-import { TfiWrite } from "react-icons/tfi";
-import { useDispatch } from "react-redux";
-import { apiErrorHandler } from "../../../../../api/apiErrorHandler";
-import useAutoRefetchOnReconnect from "../../../../../api/useAutoRefetchOnReconnect";
-import { useGetFolderStructureQuery } from "../../../../../redux/apis/apiSlice";
-import { setAddFolderData } from "../../../../../redux/slice/sidebarSlice";
-import FolderTree from "../../../../admin/addBlog/components/FolderTree";
-import ContentTree from "../../../../admin/addBlog/components/ContentTree";
+import React, { useEffect, useState } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
+import { TfiWrite } from 'react-icons/tfi';
+import { useDispatch } from 'react-redux';
+import { apiErrorHandler } from '../../../../../api/apiErrorHandler';
+import useAutoRefetchOnReconnect from '../../../../../api/useAutoRefetchOnReconnect';
+import { useGetFolderStructureQuery } from '../../../../../app/store/slice/apiSlice';
+import { setAddFolderData } from '../../../../../app/store/slice/sidebarSlice';
+import FolderTree from '../../../../admin/addBlog/components/FolderTree';
+import ContentTree from '../../../../admin/addBlog/components/ContentTree';
 
 function CoachesDashboardAside() {
   const [isAsideOpen, setIsAsideOpen] = useState(false);
@@ -23,7 +23,7 @@ function CoachesDashboardAside() {
     refetch,
   } = useGetFolderStructureQuery();
   useEffect(() => {
-    apiErrorHandler(isError, error, isSuccess, "Topic loaded successfully!");
+    apiErrorHandler(isError, error, isSuccess, 'Topic loaded successfully!');
   }, [isError, error, isSuccess]);
   useAutoRefetchOnReconnect(refetch);
 
@@ -63,7 +63,7 @@ function CoachesDashboardAside() {
     <div className="flex flex-col p-2 w-full   h-full  overflow-auto ">
       <div
         className={`flex flex-col   h-full  gap-2 overflow-hidden ${
-          isAsideOpen ? "items-center" : "items-start"
+          isAsideOpen ? 'items-center' : 'items-start'
         }`}
       >
         {/* <div className="p-4 w-full">
@@ -115,7 +115,7 @@ function CoachesDashboardAside() {
               </span>
               <span
                 className={`text-[#393838]  dropdown-icon transition-all duration-400 ${
-                  showDropdown ? "rotate-180" : "rotate-0"
+                  showDropdown ? 'rotate-180' : 'rotate-0'
                 }`}
               >
                 <IoIosArrowDown />

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 function Cards({ title, relatedBlog, date, readingTime, className }) {
   return (
@@ -9,10 +9,10 @@ function Cards({ title, relatedBlog, date, readingTime, className }) {
         <h2
           className="text-xl truncate h-10 text-wrap font-extrabold text-[#1D1D1F99]"
           style={{
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: "250px",
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: '250px',
           }}
         >
           {title}

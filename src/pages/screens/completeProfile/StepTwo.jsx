@@ -1,16 +1,16 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
-import Mcq from "../../../components/questions/mcq/Mcq";
-import Button from "../../../components/small/Button";
-import { stepTwoQuestions } from "./questions";
-import IncompleteProfileMessage from "./IncompleteProfileMessage";
-import Question from "../../../components/questions/mcq/Question";
+import { useEffect, useState } from 'react';
+import Mcq from '../../../components/questions/mcq/Mcq';
+import Button from '../../../components/small/Button';
+import { stepTwoQuestions } from './questions';
+import IncompleteProfileMessage from './IncompleteProfileMessage';
+import Question from '../../../components/questions/mcq/Question';
 
 const StepTwo = ({ setCurrentStep }) => {
   const [isConfirmAlert, setIsConfirmAlert] = useState(false);
   const [answers, setAnswers] = useState(() => {
     return stepTwoQuestions.reduce((acc, question, index) => {
-      acc[index] = "";
+      acc[index] = '';
       return acc;
     }, {});
   });
@@ -47,7 +47,7 @@ const StepTwo = ({ setCurrentStep }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {stepTwoQuestions.map((question, i) => (
           <section key={i} className="shadow-md rounded-lg p-4">
-            {question?.questionType === "text" ? (
+            {question?.questionType === 'text' ? (
               <Question
                 label={question.question}
                 placeholder={question?.placeholder}
@@ -55,7 +55,7 @@ const StepTwo = ({ setCurrentStep }) => {
                 isRequired={question?.isRequired}
                 value={answers[i]}
                 onChange={(e) => handleAnswerChange(i, e.target.value)}
-                type={question.type || "text"}
+                type={question.type || 'text'}
               />
             ) : (
               <Mcq

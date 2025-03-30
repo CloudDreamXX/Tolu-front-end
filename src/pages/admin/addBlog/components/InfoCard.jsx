@@ -3,7 +3,7 @@
 
 // const InfoCard = ({ Icon, title, handleCardClick, description }) => {
 //   return (
-//     <section 
+//     <section
 //       onClick={() => handleCardClick(description)}  // Trigger the parent's function
 //       className="flex items-center gap-2 hover:bg-primary rounded-lg p-3 cursor-pointer"
 //     >
@@ -20,7 +20,7 @@
 // };
 
 // export default InfoCard;
-import React from "react";
+import React from 'react';
 
 const InfoCard = ({ Icon, title, handleCardClick, description, contentId }) => {
   return (

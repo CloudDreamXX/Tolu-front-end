@@ -1,19 +1,19 @@
-import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import { FaEllipsisV, FaRegFolder } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { FaEllipsisV, FaRegFolder } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   useDeleteContentByIdMutation,
   useEditContentByIdMutation,
   useGetFolderStructureQuery,
   useMoveContentMutation,
-} from "../redux/apis/apiSlice";
-import { setContentId } from "../redux/slice/sidebarSlice";
-import Modal from "./modals/Modal";
-import Button from "./small/Button";
-import FolderSelection from "./FolderSelection";
-import EditContent from "./EditContent";
+} from '../app/store/slice/apiSlice';
+import { setContentId } from '../app/store/slice/sidebarSlice';
+import Modal from './modals/Modal';
+import Button from './small/Button';
+import FolderSelection from './FolderSelection';
+import EditContent from './EditContent';
 
 const ContentItem = ({ content, folderId }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,12 +29,11 @@ const ContentItem = ({ content, folderId }) => {
 
   // Extract all folders recursively
 
-
   // Move content to selected folder
   const handleMoveContent = async () => {
-    if (!selectedFolder) return toast.error("Please select a folder.");
+    if (!selectedFolder) return toast.error('Please select a folder.');
     if (content.current_folder_id === selectedFolder)
-      return toast.error("Content is already in this folder.");
+      return toast.error('Content is already in this folder.');
 
     try {
       const response = await moveContent({
@@ -44,16 +43,16 @@ const ContentItem = ({ content, folderId }) => {
       toast.success(response.message);
       closeModal();
     } catch (error) {
-      toast.error(error?.data?.message || "Error moving content.");
+      toast.error(error?.data?.message || 'Error moving content.');
     }
   };
 
   const handleDeleteContent = async () => {
     try {
       await deleteContent(content.id).unwrap();
-      toast.success("Content deleted successfully.");
+      toast.success('Content deleted successfully.');
     } catch (error) {
-      toast.error("Error deleting content.");
+      toast.error('Error deleting content.');
     }
   };
 
@@ -75,8 +74,8 @@ const ContentItem = ({ content, folderId }) => {
         setIsMenuOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const dispatch = useDispatch();
@@ -85,19 +84,19 @@ const ContentItem = ({ content, folderId }) => {
   const currentPath = location.pathname;
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const userType = localStorage.getItem("userType");
+  const userType = localStorage.getItem('userType');
   const contentHandler = (item) => {
     dispatch(setContentId(item));
 
-    if (currentPath === "/admin/library-topic-details") {
+    if (currentPath === '/admin/library-topic-details') {
       setSearchParams({ id: item.id, folderId: folderId });
-    } else if (currentPath === "/coaches/coaches-library-topic-details") {
+    } else if (currentPath === '/coaches/coaches-library-topic-details') {
       setSearchParams({ id: item.id, folderId: folderId });
-    } else if (currentPath === "/admin") {
+    } else if (currentPath === '/admin') {
       navigate(
         `/admin/library-topic-details?id=${item.id}&folderId=${folderId}`
       );
-    } else if (currentPath === "/coaches") {
+    } else if (currentPath === '/coaches') {
       navigate(
         `/coaches/coaches-library-topic-details?id=${item.id}&folderId=${folderId}`
       );
@@ -125,14 +124,16 @@ const ContentItem = ({ content, folderId }) => {
         onClose={closeEditModalHandle}
         title={<h1 className="text-xl font-bold">Edit Content</h1>}
       >
-        <EditContent content={content} closeEditModalHandle={closeEditModalHandle} />
+        <EditContent
+          content={content}
+          closeEditModalHandle={closeEditModalHandle}
+        />
       </Modal>
 
       {/* Content Item */}
       <div className="flex items-center justify-between p-2 border-b border-gray-300 relative">
-
-
-        <section className="truncate  w-28"
+        <section
+          className="truncate  w-28"
           onClick={() => contentHandler(content)}
         >
           <span className="">📄 {content.title}</span>

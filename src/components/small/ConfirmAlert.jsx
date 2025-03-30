@@ -7,7 +7,7 @@ const ConfirmAlert = ({ title, onClose, children, width, message }) => {
     >
       <div
         className={`bg-white rounded-md shadow-lg p-4 md:p-6 overflow-y-auto custom-scroll h-fit max-h-full space-y-3 ${
-          width ? width : "w-[300px] md:w-[400px] lg:w-[700px] xl:w-[900px]"
+          width ? width : 'w-[300px] md:w-[400px] lg:w-[700px] xl:w-[900px]'
         }`}
         onClick={(e) => e.stopPropagation()}
       >

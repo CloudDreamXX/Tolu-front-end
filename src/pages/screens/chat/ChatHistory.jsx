@@ -1,19 +1,24 @@
-import { useEffect, useState } from "react";
-import { BiSolidEdit } from "react-icons/bi";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { MdHistory } from "react-icons/md";
-import { useDispatch } from "react-redux";
-import { setNewChat } from "../../../redux/slice/chatSlice";
+import { useEffect, useState } from 'react';
+import { BiSolidEdit } from 'react-icons/bi';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { MdHistory } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
+import { setNewChat } from '../../../app/store/slice/chatSlice';
 
-const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, chatIdHandler }) => {
+const ChatHistory = ({
+  chatHistory,
+  isAsideOpen,
+  isLoading,
+  chatIdHandler,
+}) => {
   const dispatch = useDispatch();
   const [showHistory, setShowHistory] = useState(true);
   const newChatHandler = () => {
     dispatch(setNewChat(true));
   };
   useEffect(() => {
-    setShowHistory(false)
-  }, [isAsideOpen])
+    setShowHistory(false);
+  }, [isAsideOpen]);
 
   const toggleHistory = () => {
     setShowHistory((prev) => !prev);
@@ -25,10 +30,26 @@ const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, chatIdHandler }) => 
     const lastWeek = new Date(today - 7 * 86400000);
 
     return {
-      todayChats: Array.isArray(chats) ? chats.filter(chat => new Date(chat.created_at) >= today) : [],
-      yesterdayChats: Array.isArray(chats) ? chats.filter(chat => new Date(chat.created_at) >= yesterday && new Date(chat.created_at) < today) : [],
-      last7DaysChats: Array.isArray(chats) ? chats.filter(chat => new Date(chat.created_at) >= lastWeek && new Date(chat.created_at) < yesterday) : [],
-      earlierChats: Array.isArray(chats) ? chats.filter(chat => new Date(chat.created_at) < lastWeek) : [],
+      todayChats: Array.isArray(chats)
+        ? chats.filter((chat) => new Date(chat.created_at) >= today)
+        : [],
+      yesterdayChats: Array.isArray(chats)
+        ? chats.filter(
+            (chat) =>
+              new Date(chat.created_at) >= yesterday &&
+              new Date(chat.created_at) < today
+          )
+        : [],
+      last7DaysChats: Array.isArray(chats)
+        ? chats.filter(
+            (chat) =>
+              new Date(chat.created_at) >= lastWeek &&
+              new Date(chat.created_at) < yesterday
+          )
+        : [],
+      earlierChats: Array.isArray(chats)
+        ? chats.filter((chat) => new Date(chat.created_at) < lastWeek)
+        : [],
     };
   };
 
@@ -62,17 +83,19 @@ const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, chatIdHandler }) => 
             {Object.entries(categorizedChats).map(([key, chats]) => (
               <div key={key} className=" p-2 rounded-lg">
                 <h3 className="text-gray-600 font-medium">
-                  {key === "todayChats"
-                    ? "Today"
-                    : key === "yesterdayChats"
-                      ? "Yesterday"
-                      : key === "last7DaysChats"
-                        ? "Last 7 Days"
-                        : "Earlier"}
+                  {key === 'todayChats'
+                    ? 'Today'
+                    : key === 'yesterdayChats'
+                      ? 'Yesterday'
+                      : key === 'last7DaysChats'
+                        ? 'Last 7 Days'
+                        : 'Earlier'}
                 </h3>
 
                 {isLoading ? (
-                  <p className="px-4 py-2 text-gray-500 text-xs italic">Loading...</p>
+                  <p className="px-4 py-2 text-gray-500 text-xs italic">
+                    Loading...
+                  </p>
                 ) : chats.length > 0 ? (
                   chats.map((chat) => (
                     <p
@@ -85,7 +108,9 @@ const ChatHistory = ({ chatHistory, isAsideOpen, isLoading, chatIdHandler }) => 
                     </p>
                   ))
                 ) : (
-                  <p className="px-4 py-2 text-gray-500 text-xs italic">No history available</p>
+                  <p className="px-4 py-2 text-gray-500 text-xs italic">
+                    No history available
+                  </p>
                 )}
               </div>
             ))}

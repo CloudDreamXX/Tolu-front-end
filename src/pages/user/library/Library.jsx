@@ -6,7 +6,7 @@ import ModalManager from './components/ModalManager';
 
 function Library() {
   const [isFocused, setIsFocused] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [dropdownData, setDropdownData] = useState([]);
 
@@ -71,20 +71,17 @@ function Library() {
       date: '23-02-2025',
       readingTime: '5 mins reading left',
     },
-
-
-
   ];
 
   const webinars = [
-    { title: "Next.js in Action", date: "2025-03-01", topics: 7 },
-    { title: "GraphQL for Beginners", date: "2025-03-05", topics: 6 },
-    { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
-    { title: "Serverless Applications", date: "2025-03-10", topics: 5 },
+    { title: 'Next.js in Action', date: '2025-03-01', topics: 7 },
+    { title: 'GraphQL for Beginners', date: '2025-03-05', topics: 6 },
+    { title: 'Serverless Applications', date: '2025-03-10', topics: 5 },
+    { title: 'Serverless Applications', date: '2025-03-10', topics: 5 },
   ];
   useEffect(() => {
-    setModalOpen(false)
-  }, [])
+    setModalOpen(false);
+  }, []);
 
   const closeModal = () => {
     setModalOpen(false);
@@ -105,7 +102,6 @@ function Library() {
     document.getElementById('file-input').click();
   };
 
-
   const handleSubmitValue = (value) => {
     alert(`Submitted Value: ${value}`);
   };
@@ -114,26 +110,20 @@ function Library() {
     alert(`File Uploaded: ${file.name}`);
   };
 
-
   // h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)] lg:h-screen
 
   return (
-
-    <div className='w-full h-full pt-4 bg-white relative  '>
-
+    <div className="w-full h-full pt-4 bg-white relative  ">
       {modalOpen && (
         <ModalManager
           setModalOpen={setModalOpen}
           setDropdownData={setDropdownData}
           closeModal={closeModal}
-
         />
       )}
-      <div className='h-[450px] lg:h-[80%] custom-scroll overflow-auto'>
-
+      <div className="h-[450px] lg:h-[80%] custom-scroll overflow-auto">
         {/* <div className='w-full h-[calc(100vh-200px)] sm:h-[calc(100vh-150px)] overflow-auto p-2'> */}
         <div className="grid gap-6 h-[400px] overflow-y-auto sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
-
           {cardsData.map((card, index) => (
             <Cards
               key={index}
@@ -159,7 +149,7 @@ function Library() {
       </div>
 
       {/* </div> */}
-      <section className='w-full  top-2 pt-4 flex items-center justify-center '>
+      <section className="w-full  top-2 pt-4 flex items-center justify-center ">
         <div className='"w-[90%] sm:w-[85%] md:w-[75%] lg:w-[80%]"'>
           <LibraryInput
             placeholder="Ask anything..."
@@ -170,10 +160,7 @@ function Library() {
         </div>
       </section>
     </div>
-
-
-
-  )
+  );
 }
 
-export default Library
+export default Library;
