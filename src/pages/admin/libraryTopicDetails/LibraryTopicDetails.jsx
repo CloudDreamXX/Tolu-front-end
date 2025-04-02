@@ -335,14 +335,14 @@ const LibraryTopicDetails = () => {
         />
       </Modal>
       {/* Main UI */}
-      <section className=" h-[calc(100vh-90px)] w-full flex flex-col items-center">
+      <section className=" h-[calc(100vh-90px)] w-full flex flex-col items-center -mt-6">
         {isError && (
           <div className="text-red-500 flex items-center h-[90%]">
             {error?.data?.message || 'An error occurred'}
           </div>
         )}
         {!isError && (
-          <div className="h-[90%] w-full custom-scroll mb-2 overflow-auto">
+          <div className="h-[80%] w-full custom-scroll mb-2 overflow-auto">
             <div className="w-full flex flex-col justify-center overflow-auto">
               {/* Content Display Section */}
               <section className="flex justify-center w-full  overflow-auto h gap-4">

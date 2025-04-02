@@ -132,9 +132,14 @@ function AppRoutes() {
           <Route path="folder/:folderId" element={<Folder />} />
           <Route path="folder/:folderId/topic/:topicId" element={<Topic />} />
           <Route path="document/:docId" element={<Document />} />
+          <Route path="newdoc" element={<NewDoc />} />
           <Route
             path="folder/:folderId/topic/:topicId/newdoc"
             element={<NewDoc />}
+          />
+          <Route
+            path="library-topic-details"
+            element={<LibraryTopicDetails />}
           />
         </Route>
       </Route>

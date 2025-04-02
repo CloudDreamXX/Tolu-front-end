@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '../../../../components/small/Button';
-// import Button from './Button'; // Adjust the import path as needed
 
 const AddInstruction = ({
   handleInstructionChange,
@@ -8,14 +7,19 @@ const AddInstruction = ({
   addInstruction,
   instruction,
 }) => {
-  // Handler for text area changes – uses parent's state setter
+  useEffect(() => {
+    const savedInstructions = localStorage.getItem('instruction');
+    if (savedInstructions && !instruction) {
+      handleInstructionChange({ target: { value: savedInstructions } });
+    }
+  }, [handleInstructionChange, instruction]);
 
   return (
     <div>
       <textarea
         className="w-full mt-4 h-40 p-4 border rounded"
         placeholder="Enter instructions here..."
-        value={instruction}
+        value={instruction || ''}
         onChange={handleInstructionChange}
       />
       <section className="flex justify-end gap-2 mt-4">
