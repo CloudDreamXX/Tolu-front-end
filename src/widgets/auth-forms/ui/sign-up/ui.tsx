@@ -94,7 +94,12 @@ export const SignupForm = () => {
         <div
           className={`lg:col-span-12 ${verifyEmail ? "opacity-50" : "opacity-100"}`}
         >
-          <Button text="Sign Up" type="submit" width="w-full " />
+          <Button
+            text="Sign Up"
+            type="submit"
+            width="w-full"
+            className="bg-gray-300"
+          />
         </div>
       </form>
     </>

@@ -11,12 +11,12 @@ export const Auth = () => {
         <div className="flex items-center w-full gap-4 sm:w-auto">
           <Button
             text="Login"
-            bg={`  hover:bg-gray-300 ${!showLogin ? "text-white bg-[rgb(152, 153, 155)]" : "text-black"}`}
+            bg={`  hover:bg-gray-300 ${!showLogin ? "text-white bg-gray-400" : " text-black"}`}
             onClick={() => setShowLogin(false)}
           />
           <Button
             text="Sign Up"
-            bg={` hover:bg-gray-300  ${showLogin ? "text-white bg-[rgb(152, 153, 155)]" : "text-black"}`}
+            bg={` hover:bg-gray-300  ${showLogin ? "text-white bg-gray-400" : " text-black"}`}
             onClick={() => setShowLogin(true)}
           />
         </div>
