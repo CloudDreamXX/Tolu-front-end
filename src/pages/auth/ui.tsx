@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "shared/ui/_deprecated";
 import { LoginForm, SignupForm } from "widgets/auth-forms";
 
-export const Auth = () => {
+export const Auth: React.FC = () => {
   const [showLogin, setShowLogin] = useState(false);
 
   return (

@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { IUser } from './model';
-import { getUserRole } from 'shared/lib';
+import { createSlice } from "@reduxjs/toolkit";
+import { IUser } from "./model";
+import { getUserRole } from "shared/lib";
 
 interface InitialState {
   user: IUser | null;
@@ -17,13 +17,13 @@ const initialState: InitialState = {
 };
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setUser: (state, action) => {
       const email = action.payload?.email ?? null;
       if (!email) {
-        state.userType = { role: 'guest' };
+        state.userType = { role: "guest" };
       } else {
         state.userType = {
           role: getUserRole(email),
@@ -33,6 +33,12 @@ export const userSlice = createSlice({
     setCredentials: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.accessToken;
+
+      if (action.payload.user?.email) {
+        state.userType = {
+          role: getUserRole(action.payload.user.email),
+        };
+      }
     },
     logout: (state) => {
       state.user = null;

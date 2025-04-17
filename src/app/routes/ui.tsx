@@ -1,7 +1,6 @@
 import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "entities/store/lib";
-import { useEffect } from "react";
 
 interface ProtectedRouteProps {
   allowedRoles: string[];
@@ -33,19 +32,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
 
     return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
+  } else if (location.pathname === "/auth") {
+    return <Navigate to={getRouteByRole(userType.role)} replace />;
   }
 
-  const role = userType.role;
-  const targetRoute = getRouteByRole(role);
-
-  if (
-    location.pathname.startsWith(targetRoute) &&
-    allowedRoles.includes(role)
-  ) {
-    return <Outlet />;
-  }
-
-  return (
-    <Navigate to={targetRoute} state={{ from: location.pathname }} replace />
-  );
+  return <Outlet />;
 };

@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getUserType, navigateByUserType, signupFormFields } from "../../lib";
+import { signupFormFields } from "../../lib";
 import { Button, Input, SingUpModal1 } from "shared/ui/_deprecated";
 import { setCredentials, setUser, UserService } from "entities/user";
 
@@ -47,12 +47,10 @@ export const SignupForm = () => {
       dispatch(setCredentials(response));
 
       const email = response.user?.email;
-      const userType = getUserType(email);
 
       dispatch(setUser({ email }));
-      localStorage.setItem("userType", JSON.stringify(userType));
       toast.success("SignUp Successful");
-      navigateByUserType(navigate, userType.role);
+      navigate("/", { replace: true });
     } catch (error) {
       console.error("Signup failed:", error);
       toast.error(error instanceof Error ? error.message : "Login Failed");

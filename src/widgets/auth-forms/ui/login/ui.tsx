@@ -2,7 +2,6 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getUserType, navigateByUserType } from "../../lib";
 import { Button, Input } from "shared/ui/_deprecated";
 import { setCredentials, setUser, UserService } from "entities/user";
 
@@ -22,14 +21,12 @@ export const LoginForm = () => {
       dispatch(setCredentials(response));
 
       const email = response.user?.email;
-      const userType = getUserType(email);
 
       dispatch(setUser({ email }));
-      localStorage.setItem("userType", JSON.stringify(userType));
 
       toast.success("Login Successful");
 
-      navigateByUserType(navigate, userType.role);
+      navigate("/", { replace: true });
     } catch (error) {
       console.error("Login failed:", error);
       toast.error(error instanceof Error ? error.message : "Login Failed");
