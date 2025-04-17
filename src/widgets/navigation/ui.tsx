@@ -1,20 +1,66 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { navigationItems } from "./lib";
 import Menu from "shared/assets/icons/menu";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import ArrowPoligon from "shared/assets/icons/arrow-poligon";
 
 export const Navigation: React.FC = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [popupPosition, setPopupPosition] = useState<"left" | "right" | null>(
+    null
+  );
+  const navItemRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const location = useLocation();
+
+  const calculatePopupPosition = (button: HTMLButtonElement) => {
+    const buttonRect = button.getBoundingClientRect();
+    const windowWidth = window.innerWidth;
+
+    if (buttonRect.right > windowWidth - 500) {
+      setPopupPosition("right");
+    } else {
+      setPopupPosition("left");
+    }
+  };
+
+  const handleMouseEnter = (mainLink: string) => {
+    setHoveredItem(mainLink);
+    const button = navItemRefs.current.get(mainLink);
+    if (button) {
+      calculatePopupPosition(button);
+    }
+  };
+
+  useEffect(() => {
+    setHoveredItem(null);
+    setPopupPosition(null);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (hoveredItem) {
+        const button = navItemRefs.current.get(hoveredItem);
+        if (button) {
+          calculatePopupPosition(button);
+        }
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [hoveredItem]);
 
   return (
-    <div className="flex flex-row items-center justify-center h-[78px] gap-[30px] relative px-[48px] py-[19px]">
+    <div className="flex bg-white flex-row items-center justify-center h-[78px] gap-[30px] relative px-[48px] py-[19px]">
       <div className="flex flex-row gap-[30px] w-full">
         {navigationItems.map((item) => (
           <button
             key={item.mainLink}
             className="relative"
-            onMouseEnter={() => setHoveredItem(item.mainLink)}
+            ref={(el) => {
+              if (el) navItemRefs.current.set(item.mainLink, el);
+            }}
+            onMouseEnter={() => handleMouseEnter(item.mainLink)}
             onMouseLeave={() => setHoveredItem(null)}
           >
             <NavLink
@@ -29,8 +75,12 @@ export const Navigation: React.FC = () => {
             {hoveredItem === item.mainLink &&
               item.links &&
               item.links.length > 0 && (
-                <div className="absolute left-0 pt-4 top-full">
-                  <div className="absolute top-[6px] left-[32px] z-40">
+                <div
+                  className={`absolute pt-4 top-full ${popupPosition === "right" ? "right-0" : "left-0"}`}
+                >
+                  <div
+                    className={`absolute top-[6px] ${popupPosition === "right" ? "right-[32px]" : "left-[32px]"} z-40`}
+                  >
                     <ArrowPoligon />
                   </div>
 
