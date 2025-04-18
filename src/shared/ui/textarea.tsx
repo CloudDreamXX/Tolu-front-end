@@ -6,12 +6,16 @@ interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   footer?: React.ReactNode;
   footerClassName?: string;
+  containerClassName?: string;
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, footer, footerClassName, ...props }, ref) => {
+  (
+    { className, containerClassName, footer, footerClassName, ...props },
+    ref
+  ) => {
     return (
-      <div className="flex flex-col w-full">
+      <div className={cn("flex flex-col w-full", containerClassName)}>
         <textarea
           className={cn(
             "flex min-h-[80px] w-full rounded-md border border-input bg-background px-6 pt-4 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",

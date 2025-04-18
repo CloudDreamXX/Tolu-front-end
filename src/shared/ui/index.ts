@@ -8,3 +8,5 @@ export * from "./scroll-area";
 export * from "./textarea";
 export * from "./badge";
 export * from "./checkbox";
+export * from "./card";
+export * from "./dropdown-menu";

@@ -20,13 +20,10 @@ const getRouteByRole = (role: string): string => {
   }
 };
 
-export const MainLayout: React.FC<{ children: ReactElement }> = ({
-  children,
-}) => {
-  const location = useLocation();
-
-  const mainLocation = location.pathname.split("/")[1];
-
+export const MainLayout: React.FC<{
+  children: ReactElement;
+  mainLocation: string;
+}> = ({ children, mainLocation }) => {
   return (
     <div className="flex flex-row w-full h-screen min-h-screen overflow-hidden min-w-screen">
       <div className="h-full w-full max-w-[316px] px-2 py-8">
