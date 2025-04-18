@@ -13,7 +13,13 @@ import {
 } from "shared/ui";
 import { ScrollArea } from "shared/ui/scroll-area";
 
-export const PopoverClient: React.FC = () => {
+interface IPopoverClientProps {
+  customTrigger?: React.ReactNode;
+}
+
+export const PopoverClient: React.FC<IPopoverClientProps> = ({
+  customTrigger,
+}) => {
   const [selectedClients, setSelectedClients] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
   const [clients] = useState<string[]>([
@@ -45,20 +51,22 @@ export const PopoverClient: React.FC = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="secondary"
-          className="w-12 h-12 p-[10px] rounded-full relative"
-        >
-          <Personalized />
-          {selectedClients.length > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
-            >
-              {selectedClients.length}
-            </Badge>
-          )}
-        </Button>
+        {customTrigger ?? (
+          <Button
+            variant="secondary"
+            className="w-12 h-12 p-[10px] rounded-full relative"
+          >
+            <Personalized />
+            {selectedClients.length > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
+              >
+                {selectedClients.length}
+              </Badge>
+            )}
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-6 flex flex-col gap-6">
         <Input

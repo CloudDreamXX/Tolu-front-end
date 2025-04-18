@@ -10,7 +10,13 @@ import {
   Badge,
 } from "shared/ui";
 
-export const PopoverAttach: React.FC = () => {
+interface PopoverAttachProps {
+  customTrigger?: React.ReactNode;
+}
+
+export const PopoverAttach: React.FC<PopoverAttachProps> = ({
+  customTrigger,
+}) => {
   const [dragActive, setDragActive] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -51,26 +57,28 @@ export const PopoverAttach: React.FC = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant={"outline"}
-          className="relative flex flex-col w-full gap-3 py-4 rounded-3xl h-fit"
-        >
-          <h4 className="flex flex-row gap-2 text-xl font-bold">
-            <Attach />
-            Attach files to folder
-          </h4>
-          <p className="text-sm text-[#5F5F65]">
-            Enhance content quality by providing credible references
-          </p>
-          {attachedFiles.length > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
-            >
-              {attachedFiles.length}
-            </Badge>
-          )}
-        </Button>
+        {customTrigger ?? (
+          <Button
+            variant={"outline"}
+            className="relative flex flex-col w-full gap-3 py-4 rounded-3xl h-fit"
+          >
+            <h4 className="flex flex-row gap-2 text-xl font-bold">
+              <Attach />
+              Attach files to folder
+            </h4>
+            <p className="text-sm text-[#5F5F65]">
+              Enhance content quality by providing credible references
+            </p>
+            {attachedFiles.length > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
+              >
+                {attachedFiles.length}
+              </Badge>
+            )}
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-[742px] p-6 flex flex-col gap-6 bg-[#F9FAFB]">
         <h4 className="flex flex-row gap-2 text-xl font-bold">

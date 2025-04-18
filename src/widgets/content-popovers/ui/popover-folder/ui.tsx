@@ -12,7 +12,13 @@ import {
   Badge,
 } from "shared/ui";
 
-export const PopoverFolder: React.FC = () => {
+interface PopoverFolderProps {
+  customTrigger?: React.ReactNode;
+}
+
+export const PopoverFolder: React.FC<PopoverFolderProps> = ({
+  customTrigger,
+}) => {
   const [search, setSearch] = useState<string>("");
   const [folders] = useState<string[]>([
     "Mood Sings",
@@ -43,20 +49,22 @@ export const PopoverFolder: React.FC = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="secondary"
-          className="w-12 h-12 p-[10px] rounded-full relative"
-        >
-          <ClosedFolder />
-          {selectedFolders.length > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
-            >
-              {selectedFolders.length}
-            </Badge>
-          )}
-        </Button>
+        {customTrigger ?? (
+          <Button
+            variant="secondary"
+            className="w-12 h-12 p-[10px] rounded-full relative"
+          >
+            <ClosedFolder />
+            {selectedFolders.length > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
+              >
+                {selectedFolders.length}
+              </Badge>
+            )}
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-[526px] p-6 flex flex-col gap-6">
         <Input

@@ -8,6 +8,7 @@ import {
   DocumentInstructionInfo,
   DocumentStatusProgress,
   IDocument,
+  DocumentEditPopover,
 } from "entities/document";
 import {
   Breadcrumb,
@@ -15,19 +16,12 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
   Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   ScrollArea,
   Textarea,
 } from "shared/ui";
-import Dots from "shared/assets/icons/dots";
-import Eye from "shared/assets/icons/eye";
-import Edit from "shared/assets/icons/edit";
-import { Archive, ArrowRight, Dot, Send, Trash2 } from "lucide-react";
-import Duplicate from "shared/assets/icons/duplicate";
-import Box from "shared/assets/icons/box";
+
 import { PopoverClient, PopoverFolder } from "widgets/content-popovers";
+import { Dot, Send } from "lucide-react";
 
 export const ContentManagerAiGeneratedDocument: React.FC = () => {
   const { documentId } = useParams();
@@ -77,59 +71,13 @@ export const ContentManagerAiGeneratedDocument: React.FC = () => {
             <DocumentFileInfo files={document.attachedFiles} />
             <DocumentInstructionInfo instructions={document.instructions} />
             <DocumentClientInfo client={document.client} />
-            <Popover>
-              <PopoverTrigger className="ml-auto cursor-pointer rounded-full hover:bg-[#F9FAFB]">
-                <Dots className="w-5 h-5" />
-              </PopoverTrigger>
-              <PopoverContent className="bg-white flex flex-col gap-4 py-4 px-3.5 w-[238px] rounded-lg shadow-md border border-[#fff]">
-                <Button
-                  variant={"ghost"}
-                  className="justify-start h-6 p-0 font-medium"
-                >
-                  <Edit /> Edit
-                </Button>
-                <Button
-                  variant={"ghost"}
-                  className="justify-start h-6 p-0 font-medium"
-                >
-                  <ArrowRight /> Move
-                </Button>
-                <Button
-                  variant={"ghost"}
-                  className="justify-start h-6 p-0 font-medium"
-                >
-                  <Duplicate /> Duplicate
-                </Button>{" "}
-                <Button
-                  variant={"ghost"}
-                  className="justify-start h-6 p-0 font-medium"
-                >
-                  <Eye /> Mark as ready for review
-                </Button>{" "}
-                <Button
-                  variant={"ghost"}
-                  className="justify-start h-6 p-0 font-medium"
-                >
-                  <Box /> Mark as ready to publish
-                </Button>{" "}
-                <Button
-                  variant={"ghost"}
-                  className="justify-start h-6 p-0 font-medium"
-                >
-                  <Archive /> Archive
-                </Button>{" "}
-                <Button
-                  variant={"ghost"}
-                  className="justify-start h-6 p-0 font-medium text-destructive"
-                >
-                  <Trash2 /> Delete
-                </Button>
-              </PopoverContent>
-            </Popover>
+            <div className="ml-auto">
+              <DocumentEditPopover />
+            </div>
           </div>
           <div className="flex flex-row h-full gap-16">
             <DocumentStatusProgress status={document.status} />
-            <ScrollArea className="h-[calc(100%-48px)] pt-6">
+            <ScrollArea className="h-[calc(100%-64px)] pt-6">
               <h1 className="mb-6 text-3xl font-bold">{document.title}</h1>
               <h2 className="mb-4 text-2xl font-bold">What to Know</h2>
               <p className="mb-4 text-lg font-medium text-muted-foreground">
@@ -177,7 +125,7 @@ export const ContentManagerAiGeneratedDocument: React.FC = () => {
                 Hot flashes are among the most well-known menopause symptoms,
                 affecting up to 80% of women. They involve:
               </p>
-              <ul>
+              <ul className="pb-32">
                 <li className="text-lg font-medium text-muted-foreground">
                   <Dot className="inline-block mr-2" />A sudden feeling of heat,
                   often in the chest, face, and neck.
