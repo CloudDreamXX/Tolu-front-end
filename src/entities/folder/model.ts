@@ -1,5 +1,18 @@
 //TODO: replace with actual model from the database
-// This is a placeholder for the actual document model
+// This is a placeholder for the actual models
+export interface IFolder {
+  id: string;
+  name: string;
+  documents: IDocument[];
+  status: FolderStatus;
+  reviewers?: string[];
+  files?: string[];
+  createdAt: string;
+  updatedAt: string;
+  instructions?: string[];
+  clients?: string[];
+}
+
 export interface IDocument {
   id: string;
   title: string;
@@ -12,11 +25,18 @@ export interface IDocument {
   userEngagement?: IUserEngagement;
   readyForReview?: boolean;
   reviewStatus?: ReviewStatus;
-  reviewer?: string;
+  reviewers?: string[];
   folderId: string;
+  createdAt: string;
 }
 
-export type ReviewStatus = "waiting" | "second-review" | "under-review";
+export type FolderStatus = "ready-to-publish" | "archived" | "deleted";
+
+export type ReviewStatus =
+  | "waiting"
+  | "second-review"
+  | "under-review"
+  | "ready-to-publish";
 
 export type DocumentStatus =
   | "ai-generated"

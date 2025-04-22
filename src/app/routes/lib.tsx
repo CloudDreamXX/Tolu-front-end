@@ -6,6 +6,8 @@ import {
   ContentManagerAiGeneratedDocument,
   ContentManagerAiGenerated,
   ContentManagerInReview,
+  ContentManagerApproved,
+  ContentManagerFolder,
 } from "pages/content-manager";
 
 export const AppRoutes = () => {
@@ -33,6 +35,14 @@ export const AppRoutes = () => {
         <Route
           path="/content-manager/in-review"
           element={<ContentManagerInReview />}
+        />
+        <Route
+          path="/content-manager/approved"
+          element={<ContentManagerApproved />}
+        />
+        <Route
+          path="/content-manager/folder/:folderId"
+          element={<ContentManagerFolder />}
         />
         <Route
           path="/content-manager/document/:folderId/:documentId"

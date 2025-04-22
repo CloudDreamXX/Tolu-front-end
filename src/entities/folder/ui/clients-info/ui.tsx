@@ -1,21 +1,19 @@
-import { PopoverAttach } from "widgets/content-popovers";
+import { PopoverClient } from "widgets/content-popovers";
 
-interface DocumentFileInfoProps {
-  files?: string[];
+interface ClientsInfoProps {
+  client?: string[];
 }
 
-export const DocumentFileInfo: React.FC<DocumentFileInfoProps> = ({
-  files,
-}) => {
+export const ClientsInfo: React.FC<ClientsInfoProps> = ({ client }) => {
   return (
-    <PopoverAttach
+    <PopoverClient
       customTrigger={
         <button className="flex flex-row items-end group">
           <h4 className="text-lg font-semibold">
-            Attached files: {files?.length ?? "N/A"}
+            Clients: {client?.length ?? "N/A"}
           </h4>
           <div className="mb-1 ml-1 text-xs font-semibold group-hover:text-[#008FF6]">
-            / View
+            / Edit
           </div>
         </button>
       }

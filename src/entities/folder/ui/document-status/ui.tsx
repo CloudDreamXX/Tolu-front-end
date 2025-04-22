@@ -1,6 +1,6 @@
 import React from "react";
 import clsx from "clsx";
-import { DocumentStatus } from "../card";
+import { DocumentStatus } from "../document-card";
 
 interface ProgressBarProps {
   status: DocumentStatus;

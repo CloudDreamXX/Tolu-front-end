@@ -1,4 +1,4 @@
-import { ReviewStatus } from "entities/document/model";
+import { ReviewStatus } from "entities/folder";
 import { Clock } from "lucide-react";
 import Expert from "shared/assets/icons/expert";
 import Flag from "shared/assets/icons/flag";

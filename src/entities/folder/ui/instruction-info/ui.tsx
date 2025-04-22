@@ -1,12 +1,16 @@
 import { PopoverInstruction } from "widgets/content-popovers";
 
-interface DocumentInstructionInfoProps {
+interface InstructionInfoProps {
   instructions?: string[];
+  title?: string;
+  description?: string;
 }
 
-export const DocumentInstructionInfo: React.FC<
-  DocumentInstructionInfoProps
-> = ({ instructions }) => {
+export const InstructionInfo: React.FC<InstructionInfoProps> = ({
+  instructions,
+  title,
+  description,
+}) => {
   return (
     <PopoverInstruction
       customTrigger={
@@ -19,6 +23,8 @@ export const DocumentInstructionInfo: React.FC<
           </div>
         </button>
       }
+      title={title}
+      description={description}
     />
   );
 };

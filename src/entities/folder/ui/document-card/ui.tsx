@@ -3,12 +3,13 @@ import { IDocument } from "../../model";
 import { File } from "lucide-react";
 import ClosedFolder from "shared/assets/icons/closed-folder";
 import { useNavigate } from "react-router-dom";
-import { DocumentEditPopover } from "../edit-popover";
+import { DocumentEditPopover } from "../document-edit-popover";
 import {
+  renderDate,
   renderReadyForReview,
   renderReviewer,
   renderReviewStatus,
-} from "./lib";
+} from "../lib";
 
 interface DocumentCardProps {
   document: IDocument;
@@ -16,7 +17,7 @@ interface DocumentCardProps {
 
 export const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => {
   const nav = useNavigate();
-  const { title, folder, readyForReview, reviewStatus, reviewer } = document;
+  const { title, folder, readyForReview, reviewStatus, reviewers } = document;
 
   return (
     <button
@@ -64,7 +65,8 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => {
           </p>
           {renderReadyForReview(readyForReview)}
           {renderReviewStatus(reviewStatus)}
-          {renderReviewer(reviewer)}
+          {renderReviewer(reviewers)}
+          {renderDate(document.createdAt)}
         </CardContent>
       </Card>
     </button>

@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { MOCK_DOCUMENT } from "./mock";
 import { useParams } from "react-router-dom";
 import {
-  DocumentClientInfo,
-  DocumentFileInfo,
+  ClientsInfo,
+  FilesInfo,
   DocumentFolderInfo,
-  DocumentInstructionInfo,
+  InstructionInfo,
   DocumentStatusProgress,
   IDocument,
   DocumentEditPopover,
-} from "entities/document";
+} from "entities/folder";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -68,16 +68,16 @@ export const ContentManagerAiGeneratedDocument: React.FC = () => {
               folderId={document.folderId}
               folderName={document.folder}
             />
-            <DocumentFileInfo files={document.attachedFiles} />
-            <DocumentInstructionInfo instructions={document.instructions} />
-            <DocumentClientInfo client={document.client} />
+            <FilesInfo files={document.attachedFiles} />
+            <InstructionInfo instructions={document.instructions} />
+            <ClientsInfo client={document.client} />
             <div className="ml-auto">
               <DocumentEditPopover document={document} />
             </div>
           </div>
-          <div className="flex flex-row h-full gap-16">
+          <div className="flex flex-row h-full gap-16 pt-6">
             <DocumentStatusProgress status={document.status} />
-            <ScrollArea className="h-[calc(100%-64px)] pt-6">
+            <ScrollArea className="h-[calc(100%-64px)] ">
               <h1 className="mb-6 text-3xl font-bold">{document.title}</h1>
               <h2 className="mb-4 text-2xl font-bold">What to Know</h2>
               <p className="mb-4 text-lg font-medium text-muted-foreground">

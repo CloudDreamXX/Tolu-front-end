@@ -5,7 +5,7 @@ import { Archive, ArrowRight, Trash2 } from "lucide-react";
 import Duplicate from "shared/assets/icons/duplicate";
 import Box from "shared/assets/icons/box";
 import { Button, Popover, PopoverTrigger, PopoverContent } from "shared/ui";
-import { IDocument } from "../card";
+import { IDocument } from "../document-card";
 import Expert from "shared/assets/icons/expert";
 
 interface IPopoverDocumentEditProps {

@@ -4,13 +4,28 @@ import Search from "shared/assets/icons/search";
 import { Button } from "shared/ui/button";
 import { Input } from "shared/ui/input";
 import { sideBarContent } from "./lib";
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import Dots from "shared/assets/icons/dots";
+import { FOLDERS } from "pages/content-manager";
+import ClosedFolder from "shared/assets/icons/closed-folder";
 
 export const ContentManagerSidebar: React.FC = () => {
   const nav = useNavigate();
-  const [links] = useState(sideBarContent);
+  const [links, setLinks] = useState(sideBarContent);
+  const [folder, setFolder] = useState<string | null>(null);
+  const { folderId, documentId } = useParams<{
+    folderId: string;
+    documentId: string;
+  }>();
+
+  useEffect(() => {
+    if (documentId) {
+      setFolder(null);
+      return;
+    }
+    setFolder(FOLDERS.find((f) => f.id === folderId)?.name || null);
+  }, [folderId, documentId]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -35,15 +50,24 @@ export const ContentManagerSidebar: React.FC = () => {
         />
         <div className="flex flex-col gap-1 pt-4">
           {links.map((link) => (
-            <NavLink
-              key={link.title}
-              to={link.link}
-              className="flex items-center gap-3 p-4 font-semibold text-[#1D1D1F] text-lg"
-            >
-              {link.icon}
-              {link.title}
-              <Dots className="ml-auto" />
-            </NavLink>
+            <>
+              <NavLink
+                key={link.title}
+                to={link.link}
+                className="flex items-center gap-3 px-4 py-[7px] font-semibold text-[#1D1D1F] text-lg"
+              >
+                {link.icon}
+                {link.title}
+                <Dots className="ml-auto" />
+              </NavLink>
+              {link.title === "Approved" && folder && (
+                <div className="flex flex-row w-full gap-2 px-4 py-[7px] pl-12 box-border">
+                  <ClosedFolder width={24} height={24} />
+                  <span className="font-extrabold ">{folder}</span>
+                  <Dots className="ml-auto" />
+                </div>
+              )}
+            </>
           ))}
         </div>
       </div>

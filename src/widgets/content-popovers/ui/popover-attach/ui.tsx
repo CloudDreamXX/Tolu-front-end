@@ -1,5 +1,5 @@
-import { X } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
+import { File, Plus, Trash2 } from "lucide-react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Attach from "shared/assets/icons/attach";
 import {
   Button,
@@ -12,14 +12,61 @@ import {
 
 interface PopoverAttachProps {
   customTrigger?: React.ReactNode;
+  isAttached?: boolean;
+  title?: string;
+  description?: string;
 }
 
 export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   customTrigger,
+  isAttached,
+  title,
+  description,
 }) => {
   const [dragActive, setDragActive] = useState(false);
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  // TODO: create file type
+  const [attachedFiles, setAttachedFiles] = useState<Array<any>>(() =>
+    isAttached
+      ? [
+          {
+            name: "file-name.pdf",
+            size: "200 KB",
+            type: "application/pdf",
+          },
+          {
+            name: "file-name.pdf",
+            size: "200 KB",
+            type: "application/pdf",
+          },
+          {
+            name: "file-name.pdf",
+            size: "200 KB",
+            type: "application/pdf",
+          },
+          {
+            name: "file-name.pdf",
+            size: "200 KB",
+            type: "application/pdf",
+          },
+          {
+            name: "file-name.pdf",
+            size: "200 KB",
+            type: "application/pdf",
+          },
+          {
+            name: "file-name.pdf",
+            size: "200 KB",
+            type: "application/pdf",
+          },
+        ]
+      : []
+  );
+  const [isAttachedState, setIsAttachedState] = useState(isAttached ?? false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setIsAttachedState(isAttached ?? false);
+  }, [isAttached]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -27,7 +74,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   };
 
   const handleDragLeave = () => setDragActive(false);
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragActive(false);
@@ -55,7 +101,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   };
 
   return (
-    <Popover>
+    <Popover onOpenChange={() => setIsAttachedState(false)}>
       <PopoverTrigger asChild>
         {customTrigger ?? (
           <Button
@@ -80,65 +126,112 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[742px] p-6 flex flex-col gap-6 bg-[#F9FAFB]">
-        <h4 className="flex flex-row gap-2 text-xl font-bold">
-          <Attach />
-          Attach files to folder
-        </h4>
-        <p className="text-sm text-[#5F5F65]">
-          Enhance content quality by providing credible references
-        </p>
-        <DropArea
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          dragActive={dragActive}
-          onBrowseClick={handleBrowseClick}
-        />
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          className="hidden"
-          accept=".pdf,.doc,.docx"
-          onChange={handleFileChange}
-        />
-        {attachedFiles.length > 0 && (
-          <div className="flex flex-col gap-2">
-            {attachedFiles.map((file, index) => (
-              <div
-                key={file.name}
-                className="flex flex-row items-center justify-between w-full px-4 py-2 bg-white rounded-lg shadow-md"
-              >
-                <span className="text-sm font-medium text-gray-900 truncate">
-                  {file.name}
-                </span>
-                <button
-                  className="text-red-500 hover:text-red-700"
-                  onClick={() =>
-                    setAttachedFiles(
-                      attachedFiles.filter((_, i) => i !== index)
-                    )
-                  }
+      <PopoverContent className="w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
+        {isAttachedState ? (
+          <>
+            <h4 className="flex flex-row gap-2 text-xl font-bold">
+              <Attach />
+              Attached files
+            </h4>
+            <p className="text-sm text-[#5F5F65]">
+              Enhance content quality by providing credible references
+            </p>
+            <div className="flex flex-col gap-1">
+              {attachedFiles.map((file, index) => (
+                <div
+                  key={file.name}
+                  className="flex flex-row items-center justify-between w-full px-3 py-2 bg-white rounded-lg"
                 >
-                  <X />
-                </button>
+                  <div className="flex flex-row items-center w-full gap-2">
+                    <File color="#008FF6" />
+                    <div className="flex flex-col w-full gap-1">
+                      <span className="text-sm font-medium">{file.name}</span>
+                      <span className="text-xs text-[#5F5F65]">
+                        {file.size}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setAttachedFiles((prev) =>
+                          prev.filter((_, i) => i !== index)
+                        );
+                      }}
+                    >
+                      <Trash2 color="#FF1F0F" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-row justify-between">
+              <Button
+                variant={"light-blue"}
+                className="w-[128px]"
+                onClick={() => {}}
+              >
+                Cancel
+              </Button>
+              <div className="flex flex-row gap-2">
+                <Button
+                  className="bg-white text-[#008FF6]"
+                  onClick={() => setIsAttachedState(false)}
+                >
+                  <Plus />
+                  Attach files
+                </Button>
+                <Button
+                  variant={"blue"}
+                  className="w-[128px]"
+                  onClick={() => {}}
+                >
+                  Save
+                </Button>
               </div>
-            ))}
-          </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <h4 className="flex flex-row gap-2 text-xl font-bold">
+              <Attach />
+              {title ?? "Attach files to folder"}
+            </h4>
+            <p className="text-sm text-[#5F5F65]">
+              {description ??
+                "Enhance content quality by providing credible references"}
+            </p>
+            <DropArea
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              dragActive={dragActive}
+              onBrowseClick={handleBrowseClick}
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              className="hidden"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+            />
+            <div className="flex flex-row justify-between">
+              <Button
+                variant={"light-blue"}
+                className="w-[128px]"
+                onClick={() => setIsAttachedState(true)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={"blue"}
+                className="w-[128px]"
+                onClick={() => setIsAttachedState(true)}
+              >
+                Attach
+              </Button>
+            </div>
+          </>
         )}
-        <div className="flex flex-row justify-between">
-          <Button
-            variant={"light-blue"}
-            className="w-[128px]"
-            onClick={() => {}}
-          >
-            Cancel
-          </Button>
-          <Button variant={"blue"} className="w-[128px]" onClick={() => {}}>
-            Attach
-          </Button>
-        </div>
       </PopoverContent>
     </Popover>
   );
