@@ -2,10 +2,13 @@ import { Card, CardContent } from "shared/ui";
 import { IDocument } from "../../model";
 import { File } from "lucide-react";
 import ClosedFolder from "shared/assets/icons/closed-folder";
-import ReadyForNext from "shared/assets/icons/ready-for-next";
-import NotReadyForNext from "shared/assets/icons/not-ready-for-next";
 import { useNavigate } from "react-router-dom";
 import { DocumentEditPopover } from "../edit-popover";
+import {
+  renderReadyForReview,
+  renderReviewer,
+  renderReviewStatus,
+} from "./lib";
 
 interface DocumentCardProps {
   document: IDocument;
@@ -13,17 +16,15 @@ interface DocumentCardProps {
 
 export const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => {
   const nav = useNavigate();
-  const { title, folder, readyForReview } = document;
+  const { title, folder, readyForReview, reviewStatus, reviewer } = document;
 
   return (
     <button
-      className="relative group w-full max-w-[277px]"
+      className="relative group w-full h-fit max-w-[277px]"
       onClick={(e) => {
         e.preventDefault();
         console.log(e.target);
-        nav(
-          `/content-manager/ai-generated/${document.folderId}/${document.id}`
-        );
+        nav(`/content-manager/document/${document.folderId}/${document.id}`);
       }}
     >
       <div
@@ -54,17 +55,16 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => {
               className="z-10 ml-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <DocumentEditPopover />
+              <DocumentEditPopover document={document} />
             </button>
           </div>
           <p className="flex items-center gap-2 text-base font-semibold truncate">
             <ClosedFolder width={20} height={20} className="min-w-5" />
             {folder}
           </p>
-          <div className="flex items-center gap-2 text-base font-semibold">
-            {readyForReview ? <ReadyForNext /> : <NotReadyForNext />}
-            Ready for review
-          </div>
+          {renderReadyForReview(readyForReview)}
+          {renderReviewStatus(reviewStatus)}
+          {renderReviewer(reviewer)}
         </CardContent>
       </Card>
     </button>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AI_GENERATED_CONTENT } from "./mock";
+import { MOCK_DOCUMENT } from "./mock";
 import { useParams } from "react-router-dom";
 import {
   DocumentClientInfo,
@@ -26,7 +26,7 @@ import { Dot, Send } from "lucide-react";
 export const ContentManagerAiGeneratedDocument: React.FC = () => {
   const { documentId } = useParams();
   const [document] = useState<IDocument | null>(
-    AI_GENERATED_CONTENT.find((doc) => doc.id === documentId) || null
+    MOCK_DOCUMENT.find((doc) => doc.id === documentId) || null
   );
 
   if (!document) {
@@ -72,7 +72,7 @@ export const ContentManagerAiGeneratedDocument: React.FC = () => {
             <DocumentInstructionInfo instructions={document.instructions} />
             <DocumentClientInfo client={document.client} />
             <div className="ml-auto">
-              <DocumentEditPopover />
+              <DocumentEditPopover document={document} />
             </div>
           </div>
           <div className="flex flex-row h-full gap-16">

@@ -10,10 +10,12 @@ import {
   DropdownMenuTrigger,
   Input,
 } from "shared/ui";
-import { AI_GENERATED_CONTENT } from "./mock";
+import { MOCK_DOCUMENT } from "../document/mock";
 
-export const ContentManagerAiGenerated: React.FC = () => {
-  const [documents, setDocuments] = useState<IDocument[]>(AI_GENERATED_CONTENT);
+export const ContentManagerInReview: React.FC = () => {
+  const [documents, setDocuments] = useState<IDocument[]>(
+    MOCK_DOCUMENT.filter((doc) => doc.status === "in-review")
+  );
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());
   const [search, setSearch] = useState<string>("");
 
@@ -28,11 +30,12 @@ export const ContentManagerAiGenerated: React.FC = () => {
       <div className="flex flex-col gap-2">
         <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
           <AiCreate width={24} height={24} fill="#000" />
-          AI-generated contents
+          In-review contents{" "}
         </h1>
         <p className="text-sm font-medium">
-          These contents require to be approved by certified reviewer before
-          getting published on public library.
+          These contents are under review by certified or licensed health
+          professionals. Once approved they can be marked ready to get published
+          in public library.
         </p>
       </div>
       <div className="flex flex-col gap-6">

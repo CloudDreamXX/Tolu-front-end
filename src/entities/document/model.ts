@@ -11,8 +11,12 @@ export interface IDocument {
   documentText?: string;
   userEngagement?: IUserEngagement;
   readyForReview?: boolean;
+  reviewStatus?: ReviewStatus;
+  reviewer?: string;
   folderId: string;
 }
+
+export type ReviewStatus = "waiting" | "second-review" | "under-review";
 
 export type DocumentStatus =
   | "ai-generated"

@@ -3,8 +3,9 @@ import { MainLayout, ProtectedRoute } from "./ui";
 import { Auth } from "pages/auth";
 import {
   ContentManagerCreatePage,
-  ContentManagerAiGenerated,
   ContentManagerAiGeneratedDocument,
+  ContentManagerAiGenerated,
+  ContentManagerInReview,
 } from "pages/content-manager";
 
 export const AppRoutes = () => {
@@ -30,7 +31,11 @@ export const AppRoutes = () => {
           element={<ContentManagerAiGenerated />}
         />
         <Route
-          path="/content-manager/ai-generated/:folderId/:documentId"
+          path="/content-manager/in-review"
+          element={<ContentManagerInReview />}
+        />
+        <Route
+          path="/content-manager/document/:folderId/:documentId"
           element={<ContentManagerAiGeneratedDocument />}
         />
         <Route
