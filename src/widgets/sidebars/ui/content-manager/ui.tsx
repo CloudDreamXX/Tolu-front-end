@@ -9,22 +9,24 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import Dots from "shared/assets/icons/dots";
 import { FOLDERS } from "pages/content-manager";
 import ClosedFolder from "shared/assets/icons/closed-folder";
+import { MOCK_DOCUMENT } from "pages/content-manager/document/mock";
+import { File } from "lucide-react";
 
 export const ContentManagerSidebar: React.FC = () => {
   const nav = useNavigate();
-  const [links, setLinks] = useState(sideBarContent);
+  const [links] = useState(sideBarContent);
   const [folder, setFolder] = useState<string | null>(null);
+  const [document, setDocument] = useState<string | null>(null);
+  const [tab, setTab] = useState<string | null>(null);
   const { folderId, documentId } = useParams<{
     folderId: string;
     documentId: string;
   }>();
 
   useEffect(() => {
-    if (documentId) {
-      setFolder(null);
-      return;
-    }
-    setFolder(FOLDERS.find((f) => f.id === folderId)?.name || null);
+    setFolder(FOLDERS.find((f) => f.id === folderId)?.name ?? null);
+    setDocument(MOCK_DOCUMENT.find((d) => d.id === documentId)?.title ?? null);
+    setTab(window.location.pathname.split("/")[3]);
   }, [folderId, documentId]);
 
   return (
@@ -50,24 +52,35 @@ export const ContentManagerSidebar: React.FC = () => {
         />
         <div className="flex flex-col gap-1 pt-4">
           {links.map((link) => (
-            <>
+            <div key={link.title} className="flex flex-col">
               <NavLink
-                key={link.title}
                 to={link.link}
-                className="flex items-center gap-3 px-4 py-[7px] font-semibold text-[#1D1D1F] text-lg"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-[7px] text-lg text-[#1D1D1F] ${
+                    isActive ? "font-bold" : "font-semibold"
+                  }`
+                }
               >
                 {link.icon}
                 {link.title}
-                <Dots className="ml-auto" />
               </NavLink>
-              {link.title === "Approved" && folder && (
+              {link.title.toLowerCase() === tab && folder && (
                 <div className="flex flex-row w-full gap-2 px-4 py-[7px] pl-12 box-border">
                   <ClosedFolder width={24} height={24} />
-                  <span className="font-extrabold ">{folder}</span>
+                  <span className={`${!document && "font-extrabold"}`}>
+                    {folder}
+                  </span>
                   <Dots className="ml-auto" />
                 </div>
               )}
-            </>
+              {link.title.toLowerCase() === tab && document && (
+                <div className="flex flex-row w-full gap-2 px-4 py-[7px] pl-16 box-border">
+                  <File width={24} height={24} className="min-w-6" />
+                  <span className="font-extrabold truncate">{document}</span>
+                  <Dots className="ml-auto min-w-6" />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>

@@ -6,16 +6,22 @@ import {
   renderFiles,
   renderReviewer,
   renderReviewStatus,
+  renderAuthor,
 } from "../lib";
 import ClosedFolder from "shared/assets/icons/closed-folder";
+import { cn } from "shared/lib";
+import { ArchiveRestore } from "lucide-react";
 
 interface FolderCardProps {
   folder: IFolder;
+  withText?: boolean;
 }
 
-export const FolderCard: React.FC<FolderCardProps> = ({ folder }) => {
+export const FolderCard: React.FC<FolderCardProps> = ({ folder, withText }) => {
   const nav = useNavigate();
-  const { name, files, status, reviewers, createdAt, id } = folder;
+  const location = window.location.pathname;
+  const tab = location.split("/")[2];
+  const { name, files, status, reviewers, createdAt, author, id } = folder;
 
   return (
     <button
@@ -23,7 +29,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({ folder }) => {
       onClick={(e) => {
         e.preventDefault();
         console.log(e.target);
-        nav(`/content-manager/folder/${id}`);
+        nav(`/content-manager/folder/${tab}/${id}`);
       }}
     >
       <div
@@ -46,19 +52,26 @@ export const FolderCard: React.FC<FolderCardProps> = ({ folder }) => {
         group-hover:shadow-[4px_4px_4px_rgba(0,0,0,0.25)]
       "
       >
-        <CardContent className="flex flex-col gap-3.5 p-4">
+        <CardContent
+          className={cn("flex flex-col gap-3.5 p-4", withText && "gap-2")}
+        >
           <div className="flex items-center gap-2">
             <ClosedFolder className="min-w-6" />
             <h2 className="text-xl font-bold truncate max-w-30">{name}</h2>
-            <button
-              className="z-10 ml-auto"
-              onClick={(e) => e.stopPropagation()}
-            ></button>
+            {status === "archived" && (
+              <button
+                className="z-10 ml-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ArchiveRestore size={24} />
+              </button>
+            )}
           </div>
-          {renderFiles(files)}
+          {renderFiles(files, withText)}
+          {renderAuthor(author, withText)}
           {renderReviewStatus(status)}
-          {renderReviewer(reviewers)}
-          {renderDate(createdAt)}
+          {renderReviewer(reviewers, withText)}
+          {renderDate(createdAt, withText)}
         </CardContent>
       </Card>
     </button>

@@ -8,6 +8,8 @@ import {
   ContentManagerInReview,
   ContentManagerApproved,
   ContentManagerFolder,
+  ContentManagerPublished,
+  ContentManagerArchived,
 } from "pages/content-manager";
 
 export const AppRoutes = () => {
@@ -41,11 +43,19 @@ export const AppRoutes = () => {
           element={<ContentManagerApproved />}
         />
         <Route
-          path="/content-manager/folder/:folderId"
+          path="/content-manager/published"
+          element={<ContentManagerPublished />}
+        />
+        <Route
+          path="/content-manager/archived"
+          element={<ContentManagerArchived />}
+        />
+        <Route
+          path="/content-manager/folder/:tab/:folderId"
           element={<ContentManagerFolder />}
         />
         <Route
-          path="/content-manager/document/:folderId/:documentId"
+          path="/content-manager/document/:tab/:folderId/:documentId"
           element={<ContentManagerAiGeneratedDocument />}
         />
         <Route

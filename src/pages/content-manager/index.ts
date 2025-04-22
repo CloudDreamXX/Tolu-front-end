@@ -4,3 +4,5 @@ export * from "./in-review";
 export * from "./document";
 export * from "./folder";
 export * from "./approved";
+export * from "./published";
+export * from "./archived";

@@ -34,7 +34,7 @@ export const ContentManagerAiGeneratedDocument: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-2 px-[87px] py-6 bg-white h-[calc(100vh-78px)] w-full relative">
+    <div className="flex flex-col gap-2 px-[60px] py-6 bg-white h-[calc(100vh-78px)] w-full relative">
       <Textarea
         placeholder="Let's start with a subject or writing request..."
         containerClassName={
@@ -61,7 +61,7 @@ export const ContentManagerAiGeneratedDocument: React.FC = () => {
         <BreadcrumbSeparator />
         <BreadcrumbItem>{document.title}</BreadcrumbItem>
       </Breadcrumb>
-      <div className="flex flex-row gap-[25px] h-full">
+      <div className="flex flex-row gap-[25px] h-full ">
         <div className="flex flex-col w-full h-full max-h-full gap-2">
           <div className="flex flex-row gap-[41px] min-h-[50px] items-center">
             <DocumentFolderInfo

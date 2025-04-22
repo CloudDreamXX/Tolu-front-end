@@ -5,19 +5,39 @@ import ClosedFolder from "shared/assets/icons/closed-folder";
 import { useNavigate } from "react-router-dom";
 import { DocumentEditPopover } from "../document-edit-popover";
 import {
+  renderAuthor,
   renderDate,
+  renderFiles,
   renderReadyForReview,
   renderReviewer,
   renderReviewStatus,
 } from "../lib";
+import { cn } from "shared/lib";
 
 interface DocumentCardProps {
   document: IDocument;
+  customTabLink?: string;
+  withText?: boolean;
 }
 
-export const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => {
+export const DocumentCard: React.FC<DocumentCardProps> = ({
+  document,
+  customTabLink,
+  withText = false,
+}) => {
   const nav = useNavigate();
-  const { title, folder, readyForReview, reviewStatus, reviewers } = document;
+  const location = window.location.pathname;
+  const tab = location.split("/")[2];
+  const {
+    title,
+    folder,
+    readyForReview,
+    reviewStatus,
+    reviewers,
+    author,
+    attachedFiles,
+    createdAt,
+  } = document;
 
   return (
     <button
@@ -25,7 +45,10 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => {
       onClick={(e) => {
         e.preventDefault();
         console.log(e.target);
-        nav(`/content-manager/document/${document.folderId}/${document.id}`);
+        nav(
+          customTabLink ??
+            `/content-manager/document/${tab}/${document.folderId}/${document.id}`
+        );
       }}
     >
       <div
@@ -48,7 +71,9 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => {
         group-hover:shadow-[4px_4px_4px_rgba(0,0,0,0.25)]
       "
       >
-        <CardContent className="flex flex-col gap-3.5 p-4">
+        <CardContent
+          className={cn("flex flex-col gap-3.5 p-4", withText && "gap-2")}
+        >
           <div className="flex items-center gap-2">
             <File className="min-w-6" />
             <h2 className="text-xl font-bold truncate max-w-30">{title}</h2>
@@ -59,14 +84,18 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => {
               <DocumentEditPopover document={document} />
             </button>
           </div>
-          <p className="flex items-center gap-2 text-base font-semibold truncate">
-            <ClosedFolder width={20} height={20} className="min-w-5" />
-            {folder}
-          </p>
+          {!withText && (
+            <p className="flex items-center gap-2 text-base font-semibold truncate">
+              <ClosedFolder width={20} height={20} className="min-w-5" />
+              {folder}
+            </p>
+          )}
+          {renderAuthor(author, withText)}
           {renderReadyForReview(readyForReview)}
-          {renderReviewStatus(reviewStatus)}
-          {renderReviewer(reviewers)}
-          {renderDate(document.createdAt)}
+          {withText && renderFiles(attachedFiles, withText)}
+          {!withText && renderReviewStatus(reviewStatus)}
+          {renderReviewer(reviewers, withText)}
+          {renderDate(createdAt, withText)}
         </CardContent>
       </Card>
     </button>

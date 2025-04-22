@@ -11,6 +11,7 @@ export interface IFolder {
   updatedAt: string;
   instructions?: string[];
   clients?: string[];
+  author?: string;
 }
 
 export interface IDocument {
@@ -28,15 +29,17 @@ export interface IDocument {
   reviewers?: string[];
   folderId: string;
   createdAt: string;
+  author?: string;
 }
 
-export type FolderStatus = "ready-to-publish" | "archived" | "deleted";
+export type FolderStatus = "ready-to-publish" | "archived" | "published";
 
 export type ReviewStatus =
   | "waiting"
   | "second-review"
   | "under-review"
-  | "ready-to-publish";
+  | "ready-to-publish"
+  | "published";
 
 export type DocumentStatus =
   | "ai-generated"

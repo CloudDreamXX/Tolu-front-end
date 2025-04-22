@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { possibleClientNames } from "pages/content-manager";
 import { useEffect, useState } from "react";
 import Person from "shared/assets/icons/person";
@@ -38,12 +38,12 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="flex flex-row items-end group">
+        <button className="flex flex-row items-center group">
           <h4 className="text-lg font-semibold">
             Clients: {clients?.length ?? "N/A"}
           </h4>
           <div className="mb-1 ml-1 text-xs font-semibold group-hover:text-[#008FF6]">
-            / Edit
+            <Pencil width={16} height={16} />
           </div>
         </button>
       </PopoverTrigger>
