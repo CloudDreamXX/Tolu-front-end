@@ -1,5 +1,5 @@
-import { API_ROUTES, ApiService } from 'shared/api';
-import { IUser } from './model';
+import { API_ROUTES, ApiService } from "shared/api";
+import { IUser } from "./model";
 
 interface LoginCredentials {
   email: string;
@@ -8,7 +8,7 @@ interface LoginCredentials {
 
 interface AuthResponse {
   user: IUser;
-  token: string;
+  accessToken: string;
 }
 
 interface UserExistenceResponse {
@@ -27,7 +27,7 @@ export class UserService {
   static async checkUserExistence(
     email: string
   ): Promise<UserExistenceResponse> {
-    const endpoint = API_ROUTES.USER.EXIST.replace('{email}', email);
+    const endpoint = API_ROUTES.USER.EXIST.replace("{email}", email);
     return ApiService.get<UserExistenceResponse>(endpoint);
   }
 

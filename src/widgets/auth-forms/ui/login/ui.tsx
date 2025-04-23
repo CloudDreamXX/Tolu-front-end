@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Input } from "shared/ui/_deprecated";
-import { setCredentials, setUser, UserService } from "entities/user";
+import { setCredentials, UserService } from "entities/user";
 
 export const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -18,17 +18,29 @@ export const LoginForm = () => {
     e.preventDefault();
     try {
       const response = await UserService.login(formData);
-      dispatch(setCredentials(response));
 
-      const email = response.user?.email;
+      if (!response) {
+        throw new Error("No response from server");
+      }
 
-      dispatch(setUser({ email }));
+      console.log("API Response:", response);
+
+      if (response.accessToken && response.user) {
+        dispatch(
+          setCredentials({
+            user: response.user,
+            accessToken: response.accessToken,
+          })
+        );
+      } else {
+        console.error("Invalid response structure:", response);
+        throw new Error("Invalid server response format");
+      }
 
       toast.success("Login Successful");
-
       navigate("/", { replace: true });
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login error:", error);
       toast.error(error instanceof Error ? error.message : "Login Failed");
     }
   };

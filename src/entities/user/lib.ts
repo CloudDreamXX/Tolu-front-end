@@ -31,13 +31,25 @@ export const userSlice = createSlice({
       }
     },
     setCredentials: (state, action) => {
-      state.user = action.payload.user;
-      state.token = action.payload.accessToken;
+      if (!action.payload) {
+        console.error(
+          "setCredentials called with invalid payload",
+          action.payload
+        );
+        return;
+      }
 
-      if (action.payload.user?.email) {
+      const user = action.payload.user ?? null;
+      state.user = user;
+
+      state.token = action.payload.accessToken ?? action.payload.token ?? null;
+
+      if (user?.email) {
         state.userType = {
-          role: getUserRole(action.payload.user.email),
+          role: getUserRole(user.email),
         };
+      } else {
+        state.userType = { role: "guest" };
       }
     },
     logout: (state) => {
