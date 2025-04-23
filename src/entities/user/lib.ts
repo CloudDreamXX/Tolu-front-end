@@ -21,6 +21,8 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
+      if (!state) return initialState;
+
       const email = action.payload?.email ?? null;
       if (!email) {
         state.userType = { role: "guest" };
@@ -31,6 +33,8 @@ export const userSlice = createSlice({
       }
     },
     setCredentials: (state, action) => {
+      if (!state) return initialState;
+
       if (!action.payload) {
         console.error(
           "setCredentials called with invalid payload",
@@ -40,8 +44,8 @@ export const userSlice = createSlice({
       }
 
       const user = action.payload.user ?? null;
-      state.user = user;
 
+      state.user = user;
       state.token = action.payload.accessToken ?? action.payload.token ?? null;
 
       if (user?.email) {
@@ -53,11 +57,14 @@ export const userSlice = createSlice({
       }
     },
     logout: (state) => {
+      if (!state) return initialState;
+
       state.user = null;
       state.token = null;
       state.userType = null;
     },
     setLoading: (state, action) => {
+      if (!state) return initialState;
       state.isLoading = action.payload;
     },
   },
