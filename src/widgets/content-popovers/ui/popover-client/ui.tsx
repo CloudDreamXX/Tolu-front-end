@@ -40,7 +40,6 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   }, [search, clients]);
 
   const toggleClientSelection = (client: string) => {
-    console.log("client", client);
     setSelectedClients((prev) =>
       prev.includes(client)
         ? prev.filter((c) => c !== client)

@@ -19,8 +19,6 @@ export const DocumentStatusProgress: React.FC<ProgressBarProps> = ({
 }) => {
   const currentIndex = STEPS.findIndex((s) => s.id === status);
 
-  console.log("currentIndex", currentIndex, status);
-
   return (
     <div className="relative flex flex-col items-start pl-2.5 h-fit min-w-28">
       <div className="absolute bottom-1 w-px bg-gray-200 top-1 left-[18px]" />

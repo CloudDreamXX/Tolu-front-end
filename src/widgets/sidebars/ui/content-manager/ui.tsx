@@ -32,8 +32,6 @@ export const ContentManagerSidebar: React.FC = () => {
     setDocument(MOCK_DOCUMENT.find((d) => d.id === documentId)?.title ?? null);
   }, [location.pathname, folderId, documentId]);
 
-  console.log("tab", tab);
-
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col items-center text-center">

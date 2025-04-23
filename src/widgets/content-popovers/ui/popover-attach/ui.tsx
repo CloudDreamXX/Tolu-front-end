@@ -97,7 +97,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     );
     setAttachedFiles((prev) => [...prev, ...validFiles]);
     e.target.value = "";
-    console.log(selectedFiles);
   };
 
   return (

@@ -42,8 +42,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const location = useLocation();
   const { token, userType } = useSelector((state: RootState) => ({
-    token: state.user.token,
-    userType: state.user.userType,
+    token: state?.user?.token,
+    userType: state?.user?.userType,
   }));
 
   if (!token || !userType) {

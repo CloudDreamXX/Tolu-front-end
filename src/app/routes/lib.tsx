@@ -3,7 +3,7 @@ import { MainLayout, ProtectedRoute } from "./ui";
 import { Auth } from "pages/auth";
 import {
   ContentManagerCreatePage,
-  ContentManagerAiGeneratedDocument,
+  ContentManagerDocument,
   ContentManagerAiGenerated,
   ContentManagerInReview,
   ContentManagerApproved,
@@ -56,7 +56,7 @@ export const AppRoutes = () => {
         />
         <Route
           path="/content-manager/:tab/document/:folderId/:documentId"
-          element={<ContentManagerAiGeneratedDocument />}
+          element={<ContentManagerDocument />}
         />
         <Route
           path="/content-manager/published"

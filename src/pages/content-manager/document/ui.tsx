@@ -23,11 +23,13 @@ import {
 import { PopoverClient, PopoverFolder } from "widgets/content-popovers";
 import { Dot, Send } from "lucide-react";
 
-export const ContentManagerAiGeneratedDocument: React.FC = () => {
-  const { documentId } = useParams();
+export const ContentManagerDocument: React.FC = () => {
+  const { tab, documentId } = useParams();
   const [document] = useState<IDocument | null>(
     MOCK_DOCUMENT.find((doc) => doc.id === documentId) || null
   );
+
+  console.log(tab);
 
   if (!document) {
     return <div>Document not found</div>;
@@ -72,7 +74,7 @@ export const ContentManagerAiGeneratedDocument: React.FC = () => {
             <InstructionInfo instructions={document.instructions} />
             <ClientsInfo client={document.client} />
             <div className="ml-auto">
-              <DocumentEditPopover document={document} />
+              <DocumentEditPopover document={document} tab={tab} />
             </div>
           </div>
           <div className="flex flex-row h-full gap-16 pt-6">

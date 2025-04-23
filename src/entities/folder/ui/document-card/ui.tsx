@@ -41,7 +41,6 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
       className="relative group w-full h-fit max-w-[277px]"
       onClick={(e) => {
         e.preventDefault();
-        console.log(e.target);
         nav(
           `/content-manager/${tab}/document/${document.folderId}/${document.id}`
         );
