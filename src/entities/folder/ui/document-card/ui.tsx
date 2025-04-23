@@ -2,7 +2,7 @@ import { Card, CardContent } from "shared/ui";
 import { IDocument } from "../../model";
 import { File } from "lucide-react";
 import ClosedFolder from "shared/assets/icons/closed-folder";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DocumentEditPopover } from "../document-edit-popover";
 import {
   renderAuthor,
@@ -16,18 +16,15 @@ import { cn } from "shared/lib";
 
 interface DocumentCardProps {
   document: IDocument;
-  customTabLink?: string;
   withText?: boolean;
 }
 
 export const DocumentCard: React.FC<DocumentCardProps> = ({
   document,
-  customTabLink,
   withText = false,
 }) => {
   const nav = useNavigate();
-  const location = window.location.pathname;
-  const tab = location.split("/")[2];
+  const tab = useLocation().pathname.split("/")[2];
   const {
     title,
     folder,
@@ -46,8 +43,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
         e.preventDefault();
         console.log(e.target);
         nav(
-          customTabLink ??
-            `/content-manager/document/${tab}/${document.folderId}/${document.id}`
+          `/content-manager/${tab}/document/${document.folderId}/${document.id}`
         );
       }}
     >

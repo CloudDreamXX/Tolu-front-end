@@ -99,7 +99,6 @@ export const ContentManagerFolder: React.FC = () => {
             <DocumentCard
               key={document.title}
               document={document}
-              customTabLink={`/content-manager/document/${folderName}/${document.folderId}/${document.id}`}
               withText={folderName === "published" || folderName === "archived"}
             />
           ))}

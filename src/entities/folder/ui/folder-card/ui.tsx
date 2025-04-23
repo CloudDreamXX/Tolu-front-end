@@ -21,15 +21,22 @@ export const FolderCard: React.FC<FolderCardProps> = ({ folder, withText }) => {
   const nav = useNavigate();
   const location = window.location.pathname;
   const tab = location.split("/")[2];
-  const { name, files, status, reviewers, createdAt, author, id } = folder;
+  const {
+    name,
+    files,
+    status,
+    reviewers,
+    createdAt,
+    author,
+    id: folderId,
+  } = folder;
 
   return (
     <button
       className="relative group w-full h-fit max-w-[277px]"
       onClick={(e) => {
         e.preventDefault();
-        console.log(e.target);
-        nav(`/content-manager/folder/${tab}/${id}`);
+        nav(`/content-manager/${tab}/folder/${folderId}`);
       }}
     >
       <div

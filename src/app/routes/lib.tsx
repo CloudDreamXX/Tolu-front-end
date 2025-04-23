@@ -51,11 +51,11 @@ export const AppRoutes = () => {
           element={<ContentManagerArchived />}
         />
         <Route
-          path="/content-manager/folder/:tab/:folderId"
+          path="/content-manager/:tab/folder/:folderId"
           element={<ContentManagerFolder />}
         />
         <Route
-          path="/content-manager/document/:tab/:folderId/:documentId"
+          path="/content-manager/:tab/document/:folderId/:documentId"
           element={<ContentManagerAiGeneratedDocument />}
         />
         <Route
