@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "app";
 import "./index.css";
-import store, { persistor } from "entities/store";
+import { persistor, store } from "entities/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
 import { LoadingScreen } from "pages/loading";
