@@ -11,12 +11,17 @@ import {
   ContentManagerPublished,
   ContentManagerArchived,
 } from "pages/content-manager";
+import ForgotPassword from "widgets/auth-forms/ui/forgot-password/ui";
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
         <Route path="/auth" element={<Auth />} />
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
       </Route>
 
       <Route
