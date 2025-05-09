@@ -47,7 +47,17 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }));
 
   if (!token || !userType) {
-    if (location.pathname === "/auth" || location.pathname === "/register" || location.pathname === "/forgot-password" || location.pathname == "/new-password") {
+    if (
+      location.pathname === "/auth" ||
+      location.pathname === "/register" ||
+      location.pathname === "/forgot-password" ||
+      location.pathname == "/new-password" ||
+      location.pathname == "/email-check" || 
+      location.pathname == "/welcome" ||
+      location.pathname == "/onboarding-welcome" ||
+      location.pathname == "/subscription-plan" ||
+      location.pathname == "/select-type"
+    ) {
       return <Outlet />;
     }
 
