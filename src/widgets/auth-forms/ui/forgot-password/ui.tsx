@@ -5,7 +5,6 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
 
   const handleSubmit = () => {
-    // Handle form submission logic here
     console.log("Email submitted:", email);
   };
   return (
@@ -54,9 +53,6 @@ const ForgotPassword = () => {
                 <button className={ email ? "bg-[#1C63DB] duration-200 ease-in w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-white gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold" : "duration-200 ease-in bg-[#D5DAE2] w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#5F5F65] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"}>Send</button>
               </div>
               <p className="text-[14px] font-[Nunito] font-medium">Remember your password? <Link to='/auth' className="cursor-pointer text-[#1C63DB] underline">Log in</Link></p>
-              <div>
-
-              </div>
           </div>
           <div className="flex flex-col items-center gap-[24px] slef-stretch"></div>
         </form>

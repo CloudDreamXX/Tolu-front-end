@@ -12,15 +12,24 @@ import {
   ContentManagerArchived,
 } from "pages/content-manager";
 import ForgotPassword from "widgets/auth-forms/ui/forgot-password/ui";
+import { NewPassword } from "widgets/auth-forms/ui/new-password";
+import { Register } from "widgets/auth-forms";
+import { CheckEmail } from "widgets/auth-forms/ui/check-email";
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
         <Route path="/auth" element={<Auth />} />
+        <Route path="/email-check" element={<CheckEmail />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/forgot-password"
           element={<ForgotPassword />}
+        />
+        <Route
+          path="/new-password"
+          element={<NewPassword />}
         />
       </Route>
 

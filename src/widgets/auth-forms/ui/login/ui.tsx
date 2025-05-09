@@ -6,7 +6,7 @@ import { z } from "zod";
 import { setCredentials, UserService } from "entities/user";
 import { EyeClosed, EyeIcon } from "lucide-react";
 
-export const LoginForm = ({ setShowLogin }: { setShowLogin: (val: boolean) => void }) => {
+export const LoginForm = () => {
   const loginSchema = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
@@ -16,7 +16,6 @@ export const LoginForm = ({ setShowLogin }: { setShowLogin: (val: boolean) => vo
   const [showPassword, setShowPassword] = useState(true);
   const [loginError, setLoginError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -35,8 +34,8 @@ export const LoginForm = ({ setShowLogin }: { setShowLogin: (val: boolean) => vo
     if (!parsedData.success) {
       // Extract error messages
       const errors = parsedData.error.errors;
-      setLoginError(errors.find(e => e.path[0] === 'email')?.message || "");
-      setPasswordError(errors.find(e => e.path[0] === 'password')?.message || "");
+      setLoginError(errors.find(e => e.path[0] === 'email')?.message ?? "");
+      setPasswordError(errors.find(e => e.path[0] === 'password')?.message ?? "");
       return;
     }
 
@@ -114,7 +113,7 @@ export const LoginForm = ({ setShowLogin }: { setShowLogin: (val: boolean) => vo
           </main>
           <div className="flex flex-col items-center gap-[24px] slef-stretch">
             <button type="submit" className={ formData.email.length > 1 && formData.password.length > 1 && !passwordError && !loginError ? "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold" : "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5F5F65] font-[Nunito] text-[16px] font-semibold"}>Log In</button>
-            <p className="text-black font-[Nunito] text-[14px] font-medium">Don't have an account yet? <button className="underline text-[#1C63DB] ">Sign up</button></p>
+            <p className="text-black font-[Nunito] text-[14px] font-medium">Don't have an account yet? <Link to='/register' className="underline text-[#1C63DB] ">Sign up</Link></p>
           </div>
         </form>
       </div>
