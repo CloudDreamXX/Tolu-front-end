@@ -11,12 +11,44 @@ import {
   ContentManagerPublished,
   ContentManagerArchived,
 } from "pages/content-manager";
+import ForgotPassword from "widgets/auth-forms/ui/forgot-password/ui";
+import { NewPassword } from "widgets/auth-forms/ui/new-password";
+import { Register } from "widgets/auth-forms";
+import { CheckEmail } from "widgets/auth-forms/ui/check-email";
+import { OnboardingWerlcome } from "pages/onboarding-welcome";
+import { OnboardingMain } from "pages/onboarding-main";
+import { SubscriptionPlan } from "pages/subscription-plan/ui";
+import { SelectType } from "pages/select-type";
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
         <Route path="/auth" element={<Auth />} />
+        <Route path="/email-check" element={<CheckEmail />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+        <Route
+          path="/subscription-plan"
+          element={
+            <SubscriptionPlan />
+          }
+          />
+          <Route
+          path="/select-type"
+          element={<SelectType/>}/>
+        <Route
+          path="/welcome"
+          element={<OnboardingWerlcome />}
+        />
+        <Route path="/onboarding-welcome" element={<OnboardingMain/>}/>
+        <Route
+          path="/new-password"
+          element={<NewPassword />}
+        />
       </Route>
 
       <Route
