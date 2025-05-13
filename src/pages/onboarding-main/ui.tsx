@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Footer } from "pages/onboarding-welcome/components";
 import { Button, HeaderOnboarding } from "./components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCoachField } from "../../entities/store/coachOnboardingSlice";
 import { RootState } from "entities/store";
@@ -10,6 +10,7 @@ export const OnboardingMain = () => {
   const [showHint, setShowHint] = useState(false);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
+  const nav = useNavigate();
 
   const coachData = useSelector((state: RootState) => state.coachOnboarding);
 
@@ -249,6 +250,7 @@ useEffect(() => {
         </section>
         <div className="flex items-center gap-[16px]">
           <button
+            onClick={() => nav(-1)}
             className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >

@@ -4,10 +4,12 @@ import { UploadCloud } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const nav = useNavigate();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -172,6 +174,7 @@ export const ProfileSetup = () => {
           <button
             className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
+            onClick={() => nav(-1)}
           >
             Back
           </button>

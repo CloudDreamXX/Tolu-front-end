@@ -3,7 +3,7 @@ import { HeaderOnboarding } from "pages/onboarding-main/components";
 import { Footer } from "pages/onboarding-welcome/components";
 import { useRef, useState } from "react";
 import UploadCloud from "shared/assets/icons/upload-cloud";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 
@@ -17,6 +17,7 @@ export const AboutYourPractice = () => {
   const [recentClients, setRecentClients] = useState("");
   const [targetClients, setTargetClients] = useState("");
   const [labsUsed, setLabsUsed] = useState("");
+  const nav = useNavigate();
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -198,7 +199,7 @@ export const AboutYourPractice = () => {
 
         {/* Navigation */}
         <div className="flex items-center gap-[16px] bg-transparent">
-          <button className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]" style={{ background: "rgba(0, 143, 246, 0.10)" }}>
+          <button onClick={() => nav(-1)} className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]" style={{ background: "rgba(0, 143, 246, 0.10)" }}>
             Back
           </button>
           <Link to="/subscription-plan" className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white">
