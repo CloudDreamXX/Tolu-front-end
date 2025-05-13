@@ -8,8 +8,16 @@ const userPersistConfig = {
   storage,
 };
 
+import coachOnboardingReducer from "./coachOnboardingSlice"; // update path accordingly
+
+const coachPersistConfig = {
+  key: "coachOnboarding",
+  storage,
+};
+
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
+  coachOnboarding: persistReducer(coachPersistConfig, coachOnboardingReducer),
 });
 
 export const store = configureStore({

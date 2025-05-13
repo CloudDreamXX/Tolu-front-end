@@ -1,8 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { SelectType, SignUp } from "./components";
 import { UserService } from "entities/user";
+import { useNavigate } from "react-router-dom";
 
 export const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     accountType: "",
     name: "",
@@ -26,6 +28,9 @@ export const Register = () => {
       console.log("Registering user with data:", dataBE);
       const data = await UserService.registerUser(dataBE);
       console.log("User registered successfully", data);
+      if(data.success) {
+        navigate('/verify-email');
+      }
     }
     catch (error) {
       console.error("Error registering user:", error);

@@ -4,16 +4,25 @@ import { Footer } from "pages/onboarding-welcome/components";
 import { useRef, useState } from "react";
 import UploadCloud from "shared/assets/icons/upload-cloud";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateCoachField } from "entities/store/coachOnboardingSlice";
 
 export const AboutYourPractice = () => {
+  const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
+
+  const [school, setSchool] = useState("");
+  const [recentClients, setRecentClients] = useState("");
+  const [targetClients, setTargetClients] = useState("");
+  const [labsUsed, setLabsUsed] = useState("");
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && isValidFile(file)) {
       setSelectedFile(file);
+      dispatch(updateCoachField({ key: "certificate_file", value: file }));
     }
   };
 
@@ -23,6 +32,7 @@ export const AboutYourPractice = () => {
     const file = e.dataTransfer.files?.[0];
     if (file && isValidFile(file)) {
       setSelectedFile(file);
+      dispatch(updateCoachField({ key: "certificate_file", value: file }));
     }
   };
 
@@ -43,6 +53,28 @@ export const AboutYourPractice = () => {
   const triggerFileSelect = () => {
     fileInputRef.current?.click();
   };
+
+  const handleFieldChange = (field: string, value: string) => {
+    switch (field) {
+      case "school":
+        setSchool(value);
+        dispatch(updateCoachField({ key: "school", value }));
+        break;
+      case "recent":
+        setRecentClients(value);
+        dispatch(updateCoachField({ key: "recent_client_count", value }));
+        break;
+      case "target":
+        setTargetClients(value);
+        dispatch(updateCoachField({ key: "target_client_count", value }));
+        break;
+      case "labs":
+        setLabsUsed(value);
+        dispatch(updateCoachField({ key: "uses_labs_supplements", value }));
+        break;
+    }
+  };
+
   return (
     <div
       className="w-full h-full m-0 p-0 pb-10"
@@ -56,16 +88,25 @@ export const AboutYourPractice = () => {
           About your practice
         </h2>
         <div className="w-[700px] bg-white shadow-mdp-[40px] flex flex-col items-start gap-[24px] rounded-[20px]">
+          {/* School */}
           <div className="flex flex-col items-start self-stretch gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium mt-[16px] ml-[32px] text-black">
               Which school did you graduate from? *
             </p>
-            <select className=" ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
-              <option value="1">Select your practice</option>
-              <option value="2">Option 2</option>
-              <option value="3">Option 3</option>
+            <select
+              onChange={(e) => handleFieldChange("school", e.target.value)}
+              className="ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF]"
+            >
+              <option value="">Select your practice</option>
+              <option value="University of California, San Francisco">
+                University of California, San Francisco
+              </option>
+              <option value="Stanford University">Stanford University</option>
+              <option value="Harvard Medical School">Harvard Medical School</option>
             </select>
           </div>
+
+          {/* File Upload */}
           <div
             className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
               dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
@@ -99,83 +140,65 @@ export const AboutYourPractice = () => {
               </div>
             </div>
           </div>
+
+          {/* Recent clients */}
           <div className="flex flex-col items-start self-stretch gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium ml-[32px] text-black">
               How many clients have you helped within the past 3 months? *
             </p>
-            <select className=" ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
-              <option value="1">Select your practice</option>
-              <option value="2">Option 2</option>
-              <option value="3">Option 3</option>
+            <select
+              onChange={(e) => handleFieldChange("recent", e.target.value)}
+              className="ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF]"
+            >
+              <option value="">Select</option>
+              <option value="10">1–10</option>
+              <option value="25">11–25</option>
+              <option value="50+">50+</option>
             </select>
           </div>
+
+          {/* Target clients */}
           <div className="flex flex-col items-start self-stretch gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium ml-[32px] text-black">
-              How many new clients do you hope to acquire over the next 3
-              months? *
+              How many new clients do you hope to acquire over the next 3 months? *
             </p>
-            <select className=" ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
-              <option value="1">Select your practice</option>
-              <option value="2">Option 2</option>
-              <option value="3">Option 3</option>
+            <select
+              onChange={(e) => handleFieldChange("target", e.target.value)}
+              className="ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF]"
+            >
+              <option value="">Select</option>
+              <option value="10">1–10</option>
+              <option value="25">11–25</option>
+              <option value="50+">50+</option>
             </select>
           </div>
+
+          {/* Radio - uses labs/supplements */}
           <div className="flex flex-col ml-[32px] items-start self-stretch mb-[16px] gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium text-black">
-              How many new clients do you hope to acquire over the next 3
-              months? *
+              Do you use labs or supplements? *
             </p>
             <div className="flex items-center gap-[60px]">
-              <div className="flex gap-[16px] items-center">
-                <input
-                  type="radio"
-                  name="radio"
-                  id="radio1"
-                  className="w-[20px] h-[20px]"
-                />
-                <label
-                  htmlFor="radio1"
-                  className="font-[Nunito] text-[16px] font-medium text-black"
-                >
-                  Yes
+              {["yes", "no", "planning to"].map((option) => (
+                <label key={option} className="flex gap-[16px] items-center">
+                  <input
+                    type="radio"
+                    name="labs"
+                    value={option}
+                    checked={labsUsed === option}
+                    onChange={(e) => handleFieldChange("labs", e.target.value)}
+                    className="w-[20px] h-[20px]"
+                  />
+                  <span className="font-[Nunito] text-[16px] font-medium text-black capitalize">{option}</span>
                 </label>
-              </div>
-              <div className="flex gap-[16px] items-center">
-                <input
-                  type="radio"
-                  name="radio"
-                  id="radio1"
-                  className="w-[20px] h-[20px]"
-                />
-                <label
-                  htmlFor="radio1"
-                  className="font-[Nunito] text-[16px] font-medium text-black"
-                >
-                  No
-                </label>
-              </div>
-              <div className="flex gap-[16px] items-center">
-                <input
-                  type="radio"
-                  name="radio"
-                  id="radio1"
-                  className="w-[20px] h-[20px]"
-                />
-                <label
-                  htmlFor="radio1"
-                  className="font-[Nunito] text-[16px] font-medium text-black"
-                >
-                  Planning to
-                </label>
-              </div>
+              ))}
             </div>
           </div>
         </div>
+
+        {/* Navigation */}
         <div className="flex items-center gap-[16px] bg-transparent">
-          <button
-            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
-            style={{ background: "rgba(0, 143, 246, 0.10)" }}
-          >
+          <button className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]" style={{ background: "rgba(0, 143, 246, 0.10)" }}>
             Back
           </button>
           <Link to="/subscription-plan" className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white">

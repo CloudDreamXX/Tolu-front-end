@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 export const HeaderOnboarding = () => {
+  const navigate = useNavigate();
   return (
     <header className="flex items-center self-stretch pr-[40px] gap-[351px]">
       <div className="flex flex-col items-center p-[40px] justify-center">
-        <h2 className="text-[#1D1D1F] text-center text-[40px] font-bold font-[Open Sans]">
+        <h2 onClick={() => navigate('/')} className="cursor-pointer text-[#1D1D1F] text-center text-[40px] font-bold font-[Open Sans]">
           VITAI
         </h2>
         <h4 className="text-[#1D1D1F] text-center text-[20px] font-medium font-[Open Sans]">

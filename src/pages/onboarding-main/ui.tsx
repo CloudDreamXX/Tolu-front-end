@@ -2,31 +2,47 @@ import { useEffect, useState } from "react";
 import { Footer } from "pages/onboarding-welcome/components";
 import { Button, HeaderOnboarding } from "./components";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { updateCoachField } from "../../entities/store/coachOnboardingSlice";
+import { RootState } from "entities/store";
 
 export const OnboardingMain = () => {
   const [showHint, setShowHint] = useState(false);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
 
+  const coachData = useSelector((state: RootState) => state.coachOnboarding);
+
+useEffect(() => {
+  console.log("Current primary_niches in Redux:", coachData.primary_niches);
+}, [coachData.primary_niches]);
+
   useEffect(() => {
     if (selectedButtons.length > 0) {
       setShowHint(true);
     }
-  }, [selectedButtons])
+  }, [selectedButtons]);
+
+  const dispatch = useDispatch();
 
   const handleButtonClick = (buttonText: string) => {
     setSelectedButtons((prevSelected) => {
+      let updated;
       if (prevSelected.includes(buttonText)) {
-        return prevSelected.filter((item) => item !== buttonText);
+        updated = prevSelected.filter((item) => item !== buttonText);
       } else {
-        return [...prevSelected, buttonText];
+        updated = [...prevSelected, buttonText];
       }
+
+      // 🔄 Update Redux store with new primary_niches
+      dispatch(updateCoachField({ key: "primary_niches", value: updated }));
+      return updated;
     });
   };
 
   const isOtherSelected = () => {
     return selectedButtons.includes("Other");
-  }
+  };
 
   return (
     <div
@@ -37,7 +53,9 @@ export const OnboardingMain = () => {
     >
       <HeaderOnboarding />
       <main className="flex flex-col items-center flex-1 justify-center gap-[60px] self-stretch">
-        <h3 className="font-[Inter] text-[32px] font-medium text-black text-center self-stretch">What are your primary focus areas?</h3>
+        <h3 className="font-[Inter] text-[32px] font-medium text-black text-center self-stretch">
+          What are your primary focus areas?
+        </h3>
         <section className="w-[900px] items-center justify-center flex flex-col gap-[32px]">
           <div className="flex w-[500px] items-start gap-[12px] flex-col">
             <input
@@ -51,7 +69,9 @@ export const OnboardingMain = () => {
               <Button
                 onClick={() => handleButtonClick("Perimenopause & Menopause")}
                 style={{
-                  background: selectedButtons.includes("Perimenopause & Menopause")
+                  background: selectedButtons.includes(
+                    "Perimenopause & Menopause"
+                  )
                     ? "rgba(0, 143, 246, 0.10)"
                     : "transparent",
                 }}
@@ -83,7 +103,9 @@ export const OnboardingMain = () => {
               <Button
                 onClick={() => handleButtonClick("Weight & Metabolic Health")}
                 style={{
-                  background: selectedButtons.includes("Weight & Metabolic Health")
+                  background: selectedButtons.includes(
+                    "Weight & Metabolic Health"
+                  )
                     ? "rgba(0, 143, 246, 0.10)"
                     : "transparent",
                 }}
@@ -91,9 +113,13 @@ export const OnboardingMain = () => {
                 Weight & Metabolic Health
               </Button>
               <Button
-                onClick={() => handleButtonClick("Blood Sugar & Insulin Resistance")}
+                onClick={() =>
+                  handleButtonClick("Blood Sugar & Insulin Resistance")
+                }
                 style={{
-                  background: selectedButtons.includes("Blood Sugar & Insulin Resistance")
+                  background: selectedButtons.includes(
+                    "Blood Sugar & Insulin Resistance"
+                  )
                     ? "rgba(0, 143, 246, 0.10)"
                     : "transparent",
                 }}
@@ -113,9 +139,13 @@ export const OnboardingMain = () => {
             </div>
             <div className="flex gap-[13px]">
               <Button
-                onClick={() => handleButtonClick("Chronic Fatigue / Long COVID")}
+                onClick={() =>
+                  handleButtonClick("Chronic Fatigue / Long COVID")
+                }
                 style={{
-                  background: selectedButtons.includes("Chronic Fatigue / Long COVID")
+                  background: selectedButtons.includes(
+                    "Chronic Fatigue / Long COVID"
+                  )
                     ? "rgba(0, 143, 246, 0.10)"
                     : "transparent",
                 }}
@@ -157,7 +187,9 @@ export const OnboardingMain = () => {
               <Button
                 onClick={() => handleButtonClick("Postpartum / Pelvic Floor")}
                 style={{
-                  background: selectedButtons.includes("Postpartum / Pelvic Floor")
+                  background: selectedButtons.includes(
+                    "Postpartum / Pelvic Floor"
+                  )
                     ? "rgba(0, 143, 246, 0.10)"
                     : "transparent",
                 }}
@@ -186,13 +218,24 @@ export const OnboardingMain = () => {
               </Button>
             </div>
           </div>
-            {isOtherSelected() ? (
+          {isOtherSelected() ? (
             <div className="flex justify-center gap-[8px] items-start w-full">
               <input
-              onChange={(e) => setOtherText(e.target.value)}
-              type="text"
-              placeholder="Please specify your niche"
-              className="flex outline-none w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white"
+                onChange={(e) => {
+                  setOtherText(e.target.value);
+                  dispatch(
+                    updateCoachField({
+                      key: "primary_niches",
+                      value: [
+                        ...selectedButtons.filter((n) => n !== "Other"),
+                        e.target.value,
+                      ],
+                    })
+                  );
+                }}
+                type="text"
+                placeholder="Please specify your niche"
+                className="flex outline-none w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white"
               />
               {otherText.length > 0 && (
                 <button className="flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white">
@@ -200,15 +243,25 @@ export const OnboardingMain = () => {
                 </button>
               )}
             </div>
-            ) : (
-            ''
-            )}
+          ) : (
+            ""
+          )}
         </section>
         <div className="flex items-center gap-[16px]">
-          <button className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]" style={{ background: "rgba(0, 143, 246, 0.10)" }}>
+          <button
+            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            style={{ background: "rgba(0, 143, 246, 0.10)" }}
+          >
             Back
           </button>
-          <Link to="/about-your-practice" className={selectedButtons.length >= 1 ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white" : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"}>
+          <Link
+            to="/about-your-practice"
+            className={
+              selectedButtons.length >= 1
+                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
+                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
+            }
+          >
             Next
           </Link>
         </div>

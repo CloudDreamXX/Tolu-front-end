@@ -1,14 +1,18 @@
 import { HeaderOnboarding } from "pages/onboarding-main/components";
 import { Footer } from "pages/onboarding-welcome/components";
 import { UploadCloud } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { useState } from "react";
 
 export const ProfileSetup = () => {
+  const dispatch = useDispatch();
   const [filePreview, setFilePreview] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      dispatch(updateCoachField({ key: "profile_picture", value: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
         setFilePreview(reader.result as string);
@@ -36,41 +40,65 @@ export const ProfileSetup = () => {
           <div className="flex gap-[20px]">
             <div className="flex flex-col flex-1 gap-[8px]">
               <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">First name</label>
-              <input className="border rounded-[8px] h-[44px] px-[12px] text-[16px]" type="text" placeholder="Sophia" />
+              <input
+                type="text"
+                placeholder="Sophia"
+                onChange={(e) => dispatch(updateCoachField({ key: "first_name", value: e.target.value }))}
+                className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+              />
             </div>
             <div className="flex flex-col flex-1 gap-[8px]">
               <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Last name</label>
-              <input className="border rounded-[8px] h-[44px] px-[12px] text-[16px]" type="text" placeholder="Turner" />
+              <input
+                type="text"
+                placeholder="Turner"
+                onChange={(e) => dispatch(updateCoachField({ key: "last_name", value: e.target.value }))}
+                className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+              />
             </div>
           </div>
 
           {/* Age */}
           <div className="flex flex-col gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Age</label>
-            <input className="border rounded-[8px] h-[44px] px-[12px] text-[16px]" type="number" placeholder="Enter Age" />
+            <input
+              min={0}
+              max={120}
+              type="number"
+              placeholder="Enter Age"
+              onChange={(e) => dispatch(updateCoachField({ key: "age", value: e.target.value }))}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
           </div>
 
           {/* Gender */}
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Gender:</label>
+            <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Gender</label>
             <div className="flex gap-[40px]">
-              <label className="flex items-center gap-[8px] text-[16px] text-black font-[Nunito]">
-                <input type="radio" name="gender" className="w-[20px] h-[20px]" />
-                Men
-              </label>
-              <label className="flex items-center gap-[8px] text-[16px] text-black font-[Nunito]">
-                <input type="radio" name="gender" className="w-[20px] h-[20px]" defaultChecked />
-                Women
-              </label>
+              {["male", "female"].map((gender) => (
+                <label key={gender} className="flex items-center gap-[8px] text-[16px] text-black font-[Nunito]">
+                  <input
+                    type="radio"
+                    name="gender"
+                    onChange={() => dispatch(updateCoachField({ key: "gender", value: gender }))}
+                    className="w-[20px] h-[20px]"
+                  />
+                  {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                </label>
+              ))}
             </div>
           </div>
 
           {/* Time zone */}
           <div className="flex flex-col gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Time zone</label>
-            <select className="border rounded-[8px] h-[44px] px-[12px] text-[16px] text-[#5F5F65]">
-              <option>(GMT-08:00) Pacific Time (US & Canada)</option>
-              <option>(GMT+00:00) UTC</option>
+            <select
+              onChange={(e) => dispatch(updateCoachField({ key: "timezone", value: e.target.value }))}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px] text-[#5F5F65]"
+            >
+              <option value="">Select timezone</option>
+              <option value="America/Los_Angeles">(GMT-08:00) Pacific Time (US & Canada)</option>
+              <option value="UTC">(GMT+00:00) UTC</option>
             </select>
           </div>
 
@@ -85,9 +113,7 @@ export const ProfileSetup = () => {
                 onClick={() => document.getElementById("file-upload")?.click()}
               >
                 <UploadCloud color="#1C63DB" size={32} />
-                <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
-                  Click to upload
-                </p>
+                <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">Click to upload</p>
                 <p className="text-[#5F5F65] text-[14px] font-[Nunito]">or drag and drop</p>
                 <p className="text-[#5F5F65] text-[14px] font-[Nunito]">PDF, JPG or PNG</p>
               </div>
@@ -95,11 +121,11 @@ export const ProfileSetup = () => {
             <input id="file-upload" type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
           </div>
 
-          {/* Two-Factor Authentication */}
+          {/* Two-Factor Auth */}
           <div className="flex flex-col gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Two-factor authentication</label>
             <label className="flex items-center gap-[8px] text-[16px] font-[Nunito] text-black">
-              <input type="checkbox" />
+              <input type="checkbox" onChange={(e) => dispatch(updateCoachField({ key: "two_factor_enabled", value: e.target.checked }))} />
               Enable two-factor authentication
             </label>
           </div>
@@ -108,32 +134,35 @@ export const ProfileSetup = () => {
           <div className="flex flex-col gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Choose method:</label>
             <div className="flex gap-[24px]">
-              <label className="flex items-center gap-[8px]">
-                <input type="radio" name="2fa" className="w-[16px] h-[16px]" />
-                SMS
-              </label>
-              <label className="flex items-center gap-[8px]">
-                <input type="radio" name="2fa" className="w-[16px] h-[16px]" />
-                Authenticator App
-              </label>
-              <label className="flex items-center gap-[8px]">
-                <input type="radio" name="2fa" className="w-[16px] h-[16px]" />
-                Email
-              </label>
+              {["sms", "app", "email"].map((method) => (
+                <label key={method} className="flex items-center gap-[8px]">
+                  <input
+                    type="radio"
+                    name="2fa"
+                    className="w-[16px] h-[16px]"
+                    onChange={() => dispatch(updateCoachField({ key: "two_factor_method", value: method }))}
+                  />
+                  {method.toUpperCase()}
+                </label>
+              ))}
             </div>
           </div>
 
           {/* Recovery Question */}
           <div className="flex gap-[12px]">
-            <select className="flex-1 border rounded-[8px] h-[44px] px-[12px] text-[16px] text-[#5F5F65]">
-              <option>Select recovery question</option>
-              <option>What is your favorite book?</option>
-              <option>Mother's maiden name?</option>
+            <select
+              className="flex-1 border rounded-[8px] h-[44px] px-[12px] text-[16px] text-[#5F5F65]"
+              onChange={(e) => dispatch(updateCoachField({ key: "security_questions", value: e.target.value }))}
+            >
+              <option value="">Select recovery question</option>
+              <option value="book">What is your favorite book?</option>
+              <option value="mother">Mother's maiden name?</option>
             </select>
             <input
               type="text"
               className="flex-1 border rounded-[8px] h-[44px] px-[12px] text-[16px]"
               placeholder="Enter your answer"
+              onChange={(e) => dispatch(updateCoachField({ key: "security_answers", value: e.target.value }))}
             />
           </div>
         </form>
