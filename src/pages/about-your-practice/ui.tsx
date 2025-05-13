@@ -1,9 +1,48 @@
 import { Lightbulb } from "lucide-react";
 import { HeaderOnboarding } from "pages/onboarding-main/components";
 import { Footer } from "pages/onboarding-welcome/components";
+import { useRef, useState } from "react";
 import UploadCloud from "shared/assets/icons/upload-cloud";
+import { Link } from "react-router-dom";
 
 export const AboutYourPractice = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && isValidFile(file)) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && isValidFile(file)) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragOver(false);
+  };
+
+  const isValidFile = (file: File) => {
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+    return allowedTypes.includes(file.type);
+  };
+
+  const triggerFileSelect = () => {
+    fileInputRef.current?.click();
+  };
   return (
     <div
       className="w-full h-full m-0 p-0 pb-10"
@@ -18,66 +57,70 @@ export const AboutYourPractice = () => {
         </h2>
         <div className="w-[700px] bg-white shadow-mdp-[40px] flex flex-col items-start gap-[24px] rounded-[20px]">
           <div className="flex flex-col items-start self-stretch gap-[16px]">
-            <p className="font-[Nunito] text-[16px] font-medium ml-[16px] text-black">
+            <p className="font-[Nunito] text-[16px] font-medium mt-[16px] ml-[32px] text-black">
               Which school did you graduate from? *
             </p>
-            <select className=" ml-[16px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
+            <select className=" ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
               <option value="1">Select your practice</option>
               <option value="2">Option 2</option>
               <option value="3">Option 3</option>
             </select>
           </div>
-          <div className="flex flex-col items-start gap-[16px]">
-            <p className="font-[Nunito] text-[16px] font-medium text-black ml-[16px]">
-              Upload a certificate or license *
-            </p>
-            <div className="flex py-[16px] ml-[16px] w-[620px] px-[24px gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed border-[#1C63DB] bg-white">
-              <div className="flex gap-[12px] items-center flex-col">
-                <div className="flex p-[8px] items-centergap-[10px] rounded-[8px] border-[1px] border-[#F3F6FB] bg-white">
-                  <UploadCloud />
-                </div>
-                <div className="flex flex-col items-center gap-[4px]">
-                  <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                    Click to upload
-                  </p>
-                  <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                    or drag and drop
-                  </p>
-                  <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                    PDF, JPG or PNG
-                  </p>
-                </div>
+          <div
+            className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
+              dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
+            } bg-white cursor-pointer transition`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={triggerFileSelect}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <div className="flex gap-[12px] items-center flex-col">
+              <div className="flex p-[8px] items-center gap-[10px] rounded-[8px] border-[1px] border-[#F3F6FB] bg-white">
+                <UploadCloud />
+              </div>
+              <div className="flex flex-col items-center gap-[4px]">
+                <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                  {selectedFile ? selectedFile.name : "Click to upload"}
+                </p>
+                <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
+                  or drag and drop
+                </p>
+                <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
+                  PDF, JPG or PNG
+                </p>
               </div>
             </div>
-            <div className="flex ml-[16px] gap-[8px] items-center">
-              <Lightbulb size={20} color="#1C63DB" />
-              <p className="font-[Nunito] text-[16px] font-medium text-[#1C63DB]">
-                Data is securely saved with a HIPAA-compliant notice
-              </p>
-            </div>
           </div>
           <div className="flex flex-col items-start self-stretch gap-[16px]">
-            <p className="font-[Nunito] text-[16px] font-medium ml-[16px] text-black">
+            <p className="font-[Nunito] text-[16px] font-medium ml-[32px] text-black">
               How many clients have you helped within the past 3 months? *
             </p>
-            <select className=" ml-[16px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
+            <select className=" ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
               <option value="1">Select your practice</option>
               <option value="2">Option 2</option>
               <option value="3">Option 3</option>
             </select>
           </div>
           <div className="flex flex-col items-start self-stretch gap-[16px]">
-            <p className="font-[Nunito] text-[16px] font-medium ml-[16px] text-black">
+            <p className="font-[Nunito] text-[16px] font-medium ml-[32px] text-black">
               How many new clients do you hope to acquire over the next 3
               months? *
             </p>
-            <select className=" ml-[16px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
+            <select className=" ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF] flex flex-col self-stretch gap-[10px]">
               <option value="1">Select your practice</option>
               <option value="2">Option 2</option>
               <option value="3">Option 3</option>
             </select>
           </div>
-          <div className="flex flex-col ml-[16px] items-start self-stretch gap-[16px]">
+          <div className="flex flex-col ml-[32px] items-start self-stretch mb-[16px] gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium text-black">
               How many new clients do you hope to acquire over the next 3
               months? *
@@ -129,12 +172,15 @@ export const AboutYourPractice = () => {
           </div>
         </div>
         <div className="flex items-center gap-[16px] bg-transparent">
-          <button className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]" style={{ background: "rgba(0, 143, 246, 0.10)" }}>
+          <button
+            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            style={{ background: "rgba(0, 143, 246, 0.10)" }}
+          >
             Back
           </button>
-          <button className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white">
+          <Link to="/subscription-plan" className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white">
             Next
-          </button>
+          </Link>
         </div>
       </main>
       <Footer />

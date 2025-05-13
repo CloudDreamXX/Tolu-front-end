@@ -21,6 +21,7 @@ import { SubscriptionPlan } from "pages/subscription-plan/ui";
 import { SelectType } from "pages/select-type";
 import { AboutYourPractice } from "pages/about-your-practice";
 import { VerifyEmailPass } from "widgets/auth-forms/ui/check-email-pass/ui";
+import { ProfileSetup } from "pages/profile-setup";
 
 export const AppRoutes = () => {
   return (
@@ -33,6 +34,10 @@ export const AppRoutes = () => {
         <Route
           path="/forgot-password"
           element={<ForgotPassword />}
+        />
+        <Route 
+          path="/profile-setup"
+          element={<ProfileSetup/>}
         />
         <Route
           path="/about-your-practice"

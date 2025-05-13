@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Footer } from "pages/onboarding-welcome/components";
 import { Button, HeaderOnboarding } from "./components";
+import { Link } from "react-router-dom";
 
 export const OnboardingMain = () => {
   const [showHint, setShowHint] = useState(false);
@@ -207,9 +208,9 @@ export const OnboardingMain = () => {
           <button className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]" style={{ background: "rgba(0, 143, 246, 0.10)" }}>
             Back
           </button>
-          <button className={selectedButtons.length >= 1 ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white" : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"}>
+          <Link to="/about-your-practice" className={selectedButtons.length >= 1 ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white" : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"}>
             Next
-          </button>
+          </Link>
         </div>
       </main>
       <Footer />
