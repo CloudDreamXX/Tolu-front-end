@@ -1,9 +1,14 @@
 import { API_ROUTES, ApiService } from "shared/api";
-import { IUser } from "./model";
+import { IRegisterUser, IUser } from "./model";
 
 interface LoginCredentials {
   email: string;
   password: string;
+}
+
+interface IVerify {
+  email: string;
+  token: string;
 }
 
 interface AuthResponse {
@@ -22,6 +27,34 @@ export class UserService {
 
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     return ApiService.post<AuthResponse>(API_ROUTES.USER.LOGIN, credentials);
+  }
+
+  static async forgotPassword(email: string): Promise<{ success: boolean, message: string, email: string }> {
+    return ApiService.post<{ success: boolean, message: string, email: string }>(
+      API_ROUTES.USER.FORGOT_PASSWORD,
+      { email }
+    );
+  }
+
+  static async registerUser(userInfo: IRegisterUser): Promise<{ success: boolean }> {
+    return ApiService.post<{ success: boolean }>(
+      API_ROUTES.USER.SIGNUP,
+      userInfo
+    );
+  }
+
+  static async verifyEmail({email, token}: IVerify): Promise<{success: string}> {
+    return ApiService.post<{success: string}>(
+      API_ROUTES.USER.COMPLETE_SIGNUP,
+      { email, token }
+    );
+  }
+
+  static async verifyEmailPass({email, token}: IVerify): Promise<{success: string}> {
+    return ApiService.post<{success: string}>(
+      API_ROUTES.USER.VERIFY_RESET_TOKEN,
+      { email, token }
+    );
   }
 
   static async checkUserExistence(

@@ -9,3 +9,12 @@ export interface IUser {
   num_clients: string;
   priority: string[];
 }
+
+export interface IRegisterUser {
+  name: string;
+  email: string;
+  dob: string;
+  password: string;
+  phone_number: string;
+  roleID: number;
+}

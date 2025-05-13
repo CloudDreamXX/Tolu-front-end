@@ -2,8 +2,8 @@ import { UserService } from "entities/user";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-export const CheckEmail = () => {
-  const { search } = useLocation();
+export const VerifyEmailPass = () => {
+    const { search } = useLocation();
 
   const query = new URLSearchParams(search);
   const token = query.get("token") ?? "";
@@ -13,7 +13,7 @@ export const CheckEmail = () => {
     if (token.length > 0 && email.length > 0) {
       const verifyEmail = async () => {
         try {
-          const msg = await UserService.verifyEmail({ email, token });
+          const msg = await UserService.verifyEmailPass({ email, token });
           console.log("Email verification response:", msg);
         } catch (error) {
           console.error("Error verifying email:", error);
@@ -66,4 +66,4 @@ export const CheckEmail = () => {
       )}
     </div>
   );
-};
+}

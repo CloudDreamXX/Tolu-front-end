@@ -19,17 +19,24 @@ import { OnboardingWerlcome } from "pages/onboarding-welcome";
 import { OnboardingMain } from "pages/onboarding-main";
 import { SubscriptionPlan } from "pages/subscription-plan/ui";
 import { SelectType } from "pages/select-type";
+import { AboutYourPractice } from "pages/about-your-practice";
+import { VerifyEmailPass } from "widgets/auth-forms/ui/check-email-pass/ui";
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
         <Route path="/auth" element={<Auth />} />
-        <Route path="/email-check" element={<CheckEmail />} />
+        <Route path="/verify-email" element={<CheckEmail />} />
+        <Route path="/verify-email-pass" element={<VerifyEmailPass/>}/>
         <Route path="/register" element={<Register />} />
         <Route
           path="/forgot-password"
           element={<ForgotPassword />}
+        />
+        <Route
+          path="/about-your-practice"
+          element={<AboutYourPractice />}
         />
         <Route
           path="/subscription-plan"

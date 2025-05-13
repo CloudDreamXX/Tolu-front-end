@@ -4,8 +4,10 @@ export const API_ROUTES = {
     SIGNUP: '/user/signup',
     COMPLETE_SIGNUP: '/user/complete-signup',
     LOGIN: '/user/login',
+    FORGOT_PASSWORD: '/user/forgot-password',
     PROFILE: '/user/profile',
     DELETE_ACCOUNT: '/user/delete-account',
+    VERIFY_RESET_TOKEN: '/user/verify-reset-token',
   },
   AI: {
     SEARCH: '/ai-search/',

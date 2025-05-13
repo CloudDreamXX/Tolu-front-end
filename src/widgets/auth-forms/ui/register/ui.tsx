@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { SelectType, SignUp } from "./components";
+import { UserService } from "entities/user";
 
 export const Register = () => {
   const [formData, setFormData] = useState({
@@ -11,8 +12,24 @@ export const Register = () => {
     newPassword: "",
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    const dataBE = {
+      name: formData.name,
+      email: formData.email,
+      phone_number: formData.phone,
+      password: formData.password,
+      dob: "2025-05-13",
+      roleID: 3,
+    }
+    try {
+      console.log("Registering user with data:", dataBE);
+      const data = await UserService.registerUser(dataBE);
+      console.log("User registered successfully", data);
+    }
+    catch (error) {
+      console.error("Error registering user:", error);
+    }
   };
 
   const handleCardClick = (user: string) => {

@@ -52,11 +52,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       location.pathname === "/register" ||
       location.pathname === "/forgot-password" ||
       location.pathname == "/new-password" ||
-      location.pathname == "/email-check" || 
+      location.pathname == "/verify-email" ||
+      location.pathname == "/verify-email-pass" ||
       location.pathname == "/welcome" ||
       location.pathname == "/onboarding-welcome" ||
       location.pathname == "/subscription-plan" ||
-      location.pathname == "/select-type"
+      location.pathname == "/select-type" ||
+      location.pathname == "/about-your-practice"
     ) {
       return <Outlet />;
     }
