@@ -23,6 +23,7 @@ import { AboutYourPractice } from "pages/about-your-practice";
 import { VerifyEmailPass } from "widgets/auth-forms/ui/check-email-pass/ui";
 import { ProfileSetup } from "pages/profile-setup";
 import { InviteClients } from "pages/invite-clients";
+import { OnboardingFinish } from "pages/onboarding-finish";
 
 export const AppRoutes = () => {
   return (
@@ -63,6 +64,10 @@ export const AppRoutes = () => {
           element={<NewPassword />}
         />
         <Route path="/invite-clients" element={<InviteClients />}/>
+        <Route 
+          path="/onboarding-finish"
+          element={<OnboardingFinish/>}
+        />
       
 
       <Route
