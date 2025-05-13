@@ -178,7 +178,7 @@ export const ProfileSetup = () => {
           >
             Back
           </button>
-          <button className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white">
+          <button onClick={() => nav('/invite-clients')} className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white">
             Next
           </button>
         </div>

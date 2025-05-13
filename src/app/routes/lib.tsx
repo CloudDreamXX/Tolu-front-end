@@ -22,11 +22,12 @@ import { SelectType } from "pages/select-type";
 import { AboutYourPractice } from "pages/about-your-practice";
 import { VerifyEmailPass } from "widgets/auth-forms/ui/check-email-pass/ui";
 import { ProfileSetup } from "pages/profile-setup";
+import { InviteClients } from "pages/invite-clients";
 
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
+      <Route element={<ProtectedRoute allowedRoles={["guest"]} />}></Route>
         <Route path="/auth" element={<Auth />} />
         <Route path="/verify-email" element={<CheckEmail />} />
         <Route path="/verify-email-pass" element={<VerifyEmailPass/>}/>
@@ -61,7 +62,8 @@ export const AppRoutes = () => {
           path="/new-password"
           element={<NewPassword />}
         />
-      </Route>
+        <Route path="/invite-clients" element={<InviteClients />}/>
+      
 
       <Route
         element={

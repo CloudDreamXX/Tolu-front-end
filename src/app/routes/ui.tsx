@@ -59,7 +59,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       location.pathname == "/subscription-plan" ||
       location.pathname == "/select-type" ||
       location.pathname == "/about-your-practice" ||
-      location.pathname == "/profile-setup"
+      location.pathname == "/profile-setup" ||
+      location.pathname == "/invite-clients"
     ) {
       return <Outlet />;
     }
