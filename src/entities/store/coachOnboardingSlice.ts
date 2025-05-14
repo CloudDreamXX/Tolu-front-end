@@ -26,7 +26,7 @@ export interface CoachOnboardingState {
   biometrics_monitoring_method: string;
   lab_ordering_method: string;
   supplement_ordering_method: string;
-  profile_picture: File | null;
+  profile_picture: string;
   coach_admin_privacy_accepted: boolean;
   independent_contractor_accepted: boolean;
   content_licensing_accepted: boolean;
@@ -38,7 +38,7 @@ export interface CoachOnboardingState {
   two_factor_method: string;
   security_questions: string;
   security_answers: string;
-  certificate_file: File | null;
+  certificate_file: string;
 }
 
 const initialState: CoachOnboardingState = {
@@ -78,8 +78,8 @@ const initialState: CoachOnboardingState = {
   two_factor_method: "qwe",
   security_questions: "qwe",
   security_answers: "qwe",
-  certificate_file: null,
-  profile_picture: null,
+  certificate_file: "",
+  profile_picture: "",
 };
 
 // {

@@ -15,7 +15,7 @@ export const ProfileSetup = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      dispatch(updateCoachField({ key: "profile_picture", value: file }));
+      // dispatch(updateCoachField({ key: "profile_picture", value: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
         setFilePreview(reader.result as string);
@@ -35,7 +35,7 @@ export const ProfileSetup = () => {
         background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
       }}
     >
-      <HeaderOnboarding currentStep={5}/>
+      <HeaderOnboarding currentStep={4}/>
 
       <main className="mx-auto flex flex-col gap-[32px] items-center justify-center w-[859px]">
         <h1 className="text-black text-[32px] font-[Inter] font-medium text-center">
