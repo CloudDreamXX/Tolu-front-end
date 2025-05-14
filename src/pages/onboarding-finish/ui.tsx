@@ -12,8 +12,6 @@ export const OnboardingFinish = () => {
     const handleLastClick = async () => {
       try {
         const message = await UserService.onboardUser(coachOnboarding, token);
-        console.log("Onboarding response:", message);
-          console.log("User onboarded successfully");
           nav("/content-manager/published");
       } catch (error) {
         console.error("Error during onboarding:", error);

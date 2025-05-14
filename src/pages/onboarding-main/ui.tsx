@@ -2,17 +2,38 @@ import { useEffect, useState } from "react";
 import { Footer } from "pages/onboarding-welcome/components";
 import { Button, HeaderOnboarding } from "./components";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { updateCoachField } from "../../entities/store/coachOnboardingSlice";
-import { RootState } from "entities/store";
+
+const buttons = [
+  [
+    "Perimenopause & Menopause",
+    "Gut Health",
+    "Thyroid & Autoimmune",
+  ],
+  [
+    "Weight & Metabolic Health",
+    "Blood Sugar & Insulin Resistance",
+    "Fertility & Hormones",
+  ],
+  [
+    "Chronic Fatigue / Long COVID",
+    "Anxiety & Sleep",
+    "Mold / Lyme / MCAS",
+  ],
+  [
+    "Inflammation & Pain",
+    "Postpartum / Pelvic Floor",
+    "Cancer Support",
+    "Other",
+  ],
+]
 
 export const OnboardingMain = () => {
   const [showHint, setShowHint] = useState(false);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const nav = useNavigate();
-
-  const coachData = useSelector((state: RootState) => state.coachOnboarding);
   
   useEffect(() => {
     if (selectedButtons.length > 0) {
@@ -30,8 +51,6 @@ export const OnboardingMain = () => {
       } else {
         updated = [...prevSelected, buttonText];
       }
-
-      // 🔄 Update Redux store with new primary_niches
       dispatch(updateCoachField({ key: "primary_niches", value: updated }));
       return updated;
     });
@@ -62,158 +81,25 @@ export const OnboardingMain = () => {
             />
           </div>
           <div className="flex gap-[17px] items-center justify-center content-center py-[17px] px-[13px] flex-wrap self-stretch">
-            <div className="flex gap-[13px]">
-              <Button
-                onClick={() => handleButtonClick("Perimenopause & Menopause")}
+            {buttons.map((row, index) => (
+              <div key={index} className="flex gap-[13px]">
+                {row.map((buttonText) => (
+                  <Button
+                  key={buttonText}
+                onClick={() => handleButtonClick(buttonText)}
                 style={{
                   background: selectedButtons.includes(
-                    "Perimenopause & Menopause"
+                    buttonText
                   )
                     ? "rgba(0, 143, 246, 0.10)"
                     : "transparent",
                 }}
               >
-                Perimenopause & Menopause
+                {buttonText}
               </Button>
-              <Button
-                onClick={() => handleButtonClick("Gut Health")}
-                style={{
-                  background: selectedButtons.includes("Gut Health")
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Gut Health
-              </Button>
-              <Button
-                onClick={() => handleButtonClick("Thyroid & Autoimmune")}
-                style={{
-                  background: selectedButtons.includes("Thyroid & Autoimmune")
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Thyroid & Autoimmune
-              </Button>
-            </div>
-            <div className="flex gap-[13px]">
-              <Button
-                onClick={() => handleButtonClick("Weight & Metabolic Health")}
-                style={{
-                  background: selectedButtons.includes(
-                    "Weight & Metabolic Health"
-                  )
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Weight & Metabolic Health
-              </Button>
-              <Button
-                onClick={() =>
-                  handleButtonClick("Blood Sugar & Insulin Resistance")
-                }
-                style={{
-                  background: selectedButtons.includes(
-                    "Blood Sugar & Insulin Resistance"
-                  )
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Blood Sugar & Insulin Resistance
-              </Button>
-              <Button
-                onClick={() => handleButtonClick("Fertility & Hormones")}
-                style={{
-                  background: selectedButtons.includes("Fertility & Hormones")
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Fertility & Hormones
-              </Button>
-            </div>
-            <div className="flex gap-[13px]">
-              <Button
-                onClick={() =>
-                  handleButtonClick("Chronic Fatigue / Long COVID")
-                }
-                style={{
-                  background: selectedButtons.includes(
-                    "Chronic Fatigue / Long COVID"
-                  )
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Chronic Fatigue / Long COVID
-              </Button>
-              <Button
-                onClick={() => handleButtonClick("Anxiety & Sleep")}
-                style={{
-                  background: selectedButtons.includes("Anxiety & Sleep")
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Anxiety & Sleep
-              </Button>
-              <Button
-                onClick={() => handleButtonClick("Mold / Lyme / MCAS")}
-                style={{
-                  background: selectedButtons.includes("Mold / Lyme / MCAS")
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Mold / Lyme / MCAS
-              </Button>
-            </div>
-            <div className="flex gap-[13px]">
-              <Button
-                onClick={() => handleButtonClick("Inflammation & Pain")}
-                style={{
-                  background: selectedButtons.includes("Inflammation & Pain")
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Inflammation & Pain
-              </Button>
-              <Button
-                onClick={() => handleButtonClick("Postpartum / Pelvic Floor")}
-                style={{
-                  background: selectedButtons.includes(
-                    "Postpartum / Pelvic Floor"
-                  )
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Postpartum / Pelvic Floor
-              </Button>
-              <Button
-                onClick={() => handleButtonClick("Cancer Support")}
-                style={{
-                  background: selectedButtons.includes("Cancer Support")
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Cancer Support
-              </Button>
-              <Button
-                onClick={() => handleButtonClick("Other")}
-                style={{
-                  background: selectedButtons.includes("Other")
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                Other
-              </Button>
-            </div>
+                ))}
+              </div>
+            ))}
           </div>
           {isOtherSelected() ? (
             <div className="flex justify-center gap-[8px] items-start w-full">

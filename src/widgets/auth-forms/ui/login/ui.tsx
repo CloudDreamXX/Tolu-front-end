@@ -28,11 +28,9 @@ export const LoginForm = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // Validate both email and password together
     const parsedData = loginSchema.safeParse(formData);
 
     if (!parsedData.success) {
-      // Extract error messages
       const errors = parsedData.error.errors;
       setLoginError(errors.find(e => e.path[0] === 'email')?.message ?? "");
       setPasswordError(errors.find(e => e.path[0] === 'password')?.message ?? "");
@@ -45,8 +43,6 @@ export const LoginForm = () => {
       if (!response) {
         throw new Error("No response from server");
       }
-
-      console.log("API Response:", response);
 
       if (response.accessToken && response.user) {
         dispatch(

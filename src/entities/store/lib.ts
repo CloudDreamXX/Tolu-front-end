@@ -2,22 +2,16 @@ import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "../user";
+import coachOnboardingReducer from "./coachOnboardingSlice";
 
 const userPersistConfig = {
   key: "user",
   storage,
 };
 
-import coachOnboardingReducer from "./coachOnboardingSlice"; // update path accordingly
-
-const coachPersistConfig = {
-  key: "coachOnboarding",
-  storage,
-};
-
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
-  coachOnboarding: persistReducer(coachPersistConfig, coachOnboardingReducer),
+  coachOnboarding: coachOnboardingReducer,
 });
 
 export const store = configureStore({

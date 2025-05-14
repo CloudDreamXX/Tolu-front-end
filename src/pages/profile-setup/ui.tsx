@@ -15,7 +15,6 @@ export const ProfileSetup = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // dispatch(updateCoachField({ key: "profile_picture", value: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
         setFilePreview(reader.result as string);

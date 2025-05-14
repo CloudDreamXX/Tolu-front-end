@@ -18,8 +18,6 @@ export const InviteClients = () => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedFileName(file.name);
-      console.log("Uploaded file:", file);
-      // You can now store the file in Redux or upload to API here
     }
   };
 
@@ -84,6 +82,7 @@ export const InviteClients = () => {
             <p className="text-left font-[Nunito] text-black text-base font-medium">Manual Invite</p>
             {clientel.map((client) => (
                 <input
+                  key={client}
                   type="text"
                   placeholder="Enter email or phone"
                   className="h-[44px] w-full rounded-[8px] border border-[#DFDFDF] px-[16px] font-[Nunito] text-[14px] text-[#5F5F65]"

@@ -18,7 +18,7 @@ export const CheckEmail = () => {
       const verifyEmail = async () => {
         try {
           const msg = await UserService.verifyEmail({ email, token });
-          console.log("Email verification response:", msg);
+
           if (msg.user && msg.accessToken) {
             dispatch(
               setCredentials({

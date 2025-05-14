@@ -29,9 +29,7 @@ export const Register = () => {
     }
     setRoleID(formData.accountType === "client" ? 3 : 2);
     try {
-      console.log("Registering user with data:", dataBE);
       const data = await UserService.registerUser(dataBE);
-      console.log("User registered successfully", data);
       if(data.success) {
         navigate('/verify-email');
       }

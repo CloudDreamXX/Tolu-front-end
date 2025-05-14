@@ -2,7 +2,7 @@ import { UserService } from "entities/user";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const ForgotPassword = () => {
+export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const nav = useNavigate();
 
@@ -11,7 +11,6 @@ const ForgotPassword = () => {
     if (email) {
       try {
         const response = await UserService.forgotPassword(email);
-        console.log("Password reset email sent:", response);
         nav("/verify-email-pass");
       } catch (error) {
         console.error("Error sending password reset email:", error);
@@ -96,5 +95,3 @@ const ForgotPassword = () => {
     </div>
   );
 };
-
-export default ForgotPassword;

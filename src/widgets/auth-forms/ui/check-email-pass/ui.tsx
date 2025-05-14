@@ -15,9 +15,7 @@ export const VerifyEmailPass = () => {
       const verifyEmail = async () => {
         try {
           const msg = await UserService.verifyEmailPass({ email, token });
-          console.log("Email verification response:", msg);
           if (msg.user && msg.accessToken) {
-            console.log("User verified successfully:", msg.user);
             nav("/")
           }
         } catch (error) {

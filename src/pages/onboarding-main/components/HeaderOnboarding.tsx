@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 
 interface HeaderOnboardingProps {
-  currentStep: number; // 0-based index from 0 to 5
+  currentStep: number;
 }
 
 export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {

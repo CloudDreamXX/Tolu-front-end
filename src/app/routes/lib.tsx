@@ -11,7 +11,7 @@ import {
   ContentManagerPublished,
   ContentManagerArchived,
 } from "pages/content-manager";
-import ForgotPassword from "widgets/auth-forms/ui/forgot-password/ui";
+import {ForgotPassword} from "widgets/auth-forms/ui/forgot-password";
 import { NewPassword } from "widgets/auth-forms/ui/new-password";
 import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
@@ -20,7 +20,7 @@ import { OnboardingMain } from "pages/onboarding-main";
 import { SubscriptionPlan } from "pages/subscription-plan/ui";
 import { SelectType } from "pages/select-type";
 import { AboutYourPractice } from "pages/about-your-practice";
-import { VerifyEmailPass } from "widgets/auth-forms/ui/check-email-pass/ui";
+import { VerifyEmailPass } from "widgets/auth-forms/ui/check-email-pass";
 import { ProfileSetup } from "pages/profile-setup";
 import { InviteClients } from "pages/invite-clients";
 import { OnboardingFinish } from "pages/onboarding-finish";

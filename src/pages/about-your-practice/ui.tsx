@@ -33,7 +33,6 @@ export const AboutYourPractice = () => {
     const file = e.target.files?.[0];
     if (file && isValidFile(file)) {
       setSelectedFile(file);
-      // dispatch(updateCoachField({ key: "certificate_file", value: file }));
     }
   };
 
@@ -43,7 +42,6 @@ export const AboutYourPractice = () => {
     const file = e.dataTransfer.files?.[0];
     if (file && isValidFile(file)) {
       setSelectedFile(file);
-      // dispatch(updateCoachField({ key: "certificate_file", value: file }));
     }
   };
 

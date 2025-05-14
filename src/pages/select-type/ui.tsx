@@ -11,29 +11,29 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 
+const titlesAndIcons = [
+  {
+    title: "Clinical & Licensed Healthcare Providers",
+    icon: <Microscope size={20} />,
+  },
+  {
+    title: "Functional & Holistic Health Practitioners",
+    icon: <Leaf />,
+  },
+  {
+    title: "Lifestyle, Mind-Body, and Wellness Coaches",
+    icon: <Brain />,
+  },
+  {
+    title: "Women's Health & Specialty Coaches",
+    icon: <WomansLine />,
+  },
+  {
+    title: "Other",
+    icon: <Chemistry />,
+  },
+];
 export const SelectType = () => {
-  const titlesAndIcons = [
-    {
-      title: "Clinical & Licensed Healthcare Providers",
-      icon: <Microscope size={20} />,
-    },
-    {
-      title: "Functional & Holistic Health Practitioners",
-      icon: <Leaf />,
-    },
-    {
-      title: "Lifestyle, Mind-Body, and Wellness Coaches",
-      icon: <Brain />,
-    },
-    {
-      title: "Women's Health & Specialty Coaches",
-      icon: <WomansLine />,
-    },
-    {
-      title: "Other",
-      icon: <Chemistry />,
-    },
-  ];
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>(new Array(5).fill(""));
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
