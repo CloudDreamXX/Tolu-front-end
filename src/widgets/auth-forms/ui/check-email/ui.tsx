@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 export const CheckEmail = () => {
   const { search } = useLocation();
+  const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
   const nav = useNavigate();
   const query = new URLSearchParams(search);
@@ -25,6 +26,10 @@ export const CheckEmail = () => {
                 accessToken: msg.accessToken,
               })
             );
+            if(user.user?.roleID === 3) {
+              nav("/content-manager");
+              return;
+            }
             nav("/welcome");
           }
         } catch (error) {

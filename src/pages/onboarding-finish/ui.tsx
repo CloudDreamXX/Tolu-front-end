@@ -20,7 +20,7 @@ export const OnboardingFinish = () => {
           console.error("Error during onboarding:", res.success);
         }
       } catch (error) {
-        console.error("Error during onboarding:", error);
+        // console.error("Error during onboarding:", error);
       }
     }
   return (

@@ -40,6 +40,11 @@ export const userSlice = createSlice({
         };
       }
     },
+    setRoleID: (state, action) => {
+      if (state.user) {
+        state.user.roleID = action.payload.roleID;
+      }
+    },
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -51,6 +56,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout, setUser, setLoading } =
+export const { setCredentials, logout, setUser, setRoleID, setLoading } =
   userSlice.actions;
 export default userSlice.reducer;

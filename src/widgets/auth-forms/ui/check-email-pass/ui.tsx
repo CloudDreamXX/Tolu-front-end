@@ -17,10 +17,8 @@ export const VerifyEmailPass = () => {
           const msg = await UserService.verifyEmailPass({ email, token });
           console.log("Email verification response:", msg);
           if (msg.user && msg.accessToken) {
-            // Handle successful verification, e.g., navigate to a different page
             console.log("User verified successfully:", msg.user);
             nav("/")
-            // Redirect or show success message
           }
         } catch (error) {
           console.error("Error verifying email:", error);
