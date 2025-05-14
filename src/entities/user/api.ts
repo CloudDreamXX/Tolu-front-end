@@ -51,8 +51,8 @@ export class UserService {
     );
   }
 
-  static async verifyEmailPass({email, token}: IVerify): Promise<{success: string}> {
-    return ApiService.post<{success: string}>(
+  static async verifyEmailPass({email, token}: IVerify): Promise<AuthResponse> {
+    return ApiService.post<AuthResponse>(
       API_ROUTES.USER.VERIFY_RESET_TOKEN,
       { email, token }
     );
@@ -61,19 +61,11 @@ export class UserService {
   static async onboardUser(data: CoachOnboardingState, token: string | null): Promise<{ success: string }> {
     const formData = new FormData();
 
-    const {
-      ...onboardingFields
-    } = data;
-
-    formData.append("onboarding_data", JSON.stringify(onboardingFields));
-
-    // if (certificate_file) {
-    //   formData.append("license_file", certificate_file);
-    // }
-
-    // if (profile_picture) {
-    //   formData.append("headshot", profile_picture);
-    // }
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value as string | Blob);
+      }
+    });
 
     const response = await ApiService.post<string>(
       API_ROUTES.USER.ONBOARD_USER,

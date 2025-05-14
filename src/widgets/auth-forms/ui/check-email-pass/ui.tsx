@@ -1,11 +1,12 @@
 import { UserService } from "entities/user";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const VerifyEmailPass = () => {
     const { search } = useLocation();
 
   const query = new URLSearchParams(search);
+  const nav = useNavigate();
   const token = query.get("token") ?? "";
   const email = query.get("email") ?? "";
 
@@ -15,6 +16,12 @@ export const VerifyEmailPass = () => {
         try {
           const msg = await UserService.verifyEmailPass({ email, token });
           console.log("Email verification response:", msg);
+          if (msg.user && msg.accessToken) {
+            // Handle successful verification, e.g., navigate to a different page
+            console.log("User verified successfully:", msg.user);
+            nav("/")
+            // Redirect or show success message
+          }
         } catch (error) {
           console.error("Error verifying email:", error);
         }
