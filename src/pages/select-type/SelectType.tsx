@@ -60,7 +60,6 @@ export const SelectType = () => {
 
     if (!isAllSelected()) return;
 
-    // Filter out empty values just in case (extra safety)
     const filledTypes = selectedOptions.filter(option => option.trim() !== "");
 
     dispatch(updateCoachField({ key: "practitioner_types", value: filledTypes }));

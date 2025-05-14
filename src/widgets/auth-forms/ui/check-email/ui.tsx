@@ -8,7 +8,6 @@ export const CheckEmail = () => {
   const { search } = useLocation();
   const dispatch = useDispatch();
   const nav = useNavigate();
-  const user = useSelector((state: RootState) => state.user)
   const query = new URLSearchParams(search);
   const token = query.get("token") ?? "";
   const email = query.get("email") ?? "";
@@ -54,7 +53,7 @@ export const CheckEmail = () => {
               Just a moment...
             </h1>
             <h3 className="text-center self-stretch text-black font-[Nunito] text-[24px] font-normal">
-              We’re verifying your link. This will only take a few<br/> seconds.
+              We&apos;re verifying your link. This will only take a few<br/> seconds.
             </h3>
           </div>
           <p className="text-black font-[Nunito] text-[14px] font-normal">
@@ -68,8 +67,8 @@ export const CheckEmail = () => {
               Check your inbox
             </h1>
             <h3 className="text-center self-stretch text-black font-[Nunito] text-[24px] font-normal">
-              We’ve sent you a link. Follow the instructions in<br/> your email to
-              continue. Don’t forget to check your<br/> spam or promotions folder.
+              We&apos;ve sent you a link. Follow the instructions in<br/> your email to
+              continue. Don&apos;t forget to check your<br/> spam or promotions folder.
             </h3>
           </div>
           <p className="text-black font-[Nunito] text-[14px] font-normal">

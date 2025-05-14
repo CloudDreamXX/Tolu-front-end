@@ -3,13 +3,14 @@ import { Footer } from "pages/onboarding-welcome/components";
 import { UploadCloud } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const nav = useNavigate();
+  const ref = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -22,6 +23,10 @@ export const ProfileSetup = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  const handleClick = () => {
+    ref.current?.click();
+  }
 
   return (
     <div
@@ -112,7 +117,7 @@ export const ProfileSetup = () => {
             ) : (
               <div
                 className="w-full border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer"
-                onClick={() => document.getElementById("file-upload")?.click()}
+                onClick={handleClick}
               >
                 <UploadCloud color="#1C63DB" size={32} />
                 <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">Click to upload</p>
@@ -120,7 +125,7 @@ export const ProfileSetup = () => {
                 <p className="text-[#5F5F65] text-[14px] font-[Nunito]">PDF, JPG or PNG</p>
               </div>
             )}
-            <input id="file-upload" type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+            <input ref={ref} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
           </div>
 
           {/* Two-Factor Auth */}
