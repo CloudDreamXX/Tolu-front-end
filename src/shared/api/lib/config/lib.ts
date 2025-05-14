@@ -8,6 +8,7 @@ export const API_ROUTES = {
     PROFILE: '/user/profile',
     DELETE_ACCOUNT: '/user/delete-account',
     VERIFY_RESET_TOKEN: '/user/verify-reset-token',
+    ONBOARD_USER: '/coach/onboarding',
   },
   AI: {
     SEARCH: '/ai-search/',

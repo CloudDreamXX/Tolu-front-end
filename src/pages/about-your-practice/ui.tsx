@@ -83,7 +83,7 @@ export const AboutYourPractice = () => {
         background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
       }}
     >
-      <HeaderOnboarding />
+      <HeaderOnboarding currentStep={2}/>
       <main className="flex flex-col items-center flex-1 justify-center w-full gap-[32px] self-stretch">
         <h2 className="font-[Inter] text-[32px] text-center font-medium text-black w-[700px]">
           About your practice

@@ -56,7 +56,7 @@ export const SelectType = () => {
         background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
       }}
     >
-      <HeaderOnboarding />
+      <HeaderOnboarding currentStep={0}/>
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
         <h1 className="flex text-center font-[Inter] text-[32px] font-medium text-black">
           What type of practitioner best describes your role?

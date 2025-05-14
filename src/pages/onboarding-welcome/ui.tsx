@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Footer, MiddleCard } from "./components";
+import { Footer, MiddleCard, Header } from "./components";
 import { contents } from "./index";
 import Lock from "shared/assets/icons/lock";
 import Medkit from "shared/assets/icons/medkit";
@@ -7,7 +7,6 @@ import PapersLock from "shared/assets/icons/papers-lock";
 import Handshake from "shared/assets/icons/handshake";
 import Like from "shared/assets/icons/like";
 import { useNavigate } from "react-router-dom";
-import { Header } from "./components";
 
 export const OnboardingWerlcome = () => {
   const icons = [

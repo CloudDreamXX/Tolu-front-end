@@ -1,8 +1,53 @@
 import { Footer, Header } from "pages/onboarding-welcome/components";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "entities/store";
+import { setCredentials, UserService } from "entities/user";
+import { clearTempCred } from "entities/store/tempCredSlice";
+import { access } from "fs";
 
 export const OnboardingFinish = () => {
+    const coachOnboarding = useSelector((state: RootState) => state.coachOnboarding);
+    const token = useSelector((state: RootState) => state.user.token);
+    const tempCred = useSelector((state: RootState) => state.tempCred);
+    const dispatch = useDispatch();
     const nav = useNavigate();
+
+    const handleLastClick = async () => {
+  try {
+    // Step 1: Log in using saved email/password
+    alert(tempCred.email);
+    alert(tempCred.password);
+    const loginResponse = await UserService.login({
+      email: tempCred.email,
+      password: tempCred.password,
+    });
+
+    if (loginResponse?.accessToken && loginResponse?.user) {
+      // Step 2: Save token to Redux
+      dispatch(setCredentials({
+        user: loginResponse.user,
+        accessToken: loginResponse.accessToken,
+      }));
+      alert(loginResponse.accessToken);
+
+      // Step 3: Onboard the user using the freshly acquired token
+      const onboardResponse = await UserService.onboardUser(coachOnboarding, loginResponse.accessToken);
+
+      if (onboardResponse.success) {
+        dispatch(clearTempCred()); // Clean up
+        nav("/content-manager/published");
+      } else {
+        console.error("Onboarding failed:", onboardResponse.success);
+      }
+    } else {
+      console.error("Login failed after registration:", loginResponse);
+    }
+  } catch (error) {
+    console.error("Error during login/onboarding:", error);
+  }
+  };
+
   return (
     <div
       className="w-full h-screen m-0 p-0"
@@ -23,7 +68,7 @@ export const OnboardingFinish = () => {
             </p>
           </div>
           <button
-            onClick={() => nav("/")}
+            onClick={handleLastClick}
             className="flex justify-center items-center h-[44px] w-[250px] p-[16px] rounded-full bg-[#1C63DB] text-white"
           >
             Go to My Dashboard

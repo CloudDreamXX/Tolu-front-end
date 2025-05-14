@@ -1,5 +1,6 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import { IRegisterUser, IUser } from "./model";
+import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 
 interface LoginCredentials {
   email: string;
@@ -55,6 +56,39 @@ export class UserService {
       API_ROUTES.USER.VERIFY_RESET_TOKEN,
       { email, token }
     );
+  }
+
+  static async onboardUser(data: CoachOnboardingState, token: string | null): Promise<{ success: string }> {
+    const formData = new FormData();
+
+    const {
+      ...onboardingFields
+    } = data;
+
+    formData.append("onboarding_data", JSON.stringify(onboardingFields));
+
+    alert(token);
+
+    // if (certificate_file) {
+    //   formData.append("license_file", certificate_file);
+    // }
+
+    // if (profile_picture) {
+    //   formData.append("headshot", profile_picture);
+    // }
+
+    const response = await ApiService.post<string>(
+      API_ROUTES.USER.ONBOARD_USER,
+      formData,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        withCredentials: true,
+      }
+    );
+
+    return { success: response };
   }
 
   static async checkUserExistence(
