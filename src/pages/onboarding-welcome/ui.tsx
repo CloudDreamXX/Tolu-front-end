@@ -25,7 +25,7 @@ export const OnboardingWerlcome = () => {
     setCurentWindow((prev) => prev + 1);
 
     if (curentWindow === contents.length) {
-      nav("/onboarding-welcome");
+      nav("/select-type");
     }
   }
 

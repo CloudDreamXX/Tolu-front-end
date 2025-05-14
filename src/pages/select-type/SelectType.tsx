@@ -7,9 +7,12 @@ import Leaf from "shared/assets/icons/leaf";
 import Brain from "shared/assets/icons/brain";
 import WomansLine from "shared/assets/icons/womans-line";
 import Chemistry from "shared/assets/icons/chemistry";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateCoachField } from "entities/store/coachOnboardingSlice";
 
 export const SelectType = () => {
-    const titlesAndIcosn = [
+  const titlesAndIcons = [
     {
       title: "Clinical & Licensed Healthcare Providers",
       icon: <Microscope size={20} />,
@@ -24,15 +27,18 @@ export const SelectType = () => {
     },
     {
       title: "Women's Health & Specialty Coaches",
-        icon: <WomansLine />,
+      icon: <WomansLine />,
     },
     {
       title: "Other",
       icon: <Chemistry />,
     },
-    ]
+  ];
+
   const [selectedOptions, setSelectedOptions] = useState<string[]>(new Array(5).fill(""));
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+  const dispatch = useDispatch();
+  const nav = useNavigate();
 
   const handleSelection = (index: number, value: string) => {
     const updatedOptions = [...selectedOptions];
@@ -49,6 +55,18 @@ export const SelectType = () => {
     return selectedOptions.every(option => option !== "");
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isAllSelected()) return;
+
+    // Filter out empty values just in case (extra safety)
+    const filledTypes = selectedOptions.filter(option => option.trim() !== "");
+
+    dispatch(updateCoachField({ key: "practitioner_types", value: filledTypes }));
+    nav("/onboarding-welcome");
+  };
+
   return (
     <div
       className="w-full h-full"
@@ -56,13 +74,16 @@ export const SelectType = () => {
         background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
       }}
     >
-      <HeaderOnboarding currentStep={0}/>
+      <HeaderOnboarding currentStep={0} />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
         <h1 className="flex text-center font-[Inter] text-[32px] font-medium text-black">
           What type of practitioner best describes your role?
         </h1>
-        <form onSubmit={() => {}} className="flex flex-col gap-[20px] p-[40px] items-center rounded-[20px] bg-white shadow-md border-[1px] border-[#1C63DB]">
-          {titlesAndIcosn.map((item, index) => (
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-[20px] p-[40px] items-center rounded-[20px] bg-white shadow-md border-[1px] border-[#1C63DB]"
+        >
+          {titlesAndIcons.map((item, index) => (
             <div key={index} className="flex flex-col gap-[20px] w-[460px] items-start">
               <div className="flex items-center self-stretch gap-[8px]">
                 {item.icon}
@@ -76,15 +97,14 @@ export const SelectType = () => {
                 <button
                   type="button"
                   className="flex w-full items-center justify-between bg-[#FAFAFA] border-[#9D9D9D] border-[1px] rounded-[8px] h-[52px] px-[12px] cursor-pointer"
-                  onClick={() => toggleDropdown(index)} // Toggle dropdown visibility based on index
+                  onClick={() => toggleDropdown(index)}
                 >
                   <span className="text-[#5F5F65] font-[Nunito] text-[16px]">
                     {selectedOptions[index] || "Select your type"}
                   </span>
                   <ChevronDown className="text-[#9D9D9D]" />
                 </button>
-                {/* Dropdown options */}
-                {activeDropdown === index && ( // Only show dropdown if it's the active one
+                {activeDropdown === index && (
                   <div className="absolute z-10 flex flex-col gap-[10px] w-full mt-[4px] bg-white border-[#9D9D9D] border-[1px] rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto">
                     {[
                       "Clinical Psychologist",
@@ -94,14 +114,14 @@ export const SelectType = () => {
                       "Clinical Social Worker",
                       "Licensed Professional Counselor",
                       "Marriage and Family Therapist",
-                    ].map((item) => (
+                    ].map((option) => (
                       <button
                         type="button"
-                        key={item}
-                        className={`p-[12px] text-[#1D1D1F] text-[16px] font-medium cursor-pointer hover:bg-[#F1F1F1] hover:text-[#1C63DB] ${selectedOptions[index] === item ? "bg-[#E4E9F2]" : ""}`}
-                        onClick={() => handleSelection(index, item)} // Update selection for this dropdown
+                        key={option}
+                        className={`p-[12px] text-[#1D1D1F] text-[16px] font-medium cursor-pointer hover:bg-[#F1F1F1] hover:text-[#1C63DB] ${selectedOptions[index] === option ? "bg-[#E4E9F2]" : ""}`}
+                        onClick={() => handleSelection(index, option)}
                       >
-                        {item}
+                        {option}
                       </button>
                     ))}
                   </div>
@@ -109,8 +129,17 @@ export const SelectType = () => {
               </div>
             </div>
           ))}
+
+          <button
+            type="submit"
+            disabled={!isAllSelected()}
+            className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
+              isAllSelected() ? "bg-[#1C63DB] text-white" : "bg-[#D5DAE2] text-[#5F5F65]"
+            }`}
+          >
+            Next
+          </button>
         </form>
-        <button type="submit" className={isAllSelected() ? "flex items-center justify-center w-[250px] h-[44px] text-white p-[16px] rounded-full bg-[#1C63DB]" : "flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full bg-[#D5DAE2]"}>Next</button>
       </main>
       <Footer />
     </div>

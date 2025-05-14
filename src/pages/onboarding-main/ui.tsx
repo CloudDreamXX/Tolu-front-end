@@ -13,11 +13,7 @@ export const OnboardingMain = () => {
   const nav = useNavigate();
 
   const coachData = useSelector((state: RootState) => state.coachOnboarding);
-
-useEffect(() => {
-  console.log("Current primary_niches in Redux:", coachData.primary_niches);
-}, [coachData.primary_niches]);
-
+  
   useEffect(() => {
     if (selectedButtons.length > 0) {
       setShowHint(true);

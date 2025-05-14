@@ -67,8 +67,6 @@ export class UserService {
 
     formData.append("onboarding_data", JSON.stringify(onboardingFields));
 
-    alert(token);
-
     // if (certificate_file) {
     //   formData.append("license_file", certificate_file);
     // }
