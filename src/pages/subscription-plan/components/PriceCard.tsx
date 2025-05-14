@@ -21,11 +21,6 @@ export const PriceCard: React.FC<PriceCardProps> = ({
   return (
     <button onClick={onClick} className={active ? "bg-[#F4F9FF] rounded-[16px] border-[1px] border-[#AAC6EC] py-[40px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]" : "rounded-[16px] bg-white border-[1px] border-[#AAC6EC] py-[40px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]"}>
       <div className="flex flex-col gap-[4px] items-center">
-      {/* {mostPopular && (
-        <div className="text-white rotate-[34.108deg] font-inter text-[18px] font-bold flex items-center gap-[10px] w-[360.865px] p-[8px] relative top-[-30px] bg-[#1C63DB] right-[-160.28px] justify-center">
-            Most popular
-        </div>
-      )} */}
         <h2 className=" text-[#5F5F65] font-[Inter] text-[18px]/[25.2px] font-medium">
           STARTING PLAN
         </h2>
@@ -54,7 +49,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
         </li>
         <li className="flex gap-[16px] items-center">
           <Check color="#1C63DB" size={20} />
-          <span className="text-[#1d1d1f] font-[Inter] text-[20px] font-medium">
+          <span className="text-[#1d1d1f] font-[Inter] text-[20px] font-medium text-nowrap">
             Access basic content library (templates, basics)
           </span>
         </li>

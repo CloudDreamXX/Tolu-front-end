@@ -32,7 +32,7 @@ export const Register = () => {
       console.log("Registering user with data:", dataBE);
       const data = await UserService.registerUser(dataBE);
       console.log("User registered successfully", data);
-      if(data.success && dataBE.roleID === 3) {
+      if(data.success) {
         navigate('/verify-email');
       }
     }

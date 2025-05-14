@@ -253,7 +253,7 @@ export const OnboardingMain = () => {
             Back
           </button>
           <Link
-            to="/about-your-practice"
+            to={selectedButtons.length > 0 ? "/about-your-practice" : ''}
             className={
               selectedButtons.length >= 1
                 ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"

@@ -44,7 +44,6 @@ export const ProfileSetup = () => {
 
         <form className="flex flex-col w-[700px] max-h-[700px] overflow-y-auto py-[40px] px-[40px] bg-white rounded-[20px] shadow-md gap-[24px]">
           {/* First and Last Name */}
-          <div className="flex gap-[20px]">
             <div className="flex flex-col flex-1 gap-[8px]">
               <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">First name</label>
               <input
@@ -63,7 +62,6 @@ export const ProfileSetup = () => {
                 className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
               />
             </div>
-          </div>
 
           {/* Age */}
           <div className="flex flex-col gap-[8px]">
@@ -116,7 +114,7 @@ export const ProfileSetup = () => {
               <img src={filePreview} className="w-[150px] h-[150px] rounded-[12px] object-cover" />
             ) : (
               <div
-                className="w-full border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer"
+                className="w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer"
                 onClick={handleClick}
               >
                 <UploadCloud color="#1C63DB" size={32} />

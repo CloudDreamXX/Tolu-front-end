@@ -129,7 +129,9 @@ export const SelectType = () => {
             </div>
           ))}
 
+        </form>
           <button
+            onClick={handleSubmit}
             type="submit"
             disabled={!isAllSelected()}
             className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
@@ -138,7 +140,6 @@ export const SelectType = () => {
           >
             Next
           </button>
-        </form>
       </main>
       <Footer />
     </div>

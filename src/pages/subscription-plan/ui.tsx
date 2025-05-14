@@ -21,12 +21,12 @@ export const SubscriptionPlan = () => {
         <h3 className="font-[Inter] text-[32px] font-medium text-black text-center self-stretch">
           Choose subscription plan
         </h3>
-        <section className="flex gap-[32px] w-[1200px] items-center">
+        <section className="flex gap-[32px] w-[1050px] items-center">
           <PriceCard
             onClick={() => setActiveCard("starting")}
             active={activeCard === "starting"}
             plan="starting"
-            price="$33.99"
+            price="$00.00"
             features={[
               "1 Coach",
               "5 Clients",
@@ -40,7 +40,7 @@ export const SubscriptionPlan = () => {
             onClick={() => setActiveCard("professional")}
             active={activeCard === "professional"}
             plan="professional"
-            price="$99.99"
+            price="$33.99"
             mostPopular
             features={[
               "1 Coach",
@@ -52,7 +52,7 @@ export const SubscriptionPlan = () => {
             ]}
           />
         </section>
-        <div className="flex items-center gap-[16px]">
+        <div className="pb-10 flex items-center gap-[16px]">
         <button
           onClick={() => nav(-1)}
           className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"

@@ -58,11 +58,10 @@ export class UserService {
     );
   }
 
-static async onboardUser(data: CoachOnboardingState, token: string | null): Promise<{ success: string }> {
+static async onboardUser(data: CoachOnboardingState, token: string | null): Promise<{ message: string }> {
   const formData = new FormData();
-
-  // Only append JSON string
-  formData.append("onboarding_data", JSON.stringify({ detail: "qweqweqweqweqwe" }));
+  
+  formData.append("onboarding_data", JSON.stringify({data}));
 
   const response = await ApiService.post<string>(
     API_ROUTES.USER.ONBOARD_USER,
@@ -70,14 +69,13 @@ static async onboardUser(data: CoachOnboardingState, token: string | null): Prom
     {
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        // 👇 Force Axios to detect boundary itself
         "Content-Type": "multipart/form-data",
       },
       withCredentials: true,
     }
   );
 
-  return { success: response };
+  return { message: response };
 }
 
 

@@ -19,6 +19,16 @@ export const AboutYourPractice = () => {
   const [labsUsed, setLabsUsed] = useState("");
   const nav = useNavigate();
 
+  const allFilled = () => {
+    return (
+      school.length > 0 &&
+      recentClients.length > 0 &&
+      targetClients.length > 0 &&
+      labsUsed.length > 0 &&
+      selectedFile !== null
+    );
+  }
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && isValidFile(file)) {
@@ -202,7 +212,8 @@ export const AboutYourPractice = () => {
           <button onClick={() => nav(-1)} className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]" style={{ background: "rgba(0, 143, 246, 0.10)" }}>
             Back
           </button>
-          <Link to="/subscription-plan" className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white">
+          <Link to={allFilled() === true ? "/subscription-plan" : ""} className={allFilled() === true ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
+                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"}>
             Next
           </Link>
         </div>

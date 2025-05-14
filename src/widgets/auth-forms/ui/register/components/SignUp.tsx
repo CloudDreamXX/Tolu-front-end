@@ -67,7 +67,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             Email
           </label>
           <input
-            type="text"
+            type="email"
             placeholder="Enter Email"
             name="email"
             onChange={formDataChangeHandler}

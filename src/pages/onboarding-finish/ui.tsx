@@ -11,16 +11,12 @@ export const OnboardingFinish = () => {
 
     const handleLastClick = async () => {
       try {
-        const res = await UserService.onboardUser(coachOnboarding, token);
-        console.log("Onboarding response:", res);
-        if (res.success) {
+        const message = await UserService.onboardUser(coachOnboarding, token);
+        console.log("Onboarding response:", message);
           console.log("User onboarded successfully");
           nav("/content-manager/published");
-        } else {
-          console.error("Error during onboarding:", res.success);
-        }
       } catch (error) {
-        // console.error("Error during onboarding:", error);
+        console.error("Error during onboarding:", error);
       }
     }
   return (
