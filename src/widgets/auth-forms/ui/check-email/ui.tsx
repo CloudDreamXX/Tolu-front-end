@@ -1,10 +1,14 @@
-import { UserService } from "entities/user";
+import { RootState } from "entities/store";
+import { setCredentials, UserService } from "entities/user";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export const CheckEmail = () => {
   const { search } = useLocation();
+  const dispatch = useDispatch();
   const nav = useNavigate();
+  const user = useSelector((state: RootState) => state.user)
   const query = new URLSearchParams(search);
   const token = query.get("token") ?? "";
   const email = query.get("email") ?? "";
@@ -15,7 +19,13 @@ export const CheckEmail = () => {
         try {
           const msg = await UserService.verifyEmail({ email, token });
           console.log("Email verification response:", msg);
-          if (msg.success) {
+          if (msg.user && msg.accessToken) {
+            dispatch(
+              setCredentials({
+                user: msg.user,
+                accessToken: msg.accessToken,
+              })
+            );
             nav("/welcome");
           }
         } catch (error) {

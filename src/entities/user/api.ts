@@ -44,8 +44,8 @@ export class UserService {
     );
   }
 
-  static async verifyEmail({email, token}: IVerify): Promise<{success: string}> {
-    return ApiService.post<{success: string}>(
+  static async verifyEmail({email, token}: IVerify): Promise<AuthResponse> {
+    return ApiService.post<AuthResponse>(
       API_ROUTES.USER.COMPLETE_SIGNUP,
       { email, token }
     );

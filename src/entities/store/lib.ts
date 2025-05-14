@@ -15,16 +15,9 @@ const coachPersistConfig = {
   storage,
 };
 
-import tempCredReducer from "./tempCredSlice"; // update path accordingly
-const tempCr = {
-  key: "tempCred",
-  storage,
-};
-
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
   coachOnboarding: persistReducer(coachPersistConfig, coachOnboardingReducer),
-  tempCred: persistReducer(tempCr, tempCredReducer),
 });
 
 export const store = configureStore({
