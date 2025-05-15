@@ -5,6 +5,7 @@ import { getUserRole } from "shared/lib";
 interface InitialState {
   user: IUser | null;
   token: string | null;
+  tokenNewPassword: string | null;
   userType: { role: string } | null;
   isLoading: boolean;
 }
@@ -12,6 +13,7 @@ interface InitialState {
 const initialState: InitialState = {
   user: null,
   token: null,
+  tokenNewPassword: null,
   userType: null,
   isLoading: true,
 };
@@ -33,6 +35,7 @@ export const userSlice = createSlice({
     setCredentials: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.accessToken;
+      state.tokenNewPassword = action.payload.tokenNewPassword;
 
       if (action.payload.user?.email) {
         state.userType = {
@@ -48,6 +51,7 @@ export const userSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.tokenNewPassword = null;
       state.userType = null;
     },
     setLoading: (state, action) => {

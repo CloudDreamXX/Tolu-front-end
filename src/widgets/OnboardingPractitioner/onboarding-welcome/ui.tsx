@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Footer } from "../Footer";
-import { Header } from "../Header";
+import { Footer } from "../../Footer";
+import { Header } from "../../Header";
 import { MiddleCard } from "./components";
 import { contents } from "./index";
 import Lock from "shared/assets/icons/lock";

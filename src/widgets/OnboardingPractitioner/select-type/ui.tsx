@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import CircleQuestion from "shared/assets/icons/circle-question";
-import { Footer } from "../Footer";
-import { HeaderOnboarding } from "../HeaderOnboarding";
+import { Footer } from "../../Footer";
+import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";

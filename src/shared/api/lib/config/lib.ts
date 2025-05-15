@@ -1,5 +1,6 @@
 export const API_ROUTES = {
   USER: {
+    SET_NEW_PASSWORD: "/user/reset-password",
     EXIST: "/user-exist/{email}",
     SIGNUP: "/user/signup",
     COMPLETE_SIGNUP: "/user/complete-signup",

@@ -23,6 +23,7 @@ import { AboutYourPractice } from "widgets/OnboardingPractitioner/about-your-pra
 import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
 import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
 import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
+import { WelcomeScreen } from "widgets/OnboardingClient/WelcomeScreen";
 
 export const AppRoutes = () => {
   return (
@@ -37,7 +38,8 @@ export const AppRoutes = () => {
       <Route path="/about-your-practice" element={<AboutYourPractice />} />
       <Route path="/subscription-plan" element={<SubscriptionPlan />} />
       <Route path="/select-type" element={<SelectType />} />
-      <Route path="/welcome" element={<OnboardingWerlcome />} />
+      <Route path="/welcome/client" element={<WelcomeScreen />} />
+      <Route path="/welcome/practitioner" element={<OnboardingWerlcome />} />
       <Route path="/onboarding-welcome" element={<OnboardingMain />} />
       <Route path="/new-password" element={<NewPassword />} />
       <Route path="/invite-clients" element={<InviteClients />} />

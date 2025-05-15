@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Footer } from "../Footer";
+import { Footer } from "../../Footer";
 import { Button, HeaderOnboarding } from "./components";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";

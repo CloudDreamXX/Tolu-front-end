@@ -40,6 +40,17 @@ export class UserService {
     }>(API_ROUTES.USER.FORGOT_PASSWORD, { email });
   }
 
+  static async setNewPassword(
+    email: string,
+    token: string,
+    new_password: string
+  ): Promise<{ message: string }> {
+    return ApiService.post<{ message: string }>(
+      API_ROUTES.USER.SET_NEW_PASSWORD,
+      { email, token, new_password }
+    );
+  }
+
   static async registerUser(
     userInfo: IRegisterUser
   ): Promise<{ success: boolean }> {

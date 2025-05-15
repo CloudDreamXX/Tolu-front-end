@@ -1,5 +1,5 @@
-import { Footer } from "../Footer";
-import { Header } from "../Header";
+import { Footer } from "../../Footer";
+import { Header } from "../../Header";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "entities/store";

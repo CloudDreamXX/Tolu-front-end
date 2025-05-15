@@ -1,6 +1,12 @@
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export const NewPassword = () => {
+const { user: userData, tokenNewPassword } = useSelector((state: RootState) => state.user);
+  const nav = useNavigate();
   const [formData, setFormData] = useState({
     newPassword: "",
     newPasswordRepeat: "",
@@ -12,12 +18,37 @@ export const NewPassword = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (formData.newPassword !== formData.newPasswordRepeat) {
-      setPasswordError("Passwords do not match");
+const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+
+  if (formData.newPassword !== formData.newPasswordRepeat) {
+    setPasswordError("Passwords do not match");
+    return;
+  }
+
+  try {
+    if (userData?.email && tokenNewPassword) {
+      console.log("userData", userData?.email);
+      console.log("tokenNewPassword", tokenNewPassword);
+      const msg = await UserService.setNewPassword(
+        userData.email,
+        tokenNewPassword,
+        formData.newPassword
+      );
+
+      if (msg.message) {
+        console.log("Password updated successfully");
+        nav("/");
+      }
+    } else {
+      setPasswordError("Missing email or reset token.");
     }
-  };
+  } catch (error) {
+    console.error("Error updating password:", error);
+    setPasswordError("Failed to update password. Please try again.");
+  }
+};
+
 
   return (
     <div className="w-full h-screen flex items-start py-0">

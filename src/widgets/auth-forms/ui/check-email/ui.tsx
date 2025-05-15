@@ -5,14 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
 type CheckEmailProps = {
-  from: "register" | "forgot-password"
-}; 
+  from: "register" | "forgot-password";
+};
 
-export const CheckEmail: React.FC<CheckEmailProps> = ({from}) => {
+export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
+  const nav = useNavigate();
+  const dispatch = useDispatch();
   const { search } = useLocation();
   const user = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch();
-  const nav = useNavigate();
   const query = new URLSearchParams(search);
   const token = query.get("token") ?? "";
   const email = query.get("email") ?? "";
@@ -32,10 +32,10 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({from}) => {
                 })
               );
               if (user.user?.roleID === 3) {
-                nav("/content-manager");
+                nav("/welcome/client");
                 return;
               }
-              nav("/welcome");
+              nav("/welcome/practitioner");
             }
           } catch (error) {
             console.error("Error verifying email:", error);
@@ -50,9 +50,14 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({from}) => {
         const verifyEmail = async () => {
           try {
             const msg = await UserService.verifyEmailPass({ email, token });
-            if (msg.user && msg.accessToken) {
-              nav("/");
-            }
+            dispatch(
+              setCredentials({
+                user: { email },
+                accessToken: null,
+                tokenNewPassword: token,
+              })
+            );
+            nav("/");
           } catch (error) {
             console.error("Error verifying email:", error);
           }

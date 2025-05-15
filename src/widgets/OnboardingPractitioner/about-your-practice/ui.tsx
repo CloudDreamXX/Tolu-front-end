@@ -1,5 +1,5 @@
-import { HeaderOnboarding } from "../HeaderOnboarding";
-import { Footer } from "../Footer";
+import { HeaderOnboarding } from "../../HeaderOnboarding";
+import { Footer } from "../../Footer";
 import { useRef, useState } from "react";
 import UploadCloud from "shared/assets/icons/upload-cloud";
 import { Link, useNavigate } from "react-router-dom";

@@ -28,7 +28,8 @@ const checkPath = () => {
     location.pathname === "/new-password" ||
     location.pathname === "/verify-email" ||
     location.pathname === "/verify-email-pass" ||
-    location.pathname === "/welcome" ||
+    location.pathname === "/welcome/client" ||
+    location.pathname === "/welcome/practitioner" ||
     location.pathname === "/onboarding-welcome" ||
     location.pathname === "/subscription-plan" ||
     location.pathname === "/select-type" ||
