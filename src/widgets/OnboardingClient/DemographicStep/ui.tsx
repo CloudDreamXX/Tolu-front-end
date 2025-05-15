@@ -4,7 +4,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "shared/ui/select";
@@ -54,7 +53,10 @@ export const DemographicStep = () => {
               <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Menopause Status *
               </label>
-
+              <div className="gap-6 flex w-full items-center">
+                <div className="flex gap-4 flex-1 items-center">
+                </div>
+              </div>
             </div>
             <div className="flex w-full items-start gap-6 self-stretch">
               <div className="flex flex-col w-full flex-1 items-start gap-2">
