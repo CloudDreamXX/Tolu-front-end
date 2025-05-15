@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
+import { AuthPageWrapper } from "shared/ui";
 
 export const OnboardingFinish = () => {
   const coachOnboarding = useSelector(
@@ -21,12 +22,7 @@ export const OnboardingFinish = () => {
     }
   };
   return (
-    <div
-      className="w-full h-screen m-0 p-0"
-      style={{
-        background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
-      }}
-    >
+    <AuthPageWrapper>
       <Header />
       <main className="flex flex-col items-center flex-1 justify-center self-stretch mt-20">
         <div className="flex flex-col items-center justify-center gap-[32px] py-[56px] px-[100px] rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
@@ -49,6 +45,6 @@ export const OnboardingFinish = () => {
         </div>
       </main>
       <Footer />
-    </div>
+    </AuthPageWrapper>
   );
 };

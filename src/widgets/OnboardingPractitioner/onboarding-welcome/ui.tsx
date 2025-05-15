@@ -9,6 +9,7 @@ import PapersLock from "shared/assets/icons/papers-lock";
 import Handshake from "shared/assets/icons/handshake";
 import Like from "shared/assets/icons/like";
 import { useNavigate } from "react-router-dom";
+import { AuthPageWrapper } from "shared/ui";
 
 export const OnboardingWerlcome = () => {
   const icons = [
@@ -32,12 +33,7 @@ export const OnboardingWerlcome = () => {
   };
 
   return (
-    <div
-      className="w-full h-screen m-0 p-0"
-      style={{
-        background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
-      }}
-    >
+    <AuthPageWrapper>
       <Header />
       <main className="flex flex-col items-center flex-1 justify-center self-stretch">
         {curentWindow === 0 ? (
@@ -70,6 +66,6 @@ export const OnboardingWerlcome = () => {
         )}
       </main>
       <Footer />
-    </div>
-  );
+    </AuthPageWrapper>  
+);
 };

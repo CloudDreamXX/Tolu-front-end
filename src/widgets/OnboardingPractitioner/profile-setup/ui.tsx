@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthPageWrapper, Input } from "shared/ui";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
@@ -28,12 +29,7 @@ export const ProfileSetup = () => {
   };
 
   return (
-    <div
-      className="w-full h-full min-h-screen pb-10"
-      style={{
-        background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
-      }}
-    >
+    <AuthPageWrapper>
       <HeaderOnboarding currentStep={4} />
 
       <main className="mx-auto flex flex-col gap-[32px] items-center justify-center w-[859px]">
@@ -47,7 +43,7 @@ export const ProfileSetup = () => {
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
               First name
             </label>
-            <input
+            <Input
               type="text"
               placeholder="Sophia"
               onChange={(e) =>
@@ -62,7 +58,7 @@ export const ProfileSetup = () => {
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
               Last name
             </label>
-            <input
+            <Input
               type="text"
               placeholder="Turner"
               onChange={(e) =>
@@ -79,7 +75,7 @@ export const ProfileSetup = () => {
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
               Age
             </label>
-            <input
+            <Input
               min={0}
               max={120}
               type="number"
@@ -242,7 +238,7 @@ export const ProfileSetup = () => {
               <option value="book">What is your favorite book?</option>
               <option value="mother">Mother's maiden name?</option>
             </select>
-            <input
+            <Input
               type="text"
               className="flex-1 border rounded-[8px] h-[44px] px-[12px] text-[16px]"
               placeholder="Enter your answer"
@@ -277,6 +273,6 @@ export const ProfileSetup = () => {
       </main>
 
       <Footer />
-    </div>
+    </AuthPageWrapper>
   );
 };

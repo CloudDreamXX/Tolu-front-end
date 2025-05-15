@@ -3,6 +3,7 @@ import { Download } from "lucide-react";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
+import { AuthPageWrapper, Input } from "shared/ui";
 
 export const InviteClients = () => {
   const nav = useNavigate();
@@ -22,12 +23,7 @@ export const InviteClients = () => {
   };
 
   return (
-    <div
-      className="w-full h-full min-h-screen pb-10"
-      style={{
-        background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
-      }}
-    >
+  <AuthPageWrapper>
       <HeaderOnboarding currentStep={5} />
       <main className="flex flex-col items-center justify-center w-full gap-[40px] mt-[40px]">
         <h1 className="text-[32px] text-black font-[Inter] font-semibold text-center">
@@ -63,7 +59,7 @@ export const InviteClients = () => {
               </p>
             )}
           </div>
-          <input
+          <Input
             ref={fileInputRef}
             type="file"
             accept=".csv,application/pdf"
@@ -96,7 +92,7 @@ export const InviteClients = () => {
               Manual Invite
             </p>
             {clientel.map((client) => (
-              <input
+              <Input
                 key={client}
                 type="text"
                 placeholder="Enter email or phone"
@@ -132,6 +128,6 @@ export const InviteClients = () => {
         </div>
       </main>
       <Footer />
-    </div>
+    </AuthPageWrapper>
   );
 };

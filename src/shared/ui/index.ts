@@ -10,3 +10,4 @@ export * from "./badge";
 export * from "./checkbox";
 export * from "./card";
 export * from "./dropdown-menu";
+export * from './auth-page-wrapper';

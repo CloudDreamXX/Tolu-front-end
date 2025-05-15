@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { dropdownOptions, titlesAndIcons } from "./mock";
+import { AuthPageWrapper } from "shared/ui";
 
 export const SelectType = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
@@ -47,12 +48,7 @@ export const SelectType = () => {
   };
 
   return (
-    <div
-      className="w-full h-full"
-      style={{
-        background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
-      }}
-    >
+<AuthPageWrapper>
       <HeaderOnboarding currentStep={0} />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
         <h1 className="flex text-center font-[Inter] text-[32px] font-medium text-black">
@@ -118,6 +114,6 @@ export const SelectType = () => {
         </button>
       </main>
       <Footer />
-    </div>
+    </AuthPageWrapper>
   );
 };

@@ -1,6 +1,7 @@
 import { EyeClosed, EyeIcon } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Input } from "shared/ui";
 
 interface SignUpProps {
   formData: {
@@ -62,7 +63,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Full name
           </label>
-          <input
+          <Input
             type="text"
             placeholder="Enter Name"
             name="name"
@@ -74,7 +75,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Email
           </label>
-          <input
+          <Input
             type="email"
             placeholder="Enter Email"
             name="email"
@@ -86,7 +87,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Phone Number
           </label>
-          <input
+          <Input
             type="tel"
             placeholder="Enter Phone Number"
             name="phone"
@@ -99,7 +100,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             Create password
           </label>
           <div className="flex flex-row-reverse items-center w-full">
-            <input
+            <Input
               type={showPassword ? "password" : "text"}
               placeholder="Enter Password"
               name="password"
@@ -126,7 +127,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             Repeat password
           </label>
           <div className="flex flex-row-reverse items-center w-full">
-            <input
+            <Input
               type={showNewPassword ? "password" : "text"}
               placeholder="Enter Password"
               name="newPassword"

@@ -4,6 +4,7 @@ import { Button, HeaderOnboarding } from "./components";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
+import { AuthPageWrapper, Input } from "shared/ui";
 
 const buttons = [
   ["Perimenopause & Menopause", "Gut Health", "Thyroid & Autoimmune"],
@@ -53,12 +54,7 @@ export const OnboardingMain = () => {
   };
 
   return (
-    <div
-      className="w-full h-screen m-0 p-0"
-      style={{
-        background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
-      }}
-    >
+    <AuthPageWrapper>
       <HeaderOnboarding currentStep={1} />
       <main className="flex flex-col items-center flex-1 justify-center gap-[60px] self-stretch">
         <h3 className="font-[Inter] text-[32px] font-medium text-black text-center self-stretch">
@@ -66,7 +62,7 @@ export const OnboardingMain = () => {
         </h3>
         <section className="w-[900px] items-center justify-center flex flex-col gap-[32px]">
           <div className="flex w-[500px] items-start gap-[12px] flex-col">
-            <input
+            <Input
               type="text"
               placeholder="Search"
               className="h-[44px] px-[12px] py-[8px] flex items-center gap-[8px] self-stretch rounded-full border-[1px] border-[#DBDEE1] bg-white flex-1 font-[Nunito] text-[14px] font-semibold text-[#5F5F65]"
@@ -93,7 +89,7 @@ export const OnboardingMain = () => {
           </div>
           {isOtherSelected() ? (
             <div className="flex justify-center gap-[8px] items-start w-full">
-              <input
+              <Input
                 onChange={(e) => {
                   setOtherText(e.target.value);
                   dispatch(
@@ -141,6 +137,6 @@ export const OnboardingMain = () => {
         </div>
       </main>
       <Footer />
-    </div>
+    </AuthPageWrapper>
   );
 };

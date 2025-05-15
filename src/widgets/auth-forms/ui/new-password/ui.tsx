@@ -3,6 +3,7 @@ import { UserService } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Input } from "shared/ui";
 
 export const NewPassword = () => {
 const { user: userData, tokenNewPassword } = useSelector((state: RootState) => state.user);
@@ -52,7 +53,7 @@ const handleSubmit = async (e: FormEvent) => {
 
   return (
     <div className="w-full h-screen flex items-start py-0">
-      <div className="w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
+      <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
           <h1 className="text-white text-center text-[96px] font-bold">
             VITAI
@@ -75,7 +76,7 @@ const handleSubmit = async (e: FormEvent) => {
               <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
                 New Password
               </label>
-              <input
+              <Input
                 type="password"
                 placeholder="Enter New Password"
                 name="newPassword"
@@ -88,7 +89,7 @@ const handleSubmit = async (e: FormEvent) => {
                 Confirm new password
               </label>
               <div className="flex flex-row-reverse items-center w-full">
-                <input
+                <Input
                   type="password"
                   placeholder="Enter New Password"
                   name="newPasswordRepeat"
