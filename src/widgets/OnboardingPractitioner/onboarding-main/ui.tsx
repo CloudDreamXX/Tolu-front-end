@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Footer } from "pages/onboarding-welcome/components";
+import { Footer } from "../Footer";
 import { Button, HeaderOnboarding } from "./components";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { updateCoachField } from "../../entities/store/coachOnboardingSlice";
+import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 
 const buttons = [
   ["Perimenopause & Menopause", "Gut Health", "Thyroid & Autoimmune"],

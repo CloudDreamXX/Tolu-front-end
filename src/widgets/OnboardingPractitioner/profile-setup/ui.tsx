@@ -1,5 +1,5 @@
-import { HeaderOnboarding } from "pages/onboarding-main/components";
-import { Footer } from "pages/onboarding-welcome/components";
+import { HeaderOnboarding } from "../HeaderOnboarding";
+import { Footer } from "../Footer";
 import { UploadCloud } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";

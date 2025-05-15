@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Footer, MiddleCard, Header } from "./components";
+import { Footer } from "../Footer";
+import { Header } from "../Header";
+import { MiddleCard } from "./components";
 import { contents } from "./index";
 import Lock from "shared/assets/icons/lock";
 import Medkit from "shared/assets/icons/medkit";

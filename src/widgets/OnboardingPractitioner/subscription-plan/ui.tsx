@@ -1,5 +1,5 @@
-import { HeaderOnboarding } from "pages/onboarding-main/components";
-import { Footer } from "pages/onboarding-welcome/components";
+import { HeaderOnboarding } from "../HeaderOnboarding";
+import { Footer } from "../Footer";
 import { PriceCard } from "./components";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";

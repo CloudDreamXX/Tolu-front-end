@@ -15,14 +15,14 @@ import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
 import { NewPassword } from "widgets/auth-forms/ui/new-password";
 import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
-import { OnboardingWerlcome } from "pages/onboarding-welcome";
-import { OnboardingMain } from "pages/onboarding-main";
-import { SubscriptionPlan } from "pages/subscription-plan/ui";
-import { SelectType } from "pages/select-type";
-import { AboutYourPractice } from "pages/about-your-practice";
-import { ProfileSetup } from "pages/profile-setup";
-import { InviteClients } from "pages/invite-clients";
-import { OnboardingFinish } from "pages/onboarding-finish";
+import { OnboardingWerlcome } from "widgets/OnboardingPractitioner/onboarding-welcome";
+import { OnboardingMain } from "widgets/OnboardingPractitioner/onboarding-main";
+import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
+import { SelectType } from "widgets/OnboardingPractitioner/select-type";
+import { AboutYourPractice } from "widgets/OnboardingPractitioner/about-your-practice";
+import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
+import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
+import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
 
 export const AppRoutes = () => {
   return (

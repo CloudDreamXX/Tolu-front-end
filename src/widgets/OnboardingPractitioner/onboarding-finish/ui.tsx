@@ -1,4 +1,5 @@
-import { Footer, Header } from "pages/onboarding-welcome/components";
+import { Footer } from "../Footer";
+import { Header } from "../Header";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "entities/store";

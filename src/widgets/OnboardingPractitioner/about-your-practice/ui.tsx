@@ -1,6 +1,5 @@
-import { Lightbulb } from "lucide-react";
-import { HeaderOnboarding } from "pages/onboarding-main/components";
-import { Footer } from "pages/onboarding-welcome/components";
+import { HeaderOnboarding } from "../HeaderOnboarding";
+import { Footer } from "../Footer";
 import { useRef, useState } from "react";
 import UploadCloud from "shared/assets/icons/upload-cloud";
 import { Link, useNavigate } from "react-router-dom";
