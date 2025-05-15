@@ -3,7 +3,6 @@ name: Lint Code
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [main, develop]
     paths:
       - '**.ts'
       - '**.tsx'
