@@ -1,9 +1,8 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { SelectType, SignUp } from "./components";
-import { UserService } from "entities/user";
+import { UserService, setRoleID } from "entities/user";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setRoleID } from "entities/user";
 
 export const Register = () => {
   const navigate = useNavigate();

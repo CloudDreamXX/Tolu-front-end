@@ -24,14 +24,18 @@ import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
 import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
 import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
 import { WelcomeScreen } from "widgets/OnboardingClient/WelcomeScreen";
+import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}></Route>
       <Route path="/auth" element={<Auth />} />
-      <Route path="/verify-email" element={<CheckEmail from="register"/>} />
-      <Route path="/verify-email-pass" element={<CheckEmail from="forgot-password" />} />
+      <Route path="/verify-email" element={<CheckEmail from="register" />} />
+      <Route
+        path="/verify-email-pass"
+        element={<CheckEmail from="forgot-password" />}
+      />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/profile-setup" element={<ProfileSetup />} />
@@ -44,7 +48,7 @@ export const AppRoutes = () => {
       <Route path="/new-password" element={<NewPassword />} />
       <Route path="/invite-clients" element={<InviteClients />} />
       <Route path="/onboarding-finish" element={<OnboardingFinish />} />
-
+      <Route path="/about-you" element={<DemographicStep />} />
       <Route
         element={
           <MainLayout mainLocation="content-manager">

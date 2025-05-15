@@ -57,7 +57,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
                 tokenNewPassword: token,
               })
             );
-            nav("/");
+            nav("/forgot-password");
           } catch (error) {
             console.error("Error verifying email:", error);
           }

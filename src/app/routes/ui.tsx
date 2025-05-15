@@ -36,7 +36,8 @@ const checkPath = () => {
     location.pathname === "/about-your-practice" ||
     location.pathname === "/profile-setup" ||
     location.pathname === "/invite-clients" ||
-    location.pathname === "/onboarding-finish"
+    location.pathname === "/onboarding-finish" || 
+    location.pathname === "/about-you"
   ) {
     return <Outlet />;
   }
