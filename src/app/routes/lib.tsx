@@ -11,7 +11,7 @@ import {
   ContentManagerPublished,
   ContentManagerArchived,
 } from "pages/content-manager";
-import {ForgotPassword} from "widgets/auth-forms/ui/forgot-password";
+import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
 import { NewPassword } from "widgets/auth-forms/ui/new-password";
 import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
@@ -20,7 +20,6 @@ import { OnboardingMain } from "pages/onboarding-main";
 import { SubscriptionPlan } from "pages/subscription-plan/ui";
 import { SelectType } from "pages/select-type";
 import { AboutYourPractice } from "pages/about-your-practice";
-import { VerifyEmailPass } from "widgets/auth-forms/ui/check-email-pass";
 import { ProfileSetup } from "pages/profile-setup";
 import { InviteClients } from "pages/invite-clients";
 import { OnboardingFinish } from "pages/onboarding-finish";
@@ -29,46 +28,20 @@ export const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}></Route>
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/verify-email" element={<CheckEmail />} />
-        <Route path="/verify-email-pass" element={<VerifyEmailPass/>}/>
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
-        <Route 
-          path="/profile-setup"
-          element={<ProfileSetup/>}
-        />
-        <Route
-          path="/about-your-practice"
-          element={<AboutYourPractice />}
-        />
-        <Route
-          path="/subscription-plan"
-          element={
-            <SubscriptionPlan />
-          }
-          />
-          <Route
-          path="/select-type"
-          element={<SelectType/>}/>
-        <Route
-          path="/welcome"
-          element={<OnboardingWerlcome />}
-        />
-        <Route path="/onboarding-welcome" element={<OnboardingMain/>}/>
-        <Route
-          path="/new-password"
-          element={<NewPassword />}
-        />
-        <Route path="/invite-clients" element={<InviteClients />}/>
-        <Route 
-          path="/onboarding-finish"
-          element={<OnboardingFinish/>}
-        />
-      
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/verify-email" element={<CheckEmail from="register"/>} />
+      <Route path="/verify-email-pass" element={<CheckEmail from="forgot-password" />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/profile-setup" element={<ProfileSetup />} />
+      <Route path="/about-your-practice" element={<AboutYourPractice />} />
+      <Route path="/subscription-plan" element={<SubscriptionPlan />} />
+      <Route path="/select-type" element={<SelectType />} />
+      <Route path="/welcome" element={<OnboardingWerlcome />} />
+      <Route path="/onboarding-welcome" element={<OnboardingMain />} />
+      <Route path="/new-password" element={<NewPassword />} />
+      <Route path="/invite-clients" element={<InviteClients />} />
+      <Route path="/onboarding-finish" element={<OnboardingFinish />} />
 
       <Route
         element={

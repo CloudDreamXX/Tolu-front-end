@@ -5,7 +5,7 @@ export interface IUser {
   password: string;
   type?: string;
   role: string;
-  roleID? : number;
+  roleID?: number;
   location: string;
   num_clients: string;
   priority: string[];

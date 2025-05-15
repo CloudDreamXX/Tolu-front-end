@@ -30,54 +30,64 @@ export class UserService {
     return ApiService.post<AuthResponse>(API_ROUTES.USER.LOGIN, credentials);
   }
 
-  static async forgotPassword(email: string): Promise<{ success: boolean, message: string, email: string }> {
-    return ApiService.post<{ success: boolean, message: string, email: string }>(
-      API_ROUTES.USER.FORGOT_PASSWORD,
-      { email }
-    );
+  static async forgotPassword(
+    email: string
+  ): Promise<{ success: boolean; message: string; email: string }> {
+    return ApiService.post<{
+      success: boolean;
+      message: string;
+      email: string;
+    }>(API_ROUTES.USER.FORGOT_PASSWORD, { email });
   }
 
-  static async registerUser(userInfo: IRegisterUser): Promise<{ success: boolean }> {
+  static async registerUser(
+    userInfo: IRegisterUser
+  ): Promise<{ success: boolean }> {
     return ApiService.post<{ success: boolean }>(
       API_ROUTES.USER.SIGNUP,
       userInfo
     );
   }
 
-  static async verifyEmail({email, token}: IVerify): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(
-      API_ROUTES.USER.COMPLETE_SIGNUP,
-      { email, token }
-    );
+  static async verifyEmail({ email, token }: IVerify): Promise<AuthResponse> {
+    return ApiService.post<AuthResponse>(API_ROUTES.USER.COMPLETE_SIGNUP, {
+      email,
+      token,
+    });
   }
 
-  static async verifyEmailPass({email, token}: IVerify): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(
-      API_ROUTES.USER.VERIFY_RESET_TOKEN,
-      { email, token }
-    );
+  static async verifyEmailPass({
+    email,
+    token,
+  }: IVerify): Promise<AuthResponse> {
+    return ApiService.post<AuthResponse>(API_ROUTES.USER.VERIFY_RESET_TOKEN, {
+      email,
+      token,
+    });
   }
 
-static async onboardUser(data: CoachOnboardingState, token: string | null): Promise<{ message: string }> {
-  const formData = new FormData();
-  
-  formData.append("onboarding_data", JSON.stringify({data}));
+  static async onboardUser(
+    data: CoachOnboardingState,
+    token: string | null
+  ): Promise<{ message: string }> {
+    const formData = new FormData();
 
-  const response = await ApiService.post<string>(
-    API_ROUTES.USER.ONBOARD_USER,
-    formData,
-    {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "multipart/form-data",
-      },
-      withCredentials: true,
-    }
-  );
+    formData.append("onboarding_data", JSON.stringify({ data }));
 
-  return { message: response };
-}
+    const response = await ApiService.post<string>(
+      API_ROUTES.USER.ONBOARD_USER,
+      formData,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
 
+    return { message: response };
+  }
 
   static async checkUserExistence(
     email: string

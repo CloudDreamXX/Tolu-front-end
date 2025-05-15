@@ -7,7 +7,7 @@ interface InputProps {
 
 export const Input: React.FC<InputProps> = ({
   style,
-  type = 'text',
+  type = "text",
   label,
   ...rest
 }) => {
@@ -15,7 +15,7 @@ export const Input: React.FC<InputProps> = ({
     <div className="flex-1">
       <label
         className={`${
-          style ?? 'text-base md:text-lg text-textColor/80 pb-1 block'
+          style ?? "text-base md:text-lg text-textColor/80 pb-1 block"
         }`}
       >
         {label}

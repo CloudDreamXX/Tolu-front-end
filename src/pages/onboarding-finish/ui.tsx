@@ -5,18 +5,20 @@ import { RootState } from "entities/store";
 import { UserService } from "entities/user";
 
 export const OnboardingFinish = () => {
-    const coachOnboarding = useSelector((state: RootState) => state.coachOnboarding);
-    const token = useSelector((state: RootState) => state.user.token);
-    const nav = useNavigate();
+  const coachOnboarding = useSelector(
+    (state: RootState) => state.coachOnboarding
+  );
+  const token = useSelector((state: RootState) => state.user.token);
+  const nav = useNavigate();
 
-    const handleLastClick = async () => {
-      try {
-        const message = await UserService.onboardUser(coachOnboarding, token);
-          nav("/content-manager/published");
-      } catch (error) {
-        console.error("Error during onboarding:", error);
-      }
+  const handleLastClick = async () => {
+    try {
+      const message = await UserService.onboardUser(coachOnboarding, token);
+      nav("/content-manager/published");
+    } catch (error) {
+      console.error("Error during onboarding:", error);
     }
+  };
   return (
     <div
       className="w-full h-screen m-0 p-0"
@@ -33,7 +35,8 @@ export const OnboardingFinish = () => {
             </h3>
             <p className="self-stretch text-center text-black font-[Nunito] text-[24px] font-medium ">
               We’ve set up your dashboard with tools, templates, and content
-              tailored to:<br/> Functional Nutrition + Gut Health & Menopause Support
+              tailored to:
+              <br /> Functional Nutrition + Gut Health & Menopause Support
             </p>
           </div>
           <button

@@ -6,35 +6,27 @@ import { useDispatch } from "react-redux";
 import { updateCoachField } from "../../entities/store/coachOnboardingSlice";
 
 const buttons = [
-  [
-    "Perimenopause & Menopause",
-    "Gut Health",
-    "Thyroid & Autoimmune",
-  ],
+  ["Perimenopause & Menopause", "Gut Health", "Thyroid & Autoimmune"],
   [
     "Weight & Metabolic Health",
     "Blood Sugar & Insulin Resistance",
     "Fertility & Hormones",
   ],
-  [
-    "Chronic Fatigue / Long COVID",
-    "Anxiety & Sleep",
-    "Mold / Lyme / MCAS",
-  ],
+  ["Chronic Fatigue / Long COVID", "Anxiety & Sleep", "Mold / Lyme / MCAS"],
   [
     "Inflammation & Pain",
     "Postpartum / Pelvic Floor",
     "Cancer Support",
     "Other",
   ],
-]
+];
 
 export const OnboardingMain = () => {
   const [showHint, setShowHint] = useState(false);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const nav = useNavigate();
-  
+
   useEffect(() => {
     if (selectedButtons.length > 0) {
       setShowHint(true);
@@ -67,7 +59,7 @@ export const OnboardingMain = () => {
         background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
       }}
     >
-      <HeaderOnboarding currentStep={1}/>
+      <HeaderOnboarding currentStep={1} />
       <main className="flex flex-col items-center flex-1 justify-center gap-[60px] self-stretch">
         <h3 className="font-[Inter] text-[32px] font-medium text-black text-center self-stretch">
           What are your primary focus areas?
@@ -85,18 +77,16 @@ export const OnboardingMain = () => {
               <div key={index} className="flex gap-[13px]">
                 {row.map((buttonText) => (
                   <Button
-                  key={buttonText}
-                onClick={() => handleButtonClick(buttonText)}
-                style={{
-                  background: selectedButtons.includes(
-                    buttonText
-                  )
-                    ? "rgba(0, 143, 246, 0.10)"
-                    : "transparent",
-                }}
-              >
-                {buttonText}
-              </Button>
+                    key={buttonText}
+                    onClick={() => handleButtonClick(buttonText)}
+                    style={{
+                      background: selectedButtons.includes(buttonText)
+                        ? "rgba(0, 143, 246, 0.10)"
+                        : "transparent",
+                    }}
+                  >
+                    {buttonText}
+                  </Button>
                 ))}
               </div>
             ))}
@@ -139,7 +129,7 @@ export const OnboardingMain = () => {
             Back
           </button>
           <Link
-            to={selectedButtons.length > 0 ? "/about-your-practice" : ''}
+            to={selectedButtons.length > 0 ? "/about-your-practice" : ""}
             className={
               selectedButtons.length >= 1
                 ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"

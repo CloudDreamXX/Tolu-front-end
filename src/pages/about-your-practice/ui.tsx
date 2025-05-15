@@ -27,7 +27,7 @@ export const AboutYourPractice = () => {
       labsUsed.length > 0 &&
       selectedFile !== null
     );
-  }
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -91,7 +91,7 @@ export const AboutYourPractice = () => {
         background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
       }}
     >
-      <HeaderOnboarding currentStep={2}/>
+      <HeaderOnboarding currentStep={2} />
       <main className="flex flex-col items-center flex-1 justify-center w-full gap-[32px] self-stretch">
         <h2 className="font-[Inter] text-[32px] text-center font-medium text-black w-[700px]">
           About your practice
@@ -111,7 +111,9 @@ export const AboutYourPractice = () => {
                 University of California, San Francisco
               </option>
               <option value="Stanford University">Stanford University</option>
-              <option value="Harvard Medical School">Harvard Medical School</option>
+              <option value="Harvard Medical School">
+                Harvard Medical School
+              </option>
             </select>
           </div>
 
@@ -169,7 +171,8 @@ export const AboutYourPractice = () => {
           {/* Target clients */}
           <div className="flex flex-col items-start self-stretch gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium ml-[32px] text-black">
-              How many new clients do you hope to acquire over the next 3 months? *
+              How many new clients do you hope to acquire over the next 3
+              months? *
             </p>
             <select
               onChange={(e) => handleFieldChange("target", e.target.value)}
@@ -198,7 +201,9 @@ export const AboutYourPractice = () => {
                     onChange={(e) => handleFieldChange("labs", e.target.value)}
                     className="w-[20px] h-[20px]"
                   />
-                  <span className="font-[Nunito] text-[16px] font-medium text-black capitalize">{option}</span>
+                  <span className="font-[Nunito] text-[16px] font-medium text-black capitalize">
+                    {option}
+                  </span>
                 </label>
               ))}
             </div>
@@ -207,11 +212,21 @@ export const AboutYourPractice = () => {
 
         {/* Navigation */}
         <div className="flex items-center gap-[16px] bg-transparent">
-          <button onClick={() => nav(-1)} className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]" style={{ background: "rgba(0, 143, 246, 0.10)" }}>
+          <button
+            onClick={() => nav(-1)}
+            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            style={{ background: "rgba(0, 143, 246, 0.10)" }}
+          >
             Back
           </button>
-          <Link to={allFilled() === true ? "/subscription-plan" : ""} className={allFilled() === true ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
-                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"}>
+          <Link
+            to={allFilled() === true ? "/subscription-plan" : ""}
+            className={
+              allFilled() === true
+                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
+                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
+            }
+          >
             Next
           </Link>
         </div>

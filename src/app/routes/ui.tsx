@@ -20,26 +20,26 @@ const getRouteByRole = (role: string): string => {
   }
 };
 
-  const checkPath = () => {
-    if (
-      location.pathname === "/auth" ||
-      location.pathname === "/register" ||
-      location.pathname === "/forgot-password" ||
-      location.pathname === "/new-password" ||
-      location.pathname === "/verify-email" ||
-      location.pathname === "/verify-email-pass" ||
-      location.pathname === "/welcome" ||
-      location.pathname === "/onboarding-welcome" ||
-      location.pathname === "/subscription-plan" ||
-      location.pathname === "/select-type" ||
-      location.pathname === "/about-your-practice" ||
-      location.pathname === "/profile-setup" ||
-      location.pathname === "/invite-clients" ||
-      location.pathname === "/onboarding-finish"
-    ) {
-      return <Outlet />;
-    }
+const checkPath = () => {
+  if (
+    location.pathname === "/auth" ||
+    location.pathname === "/register" ||
+    location.pathname === "/forgot-password" ||
+    location.pathname === "/new-password" ||
+    location.pathname === "/verify-email" ||
+    location.pathname === "/verify-email-pass" ||
+    location.pathname === "/welcome" ||
+    location.pathname === "/onboarding-welcome" ||
+    location.pathname === "/subscription-plan" ||
+    location.pathname === "/select-type" ||
+    location.pathname === "/about-your-practice" ||
+    location.pathname === "/profile-setup" ||
+    location.pathname === "/invite-clients" ||
+    location.pathname === "/onboarding-finish"
+  ) {
+    return <Outlet />;
   }
+};
 
 export const MainLayout: React.FC<{
   children: ReactElement;

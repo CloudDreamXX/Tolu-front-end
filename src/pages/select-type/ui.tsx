@@ -1,41 +1,17 @@
 import { useState } from "react";
-import { ChevronDown, Microscope } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import CircleQuestion from "shared/assets/icons/circle-question";
 import { Footer } from "pages/onboarding-welcome/components";
 import { HeaderOnboarding } from "pages/onboarding-main/components";
-import Leaf from "shared/assets/icons/leaf";
-import Brain from "shared/assets/icons/brain";
-import WomansLine from "shared/assets/icons/womans-line";
-import Chemistry from "shared/assets/icons/chemistry";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
+import { dropdownOptions, titlesAndIcons } from "./mock";
 
-const titlesAndIcons = [
-  {
-    title: "Clinical & Licensed Healthcare Providers",
-    icon: <Microscope size={20} />,
-  },
-  {
-    title: "Functional & Holistic Health Practitioners",
-    icon: <Leaf />,
-  },
-  {
-    title: "Lifestyle, Mind-Body, and Wellness Coaches",
-    icon: <Brain />,
-  },
-  {
-    title: "Women's Health & Specialty Coaches",
-    icon: <WomansLine />,
-  },
-  {
-    title: "Other",
-    icon: <Chemistry />,
-  },
-];
 export const SelectType = () => {
-
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(new Array(5).fill(""));
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(
+    new Array(5).fill("")
+  );
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const dispatch = useDispatch();
   const nav = useNavigate();
@@ -48,11 +24,11 @@ export const SelectType = () => {
   };
 
   const toggleDropdown = (index: number) => {
-    setActiveDropdown(prev => (prev === index ? null : index));
+    setActiveDropdown((prev) => (prev === index ? null : index));
   };
 
   const isAllSelected = () => {
-    return selectedOptions.every(option => option !== "");
+    return selectedOptions.every((option) => option !== "");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -60,9 +36,13 @@ export const SelectType = () => {
 
     if (!isAllSelected()) return;
 
-    const filledTypes = selectedOptions.filter(option => option.trim() !== "");
+    const filledTypes = selectedOptions.filter(
+      (option) => option.trim() !== ""
+    );
 
-    dispatch(updateCoachField({ key: "practitioner_types", value: filledTypes }));
+    dispatch(
+      updateCoachField({ key: "practitioner_types", value: filledTypes })
+    );
     nav("/onboarding-welcome");
   };
 
@@ -83,7 +63,10 @@ export const SelectType = () => {
           className="flex flex-col gap-[20px] p-[40px] items-center rounded-[20px] bg-white shadow-md border-[1px] border-[#1C63DB]"
         >
           {titlesAndIcons.map((item, index) => (
-            <div key={index} className="flex flex-col gap-[20px] w-[460px] items-start">
+            <div
+              key={index}
+              className="flex flex-col gap-[20px] w-[460px] items-start"
+            >
               <div className="flex items-center self-stretch gap-[8px]">
                 {item.icon}
                 <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[20px] font-semibold">
@@ -105,15 +88,7 @@ export const SelectType = () => {
                 </button>
                 {activeDropdown === index && (
                   <div className="absolute z-10 flex flex-col gap-[10px] w-full mt-[4px] bg-white border-[#9D9D9D] border-[1px] rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto">
-                    {[
-                      "Clinical Psychologist",
-                      "Psychiatrist",
-                      "Psychoanalyst",
-                      "Psychotherapist",
-                      "Clinical Social Worker",
-                      "Licensed Professional Counselor",
-                      "Marriage and Family Therapist",
-                    ].map((option) => (
+                    {dropdownOptions.map((option) => (
                       <button
                         type="button"
                         key={option}
@@ -128,18 +103,19 @@ export const SelectType = () => {
               </div>
             </div>
           ))}
-
         </form>
-          <button
-            onClick={handleSubmit}
-            type="submit"
-            disabled={!isAllSelected()}
-            className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
-              isAllSelected() ? "bg-[#1C63DB] text-white" : "bg-[#D5DAE2] text-[#5F5F65]"
-            }`}
-          >
-            Next
-          </button>
+        <button
+          onClick={handleSubmit}
+          type="submit"
+          disabled={!isAllSelected()}
+          className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
+            isAllSelected()
+              ? "bg-[#1C63DB] text-white"
+              : "bg-[#D5DAE2] text-[#5F5F65]"
+          }`}
+        >
+          Next
+        </button>
       </main>
       <Footer />
     </div>

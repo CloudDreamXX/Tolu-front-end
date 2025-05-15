@@ -4,7 +4,11 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export const CheckEmail = () => {
+type CheckEmailProps = {
+  from: "register" | "forgot-password"
+}; 
+
+export const CheckEmail: React.FC<CheckEmailProps> = ({from}) => {
   const { search } = useLocation();
   const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
@@ -14,31 +18,49 @@ export const CheckEmail = () => {
   const email = query.get("email") ?? "";
 
   useEffect(() => {
-    if (token.length > 0 && email.length > 0) {
-      const verifyEmail = async () => {
-        try {
-          const msg = await UserService.verifyEmail({ email, token });
+    if (from === "register") {
+      if (token.length > 0 && email.length > 0) {
+        const verifyEmail = async () => {
+          try {
+            const msg = await UserService.verifyEmail({ email, token });
 
-          if (msg.user && msg.accessToken) {
-            dispatch(
-              setCredentials({
-                user: msg.user,
-                accessToken: msg.accessToken,
-              })
-            );
-            if(user.user?.roleID === 3) {
-              nav("/content-manager");
-              return;
+            if (msg.user && msg.accessToken) {
+              dispatch(
+                setCredentials({
+                  user: msg.user,
+                  accessToken: msg.accessToken,
+                })
+              );
+              if (user.user?.roleID === 3) {
+                nav("/content-manager");
+                return;
+              }
+              nav("/welcome");
             }
-            nav("/welcome");
+          } catch (error) {
+            console.error("Error verifying email:", error);
           }
-        } catch (error) {
-          console.error("Error verifying email:", error);
-        }
-      };
-      verifyEmail();
+        };
+        verifyEmail();
+      }
     }
-  }, [token, email]);
+
+    if (from === "forgot-password") {
+      if (token.length > 0 && email.length > 0) {
+        const verifyEmail = async () => {
+          try {
+            const msg = await UserService.verifyEmailPass({ email, token });
+            if (msg.user && msg.accessToken) {
+              nav("/");
+            }
+          } catch (error) {
+            console.error("Error verifying email:", error);
+          }
+        };
+        verifyEmail();
+      }
+    }
+  }, [token, email, from]);
   return (
     <div className="w-full h-screen flex items-start py-0">
       <div className="w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
@@ -58,11 +80,15 @@ export const CheckEmail = () => {
               Just a moment...
             </h1>
             <h3 className="text-center self-stretch text-black font-[Nunito] text-[24px] font-normal">
-              We&apos;re verifying your link. This will only take a few<br/> seconds.
+              We&apos;re verifying your link. This will only take a few
+              <br /> seconds.
             </h3>
           </div>
           <p className="text-black font-[Nunito] text-[14px] font-normal">
-            Need help? <span className="underline cursor-pointer text-[#1C63DB]">Support</span>
+            Need help?{" "}
+            <span className="underline cursor-pointer text-[#1C63DB]">
+              Support
+            </span>
           </p>
         </div>
       ) : (
@@ -72,12 +98,16 @@ export const CheckEmail = () => {
               Check your inbox
             </h1>
             <h3 className="text-center self-stretch text-black font-[Nunito] text-[24px] font-normal">
-              We&apos;ve sent you a link. Follow the instructions in<br/> your email to
-              continue. Don&apos;t forget to check your<br/> spam or promotions folder.
+              We&apos;ve sent you a link. Follow the instructions in
+              <br /> your email to continue. Don&apos;t forget to check your
+              <br /> spam or promotions folder.
             </h3>
           </div>
           <p className="text-black font-[Nunito] text-[14px] font-normal">
-            Need help? <span className="underline cursor-pointer text-[#1C63DB]">Support</span>
+            Need help?{" "}
+            <span className="underline cursor-pointer text-[#1C63DB]">
+              Support
+            </span>
           </p>
         </div>
       )}

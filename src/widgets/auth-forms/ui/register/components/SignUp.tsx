@@ -23,7 +23,7 @@ export const SignUp: React.FC<SignUpProps> = ({
   const [showPassword, setShowPassword] = useState(true);
   const [showNewPassword, setShowNewPassword] = useState(true);
   const nav = useNavigate();
-  const {accountType, name, email, phone, password, newPassword} = formData;
+  const { accountType, name, email, phone, password, newPassword } = formData;
 
   const passwordsMatch = () => {
     if (password.length > 8 && newPassword.length > 8) {
@@ -31,15 +31,23 @@ export const SignUp: React.FC<SignUpProps> = ({
     } else {
       return false;
     }
-  }
+  };
 
   const checkComplete = () => {
-    if (accountType.length > 0 && name.length > 0 && email.length > 0 && phone.length > 0 && password.length > 0 && newPassword.length > 0 && password === newPassword) {
+    if (
+      accountType.length > 0 &&
+      name.length > 0 &&
+      email.length > 0 &&
+      phone.length > 0 &&
+      password.length > 0 &&
+      newPassword.length > 0 &&
+      password === newPassword
+    ) {
       return true;
     } else {
       return false;
     }
-  }
+  };
   return (
     <form
       autoComplete="off"
@@ -123,31 +131,55 @@ export const SignUp: React.FC<SignUpProps> = ({
               placeholder="Enter Password"
               name="newPassword"
               onChange={formDataChangeHandler}
-              className={!passwordsMatch() ? "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none focus-visible:outline-none" : "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"}
+              className={
+                !passwordsMatch()
+                  ? "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none focus-visible:outline-none"
+                  : "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+              }
             />
             {formData.password.length > 0 && (
-                <button
+              <button
                 type="button"
                 className="absolute mr-2"
                 onClick={() => setShowNewPassword(!showNewPassword)}
-                >
+              >
                 {!showNewPassword ? (
-                    <EyeIcon size={16} />
+                  <EyeIcon size={16} />
                 ) : (
-                    <EyeClosed size={16} />
+                  <EyeClosed size={16} />
                 )}
               </button>
             )}
           </div>
-            {!passwordsMatch() && (<p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] flex items-center justify-center gap-[10px]">Passwords do not match</p>)}
+          {!passwordsMatch() && (
+            <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] flex items-center justify-center gap-[10px]">
+              Passwords do not match
+            </p>
+          )}
         </div>
       </section>
       <section>
         <div className="flex flex-col items-center gap-[24px] self-stretch">
-            <button type="submit" onClick={() => nav('/email-check')} className={ checkComplete() ? "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold" : "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] font-[Nunito] text-[16px] font-semibold"}>
-                Proceed
-            </button>
-            <p className="text-[14px] font-[Nunito] font-medium">Already have an account? <Link to='/auth' className="cursor-pointer text-[#1C63DB] underline">Log in</Link></p>
+          <button
+            type="submit"
+            onClick={() => nav("/email-check")}
+            className={
+              checkComplete()
+                ? "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
+                : "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] font-[Nunito] text-[16px] font-semibold"
+            }
+          >
+            Proceed
+          </button>
+          <p className="text-[14px] font-[Nunito] font-medium">
+            Already have an account?{" "}
+            <Link
+              to="/auth"
+              className="cursor-pointer text-[#1C63DB] underline"
+            >
+              Log in
+            </Link>
+          </p>
         </div>
       </section>
     </form>
