@@ -1,15 +1,28 @@
-import React, { ChangeEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { UserService } from "entities/user";
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Input } from "shared/ui";
 
-const ForgotPassword = () => {
+export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
+  const nav = useNavigate();
 
-  const handleSubmit = () => {
-    console.log("Email submitted:", email);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      try {
+        const response = await UserService.forgotPassword(email);
+        nav("/verify-email-pass");
+      } catch (error) {
+        console.error("Error sending password reset email:", error);
+      }
+    } else {
+      console.error("Email is required");
+    }
   };
   return (
     <div className="w-full h-screen flex items-start py-0">
-      <div className="w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
+      <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
           <h1 className="text-white text-center text-[96px] font-bold">
             VITAI
@@ -31,7 +44,7 @@ const ForgotPassword = () => {
             <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
               Email
             </label>
-            <input
+            <Input
               type="email"
               placeholder="Enter Email"
               name="email"
@@ -48,11 +61,34 @@ const ForgotPassword = () => {
             </p>
           </div>
           <div className="flex flex-col items-center gap-[24px] self-stretch">
-              <div className="flex items-start gap-[24px]">
-                <button className="bg-[#008FF61A] w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#1C63DB] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold">Back</button>
-                <button className={ email ? "bg-[#1C63DB] duration-200 ease-in w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-white gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold" : "duration-200 ease-in bg-[#D5DAE2] w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#5F5F65] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"}>Send</button>
-              </div>
-              <p className="text-[14px] font-[Nunito] font-medium">Remember your password? <Link to='/auth' className="cursor-pointer text-[#1C63DB] underline">Log in</Link></p>
+            <div className="flex items-start gap-[24px]">
+              <button
+                type="button"
+                onClick={() => nav(-1)}
+                className="bg-[#008FF61A] w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#1C63DB] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleSubmit}
+                className={
+                  email
+                    ? "bg-[#1C63DB] duration-200 ease-in w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-white gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"
+                    : "duration-200 ease-in bg-[#D5DAE2] w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#5F5F65] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"
+                }
+              >
+                Send
+              </button>
+            </div>
+            <p className="text-[14px] font-[Nunito] font-medium">
+              Remember your password?{" "}
+              <Link
+                to="/auth"
+                className="cursor-pointer text-[#1C63DB] underline"
+              >
+                Log in
+              </Link>
+            </p>
           </div>
           <div className="flex flex-col items-center gap-[24px] slef-stretch"></div>
         </form>
@@ -60,5 +96,3 @@ const ForgotPassword = () => {
     </div>
   );
 };
-
-export default ForgotPassword;

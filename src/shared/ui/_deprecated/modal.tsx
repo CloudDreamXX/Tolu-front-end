@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface SignupFormProps {
   isModalOpen: boolean;
@@ -49,8 +49,8 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
               onClick={() => onCategoryClick && onCategoryClick(category.name)}
               className={`p-2 border-2 rounded-full text-center cursor-pointer transition ${
                 selectedCategories.includes(category.name)
-                  ? 'bg-[#EEEEEE] text-[#252525B2] border-4 border-[#2525254D]'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? "bg-[#EEEEEE] text-[#252525B2] border-4 border-[#2525254D]"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
               {category.name}
@@ -63,8 +63,8 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
           <button
             className={`mt-6 w-[100px] p-3 rounded-lg font-semibold transition ${
               selectedCategories.length >= 2
-                ? 'bg-blue-500 text-white hover:bg-blue-600'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
             disabled={selectedCategories.length < 2}
             onClick={onClose}

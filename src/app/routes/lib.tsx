@@ -11,46 +11,44 @@ import {
   ContentManagerPublished,
   ContentManagerArchived,
 } from "pages/content-manager";
-import ForgotPassword from "widgets/auth-forms/ui/forgot-password/ui";
+import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
 import { NewPassword } from "widgets/auth-forms/ui/new-password";
 import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
-import { OnboardingWerlcome } from "pages/onboarding-welcome";
-import { OnboardingMain } from "pages/onboarding-main";
-import { SubscriptionPlan } from "pages/subscription-plan/ui";
-import { SelectType } from "pages/select-type";
+import { OnboardingWerlcome } from "widgets/OnboardingPractitioner/onboarding-welcome";
+import { OnboardingMain } from "widgets/OnboardingPractitioner/onboarding-main";
+import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
+import { SelectType } from "widgets/OnboardingPractitioner/select-type";
+import { AboutYourPractice } from "widgets/OnboardingPractitioner/about-your-practice";
+import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
+import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
+import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
+import { WelcomeScreen } from "widgets/OnboardingClient/WelcomeScreen";
+import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
 
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/email-check" element={<CheckEmail />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
-        <Route
-          path="/subscription-plan"
-          element={
-            <SubscriptionPlan />
-          }
-          />
-          <Route
-          path="/select-type"
-          element={<SelectType/>}/>
-        <Route
-          path="/welcome"
-          element={<OnboardingWerlcome />}
-        />
-        <Route path="/onboarding-welcome" element={<OnboardingMain/>}/>
-        <Route
-          path="/new-password"
-          element={<NewPassword />}
-        />
-      </Route>
-
+      <Route element={<ProtectedRoute allowedRoles={["guest"]} />}></Route>
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/verify-email" element={<CheckEmail from="register" />} />
+      <Route
+        path="/verify-email-pass"
+        element={<CheckEmail from="forgot-password" />}
+      />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/profile-setup" element={<ProfileSetup />} />
+      <Route path="/about-your-practice" element={<AboutYourPractice />} />
+      <Route path="/subscription-plan" element={<SubscriptionPlan />} />
+      <Route path="/select-type" element={<SelectType />} />
+      <Route path="/welcome/client" element={<WelcomeScreen />} />
+      <Route path="/welcome/practitioner" element={<OnboardingWerlcome />} />
+      <Route path="/onboarding-welcome" element={<OnboardingMain />} />
+      <Route path="/new-password" element={<NewPassword />} />
+      <Route path="/invite-clients" element={<InviteClients />} />
+      <Route path="/onboarding-finish" element={<OnboardingFinish />} />
+      <Route path="/about-you" element={<DemographicStep />} />
       <Route
         element={
           <MainLayout mainLocation="content-manager">

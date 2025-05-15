@@ -8,6 +8,7 @@ import {
   PopoverContent,
   DropArea,
   Badge,
+  Input,
 } from "shared/ui";
 
 interface PopoverAttachProps {
@@ -205,7 +206,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
               dragActive={dragActive}
               onBrowseClick={handleBrowseClick}
             />
-            <input
+            <Input
               ref={fileInputRef}
               type="file"
               multiple

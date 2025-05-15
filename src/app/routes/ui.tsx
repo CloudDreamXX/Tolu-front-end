@@ -20,6 +20,29 @@ const getRouteByRole = (role: string): string => {
   }
 };
 
+const checkPath = () => {
+  if (
+    location.pathname === "/auth" ||
+    location.pathname === "/register" ||
+    location.pathname === "/forgot-password" ||
+    location.pathname === "/new-password" ||
+    location.pathname === "/verify-email" ||
+    location.pathname === "/verify-email-pass" ||
+    location.pathname === "/welcome/client" ||
+    location.pathname === "/welcome/practitioner" ||
+    location.pathname === "/onboarding-welcome" ||
+    location.pathname === "/subscription-plan" ||
+    location.pathname === "/select-type" ||
+    location.pathname === "/about-your-practice" ||
+    location.pathname === "/profile-setup" ||
+    location.pathname === "/invite-clients" ||
+    location.pathname === "/onboarding-finish" || 
+    location.pathname === "/about-you"
+  ) {
+    return <Outlet />;
+  }
+};
+
 export const MainLayout: React.FC<{
   children: ReactElement;
   mainLocation: string;
@@ -47,24 +70,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }));
 
   if (!token || !userType) {
-    if (
-      location.pathname === "/auth" ||
-      location.pathname === "/register" ||
-      location.pathname === "/forgot-password" ||
-      location.pathname == "/new-password" ||
-      location.pathname == "/email-check" || 
-      location.pathname == "/welcome" ||
-      location.pathname == "/onboarding-welcome" ||
-      location.pathname == "/subscription-plan" ||
-      location.pathname == "/select-type"
-    ) {
-      return <Outlet />;
-    }
-
+    checkPath();
     return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
   } else if (location.pathname === "/auth") {
     return <Navigate to={getRouteByRole(userType.role)} replace />;
   }
-
   return <Outlet />;
 };

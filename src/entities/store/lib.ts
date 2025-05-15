@@ -2,6 +2,7 @@ import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "../user";
+import coachOnboardingReducer from "./coachOnboardingSlice";
 
 const userPersistConfig = {
   key: "user",
@@ -10,6 +11,7 @@ const userPersistConfig = {
 
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
+  coachOnboarding: coachOnboardingReducer,
 });
 
 export const store = configureStore({
