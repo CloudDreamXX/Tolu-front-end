@@ -1,0 +1,82 @@
+name: Lint Code
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main, develop]
+    paths:
+      - '**.ts'
+      - '**.tsx'
+      - '**.js'
+      - '**.jsx'
+      - '.eslintrc.*'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  lint:
+    name: Run ESLint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+      
+      # Get changed files to only lint files that have changed
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files: |
+            **/*.ts
+            **/*.tsx
+          
+      - name: Run ESLint on changed files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Running ESLint on changed files:"
+          echo "${{ steps.changed-files.outputs.all_changed_files }}"
+          npx eslint ${{ steps.changed-files.outputs.all_changed_files }} --max-warnings=0
+          
+      - name: Run full ESLint check if no specific files changed
+        if: steps.changed-files.outputs.any_changed != 'true'
+        run: npm run lint
+
+      - name: Run TypeScript type checking
+        run: npm run typecheck
+
+      # Add comment to the PR with the results
+      - name: Comment PR
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
+            
+            const eslintResult = "${{ job.status }}";
+            const emoji = eslintResult === "success" ? "✅" : "❌";
+            const status = eslintResult === "success" ? "passed" : "failed";
+            
+            github.rest.issues.createComment({
+              issue_number,
+              owner,
+              repo,
+              body: `## Lint Check: ${emoji} ${status.toUpperCase()} ${emoji}
+              
+              ${eslintResult !== "success" ? "Please fix the lint errors before merging this PR." : "All lint checks passed successfully!"}
+              
+              [View Logs](${process.env.GITHUB_SERVER_URL}/${owner}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID})
+              `
+            });
