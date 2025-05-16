@@ -40,10 +40,6 @@ export const DemographicStep = () => {
     menopauseStatus.trim() &&
     country.trim() &&
     zipCode.trim() &&
-    race.trim() &&
-    household.trim() &&
-    occupationVal.trim() &&
-    educationVal.trim() &&
     language.trim();
     
     const handleNext = () => {
@@ -184,7 +180,8 @@ export const DemographicStep = () => {
                   ZIP/Postal Code *
                 </label>
                 <Input
-                  onChange={(e) => {if (zipCode.length > 5) return; setZipCode(e.target.value);}}
+                  onChange={(e) => {if (zipCode.length >= 5) return; setZipCode(e.target.value);}}
+                  value={zipCode}
                   placeholder="Enter ZIP/Postal Code"
                 />
               </div>
