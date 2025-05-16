@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "../user";
 import coachOnboardingReducer from "./coachOnboardingSlice";
+import { clientOnboardingReducer } from "./clientOnboardingSlice";
 
 const userPersistConfig = {
   key: "user",
@@ -12,6 +13,7 @@ const userPersistConfig = {
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
   coachOnboarding: coachOnboardingReducer,
+  clientOnboarding: clientOnboardingReducer,
 });
 
 export const store = configureStore({

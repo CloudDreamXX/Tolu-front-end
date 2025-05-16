@@ -25,6 +25,14 @@ import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
 import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
 import { WelcomeScreen } from "widgets/OnboardingClient/WelcomeScreen";
 import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
+import { WhatBrringsYouHere } from "widgets/OnboardingClient/WhatBringsYouHere";
+import { Values } from "widgets/OnboardingClient/Values";
+import { Barriers } from "widgets/OnboardingClient/Barriers";
+import { Support } from "widgets/OnboardingClient/Support";
+import { PersonalityType } from "widgets/OnboardingClient/PersonalityType";
+import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
+import { Readiness } from "widgets/OnboardingClient/Readiness";
+import { Summary } from "widgets/OnboardingClient/Summary";
 
 export const AppRoutes = () => {
   return (
@@ -49,6 +57,14 @@ export const AppRoutes = () => {
       <Route path="/invite-clients" element={<InviteClients />} />
       <Route path="/onboarding-finish" element={<OnboardingFinish />} />
       <Route path="/about-you" element={<DemographicStep />} />
+      <Route path="/what-brings-you-here" element={<WhatBrringsYouHere />} />
+      <Route path="/values" element={<Values/>} />
+      <Route path="/barriers" element={<Barriers />} />
+      <Route path="/support" element={<Support />} />
+      <Route path="/personality-type" element={<PersonalityType/>} />
+      <Route path="/choose-test" element={<ChooseTest/>} />
+      <Route path="/readiness" element={<Readiness/>} />
+      <Route path="/summary" element={<Summary/>} />
       <Route
         element={
           <MainLayout mainLocation="content-manager">

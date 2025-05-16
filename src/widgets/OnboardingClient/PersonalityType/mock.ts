@@ -1,0 +1,18 @@
+export const personalities = [
+    "Architect",
+    "Logician",
+    "Commander",
+    "Debater",
+    "Advocate",
+    "Mediator",
+    "Protagonist",
+    "Campaigner",
+    "Logistician",
+    "Defender",
+    "Executive",
+    "Consul",
+    "Virtuoso",
+    "Adventurer",
+    "Enterpreneur",
+    "Entertainer"
+];
