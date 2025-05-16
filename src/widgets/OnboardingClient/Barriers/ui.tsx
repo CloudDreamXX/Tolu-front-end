@@ -8,48 +8,52 @@ import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 
 export const Barriers = () => {
-  const [radio, setRadio] = useState({
-    value: "",
-    id: "",
-  });
+  const [radio, setRadio] = useState({ value: "", id: "" });
   const [input, setInput] = useState("");
   const nav = useNavigate();
   const dispatch = useDispatch();
-const handleNext = () => {
-  const trimmedInput = input.trim();
-  const valueToSave =
-    trimmedInput !== "" ? trimmedInput : radioContent[Number(radio.id)];
 
-  dispatch(setFormField({ field: "barriers", value: valueToSave }));
-  nav("/support");
-};
-  const isFilled = () => {
-    return radio.value !== "" && input !== "";
+  const isOtherSelected = radio.value === "Other";
+  const trimmedInput = input.trim();
+
+  const handleNext = () => {
+    const valueToSave = isOtherSelected ? trimmedInput : radio.value;
+    dispatch(setFormField({ field: "barriers", value: valueToSave }));
+    nav("/support");
   };
+
+  const isFilled = () => {
+    return isOtherSelected ? trimmedInput !== "" : radio.value !== "";
+  };
+
   return (
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={3} steps={8} />
       <main className="flex flex-col items-center gap-8 justify-center self-stretch">
-        <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-h1">
+        <h1 className="text-[#1D1D1F] text-center text-h1">
           Barriers & Self-Reflection
         </h1>
-        <div className=" w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
+
+        <div className="w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
           <div className="flex flex-col gap-2 items-start">
             <h1 className="text-h5 font-[Nunito] text-[18px] text-[#1D1D1F]">
               What’s been getting in your way so far?
             </h1>
           </div>
-          <div className="flex flex-col gap-4 items-start">
+
+          <div className="flex flex-col gap-4 items-start w-full">
             {radioContent.map((item, index) => (
-              <div key={item} className="flex gap-4  items-center">
+              <div key={item} className="flex gap-4 items-center">
                 <input
+                  type="radio"
+                  name="problem"
+                  value={item}
                   id={index.toString()}
+                  className="h-6 w-6 rounded-full"
+                  checked={radio.value === item}
                   onChange={(e) =>
                     setRadio({ value: e.target.value, id: e.target.id })
                   }
-                  type="radio"
-                  name="problem"
-                  className="h-6 w-6 rounded-full"
                 />
                 <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
                   {item}
@@ -57,17 +61,22 @@ const handleNext = () => {
               </div>
             ))}
           </div>
-          <div className="flex flex-col gap-[10px] w-full items-start">
-            <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
-              Your variant
-            </label>
-            <Input
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Other"
-              className="w-full text-[16px] font-[Nunito] font-medium py-[11px] px-[16px] "
-            />
-          </div>
+
+          {isOtherSelected && (
+            <div className="flex flex-col gap-[10px] w-full items-start">
+              <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
+                Your variant
+              </label>
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Other"
+                className="w-full text-[16px] font-[Nunito] font-medium py-[11px] px-[16px]"
+              />
+            </div>
+          )}
         </div>
+
         <div className="flex justify-between items-center w-full max-w-[700px]">
           <button
             onClick={handleNext}
@@ -88,7 +97,7 @@ const handleNext = () => {
               className={
                 isFilled()
                   ? "p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
-                  : "p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-white"
+                  : "p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-white cursor-not-allowed"
               }
             >
               Continue

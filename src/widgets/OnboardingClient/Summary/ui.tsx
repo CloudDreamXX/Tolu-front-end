@@ -70,11 +70,14 @@ export const Summary = () => {
     editing: boolean,
     section: "personal" | "insights"
   ) => {
-    const value = section === "personal" ? personalState[key] : insightsState[key];
+    const value =
+      section === "personal" ? personalState[key] : insightsState[key];
 
     return (
       <div key={key} className="flex flex-col gap-1 flex-1">
-        <p className="text-[#5F5F65] text-[12px] font-normal font-[Nunito]">{label}</p>
+        <p className="text-[#5F5F65] text-[12px] font-normal font-[Nunito]">
+          {label}
+        </p>
         {editing ? (
           <Input
             name={key}
@@ -114,7 +117,9 @@ export const Summary = () => {
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={7} steps={8} />
       <main className="flex flex-col w-full items-center gap-8 justify-center self-stretch">
-        <h1 className="text-[#1D1D1F] text-center text-h1">Summary Confirmation Page</h1>
+        <h1 className="text-[#1D1D1F] text-center text-h1">
+          Summary Confirmation Page
+        </h1>
 
         <div className="w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
           <div className="flex flex-col items-start gap-2">
@@ -129,13 +134,33 @@ export const Summary = () => {
           {/* Personal Info Section */}
           <div className="rounded-[16px] border border-[#DDEBF6] w-full flex flex-col gap-4 p-6">
             <div className="flex justify-between items-center w-full">
-              <h2 className="text-[#1D1D1F] font-[Nunito] text-[18px] font-bold">Personal info</h2>
+              <h2 className="text-[#1D1D1F] font-[Nunito] text-[18px] font-bold">
+                Personal info
+              </h2>
               {!isEditingPersonal ? (
-                <PencilIcon className="cursor-pointer" onClick={() => setIsEditingPersonal(true)} size={16} color="#1C63DB" />
+                <PencilIcon
+                  className="cursor-pointer"
+                  onClick={() => setIsEditingPersonal(true)}
+                  size={16}
+                  color="#1C63DB"
+                />
               ) : (
                 <div className="flex gap-2">
-                  <button className="text-[#1C63DB] text-sm" onClick={() => handleSave("personal")}>Save</button>
-                  <button className="text-gray-500 text-sm" onClick={() => setIsEditingPersonal(false)}>Cancel</button>
+                  <button
+                    className="text-[#1C63DB] text-sm"
+                    onClick={() => handleSave("personal")}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="text-gray-500 text-sm"
+                    onClick={() => {
+                      setPersonalState({ ...client });
+                      setIsEditingPersonal(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
                 </div>
               )}
             </div>
@@ -145,17 +170,41 @@ export const Summary = () => {
           {/* Insights Section */}
           <div className="rounded-[16px] border border-[#DDEBF6] w-full flex flex-col gap-4 p-6">
             <div className="flex justify-between items-center w-full">
-              <h2 className="text-[#1D1D1F] font-[Nunito] text-[18px] font-bold">Your insights</h2>
+              <h2 className="text-[#1D1D1F] font-[Nunito] text-[18px] font-bold">
+                Your insights
+              </h2>
               {!isEditingInsights ? (
-                <PencilIcon className="cursor-pointer" onClick={() => setIsEditingInsights(true)} size={16} color="#1C63DB" />
+                <PencilIcon
+                  className="cursor-pointer"
+                  onClick={() => setIsEditingInsights(true)}
+                  size={16}
+                  color="#1C63DB"
+                />
               ) : (
                 <div className="flex gap-2">
-                  <button className="text-[#1C63DB] text-sm" onClick={() => handleSave("insights")}>Save</button>
-                  <button className="text-gray-500 text-sm" onClick={() => setIsEditingInsights(false)}>Cancel</button>
+                  <button
+                    className="text-[#1C63DB] text-sm"
+                    onClick={() => handleSave("insights")}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="text-gray-500 text-sm"
+                    onClick={() => {
+                      setInsightsState({ ...client });
+                      setIsEditingInsights(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
                 </div>
               )}
             </div>
-            {renderPairs(insightsFields, isEditingInsights, "insights")}
+
+            {/* One-by-one fields instead of pairs */}
+            {insightsFields.map(({ label, key }) =>
+              renderField(label, key, isEditingInsights, "insights")
+            )}
           </div>
         </div>
 

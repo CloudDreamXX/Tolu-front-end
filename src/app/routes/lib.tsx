@@ -33,6 +33,7 @@ import { PersonalityType } from "widgets/OnboardingClient/PersonalityType";
 import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
 import { Readiness } from "widgets/OnboardingClient/Readiness";
 import { Summary } from "widgets/OnboardingClient/Summary";
+import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
 
 export const AppRoutes = () => {
   return (
@@ -65,6 +66,7 @@ export const AppRoutes = () => {
       <Route path="/choose-test" element={<ChooseTest/>} />
       <Route path="/readiness" element={<Readiness/>} />
       <Route path="/summary" element={<Summary/>} />
+      <Route path="/finish" element={<FinishClientOnboarding/>}/>
       <Route
         element={
           <MainLayout mainLocation="content-manager">
