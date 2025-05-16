@@ -120,7 +120,6 @@ export const Summary = () => {
         <h1 className="text-[#1D1D1F] text-center text-h1">
           Summary Confirmation Page
         </h1>
-
         <div className="w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
           <div className="flex flex-col items-start gap-2">
             <h3 className="font-[Nunito] text-[18px] font-bold text-[#1D1D1F]">
