@@ -56,7 +56,9 @@ export const Readiness = () => {
 
           {/* Slider Message Box */}
           <div className="flex gap-2 items-center justify-center">
-            <Detective width={20} height={20} />
+            <div className="w=[20px] h=[20px]">
+            <Detective />
+            </div>
             <p className="flex flex-1 font-[Nunito] text-[14px]/[20px] font-medium text-[#1B2559]">
               {readinessMessages[value[0] - 1]}
             </p>
