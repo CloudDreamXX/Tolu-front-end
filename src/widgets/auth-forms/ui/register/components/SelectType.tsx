@@ -21,7 +21,7 @@ export const SelectType: React.FC<SelectType> = ({
   const [cardActive, setCardActive] = useState("");
   return (
     <main className="w-[550px] flex flex-col items-center gap-[60px]">
-      <h3 className="text-black text-center font-[Inter] font-semibold text-[40px]">
+      <h3 className="text-black text-center font-inter font-semibold text-[40px]">
         Select Your Type of Account:
       </h3>
       <main className="flex items-start gap-[80px]">

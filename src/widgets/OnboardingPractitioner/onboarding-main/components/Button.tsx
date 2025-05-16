@@ -1,17 +1,23 @@
+import UnselectIcon from "shared/assets/icons/unselect-blue"
+
 interface ButtonProps {
   children: React.ReactNode;
+  selected: boolean;
   onClick?: () => void;
-  style?: React.CSSProperties;
 }
 
-export const Button: React.FC<ButtonProps> = ({ children, onClick, style }) => {
+export const Button: React.FC<ButtonProps> = ({ children, selected, onClick }) => {
+  const baseClasses =
+    "flex py-2 px-4 items-center justify-center gap-[6px] rounded-full border border-[#BFBFBF] font-[Nunito] text-[16px] leading-[20px] font-semibold";
+
+  const selectedClasses = selected
+    ? "bg-[rgba(0,143,246,0.10)] text-[#1C63DB] border-[transparent]"
+    : "bg-transparent text-[#2D2D2D]";
+
   return (
-    <button
-      style={style}
-      onClick={onClick}
-      className="flex py-[10px] px-[32px] items-center justify-center gap-[6px] rounded-full border-[1px] border-[#BFBFBF] text-[#2D2D2D] font-[Nunito] text-[16px]/[20px] font-semibold"
-    >
+    <button onClick={onClick} className={`${baseClasses} ${selectedClasses}`}>
       {children}
+      {selected && <UnselectIcon />}
     </button>
-  );
+  )
 };

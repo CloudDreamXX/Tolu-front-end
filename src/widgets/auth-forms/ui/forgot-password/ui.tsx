@@ -24,10 +24,10 @@ export const ForgotPassword = () => {
     <div className="w-full h-screen flex items-start py-0">
       <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white text-center text-[96px] font-bold">
+          <h1 className="text-white text-center text-[96px] font-bold font-reem">
             VITAI
           </h1>
-          <h3 className="text-white text-center text-[32px] font-medium">
+          <h3 className="text-white text-center text-[32px] font-medium font-open">
             The Holistic Health Assistant
           </h3>
         </aside>
@@ -37,7 +37,7 @@ export const ForgotPassword = () => {
           className="w-[550px] flex flex-col items-center gap-[60px]"
           onSubmit={handleSubmit}
         >
-          <h3 className="text-black text-center font-[Inter] font-semibold text-[40px]">
+          <h3 className="text-black text-center font-inter font-semibold text-[40px]">
             Forgot password
           </h3>
           <div className="flex flex-col items-start gap-[10] self-stretch">

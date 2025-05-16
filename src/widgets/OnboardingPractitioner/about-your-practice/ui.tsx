@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Input } from "shared/ui";
+import LightIcon from "shared/assets/icons/light"
+import { SearchableSelect } from "../components/SearchableSelect";
 
 export const AboutYourPractice = () => {
   const dispatch = useDispatch();
@@ -88,35 +90,33 @@ export const AboutYourPractice = () => {
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={2} />
       <main className="flex flex-col items-center flex-1 justify-center w-full gap-[32px] self-stretch">
-        <h2 className="font-[Inter] text-[32px] text-center font-medium text-black w-[700px]">
+        <h2 className="font-inter text-[32px] text-center font-medium text-black w-[700px]">
           About your practice
         </h2>
         <div className="w-[700px] bg-white shadow-mdp-[40px] flex flex-col items-start gap-[24px] rounded-[20px]">
           {/* School */}
-          <div className="flex flex-col items-start self-stretch gap-[16px]">
-            <p className="font-[Nunito] text-[16px] font-medium mt-[16px] ml-[32px] text-black">
-              Which school did you graduate from? *
+          <div className="flex flex-col items-start self-stretch gap-[16px] mt-[40px] ml-[32px]">
+            <SearchableSelect
+              label="Which school did you graduate from? *"
+              options={[
+                "Functional Medicine Coaching Academy (FMCA)",
+                "Functional Nutrition Alliance (FxNA)",
+                "Nutritional Therapy Association (NTA)",
+                "Nutrition Therapy Institute (NTI)",
+                "Health Coach Institute (HCI)",
+              ]}
+              value={school}
+              onChange={(value) => handleFieldChange("school", value)}
+            />
+            <p className="font-[Nunito] text-[16px] font-medium text-black ml-[40px]">
+              Upload a certificate or license *
             </p>
-            <select
-              onChange={(e) => handleFieldChange("school", e.target.value)}
-              className="ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF]"
-            >
-              <option value="">Select your practice</option>
-              <option value="University of California, San Francisco">
-                University of California, San Francisco
-              </option>
-              <option value="Stanford University">Stanford University</option>
-              <option value="Harvard Medical School">
-                Harvard Medical School
-              </option>
-            </select>
           </div>
 
           {/* File Upload */}
           <div
-            className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
-              dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
-            } bg-white cursor-pointer transition`}
+            className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
+              } bg-white cursor-pointer transition`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -146,48 +146,53 @@ export const AboutYourPractice = () => {
               </div>
             </div>
           </div>
-
-          {/* Recent clients */}
-          <div className="flex flex-col items-start self-stretch gap-[16px]">
-            <p className="font-[Nunito] text-[16px] font-medium ml-[32px] text-black">
-              How many clients have you helped within the past 3 months? *
+          <div className="flex ml-[40px]">
+            <LightIcon />
+            <p className="font-[Nunito] text-[16px] font-medium ml-[8px] text-[#1C63DB]">
+              Data is securely saved with a HIPAA-compliant notice
             </p>
-            <select
-              onChange={(e) => handleFieldChange("recent", e.target.value)}
-              className="ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF]"
-            >
-              <option value="">Select</option>
-              <option value="10">1–10</option>
-              <option value="25">11–25</option>
-              <option value="50+">50+</option>
-            </select>
+          </div>
+          {/* Recent clients */}
+          <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
+            <SearchableSelect
+              label="How many clients have you helped within the past 3 months? *"
+              options={[
+                "0-5",
+                "6-15",
+                "16-30",
+                "31-50",
+                "50+",
+              ]}
+              value={school}
+              onChange={(value) => handleFieldChange("recent", value)}
+            />
           </div>
 
           {/* Target clients */}
-          <div className="flex flex-col items-start self-stretch gap-[16px]">
-            <p className="font-[Nunito] text-[16px] font-medium ml-[32px] text-black">
-              How many new clients do you hope to acquire over the next 3
-              months? *
-            </p>
-            <select
-              onChange={(e) => handleFieldChange("target", e.target.value)}
-              className="ml-[32px] py-[11px] px-[16px] w-[620px] rounded-[8px] border-[1px] border-[#DFDFDF]"
-            >
-              <option value="">Select</option>
-              <option value="10">1–10</option>
-              <option value="25">11–25</option>
-              <option value="50+">50+</option>
-            </select>
+          <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
+            <SearchableSelect
+              label="How many new clients do you hope to acquire over the next 3
+              months? *"
+              options={[
+                "0-5",
+                "6-15",
+                "16-30",
+                "31-50",
+                "50+",
+              ]}
+              value={school}
+              onChange={(value) => handleFieldChange("target", value)}
+            />
           </div>
 
           {/* Radio - uses labs/supplements */}
           <div className="flex flex-col ml-[32px] items-start self-stretch mb-[16px] gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium text-black">
-              Do you use labs or supplements? *
+              Do you currently use labs or supplementation in your practice? *
             </p>
             <div className="flex items-center gap-[60px]">
               {["yes", "no", "planning to"].map((option) => (
-                <label key={option} className="flex gap-[16px] items-center">
+                <label key={option} className="flex gap-[16px] items-center whitespace-nowrap">
                   <Input
                     type="radio"
                     name="labs"

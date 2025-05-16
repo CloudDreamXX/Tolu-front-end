@@ -81,7 +81,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       {token.length > 0 && email.length > 0 ? (
         <div className="w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px]">
           <div className="flex flex-col items-end self-stretch justify-end gap-[16px]">
-            <h1 className="text-center self-stretch text-black font-[Inter] text-[40px] font-semibold">
+            <h1 className="text-center self-stretch text-black font-inter text-[40px] font-semibold">
               Just a moment...
             </h1>
             <h3 className="text-center self-stretch text-black font-[Nunito] text-[24px] font-normal">
@@ -99,7 +99,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       ) : (
         <div className="w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px]">
           <div className="flex flex-col items-end self-stretch justify-end gap-[16px]">
-            <h1 className="text-center self-stretch text-black font-[Inter] text-[40px] font-semibold">
+            <h1 className="text-center self-stretch text-black font-inter text-[40px] font-semibold">
               Check your inbox
             </h1>
             <h3 className="text-center self-stretch text-black font-[Nunito] text-[24px] font-normal">

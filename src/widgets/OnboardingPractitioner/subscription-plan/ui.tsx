@@ -15,7 +15,7 @@ export const SubscriptionPlan = () => {
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={3} />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
-        <h3 className="font-[Inter] text-[32px] font-medium text-black text-center self-stretch">
+        <h3 className="font-inter text-[32px] font-medium text-black text-center self-stretch">
           Choose subscription plan
         </h3>
         <section className="flex gap-[32px] w-[1050px] items-center">
@@ -23,14 +23,14 @@ export const SubscriptionPlan = () => {
             onClick={() => setActiveCard("starting")}
             active={activeCard === "starting"}
             plan="starting"
-            price="$00.00"
+            price="$0.00"
             features={features}
           />
           <PriceCard
             onClick={() => setActiveCard("professional")}
             active={activeCard === "professional"}
             plan="professional"
-            price="$33.99"
+            price="$39.00"
             mostPopular
             features={features}
           />

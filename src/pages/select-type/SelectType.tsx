@@ -58,7 +58,7 @@ export const SelectType = () => {
     >
       <HeaderOnboarding />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
-        <h1 className="flex text-center font-[Inter] text-[32px] font-medium text-black">
+        <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
           What type of practitioner best describes your role?
         </h1>
         <form onSubmit={() => {}} className="flex flex-col gap-[20px] p-[40px] items-center rounded-[20px] bg-white shadow-md border-[1px] border-[#1C63DB]">

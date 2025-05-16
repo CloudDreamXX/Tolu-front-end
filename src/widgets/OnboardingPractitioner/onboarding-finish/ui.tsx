@@ -27,7 +27,7 @@ export const OnboardingFinish = () => {
       <main className="flex flex-col items-center flex-1 justify-center self-stretch mt-20">
         <div className="flex flex-col items-center justify-center gap-[32px] py-[56px] px-[100px] rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
           <div className="flex flex-col items-center gap-[24px]">
-            <h3 className="w-[860px] text-black font-[Inter] text-center text-[40px]/[59px] font-semibold">
+            <h3 className="w-[860px] text-black font-inter text-center text-[40px]/[59px] font-semibold">
               You’re all set!
             </h3>
             <p className="self-stretch text-center text-black font-[Nunito] text-[24px] font-medium ">

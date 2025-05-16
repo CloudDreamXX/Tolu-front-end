@@ -36,7 +36,7 @@ export const OnboardingMain = () => {
     >
       <HeaderOnboarding />
       <main className="flex flex-col items-center flex-1 justify-center gap-[60px] self-stretch">
-        <h3 className="font-[Inter] text-[32px] font-medium text-black text-center self-stretch">What are your primary focus areas?</h3>
+        <h3 className="font-inter text-[32px] font-medium text-black text-center self-stretch">What are your primary focus areas?</h3>
         <section className="w-[900px] items-center justify-center flex flex-col gap-[32px]">
           <div className="flex w-[500px] items-start gap-[12px] flex-col">
             <input
@@ -186,7 +186,7 @@ export const OnboardingMain = () => {
             </div>
           </div>
             {isOtherSelected() ? (
-            <div className="flex justify-center gap-[8px] items-start w-full">
+            <div className="flex justify-center gap-[8px] items-start">
               <input
               onChange={(e) => setOtherText(e.target.value)}
               type="text"

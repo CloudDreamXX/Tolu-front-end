@@ -9,7 +9,7 @@ import { Input } from "shared/ui";
 
 export const LoginForm = () => {
   const loginSchema = z.object({
-    email: z.string().email("Invalid email address"),
+    email: z.string().email("The email format is incorrect."),
     password: z.string().min(8, "Password must be at least 8 characters long"),
   });
 
@@ -19,11 +19,36 @@ export const LoginForm = () => {
   const [passwordError, setPasswordError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [token, setToken] = useState("");
 
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginError("");
     setPasswordError("");
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleTokenSubmit = async () => {
+    if (!formData.email) return;
+
+    try {
+      const response = await UserService.verifyEmail({
+        email: formData.email,
+        token,
+      });
+
+      if (response.accessToken && response.user) {
+        dispatch(setCredentials({
+          user: response.user,
+          accessToken: response.accessToken,
+        }));
+
+        navigate("/", { replace: true });
+      } else {
+        console.error("Invalid token or response");
+      }
+    } catch (error) {
+      console.error("Token login error:", error);
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -71,12 +96,8 @@ export const LoginForm = () => {
     <div className="w-full h-screen flex items-start py-0">
       <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white text-center text-[96px] font-bold">
-            VITAI
-          </h1>
-          <h3 className="text-white text-center text-[32px] font-medium">
-            The Holistic Health Assistant
-          </h3>
+          <h1 className="text-white text-center text-[96px] font-bold font-reem">VITAI</h1>
+          <h3 className="text-white text-center text-[32px] font-medium font-open">The Holistic Health Assistant</h3>
         </aside>
       </div>
       <div className="w-full h-full flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
@@ -84,7 +105,7 @@ export const LoginForm = () => {
           className="w-[550px] flex flex-col items-center gap-[60px]"
           onSubmit={handleSubmit}
         >
-          <h3 className="text-black text-center font-[Inter] font-semibold text-[40px]">
+          <h3 className="text-black text-center font-inter font-semibold text-[40px]">
             Log In
           </h3>
           <main className="flex flex-col gap-[24px] items-start self-stretch">
@@ -126,7 +147,7 @@ export const LoginForm = () => {
                 {formData.password.length > 0 && (
                   <button
                     type="button"
-                    className="absolute mr-2"
+                    className="absolute mr-4"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {!showPassword ? (
@@ -154,9 +175,9 @@ export const LoginForm = () => {
               type="submit"
               className={
                 formData.email.length > 1 &&
-                formData.password.length > 1 &&
-                !passwordError &&
-                !loginError
+                  formData.password.length > 1 &&
+                  !passwordError &&
+                  !loginError
                   ? "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
                   : "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5F5F65] font-[Nunito] text-[16px] font-semibold"
               }

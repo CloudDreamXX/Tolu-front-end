@@ -16,7 +16,7 @@ export const SubscriptionPlan = () => {
     >
       <HeaderOnboarding />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
-        <h3 className="font-[Inter] text-[32px] font-medium text-black text-center self-stretch">
+        <h3 className="font-inter text-[32px] font-medium text-black text-center self-stretch">
           Choose subscription plan
         </h3>
         <section className="flex gap-[32px] w-[1200px] items-center">

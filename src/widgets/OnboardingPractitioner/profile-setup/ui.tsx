@@ -1,17 +1,20 @@
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { UploadCloud } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
+import { SearchableSelect } from "../components/SearchableSelect";
+import { RootState } from "entities/store";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const nav = useNavigate();
   const ref = useRef<HTMLInputElement>(null);
+  const state = useSelector((state: RootState) => state.coachOnboarding);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -33,7 +36,7 @@ export const ProfileSetup = () => {
       <HeaderOnboarding currentStep={4} />
 
       <main className="mx-auto flex flex-col gap-[32px] items-center justify-center w-[859px]">
-        <h1 className="text-black text-[32px] font-[Inter] font-medium text-center">
+        <h1 className="text-black text-[32px] font-inter font-medium text-center">
           Profile Setup
         </h1>
 
@@ -88,14 +91,13 @@ export const ProfileSetup = () => {
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
             />
           </div>
-
           {/* Gender */}
           <div className="flex flex-col gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
               Gender
             </label>
             <div className="flex gap-[40px]">
-              {["male", "female"].map((gender) => (
+              {["men", "women"].map((gender) => (
                 <label
                   key={gender}
                   className="flex items-center gap-[8px] text-[16px] text-black font-[Nunito]"
@@ -115,26 +117,23 @@ export const ProfileSetup = () => {
               ))}
             </div>
           </div>
-
           {/* Time zone */}
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
-              Time zone
-            </label>
-            <select
-              onChange={(e) =>
-                dispatch(
-                  updateCoachField({ key: "timezone", value: e.target.value })
-                )
-              }
-              className="border rounded-[8px] h-[44px] px-[12px] text-[16px] text-[#5F5F65]"
-            >
-              <option value="">Select timezone</option>
-              <option value="America/Los_Angeles">
-                (GMT-08:00) Pacific Time (US & Canada)
-              </option>
-              <option value="UTC">(GMT+00:00) UTC</option>
-            </select>
+            <SearchableSelect
+              label="Time zone"
+              labelStyle="text-[#5F5F65]"
+              placeholder="Search for Time Zone"
+              options={[
+                "(GMT-08:00) Pacific Time (US & Canada)",
+                "(GMT-08:00) Pacific Standard Time (Mexico)",
+                "(GMT+13:00) Pacific/Auckland (New Zealand Time)",
+                "(GMT-09:00) Pacific/Honolulu (Hawaii Time)",
+              ]}
+              value={state.timezone}
+              onChange={(value) => dispatch(
+                updateCoachField({ key: "timezone", value: value })
+              )}
+            />
           </div>
 
           {/* Upload Profile Picture */}
@@ -223,24 +222,31 @@ export const ProfileSetup = () => {
 
           {/* Recovery Question */}
           <div className="flex gap-[12px]">
-            <select
-              className="flex-1 border rounded-[8px] h-[44px] px-[12px] text-[16px] text-[#5F5F65]"
-              onChange={(e) =>
-                dispatch(
+                        <SearchableSelect
+              label="Set recovery question"
+              labelStyle="text-[#5F5F65]"
+              placeholder="Select recovery question"
+              options={[
+                "What is your favorite book?",
+                "Mother's maiden name?",
+                "In what city were you born?",
+                "What is your favourite book",
+              ]}
+              value={state.timezone}
+              onChange={(value) => dispatch(
                   updateCoachField({
                     key: "security_questions",
-                    value: e.target.value,
+                    value: value,
                   })
-                )
-              }
-            >
-              <option value="">Select recovery question</option>
-              <option value="book">What is your favorite book?</option>
-              <option value="mother">Mother's maiden name?</option>
-            </select>
+                )}
+            />
+            <div className="flex flex-col gap-[8px] w-[100%]">
+            <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
+              Answer the questions for recovery
+            </label>
             <Input
               type="text"
-              className="flex-1 border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+              className="flex-1 border rounded-[8px] h-[44px] px-[12px] py-[16px] text-[16px]"
               placeholder="Enter your answer"
               onChange={(e) =>
                 dispatch(
@@ -251,6 +257,7 @@ export const ProfileSetup = () => {
                 )
               }
             />
+            </div>
           </div>
         </form>
 

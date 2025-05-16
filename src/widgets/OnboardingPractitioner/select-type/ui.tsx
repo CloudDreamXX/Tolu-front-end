@@ -48,10 +48,10 @@ export const SelectType = () => {
   };
 
   return (
-<AuthPageWrapper>
+    <AuthPageWrapper>
       <HeaderOnboarding currentStep={0} />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
-        <h1 className="flex text-center font-[Inter] text-[32px] font-medium text-black">
+        <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
           What type of practitioner best describes your role?
         </h1>
         <form
@@ -77,18 +77,18 @@ export const SelectType = () => {
                   className="flex w-full items-center justify-between bg-[#FAFAFA] border-[#9D9D9D] border-[1px] rounded-[8px] h-[52px] px-[12px] cursor-pointer"
                   onClick={() => toggleDropdown(index)}
                 >
-                  <span className="text-[#5F5F65] font-[Nunito] text-[16px]">
+                  <span className="text-[#000] font-[Nunito] text-[16px]">
                     {selectedOptions[index] || "Select your type"}
                   </span>
                   <ChevronDown className="text-[#9D9D9D]" />
                 </button>
                 {activeDropdown === index && (
-                  <div className="absolute z-10 flex flex-col gap-[10px] w-full mt-[4px] bg-white border-[#9D9D9D] border-[1px] rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto">
+                  <div className="absolute z-10 flex flex-col w-full mt-[4px] bg-[#FAFAFA] border-none rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto scrollbar-hide">
                     {dropdownOptions.map((option) => (
                       <button
                         type="button"
                         key={option}
-                        className={`p-[12px] text-[#1D1D1F] text-[16px] font-medium cursor-pointer hover:bg-[#F1F1F1] hover:text-[#1C63DB] ${selectedOptions[index] === option ? "bg-[#E4E9F2]" : ""}`}
+                        className="py-[15px] px-[12px] text-left text-[#1D1D1F] text-[16px] font-medium cursor-pointer hover:bg-[#F2F2F2] hover:text-[#1C63DB]"
                         onClick={() => handleSelection(index, option)}
                       >
                         {option}
@@ -104,11 +104,10 @@ export const SelectType = () => {
           onClick={handleSubmit}
           type="submit"
           disabled={!isAllSelected()}
-          className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
-            isAllSelected()
+          className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${isAllSelected()
               ? "bg-[#1C63DB] text-white"
               : "bg-[#D5DAE2] text-[#5F5F65]"
-          }`}
+            }`}
         >
           Next
         </button>

@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Reem+Kufi:wght@400..700&family=Space+Grotesk:wght@300..700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,6 +10,7 @@
   --text-color: #1d1d1f99;
   --nunito-text: "Nunito", serif;
 }
+
 * {
   padding: 0;
   margin: 0;
@@ -64,6 +66,7 @@ li::marker {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -96,7 +99,20 @@ li::marker {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.font-inter {
+  font-family: 'Inter', 'sans-serif' !important;
+}
+
+.font-reem {
+  font-family: 'Reem Kufi', 'sans-serif' !important;
+}
+
+.font-open {
+  font-family: 'Open Sans', 'sans-serif' !important;
 }
