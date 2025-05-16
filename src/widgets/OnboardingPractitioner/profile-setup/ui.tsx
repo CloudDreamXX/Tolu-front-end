@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
 import { SearchableSelect } from "../components/SearchableSelect";
 import { RootState } from "entities/store";
+import { Switch } from "shared/ui/switch";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,15 @@ export const ProfileSetup = () => {
   const handleClick = () => {
     ref.current?.click();
   };
+
+  const isFormValid =
+    !!state.first_name?.trim() &&
+    !!state.last_name?.trim() &&
+    !!state.age &&
+    !!state.gender &&
+    !!state.timezone &&
+    !!state.security_questions &&
+    !!state.security_answers?.trim();
 
   return (
     <AuthPageWrapper>
@@ -159,7 +169,7 @@ export const ProfileSetup = () => {
                   or drag and drop
                 </p>
                 <p className="text-[#5F5F65] text-[14px] font-[Nunito]">
-                  PDF, JPG or PNG
+                  JPG or PNG
                 </p>
               </div>
             )}
@@ -178,13 +188,14 @@ export const ProfileSetup = () => {
               Two-factor authentication
             </label>
             <label className="flex items-center gap-[8px] text-[16px] font-[Nunito] text-black">
-              <input
-                type="checkbox"
-                onChange={(e) =>
+              <Switch
+                className="data-[state=checked]:bg-black"
+                checked={state.two_factor_enabled}
+                onCheckedChange={(value: boolean) =>
                   dispatch(
                     updateCoachField({
                       key: "two_factor_enabled",
-                      value: e.target.checked,
+                      value: value,
                     })
                   )
                 }
@@ -199,7 +210,7 @@ export const ProfileSetup = () => {
               Choose method:
             </label>
             <div className="flex gap-[24px]">
-              {["sms", "app", "email"].map((method) => (
+              {["SMS", "Authenticator App", "Email"].map((method) => (
                 <label key={method} className="flex items-center gap-[8px]">
                   <input
                     type="radio"
@@ -214,14 +225,14 @@ export const ProfileSetup = () => {
                       )
                     }
                   />
-                  {method.toUpperCase()}
+                  {method}
                 </label>
               ))}
             </div>
           </div>
 
           {/* Recovery Question */}
-          <div className="flex gap-[12px]">
+          <div className="flex items-center gap-[12px]">
             <SearchableSelect
               label="Set recovery question"
               labelStyle="text-[#5F5F65]"
@@ -248,7 +259,7 @@ export const ProfileSetup = () => {
               </label>
               <Input
                 type="text"
-                className="flex-1 border rounded-[8px] h-[44px] px-[12px] py-[16px] text-[16px]"
+                className="flex-1 border rounded-[8px] min-h-[48px] px-[12px] py-[16px] text-[16px]"
                 placeholder="Enter your answer"
                 onChange={(e) =>
                   dispatch(
@@ -274,7 +285,12 @@ export const ProfileSetup = () => {
           </button>
           <button
             onClick={() => nav("/invite-clients")}
-            className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
+            disabled={!isFormValid}
+            className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
+              isFormValid
+                ? "bg-[#1C63DB] text-white"
+                : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
+            }`}
           >
             Next
           </button>

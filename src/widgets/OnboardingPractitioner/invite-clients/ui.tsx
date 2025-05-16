@@ -9,7 +9,7 @@ export const InviteClients = () => {
   const nav = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-  const [clientel, setClientel] = useState<number[]>([1]);
+  const [clientel, setClientel] = useState<string[]>([""]);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -22,6 +22,8 @@ export const InviteClients = () => {
     }
   };
 
+  const isAllClientsFilled = clientel.every((value) => value.trim() !== "");
+
   return (
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={5} />
@@ -30,11 +32,10 @@ export const InviteClients = () => {
           Invite Clients
         </h1>
         <p className="text-[#5F5F65] text-[16px] font-[Nunito] font-normal text-center">
-          Invite your clients to join your coaching platform and start working
-          together
+          Invite your clients to join your coaching platform and start working together
         </p>
 
-        <div className="bg-white rounded-[16px] py-[32px] px-[40px] w-[600px] flex flex-col gap-[24px] items-center shadow-md">
+        <div className="bg-white rounded-[16px] py-[32px] px-[40px] w-[600px] flex flex-col gap-[24px] items-start shadow-md">
           <p className="text-left font-[Nunito] text-black text-base font-medium">
             Import CSV or PDF
           </p>
@@ -81,9 +82,9 @@ export const InviteClients = () => {
 
           {/* Divider */}
           <div className="w-full flex items-center gap-[8px] text-[#C0C0C0] text-[14px]">
-            <div className="flex-1 h-[1px] bg-[#DBDEE1]" />
-            or
-            <div className="flex-1 h-[1px] bg-[#DBDEE1]" />
+            <div className="flex-1 h-[1px] bg-[#8EBEFF]" />
+            <span className="text-[#8EBEFF]">or</span>
+            <div className="flex-1 h-[1px] bg-[#8EBEFF]" />
           </div>
 
           {/* Manual input */}
@@ -91,16 +92,22 @@ export const InviteClients = () => {
             <p className="text-left font-[Nunito] text-black text-base font-medium">
               Manual Invite
             </p>
-            {clientel.map((client) => (
+            {clientel.map((value, index) => (
               <Input
-                key={client}
+                key={index}
                 type="text"
                 placeholder="Enter email or phone"
+                value={value}
+                onChange={(e) => {
+                  const updated = [...clientel];
+                  updated[index] = e.target.value;
+                  setClientel(updated);
+                }}
                 className="h-[44px] w-full rounded-[8px] border border-[#DFDFDF] px-[16px] font-[Nunito] text-[14px] text-[#5F5F65]"
               />
             ))}
             <button
-              onClick={() => setClientel([...clientel, clientel.length + 1])}
+              onClick={() => setClientel([...clientel, ""])}
               type="button"
               style={{ background: "rgba(0, 143, 246, 0.10)" }}
               className="mt-4 h-7 w-44 rounded-full text-[#1C63DB] font-[Nunito] flex items-center justify-center text-[14px] font-semibold"
@@ -121,7 +128,12 @@ export const InviteClients = () => {
           </button>
           <button
             onClick={() => nav("/onboarding-finish")}
-            className="bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
+            disabled={!isAllClientsFilled}
+            className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
+              isAllClientsFilled
+                ? "bg-[#1C63DB] text-white"
+                : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
+            }`}
           >
             Next
           </button>
