@@ -4,6 +4,7 @@ import { getStepStyle } from "./uitls";
 
 interface HeaderOnboardingProps {
   currentStep: number;
+  steps?: number;
 }
 
 export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
