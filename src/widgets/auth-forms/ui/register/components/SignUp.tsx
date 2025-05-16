@@ -24,9 +24,9 @@ const signUpSchema = z
     email: z.string().email("The email format is incorrect"),
     phone: z
       .string()
-      .min(11, "Phone number is too short")
-      .max(11, "Phone number is too long")
-      .regex(/^\+?[0-9]+$/, "Phone number format is invalid"),
+      .min(10, "Phone number is too short")
+      .max(15, "Phone number is too long")
+      .regex(/^\d+$/, "Phone number must contain digits only"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     newPassword: z.string().min(8, "Password must be at least 8 characters"),
   })
