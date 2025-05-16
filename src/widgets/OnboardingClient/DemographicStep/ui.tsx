@@ -97,6 +97,7 @@ export const DemographicStep = () => {
               <div className="gap-6 flex w-full items-center">
                 <div className="flex gap-4 flex-1 items-center">
                   <input
+                    value="still menstruating"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
                     name="menopause"
                     type="radio"
@@ -108,6 +109,7 @@ export const DemographicStep = () => {
                 </div>
                 <div className="flex gap-4 flex-1 items-center">
                   <input
+                    value="irregular pause"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
                     name="menopause"
                     type="radio"
@@ -121,6 +123,7 @@ export const DemographicStep = () => {
               <div className="gap-6 flex w-full items-center">
                 <div className="flex gap-4 flex-1 items-center">
                   <input
+                    value="no period for 12+ months"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
                     name="menopause"
                     type="radio"
@@ -132,6 +135,7 @@ export const DemographicStep = () => {
                 </div>
                 <div className="flex gap-4 flex-1 items-center">
                   <input
+                    value="postmenopausal"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
                     name="menopause"
                     type="radio"
@@ -144,6 +148,7 @@ export const DemographicStep = () => {
               </div>
               <div className="flex items-center gap-4">
                 <input
+                  value="not sure"
                   name="menopause"
                   type="radio"
                   onChange={(e) => setMenopauseStatus(e.target.value)}

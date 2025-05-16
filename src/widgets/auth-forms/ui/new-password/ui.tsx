@@ -29,8 +29,6 @@ const handleSubmit = async (e: FormEvent) => {
 
   try {
     if (userData?.email && tokenNewPassword) {
-      console.log("userData", userData?.email);
-      console.log("tokenNewPassword", tokenNewPassword);
       const msg = await UserService.setNewPassword(
         userData.email,
         tokenNewPassword,
@@ -38,7 +36,6 @@ const handleSubmit = async (e: FormEvent) => {
       );
 
       if (msg.message) {
-        console.log("Password updated successfully");
         nav("/");
       }
     } else {

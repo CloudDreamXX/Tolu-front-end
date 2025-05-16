@@ -6,10 +6,24 @@ import Img2 from "shared/assets/images/card2.png";
 import Img3 from "shared/assets/images/card3.png";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
 
 export const FinishClientOnboarding = () => {
+    const token = useSelector((state: RootState) => state.user.token);
+    const client = useSelector((state: RootState) => state.clientOnboarding);
     const nav = useNavigate();
     useEffect(() => {
+        const handleLast = async () => {
+          try {
+            const message = await UserService.onboardClient(client, token);
+          }
+          catch (error) {
+            console.error("Error during onboarding:", error);
+          }
+        }
+        handleLast();
         const timer = setTimeout(() => {
             nav("/content-manager/published");
         }, 5000);

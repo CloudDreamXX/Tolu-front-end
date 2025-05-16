@@ -32,7 +32,6 @@ const handleNext = () => {
   }
 
   dispatch(setFormField({ field: "values", value: finalValues }));
-  console.log("Selected values:", finalValues);
   nav("/barriers");
 };
 

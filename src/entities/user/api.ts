@@ -1,6 +1,7 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import { IRegisterUser, IUser } from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
+import { FormState } from "entities/store/clientOnboardingSlice";
 
 interface LoginCredentials {
   email: string;
@@ -87,6 +88,45 @@ export class UserService {
 
     const response = await ApiService.post<string>(
       API_ROUTES.USER.ONBOARD_USER,
+      formData,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+
+    return { message: response };
+  }
+
+  static async getOnboardingUser(
+    token: string | null
+  ): Promise<CoachOnboardingState> {
+    const response = await ApiService.get<CoachOnboardingState>(
+      API_ROUTES.USER.GET_ONBOARDING_USER,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        withCredentials: true,
+      }
+    );
+
+    return response;
+  }
+
+  static async onboardClient(
+    data: FormState,
+    token: string | null
+  ): Promise<{ message: string }> {
+    const formData = new FormData();
+
+    formData.append("onboarding_data", JSON.stringify({ data }));
+
+    const response = await ApiService.post<string>(
+      API_ROUTES.USER.ONBOARD_CLIENT,
       formData,
       {
         headers: {
