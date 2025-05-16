@@ -13,15 +13,20 @@ interface PriceCardProps {
 export const PriceCard: React.FC<PriceCardProps> = ({
   plan,
   price,
-  features,
   active,
   onClick,
-  mostPopular = false,
 }) => {
   return (
-    <button onClick={onClick} className={active ? "bg-[#F4F9FF] rounded-[16px] border-[1px] border-[#AAC6EC] py-[40px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]" : "rounded-[16px] bg-white border-[1px] border-[#AAC6EC] py-[40px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]"}>
+    <button
+      onClick={onClick}
+      className={
+        active
+          ? "bg-[#F4F9FF] rounded-[16px] border-[1px] border-[#AAC6EC] py-[40px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]"
+          : "rounded-[16px] bg-white border-[1px] border-[#AAC6EC] py-[40px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]"
+      }
+    >
       <div className="flex flex-col gap-[4px] items-center">
-      {/* {mostPopular && (
+        {/* {mostPopular && (
         <div className="text-white rotate-[34.108deg] font-inter text-[18px] font-bold flex items-center gap-[10px] w-[360.865px] p-[8px] relative top-[-30px] bg-[#1C63DB] right-[-160.28px] justify-center">
             Most popular
         </div>
@@ -60,8 +65,12 @@ export const PriceCard: React.FC<PriceCardProps> = ({
         </li>
       </ul>
       <div className="flex flex-col items-center justify-center">
-        <h2 className="font-inter font-medium text-[40px]/[140%] text-[#1C63DB]">{price} USD</h2>
-        <h4 className="font-inter font-medium text-[16px]/[140%] text-[#AAA]">/per month</h4>
+        <h2 className="font-inter font-medium text-[40px]/[140%] text-[#1C63DB]">
+          {price} USD
+        </h2>
+        <h4 className="font-inter font-medium text-[16px]/[140%] text-[#AAA]">
+          /per month
+        </h4>
       </div>
     </button>
   );

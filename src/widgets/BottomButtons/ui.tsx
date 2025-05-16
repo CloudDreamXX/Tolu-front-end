@@ -2,17 +2,17 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 interface BottomButtonsProps {
-    handleNext: () => void;
-    skipButton: () => void;
-    isButtonActive: () => boolean;
+  handleNext: () => void;
+  skipButton: () => void;
+  isButtonActive: () => boolean;
 }
 
 export const BottomButtons: React.FC<BottomButtonsProps> = ({
-    handleNext,
-    skipButton,
-    isButtonActive,
+  handleNext,
+  skipButton,
+  isButtonActive,
 }) => {
-    const nav = useNavigate();
+  const nav = useNavigate();
   return (
     <div className="flex justify-between items-center w-full max-w-[700px]">
       <button

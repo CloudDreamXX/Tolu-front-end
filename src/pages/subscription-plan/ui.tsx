@@ -4,9 +4,9 @@ import { PriceCard } from "./components";
 import { useState } from "react";
 
 export const SubscriptionPlan = () => {
-  const [activeCard, setActiveCard] = useState<"starting" | "professional" | "">(
-    ""
-  );
+  const [activeCard, setActiveCard] = useState<
+    "starting" | "professional" | ""
+  >("");
   return (
     <div
       className="w-full h-full m-0 p-0"
@@ -51,22 +51,22 @@ export const SubscriptionPlan = () => {
           />
         </section>
         <div className="flex items-center gap-[16px]">
-        <button
-          className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
-          style={{ background: "rgba(0, 143, 246, 0.10)" }}
-        >
-          Back
-        </button>
-        <button
-          className={
-            activeCard !== ""
-              ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
-              : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
-          }
-        >
-          Next
-        </button>
-      </div>
+          <button
+            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            style={{ background: "rgba(0, 143, 246, 0.10)" }}
+          >
+            Back
+          </button>
+          <button
+            className={
+              activeCard !== ""
+                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
+                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
+            }
+          >
+            Next
+          </button>
+        </div>
       </main>
       <Footer />
     </div>

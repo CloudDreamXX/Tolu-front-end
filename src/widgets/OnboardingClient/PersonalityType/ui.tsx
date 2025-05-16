@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { AuthPageWrapper } from "shared/ui";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "shared/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "shared/ui/select";
 import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import { personalities } from "./mock";
@@ -23,27 +30,29 @@ export const PersonalityType = () => {
   };
 
   const isButtonActive = () => {
-    if(radioChosen === "know" && personalityType.length > 0) {
+    if (radioChosen === "know" && personalityType.length > 0) {
       return true;
-    }
-    else if (radioChosen !== "know" && radioChosen.length > 0) {
+    } else if (radioChosen !== "know" && radioChosen.length > 0) {
       return true;
     }
     return false;
-  }
+  };
 
   const handleNext = () => {
-    if(radioChosen === "know" && personalityType.length > 0 || radioChosen === "later") {
-      dispatch(setFormField({ field: "personalityType", value: personalityType }));
+    if (
+      (radioChosen === "know" && personalityType.length > 0) ||
+      radioChosen === "later"
+    ) {
+      dispatch(
+        setFormField({ field: "personalityType", value: personalityType })
+      );
       nav("/readiness");
-    }
-    else if (radioChosen === "test" ) {
+    } else if (radioChosen === "test") {
       nav("/choose-test");
-    }
-    else {
+    } else {
       return;
     }
-  }
+  };
 
   return (
     <AuthPageWrapper>
@@ -97,7 +106,10 @@ export const PersonalityType = () => {
                 <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
                   Personality type
                 </p>
-                <Select value={personalityType} onValueChange={setPersonalityType}>
+                <Select
+                  value={personalityType}
+                  onValueChange={setPersonalityType}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
@@ -127,7 +139,11 @@ export const PersonalityType = () => {
             </div>
           </div>
         </div>
-        <BottomButtons handleNext={handleNext} skipButton={() => nav('/readiness')} isButtonActive={isButtonActive}/>
+        <BottomButtons
+          handleNext={handleNext}
+          skipButton={() => nav("/readiness")}
+          isButtonActive={isButtonActive}
+        />
       </main>
       <Footer />
     </AuthPageWrapper>

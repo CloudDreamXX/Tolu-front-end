@@ -17,23 +17,23 @@ export const Values = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked, value } = e.target;
 
-    if (checked && selectedValues.length < 3 ) {
+    if (checked && selectedValues.length < 3) {
       setSelectedValues((prev) => [...prev, value]);
     } else if (!checked) {
       setSelectedValues((prev) => prev.filter((v) => v !== value));
     }
   };
 
-const handleNext = () => {
-  const finalValues = [...selectedValues];
+  const handleNext = () => {
+    const finalValues = [...selectedValues];
 
-  if (selectedValues.includes("Other") && inputValue.trim()) {
-    finalValues.splice(finalValues.indexOf("Other"), 1, inputValue.trim());
-  }
+    if (selectedValues.includes("Other") && inputValue.trim()) {
+      finalValues.splice(finalValues.indexOf("Other"), 1, inputValue.trim());
+    }
 
-  dispatch(setFormField({ field: "values", value: finalValues }));
-  nav("/barriers");
-};
+    dispatch(setFormField({ field: "values", value: finalValues }));
+    nav("/barriers");
+  };
 
   return (
     <AuthPageWrapper>

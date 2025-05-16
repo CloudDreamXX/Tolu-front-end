@@ -36,8 +36,8 @@ const checkPath = () => {
     location.pathname === "/about-your-practice" ||
     location.pathname === "/profile-setup" ||
     location.pathname === "/invite-clients" ||
-    location.pathname === "/onboarding-finish" || 
-    location.pathname === "/about-you" || 
+    location.pathname === "/onboarding-finish" ||
+    location.pathname === "/about-you" ||
     location.pathname === "/what-brings-you-here" ||
     location.pathname === "/values" ||
     location.pathname === "/barriers" ||
@@ -46,7 +46,7 @@ const checkPath = () => {
     location.pathname === "/choose-test" ||
     location.pathname === "/readiness" ||
     location.pathname === "/summary" ||
-    location.pathname === "/finish" 
+    location.pathname === "/finish"
   ) {
     return <Outlet />;
   }
@@ -69,9 +69,7 @@ export const MainLayout: React.FC<{
   );
 };
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  allowedRoles,
-}) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
   const location = useLocation();
   const { token, userType } = useSelector((state: RootState) => ({
     token: state?.user?.token,

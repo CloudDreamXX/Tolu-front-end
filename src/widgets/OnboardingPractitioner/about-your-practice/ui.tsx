@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Input } from "shared/ui";
-import LightIcon from "shared/assets/icons/light"
+import LightIcon from "shared/assets/icons/light";
 import { SearchableSelect } from "../components/SearchableSelect";
 
 export const AboutYourPractice = () => {
@@ -115,8 +115,9 @@ export const AboutYourPractice = () => {
 
           {/* File Upload */}
           <div
-            className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
-              } bg-white cursor-pointer transition`}
+            className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
+              dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
+            } bg-white cursor-pointer transition`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -156,13 +157,7 @@ export const AboutYourPractice = () => {
           <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
             <SearchableSelect
               label="How many clients have you helped within the past 3 months? *"
-              options={[
-                "0-5",
-                "6-15",
-                "16-30",
-                "31-50",
-                "50+",
-              ]}
+              options={["0-5", "6-15", "16-30", "31-50", "50+"]}
               value={school}
               onChange={(value) => handleFieldChange("recent", value)}
             />
@@ -173,13 +168,7 @@ export const AboutYourPractice = () => {
             <SearchableSelect
               label="How many new clients do you hope to acquire over the next 3
               months? *"
-              options={[
-                "0-5",
-                "6-15",
-                "16-30",
-                "31-50",
-                "50+",
-              ]}
+              options={["0-5", "6-15", "16-30", "31-50", "50+"]}
               value={school}
               onChange={(value) => handleFieldChange("target", value)}
             />
@@ -192,7 +181,10 @@ export const AboutYourPractice = () => {
             </p>
             <div className="flex items-center gap-[60px]">
               {["yes", "no", "planning to"].map((option) => (
-                <label key={option} className="flex gap-[16px] items-center whitespace-nowrap">
+                <label
+                  key={option}
+                  className="flex gap-[16px] items-center whitespace-nowrap"
+                >
                   <Input
                     type="radio"
                     name="labs"

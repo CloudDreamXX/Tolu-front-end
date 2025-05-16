@@ -41,19 +41,21 @@ export const DemographicStep = () => {
     country.trim() &&
     zipCode.trim() &&
     language.trim();
-    
-    const handleNext = () => {
-      dispatch(setFormField({ field: "age", value: Number(age) }));
-      dispatch(setFormField({ field: "menopauseStatus", value: menopauseStatus }));
-      dispatch(setFormField({ field: "country", value: country }));
-      dispatch(setFormField({ field: "ZIP", value: zipCode }));
-      dispatch(setFormField({ field: "race", value: race }));
-      dispatch(setFormField({ field: "household", value: household }));
-      dispatch(setFormField({ field: "occupation", value: occupationVal }));
-      dispatch(setFormField({ field: "education", value: educationVal }));
-      dispatch(setFormField({ field: "language", value: language }));
-      nav("/what-brings-you-here");
-    }
+
+  const handleNext = () => {
+    dispatch(setFormField({ field: "age", value: Number(age) }));
+    dispatch(
+      setFormField({ field: "menopauseStatus", value: menopauseStatus })
+    );
+    dispatch(setFormField({ field: "country", value: country }));
+    dispatch(setFormField({ field: "ZIP", value: zipCode }));
+    dispatch(setFormField({ field: "race", value: race }));
+    dispatch(setFormField({ field: "household", value: household }));
+    dispatch(setFormField({ field: "occupation", value: occupationVal }));
+    dispatch(setFormField({ field: "education", value: educationVal }));
+    dispatch(setFormField({ field: "language", value: language }));
+    nav("/what-brings-you-here");
+  };
 
   return (
     <AuthPageWrapper>
@@ -180,7 +182,10 @@ export const DemographicStep = () => {
                   ZIP/Postal Code *
                 </label>
                 <Input
-                  onChange={(e) => {if (zipCode.length >= 5) return; setZipCode(e.target.value);}}
+                  onChange={(e) => {
+                    if (zipCode.length >= 5) return;
+                    setZipCode(e.target.value);
+                  }}
                   value={zipCode}
                   placeholder="Enter ZIP/Postal Code"
                 />
@@ -303,7 +308,6 @@ export const DemographicStep = () => {
             }`}
             disabled={!isFormComplete()}
             onClick={handleNext}
-            
           >
             Continue
           </button>

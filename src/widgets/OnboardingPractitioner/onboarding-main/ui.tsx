@@ -24,7 +24,7 @@ const buttons = [
 ];
 
 export const OnboardingMain = () => {
-  const [showHint, setShowHint] = useState(false);
+  const [_, setShowHint] = useState(false);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const nav = useNavigate();
@@ -58,7 +58,6 @@ export const OnboardingMain = () => {
     selectedButtons.length === 0 ||
     (selectedButtons.includes("Other") && otherText.trim() === "");
 
-
   return (
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={1} />
@@ -82,7 +81,8 @@ export const OnboardingMain = () => {
                   <Button
                     key={buttonText}
                     selected={selectedButtons.includes(buttonText)}
-                    onClick={() => handleButtonClick(buttonText)}>
+                    onClick={() => handleButtonClick(buttonText)}
+                  >
                     {buttonText}
                   </Button>
                 ))}

@@ -1,21 +1,21 @@
 import { Footer } from "../../Footer";
 import { Header } from "../../Header";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+// import { useSelector } from "react-redux";
+// import { RootState } from "entities/store";
+// import { UserService } from "entities/user";
 import { AuthPageWrapper } from "shared/ui";
 
 export const OnboardingFinish = () => {
-  const coachOnboarding = useSelector(
-    (state: RootState) => state.coachOnboarding
-  );
-  const token = useSelector((state: RootState) => state.user.token);
+  // const coachOnboarding = useSelector(
+  //   (state: RootState) => state.coachOnboarding
+  // );
+  // const token = useSelector((state: RootState) => state.user.token);
   const nav = useNavigate();
 
   const handleLastClick = async () => {
     try {
-      const message = await UserService.onboardUser(coachOnboarding, token);
+      // const message = await UserService.onboardUser(coachOnboarding, token);
       nav("/content-manager/published");
     } catch (error) {
       console.error("Error during onboarding:", error);

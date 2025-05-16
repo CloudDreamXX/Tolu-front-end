@@ -10,12 +10,13 @@ export const ChooseTest = () => {
   const nav = useNavigate();
   const [activeCard, setActiveCard] = useState("16Personalities");
   const [visited, setVisited] = useState(false);
-  
+
   const desc1 = (
     <>
       The 16 Personalities test is a popular psychological assessment based on
-      the<br/> Myers-Briggs Type Indicator (MBTI) and Carl Jung’s theories. It
-      categorizes <br/> individuals into 16 personality types.
+      the
+      <br /> Myers-Briggs Type Indicator (MBTI) and Carl Jung’s theories. It
+      categorizes <br /> individuals into 16 personality types.
     </>
   );
 
@@ -31,12 +32,14 @@ export const ChooseTest = () => {
   );
 
   const handleNext = () => {
-    if(visited) {
-        nav("/readiness");
-    }
-    else if (activeCard === "16Personalities") {
+    if (visited) {
+      nav("/readiness");
+    } else if (activeCard === "16Personalities") {
       setVisited(true);
-      window.open("https://www.16personalities.com/free-personality-test", "_blank");
+      window.open(
+        "https://www.16personalities.com/free-personality-test",
+        "_blank"
+      );
     } else if (activeCard === "Enneagram") {
       setVisited(true);
       window.open("https://www.eclecticenergies.com/enneagram/test", "_blank");
@@ -56,10 +59,24 @@ export const ChooseTest = () => {
           </p>
         </div>
         <div className="w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
-          <Card title="16Personalities" description={desc1} active={activeCard === "16Personalities"} onClick={() => setActiveCard("16Personalities")}/>
-            <Card title="Enneagram" description={desc2} active={activeCard === "Enneagram"} onClick={() => setActiveCard("Enneagram")}/>
+          <Card
+            title="16Personalities"
+            description={desc1}
+            active={activeCard === "16Personalities"}
+            onClick={() => setActiveCard("16Personalities")}
+          />
+          <Card
+            title="Enneagram"
+            description={desc2}
+            active={activeCard === "Enneagram"}
+            onClick={() => setActiveCard("Enneagram")}
+          />
         </div>
-        <BottomButtons handleNext={handleNext} skipButton={() => nav('/readiness')} isButtonActive={() => activeCard.length > 0} />
+        <BottomButtons
+          handleNext={handleNext}
+          skipButton={() => nav("/readiness")}
+          isButtonActive={() => activeCard.length > 0}
+        />
       </main>
       <Footer />
     </AuthPageWrapper>

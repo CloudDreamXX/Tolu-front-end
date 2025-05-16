@@ -1,5 +1,5 @@
-import { UserService } from "entities/user";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+// import { UserService } from "entities/user";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "shared/ui";
 
@@ -11,7 +11,7 @@ export const ForgotPassword = () => {
     e.preventDefault();
     if (email) {
       try {
-        const response = await UserService.forgotPassword(email);
+        // const response = await UserService.forgotPassword(email);
         nav("/verify-email-pass");
       } catch (error) {
         console.error("Error sending password reset email:", error);

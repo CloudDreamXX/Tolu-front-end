@@ -8,7 +8,7 @@ interface HeaderOnboardingProps {
 
 export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
   const navigate = useNavigate();
-  
+
   return (
     <header className="flex items-center self-stretch pr-[40px] gap-[351px] bg-gradient-to-b from-[#F3ECFE] to-[#E8EFFE]">
       {/* Logo Section */}
@@ -16,7 +16,7 @@ export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
         <h2
           onClick={() => navigate("/")}
           className="cursor-pointer text-[#1D1D1F] text-center text-[40px] font-bold font-open h-[54px]"
-          >
+        >
           VITAI
         </h2>
         <h4 className="text-[#1D1D1F] text-center text-[20px] font-medium font-open h-[27px]">
@@ -33,7 +33,7 @@ export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
         <div
           className="absolute top-1/2 left-0 h-[8px] bg-[#1866E0] z-10 transform -translate-y-1/2 transition-all duration-300"
           style={{ width: `${(currentStep / 5) * 100}%` }}
-          />
+        />
 
         {Array.from({ length: 6 }).map((_, index) => {
           const isCompleted = index < currentStep;

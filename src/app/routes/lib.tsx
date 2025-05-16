@@ -59,14 +59,14 @@ export const AppRoutes = () => {
       <Route path="/onboarding-finish" element={<OnboardingFinish />} />
       <Route path="/about-you" element={<DemographicStep />} />
       <Route path="/what-brings-you-here" element={<WhatBrringsYouHere />} />
-      <Route path="/values" element={<Values/>} />
+      <Route path="/values" element={<Values />} />
       <Route path="/barriers" element={<Barriers />} />
       <Route path="/support" element={<Support />} />
-      <Route path="/personality-type" element={<PersonalityType/>} />
-      <Route path="/choose-test" element={<ChooseTest/>} />
-      <Route path="/readiness" element={<Readiness/>} />
-      <Route path="/summary" element={<Summary/>} />
-      <Route path="/finish" element={<FinishClientOnboarding/>}/>
+      <Route path="/personality-type" element={<PersonalityType />} />
+      <Route path="/choose-test" element={<ChooseTest />} />
+      <Route path="/readiness" element={<Readiness />} />
+      <Route path="/summary" element={<Summary />} />
+      <Route path="/finish" element={<FinishClientOnboarding />} />
       <Route
         element={
           <MainLayout mainLocation="content-manager">

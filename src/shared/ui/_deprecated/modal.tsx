@@ -15,7 +15,6 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
   selectedCategories,
   onCategoryClick,
   onClose,
-  onNext,
 }) => {
   if (!isModalOpen) return null;
 
@@ -43,7 +42,7 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
         </div>
 
         <div className="flex flex-wrap justify-center gap-4">
-          {categories?.map((category, index) => (
+          {categories?.map((category, _) => (
             <button
               key={category.id}
               onClick={() => onCategoryClick && onCategoryClick(category.name)}

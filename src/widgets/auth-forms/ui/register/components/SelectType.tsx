@@ -14,10 +14,7 @@ interface SelectType {
   handleCardClick: (user: string) => void;
 }
 
-export const SelectType: React.FC<SelectType> = ({
-  formData,
-  handleCardClick,
-}) => {
+export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
   const [cardActive, setCardActive] = useState("");
   return (
     <main className="w-[550px] flex flex-col items-center gap-[60px]">

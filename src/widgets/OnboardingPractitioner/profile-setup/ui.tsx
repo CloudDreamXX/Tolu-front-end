@@ -130,9 +130,9 @@ export const ProfileSetup = () => {
                 "(GMT-09:00) Pacific/Honolulu (Hawaii Time)",
               ]}
               value={state.timezone}
-              onChange={(value) => dispatch(
-                updateCoachField({ key: "timezone", value: value })
-              )}
+              onChange={(value) =>
+                dispatch(updateCoachField({ key: "timezone", value: value }))
+              }
             />
           </div>
 
@@ -222,7 +222,7 @@ export const ProfileSetup = () => {
 
           {/* Recovery Question */}
           <div className="flex gap-[12px]">
-                        <SearchableSelect
+            <SearchableSelect
               label="Set recovery question"
               labelStyle="text-[#5F5F65]"
               placeholder="Select recovery question"
@@ -233,30 +233,32 @@ export const ProfileSetup = () => {
                 "What is your favourite book",
               ]}
               value={state.timezone}
-              onChange={(value) => dispatch(
+              onChange={(value) =>
+                dispatch(
                   updateCoachField({
                     key: "security_questions",
                     value: value,
                   })
-                )}
-            />
-            <div className="flex flex-col gap-[8px] w-[100%]">
-            <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
-              Answer the questions for recovery
-            </label>
-            <Input
-              type="text"
-              className="flex-1 border rounded-[8px] h-[44px] px-[12px] py-[16px] text-[16px]"
-              placeholder="Enter your answer"
-              onChange={(e) =>
-                dispatch(
-                  updateCoachField({
-                    key: "security_answers",
-                    value: e.target.value,
-                  })
                 )
               }
             />
+            <div className="flex flex-col gap-[8px] w-[100%]">
+              <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
+                Answer the questions for recovery
+              </label>
+              <Input
+                type="text"
+                className="flex-1 border rounded-[8px] h-[44px] px-[12px] py-[16px] text-[16px]"
+                placeholder="Enter your answer"
+                onChange={(e) =>
+                  dispatch(
+                    updateCoachField({
+                      key: "security_answers",
+                      value: e.target.value,
+                    })
+                  )
+                }
+              />
             </div>
           </div>
         </form>

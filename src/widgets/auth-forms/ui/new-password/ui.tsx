@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "shared/ui";
 
 export const NewPassword = () => {
-const { user: userData, tokenNewPassword } = useSelector((state: RootState) => state.user);
+  const { user: userData, tokenNewPassword } = useSelector(
+    (state: RootState) => state.user
+  );
   const nav = useNavigate();
   const [formData, setFormData] = useState({
     newPassword: "",
@@ -19,41 +21,44 @@ const { user: userData, tokenNewPassword } = useSelector((state: RootState) => s
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-  if (formData.newPassword !== formData.newPasswordRepeat) {
-    setPasswordError("Passwords do not match");
-    return;
-  }
-
-  try {
-    if (userData?.email && tokenNewPassword) {
-      const msg = await UserService.setNewPassword(
-        userData.email,
-        tokenNewPassword,
-        formData.newPassword
-      );
-
-      if (msg.message) {
-        nav("/");
-      }
-    } else {
-      setPasswordError("Missing email or reset token.");
+    if (formData.newPassword !== formData.newPasswordRepeat) {
+      setPasswordError("Passwords do not match");
+      return;
     }
-  } catch (error) {
-    console.error("Error updating password:", error);
-    setPasswordError("Failed to update password. Please try again.");
-  }
-};
 
+    try {
+      if (userData?.email && tokenNewPassword) {
+        const msg = await UserService.setNewPassword(
+          userData.email,
+          tokenNewPassword,
+          formData.newPassword
+        );
+
+        if (msg.message) {
+          nav("/");
+        }
+      } else {
+        setPasswordError("Missing email or reset token.");
+      }
+    } catch (error) {
+      console.error("Error updating password:", error);
+      setPasswordError("Failed to update password. Please try again.");
+    }
+  };
 
   return (
     <div className="w-full h-screen flex items-start py-0">
       <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white text-center text-[96px] font-bold font-reem">VITAI</h1>
-          <h3 className="text-white text-center text-[32px] font-medium font-open">The Holistic Health Assistant</h3>
+          <h1 className="text-white text-center text-[96px] font-bold font-reem">
+            VITAI
+          </h1>
+          <h3 className="text-white text-center text-[32px] font-medium font-open">
+            The Holistic Health Assistant
+          </h3>
         </aside>
       </div>
       <div className="w-full h-full flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">

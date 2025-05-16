@@ -23,7 +23,7 @@ export const InviteClients = () => {
   };
 
   return (
-  <AuthPageWrapper>
+    <AuthPageWrapper>
       <HeaderOnboarding currentStep={5} />
       <main className="flex flex-col items-center justify-center w-full gap-[40px] mt-[40px]">
         <h1 className="text-[32px] text-black font-inter font-semibold text-center">

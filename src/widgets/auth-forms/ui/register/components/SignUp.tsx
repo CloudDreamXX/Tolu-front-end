@@ -51,10 +51,11 @@ export const SignUp: React.FC<SignUpProps> = ({
     const digits = val.replace(/\D/g, "");
     if (!digits) return "";
     if (digits.length === 1) return "+" + digits;
-    if (digits.length < 5)
-      return "+" + digits[0] + " (" + digits.slice(1);
+    if (digits.length < 5) return "+" + digits[0] + " (" + digits.slice(1);
     if (digits.length < 8)
-      return "+" + digits[0] + " (" + digits.slice(1, 4) + ") " + digits.slice(4);
+      return (
+        "+" + digits[0] + " (" + digits.slice(1, 4) + ") " + digits.slice(4)
+      );
     return (
       "+" +
       digits[0] +
@@ -228,18 +229,14 @@ export const SignUp: React.FC<SignUpProps> = ({
                   : "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
               }
             />
-              <button
-                type="button"
-                className="absolute mr-4"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Show password" : "Hide password"}
-              >
-                {!showPassword ? (
-                  <EyeIcon size={16} />
-                ) : (
-                  <EyeClosed size={16} />
-                )}
-              </button>
+            <button
+              type="button"
+              className="absolute mr-4"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Show password" : "Hide password"}
+            >
+              {!showPassword ? <EyeIcon size={16} /> : <EyeClosed size={16} />}
+            </button>
           </div>
           {errors.password && (
             <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px]">
@@ -267,18 +264,18 @@ export const SignUp: React.FC<SignUpProps> = ({
                   : "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
               }
             />
-              <button
-                type="button"
-                className="absolute mr-4"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-                aria-label={showNewPassword ? "Show password" : "Hide password"}
-              >
-                {!showNewPassword ? (
-                  <EyeIcon size={16} />
-                ) : (
-                  <EyeClosed size={16} />
-                )}
-              </button>
+            <button
+              type="button"
+              className="absolute mr-4"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              aria-label={showNewPassword ? "Show password" : "Hide password"}
+            >
+              {!showNewPassword ? (
+                <EyeIcon size={16} />
+              ) : (
+                <EyeClosed size={16} />
+              )}
+            </button>
           </div>
           {errors.newPassword && (
             <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px]">
@@ -303,7 +300,10 @@ export const SignUp: React.FC<SignUpProps> = ({
           </button>
           <p className="text-[14px] font-[Nunito] font-medium">
             Already have an account?{" "}
-            <Link to="/auth" className="cursor-pointer text-[#1C63DB] underline">
+            <Link
+              to="/auth"
+              className="cursor-pointer text-[#1C63DB] underline"
+            >
               Log in
             </Link>
           </p>

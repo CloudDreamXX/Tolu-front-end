@@ -104,10 +104,11 @@ export const SelectType = () => {
           onClick={handleSubmit}
           type="submit"
           disabled={!isAllSelected()}
-          className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${isAllSelected()
+          className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
+            isAllSelected()
               ? "bg-[#1C63DB] text-white"
               : "bg-[#D5DAE2] text-[#5F5F65]"
-            }`}
+          }`}
         >
           Next
         </button>

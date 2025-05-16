@@ -76,7 +76,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[250px] gap-x-6 gap-y-2">
-          {filteredFolders.map((folder, index) => (
+          {filteredFolders.map((folder, _) => (
             <button
               className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
                 selectedFolders.includes(folder)

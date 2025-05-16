@@ -1,2 +1,2 @@
-export * from './HeaderOnboarding';
-export * from './Button';
+export * from "./HeaderOnboarding";
+export * from "./Button";

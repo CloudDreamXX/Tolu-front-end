@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "shared/ui/tooltip"
+} from "shared/ui/tooltip";
 
 export const Footer = () => {
   return (
@@ -12,14 +12,14 @@ export const Footer = () => {
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <button
-              className="bg-[#008FF61A] flex p-[24px] items-center justify-center gap-[8px] rounded-full transition-colors duration-200 hover:bg-[#008FF6] hover:bg-opacity-30"
-            >
+            <button className="bg-[#008FF61A] flex p-[24px] items-center justify-center gap-[8px] rounded-full transition-colors duration-200 hover:bg-[#008FF6] hover:bg-opacity-30">
               <Ai />
             </button>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-[#1D1D1F] font-[Nunito] text-base font-normal">I am magic AI button</p>
+            <p className="text-[#1D1D1F] font-[Nunito] text-base font-normal">
+              I am magic AI button
+            </p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

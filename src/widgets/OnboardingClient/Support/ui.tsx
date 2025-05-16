@@ -52,7 +52,8 @@ export const Support = () => {
 
           {checkboxes
             .reduce((rows, item, index) => {
-              if (index % 2 === 0) rows.push(checkboxes.slice(index, index + 2));
+              if (index % 2 === 0)
+                rows.push(checkboxes.slice(index, index + 2));
               return rows;
             }, [] as string[][])
             .map((rowItems, rowIndex) => (

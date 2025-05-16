@@ -9,9 +9,7 @@ export const HeaderOnboarding = () => {
           Coach Admin
         </h4>
       </div>
-      <div className="w-[750px] h-[95px] shrink-0 flex items-center justify-between">
-      
-      </div>
+      <div className="w-[750px] h-[95px] shrink-0 flex items-center justify-between"></div>
     </header>
   );
 };

@@ -1,9 +1,9 @@
 export const checkboxes = [
-    "Partner",
-    "Doctor",
-    "Therapist",
-    "Coach",
-    "Friends / Community",
-    "Online groups",
-    "No one right now"
+  "Partner",
+  "Doctor",
+  "Therapist",
+  "Coach",
+  "Friends / Community",
+  "Online groups",
+  "No one right now",
 ];

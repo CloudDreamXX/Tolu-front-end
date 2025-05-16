@@ -1,4 +1,4 @@
-import { DocumentCard, FolderCard, IDocument, IFolder } from "entities/folder";
+import { FolderCard, IFolder } from "entities/folder";
 import { ChevronDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import AiCreate from "shared/assets/icons/ai-create";
@@ -12,7 +12,6 @@ import {
   Input,
 } from "shared/ui";
 import { FOLDERS } from "../folder/mock";
-import { MOCK_DOCUMENT } from "../document/mock";
 
 export const ContentManagerPublished: React.FC = () => {
   const [folders] = useState<IFolder[]>(

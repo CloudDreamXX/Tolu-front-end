@@ -9,7 +9,7 @@ import WomansLine from "shared/assets/icons/womans-line";
 import Chemistry from "shared/assets/icons/chemistry";
 
 export const SelectType = () => {
-    const titlesAndIcosn = [
+  const titlesAndIcosn = [
     {
       title: "Clinical & Licensed Healthcare Providers",
       icon: <Microscope size={20} />,
@@ -24,14 +24,16 @@ export const SelectType = () => {
     },
     {
       title: "Women's Health & Specialty Coaches",
-        icon: <WomansLine />,
+      icon: <WomansLine />,
     },
     {
       title: "Other",
       icon: <Chemistry />,
     },
-    ]
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(new Array(5).fill(""));
+  ];
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(
+    new Array(5).fill("")
+  );
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
 
   const handleSelection = (index: number, value: string) => {
@@ -42,11 +44,11 @@ export const SelectType = () => {
   };
 
   const toggleDropdown = (index: number) => {
-    setActiveDropdown(prev => (prev === index ? null : index));
+    setActiveDropdown((prev) => (prev === index ? null : index));
   };
 
   const isAllSelected = () => {
-    return selectedOptions.every(option => option !== "");
+    return selectedOptions.every((option) => option !== "");
   };
 
   return (
@@ -61,9 +63,15 @@ export const SelectType = () => {
         <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
           What type of practitioner best describes your role?
         </h1>
-        <form onSubmit={() => {}} className="flex flex-col gap-[20px] p-[40px] items-center rounded-[20px] bg-white shadow-md border-[1px] border-[#1C63DB]">
+        <form
+          onSubmit={() => {}}
+          className="flex flex-col gap-[20px] p-[40px] items-center rounded-[20px] bg-white shadow-md border-[1px] border-[#1C63DB]"
+        >
           {titlesAndIcosn.map((item, index) => (
-            <div key={index} className="flex flex-col gap-[20px] w-[460px] items-start">
+            <div
+              key={index}
+              className="flex flex-col gap-[20px] w-[460px] items-start"
+            >
               <div className="flex items-center self-stretch gap-[8px]">
                 {item.icon}
                 <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[20px] font-semibold">
@@ -110,7 +118,16 @@ export const SelectType = () => {
             </div>
           ))}
         </form>
-        <button type="submit" className={isAllSelected() ? "flex items-center justify-center w-[250px] h-[44px] text-white p-[16px] rounded-full bg-[#1C63DB]" : "flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full bg-[#D5DAE2]"}>Next</button>
+        <button
+          type="submit"
+          className={
+            isAllSelected()
+              ? "flex items-center justify-center w-[250px] h-[44px] text-white p-[16px] rounded-full bg-[#1C63DB]"
+              : "flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full bg-[#D5DAE2]"
+          }
+        >
+          Next
+        </button>
       </main>
       <Footer />
     </div>

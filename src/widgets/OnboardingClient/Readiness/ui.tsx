@@ -26,7 +26,12 @@ export const Readiness = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
   const handleNext = () => {
-    dispatch(setFormField({ field: "readiness", value: readinessMessages[value[0] - 1] }));
+    dispatch(
+      setFormField({
+        field: "readiness",
+        value: readinessMessages[value[0] - 1],
+      })
+    );
     nav("/summary");
   };
 

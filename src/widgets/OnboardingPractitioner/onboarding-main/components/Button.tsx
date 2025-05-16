@@ -1,4 +1,4 @@
-import UnselectIcon from "shared/assets/icons/unselect-blue"
+import UnselectIcon from "shared/assets/icons/unselect-blue";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -6,7 +6,11 @@ interface ButtonProps {
   onClick?: () => void;
 }
 
-export const Button: React.FC<ButtonProps> = ({ children, selected, onClick }) => {
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  selected,
+  onClick,
+}) => {
   const baseClasses =
     "flex py-2 px-4 items-center justify-center gap-[6px] rounded-full border border-[#BFBFBF] font-[Nunito] text-[16px] leading-[20px] font-semibold";
 
@@ -19,5 +23,5 @@ export const Button: React.FC<ButtonProps> = ({ children, selected, onClick }) =
       {children}
       {selected && <UnselectIcon />}
     </button>
-  )
+  );
 };

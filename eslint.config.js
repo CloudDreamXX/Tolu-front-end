@@ -62,6 +62,12 @@ export default [
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      "vite.config.js",
+      "tailwind.config.js",
+      "postcss.config.js",
+    ],
   },
 ];

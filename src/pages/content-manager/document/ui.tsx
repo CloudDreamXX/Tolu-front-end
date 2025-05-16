@@ -29,8 +29,6 @@ export const ContentManagerDocument: React.FC = () => {
     MOCK_DOCUMENT.find((doc) => doc.id === documentId) || null
   );
 
-  console.log(tab);
-
   if (!document) {
     return <div>Document not found</div>;
   }

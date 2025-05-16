@@ -1,4 +1,3 @@
-import { Target } from "lucide-react";
 import UploadCloud from "shared/assets/icons/upload-cloud";
 
 export const DropArea = ({

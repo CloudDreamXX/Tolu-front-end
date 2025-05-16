@@ -1,6 +1,6 @@
 import Dots from "shared/assets/icons/dots";
 
-import { Button, Popover, PopoverTrigger, PopoverContent } from "shared/ui";
+import { Popover, PopoverTrigger, PopoverContent } from "shared/ui";
 import { IDocument } from "../document-card";
 import { renderContent } from "./lib";
 

@@ -66,6 +66,6 @@ export const OnboardingWerlcome = () => {
         )}
       </main>
       <Footer />
-    </AuthPageWrapper>  
-);
+    </AuthPageWrapper>
+  );
 };

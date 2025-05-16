@@ -49,7 +49,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       if (token.length > 0 && email.length > 0) {
         const verifyEmail = async () => {
           try {
-            const msg = await UserService.verifyEmailPass({ email, token });
+            // const msg = await UserService.verifyEmailPass({ email, token });
             dispatch(
               setCredentials({
                 user: { email },
