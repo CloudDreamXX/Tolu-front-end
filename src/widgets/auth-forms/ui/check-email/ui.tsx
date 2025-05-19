@@ -32,10 +32,10 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
                 })
               );
               if (user.user?.roleID === 3) {
-                nav("/welcome/practitioner");
+                nav("/welcome/client");
                 return;
               }
-              nav("/welcome/client");
+              nav("/welcome/practitioner");
             }
           } catch (error) {
             console.error("Error verifying email:", error);

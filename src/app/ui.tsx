@@ -5,6 +5,7 @@ import { RootState } from "entities/store/lib";
 import { AppRoutes } from "./routes";
 import { LoadingScreen } from "pages/loading";
 import { setLoading } from "entities/user";
+import { Toaster } from "shared/ui/toaster";
 
 export const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
       {isLoading && <LoadingScreen />}
       <Suspense fallback={<LoadingScreen />}>
         <AppRoutes />
+        <Toaster />
       </Suspense>
     </BrowserRouter>
   );

@@ -15,6 +15,7 @@ createRoot(rootElement).render(
     <Provider store={store}>
       <PersistGate loading={<LoadingScreen />} persistor={persistor}>
         <App />
+        <Toaster />
       </PersistGate>
       <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
     </Provider>

@@ -3,9 +3,11 @@ import { SelectType, SignUp } from "./components";
 import { UserService, setRoleID } from "entities/user";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useToast } from "shared/lib/hooks/use-toast";
 
 export const Register = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     accountType: "",
     name: "",
@@ -33,6 +35,11 @@ export const Register = () => {
       }
     } catch (error) {
       console.error("Error registering user:", error);
+      toast({
+        title: "Email already exists",
+        description: "Please use your email to log in, or use another email.",
+        // variant: "destructive",
+      });
     }
   };
 
