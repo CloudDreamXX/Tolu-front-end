@@ -6,28 +6,27 @@ import { useDispatch } from "react-redux";
 import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Input } from "shared/ui";
 import Search from "shared/assets/icons/search";
-
-const buttons = [
-  ["Perimenopause & Menopause", "Gut Health", "Thyroid & Autoimmune"],
-  [
-    "Weight & Metabolic Health",
-    "Blood Sugar & Insulin Resistance",
-    "Fertility & Hormones",
-  ],
-  ["Chronic Fatigue / Long COVID", "Anxiety & Sleep", "Mold / Lyme / MCAS"],
-  [
-    "Inflammation & Pain",
-    "Postpartum / Pelvic Floor",
-    "Cancer Support",
-    "Other",
-  ],
-];
+import { buttons } from "./mock";
 
 export const OnboardingMain = () => {
   const [_, setShowHint] = useState(false);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const nav = useNavigate();
+
+  const handleOther = () => {
+    setSelectedButtons((prevSelected) => {
+      let updated;
+      if (prevSelected.includes("Other")) {
+        updated = prevSelected.filter((item) => item !== "Other");
+        setOtherText("");
+      }
+      else {
+        updated = [...prevSelected, "Other"];
+      }
+      return updated;
+    });
+  }
 
   useEffect(() => {
     if (selectedButtons.length > 0) {
@@ -37,17 +36,17 @@ export const OnboardingMain = () => {
 
   const dispatch = useDispatch();
 
-  const handleButtonClick = (buttonText: string) => {
-    setSelectedButtons((prevSelected) => {
-      let updated;
-      if (prevSelected.includes(buttonText)) {
-        updated = prevSelected.filter((item) => item !== buttonText);
-      } else {
-        updated = [...prevSelected, buttonText];
-      }
-      dispatch(updateCoachField({ key: "primary_niches", value: updated }));
-      return updated;
-    });
+  const handleButtonClick = (buttonText: string, id: number = 0) => {
+      setSelectedButtons((prevSelected) => {
+        let updated;
+        if (prevSelected.includes(buttonText)) {
+          updated = prevSelected.filter((item) => item !== buttonText);
+        } else {
+          updated = [...prevSelected, buttonText];
+        }
+        dispatch(updateCoachField({ key: "primary_niches", value: updated }));
+        return updated;
+      });
   };
 
   const isOtherSelected = () => {
@@ -109,7 +108,7 @@ export const OnboardingMain = () => {
                 className="flex outline-none w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white"
               />
               {otherText.length > 0 && (
-                <button className="flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white w-full">
+                <button onClick={handleOther} className="text-nowrap flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white w-auto">
                   Add niche
                 </button>
               )}

@@ -3,7 +3,7 @@ import { Footer } from "../../Footer";
 import { UploadCloud } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { useRef, useState } from "react";
+import { useRef, useState, DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
 import { SearchableSelect } from "../components/SearchableSelect";
@@ -13,12 +13,12 @@ import { Switch } from "shared/ui/switch";
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
   const nav = useNavigate();
   const ref = useRef<HTMLInputElement>(null);
   const state = useSelector((state: RootState) => state.coachOnboarding);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFile = (file: File) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -28,8 +28,37 @@ export const ProfileSetup = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFile(file);
+    }
+  };
+
   const handleClick = () => {
     ref.current?.click();
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
   };
 
   const isFormValid =
@@ -158,8 +187,13 @@ export const ProfileSetup = () => {
               />
             ) : (
               <div
-                className="w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer"
+                className={`w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors ${
+                  dragActive ? "bg-blue-50 border-blue-400" : ""
+                }`}
                 onClick={handleClick}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
               >
                 <UploadCloud color="#1C63DB" size={32} />
                 <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
