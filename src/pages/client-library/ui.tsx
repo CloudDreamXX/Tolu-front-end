@@ -1,26 +1,31 @@
-import React from "react";
 import ClockAfternoon from "shared/assets/icons/clock-afternoon";
 import { ClientCard, Input, SliderCard } from "shared/ui";
-import { smallCards, tableRows, tableHeaders } from "./mock";
+import { smallCards, tableRows, tableHeaders, timelines } from "./mock";
 import { MoodScore } from "widgets/MoodScore";
 import InfoIcon from "shared/assets/icons/info-icon";
 import { HealthGoalsCard } from "widgets/HealthGoalsCard";
-import { ArrowRight, Bookmark } from "lucide-react";
+import { ArrowRight, Bookmark, Upload } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import Share from "shared/assets/icons/share";
 import PaperPlane from "shared/assets/icons/paper-plane";
-import avatar from 'shared/assets/images/Avatar.png';
+import avatar from "shared/assets/images/Avatar.png";
+import { useState } from "react";
+import { TimelineItem } from "widgets/TimelineItem";
 
 export const ClientLibrary = () => {
+  const [timelineOpen, setTimelineOpen] = useState(false);
   return (
     <main className="flex flex-col items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F1F3F5]">
       <div className="flex items-center justify-center self-stretch">
         <h1 className="flex-1 text-[#1D1D1F] font-[Nunito] text-[32px]/[44px] font-bold">
           Health Snapshot
         </h1>
-        <button className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#DDEBF6] justify-center  items-center py-[6px] px-3 flex gap-2 ">
+        <button
+          onClick={() => setTimelineOpen((prev) => !prev)}
+          className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#DDEBF6] justify-center  items-center py-[6px] px-3 flex gap-2 "
+        >
           <ClockAfternoon />
-          Open timeline
+          {!timelineOpen ? "Open timeline" : "Close timeline"}
         </button>
       </div>
       <div className="flex flex-col gap-4 w-full p-4 items-start rounded-2xl bg-white">
@@ -58,21 +63,9 @@ export const ClientLibrary = () => {
               Health Goals
             </h1>
             <div className="flex gap-4 items-start self-stretch">
-              <HealthGoalsCard
-                name="Name 1"
-                completed={2}
-                outOf={5}
-              />
-              <HealthGoalsCard
-                name="Name 2"
-                completed={4}
-                outOf={5}
-              />
-              <HealthGoalsCard
-                name="Name 3"
-                completed={0}
-                outOf={5}
-              />
+              <HealthGoalsCard name="Name 1" completed={2} outOf={5} />
+              <HealthGoalsCard name="Name 2" completed={4} outOf={5} />
+              <HealthGoalsCard name="Name 3" completed={0} outOf={5} />
             </div>
           </div>
           <div className="w-full flex flex-col gap-4 p-4 items-start rounded-2xl bg-white">
@@ -259,6 +252,27 @@ export const ClientLibrary = () => {
         </div>
         {/* Right Side End*/}
       </div>
+      {timelineOpen && (
+        <div className="py-8 px-6 gap-6 flex flex-col items-center absolute right-[24px] top-[164px] rounded-2xl bg-white w-[450px] h-[740px] shadow-md">
+          <div className="flex items-center justify-between self-stretch">
+            <h2 className="font-[Nunito] text-[#1D1D1F] text-[24px]/[32px] font-semibold">
+              Timeline
+            </h2>
+            <button className="font-[Nunito] text-[#1C63DB] text-[14px]/[20px] font-semibold">
+              Mark all as read
+            </button>
+          </div>
+          {timelines.map((item, index) => (
+            <TimelineItem
+              key={index}
+              title={item.title}
+              date={item.date}
+              description={item.description}
+              icon={<Upload className="text-[#1C63DB] w-6 h-6" />}
+            />
+          ))}
+        </div>
+      )}
     </main>
   );
 };

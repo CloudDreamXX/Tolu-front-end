@@ -77,3 +77,36 @@ export const tableRows = [
         Comment: "Consistent with\n previous test",
     },
 ]
+
+export const timelines = [
+    {
+        title: "Vitamin D result updated",
+        date: "May 4, 4:02 am",
+        description: "You added a new lab value: 38 ng/mL ",
+    },
+    {
+        title: "Vitamin D result updated",
+        date: "May 4, 4:02 am",
+        description: "You added a new lab value: 38 ng/mL ",
+    },
+    {
+        title: "Vitamin D result updated",
+        date: "May 4, 4:02 am",
+        description: "You added a new lab value: 38 ng/mL ",
+    },
+    {
+        title: "Vitamin D result updated",
+        date: "May 4, 4:02 am",
+        description: "You added a new lab value: 38 ng/mL ",
+    },
+    {
+        title: "Vitamin D result updated",
+        date: "May 4, 4:02 am",
+        description: "You added a new lab value: 38 ng/mL ",
+    },
+    {
+        title: "Vitamin D result updated",
+        date: "May 4, 4:02 am",
+        description: "You added a new lab value: 38 ng/mL ",
+    },
+]
