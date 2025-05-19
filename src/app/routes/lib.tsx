@@ -34,6 +34,7 @@ import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
 import { Readiness } from "widgets/OnboardingClient/Readiness";
 import { Summary } from "widgets/OnboardingClient/Summary";
 import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
+import { ClientLibrary } from "pages/client-library";
 
 export const AppRoutes = () => {
   return (
@@ -117,6 +118,10 @@ export const AppRoutes = () => {
         <Route
           path="/content-manager"
           element={<Navigate to={"/content-manager/published"} />}
+        />
+        <Route
+          path="/client/library"
+          element={<ClientLibrary />}
         />
       </Route>
 

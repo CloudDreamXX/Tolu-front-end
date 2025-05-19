@@ -11,3 +11,5 @@ export * from "./checkbox";
 export * from "./card";
 export * from "./dropdown-menu";
 export * from "./auth-page-wrapper";
+export * from "./client-card";
+export * from "./slider-card";
