@@ -124,7 +124,7 @@ export const AppRoutes = () => {
       <Route
         element={
           <MainLayout mainLocation="health-snapshot">
-            <ProtectedRoute allowedRoles={["client"]} />
+            <ProtectedRoute allowedRoles={["user"]} />
           </MainLayout>
         }
       >

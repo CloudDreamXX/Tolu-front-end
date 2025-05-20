@@ -47,7 +47,7 @@ const checkPath = () => {
     location.pathname === "/choose-test" ||
     location.pathname === "/readiness" ||
     location.pathname === "/summary" ||
-    location.pathname === "/finish" || 
+    location.pathname === "/finish" ||
     location.pathname === "/health-snapshot"
   ) {
     return <Outlet />;
@@ -64,7 +64,7 @@ export const MainLayout: React.FC<{
         {getSideBar(mainLocation)}
       </div>
       <div className="flex flex-col w-full h-full bg-[#F3F6FB]">
-       {getNavigation(mainLocation)}
+        {getNavigation(mainLocation)}
         {children}
       </div>
     </div>
@@ -81,8 +81,18 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
   if (!token || !userType) {
     checkPath();
     return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
-  } else if (location.pathname === "/auth") {
+  } 
+  
+  if (location.pathname === "/auth") {
     return <Navigate to={getRouteByRole(userType.role)} replace />;
   }
+
+  if (
+    userType.role === "user" &&
+    location.pathname !== "/health-snapshot"
+  ) {
+    return <Navigate to="/health-snapshot" replace />;
+  }
+
   return <Outlet />;
 };
