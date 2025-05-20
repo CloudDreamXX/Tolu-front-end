@@ -16,8 +16,6 @@ export const Navigation: React.FC = () => {
   const location = useLocation();
  const token = useSelector((state: RootState) => state.user.token);
 
-  console.log(token)
-
   const calculatePopupPosition = (button: HTMLButtonElement) => {
     const buttonRect = button.getBoundingClientRect();
     const windowWidth = window.innerWidth;

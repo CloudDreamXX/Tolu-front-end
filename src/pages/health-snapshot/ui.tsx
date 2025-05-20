@@ -12,7 +12,7 @@ import avatar from "shared/assets/images/Avatar.png";
 import { useState } from "react";
 import { TimelineItem } from "widgets/TimelineItem";
 
-export const ClientLibrary = () => {
+export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
   return (
     <main className="flex flex-col items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F1F3F5]">

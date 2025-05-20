@@ -47,7 +47,7 @@ const checkPath = () => {
     location.pathname === "/readiness" ||
     location.pathname === "/summary" ||
     location.pathname === "/finish" || 
-    location.pathname === "/client-library"
+    location.pathname === "/health-snapshot"
   ) {
     return <Outlet />;
   }

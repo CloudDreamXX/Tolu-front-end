@@ -34,7 +34,7 @@ import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
 import { Readiness } from "widgets/OnboardingClient/Readiness";
 import { Summary } from "widgets/OnboardingClient/Summary";
 import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
-import { ClientLibrary } from "pages/client-library";
+import { HealthSnapshot } from "pages/health-snapshot";
 
 export const AppRoutes = () => {
   return (
@@ -119,9 +119,18 @@ export const AppRoutes = () => {
           path="/content-manager"
           element={<Navigate to={"/content-manager/published"} />}
         />
+      </Route>
+
+      <Route
+        element={
+          <MainLayout mainLocation="health-snapshot">
+            <ProtectedRoute allowedRoles={["client"]} />
+          </MainLayout>
+        }
+      >
         <Route
-          path="/client-library"
-          element={<ClientLibrary />}
+          path="/health-snapshot"
+          element={<HealthSnapshot />}
         />
       </Route>
 
