@@ -11,41 +11,12 @@ import { Slider } from "shared/ui/slider";
 export const MoodScore = () => {
   const [mood, setMood] = useState(0);
   const getMoodText = (mood: number) => {
-    switch (mood) {
-      case 0:
-        return "Angry";
-      case 20:
-        return "Sad";
-      case 40:
-        return "Neutral";
-      case 60:
-        return "Stable";
-      case 80:
-        return "Happy";
-      case 100:
-        return "Excellent";
-      default:
-        return "Unknown";
-    }
-  }
+    return ["Angry", "Sad", "Neutral", "Stable", "Happy", "Excellent"][mood] || "Unknown";
+  };
+
   const getMoodImage = (mood: number) => {
-    switch (mood) {
-      case 0:
-        return Angry;
-      case 20:
-        return Sad;
-      case 40:
-        return Neutral;
-      case 60:
-        return Smile;
-      case 80:
-        return Smiley;
-      case 100:
-        return Happy;
-      default:
-        return Angry;
-    }
-  }
+    return [Angry, Sad, Neutral, Smile, Smiley, Happy][mood] || Angry;
+  };
   return (
     <div className="gap-4 p-6 flex flex-col items-start self-stretch bg-[#F3F7FD] rounded-2xl w-[492px]">
       <div className="flex gap-1 items-center self-stretch">
@@ -60,14 +31,22 @@ export const MoodScore = () => {
           <h2 className="text-[#1B2559] font-[Nunito] text-[14px]/[20px] font-medium">{getMoodText(mood)}</h2>
           <InfoIcon />
         </div>
-        <Slider step={20} onValueChange={([value]) => setMood(value)}/>
-        <div className="flex gap-[54px] items-center self-stretch">
-          <img src={Angry} alt="Angry" />
-          <img src={Sad} alt="Sad" />
-          <img src={Neutral} alt="Neutral" />
-          <img src={Smile} alt="Smile" />
-          <img src={Smiley} alt="Smiley" />
-          <img src={Happy} alt="Happy" />
+        <Slider
+          min={0}
+          max={59}
+          step={1}
+          onValueChange={([value]) => setMood(Math.floor(value / 10))}
+          colors={[
+            "#FF1F0F", "#F6B448", "#F5D094",
+            "#BCE2C8", "#ECEFF4", "#ECEFF4"
+          ]}
+        />
+        <div className="flex justify-between items-center w-full px-3">
+          {[Angry, Sad, Neutral, Smile, Smiley, Happy].map((img, idx) => (
+            <div key={idx} className="w-1/6 flex justify-center">
+              <img src={img} alt={`Mood ${idx}`} />
+            </div>
+          ))}
         </div>
       </div>
     </div>

@@ -53,9 +53,9 @@ export const ClientLibrary = () => {
               Active Symptoms
             </h1>
             <div className="flex gap-4 items-start self-stretch">
-              <SliderCard title="Bloating" />
-              <SliderCard title="Brain fog" />
-              <SliderCard title="Joint stiffness" />
+              <SliderCard title="Bloating" colors={["#006622", "#006622", "#006622", "#006622", "#006622", "#006622"]} />
+              <SliderCard title="Brain fog" colors={["#F6B448", "#F6B448", "#F6B448", "#F6B448", "#F6B448", "#F6B448"]} />
+              <SliderCard title="Joint stiffness" colors={["#AAC6EC", "#AAC6EC", "#AAC6EC", "#AAC6EC", "#AAC6EC", "#AAC6EC"]} />
             </div>
           </div>
           <div className="w-full flex flex-col gap-4 p-4 items-start rounded-2xl bg-white">
