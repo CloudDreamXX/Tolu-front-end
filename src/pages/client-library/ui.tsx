@@ -188,7 +188,7 @@ export const ClientLibrary = () => {
                   height="120px"
                 />
               </div>
-              <div className="flex max-h-[120px] flex-col p-6 items-start center flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">
+              <div className="flex max-h-[120px] flex-col gap-[23px] p-6 items-start center flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">
                 <div className="flex items-center gap-1 self-stretch">
                   <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
                     Cycle tracking insights

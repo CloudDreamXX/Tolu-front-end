@@ -120,7 +120,7 @@ export const AppRoutes = () => {
           element={<Navigate to={"/content-manager/published"} />}
         />
         <Route
-          path="/client/library"
+          path="/client-library"
           element={<ClientLibrary />}
         />
       </Route>

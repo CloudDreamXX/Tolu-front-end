@@ -160,4 +160,15 @@ export class UserService {
   static async updateProfile(userData: Partial<IUser>): Promise<IUser> {
     return ApiService.put<IUser>(API_ROUTES.USER.PROFILE, userData);
   }
+
+  static async signOut(): Promise<{ success: boolean }> {
+    return ApiService.post<{ success: boolean }>(
+      API_ROUTES.USER.SIGNOUT,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
 }

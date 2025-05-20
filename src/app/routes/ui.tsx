@@ -71,17 +71,17 @@ export const MainLayout: React.FC<{
 };
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
-  const location = useLocation();
-  const { token, userType } = useSelector((state: RootState) => ({
-    token: state?.user?.token,
-    userType: state?.user?.userType,
-  }));
+  // const location = useLocation();
+  // const { token, userType } = useSelector((state: RootState) => ({
+  //   token: state?.user?.token,
+  //   userType: state?.user?.userType,
+  // }));
 
-  if (!token || !userType) {
-    checkPath();
-    return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
-  } else if (location.pathname === "/auth") {
-    return <Navigate to={getRouteByRole(userType.role)} replace />;
-  }
+  // if (!token || !userType) {
+  //   checkPath();
+  //   return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
+  // } else if (location.pathname === "/auth") {
+  //   return <Navigate to={getRouteByRole(userType.role)} replace />;
+  // }
   return <Outlet />;
 };

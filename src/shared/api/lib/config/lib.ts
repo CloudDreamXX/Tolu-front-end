@@ -12,6 +12,7 @@ export const API_ROUTES = {
     ONBOARD_USER: "/coach/onboarding",
     ONBOARD_CLIENT: "/client/onboarding",
     GET_ONBOARDING_USER: "/client/onboarding",
+    SIGNOUT: "/user/signout",
   },
   AI: {
     SEARCH: "/ai-search/",
