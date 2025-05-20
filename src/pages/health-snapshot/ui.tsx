@@ -204,19 +204,11 @@ export const HealthSnapshot = () => {
           <div className="flex w-full flex-col justify-center items-start flex-1 rounded-2xl">
             <div className="w-full max-w-[516px] rounded-t-2xl bg-white flex p-6 flex-col flex-1 items-start gap-6 max-h-[620px]">
               <div className="flex flex-col gap-4 items-center justify-center self-stretch">
-                <Avatar>
-                  <AvatarImage src={avatar} />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
                 <p className="font-[Nunito] text-[#1D1D1F] text-center text-[18px]/[24px] font-semibold">
                   AI Assistant
                 </p>
               </div>
               <div className="flex flex-1 items-start gap-3">
-                <Avatar>
-                  <AvatarImage src={avatar} />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
                 <div className="flex flex-col items-start gap-[6px] flex-1">
                   <div className="flex gap-2 items-center self-stretch">
                     <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1F1F1D]">
