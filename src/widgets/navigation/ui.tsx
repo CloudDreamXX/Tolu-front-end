@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { navigationItems } from "./lib";
 import Menu from "shared/assets/icons/menu";
+import SignOutIcon from "shared/assets/icons/signout";
 import { useState, useRef, useEffect } from "react";
 import ArrowPoligon from "shared/assets/icons/arrow-poligon";
 import { UserService } from "entities/user/api";
@@ -154,6 +155,9 @@ export const Navigation: React.FC = () => {
           </div>
           <div className="rounded-xl bg-[#F3F6FB] shadow-lg z-50 p-5 w-auto">
             <p className="flex w-full gap-2 text-base font-semibold text-left">
+                                        <span className="flex items-center justify-center w-8 h-8 text-gray-600 bg-white rounded-md shadow-md shrink-0">
+                            <SignOutIcon/>
+                          </span>
               <span className={"flex items-center text-[#1D1D1F] font-medium gap-2 rounded-md whitespace-nowrap cursor-pointer hover:text-blue-700"
               } onClick={handleSignOut}>
                 Sign out
