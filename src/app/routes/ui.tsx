@@ -2,8 +2,9 @@ import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "entities/store";
 import { ReactElement } from "react";
-import { Navigation } from "widgets/navigation";
+import { Navigation } from "widgets/navigations/navigation";
 import { getSideBar } from "widgets/sidebars";
+import { getNavigation } from "widgets/navigations/lib";
 
 interface ProtectedRouteProps {
   allowedRoles: string[];
@@ -63,7 +64,7 @@ export const MainLayout: React.FC<{
         {getSideBar(mainLocation)}
       </div>
       <div className="flex flex-col w-full h-full bg-[#F3F6FB]">
-        <Navigation />
+       {getNavigation(mainLocation)}
         {children}
       </div>
     </div>
