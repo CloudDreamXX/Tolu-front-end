@@ -4,25 +4,35 @@ import { cn } from "shared/lib/utils";
 
 interface CustomSliderProps
   extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
-  colors?: string[]; 
+  colors?: string[];
+  value?: number[]; 
+  activeIndex?: number;
 }
 
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   CustomSliderProps
->(({ className, colors, ...props }, ref) => {
+>(({ className, colors, value = [0], activeIndex, ...props }, ref) => {
   const isCustomColored = Array.isArray(colors) && colors.length === 6;
+  const active = activeIndex ?? Math.floor(value[0] / 10);
 
   return (
     <SliderPrimitive.Root
       ref={ref}
+      value={value}
       className={cn("relative flex w-full touch-none select-none items-center", className)}
       {...props}
     >
       {isCustomColored ? (
         <SliderPrimitive.Track className="relative h-3 w-full rounded-[4px] bg-transparent flex overflow-hidden gap-[2px]">
           {colors!.map((color, index) => (
-            <div key={index} className="w-1/6 h-full" style={{ backgroundColor: color }} />
+            <div
+              key={index}
+              className="w-1/6 h-full transition-colors duration-200"
+              style={{
+                backgroundColor: index <= active ? color : "#ECEFF4",
+              }}
+            />
           ))}
         </SliderPrimitive.Track>
       ) : (
