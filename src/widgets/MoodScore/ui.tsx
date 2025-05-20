@@ -61,7 +61,7 @@ export const MoodScore = () => {
           <InfoIcon />
         </div>
         <Slider step={20} onValueChange={([value]) => setMood(value)}/>
-        <div className="flex gap-16 items-center self-stretch">
+        <div className="flex gap-[54px] items-center self-stretch">
           <img src={Angry} alt="Angry" />
           <img src={Sad} alt="Sad" />
           <img src={Neutral} alt="Neutral" />
