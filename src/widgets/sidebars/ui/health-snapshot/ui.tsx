@@ -60,7 +60,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                     <Button
                         variant={"brightblue"}
                         className="w-full h-[44px] text-base font-semibold"
-                        onClick={() => nav("/content-manager/create")}
+                        onClick={() => nav("/health-snapshot")}
                     >
                         <Sparkle />
                         Ask VITAI
@@ -116,11 +116,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
                             </div>}
                         </div>
                         <NavLink
-                            to={"/health-snapshot/expert-content"}
-                            className={({ isActive }) =>
-                                `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] ${isActive ? "font-bold" : "font-semibold"
-                                }`
-                            }
+                            to={"/health-snapshot"}
+                            className={"flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F]"}
                         >
                             <Expert />
                             Expert Content
