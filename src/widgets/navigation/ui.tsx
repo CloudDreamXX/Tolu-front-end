@@ -1,20 +1,14 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { navigationItems } from "./lib";
 import Menu from "shared/assets/icons/menu";
-import SignOutIcon from "shared/assets/icons/signout";
 import { useState, useRef, useEffect } from "react";
 import ArrowPoligon from "shared/assets/icons/arrow-poligon";
-import { UserService } from "entities/user/api";
-import { RootState } from "entities/store";
-import { useSelector } from "react-redux";
 
 export const Navigation: React.FC = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [popupPosition, setPopupPosition] = useState<"left" | "right" | null>(null);
-  const [menuHovered, setMenuHovered] = useState(false);
   const navItemRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const location = useLocation();
- const token = useSelector((state: RootState) => state.user.token);
 
   const calculatePopupPosition = (button: HTMLButtonElement) => {
     const buttonRect = button.getBoundingClientRect();
@@ -53,16 +47,6 @@ export const Navigation: React.FC = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [hoveredItem]);
-
-  const handleSignOut = async () => {
-    try {
-      await UserService.signOut(token);
-      localStorage.clear();
-      window.location.href = "/auth";
-    } catch (error) {
-      console.error("Sign out failed:", error);
-    }
-  };
 
   return (
     <div className="flex bg-white flex-row items-center justify-center h-[78px] gap-[30px] relative px-[48px] py-[19px]">
@@ -140,35 +124,10 @@ export const Navigation: React.FC = () => {
 
       <div
         className="relative"
-        onMouseEnter={() => setMenuHovered(true)}
-        onMouseLeave={() => setMenuHovered(false)}
       >
         <button>
           <Menu />
         </button>
-
-        {menuHovered && (
-          <div
-            className={`absolute top-full right-0`}
-          >
-            <div
-              className={`absolute top-[-10px] right-[10px] z-50`}
-            >
-              <ArrowPoligon />
-            </div>
-            <div className="rounded-xl bg-[#F3F6FB] shadow-lg z-50 p-5 w-auto">
-              <p className="flex w-full gap-2 text-base font-semibold text-left">
-                <span className="flex items-center justify-center w-8 h-8 text-gray-600 bg-white rounded-md shadow-md shrink-0">
-                  <SignOutIcon />
-                </span>
-                <span className={"flex items-center text-[#1D1D1F] font-medium gap-2 rounded-md whitespace-nowrap cursor-pointer hover:text-blue-700"
-                } onClick={handleSignOut}>
-                  Sign out
-                </span>
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
