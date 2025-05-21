@@ -7,23 +7,24 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import SmallTooltip from "shared/assets/icons/small-tooltip";
+import { RadioGroup, RadioGroupItem } from "shared/ui/radio-group"; // <-- import shadcn RadioGroup
 
 export const WhatBrringsYouHere = () => {
-  const [radio, setRadio] = useState({ value: "", id: "" });
+  const [radioValue, setRadioValue] = useState("");
   const [input, setInput] = useState("");
   const nav = useNavigate();
   const dispatch = useDispatch();
 
-  const isOtherSelected = radio.value === "Other";
+  const isOtherSelected = radioValue === "Other";
 
   const handleNext = () => {
-    const finalValue = isOtherSelected ? input.trim() : radio.value;
+    const finalValue = isOtherSelected ? input.trim() : radioValue;
     dispatch(setFormField({ field: "whatBringsYouHere", value: finalValue }));
     nav("/values");
   };
 
   const isFilled = () => {
-    return isOtherSelected ? input.trim() !== "" : radio.value !== "";
+    return isOtherSelected ? input.trim() !== "" : radioValue !== "";
   };
 
   return (
@@ -44,29 +45,34 @@ export const WhatBrringsYouHere = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 items-start w-full">
+          <RadioGroup
+            value={radioValue}
+            onValueChange={(val) => setRadioValue(val)}
+            className="flex flex-col gap-4 w-full"
+          >
             {radioContent.map((item, index) => (
-              <div key={item} className="w-full flex gap-4 items-start">
-                <input
-                  id={index.toString()}
-                  type="radio"
-                  name="problem"
-                  className="h-6 w-6 rounded-full mt-1"
+              <div key={item} className="flex items-center gap-4 w-full">
+                <RadioGroupItem
                   value={item}
-                  onChange={(e) =>
-                    setRadio({ value: e.target.value, id: e.target.id })
-                  }
-                  checked={radio.value === item}
+                  id={`radio-${index}`}
+                  className="mt-[5px] w-6 h-6"
                 />
-                <div className="flex gap-2 items-start flex-grow">
-                  <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
-                    {item}
-                  </p>
-                  <SmallTooltip />
-                </div>
+                <label
+                  htmlFor={`radio-${index}`}
+                  className="flex flex-grow cursor-pointer"
+                >
+                  <span className="inline-flex items-start">
+                    <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F] leading-snug mr-1">
+                      {item}
+                    </p>
+                    <div className="flex-shrink-0 mt-[3px]">
+                      <SmallTooltip />
+                    </div>
+                  </span>
+                </label>
               </div>
             ))}
-          </div>
+          </RadioGroup>
 
           {isOtherSelected && (
             <div className="flex flex-col gap-[10px] w-full items-start">

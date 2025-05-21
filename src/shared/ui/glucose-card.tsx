@@ -1,13 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InfoIcon from "shared/assets/icons/info-icon";
 import TrendUp from "shared/assets/icons/trend-up";
 import TrendDown from "shared/assets/icons/trend-down";
 import Pencil from "shared/assets/icons/pencil";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "shared/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "shared/ui/dialog";
 import { format } from "date-fns";
 import {
   Select,
@@ -52,16 +48,60 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const glucoseValue = useSelector((state: RootState) => state.clientGlucose.glucoseValue);
-  const measurementType = useSelector((state: RootState) => state.clientGlucose.measurementType);
-  const dateString = useSelector((state: RootState) => state.clientGlucose.date);
-  const notes = useSelector((state: RootState) => state.clientGlucose.notes);
+  // Redux state
+  const glucoseValueFromStore = useSelector(
+    (state: RootState) => state.clientGlucose.glucoseValue
+  );
+  const measurementTypeFromStore = useSelector(
+    (state: RootState) => state.clientGlucose.measurementType
+  );
+  const dateStringFromStore = useSelector(
+    (state: RootState) => state.clientGlucose.date
+  );
+  const notesFromStore = useSelector(
+    (state: RootState) => state.clientGlucose.notes
+  );
 
   const [open, setOpen] = useState(false);
 
-  const date = dateString ? new Date(dateString) : undefined;
+  // Local state for dialog inputs, initialized from Redux store on open
+  const [localGlucoseValue, setLocalGlucoseValue] = useState(
+    glucoseValueFromStore
+  );
+  const [localMeasurementType, setLocalMeasurementType] = useState(
+    measurementTypeFromStore
+  );
+  const [localDate, setLocalDate] = useState<Date | null>(
+    dateStringFromStore ? new Date(dateStringFromStore) : null
+  );
+  const [localNotes, setLocalNotes] = useState(notesFromStore);
 
-  const isEmpty = glucoseValue.trim() === "";
+  // When dialog opens, sync local state with store values
+  useEffect(() => {
+    if (open) {
+      setLocalGlucoseValue(glucoseValueFromStore);
+      setLocalMeasurementType(measurementTypeFromStore);
+      setLocalDate(dateStringFromStore ? new Date(dateStringFromStore) : null);
+      setLocalNotes(notesFromStore);
+    }
+  }, [
+    open,
+    glucoseValueFromStore,
+    measurementTypeFromStore,
+    dateStringFromStore,
+    notesFromStore,
+  ]);
+
+  const isEmpty = glucoseValueFromStore.trim() === "";
+
+  // Save handler dispatches all local state to Redux and closes modal
+  const handleSave = () => {
+    dispatch(setGlucoseValue(localGlucoseValue));
+    dispatch(setMeasurementType(localMeasurementType));
+    dispatch(setReduxDate(localDate ? localDate.toISOString() : ""));
+    dispatch(setNotes(localNotes));
+    setOpen(false);
+  };
 
   return (
     <div
@@ -95,8 +135,8 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
               <Input
                 placeholder="Enter value"
                 className="w-full py-[11px] px-4"
-                value={glucoseValue}
-                onChange={(e) => dispatch(setGlucoseValue(e.target.value))}
+                value={localGlucoseValue}
+                onChange={(e) => setLocalGlucoseValue(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-[10px] items-start w-full">
@@ -104,8 +144,8 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                 Measurement type
               </label>
               <Select
-                value={measurementType}
-                onValueChange={(val) => dispatch(setMeasurementType(val))}
+                value={localMeasurementType}
+                onValueChange={(val) => setLocalMeasurementType(val)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select" />
@@ -114,8 +154,12 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                   <SelectGroup>
                     <SelectLabel>Measurement Types</SelectLabel>
                     <SelectItem value="Fasting">Fasting</SelectItem>
-                    <SelectItem value="Post-meal (1 hr)">Post-meal (1 hr)</SelectItem>
-                    <SelectItem value="Post-meal (2 hr)">Post-meal (2 hr)</SelectItem>
+                    <SelectItem value="Post-meal (1 hr)">
+                      Post-meal (1 hr)
+                    </SelectItem>
+                    <SelectItem value="Post-meal (2 hr)">
+                      Post-meal (2 hr)
+                    </SelectItem>
                     <SelectItem value="Other">Other</SelectItem>
                   </SelectGroup>
                 </SelectContent>
@@ -131,20 +175,24 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                     variant={"outline"}
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
+                      !localDate && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    {localDate ? (
+                      format(localDate, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={date}
-                    onSelect={(selectedDate) =>
-                      dispatch(setReduxDate(selectedDate ? selectedDate.toISOString() : ""))
-                    }
+                    selected={localDate ?? undefined}
+                    onSelect={(selectedDate) => {
+                      setLocalDate(selectedDate ?? null);
+                    }}
                     initialFocus
                   />
                 </PopoverContent>
@@ -158,8 +206,8 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
               <Input
                 placeholder="Leave short feedback about your wellness"
                 className="w-full py-[11px] px-4"
-                value={notes}
-                onChange={(e) => dispatch(setNotes(e.target.value))}
+                value={localNotes}
+                onChange={(e) => setLocalNotes(e.target.value)}
               />
             </div>
             <div className="flex justify-between items-center w-full">
@@ -170,7 +218,8 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                 Cancel
               </button>
               <button
-                type="submit"
+                type="button"
+                onClick={handleSave}
                 className="flex justify-center items-center rounded-full bg-[#1C63DB] text-[16px]/[22px] font-semibold font-[Nunito] text-white p-4 w-32 h-[44px]"
               >
                 Save
