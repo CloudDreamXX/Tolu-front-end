@@ -1,5 +1,5 @@
 import ClockAfternoon from "shared/assets/icons/clock-afternoon";
-import { ClientCard, Input, SliderCard } from "shared/ui";
+import { ClientCard, GlucoseCard, Input, SliderCard } from "shared/ui";
 import { smallCards, timelines } from "./mock";
 import { MoodScore, willModalOpen } from "widgets/MoodScore";
 import InfoIcon from "shared/assets/icons/info-icon";
@@ -184,10 +184,8 @@ export const HealthSnapshot = () => {
                 />
               </div>
               <div className="flex items-start flex-1 gap-4 self-stretch">
-                <ClientCard
-                  title="Glucose"
+                <GlucoseCard
                   modifiable
-                  onModify={() => {}}
                   indicator="91 mg/dL"
                   trend="up"
                   width="226px"

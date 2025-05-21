@@ -5,6 +5,7 @@ import userReducer from "../user";
 import coachOnboardingReducer from "./coachOnboardingSlice";
 import { clientOnboardingReducer } from "./clientOnboardingSlice";
 import { clientMoodReducer } from "./clientMoodSlice";
+import { clientGlucoseReducer } from "./clientGlucoseSlice";
 
 const userPersistConfig = {
   key: "user",
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
   coachOnboarding: coachOnboardingReducer,
   clientOnboarding: clientOnboardingReducer,
-  clientMood: persistReducer(clientMoodPersistConfig, clientMoodReducer)
+  clientMood: persistReducer(clientMoodPersistConfig, clientMoodReducer),
+  clientGlucose: clientGlucoseReducer,
 });
 
 export const store = configureStore({

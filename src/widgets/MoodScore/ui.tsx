@@ -62,7 +62,7 @@ export const MoodScore: React.FC = () => {
             {/* Gray bars positioned absolutely on top */}
             <div
               className="absolute inset-0 flex justify-between items-center pointer-events-none"
-              style={{ height: "32px" }} // height to match emoji size or adjust as needed
+              style={{ height: "32px" }}
             >
               {Array.from({ length: 6 }).map((_, idx) => (
                 <div
