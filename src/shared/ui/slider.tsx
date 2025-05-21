@@ -5,7 +5,7 @@ import { cn } from "shared/lib/utils";
 interface CustomSliderProps
   extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
   colors?: string[];
-  value?: number[]; 
+  value?: number[];
   activeIndex?: number;
 }
 
@@ -13,8 +13,8 @@ const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   CustomSliderProps
 >(({ className, colors, value = [0], activeIndex, ...props }, ref) => {
-  const isCustomColored = Array.isArray(colors) && colors.length === 6;
-  const active = activeIndex ?? Math.floor(value[0] / 10);
+  const isCustomColored = Array.isArray(colors);
+  const active = activeIndex ?? (value[0] ? value[0] - 1 : 0);
 
   return (
     <SliderPrimitive.Root

@@ -57,7 +57,7 @@ export const Readiness = () => {
           {/* Slider Message Box */}
           <div className="flex gap-2 items-center justify-center">
             <div className="w=[20px] h=[20px]">
-            <Detective />
+              <Detective />
             </div>
             <p className="flex flex-1 font-[Nunito] text-[14px]/[20px] font-medium text-[#1B2559]">
               {readinessMessages[value[0] - 1]}
@@ -67,13 +67,13 @@ export const Readiness = () => {
           {/* Slider Control */}
           <div className="w-full">
             <Slider
-              min={1}
+              min={0}
               max={10}
               step={1}
               value={value}
               onValueChange={handleSliderChange}
               className="w-full"
-              colors={["#1C63DB", "#B0B0B8"]}
+              colors={["#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB"]}
             />
             <div className="flex justify-between mt-2 text-xs text-[#1D1D1F] font-[12px] font-[Nunito]">
               {Array.from({ length: 10 }, (_, i) => (
