@@ -1,4 +1,5 @@
 import { logout } from "entities/user";
+import { User } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -11,7 +12,6 @@ export const NavigationClient: React.FC = () => {
   const nav = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -29,7 +29,7 @@ export const NavigationClient: React.FC = () => {
 
   const handleSignOut = () => {
     console.log("Sign out clicked");
-    dispatch(logout())
+    dispatch(logout());
     nav("/auth");
   };
 
@@ -74,19 +74,17 @@ export const NavigationClient: React.FC = () => {
       <div className="relative" ref={menuRef}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
+          // aria-label="Toggle menu"
           className="p-2 transition-colors duration-200"
         >
-          <Menu color={
-            menuOpen ? "#1C63DB" : "black"
-            } />
+          <Menu className={menuOpen ? "text-[#1C63DB]" : "text-black"} />
         </button>
 
         {menuOpen && (
           <div
-            className="right-0 top-10 mt-2 w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 p-3
-                       flex flex-col gap-2 z-50
-                       before:absolute before:-top-2 before:right-4 before:border-8 before:border-transparent before:border-b-white relative"
+            className="absolute right-0 top-full mt-2 w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 p-3
+             flex flex-col gap-2 z-50
+             before:absolute before:-top-2 before:right-4 before:border-8 before:border-transparent before:border-b-white"
             style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
           >
             <button
@@ -96,7 +94,9 @@ export const NavigationClient: React.FC = () => {
               }}
               className="flex items-center gap-3 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg"
             >
-              <ProfileIcon />
+              <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
+                <User size={24} />
+              </div>
               Profile
             </button>
 
@@ -107,7 +107,9 @@ export const NavigationClient: React.FC = () => {
               }}
               className="flex items-center gap-3 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg"
             >
-              <SignOutIcon />
+              <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
+                <SignOutIcon />
+              </div>
               Sign out
             </button>
           </div>
@@ -116,7 +118,3 @@ export const NavigationClient: React.FC = () => {
     </div>
   );
 };
-function useAppDispatch() {
-  throw new Error("Function not implemented.");
-}
-
