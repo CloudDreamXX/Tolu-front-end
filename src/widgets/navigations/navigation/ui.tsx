@@ -6,9 +6,7 @@ import ArrowPoligon from "shared/assets/icons/arrow-poligon";
 
 export const Navigation: React.FC = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [popupPosition, setPopupPosition] = useState<"left" | "right" | null>(
-    null
-  );
+  const [popupPosition, setPopupPosition] = useState<"left" | "right" | null>(null);
   const navItemRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const location = useLocation();
 
@@ -99,8 +97,7 @@ export const Navigation: React.FC = () => {
                           key={link.link}
                           to={link.link}
                           className={({ isActive }) =>
-                            `flex items-center hover:text-blue-700 text-[#1D1D1F] font-medium gap-2 rounded-md whitespace-nowrap ${
-                              isActive && "bg-blue-100 text-blue-700"
+                            `flex items-center hover:text-blue-700 text-[#1D1D1F] font-medium gap-2 rounded-md whitespace-nowrap ${isActive && "bg-blue-100 text-blue-700"
                             }`
                           }
                         >
@@ -108,7 +105,7 @@ export const Navigation: React.FC = () => {
                             {link.icon}
                           </span>
                           <span className="pr-2 text-left">
-                            {link.title}{" "}
+                            {link.title}
                             {link.titleAdditional && (
                               <span className="text-gray-500">
                                 ({link.titleAdditional})
@@ -124,9 +121,14 @@ export const Navigation: React.FC = () => {
           </button>
         ))}
       </div>
-      <button className="">
-        <Menu />
-      </button>
+
+      <div
+        className="relative"
+      >
+        <button>
+          <Menu />
+        </button>
+      </div>
     </div>
   );
 };

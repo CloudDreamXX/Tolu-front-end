@@ -21,6 +21,8 @@ const buttonVariants = cva(
         blue: "bg-[#008FF6] w-full text-white hover:bg-[#008FF6]/80 rounded-full",
         blue2:
           "bg-[#008ff61a] text-[#008FF6] font-medium hover:bg-[#008ff61a]/20 rounded-full",
+        brightblue:
+          "bg-[#1C63DB] text-[#FFFFFF] font-medium hover:bg-[#1C63DB]/80 rounded-full",
         black: "bg-[#000] w-full text-white hover:bg-[#000]/90 rounded-full",
         "light-blue":
           "bg-[#D6ECFD] text-[#008FF6] rounded-full hover:bg-[#D6ECFD]/80",

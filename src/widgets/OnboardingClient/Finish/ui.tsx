@@ -24,7 +24,7 @@ export const FinishClientOnboarding = () => {
     };
     handleLast();
     const timer = setTimeout(() => {
-      nav("/content-manager/published");
+      nav("/health-snapshot");
     }, 5000);
 
     return () => clearTimeout(timer);
