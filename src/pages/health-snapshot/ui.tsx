@@ -1,7 +1,7 @@
 import ClockAfternoon from "shared/assets/icons/clock-afternoon";
 import { ClientCard, Input, SliderCard } from "shared/ui";
 import { smallCards, timelines } from "./mock";
-import { MoodScore } from "widgets/MoodScore";
+import { MoodScore, willModalOpen } from "widgets/MoodScore";
 import InfoIcon from "shared/assets/icons/info-icon";
 import { HealthGoalsCard } from "widgets/HealthGoalsCard";
 import { ArrowRight, Bookmark, Upload } from "lucide-react";
@@ -9,14 +9,28 @@ import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import Share from "shared/assets/icons/share";
 import PaperPlane from "shared/assets/icons/paper-plane";
 import avatar from "shared/assets/images/Avatar.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TimelineItem } from "widgets/TimelineItem";
 import { HealthTable } from "widgets/HealthTable";
+import { RootState } from "entities/store";
+import { useSelector } from "react-redux";
+import { MoodModal } from "widgets/MoodScore/MoodModal";
 
 export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
+  const [showMoodModal, setShowMoodModal] = useState(false);
+
+  const lastLogIn = useSelector((state: RootState) => state.clientMood.lastLogIn);
+  const lastMood = useSelector((state: RootState) => state.clientMood.lastMood);
+
+  useEffect(() => {
+    if (!lastMood || willModalOpen(lastLogIn)) {
+      setShowMoodModal(true);
+    }
+  }, [lastMood, lastLogIn]);
   return (
     <main className="flex flex-col items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F1F3F5]">
+      {showMoodModal && <MoodModal onClose={() => setShowMoodModal(false)} />}
       <div className="flex items-center justify-center self-stretch">
         <h1 className="flex-1 text-[#1D1D1F] font-[Nunito] text-[32px]/[44px] font-bold">
           Health Snapshot

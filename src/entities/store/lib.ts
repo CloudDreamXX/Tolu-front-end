@@ -4,9 +4,15 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "../user";
 import coachOnboardingReducer from "./coachOnboardingSlice";
 import { clientOnboardingReducer } from "./clientOnboardingSlice";
+import { clientMoodReducer } from "./clientMoodSlice";
 
 const userPersistConfig = {
   key: "user",
+  storage,
+};
+
+const clientMoodPersistConfig = {
+  key: "clientMood",
   storage,
 };
 
@@ -14,6 +20,7 @@ const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
   coachOnboarding: coachOnboardingReducer,
   clientOnboarding: clientOnboardingReducer,
+  clientMood: persistReducer(clientMoodPersistConfig, clientMoodReducer)
 });
 
 export const store = configureStore({
