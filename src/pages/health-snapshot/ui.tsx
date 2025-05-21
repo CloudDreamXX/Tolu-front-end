@@ -11,6 +11,7 @@ import PaperPlane from "shared/assets/icons/paper-plane";
 import avatar from "shared/assets/images/Avatar.png";
 import { useState } from "react";
 import { TimelineItem } from "widgets/TimelineItem";
+import { getColorStatus } from "./utils";
 
 export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
@@ -98,8 +99,11 @@ export const HealthSnapshot = () => {
                       <td className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm">
                         {row.Testdate}
                       </td>
-                      <td className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm">
-                        {row.Status}
+                      <td style={{color: getColorStatus(row.Status)}} className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm">
+                        <div className="flex gap-1 items-center">
+                          <div style={{backgroundColor: getColorStatus(row.Status)}} className="rounded-full w-[6px] h-[6px]"/>
+                          {row.Status}
+                        </div>
                       </td>
                       <td className="italic whitespace-pre-line px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] break-words bg-white rounded-lg shadow-sm">
                         {row.Comment}

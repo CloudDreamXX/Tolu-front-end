@@ -110,3 +110,9 @@ export const timelines = [
         description: "You added a new lab value: 38 ng/mL ",
     },
 ]
+
+export const statusColors = [
+    "#006622", // green
+    "#F6B448", // yellow
+    "#FF1F0F" // red
+];
