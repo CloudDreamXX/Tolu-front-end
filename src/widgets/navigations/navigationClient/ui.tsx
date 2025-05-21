@@ -2,8 +2,7 @@ import { NavLink } from "react-router-dom";
 import Menu from "shared/assets/icons/menu";
 import Library from "shared/assets/icons/library";
 import HeartBeat from "shared/assets/icons/heartbeat";
-import Settings from "shared/assets/icons/settings";
-import Chat from "shared/assets/icons/chat";
+import Messages from "shared/assets/icons/messages";
 
 export const NavigationClient: React.FC = () => {
   return (
@@ -36,7 +35,7 @@ export const NavigationClient: React.FC = () => {
             }`
           }
         >
-          <Chat />
+          <Messages />
           Messages
         </NavLink>
         {/* <NavLink

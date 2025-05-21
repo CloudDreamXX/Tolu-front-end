@@ -73,6 +73,7 @@ export const Readiness = () => {
               value={value}
               onValueChange={handleSliderChange}
               className="w-full"
+              colors={["#1C63DB", "#B0B0B8"]}
             />
             <div className="flex justify-between mt-2 text-xs text-[#1D1D1F] font-[12px] font-[Nunito]">
               {Array.from({ length: 10 }, (_, i) => (

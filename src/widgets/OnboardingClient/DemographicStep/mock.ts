@@ -20,23 +20,23 @@ export const languages = [
 ];
 
 export const raceEthnicity = [
-  "White",
+  "Indigenous or Native American",
+  "Asian or Asian American",
   "Black or African American",
-  "Asian",
-  "Hispanic or Latino",
-  "Native American or Alaska Native",
-  "Native Hawaiian or Other Pacific Islander",
-  "Middle Eastern or North African",
-  "Mixed/Multiracial",
-  "Other",
+  "Latino/a/e or Hispanic",
+  "Middle Eastern or North African (MENA)",
+  "Native Hawaiian or Pacific Islander",
+  "European descent",
+  "Prefer not to say",
 ];
 
 export const householdType = [
   "Single",
-  "Partnered",
+  "Living with partner",
+  "Living with spouse",
+  "Living with parents",
   "With children",
   "Caregiver",
-  "Multigenerational",
   "Other",
 ];
 
@@ -51,9 +51,11 @@ export const education = [
 
 export const occupation = [
   "Healthcare Professional",
-  "Educator",
-  "Engineer/IT",
-  "Business/Finance",
-  "Creative Arts",
-  "Other",
+  "Educator / Academic",
+  "Office / Administrative",
+  "Skilled trade / Labor",
+  "Technology / Engineering",
+  "Service industry (e.g. retail, hospitality)",
+  "Student / In training",
+  "Unemployed / Retired / Other",
 ];

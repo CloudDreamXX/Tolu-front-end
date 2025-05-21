@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { AuthPageWrapper, Input } from "shared/ui";
+import { AuthPageWrapper, Checkbox, Input } from "shared/ui";
 import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import { checkboxes } from "./utils";
@@ -14,15 +14,13 @@ export const Values = () => {
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked, value } = e.target;
-
-    if (checked && selectedValues.length < 3) {
-      setSelectedValues((prev) => [...prev, value]);
-    } else if (!checked) {
-      setSelectedValues((prev) => prev.filter((v) => v !== value));
-    }
-  };
+  const handleInputChange = (value: string, checked: boolean) => {
+  if (checked && selectedValues.length < 3) {
+    setSelectedValues((prev) => [...prev, value]);
+  } else if (!checked) {
+    setSelectedValues((prev) => prev.filter((v) => v !== value));
+  }
+};
 
   const handleNext = () => {
     const finalValues = [...selectedValues];
@@ -70,16 +68,16 @@ export const Values = () => {
               <div key={rowIndex} className="gap-6 flex w-full items-center">
                 {rowItems.map((item, i) => (
                   <div key={i} className="flex gap-4 flex-1 items-center">
-                    <input
-                      onChange={handleInputChange}
-                      type="checkbox"
-                      value={item}
+                    <Checkbox
                       checked={selectedValues.includes(item)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange(item, checked === true)
+                      }
                       disabled={
                         !selectedValues.includes(item) &&
                         selectedValues.length >= 3
                       }
-                      className="h-6 w-6 rounded-full"
+                      className="h-6 w-6 rounded-lg"
                     />
                     <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
                       {item}

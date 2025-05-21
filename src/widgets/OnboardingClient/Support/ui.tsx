@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { AuthPageWrapper, Input } from "shared/ui";
+import { AuthPageWrapper, Checkbox, Input } from "shared/ui";
 import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import { BottomButtons } from "widgets/BottomButtons";
@@ -15,9 +15,7 @@ export const Support = () => {
   const [selectedSupport, setSelectedSupport] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked, value } = e.target;
-
+  const handleInputChange = (value: string, checked: boolean) => {
     if (checked) {
       setSelectedSupport((prev) => [...prev, value]);
     } else {
@@ -60,12 +58,11 @@ export const Support = () => {
               <div key={rowIndex} className="gap-6 flex w-full items-center">
                 {rowItems.map((item, i) => (
                   <div key={i} className="flex gap-4 flex-1 items-center">
-                    <input
-                      onChange={handleInputChange}
-                      type="checkbox"
+                    <Checkbox
+                      onCheckedChange={(checked) => handleInputChange(item, checked === true)}
                       value={item}
                       checked={selectedSupport.includes(item)}
-                      className="h-6 w-6 rounded-full"
+                      className="h-6 w-6 rounded-lg"
                     />
                     <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
                       {item}
@@ -75,7 +72,6 @@ export const Support = () => {
               </div>
             ))}
 
-          {selectedSupport.includes("Other") && (
             <div className="flex flex-col gap-[10px] w-full max-w-[700px] items-start">
               <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
                 Is there anything else we should know?
@@ -87,15 +83,13 @@ export const Support = () => {
                 onChange={(e) => setInputValue(e.target.value)}
               />
             </div>
-          )}
         </div>
 
         <BottomButtons
           handleNext={handleNext}
           skipButton={() => nav("/personality-type")}
           isButtonActive={() =>
-            selectedSupport.length > 0 &&
-            (!selectedSupport.includes("Other") || inputValue.trim() !== "")
+            selectedSupport.length > 0
           }
         />
       </main>

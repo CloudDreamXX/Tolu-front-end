@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
+import SmallTooltip from "shared/assets/icons/small-tooltip";
 
 export const WhatBrringsYouHere = () => {
   const [radio, setRadio] = useState({ value: "", id: "" });
@@ -45,21 +46,24 @@ export const WhatBrringsYouHere = () => {
 
           <div className="flex flex-col gap-4 items-start w-full">
             {radioContent.map((item, index) => (
-              <div key={item} className="flex gap-4 items-center">
+              <div key={item} className="w-full flex gap-4 items-start">
                 <input
                   id={index.toString()}
                   type="radio"
                   name="problem"
-                  className="h-6 w-6 rounded-full"
+                  className="h-6 w-6 rounded-full mt-1"
                   value={item}
                   onChange={(e) =>
                     setRadio({ value: e.target.value, id: e.target.id })
                   }
                   checked={radio.value === item}
                 />
-                <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
-                  {item}
-                </p>
+                <div className="flex gap-2 items-start flex-grow">
+                  <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
+                    {item}
+                  </p>
+                  <SmallTooltip />
+                </div>
               </div>
             ))}
           </div>
