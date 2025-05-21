@@ -28,7 +28,13 @@ export class UserService {
   }
 
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.LOGIN, credentials);
+    return ApiService.post<AuthResponse>(
+      API_ROUTES.USER.LOGIN,
+      credentials,
+      {
+        withCredentials: true,
+      }
+    );
   }
 
   static async forgotPassword(

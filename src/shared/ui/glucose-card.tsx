@@ -76,7 +76,6 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
   );
   const [localNotes, setLocalNotes] = useState(notesFromStore);
 
-  // When dialog opens, sync local state with store values
   useEffect(() => {
     if (open) {
       setLocalGlucoseValue(glucoseValueFromStore);
@@ -94,7 +93,6 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
 
   const isEmpty = glucoseValueFromStore.trim() === "";
 
-  // Save handler dispatches all local state to Redux and closes modal
   const handleSave = () => {
     dispatch(setGlucoseValue(localGlucoseValue));
     dispatch(setMeasurementType(localMeasurementType));
