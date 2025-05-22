@@ -27,6 +27,11 @@ export const raceEthnicity = [
   "Middle Eastern or North African (MENA)",
   "Native Hawaiian or Pacific Islander",
   "European descent",
+  "Multiracial (Two or more races)",
+  "South Asian",
+  "East, Southeast, Central Asian",
+  "Ashkenazi or Sephardic Jewish",
+  "Romani",
   "Prefer not to say",
 ];
 

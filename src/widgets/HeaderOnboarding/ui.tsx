@@ -5,9 +5,10 @@ import { getStepStyle } from "./uitls";
 interface HeaderOnboardingProps {
   currentStep: number;
   steps?: number;
+  isClient?: boolean;
 }
 
-export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
+export const HeaderOnboarding = ({ currentStep, isClient, steps = 6 }: HeaderOnboardingProps) => {
   const navigate = useNavigate();
 
   return (
@@ -21,7 +22,7 @@ export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
           TOLU
         </h2>
         <h4 className="capitalize text-[#1D1D1F] text-center text-[20px] font-medium font-open h-[27px]">
-          COACH ADMIN
+          {isClient ? "CLIENT LIBRARY" : "COACH ADMIN"}
         </h4>
       </div>
 
@@ -33,10 +34,10 @@ export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
         {/* Blue progress line (behind completed steps only) */}
         <div
           className="absolute top-1/2 left-0 h-[8px] bg-[#1866E0] z-10 transform -translate-y-1/2 transition-all duration-300"
-          style={{ width: `${(currentStep / 5) * 100}%` }}
+          style={{ width: `${(currentStep / (steps-1)) * 100}%` }}
         />
 
-        {Array.from({ length: 6 }).map((_, index) => {
+        {Array.from({ length: steps }).map((_, index) => {
           const isCompleted = index < currentStep;
           const isCurrent = index === currentStep;
           const style = getStepStyle({ isCompleted, isCurrent });

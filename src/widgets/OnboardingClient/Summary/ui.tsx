@@ -115,7 +115,7 @@ export const Summary = () => {
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={7} steps={8} />
+      <HeaderOnboarding isClient currentStep={7} steps={8} />
       <main className="flex flex-col w-full items-center gap-8 justify-center self-stretch">
         <h1 className="text-[#1D1D1F] text-center text-h1">
           Summary Confirmation Page

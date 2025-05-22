@@ -68,7 +68,7 @@ export const DemographicStep = () => {
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={0} steps={8} />
+      <HeaderOnboarding isClient currentStep={0} steps={8} />
       <main className="flex flex-col items-center gap-8 justify-center self-stretch">
         <div className="flex flex-col gap-8 w-full max-w-[700px] items-start">
           <div className="flex flex-col gap-4 items-center self-stretch">
@@ -136,7 +136,7 @@ export const DemographicStep = () => {
               <div className="gap-6 flex w-full items-center">
                 <div className="flex gap-4 flex-1 items-center">
                   <input
-                    value="no period for 12+ months"
+                    value="no periods for 12+ months"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
                     name="menopause"
                     type="radio"
@@ -144,7 +144,7 @@ export const DemographicStep = () => {
                   />
                   <div className="flex gap-2 items-center">
                     <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-                      No period for 12+ months
+                      No periods for 12+ months
                     </p>
                     <SmallTooltip />
                   </div>

@@ -29,7 +29,7 @@ export const WhatBrringsYouHere = () => {
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={1} steps={8} />
+      <HeaderOnboarding isClient currentStep={1} steps={8} />
       <main className="flex flex-col items-center gap-8 justify-center self-stretch">
         <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-h1">
           What Brings You Here?

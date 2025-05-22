@@ -35,7 +35,7 @@ export const Values = () => {
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={2} steps={8} />
+      <HeaderOnboarding isClient currentStep={2} steps={8} />
       <main className="flex flex-col items-center gap-8 justify-center self-stretch">
         <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-h1">
           Values & Inner Drivers

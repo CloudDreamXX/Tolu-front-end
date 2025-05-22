@@ -41,7 +41,7 @@ export const Readiness = () => {
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={6} steps={8} />
+      <HeaderOnboarding isClient currentStep={6} steps={8} />
       <main className="flex flex-col w-full items-center gap-8 justify-center self-stretch">
         <div className="flex flex-col items-center">
           <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-h1">
