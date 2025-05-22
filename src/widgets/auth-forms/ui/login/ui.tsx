@@ -97,11 +97,11 @@ export const LoginForm = () => {
                 placeholder="Enter Email"
                 name="email"
                 onChange={formDataChangeHandler}
-                className={
+                className={`px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in ${
                   loginError
-                    ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in"
-                    : "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
-                }
+                    ? "!border-[#FF1F0F] focus:border-[#FF1F0F]"
+                    : "!border-[#DFDFDF] focus:border-[#1C63DB]"
+                }`}
               />
               <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] flex items-center justify-center gap-[10px]">
                 {loginError}

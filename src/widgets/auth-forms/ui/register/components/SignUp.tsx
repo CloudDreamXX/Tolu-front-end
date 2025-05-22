@@ -251,7 +251,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           <div className="flex flex-row-reverse items-center w-full relative">
             <Input
               type={showNewPassword ? "password" : "text"}
-              placeholder="Repeat Password"
+              placeholder="Enter Password"
               name="newPassword"
               value={formData.newPassword}
               onChange={(e) => {

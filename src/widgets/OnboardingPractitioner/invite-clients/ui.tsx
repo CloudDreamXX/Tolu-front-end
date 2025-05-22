@@ -1,14 +1,16 @@
 import { useRef, useState } from "react";
-import { Download } from "lucide-react";
+import { Download, File } from "lucide-react";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
+// import File from "shared/assets/icons/file";
 
 export const InviteClients = () => {
   const nav = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
   const [clientel, setClientel] = useState<string[]>([""]);
 
   const handleUploadClick = () => {
@@ -19,6 +21,7 @@ export const InviteClients = () => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedFileName(file.name);
+      setUploadedFileSize(`${(file.size / 1024).toFixed(0)} KB`);
     }
   };
 
@@ -36,30 +39,57 @@ export const InviteClients = () => {
         </p>
 
         <div className="bg-white rounded-[16px] py-[32px] px-[40px] w-[600px] flex flex-col gap-[24px] items-start shadow-md">
-          <p className="text-left font-[Nunito] text-black text-base font-medium">
-            Import CSV or PDF
-          </p>
 
-          {/* Upload Box */}
-          <div
-            className="w-full border border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer"
-            onClick={handleUploadClick}
-          >
-            <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-              Click to upload
-            </div>
-            <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
-              or drag and drop
-            </p>
-            <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
-              CSV or PDF file
-            </p>
-            {uploadedFileName && (
-              <p className="text-[#1C63DB] font-[Nunito] text-[14px] mt-2">
-                Uploaded: {uploadedFileName}
+          {/* Import Section */}
+          {uploadedFileName ? (
+            <div className="w-full max-w-[330px]">
+              <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                Import PDF
               </p>
-            )}
-          </div>
+              <div className="w-full border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <File stroke="#1C63DB"/>
+                  <div className="flex flex-col leading-[1.2]">
+                    <p className="text-[14px] font-[Nunito] text-black font-semibold">
+                      {uploadedFileName}
+                    </p>
+                    <p className="text-[12px] font-[Nunito] text-[#5F5F65]">{uploadedFileSize}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setUploadedFileName(null);
+                    setUploadedFileSize(null);
+                  }}
+                  className="text-[#1C63DB] text-[20px] font-bold"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full">
+              <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                Import CSV or PDF
+              </p>
+              <div
+                className="w-full border border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer"
+                onClick={handleUploadClick}
+              >
+                <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                  Click to upload
+                </div>
+                <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
+                  or drag and drop
+                </p>
+                <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
+                  CSV or PDF file
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Hidden File Input */}
           <Input
             ref={fileInputRef}
             type="file"
@@ -69,7 +99,7 @@ export const InviteClients = () => {
           />
 
           {/* Download Template */}
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center mt-[4px]">
             <Download size={16} color="#1C63DB" />
             <a
               href="/template.pdf"
@@ -87,7 +117,7 @@ export const InviteClients = () => {
             <div className="flex-1 h-[1px] bg-[#8EBEFF]" />
           </div>
 
-          {/* Manual input */}
+          {/* Manual Invite */}
           <div className="w-full flex flex-col gap-2">
             <p className="text-left font-[Nunito] text-black text-base font-medium">
               Manual Invite
@@ -117,7 +147,7 @@ export const InviteClients = () => {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation Buttons */}
         <div className="flex items-center gap-[16px] bg-transparent">
           <button
             className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"

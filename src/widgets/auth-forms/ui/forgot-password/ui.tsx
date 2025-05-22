@@ -54,7 +54,7 @@ export const ForgotPassword = () => {
               className="px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
             />
             <p className="flex p-[4px] justify-end items-center gap-[12px] text-black text-[14px] font-normal font-[Nunito]">
-              Didn't get the code?{" "}
+              Didn't get the code?
               <span className="cursor-pointer text-[#1C63DB] underline">
                 Resend
               </span>

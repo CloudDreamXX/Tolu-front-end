@@ -76,7 +76,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 onClick={toggleRefine}
                 className="flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] font-semibold cursor-pointer select-none"
               >
-                <Magic />
+                {/* <Magic /> */}
                 Refine Search
                 <span
                   className={`ml-auto transition-transform duration-0 ${isRefineOpen ? "rotate-180" : ""}`}
@@ -137,11 +137,12 @@ export const HealthSnapshotSidebar: React.FC = () => {
             <NavLink
               to={"/health-snapshot"}
               className={
-                "flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F]"
+                "flex items-center justify-between gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F]"
               }
             >
-              <Expert />
+              {/* <Expert /> */}
               Expert Content
+              <CaretDown />
             </NavLink>
           </div>
         </div>

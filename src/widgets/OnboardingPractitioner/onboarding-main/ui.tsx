@@ -68,7 +68,7 @@ export const OnboardingMain = () => {
           <div className="flex w-[500px] items-start gap-[12px] flex-col">
             <Input
               type="text"
-              icon={<Search />}
+              icon={<Search className="ml-2"/>}
               placeholder="Search"
               className="h-[44px] py-[8px] flex items-center gap-[8px] self-stretch rounded-full border-[1px] border-[#DBDEE1] bg-white flex-1 font-[Nunito] text-[14px] font-semibold text-[#5F5F65]"
             />
