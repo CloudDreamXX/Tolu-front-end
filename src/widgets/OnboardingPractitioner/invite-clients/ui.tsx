@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Download, File } from "lucide-react";
+import { Download, File, X } from "lucide-react";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
@@ -35,35 +35,36 @@ export const InviteClients = () => {
           Invite Clients
         </h1>
         <p className="text-[#5F5F65] text-[16px] font-[Nunito] font-normal text-center">
-          Invite your clients to join your coaching platform and start working together
+          Invite your clients to join your coaching platform and start working
+          together
         </p>
 
         <div className="bg-white rounded-[16px] py-[32px] px-[40px] w-[600px] flex flex-col gap-[24px] items-start shadow-md">
-
           {/* Import Section */}
           {uploadedFileName ? (
             <div className="w-full max-w-[330px]">
               <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
                 Import PDF
               </p>
-              <div className="w-full border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <File stroke="#1C63DB"/>
-                  <div className="flex flex-col leading-[1.2]">
-                    <p className="text-[14px] font-[Nunito] text-black font-semibold">
-                      {uploadedFileName}
-                    </p>
-                    <p className="text-[12px] font-[Nunito] text-[#5F5F65]">{uploadedFileSize}</p>
-                  </div>
+              <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
+                <File stroke="#1C63DB" />
+                <div className="flex flex-col leading-[1.2]">
+                  <p className="text-[14px] font-[Nunito] text-black font-semibold">
+                    {uploadedFileName}
+                  </p>
+                  <p className="text-[12px] font-[Nunito] text-[#5F5F65]">
+                    {uploadedFileSize}
+                  </p>
                 </div>
+                {/* Close button in top-right corner */}
                 <button
                   onClick={() => {
                     setUploadedFileName(null);
                     setUploadedFileSize(null);
                   }}
-                  className="text-[#1C63DB] text-[20px] font-bold"
+                  className="absolute top-[6px] right-[6px]"
                 >
-                  ×
+                  <X size={16} stroke="#A7A7A7" />
                 </button>
               </div>
             </div>
@@ -90,7 +91,7 @@ export const InviteClients = () => {
           )}
 
           {/* Hidden File Input */}
-          <Input
+          <input
             ref={fileInputRef}
             type="file"
             accept=".csv,application/pdf"

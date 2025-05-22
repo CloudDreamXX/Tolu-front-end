@@ -123,7 +123,7 @@ export const AboutYourPractice = () => {
             onDrop={handleDrop}
             onClick={triggerFileSelect}
           >
-            <Input
+            <input
               ref={fileInputRef}
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
