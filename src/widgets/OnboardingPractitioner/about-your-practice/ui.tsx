@@ -97,6 +97,7 @@ export const AboutYourPractice = () => {
           {/* School */}
           <div className="flex flex-col items-start self-stretch gap-[16px] mt-[40px] ml-[32px]">
             <SearchableSelect
+              width="w-[620px]"
               label="Which school did you graduate from? *"
               options={[
                 "Functional Medicine Coaching Academy (FMCA)",
@@ -156,6 +157,7 @@ export const AboutYourPractice = () => {
           {/* Recent clients */}
           <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
             <SearchableSelect
+              width="w-[620px]"
               label="How many clients have you helped within the past 3 months? *"
               options={["0-5", "6-15", "16-30", "31-50", "50+"]}
               value={school}
@@ -166,6 +168,7 @@ export const AboutYourPractice = () => {
           {/* Target clients */}
           <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
             <SearchableSelect
+              width="w-[620px]"
               label="How many new clients do you hope to acquire over the next 3
               months? *"
               options={["0-5", "6-15", "16-30", "31-50", "50+"]}
@@ -180,7 +183,7 @@ export const AboutYourPractice = () => {
               Do you currently use labs or supplementation in your practice? *
             </p>
             <div className="flex items-center gap-[60px]">
-              {["yes", "no", "planning to"].map((option) => (
+              {["Yes", "No", "Planning to"].map((option) => (
                 <label
                   key={option}
                   className="flex gap-[16px] items-center whitespace-nowrap"
@@ -193,7 +196,7 @@ export const AboutYourPractice = () => {
                     onChange={(e) => handleFieldChange("labs", e.target.value)}
                     className="w-[20px] h-[20px]"
                   />
-                  <span className="font-[Nunito] text-[16px] font-medium text-black capitalize">
+                  <span className="font-[Nunito] text-[16px] font-medium text-black">
                     {option}
                   </span>
                 </label>

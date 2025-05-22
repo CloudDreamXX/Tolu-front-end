@@ -60,7 +60,7 @@ export const OnboardingWerlcome = () => {
           <MiddleCard
             title={contents[curentWindow - 1].title}
             description={contents[curentWindow - 1].description}
-            icon={contents[curentWindow - 1].icon}
+            icon={<span className="w-[100px] h-[100px]">{contents[curentWindow - 1].icon}</span>}
             handleNext={addStep}
           />
         )}

@@ -10,23 +10,32 @@ import { buttons } from "./mock";
 
 export const OnboardingMain = () => {
   const [_, setShowHint] = useState(false);
+  const [customButtons, setCustomButtons] = useState(buttons);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const nav = useNavigate();
 
   const handleOther = () => {
-    setSelectedButtons((prevSelected) => {
-      let updated;
-      if (prevSelected.includes("Other")) {
-        updated = prevSelected.filter((item) => item !== "Other");
-        setOtherText("");
+    if (!otherText.trim()) return;
+
+    setSelectedButtons((prevSelected) =>
+      prevSelected.filter((n) => n !== "Other").concat(otherText)
+    );
+
+    setCustomButtons((prev) => {
+      const copy = [...prev];
+      const lastRow = copy[copy.length - 1];
+
+      if (lastRow.length >= 3) {
+        return [...copy, [otherText]];
+      } else {
+        lastRow.push(otherText);
+        return copy;
       }
-      else {
-        updated = [...prevSelected, "Other"];
-      }
-      return updated;
     });
-  }
+
+    setOtherText("");
+  };
 
   useEffect(() => {
     if (selectedButtons.length > 0) {
@@ -37,16 +46,16 @@ export const OnboardingMain = () => {
   const dispatch = useDispatch();
 
   const handleButtonClick = (buttonText: string, id: number = 0) => {
-      setSelectedButtons((prevSelected) => {
-        let updated;
-        if (prevSelected.includes(buttonText)) {
-          updated = prevSelected.filter((item) => item !== buttonText);
-        } else {
-          updated = [...prevSelected, buttonText];
-        }
-        dispatch(updateCoachField({ key: "primary_niches", value: updated }));
-        return updated;
-      });
+    setSelectedButtons((prevSelected) => {
+      let updated;
+      if (prevSelected.includes(buttonText)) {
+        updated = prevSelected.filter((item) => item !== buttonText);
+      } else {
+        updated = [...prevSelected, buttonText];
+      }
+      dispatch(updateCoachField({ key: "primary_niches", value: updated }));
+      return updated;
+    });
   };
 
   const isOtherSelected = () => {
@@ -67,14 +76,15 @@ export const OnboardingMain = () => {
         <section className="w-[900px] items-center justify-center flex flex-col gap-[32px]">
           <div className="flex w-[500px] items-start gap-[12px] flex-col">
             <Input
+              variant="none"
               type="text"
-              icon={<Search className="ml-2"/>}
+              icon={<Search className="ml-2" />}
               placeholder="Search"
               className="h-[44px] py-[8px] flex items-center gap-[8px] self-stretch rounded-full border-[1px] border-[#DBDEE1] bg-white flex-1 font-[Nunito] text-[14px] font-semibold text-[#5F5F65]"
             />
           </div>
           <div className="flex gap-[17px] items-center justify-center content-center py-[17px] px-[13px] flex-wrap self-stretch">
-            {buttons.map((row, index) => (
+            {customButtons.map((row, index) => (
               <div key={index} className="flex gap-[13px]">
                 {row.map((buttonText) => (
                   <Button
@@ -89,7 +99,7 @@ export const OnboardingMain = () => {
             ))}
           </div>
           {isOtherSelected() ? (
-            <div className="flex justify-center gap-[8px] items-center">
+            <div className="w-[300px] flex justify-center gap-[8px] items-center">
               <Input
                 onChange={(e) => {
                   setOtherText(e.target.value);
@@ -105,10 +115,13 @@ export const OnboardingMain = () => {
                 }}
                 type="text"
                 placeholder="Please specify your niche"
-                className="flex outline-none w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white"
+                className="flex outline-none w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white focus:border-[#1C63DB] focus:outline-none"
               />
               {otherText.length > 0 && (
-                <button onClick={handleOther} className="text-nowrap flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white w-auto">
+                <button
+                  onClick={handleOther}
+                  className="text-nowrap flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white w-auto"
+                >
                   Add niche
                 </button>
               )}

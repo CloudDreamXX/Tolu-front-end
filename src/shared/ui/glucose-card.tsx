@@ -62,29 +62,26 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
     (state: RootState) => state.clientGlucose.notes
   );
 
-  const [open, setOpen] = useState(false);
+  // Dialog & Calendar state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
-  // Local state for dialog inputs, initialized from Redux store on open
-  const [localGlucoseValue, setLocalGlucoseValue] = useState(
-    glucoseValueFromStore
-  );
-  const [localMeasurementType, setLocalMeasurementType] = useState(
-    measurementTypeFromStore
-  );
-  const [localDate, setLocalDate] = useState<Date | null>(
-    dateStringFromStore ? new Date(dateStringFromStore) : null
-  );
-  const [localNotes, setLocalNotes] = useState(notesFromStore);
+  // Local state for inputs
+  const [localGlucoseValue, setLocalGlucoseValue] = useState("");
+  const [localMeasurementType, setLocalMeasurementType] = useState("");
+  const [localDate, setLocalDate] = useState<Date | null>(null);
+  const [localNotes, setLocalNotes] = useState("");
 
+  // Populate local state on dialog open
   useEffect(() => {
-    if (open) {
+    if (dialogOpen) {
       setLocalGlucoseValue(glucoseValueFromStore);
       setLocalMeasurementType(measurementTypeFromStore);
       setLocalDate(dateStringFromStore ? new Date(dateStringFromStore) : null);
       setLocalNotes(notesFromStore);
     }
   }, [
-    open,
+    dialogOpen,
     glucoseValueFromStore,
     measurementTypeFromStore,
     dateStringFromStore,
@@ -98,21 +95,18 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
     dispatch(setMeasurementType(localMeasurementType));
     dispatch(setReduxDate(localDate ? localDate.toISOString() : ""));
     dispatch(setNotes(localNotes));
-    setOpen(false);
+    setDialogOpen(false);
   };
 
   return (
     <div
       className="flex flex-col p-4 justify-between items-start flex-1 rounded-2xl bg-[#F3F7FD] relative"
-      style={{
-        width: width ?? "238px",
-        height: height ?? "160px",
-      }}
+      style={{ width: width ?? "238px", height: height ?? "160px" }}
     >
       {modifiable && (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <button className="absolute right-[12px] top-[12px] py-[6px] px-[8px] h-8 rounded-full bg-[#DDEBF6] flex items-center justify-center ">
+            <button className="absolute right-[12px] top-[12px] py-[6px] px-[8px] h-8 rounded-full bg-[#DDEBF6] flex items-center justify-center">
               <Pencil />
             </button>
           </DialogTrigger>
@@ -126,6 +120,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                 your blood glucose reading here.
               </p>
             </div>
+
             <div className="flex flex-col gap-[10px] items-start w-full">
               <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Glucose value, mg/dL or mmol/L
@@ -137,6 +132,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                 onChange={(e) => setLocalGlucoseValue(e.target.value)}
               />
             </div>
+
             <div className="flex flex-col gap-[10px] items-start w-full">
               <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Measurement type
@@ -163,6 +159,8 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                 </SelectContent>
               </Select>
             </div>
+
+            {/* ✅ Fixed Date Picker */}
             <div className="flex flex-col gap-[10px] items-start w-full">
               <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Date & Time
@@ -170,18 +168,14 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
-                    variant={"outline"}
+                    variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal",
                       !localDate && "text-muted-foreground"
                     )}
                   >
-                    <CalendarIcon />
-                    {localDate ? (
-                      format(localDate, "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {localDate ? format(localDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -189,13 +183,16 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                     mode="single"
                     selected={localDate ?? undefined}
                     onSelect={(selectedDate) => {
-                      setLocalDate(selectedDate ?? null);
+                      if (selectedDate) {
+                        setLocalDate(selectedDate);
+                      }
                     }}
                     initialFocus
                   />
                 </PopoverContent>
               </Popover>
             </div>
+
             <div className="flex flex-col gap-[10px] items-start w-full">
               <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Notes{" "}
@@ -208,9 +205,10 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                 onChange={(e) => setLocalNotes(e.target.value)}
               />
             </div>
+
             <div className="flex justify-between items-center w-full">
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => setDialogOpen(false)}
                 className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold font-[Nunito] text-[#1C63DB] p-4 w-32 h-[44px]"
               >
                 Cancel

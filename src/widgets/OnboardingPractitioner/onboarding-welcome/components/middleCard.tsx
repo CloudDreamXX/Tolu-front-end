@@ -16,7 +16,7 @@ export const MiddleCard: React.FC<MiddleCardProps> = ({
       <div className="flex flex-col justify-between items-center shrink-0 w-[548px] h-[269px] gap-[24px]">
         {icon}
         <div className="flex w-[460px] flex-col items-center gap-[16px]">
-          <h2 className="text-center text-black font-[Nunito] text-[40px]/[56px] font-bold">
+          <h2 className="text-center text-black font-[Nunito] text-[40px]/[56px] text-nowrap font-bold">
             {title}
           </h2>
           <p className="text-center text-[24px] text-[#000000]">

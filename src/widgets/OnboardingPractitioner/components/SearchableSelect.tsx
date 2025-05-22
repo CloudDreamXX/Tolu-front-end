@@ -7,6 +7,7 @@ interface SearchableSelectProps {
   onChange: (value: string) => void;
   placeholder?: string;
   labelStyle?: string;
+  width?: string;
 }
 
 export const SearchableSelect: React.FC<SearchableSelectProps> = ({
@@ -16,6 +17,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
   value,
   onChange,
   placeholder = "Select",
+  width = "w-[100%]",
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const [filteredOptions, setFilteredOptions] = useState(options);
@@ -47,7 +49,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
   };
 
   return (
-    <div className="w-[100%] relative" ref={containerRef}>
+    <div className={`${width} relative`} ref={containerRef}>
       <label
         className={`peer-focus:text-[#1D1D1F] ${labelStyle} font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block`}
       >

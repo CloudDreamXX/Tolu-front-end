@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { cn } from "shared/lib/utils";
 
-type InputVariant = "default" | "bottom-border";
+type InputVariant = "default" | "bottom-border" | "none";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;
