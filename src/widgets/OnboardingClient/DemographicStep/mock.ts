@@ -46,7 +46,7 @@ export const householdType = [
 ];
 
 export const education = [
-  "High School or less",
+  "High school or less",
   "Some college",
   "Bachelor's",
   "Master's",
