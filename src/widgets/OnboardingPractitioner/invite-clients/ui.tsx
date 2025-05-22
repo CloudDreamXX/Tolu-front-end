@@ -45,7 +45,7 @@ export const InviteClients = () => {
       <HeaderOnboarding currentStep={5} />
       <main className="flex flex-col items-center justify-center w-full gap-[32px] mt-[40px]">
         {/* Heading */}
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-4">
           <h1 className="text-[32px] text-black font-inter font-semibold text-center">
             Invite Clients
           </h1>
