@@ -20,8 +20,8 @@ export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
         >
           TOLU
         </h2>
-        <h4 className="text-[#1D1D1F] text-center text-[20px] font-medium font-open h-[27px]">
-          Coach Admin
+        <h4 className="capitalize text-[#1D1D1F] text-center text-[20px] font-medium font-open h-[27px]">
+          COACH ADMIN
         </h4>
       </div>
 

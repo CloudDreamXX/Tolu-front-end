@@ -69,8 +69,8 @@ export const NewPassword = () => {
           <h1 className="text-white font-open text-center text-[96px] font-bold">
             TOLU
           </h1>
-          <h3 className="text-white font-open text-center text-[32px] font-medium">
-            The Holistic Menopause Health Assistant
+          <h3 className="capitalize text-white font-open text-center text-[32px] font-medium">
+            THE HOLISTIC MENOPAUSE HEALTH ASSISTANT
           </h3>
         </aside>
       </div>

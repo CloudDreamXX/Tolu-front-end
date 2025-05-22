@@ -60,30 +60,39 @@ export const LoginForm = () => {
         });
         navigate("/", { replace: true });
       } else {
-        console.error("Invalid response structure:", response);
         throw new Error("Invalid server response format");
       }
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error.message ||
+        "Invalid email or password. Please try again.";
+
+      setLoginError(message);
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "Invalid email or password. Please try again.",
+        description: message,
       });
     }
   };
 
   return (
     <div className="w-full h-screen flex items-start py-0">
-      <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
+      {/* Left side */}
+      <div className="w-full max-w-[665px] h-full flex px-[76.5px] flex-col justify-center items-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white font-open text-center text-[96px] font-bold">TOLU</h1>
-          <h3 className="font-open text-white text-center text-[32px] font-medium">
-            The Holistic Menopause Health Assistant
+          <h1 className="text-white font-open text-center text-[96px] font-bold">
+            TOLU
+          </h1>
+          <h3 className="capitalize font-open text-white text-center text-[32px] font-medium">
+            THE HOLISTIC MENOPAUSE HEALTH ASSISTANT
           </h3>
         </aside>
       </div>
-      <div className="w-full h-full flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
+
+      {/* Right side */}
+      <div className="w-full h-full flex justify-center items-center flex-1 bg-white">
         <form
           className="w-[550px] flex flex-col items-center gap-[60px]"
           onSubmit={handleSubmit}
@@ -91,85 +100,110 @@ export const LoginForm = () => {
           <h3 className="text-black text-center font-inter font-semibold text-[40px]">
             Log In
           </h3>
+
+          {/* Form content */}
           <main className="flex flex-col gap-[24px] items-start self-stretch">
-            <div className="flex flex-col items-start gap-[10] self-stretch">
-              <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+            {/* Email */}
+            <div className="flex flex-col items-start gap-[4px] w-full">
+              <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
                 Email
               </label>
               <Input
-                type="email"
+                type="text"
                 placeholder="Enter Email"
                 name="email"
                 onChange={formDataChangeHandler}
-                className={`px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in ${
+                className={`px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in w-full ${
                   loginError
-                    ? "!border-[#FF1F0F] focus:border-[#FF1F0F]"
-                    : "!border-[#DFDFDF] focus:border-[#1C63DB]"
+                    ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
+                    : "border border-[#DFDFDF] focus:border-[#1C63DB]"
                 }`}
               />
-              <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] flex items-center justify-center gap-[10px]">
-                {loginError}
-              </p>
+              {loginError && (
+                <p className="text-[#FF1F0F] font-[Nunito] text-[14px] font-medium px-[4px] pt-[4px]">
+                  {loginError.includes("not in our system") ? (
+                    <>
+                      The email address is not in our system, please{" "}
+                      <Link
+                        to="/register"
+                        className="underline text-[#FF1F0F] hover:text-[#e11d48]"
+                      >
+                        create an account
+                      </Link>{" "}
+                      to log in
+                    </>
+                  ) : (
+                    loginError
+                  )}
+                </p>
+              )}
             </div>
-            <div className="flex flex-col items-start gap-[10] self-stretch">
-              <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+
+            {/* Password */}
+            <div className="flex flex-col items-start gap-[4px] w-full">
+              <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
                 Password
               </label>
-              <div className="flex flex-row-reverse items-center w-full">
+              <div className="flex flex-row-reverse items-center w-full relative">
                 <Input
                   type={showPassword ? "password" : "text"}
                   placeholder="Enter Password"
                   name="password"
                   onChange={formDataChangeHandler}
-                  className={
+                  className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in ${
                     passwordError
-                      ? "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in"
-                      : "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
-                  }
+                      ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
+                      : "border border-[#DFDFDF] focus:border-[#1C63DB]"
+                  }`}
                 />
                 {formData.password.length > 0 && (
                   <button
                     type="button"
-                    className="absolute mr-4"
+                    className="absolute right-4"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {!showPassword ? (
-                      <EyeIcon size={16} />
-                    ) : (
+                    {showPassword ? (
                       <EyeClosed size={16} />
+                    ) : (
+                      <EyeIcon size={16} />
                     )}
                   </button>
                 )}
               </div>
-              <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] flex items-center justify-center gap-[10px]">
-                {passwordError}
-              </p>
+              {passwordError && (
+                <p className="text-[#FF1F0F] font-[Nunito] text-[14px] font-medium px-[4px] pt-[4px]">
+                  {passwordError}
+                </p>
+              )}
             </div>
+
+            {/* Forgot Password */}
             <Link
-              type="button"
               to="/forgot-password"
-              className="flex p-[4px] justify-end items-center gap-[12px] hover:text-[#1C63DB] text-[#5F5F65] text-[14px] font-normal font-[Nunito] underline"
+              className="self-end text-[14px] text-[#5F5F65] underline font-[Nunito] hover:text-[#1C63DB]"
             >
               Forgot password
             </Link>
           </main>
-          <div className="flex flex-col items-center gap-[24px] slef-stretch">
+
+          {/* Submit + Register */}
+          <div className="flex flex-col items-center gap-[24px] w-full">
             <button
               type="submit"
-              className={
-                formData.email.length > 1 &&
-                formData.password.length > 1 &&
+              className={`w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
+                formData.email &&
+                formData.password &&
                 !passwordError &&
                 !loginError
-                  ? "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
-                  : "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5F5F65] font-[Nunito] text-[16px] font-semibold"
-              }
+                  ? "bg-[#1C63DB] text-white"
+                  : "bg-[#D5DAE2] text-[#5F5F65]"
+              }`}
             >
               Log In
             </button>
             <p className="text-black font-[Nunito] text-[14px] font-medium">
-              Don't have an account yet?{" "}
-              <Link to="/register" className="underline text-[#1C63DB] ">
+              Don&apos;t have an account yet?{" "}
+              <Link to="/register" className="underline text-[#1C63DB]">
                 Sign up
               </Link>
             </p>

@@ -45,7 +45,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-center text-center">
           <h2 className="text-[40px] font-bold font-open">TOLU</h2>
-          <h3 className="text-2xl font-semibold font-open">Client Library</h3>
+          <h3 className="text-2xl font-semibold font-open">CLIENT LIBRARY</h3>
         </div>
         <div className="flex flex-col px-[14px] py-[17px] gap-[18px]">
           <Input
