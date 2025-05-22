@@ -223,7 +223,7 @@ export const ProfileSetup = () => {
             </label>
             <label className="flex items-center gap-[8px] text-[16px] font-[Nunito] text-black">
               <Switch
-                className="data-[state=checked]:bg-black"
+                className="data-[state=checked]:bg-[#1C63DB]"
                 checked={state.two_factor_enabled}
                 onCheckedChange={(value: boolean) =>
                   dispatch(

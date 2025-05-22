@@ -18,7 +18,7 @@ export const SubscriptionPlan = () => {
         <h3 className="font-inter text-[32px] font-medium text-black text-center self-stretch">
           Choose subscription plan
         </h3>
-        <section className="flex gap-[32px] w-[1050px] items-center">
+        <section className="flex gap-[32px] w-[1150px] items-center">
           <PriceCard
             onClick={() => setActiveCard("starting")}
             active={activeCard === "starting"}

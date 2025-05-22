@@ -30,14 +30,16 @@ export const InviteClients = () => {
   return (
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={5} />
-      <main className="flex flex-col items-center justify-center w-full gap-[40px] mt-[40px]">
-        <h1 className="text-[32px] text-black font-inter font-semibold text-center">
-          Invite Clients
-        </h1>
-        <p className="text-[#5F5F65] text-[16px] font-[Nunito] font-normal text-center">
-          Invite your clients to join your coaching platform and start working
-          together
-        </p>
+      <main className="flex flex-col items-center justify-center w-full gap-[32px] mt-[40px]">
+        <div className="flex flex-col items-center gap-6">
+          <h1 className="text-[32px] text-black font-inter font-semibold text-center">
+            Invite Clients
+          </h1>
+          <p className="text-[#5F5F65] text-[20px] !font-[Inter] font-normal text-center">
+            Invite your clients to join your coaching platform and start working
+            together
+          </p>
+        </div>
 
         <div className="bg-white rounded-[16px] py-[32px] px-[40px] w-[600px] flex flex-col gap-[24px] items-start shadow-md">
           {/* Import Section */}

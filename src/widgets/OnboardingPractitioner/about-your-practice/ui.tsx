@@ -109,21 +109,23 @@ export const AboutYourPractice = () => {
               value={school}
               onChange={(value) => handleFieldChange("school", value)}
             />
-            <p className="font-[Nunito] text-[16px] font-medium text-black ml-[40px]">
-              Upload a certificate or license *
-            </p>
           </div>
 
           {/* File Upload */}
+          <div className="flex flex-col gap-2 items-start">
+
+            <p className="ml-[32px] font-[Nunito] text-[16px] font-medium text-black ">
+              Upload a certificate or license *
+            </p>
           <div
             className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
               dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
-            } bg-white cursor-pointer transition`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={triggerFileSelect}
-          >
+              } bg-white cursor-pointer transition`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={triggerFileSelect}
+              >
             <input
               ref={fileInputRef}
               type="file"
@@ -148,6 +150,7 @@ export const AboutYourPractice = () => {
               </div>
             </div>
           </div>
+              </div>
           <div className="flex ml-[40px]">
             <LightIcon />
             <p className="font-[Nunito] text-[16px] font-medium ml-[8px] text-[#1C63DB]">
