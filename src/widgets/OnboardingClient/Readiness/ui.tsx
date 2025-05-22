@@ -42,7 +42,10 @@ export const Readiness = () => {
   return (
     <AuthPageWrapper>
       <HeaderOnboarding isClient currentStep={6} steps={8} />
-      <main className="flex flex-col w-full items-center gap-8 justify-center self-stretch">
+      <main
+        className="flex flex-col items-center justify-center w-full gap-8"
+        style={{ minHeight: "calc(100vh - 300px)" }}
+      >
         <div className="flex flex-col items-center">
           <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-h1">
             Readiness to Commit
@@ -73,7 +76,18 @@ export const Readiness = () => {
               value={value}
               onValueChange={handleSliderChange}
               className="w-full"
-              colors={["#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB"]}
+              colors={[
+                "#1C63DB",
+                "#1C63DB",
+                "#1C63DB",
+                "#1C63DB",
+                "#1C63DB",
+                "#1C63DB",
+                "#1C63DB",
+                "#1C63DB",
+                "#1C63DB",
+                "#1C63DB",
+              ]}
             />
             <div className="flex justify-between mt-2 text-xs text-[#1D1D1F] font-[12px] font-[Nunito]">
               {Array.from({ length: 10 }, (_, i) => (
