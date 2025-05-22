@@ -207,11 +207,22 @@ export const Summary = () => {
           </div>
         </div>
 
-        <BottomButtons
-          handleNext={() => nav("/finish")}
-          skipButton={() => nav("/finish")}
-          isButtonActive={() => true}
-        />
+        <div className="flex justify-between items-center w-full max-w-[700px]">
+          <button
+            onClick={() => nav(-1)}
+            className="p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
+          >
+            Back
+          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => nav("/finish")}
+              className="p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
       </main>
       <Footer />
     </AuthPageWrapper>
