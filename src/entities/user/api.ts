@@ -24,7 +24,9 @@ interface UserExistenceResponse {
 
 export class UserService {
   static async signUp(userData: IUser): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.SIGNUP, userData);
+    return ApiService.post<AuthResponse>(API_ROUTES.USER.SIGNUP, userData, {
+        withCredentials: true,
+      });
   }
 
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -44,7 +46,11 @@ export class UserService {
       success: boolean;
       message: string;
       email: string;
-    }>(API_ROUTES.USER.FORGOT_PASSWORD, { email });
+    }>(API_ROUTES.USER.FORGOT_PASSWORD, { email },
+      {
+        withCredentials: true,
+      }
+    );
   }
 
   static async setNewPassword(
@@ -54,7 +60,10 @@ export class UserService {
   ): Promise<{ message: string }> {
     return ApiService.post<{ message: string }>(
       API_ROUTES.USER.SET_NEW_PASSWORD,
-      { email, token, new_password }
+      { email, token, new_password },
+      {
+        withCredentials: true,
+      }
     );
   }
 
@@ -63,7 +72,10 @@ export class UserService {
   ): Promise<{ success: boolean }> {
     return ApiService.post<{ success: boolean }>(
       API_ROUTES.USER.SIGNUP,
-      userInfo
+      userInfo,
+      {
+        withCredentials: true,
+      }
     );
   }
 
@@ -71,7 +83,10 @@ export class UserService {
     return ApiService.post<AuthResponse>(API_ROUTES.USER.COMPLETE_SIGNUP, {
       email,
       token,
-    });
+    },
+      {
+        withCredentials: true,
+  });
   }
 
   static async verifyEmailPass({
@@ -81,7 +96,10 @@ export class UserService {
     return ApiService.post<AuthResponse>(API_ROUTES.USER.VERIFY_RESET_TOKEN, {
       email,
       token,
-    });
+    },
+      {
+        withCredentials: true,
+  });
   }
 
   static async onboardUser(

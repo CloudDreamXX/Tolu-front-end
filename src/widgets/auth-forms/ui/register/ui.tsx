@@ -38,7 +38,7 @@ export const Register = () => {
       toast({
         title: "Email already exists",
         description: "Please use your email to log in, or use another email.",
-        // variant: "destructive",
+        variant: "destructive",
       });
     }
   };
