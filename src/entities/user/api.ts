@@ -24,19 +24,11 @@ interface UserExistenceResponse {
 
 export class UserService {
   static async signUp(userData: IUser): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.SIGNUP, userData, {
-        withCredentials: true,
-      });
+    return ApiService.post<AuthResponse>(API_ROUTES.USER.SIGNUP, userData);
   }
 
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(
-      API_ROUTES.USER.LOGIN,
-      credentials,
-      {
-        withCredentials: true,
-      }
-    );
+    return ApiService.post<AuthResponse>(API_ROUTES.USER.LOGIN, credentials);
   }
 
   static async forgotPassword(
@@ -46,10 +38,9 @@ export class UserService {
       success: boolean;
       message: string;
       email: string;
-    }>(API_ROUTES.USER.FORGOT_PASSWORD, { email },
-      {
-        withCredentials: true,
-      }
+    }>(
+      API_ROUTES.USER.FORGOT_PASSWORD,
+      { email },
     );
   }
 
@@ -61,9 +52,6 @@ export class UserService {
     return ApiService.post<{ message: string }>(
       API_ROUTES.USER.SET_NEW_PASSWORD,
       { email, token, new_password },
-      {
-        withCredentials: true,
-      }
     );
   }
 
@@ -73,33 +61,30 @@ export class UserService {
     return ApiService.post<{ success: boolean }>(
       API_ROUTES.USER.SIGNUP,
       userInfo,
-      {
-        withCredentials: true,
-      }
     );
   }
 
   static async verifyEmail({ email, token }: IVerify): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.COMPLETE_SIGNUP, {
-      email,
-      token,
-    },
+    return ApiService.post<AuthResponse>(
+      API_ROUTES.USER.COMPLETE_SIGNUP,
       {
-        withCredentials: true,
-  });
+        email,
+        token,
+      },
+    );
   }
 
   static async verifyEmailPass({
     email,
     token,
   }: IVerify): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.VERIFY_RESET_TOKEN, {
-      email,
-      token,
-    },
+    return ApiService.post<AuthResponse>(
+      API_ROUTES.USER.VERIFY_RESET_TOKEN,
       {
-        withCredentials: true,
-  });
+        email,
+        token,
+      },
+    );
   }
 
   static async onboardUser(
