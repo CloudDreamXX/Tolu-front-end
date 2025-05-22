@@ -4,24 +4,37 @@ import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
-// import File from "shared/assets/icons/file";
+import UploadCloud from "shared/assets/icons/upload-cloud";
 
 export const InviteClients = () => {
   const nav = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
   const [clientel, setClientel] = useState<string[]>([""]);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFile = (file: File) => {
     if (file) {
       setUploadedFileName(file.name);
       setUploadedFileSize(`${(file.size / 1024).toFixed(0)} KB`);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    handleFile(file!);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFile(e.dataTransfer.files[0]);
     }
   };
 
@@ -31,6 +44,7 @@ export const InviteClients = () => {
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={5} />
       <main className="flex flex-col items-center justify-center w-full gap-[32px] mt-[40px]">
+        {/* Heading */}
         <div className="flex flex-col items-center gap-6">
           <h1 className="text-[32px] text-black font-inter font-semibold text-center">
             Invite Clients
@@ -41,8 +55,9 @@ export const InviteClients = () => {
           </p>
         </div>
 
+        {/* Upload Card */}
         <div className="bg-white rounded-[16px] py-[32px] px-[40px] w-[600px] flex flex-col gap-[24px] items-start shadow-md">
-          {/* Import Section */}
+          {/* File Preview */}
           {uploadedFileName ? (
             <div className="w-full max-w-[330px]">
               <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
@@ -58,7 +73,6 @@ export const InviteClients = () => {
                     {uploadedFileSize}
                   </p>
                 </div>
-                {/* Close button in top-right corner */}
                 <button
                   onClick={() => {
                     setUploadedFileName(null);
@@ -71,28 +85,36 @@ export const InviteClients = () => {
               </div>
             </div>
           ) : (
+            // Drop Zone
             <div className="w-full">
               <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
                 Import CSV or PDF
               </p>
               <div
-                className="w-full border border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer"
+                className={`w-full border ${
+                  dragOver ? "border-[#0057C2]" : "border-dashed border-[#1C63DB]"
+                } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
                 onClick={handleUploadClick}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={handleDrop}
               >
+                <div className="flex p-2 items-center justify-center bg-white border rounded-[8px] border-[#F3F6FB]">
+                  <UploadCloud />
+                </div>
                 <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                  Click to upload
+                  Click or drag to upload
                 </div>
                 <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
-                  or drag and drop
-                </p>
-                <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
                   CSV or PDF file
                 </p>
               </div>
             </div>
           )}
 
-          {/* Hidden File Input */}
           <input
             ref={fileInputRef}
             type="file"
@@ -101,7 +123,7 @@ export const InviteClients = () => {
             onChange={handleFileChange}
           />
 
-          {/* Download Template */}
+          {/* Template Link */}
           <div className="flex gap-2 items-center mt-[4px]">
             <Download size={16} color="#1C63DB" />
             <a
@@ -150,7 +172,7 @@ export const InviteClients = () => {
           </div>
         </div>
 
-        {/* Navigation Buttons */}
+        {/* Navigation */}
         <div className="flex items-center gap-[16px] bg-transparent">
           <button
             className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
