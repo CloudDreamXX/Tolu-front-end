@@ -1,7 +1,8 @@
-// import { UserService } from "entities/user";
+import { UserService } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "shared/ui";
+import { toast } from "shared/lib/hooks/use-toast";
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -11,22 +12,29 @@ export const ForgotPassword = () => {
     e.preventDefault();
     if (email) {
       try {
-        // const response = await UserService.forgotPassword(email);
+        await UserService.forgotPassword(email);
         nav("/verify-email-pass");
       } catch (error) {
         console.error("Error sending password reset email:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "We couldn’t send the reset email. Please try again.",
+        });
       }
     } else {
-      console.error("Email is required");
+      toast({
+        variant: "destructive",
+        title: "Missing email",
+        description: "Please enter your email before submitting.",
+      });
     }
   };
   return (
     <div className="w-full h-screen flex items-start py-0">
       <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white text-center text-[96px] font-bold">
-            TOLU
-          </h1>
+          <h1 className="text-white text-center text-[96px] font-bold">TOLU</h1>
           <h3 className="text-white text-center text-[32px] font-medium">
             The Holistic Menopause Health Assistant
           </h3>

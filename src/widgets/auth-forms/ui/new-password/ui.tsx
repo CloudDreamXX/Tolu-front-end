@@ -3,6 +3,7 @@ import { UserService } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "shared/lib/hooks/use-toast";
 import { Input } from "shared/ui";
 
 export const NewPassword = () => {
@@ -38,14 +39,26 @@ export const NewPassword = () => {
         );
 
         if (msg.message) {
+          toast({
+            title: "Password updated",
+            description: "You can now log in with your new password.",
+          });
           nav("/");
         }
       } else {
-        setPasswordError("Missing email or reset token.");
+        toast({
+          variant: "destructive",
+          title: "Missing credentials",
+          description: "Email or reset token not found. Please retry the flow.",
+        });
       }
     } catch (error) {
       console.error("Error updating password:", error);
-      setPasswordError("Failed to update password. Please try again.");
+      toast({
+        variant: "destructive",
+        title: "Password update failed",
+        description: "Something went wrong while updating your password. Please try again.",
+      });
     }
   };
 

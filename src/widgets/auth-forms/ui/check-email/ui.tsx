@@ -3,6 +3,7 @@ import { setCredentials, UserService } from "entities/user";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "shared/lib/hooks/use-toast";
 
 type CheckEmailProps = {
   from: "register" | "forgot-password";
@@ -18,54 +19,63 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
   const email = query.get("email") ?? "";
 
   useEffect(() => {
-    if (from === "register") {
-      if (token.length > 0 && email.length > 0) {
-        const verifyEmail = async () => {
-          try {
-            const msg = await UserService.verifyEmail({ email, token });
+    if (from === "register" && token && email) {
+      const verifyEmail = async () => {
+        try {
+          const msg = await UserService.verifyEmail({ email, token });
 
-            if (msg.user && msg.accessToken) {
-              dispatch(
-                setCredentials({
-                  user: msg.user,
-                  accessToken: msg.accessToken,
-                })
-              );
-              if (user.user?.roleID === 3) {
-                nav("/welcome/client");
-                return;
-              }
-              nav("/welcome/practitioner");
-            }
-          } catch (error) {
-            console.error("Error verifying email:", error);
-          }
-        };
-        verifyEmail();
-      }
-    }
-
-    if (from === "forgot-password") {
-      if (token.length > 0 && email.length > 0) {
-        const verifyEmail = async () => {
-          try {
-            // const msg = await UserService.verifyEmailPass({ email, token });
+          if (msg.user && msg.accessToken) {
             dispatch(
               setCredentials({
-                user: { email },
-                accessToken: null,
-                tokenNewPassword: token,
+                user: msg.user,
+                accessToken: msg.accessToken,
               })
             );
-            nav("/new-password");
-          } catch (error) {
-            console.error("Error verifying email:", error);
+            if (msg.user.roleID === 3) {
+              nav("/welcome/client");
+            } else {
+              nav("/welcome/practitioner");
+            }
           }
-        };
-        verifyEmail();
-      }
+        } catch (error) {
+          console.error("Error verifying email:", error);
+          toast({
+            variant: "destructive",
+            title: "Verification failed",
+            description:
+              "We couldn't verify your email. Please try again or request a new link.",
+          });
+        }
+      };
+      verifyEmail();
+    }
+
+    if (from === "forgot-password" && token && email) {
+      const verifyEmail = async () => {
+        try {
+          const msg = await UserService.verifyEmailPass({ email, token });
+          dispatch(
+            setCredentials({
+              user: { email },
+              accessToken: null,
+              tokenNewPassword: token,
+            })
+          );
+          nav("/new-password");
+        } catch (error) {
+          console.error("Error verifying password reset:", error);
+          toast({
+            variant: "destructive",
+            title: "Verification failed",
+            description:
+              "We couldn't verify your reset link. Please try again or request a new one.",
+          });
+        }
+      };
+      verifyEmail();
     }
   }, [token, email, from]);
+
   return (
     <div className="w-full h-screen flex items-start py-0">
       <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
