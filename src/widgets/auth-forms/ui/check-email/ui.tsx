@@ -80,10 +80,10 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
     <div className="w-full h-screen flex items-start py-0">
       <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white text-center text-[96px] font-bold">
+          <h1 className="text-white font-open text-center text-[96px] font-bold">
             TOLU
           </h1>
-          <h3 className="text-white text-center text-[32px] font-medium">
+          <h3 className="text-white font-open text-center text-[32px] font-medium">
             The Holistic Menopause Health Assistant
           </h3>
         </aside>

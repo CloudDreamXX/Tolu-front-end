@@ -3,7 +3,12 @@ import { User } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
+import Chat from "shared/assets/icons/chat";
+import ChatsCircle from "shared/assets/icons/chats-circle";
+import Heartbeat from "shared/assets/icons/heartbeat";
+import Library from "shared/assets/icons/library";
 import Menu from "shared/assets/icons/menu";
+import Message from "shared/assets/icons/message";
 import ProfileIcon from "shared/assets/icons/profile";
 import SignOutIcon from "shared/assets/icons/signout";
 
@@ -44,6 +49,7 @@ export const NavigationClient: React.FC = () => {
             }`
           }
         >
+          <Heartbeat/>
           Health Snapshot
         </NavLink>
 
@@ -55,6 +61,7 @@ export const NavigationClient: React.FC = () => {
             }`
           }
         >
+          <Library />
           Library
         </NavLink>
 
@@ -66,6 +73,7 @@ export const NavigationClient: React.FC = () => {
             }`
           }
         >
+          <ChatsCircle />
           Messages
         </NavLink>
       </div>

@@ -67,6 +67,9 @@ export default {
         xl: "1280px",
         "2xl": "1536px",
       },
+      fontFamily: {
+        open: ['"Open Sans"', 'sans-serif'],
+      },
       fontSize: {
         h1: [
           "32px",
