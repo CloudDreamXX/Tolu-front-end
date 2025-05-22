@@ -40,7 +40,7 @@ export const OnboardingWerlcome = () => {
           <div className="flex flex-col items-center justify-center gap-[32px] py-[56px] px-[100px] rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
             <div className="flex flex-col items-center gap-[24px]">
               <h3 className="w-[860px] text-black font-inter text-center text-[40px]/[59px] font-semibold">
-                Welcome to VITAI,
+                Welcome to TOLU,
                 <br /> your AI-powered assistant for
                 <br /> functional and holistic practice.
               </h3>

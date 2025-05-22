@@ -14,14 +14,14 @@ export const WelcomeScreen = () => {
         <div className="flex py-[56px] px-[100px] gap-8 flex-col items-center justify-center rounded-3xl bg-white">
           <img
             src={ClientWelcomePicture}
-            alt="Welcome to the VitAI! Create and configure your account."
+            alt="Welcome to the TOLU! Create and configure your account."
           />
           <div className="flex flex-col items-center gap-6">
             <h2 className="text-black text-center text-[40px]/[54px] font-bold font-[Nunito]">
               Welcome to Your Health Companion!
             </h2>
             <p className="text-[#5F5F65] text-[24px]/[32px] font-normal font-[Nunito] text-center">
-              VITAI is here to support you through your menopause journey — with
+              TOLU is here to support you through your menopause journey — with
               <br /> personalized tools, guidance, and insights based on who you
               are and how you
               <br /> live.

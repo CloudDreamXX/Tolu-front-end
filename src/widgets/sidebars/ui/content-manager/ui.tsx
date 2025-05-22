@@ -35,7 +35,7 @@ export const ContentManagerSidebar: React.FC = () => {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col items-center text-center">
-        <h2 className="text-[40px] font-bold">VITAI</h2>
+        <h2 className="text-[40px] font-bold">TOLU</h2>
         <h3 className="text-2xl font-semibold">Admin</h3>
       </div>
       <div className="flex flex-col px-[14px] py-[17px] gap-[18px]">

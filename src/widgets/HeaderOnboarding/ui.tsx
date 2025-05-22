@@ -18,7 +18,7 @@ export const HeaderOnboarding = ({ currentStep }: HeaderOnboardingProps) => {
           onClick={() => navigate("/")}
           className="cursor-pointer text-[#1D1D1F] text-center text-[40px] font-bold font-open h-[54px]"
         >
-          VITAI
+          TOLU
         </h2>
         <h4 className="text-[#1D1D1F] text-center text-[20px] font-medium font-open h-[27px]">
           Coach Admin
