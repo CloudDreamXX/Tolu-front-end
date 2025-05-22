@@ -18,12 +18,10 @@ import {
   occupation,
   raceEthnicity,
 } from "./index";
-import { FaQuestionCircle } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import Info from "shared/assets/icons/info";
-import InfoIcon from "shared/assets/icons/info-icon";
 import SmallTooltip from "shared/assets/icons/small-tooltip";
 
 export const DemographicStep = () => {
@@ -59,6 +57,13 @@ export const DemographicStep = () => {
     dispatch(setFormField({ field: "education", value: educationVal }));
     dispatch(setFormField({ field: "language", value: language }));
     nav("/what-brings-you-here");
+  };
+
+  const handleZip = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 5) {
+      setZipCode(value);
+    }
   };
 
   return (
@@ -109,22 +114,22 @@ export const DemographicStep = () => {
                     <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                       Still menstruating
                     </p>
-                    <SmallTooltip/>
+                    <SmallTooltip />
                   </div>
                 </div>
                 <div className="flex gap-4 flex-1 items-center">
                   <input
-                    value="irregular pause"
+                    value="irregular cycles"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
                     name="menopause"
                     type="radio"
                     className="w-4 h-4 p-1"
                   />
                   <div className="flex gap-2 items-center">
-                  <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-                    Irregular pause
-                  </p>
-                  <SmallTooltip/>
+                    <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+                      Irregular cycles
+                    </p>
+                    <SmallTooltip />
                   </div>
                 </div>
               </div>
@@ -138,10 +143,10 @@ export const DemographicStep = () => {
                     className="w-4 h-4 p-1"
                   />
                   <div className="flex gap-2 items-center">
-                  <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-                    No period for 12+ months
-                  </p>
-                  <SmallTooltip/>
+                    <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+                      No period for 12+ months
+                    </p>
+                    <SmallTooltip />
                   </div>
                 </div>
                 <div className="flex gap-4 flex-1 items-center">
@@ -153,10 +158,10 @@ export const DemographicStep = () => {
                     className="w-4 h-4 p-1"
                   />
                   <div className="flex gap-2 items-center">
-                  <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-                    Postmenopausal
-                  </p>
-                  <SmallTooltip/>
+                    <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+                      Postmenopausal
+                    </p>
+                    <SmallTooltip />
                   </div>
                 </div>
               </div>
@@ -169,10 +174,10 @@ export const DemographicStep = () => {
                   className="w-4 h-4 p-1"
                 />
                 <div className="flex gap-2 items-center">
-                <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-                  Not sure
-                </p>
-                <SmallTooltip/>
+                  <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+                    Not sure
+                  </p>
+                  <SmallTooltip />
                 </div>
               </div>
             </div>
@@ -201,10 +206,7 @@ export const DemographicStep = () => {
                   ZIP/Postal Code *
                 </label>
                 <Input
-                  onChange={(e) => {
-                    if (zipCode.length >= 5) return;
-                    setZipCode(e.target.value);
-                  }}
+                  onChange={handleZip}
                   value={zipCode}
                   placeholder="Enter ZIP/Postal Code"
                 />
@@ -307,7 +309,7 @@ export const DemographicStep = () => {
             </div>
           </div>
           <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6]">
-            <Info/>
+            <Info />
             <p className="text-[#1B2559] font-[Nunito] text-base font-normal">
               Your information is kept private and secure. It helps us provide
               smarter, more relevant
