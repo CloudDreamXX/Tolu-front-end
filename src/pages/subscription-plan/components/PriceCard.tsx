@@ -26,11 +26,6 @@ export const PriceCard: React.FC<PriceCardProps> = ({
       }
     >
       <div className="flex flex-col gap-[4px] items-center">
-        {/* {mostPopular && (
-        <div className="text-white rotate-[34.108deg] font-inter text-[18px] font-bold flex items-center gap-[10px] w-[360.865px] p-[8px] relative top-[-30px] bg-[#1C63DB] right-[-160.28px] justify-center">
-            Most popular
-        </div>
-      )} */}
         <h2 className=" text-[#5F5F65] font-inter text-[18px]/[25.2px] font-medium">
           STARTING PLAN
         </h2>

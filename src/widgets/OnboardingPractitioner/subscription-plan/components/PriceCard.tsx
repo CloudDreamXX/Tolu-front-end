@@ -33,7 +33,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
         } rounded-[16px] py-[40px] w-full max-w-[684px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]`}
       >
         <div className="flex flex-col gap-[4px] items-center">
-          <h2 className=" text-[#5F5F65] font-inter text-[18px]/[25.2px] font-medium">
+          <h2 className="text-[#5F5F65] font-inter text-[18px]/[25.2px] font-medium">
             {plan === "starting" ? "STARTING" : "PROFESSIONAL"} PLAN
           </h2>
           <h1 className="text-[#1D1D1F] font-inter text-[32px]/[44.8px] font-semibold">
@@ -45,7 +45,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             <Check color="#1C63DB" size={20} />
             <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
               Manage up to{" "}
-              <span className="font-bold">
+              <span className="!font-bold">
                 {plan === "starting" ? 3 : 50} active clients
               </span>
             </span>
@@ -54,7 +54,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             <Check color="#1C63DB" size={20} />
             <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
               Host up to{" "}
-              <span className="font-bold">
+              <span className="!font-bold">
                 {plan === "starting" ? 10 : 50} sessions
               </span>{" "}
               per month
@@ -63,7 +63,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
           <li className="flex gap-[16px] items-center">
             <Check color="#1C63DB" size={20} />
             <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
-              <span className="font-bold">
+              <span className="!font-bold">
                 {plan === "starting" ? 1 : 15} GB storage
               </span>{" "}
               for client materials
@@ -74,12 +74,12 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             <span className="text-[#1d1d1f] font-inter text-[20px] pr-4 font-medium whitespace-nowrap">
               {plan === "starting" ? (
                 <>
-                  <span className="font-bold">Access basic content</span>{" "}
+                  <span className="!font-bold">Access basic content</span>{" "}
                   library (templates, basics)
                 </>
               ) : (
                 <>
-                  <span className="font-bold">Full access</span> to the content
+                  <span className="!font-bold">Full access</span> to the content
                   library and templates
                 </>
               )}
