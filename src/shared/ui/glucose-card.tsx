@@ -33,7 +33,6 @@ import { RootState } from "entities/store";
 export interface GlucoseCardProps {
   indicator: string;
   trend: "up" | "down";
-  increased?: boolean;
   width?: string;
   height?: string;
   modifiable?: boolean;
@@ -64,7 +63,6 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
 
   // Dialog & Calendar state
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [calendarOpen, setCalendarOpen] = useState(false);
 
   // Local state for inputs
   const [localGlucoseValue, setLocalGlucoseValue] = useState("");
@@ -160,7 +158,6 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
               </Select>
             </div>
 
-            {/* ✅ Fixed Date Picker */}
             <div className="flex flex-col gap-[10px] items-start w-full">
               <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Date & Time
@@ -178,7 +175,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                     {localDate ? format(localDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                   <Calendar
                     mode="single"
                     selected={localDate ?? undefined}

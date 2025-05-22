@@ -15,6 +15,7 @@ import { HealthTable } from "widgets/HealthTable";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
 import { MoodModal } from "widgets/MoodScore/MoodModal";
+import Heartbeat from "shared/assets/icons/heartbeat";
 
 export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
@@ -35,13 +36,22 @@ export const HealthSnapshot = () => {
         <h1 className="flex-1 text-[#1D1D1F] font-[Nunito] text-[32px]/[44px] font-bold">
           Health Snapshot
         </h1>
-        <button
-          onClick={() => setTimelineOpen((prev) => !prev)}
-          className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#DDEBF6] justify-center  items-center py-[6px] px-3 flex gap-2 "
-        >
-          <ClockAfternoon />
-          {!timelineOpen ? "Open timeline" : "Close timeline"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {}}
+            className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#AAC6EC] justify-center  items-center py-[6px] px-3 flex gap-2 "
+            >
+              <Heartbeat />
+            Network Support
+          </button>
+          <button
+            onClick={() => setTimelineOpen((prev) => !prev)}
+            className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#DDEBF6] justify-center  items-center py-[6px] px-3 flex gap-2 "
+            >
+              <ClockAfternoon />
+            {!timelineOpen ? "Open timeline" : "Close timeline"}
+          </button>
+          </div>
       </div>
       <div className="flex flex-col gap-4 w-full p-4 items-start rounded-2xl bg-white">
         <h1 className="self-stretch font-[Nunito] text-[24px]/[32px] font-semibold text-[#1D1D1F]">
