@@ -47,14 +47,14 @@ export const HealthSnapshot = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNetworkSupportOpen((prev) => !prev)}
-            className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#AAC6EC] justify-center  items-center py-[6px] px-3 flex gap-2 "
+            className={`h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full ${networkSupportOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center items-center py-[6px] px-3 flex gap-2`}
           >
             <Heartbeat />
             Network Support
           </button>
           <button
             onClick={() => setTimelineOpen((prev) => !prev)}
-            className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#DDEBF6] justify-center  items-center py-[6px] px-3 flex gap-2 "
+            className={`h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full ${timelineOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center  items-center py-[6px] px-3 flex gap-2`}
           >
             <ClockAfternoon />
             {!timelineOpen ? "Open timeline" : "Close timeline"}

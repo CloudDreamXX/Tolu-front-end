@@ -147,15 +147,15 @@ export const HealthSnapshotSidebar: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-4 items-center pl-4">
+      <button className="flex gap-4 items-center pl-4 ">
         <Avatar>
           <AvatarImage src={AvatarWoman} alt="Avatar" />
           <AvatarFallback>USR</AvatarFallback>
         </Avatar>
-        <p className="text-[#1D1D1F] font-[Nunito] text-[16px]/[22px] font-semibold">
+        <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
           Frances Swann
         </p>
-      </div>
+      </button>
     </div>
   );
 };

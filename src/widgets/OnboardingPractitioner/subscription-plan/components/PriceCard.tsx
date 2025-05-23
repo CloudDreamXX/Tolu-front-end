@@ -5,7 +5,6 @@ import clsx from "clsx";
 interface PriceCardProps {
   plan: "starting" | "professional";
   price: string;
-  features: React.ReactNode[];
   active?: boolean;
   second?: boolean;
   onClick?: () => void;

@@ -3,7 +3,6 @@ import { Footer } from "../../Footer";
 import { PriceCard } from "./components";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { features } from "./mock";
 import { AuthPageWrapper } from "shared/ui";
 
 export const SubscriptionPlan = () => {
@@ -24,7 +23,6 @@ export const SubscriptionPlan = () => {
             active={activeCard === "starting"}
             plan="starting"
             price="$0.00"
-            features={features}
           />
           <PriceCard
             onClick={() => setActiveCard("professional")}
@@ -33,7 +31,6 @@ export const SubscriptionPlan = () => {
             price="$39.00"
             second={true}
             mostPopular
-            features={features}
           />
         </section>
         <div className="pb-10 flex items-center gap-[16px]">
