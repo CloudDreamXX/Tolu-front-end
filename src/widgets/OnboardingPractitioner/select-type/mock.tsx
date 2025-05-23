@@ -4,16 +4,6 @@ import WomansLine from "shared/assets/icons/womans-line";
 import Chemistry from "shared/assets/icons/chemistry";
 import { Microscope } from "lucide-react";
 
-export const dropdownOptions = [
-  "Clinical Psychologist",
-  "Psychiatrist",
-  "Psychoanalyst",
-  "Psychotherapist",
-  "Clinical Social Worker",
-  "Licensed Professional Counselor",
-  "Marriage and Family Therapist",
-];
-
 const ClinicalOptions = [
   "Nurse Practitioner (NP)",
   "Physician Assistant (PA)",
@@ -23,7 +13,7 @@ const ClinicalOptions = [
   "Physical Therapist (PT) – Pelvic Floor & Women’s Health",
   "Licensed Clinical Social Worker (LCSW)",
   "Licensed Midwife or Nurse Midwife (CNM)",
-  "Chiropractor (DC)"
+  "Chiropractor (DC)",
 ];
 
 const FunctionalOptions = [
@@ -35,7 +25,7 @@ const FunctionalOptions = [
   "Ayurvedic Practitioner",
   "Homeopath",
   "Board Certified Nutrition Specialist (CNS)",
-  "Health Practitioner with Detox or Gut Health Specialty"
+  "Health Practitioner with Detox or Gut Health Specialty",
 ];
 
 const LifestyleOptions = [
@@ -46,7 +36,7 @@ const LifestyleOptions = [
   "Yoga Therapist or Instructor",
   "Fitness Coach with Hormone Focus",
   "Lifestyle Coach (Sleep, Energy, Productivity)",
-  "Recovery & Resilience Coach"
+  "Recovery & Resilience Coach",
 ];
 
 const WomensOptions = [
@@ -57,7 +47,7 @@ const WomensOptions = [
   "Prenatal/Postpartum Coach",
   "PCOS/Endometriosis Coach",
   "Sexual Health Coach for Women",
-  "Emotional Eating or Body Image Coach"
+  "Emotional Eating or Body Image Coach",
 ];
 
 const OtherOptions = [
@@ -68,7 +58,7 @@ const OtherOptions = [
   "Supplement or Nutraceutical Consultant",
   "Educator or Course Creator in Wellness",
   "Chronic Condition Coach (e.g., autoimmune, metabolic)",
-  "Other (please specify)"
+  "Other (please specify)",
 ];
 
 export const titlesAndIcons = [
@@ -76,25 +66,31 @@ export const titlesAndIcons = [
     title: "Clinical & Licensed Healthcare Providers",
     icon: <Microscope size={20} />,
     options: ClinicalOptions,
+    tooltipContent:
+      "For licensed professionals supporting\nhealth transformation through\ndiagnostics and medical oversight.",
   },
   {
     title: "Functional & Holistic Health Practitioners",
     icon: <Leaf />,
     options: FunctionalOptions,
+    tooltipContent: "For those trained in integrative\nframeworks and root-cause resolution."
   },
   {
     title: "Lifestyle, Mind-Body, and Wellness Coaches",
     icon: <Brain />,
     options: LifestyleOptions,
+    tooltipContent: "Supporting behavioral change, stress\nreduction, and nervous system balance."
   },
   {
     title: "Women's Health & Specialty Coaches",
     icon: <WomansLine />,
     options: WomensOptions,
+    tooltipContent: "Serving women through transitions like\nperimenopause, menopause, and\nfertility journeys."
   },
   {
     title: "Other",
     icon: <Chemistry />,
     options: OtherOptions,
+    tooltipContent: "For professionals who support\nwellness but don’t fall into traditional\ncategories."
   },
 ];

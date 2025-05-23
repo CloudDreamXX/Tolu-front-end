@@ -6,7 +6,7 @@ import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { dropdownOptions, titlesAndIcons } from "./mock";
+import { titlesAndIcons } from "./mock";
 import { AuthPageWrapper } from "shared/ui";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Tooltip, TooltipContent, TooltipTrigger } from "shared/ui/tooltip";
@@ -78,10 +78,8 @@ export const SelectType = () => {
                       </span>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <span>
-                        Specialists in women’s hormonal,<br/> reproductive, and
-                        life-stage health<br/> (e.g., fertility, menopause,
-                        postpartum).
+                      <span className="whitespace-pre-line">
+                        {item.tooltipContent}
                       </span>
                     </TooltipContent>
                   </Tooltip>
