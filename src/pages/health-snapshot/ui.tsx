@@ -90,7 +90,7 @@ export const HealthSnapshot = () => {
                     <h3 className="text-[18px]/[24px] font-medium font-[Nunito] text-[#1F1F1D]">
                       Success!
                     </h3>
-                    <p className="text-[14px]/[20px] font-semibold font-[Nunito] text-[#1F1F1D]">
+                    <p className="text-[14px]/[20px] font-semibold text-nowrap font-[Nunito] text-[#1F1F1D]">
                       Low sugar meals correlated with reduced brain fog
                     </p>
                   </div>
@@ -105,7 +105,7 @@ export const HealthSnapshot = () => {
                     <h3 className="text-[18px]/[24px] font-semibold font-[Nunito] text-[#1F1F1D]">
                       Change needs
                     </h3>
-                    <p className="text-[14px]/[20px] font-medium font-[Nunito] text-[#1F1F1D]">
+                    <p className="text-nowrap text-[14px]/[20px] font-medium font-[Nunito] text-[#1F1F1D]">
                       Skipping sleep routines increased cravings
                     </p>
                   </div>

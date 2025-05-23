@@ -23,6 +23,12 @@ import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import Info from "shared/assets/icons/info";
 import SmallTooltip from "shared/assets/icons/small-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui/tooltip";
 
 export const DemographicStep = () => {
   const dispatch = useDispatch();
@@ -214,7 +220,22 @@ export const DemographicStep = () => {
                   <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                     Not sure
                   </p>
-                  <SmallTooltip />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>
+                          <SmallTooltip />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          It's absolutely OK not to know<br/> where you are. Tolu
+                          will help you to<br/> figure our exactly where you are in<br/>
+                          your journey.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </div>

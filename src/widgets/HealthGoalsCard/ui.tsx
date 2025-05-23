@@ -23,7 +23,7 @@ export const HealthGoalsCard: React.FC<HealthGoalsCardProps> = ({
         </div>
         <div className="flex flex-col items-start self-stretch gap-4">
             <p className="text-[14px]/[20px] font-medium font-[Nunito] text-[#1D1D1F]">{completed} of {outOf} gut health steps completed</p>
-            <div style={{ backgroundImage: `linear-gradient(to right, #1C63DB 0%, #1C63DB ${percentage}%, rgba(0,0,0,0) ${percentage}%, rgba(0,0,0,0) 100%)`}} className="flex h-[32px] items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-3 gap-8 px-4">
+            <div style={{ backgroundImage: `linear-gradient(to right, #1C63DB 0%, #1C63DB ${percentage}%, rgba(0,0,0,0) ${percentage}%, rgba(0,0,0,0) 100%)`}} className="flex h-[32px] text-nowrap items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-3 gap-8 px-4">
                 {completed === 0 ? <span className={percentage > 20 ? "text-white" : ""}>Waiting ...</span> : <span className={percentage > 40 ? "text-white" : ""}>In progress ...</span>}
                 <span>{percentage}%</span>
             </div>

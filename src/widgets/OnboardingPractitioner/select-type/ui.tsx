@@ -8,6 +8,8 @@ import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { dropdownOptions, titlesAndIcons } from "./mock";
 import { AuthPageWrapper } from "shared/ui";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "shared/ui/tooltip";
 
 export const SelectType = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
@@ -68,7 +70,22 @@ export const SelectType = () => {
                 <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[20px] font-semibold">
                   {item.title}
                 </h2>
-                <CircleQuestion />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <CircleQuestion />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <span>
+                        Specialists in women’s hormonal,<br/> reproductive, and
+                        life-stage health<br/> (e.g., fertility, menopause,
+                        postpartum).
+                      </span>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               {/* Custom Dropdown */}
               <div className="relative w-full">

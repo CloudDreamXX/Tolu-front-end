@@ -66,7 +66,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                       style={{ color: getColorStatus(row.Status) }}
                       className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] whitespace-normal break-words bg-white rounded-lg shadow-sm"
                     >
-                      <div className="flex gap-1 items-center">
+                      <div className="flex text-nowrap gap-1 items-center">
                         <div
                           style={{
                             backgroundColor: getColorStatus(row.Status),
