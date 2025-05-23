@@ -101,7 +101,7 @@ export const SelectType = () => {
                 </button>
                 {activeDropdown === index && (
                   <div className="absolute z-10 flex flex-col w-full mt-[4px] bg-[#FAFAFA] border-none rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto scrollbar-hide">
-                    {dropdownOptions.map((option) => (
+                    {item.options.map((option) => (
                       <button
                         type="button"
                         key={option}
