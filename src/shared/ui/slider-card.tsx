@@ -13,8 +13,7 @@ export const SliderCard: React.FC<SliderCardProps> = ({ title, colors }) => {
   const max = 5;
   const stepCount = colors.length;
   const stepSize = max / stepCount;
-
-  const activeIndex = Math.floor(value / stepSize);
+  const activeIndex = value === 0 ? -1 : Math.floor(value / stepSize);
 
   return (
     <div className="rounded-2xl bg-[#F3F7FD] p-6 gap-6 flex flex-col items-start flex-1">
@@ -40,7 +39,7 @@ export const SliderCard: React.FC<SliderCardProps> = ({ title, colors }) => {
       <Slider
         min={0}
         max={max}
-        step={0.1} // плавный шаг
+        step={0.1}
         value={[value]}
         onValueChange={([val]) => setValue(val)}
         colors={colors}
