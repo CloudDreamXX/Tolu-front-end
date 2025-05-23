@@ -129,21 +129,18 @@ export default {
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
-    plugin(function ({ addUtilities }) {
-      addUtilities({
-        ".scrollbar-hide": {
-          /* Chrome, Safari и Opera */
-          "-webkit-scrollbar": {
-            display: "none",
-          },
-          /* Firefox */
-          "scrollbar-width": "none",
-          /* IE и Edge */
-          "-ms-overflow-style": "none",
-        },
-      });
-    }),
+  require('tailwindcss-animate'),
+  plugin(function ({ addUtilities }) {
+    addUtilities({
+      '.scrollbar-hide': {
+        '-ms-overflow-style': 'none',     // IE and Edge
+        'scrollbar-width': 'none',        // Firefox
+      },
+      '.scrollbar-hide::-webkit-scrollbar': {
+        display: 'none',                  // Chrome, Safari, Opera
+      },
+    })
+  }),
     plugin(function ({ addComponents }) {
       addComponents({
         ".select-no-arrow": {

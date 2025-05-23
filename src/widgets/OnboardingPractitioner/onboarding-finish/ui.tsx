@@ -33,7 +33,10 @@ export const OnboardingFinish = () => {
             <p className="self-stretch text-center text-black font-[Nunito] text-[24px] font-medium ">
               We’ve set up your dashboard with tools, templates, and content
               tailored to:
-              <br /> <span className="self-stretch text-center text-black font-[Nunito] text-[24px] font-bold">Functional Nutrition + Gut Health & Menopause Support</span>
+              <br />
+              <span className="self-stretch text-center text-black font-[Nunito] text-[24px] font-bold">
+                Functional Nutrition and Lifestyle Support for Menopause Health
+              </span>
             </p>
           </div>
           <button

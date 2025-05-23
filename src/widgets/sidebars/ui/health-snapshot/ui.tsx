@@ -89,7 +89,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 <div className="flex flex-col pl-4 gap-1">
                   <div
                     className={
-                      "flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] font-semibold"
+                      "flex items-center gap-3 px-[16px] py-[9px] text-lg text-[#1D1D1F] font-semibold"
                     }
                   >
                     <Checkbox
@@ -100,7 +100,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   </div>
                   <div
                     className={
-                      "flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] font-semibold"
+                      "flex items-center gap-3 px-[16px] py-[9px] text-lg text-[#1D1D1F] font-semibold"
                     }
                   >
                     <Checkbox
@@ -111,7 +111,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   </div>
                   <div
                     className={
-                      "flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] font-semibold"
+                      "flex items-center gap-3 px-[16px] py-[9px] text-lg text-[#1D1D1F] font-semibold"
                     }
                   >
                     <Checkbox
@@ -122,7 +122,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   </div>
                   <div
                     className={
-                      "flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] font-semibold"
+                      "flex items-center gap-3 px-[16px] py-[9px] text-lg text-[#1D1D1F] font-semibold"
                     }
                   >
                     <Checkbox

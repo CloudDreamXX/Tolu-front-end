@@ -18,7 +18,7 @@ export const Footer = () => {
           </TooltipTrigger>
           <TooltipContent>
             <p className="text-[#1D1D1F] font-[Nunito] text-base font-normal">
-              I am magic AI button
+              This will help match your clients to you.
             </p>
           </TooltipContent>
         </Tooltip>

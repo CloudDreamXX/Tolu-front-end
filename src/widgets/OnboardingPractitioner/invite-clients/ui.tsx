@@ -92,7 +92,9 @@ export const InviteClients = () => {
               </p>
               <div
                 className={`w-full border ${
-                  dragOver ? "border-[#0057C2]" : "border-dashed border-[#1C63DB]"
+                  dragOver
+                    ? "border-[#0057C2]"
+                    : "border-dashed border-[#1C63DB]"
                 } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
                 onClick={handleUploadClick}
                 onDragOver={(e) => {
@@ -173,25 +175,28 @@ export const InviteClients = () => {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center gap-[16px] bg-transparent">
-          <button
-            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
-            style={{ background: "rgba(0, 143, 246, 0.10)" }}
-            onClick={() => nav(-1)}
-          >
-            Back
-          </button>
-          <button
-            onClick={() => nav("/onboarding-finish")}
-            disabled={!isAllClientsFilled}
-            className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
-              isAllClientsFilled
-                ? "bg-[#1C63DB] text-white"
-                : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-            }`}
-          >
-            Next
-          </button>
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-[16px] bg-transparent">
+            <button
+              className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+              style={{ background: "rgba(0, 143, 246, 0.10)" }}
+              onClick={() => nav(-1)}
+            >
+              Back
+            </button>
+            <button
+              onClick={() => nav("/onboarding-finish")}
+              disabled={!isAllClientsFilled}
+              className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
+                isAllClientsFilled
+                  ? "bg-[#1C63DB] text-white"
+                  : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
+              }`}
+            >
+              Next
+            </button>
+          </div>
+          <button className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB] font-[Nunito] text-[16px] font-semibold" onClick={() => nav("/onboarding-finish")}>Skip this step</button>
         </div>
       </main>
       <Footer />

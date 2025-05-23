@@ -9,6 +9,7 @@ import { AuthPageWrapper, Input } from "shared/ui";
 import { SearchableSelect } from "../components/SearchableSelect";
 import { RootState } from "entities/store";
 import { Switch } from "shared/ui/switch";
+import { timezoneOptions } from "./mock";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
@@ -85,24 +86,15 @@ export const ProfileSetup = () => {
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
               First name
             </label>
-            <Input
-              type="text"
-              placeholder="Sophia"
-              onChange={(e) =>
-                dispatch(
-                  updateCoachField({ key: "first_name", value: e.target.value })
-                )
-              }
-              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-            />
+            <p className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Sophia turner</p>
           </div>
           <div className="flex flex-col flex-1 gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
-              Last name
+              Alternative name for your practice profile
             </label>
             <Input
               type="text"
-              placeholder="Turner"
+              placeholder="Enter Alternative Name"
               onChange={(e) =>
                 dispatch(
                   updateCoachField({ key: "last_name", value: e.target.value })
@@ -162,12 +154,7 @@ export const ProfileSetup = () => {
               label="Time zone"
               labelStyle="text-[#5F5F65]"
               placeholder="Search for Time Zone"
-              options={[
-                "(GMT-08:00) Pacific Time (US & Canada)",
-                "(GMT-08:00) Pacific Standard Time (Mexico)",
-                "(GMT+13:00) Pacific/Auckland (New Zealand Time)",
-                "(GMT-09:00) Pacific/Honolulu (Hawaii Time)",
-              ]}
+              options={timezoneOptions}
               value={state.timezone}
               onChange={(value) =>
                 dispatch(updateCoachField({ key: "timezone", value: value }))

@@ -4,7 +4,7 @@ import { smallCards, timelines } from "./mock";
 import { MoodScore, willModalOpen } from "widgets/MoodScore";
 import InfoIcon from "shared/assets/icons/info-icon";
 import { HealthGoalsCard } from "widgets/HealthGoalsCard";
-import { ArrowRight, Bookmark, Upload } from "lucide-react";
+import { ArrowRight, Bookmark, Calendar, ChevronLeft, ChevronRight, Upload } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import Share from "shared/assets/icons/share";
 import PaperPlane from "shared/assets/icons/paper-plane";
@@ -16,18 +16,20 @@ import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
 import { MoodModal } from "widgets/MoodScore/MoodModal";
 import Heartbeat from "shared/assets/icons/heartbeat";
+import { CalendarPopup } from "widgets/Calendar";
 
 export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
+  const [networkSupportOpen, setNetworkSupportOpen] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
 
   const icons = useMemo(() => {
-    return [
-      <Upload className="text-[#1C63DB] w-6 h-6" />,
-    ];
+    return [<Upload className="text-[#1C63DB] w-6 h-6" />];
   }, []);
 
-  const lastLogIn = useSelector((state: RootState) => state.clientMood.lastLogIn);
+  const lastLogIn = useSelector(
+    (state: RootState) => state.clientMood.lastLogIn
+  );
   const lastMood = useSelector((state: RootState) => state.clientMood.lastMood);
 
   useEffect(() => {
@@ -44,20 +46,20 @@ export const HealthSnapshot = () => {
         </h1>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => {}}
+            onClick={() => setNetworkSupportOpen((prev) => !prev)}
             className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#AAC6EC] justify-center  items-center py-[6px] px-3 flex gap-2 "
-            >
-              <Heartbeat />
+          >
+            <Heartbeat />
             Network Support
           </button>
           <button
             onClick={() => setTimelineOpen((prev) => !prev)}
             className="h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full bg-[#DDEBF6] justify-center  items-center py-[6px] px-3 flex gap-2 "
-            >
-              <ClockAfternoon />
+          >
+            <ClockAfternoon />
             {!timelineOpen ? "Open timeline" : "Close timeline"}
           </button>
-          </div>
+        </div>
       </div>
       <div className="flex flex-col gap-4 w-full p-4 items-start rounded-2xl bg-white">
         <h1 className="self-stretch font-[Nunito] text-[24px]/[32px] font-semibold text-[#1D1D1F]">
@@ -171,7 +173,7 @@ export const HealthSnapshot = () => {
               Lab & Test
             </h1>
             <div className="w-full border border-[#DDEBF6] rounded-2xl overflow-hidden bg-white">
-                <HealthTable userType="free"/>
+              <HealthTable userType="free" />
             </div>
           </div>
         </div>
@@ -295,6 +297,9 @@ export const HealthSnapshot = () => {
             />
           ))}
         </div>
+      )}
+      {networkSupportOpen && (
+        <CalendarPopup/>
       )}
     </main>
   );
