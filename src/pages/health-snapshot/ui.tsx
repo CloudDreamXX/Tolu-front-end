@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import Share from "shared/assets/icons/share";
 import PaperPlane from "shared/assets/icons/paper-plane";
 import avatar from "shared/assets/images/Avatar.png";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TimelineItem } from "widgets/TimelineItem";
 import { HealthTable } from "widgets/HealthTable";
 import { RootState } from "entities/store";
@@ -20,6 +20,12 @@ import Heartbeat from "shared/assets/icons/heartbeat";
 export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
+
+  const icons = useMemo(() => {
+    return [
+      <Upload className="text-[#1C63DB] w-6 h-6" />,
+    ];
+  }, []);
 
   const lastLogIn = useSelector((state: RootState) => state.clientMood.lastLogIn);
   const lastMood = useSelector((state: RootState) => state.clientMood.lastMood);
@@ -285,7 +291,7 @@ export const HealthSnapshot = () => {
               title={item.title}
               date={item.date}
               description={item.description}
-              icon={<Upload className="text-[#1C63DB] w-6 h-6" />}
+              icon={icons[index]}
             />
           ))}
         </div>
