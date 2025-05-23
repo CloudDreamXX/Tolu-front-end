@@ -101,7 +101,7 @@ export const CalendarPopup = () => {
     const dayEvents = events.filter(e => e.date === dateStr);
 
     dayGrid.push(
-      <div
+      <button
         key={i}
         onClick={() => {
           setSelectedDate(dateStr);
@@ -132,7 +132,7 @@ export const CalendarPopup = () => {
             </div>
           );
         })}
-      </div>
+      </button>
     );
 
     day = addDays(day, 1);

@@ -106,13 +106,13 @@ li::marker {
 }
 
 .font-inter {
-  font-family: 'Inter', 'sans-serif' !important;
+  font-family: 'Inter', 'sans-serif', sans-serif !important;
 }
 
 .font-reem {
-  font-family: 'Reem Kufi', 'sans-serif' !important;
+  font-family: 'Reem Kufi', 'sans-serif', sans-serif !important;
 }
 
 .font-open {
-  font-family: 'Open Sans', 'sans-serif' !important;
+  font-family: 'Open Sans', 'sans-serif', sans-serif !important;
 }

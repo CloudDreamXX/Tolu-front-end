@@ -24,7 +24,7 @@ export const HealthSnapshot = () => {
   const [showMoodModal, setShowMoodModal] = useState(false);
 
   const icons = useMemo(() => {
-    return [<Upload className="text-[#1C63DB] w-6 h-6" />];
+    return [<Upload key={1} className="text-[#1C63DB] w-6 h-6" />];
   }, []);
 
   const lastLogIn = useSelector(
