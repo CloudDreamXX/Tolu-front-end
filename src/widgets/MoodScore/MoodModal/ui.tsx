@@ -6,12 +6,12 @@ import {
 } from "entities/store/clientMoodSlice";
 import { useDispatch } from "react-redux";
 import InfoIcon from "shared/assets/icons/info-icon";
-import Angry from "shared/assets/images/Angry.png";
-import Sad from "shared/assets/images/Sad.png";
-import Neutral from "shared/assets/images/Neutrak.png";
-import Smile from "shared/assets/images/Smile.png";
-import Smiley from "shared/assets/images/Smiley.png";
-import Happy from "shared/assets/images/Excellent.png";
+import Angry from "shared/assets/images/Angry.svg";
+import Sad from "shared/assets/images/Sad.svg";
+import Neutral from "shared/assets/images/Neutrak.svg";
+import Smile from "shared/assets/images/Smile.svg";
+import Smiley from "shared/assets/images/Smiley.svg";
+import Happy from "shared/assets/images/Excellent.svg";
 import { Slider } from "shared/ui/slider";
 import { X } from "lucide-react";
 import { Input } from "shared/ui";

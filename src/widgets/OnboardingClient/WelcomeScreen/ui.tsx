@@ -18,13 +18,13 @@ export const WelcomeScreen = () => {
           />
           <div className="flex flex-col items-center gap-6">
             <h2 className="text-black text-center text-[40px]/[54px] font-bold font-[Nunito]">
-              Welcome to Your Health Companion!
+              Welcome to A Healthy Menopause
+              <br /> Transformation
             </h2>
             <p className="text-[#5F5F65] text-[24px]/[32px] font-normal font-[Nunito] text-center">
-              TOLU is here to support you through your menopause journey — with
-              <br /> personalized tools, guidance, and insights based on who you
-              are and how you
-              <br /> live.
+              TOLU supports you through your menopause journey with personalized
+              tools,<br/> guidance, and insights based on who you are and how you
+              live your life.
             </p>
           </div>
           <button

@@ -235,7 +235,7 @@ export const HealthSnapshot = () => {
               </div>
               <div className="flex flex-1 items-start gap-3">
                 <div className="flex flex-col items-start gap-[6px] flex-1">
-                  <div className="flex gap-2 items-center self-stretch">
+                  <div className="flex gap-2 justify-between items-center self-stretch">
                     <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1F1F1D]">
                       AI Assistant
                     </h3>

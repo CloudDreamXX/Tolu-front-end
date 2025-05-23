@@ -217,9 +217,9 @@ export const Summary = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => nav("/finish")}
-              className="p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
+              className="p-4 w-auto h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
             >
-              Continue
+              Create My Personalized Dashboard
             </button>
           </div>
         </div>

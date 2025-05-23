@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import InfoIcon from "shared/assets/icons/info-icon";
 import Pencil from "shared/assets/icons/pencil";
-import Smile from "shared/assets/images/Smile.png";
-import Angry from "shared/assets/images/Angry.png";
-import Sad from "shared/assets/images/Sad.png";
-import Happy from "shared/assets/images/Excellent.png";
-import Neutral from "shared/assets/images/Neutrak.png";
-import Smiley from "shared/assets/images/Smiley.png";
+import Smile from "shared/assets/images/Smile.svg";
+import Angry from "shared/assets/images/Angry.svg";
+import Sad from "shared/assets/images/Sad.svg";
+import Happy from "shared/assets/images/Excellent.svg";
+import Neutral from "shared/assets/images/Neutrak.svg";
+import Smiley from "shared/assets/images/Smiley.svg";
 import { Slider } from "shared/ui/slider";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";

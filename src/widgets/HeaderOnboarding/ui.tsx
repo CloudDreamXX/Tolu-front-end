@@ -22,7 +22,15 @@ export const HeaderOnboarding = ({ currentStep, isClient, steps = 6 }: HeaderOnb
           TOLU
         </h2>
         <h4 className="capitalize text-[#1D1D1F] text-center text-[20px] font-medium font-open h-[27px]">
-          {isClient ? "CLIENT LIBRARY" : "COACH ADMIN"}
+          {isClient ? (
+            <>
+              YOUR MENOPAUSE
+              <br />
+              HEALTH ASSISTANT
+            </>
+          ) : (
+            "COACH ADMIN"
+          )}
         </h4>
       </div>
 
