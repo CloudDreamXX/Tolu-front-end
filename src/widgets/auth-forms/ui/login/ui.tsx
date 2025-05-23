@@ -180,7 +180,7 @@ export const LoginForm = () => {
             {/* Forgot Password */}
             <Link
               to="/forgot-password"
-              className="self-end text-[14px] text-[#5F5F65] underline font-[Nunito] hover:text-[#1C63DB]"
+              className="self-stretch text-[14px] text-[#5F5F65] underline font-[Nunito] hover:text-[#1C63DB]"
             >
               Forgot password
             </Link>

@@ -37,12 +37,12 @@ export const ChooseTest = () => {
     } else if (activeCard === "16Personalities") {
       setVisited(true);
       window.open(
-        "https://www.16personalities.com/free-personality-test",
+        "https://www.16personalities.com/free-personality-test ",
         "_blank"
       );
     } else if (activeCard === "Enneagram") {
       setVisited(true);
-      window.open("https://www.eclecticenergies.com/enneagram/test", "_blank");
+      window.open("https://enneagramtest.com/test ", "_blank");
     }
   };
 

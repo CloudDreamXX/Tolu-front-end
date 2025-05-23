@@ -7,6 +7,7 @@ import { Slider } from "shared/ui/slider";
 import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { useNavigate } from "react-router-dom";
+import { Footer } from "widgets/Footer";
 
 const readinessMessages = [
   "I'm just exploring right now",
@@ -103,6 +104,7 @@ export const Readiness = () => {
           isButtonActive={() => true}
         />
       </main>
+      <Footer />
     </AuthPageWrapper>
   );
 };

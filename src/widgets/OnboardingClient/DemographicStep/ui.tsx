@@ -35,6 +35,9 @@ export const DemographicStep = () => {
   const [household, setHousehold] = useState("");
   const [occupationVal, setOccupationVal] = useState("");
   const [educationVal, setEducationVal] = useState("");
+  const [otherHousehold, setOtherHousehold] = useState("");
+  const [otherOccupation, setOtherOccupation] = useState("");
+  const [otherRace, setOtherRace] = useState("");
   const nav = useNavigate();
   const isFormComplete = () =>
     age.trim() &&
@@ -56,6 +59,25 @@ export const DemographicStep = () => {
     dispatch(setFormField({ field: "occupation", value: occupationVal }));
     dispatch(setFormField({ field: "education", value: educationVal }));
     dispatch(setFormField({ field: "language", value: language }));
+    dispatch(
+      setFormField({
+        field: "race",
+        value: race === "Other" ? otherRace : race,
+      })
+    );
+    dispatch(
+      setFormField({
+        field: "household",
+        value: household === "Other" ? otherHousehold : household,
+      })
+    );
+    dispatch(
+      setFormField({
+        field: "occupation",
+        value: occupationVal === "Other" ? otherOccupation : occupationVal,
+      })
+    );
+
     nav("/what-brings-you-here");
   };
 
@@ -64,6 +86,21 @@ export const DemographicStep = () => {
     if (value.length <= 5) {
       setZipCode(value);
     }
+  };
+
+  const handleHouseholdChange = (val: string) => {
+    setHousehold(val);
+    if (val !== "Other") setOtherHousehold("");
+  };
+
+  const handleOccupationChange = (val: string) => {
+    setOccupationVal(val);
+    if (val !== "Other") setOtherOccupation("");
+  };
+
+  const handleRaceChange = (val: string) => {
+    setRace(val);
+    if (val !== "Other") setOtherRace("");
   };
 
   return (
@@ -249,13 +286,21 @@ export const DemographicStep = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {race === "Other (please specify)" && (
+                <Input
+                  placeholder="Enter race or ethnicity"
+                  value={otherRace}
+                  onChange={(e) => setOtherRace(e.target.value)}
+                  className="mt-2"
+                />
+              )}
             </div>
             <div className="flex w-full flex-col items-start gap-[10px]">
               <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Household Type *
               </label>
-              <Select onValueChange={setHousehold}>
-                <SelectTrigger className="">
+              <Select onValueChange={handleHouseholdChange}>
+                <SelectTrigger>
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -268,13 +313,21 @@ export const DemographicStep = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {household === "Other (please specify)" && (
+                <Input
+                  placeholder="Enter household type"
+                  value={otherHousehold}
+                  onChange={(e) => setOtherHousehold(e.target.value)}
+                  className="mt-2"
+                />
+              )}
             </div>
             <div className="flex w-full flex-col items-start gap-[10px]">
               <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Occupation
               </label>
-              <Select onValueChange={setOccupationVal}>
-                <SelectTrigger className="">
+              <Select onValueChange={handleOccupationChange}>
+                <SelectTrigger>
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -287,20 +340,28 @@ export const DemographicStep = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {occupationVal === "Other (please specify)" && (
+                <Input
+                  placeholder="Enter occupation"
+                  value={otherOccupation}
+                  onChange={(e) => setOtherOccupation(e.target.value)}
+                  className="mt-2"
+                />
+              )}
             </div>
             <div className="flex w-full flex-col items-start gap-[10px]">
               <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Education Level
               </label>
-              <Select onValueChange={setEducationVal}>
-                <SelectTrigger className="">
+              <Select onValueChange={handleRaceChange}>
+                <SelectTrigger>
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {education.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
+                    {education.map((race) => (
+                      <SelectItem key={race} value={race}>
+                        {race}
                       </SelectItem>
                     ))}
                   </SelectGroup>

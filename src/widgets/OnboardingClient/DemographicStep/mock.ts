@@ -33,6 +33,7 @@ export const raceEthnicity = [
   "Ashkenazi or Sephardic Jewish",
   "Romani",
   "Prefer not to say",
+  "Other (please specify)",
 ];
 
 export const householdType = [
@@ -42,7 +43,7 @@ export const householdType = [
   "Living with parents",
   "With children",
   "Caregiver",
-  "Other",
+  "Other (please specify)",
 ];
 
 export const education = [
@@ -63,4 +64,5 @@ export const occupation = [
   "Service industry (e.g. retail, hospitality)",
   "Student / In training",
   "Unemployed / Retired / Other",
+  "Other (please specify)",
 ];
