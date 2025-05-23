@@ -39,28 +39,28 @@ export const timelines = [
         description: "You added a new lab value: 38 ng/mL ",
     },
     {
-        title: "Vitamin D result updated",
+        title: "Trend detected",
         date: "May 4, 4:02 am",
-        description: "You added a new lab value: 38 ng/mL ",
+        description: "Glucose levels increased by 10% since last test",
     },
     {
-        title: "Vitamin D result updated",
+        title: "New status alert",
         date: "May 4, 4:02 am",
-        description: "You added a new lab value: 38 ng/mL ",
+        description: "hsCRP marked as “Borderline” based on recent input ",
     },
     {
-        title: "Vitamin D result updated",
+        title: "Lab report uploaded",
         date: "May 4, 4:02 am",
-        description: "You added a new lab value: 38 ng/mL ",
+        description: "File: Annual-Checkup-2025.pdf",
     },
     {
-        title: "Vitamin D result updated",
+        title: "Manual entry added",
         date: "May 4, 4:02 am",
-        description: "You added a new lab value: 38 ng/mL ",
+        description: "You manually entered Estradiol level: 72 pg/mL",
     },
     {
-        title: "Vitamin D result updated",
+        title: "Test results synced",
         date: "May 4, 4:02 am",
-        description: "You added a new lab value: 38 ng/mL ",
+        description: "Test results synced ",
     },
 ]

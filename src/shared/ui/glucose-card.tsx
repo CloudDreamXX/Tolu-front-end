@@ -144,7 +144,6 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Measurement Types</SelectLabel>
                     <SelectItem value="Fasting">Fasting</SelectItem>
                     <SelectItem value="Post-meal (1 hr)">
                       Post-meal (1 hr)
