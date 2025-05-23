@@ -1,11 +1,13 @@
 import { Check } from "lucide-react";
 import React from "react";
+import clsx from "clsx";
 
 interface PriceCardProps {
   plan: "starting" | "professional";
   price: string;
   features: React.ReactNode[];
   active?: boolean;
+  second?: boolean;
   onClick?: () => void;
   mostPopular?: boolean;
 }
@@ -15,11 +17,19 @@ export const PriceCard: React.FC<PriceCardProps> = ({
   price,
   active,
   onClick,
+  second,
   mostPopular = false,
 }) => {
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-[16px] border ${active ? "border-[#1C63DB]" : "border-[#AAC6EC]"}`}
+      className={clsx(
+        "relative w-full overflow-hidden rounded-[16px] border transition-shadow",
+        {
+          "border-[4px] border-[#1C63DB] bg-white shadow-[0px_0px_20px_rgba(0,143,246,0.5)]": active,
+          "border-[#1C63DB]": !active && second,
+          "border-[#AAC6EC]": !active && !second,
+        }
+      )}
     >
       {mostPopular && (
         <div className="absolute top-[45px] right-[-90px] bg-[#1C63DB] text-white px-[12px] py-[8px] text-[18px] font-bold font-inter shadow-md w-[360px] text-center rotate-[35deg] pointer-events-none">
@@ -28,9 +38,13 @@ export const PriceCard: React.FC<PriceCardProps> = ({
       )}
       <button
         onClick={onClick}
-        className={`${
-          active ? "bg-[#F4F9FF]" : "bg-white"
-        } rounded-[16px] py-[40px] w-full max-w-[684px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]`}
+        className={clsx(
+          "rounded-[16px] py-[40px] w-full max-w-[684px] px-[24px] flex flex-col justify-center items-center gap-[80px] glex-1 h-[695px]",
+          {
+            "bg-[#F4F9FF]": second,
+            "bg-white": !second,
+          }
+        )}
       >
         <div className="flex flex-col gap-[4px] items-center">
           <h2 className="text-[#5F5F65] font-inter text-[18px]/[25.2px] font-medium">
@@ -40,6 +54,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             {plan === "starting" ? "Starter" : "Pro"} Coach Tier
           </h1>
         </div>
+
         <ul className="flex flex-col justify-center items-start gap-[24px] self-stretch">
           <li className="flex gap-[16px] items-center">
             <Check color="#1C63DB" size={20} />
@@ -86,6 +101,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             </span>
           </li>
         </ul>
+
         <div className="flex flex-col items-center justify-center">
           <h2 className="font-inter font-medium text-[40px]/[140%] text-[#1C63DB]">
             {price} USD

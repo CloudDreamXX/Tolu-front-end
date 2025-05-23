@@ -31,6 +31,7 @@ export const SubscriptionPlan = () => {
             active={activeCard === "professional"}
             plan="professional"
             price="$39.00"
+            second={true}
             mostPopular
             features={features}
           />

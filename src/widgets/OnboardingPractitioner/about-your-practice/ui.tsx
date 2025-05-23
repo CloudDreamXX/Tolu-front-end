@@ -12,7 +12,7 @@ import { SearchableSelect } from "../components/SearchableSelect";
 export const AboutYourPractice = () => {
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [dragOver, setDragOver] = useState(false);
 
   const [school, setSchool] = useState("");
@@ -27,23 +27,25 @@ export const AboutYourPractice = () => {
       recentClients.length > 0 &&
       targetClients.length > 0 &&
       labsUsed.length > 0 &&
-      selectedFile !== null
+      selectedFiles.length > 0
     );
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && isValidFile(file)) {
-      setSelectedFile(file);
+    const files = e.target.files;
+    if (files) {
+      const validFiles = Array.from(files).filter(isValidFile);
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
     }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setDragOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file && isValidFile(file)) {
-      setSelectedFile(file);
+    const files = e.dataTransfer.files;
+    if (files) {
+      const validFiles = Array.from(files).filter(isValidFile);
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
     }
   };
 
@@ -94,7 +96,6 @@ export const AboutYourPractice = () => {
           About your practice
         </h2>
         <div className="w-[700px] bg-white shadow-mdp-[40px] flex flex-col items-start gap-[24px] rounded-[20px]">
-          {/* School */}
           <div className="flex flex-col items-start self-stretch gap-[16px] mt-[40px] ml-[32px]">
             <SearchableSelect
               width="w-[620px]"
@@ -113,74 +114,90 @@ export const AboutYourPractice = () => {
 
           {/* File Upload */}
           <div className="flex flex-col gap-2 items-start">
-
-            <p className="ml-[32px] font-[Nunito] text-[16px] font-medium text-black ">
-              Upload a certificate or license *
+            <p className="ml-[32px] font-[Nunito] text-[16px] font-medium text-black">
+              Upload certificates or licenses *
             </p>
-          <div
-            className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
-              dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
+            <div
+              className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
+                dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
               } bg-white cursor-pointer transition`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={triggerFileSelect}
-              >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            <div className="flex gap-[12px] items-center flex-col">
-              <div className="flex p-[8px] items-center gap-[10px] rounded-[8px] border-[1px] border-[#F3F6FB] bg-white">
-                <UploadCloud />
-              </div>
-              <div className="flex flex-col items-center gap-[4px]">
-                <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                  {selectedFile ? selectedFile.name : "Click to upload"}
-                </p>
-                <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                  or drag and drop
-                </p>
-                <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                  PDF, JPG or PNG
-                </p>
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <div className="flex gap-[12px] items-center flex-col">
+                <div className="flex p-[8px] items-center gap-[10px] rounded-[8px] border-[1px] border-[#F3F6FB] bg-white">
+                  <UploadCloud />
+                </div>
+
+                <div className="flex flex-col items-center gap-[4px]">
+                  {selectedFiles.length > 0 ? (
+                    <>
+                      <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                        Uploaded files:
+                      </p>
+                      <ul className="text-[#1C63DB] font-[Nunito] text-[14px] font-normal list-disc pl-4 text-left w-full">
+                        {selectedFiles.map((file, i) => (
+                          <li key={i} className="truncate w-full max-w-[500px]">
+                            {file.name}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                        Click to upload
+                      </p>
+                      <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
+                        or drag and drop
+                      </p>
+                      <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
+                        PDF, JPG or PNG
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-              </div>
+
           <div className="flex ml-[40px]">
             <LightIcon />
             <p className="font-[Nunito] text-[16px] font-medium ml-[8px] text-[#1C63DB]">
               Data is securely saved with a HIPAA-compliant notice
             </p>
           </div>
-          {/* Recent clients */}
+
           <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
             <SearchableSelect
               width="w-[620px]"
               label="How many clients have you helped within the past 3 months? *"
               options={["0-5", "6-15", "16-30", "31-50", "50+"]}
-              value={school}
+              value={recentClients}
               onChange={(value) => handleFieldChange("recent", value)}
             />
           </div>
 
-          {/* Target clients */}
           <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
             <SearchableSelect
               width="w-[620px]"
-              label="How many new clients do you hope to acquire over the next 3
-              months? *"
+              label="How many new clients do you hope to acquire over the next 3 months? *"
               options={["0-5", "6-15", "16-30", "31-50", "50+"]}
-              value={school}
+              value={targetClients}
               onChange={(value) => handleFieldChange("target", value)}
             />
           </div>
 
-          {/* Radio - uses labs/supplements */}
           <div className="flex flex-col ml-[32px] items-start self-stretch mb-[16px] gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium text-black">
               Do you currently use labs or supplementation in your practice? *
@@ -208,7 +225,6 @@ export const AboutYourPractice = () => {
           </div>
         </div>
 
-        {/* Navigation */}
         <div className="flex items-center gap-[16px] bg-transparent">
           <button
             onClick={() => nav(-1)}
@@ -218,9 +234,9 @@ export const AboutYourPractice = () => {
             Back
           </button>
           <Link
-            to={allFilled() === true ? "/subscription-plan" : ""}
+            to={allFilled() ? "/subscription-plan" : ""}
             className={
-              allFilled() === true
+              allFilled()
                 ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
                 : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
             }
