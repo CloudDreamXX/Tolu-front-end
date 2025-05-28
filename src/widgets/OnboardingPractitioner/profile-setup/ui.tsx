@@ -86,7 +86,16 @@ export const ProfileSetup = () => {
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
               First name
             </label>
-            <p className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">Sophia turner</p>
+            <Input
+              type="text"
+              placeholder="Enter First Name"
+              onChange={(e) =>
+                dispatch(
+                  updateCoachField({ key: "first_name", value: e.target.value })
+                )
+              }
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
           </div>
           <div className="flex flex-col flex-1 gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
@@ -273,6 +282,7 @@ export const ProfileSetup = () => {
                   })
                 )
               }
+              position="top"
             />
             <div className="flex flex-col gap-[8px] w-[100%]">
               <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">

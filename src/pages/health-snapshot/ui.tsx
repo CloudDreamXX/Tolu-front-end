@@ -4,12 +4,12 @@ import { smallCards, timelines } from "./mock";
 import { MoodScore, willModalOpen } from "widgets/MoodScore";
 import InfoIcon from "shared/assets/icons/info-icon";
 import { HealthGoalsCard } from "widgets/HealthGoalsCard";
-import { ArrowRight, Bookmark, Calendar, ChevronLeft, ChevronRight, Upload } from "lucide-react";
+import { ArrowRight, Bookmark } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import Share from "shared/assets/icons/share";
 import PaperPlane from "shared/assets/icons/paper-plane";
 import avatar from "shared/assets/images/Avatar.png";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { TimelineItem } from "widgets/TimelineItem";
 import { HealthTable } from "widgets/HealthTable";
 import { RootState } from "entities/store";
@@ -22,10 +22,6 @@ export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [networkSupportOpen, setNetworkSupportOpen] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
-
-  const icons = useMemo(() => {
-    return [<Upload key={1} className="text-[#1C63DB] w-6 h-6" />];
-  }, []);
 
   const lastLogIn = useSelector(
     (state: RootState) => state.clientMood.lastLogIn
@@ -293,14 +289,12 @@ export const HealthSnapshot = () => {
               title={item.title}
               date={item.date}
               description={item.description}
-              icon={icons[index]}
+              iconName={item.icon}
             />
           ))}
         </div>
       )}
-      {networkSupportOpen && (
-        <CalendarPopup/>
-      )}
+      {networkSupportOpen && <CalendarPopup />}
     </main>
   );
 };

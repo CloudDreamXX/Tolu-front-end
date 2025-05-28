@@ -6,12 +6,16 @@ import { useDispatch } from "react-redux";
 import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Input } from "shared/ui";
 import Search from "shared/assets/icons/search";
+import LightIcon from "shared/assets/icons/light";
 import { buttons } from "./mock";
+import { cn } from "shared/lib";
 
 export const OnboardingMain = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setShowHint] = useState(false);
   const [customButtons, setCustomButtons] = useState(buttons);
   const [otherText, setOtherText] = useState("");
+  const [isClosedHint, setIsClosedHint] = useState(false);
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const nav = useNavigate();
 
@@ -45,6 +49,7 @@ export const OnboardingMain = () => {
 
   const dispatch = useDispatch();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleButtonClick = (buttonText: string, id: number = 0) => {
     setSelectedButtons((prevSelected) => {
       let updated;
@@ -62,9 +67,15 @@ export const OnboardingMain = () => {
     return selectedButtons.includes("Other");
   };
 
+  const handleHintButtonClick = () => {
+    setIsClosedHint(true);
+  };
+
   const isNextDisabled =
     selectedButtons.length === 0 ||
     (selectedButtons.includes("Other") && otherText.trim() === "");
+
+  const isShowHint = !isNextDisabled && !isClosedHint;
 
   return (
     <AuthPageWrapper>
@@ -130,7 +141,7 @@ export const OnboardingMain = () => {
             ""
           )}
         </section>
-        <div className="flex items-center gap-[16px]">
+        <div className="flex items-center gap-[16px] relative">
           <button
             onClick={() => nav(-1)}
             className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
@@ -150,6 +161,28 @@ export const OnboardingMain = () => {
           >
             Next
           </Link>
+          {isShowHint && (
+            <div
+              className={cn(
+                "absolute top-full left-10 right-0 mx-auto translate-y-[1.625rem] rounded-[0.625rem] p-4 bg-white border border-blue-500 font-semibold max-w-[19.375rem] w-full flex flex-col gap-3",
+                "animate-in fade-in"
+              )}
+            >
+              <div className="absolute bottom-full right-14 w-5 h-5 bg-white border border-blue-500 rotate-45 translate-y-1/2 translate-x-1/2 border-b-transparent border-r-transparent"></div>
+              <h3 className="flex gap-2 text-[#1B2559] leading-[1.4]">
+                <span className="w-6 h-6 shrink-0 ">
+                  <LightIcon className="text-[#1B2559] " />
+                </span>
+                You can update your focus areas anytime from your dashboard.
+              </h3>
+              <button
+                className="bg-[#1C63DB] inline-flex py-1 px-4 justify-center items-center gap-2 rounded-full font-[Nunito] font-semibold text-white self-center"
+                onClick={handleHintButtonClick}
+              >
+                Got It
+              </button>
+            </div>
+          )}
         </div>
       </main>
       <Footer />

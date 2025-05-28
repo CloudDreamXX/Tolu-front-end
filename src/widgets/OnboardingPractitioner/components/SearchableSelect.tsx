@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import { cn } from "shared/lib";
+
 interface SearchableSelectProps {
   label: string;
   options: string[];
@@ -8,6 +10,7 @@ interface SearchableSelectProps {
   placeholder?: string;
   labelStyle?: string;
   width?: string;
+  position?: "top" | "bottom";
 }
 
 export const SearchableSelect: React.FC<SearchableSelectProps> = ({
@@ -18,6 +21,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
   onChange,
   placeholder = "Select",
   width = "w-[100%]",
+  position = "bottom",
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const [filteredOptions, setFilteredOptions] = useState(options);
@@ -55,34 +59,44 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
       >
         {label}
       </label>
-      <input
-        type="text"
-        value={inputValue}
-        onClick={() => setIsOpen(true)}
-        onChange={(e) => {
-          setInputValue(e.target.value);
-          setIsOpen(true);
-        }}
-        placeholder={placeholder ? placeholder : "Select"}
-        className="peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
-      />
-      {isOpen && (
-        <ul className="absolute z-10 mt-1 w-full max-h-[160px] overflow-y-auto scrollbar-hide border border-[#1C63DB] bg-white rounded-md shadow-md p-[16px] flex flex-col gap-[8px]">
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((option) => (
-              <li
-                key={option}
-                onClick={() => handleSelect(option)}
-                className="cursor-pointer hover:bg-[#F3F6FB]"
-              >
-                {option}
+      <div className="relative">
+        <input
+          type="text"
+          value={inputValue}
+          onClick={() => setIsOpen(true)}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            setIsOpen(true);
+          }}
+          placeholder={placeholder ? placeholder : "Select"}
+          className="peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
+        />
+        {isOpen && (
+          <ul
+            className={cn(
+              "absolute z-10 w-full max-h-[160px] overflow-y-auto scrollbar-hide border border-[#1C63DB] bg-white rounded-md shadow-md p-[16px] flex flex-col gap-[8px]",
+              position === "top" && "bottom-full mb-1",
+              position === "bottom" && "top-full mt-1"
+            )}
+          >
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <li
+                  key={option}
+                  onClick={() => handleSelect(option)}
+                  className="cursor-pointer hover:bg-[#F3F6FB]"
+                >
+                  {option}
+                </li>
+              ))
+            ) : (
+              <li className="px-[16px] py-[8px] text-[#888]">
+                No matches found
               </li>
-            ))
-          ) : (
-            <li className="px-[16px] py-[8px] text-[#888]">No matches found</li>
-          )}
-        </ul>
-      )}
+            )}
+          </ul>
+        )}
+      </div>
       <div
         className={`pointer-events-none absolute right-4 top-[48px] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
       >

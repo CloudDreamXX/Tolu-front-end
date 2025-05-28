@@ -80,16 +80,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
   if (!token || !userType) {
     checkPath();
     return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
-  } 
-  
+  }
   if (location.pathname === "/auth") {
     return <Navigate to={getRouteByRole(userType.role)} replace />;
   }
 
-  if (
-    userType.role === "user" &&
-    location.pathname !== "/health-snapshot"
-  ) {
+  if (userType.role === "user" && location.pathname !== "/health-snapshot") {
     return <Navigate to="/health-snapshot" replace />;
   }
 

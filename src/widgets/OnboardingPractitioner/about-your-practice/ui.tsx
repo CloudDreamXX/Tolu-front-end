@@ -171,9 +171,9 @@ export const AboutYourPractice = () => {
             </div>
           </div>
 
-          <div className="flex ml-[40px]">
+          <div className="flex ml-[40px] text-[#1C63DB]">
             <LightIcon />
-            <p className="font-[Nunito] text-[16px] font-medium ml-[8px] text-[#1C63DB]">
+            <p className="font-[Nunito] text-[16px] font-medium ml-[8px]">
               Data is securely saved with a HIPAA-compliant notice
             </p>
           </div>

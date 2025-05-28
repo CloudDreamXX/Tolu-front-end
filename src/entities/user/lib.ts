@@ -23,12 +23,13 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const email = action.payload?.email ?? null;
-      if (!email) {
+      const roleID = action.payload?.user?.roleID ?? null;
+
+      if (!roleID) {
         state.userType = { role: "guest" };
       } else {
         state.userType = {
-          role: getUserRole(email),
+          role: getUserRole(roleID),
         };
       }
     },
@@ -37,9 +38,11 @@ export const userSlice = createSlice({
       state.token = action.payload.accessToken;
       state.tokenNewPassword = action.payload.tokenNewPassword;
 
-      if (action.payload.user?.email) {
+      const roleID = action.payload?.user?.roleID ?? null;
+
+      if (roleID) {
         state.userType = {
-          role: getUserRole(action.payload.user.email),
+          role: getUserRole(roleID),
         };
       }
     },

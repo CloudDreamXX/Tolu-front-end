@@ -10,10 +10,10 @@ interface SliderCardProps {
 export const SliderCard: React.FC<SliderCardProps> = ({ title, colors }) => {
   const [value, setValue] = useState(0);
 
-  const max = 5;
+  const max = 6;
   const stepCount = colors.length;
   const stepSize = max / stepCount;
-  const activeIndex = value === 0 ? -1 : Math.floor(value / stepSize);
+  const activeIndex = value === 0 ? -1 : Math.floor(value / stepSize) - 1;
 
   return (
     <div className="rounded-2xl bg-[#F3F7FD] p-6 gap-6 flex flex-col items-start flex-1">

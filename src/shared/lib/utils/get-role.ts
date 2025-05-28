@@ -1,10 +1,3 @@
-export const getUserRole = (email: string) => {
-  switch (email) {
-    case "admin@example.com":
-      return "admin";
-    case "test@example.com":
-      return "coaches";
-    default:
-      return "user";
-  }
+export const getUserRole = (roleId: number) => {
+  return ["admin", "coaches", "user"][roleId - 1] ?? "guest";
 };
