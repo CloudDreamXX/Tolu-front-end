@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
+import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import CircleQuestion from "shared/assets/icons/circle-question";
+import { AuthPageWrapper, TooltipWrapper } from "shared/ui";
 import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { titlesAndIcons } from "./mock";
-import { AuthPageWrapper } from "shared/ui";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { Tooltip, TooltipContent, TooltipTrigger } from "shared/ui/tooltip";
 
 export const SelectType = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
@@ -90,20 +88,9 @@ export const SelectType = () => {
                   <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[16px] mb:text-[20px] font-semibold">
                     {item.title}
                   </h2>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>
-                          <CircleQuestion />
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <span className="whitespace-pre-line text-[#1B2559] text-[16px] font-semibold">
-                          {item.tooltipContent}
-                        </span>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <TooltipWrapper content={item.tooltipContent}>
+                    <CircleQuestion />
+                  </TooltipWrapper>
                 </div>
                 {/* Custom Dropdown */}
                 <div className="relative w-full">

@@ -127,6 +127,9 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        wrapper: "1px 1px 10px 0px rgba(0, 0, 0, 0.15)",
+      },
     },
   },
   plugins: [

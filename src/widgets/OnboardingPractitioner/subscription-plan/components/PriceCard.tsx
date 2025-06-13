@@ -70,8 +70,12 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             </span>
           </li>
           <li className="flex gap-[16px] items-center">
-            <Check color="#1C63DB" size={20} />
-            <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] pr-4 font-medium lg:whitespace-nowrap text-left">
+            <Check
+              color="#1C63DB"
+              size={20}
+              className="min-w-[20px] min-h-[20px]"
+            />
+            <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium text-left">
               {plan === "starting" ? (
                 <>
                   <span className="!font-bold">Access basic content</span>{" "}

@@ -15,11 +15,22 @@ export const InviteClients = () => {
   const [dragOver, setDragOver] = useState(false);
   const [clientel, setClientel] = useState<string[]>([""]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+  const [isTablet, setIsTablet] = useState<boolean>(
+    window.innerWidth >= 768 && window.innerWidth < 1024
+  );
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
+    const handleTabletResize = () =>
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("resize", handleTabletResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", handleTabletResize);
+    };
   }, []);
 
   const handleUploadClick = () => {
@@ -52,7 +63,7 @@ export const InviteClients = () => {
     <AuthPageWrapper>
       <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={5} />
-      <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px] absolute bottom-0 md:static">
+      <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px]">
         {!isMobile && (
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-[32px] text-black font-inter font-semibold text-center">
@@ -127,7 +138,7 @@ export const InviteClients = () => {
                   <UploadCloud />
                 </div>
                 <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                  Click or drag to upload
+                  Click {isMobile || isTablet ? "" : "or drag"} to upload
                 </div>
                 <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
                   CSV or PDF file
@@ -186,7 +197,7 @@ export const InviteClients = () => {
               onClick={() => setClientel([...clientel, ""])}
               type="button"
               style={{ background: "rgba(0, 143, 246, 0.10)" }}
-              className="mt-4 h-7 w-44 rounded-full text-[#1C63DB] font-[Nunito] flex items-center justify-center text-[14px] font-semibold"
+              className="mt-4 h-11 md:h-7 w-44 rounded-full text-[#1C63DB] font-[Nunito] flex items-center justify-center text-[14px] font-semibold"
             >
               + Add another
             </button>

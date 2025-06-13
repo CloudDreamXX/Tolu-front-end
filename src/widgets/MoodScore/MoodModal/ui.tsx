@@ -108,15 +108,22 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
               <h2 className="text-[#1C3C8D] font-[Nunito] text-[18px] font-semibold">
                 {moodLabels[moodIndex]}
               </h2>
-              <InfoIcon />
+              <span className="w-[20px] h-[20px]">
+                <InfoIcon />
+              </span>
             </div>
 
             <Slider
-              min={0}
-              max={59}
-              step={1}
+              min={0.1}
+              max={5.59}
+              step={0.01}
               value={[rawValue]}
               onValueChange={([val]) => setRawValue(val)}
+              onValueCommit={() => {
+                const roundedValue = Math.ceil(rawValue) - 0.5;
+                setRawValue(roundedValue);
+              }}
+              activeIndex={rawValue}
               colors={[
                 "#FF1F0F",
                 "#F6B448",

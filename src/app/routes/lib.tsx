@@ -120,10 +120,10 @@ export const AppRoutes = () => {
           path="/content-manager/published"
           element={<div>Published</div>}
         />
-        {/* <Route
+        <Route
           path="*"
           element={<Navigate to={"/content-manager/library"} />}
-        /> */}
+        />
         <Route
           path="/content-manager"
           element={<Navigate to={"/content-manager/library"} />}

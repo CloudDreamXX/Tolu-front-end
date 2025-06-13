@@ -39,7 +39,7 @@ export const OnboardingFinish = () => {
             <h3 className="w-full md:w-[597px] xl:w-[860px] text-black font-inter text-center text-[32px] md:text-[48px] font-semibold">
               You’re all set!
             </h3>
-            <p className="self-stretch text-center text-black font-[Nunito] text-[16px] md:text-[24px] font-medium ">
+            <p className="self-stretch text-center text-black font-[Nunito] text-[16px] md:text-[24px] font-medium leading-[35px]">
               We’ve set up your dashboard with tools, templates, and content
               tailored to: {""}
               <span className="self-stretch text-center text-black font-[Nunito] text-[16px] md:text-[24px] font-bold">
