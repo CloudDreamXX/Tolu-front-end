@@ -22,4 +22,3 @@ export default (props?: React.SVGProps<SVGSVGElement>) => {
     </svg>
   );
 };
-

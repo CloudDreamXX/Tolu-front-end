@@ -45,7 +45,9 @@ export const HealthSnapshotSidebar: React.FC = () => {
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-center text-center">
           <h2 className="text-[46.667px] font-bold font-open">TOLU</h2>
-          <h3 className="text-[16.2px] font-semibold font-open">CLIENT LIBRARY</h3>
+          <h3 className="text-[16.2px] font-semibold font-open">
+            CLIENT LIBRARY
+          </h3>
         </div>
         <div className="flex flex-col px-[14px] py-[17px] gap-[18px]">
           <Input
@@ -93,8 +95,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
                     }
                   >
                     <Checkbox
-                        className="h-6 w-6 rounded-lg"
-                        onCheckedChange={(checked) => console.log(checked)}
+                      className="h-6 w-6 rounded-lg"
+                      onCheckedChange={(checked) => console.log(checked)}
                     />
                     Symptoms
                   </div>
@@ -104,8 +106,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
                     }
                   >
                     <Checkbox
-                        className="h-6 w-6 rounded-lg"
-                        onCheckedChange={(checked) => console.log(checked)}
+                      className="h-6 w-6 rounded-lg"
+                      onCheckedChange={(checked) => console.log(checked)}
                     />
                     Conditions
                   </div>
@@ -115,8 +117,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
                     }
                   >
                     <Checkbox
-                        className="h-6 w-6 rounded-lg"
-                        onCheckedChange={(checked) => console.log(checked)}
+                      className="h-6 w-6 rounded-lg"
+                      onCheckedChange={(checked) => console.log(checked)}
                     />
                     Supplements
                   </div>
@@ -126,8 +128,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
                     }
                   >
                     <Checkbox
-                        className="h-6 w-6 rounded-lg"
-                        onCheckedChange={(checked) => console.log(checked)}
+                      className="h-6 w-6 rounded-lg"
+                      onCheckedChange={(checked) => console.log(checked)}
                     />
                     Lab Tests
                   </div>

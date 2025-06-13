@@ -86,15 +86,15 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                       {row.lab}
                     </td>
                   );
-                  case 5:
-                    return (
-                      <td
-                        key={header.id}
-                        className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
-                      >
-                        {row.func}
-                      </td>
-                    );
+                case 5:
+                  return (
+                    <td
+                      key={header.id}
+                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
+                    >
+                      {row.func}
+                    </td>
+                  );
                 case 6:
                   return (
                     <td

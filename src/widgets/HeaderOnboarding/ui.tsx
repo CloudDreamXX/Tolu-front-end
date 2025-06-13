@@ -8,7 +8,11 @@ interface HeaderOnboardingProps {
   isClient?: boolean;
 }
 
-export const HeaderOnboarding = ({ currentStep, isClient, steps = 6 }: HeaderOnboardingProps) => {
+export const HeaderOnboarding = ({
+  currentStep,
+  isClient,
+  steps = 6,
+}: HeaderOnboardingProps) => {
   const navigate = useNavigate();
 
   return (

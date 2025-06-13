@@ -49,7 +49,7 @@ export const NavigationClient: React.FC = () => {
             }`
           }
         >
-          <Heartbeat/>
+          <Heartbeat />
           Health Snapshot
         </NavLink>
 

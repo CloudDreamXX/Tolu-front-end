@@ -15,12 +15,12 @@ export const Values = () => {
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (value: string, checked: boolean) => {
-  if (checked && selectedValues.length < 3) {
-    setSelectedValues((prev) => [...prev, value]);
-  } else if (!checked) {
-    setSelectedValues((prev) => prev.filter((v) => v !== value));
-  }
-};
+    if (checked && selectedValues.length < 3) {
+      setSelectedValues((prev) => [...prev, value]);
+    } else if (!checked) {
+      setSelectedValues((prev) => prev.filter((v) => v !== value));
+    }
+  };
 
   const handleNext = () => {
     const finalValues = [...selectedValues];

@@ -11,6 +11,6 @@ export const getNavigation = (location: string): React.ReactNode => {
     case "settings":
       return <div></div>;
     default:
-      return null;  
+      return null;
   }
 };

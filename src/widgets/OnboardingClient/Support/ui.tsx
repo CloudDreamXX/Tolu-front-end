@@ -59,7 +59,9 @@ export const Support = () => {
                 {rowItems.map((item, i) => (
                   <div key={i} className="flex gap-4 flex-1 items-center">
                     <Checkbox
-                      onCheckedChange={(checked) => handleInputChange(item, checked === true)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange(item, checked === true)
+                      }
                       value={item}
                       checked={selectedSupport.includes(item)}
                       className="h-6 w-6 rounded-lg"
@@ -72,25 +74,23 @@ export const Support = () => {
               </div>
             ))}
 
-            <div className="flex flex-col gap-[10px] w-full max-w-[700px] items-start">
-              <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
-                Is there anything else we should know?
-              </label>
-              <Input
-                className="w-full"
-                placeholder="Someone who supports you"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-              />
-            </div>
+          <div className="flex flex-col gap-[10px] w-full max-w-[700px] items-start">
+            <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
+              Is there anything else we should know?
+            </label>
+            <Input
+              className="w-full"
+              placeholder="Someone who supports you"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+          </div>
         </div>
 
         <BottomButtons
           handleNext={handleNext}
           skipButton={() => nav("/personality-type")}
-          isButtonActive={() =>
-            selectedSupport.length > 0
-          }
+          isButtonActive={() => selectedSupport.length > 0}
         />
       </main>
       <Footer />

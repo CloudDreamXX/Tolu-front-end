@@ -5,7 +5,7 @@ export const Header: React.FC = () => (
         TOLU
       </h2>
       <h4 className="capitalize text-[#1D1D1F] text-center text-[20px] font-medium font-open h-[27px]">
-          COACH ADMIN
+        COACH ADMIN
       </h4>
     </div>
   </header>

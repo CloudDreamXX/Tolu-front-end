@@ -57,7 +57,8 @@ export const NewPassword = () => {
       toast({
         variant: "destructive",
         title: "Password update failed",
-        description: "Something went wrong while updating your password. Please try again.",
+        description:
+          "Something went wrong while updating your password. Please try again.",
       });
     }
   };

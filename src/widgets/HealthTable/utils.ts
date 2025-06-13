@@ -8,4 +8,4 @@ export const getColorStatus = (status: string): string => {
     return statusColors[1];
   }
   return statusColors[2];
-}
+};

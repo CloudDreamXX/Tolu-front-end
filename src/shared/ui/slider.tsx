@@ -1,5 +1,5 @@
-import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
+import * as React from "react";
 import { cn } from "shared/lib/utils";
 
 interface CustomSliderProps
@@ -14,26 +14,45 @@ const Slider = React.forwardRef<
   CustomSliderProps
 >(({ className, colors, value = [0], activeIndex, ...props }, ref) => {
   const isCustomColored = Array.isArray(colors);
-  const active = activeIndex ?? (value[0] ? value[0] - 1 : 0);
+  const active = activeIndex ?? Math.max(value[0] - 1, 0);
 
   return (
     <SliderPrimitive.Root
       ref={ref}
       value={value}
-      className={cn("relative flex w-full touch-none select-none items-center", className)}
+      className={cn(
+        "relative flex w-full touch-none select-none items-center",
+        className
+      )}
       {...props}
     >
       {isCustomColored ? (
         <SliderPrimitive.Track className="relative h-3 w-full rounded-[4px] bg-transparent flex overflow-hidden gap-[2px]">
-          {colors!.map((color, index) => (
-            <div
-              key={index}
-              className="w-1/6 h-full transition-colors duration-200"
-              style={{
-                backgroundColor: index <= active ? color : "#ECEFF4",
-              }}
-            />
-          ))}
+          {colors.map((color, index) => {
+            const filledSegments = Math.floor(value[0]);
+            const decimalPart = value[0] - filledSegments;
+            const segmentWidth = decimalPart * 100;
+
+            return (
+              <div
+                key={index}
+                className="w-1/6 h-full transition-colors duration-200"
+                style={{
+                  backgroundColor: index < active ? color : "#ECEFF4",
+                }}
+              >
+                <div
+                  className=" w-full h-full"
+                  style={{
+                    backgroundColor:
+                      index <= filledSegments ? color : "#ECEFF4",
+                    width:
+                      index === filledSegments ? `${segmentWidth}%` : "auto",
+                  }}
+                />
+              </div>
+            );
+          })}
         </SliderPrimitive.Track>
       ) : (
         <SliderPrimitive.Track className="relative h-2 w-full rounded-full bg-[#D9D9D9]">

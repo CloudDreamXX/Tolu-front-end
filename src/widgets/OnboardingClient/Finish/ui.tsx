@@ -31,7 +31,7 @@ export const FinishClientOnboarding = () => {
   }, []);
   return (
     <AuthPageWrapper>
-      <Header description="Your Menopause\nHealth Assistant"/>
+      <Header description="Your Menopause\nHealth Assistant" />
       <main className="flex flex-col items-center gap-8 justify-center self-stretch">
         <div className="w-full max-w-[1060px] py-[56px] px-[100px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
           <div className="flex gap-10 items-center justify-center">

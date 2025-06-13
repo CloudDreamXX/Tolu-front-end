@@ -23,7 +23,8 @@ export const WelcomeScreen = () => {
             </h2>
             <p className="text-[#5F5F65] text-[24px]/[32px] font-normal font-[Nunito] text-center">
               TOLU supports you through your menopause journey with personalized
-              tools,<br/> guidance, and insights based on who you are and how you
+              tools,
+              <br /> guidance, and insights based on who you are and how you
               live your life.
             </p>
           </div>

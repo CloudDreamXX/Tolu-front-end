@@ -1,6 +1,6 @@
+import { useState } from "react";
 import InfoIcon from "shared/assets/icons/info-icon";
 import { Slider } from "./slider";
-import { useState } from "react";
 
 interface SliderCardProps {
   title: string;
@@ -39,7 +39,7 @@ export const SliderCard: React.FC<SliderCardProps> = ({ title, colors }) => {
       <Slider
         min={0}
         max={max}
-        step={0.1}
+        step={0.01}
         value={[value]}
         onValueChange={([val]) => setValue(val)}
         colors={colors}

@@ -148,7 +148,10 @@ export const ClientCard: React.FC<ClientCardProps> = ({
               />
             </div>
             <div className="flex justify-between items-center w-full">
-              <button onClick={() => setOpen(false)} className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold font-[Nunito] text-[#1C63DB] p-4 w-32 h-[44px]">
+              <button
+                onClick={() => setOpen(false)}
+                className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold font-[Nunito] text-[#1C63DB] p-4 w-32 h-[44px]"
+              >
                 Cancel
               </button>
               <button

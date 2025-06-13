@@ -1,4 +1,19 @@
-import { AuthPageWrapper, Input } from "shared/ui";
+import { setFormField } from "entities/store/clientOnboardingSlice";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+import Info from "shared/assets/icons/info";
+import SmallTooltip from "shared/assets/icons/small-tooltip";
+import { cn } from "shared/lib";
+import {
+  AuthPageWrapper,
+  Checkbox,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "shared/ui";
 import {
   Select,
   SelectContent,
@@ -7,8 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "shared/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui/tooltip";
 import { Footer } from "widgets/Footer";
-import { useState } from "react";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import {
   countries,
@@ -18,17 +38,6 @@ import {
   occupation,
   raceEthnicity,
 } from "./index";
-import { useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
-import { setFormField } from "entities/store/clientOnboardingSlice";
-import Info from "shared/assets/icons/info";
-import SmallTooltip from "shared/assets/icons/small-tooltip";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "shared/ui/tooltip";
 
 export const DemographicStep = () => {
   const dispatch = useDispatch();
@@ -36,7 +45,7 @@ export const DemographicStep = () => {
   const [menopauseStatus, setMenopauseStatus] = useState("");
   const [country, setCountry] = useState("");
   const [zipCode, setZipCode] = useState("");
-  const [language, setLanguage] = useState("");
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [race, setRace] = useState("");
   const [household, setHousehold] = useState("");
   const [occupationVal, setOccupationVal] = useState("");
@@ -50,8 +59,10 @@ export const DemographicStep = () => {
     menopauseStatus.trim() &&
     country.trim() &&
     zipCode.trim() &&
-    language.trim() &&
+    selectedLanguages.length &&
     household.trim();
+
+  const [isOpenSelectLanguage, setIsOpenSelectLanguage] = useState(false);
 
   const handleNext = () => {
     dispatch(setFormField({ field: "age", value: Number(age) }));
@@ -64,7 +75,7 @@ export const DemographicStep = () => {
     dispatch(setFormField({ field: "household", value: household }));
     dispatch(setFormField({ field: "occupation", value: occupationVal }));
     dispatch(setFormField({ field: "education", value: educationVal }));
-    dispatch(setFormField({ field: "language", value: language }));
+    dispatch(setFormField({ field: "language", value: selectedLanguages }));
     dispatch(
       setFormField({
         field: "race",
@@ -109,12 +120,19 @@ export const DemographicStep = () => {
     if (val !== "Other") setOtherRace("");
   };
 
+  const handleLanguageChange = (value: string) => {
+    setSelectedLanguages((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
+    setIsOpenSelectLanguage(true);
+  };
+
   return (
     <AuthPageWrapper>
       <HeaderOnboarding isClient currentStep={0} steps={8} />
-      <main className="flex flex-col items-center gap-8 justify-center self-stretch">
+      <main className="flex flex-col items-center self-stretch justify-center gap-8">
         <div className="flex flex-col gap-8 w-full max-w-[700px] items-start">
-          <div className="flex flex-col gap-4 items-center self-stretch">
+          <div className="flex flex-col items-center self-stretch gap-4">
             <h1 className="text-[#1D1D1F] text-h1 text-center font-[Nunito]">
               Tell us a bit about you
             </h1>
@@ -125,7 +143,7 @@ export const DemographicStep = () => {
             </p>
           </div>
         </div>
-        <div className="flex flex-col self-stretch justify-center items-center gap-4">
+        <div className="flex flex-col items-center self-stretch justify-center gap-4">
           <div className="w-full max-w-[700px] flex p-10 gap-6 flex-col items-start justify-center rounded-3xl bg-white">
             <div className="flex w-full flex-col items-start gap-[10px] ">
               <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
@@ -133,7 +151,7 @@ export const DemographicStep = () => {
               </label>
               <Input
                 onChange={(e) => setAge(e.target.value)}
-                className="w-full self-stretch"
+                className="self-stretch w-full"
                 max={120}
                 min={0}
                 type="number"
@@ -144,8 +162,8 @@ export const DemographicStep = () => {
               <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Period Status *
               </label>
-              <div className="gap-6 flex w-full items-center">
-                <div className="flex gap-4 flex-1 items-center">
+              <div className="flex items-center w-full gap-6">
+                <div className="flex items-center flex-1 gap-4">
                   <input
                     value="still menstruating"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
@@ -153,14 +171,14 @@ export const DemographicStep = () => {
                     type="radio"
                     className="w-4 h-4 p-1"
                   />
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                       Still menstruating
                     </p>
                     <SmallTooltip />
                   </div>
                 </div>
-                <div className="flex gap-4 flex-1 items-center">
+                <div className="flex items-center flex-1 gap-4">
                   <input
                     value="irregular cycles"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
@@ -168,7 +186,7 @@ export const DemographicStep = () => {
                     type="radio"
                     className="w-4 h-4 p-1"
                   />
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                       Irregular cycles
                     </p>
@@ -176,8 +194,8 @@ export const DemographicStep = () => {
                   </div>
                 </div>
               </div>
-              <div className="gap-6 flex w-full items-center">
-                <div className="flex gap-4 flex-1 items-center">
+              <div className="flex items-center w-full gap-6">
+                <div className="flex items-center flex-1 gap-4">
                   <input
                     value="no periods for 12+ months"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
@@ -185,14 +203,14 @@ export const DemographicStep = () => {
                     type="radio"
                     className="w-4 h-4 p-1"
                   />
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                       No periods for 12+ months
                     </p>
                     <SmallTooltip />
                   </div>
                 </div>
-                <div className="flex gap-4 flex-1 items-center">
+                <div className="flex items-center flex-1 gap-4">
                   <input
                     value="postmenopausal"
                     onChange={(e) => setMenopauseStatus(e.target.value)}
@@ -200,7 +218,7 @@ export const DemographicStep = () => {
                     type="radio"
                     className="w-4 h-4 p-1"
                   />
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                       Postmenopausal
                     </p>
@@ -216,7 +234,7 @@ export const DemographicStep = () => {
                   onChange={(e) => setMenopauseStatus(e.target.value)}
                   className="w-4 h-4 p-1"
                 />
-                <div className="flex gap-2 items-center">
+                <div className="flex items-center gap-2">
                   <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                     Not sure
                   </p>
@@ -229,8 +247,10 @@ export const DemographicStep = () => {
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>
-                          It's absolutely OK not to know<br/> where you are. Tolu
-                          will help you to<br/> figure our exactly where you are in<br/>
+                          It's absolutely OK not to know
+                          <br /> where you are. Tolu will help you to
+                          <br /> figure our exactly where you are in
+                          <br />
                           your journey.
                         </p>
                       </TooltipContent>
@@ -239,8 +259,8 @@ export const DemographicStep = () => {
                 </div>
               </div>
             </div>
-            <div className="flex w-full items-start gap-6 self-stretch">
-              <div className="flex flex-col w-full flex-1 items-start gap-2">
+            <div className="flex items-start self-stretch w-full gap-6">
+              <div className="flex flex-col items-start flex-1 w-full gap-2">
                 <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                   Country *
                 </label>
@@ -259,7 +279,7 @@ export const DemographicStep = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex flex-col w-full flex-1 items-start gap-2">
+              <div className="flex flex-col items-start flex-1 w-full gap-2">
                 <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                   ZIP/Postal Code *
                 </label>
@@ -274,20 +294,54 @@ export const DemographicStep = () => {
               <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Language *
               </label>
-              <Select onValueChange={setLanguage}>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {languages.map((language) => (
-                      <SelectItem key={language} value={language}>
-                        {language}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+
+              <Popover>
+                <PopoverTrigger className="w-full">
+                  <button className="flex min-h-10 w-full items-center font-[Nunito]  rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 gap-2 flex-wrap">
+                    {selectedLanguages.length === 0 ? (
+                      <span className="text-muted-foreground">
+                        Select languages
+                      </span>
+                    ) : (
+                      selectedLanguages.map((lang) => (
+                        <button
+                          key={lang}
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLanguageChange(lang);
+                          }}
+                          className="bg-gray-100 text-black px-2 py-0.5 rounded-md"
+                        >
+                          {lang} ×
+                        </button>
+                      ))
+                    )}
+                    <ChevronDown className="w-4 h-4 ml-auto opacity-60" />
+                  </button>
+                </PopoverTrigger>
+
+                <PopoverContent className="p-1 w-[var(--radix-popover-trigger-width)] font-[Nunito]">
+                  {languages.map((lang) => (
+                    <label
+                      key={lang}
+                      className={cn(
+                        "relative flex w-full items-center py-1.5 pl-8 pr-2 text-sm transition-colors rounded-md",
+                        "hover:!text-blue-500 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        selectedLanguages.includes(lang) &&
+                          "bg-accent text-accent-foreground"
+                      )}
+                    >
+                      <Checkbox
+                        checked={selectedLanguages.includes(lang)}
+                        onCheckedChange={() => handleLanguageChange(lang)}
+                        className="absolute left-2 flex items-center justify-center w-4 h-4 -translate-y-1/2 border-sm rounded-sm top-1/2 hover:!border-blue-500 border-gray-200 "
+                      />
+                      {lang}
+                    </label>
+                  ))}
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="flex w-full flex-col items-start gap-[10px]">
               <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">

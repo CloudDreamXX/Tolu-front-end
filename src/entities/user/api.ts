@@ -38,10 +38,7 @@ export class UserService {
       success: boolean;
       message: string;
       email: string;
-    }>(
-      API_ROUTES.USER.FORGOT_PASSWORD,
-      { email },
-    );
+    }>(API_ROUTES.USER.FORGOT_PASSWORD, { email });
   }
 
   static async setNewPassword(
@@ -51,7 +48,7 @@ export class UserService {
   ): Promise<{ message: string }> {
     return ApiService.post<{ message: string }>(
       API_ROUTES.USER.SET_NEW_PASSWORD,
-      { email, token, new_password },
+      { email, token, new_password }
     );
   }
 
@@ -60,31 +57,25 @@ export class UserService {
   ): Promise<{ success: boolean }> {
     return ApiService.post<{ success: boolean }>(
       API_ROUTES.USER.SIGNUP,
-      userInfo,
+      userInfo
     );
   }
 
   static async verifyEmail({ email, token }: IVerify): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(
-      API_ROUTES.USER.COMPLETE_SIGNUP,
-      {
-        email,
-        token,
-      },
-    );
+    return ApiService.post<AuthResponse>(API_ROUTES.USER.COMPLETE_SIGNUP, {
+      email,
+      token,
+    });
   }
 
   static async verifyEmailPass({
     email,
     token,
   }: IVerify): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(
-      API_ROUTES.USER.VERIFY_RESET_TOKEN,
-      {
-        email,
-        token,
-      },
-    );
+    return ApiService.post<AuthResponse>(API_ROUTES.USER.VERIFY_RESET_TOKEN, {
+      email,
+      token,
+    });
   }
 
   static async onboardUser(

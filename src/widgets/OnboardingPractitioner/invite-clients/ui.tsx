@@ -196,7 +196,12 @@ export const InviteClients = () => {
               Next
             </button>
           </div>
-          <button className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB] font-[Nunito] text-[16px] font-semibold" onClick={() => nav("/onboarding-finish")}>Skip this step</button>
+          <button
+            className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB] font-[Nunito] text-[16px] font-semibold"
+            onClick={() => nav("/onboarding-finish")}
+          >
+            Skip this step
+          </button>
         </div>
       </main>
       <Footer />

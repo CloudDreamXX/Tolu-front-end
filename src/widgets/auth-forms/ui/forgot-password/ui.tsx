@@ -34,7 +34,9 @@ export const ForgotPassword = () => {
     <div className="w-full h-screen flex items-start py-0">
       <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
         <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white font-open text-center text-[96px] font-bold">TOLU</h1>
+          <h1 className="text-white font-open text-center text-[96px] font-bold">
+            TOLU
+          </h1>
           <h3 className="capitalize text-white font-open text-center text-[32px] font-medium">
             THE HOLISTIC MENOPAUSE HEALTH ASSISTANT
           </h3>
@@ -62,7 +64,10 @@ export const ForgotPassword = () => {
               className="px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
             />
             <p className="flex p-[4px] gap-1 justify-end items-center text-black text-[14px] font-normal font-[Nunito]">
-              Didn't get the code?{" "}<span className="cursor-pointer text-[#1C63DB] underline">Resend</span>
+              Didn't get the code?{" "}
+              <span className="cursor-pointer text-[#1C63DB] underline">
+                Resend
+              </span>
             </p>
           </div>
           <div className="flex flex-col items-center gap-[24px] self-stretch">

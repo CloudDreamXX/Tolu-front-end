@@ -174,7 +174,10 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                     {localDate ? format(localDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
+                <PopoverContent
+                  className="w-auto p-0 pointer-events-auto"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={localDate ?? undefined}

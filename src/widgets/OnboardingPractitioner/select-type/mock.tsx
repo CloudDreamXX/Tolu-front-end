@@ -73,24 +73,28 @@ export const titlesAndIcons = [
     title: "Functional & Holistic Health Practitioners",
     icon: <Leaf />,
     options: FunctionalOptions,
-    tooltipContent: "For those trained in integrative\nframeworks and root-cause resolution."
+    tooltipContent:
+      "For those trained in integrative\nframeworks and root-cause resolution.",
   },
   {
     title: "Lifestyle, Mind-Body, and Wellness Coaches",
     icon: <Brain />,
     options: LifestyleOptions,
-    tooltipContent: "Supporting behavioral change, stress\nreduction, and nervous system balance."
+    tooltipContent:
+      "Supporting behavioral change, stress\nreduction, and nervous system balance.",
   },
   {
     title: "Women's Health & Specialty Coaches",
     icon: <WomansLine />,
     options: WomensOptions,
-    tooltipContent: "Serving women through transitions like\nperimenopause, menopause, and\nfertility journeys."
+    tooltipContent:
+      "Serving women through transitions like\nperimenopause, menopause, and\nfertility journeys.",
   },
   {
     title: "Other",
     icon: <Chemistry />,
     options: OtherOptions,
-    tooltipContent: "For professionals who support\nwellness but don’t fall into traditional\ncategories."
+    tooltipContent:
+      "For professionals who support\nwellness but don’t fall into traditional\ncategories.",
   },
 ];

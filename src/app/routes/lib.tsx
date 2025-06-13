@@ -128,10 +128,7 @@ export const AppRoutes = () => {
           </MainLayout>
         }
       >
-        <Route
-          path="/health-snapshot"
-          element={<HealthSnapshot />}
-        />
+        <Route path="/health-snapshot" element={<HealthSnapshot />} />
       </Route>
 
       {/* 404 route */}

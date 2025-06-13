@@ -24,7 +24,8 @@ export const PriceCard: React.FC<PriceCardProps> = ({
       className={clsx(
         "relative w-full overflow-hidden rounded-[16px] border transition-shadow",
         {
-          "border-[4px] border-[#1C63DB] bg-white shadow-[0px_0px_20px_rgba(0,143,246,0.5)]": active,
+          "border-[4px] border-[#1C63DB] bg-white shadow-[0px_0px_20px_rgba(0,143,246,0.5)]":
+            active,
           "border-[#1C63DB]": !active && second,
           "border-[#AAC6EC]": !active && !second,
         }
