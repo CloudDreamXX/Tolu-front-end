@@ -329,13 +329,13 @@ export const DemographicStep = () => {
                         "relative flex w-full items-center py-1.5 pl-8 pr-2 text-sm transition-colors rounded-md",
                         "hover:!text-blue-500 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
                         selectedLanguages.includes(lang) &&
-                          "bg-accent text-accent-foreground"
+                          "bg-accent text-accent-foreground text-blue-500 "
                       )}
                     >
                       <Checkbox
                         checked={selectedLanguages.includes(lang)}
                         onCheckedChange={() => handleLanguageChange(lang)}
-                        className="absolute left-2 flex items-center justify-center w-4 h-4 -translate-y-1/2 border-sm rounded-sm top-1/2 hover:!border-blue-500 border-gray-200 "
+                        className="absolute left-2 flex items-center justify-center w-4 h-4 -translate-y-1/2 rounded-sm top-1/2 hover:!border-blue-500 border-gray-200 border"
                       />
                       {lang}
                     </label>

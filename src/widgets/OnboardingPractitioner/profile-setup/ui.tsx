@@ -292,7 +292,6 @@ export const ProfileSetup = () => {
                   })
                 )
               }
-              arrowTopPosition="72"
             />
             <div className="flex flex-col gap-[8px] w-[100%]">
               <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">

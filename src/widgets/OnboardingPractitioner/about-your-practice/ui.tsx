@@ -1,13 +1,15 @@
-import { HeaderOnboarding } from "../../HeaderOnboarding";
-import { Footer } from "../../Footer";
-import { useEffect, useRef, useState } from "react";
-import UploadCloud from "shared/assets/icons/upload-cloud";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { AuthPageWrapper, Input } from "shared/ui";
+import { Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import LightIcon from "shared/assets/icons/light";
+import UploadCloud from "shared/assets/icons/upload-cloud";
+import { AuthPageWrapper, Input } from "shared/ui";
+import { Footer } from "../../Footer";
+import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { SearchableSelect } from "../components/SearchableSelect";
+import { cn } from "shared/lib";
 
 export const AboutYourPractice = () => {
   const dispatch = useDispatch();
@@ -97,6 +99,10 @@ export const AboutYourPractice = () => {
     }
   };
 
+  const removeFile = (file: File) => {
+    setSelectedFiles((prev) => prev.filter((f) => f !== file));
+  };
+
   const schoolOptions = [
     "Functional Medicine Coaching Academy (FMCA)",
     "Functional Nutrition Alliance (FxNA)",
@@ -109,20 +115,20 @@ export const AboutYourPractice = () => {
     <AuthPageWrapper>
       <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={2} />
-      <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch bg-white shadow-mdp-[40px] md:shadow-none md:bg-transparent py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0">
+      <main className="flex flex-col items-center self-stretch justify-center flex-1 w-full gap-6 mx-auto max-w-[700px]">
         {!isMobile && (
           <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
             About your practice
           </h1>
         )}
-        <div className="w-full md:w-[700px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px]">
+        <div className="flex flex-col items-start w-full gap-6 p-4 bg-white shadow-md rounded-3xl sm:p-10">
           {isMobile && (
             <h1 className="flex text-center font-inter text-[24px] font-medium text-black">
               About your practice
             </h1>
           )}
           {/* School */}
-          <div className="flex flex-col items-start self-stretch md:mt-[40px] md:ml-[32px] w-full md:w-[620px] relative">
+          <div className="flex flex-col items-start self-stretch w-full md:w-[620px] relative">
             <label className="peer-focus:text-[#1D1D1F] ${labelStyle} font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block">
               Which school did you graduate from? *
             </label>
@@ -203,14 +209,16 @@ export const AboutYourPractice = () => {
           </div>
 
           {/* File Upload */}
-          <div className="flex flex-col gap-2 items-start w-full">
-            <p className="md:ml-[32px] font-[Nunito] text-[16px] font-medium text-black ">
+          <div className="flex flex-col items-start w-full gap-2">
+            <p className="font-[Nunito] text-[16px] font-medium text-black ">
               Upload a certificate or license *
             </p>
             <div
-              className={`flex py-[16px] md:ml-[32px] w-full md:w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
+              className={cn(
+                "flex py-[16px] w-full md:w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed",
+                "bg-white cursor-pointer transition",
                 dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
-              } bg-white cursor-pointer transition`}
+              )}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -230,47 +238,47 @@ export const AboutYourPractice = () => {
                 </div>
 
                 <div className="flex flex-col items-center gap-[4px]">
-                  {selectedFiles.length > 0 ? (
-                    <>
-                      <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                        Uploaded files:
-                      </p>
-                      <ul className="text-[#1C63DB] font-[Nunito] text-[14px] font-normal list-disc pl-4 text-left w-full">
-                        {selectedFiles.map((file, i) => (
-                          <li key={i} className="truncate w-full max-w-[500px]">
-                            {file.name}
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                        Click to upload
-                      </p>
-                      <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                        or drag and drop
-                      </p>
-                      <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                        PDF, JPG or PNG
-                      </p>
-                    </>
-                  )}
+                  <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                    Click to upload
+                  </p>
+                  <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
+                    or drag and drop
+                  </p>
+                  <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
+                    PDF, JPG or PNG
+                  </p>
                 </div>
               </div>
             </div>
+            {selectedFiles.length > 0 && (
+              <div className="flex flex-wrap w-full h-auto gap-4">
+                {selectedFiles.map((file, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={file.name}
+                      className="object-cover rounded-lg w-[114px] h-[114px] lg:w-[150px] lg:h-[150px]"
+                    />
+                    <Trash2
+                      className="absolute w-8 h-8 p-1 bg-white rounded-md cursor-pointer top-1 right-1 stroke-error"
+                      onClick={() => removeFile(file)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="flex ml-[40px] text-[#1C63DB]">
+          <div className="flex items-center text-[#1C63DB] gap-2 w-full">
             <LightIcon />
-            <p className="font-[Nunito] text-[16px] font-medium ml-[8px]">
+            <p className="font-[Nunito] text-[16px] font-medium">
               Data is securely saved with a HIPAA-compliant notice
             </p>
           </div>
           {/* Recent clients */}
-          <div className="flex flex-col items-start self-stretch gap-[16px] md:ml-[32px]">
+          <div className="flex flex-col items-start self-stretch gap-[16px] ">
             <SearchableSelect
-              width="w-full md:w-[620px]"
+              width="w-full"
               label="How many clients have you helped within the past 3 months? *"
               options={["0-5", "6-15", "16-30", "31-50", "50+"]}
               value={school}
@@ -279,9 +287,9 @@ export const AboutYourPractice = () => {
           </div>
 
           {/* Target clients */}
-          <div className="flex flex-col items-start self-stretch gap-[16px] md:ml-[32px]">
+          <div className="flex flex-col items-start self-stretch gap-[16px]">
             <SearchableSelect
-              width="w-full md:w-[620px]"
+              width="w-full"
               label="How many new clients do you hope to acquire over the next 3
               months? *"
               options={["0-5", "6-15", "16-30", "31-50", "50+"]}
@@ -291,11 +299,11 @@ export const AboutYourPractice = () => {
           </div>
 
           {/* Radio - uses labs/supplements */}
-          <div className="flex flex-col md:ml-[32px] items-start self-stretch md:mb-[40px] gap-[16px]">
+          <div className="flex flex-col  items-start self-stretch md:mb-[40px] gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium text-black">
               Do you currently use labs or supplementation in your practice? *
             </p>
-            <div className="flex flex-col md:flex-row items-start md:items-center md:gap-[60px]">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-[60px]">
               {["Yes", "No", "Planning to"].map((option) => (
                 <label
                   key={option}
