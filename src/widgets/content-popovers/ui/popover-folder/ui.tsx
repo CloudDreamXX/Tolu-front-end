@@ -1,3 +1,4 @@
+import { NewFolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
 import { RootState } from "entities/store";
 import { Edit, Trash2 } from "lucide-react";
@@ -19,7 +20,6 @@ import {
   Badge,
 } from "shared/ui";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
-import { setFolders, NewFolder } from "entities/folder";
 
 interface PopoverFolderProps {
   setFolderId?: (folderId: string) => void;
@@ -39,6 +39,9 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   );
   const token = useSelector((state: RootState) => state.user.token);
   const [createPopup, setCreatePopup] = useState<boolean>(false);
+  const [subfolderPopup, setSubfolderPopup] = useState<boolean>(false);
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
+  const [parentFolderId, setParentFolderId] = useState<string | null>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -74,17 +77,18 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     return folderData.filter((folder) =>
       folder.name.toLowerCase().includes(search.toLowerCase())
     );
-  }, [search, foldersMap]);
+  }, [search, folderData]);
 
   const toggleFolderSelection = (folder: {
     name: string;
     id: string;
     subfolders?: { name: string; id: string }[];
   }) => {
-    if (subfolders.length > 0) {
+    if (subfolderPopup) {
       setSelectedFolder(folder.id);
       setSelectedFolderName(folder.name);
-      setFolderId?.(folder.id);
+      setFolderId && setFolderId(folder.id);
+      setPopoverOpen(false);
       return;
     }
 
@@ -92,7 +96,11 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       setSelectedFolder(null);
       setSubfolders(folder.subfolders);
       setSelectedFolderName(folder.name);
+      setParentFolderId(folder.id);
+      setSubfolderPopup(true);
     } else {
+      setParentFolderId(folder.id);
+      setSelectedFolderName(folder.name);
       toast({
         title: "Please add a subfolder",
         description: "You must create or select a subfolder to proceed.",
@@ -106,16 +114,29 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       const newFolder: NewFolder = {
         name: name,
         description: description,
-        parent_folder_id: selectedFolder as string,
+        parent_folder_id: parentFolderId as string,
       };
+
       const response = await FoldersService.createFolder(newFolder, token);
       const newFolderId = response.folder.id;
-      setFolderId?.(newFolderId);
+
+      setFolderId && setFolderId(newFolderId);
+      setSelectedFolder(newFolderId);
+
       toast({ title: "Created successfully" });
       setCreatePopup(false);
 
       const folderResponse = await FoldersService.getFolders();
       dispatch(setFolders(folderResponse));
+
+      const updatedParentFolder = Object.values(folderResponse)
+        .flat()
+        .find((folder) => folder.id === parentFolderId);
+
+      if (updatedParentFolder && updatedParentFolder.subfolders) {
+        setSubfolders(updatedParentFolder.subfolders);
+        setSubfolderPopup(true);
+      }
     } catch (error) {
       console.error("Error creating a folder:", error);
       toast({
@@ -127,12 +148,20 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   };
 
   const handleBackClick = () => {
+    setSubfolderPopup(false);
     setSubfolders([]);
+    setParentFolderId(null);
+  };
+
+  const handleCreateSubfolder = (parentId: string, parentName: string) => {
+    setParentFolderId(parentId);
+    setSelectedFolderName(parentName);
+    setCreatePopup(true);
   };
 
   return (
     <>
-      <Popover>
+      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
         <PopoverTrigger asChild>
           {customTrigger ?? (
             <Button
@@ -152,87 +181,101 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
           )}
         </PopoverTrigger>
         <PopoverContent className="w-[526px] p-6 flex flex-col gap-6">
-          <Input
-            variant="bottom-border"
-            placeholder="Choose a folder"
-            className="py-1/2 h-[26px] pl-2 bg-transparent"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[250px] gap-x-6 gap-y-2">
-            {filteredFolders.map((folder) => (
-              <button
-                className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
-                  selectedFolder === folder.id
-                    ? "bg-blue-50 border border-blue-200"
-                    : "bg-white"
-                }`}
-                key={folder.id}
-                onClick={() => toggleFolderSelection(folder)}
-              >
-                <span className="text-lg font-semibold text-gray-900 truncate">
-                  {folder.name}
-                </span>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-8 h-8 p-0 rounded-full"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Dots />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
-                    <Button
-                      variant="ghost"
-                      className="items-center justify-start w-full h-8 p-1 font-medium"
-                      onClick={() => setCreatePopup(true)}
-                    >
-                      <Plus width={24} height={24} /> Add subfolder
-                    </Button>
-                    {folder.subfolders && folder.subfolders.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        className="items-center justify-start w-full h-8 p-1 font-medium"
-                        onClick={() => toggleFolderSelection(folder)}
-                      >
-                        <SubfolderIcon width={24} height={24} /> View subfolders
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      className="items-center justify-start w-full h-8 p-1 font-medium"
-                    >
-                      <Edit width={24} height={24} /> Rename
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      <Trash2
-                        width={24}
-                        height={24}
-                        className="text-destructive"
-                      />{" "}
-                      Delete
-                    </Button>
-                  </PopoverContent>
-                </Popover>
-              </button>
-            ))}
-          </div>
-
-          {subfolders.length > 0 && (
-            <PopoverContent className="w-[526px] h-[261px] p-6 flex flex-col gap-6">
-              <button onClick={handleBackClick}>
-                <ArrowBack color="#1D1D1F" />
-              </button>
-              <div className="text-[18px] font-semibold text-black flex justify-between">
-                {selectedFolderName}
-                <Plus />
+          {!subfolderPopup ? (
+            <>
+              <Input
+                variant="bottom-border"
+                placeholder="Choose a folder"
+                className="py-1/2 h-[26px] pl-2 bg-transparent"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[250px] gap-x-6 gap-y-2">
+                {filteredFolders.map((folder) => (
+                  <button
+                    className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
+                      selectedFolder === folder.id
+                        ? "bg-blue-50 border border-blue-200"
+                        : "bg-white"
+                    }`}
+                    key={folder.id}
+                    onClick={() => toggleFolderSelection(folder)}
+                  >
+                    <span className="text-lg font-semibold text-gray-900 truncate">
+                      {folder.name}
+                    </span>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-8 h-8 p-0 rounded-full"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Dots />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
+                        <Button
+                          variant="ghost"
+                          className="items-center justify-start w-full h-8 p-1 font-medium"
+                          onClick={() =>
+                            handleCreateSubfolder(folder.id, folder.name)
+                          }
+                        >
+                          <Plus width={24} height={24} /> Add subfolder
+                        </Button>
+                        {folder.subfolders && folder.subfolders.length > 0 && (
+                          <Button
+                            variant="ghost"
+                            className="items-center justify-start w-full h-8 p-1 font-medium"
+                            onClick={() => toggleFolderSelection(folder)}
+                          >
+                            <SubfolderIcon width={24} height={24} /> View
+                            subfolders
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          className="items-center justify-start w-full h-8 p-1 font-medium"
+                        >
+                          <Edit width={24} height={24} /> Rename
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          <Trash2
+                            width={24}
+                            height={24}
+                            className="text-destructive"
+                          />{" "}
+                          Delete
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
+                  </button>
+                ))}
               </div>
-              <div className="grid w-full grid-cols-2 overflow-y-auto gap-x-6 gap-y-2">
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <button onClick={handleBackClick}>
+                  <ArrowBack color="#1D1D1F" />
+                </button>
+                <div className="text-[18px] font-semibold text-black flex items-center gap-2">
+                  {selectedFolderName}
+                  <button
+                    onClick={() =>
+                      handleCreateSubfolder(parentFolderId!, selectedFolderName)
+                    }
+                    className="p-1 rounded hover:bg-gray-100"
+                  >
+                    <Plus />
+                  </button>
+                </div>
+              </div>
+              <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
                 {subfolders.map((subfolder) => (
                   <button
                     className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
@@ -279,7 +322,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                   </button>
                 ))}
               </div>
-            </PopoverContent>
+            </>
           )}
         </PopoverContent>
       </Popover>

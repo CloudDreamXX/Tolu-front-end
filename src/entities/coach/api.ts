@@ -187,7 +187,7 @@ export class CoachService {
               const jsonData = JSON.parse(line.substring(5).trim());
 
               folderId = jsonData.folder_id;
-              documentId = jsonData.saved_content_id;
+              documentId = jsonData.content_id;
               chatId = jsonData.chat_id;
 
               if (onChunk) onChunk(jsonData);
