@@ -11,12 +11,15 @@ export const countries = [
 
 export const languages = [
   "English",
-  "English, French",
-  "German",
-  "Japanese",
-  "Portuguese",
-  "Afrikaans, English",
-  "Hindi, English",
+  "Spanish (Español)",
+  "French (Français)",
+  "German (Deutsch)",
+  "Portuguese (Português)",
+  "Italian (Italiano)",
+  "Dutch (Nederlands)",
+  "Polish (Polski)",
+  "Ukrainian (Українська)",
+  "Chinese (中文)",
 ];
 
 export const raceEthnicity = [

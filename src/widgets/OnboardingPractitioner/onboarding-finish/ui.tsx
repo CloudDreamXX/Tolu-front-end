@@ -1,3 +1,4 @@
+import { toast } from "shared/lib/hooks/use-toast";
 import { Footer } from "../../Footer";
 import { Header } from "../../Header";
 import { useNavigate } from "react-router-dom";
@@ -16,32 +17,39 @@ export const OnboardingFinish = () => {
   const handleLastClick = async () => {
     try {
       // const message = await UserService.onboardUser(coachOnboarding, token);
-      nav("/content-manager/published");
+      nav("/content-manager/library");
+      toast({
+        title: "Onboarding successful",
+      });
     } catch (error) {
       console.error("Error during onboarding:", error);
+      toast({
+        variant: "destructive",
+        title: "Error during onboarding",
+        description: "Error during onboarding. Please try again",
+      });
     }
   };
   return (
     <AuthPageWrapper>
-      <Header />
-      <main className="flex flex-col items-center flex-1 justify-center self-stretch mt-20">
-        <div className="flex flex-col items-center justify-center gap-[32px] py-[56px] px-[100px] rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
-          <div className="flex flex-col items-center gap-[24px]">
-            <h3 className="w-[860px] text-black font-inter text-center text-[48px]/[59px] font-semibold">
+      <Header description="COACH ADMIN" />
+      <main className="absolute bottom-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:right-auto md:w-full xl:w-[940px] flex flex-col items-center self-stretch">
+        <div className="flex flex-col items-center justify-center gap-[40px] md:mx-[45px] xl:mx-0 md:gap-[32px] py-[24px] px-[24px] md:p-[40px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
+          <div className="flex flex-col items-center gap-[40px] md:gap-[24px] ">
+            <h3 className="w-full md:w-[597px] xl:w-[860px] text-black font-inter text-center text-[32px] md:text-[48px] font-semibold">
               You’re all set!
             </h3>
-            <p className="self-stretch text-center text-black font-[Nunito] text-[24px] font-medium ">
+            <p className="self-stretch text-center text-black font-[Nunito] text-[16px] md:text-[24px] font-medium ">
               We’ve set up your dashboard with tools, templates, and content
-              tailored to:
-              <br />
-              <span className="self-stretch text-center text-black font-[Nunito] text-[24px] font-bold">
+              tailored to: {""}
+              <span className="self-stretch text-center text-black font-[Nunito] text-[16px] md:text-[24px] font-bold">
                 Functional Nutrition and Lifestyle Support for Menopause Health
               </span>
             </p>
           </div>
           <button
             onClick={handleLastClick}
-            className="flex justify-center items-center h-[44px] w-[250px] p-[16px] rounded-full bg-[#1C63DB] text-white"
+            className="flex justify-center items-center h-[44px] w-full md:w-[250px] p-[16px] rounded-full bg-[#1C63DB] text-white"
           >
             Go to My Dashboard
           </button>

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { IFolder } from "../document-card";
+import { IFolderMock } from "../document-card";
 import { Card, CardContent } from "shared/ui";
 import {
   renderDate,
@@ -13,7 +13,7 @@ import { cn } from "shared/lib";
 import { ArchiveRestore } from "lucide-react";
 
 interface FolderCardProps {
-  folder: IFolder;
+  folder: IFolderMock;
   withText?: boolean;
 }
 

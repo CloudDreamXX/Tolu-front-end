@@ -6,6 +6,7 @@ import Img2 from "shared/assets/images/card2.png";
 import Img3 from "shared/assets/images/card3.png";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "shared/lib/hooks/use-toast";
 // import { useSelector } from "react-redux";
 // import { RootState } from "entities/store";
 // import { UserService } from "entities/user";
@@ -18,8 +19,16 @@ export const FinishClientOnboarding = () => {
     const handleLast = async () => {
       try {
         // const message = await UserService.onboardClient(client, token);
+        toast({
+          title: "Onboarding successful",
+        });
       } catch (error) {
         console.error("Error during onboarding:", error);
+        toast({
+          variant: "destructive",
+          title: "Error during onboarding",
+          description: "Error during onboarding. Please try again",
+        });
       }
     };
     handleLast();

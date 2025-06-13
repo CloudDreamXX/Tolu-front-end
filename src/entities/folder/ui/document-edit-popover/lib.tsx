@@ -1,5 +1,5 @@
 import Expert from "shared/assets/icons/expert";
-import Eye from "shared/assets/icons/eye";
+import { Eye } from "shared/assets/icons/eye";
 import Edit from "shared/assets/icons/edit";
 import { Archive, ArrowRight, Trash2 } from "lucide-react";
 import Duplicate from "shared/assets/icons/duplicate";

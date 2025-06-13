@@ -12,21 +12,21 @@ export const MiddleCard: React.FC<MiddleCardProps> = ({
   handleNext,
 }) => {
   return (
-    <div className="flex flex-col w-[900px] items-center justify-center gap-[40px] py-[56px] px-[100px] rounded-[30px] border-[2px] border-[#F3F6FB] bg-white">
-      <div className="flex flex-col justify-between items-center shrink-0 w-[548px] h-[269px] gap-[24px]">
+    <div className="flex flex-col w-full xl:w-[900px] items-center justify-center gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[45px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white">
+      <div className="flex flex-col items-center shrink-0 w-full md:w-[548px] md:h-[269px] gap-[24px]">
         {icon}
-        <div className="flex w-[460px] flex-col items-center gap-[16px]">
-          <h2 className="text-center text-black font-[Nunito] text-[40px]/[56px] text-nowrap font-bold">
+        <div className="flex md:w-[460px] flex-col items-center gap-[16px]">
+          <h2 className="text-center text-black font-[Nunito] text-[24px] md:text-[40px]/[56px] text-nowrap font-bold">
             {title}
           </h2>
-          <p className="text-center text-[24px] text-[#000000]">
+          <p className="text-center text-[16px] md:text-[24px] text-[#000000]">
             {description}
           </p>
         </div>
       </div>
       <button
         onClick={handleNext}
-        className="flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-[250px] h-[44px] p-[16px] shrink-0"
+        className="flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] shrink-0"
       >
         Continue
       </button>

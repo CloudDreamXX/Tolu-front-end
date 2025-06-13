@@ -3,12 +3,14 @@ import UnselectIcon from "shared/assets/icons/unselect-blue";
 interface ButtonProps {
   children: React.ReactNode;
   selected: boolean;
+  disabled?: boolean;
   onClick?: () => void;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   children,
   selected,
+  disabled,
   onClick,
 }) => {
   const baseClasses =
@@ -18,8 +20,14 @@ export const Button: React.FC<ButtonProps> = ({
     ? "bg-[rgba(0,143,246,0.10)] text-[#1C63DB] border-[transparent]"
     : "bg-transparent text-[#2D2D2D]";
 
+  const disabledClasses = disabled ? "opacity-[0.4]" : "";
+
   return (
-    <button onClick={onClick} className={`${baseClasses} ${selectedClasses}`}>
+    <button
+      onClick={onClick}
+      className={`${baseClasses} ${selectedClasses} ${disabledClasses}`}
+      disabled={disabled}
+    >
       {children}
       {selected && <UnselectIcon />}
     </button>

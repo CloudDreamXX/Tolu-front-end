@@ -30,28 +30,31 @@ export const ForgotPassword = () => {
       });
     }
   };
+
   return (
-    <div className="w-full h-screen flex items-start py-0">
-      <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
-        <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white font-open text-center text-[96px] font-bold">
+    <div className="flex flex-col w-full h-screen xl:flex-row">
+      <div className="w-full xl:max-w-[665px] h-[150px] xl:h-full bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
+        <aside className="py-[10px] px-[95px] xl:p-[40px] flex items-center justify-center flex-col">
+          <h1 className="text-white font-open text-center text-[44.444px] xl:text-[96px] font-bold">
             TOLU
           </h1>
-          <h3 className="capitalize text-white font-open text-center text-[32px] font-medium">
+          <h3 className="capitalize font-open text-white text-center text-[14px] md:text-[15px] xl:text-[32px] font-semibold xl:font-medium">
             THE HOLISTIC MENOPAUSE HEALTH ASSISTANT
           </h3>
         </aside>
       </div>
-      <div className="w-full h-full flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
+
+      <div className="w-full h-full flex justify-center xl:items-center flex-1 bg-[linear-gradient(0deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.10)_100%),#FFF]">
         <form
-          className="w-[550px] flex flex-col items-center gap-[60px]"
+          className="w-full md:w-[550px] flex flex-col mt-[44px] md:mt-[121px] xl:mt-0 py-[24px] px-[16px] md:p-0 xl:items-center gap-[40px] xl:gap-[60px]"
           onSubmit={handleSubmit}
         >
-          <h3 className="text-black text-center font-inter font-semibold text-[40px]">
-            Forgot password
+          <h3 className="text-black text-center font-inter font-semibold text-[28px] md:text-[40px]">
+            Forgot Password
           </h3>
-          <div className="flex flex-col items-start gap-[10] self-stretch">
-            <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+
+          <div className="flex flex-col items-start gap-[4px] w-full">
+            <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
               Email
             </label>
             <Input
@@ -61,46 +64,44 @@ export const ForgotPassword = () => {
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setEmail(event.target.value)
               }
-              className="px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+              className="px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white border border-[#DFDFDF] outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in w-full"
             />
-            <p className="flex p-[4px] gap-1 justify-end items-center text-black text-[14px] font-normal font-[Nunito]">
+            <p className="flex px-[4px] pt-[4px] text-black text-[14px] font-normal font-[Nunito] w-full xl:justify-end">
               Didn't get the code?{" "}
-              <span className="cursor-pointer text-[#1C63DB] underline">
+              <span className="cursor-pointer text-[#1C63DB] underline ml-1">
                 Resend
               </span>
             </p>
           </div>
-          <div className="flex flex-col items-center gap-[24px] self-stretch">
-            <div className="flex items-start gap-[24px]">
+
+          <div className="flex flex-col items-center gap-[24px] w-full mt-auto md:mt-0">
+            <div className="flex flex-row gap-[8px] md:gap-[24px] w-full md:justify-center">
               <button
                 type="button"
                 onClick={() => nav(-1)}
-                className="bg-[#008FF61A] w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#1C63DB] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"
+                className="bg-[#008FF61A] w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#1C63DB] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"
               >
                 Back
               </button>
               <button
-                onClick={handleSubmit}
-                className={
+                type="submit"
+                className={`w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold ${
                   email
-                    ? "bg-[#1C63DB] duration-200 ease-in w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-white gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"
-                    : "duration-200 ease-in bg-[#D5DAE2] w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#5F5F65] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"
-                }
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5F5F65]"
+                }`}
               >
                 Send
               </button>
             </div>
-            <p className="text-[14px] font-[Nunito] font-medium">
+
+            <p className="text-black font-[Nunito] text-[14px] font-medium">
               Remember your password?{" "}
-              <Link
-                to="/auth"
-                className="cursor-pointer text-[#1C63DB] underline"
-              >
+              <Link to="/auth" className="underline text-[#1C63DB]">
                 Log in
               </Link>
             </p>
           </div>
-          <div className="flex flex-col items-center gap-[24px] slef-stretch"></div>
         </form>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IUser } from "./model";
-import { getUserRole } from "shared/lib";
 
 interface InitialState {
   user: IUser | null;
@@ -29,7 +28,7 @@ export const userSlice = createSlice({
         state.userType = { role: "guest" };
       } else {
         state.userType = {
-          role: getUserRole(roleID),
+          role: action.payload.user.roleName,
         };
       }
     },
@@ -42,7 +41,7 @@ export const userSlice = createSlice({
 
       if (roleID) {
         state.userType = {
-          role: getUserRole(roleID),
+          role: action.payload.user.roleName,
         };
       }
     },

@@ -1,8 +1,15 @@
-import { Edit, PlusIcon, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { FoldersService } from "entities/folder/api";
+import { RootState } from "entities/store";
+import { Edit, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import ArrowBack from "shared/assets/icons/arrowBack";
 import ClosedFolder from "shared/assets/icons/closed-folder";
 import Dots from "shared/assets/icons/dots";
+import { Eye } from "shared/assets/icons/eye";
 import Plus from "shared/assets/icons/plus";
+import SubfolderIcon from "shared/assets/icons/subfolders";
+import { toast } from "shared/lib/hooks/use-toast";
 import {
   Button,
   Popover,
@@ -11,124 +18,278 @@ import {
   Input,
   Badge,
 } from "shared/ui";
+import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
+import { setFolders, NewFolder } from "entities/folder";
 
 interface PopoverFolderProps {
+  setFolderId?: (folderId: string) => void;
   customTrigger?: React.ReactNode;
 }
 
 export const PopoverFolder: React.FC<PopoverFolderProps> = ({
+  setFolderId,
   customTrigger,
 }) => {
   const [search, setSearch] = useState<string>("");
-  const [folders] = useState<string[]>([
-    "Mood Sings",
-    "Hormones 101",
-    "Menopause Migraines",
-    "Lifestyle",
-    "Anxiety",
-    "Food Sensitivities",
-    "Hot Flashes",
-    "Sleep Disturbance",
-  ]);
-  const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+  const { foldersMap } = useSelector((state: RootState) => state.folder);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [selectedFolderName, setSelectedFolderName] = useState<string>("");
+  const [subfolders, setSubfolders] = useState<{ name: string; id: string }[]>(
+    []
+  );
+  const token = useSelector((state: RootState) => state.user.token);
+  const [createPopup, setCreatePopup] = useState<boolean>(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await FoldersService.getFolders(token);
+        dispatch(setFolders(response));
+      } catch (error) {
+        console.error("Error fetching folders:", error);
+      }
+    };
+
+    fetchFolders();
+  }, [token, dispatch]);
+
+  const folderData = Object.keys(foldersMap)
+    .map((category) =>
+      foldersMap[category].map(
+        (folder: {
+          name: string;
+          id: string;
+          subfolders: { name: string; id: string }[];
+        }) => ({
+          name: folder.name,
+          id: folder.id,
+          subfolders: folder.subfolders || [],
+        })
+      )
+    )
+    .flat();
 
   const filteredFolders = useMemo(() => {
-    return folders.filter((folder) =>
-      folder.toLowerCase().includes(search.toLowerCase())
+    return folderData.filter((folder) =>
+      folder.name.toLowerCase().includes(search.toLowerCase())
     );
-  }, [search, folders]);
+  }, [search, foldersMap]);
 
-  const toggleFolderSelection = (folder: string) => {
-    setSelectedFolders((prev) =>
-      prev.includes(folder)
-        ? prev.filter((f) => f !== folder)
-        : [...prev, folder]
-    );
+  const toggleFolderSelection = (folder: {
+    name: string;
+    id: string;
+    subfolders?: { name: string; id: string }[];
+  }) => {
+    if (subfolders.length > 0) {
+      setSelectedFolder(folder.id);
+      setSelectedFolderName(folder.name);
+      setFolderId?.(folder.id);
+      return;
+    }
+
+    if (folder.subfolders && folder.subfolders.length > 0) {
+      setSelectedFolder(null);
+      setSubfolders(folder.subfolders);
+      setSelectedFolderName(folder.name);
+    } else {
+      toast({
+        title: "Please add a subfolder",
+        description: "You must create or select a subfolder to proceed.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const createFolder = async (name: string, description: string) => {
+    try {
+      const newFolder: NewFolder = {
+        name: name,
+        description: description,
+        parent_folder_id: selectedFolder as string,
+      };
+      const response = await FoldersService.createFolder(newFolder, token);
+      const newFolderId = response.folder.id;
+      setFolderId?.(newFolderId);
+      toast({ title: "Created successfully" });
+      setCreatePopup(false);
+
+      const folderResponse = await FoldersService.getFolders(token);
+      dispatch(setFolders(folderResponse));
+    } catch (error) {
+      console.error("Error creating a folder:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to create a folder",
+        description: "Failed to create a folder. Please try again.",
+      });
+    }
+  };
+
+  const handleBackClick = () => {
+    setSubfolders([]);
   };
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        {customTrigger ?? (
-          <Button
-            variant="secondary"
-            className="w-12 h-12 p-[10px] rounded-full relative"
-          >
-            <ClosedFolder />
-            {selectedFolders.length > 0 && (
-              <Badge
-                variant="destructive"
-                className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
-              >
-                {selectedFolders.length}
-              </Badge>
-            )}
-          </Button>
-        )}
-      </PopoverTrigger>
-      <PopoverContent className="w-[526px] p-6 flex flex-col gap-6">
-        <Input
-          variant="bottom-border"
-          iconRight={<PlusIcon className="relative left-3" />}
-          placeholder="Choose a folder"
-          className="py-1/2 h-[26px] pl-2 bg-transparent"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[250px] gap-x-6 gap-y-2">
-          {filteredFolders.map((folder, _) => (
-            <button
-              className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
-                selectedFolders.includes(folder)
-                  ? "bg-blue-50 border border-blue-200"
-                  : "bg-white"
-              }`}
-              key={folder}
-              onClick={() => toggleFolderSelection(folder)}
+    <>
+      <Popover>
+        <PopoverTrigger asChild>
+          {customTrigger ?? (
+            <Button
+              variant="secondary"
+              className="w-12 h-12 p-[10px] rounded-full relative"
             >
-              <span className="text-lg font-semibold text-gray-900 truncate">
-                {folder}
-              </span>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="w-8 h-8 p-0 rounded-full"
-                    onClick={(e) => e.stopPropagation()}
+              <ClosedFolder />
+              {selectedFolder && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
+                >
+                  1
+                </Badge>
+              )}
+            </Button>
+          )}
+        </PopoverTrigger>
+        <PopoverContent className="w-[526px] p-6 flex flex-col gap-6">
+          <Input
+            variant="bottom-border"
+            placeholder="Choose a folder"
+            className="py-1/2 h-[26px] pl-2 bg-transparent"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[250px] gap-x-6 gap-y-2">
+            {filteredFolders.map((folder) => (
+              <button
+                className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
+                  selectedFolder === folder.id
+                    ? "bg-blue-50 border border-blue-200"
+                    : "bg-white"
+                }`}
+                key={folder.id}
+                onClick={() => toggleFolderSelection(folder)}
+              >
+                <span className="text-lg font-semibold text-gray-900 truncate">
+                  {folder.name}
+                </span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-8 h-8 p-0 rounded-full"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Dots />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
+                    <Button
+                      variant="ghost"
+                      className="items-center justify-start w-full h-8 p-1 font-medium"
+                      onClick={() => setCreatePopup(true)}
+                    >
+                      <Plus width={24} height={24} /> Add subfolder
+                    </Button>
+                    {folder.subfolders && folder.subfolders.length > 0 && (
+                      <Button
+                        variant="ghost"
+                        className="items-center justify-start w-full h-8 p-1 font-medium"
+                        onClick={() => toggleFolderSelection(folder)}
+                      >
+                        <SubfolderIcon width={24} height={24} /> View subfolders
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      className="items-center justify-start w-full h-8 p-1 font-medium"
+                    >
+                      <Edit width={24} height={24} /> Rename
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <Trash2
+                        width={24}
+                        height={24}
+                        className="text-destructive"
+                      />{" "}
+                      Delete
+                    </Button>
+                  </PopoverContent>
+                </Popover>
+              </button>
+            ))}
+          </div>
+
+          {subfolders.length > 0 && (
+            <PopoverContent className="w-[526px] h-[261px] p-6 flex flex-col gap-6">
+              <button onClick={handleBackClick}>
+                <ArrowBack color="#1D1D1F" />
+              </button>
+              <div className="text-[18px] font-semibold text-black flex justify-between">
+                {selectedFolderName}
+                <Plus />
+              </div>
+              <div className="grid w-full grid-cols-2 overflow-y-auto gap-x-6 gap-y-2">
+                {subfolders.map((subfolder) => (
+                  <button
+                    className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
+                      selectedFolder === subfolder.id
+                        ? "bg-blue-50 border border-blue-200"
+                        : "bg-white"
+                    }`}
+                    key={subfolder.id}
+                    onClick={() => toggleFolderSelection(subfolder)}
                   >
-                    <Dots />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
-                  <Button
-                    variant="ghost"
-                    className="items-center justify-start w-full h-8 p-1 font-medium"
-                  >
-                    <Plus width={24} height={24} /> Add subfolder
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="items-center justify-start w-full h-8 p-1 font-medium"
-                  >
-                    <Edit width={24} height={24} /> Rename
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
-                  >
-                    <Trash2
-                      width={24}
-                      height={24}
-                      className="text-destructive"
-                    />{" "}
-                    Delete
-                  </Button>
-                </PopoverContent>
-              </Popover>
-            </button>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
+                    <span className="text-lg font-semibold text-gray-900 truncate">
+                      {subfolder.name}
+                    </span>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-8 h-8 p-0 rounded-full"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Dots />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
+                        <Button
+                          variant="ghost"
+                          className="items-center justify-start w-full h-8 p-1 font-medium"
+                        >
+                          <Eye /> View source files
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          <Trash2
+                            width={24}
+                            height={24}
+                            className="text-destructive"
+                          />{" "}
+                          Delete
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          )}
+        </PopoverContent>
+      </Popover>
+
+      {createPopup && (
+        <CreateSubfolderPopup
+          onClose={() => setCreatePopup(false)}
+          onComplete={createFolder}
+        />
+      )}
+    </>
   );
 };

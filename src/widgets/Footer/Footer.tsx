@@ -6,14 +6,36 @@ import {
   TooltipTrigger,
 } from "shared/ui/tooltip";
 
-export const Footer = () => {
+type Props = {
+  position?: "top-right" | "top-left" | "bottom-right";
+};
+
+export const Footer: React.FC<Props> = ({ position }) => {
   return (
-    <footer className="fixed bottom-0 right-8 flex pr-[40] pl-[40px] pb-[40px] bg-transparent">
+    <footer
+      className={`flex bg-transparent ${
+        position === "top-left"
+          ? "py-[24px] px-[16px] mb-[24px]"
+          : position === "top-right"
+            ? "fixed top-[24px] right-[19px] z-10"
+            : "fixed bottom-0 right-8 pl-[40px] pb-[40px]"
+      }`}
+    >
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <button className="bg-[#008FF61A] flex p-[24px] items-center justify-center gap-[8px] rounded-full transition-colors duration-200 hover:bg-[#008FF6] hover:bg-opacity-30">
-              <Ai />
+            <button
+              className={`bg-[#008FF61A] flex items-center justify-center gap-[8px] rounded-full transition-colors duration-200 hover:bg-[#008FF6] hover:bg-opacity-30 ${
+                position === "top-left" || position === "top-right"
+                  ? "p-[13px]"
+                  : "p-[24px]"
+              }`}
+            >
+              <Ai
+                size={
+                  position === "top-left" || position === "top-right" ? 15 : 28
+                }
+              />
             </button>
           </TooltipTrigger>
           <TooltipContent>

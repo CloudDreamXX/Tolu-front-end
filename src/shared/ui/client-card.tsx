@@ -54,13 +54,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   const [date, setDate] = useState<Date>();
   const [open, setOpen] = useState(false);
   return (
-    <div
-      className="flex flex-col p-4 justify-between items-start flex-1 rounded-2xl bg-[#F3F7FD] relative"
-      style={{
-        width: width ?? "238px",
-        height: height ?? "160px",
-      }}
-    >
+    <div className="flex flex-col p-4 justify-between items-start flex-1 rounded-2xl bg-[#F3F7FD] relative w-[100%] xl:w-full 3xl:w-[238px] h-[116px] md:h-[155px] xl:h-[100%]">
       {modifiable && (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -164,14 +158,16 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           </DialogContent>
         </Dialog>
       )}
-      <div className="flex items-center gap-1 self-stretch">
-        <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+      <div className="flex items-center justify-between xl:justify-start gap-1 self-stretch">
+        <h3 className="font-[Nunito] text-[12px] md:text-[16px] xl:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
           {title}
         </h3>
-        <InfoIcon />
+        <span className="w-[16px] h-[16px] md:w-[20px] md:h-[20px]">
+          <InfoIcon />
+        </span>
       </div>
-      <div className="flex items-center gap-3">
-        <h2 className="text-[32px]/[44px] font-bold font-[Nunito] text-nowrap text-[#1C63DB]">
+      <div className="flex items-center justify-between xl:justify-start gap-3 w-full">
+        <h2 className="text-[18px] md:text-[24px] xl:text-[32px]/[44px] font-bold font-[Nunito] text-nowrap text-[#1C63DB]">
           {indicator}
         </h2>
         <div

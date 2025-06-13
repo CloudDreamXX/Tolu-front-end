@@ -89,6 +89,28 @@ export class ApiService {
     }
   }
 
+  public static async postFormData<T>(
+    endpoint: string,
+    formData: FormData,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    try {
+      const response: AxiosResponse<T> = await axiosInstance.post(
+        endpoint,
+        formData,
+        {
+          ...config,
+          headers: {
+            ...config?.headers,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
   public static async put<T>(
     endpoint: string,
     data?: any,

@@ -1,6 +1,6 @@
-import { IDocument } from "entities/folder";
+import { IDocumentMock } from "entities/folder";
 
-export const MOCK_DOCUMENT: IDocument[] = [
+export const MOCK_DOCUMENT: IDocumentMock[] = [
   {
     id: "1",
     title: "Understanding menopause symptoms",

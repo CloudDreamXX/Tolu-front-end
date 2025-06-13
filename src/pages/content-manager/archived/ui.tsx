@@ -1,4 +1,4 @@
-import { FolderCard, IFolder } from "entities/folder";
+import { FolderCard, IFolderMock } from "entities/folder";
 import { ChevronDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import AiCreate from "shared/assets/icons/ai-create";
@@ -14,7 +14,7 @@ import {
 import { FOLDERS } from "../folder/mock";
 
 export const ContentManagerArchived: React.FC = () => {
-  const [folders] = useState<IFolder[]>(
+  const [folders] = useState<IFolderMock[]>(
     FOLDERS.filter((doc) => doc.status === "archived")
   );
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());

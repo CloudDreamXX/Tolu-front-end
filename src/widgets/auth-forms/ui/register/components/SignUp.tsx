@@ -125,7 +125,7 @@ export const SignUp: React.FC<SignUpProps> = ({
   return (
     <form
       autoComplete="off"
-      className="w-[550px] flex flex-col items-center gap-[60px]"
+      className="w-[550px] flex flex-col items-center gap-[40px] md:gap-[60px]"
       onSubmit={onSubmit}
     >
       <h1 className="self-stretch text-black text-center font-inter text-[40px] font-semibold ">
@@ -133,7 +133,7 @@ export const SignUp: React.FC<SignUpProps> = ({
       </h1>
 
       <section className="w-full flex flex-col items-start gap-[24px] self-stretch">
-        <div className="flex flex-col items-start gap-[10] self-stretch">
+        <div className="flex flex-col items-start gap-[10px] self-stretch">
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Full name
           </label>
@@ -159,7 +159,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           )}
         </div>
 
-        <div className="flex flex-col items-start gap-[10] self-stretch">
+        <div className="flex flex-col items-start gap-[10px] self-stretch">
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Email
           </label>
@@ -185,7 +185,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           )}
         </div>
 
-        <div className="flex flex-col items-start gap-[10] self-stretch">
+        <div className="flex flex-col items-start gap-[10px] self-stretch">
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Phone number
           </label>
@@ -208,7 +208,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           )}
         </div>
 
-        <div className="flex flex-col items-start gap-[10] self-stretch">
+        <div className="flex flex-col items-start gap-[10px] self-stretch">
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Create password
           </label>
@@ -244,7 +244,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             </p>
           )}
         </div>
-        <div className="flex flex-col items-start gap-[10] self-stretch">
+        <div className="flex flex-col items-start gap-[10px] self-stretch">
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Repeat password
           </label>
@@ -285,30 +285,25 @@ export const SignUp: React.FC<SignUpProps> = ({
         </div>
       </section>
 
-      <section>
-        <div className="flex flex-col items-center gap-[24px] self-stretch">
-          <button
-            type="submit"
-            disabled={!isFormValid()}
-            className={
-              isFormValid()
-                ? "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
-                : "flex w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] font-[Nunito] text-[16px] font-semibold cursor-not-allowed"
-            }
-          >
-            Proceed
-          </button>
-          <p className="text-[14px] font-[Nunito] font-medium">
-            Already have an account?{" "}
-            <Link
-              to="/auth"
-              className="cursor-pointer text-[#1C63DB] underline"
-            >
-              Log in
-            </Link>
-          </p>
-        </div>
-      </section>
+      <div className="flex flex-col w-full items-center gap-[24px] self-stretch">
+        <button
+          type="submit"
+          disabled={!isFormValid()}
+          className={
+            isFormValid()
+              ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
+              : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] font-[Nunito] text-[16px] font-semibold cursor-not-allowed"
+          }
+        >
+          Proceed
+        </button>
+        <p className="text-[14px] font-[Nunito] font-medium">
+          Already have an account?{" "}
+          <Link to="/auth" className="cursor-pointer text-[#1C63DB] underline">
+            Log in
+          </Link>
+        </p>
+      </div>
     </form>
   );
 };

@@ -66,9 +66,10 @@ export default {
         lg: "1024px",
         xl: "1280px",
         "2xl": "1536px",
+        "3xl": "1880px",
       },
       fontFamily: {
-        open: ['"Open Sans"', 'sans-serif'],
+        open: ['"Open Sans"', "sans-serif"],
       },
       fontSize: {
         h1: [
@@ -129,18 +130,18 @@ export default {
     },
   },
   plugins: [
-  require('tailwindcss-animate'),
-  plugin(function ({ addUtilities }) {
-    addUtilities({
-      '.scrollbar-hide': {
-        '-ms-overflow-style': 'none',     // IE and Edge
-        'scrollbar-width': 'none',        // Firefox
-      },
-      '.scrollbar-hide::-webkit-scrollbar': {
-        display: 'none',                  // Chrome, Safari, Opera
-      },
-    })
-  }),
+    require("tailwindcss-animate"),
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none", // IE and Edge
+          "scrollbar-width": "none", // Firefox
+        },
+        ".scrollbar-hide::-webkit-scrollbar": {
+          display: "none", // Chrome, Safari, Opera
+        },
+      });
+    }),
     plugin(function ({ addComponents }) {
       addComponents({
         ".select-no-arrow": {

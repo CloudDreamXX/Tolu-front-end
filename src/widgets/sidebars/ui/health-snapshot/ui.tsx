@@ -4,170 +4,185 @@ import Search from "shared/assets/icons/search";
 import { Button } from "shared/ui/button";
 import { Input } from "shared/ui/input";
 import { NavLink, useNavigate } from "react-router-dom";
-import Magic from "shared/assets/icons/magic";
-import CaretDown from "shared/assets/icons/caret-down";
-import Expert from "shared/assets/icons/expert-content";
-import SquareDivider from "shared/assets/icons/square-divider";
-import Symptoms from "shared/assets/icons/symptoms";
-import Conditions from "shared/assets/icons/conditions";
-import Supplements from "shared/assets/icons/supplements";
-import LabTests from "shared/assets/icons/lab-tests";
-import { useState } from "react";
-import SignOutIcon from "shared/assets/icons/signout";
+import { useEffect, useState } from "react";
 import AvatarWoman from "shared/assets/images/AvatarWoman.png";
 import { UserService } from "entities/user";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
-import { Checkbox } from "shared/ui";
+import ChatsCircle from "shared/assets/icons/chats-circle";
+import Library from "shared/assets/icons/library";
+import Heartbeat from "shared/assets/icons/heartbeat";
+import Dots from "shared/assets/icons/threeDots";
+import { User } from "lucide-react";
+import SignOutIcon from "shared/assets/icons/signout";
+import { toast } from "shared/lib/hooks/use-toast";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
-  const [isRefineOpen, setIsRefineOpen] = useState(false);
   const token = useSelector((state: RootState) => state.user.token);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [isNarrow, setIsNarrow] = useState(false);
 
-  const toggleRefine = () => {
-    setIsRefineOpen((prev) => !prev);
-  };
+  useEffect(() => {
+    const checkWidth = () => {
+      const w = window.innerWidth;
+      setIsNarrow(w >= 1280 && w <= 1536);
+    };
+    checkWidth();
+    window.addEventListener("resize", checkWidth);
+    return () => window.removeEventListener("resize", checkWidth);
+  }, []);
 
   const handleSignOut = async () => {
     try {
       await UserService.signOut(token);
+      toast({
+        title: "Sign out successful",
+      });
       localStorage.clear();
       window.location.href = "/auth";
     } catch (error) {
       console.error("Sign out failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Sign out failed",
+        description: "Sign out failed. Please try again",
+      });
     }
   };
 
   return (
-    <div className="flex flex-col justify-between h-full">
-      <div className="flex flex-col gap-8">
+    <div
+      className={`flex flex-col justify-between h-full ${isNarrow ? "w-[81px] items-center" : "w-[268px]"}`}
+    >
+      <div className="flex flex-col gap-[32px]">
         <div className="flex flex-col items-center text-center">
-          <h2 className="text-[46.667px] font-bold font-open">TOLU</h2>
-          <h3 className="text-[16.2px] font-semibold font-open">
-            CLIENT LIBRARY
-          </h3>
-        </div>
-        <div className="flex flex-col px-[14px] py-[17px] gap-[18px]">
-          <Input
-            placeholder="Search by name or content"
-            icon={<Search className="ml-[16px]" />}
-            iconRight={<Chevron className="mr-[16px]" />}
-            className="rounded-full px-[54px]"
-          />
-          <div className="flex items-center w-full gap-[8px]">
-            <div className="flex-grow border-t border-[#ECEFF4]" />
-            <div className="text-[#5F5F65] font-semibold select-none">or</div>
-            <div className="flex-grow border-t border-[#ECEFF4]" />
-          </div>
-
-          <Button
-            variant={"brightblue"}
-            className="w-full h-[44px] text-base font-semibold"
-            onClick={() => nav("/health-snapshot")}
+          <h2
+            className={`${isNarrow ? "text-[27px]" : "text-[46.667px]"} font-bold font-open`}
           >
-            <Sparkle />
-            Ask TOLU
-          </Button>
+            TOLU
+          </h2>
         </div>
-        <div className="flex flex-col gap-1 pt-[48px]">
-          <div className="flex flex-col">
-            <div className="flex flex-col gap-1">
-              <button
-                onClick={toggleRefine}
-                className="flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] font-semibold cursor-pointer select-none"
-              >
-                {/* <Magic /> */}
-                Refine Search
-                <span
-                  className={`ml-auto transition-transform duration-0 ${isRefineOpen ? "rotate-180" : ""}`}
-                >
-                  <CaretDown />
-                </span>
-              </button>
+        <div className="flex flex-col px-[14px] gap-[18px]">
+          <Input
+            placeholder={isNarrow ? "" : "Search"}
+            icon={<Search className="ml-[28px]" />}
+            iconRight={isNarrow ? undefined : <Chevron className="mr-[16px]" />}
+            className={`rounded-full w-full ${isNarrow ? "px-[28px] py-[12px]" : "px-[54px]"}`}
+          />
 
-              {isRefineOpen && (
-                <div className="flex flex-col pl-4 gap-1">
-                  <div
-                    className={
-                      "flex items-center gap-3 px-[16px] py-[9px] text-lg text-[#1D1D1F] font-semibold"
-                    }
-                  >
-                    <Checkbox
-                      className="h-6 w-6 rounded-lg"
-                      onCheckedChange={(checked) => console.log(checked)}
-                    />
-                    Symptoms
-                  </div>
-                  <div
-                    className={
-                      "flex items-center gap-3 px-[16px] py-[9px] text-lg text-[#1D1D1F] font-semibold"
-                    }
-                  >
-                    <Checkbox
-                      className="h-6 w-6 rounded-lg"
-                      onCheckedChange={(checked) => console.log(checked)}
-                    />
-                    Conditions
-                  </div>
-                  <div
-                    className={
-                      "flex items-center gap-3 px-[16px] py-[9px] text-lg text-[#1D1D1F] font-semibold"
-                    }
-                  >
-                    <Checkbox
-                      className="h-6 w-6 rounded-lg"
-                      onCheckedChange={(checked) => console.log(checked)}
-                    />
-                    Supplements
-                  </div>
-                  <div
-                    className={
-                      "flex items-center gap-3 px-[16px] py-[9px] text-lg text-[#1D1D1F] font-semibold"
-                    }
-                  >
-                    <Checkbox
-                      className="h-6 w-6 rounded-lg"
-                      onCheckedChange={(checked) => console.log(checked)}
-                    />
-                    Lab Tests
-                  </div>
-                </div>
-              )}
-            </div>
-            <NavLink
-              to={"/health-snapshot"}
-              className={
-                "flex items-center justify-between gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F]"
-              }
+          {!isNarrow && (
+            <Button
+              variant={"brightblue"}
+              className="w-full h-[44px] text-base font-semibold"
+              onClick={() => nav("/health-snapshot")}
             >
-              {/* <Expert /> */}
-              Expert Content
-              <CaretDown />
-            </NavLink>
-          </div>
+              <Sparkle />
+              Ask TOLU
+            </Button>
+          )}
+        </div>
+
+        <div
+          className={`flex flex-col w-full ${isNarrow ? "items-center" : "items-start"}`}
+        >
+          <NavLink
+            to={"/health-snapshot"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
+                isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+              }`
+            }
+          >
+            <Heartbeat />
+            {isNarrow ? "" : "Health Snapshot"}
+          </NavLink>
+
+          <NavLink
+            to={"/library"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
+                isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+              }`
+            }
+          >
+            <Library />
+            {isNarrow ? "" : "Library"}
+          </NavLink>
+
+          <NavLink
+            to={"/messages"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${
+                isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+              }`
+            }
+          >
+            <ChatsCircle />
+            {isNarrow ? "" : "Messages"}
+          </NavLink>
         </div>
       </div>
-      <button className="flex gap-4 items-center pl-4 ">
+      <button
+        onClick={isNarrow ? () => setMenuOpen(!menuOpen) : () => {}}
+        className={`flex gap-4 items-center ${isNarrow ? "" : "pl-4"}`}
+      >
         <Avatar>
           <AvatarImage src={AvatarWoman} alt="Avatar" />
           <AvatarFallback>USR</AvatarFallback>
         </Avatar>
-        <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
-          Frances Swann
-        </p>
+        {!isNarrow && (
+          <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
+            Frances Swann
+          </p>
+        )}
+        {!isNarrow && (
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-2 transition-colors duration-200"
+          >
+            <Dots color={menuOpen ? "#1C63DB" : "black"} />
+          </button>
+        )}
       </button>
+
+      {menuOpen && (
+        <div
+          className={`
+            absolute ${isNarrow ? "left-[70px] bottom-[20px]" : "left-[90px] bottom-[80px]"} 
+            mt-2 w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 py-[12px] px-[20px]
+            flex flex-col gap-2 z-50
+            ${!isNarrow && "before:content-[''] before:absolute before:-bottom-2 before:right-7 before:border-x-8 before:border-t-8 before:border-x-transparent before:border-t-white"}`}
+          style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
+        >
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              nav("/profile");
+            }}
+            className="flex items-center gap-3 text-gray-800 rounded-lg hover:bg-gray-100"
+          >
+            <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
+              <User size={24} />
+            </div>
+            Profile
+          </button>
+
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              handleSignOut();
+            }}
+            className="flex items-center gap-3 text-gray-800 rounded-lg hover:bg-gray-100"
+          >
+            <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
+              <SignOutIcon />
+            </div>
+            Sign out
+          </button>
+        </div>
+      )}
     </div>
   );
 };
-
-{
-  /* <button
-                onClick={handleSignOut}
-                className="flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] font-semibold cursor-pointer select-none"
-            >
-                <SignOutIcon />
-                Log out
-            </button> */
-}

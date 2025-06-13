@@ -1,4 +1,9 @@
-import { DocumentCard, FolderCard, IDocument, IFolder } from "entities/folder";
+import {
+  DocumentCard,
+  FolderCard,
+  IDocumentMock,
+  IFolderMock,
+} from "entities/folder";
 import { ChevronDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import AiCreate from "shared/assets/icons/ai-create";
@@ -15,10 +20,10 @@ import { FOLDERS } from "../folder/mock";
 import { MOCK_DOCUMENT } from "../document/mock";
 
 export const ContentManagerApproved: React.FC = () => {
-  const [folders] = useState<IFolder[]>(
+  const [folders] = useState<IFolderMock[]>(
     FOLDERS.filter((doc) => doc.status === "ready-to-publish")
   );
-  const [documents] = useState<IDocument[]>(
+  const [documents] = useState<IDocumentMock[]>(
     MOCK_DOCUMENT.filter((doc) => doc.reviewStatus === "ready-to-publish")
   );
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());

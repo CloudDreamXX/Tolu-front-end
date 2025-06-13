@@ -1,134 +1,171 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { navigationItems } from "./lib";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { User } from "lucide-react";
 import Menu from "shared/assets/icons/menu";
 import { useState, useRef, useEffect } from "react";
-import ArrowPoligon from "shared/assets/icons/arrow-poligon";
+import { useDispatch } from "react-redux";
+import { logout } from "entities/user";
+import SignOutIcon from "shared/assets/icons/signout";
+import Close from "shared/assets/icons/close";
+import { Input } from "shared/ui/input";
+import Search from "shared/assets/icons/search";
+import Chevron from "shared/assets/icons/chevron";
+import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 
 export const Navigation: React.FC = () => {
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [popupPosition, setPopupPosition] = useState<"left" | "right" | null>(
-    null
-  );
-  const navItemRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const location = useLocation();
-
-  const calculatePopupPosition = (button: HTMLButtonElement) => {
-    const buttonRect = button.getBoundingClientRect();
-    const windowWidth = window.innerWidth;
-
-    if (buttonRect.right > windowWidth - 500) {
-      setPopupPosition("right");
-    } else {
-      setPopupPosition("left");
-    }
-  };
-
-  const handleMouseEnter = (mainLink: string) => {
-    setHoveredItem(mainLink);
-    const button = navItemRefs.current.get(mainLink);
-    if (button) {
-      calculatePopupPosition(button);
-    }
-  };
-
-  useEffect(() => {
-    setHoveredItem(null);
-    setPopupPosition(null);
-  }, [location.pathname]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const nav = useNavigate();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+  const [menuMobOpen, setMenuMobOpen] = useState(false);
+  const menuMobRef = useRef<HTMLDivElement>(null);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1280);
 
   useEffect(() => {
     const handleResize = () => {
-      if (hoveredItem) {
-        const button = navItemRefs.current.get(hoveredItem);
-        if (button) {
-          calculatePopupPosition(button);
-        }
-      }
+      setIsDesktop(window.innerWidth > 1280);
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [hoveredItem]);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+        setMenuMobOpen(false);
+      }
+    }
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen, menuMobOpen]);
+
+  const handleSignOut = () => {
+    dispatch(logout());
+    nav("/auth");
+  };
+
+  if (location.pathname === "/content-manager/create" && isDesktop) return null;
 
   return (
-    <div className="flex bg-white flex-row items-center justify-center h-[78px] gap-[30px] relative px-[48px] py-[19px]">
-      <div className="flex flex-row gap-[30px] w-full">
-        {navigationItems.map((item) => (
-          <button
-            key={item.mainLink}
-            className="relative"
-            ref={(el) => {
-              if (el) navItemRefs.current.set(item.mainLink, el);
-            }}
-            onMouseEnter={() => handleMouseEnter(item.mainLink)}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <NavLink
-              to={item.mainLink}
-              className={({ isActive }) =>
-                `px-4 py-2 font-medium ${isActive ? "text-blue-600" : "text-gray-700 hover:text-blue-500"}`
-              }
-            >
-              {item.title}
-            </NavLink>
-
-            {hoveredItem === item.mainLink &&
-              item.links &&
-              item.links.length > 0 && (
-                <div
-                  className={`absolute pt-4 top-full ${popupPosition === "right" ? "right-0" : "left-0"}`}
-                >
-                  <div
-                    className={`absolute top-[6px] ${popupPosition === "right" ? "right-[32px]" : "left-[32px]"} z-40`}
-                  >
-                    <ArrowPoligon />
-                  </div>
-
-                  <div
-                    className={`rounded-xl bg-[#F3F6FB] shadow-lg z-50 p-5 w-auto ${item.variant === "small" ? "min-w-[250px]" : "min-w-max"}`}
-                  >
-                    <p className="flex w-full gap-2 mb-3 text-base font-semibold text-left">
-                      <span className="w-full">{item.title}</span>
-                      <span className="w-full">{item?.additionalTitle}</span>
-                    </p>
-                    <div
-                      className={`grid ${item.variant === "small" ? "grid-cols-1" : "grid-cols-2"} gap-[10px]`}
-                    >
-                      {item.links.map((link) => (
-                        <NavLink
-                          key={link.link}
-                          to={link.link}
-                          className={({ isActive }) =>
-                            `flex items-center hover:text-blue-700 text-[#1D1D1F] font-medium gap-2 rounded-md whitespace-nowrap ${
-                              isActive && "bg-blue-100 text-blue-700"
-                            }`
-                          }
-                        >
-                          <span className="flex items-center justify-center w-8 h-8 text-gray-600 bg-white rounded-md shadow-md shrink-0">
-                            {link.icon}
-                          </span>
-                          <span className="pr-2 text-left">
-                            {link.title}
-                            {link.titleAdditional && (
-                              <span className="text-gray-500">
-                                ({link.titleAdditional})
-                              </span>
-                            )}
-                          </span>
-                        </NavLink>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-          </button>
-        ))}
+    <div className="bg-white xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] relative px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]">
+      {/* Mobile Hamburger */}
+      <div className="flex items-center justify-between w-full xl:hidden">
+        <div className="flex flex-col">
+          <h1 className="text-[32px] md:text-[40px] font-[700] h-[40px] md:h-[50px] font-open leading-normal">
+            TOLU
+          </h1>
+          <p className="text-[16px] md:text-[18px] font-[700] h-[21px] md:h-[27px] font-open leading-normal">
+            Practitioner Admin
+          </p>
+        </div>
+        <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
+          <Menu className="text-black w-[32px] md:w-[40px]" />
+        </button>
       </div>
 
-      <div className="relative">
-        <button>
-          <Menu />
+      {/* Full-screen Drawer */}
+      {menuMobOpen && (
+        <div className="fixed inset-0 bg-[#F1F3F5] top-[70px] md:top-0 md:bg-black md:bg-opacity-40 flex items-center justify-center z-50">
+          <div
+            className="fixed top-0 right-0 bottom-0 left-0 bg-white z-[999] p-[16px] flex flex-col 
+             md:w-[390px] md:right-[10px] md:top-[10px] md:bottom-[10px] md:left-auto md:rounded-[16px]"
+            ref={menuMobRef}
+          >
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex flex-col items-center">
+                <h1 className="text-[32px] md:text-[40px] font-[700] font-open leading-normal">
+                  TOLU
+                </h1>
+                <p className="text-[16px] md:text-[18px] font-[700] font-open leading-normal">
+                  Practitioner Admin
+                </p>
+              </div>
+              <button
+                onClick={() => setMenuMobOpen(false)}
+                aria-label="Close menu"
+                className="absolute top-[16px] right-[16px]"
+              >
+                <span className="text-2xl font-bold">
+                  <Close />
+                </span>
+              </button>
+            </div>
+            <Input
+              placeholder="Search"
+              icon={<Search className="ml-[16px]" />}
+              iconRight={<Chevron className="mr-[16px]" />}
+              className="rounded-full px-[54px]"
+            />
+            <div className="flex flex-col gap-4 mt-6">
+              {sideBarContent.map((link) => (
+                <NavLink
+                  key={link.title}
+                  to={link.link}
+                  onClick={() => setMenuMobOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${
+                      isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                    } hover:text-[#1C63DB]`
+                  }
+                >
+                  {link.icon}
+                  <span>{link.title}</span>
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="relative hidden ml-auto xl:flex">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          // aria-label="Toggle menu"
+          className="transition-colors duration-200"
+        >
+          <Menu className={menuOpen ? "text-[#1C63DB]" : "text-black"} />
         </button>
+
+        {menuOpen && (
+          <div
+            className="absolute right-0 top-full mt-2 w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 p-3
+             flex flex-col gap-2 z-50
+             before:absolute before:-top-2 before:right-4 before:border-8 before:border-transparent before:border-b-white"
+            style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
+          >
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                nav("/profile");
+              }}
+              className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
+            >
+              <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
+                <User size={24} />
+              </div>
+              Profile
+            </button>
+
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                handleSignOut();
+              }}
+              className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
+            >
+              <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
+                <SignOutIcon />
+              </div>
+              Sign out
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

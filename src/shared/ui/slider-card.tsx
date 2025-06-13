@@ -16,12 +16,14 @@ export const SliderCard: React.FC<SliderCardProps> = ({ title, colors }) => {
   const activeIndex = value === 0 ? -1 : Math.floor(value / stepSize) - 1;
 
   return (
-    <div className="rounded-2xl bg-[#F3F7FD] p-6 gap-6 flex flex-col items-start flex-1">
-      <div className="flex gap-1 items-center self-stretch">
+    <div className="rounded-2xl bg-[#F3F7FD] p-6 gap-6 flex flex-col items-start flex-1 w-full">
+      <div className="flex gap-1 items-center justify-between xl:justify-start self-stretch">
         <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
           {title}
         </h3>
-        <InfoIcon />
+        <span className="w-[20px] h-[20px]">
+          <InfoIcon />
+        </span>
       </div>
 
       <div className="flex gap-2 items-start self-stretch">

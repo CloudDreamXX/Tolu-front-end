@@ -36,13 +36,15 @@ export const MoodScore: React.FC = () => {
   return (
     <>
       {!lastMood ? (
-        <div className="relative gap-4 p-6 flex flex-col items-start self-stretch bg-[#F3F7FD] rounded-2xl w-[492px]">
+        <div className="relative gap-4 p-[16px] md:p-6 flex flex-col items-start self-stretch bg-[#F3F7FD] rounded-2xl w-full 3xl:w-[492px]">
           <div className="flex items-center justify-between self-stretch">
             <div className="flex gap-1 items-center">
-              <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+              <h3 className="font-[Nunito] text-[16px] md:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
                 Mood score
               </h3>
-              <InfoIcon />
+              <span className="w-[20px] h-[20px]">
+                <InfoIcon />
+              </span>
             </div>
             <button
               aria-label="Edit mood"
@@ -79,7 +81,7 @@ export const MoodScore: React.FC = () => {
                   <img
                     src={img}
                     alt={`Mood ${moodLabels[idx]}`}
-                    className="h-8"
+                    className="h-5"
                   />
                 </div>
               ))}
@@ -92,7 +94,9 @@ export const MoodScore: React.FC = () => {
             <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
               Mood score
             </h3>
-            <InfoIcon />
+            <span className="w-[20px] h-[20px]">
+              <InfoIcon />
+            </span>
           </div>
 
           <div className="flex flex-col items-start gap-4 h-[80px] self-stretch">
@@ -101,7 +105,9 @@ export const MoodScore: React.FC = () => {
               <h2 className="text-[#1B2559] font-[Nunito] text-[14px]/[20px] font-medium">
                 {moodLabels[moodIndex]}
               </h2>
-              <InfoIcon />
+              <span className="w-[20px] h-[20px]">
+                <InfoIcon />
+              </span>
             </div>
 
             <Slider

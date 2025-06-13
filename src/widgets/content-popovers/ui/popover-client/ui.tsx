@@ -1,5 +1,8 @@
+import { Client, ClientsResponse, CoachService } from "entities/coach";
+import { RootState } from "entities/store";
 import { PlusIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import Personalized from "shared/assets/icons/personalized";
 import { cn } from "shared/lib";
 import {
@@ -14,37 +17,47 @@ import {
 import { ScrollArea } from "shared/ui/scroll-area";
 
 interface IPopoverClientProps {
+  setClientId?: (clientId: string | null) => void;
   customTrigger?: React.ReactNode;
 }
 
 export const PopoverClient: React.FC<IPopoverClientProps> = ({
+  setClientId,
   customTrigger,
 }) => {
-  const [selectedClients, setSelectedClients] = useState<string[]>([]);
+  const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
-  const [clients] = useState<string[]>([
-    "Amanda Francis1",
-    "Amanda Francis2",
-    "Amanda Francis3",
-    "Amanda Francis4",
-    "Amanda Francis5",
-    "Amanda Francis6",
-    "Amanda Francis7",
-    "Amanda Francis8",
-  ]);
+  const [clients, setClients] = useState<Client[]>([]);
+  const token = useSelector((state: RootState) => state.user.token);
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const data: ClientsResponse =
+          await CoachService.getManagedClients(token);
+        setClients(data.clients);
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+
+    fetchClients();
+  }, [token]);
 
   const filteredClients = useMemo(() => {
     return clients.filter((client) =>
-      client.toLowerCase().includes(search.toLowerCase())
+      client.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, clients]);
 
-  const toggleClientSelection = (client: string) => {
-    setSelectedClients((prev) =>
-      prev.includes(client)
-        ? prev.filter((c) => c !== client)
-        : [...prev, client]
-    );
+  const toggleClientSelection = (client_id: string) => {
+    if (selectedClient === client_id) {
+      setSelectedClient(null);
+    } else {
+      setSelectedClient(client_id);
+    }
+
+    setClientId?.(client_id);
   };
 
   return (
@@ -56,12 +69,12 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
             className="w-12 h-12 p-[10px] rounded-full relative"
           >
             <Personalized />
-            {selectedClients.length > 0 && (
+            {selectedClient && (
               <Badge
                 variant="destructive"
                 className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
               >
-                {selectedClients.length}
+                1
               </Badge>
             )}
           </Button>
@@ -80,26 +93,28 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
           <div className="flex flex-col gap-2 pr-3">
             {filteredClients.map((client) => (
               <button
-                key={client}
+                key={client.client_id}
                 className={`flex items-center w-full py-2 px-[14px] gap-2 rounded-md cursor-pointer bg-white`}
-                onClick={() => toggleClientSelection(client)}
+                onClick={() => toggleClientSelection(client.client_id)}
               >
                 <Checkbox
-                  id={`client-${client}`}
-                  checked={selectedClients.includes(client)}
-                  onCheckedChange={() => toggleClientSelection(client)}
-                  value={client}
+                  id={`client-${client.client_id}`}
+                  checked={selectedClient === client.client_id}
+                  onCheckedChange={() =>
+                    toggleClientSelection(client.client_id)
+                  }
+                  value={client.client_id}
                   className={cn(
                     "w-4 h-4 p-0.5 border-gray-300 rounded-full",
-                    selectedClients.includes(client) && "border-gray-600"
+                    selectedClient === client.client_id && "border-gray-600"
                   )}
                   checkClassName="min-w-2.5 w-2.5 h-2.5 border-gray-300 rounded-full bg-gray-600 text-gray-600"
                 />
                 <label
-                  htmlFor={`client-${client}`}
+                  htmlFor={`client-${client.client_id}`}
                   className="text-sm font-medium text-gray-900 cursor-pointer"
                 >
-                  {client}
+                  {client.name}
                 </label>
               </button>
             ))}

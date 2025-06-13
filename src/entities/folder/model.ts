@@ -1,9 +1,120 @@
-//TODO: replace with actual model from the database
-// This is a placeholder for the actual models
+export interface IFileNamesResponse {
+  path: string;
+  filename: string;
+  content_type: string;
+}
+
+export interface IContentItemResponse {
+  id: string;
+  title: string;
+  chat_id: string;
+  creator_id: string;
+  created_at: string;
+  reviewer_name: string | null;
+  price: string | null;
+  status: string | null;
+}
+
+export interface ISubfolderResponse {
+  id: string;
+  name: string;
+  file_count: number;
+  file_names: IFileNamesResponse[];
+  custom_instructions: string | null;
+  creator_id: string;
+  created_at: string;
+  reviewer_name: string | null;
+  price: string | null;
+  status: string | null;
+  total_content_items: number;
+  subfolders: ISubfolderResponse[];
+  content: IContentItemResponse[];
+}
+
+export interface IFolderItemResponse {
+  id: string;
+  name: string;
+  file_count: number;
+  file_names: IFileNamesResponse[];
+  custom_instructions: string | null;
+  creator_id: string;
+  created_at: string;
+  reviewer_name: string | null;
+  price: string | null;
+  status: string | null;
+  total_content_items: number;
+  subfolders: ISubfolderResponse[];
+  content: IContentItemResponse[];
+}
+
+export interface IFolderResponse {
+  [key: string]: IFolderItemResponse[];
+}
+
+export interface IFileNames {
+  path: string;
+  filename: string;
+  contentType: string;
+}
+
+export interface IContentItem {
+  id: string;
+  title: string;
+  chatId: string;
+  creatorId: string;
+  createdAt: string;
+  reviewerName: string | null;
+  price: string | null;
+  status: string | null;
+}
+
+export interface ISubfolder {
+  id: string;
+  name: string;
+  fileCount: number;
+  fileNames: IFileNames[];
+  customInstructions: string | null;
+  creatorId: string;
+  createdAt: string;
+  reviewerName: string | null;
+  price: string | null;
+  status: string | null;
+  totalContentItems: number;
+  subfolders: ISubfolder[];
+  content: IContentItem[];
+}
+
 export interface IFolder {
   id: string;
   name: string;
-  documents: IDocument[];
+  fileCount: number;
+  fileNames: IFileNames[];
+  customInstructions: string | null;
+  creatorId: string;
+  createdAt: string;
+  reviewerName: string | null;
+  price: string | null;
+  status: string | null;
+  totalContentItems: number;
+  subfolders: ISubfolder[];
+  content: IContentItem[];
+  isSystemFolder?: boolean;
+  parentFolderId?: string;
+  parentFolderName?: string;
+  description?: string;
+  isRootFolder?: boolean;
+  isSubfolder?: boolean;
+  isEmpty?: boolean;
+}
+
+export interface IFolderMap {
+  [key: string]: IFolder[];
+}
+
+export interface IFolderMock {
+  id: string;
+  name: string;
+  documents: IDocumentMock[];
   status: FolderStatus;
   reviewers?: string[];
   files?: string[];
@@ -14,7 +125,7 @@ export interface IFolder {
   author?: string;
 }
 
-export interface IDocument {
+export interface IDocumentMock {
   id: string;
   title: string;
   folder: string;
@@ -56,4 +167,33 @@ export interface IUserEngagement {
   feedback: number;
   comments: number;
   shares: number;
+}
+
+export interface NewFolder {
+  name: string;
+  description: string;
+  parent_folder_id: string;
+}
+
+export interface ContentItem {
+  id: string;
+  title: string;
+  status: string | null;
+  created_at: string;
+  updated_at: string | null;
+}
+
+export interface Folder {
+  folder_id: string;
+  name: string;
+  is_system_folder: boolean;
+  content: ContentItem[];
+  subfolders: any[];
+  created_at: string;
+}
+
+export interface FolderResponse {
+  success: boolean;
+  folder: Folder;
+  message: string;
 }

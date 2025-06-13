@@ -1,4 +1,4 @@
-import { DocumentCard, IDocument } from "entities/folder";
+import { DocumentCard, IDocumentMock } from "entities/folder";
 import { ChevronDown } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import AiCreate from "shared/assets/icons/ai-create";
@@ -13,7 +13,7 @@ import {
 import { MOCK_DOCUMENT } from "../document/mock";
 
 export const ContentManagerInReview: React.FC = () => {
-  const [documents] = useState<IDocument[]>(
+  const [documents] = useState<IDocumentMock[]>(
     MOCK_DOCUMENT.filter((doc) => doc.status === "in-review")
   );
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());

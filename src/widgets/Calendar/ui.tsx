@@ -193,13 +193,13 @@ export const CalendarPopup = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 rounded overflow-hidden h-full">
+      <div className="grid h-full grid-cols-7 overflow-hidden rounded">
         {dayGrid}
       </div>
 
       {showModal && (
         <div className="absolute top-1/2 left-1/2 w-[360px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl z-50 p-6 flex flex-col gap-4">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-[#1D1D1F] font-[Nunito]">
               {editIndex !== null ? "Edit event" : "New event"}
             </h3>
@@ -239,11 +239,11 @@ export const CalendarPopup = () => {
               className="border border-[#E4E4E7] rounded px-3 py-2 text-sm"
             />
           </div>
-          <div className="flex justify-between mt-4 items-center">
+          <div className="flex items-center justify-between mt-4">
             {editIndex !== null ? (
               <button
                 onClick={handleDeleteEvent}
-                className="flex items-center gap-2 text-red-500 font-semibold text-sm"
+                className="flex items-center gap-2 text-sm font-semibold text-red-500"
               >
                 <Trash2 size={16} /> Delete event
               </button>
@@ -262,7 +262,7 @@ export const CalendarPopup = () => {
 
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <DialogContent className="w-[742px]">
-          <DialogHeader className="flex flex-col gap-6 p-6 items-start">
+          <DialogHeader className="flex flex-col items-start gap-6 p-6">
             <DialogTitle>
               Are you sure you want to delete this event?
             </DialogTitle>
@@ -272,7 +272,7 @@ export const CalendarPopup = () => {
               event later.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex justify-between items-center w-full">
+          <DialogFooter className="flex items-center justify-between w-full">
             <button
               onClick={() => setShowDeleteConfirm(false)}
               className="flex items-center rounded-full justify-center w-32 h-[44px] text-sm p-4 bg-[#DDEBF6] text-[#1C63DB]"

@@ -1,11 +1,11 @@
 import Dots from "shared/assets/icons/dots";
 
 import { Popover, PopoverTrigger, PopoverContent } from "shared/ui";
-import { IDocument } from "../document-card";
+import { IDocumentMock } from "../document-card";
 import { renderContent } from "./lib";
 
 interface IPopoverDocumentEditProps {
-  document: IDocument;
+  document: IDocumentMock;
   customTrigger?: React.ReactNode;
   tab?: string;
 }

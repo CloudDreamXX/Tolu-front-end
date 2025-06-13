@@ -22,6 +22,19 @@ export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [networkSupportOpen, setNetworkSupportOpen] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
+  const user = useSelector((state: RootState) => state.user);
+  const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth > 1536);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1280);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 1536);
+      setIsMobile(window.innerWidth < 1200);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const lastLogIn = useSelector(
     (state: RootState) => state.clientMood.lastLogIn
@@ -34,34 +47,44 @@ export const HealthSnapshot = () => {
     }
   }, [lastMood, lastLogIn]);
   return (
-    <main className="flex flex-col items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F1F3F5]">
+    <main className="flex flex-col items-start gap-[16px] md:gap-6 p-[16px] md:p-6 self-stretch overflow-y-auto bg-[#F1F3F5]">
       {showMoodModal && <MoodModal onClose={() => setShowMoodModal(false)} />}
-      <div className="flex items-center justify-center self-stretch">
-        <h1 className="flex-1 text-[#1D1D1F] font-[Nunito] text-[32px]/[44px] font-bold">
+      {isMobile && (
+        <h1 className="flex-1 text-[#1D1D1F] font-[Nunito] text-[24px] font-bold">
           Health Snapshot
         </h1>
+      )}
+      <div className="flex items-center xl:justify-center self-stretch">
+        {!isMobile && (
+          <h1 className="flex-1 text-[#1D1D1F] font-[Nunito] text-[32px]/[44px] font-bold">
+            Health Snapshot
+          </h1>
+        )}
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNetworkSupportOpen((prev) => !prev)}
-            className={`h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full ${networkSupportOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center items-center py-[6px] px-3 flex gap-2`}
+            className={`md:h-[44px] w-[115px] md:w-fit font-[Nunito] text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${networkSupportOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
           >
             <Heartbeat />
             Network Support
           </button>
           <button
             onClick={() => setTimelineOpen((prev) => !prev)}
-            className={`h-[44px] font-[Nunito] text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-full ${timelineOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center  items-center py-[6px] px-3 flex gap-2`}
+            className={`md:h-[44px] w-[115px] md:w-fit font-[Nunito] text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${timelineOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center  items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
           >
             <ClockAfternoon />
             {!timelineOpen ? "Open timeline" : "Close timeline"}
           </button>
         </div>
       </div>
-      <div className="flex flex-col gap-4 w-full p-4 items-start rounded-2xl bg-white">
-        <h1 className="self-stretch font-[Nunito] text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+      <div className="flex flex-col gap-4 w-full p-[16px] md:p-[24px] items-start rounded-2xl bg-white">
+        <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
           Weekly Trends Summary
         </h1>
-        <div className="flex items-start gap-4 self-stretch">
+        <div
+          className="grid grid-cols-2 grid-rows-2 gap-4 self-stretch 
+             2xl:flex md:items-start md:gap-4"
+        >
           {smallCards.map((card) => (
             <ClientCard
               key={card.id}
@@ -71,24 +94,26 @@ export const HealthSnapshot = () => {
               increased={card.increased}
             />
           ))}
-          <MoodScore />
+          {isDesktop && <MoodScore />}
         </div>
+
+        {!isDesktop && <MoodScore />}
       </div>
-      <div className="flex items-start gap-6 self-stretch">
+      <div className="flex items-start xl:gap-6 self-stretch w-full">
         {/* Left Side Start*/}
-        <div className="flex flex-col gap-6 self-stretch flex-1 items-start">
+        <div className="flex flex-col gap-[16px] md:gap-6 self-stretch flex-1 items-start w-full xl:w-fit">
           <div className="w-full flex flex-col gap-4 p-4 items-start rounded-2xl bg-white">
-            <h1 className="self-stretch font-[Nunito] text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               What’s Working / What’s Not
             </h1>
-            <div className="flex gap-4 items-start self-stretch">
-              <div className="flex items-start flex-1">
+            <div className="flex flex-col md:flex-row gap-[8px] md:gap-4 items-start self-stretch w-full">
+              <div className="flex items-start flex-1 w-full h-full xl:w-fit">
                 <div className="relative flex gap-2 p-4 flex-1 items-center rounded-[10px] border border-[#BCE2C8] bg-[#F0FFF5] before:content-[''] before:absolute before:inset-y-0 before:left-0 before:w-2 before:rounded-l-[16px] before:bg-[#BCE2C8]">
-                  <div className="flex flex-col gap-2 items-start flex-1">
-                    <h3 className="text-[18px]/[24px] font-medium font-[Nunito] text-[#1F1F1D]">
+                  <div className="flex flex-col gap-2 items-start flex-1 w-full h-full xl:w-fit">
+                    <h3 className="text-[16px] md:text-[18px]/[24px] font-medium font-[Nunito] text-[#1F1F1D]">
                       Success!
                     </h3>
-                    <p className="text-[14px]/[20px] font-semibold text-nowrap font-[Nunito] text-[#1F1F1D]">
+                    <p className="text-[12px] md:text-[14px]/[20px] font-semibold h-full xl:text-nowrap font-[Nunito] text-[#1F1F1D]">
                       Low sugar meals correlated with reduced brain fog
                     </p>
                   </div>
@@ -97,13 +122,13 @@ export const HealthSnapshot = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex items-start flex-1">
-                <div className="relative flex gap-2 p-4 flex-1 items-center rounded-[10px] border border-[#FFB3AE] bg-[#FFF6F5] before:content-[''] before:absolute before:inset-y-0 before:left-0 before:w-2 before:rounded-l-[16px] before:bg-[#FFB3AE]">
-                  <div className="flex flex-col gap-2 items-start flex-1">
-                    <h3 className="text-[18px]/[24px] font-semibold font-[Nunito] text-[#1F1F1D]">
+              <div className="flex items-start flex-1 w-full h-full xl:w-fit">
+                <div className="h-full relative flex gap-2 p-4 flex-1 items-center rounded-[10px] border border-[#FFB3AE] bg-[#FFF6F5] before:content-[''] before:absolute before:inset-y-0 before:left-0 before:w-2 before:rounded-l-[16px] before:bg-[#FFB3AE]">
+                  <div className="flex flex-col gap-2 items-start flex-1 w-full xl:w-fit">
+                    <h3 className="text-[16px] md:text-[18px]/[24px] font-medium font-[Nunito] text-[#1F1F1D]">
                       Change needs
                     </h3>
-                    <p className="text-nowrap text-[14px]/[20px] font-medium font-[Nunito] text-[#1F1F1D]">
+                    <p className="text-[12px] md:text-[14px]/[20px] font-semibold xl:text-nowrap font-[Nunito] text-[#1F1F1D]">
                       Skipping sleep routines increased cravings
                     </p>
                   </div>
@@ -114,11 +139,63 @@ export const HealthSnapshot = () => {
               </div>
             </div>
           </div>
+          <div className="flex xl:hidden p-6 flex-col gap-6 self-stretch shrink-0 w-full items-start rounded-2xl bg-white">
+            <h1 className="self-stretch font-[Nunito] text-[18px] font-semibold text-[#1D1D1F]">
+              Biometric Insights
+            </h1>
+            <div className="flex flex-col flex-1 items-start self-stretch">
+              <div className="flex items-start flex-1 gap-4 self-stretch mb-[16px]">
+                <ClientCard
+                  title="Sleep duration"
+                  indicator="7h 12m"
+                  trend="down"
+                  width="226px"
+                  height="120px"
+                />
+                <ClientCard
+                  title="HRV"
+                  indicator="HRV"
+                  trend="up"
+                  width="226px"
+                  height="120px"
+                />
+              </div>
+              <div className="flex items-start flex-1 gap-4 self-stretch mb-[16px]">
+                <GlucoseCard
+                  modifiable
+                  indicator="91 mg/dL"
+                  trend="up"
+                  width="226px"
+                  height="120px"
+                />
+                <ClientCard
+                  title="Resting heart rate"
+                  indicator="58 bpm"
+                  trend="down"
+                  width="226px"
+                  height="120px"
+                />
+              </div>
+              <div className="flex max-h-[120px] flex-col gap-[23px] p-[16px] md:p-6 items-start center flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">
+                <div className="flex items-center gap-1 self-stretch">
+                  <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+                    Cycle tracking insights
+                  </h3>
+                  <span className="w-[20px] h-[20px]">
+                    <InfoIcon />
+                  </span>
+                </div>
+                <h1 className="text-[#1C63DB] text-[24px] md:text-[32px]/[44px] font-bold font-[Nunito]">
+                  Luteal Phase
+                </h1>
+              </div>
+            </div>
+          </div>
           <div className="w-full flex flex-col gap-4 p-4 items-start rounded-2xl bg-white">
-            <h1 className="self-stretch font-[Nunito] text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               Active Symptoms
             </h1>
-            <div className="flex gap-4 items-start self-stretch">
+            <div className="flex flex-col md:flex-row gap-4 items-start self-stretch">
               <SliderCard
                 title="Bloating"
                 colors={[
@@ -155,20 +232,20 @@ export const HealthSnapshot = () => {
             </div>
           </div>
           <div className="w-full flex flex-col gap-4 p-4 items-start rounded-2xl bg-white">
-            <h1 className="self-stretch font-[Nunito] text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               Health Goals
             </h1>
-            <div className="flex gap-4 items-start self-stretch">
+            <div className="flex flex-col md:flex-row gap-4 items-start self-stretch">
               <HealthGoalsCard name="Name 1" completed={2} outOf={5} />
               <HealthGoalsCard name="Name 2" completed={4} outOf={5} />
               <HealthGoalsCard name="Name 3" completed={0} outOf={5} />
             </div>
           </div>
           <div className="w-full flex flex-col gap-4 p-4 items-start rounded-2xl bg-white">
-            <h1 className="self-stretch font-[Nunito] text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               Lab & Test
             </h1>
-            <div className="w-full border border-[#DDEBF6] rounded-2xl overflow-hidden bg-white">
+            <div className="w-full md:border border-[#DDEBF6] rounded-2xl overflow-hidden bg-white">
               <HealthTable userType="free" />
             </div>
           </div>
@@ -176,41 +253,41 @@ export const HealthSnapshot = () => {
         {/* Left Side End*/}
         {/* Right Side Start*/}
         <div className="flex flex-col gap-6 items-start h-[1318px]">
-          <div className="p-6 flex flex-col gap-6 self-stretch shrink-0 w-full max-w-[516px] h-full max-h-[515px] items-start rounded-2xl bg-white">
-            <h1 className="self-stretch font-[Nunito] text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+          <div className="hidden xl:flex p-6 flex-col gap-6 self-stretch shrink-0 w-full max-w-[516px] h-full max-h-[515px] items-start rounded-2xl bg-white">
+            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               Biometric Insights
             </h1>
             <div className="flex flex-col flex-1 items-start self-stretch">
-              <div className="flex items-start flex-1 gap-4 self-stretch">
+              <div className="flex items-start flex-1 gap-4 self-stretch mb-[16px]">
                 <ClientCard
                   title="Sleep duration"
                   indicator="7h 12m"
                   trend="down"
                   width="226px"
-                  height="120px"
+                  height="140px"
                 />
                 <ClientCard
                   title="HRV"
                   indicator="HRV"
                   trend="up"
                   width="226px"
-                  height="120px"
+                  height="140px"
                 />
               </div>
-              <div className="flex items-start flex-1 gap-4 self-stretch">
+              <div className="flex items-start flex-1 gap-4 self-stretch mb-[16px]">
                 <GlucoseCard
                   modifiable
                   indicator="91 mg/dL"
                   trend="up"
                   width="226px"
-                  height="120px"
+                  height="140px"
                 />
                 <ClientCard
                   title="Resting heart rate"
                   indicator="58 bpm"
                   trend="down"
                   width="226px"
-                  height="120px"
+                  height="140px"
                 />
               </div>
               <div className="flex max-h-[120px] flex-col gap-[23px] p-6 items-start center flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">
@@ -218,7 +295,9 @@ export const HealthSnapshot = () => {
                   <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
                     Cycle tracking insights
                   </h3>
-                  <InfoIcon />
+                  <span className="w-[20px] h-[20px]">
+                    <InfoIcon />
+                  </span>
                 </div>
                 <h1 className="text-[#1C63DB] text-[32px]/[44px] font-bold font-[Nunito]">
                   Luteal Phase
@@ -226,7 +305,7 @@ export const HealthSnapshot = () => {
               </div>
             </div>
           </div>
-          <div className="flex w-full flex-col justify-center items-start flex-1 rounded-2xl">
+          <div className="hidden xl:flex w-full flex-col justify-center items-start flex-1 rounded-2xl">
             <div className="w-full max-w-[516px] rounded-t-2xl bg-white flex p-6 flex-col flex-1 items-start gap-6 max-h-[620px]">
               <div className="flex flex-col gap-4 items-center justify-center self-stretch">
                 <Avatar>

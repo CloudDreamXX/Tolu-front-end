@@ -12,6 +12,7 @@ import {
 } from "shared/ui";
 
 interface PopoverAttachProps {
+  setFiles?: (files: string[]) => void;
   customTrigger?: React.ReactNode;
   isAttached?: boolean;
   title?: string;
@@ -19,14 +20,14 @@ interface PopoverAttachProps {
 }
 
 export const PopoverAttach: React.FC<PopoverAttachProps> = ({
+  setFiles,
   customTrigger,
   isAttached,
   title,
   description,
 }) => {
   const [dragActive, setDragActive] = useState(false);
-  // TODO: create file type
-  const [attachedFiles, setAttachedFiles] = useState<Array<any>>(() =>
+  const [attachedFiles, setAttachedFiles] = useState<Array<any>>(
     isAttached
       ? [
           {
@@ -34,31 +35,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             size: "200 KB",
             type: "application/pdf",
           },
-          {
-            name: "file-name.pdf",
-            size: "200 KB",
-            type: "application/pdf",
-          },
-          {
-            name: "file-name.pdf",
-            size: "200 KB",
-            type: "application/pdf",
-          },
-          {
-            name: "file-name.pdf",
-            size: "200 KB",
-            type: "application/pdf",
-          },
-          {
-            name: "file-name.pdf",
-            size: "200 KB",
-            type: "application/pdf",
-          },
-          {
-            name: "file-name.pdf",
-            size: "200 KB",
-            type: "application/pdf",
-          },
+          // ... other files
         ]
       : []
   );
@@ -83,6 +60,8 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       [".pdf", ".doc", ".docx"].includes(file.name.slice(-4))
     );
     setAttachedFiles((prev) => [...prev, ...validFiles]);
+
+    setFiles?.(validFiles.map((file) => file.name));
   };
 
   const handleBrowseClick = () => {
@@ -97,6 +76,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       [".pdf", ".doc", ".docx"].includes(file.name.slice(-4))
     );
     setAttachedFiles((prev) => [...prev, ...validFiles]);
+
+    setFiles?.(validFiles.map((file) => file.name));
+
     e.target.value = "";
   };
 
@@ -106,14 +88,14 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         {customTrigger ?? (
           <Button
             variant={"outline"}
-            className="relative flex flex-col w-full gap-3 py-4 rounded-3xl h-fit"
+            className="relative flex flex-col w-full gap-3 py-[8px] px-[16px] md:p-[16px] xl:px-[32px] xl:py-[16px] rounded-[18px] h-fit"
           >
-            <h4 className="flex flex-row gap-2 text-xl font-bold">
+            <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
               <Attach />
               Attach files to folder
             </h4>
-            <p className="text-sm text-[#5F5F65]">
-              Enhance content quality by providing credible references
+            <p className="text-[12px] xl:text-[14px] text-[#5F5F65]">
+              Add credible references to support information integrity
             </p>
             {attachedFiles.length > 0 && (
               <Badge
@@ -126,15 +108,15 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
+      <PopoverContent className="w-full xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         {isAttachedState ? (
           <>
-            <h4 className="flex flex-row gap-2 text-xl font-bold">
+            <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
               <Attach />
               Attached files
             </h4>
-            <p className="text-sm text-[#5F5F65]">
-              Enhance content quality by providing credible references
+            <p className="text-[12px] xl:text-[14px] text-[#5F5F65]">
+              Add credible references to support information integrity
             </p>
             <div className="flex flex-col gap-1">
               {attachedFiles.map((file, index) => (
@@ -191,11 +173,11 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           </>
         ) : (
           <>
-            <h4 className="flex flex-row gap-2 text-xl font-bold">
+            <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
               <Attach />
               {title ?? "Attach files to folder"}
             </h4>
-            <p className="text-sm text-[#5F5F65]">
+            <p className="text-[12px] xl:text-[14px] text-[#5F5F65]">
               {description ??
                 "Enhance content quality by providing credible references"}
             </p>

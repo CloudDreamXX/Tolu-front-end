@@ -10,8 +10,8 @@ export const WelcomeScreen = () => {
   return (
     <AuthPageWrapper>
       <Header />
-      <main className="flex flex-col items-center justify-center flex-1 self-stretch">
-        <div className="flex py-[56px] px-[100px] gap-8 flex-col items-center justify-center rounded-3xl bg-white">
+      <main className="flex flex-col items-center justify-center flex-1 self-stretch py-[32px]">
+        <div className="flex py-[56px] px-[100px] gap-8 flex-col items-center justify-center rounded-t-3xl md:rounded-3xl bg-white">
           <img
             src={ClientWelcomePicture}
             alt="Welcome to the TOLU! Create and configure your account."

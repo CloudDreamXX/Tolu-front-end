@@ -1,5 +1,5 @@
 import { Card, CardContent } from "shared/ui";
-import { IDocument } from "../../model";
+import { IDocumentMock } from "../../model";
 import { File } from "lucide-react";
 import ClosedFolder from "shared/assets/icons/closed-folder";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -15,7 +15,7 @@ import {
 import { cn } from "shared/lib";
 
 interface DocumentCardProps {
-  document: IDocument;
+  document: IDocumentMock;
   withText?: boolean;
 }
 

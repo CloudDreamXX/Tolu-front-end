@@ -3,7 +3,7 @@ import { Footer } from "../../Footer";
 import { UploadCloud } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { useRef, useState, DragEvent } from "react";
+import { useRef, useState, DragEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
 import { SearchableSelect } from "../components/SearchableSelect";
@@ -18,6 +18,13 @@ export const ProfileSetup = () => {
   const nav = useNavigate();
   const ref = useRef<HTMLInputElement>(null);
   const state = useSelector((state: RootState) => state.coachOnboarding);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleFile = (file: File) => {
     if (file) {
@@ -73,14 +80,20 @@ export const ProfileSetup = () => {
 
   return (
     <AuthPageWrapper>
+      <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={4} />
-
-      <main className="mx-auto flex flex-col gap-[32px] items-center justify-center w-[859px]">
-        <h1 className="text-black text-[32px] font-inter font-medium text-center">
-          Profile Setup
-        </h1>
-
-        <form className="flex flex-col w-[700px] max-h-[700px] overflow-y-auto py-[40px] px-[40px] bg-white rounded-[20px] shadow-md gap-[24px]">
+      <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px]">
+        {!isMobile && (
+          <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
+            Profile Setup
+          </h1>
+        )}
+        <form className="flex flex-col w-full lg:w-[700px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] md:py-[40px] md:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px]">
+          {isMobile && (
+            <h1 className="flex text-center items-center justify-center font-inter text-[24px] font-medium text-black">
+              Profile Setup
+            </h1>
+          )}
           {/* First and Last Name */}
           <div className="flex flex-col flex-1 gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
@@ -157,7 +170,6 @@ export const ProfileSetup = () => {
               ))}
             </div>
           </div>
-          {/* Time zone */}
           <div className="flex flex-col gap-[8px]">
             <SearchableSelect
               label="Time zone"
@@ -183,7 +195,7 @@ export const ProfileSetup = () => {
               />
             ) : (
               <div
-                className={`w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors ${
+                className={`w-full md:w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors ${
                   dragActive ? "bg-blue-50 border-blue-400" : ""
                 }`}
                 onClick={handleClick}
@@ -239,7 +251,7 @@ export const ProfileSetup = () => {
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
               Choose method:
             </label>
-            <div className="flex gap-[24px]">
+            <div className="flex flex-col md:flex-row gap-[24px]">
               {["SMS", "Authenticator App", "Email"].map((method) => (
                 <label key={method} className="flex items-center gap-[8px]">
                   <input
@@ -262,16 +274,14 @@ export const ProfileSetup = () => {
           </div>
 
           {/* Recovery Question */}
-          <div className="flex items-center gap-[12px]">
+          <div className="flex flex-col md:flex-row items-center gap-[12px]">
             <SearchableSelect
               label="Set recovery question"
               labelStyle="text-[#5F5F65]"
               placeholder="Select recovery question"
               options={[
                 "What is your favorite book?",
-                "Mother's maiden name?",
                 "In what city were you born?",
-                "What is your favourite book",
               ]}
               value={state.timezone}
               onChange={(value) =>
@@ -282,7 +292,7 @@ export const ProfileSetup = () => {
                   })
                 )
               }
-              position="top"
+              arrowTopPosition="72"
             />
             <div className="flex flex-col gap-[8px] w-[100%]">
               <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
@@ -303,32 +313,54 @@ export const ProfileSetup = () => {
               />
             </div>
           </div>
+          {isMobile && (
+            <div className="flex items-center gap-[16px] w-full md:w-fit">
+              <button
+                onClick={() => nav(-1)}
+                className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+                style={{ background: "rgba(0, 143, 246, 0.10)" }}
+              >
+                Back
+              </button>
+              <button
+                onClick={() => nav("/invite-clients")}
+                disabled={!isFormValid}
+                className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
+                  isFormValid
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </form>
 
         {/* Navigation buttons */}
-        <div className="flex items-center gap-[16px] bg-transparent">
-          <button
-            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
-            style={{ background: "rgba(0, 143, 246, 0.10)" }}
-            onClick={() => nav(-1)}
-          >
-            Back
-          </button>
-          <button
-            onClick={() => nav("/invite-clients")}
-            disabled={!isFormValid}
-            className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
-              isFormValid
-                ? "bg-[#1C63DB] text-white"
-                : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-            }`}
-          >
-            Next
-          </button>
-        </div>
+        {!isMobile && (
+          <div className="flex items-center gap-[16px] pb-10 md:pb-[140px] w-full md:w-fit">
+            <button
+              onClick={() => nav(-1)}
+              className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+              style={{ background: "rgba(0, 143, 246, 0.10)" }}
+            >
+              Back
+            </button>
+            <button
+              onClick={() => nav("/invite-clients")}
+              disabled={!isFormValid}
+              className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
+                isFormValid
+                  ? "bg-[#1C63DB] text-white"
+                  : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </main>
-
-      <Footer />
     </AuthPageWrapper>
   );
 };

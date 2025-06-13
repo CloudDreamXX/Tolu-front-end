@@ -4,19 +4,19 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - '**.ts'
-      - '**.tsx'
-      - '**.js'
-      - '**.jsx'
-      - '.eslintrc.*'
-      - 'package.json'
-      - 'package-lock.json'
+      - "**.ts"
+      - "**.tsx"
+      - "**.js"
+      - "**.jsx"
+      - ".eslintrc.*"
+      - "package.json"
+      - "package-lock.json"
 
 jobs:
   lint:
     name: Run ESLint
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,12 +26,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
-      
+
       # Get changed files to only lint files that have changed
       - name: Get changed files
         id: changed-files
@@ -40,14 +40,14 @@ jobs:
           files: |
             **/*.ts
             **/*.tsx
-          
+
       - name: Run ESLint on changed files
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo "Running ESLint on changed files:"
           echo "${{ steps.changed-files.outputs.all_changed_files }}"
           npx eslint ${{ steps.changed-files.outputs.all_changed_files }} --max-warnings=0
-          
+
       - name: Run full ESLint check if no specific files changed
         if: steps.changed-files.outputs.any_changed != 'true'
         run: npm run lint
@@ -63,11 +63,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
-            
+
             const eslintResult = "${{ job.status }}";
             const emoji = eslintResult === "success" ? "✅" : "❌";
             const status = eslintResult === "success" ? "passed" : "failed";
-            
+
             github.rest.issues.createComment({
               issue_number,
               owner,

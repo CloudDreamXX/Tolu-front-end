@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import { cn } from "shared/lib/utils";
 
 interface TextareaProps
@@ -7,18 +6,43 @@ interface TextareaProps
   footer?: React.ReactNode;
   footerClassName?: string;
   containerClassName?: string;
+  isTitleVisible?: boolean;
+  titleValue?: string;
+  onTitleChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
-    { className, containerClassName, footer, footerClassName, ...props },
+    {
+      className,
+      containerClassName,
+      footer,
+      footerClassName,
+      isTitleVisible,
+      titleValue,
+      onTitleChange,
+      ...props
+    },
     ref
   ) => {
     return (
-      <div className={cn("flex flex-col w-full", containerClassName)}>
+      <div
+        className={cn(
+          "flex flex-col w-full rounded-[18px] border border-input bg-background bg-background px-6 py-4",
+          containerClassName
+        )}
+      >
+        {isTitleVisible && (
+          <input
+            placeholder="Enter document title"
+            value={titleValue}
+            onChange={onTitleChange}
+            className="text-[24px] font-[500] text-[#1D1D1F] placeholder:text-[#1D1D1F80] outline-none pb-[16px] border-b border-[#DBDEE1] mb-[16px]"
+          />
+        )}
         <textarea
           className={cn(
-            "flex min-h-[80px] w-full rounded-md border border-input bg-background px-6 pt-4 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            "flex min-h-[80px] w-full text-[18px] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
             footer ? "rounded-b-none border-b-0" : "pb-4",
             className
           )}
@@ -28,7 +52,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {footer && (
           <div
             className={cn(
-              "flex items-center justify-between px-6 pb-4 text-sm text-gray-500 bg-white border border-t-0 border-input rounded-b-md",
+              "flex items-center justify-between text-sm text-gray-500 bg-white",
               footerClassName
             )}
           >
@@ -39,6 +63,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     );
   }
 );
+
 Textarea.displayName = "Textarea";
 
 export { Textarea };

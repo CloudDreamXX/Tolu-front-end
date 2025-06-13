@@ -1,50 +1,118 @@
 import { Send } from "lucide-react";
-import {
-  Textarea,
-  Button,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-} from "shared/ui";
+import { Textarea, Button } from "shared/ui";
 import {
   PopoverClient,
   PopoverFolder,
   PopoverAttach,
   PopoverInstruction,
 } from "widgets/content-popovers";
+import { useState } from "react";
+import { AIChatMessage, CoachService } from "entities/coach";
+import { RootState } from "entities/store";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export const ContentManagerCreatePage: React.FC = () => {
+  const [title, setTitle] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [isSending, setIsSending] = useState<boolean>(false);
+  const [folderId, setFolderId] = useState<string>("");
+  const [files, setFiles] = useState<string[]>([]);
+  const [clientId, setClientId] = useState<string | null>(null);
+  const token = useSelector((state: RootState) => state.user.token);
+  const nav = useNavigate();
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  const handleSendMessage = async () => {
+    if (message.trim() === "") return;
+
+    setIsSending(true);
+
+    const chatMessage: AIChatMessage = {
+      user_prompt: message,
+      is_new: true,
+      regenerate_id: null,
+      chat_title: title,
+    };
+
+    let finalAccumulatedReply = "";
+    let contentId = "";
+
+    try {
+      setIsStreaming(true);
+      await CoachService.aiLearningSearch(
+        chatMessage,
+        token,
+        folderId,
+        files,
+        clientId,
+        (chunk) => {
+          contentId = chunk.saved_content_id;
+          if (chunk.reply) {
+            finalAccumulatedReply += chunk.reply;
+            console.log("Streaming chunk:", chunk.reply);
+          }
+        },
+        (completedFolderId) => {
+          setIsStreaming(false);
+          console.log("Final accumulated reply:", finalAccumulatedReply);
+
+          nav(`/content-manager/library/folder/${completedFolderId}`, {
+            state: {
+              accumulatedReply: finalAccumulatedReply,
+              contentId: contentId,
+            },
+          });
+        }
+      );
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  if (isStreaming) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <h2 className="mb-4 text-lg font-semibold">Streaming in progress...</h2>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-2 px-12 py-6">
-      <Breadcrumb className="flex flex-row gap-2 text-sm text-muted-foreground">
-        <BreadcrumbLink href="/content-manager">AI-Generated</BreadcrumbLink>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>Untitled</BreadcrumbItem>
-      </Breadcrumb>
-      <h1 className="text-4xl font-semibold text-center">
+    <div className="flex flex-col gap-[48px] md:gap-[24px] px-[16px] py-[24px] md:px-[24px] md:py-[48px] xl:px-[48px] xl:py-[150px] mt-auto md:mb-auto xl:mt-0">
+      <h1 className="text-[24px] md:text-[40px] xl:text-[36px] font-semibold text-center">
         Hi, how can I help you?
       </h1>
-      <div className="flex flex-col gap-6 pt-6">
+      <div className="flex flex-col-reverse md:flex-col gap-[8px] md:gap-[16px] xl:gap-[24px]">
         <Textarea
+          isTitleVisible={true}
+          titleValue={title}
+          onTitleChange={(e) => setTitle(e.target.value)}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
           placeholder="Let's start with a subject or writing request..."
-          className="h-20 text-lg font-medium text-gray-900 resize-none placeholder:text-gray-500 border-[#008FF6] rounded-t-3xl"
+          containerClassName="border-[#008FF6]"
+          className="h-20 text-lg font-medium resize-none placeholder:text-[#1D1D1F80] text-[#1D1D1F]"
           footer={
             <div className="flex flex-row w-full gap-[10px]">
-              <PopoverClient />
-              <PopoverFolder />
+              <PopoverClient setClientId={setClientId} />
+              <PopoverFolder setFolderId={setFolderId} />
               <Button
                 variant="black"
                 className="ml-auto w-12 h-12 p-[10px] rounded-full"
+                onClick={handleSendMessage}
+                disabled={isSending}
               >
                 <Send color="#fff" />
               </Button>
             </div>
           }
-          footerClassName="rounded-b-3xl border-[#008FF6] border-t-0"
+          footerClassName="rounded-b-[18px] border-[#008FF6] border-t-0"
         />
-        <div className="flex flex-row gap-6">
-          <PopoverAttach />
+        <div className="flex flex-col md:flex-row gap-[8px] md:gap-[16px] xl:gap-[24px]">
+          <PopoverAttach setFiles={setFiles} />
           <PopoverInstruction />
         </div>
       </div>

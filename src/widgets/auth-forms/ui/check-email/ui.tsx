@@ -1,7 +1,6 @@
-import { RootState } from "entities/store";
 import { setCredentials, UserService } from "entities/user";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
 
@@ -13,7 +12,6 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const { search } = useLocation();
-  const user = useSelector((state: RootState) => state.user);
   const query = new URLSearchParams(search);
   const token = query.get("token") ?? "";
   const email = query.get("email") ?? "";
@@ -53,7 +51,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
     if (from === "forgot-password" && token && email) {
       const verifyEmail = async () => {
         try {
-          const msg = await UserService.verifyEmailPass({ email, token });
+          await UserService.verifyEmailPass({ email, token });
           dispatch(
             setCredentials({
               user: { email },
@@ -77,29 +75,29 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
   }, [token, email, from]);
 
   return (
-    <div className="w-full h-screen flex items-start py-0">
-      <div className="w-full max-w-[665px] h-full flex px-[76.5px] py-0 flex-col justify-center items-center self-center bg-[#1C63DB]">
-        <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white font-open text-center text-[96px] font-bold">
+    <div className="flex flex-col w-full h-screen xl:flex-row">
+      <div className="w-full xl:max-w-[665px] h-[150px] xl:h-full bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
+        <aside className="py-[10px] px-[95px] xl:p-[40px] flex items-center justify-center flex-col">
+          <h1 className="text-white font-open text-center text-[44.444px] xl:text-[96px] font-bold">
             TOLU
           </h1>
-          <h3 className="capitalize text-white font-open text-center text-[32px] font-medium">
+          <h3 className="capitalize font-open text-white text-center text-[14px] md:text-[15px] xl:text-[32px] font-semibold xl:font-medium">
             THE HOLISTIC MENOPAUSE HEALTH ASSISTANT
           </h3>
         </aside>
       </div>
       {token.length > 0 && email.length > 0 ? (
-        <div className="w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px]">
-          <div className="flex flex-col items-end self-stretch justify-end gap-[16px]">
-            <h1 className="text-center self-stretch text-black font-inter text-[40px] font-semibold">
+        <div className="w-full xl:w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
+          <div className="flex flex-col items-end self-stretch justify-end gap-[24px] md:gap-[16px] mt-auto md:mt-0">
+            <h1 className="text-center self-stretch text-black font-inter text-[28px] md:text-[40px] font-semibold">
               Just a moment...
             </h1>
-            <h3 className="text-center self-stretch text-black font-[Nunito] text-[24px] font-normal">
+            <h3 className="text-center self-stretch text-black font-[Nunito] text-[16px] md:text-[24px] font-normal">
               We&apos;re verifying your link. This will only take a few
               <br /> seconds.
             </h3>
           </div>
-          <p className="text-black font-[Nunito] text-[14px] font-normal">
+          <p className="text-black font-[Nunito] text-[14px] font-normal mt-auto md:mt-0">
             Need help?{" "}
             <span className="underline cursor-pointer text-[#1C63DB]">
               Support
@@ -107,18 +105,18 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
           </p>
         </div>
       ) : (
-        <div className="w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px]">
-          <div className="flex flex-col items-end self-stretch justify-end gap-[16px]">
-            <h1 className="text-center self-stretch text-black font-inter text-[40px] font-semibold">
+        <div className="w-full flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
+          <div className="flex flex-col items-end self-stretch justify-end gap-[16px] mt-auto md:mt-0">
+            <h1 className="text-center self-stretch text-black font-inter text-[28px] md:text-[40px] font-semibold">
               Check your inbox
             </h1>
-            <h3 className="text-center self-stretch text-black font-[Nunito] text-[24px] font-normal">
+            <h3 className="text-center self-stretch text-black font-[Nunito] text-[16px] md:text-[24px] font-normal">
               We&apos;ve sent you a link. Follow the instructions in
               <br /> your email to continue. Don&apos;t forget to check your
               <br /> spam or promotions folder.
             </h3>
           </div>
-          <p className="text-black font-[Nunito] text-[14px] font-normal">
+          <p className="mt-auto md:mt-0 text-black font-[Nunito] text-[14px] font-normal">
             Need help?{" "}
             <span className="underline cursor-pointer text-[#1C63DB]">
               Support

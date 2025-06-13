@@ -1,5 +1,11 @@
 import { API_ROUTES, ApiService } from "shared/api";
-import { IRegisterUser, IUser } from "./model";
+import {
+  IRegisterUser,
+  IUser,
+  MenopauseSubmissionRequest,
+  RecommendationsResponse,
+  SymptomsResponse,
+} from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { FormState } from "entities/store/clientOnboardingSlice";
 
@@ -94,7 +100,6 @@ export class UserService {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
           "Content-Type": "multipart/form-data",
         },
-        withCredentials: true,
       }
     );
 
@@ -110,7 +115,6 @@ export class UserService {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        withCredentials: true,
       }
     );
 
@@ -133,7 +137,6 @@ export class UserService {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
           "Content-Type": "multipart/form-data",
         },
-        withCredentials: true,
       }
     );
 
@@ -169,7 +172,38 @@ export class UserService {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        withCredentials: true,
+      }
+    );
+  }
+
+  static async getMenopauseSymptoms(): Promise<SymptomsResponse> {
+    return ApiService.get<SymptomsResponse>(API_ROUTES.MENOPAUSE.GET_SYMPTOMS);
+  }
+
+  static async submitMenopauseResults(
+    data: MenopauseSubmissionRequest,
+    token: string | null
+  ): Promise<{ success: boolean }> {
+    return ApiService.post<{ success: boolean }>(
+      API_ROUTES.MENOPAUSE.POST_SYMPTOMS,
+      data,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
+    );
+  }
+
+  static async getMenopauseRecommendations(
+    token: string | null
+  ): Promise<RecommendationsResponse> {
+    return ApiService.get<RecommendationsResponse>(
+      API_ROUTES.MENOPAUSE.GET_RECOMMENDATIONS,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       }
     );
   }

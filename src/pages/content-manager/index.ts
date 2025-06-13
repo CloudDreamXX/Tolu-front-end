@@ -6,3 +6,4 @@ export * from "./folder";
 export * from "./approved";
 export * from "./published";
 export * from "./archived";
+export * from "./library";

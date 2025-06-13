@@ -12,17 +12,30 @@ const TooltipTrigger = TooltipPrimitive.Trigger;
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
+>(({ className, sideOffset = 8, ...props }, ref) => (
   <TooltipPrimitive.Content
     ref={ref}
     sideOffset={sideOffset}
+    side="top"
+    align="end"
     className={cn(
-      "z-50 overflow-hidden border-[#1C63DB] rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-tooltip-content-transform-origin]",
+      "ml-[40px] z-50 border border-[#1C63DB] bg-white text-[#1D1D1F] rounded-[8px] shadow-lg p-[20px] text-sm w-[329px] leading-[1.5] relative overflow-visible", // ensure Arrow is visible
+      "data-[state=closed]:animate-fadeOut data-[state=open]:animate-fadeIn",
+      "data-[side=top]:slide-in-from-bottom-2",
       className
     )}
     {...props}
-  />
+  >
+    {props.children}
+
+    <TooltipPrimitive.Arrow
+      className="fill-white stroke-[#1C63DB] ml-auto mr-[40px]"
+      width={16}
+      height={8}
+    />
+  </TooltipPrimitive.Content>
 ));
+
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

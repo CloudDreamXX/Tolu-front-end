@@ -6,7 +6,6 @@ import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { AuthPageWrapper, Input } from "shared/ui";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
-import { BottomButtons } from "widgets/BottomButtons";
 import { Footer } from "widgets/Footer";
 
 export const Summary = () => {
@@ -74,7 +73,7 @@ export const Summary = () => {
       section === "personal" ? personalState[key] : insightsState[key];
 
     return (
-      <div key={key} className="flex flex-col gap-1 flex-1">
+      <div key={key} className="flex flex-col flex-1 gap-1">
         <p className="text-[#5F5F65] text-[12px] font-normal font-[Nunito]">
           {label}
         </p>
@@ -104,7 +103,7 @@ export const Summary = () => {
       const left = fields[i];
       const right = fields[i + 1];
       pairs.push(
-        <div key={i} className="flex items-start gap-4 self-stretch">
+        <div key={i} className="flex items-start self-stretch gap-4">
           {renderField(left.label, left.key, editing, section)}
           {right && renderField(right.label, right.key, editing, section)}
         </div>
@@ -116,7 +115,7 @@ export const Summary = () => {
   return (
     <AuthPageWrapper>
       <HeaderOnboarding isClient currentStep={7} steps={8} />
-      <main className="flex flex-col w-full items-center gap-8 justify-center self-stretch">
+      <main className="flex flex-col items-center self-stretch justify-center w-full gap-8">
         <h1 className="text-[#1D1D1F] text-center text-h1">
           Summary Confirmation Page
         </h1>
@@ -132,7 +131,7 @@ export const Summary = () => {
 
           {/* Personal Info Section */}
           <div className="rounded-[16px] border border-[#DDEBF6] w-full flex flex-col gap-4 p-6">
-            <div className="flex justify-between items-center w-full">
+            <div className="flex items-center justify-between w-full">
               <h2 className="text-[#1D1D1F] font-[Nunito] text-[18px] font-bold">
                 Personal info
               </h2>
@@ -152,7 +151,7 @@ export const Summary = () => {
                     Save
                   </button>
                   <button
-                    className="text-gray-500 text-sm"
+                    className="text-sm text-gray-500"
                     onClick={() => {
                       setPersonalState({ ...client });
                       setIsEditingPersonal(false);
@@ -168,7 +167,7 @@ export const Summary = () => {
 
           {/* Insights Section */}
           <div className="rounded-[16px] border border-[#DDEBF6] w-full flex flex-col gap-4 p-6">
-            <div className="flex justify-between items-center w-full">
+            <div className="flex items-center justify-between w-full">
               <h2 className="text-[#1D1D1F] font-[Nunito] text-[18px] font-bold">
                 Your insights
               </h2>
@@ -188,7 +187,7 @@ export const Summary = () => {
                     Save
                   </button>
                   <button
-                    className="text-gray-500 text-sm"
+                    className="text-sm text-gray-500"
                     onClick={() => {
                       setInsightsState({ ...client });
                       setIsEditingInsights(false);

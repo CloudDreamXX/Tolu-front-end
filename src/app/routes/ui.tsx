@@ -15,41 +15,15 @@ const getRouteByRole = (role: string): string => {
       return "/admin";
     case "coaches":
       return "/coaches";
+    case "Practitioner":
+    case "Coach":
+    case "Reviewer":
+    case "Super Admin":
+      return "/content-manager/library";
+    case "Client":
+      return "/health-snapshot";
     default:
-      return "/user";
-  }
-};
-
-const checkPath = () => {
-  if (
-    location.pathname === "/auth" ||
-    location.pathname === "/register" ||
-    location.pathname === "/forgot-password" ||
-    location.pathname === "/new-password" ||
-    location.pathname === "/verify-email" ||
-    location.pathname === "/verify-email-pass" ||
-    location.pathname === "/welcome/client" ||
-    location.pathname === "/welcome/practitioner" ||
-    location.pathname === "/onboarding-welcome" ||
-    location.pathname === "/subscription-plan" ||
-    location.pathname === "/select-type" ||
-    location.pathname === "/about-your-practice" ||
-    location.pathname === "/profile-setup" ||
-    location.pathname === "/invite-clients" ||
-    location.pathname === "/onboarding-finish" ||
-    location.pathname === "/about-you" ||
-    location.pathname === "/what-brings-you-here" ||
-    location.pathname === "/values" ||
-    location.pathname === "/barriers" ||
-    location.pathname === "/support" ||
-    location.pathname === "/personality-type" ||
-    location.pathname === "/choose-test" ||
-    location.pathname === "/readiness" ||
-    location.pathname === "/summary" ||
-    location.pathname === "/finish" ||
-    location.pathname === "/health-snapshot"
-  ) {
-    return <Outlet />;
+      return "/auth";
   }
 };
 
@@ -59,10 +33,10 @@ export const MainLayout: React.FC<{
 }> = ({ children, mainLocation }) => {
   return (
     <div className="flex flex-row w-full h-screen min-h-screen overflow-hidden min-w-screen">
-      <div className="h-full w-full max-w-[316px] px-2 py-8">
+      <div className="hidden xl:block h-full px-[16px] py-8">
         {getSideBar(mainLocation)}
       </div>
-      <div className="flex flex-col w-full h-full bg-[#F3F6FB]">
+      <div className="flex flex-col w-full h-full bg-[#F1F3F5]">
         {getNavigation(mainLocation)}
         {children}
       </div>
@@ -70,23 +44,21 @@ export const MainLayout: React.FC<{
   );
 };
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  allowedRoles,
+}) => {
   const location = useLocation();
-  const { token, userType } = useSelector((state: RootState) => ({
-    token: state?.user?.token,
-    userType: state?.user?.userType,
+  const { token, userRole } = useSelector((state: RootState) => ({
+    token: state.user?.token,
+    userRole: state.user?.user?.roleName,
   }));
 
-  if (!token || !userType) {
-    checkPath();
+  if (!token || !userRole) {
     return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
   }
-  if (location.pathname === "/auth") {
-    return <Navigate to={getRouteByRole(userType.role)} replace />;
-  }
 
-  if (userType.role === "user" && location.pathname !== "/health-snapshot") {
-    return <Navigate to="/health-snapshot" replace />;
+  if (!allowedRoles.includes(userRole)) {
+    return <Navigate to={getRouteByRole(userRole)} replace />;
   }
 
   return <Outlet />;

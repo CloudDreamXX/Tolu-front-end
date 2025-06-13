@@ -13,11 +13,11 @@ export const SubscriptionPlan = () => {
   return (
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={3} />
-      <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
-        <h3 className="font-inter text-[32px] font-medium text-black text-center self-stretch">
+      <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch px-[16px] md:p-0">
+        <h3 className="font-inter text-[24px] md:text-[32px] font-medium text-black text-center self-stretch">
           Choose subscription plan
         </h3>
-        <section className="flex gap-[32px] w-[1150px] items-center">
+        <section className="flex flex-col md:flex-row gap-[32px] w-full xl:w-[1150px] items-center justify-center md:px-[24px]">
           <PriceCard
             onClick={() => setActiveCard("starting")}
             active={activeCard === "starting"}
@@ -29,14 +29,13 @@ export const SubscriptionPlan = () => {
             active={activeCard === "professional"}
             plan="professional"
             price="$39.00"
-            second={true}
             mostPopular
           />
         </section>
-        <div className="pb-10 flex items-center gap-[16px]">
+        <div className="flex items-center gap-[16px] pb-10 md:pb-[140px] w-full md:w-fit">
           <button
             onClick={() => nav(-1)}
-            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
@@ -45,8 +44,8 @@ export const SubscriptionPlan = () => {
             to="/profile-setup"
             className={
               activeCard !== ""
-                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
-                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
+                ? "bg-[#1C63DB] flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
+                : "flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
             }
           >
             Next

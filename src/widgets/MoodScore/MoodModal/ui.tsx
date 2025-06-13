@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   lastMood,
   setLastLogIn,
@@ -6,6 +6,7 @@ import {
 } from "entities/store/clientMoodSlice";
 import { useDispatch } from "react-redux";
 import InfoIcon from "shared/assets/icons/info-icon";
+import ArrowBack from "shared/assets/icons/arrowBack";
 import Angry from "shared/assets/images/Angry.svg";
 import Sad from "shared/assets/images/Sad.svg";
 import Neutral from "shared/assets/images/Neutrak.svg";
@@ -44,6 +45,16 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
   const [rawValue, setRawValue] = useState(2.5);
 
   const dispatch = useDispatch();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const moodIndex = Math.floor(rawValue);
 
@@ -54,8 +65,15 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-[16px] p-8 w-[742px] flex flex-col gap-8 relative shadow-lg">
+    <div className="fixed inset-0 bg-[#F1F3F5] top-[70px] md:top-0 md:bg-black md:bg-opacity-40 flex items-center justify-center z-50">
+      <span
+        onClick={onClose}
+        aria-label="Close modal"
+        className="absolute z-10 top-[16px] left-[16px] md:hidden"
+      >
+        <ArrowBack />
+      </span>
+      <div className="bg-white absolute bottom-0 rounded-t-[16px] md:rounded-[16px] px-[16px] py-[24px] md:p-[24px] xl:p-8 w-full md:w-[742px] flex flex-col gap-8 md:relative shadow-lg">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -92,69 +110,67 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
               </h2>
               <InfoIcon />
             </div>
+
+            <Slider
+              min={0}
+              max={59}
+              step={1}
+              value={[rawValue]}
+              onValueChange={([val]) => setRawValue(val)}
+              colors={[
+                "#FF1F0F",
+                "#F6B448",
+                "#F5D094",
+                "#BCE2C8",
+                "#80D19A",
+                "#51C776",
+              ]}
+            />
+
+            <div className="flex items-center justify-between w-full px-4">
+              {moodImages.map((img, idx) => (
+                <div key={idx} className="flex justify-center w-1/6">
+                  <img
+                    src={img}
+                    alt={`Mood ${moods[idx]}`}
+                    className="w-6 h-6"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
-          <Slider
-            min={0.1}
-            max={5.59}
-            step={0.01}
-            value={[rawValue]}
-            onValueChange={([val]) => setRawValue(val)}
-            onValueCommit={() => {
-              const roundedValue = Math.ceil(rawValue) - 0.5;
-              setRawValue(roundedValue);
-            }}
-            activeIndex={rawValue}
-            colors={[
-              "#FF1F0F",
-              "#F6B448",
-              "#F5D094",
-              "#BCE2C8",
-              "#80D19A",
-              "#51C776",
-            ]}
-          />
-
-          <div className="flex items-center justify-between w-full px-4">
-            {moodImages.map((img, idx) => (
-              <div key={idx} className="flex justify-center w-1/6">
-                <img src={img} alt={`Mood ${moods[idx]}`} className="w-6 h-6" />
-              </div>
-            ))}
+          {/* Feedback textarea */}
+          <div className="flex flex-col w-full max-w-[600px] gap-1">
+            <label
+              htmlFor="mood-feedback"
+              className="font-[Nunito] text-[#1D1D1F] font-semibold text-sm"
+            >
+              Anything you'd like to add?{" "}
+              <span className="font-normal text-gray-400">(Optional)</span>
+            </label>
+            <Input
+              id="mood-feedback"
+              placeholder="Leave your short feedback (e.g. energy level, stress, triggers)"
+              className="w-full p-3 rounded border border-gray-300 resize-none text-sm font-[Nunito] placeholder:text-gray-400"
+            />
           </div>
-        </div>
 
-        {/* Feedback textarea */}
-        <div className="flex flex-col w-full max-w-[600px] gap-1">
-          <label
-            htmlFor="mood-feedback"
-            className="font-[Nunito] text-[#1D1D1F] font-semibold text-sm"
-          >
-            Anything you'd like to add?{" "}
-            <span className="font-normal text-gray-400">(Optional)</span>
-          </label>
-
-          <Input
-            id="mood-feedback"
-            placeholder="Leave your short feedback (e.g. energy level, stress, triggers)"
-            className="w-full p-3 rounded border border-gray-300 resize-none text-sm font-[Nunito] placeholder:text-gray-400"
-          />
-        </div>
-
-        {/* Buttons */}
-        <div className="flex justify-between w-full max-w-[600px]">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 font-semibold text-blue-500 rounded hover:underline"
-          >
-            Skip for today
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-6 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Submit
-          </button>
+          {/* Buttons */}
+          <div className="flex justify-between w-full max-w-[600px]">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 font-semibold text-blue-500 rounded hover:underline"
+            >
+              Skip for today
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="px-6 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -29,6 +29,7 @@ import {
   setNotes,
 } from "entities/store/clientGlucoseSlice";
 import { RootState } from "entities/store";
+import ArrowBack from "shared/assets/icons/arrowBack";
 
 export interface GlucoseCardProps {
   indicator: string;
@@ -97,18 +98,15 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
   };
 
   return (
-    <div
-      className="flex flex-col p-4 justify-between items-start flex-1 rounded-2xl bg-[#F3F7FD] relative"
-      style={{ width: width ?? "238px", height: height ?? "160px" }}
-    >
+    <div className="flex flex-col p-4 justify-between items-start flex-1 rounded-2xl bg-[#F3F7FD] relative h-full">
       {modifiable && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <button className="absolute right-[12px] top-[12px] py-[6px] px-[8px] h-8 rounded-full bg-[#DDEBF6] flex items-center justify-center">
+            <button className="absolute right-[12px] top-[12px] py-[6px] px-[6px] h-[24px] w-[24px] md:w-8 md:h-8 rounded-full bg-[#DDEBF6] flex items-center justify-center">
               <Pencil />
             </button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[742px] flex flex-col gap-6 p-6 items-start">
+          <DialogContent className="max-w-[768px] md:max-w-[742px] flex flex-col gap-6 p-6 items-start">
             <div className="flex flex-col gap-2 items-start">
               <h2 className="text-[24px]/[32px] font-semibold font-[Nunito] text-[#1D1D1F]">
                 Enter Your Glucose Level
@@ -225,10 +223,12 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
       )}
 
       <div className="flex items-center gap-1 self-stretch">
-        <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+        <h3 className="font-[Nunito] text-[12px] md:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
           Glucose
         </h3>
-        <InfoIcon />
+        <span className="w-[20px] h-[20px]">
+          <InfoIcon />
+        </span>
       </div>
 
       <div className="flex items-center gap-3">
@@ -250,7 +250,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
       </div>
 
       {isEmpty && (
-        <p className="mt-auto flex items-start w-full text-center font-[Nunito] font-bold text-[20px] leading-[28px] text-red-600">
+        <p className="mt-auto flex items-start w-full text-center font-[Nunito] font-bold text-[18px] md:text-[20px] leading-[28px] text-red-600">
           Need to enter
         </p>
       )}

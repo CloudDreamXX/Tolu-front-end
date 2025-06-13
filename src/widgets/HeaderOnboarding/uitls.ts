@@ -1,17 +1,22 @@
 type StepStyleProps = {
   isCompleted: boolean;
   isCurrent: boolean;
+  isMobile: boolean;
 };
 
-export function getStepStyle({ isCompleted, isCurrent }: StepStyleProps) {
+export function getStepStyle({
+  isCompleted,
+  isCurrent,
+  isMobile,
+}: StepStyleProps) {
   if (isCompleted) {
     return {
       backgroundColor: "#1866E0",
       color: "white",
-      border: "3px solid #1866E0",
+      border: isMobile ? "0" : "3px solid #1866E0",
       boxShadow: "inset 0px 1px 3px rgba(0,0,0,0.2)",
       fontWeight: "700",
-      fontSize: "14px",
+      fontSize: isMobile ? "12px" : "14px",
     };
   }
 
@@ -19,10 +24,10 @@ export function getStepStyle({ isCompleted, isCurrent }: StepStyleProps) {
     return {
       color: "#5F5F65",
       backgroundColor: "white",
-      border: "3px solid #1866E0",
+      border: isMobile ? "0" : "3px solid #1866E0",
       boxShadow: "inset 0px 1px 3px rgba(0,0,0,0.2)",
       fontWeight: "700",
-      fontSize: "14px",
+      fontSize: isMobile ? "12px" : "14px",
     };
   }
 
@@ -32,7 +37,7 @@ export function getStepStyle({ isCompleted, isCurrent }: StepStyleProps) {
     border: "3px solid #D9D9D9",
     boxShadow: "inset 0px 1px 3px rgba(0,0,0,0.2)",
     fontWeight: "700",
-    fontSize: "14px",
+    fontSize: isMobile ? "12px" : "14px",
   };
 }
 

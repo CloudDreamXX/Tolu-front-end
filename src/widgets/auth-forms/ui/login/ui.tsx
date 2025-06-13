@@ -78,32 +78,28 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="w-full h-screen flex items-start py-0">
-      {/* Left side */}
-      <div className="w-full max-w-[665px] h-full flex px-[76.5px] flex-col justify-center items-center bg-[#1C63DB]">
-        <aside className="p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white font-open text-center text-[96px] font-bold">
+    <div className="flex flex-col xl:flex-row w-full h-screen">
+      <div className="w-full xl:max-w-[665px] h-[150px] xl:h-full bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
+        <aside className="py-[10px] px-[95px] xl:p-[40px] flex items-center justify-center flex-col">
+          <h1 className="text-white font-open text-center text-[44.444px] xl:text-[96px] font-bold">
             TOLU
           </h1>
-          <h3 className="capitalize font-open text-white text-center text-[32px] font-medium">
+          <h3 className="capitalize font-open text-white text-center text-[14px] md:text-[15px] xl:text-[32px] font-semibold xl:font-medium">
             THE HOLISTIC MENOPAUSE HEALTH ASSISTANT
           </h3>
         </aside>
       </div>
 
-      {/* Right side */}
-      <div className="w-full h-full flex justify-center items-center flex-1 bg-white">
+      <div className="w-full h-full flex justify-center xl:items-center flex-1 bg-white">
         <form
-          className="w-[550px] flex flex-col items-center gap-[60px]"
+          className="w-full md:w-[550px] flex flex-col mt-[44px] md:mt-[121px] xl:mt-0 py-[24px] px-[16px] md:p-0 xl:items-center gap-[40px] xl:gap-[60px]"
           onSubmit={handleSubmit}
         >
-          <h3 className="text-black text-center font-inter font-semibold text-[40px]">
+          <h3 className="text-black text-center font-inter font-semibold text-[28px] md:text-[40px]">
             Log In
           </h3>
 
-          {/* Form content */}
           <main className="flex flex-col gap-[24px] items-start self-stretch">
-            {/* Email */}
             <div className="flex flex-col items-start gap-[4px] w-full">
               <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
                 Email
@@ -139,7 +135,6 @@ export const LoginForm = () => {
               )}
             </div>
 
-            {/* Password */}
             <div className="flex flex-col items-start gap-[4px] w-full">
               <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
                 Password
@@ -177,7 +172,6 @@ export const LoginForm = () => {
               )}
             </div>
 
-            {/* Forgot Password */}
             <Link
               to="/forgot-password"
               className="self-stretch text-[14px] text-[#5F5F65] underline font-[Nunito] hover:text-[#1C63DB]"
@@ -186,11 +180,10 @@ export const LoginForm = () => {
             </Link>
           </main>
 
-          {/* Submit + Register */}
-          <div className="flex flex-col items-center gap-[24px] w-full">
+          <div className="flex flex-col items-center gap-[24px] w-full mt-auto md:mt-0">
             <button
               type="submit"
-              className={`w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
+              className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
                 formData.email &&
                 formData.password &&
                 !passwordError &&

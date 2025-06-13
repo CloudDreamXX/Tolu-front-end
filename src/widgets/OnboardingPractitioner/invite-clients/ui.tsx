@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Download, File, X } from "lucide-react";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
 import UploadCloud from "shared/assets/icons/upload-cloud";
+import ArrowLeft from "shared/assets/icons/arrowLeft";
 
 export const InviteClients = () => {
   const nav = useNavigate();
@@ -13,6 +14,13 @@ export const InviteClients = () => {
   const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [clientel, setClientel] = useState<string[]>([""]);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -42,21 +50,32 @@ export const InviteClients = () => {
 
   return (
     <AuthPageWrapper>
+      <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={5} />
-      <main className="flex flex-col items-center justify-center w-full gap-[32px] mt-[40px]">
-        {/* Heading */}
-        <div className="flex flex-col items-center gap-4">
-          <h1 className="text-[32px] text-black font-inter font-semibold text-center">
-            Invite Clients
-          </h1>
-          <p className="text-[#5F5F65] text-[20px] !font-[Inter] font-normal text-center">
-            Invite your clients to join your coaching platform and start working
-            together
-          </p>
-        </div>
-
-        {/* Upload Card */}
-        <div className="bg-white rounded-[16px] py-[32px] px-[40px] w-[600px] flex flex-col gap-[24px] items-start shadow-md">
+      <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px] absolute bottom-0 md:static">
+        {!isMobile && (
+          <div className="flex flex-col items-center gap-4">
+            <h1 className="text-[32px] text-black font-inter font-semibold text-center">
+              Invite Clients
+            </h1>
+            <p className="text-[#5F5F65] text-[20px] !font-[Inter] font-normal text-center">
+              Invite your clients to join your coaching platform and start
+              working together
+            </p>
+          </div>
+        )}
+        <div className="flex flex-col w-full lg:w-[700px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] lg:py-[40px] lg:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px]">
+          {isMobile && (
+            <div className="flex flex-col items-center gap-4">
+              <h1 className="text-[24px] text-black font-inter font-semibold text-center">
+                Invite Clients
+              </h1>
+              <p className="text-[#5F5F65] text-[16px] !font-[Inter] font-normal text-center">
+                Invite your clients to join your coaching platform and start
+                working together
+              </p>
+            </div>
+          )}
           {/* File Preview */}
           {uploadedFileName ? (
             <div className="w-full max-w-[330px]">
@@ -145,7 +164,7 @@ export const InviteClients = () => {
           </div>
 
           {/* Manual Invite */}
-          <div className="w-full flex flex-col gap-2">
+          <div className="flex flex-col w-full gap-2">
             <p className="text-left font-[Nunito] text-black text-base font-medium">
               Manual Invite
             </p>
@@ -172,37 +191,71 @@ export const InviteClients = () => {
               + Add another
             </button>
           </div>
+          {isMobile && (
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-[8px] bg-transparent w-full">
+                <button
+                  className="flex w-full p-[16px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+                  style={{ background: "rgba(0, 143, 246, 0.10)" }}
+                  onClick={() => nav(-1)}
+                >
+                  <ArrowLeft />
+                  Back
+                </button>
+                <button
+                  onClick={() => nav("/onboarding-finish")}
+                  disabled={!isAllClientsFilled}
+                  className={`flex w-full p-[16px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
+                    isAllClientsFilled
+                      ? "bg-[#1C63DB] text-white"
+                      : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+              <button
+                className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB] font-[Nunito] text-[16px] font-semibold"
+                onClick={() => nav("/onboarding-finish")}
+              >
+                Skip this step
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Navigation */}
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-[16px] bg-transparent">
+        {!isMobile && (
+          <div className="flex flex-col items-center gap-4 pb-10 md:pb-[140px]">
+            <div className="flex items-center gap-[16px] bg-transparent">
+              <button
+                className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+                style={{ background: "rgba(0, 143, 246, 0.10)" }}
+                onClick={() => nav(-1)}
+              >
+                <ArrowLeft />
+                Back
+              </button>
+              <button
+                onClick={() => nav("/onboarding-finish")}
+                disabled={!isAllClientsFilled}
+                className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
+                  isAllClientsFilled
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
+                }`}
+              >
+                Next
+              </button>
+            </div>
             <button
-              className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
-              style={{ background: "rgba(0, 143, 246, 0.10)" }}
-              onClick={() => nav(-1)}
-            >
-              Back
-            </button>
-            <button
+              className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB] font-[Nunito] text-[16px] font-semibold"
               onClick={() => nav("/onboarding-finish")}
-              disabled={!isAllClientsFilled}
-              className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
-                isAllClientsFilled
-                  ? "bg-[#1C63DB] text-white"
-                  : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-              }`}
             >
-              Next
+              Skip this step
             </button>
           </div>
-          <button
-            className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB] font-[Nunito] text-[16px] font-semibold"
-            onClick={() => nav("/onboarding-finish")}
-          >
-            Skip this step
-          </button>
-        </div>
+        )}
       </main>
       <Footer />
     </AuthPageWrapper>

@@ -1,6 +1,6 @@
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UploadCloud from "shared/assets/icons/upload-cloud";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -20,10 +20,19 @@ export const AboutYourPractice = () => {
   const [targetClients, setTargetClients] = useState("");
   const [labsUsed, setLabsUsed] = useState("");
   const nav = useNavigate();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+  const [selectedSchools, setSelectedSchools] = useState<string[]>([]);
+  const [schoolDropdownOpen, setSchoolDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const allFilled = () => {
     return (
-      school.length > 0 &&
+      selectedSchools.length > 0 &&
       recentClients.length > 0 &&
       targetClients.length > 0 &&
       labsUsed.length > 0 &&
@@ -88,37 +97,118 @@ export const AboutYourPractice = () => {
     }
   };
 
+  const schoolOptions = [
+    "Functional Medicine Coaching Academy (FMCA)",
+    "Functional Nutrition Alliance (FxNA)",
+    "Nutritional Therapy Association (NTA)",
+    "Nutrition Therapy Institute (NTI)",
+    "Health Coach Institute (HCI)",
+  ];
+
   return (
     <AuthPageWrapper>
+      <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={2} />
-      <main className="flex flex-col items-center flex-1 justify-center w-full gap-[32px] self-stretch">
-        <h2 className="font-inter text-[32px] text-center font-medium text-black w-[700px]">
-          About your practice
-        </h2>
-        <div className="w-[700px] bg-white shadow-mdp-[40px] flex flex-col items-start gap-[24px] rounded-[20px]">
-          <div className="flex flex-col items-start self-stretch gap-[16px] mt-[40px] ml-[32px]">
-            <SearchableSelect
-              width="w-[620px]"
-              label="Which school did you graduate from? *"
-              options={[
-                "Functional Medicine Coaching Academy (FMCA)",
-                "Functional Nutrition Alliance (FxNA)",
-                "Nutritional Therapy Association (NTA)",
-                "Nutrition Therapy Institute (NTI)",
-                "Health Coach Institute (HCI)",
-              ]}
-              value={school}
-              onChange={(value) => handleFieldChange("school", value)}
-            />
+      <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch bg-white shadow-mdp-[40px] md:shadow-none md:bg-transparent py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0">
+        {!isMobile && (
+          <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
+            About your practice
+          </h1>
+        )}
+        <div className="w-full md:w-[700px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px]">
+          {isMobile && (
+            <h1 className="flex text-center font-inter text-[24px] font-medium text-black">
+              About your practice
+            </h1>
+          )}
+          {/* School */}
+          <div className="flex flex-col items-start self-stretch md:mt-[40px] md:ml-[32px] w-full md:w-[620px] relative">
+            <label className="peer-focus:text-[#1D1D1F] ${labelStyle} font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block">
+              Which school did you graduate from? *
+            </label>
+
+            <div
+              className="peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
+              onClick={() => setSchoolDropdownOpen((prev) => !prev)}
+            >
+              <div className="flex flex-wrap gap-[8px]">
+                {selectedSchools.length === 0 && (
+                  <span className="text-[#9D9D9D]">
+                    Select one or more schools
+                  </span>
+                )}
+                {selectedSchools.map((school, idx) => (
+                  <span
+                    key={idx}
+                    className="border border-[#CBCFD8] px-[16px] py-[6px] rounded-[6px] flex items-center gap-2"
+                  >
+                    {school}
+                    <button
+                      type="button"
+                      className="ml-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedSchools(
+                          selectedSchools.filter((s) => s !== school)
+                        );
+                      }}
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+                <div
+                  className={`pointer-events-none absolute right-4 top-[48px] transition-transform duration-300 ${schoolDropdownOpen ? "rotate-180" : ""}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="17"
+                    viewBox="0 0 16 17"
+                    fill="none"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M11.7667 6.33422C11.4542 6.0218 10.9477 6.0218 10.6353 6.33422L8.00098 8.96853L5.36666 6.33422C5.05424 6.0218 4.54771 6.0218 4.23529 6.33422C3.92287 6.64664 3.92287 7.15317 4.23529 7.46559L7.43529 10.6656C7.74771 10.978 8.25424 10.978 8.56666 10.6656L11.7667 7.46559C12.0791 7.15317 12.0791 6.64664 11.7667 6.33422Z"
+                      fill="#1D1D1F"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {schoolDropdownOpen && (
+                <div className="absolute top-full mt-1 left-0 z-10 w-full max-h-[160px] overflow-y-auto scrollbar-hide border border-[#1C63DB] bg-white rounded-md shadow-md p-[16px] flex flex-col gap-[8px]">
+                  {schoolOptions.map((option) => (
+                    <div
+                      key={option}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!selectedSchools.includes(option)) {
+                          const updated = [...selectedSchools, option];
+                          setSelectedSchools(updated);
+                          dispatch(
+                            updateCoachField({ key: "school", value: updated })
+                          );
+                        }
+                      }}
+                      className="cursor-pointer hover:bg-[#F3F6FB]"
+                    >
+                      {option}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* File Upload */}
-          <div className="flex flex-col gap-2 items-start">
-            <p className="ml-[32px] font-[Nunito] text-[16px] font-medium text-black">
-              Upload certificates or licenses *
+          <div className="flex flex-col gap-2 items-start w-full">
+            <p className="md:ml-[32px] font-[Nunito] text-[16px] font-medium text-black ">
+              Upload a certificate or license *
             </p>
             <div
-              className={`flex py-[16px] ml-[32px] w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
+              className={`flex py-[16px] md:ml-[32px] w-full md:w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
                 dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
               } bg-white cursor-pointer transition`}
               onDragOver={handleDragOver}
@@ -177,32 +267,35 @@ export const AboutYourPractice = () => {
               Data is securely saved with a HIPAA-compliant notice
             </p>
           </div>
-
-          <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
+          {/* Recent clients */}
+          <div className="flex flex-col items-start self-stretch gap-[16px] md:ml-[32px]">
             <SearchableSelect
-              width="w-[620px]"
+              width="w-full md:w-[620px]"
               label="How many clients have you helped within the past 3 months? *"
               options={["0-5", "6-15", "16-30", "31-50", "50+"]}
-              value={recentClients}
+              value={school}
               onChange={(value) => handleFieldChange("recent", value)}
             />
           </div>
 
-          <div className="flex flex-col items-start self-stretch gap-[16px] ml-[32px]">
+          {/* Target clients */}
+          <div className="flex flex-col items-start self-stretch gap-[16px] md:ml-[32px]">
             <SearchableSelect
-              width="w-[620px]"
-              label="How many new clients do you hope to acquire over the next 3 months? *"
+              width="w-full md:w-[620px]"
+              label="How many new clients do you hope to acquire over the next 3
+              months? *"
               options={["0-5", "6-15", "16-30", "31-50", "50+"]}
-              value={targetClients}
+              value={school}
               onChange={(value) => handleFieldChange("target", value)}
             />
           </div>
 
-          <div className="flex flex-col ml-[32px] items-start self-stretch mb-[16px] gap-[16px]">
+          {/* Radio - uses labs/supplements */}
+          <div className="flex flex-col md:ml-[32px] items-start self-stretch md:mb-[40px] gap-[16px]">
             <p className="font-[Nunito] text-[16px] font-medium text-black">
               Do you currently use labs or supplementation in your practice? *
             </p>
-            <div className="flex items-center gap-[60px]">
+            <div className="flex flex-col md:flex-row items-start md:items-center md:gap-[60px]">
               {["Yes", "No", "Planning to"].map((option) => (
                 <label
                   key={option}
@@ -214,7 +307,7 @@ export const AboutYourPractice = () => {
                     value={option}
                     checked={labsUsed === option}
                     onChange={(e) => handleFieldChange("labs", e.target.value)}
-                    className="w-[20px] h-[20px]"
+                    className="w-[24px] h-[24px] md:w-[20px] md:h-[20px]"
                   />
                   <span className="font-[Nunito] text-[16px] font-medium text-black">
                     {option}
@@ -225,27 +318,29 @@ export const AboutYourPractice = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-[16px] bg-transparent">
+        {/* Navigation */}
+        <div
+          className={`flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit pb-10 md:pb-[140px]`}
+        >
           <button
             onClick={() => nav(-1)}
-            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
           </button>
           <Link
             to={allFilled() ? "/subscription-plan" : ""}
-            className={
+            className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
               allFilled()
-                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
-                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
-            }
+                ? "bg-[#1C63DB] text-white"
+                : "bg-[#D5DAE2] text-[#5F5F65]"
+            }`}
           >
             Next
           </Link>
         </div>
       </main>
-      <Footer />
     </AuthPageWrapper>
   );
 };

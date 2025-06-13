@@ -1,9 +1,13 @@
-export default (props?: React.SVGProps<SVGSVGElement>) => {
+export const Eye = ({
+  width = 22,
+  height = 17,
+  ...props
+}: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="17"
+      width={width}
+      height={height}
       viewBox="0 0 22 17"
       fill="none"
       {...props}

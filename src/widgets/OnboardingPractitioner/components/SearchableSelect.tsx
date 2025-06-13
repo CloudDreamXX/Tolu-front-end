@@ -10,6 +10,7 @@ interface SearchableSelectProps {
   placeholder?: string;
   labelStyle?: string;
   width?: string;
+  arrowTopPosition?: "72" | "48";
   position?: "top" | "bottom";
 }
 
@@ -21,6 +22,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
   onChange,
   placeholder = "Select",
   width = "w-[100%]",
+  arrowTopPosition,
   position = "bottom",
 }) => {
   const [inputValue, setInputValue] = useState(value);
@@ -98,7 +100,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
         )}
       </div>
       <div
-        className={`pointer-events-none absolute right-4 top-[48px] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+        className={`pointer-events-none absolute right-4 top-[48px] top-[${arrowTopPosition}px] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

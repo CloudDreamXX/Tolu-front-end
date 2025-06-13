@@ -1,4 +1,3 @@
-import { IFolder } from "entities/folder";
 import { MOCK_DOCUMENT } from "../document/mock";
 
 export const possibleClientNames = [
@@ -9,7 +8,7 @@ export const possibleClientNames = [
   "Dennis Callis",
 ];
 
-export const FOLDERS: IFolder[] = [
+export const FOLDERS: any[] = [
   {
     id: "1",
     name: "Mood Swings",

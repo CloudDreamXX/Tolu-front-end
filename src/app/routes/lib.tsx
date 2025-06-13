@@ -15,7 +15,7 @@ import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
 import { NewPassword } from "widgets/auth-forms/ui/new-password";
 import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
-import { OnboardingWerlcome } from "widgets/OnboardingPractitioner/onboarding-welcome";
+import { OnboardingWelcome } from "widgets/OnboardingPractitioner/onboarding-welcome";
 import { OnboardingMain } from "widgets/OnboardingPractitioner/onboarding-main";
 import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
 import { SelectType } from "widgets/OnboardingPractitioner/select-type";
@@ -35,6 +35,9 @@ import { Readiness } from "widgets/OnboardingClient/Readiness";
 import { Summary } from "widgets/OnboardingClient/Summary";
 import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
 import { HealthSnapshot } from "pages/health-snapshot";
+import { Library } from "pages/library";
+import { ContentManagerClients } from "pages/content-manager/clients";
+import { ContentManagerLibrary } from "pages/content-manager/library";
 
 export const AppRoutes = () => {
   return (
@@ -47,13 +50,14 @@ export const AppRoutes = () => {
         element={<CheckEmail from="forgot-password" />}
       />
       <Route path="/register" element={<Register />} />
+      <Route path="/accept-invite/:token" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/profile-setup" element={<ProfileSetup />} />
       <Route path="/about-your-practice" element={<AboutYourPractice />} />
       <Route path="/subscription-plan" element={<SubscriptionPlan />} />
       <Route path="/select-type" element={<SelectType />} />
       <Route path="/welcome/client" element={<WelcomeScreen />} />
-      <Route path="/welcome/practitioner" element={<OnboardingWerlcome />} />
+      <Route path="/welcome/practitioner" element={<OnboardingWelcome />} />
       <Route path="/onboarding-welcome" element={<OnboardingMain />} />
       <Route path="/new-password" element={<NewPassword />} />
       <Route path="/invite-clients" element={<InviteClients />} />
@@ -71,13 +75,17 @@ export const AppRoutes = () => {
       <Route
         element={
           <MainLayout mainLocation="content-manager">
-            <ProtectedRoute allowedRoles={["guest", "admin", "coaches"]} />
+            <ProtectedRoute allowedRoles={["Practitioner"]} />
           </MainLayout>
         }
       >
         <Route
           path="/content-manager/create"
           element={<ContentManagerCreatePage />}
+        />
+        <Route
+          path="/content-manager/library"
+          element={<ContentManagerLibrary />}
         />
         <Route
           path="/content-manager/ai-generated"
@@ -95,6 +103,7 @@ export const AppRoutes = () => {
           path="/content-manager/published"
           element={<ContentManagerPublished />}
         />
+        <Route path="/clients" element={<ContentManagerClients />} />
         <Route
           path="/content-manager/archived"
           element={<ContentManagerArchived />}
@@ -104,31 +113,32 @@ export const AppRoutes = () => {
           element={<ContentManagerFolder />}
         />
         <Route
-          path="/content-manager/:tab/document/:folderId/:documentId"
+          path="/content-manager/:tab/folder/:folderId/document/:documentId"
           element={<ContentManagerDocument />}
         />
         <Route
           path="/content-manager/published"
           element={<div>Published</div>}
         />
-        <Route
+        {/* <Route
           path="*"
-          element={<Navigate to={"/content-manager/published"} />}
-        />
+          element={<Navigate to={"/content-manager/library"} />}
+        /> */}
         <Route
           path="/content-manager"
-          element={<Navigate to={"/content-manager/published"} />}
+          element={<Navigate to={"/content-manager/library"} />}
         />
       </Route>
 
       <Route
         element={
           <MainLayout mainLocation="health-snapshot">
-            <ProtectedRoute allowedRoles={["user"]} />
+            <ProtectedRoute allowedRoles={["Client"]} />
           </MainLayout>
         }
       >
         <Route path="/health-snapshot" element={<HealthSnapshot />} />
+        <Route path="/library" element={<Library />} />
       </Route>
 
       {/* 404 route */}
