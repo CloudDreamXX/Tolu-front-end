@@ -76,7 +76,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
               className="z-10 ml-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <DocumentEditPopover document={document} />
+              <DocumentEditPopover />
             </button>
           </div>
           {!withText && (

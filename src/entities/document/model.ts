@@ -19,6 +19,7 @@ export interface IDocumentResponse {
   feedback_count: string;
   comments: string;
   social_media_shares: string;
+  chat_id: string;
 }
 
 export interface IDocument {
@@ -41,6 +42,7 @@ export interface IDocument {
   feedbackCount: string;
   comments: string;
   socialMediaShares: string;
+  chatId: string;
 }
 
 export interface ISharedWith {

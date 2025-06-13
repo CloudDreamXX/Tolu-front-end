@@ -108,13 +108,20 @@ export class CoachService {
 
   static async aiLearningSearch(
     chatMessage: AIChatMessage,
-    token: string | null,
     folder_id: string,
     files?: string[],
     client_id?: string | null,
     onChunk?: (data: any) => void,
-    onComplete?: (folderId: string) => void
-  ): Promise<string> {
+    onComplete?: (folderId: {
+      folderId: string;
+      documentId: string;
+      chatId: string;
+    }) => void
+  ): Promise<{
+    folderId: string;
+    documentId: string;
+    chatId: string;
+  }> {
     const endpoint =
       import.meta.env.VITE_API_URL + API_ROUTES.COACH_ADMIN.AI_LEARNING_SEARCH;
 
@@ -133,6 +140,9 @@ export class CoachService {
     }
 
     try {
+      const user = localStorage.getItem("persist:user");
+      const parsedUser = user ? JSON.parse(user) : null;
+      const token = parsedUser?.token.replace(/"/g, "") ?? null;
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -157,6 +167,8 @@ export class CoachService {
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
       let folderId = "";
+      let documentId = "";
+      let chatId = "";
       let buffer = "";
 
       while (true) {
@@ -174,9 +186,9 @@ export class CoachService {
             try {
               const jsonData = JSON.parse(line.substring(5).trim());
 
-              if (jsonData.folder_id) {
-                folderId = jsonData.folder_id;
-              }
+              folderId = jsonData.folder_id;
+              documentId = jsonData.saved_content_id;
+              chatId = jsonData.chat_id;
 
               if (onChunk) onChunk(jsonData);
             } catch (e) {
@@ -186,8 +198,17 @@ export class CoachService {
         }
       }
 
-      if (onComplete) onComplete(folderId);
-      return folderId;
+      if (onComplete)
+        onComplete({
+          folderId,
+          documentId,
+          chatId,
+        });
+      return {
+        folderId,
+        documentId,
+        chatId,
+      };
     } catch (error) {
       console.error("Error processing stream:", error);
       throw error;

@@ -25,7 +25,7 @@ export const ContentManagerLibrary: React.FC = () => {
   useEffect(() => {
     const fetchFolders = async () => {
       try {
-        const { folders, foldersMap } = await FoldersService.getFolders(token);
+        const { folders, foldersMap } = await FoldersService.getFolders();
         dispatch(setFolders({ folders, foldersMap }));
       } catch (error) {
         console.error("Error fetching folders:", error);
@@ -40,12 +40,8 @@ export const ContentManagerLibrary: React.FC = () => {
       <div className="flex flex-col gap-2">
         <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
           <AiCreate width={24} height={24} fill="#000" />
-          Raw contents
+          Library
         </h1>
-        <p className="text-sm font-medium">
-          These contents require to be approved by certified reviewer before
-          getting Live on public library.
-        </p>
       </div>
 
       <div className="flex flex-col gap-6">

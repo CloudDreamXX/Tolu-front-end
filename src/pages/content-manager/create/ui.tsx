@@ -19,7 +19,6 @@ export const ContentManagerCreatePage: React.FC = () => {
   const [folderId, setFolderId] = useState<string>("");
   const [files, setFiles] = useState<string[]>([]);
   const [clientId, setClientId] = useState<string | null>(null);
-  const token = useSelector((state: RootState) => state.user.token);
   const nav = useNavigate();
   const [isStreaming, setIsStreaming] = useState(false);
 
@@ -42,7 +41,6 @@ export const ContentManagerCreatePage: React.FC = () => {
       setIsStreaming(true);
       await CoachService.aiLearningSearch(
         chatMessage,
-        token,
         folderId,
         files,
         clientId,
@@ -53,16 +51,20 @@ export const ContentManagerCreatePage: React.FC = () => {
             console.log("Streaming chunk:", chunk.reply);
           }
         },
-        (completedFolderId) => {
+        ({ folderId: completedFolderId, documentId, chatId }) => {
           setIsStreaming(false);
           console.log("Final accumulated reply:", finalAccumulatedReply);
 
-          nav(`/content-manager/library/folder/${completedFolderId}`, {
-            state: {
-              accumulatedReply: finalAccumulatedReply,
-              contentId: contentId,
-            },
-          });
+          nav(
+            `/content-manager/library/folder/${folderId}/document/${documentId}`,
+            {
+              state: {
+                accumulatedReply: finalAccumulatedReply,
+                contentId: contentId,
+                chatId: chatId,
+              },
+            }
+          );
         }
       );
     } catch (error) {

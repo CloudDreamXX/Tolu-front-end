@@ -35,7 +35,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             size: "200 KB",
             type: "application/pdf",
           },
-          // ... other files
         ]
       : []
   );

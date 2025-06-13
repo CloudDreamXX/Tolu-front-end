@@ -15,9 +15,13 @@ axiosInstance.interceptors.request.use(
     );
 
     if (!isExcluded) {
-      const token = localStorage.getItem("token");
+      const user = localStorage.getItem("persist:user");
+      const parsedUser = user ? JSON.parse(user) : null;
+      const token = parsedUser?.token.replace(/"/g, "") ?? null;
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        config.headers["Content-Type"] = "application/json";
       }
     }
 

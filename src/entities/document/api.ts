@@ -20,12 +20,16 @@ export class DocumentsService {
       feedbackCount: response.feedback_count,
       comments: response.comments,
       socialMediaShares: response.social_media_shares,
+      chatId: response.chat_id,
     };
   }
 
   static async getDocumentById(id: string): Promise<IDocument | null> {
     const response = await ApiService.post<IDocumentResponse>(
-      API_ROUTES.DOCUMENTS.DETAILS
+      API_ROUTES.DOCUMENTS.DETAILS,
+      {
+        content_id: id,
+      }
     );
     return DocumentsService.serealizeDocument(response) ?? null;
   }

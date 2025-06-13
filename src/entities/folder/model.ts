@@ -45,6 +45,9 @@ export interface IFolderItemResponse {
   total_content_items: number;
   subfolders: ISubfolderResponse[];
   content: IContentItemResponse[];
+  parent_folder_id?: string;
+  parent_folder_name?: string;
+  description?: string;
 }
 
 export interface IFolderResponse {

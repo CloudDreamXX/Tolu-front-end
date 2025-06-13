@@ -116,6 +116,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
               parentIndex={index}
               expandedFolders={expandedFolders}
               toggleFolder={toggleFolder}
+              folderId={row.id}
             />
           ))}
           {row.content?.map((item) => (
@@ -138,12 +139,14 @@ interface SubfolderTableRowProps {
   parentIndex: number;
   expandedFolders: Set<string>;
   toggleFolder: (id: string) => void;
+  folderId: string;
 }
 
 const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
   subfolder,
   parentIndex,
   expandedFolders,
+  folderId,
   toggleFolder,
 }) => {
   const isExpanded = expandedFolders.has(subfolder.id);
@@ -199,7 +202,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
             key={item.id}
             content={item}
             parentIndex={parentIndex}
-            folderId={subfolder.id}
+            folderId={folderId}
             paddingLeft="pl-[68px]"
           />
         ))}
@@ -229,7 +232,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
       onClick={(e) => {
         e.stopPropagation();
         nav(
-          `/content-manager/library/folder/${content.id}/document/${content.id}`
+          `/content-manager/library/folder/${folderId}/document/${content.id}`
         );
       }}
     >

@@ -88,7 +88,6 @@ export const ContentManagerFolder: React.FC = () => {
       setIsStreaming(true);
       await CoachService.aiLearningSearch(
         chatMessage,
-        token,
         newFolderId,
         undefined,
         clientId,

@@ -44,7 +44,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   useEffect(() => {
     const fetchFolders = async () => {
       try {
-        const response = await FoldersService.getFolders(token);
+        const response = await FoldersService.getFolders();
         dispatch(setFolders(response));
       } catch (error) {
         console.error("Error fetching folders:", error);
@@ -114,7 +114,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       toast({ title: "Created successfully" });
       setCreatePopup(false);
 
-      const folderResponse = await FoldersService.getFolders(token);
+      const folderResponse = await FoldersService.getFolders();
       dispatch(setFolders(folderResponse));
     } catch (error) {
       console.error("Error creating a folder:", error);
