@@ -87,6 +87,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     if (subfolderPopup) {
       setSelectedFolder(folder.id);
       setSelectedFolderName(folder.name);
+      console.log("Selected folder:", folder.name);
       setFolderId && setFolderId(folder.id);
       setPopoverOpen(false);
       return;

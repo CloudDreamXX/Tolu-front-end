@@ -8,8 +8,6 @@ import {
 } from "widgets/content-popovers";
 import { useState } from "react";
 import { AIChatMessage, CoachService } from "entities/coach";
-import { RootState } from "entities/store";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export const ContentManagerCreatePage: React.FC = () => {
@@ -17,7 +15,8 @@ export const ContentManagerCreatePage: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
   const [folderId, setFolderId] = useState<string>("");
-  const [files, setFiles] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [instruction, setInstruction] = useState<string>("");
   const [clientId, setClientId] = useState<string | null>(null);
   const nav = useNavigate();
   const [isStreaming, setIsStreaming] = useState(false);
@@ -42,6 +41,7 @@ export const ContentManagerCreatePage: React.FC = () => {
       await CoachService.aiLearningSearch(
         chatMessage,
         folderId,
+        instruction,
         files,
         clientId,
         (chunk) => {
@@ -115,7 +115,7 @@ export const ContentManagerCreatePage: React.FC = () => {
         />
         <div className="flex flex-col md:flex-row gap-[8px] md:gap-[16px] xl:gap-[24px]">
           <PopoverAttach setFiles={setFiles} />
-          <PopoverInstruction />
+          <PopoverInstruction setInstruction={setInstruction} />
         </div>
       </div>
     </div>

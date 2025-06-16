@@ -100,7 +100,8 @@ export const ContentManagerDocument: React.FC = () => {
           chat_title: document?.title ?? "",
         },
         subfolder?.id ?? folderId,
-        [],
+        undefined,
+        undefined,
         clientId,
         (chunk) => {
           console.log("Streaming chunk:", chunk.reply);

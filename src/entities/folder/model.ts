@@ -187,6 +187,7 @@ export interface ContentItem {
 }
 
 export interface Folder {
+  id: string;
   folder_id: string;
   name: string;
   is_system_folder: boolean;

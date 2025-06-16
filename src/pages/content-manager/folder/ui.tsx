@@ -8,19 +8,11 @@ import {
   Input,
   Textarea,
 } from "shared/ui";
-import { useState, useMemo, useEffect } from "react";
-import {
-  ClientsInfo,
-  DocumentCard,
-  FilesInfo,
-  FolderInfo,
-  InstructionInfo,
-} from "entities/folder";
+import { useState, useMemo } from "react";
 import Search from "shared/assets/icons/search";
-import { Archive, Copy, Plus, Send, Trash2 } from "lucide-react";
+import { Archive, Plus, Send } from "lucide-react";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
-import { ContentService } from "entities/content";
 import { PopoverClient, PopoverFolder } from "widgets/content-popovers";
 import { AIChatMessage, CoachService } from "entities/coach";
 import { title } from "process";
@@ -90,6 +82,7 @@ export const ContentManagerFolder: React.FC = () => {
         chatMessage,
         newFolderId,
         undefined,
+        undefined,
         clientId,
         (chunk) => {
           newContentId = chunk.saved_content_id;
@@ -128,7 +121,7 @@ export const ContentManagerFolder: React.FC = () => {
       | "Archived"
   ) => {
     const newStatus = {
-      id: folderId || "",
+      id: folderId ?? "",
       status: status,
     };
     await CoachService.changeStatus(newStatus, token);
@@ -187,17 +180,6 @@ export const ContentManagerFolder: React.FC = () => {
         {accumulatedReply && (
           <div dangerouslySetInnerHTML={{ __html: accumulatedReply }} />
         )}
-
-        {/* <div className="flex flex-row flex-wrap w-full gap-4">
-          {filteredDocuments.map((document) => (
-            <DocumentCard
-              key={document.id}
-              document={document}
-              withText={folderName === "published" || folderName === "archived"}
-            />
-          ))}
-        </div> */}
-
         <Textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}

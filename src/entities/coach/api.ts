@@ -109,7 +109,8 @@ export class CoachService {
   static async aiLearningSearch(
     chatMessage: AIChatMessage,
     folder_id: string,
-    files?: string[],
+    instruction?: string | null,
+    files?: File[],
     client_id?: string | null,
     onChunk?: (data: any) => void,
     onComplete?: (folderId: {
@@ -127,7 +128,12 @@ export class CoachService {
 
     const formData = new FormData();
     formData.append("chat_message", JSON.stringify(chatMessage));
+
     formData.append("folder_id", folder_id);
+
+    if (instruction) {
+      formData.append("instruction", instruction);
+    }
 
     if (files?.length) {
       files.forEach((file) => {
