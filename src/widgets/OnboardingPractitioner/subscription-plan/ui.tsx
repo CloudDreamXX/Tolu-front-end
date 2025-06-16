@@ -1,7 +1,7 @@
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { PriceCard } from "./components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthPageWrapper } from "shared/ui";
 
@@ -10,6 +10,17 @@ export const SubscriptionPlan = () => {
     "starting" | "professional" | ""
   >("");
   const nav = useNavigate();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1280);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1280);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <AuthPageWrapper>
       <HeaderOnboarding currentStep={3} />
@@ -52,7 +63,7 @@ export const SubscriptionPlan = () => {
           </Link>
         </div>
       </main>
-      <Footer />
+      <Footer position={isMobile ? "top-right" : "bottom-right"} />
     </AuthPageWrapper>
   );
 };

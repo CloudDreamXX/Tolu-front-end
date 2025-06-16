@@ -62,7 +62,7 @@ export const SelectType = () => {
     <AuthPageWrapper>
       <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={0} />
-      <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
+      <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch md:px-[24px]">
         {!isMobile && (
           <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
             What type of practitioner best describes your role?
@@ -70,7 +70,7 @@ export const SelectType = () => {
         )}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-[25px] py-[24px] px-[16px] md:p-[40px] items-center w-full md:w-fit rounded-t-[20px] md:rounded-[20px] bg-white border-[1px] border-[#1C63DB] shadow-md"
+          className="flex flex-col gap-[25px] py-[24px] px-[16px] md:p-[40px] items-center w-full lg:w-fit rounded-t-[20px] md:rounded-[20px] bg-white border-[1px] border-[#1C63DB] shadow-md"
         >
           {isMobile && (
             <h1 className="flex text-center font-inter text-[24px] font-medium text-black">
@@ -81,11 +81,11 @@ export const SelectType = () => {
             {titlesAndIcons.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col gap-[16px] md:gap-[20px] w-full md:w-[460px] items-start"
+                className="flex flex-col gap-[16px] md:gap-[20px] w-full lg:w-[460px] items-start"
               >
                 <div className="flex items-center self-stretch gap-[8px]">
                   {item.icon}
-                  <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[16px] mb:text-[20px] font-semibold">
+                  <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[16px] md:text-[20px] font-semibold">
                     {item.title}
                   </h2>
                   <TooltipWrapper content={item.tooltipContent}>

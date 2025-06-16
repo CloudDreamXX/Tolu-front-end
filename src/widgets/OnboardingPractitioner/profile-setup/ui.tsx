@@ -280,6 +280,8 @@ export const ProfileSetup = () => {
               labelStyle="text-[#5F5F65]"
               placeholder="Select recovery question"
               options={[
+                "What was the name of your first pet?",
+                "What is your mother's maiden name?",
                 "What is your favorite book?",
                 "In what city were you born?",
               ]}
@@ -292,7 +294,7 @@ export const ProfileSetup = () => {
                   })
                 )
               }
-              arrowTopPosition="72"
+              dropdownStyle="lg:w-fit text-nowrap"
             />
             <div className="flex flex-col gap-[8px] w-[100%]">
               <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">

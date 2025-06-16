@@ -49,7 +49,7 @@ export const OnboardingWelcome = () => {
       <Header description="COACH ADMIN" />
       <main className="absolute bottom-0 flex flex-col items-center self-stretch md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:right-auto md:w-full">
         {curentWindow === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-[40px] shadow-wrapper md:mx-[45px] xl:mx-0 md:gap-[32px] py-[24px] px-[24px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
+          <div className="flex flex-col items-center justify-center gap-[40px] shadow-wrapper xl:mx-0 md:gap-[32px] py-[24px] px-[24px] md:py-[40px] md:mx-[40px] md:px-[40px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
             <div className="flex flex-col items-center gap-[40px] md:gap-[24px] ">
               <h3 className="w-full md:w-[597px] xl:w-[860px] text-black font-inter text-center text-[24px] md:text-[32px] xl:text-[40px]/[59px] font-semibold">
                 Welcome to TOLU,

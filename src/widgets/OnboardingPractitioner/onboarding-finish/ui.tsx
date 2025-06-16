@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 // import { RootState } from "entities/store";
 // import { UserService } from "entities/user";
 import { AuthPageWrapper } from "shared/ui";
+import { useEffect, useState } from "react";
 
 export const OnboardingFinish = () => {
   // const coachOnboarding = useSelector(
@@ -13,6 +14,7 @@ export const OnboardingFinish = () => {
   // );
   // const token = useSelector((state: RootState) => state.user.token);
   const nav = useNavigate();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1280);
 
   const handleLastClick = async () => {
     try {
@@ -30,6 +32,16 @@ export const OnboardingFinish = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1280);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <AuthPageWrapper>
       <Header description="COACH ADMIN" />
@@ -55,7 +67,7 @@ export const OnboardingFinish = () => {
           </button>
         </div>
       </main>
-      <Footer />
+      <Footer position={isMobile ? "top-right" : "bottom-right"} />
     </AuthPageWrapper>
   );
 };

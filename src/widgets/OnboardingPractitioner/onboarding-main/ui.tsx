@@ -92,7 +92,7 @@ export const OnboardingMain = () => {
       <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={1} />
       <main
-        className={`flex flex-col items-center flex-1 justify-center gap-[32px] md:gap-[60px] self-stretch bg-white py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0 md:mt-[100px]
+        className={`flex flex-col items-center flex-1 justify-center gap-[32px] md:gap-[60px] self-stretch bg-white py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0
     ${shouldStickToBottom ? "absolute bottom-0 left-0 w-full z-10" : "relative"} 
     ${isMobile ? "shadow-md" : ""} md:bg-transparent`}
       >
@@ -192,7 +192,7 @@ export const OnboardingMain = () => {
             ""
           )}
         </section>
-        <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit">
+        <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit md:pb-[140px]">
           <button
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
@@ -221,7 +221,7 @@ export const OnboardingMain = () => {
                 "animate-in fade-in"
               )}
             >
-              <div className="absolute bottom-full right-14 w-5 h-5 bg-white border border-blue-500 rotate-45 translate-y-1/2 translate-x-1/2 border-b-transparent border-r-transparent"></div>
+              <div className="absolute w-5 h-5 rotate-45 translate-x-1/2 translate-y-1/2 bg-white border border-blue-500 bottom-full right-14 border-b-transparent border-r-transparent"></div>
               <h3 className="flex gap-2 text-[#1B2559] leading-[1.4]">
                 <span className="w-6 h-6 shrink-0 ">
                   <LightIcon className="text-[#1B2559] " />
