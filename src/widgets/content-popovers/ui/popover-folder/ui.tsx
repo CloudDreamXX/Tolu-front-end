@@ -1,4 +1,4 @@
-import { NewFolder, setFolders } from "entities/folder";
+import { IFolder, ISubfolder, NewFolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
 import { RootState } from "entities/store";
 import { Edit, Trash2 } from "lucide-react";
@@ -24,19 +24,21 @@ import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 interface PopoverFolderProps {
   setFolderId?: (folderId: string) => void;
   customTrigger?: React.ReactNode;
+  setExistingFiles?: (files: string[]) => void;
+  setExistingInstruction?: (instruction: string) => void;
 }
 
 export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   setFolderId,
   customTrigger,
+  setExistingFiles,
+  setExistingInstruction,
 }) => {
   const [search, setSearch] = useState<string>("");
-  const { foldersMap } = useSelector((state: RootState) => state.folder);
+  const { folders } = useSelector((state: RootState) => state.folder);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [selectedFolderName, setSelectedFolderName] = useState<string>("");
-  const [subfolders, setSubfolders] = useState<{ name: string; id: string }[]>(
-    []
-  );
+  const [subfolders, setSubfolders] = useState<ISubfolder[]>([]);
   const token = useSelector((state: RootState) => state.user.token);
   const [createPopup, setCreatePopup] = useState<boolean>(false);
   const [subfolderPopup, setSubfolderPopup] = useState<boolean>(false);
@@ -57,38 +59,22 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     fetchFolders();
   }, [token, dispatch]);
 
-  const folderData = Object.keys(foldersMap)
-    .map((category) =>
-      foldersMap[category].map(
-        (folder: {
-          name: string;
-          id: string;
-          subfolders: { name: string; id: string }[];
-        }) => ({
-          name: folder.name,
-          id: folder.id,
-          subfolders: folder.subfolders || [],
-        })
-      )
-    )
-    .flat();
-
   const filteredFolders = useMemo(() => {
-    return folderData.filter((folder) =>
+    return folders.filter((folder) =>
       folder.name.toLowerCase().includes(search.toLowerCase())
     );
-  }, [search, folderData]);
+  }, [search, folders]);
 
-  const toggleFolderSelection = (folder: {
-    name: string;
-    id: string;
-    subfolders?: { name: string; id: string }[];
-  }) => {
+  const toggleFolderSelection = (folder: IFolder) => {
     if (subfolderPopup) {
       setSelectedFolder(folder.id);
       setSelectedFolderName(folder.name);
       console.log("Selected folder:", folder.name);
       setFolderId && setFolderId(folder.id);
+      setExistingFiles &&
+        setExistingFiles(folder.fileNames?.map((file) => file.filename) || []);
+      setExistingInstruction &&
+        setExistingInstruction(folder.customInstructions ?? "");
       setPopoverOpen(false);
       return;
     }
@@ -134,7 +120,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
         .flat()
         .find((folder) => folder.id === parentFolderId);
 
-      if (updatedParentFolder && updatedParentFolder.subfolders) {
+      if (updatedParentFolder?.subfolders) {
         setSubfolders(updatedParentFolder.subfolders);
         setSubfolderPopup(true);
       }

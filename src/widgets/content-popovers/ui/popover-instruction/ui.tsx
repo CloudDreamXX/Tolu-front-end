@@ -15,6 +15,7 @@ interface PopoverInstructionProps {
   description?: string;
   setInstruction?: (instruction: string) => void;
   existingInstruction?: string;
+  disabled?: boolean;
 }
 
 export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
@@ -23,7 +24,12 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
   description = "Instruct how you want Tolu to respond",
   setInstruction,
   existingInstruction = "",
+  disabled = false,
 }) => {
+  console.log(
+    "PopoverInstruction rendered with existingInstruction:",
+    existingInstruction
+  );
   const [instructionText, setInstructionText] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const [savedInstruction, setSavedInstruction] = useState<string>("");
@@ -32,7 +38,6 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
     if (existingInstruction) {
       setSavedInstruction(existingInstruction);
       setInstructionText(existingInstruction);
-      setInstruction?.(existingInstruction);
     }
   }, [existingInstruction]);
 
@@ -58,7 +63,7 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild disabled={disabled}>
         {customTrigger ?? (
           <Button
             variant={"outline"}

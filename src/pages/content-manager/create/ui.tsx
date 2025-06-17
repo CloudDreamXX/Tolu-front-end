@@ -20,6 +20,8 @@ export const ContentManagerCreatePage: React.FC = () => {
   const [clientId, setClientId] = useState<string | null>(null);
   const nav = useNavigate();
   const [isStreaming, setIsStreaming] = useState(false);
+  const [existingFiles, setExistingFiles] = useState<string[]>([]);
+  const [existingInstruction, setExistingInstruction] = useState<string>("");
 
   const handleSendMessage = async () => {
     if (message.trim() === "") return;
@@ -100,7 +102,11 @@ export const ContentManagerCreatePage: React.FC = () => {
           footer={
             <div className="flex flex-row w-full gap-[10px]">
               <PopoverClient setClientId={setClientId} />
-              <PopoverFolder setFolderId={setFolderId} />
+              <PopoverFolder
+                setFolderId={setFolderId}
+                setExistingFiles={setExistingFiles}
+                setExistingInstruction={setExistingInstruction}
+              />
               <Button
                 variant="black"
                 className="ml-auto w-12 h-12 p-[10px] rounded-full"
@@ -114,8 +120,15 @@ export const ContentManagerCreatePage: React.FC = () => {
           footerClassName="rounded-b-[18px] border-[#008FF6] border-t-0"
         />
         <div className="flex flex-col md:flex-row gap-[8px] md:gap-[16px] xl:gap-[24px]">
-          <PopoverAttach setFiles={setFiles} />
-          <PopoverInstruction setInstruction={setInstruction} />
+          <PopoverAttach
+            setFiles={setFiles}
+            existingFiles={existingFiles}
+            disabled={!folderId}
+          />
+          <PopoverInstruction
+            setInstruction={setInstruction}
+            disabled={!folderId}
+          />
         </div>
       </div>
     </div>
