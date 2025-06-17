@@ -1,8 +1,3 @@
-import Sparkle from "shared/assets/icons/sparkle-2";
-import Chevron from "shared/assets/icons/chevron";
-import Search from "shared/assets/icons/search";
-import { Button } from "shared/ui/button";
-import { Input } from "shared/ui/input";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AvatarWoman from "shared/assets/images/AvatarWoman.png";
@@ -17,6 +12,7 @@ import Dots from "shared/assets/icons/threeDots";
 import { User } from "lucide-react";
 import SignOutIcon from "shared/assets/icons/signout";
 import { toast } from "shared/lib/hooks/use-toast";
+import { SearchAiSmallInput } from "entities/search";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -65,23 +61,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           </h2>
         </div>
         <div className="flex flex-col px-[14px] gap-[18px]">
-          <Input
-            placeholder={isNarrow ? "" : "Search"}
-            icon={<Search className="ml-[28px]" />}
-            iconRight={isNarrow ? undefined : <Chevron className="mr-[16px]" />}
-            className={`rounded-full w-full ${isNarrow ? "px-[28px] py-[12px]" : "px-[54px]"}`}
-          />
-
-          {!isNarrow && (
-            <Button
-              variant={"brightblue"}
-              className="w-full h-[44px] text-base font-semibold"
-              onClick={() => nav("/health-snapshot")}
-            >
-              <Sparkle />
-              Ask TOLU
-            </Button>
-          )}
+          <SearchAiSmallInput />
         </div>
 
         <div
@@ -90,7 +70,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           <NavLink
             to={"/health-snapshot"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
+              `flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
                 isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
               }`
             }
@@ -102,7 +82,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           <NavLink
             to={"/library"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
+              `flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
                 isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
               }`
             }
@@ -114,7 +94,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${
+              `flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${
                 isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
               }`
             }

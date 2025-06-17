@@ -43,7 +43,7 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.4.0",
-    "html-react-parser": "^5.2.2",
+    "html-react-parser": "^5.2.5",
     "html-to-text": "^9.0.5",
     "lucide-react": "^0.488.0",
     "primeicons": "^7.0.0",

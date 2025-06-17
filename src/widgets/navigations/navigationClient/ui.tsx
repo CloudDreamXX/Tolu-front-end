@@ -4,20 +4,18 @@ import React, { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import ChatsCircle from "shared/assets/icons/chats-circle";
-import Chevron from "shared/assets/icons/chevron";
 import Close from "shared/assets/icons/close";
 import Heartbeat from "shared/assets/icons/heartbeat";
 import Library from "shared/assets/icons/library";
 import Menu from "shared/assets/icons/menu";
-import Search from "shared/assets/icons/search";
 import SignOutIcon from "shared/assets/icons/signout";
 import SignOutIconBlue from "shared/assets/icons/signoutBlue";
 import Sparkle from "shared/assets/icons/sparkle-2";
 import { Button } from "shared/ui";
-import { Input } from "shared/ui/input";
 import AvatarWoman from "shared/assets/images/AvatarWoman.png";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import CaretRight from "shared/assets/icons/caretRight";
+import { SearchAiSmallInput } from "entities/search";
 
 export const NavigationClient: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -172,12 +170,7 @@ export const NavigationClient: React.FC = () => {
               </button>
             </div>
 
-            <Input
-              placeholder="Search by name or content"
-              icon={<Search className="ml-[16px]" />}
-              iconRight={<Chevron className="mr-[16px]" />}
-              className="rounded-full px-[54px]"
-            />
+            <SearchAiSmallInput />
             <Button
               variant={"brightblue"}
               className="w-full h-[44px] text-base font-semibold mb-[72px] mt-[8px]"

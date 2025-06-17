@@ -181,30 +181,17 @@ export class UserService {
   }
 
   static async submitMenopauseResults(
-    data: MenopauseSubmissionRequest,
-    token: string | null
+    data: MenopauseSubmissionRequest
   ): Promise<{ success: boolean }> {
     return ApiService.post<{ success: boolean }>(
       API_ROUTES.MENOPAUSE.POST_SYMPTOMS,
-      data,
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      }
+      data
     );
   }
 
-  static async getMenopauseRecommendations(
-    token: string | null
-  ): Promise<RecommendationsResponse> {
+  static async getMenopauseRecommendations(): Promise<RecommendationsResponse> {
     return ApiService.get<RecommendationsResponse>(
-      API_ROUTES.MENOPAUSE.GET_RECOMMENDATIONS,
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      }
+      API_ROUTES.MENOPAUSE.GET_RECOMMENDATIONS
     );
   }
 }

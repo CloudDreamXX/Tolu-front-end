@@ -38,6 +38,7 @@ import { HealthSnapshot } from "pages/health-snapshot";
 import { Library } from "pages/library";
 import { ContentManagerClients } from "pages/content-manager/clients";
 import { ContentManagerLibrary } from "pages/content-manager/library";
+import { LibraryChat } from "pages/library-chat";
 
 export const AppRoutes = () => {
   return (
@@ -139,6 +140,7 @@ export const AppRoutes = () => {
       >
         <Route path="/health-snapshot" element={<HealthSnapshot />} />
         <Route path="/library" element={<Library />} />
+        <Route path="/library/:chatId" element={<LibraryChat />} />
       </Route>
 
       {/* 404 route */}

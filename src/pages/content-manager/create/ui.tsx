@@ -7,7 +7,6 @@ import {
   PopoverInstruction,
 } from "widgets/content-popovers";
 import { useState } from "react";
-import { AIChatMessage, CoachService } from "entities/coach";
 import { useNavigate } from "react-router-dom";
 
 export const ContentManagerCreatePage: React.FC = () => {
@@ -19,70 +18,37 @@ export const ContentManagerCreatePage: React.FC = () => {
   const [instruction, setInstruction] = useState<string>("");
   const [clientId, setClientId] = useState<string | null>(null);
   const nav = useNavigate();
-  const [isStreaming, setIsStreaming] = useState(false);
   const [existingFiles, setExistingFiles] = useState<string[]>([]);
   const [existingInstruction, setExistingInstruction] = useState<string>("");
 
   const handleSendMessage = async () => {
-    if (message.trim() === "") return;
+    if (message.trim() === "" || !folderId) return;
 
     setIsSending(true);
 
-    const chatMessage: AIChatMessage = {
-      user_prompt: message,
-      is_new: true,
-      regenerate_id: null,
-      chat_title: title,
-    };
+    const tempDocumentId = `temp_${Date.now()}`;
 
-    let finalAccumulatedReply = "";
-    let contentId = "";
-
-    try {
-      setIsStreaming(true);
-      await CoachService.aiLearningSearch(
-        chatMessage,
-        folderId,
-        instruction,
-        files,
-        clientId,
-        (chunk) => {
-          contentId = chunk.saved_content_id;
-          if (chunk.reply) {
-            finalAccumulatedReply += chunk.reply;
-            console.log("Streaming chunk:", chunk.reply);
-          }
+    nav(
+      `/content-manager/library/folder/${folderId}/document/${tempDocumentId}`,
+      {
+        state: {
+          isNewDocument: true,
+          chatMessage: {
+            user_prompt: message,
+            is_new: true,
+            regenerate_id: null,
+            chat_title: title,
+          },
+          folderId,
+          files,
+          instruction,
+          clientId,
+          originalMessage: message,
+          originalTitle: title,
         },
-        ({ folderId: completedFolderId, documentId, chatId }) => {
-          setIsStreaming(false);
-          console.log("Final accumulated reply:", finalAccumulatedReply);
-
-          nav(
-            `/content-manager/library/folder/${folderId}/document/${documentId}`,
-            {
-              state: {
-                accumulatedReply: finalAccumulatedReply,
-                contentId: contentId,
-                chatId: chatId,
-              },
-            }
-          );
-        }
-      );
-    } catch (error) {
-      console.error("Error sending message:", error);
-    } finally {
-      setIsSending(false);
-    }
-  };
-
-  if (isStreaming) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <h2 className="mb-4 text-lg font-semibold">Streaming in progress...</h2>
-      </div>
+      }
     );
-  }
+  };
 
   return (
     <div className="flex flex-col gap-[48px] md:gap-[24px] px-[16px] py-[24px] md:px-[24px] md:py-[48px] xl:px-[48px] xl:py-[150px] mt-auto md:mb-auto xl:mt-0">
@@ -111,7 +77,7 @@ export const ContentManagerCreatePage: React.FC = () => {
                 variant="black"
                 className="ml-auto w-12 h-12 p-[10px] rounded-full"
                 onClick={handleSendMessage}
-                disabled={isSending}
+                disabled={isSending || !folderId || !message.trim()}
               >
                 <Send color="#fff" />
               </Button>
@@ -128,6 +94,7 @@ export const ContentManagerCreatePage: React.FC = () => {
           <PopoverInstruction
             setInstruction={setInstruction}
             disabled={!folderId}
+            existingInstruction={existingInstruction}
           />
         </div>
       </div>

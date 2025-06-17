@@ -109,8 +109,6 @@ export const API_ROUTES = {
 export const EXCLUDE_TOKEN_ENDPOINTS = [
   "/user/login",
   "/user/signup",
-  "/ai-search/",
-  "/ai-learning-search/",
   "/ai-personalized-search/",
   "/update-chat-title",
   "/update-folder-content",

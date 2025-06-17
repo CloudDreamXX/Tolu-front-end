@@ -1,0 +1,206 @@
+import { ApiService } from "shared/api";
+import {
+  AiSearchRequest,
+  UpdateChatTitleRequest,
+  SearchHistoryParams,
+  SearchResultResponse,
+  SearchResultResponseItem,
+} from "./model";
+
+export interface StreamChunk {
+  question?: string;
+  reply?: string;
+  body_system?: string;
+  disease?: string;
+  message?: string;
+  searched_result_id?: string;
+  chat_id?: string;
+  chat_title?: string | null;
+}
+
+export class SearchService {
+  static async aiSearchStream(
+    searchData: AiSearchRequest,
+    onChunk: (chunk: StreamChunk) => void,
+    onComplete: (finalData: {
+      searched_result_id: string;
+      chat_id: string;
+      chat_title?: string | null;
+    }) => void,
+    onError: (error: Error) => void
+  ): Promise<void> {
+    try {
+      const formData = this.createSearchRequest(
+        searchData.chat_message,
+        searchData.image,
+        searchData.pdf
+      );
+
+      const user = localStorage.getItem("persist:user");
+      const token = user ? JSON.parse(user)?.token?.replace(/"/g, "") : null;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/ai-search/`,
+        {
+          method: "POST",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error("No response body reader available");
+      }
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split("\n");
+
+        for (const line of lines) {
+          if (line.trim() === "") continue;
+
+          const jsonLine = line.replace(/^data:\s*/, "").trim();
+
+          if (jsonLine === "[DONE]") {
+            break;
+          }
+
+          try {
+            const parsed: StreamChunk = JSON.parse(jsonLine);
+
+            if (parsed.message === "Stream completed") {
+              if (parsed.searched_result_id && parsed.chat_id) {
+                onComplete({
+                  searched_result_id: parsed.searched_result_id,
+                  chat_id: parsed.chat_id,
+                  chat_title: parsed.chat_title ?? null,
+                });
+              }
+            } else {
+              onChunk(parsed);
+            }
+          } catch (parseError) {
+            console.warn("Failed to parse JSON chunk:", jsonLine, parseError);
+          }
+        }
+      }
+    } catch (error) {
+      onError(error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+
+  static async getSearchHistory(
+    params: SearchHistoryParams = {}
+  ): Promise<string> {
+    const searchParams = new URLSearchParams();
+
+    if (params.client_id) {
+      searchParams.append("client_id", params.client_id);
+    }
+
+    if (params.managed_client_id) {
+      searchParams.append("managed_client_id", params.managed_client_id);
+    }
+
+    const url = `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+
+    return ApiService.get<string>(url);
+  }
+
+  static async updateChatTitle(
+    updateData: UpdateChatTitleRequest
+  ): Promise<string> {
+    return ApiService.put<string>("/update-chat-title", updateData);
+  }
+
+  static async getSession(chatId: string): Promise<SearchResultResponseItem[]> {
+    const endpoint = `/session/${chatId}`;
+
+    const res = await ApiService.get<SearchResultResponse>(endpoint);
+    return res.search_results;
+  }
+
+  static async deleteChat(chatId: string): Promise<string> {
+    const endpoint = `/chat/${chatId}`;
+
+    return ApiService.delete<string>(endpoint);
+  }
+
+  static createSearchRequest(
+    message: string,
+    imageFile?: File,
+    pdfFile?: File
+  ) {
+    const formData = new FormData();
+    formData.append("chat_message", message);
+
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    if (pdfFile) {
+      formData.append("pdf", pdfFile);
+    }
+
+    return formData;
+  }
+
+  static validateFileType(file: File, allowedTypes: string[]): boolean {
+    return allowedTypes.includes(file.type);
+  }
+
+  static validateFileSize(file: File, maxSizeInMB: number): boolean {
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+    return file.size <= maxSizeInBytes;
+  }
+
+  static async prepareFilesForSearch(
+    files: File[]
+  ): Promise<{ image?: File; pdf?: File; errors: string[] }> {
+    const errors: string[] = [];
+    let image: File | undefined;
+    let pdf: File | undefined;
+
+    const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const pdfTypes = ["application/pdf"];
+    const maxSizeInMB = 10;
+
+    for (const file of files) {
+      if (!this.validateFileSize(file, maxSizeInMB)) {
+        errors.push(`File ${file.name} exceeds ${maxSizeInMB}MB limit`);
+        continue;
+      }
+
+      if (imageTypes.includes(file.type)) {
+        if (image) {
+          errors.push("Only one image file is allowed");
+        } else {
+          image = file;
+        }
+      } else if (pdfTypes.includes(file.type)) {
+        if (pdf) {
+          errors.push("Only one PDF file is allowed");
+        } else {
+          pdf = file;
+        }
+      } else {
+        errors.push(`File type ${file.type} is not supported`);
+      }
+    }
+
+    return { image, pdf, errors };
+  }
+}

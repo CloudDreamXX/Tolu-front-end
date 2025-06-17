@@ -3,9 +3,6 @@ import { EXCLUDE_TOKEN_ENDPOINTS } from "./config";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 axiosInstance.interceptors.request.use(
@@ -21,7 +18,6 @@ axiosInstance.interceptors.request.use(
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-        config.headers["Content-Type"] = "application/json";
       }
     }
 
