@@ -174,7 +174,7 @@ export const LibraryChat = () => {
             chat_id: currentChatId,
             regenerate_id: null,
           }),
-          image: files,
+          image: files || undefined,
         },
         (chunk: StreamChunk) => {
           if (chunk.reply) {

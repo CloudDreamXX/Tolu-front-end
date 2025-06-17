@@ -13,7 +13,7 @@ import {
 export const SearchAiSmallInput = () => {
   const nav = useNavigate();
   const { chatId } = useParams();
-  const [searchType, setSearchType] = useState<string>("");
+  const [searchType, setSearchType] = useState<string>("Search");
   const [search, setSearch] = useState<string>("");
 
   const handleSearch = () => {
