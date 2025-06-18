@@ -34,6 +34,22 @@
   border-radius: 20px;
 }
 
+.custom-message-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  border-radius: 20px;
+}
+
+.custom-message-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 20px;
+}
+
+.custom-message-scroll::-webkit-scrollbar-thumb {
+  background: #e7e7e7;
+  border-radius: 20px;
+}
+
 li::marker {
   content: "";
 }

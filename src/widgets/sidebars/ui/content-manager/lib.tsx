@@ -20,7 +20,7 @@ export const sideBarContent: SideBarItem[] = [
   },
   {
     title: "Messages",
-    link: "/",
+    link: "/content-manager/messages",
     icon: <Box />,
   },
   {

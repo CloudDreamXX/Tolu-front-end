@@ -25,3 +25,4 @@ export * from "./toast";
 export * from "./toaster";
 export * from "./tooltip";
 export * from "./TooltipWrapper";
+export * from "./tabs";

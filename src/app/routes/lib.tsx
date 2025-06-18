@@ -39,6 +39,7 @@ import { Library } from "pages/library";
 import { ContentManagerClients } from "pages/content-manager/clients";
 import { ContentManagerLibrary } from "pages/content-manager/library";
 import { LibraryChat } from "pages/library-chat";
+import { ContentManagerMessages } from "pages/content-manager/messages";
 
 export const AppRoutes = () => {
   return (
@@ -83,6 +84,10 @@ export const AppRoutes = () => {
         <Route
           path="/content-manager/create"
           element={<ContentManagerCreatePage />}
+        />
+        <Route
+          path="/content-manager/messages"
+          element={<ContentManagerMessages />}
         />
         <Route
           path="/content-manager/library"
