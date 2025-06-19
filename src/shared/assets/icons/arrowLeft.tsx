@@ -1,4 +1,4 @@
-export default () => {
+export default (props?: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,6 +6,7 @@ export default () => {
       height="20"
       viewBox="0 0 20 20"
       fill="none"
+      {...props}
     >
       <path
         d="M16.875 10H3.125"

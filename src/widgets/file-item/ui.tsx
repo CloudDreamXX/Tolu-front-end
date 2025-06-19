@@ -31,7 +31,7 @@ export const FileItem: React.FC<FileItemProps> = ({
           </span>
         </div>
       </div>
-      <Button variant={"ghost"} onClick={onDeleteClick}>
+      <Button variant={"ghost"} onClick={onDeleteClick} className="p-1">
         <Trash2 width={19} height={19} color="#FF1F0F" />
       </Button>
     </div>

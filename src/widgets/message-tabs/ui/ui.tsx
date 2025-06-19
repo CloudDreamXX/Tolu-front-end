@@ -1,7 +1,10 @@
 import { MoreVertical, Trash2 } from "lucide-react";
 import { ChatItemModel, chatItems } from "pages/content-manager";
 import { useEffect, useState } from "react";
+import ArrowLeft from "shared/assets/icons/arrowLeft";
 
+import User from "shared/assets/icons/user";
+import { usePageWidth } from "shared/lib";
 import {
   Avatar,
   AvatarFallback,
@@ -11,41 +14,49 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  ScrollArea,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  Textarea,
 } from "shared/ui";
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { TemplatesTab } from "./templates-tab";
-import { messages } from "./messages-tab/mock";
-import { MessageBubble } from "widgets/message-bubble";
 
 interface MessageTabsProps {
   chatId?: string;
+  goBackMobile: () => void;
 }
 
-export const MessageTabs: React.FC<MessageTabsProps> = ({ chatId }) => {
+export const MessageTabs: React.FC<MessageTabsProps> = ({
+  chatId,
+  goBackMobile,
+}) => {
   const [chat, setChat] = useState<ChatItemModel | null>();
+  const { isMobileOrTablet } = usePageWidth();
 
   useEffect(() => {
     //mock logic
     const result = chatItems.find((e) => e.id === chatId);
-    console.log(result);
-
     setChat(result);
   }, [chatId]);
 
   if (!chat) return null;
 
   return (
-    <main className="flex flex-col w-full h-full p-8">
+    <main className="flex flex-col w-full h-full px-4 py-6 md:p-6 lg:p-8">
       <div className="flex flex-col border-x-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center ">
+            {isMobileOrTablet && (
+              <Button
+                variant="ghost"
+                className="p-1 mr-3"
+                onClick={goBackMobile}
+              >
+                <ArrowLeft width={24} height={24} />
+              </Button>
+            )}
             <div className="relative mr-3">
               <Avatar className="w-10 h-10 ">
                 <AvatarImage src={chat.avatar} />
@@ -66,19 +77,24 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({ chatId }) => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="blue2">View Profile</Button>
+            {!isMobileOrTablet && <Button variant="blue2">View Profile</Button>}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="border-none rounded-full hover:bg-white"
+                  className="border-none rounded-full hover:bg-white w-[28px] h-[28px] md:w-[32px] md:h-[32px]"
                 >
                   <MoreVertical />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {isMobileOrTablet && (
+                  <DropdownMenuItem className="text-[#1D1D1F]">
+                    <User className="w-4 h-4 mr-2" /> Profile
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem className="text-red-600">
                   <Trash2 className="w-4 h-4 mr-2" /> Delete
                 </DropdownMenuItem>

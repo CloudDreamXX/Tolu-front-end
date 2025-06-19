@@ -16,9 +16,7 @@ export const SystemCheck: React.FC<SystemCheckProps> = ({
   setModalOpen,
   recommendations,
 }) => {
-  const width = usePageWidth();
-  const isMobile = width < 768;
-  const isTablet = width >= 768 && width < 1280;
+  const { isMobile, isTablet } = usePageWidth();
 
   return !showResults ? (
     <div className="bg-white w-full rounded-[16px] shadow-[0px_0px_16px_8px_rgba(209,219,220,0.2)] border-l-[8px] border-r-[8px] border-[#1C63DB] p-[16px_24px]">

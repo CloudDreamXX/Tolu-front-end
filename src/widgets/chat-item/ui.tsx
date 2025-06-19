@@ -16,7 +16,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   return (
     <button
       className={cn(
-        "flex flex-col w-full gap-4 p-4 pl-8 border-b cursor-pointer hover:bg-white border-[#DBDEE1] text-left",
+        "flex flex-col w-full gap-2 lg:gap-4 p-4 md:px-6 md:py-5 lg:p-4 lg:pl-8 border-b cursor-pointer hover:bg-white border-[#DBDEE1] text-left",
         classname
       )}
       onClick={onClick}

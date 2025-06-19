@@ -1,93 +1,82 @@
-import { ScrollArea } from "shared/ui";
-import { templates } from "./mock";
+import { ChangeEvent, useRef, useState } from "react";
+import { DropArea, Input, ScrollArea } from "shared/ui";
 import { FileItem } from "widgets/file-item";
-import { UploadCloud } from "lucide-react";
-import { cn } from "shared/lib";
-import { useRef, useState } from "react";
+import { templates } from "./mock";
 
 interface TemplatesTabrops {
   chatId?: string;
 }
 
 export const TemplatesTab: React.FC<TemplatesTabrops> = ({ chatId }) => {
+  const [dragActive, setDragActive] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dragOver, setDragOver] = useState(false);
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragOver(false);
-    const files = e.dataTransfer.files;
-    if (files) {
-      const validFiles = Array.from(files).filter(isValidFile);
-      //todo something
-    }
+    setDragActive(true);
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragLeave = () => setDragActive(false);
+
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragOver(true);
+    setDragActive(false);
+    const files = Array.from(e.dataTransfer.files);
+    processFiles(files);
   };
 
-  const handleDragLeave = () => {
-    setDragOver(false);
-  };
-
-  const isValidFile = (file: File) => {
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-    return allowedTypes.includes(file.type);
-  };
-
-  const triggerFileSelect = () => {
+  const handleBrowseClick = () => {
     fileInputRef.current?.click();
   };
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const validFiles = Array.from(files).filter(isValidFile);
-      //todo something
-    }
+
+  const processFiles = (files: File[]) => {
+    const validFiles = files.filter((file) => {
+      const extension = file.name
+        .toLowerCase()
+        .slice(file.name.lastIndexOf("."));
+      return [
+        ".pdf",
+        ".doc",
+        ".docx",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif",
+      ].includes(extension);
+    });
+
+    const updatedFiles = [...attachedFiles, ...validFiles];
+    setAttachedFiles(updatedFiles);
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (!selectedFiles) return;
+    const filesArray = Array.from(selectedFiles);
+    processFiles(filesArray);
+    e.target.value = "";
   };
 
   return (
     <ScrollArea className="h-[calc(100vh-238px)]">
-      <div className="flex flex-col items-start w-full gap-2">
-        <div
-          className={cn(
-            "flex py-[16px] w-full md:w-full px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed",
-            "bg-white cursor-pointer transition",
-            dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
-          )}
+      <div className="flex flex-col items-start w-full gap-2 pr-3">
+        <DropArea
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={triggerFileSelect}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,.jpg,.jpeg,.png"
-            multiple
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-          <div className="flex gap-[12px] items-center flex-col">
-            <div className="flex p-[8px] items-center gap-[10px] rounded-[8px] border-[1px] border-[#F3F6FB] bg-white">
-              <UploadCloud />
-            </div>
+          dragActive={dragActive}
+          onBrowseClick={handleBrowseClick}
+        />
 
-            <div className="flex flex-col items-center gap-[4px]">
-              <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                Click to upload
-              </p>
-              <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                or drag and drop
-              </p>
-              <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                PDF, JPG or PNG
-              </p>
-            </div>
-          </div>
-        </div>
+        <Input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif"
+          onChange={handleFileChange}
+        />
 
         {templates.map((tm) => (
           <FileItem key={tm.id} file={tm.file} />
