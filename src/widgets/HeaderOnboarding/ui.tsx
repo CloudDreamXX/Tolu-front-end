@@ -29,7 +29,7 @@ export const HeaderOnboarding = ({
   return (
     <header className="w-full bg-gradient-to-b from-[#F3ECFE] to-[#E8EFFE] px-4 pt-4 pb-2 md:h-[160px] flex flex-col md:items-center md:justify-center relative">
       {/* Logo Section */}
-      <div className="flex flex-col items-start md:absolute md:left-10 md:top-1/2 md:-translate-y-1/2 md:items-center">
+      <div className="flex items-start md:absolute md:left-10 md:top-1/2 md:-translate-y-1/2 flex-col md:items-center">
         <h2
           onClick={() => navigate("/")}
           className="cursor-pointer text-[#1D1D1F] text-center text-[25px] md:text-[44.444px] font-bold font-open"

@@ -16,7 +16,7 @@ export class FoldersService {
   private static serializeFileNames(
     fileNames: IFileNamesResponse[]
   ): IFileNames[] {
-    return fileNames.map((file) => ({
+    return fileNames?.map((file) => ({
       path: file.path,
       filename: file.filename,
       contentType: file.content_type,
@@ -35,15 +35,17 @@ export class FoldersService {
       reviewerName: item.reviewer_name,
       price: item.price,
       status: item.status,
+      messages: item.messages,
     };
   }
 
   private static serializeSubfolder(subfolder: ISubfolderResponse): ISubfolder {
+    console.log(this)
     return {
       id: subfolder.id,
       name: subfolder.name,
       fileCount: subfolder.file_count,
-      fileNames: this.serializeFileNames(subfolder.file_names ?? []),
+      fileNames: this.serializeFileNames(subfolder?.file_names ?? []),
       customInstructions: subfolder.custom_instructions,
       creatorId: subfolder.creator_id,
       createdAt: subfolder.created_at,
@@ -51,10 +53,10 @@ export class FoldersService {
       price: this.normalizePrice(subfolder.price),
       status: subfolder.status,
       totalContentItems: subfolder.total_content_items,
-      subfolders: (subfolder.subfolders ?? []).map((sub) =>
+      subfolders: (Array.isArray(subfolder?.subfolders) ? subfolder?.subfolders : [])?.map((sub) =>
         this.serializeSubfolder(sub)
       ),
-      content: (subfolder.content ?? []).map((content) =>
+      content: (subfolder?.content ?? [])?.map((content) =>
         this.serializeContentItem(content)
       ),
     };
@@ -65,7 +67,7 @@ export class FoldersService {
       id: folder.id,
       name: folder.name,
       fileCount: folder.file_count,
-      fileNames: this.serializeFileNames(folder.file_names ?? []),
+      fileNames: this.serializeFileNames(folder?.file_names ?? []),
       customInstructions: folder.custom_instructions,
       creatorId: folder.creator_id,
       createdAt: folder.created_at,
@@ -73,10 +75,10 @@ export class FoldersService {
       price: this.normalizePrice(folder.price),
       status: folder.status,
       totalContentItems: folder.total_content_items,
-      subfolders: (folder.subfolders ?? []).map((sub) =>
+      subfolders: (folder?.subfolders ?? [])?.map((sub) =>
         this.serializeSubfolder(sub)
       ),
-      content: (folder.content ?? []).map((content) =>
+      content: (folder.content ?? [])?.map((content) =>
         this.serializeContentItem(content)
       ),
       isSystemFolder: false,
@@ -139,7 +141,7 @@ export class FoldersService {
       categories.forEach((category) => {
         if (foldersData[category] && Array.isArray(foldersData[category])) {
           console.log(`Serializing ${category}:`, foldersData[category]);
-          const serializedFolders = foldersData[category].map(
+          const serializedFolders = foldersData[category]?.map(
             (folder: IFolderItemResponse) => {
               console.log(`Serializing folder:`, folder);
               return this.serializeFolder(folder);
@@ -184,11 +186,11 @@ export class FoldersService {
       const foldersData = response.data ?? response;
 
       return {
-        aiGenerated: (foldersData.ai_generated ?? []).map(this.serializeFolder),
-        inReview: (foldersData.in_review ?? []).map(this.serializeFolder),
-        approved: (foldersData.approved ?? []).map(this.serializeFolder),
-        published: (foldersData.published ?? []).map(this.serializeFolder),
-        archived: (foldersData.archived ?? []).map(this.serializeFolder),
+        aiGenerated: (foldersData.ai_generated ?? [])?.map(this.serializeFolder),
+        inReview: (foldersData.in_review ?? [])?.map(this.serializeFolder),
+        approved: (foldersData.approved ?? [])?.map(this.serializeFolder),
+        published: (foldersData.published ?? [])?.map(this.serializeFolder),
+        archived: (foldersData.archived ?? [])?.map(this.serializeFolder),
       };
     } catch (error) {
       console.error("Error in getFoldersByStatus:", error);

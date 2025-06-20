@@ -88,11 +88,40 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
 }
+
+export interface IContentMessage {
+  id: string;
+  title: string;
+  chat_id: string;
+  creator_id: string;
+  created_at: string;
+  reviewer_name: string | null;
+  price: string | null;
+  status: string | null;
+}
+
+export interface ISessionResult {
+  id: string;
+  creator_id: string;
+  chat_id: string;
+  folder_id: string;
+  query: string;
+  content: string;
+  created_at: string;
+  updated_at: string | null;
+  title: string;
+  messages: IContentMessage[];
+}
+
+export interface ISessionResponse {
+  search_results: ISessionResult[];
+}
+

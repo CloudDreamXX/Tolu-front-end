@@ -50,8 +50,6 @@ export const Navigation: React.FC = () => {
     nav("/auth");
   };
 
-  if (location.pathname === "/content-manager/create" && isDesktop) return null;
-
   return (
     <div className="bg-white xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] relative px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]">
       {/* Mobile Hamburger */}
@@ -109,8 +107,7 @@ export const Navigation: React.FC = () => {
                   to={link.link}
                   onClick={() => setMenuMobOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${
-                      isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                     } hover:text-[#1C63DB]`
                   }
                 >

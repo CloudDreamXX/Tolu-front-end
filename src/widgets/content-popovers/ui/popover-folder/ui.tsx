@@ -46,18 +46,28 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   const [parentFolderId, setParentFolderId] = useState<string | null>(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchFolders = async () => {
-      try {
-        const response = await FoldersService.getFolders();
+useEffect(() => {
+  const fetchFolders = async () => {
+    try {
+      const response = await FoldersService.getFolders();
+      if (response.folders.length > 0) {
+        const firstFolder = response.folders[0];
         dispatch(setFolders(response));
-      } catch (error) {
-        console.error("Error fetching folders:", error);
+        if (firstFolder.subfolders) {
+          setSubfolders(firstFolder.subfolders);
+          setSelectedFolderName(firstFolder.name);
+          setParentFolderId(firstFolder.id);
+          setSubfolderPopup(true); 
+        }
       }
-    };
+    } catch (error) {
+      console.error("Error fetching folders:", error);
+    }
+  };
 
-    fetchFolders();
-  }, [token, dispatch]);
+  fetchFolders();
+}, [token, dispatch]);
+
 
   const filteredFolders = useMemo(() => {
     return folders.filter((folder) =>
@@ -68,7 +78,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   const toggleFolderSelection = (folder: IFolder) => {
     if (subfolderPopup) {
       setSelectedFolder(folder.id);
-      setSelectedFolderName(folder.name);
+      // setSelectedFolderName(folder.name);
       console.log("Selected folder:", folder.name);
       setFolderId && setFolderId(folder.id);
       setExistingFiles &&
@@ -168,7 +178,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
           )}
         </PopoverTrigger>
         <PopoverContent className="w-[526px] p-6 flex flex-col gap-6">
-          {!subfolderPopup ? (
+          {/* {!subfolderPopup ? (
             <>
               <Input
                 variant="bottom-border"
@@ -244,13 +254,9 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                 ))}
               </div>
             </>
-          ) : (
+          ) : ( */}
             <>
-              <div className="flex items-center justify-between">
-                <button onClick={handleBackClick}>
-                  <ArrowBack color="#1D1D1F" />
-                </button>
-                <div className="text-[18px] font-semibold text-black flex items-center gap-2">
+                <div className="text-[18px] font-semibold text-black flex items-center justify-between gap-2">
                   {selectedFolderName}
                   <button
                     onClick={() =>
@@ -261,7 +267,6 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                     <Plus />
                   </button>
                 </div>
-              </div>
               <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
                 {subfolders.map((subfolder) => (
                   <button
@@ -310,7 +315,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                 ))}
               </div>
             </>
-          )}
+          {/* )} */}
         </PopoverContent>
       </Popover>
 

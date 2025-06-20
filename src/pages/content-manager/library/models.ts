@@ -3,6 +3,7 @@ export interface TableRow {
   parentId?: string;
   title: string;
   createdAt: string;
+  created_at?: string;
   reviewers: string | null;
   filesCount: number;
   price: string;
@@ -10,6 +11,7 @@ export interface TableRow {
   type: "folder" | "subfolder" | "video" | "voice" | "content";
   subfolders?: TableRow[];
   content?: TableRow[];
+  messages?: TableRow[];
 }
 
 export interface Reviewers {

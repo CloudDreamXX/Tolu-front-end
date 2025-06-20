@@ -6,6 +6,7 @@ import {
   ClientsResponse,
   GetClientInfoResponse,
   InviteClientPayload,
+  ISessionResponse,
   Status,
 } from "./model";
 
@@ -226,6 +227,21 @@ export class CoachService {
     token: string | null
   ): Promise<any> {
     return ApiService.put<any>(API_ROUTES.COACH_ADMIN.CHANGE_STATUS, status, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  static async getSessionById(chatId: string,
+    token: string | null
+  ): Promise<ISessionResponse> {
+    const endpoint = API_ROUTES.COACH_ADMIN.GET_SESSION.replace(
+      "{chat_id}",
+      chatId
+    );
+    return ApiService.get<ISessionResponse>(endpoint, {
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         "Content-Type": "application/json",

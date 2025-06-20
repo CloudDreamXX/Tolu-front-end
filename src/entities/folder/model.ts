@@ -1,3 +1,5 @@
+import { TableRow } from "pages/content-manager/library/models";
+
 export interface IFileNamesResponse {
   path: string;
   filename: string;
@@ -13,6 +15,7 @@ export interface IContentItemResponse {
   reviewer_name: string | null;
   price: string | null;
   status: string | null;
+  messages?: TableRow[];
 }
 
 export interface ISubfolderResponse {
@@ -60,6 +63,17 @@ export interface IFileNames {
   contentType: string;
 }
 
+export interface IMessage {
+  id: string;
+  title: string;
+  chat_id: string;
+  creator_id: string;
+  created_at: string;
+  reviewer_name: string | null;
+  price: string | null;
+  status: string;
+}
+
 export interface IContentItem {
   id: string;
   title: string;
@@ -69,6 +83,7 @@ export interface IContentItem {
   reviewerName: string | null;
   price: string | null;
   status: string | null;
+  messages?: TableRow[];
 }
 
 export interface ISubfolder {
@@ -201,3 +216,23 @@ export interface FolderResponse {
   folder: Folder;
   message: string;
 }
+
+export const FOLDER_STATUS_MAPPING = {
+  "Raw": "AI-Generated",
+  "Ready for Review": "In-Review",
+  "Waiting": "In-Review",
+  "Second Review Requested": "In-Review",
+  "Ready to Publish": "Approved",
+  "Live": "Published",
+  "Archived": "Archived",
+} as const;
+
+export const ORDERED_STATUSES: (keyof typeof FOLDER_STATUS_MAPPING)[] = [
+  "Raw",
+  "Ready for Review",
+  "Waiting",
+  "Second Review Requested",
+  "Ready to Publish",
+  "Live",
+  "Archived",
+];

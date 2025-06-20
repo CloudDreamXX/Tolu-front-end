@@ -10,6 +10,7 @@ interface SearchableSelectProps {
   placeholder?: string;
   labelStyle?: string;
   width?: string;
+  arrowTopPosition?: "72" | "48";
   position?: "top" | "bottom";
   dropdownStyle?: string;
 }
@@ -22,6 +23,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
   onChange,
   placeholder = "Select",
   width = "w-[100%]",
+  arrowTopPosition,
   position = "bottom",
   dropdownStyle,
 }) => {
@@ -70,8 +72,8 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
             setInputValue(e.target.value);
             setIsOpen(true);
           }}
-          placeholder={placeholder}
-          className="peer w-full py-[12px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
+          placeholder={placeholder ? placeholder : "Select"}
+          className="peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
         />
         <div
           className={cn(
