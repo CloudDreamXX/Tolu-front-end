@@ -46,28 +46,27 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   const [parentFolderId, setParentFolderId] = useState<string | null>(null);
   const dispatch = useDispatch();
 
-useEffect(() => {
-  const fetchFolders = async () => {
-    try {
-      const response = await FoldersService.getFolders();
-      if (response.folders.length > 0) {
-        const firstFolder = response.folders[0];
-        dispatch(setFolders(response));
-        if (firstFolder.subfolders) {
-          setSubfolders(firstFolder.subfolders);
-          setSelectedFolderName(firstFolder.name);
-          setParentFolderId(firstFolder.id);
-          setSubfolderPopup(true); 
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await FoldersService.getFolders();
+        if (response.folders.length > 0) {
+          const firstFolder = response.folders[0];
+          dispatch(setFolders(response));
+          if (firstFolder.subfolders) {
+            setSubfolders(firstFolder.subfolders);
+            setSelectedFolderName(firstFolder.name);
+            setParentFolderId(firstFolder.id);
+            setSubfolderPopup(true);
+          }
         }
+      } catch (error) {
+        console.error("Error fetching folders:", error);
       }
-    } catch (error) {
-      console.error("Error fetching folders:", error);
-    }
-  };
+    };
 
-  fetchFolders();
-}, [token, dispatch]);
-
+    fetchFolders();
+  }, [token, dispatch]);
 
   const filteredFolders = useMemo(() => {
     return folders.filter((folder) =>
@@ -255,66 +254,66 @@ useEffect(() => {
               </div>
             </>
           ) : ( */}
-            <>
-                <div className="text-[18px] font-semibold text-black flex items-center justify-between gap-2">
-                  {selectedFolderName}
-                  <button
-                    onClick={() =>
-                      handleCreateSubfolder(parentFolderId!, selectedFolderName)
-                    }
-                    className="p-1 rounded hover:bg-gray-100"
-                  >
-                    <Plus />
-                  </button>
-                </div>
-              <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
-                {subfolders.map((subfolder) => (
-                  <button
-                    className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
-                      selectedFolder === subfolder.id
-                        ? "bg-blue-50 border border-blue-200"
-                        : "bg-white"
-                    }`}
-                    key={subfolder.id}
-                    onClick={() => toggleFolderSelection(subfolder)}
-                  >
-                    <span className="text-lg font-semibold text-gray-900 truncate">
-                      {subfolder.name}
-                    </span>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="w-8 h-8 p-0 rounded-full"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Dots />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
-                        <Button
-                          variant="ghost"
-                          className="items-center justify-start w-full h-8 p-1 font-medium"
-                        >
-                          <Eye /> View source files
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        >
-                          <Trash2
-                            width={24}
-                            height={24}
-                            className="text-destructive"
-                          />{" "}
-                          Delete
-                        </Button>
-                      </PopoverContent>
-                    </Popover>
-                  </button>
-                ))}
-              </div>
-            </>
+          <>
+            <div className="text-[18px] font-semibold text-black flex items-center justify-between gap-2">
+              {selectedFolderName}
+              <button
+                onClick={() =>
+                  handleCreateSubfolder(parentFolderId!, selectedFolderName)
+                }
+                className="p-1 rounded hover:bg-gray-100"
+              >
+                <Plus />
+              </button>
+            </div>
+            <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
+              {subfolders.map((subfolder) => (
+                <button
+                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
+                    selectedFolder === subfolder.id
+                      ? "bg-blue-50 border border-blue-200"
+                      : "bg-white"
+                  }`}
+                  key={subfolder.id}
+                  onClick={() => toggleFolderSelection(subfolder)}
+                >
+                  <span className="text-lg font-semibold text-gray-900 truncate">
+                    {subfolder.name}
+                  </span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-8 h-8 p-0 rounded-full"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Dots />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
+                      <Button
+                        variant="ghost"
+                        className="items-center justify-start w-full h-8 p-1 font-medium"
+                      >
+                        <Eye /> View source files
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        <Trash2
+                          width={24}
+                          height={24}
+                          className="text-destructive"
+                        />{" "}
+                        Delete
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                </button>
+              ))}
+            </div>
+          </>
           {/* )} */}
         </PopoverContent>
       </Popover>

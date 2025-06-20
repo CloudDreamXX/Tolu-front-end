@@ -19,62 +19,62 @@ export const useLibraryLogic = (folders: IFolder[], search: string) => {
     });
   };
 
-const convertToTableRows = (folders: IFolder[]): TableRow[] => {
-  return folders.map(
-    (folder): TableRow => ({
-      id: folder.id,
-      type: "folder",
-      title: folder.name,
-      filesCount: folder.totalContentItems,
-      createdAt: folder.createdAt,
-      reviewers: folder.reviewerName || "-",
-      price: folder.price || "-",
-      status: folder.status || "-",
-      subfolders: folder.subfolders?.map(
-        (sub): TableRow => ({
-          id: sub.id,
-          type: "subfolder",
-          title: sub.name,
-          filesCount: sub.totalContentItems,
-          createdAt: sub.createdAt,
-          reviewers: sub.reviewerName || "-",
-          price: sub.price || "-",
-          status: sub.status || "-",
-          subfolders: [],
-          content:
-            sub.content?.map(
-              (c): TableRow => ({
-                id: c.id,
-                type: "content",
-                title: c.title,
-                filesCount: 0,
-                createdAt: c.createdAt,
-                reviewers: c.reviewerName || "-",
-                price: c.price || "-",
-                status: c.status || "-",
-                messages: c.messages || [],
-              })
-            ) || [],
-        })
-      ) || [],
-      content:
-        folder.content?.map(
-          (c): TableRow => ({
-            id: c.id,
-            type: "content",
-            title: c.title,
-            filesCount: 0,
-            createdAt: c.createdAt,
-            reviewers: c.reviewerName || "-",
-            price: c.price || "-",
-            status: c.status || "-",
-            messages: c.messages || [],
-          })
-        ) || [],
-    })
-  );
-};
-
+  const convertToTableRows = (folders: IFolder[]): TableRow[] => {
+    return folders.map(
+      (folder): TableRow => ({
+        id: folder.id,
+        type: "folder",
+        title: folder.name,
+        filesCount: folder.totalContentItems,
+        createdAt: folder.createdAt,
+        reviewers: folder.reviewerName || "-",
+        price: folder.price || "-",
+        status: folder.status || "-",
+        subfolders:
+          folder.subfolders?.map(
+            (sub): TableRow => ({
+              id: sub.id,
+              type: "subfolder",
+              title: sub.name,
+              filesCount: sub.totalContentItems,
+              createdAt: sub.createdAt,
+              reviewers: sub.reviewerName || "-",
+              price: sub.price || "-",
+              status: sub.status || "-",
+              subfolders: [],
+              content:
+                sub.content?.map(
+                  (c): TableRow => ({
+                    id: c.id,
+                    type: "content",
+                    title: c.title,
+                    filesCount: 0,
+                    createdAt: c.createdAt,
+                    reviewers: c.reviewerName || "-",
+                    price: c.price || "-",
+                    status: c.status || "-",
+                    messages: c.messages || [],
+                  })
+                ) || [],
+            })
+          ) || [],
+        content:
+          folder.content?.map(
+            (c): TableRow => ({
+              id: c.id,
+              type: "content",
+              title: c.title,
+              filesCount: 0,
+              createdAt: c.createdAt,
+              reviewers: c.reviewerName || "-",
+              price: c.price || "-",
+              status: c.status || "-",
+              messages: c.messages || [],
+            })
+          ) || [],
+      })
+    );
+  };
 
   const filteredItems = useMemo(() => {
     const tableRows = convertToTableRows(folders);

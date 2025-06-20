@@ -107,7 +107,8 @@ export const Navigation: React.FC = () => {
                   to={link.link}
                   onClick={() => setMenuMobOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${
+                      isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                     } hover:text-[#1C63DB]`
                   }
                 >

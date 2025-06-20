@@ -218,13 +218,13 @@ export interface FolderResponse {
 }
 
 export const FOLDER_STATUS_MAPPING = {
-  "Raw": "AI-Generated",
+  Raw: "AI-Generated",
   "Ready for Review": "In-Review",
-  "Waiting": "In-Review",
+  Waiting: "In-Review",
   "Second Review Requested": "In-Review",
   "Ready to Publish": "Approved",
-  "Live": "Published",
-  "Archived": "Archived",
+  Live: "Published",
+  Archived: "Archived",
 } as const;
 
 export const ORDERED_STATUSES: (keyof typeof FOLDER_STATUS_MAPPING)[] = [
@@ -236,3 +236,8 @@ export const ORDERED_STATUSES: (keyof typeof FOLDER_STATUS_MAPPING)[] = [
   "Live",
   "Archived",
 ];
+
+export interface ContentToMove {
+  content_id: string;
+  target_folder_id: string;
+}

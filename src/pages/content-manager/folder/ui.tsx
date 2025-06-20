@@ -216,14 +216,16 @@ export const ContentManagerFolder: React.FC = () => {
           <ChangeStatusPopup
             onClose={() => setShowChangeStatusPopup(false)}
             onComplete={onStatusComplete}
-            currentStatus={folder!.status as
-              | "Raw"
-              | "Ready for Review"
-              | "Waiting"
-              | "Second Review Requested"
-              | "Ready to Publish"
-              | "Live"
-              | "Archived"}
+            currentStatus={
+              folder!.status as
+                | "Raw"
+                | "Ready for Review"
+                | "Waiting"
+                | "Second Review Requested"
+                | "Ready to Publish"
+                | "Live"
+                | "Archived"
+            }
           />
         )}
       </div>

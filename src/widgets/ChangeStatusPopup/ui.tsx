@@ -5,33 +5,36 @@ import Close from "shared/assets/icons/close";
 interface ChangeStatusPopupProps {
   onClose: () => void;
   onComplete: (
-    status: | "Raw"
+    status:
+      | "Raw"
       | "Ready for Review"
       | "Waiting"
       | "Second Review Requested"
       | "Ready to Publish"
       | "Live"
       | "Archived"
-
   ) => Promise<void>;
   currentStatus:
-  | "Raw"
-  | "Ready for Review"
-  | "Waiting"
-  | "Second Review Requested"
-  | "Ready to Publish"
-  | "Live"
-  | "Archived";
+    | "Raw"
+    | "Ready for Review"
+    | "Waiting"
+    | "Second Review Requested"
+    | "Ready to Publish"
+    | "Live"
+    | "Archived";
 }
 
-const UI_TO_BACKEND_STATUS: Record<string, keyof typeof FOLDER_STATUS_MAPPING> = {};
+const UI_TO_BACKEND_STATUS: Record<string, keyof typeof FOLDER_STATUS_MAPPING> =
+  {};
 Object.entries(FOLDER_STATUS_MAPPING).forEach(([backend, ui]) => {
   if (!(ui in UI_TO_BACKEND_STATUS)) {
     UI_TO_BACKEND_STATUS[ui] = backend as keyof typeof FOLDER_STATUS_MAPPING;
   }
 });
 
-const STATUS_OPTIONS = Array.from(new Set(Object.values(FOLDER_STATUS_MAPPING)));
+const STATUS_OPTIONS = Array.from(
+  new Set(Object.values(FOLDER_STATUS_MAPPING))
+);
 
 export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
   onClose,
@@ -76,7 +79,10 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
           <Close />
         </button>
 
-        <h3 id="modal-title" className="text-[24px] font-semibold text-[#1D1D1F]">
+        <h3
+          id="modal-title"
+          className="text-[20px] font-semibold text-[#1D1D1F]"
+        >
           Mark as
         </h3>
         <p className="text-[14px] text-[#5F5F65] font-[500]">
@@ -86,7 +92,8 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
         <div className="flex flex-col gap-[8px]">
           {STATUS_OPTIONS.map((status) => {
             const backendValue = UI_TO_BACKEND_STATUS[status];
-            const isEnabled = backendValue === prevAllowed || backendValue === nextAllowed;
+            const isEnabled =
+              backendValue === prevAllowed || backendValue === nextAllowed;
 
             return (
               <button

@@ -19,16 +19,17 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
   expandedFolders,
   toggleFolder,
   level,
-  onClick
+  onClick,
 }) => {
   const hasChildren =
     (item.subfolders && item.subfolders.length > 0) ||
-    (item.content && item.content.length > 0)
-  const isExpanded = expandedFolders.has(item.id) || (item.messages && item.messages.length > 0);
+    (item.content && item.content.length > 0);
+  const isExpanded =
+    expandedFolders.has(item.id) || (item.messages && item.messages.length > 0);
 
   const truncateTitle = (title: string) => {
     const words = title.trim().split(/\s+/);
-    return words.length > 3 ? `${words.slice(0, 3).join(' ')}...` : title;
+    return words.length > 3 ? `${words.slice(0, 3).join(" ")}...` : title;
   };
 
   const nav = useNavigate();
@@ -36,18 +37,24 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
   return (
     <div className="border border-[#AAC6EC] rounded-[8px] p-4 bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between bg-[#AAC6EC1A] p-[8px] rounded-[4px]" onClick={onClick}>
+      <div
+        className="flex items-center justify-between bg-[#AAC6EC1A] p-[8px] rounded-[4px]"
+        onClick={onClick}
+      >
         <div className="flex items-center gap-[8px]">
           {hasChildren && (
             <ChevronDown
-              className={`cursor-pointer w-[20px] h-[20px] transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
-                }`}
+              className={`cursor-pointer w-[20px] h-[20px] transition-transform duration-200 ${
+                isExpanded ? "rotate-180" : ""
+              }`}
               onClick={() => toggleFolder(item.id)}
             />
           )}
           <div className="flex items-center gap-2">
             {getIcon(item.type)}
-            <span className="text-lg font-semibold">{truncateTitle(item.title)}</span>
+            <span className="text-lg font-semibold">
+              {truncateTitle(item.title)}
+            </span>
           </div>
         </div>
         <button>
@@ -89,7 +96,9 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
               level={level + 1}
               onClick={(e) => {
                 e.stopPropagation();
-                nav(`/content-manager/library/folder/${item.id}/document/${contentItem.id}`);
+                nav(
+                  `/content-manager/library/folder/${item.id}/document/${contentItem.id}`
+                );
               }}
             />
           ))}
@@ -101,13 +110,17 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
               className="border border-[#AAC6EC] rounded-[6px] p-3"
               onClick={(e) => {
                 e.stopPropagation();
-                nav(`/content-manager/library/folder/${item.id}/document/${msg.id}`);
+                nav(
+                  `/content-manager/library/folder/${item.id}/document/${msg.id}`
+                );
               }}
             >
               <div className="flex items-center justify-between bg-[#AAC6EC1A] p-[8px] rounded-[4px]">
                 <div className="flex items-center gap-[8px]">
                   <DocumentIcon className="text-[#4B5E6F]" />
-                  <span className="text-md font-medium">{truncateTitle(msg.title)}</span>
+                  <span className="text-md font-medium">
+                    {truncateTitle(msg.title)}
+                  </span>
                 </div>
                 <button>
                   <Dots color="#1D1D1F" />
@@ -143,8 +156,9 @@ const DetailRow: React.FC<DetailRowProps> = ({
 }) => {
   return (
     <div
-      className={`py-[8px] flex items-center ${!isLast ? "border-b border-[#F3F6FB]" : ""
-        }`}
+      className={`py-[8px] flex items-center ${
+        !isLast ? "border-b border-[#F3F6FB]" : ""
+      }`}
     >
       <span className="text-[14px] text-[#5F5F65] w-full">{label}</span>
       <span className="text-[16px] text-[#000000] w-full">{value ?? "-"}</span>

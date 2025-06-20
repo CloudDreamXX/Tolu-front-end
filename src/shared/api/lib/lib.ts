@@ -148,13 +148,14 @@ export class ApiService {
 
   public static async delete<T>(
     endpoint: string,
+    data?: any,
     config?: AxiosRequestConfig
   ): Promise<T> {
     try {
-      const response: AxiosResponse<T> = await axiosInstance.delete(
-        endpoint,
-        config
-      );
+      const response: AxiosResponse<T> = await axiosInstance.delete(endpoint, {
+        ...config,
+        data,
+      });
       return response.data;
     } catch (error) {
       return this.handleError(error);

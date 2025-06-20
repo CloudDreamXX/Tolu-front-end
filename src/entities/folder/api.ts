@@ -10,6 +10,7 @@ import {
   IFileNamesResponse,
   NewFolder,
   IFolderMap,
+  ContentToMove,
 } from "./model";
 
 export class FoldersService {
@@ -40,7 +41,7 @@ export class FoldersService {
   }
 
   private static serializeSubfolder(subfolder: ISubfolderResponse): ISubfolder {
-    console.log(this)
+    console.log(this);
     return {
       id: subfolder.id,
       name: subfolder.name,
@@ -53,9 +54,10 @@ export class FoldersService {
       price: this.normalizePrice(subfolder.price),
       status: subfolder.status,
       totalContentItems: subfolder.total_content_items,
-      subfolders: (Array.isArray(subfolder?.subfolders) ? subfolder?.subfolders : [])?.map((sub) =>
-        this.serializeSubfolder(sub)
-      ),
+      subfolders: (Array.isArray(subfolder?.subfolders)
+        ? subfolder?.subfolders
+        : []
+      )?.map((sub) => this.serializeSubfolder(sub)),
       content: (subfolder?.content ?? [])?.map((content) =>
         this.serializeContentItem(content)
       ),
@@ -186,7 +188,9 @@ export class FoldersService {
       const foldersData = response.data ?? response;
 
       return {
-        aiGenerated: (foldersData.ai_generated ?? [])?.map(this.serializeFolder),
+        aiGenerated: (foldersData.ai_generated ?? [])?.map(
+          this.serializeFolder
+        ),
         inReview: (foldersData.in_review ?? [])?.map(this.serializeFolder),
         approved: (foldersData.approved ?? [])?.map(this.serializeFolder),
         published: (foldersData.published ?? [])?.map(this.serializeFolder),
@@ -210,5 +214,33 @@ export class FoldersService {
     }
 
     return FoldersService.serializeFolder(response.folder);
+  }
+
+  static async moveFolderContent(
+    payload: ContentToMove,
+    token: string | null
+  ): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.FOLDERS.MOVE_CONTENT, payload, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  static async deleteContent(
+    contentId: string,
+    token: string | null
+  ): Promise<{ success: boolean; message: string }> {
+    return ApiService.delete<{ success: boolean; message: string }>(
+      API_ROUTES.FOLDERS.DELETE_CONTENT,
+      { content_id: contentId },
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
   }
 }

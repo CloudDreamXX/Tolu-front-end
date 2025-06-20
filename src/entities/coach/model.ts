@@ -88,13 +88,13 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-  | "Raw"
-  | "Ready for Review"
-  | "Waiting"
-  | "Second Review Requested"
-  | "Ready to Publish"
-  | "Live"
-  | "Archived";
+    | "Raw"
+    | "Ready for Review"
+    | "Waiting"
+    | "Second Review Requested"
+    | "Ready to Publish"
+    | "Live"
+    | "Archived";
 }
 
 export interface IContentMessage {
@@ -125,3 +125,9 @@ export interface ISessionResponse {
   search_results: ISessionResult[];
 }
 
+export interface RateContent {
+  content_id: string;
+  rating: number;
+  thumbs_down: boolean;
+  comment: string;
+}

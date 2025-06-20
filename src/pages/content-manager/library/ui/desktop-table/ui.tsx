@@ -26,7 +26,10 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
-  const [popupPosition, setPopupPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const [popupPosition, setPopupPosition] = useState<{
+    top: number;
+    left: number;
+  }>({ top: 0, left: 0 });
   const [isMarkAsOpen, setIsMarkAsOpen] = useState<boolean>(false);
   const token = useSelector((state: RootState) => state.user.token);
   const dispatch = useDispatch();
@@ -99,24 +102,32 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
       </div>
       {isMenuOpen && selectedRow && (
         <EditDocumentPopup
-          onEdit={() => { }}
-          onMove={() => { }}
-          onDublicate={() => { }}
+          onEdit={() => {}}
+          onMove={() => {}}
+          onDublicate={() => {}}
           onMarkAs={() => setIsMarkAsOpen(true)}
-          onArchive={() => { }}
-          onDelete={() => { }}
+          onArchive={() => {}}
+          onDelete={() => {}}
           position={popupPosition}
           type={selectedRow?.type}
         />
       )}
-      {isMarkAsOpen && <ChangeStatusPopup onClose={() => setIsMarkAsOpen(false)} onComplete={onStatusComplete} currentStatus={selectedRow!.status as
-        | "Raw"
-        | "Ready for Review"
-        | "Waiting"
-        | "Second Review Requested"
-        | "Ready to Publish"
-        | "Live"
-        | "Archived"} />}
+      {isMarkAsOpen && (
+        <ChangeStatusPopup
+          onClose={() => setIsMarkAsOpen(false)}
+          onComplete={onStatusComplete}
+          currentStatus={
+            selectedRow!.status as
+              | "Raw"
+              | "Ready for Review"
+              | "Waiting"
+              | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
+          }
+        />
+      )}
     </>
   );
 };
@@ -134,7 +145,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
   index,
   expandedFolders,
   toggleFolder,
-  onDotsClick
+  onDotsClick,
 }) => {
   const isExpanded = expandedFolders.has(row.id);
   const hasChildren = row.subfolders?.length ?? row.content?.length;
@@ -171,8 +182,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
         <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
           {row.status === "Raw" ? "Pending review" : row.status}
         </td>
-        <td className="py-[12px] pr-[8px]">
-        </td>
+        <td className="py-[12px] pr-[8px]"></td>
       </tr>
 
       {/* Children Rows */}
@@ -220,7 +230,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
   expandedFolders,
   folderId,
   toggleFolder,
-  onDotsClick
+  onDotsClick,
 }) => {
   const isExpanded = expandedFolders.has(subfolder.id);
   const hasContent = subfolder.content?.length;
@@ -256,7 +266,12 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
           {subfolder.status === "Raw" ? "Pending review" : subfolder.status}
         </td>
         <td className="py-[12px] pr-[8px]">
-          <button onClick={(e) => { e.stopPropagation(); onDotsClick(subfolder, e); }}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDotsClick(subfolder, e);
+            }}
+          >
             <Dots />
           </button>
         </td>
@@ -291,7 +306,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
   parentIndex,
   paddingLeft,
   folderId,
-  onDotsClick
+  onDotsClick,
 }) => {
   const nav = useNavigate();
   const bgClass = parentIndex % 2 === 0 ? "bg-white" : "bg-[#AAC6EC1A]";
@@ -303,7 +318,9 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
         className={`${bgClass} cursor-pointer`}
         onClick={(e) => {
           e.stopPropagation();
-          nav(`/content-manager/library/folder/${folderId}/document/${content.id}`);
+          nav(
+            `/content-manager/library/folder/${folderId}/document/${content.id}`
+          );
         }}
       >
         <td className={`pl-3 pr-[18px] ${paddingLeft}`}>
@@ -313,7 +330,10 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
           {content.title}
         </td>
         <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
-          {content.content && content.content?.length > 0 && content.content?.length || "-"}
+          {(content.content &&
+            content.content?.length > 0 &&
+            content.content?.length) ||
+            "-"}
         </td>
         <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
           {formatDateToSlash(new Date(content.createdAt))}
@@ -322,38 +342,60 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
           {content.status === "Raw" ? "Pending review" : content.status}
         </td>
         <td className="py-[12px] pr-[8px]">
-          <div onClick={(e) => { e.stopPropagation(); onDotsClick(content, e); }}><Dots /></div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onDotsClick(content, e);
+            }}
+          >
+            <Dots />
+          </div>
         </td>
       </tr>
 
-      {hasMessages && content.messages && content.messages.map((msg) => (
-        <tr key={msg.id} className={`${bgClass} cursor-pointer`} onClick={(e) => {
-          e.stopPropagation();
-          nav(`/content-manager/library/folder/${folderId}/document/${content.id}`);
-        }}>
-          <td className={`pl-[68px]`}>
-            <DocumentIcon className="ml-auto" />
-          </td>
-          <td className="py-[12px] pl-[18px] pr-[8px] text-[18px] font-[500] text-black">
-            {msg.title}
-          </td>
-          <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
-            {msg.content && msg.content?.length > 0 && msg.content?.length || "-"}
-          </td>
-          <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
-            {formatDateToSlash(new Date(msg.created_at || ""))}
-          </td>
-          <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
-            {msg.status === "Raw" ? "Pending review" : msg.status}
-          </td>
-          <td className="py-[12px] pr-[8px]">
-            <button onClick={(e) => { e.stopPropagation(); onDotsClick(msg, e); }}>
-              <Dots />
-            </button>
-          </td>
-        </tr>
-      ))}
+      {hasMessages &&
+        content.messages &&
+        content.messages.map((msg) => (
+          <tr
+            key={msg.id}
+            className={`${bgClass} cursor-pointer`}
+            onClick={(e) => {
+              e.stopPropagation();
+              nav(
+                `/content-manager/library/folder/${folderId}/document/${content.id}`
+              );
+            }}
+          >
+            <td className={`pl-[68px]`}>
+              <DocumentIcon className="ml-auto" />
+            </td>
+            <td className="py-[12px] pl-[18px] pr-[8px] text-[18px] font-[500] text-black">
+              {msg.title}
+            </td>
+            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+              {(msg.content &&
+                msg.content?.length > 0 &&
+                msg.content?.length) ||
+                "-"}
+            </td>
+            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+              {formatDateToSlash(new Date(msg.created_at || ""))}
+            </td>
+            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+              {msg.status === "Raw" ? "Pending review" : msg.status}
+            </td>
+            <td className="py-[12px] pr-[8px]">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDotsClick(msg, e);
+                }}
+              >
+                <Dots />
+              </button>
+            </td>
+          </tr>
+        ))}
     </>
   );
 };
-

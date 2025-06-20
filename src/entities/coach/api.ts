@@ -7,6 +7,7 @@ import {
   GetClientInfoResponse,
   InviteClientPayload,
   ISessionResponse,
+  RateContent,
   Status,
 } from "./model";
 
@@ -234,7 +235,8 @@ export class CoachService {
     });
   }
 
-  static async getSessionById(chatId: string,
+  static async getSessionById(
+    chatId: string,
     token: string | null
   ): Promise<ISessionResponse> {
     const endpoint = API_ROUTES.COACH_ADMIN.GET_SESSION.replace(
@@ -247,5 +249,21 @@ export class CoachService {
         "Content-Type": "application/json",
       },
     });
+  }
+
+  static async rateContent(
+    payload: RateContent,
+    token: string | null
+  ): Promise<{ content_id: boolean; message: string }> {
+    return ApiService.post<{ content_id: boolean; message: string }>(
+      API_ROUTES.COACH_ADMIN.RATE_CONTENT,
+      payload,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 }
