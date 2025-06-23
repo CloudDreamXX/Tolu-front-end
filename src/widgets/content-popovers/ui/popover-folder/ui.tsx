@@ -113,7 +113,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
         parent_folder_id: parentFolderId as string,
       };
 
-      const response = await FoldersService.createFolder(newFolder, token);
+      const response = await FoldersService.createFolder(newFolder);
       const newFolderId = response.folder.id;
 
       setFolderId && setFolderId(newFolderId);

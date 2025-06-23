@@ -64,10 +64,11 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
     description: string
   ): Promise<void> => {
     try {
-      const response = await FoldersService.createFolder(
-        { name, description, parent_folder_id: parentFolderId },
-        token
-      );
+      const response = await FoldersService.createFolder({
+        name,
+        description,
+        parent_folder_id: parentFolderId,
+      });
 
       onSelect(response.folder.id);
       setCreatePopup(false);

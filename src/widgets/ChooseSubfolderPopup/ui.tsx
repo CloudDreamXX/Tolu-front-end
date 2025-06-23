@@ -8,6 +8,7 @@ interface Props {
   parentFolderId: string;
   handleSave: (contentId: string, folderId: string) => Promise<void>;
   onClose: () => void;
+  description?: string;
 }
 
 export const ChooseSubfolderPopup: React.FC<Props> = ({
@@ -16,6 +17,7 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
   parentFolderId,
   handleSave,
   onClose,
+  description,
 }) => {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
 
@@ -32,15 +34,22 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
 
         <h3
           id="modal-title"
-          className="text-[20px] font-semibold text-[#1D1D1F] mb-[24px]"
+          className="text-[20px] font-semibold text-[#1D1D1F]"
         >
           {title}
         </h3>
-        <ChooseSubfolderPanel
-          parentFolderId={parentFolderId}
-          selectedFolderId={selectedFolderId}
-          onSelect={(folderId) => setSelectedFolderId(folderId)}
-        />
+        {description && (
+          <p className="text-[14px] text-[#5F5F65] font-[500] mt-[8px]">
+            {description}
+          </p>
+        )}
+        <div className="mt-[24px]">
+          <ChooseSubfolderPanel
+            parentFolderId={parentFolderId}
+            selectedFolderId={selectedFolderId}
+            onSelect={(folderId) => setSelectedFolderId(folderId)}
+          />
+        </div>
 
         <div className="flex justify-between mt-[24px]">
           <button

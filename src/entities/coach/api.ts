@@ -252,18 +252,11 @@ export class CoachService {
   }
 
   static async rateContent(
-    payload: RateContent,
-    token: string | null
+    payload: RateContent
   ): Promise<{ content_id: boolean; message: string }> {
     return ApiService.post<{ content_id: boolean; message: string }>(
       API_ROUTES.COACH_ADMIN.RATE_CONTENT,
-      payload,
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          "Content-Type": "application/json",
-        },
-      }
+      payload
     );
   }
 }

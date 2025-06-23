@@ -1,5 +1,6 @@
 import { Archive } from "lucide-react";
 import Edit from "shared/assets/icons/edit";
+import Improve from "shared/assets/icons/ai-create";
 import { Eye } from "shared/assets/icons/eye";
 import Save from "shared/assets/icons/save";
 import Dublicate from "shared/assets/icons/dublicate";
@@ -14,6 +15,7 @@ type Props = {
   onArchive: () => void;
   onDelete: () => void;
   position: { top: number; left: number };
+  onImproveWithAI?: () => void;
   type?: "folder" | "subfolder" | "video" | "voice" | "content";
 };
 
@@ -25,6 +27,7 @@ export const EditDocumentPopup: React.FC<Props> = ({
   onArchive,
   onDelete,
   position,
+  onImproveWithAI,
   type,
 }) => {
   return (
@@ -39,7 +42,15 @@ export const EditDocumentPopup: React.FC<Props> = ({
         left: position.left - 210,
       }}
     >
-      <MenuItem icon={<Edit />} label="Edit" onClick={onEdit} />
+      {onImproveWithAI ? (
+        <MenuItem
+          icon={<Improve />}
+          label="Improve with AI"
+          onClick={onImproveWithAI}
+        />
+      ) : (
+        <MenuItem icon={<Edit />} label="Edit" onClick={onEdit} />
+      )}
       {type !== "subfolder" && (
         <MenuItem icon={<ArrowRight />} label="Move" onClick={onMove} />
       )}

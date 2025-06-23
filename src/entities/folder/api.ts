@@ -108,16 +108,8 @@ export class FoldersService {
     return price;
   }
 
-  static async createFolder(
-    payload: NewFolder,
-    token: string | null
-  ): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.FOLDERS.CREATE, payload, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "application/json",
-      },
-    });
+  static async createFolder(payload: NewFolder): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.FOLDERS.CREATE, payload);
   }
 
   static async getFolders(): Promise<{
@@ -170,7 +162,7 @@ export class FoldersService {
     }
   }
 
-  static async getFoldersByStatus(token: string | null): Promise<{
+  static async getFoldersByStatus(): Promise<{
     aiGenerated: IFolder[];
     inReview: IFolder[];
     approved: IFolder[];
@@ -178,12 +170,7 @@ export class FoldersService {
     archived: IFolder[];
   }> {
     try {
-      const response = await ApiService.get<any>(API_ROUTES.FOLDERS.STRUCTURE, {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await ApiService.get<any>(API_ROUTES.FOLDERS.STRUCTURE);
 
       const foldersData = response.data ?? response;
 
@@ -216,31 +203,16 @@ export class FoldersService {
     return FoldersService.serializeFolder(response.folder);
   }
 
-  static async moveFolderContent(
-    payload: ContentToMove,
-    token: string | null
-  ): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.FOLDERS.MOVE_CONTENT, payload, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "application/json",
-      },
-    });
+  static async moveFolderContent(payload: ContentToMove): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.FOLDERS.MOVE_CONTENT, payload);
   }
 
   static async deleteContent(
-    contentId: string,
-    token: string | null
+    contentId: string
   ): Promise<{ success: boolean; message: string }> {
     return ApiService.delete<{ success: boolean; message: string }>(
       API_ROUTES.FOLDERS.DELETE_CONTENT,
-      { content_id: contentId },
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      { content_id: contentId }
     );
   }
 }

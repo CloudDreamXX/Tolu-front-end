@@ -337,21 +337,20 @@ export const ContentManagerDocument: React.FC = () => {
       thumbs_down: down,
       comment: comment,
     };
-    await CoachService.rateContent(payload, token);
+    await CoachService.rateContent(payload);
     setIsRateOpen(false);
     setIsBadResponseOpen(false);
   };
 
   const handleDeleteClick = async (id: string) => {
-    await FoldersService.deleteContent(id, token);
+    await FoldersService.deleteContent(id);
     setIsDeleteOpen(false);
   };
 
   const handleDublicateClick = async (id: string) => {
     setIsDublicateOpen(true);
-    const response = await ContentService.duplicateContentById(id, token);
-    console.log(response);
-    setSelectedDocumentId(response);
+    const response = await ContentService.duplicateContentById(id);
+    setSelectedDocumentId(response.duplicated_content.id);
   };
 
   const handleDublicateAndMoveClick = async (
@@ -362,7 +361,7 @@ export const ContentManagerDocument: React.FC = () => {
       content_id: id,
       target_folder_id: subfolderId,
     };
-    await FoldersService.moveFolderContent(payload, token);
+    await FoldersService.moveFolderContent(payload);
     setIsDublicateOpen(false);
   };
 
@@ -371,7 +370,7 @@ export const ContentManagerDocument: React.FC = () => {
       content_id: id,
       target_folder_id: subfolderId,
     };
-    await FoldersService.moveFolderContent(payload, token);
+    await FoldersService.moveFolderContent(payload);
     setIsMoveOpen(false);
   };
 
