@@ -24,8 +24,10 @@ interface ChangeStatusPopupProps {
     | "Archived";
 }
 
-const UI_TO_BACKEND_STATUS: Record<string, keyof typeof FOLDER_STATUS_MAPPING> =
-  {};
+export const UI_TO_BACKEND_STATUS: Record<
+  string,
+  keyof typeof FOLDER_STATUS_MAPPING
+> = {};
 Object.entries(FOLDER_STATUS_MAPPING).forEach(([backend, ui]) => {
   if (!(ui in UI_TO_BACKEND_STATUS)) {
     UI_TO_BACKEND_STATUS[ui] = backend as keyof typeof FOLDER_STATUS_MAPPING;
@@ -55,6 +57,7 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const handleSave = () => {
+    console.log(selectedStatus);
     if (selectedStatus) {
       const backendValue = UI_TO_BACKEND_STATUS[selectedStatus];
       if (backendValue) {

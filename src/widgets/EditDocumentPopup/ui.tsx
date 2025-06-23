@@ -42,7 +42,7 @@ export const EditDocumentPopup: React.FC<Props> = ({
         left: position.left - 210,
       }}
     >
-      {onImproveWithAI ? (
+      {onImproveWithAI && type !== "subfolder" && type !== "folder" ? (
         <MenuItem
           icon={<Improve />}
           label="Improve with AI"

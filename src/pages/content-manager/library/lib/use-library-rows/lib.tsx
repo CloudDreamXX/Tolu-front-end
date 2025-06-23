@@ -20,12 +20,14 @@ export const useLibraryLogic = (folders: IFolder[], search: string) => {
   };
 
   const convertToTableRows = (folders: IFolder[]): TableRow[] => {
+    console.log("foldersToConvert", folders);
     return folders.map(
       (folder): TableRow => ({
         id: folder.id,
         type: "folder",
         title: folder.name,
-        filesCount: folder.totalContentItems,
+        filesCount: folder.fileCount,
+        fileNames: folder.fileNames,
         createdAt: folder.createdAt,
         reviewers: folder.reviewerName || "-",
         price: folder.price || "-",
@@ -36,7 +38,8 @@ export const useLibraryLogic = (folders: IFolder[], search: string) => {
               id: sub.id,
               type: "subfolder",
               title: sub.name,
-              filesCount: sub.totalContentItems,
+              filesCount: sub.fileCount,
+              fileNames: sub.fileNames,
               createdAt: sub.createdAt,
               reviewers: sub.reviewerName || "-",
               price: sub.price || "-",
@@ -49,6 +52,7 @@ export const useLibraryLogic = (folders: IFolder[], search: string) => {
                     type: "content",
                     title: c.title,
                     filesCount: 0,
+                    fileNames: [],
                     createdAt: c.createdAt,
                     reviewers: c.reviewerName || "-",
                     price: c.price || "-",
@@ -65,6 +69,7 @@ export const useLibraryLogic = (folders: IFolder[], search: string) => {
               type: "content",
               title: c.title,
               filesCount: 0,
+              fileNames: [],
               createdAt: c.createdAt,
               reviewers: c.reviewerName || "-",
               price: c.price || "-",

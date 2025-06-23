@@ -1,3 +1,5 @@
+import { IFileNames } from "entities/folder";
+
 export interface TableRow {
   id: string;
   parentId?: string;
@@ -6,6 +8,7 @@ export interface TableRow {
   created_at?: string;
   reviewers: string | null;
   filesCount: number;
+  fileNames: IFileNames[];
   price: string;
   status: string;
   type: "folder" | "subfolder" | "video" | "voice" | "content";

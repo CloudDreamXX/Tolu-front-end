@@ -118,14 +118,8 @@ export const ContentManagerDocument: React.FC = () => {
             }
           }
         },
-        ({ documentId: realDocumentId }) => {
-          // setConversation([
-          //   {
-          //     user: location.state.originalMessage ?? "",
-          //     ai: accumulatedReply,
-          //     isHtml: streamingIsHtml || isHtmlContent(accumulatedReply),
-          //   },
-          // ]);
+        async ({ documentId: realDocumentId }) => {
+          await loadConversation(documentId);
           setIsCreatingDocument(false);
           navigate(
             `/content-manager/library/folder/${folderId}/document/${realDocumentId}`,
@@ -234,15 +228,8 @@ export const ContentManagerDocument: React.FC = () => {
             }
           }
         },
-        () => {
-          // setConversation((prev) => [
-          //   ...prev,
-          //   {
-          //     user: message,
-          //     ai: accumulatedReply,
-          //     isHtml: newMessageIsHtml || isHtmlContent(accumulatedReply),
-          //   },
-          // ]);
+        async () => {
+          await loadConversation(document.chatId);
           setMessage("");
           setIsSendingMessage(false);
           setNewMessageStreaming("");
@@ -265,8 +252,6 @@ export const ContentManagerDocument: React.FC = () => {
       | "Live"
       | "Archived"
   ) => {
-    if (!selectedDocumentId) return;
-
     const newStatus = {
       id: selectedDocumentId,
       status: status,
@@ -478,11 +463,11 @@ export const ContentManagerDocument: React.FC = () => {
                               variant="brightblue"
                               className="self-center w-fit"
                               onClick={() => {
-                                setSelectedDocumentId(
-                                  conversation[index - 1].id
-                                );
-                                onStatusComplete("Ready for Review");
-                                setCompareIndex(null);
+                                // console.log(conversation[index - 1].id)
+                                // setSelectedDocumentId(
+                                //   conversation[index - 1].id
+                                // );
+                                // onStatusComplete("Ready for Review");
                               }}
                             >
                               Confirm and Mark as Ready for Review
@@ -503,11 +488,11 @@ export const ContentManagerDocument: React.FC = () => {
                             <Button
                               variant="brightblue"
                               className="self-center w-fit"
-                              onClick={() => {
-                                setSelectedDocumentId(pair.id);
-                                onStatusComplete("Ready for Review");
-                                setCompareIndex(null);
-                              }}
+                              // onClick={() => {
+                              //   console.log(pair.id)
+                              //   setSelectedDocumentId(pair.id);
+                              //   onStatusComplete("Ready for Review");
+                              // }}
                             >
                               Confirm and Mark as Ready for Review
                             </Button>

@@ -341,7 +341,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
             {getIcon(row.type)}
           </div>
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-black">
+        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-black font-inter">
           {row.title}
         </td>
         <td
@@ -415,19 +415,19 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
                   /{sf.title}
                 </h3>
                 <ul className="space-y-[10px]">
-                  {sf.content?.map((item) => (
+                  {sf.fileNames?.map((item, index) => (
                     <li
-                      key={item.id}
-                      className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter truncate cursor-pointer hover:text-[#1C63DB]"
-                      onClick={() => {
-                        nav(
-                          `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
-                        );
-                        setPopupRow(null);
-                      }}
+                      key={index}
+                      className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
+                      // onClick={() => {
+                      //   nav(
+                      //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
+                      //   );
+                      //   setPopupRow(null);
+                      // }}
                     >
                       <DocumentIcon />
-                      {item.title}
+                      {item.filename}
                     </li>
                   ))}
                 </ul>
@@ -460,6 +460,44 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
   const isExpanded = expandedFolders.has(subfolder.id);
   const hasContent = subfolder.content?.length;
   const bgClass = parentIndex % 2 === 0 ? "bg-white" : "bg-[#AAC6EC1A]";
+  const [popupRow, setPopupRow] = useState<TableRow | null>(null);
+  const fileCellRef = useRef<HTMLTableCellElement | null>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [popupStyle, setPopupStyle] = useState<{ top: number; left: number }>({
+    top: 0,
+    left: 0,
+  });
+
+  useEffect(() => {
+    if (popupRow && fileCellRef.current) {
+      const rect = fileCellRef.current.getBoundingClientRect();
+      setPopupStyle({
+        top: rect.top + window.scrollY - 250,
+        left: rect.left + window.scrollX,
+      });
+    }
+  }, [popupRow]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        setPopupRow(null);
+      }
+    };
+
+    if (popupRow) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [popupRow]);
+
+  console.log(popupRow);
 
   return (
     <Fragment>
@@ -478,16 +516,23 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
           )}
           {getIcon(subfolder.type)}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-black">
+        <td className="py-[12px] pr-[8px] text-[18px] font-[500] font-inter text-black">
           {subfolder.title}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+        <td
+          ref={fileCellRef}
+          className={`py-[12px] pr-[8px] text-[18px] font-inter font-[500] ${popupRow === subfolder ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setPopupRow(subfolder);
+          }}
+        >
           {subfolder.filesCount} Files
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[18px] font-[500] font-inter text-[#5F5F65]">
           {formatDateToSlash(new Date(subfolder.createdAt))}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[18px] font-[500] font-inter text-[#5F5F65]">
           {subfolder.status === "Raw" ? "Pending review" : subfolder.status}
         </td>
         <td className="py-[12px] pr-[8px]">
@@ -514,6 +559,48 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
             onDotsClick={onDotsClick}
           />
         ))}
+
+      {popupRow && (
+        <div
+          ref={popupRef}
+          className="absolute z-50 bg-white rounded-lg border border-[#E3E3E3] shadow-lg w-[365px] h-[254px] px-[14px] py-[16px]"
+          style={{
+            top: popupStyle.top,
+            left: popupStyle.left,
+          }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-[20px] font-[700] text-[#1D1D1F] font-inter">
+              Files in "{popupRow.title}"
+            </h2>
+            <button onClick={() => setPopupRow(null)}>
+              <CloseIcon />
+            </button>
+          </div>
+
+          <div className="overflow-y-auto" style={{ height: "179px" }}>
+            <div className="mb-4">
+              <ul className="space-y-[10px]">
+                {popupRow.fileNames?.map((item, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
+                    // onClick={() => {
+                    //   nav(
+                    //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
+                    //   );
+                    //   setPopupRow(null);
+                    // }}
+                  >
+                    <DocumentIcon />
+                    {item.filename}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </Fragment>
   );
 };
@@ -551,19 +638,19 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
         <td className={`pl-3 pr-[18px] ${paddingLeft}`}>
           {getIcon(content.type, "ml-auto")}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-black">
+        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-black font-inter">
           {content.title}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
           {(content.content &&
             content.content?.length > 0 &&
             content.content?.length) ||
             "-"}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
           {formatDateToSlash(new Date(content.createdAt))}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
           {content.status === "Raw" ? "Pending review" : content.status}
         </td>
         <td className="py-[12px] pr-[8px]">
@@ -594,19 +681,19 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
             <td className={`pl-[68px]`}>
               <DocumentIcon className="ml-auto" />
             </td>
-            <td className="py-[12px] pl-[18px] pr-[8px] text-[18px] font-[500] text-black">
+            <td className="py-[12px] pl-[18px] pr-[8px] text-[18px] font-[500] text-black font-inter">
               {msg.title}
             </td>
-            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
               {(msg.content &&
                 msg.content?.length > 0 &&
                 msg.content?.length) ||
                 "-"}
             </td>
-            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
               {formatDateToSlash(new Date(msg.created_at || ""))}
             </td>
-            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65]">
+            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
               {msg.status === "Raw" ? "Pending review" : msg.status}
             </td>
             <td className="py-[12px] pr-[8px]">
