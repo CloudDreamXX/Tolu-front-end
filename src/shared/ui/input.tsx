@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { cn } from "shared/lib/utils";
 import { twMerge } from "tailwind-merge";
 
 type InputVariant = "default" | "bottom-border" | "none";
@@ -50,8 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {iconRight && (
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer
-               pointer-events-auto"
+            className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer pointer-events-auto"
             onClick={onIconClick}
           >
             {iconRight}

@@ -15,7 +15,7 @@ export const Footer: React.FC<Props> = ({ position }) => {
     <footer
       className={`flex bg-transparent ${
         position === "top-left"
-          ? "py-[24px] px-[16px] mb-[24px]"
+          ? "py-[24px] px-[16px]"
           : position === "top-right"
             ? "fixed top-[24px] right-[19px] z-10"
             : "fixed bottom-0 right-8 pl-[40px] pb-[40px]"

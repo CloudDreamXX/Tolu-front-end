@@ -1,12 +1,12 @@
 import { toast } from "shared/lib/hooks/use-toast";
 import { Footer } from "../../Footer";
-import { Header } from "../../Header";
 import { useNavigate } from "react-router-dom";
 // import { useSelector } from "react-redux";
 // import { RootState } from "entities/store";
 // import { UserService } from "entities/user";
 import { AuthPageWrapper } from "shared/ui";
 import { useEffect, useState } from "react";
+import { AdminHeader } from "widgets/Header";
 
 export const OnboardingFinish = () => {
   // const coachOnboarding = useSelector(
@@ -44,7 +44,8 @@ export const OnboardingFinish = () => {
 
   return (
     <AuthPageWrapper>
-      <Header description="COACH ADMIN" />
+      <Footer position={isMobile ? "top-left" : "bottom-right"} />
+      <AdminHeader />
       <main className="absolute bottom-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:right-auto md:w-full xl:w-[940px] flex flex-col items-center self-stretch">
         <div className="flex flex-col items-center justify-center gap-[40px] md:mx-[45px] xl:mx-0 md:gap-[32px] py-[24px] px-[24px] md:p-[40px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
           <div className="flex flex-col items-center gap-[40px] md:gap-[24px] ">
@@ -67,7 +68,6 @@ export const OnboardingFinish = () => {
           </button>
         </div>
       </main>
-      <Footer position={isMobile ? "top-right" : "bottom-right"} />
     </AuthPageWrapper>
   );
 };

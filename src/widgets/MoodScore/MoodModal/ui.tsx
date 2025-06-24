@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
 import {
   lastMood,
   setLastLogIn,
   setLastMood,
 } from "entities/store/clientMoodSlice";
+import { X } from "lucide-react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import InfoIcon from "shared/assets/icons/info-icon";
 import ArrowBack from "shared/assets/icons/arrowBack";
+import InfoIcon from "shared/assets/icons/info-icon";
 import Angry from "shared/assets/images/Angry.svg";
-import Sad from "shared/assets/images/Sad.svg";
+import Happy from "shared/assets/images/Excellent.svg";
 import Neutral from "shared/assets/images/Neutrak.svg";
+import Sad from "shared/assets/images/Sad.svg";
 import Smile from "shared/assets/images/Smile.svg";
 import Smiley from "shared/assets/images/Smiley.svg";
-import Happy from "shared/assets/images/Excellent.svg";
-import { Slider } from "shared/ui/slider";
-import { X } from "lucide-react";
 import { Input } from "shared/ui";
+import { Slider } from "shared/ui/slider";
 
 const moods: lastMood[] = [
   "Angry",
@@ -43,19 +43,7 @@ interface MoodModalProps {
 
 export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
   const [rawValue, setRawValue] = useState(2.5);
-
   const dispatch = useDispatch();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const moodIndex = Math.floor(rawValue);
 
   const handleSubmit = () => {

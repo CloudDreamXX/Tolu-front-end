@@ -101,7 +101,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
         <ul
           className={cn(
             "absolute z-10 w-full max-h-[160px] overflow-y-auto scrollbar-hide border border-[#1C63DB] bg-white rounded-md shadow-md p-[16px] flex flex-col gap-[8px]",
-            position === "top" && "bottom-full mb-1",
+            position === "top" && "bottom-full mb-[-26px]",
             position === "bottom" && "top-full mt-1",
             dropdownStyle
           )}
@@ -117,7 +117,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
               </li>
             ))
           ) : (
-            <li className="px-[16px] py-[8px] text-[#888]">No matches found</li>
+            <li className=" text-[#888]">No matches found</li>
           )}
         </ul>
       )}

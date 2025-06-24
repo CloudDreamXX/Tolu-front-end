@@ -1,17 +1,18 @@
-import { AuthPageWrapper, Input } from "shared/ui";
-import { Footer } from "widgets/Footer";
-import { HeaderOnboarding } from "widgets/HeaderOnboarding";
-import { radioContent } from "./utils";
-import { useNavigate } from "react-router";
+import { setFormField } from "entities/store/clientOnboardingSlice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setFormField } from "entities/store/clientOnboardingSlice";
+import { useNavigate } from "react-router";
+import { Input } from "shared/ui";
+import { BottomButtons } from "widgets/BottomButtons";
+import { radioContent } from "./utils";
+import { OnboardingClientLayout } from "../Layout";
 
 export const Barriers = () => {
-  const [radio, setRadio] = useState({ value: "", id: "" });
-  const [input, setInput] = useState("");
   const nav = useNavigate();
   const dispatch = useDispatch();
+
+  const [radio, setRadio] = useState({ value: "", id: "" });
+  const [input, setInput] = useState("");
 
   const isOtherSelected = radio.value === "Other";
   const trimmedInput = input.trim();
@@ -26,86 +27,65 @@ export const Barriers = () => {
     return isOtherSelected ? trimmedInput !== "" : radio.value !== "";
   };
 
-  return (
-    <AuthPageWrapper>
-      <HeaderOnboarding isClient currentStep={3} steps={8} />
-      <main className="flex flex-col items-center gap-8 justify-center self-stretch">
-        <h1 className="text-[#1D1D1F] text-center text-h1">
-          Barriers & Self-Reflection
-        </h1>
+  const title = (
+    <h1 className="flex w-full items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold"></h1>
+  );
 
-        <div className="w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
-          <div className="flex flex-col gap-2 items-start">
-            <h1 className="text-h5 font-[Nunito] text-[18px] text-[#1D1D1F]">
-              What’s been getting in your way so far?
-            </h1>
-          </div>
-
-          <div className="flex flex-col gap-4 items-start w-full">
-            {radioContent.map((item, index) => (
-              <div key={item} className="flex gap-4 items-center">
-                <input
-                  type="radio"
-                  name="problem"
-                  value={item}
-                  id={index.toString()}
-                  className="h-6 w-6 rounded-full"
-                  checked={radio.value === item}
-                  onChange={(e) =>
-                    setRadio({ value: e.target.value, id: e.target.id })
-                  }
-                />
-                <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
-                  {item}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {isOtherSelected && (
-            <div className="flex flex-col gap-[10px] w-full items-start">
-              <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
-                Your variant
-              </label>
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Other"
-                className="w-full text-[16px] font-[Nunito] font-medium py-[11px] px-[16px]"
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-between items-center w-full max-w-[700px]">
-          <button
-            onClick={handleNext}
-            className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
-          >
-            Skip this for now
-          </button>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => nav(-1)}
-              className="p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
-            >
-              Back
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={!isFilled()}
-              className={
-                isFilled()
-                  ? "p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
-                  : "p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-white cursor-not-allowed"
+  const mainContent = (
+    <>
+      <h1 className="text-h5 font-[Nunito] text-[18px] text-[#1D1D1F]">
+        What’s been getting in your way so far?
+      </h1>
+      <div className="flex flex-col gap-4">
+        {radioContent.map((item, index) => (
+          <div key={item} className="flex items-center w-full gap-4">
+            <input
+              type="radio"
+              name="problem"
+              value={item}
+              id={index.toString()}
+              className="w-6 h-6 rounded-full"
+              checked={radio.value === item}
+              onChange={(e) =>
+                setRadio({ value: e.target.value, id: e.target.id })
               }
-            >
-              Continue
-            </button>
+            />
+            <p className="flex-1 font-[Nunito] text-[16px] font-medium text-[#1D1D1F] text-wrap">
+              {item}
+            </p>
           </div>
+        ))}
+      </div>
+
+      {isOtherSelected && (
+        <div className="flex flex-col gap-[10px] w-full items-start">
+          <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
+            Your variant
+          </label>
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Other"
+            className="w-full text-[16px] font-[Nunito] font-medium py-[11px] px-[16px]"
+          />
         </div>
-      </main>
-      <Footer />
-    </AuthPageWrapper>
+      )}
+    </>
+  );
+
+  return (
+    <OnboardingClientLayout
+      currentStep={3}
+      numberOfSteps={8}
+      title={title}
+      children={mainContent}
+      buttons={
+        <BottomButtons
+          handleNext={handleNext}
+          skipButton={handleNext}
+          isButtonActive={isFilled}
+        />
+      }
+    />
   );
 };

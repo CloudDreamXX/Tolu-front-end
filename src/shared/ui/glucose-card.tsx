@@ -1,35 +1,33 @@
-import React, { useState, useEffect } from "react";
-import InfoIcon from "shared/assets/icons/info-icon";
-import TrendUp from "shared/assets/icons/trend-up";
-import TrendDown from "shared/assets/icons/trend-down";
-import Pencil from "shared/assets/icons/pencil";
-import { Dialog, DialogContent, DialogTrigger } from "shared/ui/dialog";
 import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import InfoIcon from "shared/assets/icons/info-icon";
+import Pencil from "shared/assets/icons/pencil";
+import TrendDown from "shared/assets/icons/trend-down";
+import TrendUp from "shared/assets/icons/trend-up";
+import { cn } from "shared/lib";
+import { Dialog, DialogContent, DialogTrigger } from "shared/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "shared/ui/select";
+import { Button } from "./button";
+import { Calendar } from "./calendar";
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import { Button } from "./button";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "./calendar";
-import { cn } from "shared/lib";
 
-import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "entities/store";
 import {
   setGlucoseValue,
   setMeasurementType,
-  setDate as setReduxDate,
   setNotes,
+  setDate as setReduxDate,
 } from "entities/store/clientGlucoseSlice";
-import { RootState } from "entities/store";
-import ArrowBack from "shared/assets/icons/arrowBack";
+import { useDispatch, useSelector } from "react-redux";
 
 export interface GlucoseCardProps {
   indicator: string;
@@ -107,7 +105,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-[768px] md:max-w-[742px] flex flex-col gap-6 p-6 items-start">
-            <div className="flex flex-col gap-2 items-start">
+            <div className="flex flex-col items-start gap-2">
               <h2 className="text-[24px]/[32px] font-semibold font-[Nunito] text-[#1D1D1F]">
                 Enter Your Glucose Level
               </h2>
@@ -168,7 +166,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                       !localDate && "text-muted-foreground"
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <CalendarIcon className="w-4 h-4 mr-2" />
                     {localDate ? format(localDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
@@ -203,7 +201,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
               />
             </div>
 
-            <div className="flex justify-between items-center w-full">
+            <div className="flex items-center justify-between w-full">
               <button
                 onClick={() => setDialogOpen(false)}
                 className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold font-[Nunito] text-[#1C63DB] p-4 w-32 h-[44px]"
@@ -222,7 +220,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
         </Dialog>
       )}
 
-      <div className="flex items-center gap-1 self-stretch">
+      <div className="flex items-center self-stretch gap-1">
         <h3 className="font-[Nunito] text-[12px] md:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
           Glucose
         </h3>

@@ -203,7 +203,7 @@ export const AboutYourPractice = () => {
           </div>
 
           {/* File Upload */}
-          <div className="flex flex-col gap-2 items-start w-full">
+          <div className="flex flex-col items-start w-full gap-2">
             <p className="md:ml-[32px] font-[Nunito] text-[16px] font-medium text-black ">
               Upload a certificate or license *
             </p>
@@ -261,9 +261,9 @@ export const AboutYourPractice = () => {
             </div>
           </div>
 
-          <div className="flex ml-[40px] text-[#1C63DB]">
+          <div className="flex w-full md:ml-[32px] text-[#1C63DB] gap-2 items-center">
             <LightIcon />
-            <p className="font-[Nunito] text-[16px] font-medium ml-[8px]">
+            <p className="font-[Nunito] text-[16px] font-medium ">
               Data is securely saved with a HIPAA-compliant notice
             </p>
           </div>
@@ -320,7 +320,7 @@ export const AboutYourPractice = () => {
 
         {/* Navigation */}
         <div
-          className={`flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit pb-10 md:pb-[140px] px-4`}
+          className={`flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit md:pb-[100px]`}
         >
           <button
             onClick={() => nav(-1)}

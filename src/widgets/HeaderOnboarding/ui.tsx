@@ -29,24 +29,23 @@ export const HeaderOnboarding = ({
   return (
     <header className="w-full bg-gradient-to-b from-[#F3ECFE] to-[#E8EFFE] px-4 pt-4 pb-2 md:h-[160px] flex flex-col md:items-center md:justify-center relative">
       {/* Logo Section */}
-      <div className="flex items-start md:absolute md:left-10 md:top-1/2 md:-translate-y-1/2 flex-col md:items-center">
+      <div className="flex flex-col self-start items-centr md:absolute md:left-10 md:top-1/2 md:-translate-y-1/2 md:self-center">
         <h2
           onClick={() => navigate("/")}
-          className="cursor-pointer text-[#1D1D1F] text-center text-[25px] md:text-[44.444px] font-bold font-open"
+          className="cursor-pointer text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold font-open h-[38px] md:h-[61px]"
         >
           TOLU
         </h2>
         <h4 className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[11.429px] font-semibold font-open leading-[normal]">
           {isClient ? (
-            <>
-              <span className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[11.429px] font-semibold font-open leading-[normal]">
+            <div className="flex flex-col text-center">
+              <span className="text-[#1D1D1F] text-[7px] md:text-[11.429px] font-semibold font-open leading-[normal]">
                 YOUR MENOPAUSE
               </span>
-              <br />
-              <span className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[11.429px] font-semibold font-open leading-[normal]">
+              <span className="text-[#1D1D1F] text-[7px] md:text-[11.429px] font-semibold font-open leading-[normal]">
                 HEALTH ASSISTANT
               </span>
-            </>
+            </div>
           ) : (
             <span className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[17.733px] font-semibold font-open leading-[normal]">
               COACH ADMIN

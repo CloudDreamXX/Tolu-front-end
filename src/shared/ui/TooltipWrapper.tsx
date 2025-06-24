@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { usePageWidth } from "shared/lib";
 import {
   Popover,
   PopoverContent,
@@ -21,20 +21,9 @@ export const TooltipWrapper: React.FC<TooltipWrapperProps> = ({
   content,
   children,
 }) => {
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobileOrTablet } = usePageWidth();
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 1024);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  if (isMobile) {
+  if (isMobileOrTablet) {
     return (
       <Popover>
         <PopoverTrigger asChild>

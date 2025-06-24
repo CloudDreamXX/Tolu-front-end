@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Stepper, Step, StepLabel, StepConnector } from "@mui/material";
+import { Step, StepConnector, StepLabel, Stepper } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Check } from "lucide-react";
+import React from "react";
 
 interface StepperWithLabelsProps {
   steps: string[];
@@ -14,17 +14,6 @@ export const StepperWithLabels: React.FC<StepperWithLabelsProps> = ({
   activeStep,
   getLabel,
 }) => {
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const StepIconRoot = styled("div")<{
     ownerState: { active: boolean; completed: boolean };
   }>(({ ownerState }) => ({

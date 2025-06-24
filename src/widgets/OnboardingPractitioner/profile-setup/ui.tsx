@@ -1,14 +1,15 @@
-import { HeaderOnboarding } from "../../HeaderOnboarding";
-import { Footer } from "../../Footer";
-import { UploadCloud } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { useRef, useState, DragEvent, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthPageWrapper, Input } from "shared/ui";
-import { SearchableSelect } from "../components/SearchableSelect";
 import { RootState } from "entities/store";
+import { updateCoachField } from "entities/store/coachOnboardingSlice";
+import { UploadCloud } from "lucide-react";
+import { DragEvent, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { usePageWidth } from "shared/lib";
+import { AuthPageWrapper, Input } from "shared/ui";
 import { Switch } from "shared/ui/switch";
+import { Footer } from "../../Footer";
+import { HeaderOnboarding } from "../../HeaderOnboarding";
+import { SearchableSelect } from "../components/SearchableSelect";
 import { timezoneOptions } from "./mock";
 
 export const ProfileSetup = () => {
@@ -18,13 +19,7 @@ export const ProfileSetup = () => {
   const nav = useNavigate();
   const ref = useRef<HTMLInputElement>(null);
   const state = useSelector((state: RootState) => state.coachOnboarding);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const { isMobile } = usePageWidth();
 
   const handleFile = (file: File) => {
     if (file) {
@@ -294,7 +289,8 @@ export const ProfileSetup = () => {
                   })
                 )
               }
-              dropdownStyle="lg:w-fit text-nowrap"
+              position={!isMobile ? "top" : "bottom"}
+              dropdownStyle="text-nowrap"
             />
             <div className="flex flex-col gap-[8px] w-[100%]">
               <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
@@ -318,6 +314,7 @@ export const ProfileSetup = () => {
           {isMobile && (
             <div className="flex items-center gap-[16px] w-full md:w-fit">
               <button
+                type="button"
                 onClick={() => nav(-1)}
                 className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
                 style={{ background: "rgba(0, 143, 246, 0.10)" }}
@@ -325,6 +322,7 @@ export const ProfileSetup = () => {
                 Back
               </button>
               <button
+                type="button"
                 onClick={() => nav("/invite-clients")}
                 disabled={!isFormValid}
                 className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
@@ -341,7 +339,7 @@ export const ProfileSetup = () => {
 
         {/* Navigation buttons */}
         {!isMobile && (
-          <div className="flex items-center gap-[16px] pb-10 md:pb-[140px] w-full md:w-fit">
+          <div className="flex items-center gap-[16px] pb-10 md:pb-[100px] w-full md:w-fit">
             <button
               onClick={() => nav(-1)}
               className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"

@@ -1,25 +1,17 @@
-import { HeaderOnboarding } from "../../HeaderOnboarding";
-import { Footer } from "../../Footer";
-import { PriceCard } from "./components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
+import { Footer } from "../../Footer";
+import { HeaderOnboarding } from "../../HeaderOnboarding";
+import { PriceCard } from "./components";
 
 export const SubscriptionPlan = () => {
   const [activeCard, setActiveCard] = useState<
     "starting" | "professional" | ""
   >("");
   const nav = useNavigate();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1280);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1280);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const { isMobile } = usePageWidth();
 
   return (
     <AuthPageWrapper>
@@ -43,7 +35,7 @@ export const SubscriptionPlan = () => {
             mostPopular
           />
         </section>
-        <div className="flex items-center gap-[16px] pb-10 md:pb-[140px] w-full md:w-fit">
+        <div className="flex items-center gap-[16px] pb-8 md:pb-[100px] w-full md:w-fit">
           <button
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"

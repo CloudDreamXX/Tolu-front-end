@@ -1,17 +1,20 @@
 import { ArrowRight } from "lucide-react";
-import { Footer } from "widgets/Footer";
-import { Header } from "widgets/Header";
-import ClientWelcomePicture from "shared/assets/images/Illustration.png";
 import { useNavigate } from "react-router-dom";
+import ClientWelcomePicture from "shared/assets/images/Illustration.png";
+import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
+import { Footer } from "widgets/Footer";
+import { ClientHeader } from "widgets/Header";
 
 export const WelcomeScreen = () => {
   const nav = useNavigate();
+  const { isMobileOrTablet } = usePageWidth();
+
   return (
     <AuthPageWrapper>
-      <Header />
-      <main className="flex flex-col items-center justify-center flex-1 self-stretch py-[28px] pt-0">
-        <div className="flex py-[46px] px-[100px] gap-8 flex-col items-center justify-center rounded-t-3xl md:rounded-3xl bg-white">
+      <ClientHeader />
+      <main className="flex flex-col items-center justify-center flex-1 self-stretch py-[28px] pb-0 md:pb-[28px]">
+        <div className="flex flex-col  items-center justify-center gap-8 rounded-t-3xl bg-white py-[24px] px-[16px] md:p-10 md:rounded-3xl">
           <img
             src={ClientWelcomePicture}
             alt="Welcome to the TOLU! Create and configure your account."
@@ -31,7 +34,7 @@ export const WelcomeScreen = () => {
           <button
             onClick={() => nav("/about-you")}
             type="button"
-            className="py-4 px-6 flex gap-4 items-center justify-center h-16 rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
+            className="py-4 px-6 flex gap-4 items-center w-full md:w-auto justify-center h-16 rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
           >
             <span className="text-center text-white text-2xl font-semibold font-[Nunito]">
               Let’s Begin
@@ -40,7 +43,7 @@ export const WelcomeScreen = () => {
           </button>
         </div>
       </main>
-      <Footer />
+      <Footer position={isMobileOrTablet ? "top-right" : "bottom-right"} />
     </AuthPageWrapper>
   );
 };

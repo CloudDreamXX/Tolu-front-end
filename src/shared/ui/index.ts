@@ -1,3 +1,4 @@
+export * from "./TooltipWrapper";
 export * from "./auth-page-wrapper";
 export * from "./avatar";
 export * from "./badge";
@@ -20,9 +21,8 @@ export * from "./select";
 export * from "./slider-card";
 export * from "./slider";
 export * from "./switch";
+export * from "./tabs";
 export * from "./textarea";
 export * from "./toast";
 export * from "./toaster";
 export * from "./tooltip";
-export * from "./TooltipWrapper";
-export * from "./tabs";

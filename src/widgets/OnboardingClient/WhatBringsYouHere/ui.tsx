@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import SmallTooltip from "shared/assets/icons/small-tooltip";
 import { RadioGroup, RadioGroupItem } from "shared/ui/radio-group"; // <-- import shadcn RadioGroup
+import { cn, usePageWidth } from "shared/lib";
 
 export const WhatBrringsYouHere = () => {
   const [radioValue, setRadioValue] = useState("");
@@ -16,6 +17,7 @@ export const WhatBrringsYouHere = () => {
   const dispatch = useDispatch();
 
   const isOtherSelected = radioValue === "Other";
+  const { isMobileOrTablet } = usePageWidth();
 
   const handleNext = () => {
     const finalValue = isOtherSelected ? input.trim() : radioValue;
@@ -27,16 +29,53 @@ export const WhatBrringsYouHere = () => {
     return isOtherSelected ? input.trim() !== "" : radioValue !== "";
   };
 
+  const title = (
+    <h1 className="flex w-full items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold">
+      What Brings You Here?
+    </h1>
+  );
+
+  const buttonsBlock = (
+    <div className="flex justify-between items-center w-full max-w-[700px] flex-col-reverse gap-6 md:flex-row">
+      <button
+        onClick={handleNext}
+        className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
+      >
+        Skip this for now
+      </button>
+
+      <div className="flex w-full gap-4 md:w-auto">
+        <button
+          onClick={() => nav(-1)}
+          className="p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
+        >
+          Back
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={!isFilled()}
+          className={cn(
+            "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold",
+            isFilled()
+              ? "bg-[#1C63DB] text-white"
+              : "bg-[#DDEBF6] text-white cursor-not-allowed"
+          )}
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <AuthPageWrapper>
       <HeaderOnboarding isClient currentStep={1} steps={8} />
-      <main className="flex flex-col items-center gap-8 justify-center self-stretch">
-        <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-h1">
-          What Brings You Here?
-        </h1>
+      <main className="flex flex-col items-center self-stretch justify-center gap-8">
+        {!isMobileOrTablet && title}
+        <div className="w-full max-w-[700px] flex gap-6 flex-col items-start justify-center rounded-t-3xl bg-white py-[24px] px-[16px] md:p-10 md:rounded-3xl">
+          {isMobileOrTablet && title}
 
-        <div className="w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
-          <div className="flex flex-col gap-2 items-start">
+          <div className="flex flex-col items-start gap-2">
             <h1 className="text-h5 font-[Nunito] text-[18px] text-[#1D1D1F]">
               What’s your main goal during this transition?
             </h1>
@@ -48,10 +87,10 @@ export const WhatBrringsYouHere = () => {
           <RadioGroup
             value={radioValue}
             onValueChange={(val) => setRadioValue(val)}
-            className="flex flex-col gap-4 w-full"
+            className="flex flex-col w-full gap-4"
           >
             {radioContent.map((item, index) => (
-              <div key={item} className="flex items-center gap-4 w-full">
+              <div key={item} className="flex items-center w-full gap-4">
                 <RadioGroupItem
                   value={item}
                   id={`radio-${index}`}
@@ -87,38 +126,12 @@ export const WhatBrringsYouHere = () => {
               />
             </div>
           )}
-        </div>
 
-        <div className="flex justify-between items-center w-full max-w-[700px]">
-          <button
-            onClick={handleNext}
-            className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
-          >
-            Skip this for now
-          </button>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => nav(-1)}
-              className="p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
-            >
-              Back
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={!isFilled()}
-              className={
-                isFilled()
-                  ? "p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
-                  : "p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-white cursor-not-allowed"
-              }
-            >
-              Continue
-            </button>
-          </div>
+          {isMobileOrTablet && buttonsBlock}
         </div>
+        {!isMobileOrTablet && buttonsBlock}
       </main>
-      <Footer />
+      <Footer position={isMobileOrTablet ? "top-right" : "bottom-right"} />
     </AuthPageWrapper>
   );
 };

@@ -1,30 +1,31 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import LightIcon from "shared/assets/icons/light";
+import Search from "shared/assets/icons/search";
+import { usePageWidth } from "shared/lib";
+import {
+  AuthPageWrapper,
+  Input,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui";
+import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 import { Footer } from "../../Footer";
 import { Button, HeaderOnboarding } from "./components";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
-import { AuthPageWrapper, Input } from "shared/ui";
-import Search from "shared/assets/icons/search";
-import LightIcon from "shared/assets/icons/light";
 import { buttons } from "./mock";
-import { cn } from "shared/lib";
 
 export const OnboardingMain = () => {
+  const nav = useNavigate();
+  const { isMobile } = usePageWidth();
   const [customButtons, setCustomButtons] = useState(buttons);
   const [otherText, setOtherText] = useState("");
   const [isClosedHint, setIsClosedHint] = useState(false);
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
-  const nav = useNavigate();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [searchText, setSearchText] = useState("");
   const [isNextHovered, setIsNextHovered] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const handleOther = () => {
     if (!otherText.trim()) return;
@@ -182,7 +183,7 @@ export const OnboardingMain = () => {
               {otherText.length > 0 && (
                 <button
                   onClick={handleOther}
-                  className="text-nowrap flex rounded-full bg-[#1C63DB] h-[44px] w-[120px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white w-auto"
+                  className="text-nowrap flex rounded-full bg-[#1C63DB] h-[44px] w-[120px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white "
                 >
                   Add niche
                 </button>
@@ -192,7 +193,7 @@ export const OnboardingMain = () => {
             ""
           )}
         </section>
-        <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit md:pb-[140px]">
+        <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit ">
           <button
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
@@ -200,42 +201,44 @@ export const OnboardingMain = () => {
           >
             Back
           </button>
-          <Link
-            to={!isNextDisabled ? "/about-your-practice" : ""}
-            className={
-              !isNextDisabled
-                ? "bg-[#1C63DB] flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
-                : "flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65] cursor-not-allowed"
-            }
-            tabIndex={isNextDisabled ? -1 : 0}
-            aria-disabled={isNextDisabled}
-            onMouseEnter={() => !isNextDisabled && setIsNextHovered(true)}
-            onMouseLeave={() => setIsNextHovered(false)}
-          >
-            Next
-          </Link>
-          {isShowHint && (
-            <div
-              className={cn(
-                "absolute top-full left-10 right-0 mx-auto translate-y-[1.625rem] rounded-[0.625rem] p-4 bg-white border border-blue-500 font-semibold max-w-[19.375rem] w-full flex flex-col gap-3",
-                "animate-in fade-in"
-              )}
-            >
-              <div className="absolute w-5 h-5 rotate-45 translate-x-1/2 translate-y-1/2 bg-white border border-blue-500 bottom-full right-14 border-b-transparent border-r-transparent"></div>
-              <h3 className="flex gap-2 text-[#1B2559] leading-[1.4]">
-                <span className="w-6 h-6 shrink-0 ">
-                  <LightIcon className="text-[#1B2559] " />
-                </span>
-                You can update your focus areas anytime from your dashboard.
-              </h3>
-              <button
-                className="bg-[#1C63DB] inline-flex py-1 px-4 justify-center items-center gap-2 rounded-full font-[Nunito] font-semibold text-white self-center"
-                onClick={handleHintButtonClick}
-              >
-                Got It
-              </button>
-            </div>
-          )}
+
+          <TooltipProvider delayDuration={500}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to={!isNextDisabled ? "/about-your-practice" : ""}
+                  className={
+                    !isNextDisabled
+                      ? "bg-[#1C63DB] flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
+                      : "flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65] cursor-not-allowed"
+                  }
+                  tabIndex={isNextDisabled ? -1 : 0}
+                  aria-disabled={isNextDisabled}
+                  onMouseEnter={() => !isNextDisabled && setIsNextHovered(true)}
+                  onMouseLeave={() => setIsNextHovered(false)}
+                >
+                  Next
+                </Link>
+              </TooltipTrigger>
+
+              <TooltipContent side="bottom">
+                <div className="flex flex-col items-center gap-2">
+                  <h3 className="flex gap-2 text-[#1B2559] leading-[1.4]">
+                    <span className="w-6 h-6 shrink-0 ">
+                      <LightIcon className="text-[#1B2559]" />
+                    </span>
+                    You can update your focus areas anytime from your dashboard.
+                  </h3>
+                  <button
+                    className="bg-[#1C63DB] inline-flex py-1 px-4 justify-center items-center gap-2 rounded-full font-[Nunito] font-semibold text-white self-center"
+                    onClick={handleHintButtonClick}
+                  >
+                    Got It
+                  </button>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </main>
     </AuthPageWrapper>

@@ -1,29 +1,28 @@
 import {
+  addDays,
+  addMonths,
+  format,
+  isSameMonth,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
+} from "date-fns";
+import {
+  Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
-  Calendar as CalendarIcon,
-  X,
   Clock,
   Trash2,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 import {
-  startOfMonth,
-  startOfWeek,
-  addDays,
-  addMonths,
-  subMonths,
-  isSameMonth,
-  format,
-} from "date-fns";
-import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogTrigger,
 } from "shared/ui/dialog";
 
 interface EventItem {

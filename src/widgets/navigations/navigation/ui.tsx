@@ -1,14 +1,14 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
-import Menu from "shared/assets/icons/menu";
-import { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { logout } from "entities/user";
-import SignOutIcon from "shared/assets/icons/signout";
-import Close from "shared/assets/icons/close";
-import { Input } from "shared/ui/input";
-import Search from "shared/assets/icons/search";
+import { User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import Chevron from "shared/assets/icons/chevron";
+import Close from "shared/assets/icons/close";
+import Menu from "shared/assets/icons/menu";
+import Search from "shared/assets/icons/search";
+import SignOutIcon from "shared/assets/icons/signout";
+import { Input } from "shared/ui/input";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 
 export const Navigation: React.FC = () => {

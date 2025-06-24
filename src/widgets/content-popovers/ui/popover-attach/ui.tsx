@@ -1,14 +1,14 @@
-import { FileIcon, Plus, Trash2 } from "lucide-react";
+import { FileIcon, Trash2 } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
 import Attach from "shared/assets/icons/attach";
 import {
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  DropArea,
   Badge,
+  Button,
+  DropArea,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "shared/ui";
 
 interface AttachedFile {

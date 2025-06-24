@@ -1,11 +1,11 @@
+import { Step, StepConnector, StepLabel, Stepper } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { MenopauseSubmissionRequest, Symptom } from "entities/user";
+import { Check } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import ArrowBack from "shared/assets/icons/arrowBack";
 import Close from "shared/assets/icons/close";
 import { steps } from "./mock";
-import { Stepper, Step, StepLabel, StepConnector } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { Check } from "lucide-react";
-import { MenopauseSubmissionRequest, Symptom } from "entities/user";
-import ArrowBack from "shared/assets/icons/arrowBack";
 
 interface MultiStepModalProps {
   isOpen: boolean;

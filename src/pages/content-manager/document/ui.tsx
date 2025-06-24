@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import {
+  CoachService,
+  ISessionResponse,
+  ISessionResult,
+  RateContent,
+} from "entities/coach";
+import { ContentService } from "entities/content";
 import { DocumentsService, IDocument } from "entities/document";
 import {
   ClientsInfo,
   ContentToMove,
-  DocumentEditPopover,
   DocumentFolderInfo,
   FilesInfo,
   FoldersService,
@@ -12,40 +16,35 @@ import {
   IFolder,
   ISubfolder,
 } from "entities/folder";
-import {
-  CoachService,
-  ISessionResponse,
-  ISessionResult,
-  RateContent,
-} from "entities/coach";
-import { PopoverClient } from "widgets/content-popovers";
-import Star from "shared/assets/icons/grey-star";
-import Bin from "shared/assets/icons/grey-bin";
-import Arrow from "shared/assets/icons/grey-arrow";
-import Folders from "shared/assets/icons/grey-folders";
-import Edit from "shared/assets/icons/grey-edit";
-import MarkAs from "shared/assets/icons/grey-mark-as";
-import Dislike from "shared/assets/icons/dislike";
+import { RootState } from "entities/store";
+import parse from "html-react-parser";
 import { Send } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import Dislike from "shared/assets/icons/dislike";
+import Arrow from "shared/assets/icons/grey-arrow";
+import Bin from "shared/assets/icons/grey-bin";
+import Edit from "shared/assets/icons/grey-edit";
+import Folders from "shared/assets/icons/grey-folders";
+import MarkAs from "shared/assets/icons/grey-mark-as";
+import Star from "shared/assets/icons/grey-star";
+import subfolder from "shared/assets/icons/subfolder";
 import {
   Breadcrumb,
+  BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbSeparator,
   Button,
-  Textarea,
   ScrollArea,
-  BreadcrumbItem,
+  Textarea,
 } from "shared/ui";
-import parse from "html-react-parser";
-import { useSelector } from "react-redux";
-import { RootState } from "entities/store";
-import subfolder from "shared/assets/icons/subfolder";
-import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
-import { RatePopup } from "widgets/RatePopup";
 import { BadRateResponse } from "widgets/BadRateResponsePopup";
-import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
+import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
 import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
-import { ContentService } from "entities/content";
+import { PopoverClient } from "widgets/content-popovers";
+import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
+import { RatePopup } from "widgets/RatePopup";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -509,7 +508,7 @@ export const ContentManagerDocument: React.FC = () => {
                           </div>
                         )
                       ) : null}
-                      <div className="flex items-center relative">
+                      <div className="relative flex items-center">
                         <button
                           className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
                           onClick={() => {

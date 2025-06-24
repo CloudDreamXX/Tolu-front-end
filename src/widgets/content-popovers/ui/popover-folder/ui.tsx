@@ -1,23 +1,20 @@
 import { IFolder, ISubfolder, NewFolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
 import { RootState } from "entities/store";
-import { Edit, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import ArrowBack from "shared/assets/icons/arrowBack";
+import { useDispatch, useSelector } from "react-redux";
 import ClosedFolder from "shared/assets/icons/closed-folder";
 import Dots from "shared/assets/icons/dots";
 import { Eye } from "shared/assets/icons/eye";
 import Plus from "shared/assets/icons/plus";
-import SubfolderIcon from "shared/assets/icons/subfolders";
 import { toast } from "shared/lib/hooks/use-toast";
 import {
+  Badge,
   Button,
   Popover,
-  PopoverTrigger,
   PopoverContent,
-  Input,
-  Badge,
+  PopoverTrigger,
 } from "shared/ui";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 

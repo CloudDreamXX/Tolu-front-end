@@ -6,10 +6,12 @@ import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import { checkboxes } from "./utils";
 import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
+import { usePageWidth } from "shared/lib";
 
 export const Values = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
+  const { isMobileOrTablet } = usePageWidth();
 
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -33,19 +35,56 @@ export const Values = () => {
     nav("/barriers");
   };
 
+  const title = (
+    <h1 className="flex w-full items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold">
+      Values & Inner Drivers
+    </h1>
+  );
+
+  const buttonsBlock = (
+    <div className="flex justify-between items-center w-full max-w-[700px] flex-col-reverse gap-6 md:flex-row">
+      <button
+        onClick={() => nav("/barriers")}
+        className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
+      >
+        Skip this for now
+      </button>
+      <div className="flex w-full gap-4 md:w-auto">
+        <button
+          onClick={() => nav(-1)}
+          className="p-4  w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
+        >
+          Back
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={selectedValues.length === 0 && !inputValue.trim()}
+          className={`p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold ${
+            selectedValues.length > 0 || inputValue.trim()
+              ? "bg-[#1C63DB] text-white"
+              : "bg-[#DDEBF6] text-white cursor-not-allowed"
+          }`}
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <AuthPageWrapper>
       <HeaderOnboarding isClient currentStep={2} steps={8} />
-      <main className="flex flex-col items-center gap-8 justify-center self-stretch">
-        <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-h1">
-          Values & Inner Drivers
-        </h1>
-        <div className="w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
+      <main className="flex flex-col items-center self-stretch justify-center gap-8">
+        {!isMobileOrTablet && title}
+
+        <div className="w-full max-w-[700px] flex gap-6 flex-col items-start justify-center rounded-t-3xl bg-white py-[24px] px-[16px] md:p-10 md:rounded-3xl">
+          {isMobileOrTablet && title}
+
           <div className="flex flex-col gap-2 w-full max-w-[700px] items-start">
             <h3 className="font-[Nunito] text-[18px] font-bold text-[#1D1D1F]">
               What values are most important to you right now?
             </h3>
-            <div className="flex w-full justify-between items-center">
+            <div className="flex items-center justify-between w-full">
               <p className="text-[#1D1D1F] font-[Nunito] text-[16px] font-medium">
                 Please choose up to 3.
               </p>
@@ -65,9 +104,12 @@ export const Values = () => {
               return rows;
             }, [] as string[][])
             .map((rowItems, rowIndex) => (
-              <div key={rowIndex} className="gap-6 flex w-full items-center">
+              <div
+                key={rowIndex}
+                className="flex flex-col w-full gap-6 md:flex-row md:items-center"
+              >
                 {rowItems.map((item, i) => (
-                  <div key={i} className="flex gap-4 flex-1 items-center">
+                  <div key={i} className="flex items-center flex-1 gap-4">
                     <Checkbox
                       checked={selectedValues.includes(item)}
                       onCheckedChange={(checked) =>
@@ -77,7 +119,7 @@ export const Values = () => {
                         !selectedValues.includes(item) &&
                         selectedValues.length >= 3
                       }
-                      className="h-6 w-6 rounded-lg"
+                      className="w-6 h-6 rounded-lg"
                     />
                     <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
                       {item}
@@ -100,37 +142,11 @@ export const Values = () => {
               />
             </div>
           )}
+          {isMobileOrTablet && buttonsBlock}
         </div>
-
-        <div className="flex justify-between items-center w-full max-w-[700px]">
-          <button
-            onClick={() => nav("/barriers")}
-            className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
-          >
-            Skip this for now
-          </button>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => nav(-1)}
-              className="p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
-            >
-              Back
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={selectedValues.length === 0 && !inputValue.trim()}
-              className={`p-4 w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold ${
-                selectedValues.length > 0 || inputValue.trim()
-                  ? "bg-[#1C63DB] text-white"
-                  : "bg-[#DDEBF6] text-white cursor-not-allowed"
-              }`}
-            >
-              Continue
-            </button>
-          </div>
-        </div>
+        {!isMobileOrTablet && buttonsBlock}
       </main>
-      <Footer />
+      <Footer position={isMobileOrTablet ? "top-right" : "bottom-right"} />
     </AuthPageWrapper>
   );
 };

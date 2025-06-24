@@ -1,10 +1,9 @@
 import { Archive } from "lucide-react";
+import ArrowRight from "shared/assets/icons/arrow-right";
+import Dublicate from "shared/assets/icons/dublicate";
 import Edit from "shared/assets/icons/edit";
 import Improve from "shared/assets/icons/ai-create";
 import { Eye } from "shared/assets/icons/eye";
-import Save from "shared/assets/icons/save";
-import Dublicate from "shared/assets/icons/dublicate";
-import ArrowRight from "shared/assets/icons/arrow-right";
 import Trash from "shared/assets/icons/trash-icon";
 
 type Props = {

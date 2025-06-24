@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import Setting from "shared/assets/icons/setting";
 import {
+  Badge,
   Button,
   Popover,
-  PopoverTrigger,
   PopoverContent,
+  PopoverTrigger,
   Textarea,
-  Badge,
 } from "shared/ui";
 
 interface PopoverInstructionProps {

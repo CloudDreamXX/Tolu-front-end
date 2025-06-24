@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
-import { Footer } from "../../Footer";
-import { Header } from "../../Header";
-import { MiddleCard } from "./components";
-import { contents } from "./index";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Handshake from "shared/assets/icons/handshake";
+import Like from "shared/assets/icons/like";
 import Lock from "shared/assets/icons/lock";
 import Medkit from "shared/assets/icons/medkit";
 import PapersLock from "shared/assets/icons/papers-lock";
-import Handshake from "shared/assets/icons/handshake";
-import Like from "shared/assets/icons/like";
-import { useNavigate } from "react-router-dom";
+import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
+import { AdminHeader } from "widgets/Header";
+import { Footer } from "../../Footer";
+import { MiddleCard } from "./components";
+import { contents } from "./index";
 
 export const OnboardingWelcome = () => {
   const icons = [
@@ -20,20 +21,11 @@ export const OnboardingWelcome = () => {
     <Like key={5} />,
   ];
   const nav = useNavigate();
+  const { isMobile } = usePageWidth();
   const [curentWindow, setCurentWindow] = useState(0);
   contents.forEach((content, index) => {
     content.icon = icons[index];
   });
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const addStep = () => {
     setCurentWindow((prev) => prev + 1);
@@ -46,7 +38,7 @@ export const OnboardingWelcome = () => {
   return (
     <AuthPageWrapper>
       <Footer position={isMobile ? "top-left" : undefined} />
-      <Header description="COACH ADMIN" />
+      <AdminHeader />
       <main className="absolute bottom-0 flex flex-col items-center self-stretch md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:right-auto md:w-full">
         {curentWindow === 0 ? (
           <div className="flex flex-col items-center justify-center gap-[40px] shadow-wrapper xl:mx-0 md:gap-[32px] py-[24px] px-[24px] md:py-[40px] md:mx-[40px] md:px-[40px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
@@ -73,7 +65,7 @@ export const OnboardingWelcome = () => {
             title={contents[curentWindow - 1].title}
             description={contents[curentWindow - 1].description}
             icon={
-              <span className="w-[100px] h-[100px]">
+              <span className="w-[100px]">
                 {contents[curentWindow - 1].icon}
               </span>
             }

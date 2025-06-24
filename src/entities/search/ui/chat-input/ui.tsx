@@ -1,7 +1,7 @@
+import { Paperclip, Send } from "lucide-react";
 import { useState } from "react";
-import { Send, Paperclip } from "lucide-react";
-import { Button, Textarea } from "shared/ui";
 import { cn } from "shared/lib";
+import { Button, Textarea } from "shared/ui";
 
 interface SearchAiChatInputProps {
   placeholder?: string;

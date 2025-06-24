@@ -1,32 +1,24 @@
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CircleQuestion from "shared/assets/icons/circle-question";
+import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper, TooltipWrapper } from "shared/ui";
 import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { titlesAndIcons } from "./mock";
 
 export const SelectType = () => {
+  const dispatch = useDispatch();
+  const nav = useNavigate();
+  const { isMobile } = usePageWidth();
+  const [otherText, setOtherText] = useState<string>("");
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
     new Array(5).fill("")
   );
-  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
-  const dispatch = useDispatch();
-  const nav = useNavigate();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-  const [otherText, setOtherText] = useState<string>("");
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const handleSelection = (index: number, value: string) => {
     const updatedOptions = [...selectedOptions];
@@ -123,7 +115,7 @@ export const SelectType = () => {
                       type="text"
                       value={otherText}
                       onChange={(e) => setOtherText(e.target.value)}
-                      placeholder="Please specify"
+                      placeholder="Other text"
                       className="mt-[4px] outline-none w-full h-[52px] px-[12px] border-[1px] border-[#9D9D9D] rounded-[8px] bg-[#FAFAFA] text-[16px] text-[#000] font-[Nunito]"
                     />
                   )}

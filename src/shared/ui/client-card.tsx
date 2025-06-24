@@ -1,17 +1,12 @@
-import InfoIcon from "shared/assets/icons/info-icon";
-import TrendUp from "shared/assets/icons/trend-up";
-import TrendDown from "shared/assets/icons/trend-down";
-import Pencil from "shared/assets/icons/pencil";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "shared/ui/dialog";
 import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import InfoIcon from "shared/assets/icons/info-icon";
+import Pencil from "shared/assets/icons/pencil";
+import TrendDown from "shared/assets/icons/trend-down";
+import TrendUp from "shared/assets/icons/trend-up";
+import { cn } from "shared/lib";
+import { Dialog, DialogContent, DialogTrigger } from "shared/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -21,14 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "shared/ui/select";
-import { Input } from "./input";
-import { DateTimePicker } from "widgets/date-time-picker/index";
-import { useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Button } from "./button";
-import { CalendarIcon } from "lucide-react";
 import { Calendar } from "./calendar";
-import { cn } from "shared/lib";
+import { Input } from "./input";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 export interface ClientCardProps {
   title: string;
@@ -63,7 +54,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[742px] flex flex-col gap-6 p-6 items-start">
-            <div className="flex flex-col gap-2 items-start">
+            <div className="flex flex-col items-start gap-2">
               <h2 className="text-[24px]/[32px] font-semibold font-[Nunito] text-[#1D1D1F]">
                 Enter Your Glucose Level
               </h2>
@@ -141,7 +132,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
                 className="w-full py-[11px] px-4"
               />
             </div>
-            <div className="flex justify-between items-center w-full">
+            <div className="flex items-center justify-between w-full">
               <button
                 onClick={() => setOpen(false)}
                 className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold font-[Nunito] text-[#1C63DB] p-4 w-32 h-[44px]"
@@ -158,7 +149,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           </DialogContent>
         </Dialog>
       )}
-      <div className="flex items-center justify-between xl:justify-start gap-1 self-stretch">
+      <div className="flex items-center self-stretch justify-between gap-1 xl:justify-start">
         <h3 className="font-[Nunito] text-[12px] md:text-[16px] xl:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
           {title}
         </h3>
@@ -166,7 +157,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           <InfoIcon />
         </span>
       </div>
-      <div className="flex items-center justify-between xl:justify-start gap-3 w-full">
+      <div className="flex items-center justify-between w-full gap-3 xl:justify-start">
         <h2 className="text-[18px] md:text-[24px] xl:text-[32px]/[44px] font-bold font-[Nunito] text-nowrap text-[#1C63DB]">
           {indicator}
         </h2>

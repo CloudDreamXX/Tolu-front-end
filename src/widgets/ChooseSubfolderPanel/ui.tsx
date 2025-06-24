@@ -1,22 +1,14 @@
-import { PopoverFolder } from "widgets/content-popovers";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { ISubfolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
-import { setFolders } from "entities/folder";
 import { RootState } from "entities/store";
-import { ISubfolder } from "entities/folder";
-import Plus from "shared/assets/icons/plus";
-import Dots from "shared/assets/icons/dots";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Button,
-  Badge,
-} from "shared/ui";
-import { Eye } from "shared/assets/icons/eye";
 import { Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Dots from "shared/assets/icons/dots";
+import { Eye } from "shared/assets/icons/eye";
+import Plus from "shared/assets/icons/plus";
 import { toast } from "shared/lib/hooks/use-toast";
+import { Button, Popover, PopoverContent, PopoverTrigger } from "shared/ui";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 
 interface ChooseSubfolderPanelProps {

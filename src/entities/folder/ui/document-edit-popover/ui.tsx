@@ -1,13 +1,13 @@
-import Dots from "shared/assets/icons/dots";
-import { Popover, PopoverTrigger, PopoverContent, Button } from "shared/ui";
 import { IDocument } from "entities/document";
-import { IFolder } from "../document-card";
+import { Archive, ArrowRight, Trash2 } from "lucide-react";
+import Box from "shared/assets/icons/box";
+import Dots from "shared/assets/icons/dots";
+import Duplicate from "shared/assets/icons/duplicate";
+import Edit from "shared/assets/icons/edit";
 import Expert from "shared/assets/icons/expert";
 import { Eye } from "shared/assets/icons/eye";
-import Edit from "shared/assets/icons/edit";
-import { Archive, ArrowRight, Trash2 } from "lucide-react";
-import Duplicate from "shared/assets/icons/duplicate";
-import Box from "shared/assets/icons/box";
+import { Button, Popover, PopoverContent, PopoverTrigger } from "shared/ui";
+import { IFolder } from "../document-card";
 
 interface IPopoverDocumentEditProps {
   document?: IDocument;

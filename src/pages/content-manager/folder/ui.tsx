@@ -1,4 +1,18 @@
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { AIChatMessage, CoachService } from "entities/coach";
+import { RootState } from "entities/store";
+import { Archive, Plus, Send } from "lucide-react";
+import { title } from "process";
+import { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import ArrowRight from "shared/assets/icons/arrow-right";
+import Dots from "shared/assets/icons/dots";
+import Dublicate from "shared/assets/icons/dublicate";
+import Edit from "shared/assets/icons/edit";
+import { Eye } from "shared/assets/icons/eye";
+import Save from "shared/assets/icons/save";
+import Search from "shared/assets/icons/search";
+import Trash from "shared/assets/icons/trash-icon";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,22 +22,8 @@ import {
   Input,
   Textarea,
 } from "shared/ui";
-import { useState, useMemo } from "react";
-import Search from "shared/assets/icons/search";
-import { Archive, Plus, Send } from "lucide-react";
-import { RootState } from "entities/store";
-import { useSelector } from "react-redux";
-import { PopoverClient, PopoverFolder } from "widgets/content-popovers";
-import { AIChatMessage, CoachService } from "entities/coach";
-import { title } from "process";
-import Dots from "shared/assets/icons/dots";
-import Edit from "shared/assets/icons/edit";
-import { Eye } from "shared/assets/icons/eye";
-import Save from "shared/assets/icons/save";
-import Dublicate from "shared/assets/icons/dublicate";
-import ArrowRight from "shared/assets/icons/arrow-right";
-import Trash from "shared/assets/icons/trash-icon";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
+import { PopoverClient, PopoverFolder } from "widgets/content-popovers";
 
 export const ContentManagerFolder: React.FC = () => {
   const { folderId } = useParams<{ folderId: string }>();
