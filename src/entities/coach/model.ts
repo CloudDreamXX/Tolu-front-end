@@ -25,7 +25,7 @@ export interface ClientProfile {
     menopause_status: string;
     learning_now: {
       total_shared: number;
-      recent_items: string[];
+      recent_items: RecentItems[];
     };
     recent_interventions: string;
     recent_labs: string;
@@ -44,6 +44,12 @@ export interface ClientProfile {
   labs: any;
 }
 
+export interface RecentItems {
+  content_id: string;
+  shared_at: string;
+  title: string;
+}
+
 export interface ClientsResponse {
   clients: Client[];
 }
@@ -53,7 +59,14 @@ export interface Client {
   name: string;
   gender: string;
   last_activity: string | null;
-  learning_now: string[];
+  learning_now: LearningNow[];
+  status: string;
+}
+
+export interface LearningNow {
+  content_id: string;
+  shared_at: string;
+  title: string;
 }
 
 export interface GetClientInfoResponse {
@@ -130,4 +143,21 @@ export interface RateContent {
   rating: number;
   thumbs_down: boolean;
   comment: string;
+}
+
+export interface ShareContentData {
+  content_id: string;
+  client_id: string;
+}
+
+export interface Share {
+  client_id: string;
+  client_name: string;
+  shared_at: string;
+}
+
+export interface SharedContent {
+  content_id: string;
+  shares: Share[];
+  total_shares: number;
 }

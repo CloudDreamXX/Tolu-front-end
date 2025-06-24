@@ -11,6 +11,7 @@ import {
   NewFolder,
   IFolderMap,
   ContentToMove,
+  FolderToDelete,
 } from "./model";
 
 export class FoldersService {
@@ -41,7 +42,6 @@ export class FoldersService {
   }
 
   private static serializeSubfolder(subfolder: ISubfolderResponse): ISubfolder {
-    console.log(this);
     return {
       id: subfolder.id,
       name: subfolder.name,
@@ -119,8 +119,6 @@ export class FoldersService {
     try {
       const response = await ApiService.get<any>(API_ROUTES.FOLDERS.STRUCTURE);
 
-      console.log("Raw API response:", response);
-
       const foldersData = response.data ?? response;
       const allFolders: IFolder[] = [];
 
@@ -134,10 +132,8 @@ export class FoldersService {
 
       categories.forEach((category) => {
         if (foldersData[category] && Array.isArray(foldersData[category])) {
-          console.log(`Serializing ${category}:`, foldersData[category]);
           const serializedFolders = foldersData[category]?.map(
             (folder: IFolderItemResponse) => {
-              console.log(`Serializing folder:`, folder);
               return this.serializeFolder(folder);
             }
           );
@@ -145,7 +141,6 @@ export class FoldersService {
         }
       });
 
-      console.log("Serialized folders:", allFolders);
       return {
         folders: allFolders,
         foldersMap: allFolders.reduce((map: IFolderMap, folder) => {
@@ -194,8 +189,6 @@ export class FoldersService {
     const response = await ApiService.get<{
       folder: IFolderItemResponse;
     }>(endpoint);
-    console.log("Folder response:", response);
-
     if (!response) {
       throw new Error("Folder not found");
     }
@@ -213,6 +206,15 @@ export class FoldersService {
     return ApiService.delete<{ success: boolean; message: string }>(
       API_ROUTES.FOLDERS.DELETE_CONTENT,
       { content_id: contentId }
+    );
+  }
+
+  static async deleteFolder(
+    data: FolderToDelete
+  ): Promise<{ success: boolean; message: string }> {
+    return ApiService.delete<{ success: boolean; message: string }>(
+      API_ROUTES.FOLDERS.DELETE_FOLDER,
+      data
     );
   }
 }

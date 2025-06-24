@@ -100,7 +100,11 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
                   Recent updates
                 </p>
                 <p className="text-[16px] text-[#1D1D1F]">
-                  {client.client_info.last_activity}
+                  {client.client_info.last_activity
+                    ? new Date(
+                        client.client_info.last_activity
+                      ).toLocaleDateString("en-GB")
+                    : "-"}
                 </p>
               </div>
               <div className="h-[50px]">
@@ -110,7 +114,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
                 {client.client_info.learning_now.recent_items.length > 0 && (
                   <p className="text-[16px] text-[#1D1D1F]">
                     <span className="underline">
-                      {client.client_info.learning_now.recent_items[0]}
+                      {client.client_info.learning_now.recent_items[0].title}
                     </span>
                     <span> and </span>
                     <span className="text-[#1C63D8] underline cursor-pointer">
@@ -129,7 +133,11 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
                   Last seen
                 </p>
                 <p className="text-[16px] text-[#1D1D1F]">
-                  {client.client_info.last_activity}
+                  {client.client_info.last_activity
+                    ? new Date(
+                        client.client_info.last_activity
+                      ).toLocaleDateString("en-GB")
+                    : "-"}
                 </p>
               </div>
               <div className="h-[50px]">

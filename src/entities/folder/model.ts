@@ -241,3 +241,8 @@ export interface ContentToMove {
   content_id: string;
   target_folder_id: string;
 }
+
+export interface FolderToDelete {
+  folder_id: string;
+  force_delete: false;
+}

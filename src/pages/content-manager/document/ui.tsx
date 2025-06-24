@@ -1,10 +1,5 @@
-import {
-  CoachService,
-  ISessionResponse,
-  ISessionResult,
-  RateContent,
-} from "entities/coach";
-import { ContentService } from "entities/content";
+import React, { useEffect, useState } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { DocumentsService, IDocument } from "entities/document";
 import {
   ClientsInfo,
@@ -16,35 +11,42 @@ import {
   IFolder,
   ISubfolder,
 } from "entities/folder";
-import { RootState } from "entities/store";
-import parse from "html-react-parser";
-import { Send } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import Dislike from "shared/assets/icons/dislike";
-import Arrow from "shared/assets/icons/grey-arrow";
-import Bin from "shared/assets/icons/grey-bin";
-import Edit from "shared/assets/icons/grey-edit";
-import Folders from "shared/assets/icons/grey-folders";
-import MarkAs from "shared/assets/icons/grey-mark-as";
+import {
+  CoachService,
+  ISessionResponse,
+  ISessionResult,
+  RateContent,
+  Share,
+  ShareContentData,
+} from "entities/coach";
+import { PopoverClient } from "widgets/content-popovers";
 import Star from "shared/assets/icons/grey-star";
-import subfolder from "shared/assets/icons/subfolder";
+import Bin from "shared/assets/icons/grey-bin";
+import Arrow from "shared/assets/icons/grey-arrow";
+import Folders from "shared/assets/icons/grey-folders";
+import Edit from "shared/assets/icons/grey-edit";
+import MarkAs from "shared/assets/icons/grey-mark-as";
+import Dislike from "shared/assets/icons/dislike";
+import { Send } from "lucide-react";
 import {
   Breadcrumb,
-  BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbSeparator,
   Button,
-  ScrollArea,
   Textarea,
+  ScrollArea,
+  BreadcrumbItem,
 } from "shared/ui";
-import { BadRateResponse } from "widgets/BadRateResponsePopup";
+import parse from "html-react-parser";
+import { useSelector } from "react-redux";
+import { RootState } from "entities/store";
+import subfolder from "shared/assets/icons/subfolder";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
-import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
-import { PopoverClient } from "widgets/content-popovers";
-import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
 import { RatePopup } from "widgets/RatePopup";
+import { BadRateResponse } from "widgets/BadRateResponsePopup";
+import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
+import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
+import { ContentService } from "entities/content";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -84,6 +86,7 @@ export const ContentManagerDocument: React.FC = () => {
   const isNewDocument = location.state?.isNewDocument;
   const isTemporaryDocument = documentId?.startsWith("temp_");
   const token = useSelector((state: RootState) => state.user.token);
+  const [sharedClients, setSharedClients] = useState<Share[] | null>(null);
 
   useEffect(() => {
     if (isNewDocument && location.state) {
@@ -118,7 +121,17 @@ export const ContentManagerDocument: React.FC = () => {
           }
         },
         async ({ documentId: realDocumentId }) => {
+          if (documentId && clientId) {
+            const data: ShareContentData = {
+              content_id: realDocumentId,
+              client_id: clientId,
+            };
+            await CoachService.shareContent(data);
+          }
+
           await loadConversation(documentId);
+          const response = await CoachService.getContentShares(realDocumentId);
+          setSharedClients(response.shares);
           setIsCreatingDocument(false);
           navigate(
             `/content-manager/library/folder/${folderId}/document/${realDocumentId}`,
@@ -137,7 +150,13 @@ export const ContentManagerDocument: React.FC = () => {
   }, [isNewDocument, location.state]);
 
   useEffect(() => {
-    if (!isNewDocument && !isTemporaryDocument) {
+    if (!isNewDocument && !isTemporaryDocument && documentId) {
+      const fetchShared = async () => {
+        const response = await CoachService.getContentShares(documentId);
+        setSharedClients(response.shares);
+      };
+
+      fetchShared();
       loadDocument(documentId);
     }
   }, [documentId, isNewDocument, isTemporaryDocument]);
@@ -154,7 +173,6 @@ export const ContentManagerDocument: React.FC = () => {
         }
 
         const response = await FoldersService.getFolder(folderId);
-        console.log("suoperresonaeofkasd", response);
         if (response) setFolder(response);
       } catch (error) {
         console.error("Error fetching folder:", error);
@@ -259,7 +277,6 @@ export const ContentManagerDocument: React.FC = () => {
     try {
       await CoachService.changeStatus(newStatus, token);
       setIsMarkAsOpen(false);
-      console.log("Selected status:", status);
     } catch (error) {
       console.error("Error changing status:", error);
     }
@@ -404,8 +421,8 @@ export const ContentManagerDocument: React.FC = () => {
             ) : (
               <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
             )}
-            {document ? (
-              <ClientsInfo client={document.sharedWith.clients} />
+            {sharedClients ? (
+              <ClientsInfo clients={sharedClients} documentId={documentId} />
             ) : (
               <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
             )}
@@ -433,6 +450,24 @@ export const ContentManagerDocument: React.FC = () => {
               </div>
 
               <div className="pb-80 flex flex-col gap-[32px]">
+                {isCreatingDocument && (
+                  <div className="prose-sm prose max-w-none">
+                    {streamingIsHtml || isHtmlContent(streamingContent) ? (
+                      <>
+                        {parse(streamingContent)}
+                        <span className="inline-block w-2 h-4 ml-1 bg-blue-500 animate-pulse" />
+                      </>
+                    ) : (
+                      <>
+                        <div className="whitespace-pre-wrap">
+                          {streamingContent}
+                        </div>
+                        <span className="inline-block w-2 h-4 ml-1 bg-blue-500 animate-pulse" />
+                      </>
+                    )}
+                  </div>
+                )}
+
                 {conversation.map((pair, index) => {
                   const isHTML = isHtmlContent(pair.content);
 
@@ -618,7 +653,10 @@ export const ContentManagerDocument: React.FC = () => {
             className="h-20 text-lg font-medium text-gray-900 resize-none placeholder:text-gray-500"
             footer={
               <div className="flex flex-row w-full gap-[10px]">
-                <PopoverClient setClientId={setClientId} />
+                <PopoverClient
+                  setClientId={setClientId}
+                  documentId={documentId}
+                />
                 <Button
                   variant="black"
                   className="ml-auto w-12 h-12 p-[10px] rounded-full"

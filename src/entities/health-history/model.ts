@@ -1,0 +1,29 @@
+export interface HealthHistory {
+  age: number;
+  gender: string;
+  height_weight: string;
+  weight: string;
+  current_health_concerns: string;
+  diagnosed_conditions: string;
+  medications: string;
+  supplements: string;
+  allergies_intolerances: string;
+  family_health_history: string;
+  specific_diet: string;
+  exercise_habits: string;
+  sleep_quality: string;
+  stress_levels: string;
+  energy_levels: string;
+  menstrual_cycle_status: string;
+  hormone_replacement_therapy: string;
+  fertility_concerns: string;
+  birth_control_use: string;
+  blood_sugar_concerns: string;
+  digestive_issues: string;
+  recent_lab_tests: boolean;
+  health_goals: string;
+  desired_results_timeline: string;
+  health_approach_preference: string;
+  privacy_consent: boolean;
+  follow_up_recommendations: string;
+}

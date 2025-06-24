@@ -1,6 +1,10 @@
-import { Client, ClientsResponse, CoachService } from "entities/coach";
+import {
+  Client,
+  ClientsResponse,
+  CoachService,
+  ShareContentData,
+} from "entities/coach";
 import { RootState } from "entities/store";
-import { PlusIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import Personalized from "shared/assets/icons/personalized";
@@ -17,13 +21,17 @@ import {
 import { ScrollArea } from "shared/ui/scroll-area";
 
 interface IPopoverClientProps {
+  documentId?: string;
   setClientId?: (clientId: string | null) => void;
   customTrigger?: React.ReactNode;
+  initialSelectedClientsId?: string[] | null;
 }
 
 export const PopoverClient: React.FC<IPopoverClientProps> = ({
+  documentId,
   setClientId,
   customTrigger,
+  initialSelectedClientsId,
 }) => {
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
@@ -33,9 +41,11 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const data: ClientsResponse =
-          await CoachService.getManagedClients(token);
-        setClients(data.clients);
+        const data: ClientsResponse = await CoachService.getManagedClients();
+        const activeClients = data.clients.filter(
+          (client) => client.status === "active"
+        );
+        setClients(activeClients);
       } catch (error) {
         console.error("Error fetching clients:", error);
       }
@@ -50,11 +60,28 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
     );
   }, [search, clients]);
 
-  const toggleClientSelection = (client_id: string) => {
-    if (selectedClient === client_id) {
+  const toggleClientSelection = async (client_id: string) => {
+    if (
+      selectedClient === client_id ||
+      initialSelectedClientsId?.includes(client_id)
+    ) {
       setSelectedClient(null);
+      if (documentId) {
+        const data: ShareContentData = {
+          content_id: documentId,
+          client_id: client_id,
+        };
+        await CoachService.revokeContent(data);
+      }
     } else {
       setSelectedClient(client_id);
+      if (documentId) {
+        const data: ShareContentData = {
+          content_id: documentId,
+          client_id: client_id,
+        };
+        await CoachService.shareContent(data);
+      }
     }
 
     setClientId?.(client_id);
@@ -83,7 +110,6 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
       <PopoverContent className="w-[300px] p-6 flex flex-col gap-6">
         <Input
           variant="bottom-border"
-          iconRight={<PlusIcon className="relative left-3" />}
           placeholder="Choose a client"
           className="py-1/2 h-[26px] pl-2 bg-transparent"
           value={search}
@@ -99,7 +125,10 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
               >
                 <Checkbox
                   id={`client-${client.client_id}`}
-                  checked={selectedClient === client.client_id}
+                  checked={
+                    selectedClient === client.client_id ||
+                    initialSelectedClientsId?.includes(client.client_id)
+                  }
                   onCheckedChange={() =>
                     toggleClientSelection(client.client_id)
                   }

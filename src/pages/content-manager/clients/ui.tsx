@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useCallback } from "react";
 import ClientsIcon from "shared/assets/icons/clients";
 import Search from "shared/assets/icons/search";
 import Plus from "shared/assets/icons/white-plus";
@@ -6,7 +6,6 @@ import Eye from "shared/assets/icons/blue-eye";
 import TrashIcon from "shared/assets/icons/trash-icon";
 import Messages from "shared/assets/icons/blue-messages";
 import { Button } from "shared/ui";
-import { clients } from "./mock";
 import Arrow from "shared/assets/icons/pages-arrow";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
@@ -26,6 +25,8 @@ import BlueDots from "shared/assets/icons/blue-dots";
 import CloseIcon from "shared/assets/icons/close";
 import ConfirmIcon from "shared/assets/icons/confirm";
 import { toast } from "shared/lib/hooks/use-toast";
+import UploadCloud from "shared/assets/icons/upload-cloud";
+import { File, X } from "lucide-react";
 
 const PAGE_SIZE = 10;
 
@@ -106,6 +107,27 @@ export const ContentManagerClients: React.FC = () => {
   const [popupClientId, setPopupClientId] = useState<string | null>(null);
   const [hoveredClientId, setHoveredClientId] = useState<string | null>(null);
   const [inviteSuccessPopup, setInviteSuccessPopup] = useState<boolean>(false);
+  const [importClientsPopup, setImportClientsPopup] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      setImportClientsPopup(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (importClientsPopup) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [importClientsPopup, handleClickOutside]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -121,7 +143,7 @@ export const ContentManagerClients: React.FC = () => {
     const fetchClients = async () => {
       setLoading(true);
       try {
-        const response = await CoachService.getManagedClients(token);
+        const response = await CoachService.getManagedClients();
         setClientsData(response.clients);
       } catch (error) {
         console.error("Error fetching clients", error);
@@ -139,8 +161,7 @@ export const ContentManagerClients: React.FC = () => {
   }, []);
 
   const filteredClients = useMemo(() => {
-    const baseClients = clientsData.length > 0 ? clientsData : clients;
-    return baseClients.filter((client) =>
+    return clientsData.filter((client) =>
       client.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [searchTerm, clientsData]);
@@ -244,10 +265,9 @@ export const ContentManagerClients: React.FC = () => {
 
   const handleInviteClient = async (formValues: InviteClientPayload) => {
     try {
-      const response = await CoachService.inviteClient(formValues, token);
+      await CoachService.inviteClient(formValues);
       setAddModal(false);
-      const updatedClients = await CoachService.getManagedClients(token);
-      console.log("Updated clients:", updatedClients);
+      const updatedClients = await CoachService.getManagedClients();
       setClientsData(updatedClients.clients);
       toast({
         title: "Invited successfully",
@@ -284,7 +304,7 @@ export const ContentManagerClients: React.FC = () => {
 
     try {
       await CoachService.deleteClient(selectedClient.client_info.id, token);
-      const updatedClients = await CoachService.getManagedClients(token);
+      const updatedClients = await CoachService.getManagedClients();
       setClientsData(updatedClients.clients);
       toast({
         title: "Deleted successfully",
@@ -333,6 +353,48 @@ export const ContentManagerClients: React.FC = () => {
     }
   };
 
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) await handleFile(file);
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      await handleFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFile = async (file: File) => {
+    if (!file) return;
+
+    setUploadedFileName(file.name);
+    setUploadedFileSize(`${(file.size / 1024).toFixed(0)} KB`);
+
+    try {
+      await CoachService.inviteClient(null, file);
+      const updatedClients = await CoachService.getManagedClients();
+      setClientsData(updatedClients.clients);
+      toast({
+        title: "File imported successfully",
+      });
+      setInviteSuccessPopup(true);
+      setImportClientsPopup(false);
+    } catch (error) {
+      console.error("Error importing clients", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to import clients",
+        description: "An error occurred during import. Please try again.",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-[16px] md:gap-[24px] p-8 overflow-y-auto h-[100%]">
       <div className="flex flex-col lg:flex-row gap-[16px] justify-between lg:items-end">
@@ -371,19 +433,27 @@ export const ContentManagerClients: React.FC = () => {
             Add new client
             <Plus />
           </Button>
+          <Button
+            variant={"light-blue"}
+            className="h-[44px]"
+            onClick={() => setImportClientsPopup(true)}
+          >
+            Upload CSV/XLSX
+          </Button>
         </div>
       </div>
 
       {loading ? (
         <div className="text-center py-8">Loading clients...</div>
       ) : (
-        <div className="lg:mt-4 md:rounded-[8px] lg:overflow-hidden">
-          <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
+        <div className="lg:mt-4 md:rounded-[8px]">
+          <div className="hidden md:grid grid-cols-7 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
             <div>Full name</div>
             <div>Gender</div>
             <div>Last seen</div>
             <div>Last update</div>
             <div>Learning now</div>
+            <div>Status</div>
             <div className="text-right pr-4">Actions</div>
           </div>
 
@@ -392,7 +462,7 @@ export const ContentManagerClients: React.FC = () => {
               <div
                 key={idx}
                 className="
-            md:grid md:grid-cols-6 md:items-center md:p-[12px]
+            md:grid md:grid-cols-7 md:items-center md:p-[12px]
             flex flex-col gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white md:rounded-none md:border-x-0 md:border-t-0 md:border-b md:border-[#DBDEE1]
           "
               >
@@ -417,7 +487,11 @@ export const ContentManagerClients: React.FC = () => {
                     Last seen
                   </div>
                   <div className="w-full text-[16px]">
-                    {client.last_activity}
+                    {client.last_activity
+                      ? new Date(client.last_activity).toLocaleDateString(
+                          "en-GB"
+                        )
+                      : "-"}
                   </div>
                 </div>
 
@@ -426,7 +500,11 @@ export const ContentManagerClients: React.FC = () => {
                     Last update
                   </div>
                   <div className="w-full text-[16px]">
-                    {client.last_activity}
+                    {client.last_activity
+                      ? new Date(client.last_activity).toLocaleDateString(
+                          "en-GB"
+                        )
+                      : "-"}
                   </div>
                 </div>
 
@@ -436,7 +514,7 @@ export const ContentManagerClients: React.FC = () => {
                   </div>
                   <div className="flex gap-1 items-center flex-wrap">
                     <span className="w-full text-black text-[16px] underline">
-                      {client.learning_now[0]}
+                      {client.learning_now[0]?.title || ""}
                     </span>
                     {client.learning_now.length > 1 && (
                       <>
@@ -452,16 +530,26 @@ export const ContentManagerClients: React.FC = () => {
                         </button>
                       </>
                     )}
-
                     {hoveredClientId === client.client_id && (
-                      <div className="absolute left-0 top-[50px] mt-1 z-10 bg-white border border-gray-200 shadow-md rounded-md p-2 text-sm">
+                      <div className="absolute left-0 top-full mt-1 z-[9999] bg-white border border-gray-200 shadow-md rounded-md p-2 text-sm">
                         <ul className="flex flex-col gap-[4px] text-black space-y-1">
                           {client.learning_now.slice(1).map((item, index) => (
-                            <li key={index}>{item}</li>
+                            <li key={index}>{item?.title || ""}</li>
                           ))}
                         </ul>
                       </div>
                     )}
+                  </div>
+                </div>
+
+                <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
+                  <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
+                    Status
+                  </div>
+                  <div className="w-full text-[16px]">
+                    {client.status === "waiting to accept invite"
+                      ? "pending"
+                      : client.status}
                   </div>
                 </div>
 
@@ -678,6 +766,80 @@ export const ContentManagerClients: React.FC = () => {
               Go Back to Home
             </button>
           </div>
+        </div>
+      )}
+
+      {importClientsPopup && (
+        <div
+          ref={modalRef}
+          className="flex flex-col w-full lg:w-[410px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] lg:py-[40px] lg:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px] absolute right-[32px]"
+        >
+          {uploadedFileName ? (
+            <div className="w-full max-w-[330px]">
+              <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                Import PDF
+              </p>
+              <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
+                <File stroke="#1C63DB" />
+                <div className="flex flex-col leading-[1.2]">
+                  <p className="text-[14px] font-[Nunito] text-black font-semibold">
+                    {uploadedFileName}
+                  </p>
+                  <p className="text-[12px] font-[Nunito] text-[#5F5F65]">
+                    {uploadedFileSize}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setUploadedFileName(null);
+                    setUploadedFileSize(null);
+                  }}
+                  className="absolute top-[6px] right-[6px]"
+                >
+                  <X size={16} stroke="#A7A7A7" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            // Drop Zone
+            <div className="w-full">
+              <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                Import СSV/XLSX
+              </p>
+              <div
+                className={`w-full border ${
+                  dragOver
+                    ? "border-[#0057C2]"
+                    : "border-dashed border-[#1C63DB]"
+                } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
+                onClick={handleUploadClick}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={handleDrop}
+              >
+                <div className="flex p-2 items-center justify-center bg-white border rounded-[8px] border-[#F3F6FB]">
+                  <UploadCloud />
+                </div>
+                <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                  Click {isMobile || isTablet ? "" : "or drag"} to upload
+                </div>
+                <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
+                  СSV/XLSX
+                </p>
+              </div>
+            </div>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            className="hidden"
+            onChange={handleFileChange}
+          />
         </div>
       )}
     </div>

@@ -33,4 +33,16 @@ export class ClientService {
       }
     );
   }
+
+  static async getSharedContentById(contentId: string): Promise<any> {
+    const endpoint = API_ROUTES.CLIENT.GET_SHARED_CONTENT_BY_ID.replace(
+      "{content_id}",
+      contentId
+    );
+    return ApiService.get<any>(endpoint, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 }

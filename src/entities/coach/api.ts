@@ -8,34 +8,33 @@ import {
   InviteClientPayload,
   ISessionResponse,
   RateContent,
+  ShareContentData,
+  SharedContent,
   Status,
 } from "./model";
 
 export class CoachService {
-  static async getManagedClients(
-    token: string | null
-  ): Promise<ClientsResponse> {
-    return ApiService.get<ClientsResponse>(API_ROUTES.COACH_ADMIN.GET_CLIENTS, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "application/json",
-      },
-    });
+  static async getManagedClients(): Promise<ClientsResponse> {
+    return ApiService.get<ClientsResponse>(API_ROUTES.COACH_ADMIN.GET_CLIENTS);
   }
 
   static async inviteClient(
-    payload: InviteClientPayload,
-    token: string | null
+    payload: InviteClientPayload | null,
+    file?: File
   ): Promise<{ success: boolean; message: string }> {
-    return ApiService.post<{ success: boolean; message: string }>(
+    const formData = new FormData();
+
+    if (file) {
+      formData.append("file", file);
+    }
+
+    if (payload) {
+      formData.append("invite_data", JSON.stringify(payload));
+    }
+
+    return ApiService.postFormData<{ success: boolean; message: string }>(
       API_ROUTES.COACH_ADMIN.POST_CLIENT,
-      payload,
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          "Content-Type": "application/json",
-        },
-      }
+      formData
     );
   }
 
@@ -256,6 +255,25 @@ export class CoachService {
   ): Promise<{ content_id: boolean; message: string }> {
     return ApiService.post<{ content_id: boolean; message: string }>(
       API_ROUTES.COACH_ADMIN.RATE_CONTENT,
+      payload
+    );
+  }
+
+  static async shareContent(payload: ShareContentData): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.COACH_ADMIN.SHARE_CONTENT, payload);
+  }
+
+  static async getContentShares(contentId: string): Promise<SharedContent> {
+    const endpoint = API_ROUTES.COACH_ADMIN.GET_SHARED_ACCESS.replace(
+      "{content_id}",
+      contentId
+    );
+    return ApiService.get<SharedContent>(endpoint);
+  }
+
+  static async revokeContent(payload: ShareContentData): Promise<any> {
+    return ApiService.post<any>(
+      API_ROUTES.COACH_ADMIN.REVOKE_CONTENT_ACCESS,
       payload
     );
   }

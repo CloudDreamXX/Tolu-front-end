@@ -11,7 +11,7 @@ export interface IDocumentResponse {
   original_files: string[];
   shared_with: {
     total_shares: number;
-    clients: string[];
+    clients: SharedClient[];
   };
   revenue_generated: string;
   read_count: number;
@@ -34,7 +34,7 @@ export interface IDocument {
   originalFiles: string[];
   sharedWith: {
     totalShares: number;
-    clients: string[];
+    clients: SharedClient[];
   };
   revenueGenerated: string;
   readCount: number;
@@ -45,7 +45,17 @@ export interface IDocument {
   chatId: string;
 }
 
+export interface SharedClient {
+  accepted_at: string;
+  email: string;
+  is_managed_client: boolean;
+  name: string;
+  share_type: "direct" | string;
+  shared_at: string;
+  status: "accepted" | string;
+}
+
 export interface ISharedWith {
   totalShares: number;
-  clients: string[];
+  clients: SharedClient[];
 }

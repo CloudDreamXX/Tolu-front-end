@@ -17,6 +17,7 @@ export const API_ROUTES = {
   CLIENT: {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",
     ACCEPT_COACH_INVITE: "/client/accept-coach-invite",
+    GET_SHARED_CONTENT_BY_ID: "/client/shared-coach-content/{content_id}",
   },
   AI: {
     SEARCH: "/ai-search/",
