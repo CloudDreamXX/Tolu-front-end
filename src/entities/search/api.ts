@@ -5,6 +5,8 @@ import {
   SearchHistoryParams,
   SearchResultResponse,
   SearchResultResponseItem,
+  SearchHistoryResponse,
+  SearchHistoryItem,
 } from "./model";
 
 export interface StreamChunk {
@@ -104,7 +106,7 @@ export class SearchService {
 
   static async getSearchHistory(
     params: SearchHistoryParams = {}
-  ): Promise<string> {
+  ): Promise<SearchHistoryItem[]> {
     const searchParams = new URLSearchParams();
 
     if (params.client_id) {
@@ -117,7 +119,17 @@ export class SearchService {
 
     const url = `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
-    return ApiService.get<string>(url);
+    const res = await ApiService.get<{
+      history: SearchHistoryResponse[];
+    }>(url);
+
+    return res.history.map((item) => ({
+      ...item,
+      chatId: item.chat_id,
+      chatTitle: item.chat_title,
+      createdAt: item.created_at,
+      userId: item.user_id,
+    }));
   }
 
   static async updateChatTitle(

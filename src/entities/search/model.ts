@@ -14,6 +14,35 @@ export interface SearchHistoryParams {
   managed_client_id?: string | null;
 }
 
+export interface SearchHistoryResponse {
+  active: boolean;
+  answer: string;
+  chat_id: string;
+  chat_title: string;
+  created_at: string;
+  feedback: string;
+  id: string;
+  liked: number;
+  query: string;
+  reported: number;
+  user_id: string;
+}
+
+export interface SearchHistoryItem {
+  active: boolean;
+  answer: string;
+  chat_id: string;
+  chatId: string;
+  chatTitle: string;
+  createdAt: string;
+  feedback: string;
+  id: string;
+  liked: number;
+  query: string;
+  reported: number;
+  userId: string;
+}
+
 export interface SearchResult {
   id: string;
   content: string;

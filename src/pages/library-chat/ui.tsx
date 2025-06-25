@@ -1,33 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { SearchResultResponseItem } from "entities/search/model";
 import { SearchAiChatInput } from "entities/search/ui/chat-input";
 import {
-  CopyIcon,
-  DotsThreeIcon,
-  DotsThreeVerticalIcon,
-  ShareIcon,
-  SpeakerSimpleHighIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon,
-} from "@phosphor-icons/react";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-} from "shared/ui";
-import { RotateCw } from "lucide-react";
-import parse from "html-react-parser";
-import { MagnifyingGlassPlusIcon } from "@phosphor-icons/react/dist/ssr";
-
-interface Message {
-  id: string;
-  type: "user" | "ai";
-  content: string;
-  timestamp: Date;
-}
+  ChatActions,
+  ChatBreadcrumb,
+  ChatHeader,
+  ChatLoading,
+  Message,
+  RelatedContent,
+} from "features/chat";
+import { MessageList } from "widgets/message-list";
 
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
@@ -53,7 +37,7 @@ export const LibraryChat = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      if (isInitialized) return;
+      console.log("Initializing chat with ID:", chatId);
 
       if (initialMessage && location.state?.message) {
         console.log("Processing initial message:", initialMessage);
@@ -93,7 +77,7 @@ export const LibraryChat = () => {
           initialSearchDone.current = true;
           await handleInitialSearch(initialMessage);
         }
-      } else if (isExistingChat && !sessionLoadDone.current) {
+      } else if (isExistingChat) {
         console.log("Loading existing session for:", chatId);
         sessionLoadDone.current = true;
         await loadExistingSession();
@@ -227,8 +211,6 @@ export const LibraryChat = () => {
   ) => {
     if (!message.trim() || isSearching) return;
 
-    console.log("Sending new message:", message);
-
     const userMessage: Message = {
       id: Date.now().toString(),
       type: "user",
@@ -360,202 +342,43 @@ export const LibraryChat = () => {
   const displayChatTitle =
     chatTitle ||
     (currentChatId ? `Chat ${currentChatId.slice(0, 8)}...` : "New Chat");
-  const displayChatId = currentChatId || chatId;
-
-  if (isLoadingSession) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-full">
-        <div className="flex items-center gap-2">
-          <div className="flex space-x-1">
-            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <div
-              className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
-              style={{ animationDelay: "0.2s" }}
-            ></div>
-            <div
-              className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
-              style={{ animationDelay: "0.4s" }}
-            ></div>
-          </div>
-          <span className="text-sm text-blue-600">Loading chat session...</span>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col w-full h-full gap-6 p-6">
-      <div className="">
-        <Breadcrumb className="flex flex-row gap-2 text-sm text-gray-600">
-          <BreadcrumbLink href="/library">Library</BreadcrumbLink>
-          <BreadcrumbSeparator className="text-gray-400" />
-          <BreadcrumbItem className="text-gray-800">
-            {displayChatTitle}
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </div>
-      <div className="flex flex-row w-full h-full gap-6 max-h-[calc(100vh-6rem)]">
-        <div className="flex flex-col gap-2">
-          <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-            <CopyIcon weight="bold" className="w-4 h-4 m-auto text-blue-600" />
-          </button>
-          <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-            <ShareIcon weight="bold" className="w-4 h-4 m-auto text-blue-600" />
-          </button>
-          <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-            <SpeakerSimpleHighIcon
-              weight="bold"
-              className="w-4 h-4 m-auto text-blue-600"
+      <ChatBreadcrumb displayChatTitle={displayChatTitle} />
+      <div className="flex flex-row w-full h-full gap-6 max-h-[calc(100vh-6rem)] relative">
+        <ChatActions
+          onRegenerate={handleRegenerateResponse}
+          isSearching={isSearching}
+          hasMessages={messages.length >= 2}
+        />
+        {isLoadingSession ? (
+          <ChatLoading />
+        ) : (
+          <div className="flex flex-col w-full h-full overflow-clip">
+            <ChatHeader
+              displayChatTitle={displayChatTitle}
+              isExistingChat={!!isExistingChat}
+              onNewSearch={() => navigate("/library")}
             />
-          </button>
-          <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-            <ThumbsUpIcon
-              weight="bold"
-              className="w-4 h-4 m-auto text-blue-600"
+
+            <MessageList
+              messages={messages}
+              isSearching={isSearching}
+              streamingText={streamingText}
+              error={error}
             />
-          </button>
-          <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-            <ThumbsDownIcon
-              weight="bold"
-              className="w-4 h-4 m-auto text-blue-600"
+
+            {/* Input */}
+            <SearchAiChatInput
+              placeholder="Your message"
+              onSend={handleNewMessage}
+              disabled={isSearching}
+              className="mt-4"
             />
-          </button>
-          <button
-            className="bg-[#DDEBF6] rounded-full h-8 w-8"
-            onClick={handleRegenerateResponse}
-            disabled={isSearching || messages.length < 2}
-            title="Regenerate response"
-          >
-            <RotateCw className="w-4 h-4 m-auto text-blue-600" />
-          </button>
-        </div>
-        <div className="flex flex-col w-full h-full rounded-xl overflow-clip">
-          {/* Header */}
-          <div className="flex items-center justify-between w-full p-4 bg-white border-b">
-            <div className="flex items-center gap-3">
-              <div className="text-3xl font-semibold text-gray-800">
-                {displayChatTitle}
-              </div>
-              {isExistingChat && (
-                <div className="px-2 py-1 text-xs text-green-700 bg-green-100 rounded">
-                  Existing Chat
-                </div>
-              )}
-            </div>
-            <div className="flex flex-row gap-2">
-              <button
-                className="flex flex-row items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700"
-                onClick={() => navigate("/library")}
-              >
-                <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
-              </button>
-              <button
-                className="flex flex-row items-center gap-2 p-2 text-sm font-medium text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"
-                onClick={() => navigate("/library")}
-              >
-                <DotsThreeVerticalIcon width={24} height={24} color="#000" />
-              </button>
-            </div>
           </div>
-
-          {/* Messages */}
-          <div className="flex-1 w-full py-4 overflow-y-auto bg-white rounded-b-xl">
-            <div className="max-h-full px-4 space-y-4 overflow-auto">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`w-full ${message.type === "user" ? "order-2 max-w-[40%]" : "order-1 max-w-[70%]"}`}
-                  >
-                    {message.type === "user" ? (
-                      <div className="flex flex-col justify-end w-full">
-                        <div className="flex flex-row justify-between w-full text-sm color-[#1D1D1F]">
-                          <span className="font-semibold">You</span>
-                          <span>{message.timestamp.toLocaleDateString()}</span>
-                        </div>
-                        <div className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg">
-                          {message.content}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col justify-end w-full">
-                        <div className="flex flex-row justify-between w-full text-sm color-[#1D1D1F]">
-                          <span className="font-semibold">AI Assistant</span>
-                          <span>{message.timestamp.toLocaleDateString()}</span>
-                        </div>
-                        <div className="text-sm text-[#1D1D1F] bg-[#ECEFF4] px-[14px] py-[10px] rounded-md">
-                          {parse(message.content)}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {/* Streaming AI Response */}
-              {isSearching && (
-                <div className="flex justify-start">
-                  <div className="max-w-[70%] min-w-36">
-                    <div className="flex flex-col items-start gap-3">
-                      <div className="flex flex-row justify-between w-full text-sm color-[#1D1D1F]">
-                        <span className="font-semibold">AI Assistant</span>
-                        <span>Just Now</span>
-                      </div>
-
-                      {streamingText ? (
-                        <div className="text-sm text-[#1D1D1F] bg-[#ECEFF4] px-[14px] py-[10px] rounded-md">
-                          {parse(streamingText)}
-                          <span className="inline-block w-2 h-4 ml-1 bg-blue-500 animate-pulse"></span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                            <div
-                              className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
-                              style={{ animationDelay: "0.2s" }}
-                            ></div>
-                            <div
-                              className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
-                              style={{ animationDelay: "0.4s" }}
-                            ></div>
-                          </div>
-                          <span className="text-sm text-blue-600">
-                            AI is thinking...
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {error && (
-                <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center w-5 h-5 bg-red-500 rounded-full">
-                      <span className="text-xs text-white">!</span>
-                    </div>
-                    <span className="text-sm font-medium text-red-700">
-                      Error
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-red-600">{error}</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Input */}
-          <SearchAiChatInput
-            placeholder="Your message"
-            onSend={handleNewMessage}
-            disabled={isSearching}
-            className="mt-4"
-          />
-        </div>
+        )}
+        <RelatedContent />
       </div>
     </div>
   );

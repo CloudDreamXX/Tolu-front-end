@@ -17,6 +17,14 @@ export const SearchAiSmallInput = () => {
   const [search, setSearch] = useState<string>("");
 
   const handleSearch = () => {
+    nav(`/library`, {
+      state: {
+        message: search,
+        searchType: searchType || "Search",
+      },
+      replace: true,
+    });
+
     if (!search?.trim()) return;
 
     const isInExistingChat = chatId && !chatId.startsWith("new_chat_");
@@ -54,43 +62,13 @@ export const SearchAiSmallInput = () => {
 
   return (
     <div className="relative flex flex-col w-full gap-4">
-      <div className="flex flex-row items-center justify-center border rounded-md">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex w-fit px-2 h-full flex-row gap-1.5 items-center text-sm text-black rounded-l-md border-r bg-gray-100">
-            {searchType || "Type"}
-            <Chevron className="w-4 h-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[120px] ml-4 flex flex-col">
-            <button
-              className="flex items-center gap-2 p-2 hover:bg-gray-100"
-              onClick={() => setSearchType("Generate")}
-            >
-              Generate
-            </button>
-            <button
-              className="flex items-center gap-2 p-2 hover:bg-gray-100"
-              onClick={() => setSearchType("Search")}
-            >
-              Search
-            </button>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Input
-          placeholder="Search..."
-          className="border-none rounded-r-md"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyPress={handleKeyPress}
-        />
-      </div>
       <Button
         variant={"brightblue"}
         className="w-full h-[44px] text-base font-semibold"
         onClick={handleSearch}
-        disabled={!search?.trim()}
       >
         <Sparkle />
-        Ask TOLU
+        <span className="hidden 2xl:inline">Ask TOLU</span>
       </Button>
     </div>
   );

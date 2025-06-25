@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react";
-
-import { SymptomCheckModal } from "widgets/MenopauseModals/SymptomCheckModal";
-import { MultiStepModal } from "widgets/MenopauseModals/MultiStepModal";
 import {
   MenopauseSubmissionRequest,
   Recommendation,
@@ -10,12 +7,11 @@ import {
 } from "entities/user";
 import { toast } from "shared/lib/hooks/use-toast";
 import { SystemCheck } from "./system-check";
-import { SearchAiChatInput } from "entities/search";
-import { useNavigate } from "react-router-dom";
+import { LibrarySmallChat } from "widgets/library-small-chat";
+import { LibraryClientContent } from "widgets/library-client-content";
+import { MultiStepModal, SymptomCheckModal } from "widgets/MenopauseModals";
 
 export const Library = () => {
-  const nav = useNavigate();
-
   const [modalOpen, setModalOpen] = useState(false);
   const [stepModalOpen, setStepModalOpen] = useState(false);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
@@ -57,26 +53,6 @@ export const Library = () => {
     setShowResults(true);
   };
 
-  const handleSearch = (
-    message: string,
-    files: File[],
-    searchType?: string
-  ) => {
-    if (!message?.trim()) return;
-
-    const chatId = `new_chat_${Date.now()}`;
-
-    nav(`/library/${chatId}`, {
-      state: {
-        message: message,
-        searchType: searchType ?? "Search",
-        isNewSearch: true,
-        files: files,
-      },
-      replace: true,
-    });
-  };
-
   return (
     <main className="flex flex-col h-full items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F1F3F5]">
       <SystemCheck
@@ -106,7 +82,10 @@ export const Library = () => {
         onClose={() => setCompletionModalOpen(false)}
         variant="completion"
       />
-      <SearchAiChatInput onSend={handleSearch} />
+      <div className="flex flex-row w-full h-full gap-6">
+        <LibraryClientContent />
+        <LibrarySmallChat />
+      </div>
     </main>
   );
 };

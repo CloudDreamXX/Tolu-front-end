@@ -10,7 +10,7 @@ import {
 
 import { ChatItemModel } from "pages/content-manager";
 import Search from "shared/assets/icons/search";
-import { ChatItem } from "widgets/chat-item";
+import { ChatItem } from "features/chat-item";
 
 interface MessageSidebarProps {
   chats: ChatItemModel[];

@@ -53,13 +53,13 @@ export const HealthSnapshotSidebar: React.FC = () => {
       className={`flex flex-col justify-between h-full ${isNarrow ? "w-[81px] items-center" : "w-[268px]"}`}
     >
       <div className="flex flex-col gap-[32px]">
-        <div className="flex flex-col items-center text-center">
+        <NavLink to={"/"} className="flex flex-col items-center text-center">
           <h2
             className={`${isNarrow ? "text-[27px]" : "text-[46.667px]"} font-bold font-open`}
           >
             TOLU
           </h2>
-        </div>
+        </NavLink>
         <div className="flex flex-col px-[14px] gap-[18px]">
           <SearchAiSmallInput />
         </div>
@@ -70,7 +70,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           <NavLink
             to={"/health-snapshot"}
             className={({ isActive }) =>
-              `flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
+              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
                 isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
               }`
             }
@@ -82,7 +82,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           <NavLink
             to={"/library"}
             className={({ isActive }) =>
-              `flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
+              `flex items-center gap-3 justify-center 2xl:justify-start w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
                 isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
               }`
             }
@@ -94,7 +94,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${
+              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${
                 isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
               }`
             }

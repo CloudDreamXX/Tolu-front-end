@@ -22,7 +22,7 @@ export interface IRegisterUser {
 }
 
 export interface MenopauseSubmissionRequest {
-  folder_ids: string[];
+  symptoms: string[];
   desired_health_change: string[];
   genetic_conditions: string[];
   helpful_management: string[];

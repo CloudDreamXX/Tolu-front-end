@@ -11,7 +11,7 @@ import {
   renderReadyForReview,
   renderReviewer,
   renderReviewStatus,
-} from "../lib";
+} from "../../../../shared/ui/card-text-collection";
 import { cn } from "shared/lib";
 
 interface DocumentCardProps {

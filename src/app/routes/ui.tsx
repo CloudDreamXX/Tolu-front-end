@@ -36,7 +36,7 @@ export const MainLayout: React.FC<{
       <div className="hidden xl:block h-full px-[16px] py-8">
         {getSideBar(mainLocation)}
       </div>
-      <div className="flex flex-col w-full h-full bg-[#FBFBFB]">
+      <div className="flex flex-col w-full h-full bg-[#F2F4F6]">
         {getNavigation(mainLocation)}
         {children}
       </div>

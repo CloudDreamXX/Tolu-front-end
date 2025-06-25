@@ -1,11 +1,26 @@
-import { Step } from "./models";
+export interface StepOption {
+  id: string;
+  name: string;
+}
+
+export interface Step {
+  stepTitle: string;
+  question: string;
+  subtitle?: string;
+  label?: string;
+  options: (string | StepOption)[];
+  other: boolean;
+  folder_id: string;
+  onlyOne?: boolean;
+  specialCondition?: boolean;
+}
 
 export const steps: Step[] = [
   {
-    title: "recent_symptoms",
+    stepTitle: "Symptoms",
     question: "You're the expert on how you feel.",
     subtitle: "What's been bothering you most lately?",
-    label: "Symptoms:",
+    label: "Exmaples:",
     options: [
       "Hot flashes & night sweats",
       "Sleep disturbances (insomnia, early waking)",
@@ -20,16 +35,16 @@ export const steps: Step[] = [
       "Hair thinning, dry skin, brittle nails",
       "Not feeling like myself anymore",
     ],
-    stepTitle: "Symptoms",
-    folder_id: "1",
+    other: true,
+    folder_id: "symptoms",
   },
   {
-    title: "desired_health_change",
+    stepTitle: "Health Goals",
     question:
       "If you could make one big change for your health, what would it be?",
     subtitle: "Please select only one goal",
     options: [
-      "I'd love to balance my hormones so I don’t feel like I’m on a rollercoaster every day.",
+      "I’d love to balance my hormones so I don’t feel like I’m on a rollercoaster every day.",
       "I want to get my hot flashes under control—they’re interfering with my sleep and confidence.",
       "I’d like to find a safe, effective way to support my hormones without harsh side effects.",
       "I just want to sleep through the night without waking up multiple times.",
@@ -40,11 +55,13 @@ export const steps: Step[] = [
       "I want to feel strong and maintain muscle as I age.",
       "I miss having a desire for sex!",
     ],
-    stepTitle: "Health goal",
-    folder_id: "2",
+    other: false,
+    onlyOne: true,
+    specialCondition: true,
+    folder_id: "desired_health_change",
   },
   {
-    title: "genetic_conditions",
+    stepTitle: "Health history",
     question:
       "Is there a genetic condition or autoimmune diseases you're aware of in your health history?",
     subtitle: "Please select only one condition",
@@ -59,11 +76,13 @@ export const steps: Step[] = [
       "Hashimoto’s thyroiditis runs in my family — I was diagnosed in my 30s.",
       "There’s a lot of anxiety and depression on my maternal side. I’ve felt it get worse since starting menopause.",
     ],
-    stepTitle: "Health history",
-    folder_id: "3",
+    other: false,
+    specialCondition: true,
+    onlyOne: true,
+    folder_id: "genetic_conditions",
   },
   {
-    title: "helpful_management",
+    stepTitle: "Current solution",
     question: "What have you found helpful so far in managing how you feel?",
     options: [
       "I’m eating an anti-inflammatory diet and walking every day",
@@ -78,11 +97,12 @@ export const steps: Step[] = [
       "Honestly, I’m not sure what’s working yet. I’m still experimenting",
       "I haven’t found anything that really helps. I’m overwhelmed and tired",
     ],
-    stepTitle: "Current solution",
-    folder_id: "4",
+    other: false,
+    specialCondition: true,
+    folder_id: "helpful_management",
   },
   {
-    title: "allergies_sensitivities",
+    stepTitle: "Allergies or food intolerances",
     question: "Is there anything you avoid due to an allergy or sensitivity?",
     options: [
       "I’ve developed a sensitivity to gluten — it causes bloating and brain fog",
@@ -96,11 +116,12 @@ export const steps: Step[] = [
       "I’m not officially diagnosed, but I suspect histamine intolerance — I get headaches, hives, and insomnia from certain foods",
       "No confirmed allergies, but I feel off after eating certain things and haven’t figured out why yet",
     ],
-    stepTitle: "Allergies or food intolerances",
-    folder_id: "5",
+    other: false,
+    specialCondition: true,
+    folder_id: "allergies_sensitivities",
   },
   {
-    title: "menstrual_changes",
+    stepTitle: "Women’s Health",
     question:
       "Have your menstrual cycles changed in timing, flow, or frequency?",
     options: [
@@ -117,7 +138,6 @@ export const steps: Step[] = [
       "No noticeable change in my cycle",
     ],
     other: false,
-    stepTitle: "Women’s Health",
-    folder_id: "6",
+    folder_id: "menstrual_changes",
   },
 ];

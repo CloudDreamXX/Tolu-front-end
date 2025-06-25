@@ -7,7 +7,7 @@ import {
   renderReviewer,
   renderReviewStatus,
   renderAuthor,
-} from "../lib";
+} from "../../../../shared/ui/card-text-collection";
 import ClosedFolder from "shared/assets/icons/closed-folder";
 import { cn } from "shared/lib";
 import { ArchiveRestore } from "lucide-react";

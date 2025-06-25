@@ -39,7 +39,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               "rounded-md border border-input focus-visible:outline-none",
             variant === "bottom-border" &&
               "border-0 border-b border-input rounded-none focus-visible:border-b-2 focus-visible:border-primary",
-            icon && "pl-10",
+            icon ? "pl-10" : "pl-4",
             iconRight && "pr-10",
             className
           )}

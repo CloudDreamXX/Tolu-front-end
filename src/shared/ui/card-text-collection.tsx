@@ -62,18 +62,30 @@ export const renderReviewer = (
 ) => {
   if (!reviewer) return null;
   return (
-    <div
-      className={cn(
-        "flex items-center gap-2 text-base font-semibold",
-        withText && "items-end"
-      )}
-    >
+    <div className={cn("flex items-center gap-2 text-base font-semibold")}>
       {withText ? (
         <span className="text-sm font-medium">Reviewer</span>
       ) : (
         <Expert />
       )}
       {reviewer.length > 1 ? `Mixed` : reviewer[0]}
+    </div>
+  );
+};
+
+export const renderRecommendedBy = (
+  recommendedBy: string | undefined,
+  withText?: boolean
+) => {
+  if (!recommendedBy) return null;
+  return (
+    <div className={cn("flex items-center gap-2 text-base font-semibold")}>
+      {withText ? (
+        <span className="text-sm font-medium">Recommended by</span>
+      ) : (
+        <Expert />
+      )}
+      {recommendedBy}
     </div>
   );
 };
@@ -85,10 +97,7 @@ export const renderFiles = (
   if (!files) return null;
   return (
     <p
-      className={cn(
-        "flex items-center gap-2 text-base font-semibold truncate",
-        withText && "items-end"
-      )}
+      className={cn("flex items-center gap-2 text-base font-semibold truncate")}
     >
       {withText ? (
         <span className="text-sm font-medium">Files</span>
@@ -104,12 +113,7 @@ export const renderDate = (date: string | undefined, withText?: boolean) => {
   if (!date) return null;
   const dateObj = new Date(date);
   return (
-    <p
-      className={cn(
-        "flex items-center gap-2 text-base font-semibold",
-        withText && "items-end"
-      )}
-    >
+    <p className={cn("flex items-center gap-2 text-base font-semibold")}>
       {withText ? (
         <span className="text-sm font-medium">Date</span>
       ) : (
@@ -126,12 +130,7 @@ export const renderAuthor = (
 ) => {
   if (!author) return null;
   return (
-    <p
-      className={cn(
-        "flex items-center gap-2 text-base font-semibold",
-        withText && "items-end"
-      )}
-    >
+    <p className={cn("flex items-center gap-2 text-base font-semibold")}>
       {withText ? (
         <span className="text-sm font-medium">Author</span>
       ) : (

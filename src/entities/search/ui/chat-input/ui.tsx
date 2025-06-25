@@ -50,7 +50,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
   return (
     <div
       className={cn(
-        "flex flex-col w-full px-3 py-4 mt-auto gap-4 border-2 border-gray-200 rounded-lg bg-white",
+        "flex flex-col w-full px-3 py-4 mt-auto gap-4 bg-white",
         className
       )}
     >
@@ -65,7 +65,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
         />
 
         <div className="flex flex-row items-center justify-between w-full">
-          <label className="relative flex items-center text-gray-600 transition-colors rounded-lg cursor-pointer gap-2text-sm hover:text-gray-800 hover:bg-gray-100">
+          <label className="relative flex items-center text-gray-600 transition-colors cursor-pointer gap-2text-sm hover:text-gray-800 hover:bg-gray-100">
             <Paperclip size={24} />
             {attachedFiles.length > 0 && (
               <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">

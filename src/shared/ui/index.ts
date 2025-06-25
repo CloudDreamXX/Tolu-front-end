@@ -26,3 +26,7 @@ export * from "./textarea";
 export * from "./toast";
 export * from "./toaster";
 export * from "./tooltip";
+export * from "./accordion";
+export * from "./card-text-collection";
+export * from "./label";
+export * from "./form";

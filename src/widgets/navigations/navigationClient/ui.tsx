@@ -15,7 +15,6 @@ import { Button } from "shared/ui";
 import AvatarWoman from "shared/assets/images/AvatarWoman.png";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import CaretRight from "shared/assets/icons/caretRight";
-import { SearchAiSmallInput } from "entities/search";
 
 export const NavigationClient: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -169,8 +168,6 @@ export const NavigationClient: React.FC = () => {
                 </span>
               </button>
             </div>
-
-            <SearchAiSmallInput />
             <Button
               variant={"brightblue"}
               className="w-full h-[44px] text-base font-semibold mb-[72px] mt-[8px]"
