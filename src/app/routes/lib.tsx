@@ -40,6 +40,7 @@ import { ContentManagerClients } from "pages/content-manager/clients";
 import { ContentManagerLibrary } from "pages/content-manager/library";
 import { LibraryChat } from "pages/library-chat";
 import { ContentManagerMessages } from "pages/content-manager/messages";
+import { UserManagement } from "pages/user-management";
 
 export const AppRoutes = () => {
   return (
@@ -146,6 +147,16 @@ export const AppRoutes = () => {
         <Route path="/health-snapshot" element={<HealthSnapshot />} />
         <Route path="/library" element={<Library />} />
         <Route path="/library/:chatId" element={<LibraryChat />} />
+      </Route>
+
+      <Route
+        element={
+          <MainLayout mainLocation="user-management">
+            <ProtectedRoute allowedRoles={["Admin", "Super Admin", "admin"]} />
+          </MainLayout>
+        }
+      >
+        <Route path="/user-management" element={<UserManagement />} />
       </Route>
 
       {/* 404 route */}

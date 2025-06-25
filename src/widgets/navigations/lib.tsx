@@ -4,8 +4,9 @@ import { NavigationClient } from "widgets/navigations/navigationClient/ui";
 
 export const getNavigation = (location: string): React.ReactNode => {
   switch (location) {
+    case "user-management":
     case "content-manager":
-      return <Navigation />;
+      return <Navigation pageLocation={location} />;
     case "health-snapshot":
       return <NavigationClient />;
     case "settings":

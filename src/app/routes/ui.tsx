@@ -11,15 +11,16 @@ interface ProtectedRouteProps {
 
 const getRouteByRole = (role: string): string => {
   switch (role) {
-    case "admin":
-      return "/admin";
     case "coaches":
       return "/coaches";
     case "Practitioner":
     case "Coach":
     case "Reviewer":
-    case "Super Admin":
       return "/content-manager/library";
+    case "Super Admin":
+    case "admin":
+    case "Admin":
+      return "/user-management";
     case "Client":
       return "/health-snapshot";
     default:

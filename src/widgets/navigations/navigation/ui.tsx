@@ -11,7 +11,11 @@ import SignOutIcon from "shared/assets/icons/signout";
 import { Input } from "shared/ui/input";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 
-export const Navigation: React.FC = () => {
+type Props = {
+  pageLocation: "content-manager" | "user-management"
+}
+
+export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const nav = useNavigate();
@@ -59,7 +63,7 @@ export const Navigation: React.FC = () => {
             TOLU
           </h1>
           <p className="text-[16px] md:text-[18px] font-[700] h-[21px] md:h-[27px] font-open leading-normal">
-            Practitioner Admin
+            {pageLocation === "user-management" ? "Admin" : "Practitioner Admin"}
           </p>
         </div>
         <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
@@ -107,8 +111,7 @@ export const Navigation: React.FC = () => {
                   to={link.link}
                   onClick={() => setMenuMobOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${
-                      isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                     } hover:text-[#1C63DB]`
                   }
                 >

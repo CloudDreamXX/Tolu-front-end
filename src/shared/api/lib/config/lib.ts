@@ -103,10 +103,12 @@ export const API_ROUTES = {
     CHANGE_STATUS: "/library/status",
     RATE_CONTENT: "/coach/rate-content",
   },
-
   DOCUMENTS: {
     DETAILS: "/content/retrieve",
   },
+  ADMIN: {
+    GET_ALL_USERS: "/admin/users"
+  }
 };
 
 export const EXCLUDE_TOKEN_ENDPOINTS = [
