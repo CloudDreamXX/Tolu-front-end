@@ -140,12 +140,6 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     }
   };
 
-  const handleBackClick = () => {
-    setSubfolderPopup(false);
-    setSubfolders([]);
-    setParentFolderId(null);
-  };
-
   const handleCreateSubfolder = (parentId: string, parentName: string) => {
     setParentFolderId(parentId);
     setSelectedFolderName(parentName);
@@ -173,7 +167,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
             </Button>
           )}
         </PopoverTrigger>
-        <PopoverContent className="w-[526px] p-6 flex flex-col gap-6">
+        <PopoverContent className="w-[358px] md:w-[526px] p-6 flex flex-col gap-6">
           {/* {!subfolderPopup ? (
             <>
               <Input
@@ -263,14 +257,13 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                 <Plus />
               </button>
             </div>
-            <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
+            <div className="grid w-full md:grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
               {subfolders.map((subfolder) => (
                 <button
-                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
-                    selectedFolder === subfolder.id
-                      ? "bg-blue-50 border border-blue-200"
-                      : "bg-white"
-                  }`}
+                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${selectedFolder === subfolder.id
+                    ? "bg-blue-50 border border-blue-200"
+                    : "bg-white"
+                    }`}
                   key={subfolder.id}
                   onClick={() => toggleFolderSelection(subfolder)}
                 >

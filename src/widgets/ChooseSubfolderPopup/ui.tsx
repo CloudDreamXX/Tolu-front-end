@@ -23,7 +23,7 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[500px] lg:max-w-[742px] w-full shadow-lg mx-[16px] relative">
+      <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[720px] lg:max-w-[742px] w-full shadow-lg mx-[16px] relative">
         <button
           onClick={onClose}
           className="absolute top-[16px] right-[16px]"
@@ -51,10 +51,10 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
           />
         </div>
 
-        <div className="flex justify-between mt-[24px]">
+        <div className="flex flex-col flex-col-reverse gap-[8px] md:flex-row md:justify-between mt-[24px] md:mt-[48px]">
           <button
             onClick={onClose}
-            className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] w-[128px] text-[16px] font-[600]"
+            className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600]"
           >
             Cancel
           </button>
@@ -63,7 +63,7 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
             onClick={() =>
               selectedFolderId && handleSave(contentId, selectedFolderId)
             }
-            className="px-[16px] py-[11px] rounded-full w-[128px] text-[16px] font-[600] bg-[#1C63DB] text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-[16px] py-[11px] rounded-full w-full md:w-[128px] text-[16px] font-[600] bg-[#1C63DB] text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save
           </button>

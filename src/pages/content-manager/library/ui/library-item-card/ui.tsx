@@ -12,6 +12,7 @@ interface LibraryItemCardProps {
   toggleFolder: (id: string) => void;
   level: number;
   onClick?: (e: any) => void;
+  onDotsClick: (row: TableRow, e: React.MouseEvent) => void;
 }
 
 export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
@@ -20,6 +21,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
   toggleFolder,
   level,
   onClick,
+  onDotsClick
 }) => {
   const hasChildren =
     (item.subfolders && item.subfolders.length > 0) ||
@@ -44,9 +46,8 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
         <div className="flex items-center gap-[8px]">
           {hasChildren && (
             <ChevronDown
-              className={`cursor-pointer w-[20px] h-[20px] transition-transform duration-200 ${
-                isExpanded ? "rotate-180" : ""
-              }`}
+              className={`cursor-pointer w-[20px] h-[20px] transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
+                }`}
               onClick={() => toggleFolder(item.id)}
             />
           )}
@@ -57,9 +58,15 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
             </span>
           </div>
         </div>
-        <button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDotsClick?.(item, e);
+          }}
+        >
           <Dots color="#1D1D1F" />
         </button>
+
       </div>
 
       <div className="mt-[8px]">
@@ -83,6 +90,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
               expandedFolders={expandedFolders}
               toggleFolder={toggleFolder}
               level={level + 1}
+              onDotsClick={onDotsClick}
             />
           ))}
 
@@ -100,6 +108,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                   `/content-manager/library/folder/${item.id}/document/${contentItem.id}`
                 );
               }}
+              onDotsClick={onDotsClick}
             />
           ))}
 
@@ -156,9 +165,8 @@ const DetailRow: React.FC<DetailRowProps> = ({
 }) => {
   return (
     <div
-      className={`py-[8px] flex items-center ${
-        !isLast ? "border-b border-[#F3F6FB]" : ""
-      }`}
+      className={`py-[8px] flex items-center ${!isLast ? "border-b border-[#F3F6FB]" : ""
+        }`}
     >
       <span className="text-[14px] text-[#5F5F65] w-full">{label}</span>
       <span className="text-[16px] text-[#000000] w-full">{value ?? "-"}</span>

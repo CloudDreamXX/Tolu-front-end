@@ -14,7 +14,7 @@ export const DeleteMessagePopup: React.FC<Props> = ({
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[500px] lg:max-w-[742px] w-full shadow-lg mx-[16px]">
-        <h2 className="text-[20px] font-[700] text-[#FF1F0F] flex flex-col md:flex-row md:items-center gap-[10px] md:gap-[8px] mb-[12px]">
+        <h2 className="text-[20px] font-[700] text-[#FF1F0F] flex md:items-center gap-[10px] md:gap-[8px] mb-[12px]">
           <TrashIcon fill="#FF1F0F" /> Delete Message?
         </h2>
         <p className="text-[16px] text-[#5F5F65] font-[500] mb-[24px]">

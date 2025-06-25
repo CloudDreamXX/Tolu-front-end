@@ -150,7 +150,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-full xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
+      <PopoverContent className="w-[358px] md::w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <Attach />
           {attachedFiles.length > 0

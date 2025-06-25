@@ -25,6 +25,7 @@ interface IPopoverClientProps {
   setClientId?: (clientId: string | null) => void;
   customTrigger?: React.ReactNode;
   initialSelectedClientsId?: string[] | null;
+  refreshSharedClients?: () => Promise<void>
 }
 
 export const PopoverClient: React.FC<IPopoverClientProps> = ({
@@ -32,6 +33,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   setClientId,
   customTrigger,
   initialSelectedClientsId,
+  refreshSharedClients
 }) => {
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
@@ -61,30 +63,27 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   }, [search, clients]);
 
   const toggleClientSelection = async (client_id: string) => {
-    if (
+    const isAlreadySelected =
       selectedClient === client_id ||
-      initialSelectedClientsId?.includes(client_id)
-    ) {
-      setSelectedClient(null);
-      if (documentId) {
-        const data: ShareContentData = {
-          content_id: documentId,
-          client_id: client_id,
-        };
+      initialSelectedClientsId?.includes(client_id);
+
+    setSelectedClient(isAlreadySelected ? null : client_id);
+
+    if (documentId) {
+      const data: ShareContentData = {
+        content_id: documentId,
+        client_id: client_id,
+      };
+      if (isAlreadySelected) {
         await CoachService.revokeContent(data);
-      }
-    } else {
-      setSelectedClient(client_id);
-      if (documentId) {
-        const data: ShareContentData = {
-          content_id: documentId,
-          client_id: client_id,
-        };
+      } else {
         await CoachService.shareContent(data);
       }
+
+      await refreshSharedClients?.();
     }
 
-    setClientId?.(client_id);
+    setClientId?.(isAlreadySelected ? null : client_id);
   };
 
   return (
@@ -107,7 +106,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-6 flex flex-col gap-6">
+      <PopoverContent className="w-[358px] md:w-[419px] p-6 flex flex-col gap-6">
         <Input
           variant="bottom-border"
           placeholder="Choose a client"

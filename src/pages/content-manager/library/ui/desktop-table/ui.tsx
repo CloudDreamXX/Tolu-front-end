@@ -22,106 +22,65 @@ import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
 import { ContentService } from "entities/content";
 import CloseIcon from "shared/assets/icons/close";
 
-interface LibraryDesktopViewProps {
+type LibraryDesktopViewProps = {
   filteredItems: TableRow[];
   expandedFolders: Set<string>;
   toggleFolder: (id: string) => void;
+  selectedRow: TableRow | null;
+  isMenuOpen: boolean;
+  popupPosition: { top: number; left: number };
+  isMarkAsOpen: boolean;
+  isDeleteOpen: boolean;
+  isDublicateOpen: boolean;
+  isMoveOpen: boolean;
+  isImproveOpen: boolean;
+  idToDuplicate: string;
+  folders: RootState["folder"]["folders"];
+
+  onDotsClick: (row: TableRow, e: React.MouseEvent) => void;
+  onStatusComplete: (status: "Raw" | "Ready for Review" | "Waiting" | "Second Review Requested" | "Ready to Publish" | "Live" | "Archived") => Promise<void>;
+  onDeleteClick: (id: string) => Promise<void>;
+  onDuplicateClick: (id: string) => void;
+  onDuplicateAndMoveClick: (id: string, subfolderId: string) => Promise<void>;
+  onMoveClick: (id: string, subfolderId: string) => Promise<void>;
+
+  setIsMarkAsOpen: (v: boolean) => void;
+  setIsDeleteOpen: (v: boolean) => void;
+  setIsDublicateOpen: (v: boolean) => void;
+  setIsMoveOpen: (v: boolean) => void;
+  setIsImproveOpen: (v: boolean) => void;
+  setSelectedRow: (row: TableRow | null) => void;
+  setPopupPosition: (coords: { top: number; left: number }) => void;
 }
 
 export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
   filteredItems,
   expandedFolders,
   toggleFolder,
+  selectedRow,
+  isMenuOpen,
+  popupPosition,
+  isMarkAsOpen,
+  isDeleteOpen,
+  isDublicateOpen,
+  isMoveOpen,
+  isImproveOpen,
+  idToDuplicate,
+  folders,
+
+  onDotsClick,
+  onStatusComplete,
+  onDeleteClick,
+  onDuplicateClick,
+  onDuplicateAndMoveClick,
+  onMoveClick,
+
+  setIsMarkAsOpen,
+  setIsDeleteOpen,
+  setIsDublicateOpen,
+  setIsMoveOpen,
+  setIsImproveOpen,
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
-  const [popupPosition, setPopupPosition] = useState<{
-    top: number;
-    left: number;
-  }>({ top: 0, left: 0 });
-  const [isMarkAsOpen, setIsMarkAsOpen] = useState<boolean>(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
-  const [isDublicateOpen, setIsDublicateOpen] = useState<boolean>(false);
-  const [isMoveOpen, setIsMoveOpen] = useState<boolean>(false);
-  const [isImproveOpen, setIsImproveOpen] = useState<boolean>(false);
-  const [idToDuplicate, setIsIdToDuplicate] = useState<string>("");
-  const token = useSelector((state: RootState) => state.user.token);
-  const dispatch = useDispatch();
-  const folders = useSelector((state: RootState) => state.folder);
-
-  const handleDotsClick = (row: TableRow, event: React.MouseEvent) => {
-    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    setSelectedRow(row);
-    setPopupPosition({ top: rect.top, left: rect.left });
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const onStatusComplete = async (
-    status:
-      | "Raw"
-      | "Ready for Review"
-      | "Waiting"
-      | "Second Review Requested"
-      | "Ready to Publish"
-      | "Live"
-      | "Archived"
-  ) => {
-    const newStatus = {
-      id: selectedRow?.id ?? "",
-      status: status,
-    };
-    await CoachService.changeStatus(newStatus, token);
-
-    const fetchFolders = async () => {
-      try {
-        const { folders, foldersMap } = await FoldersService.getFolders();
-        dispatch(setFolders({ folders, foldersMap }));
-      } catch (error) {
-        console.error("Error fetching folders:", error);
-      }
-    };
-
-    fetchFolders();
-
-    setIsMarkAsOpen(false);
-    setIsMenuOpen(false);
-  };
-
-  const handleDeleteClick = async (id: string) => {
-    await FoldersService.deleteContent(id);
-    setIsDeleteOpen(false);
-    setIsMenuOpen(false);
-  };
-
-  const handleDublicateClick = async (id: string) => {
-    setIsDublicateOpen(true);
-    const response = await ContentService.duplicateContentById(id);
-    setIsIdToDuplicate(response.duplicated_content.id);
-  };
-
-  const handleDublicateAndMoveClick = async (
-    id: string,
-    subfolderId: string
-  ) => {
-    const payload: ContentToMove = {
-      content_id: id,
-      target_folder_id: subfolderId,
-    };
-    await FoldersService.moveFolderContent(payload);
-    setIsDublicateOpen(false);
-    setIsMenuOpen(false);
-  };
-
-  const handleMoveClick = async (id: string, subfolderId: string) => {
-    const payload: ContentToMove = {
-      content_id: id,
-      target_folder_id: subfolderId,
-    };
-    await FoldersService.moveFolderContent(payload);
-    setIsMoveOpen(false);
-    setIsMenuOpen(false);
-  };
-
   const findParentFolderId = (
     folders: IFolder[],
     targetId: string
@@ -183,7 +142,7 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
                 index={index}
                 expandedFolders={expandedFolders}
                 toggleFolder={toggleFolder}
-                onDotsClick={handleDotsClick}
+                onDotsClick={onDotsClick}
               />
             ))}
           </tbody>
@@ -191,15 +150,18 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
       </div>
       {isMenuOpen && selectedRow && (
         <EditDocumentPopup
-          onEdit={() => {}}
+          onEdit={() => { }}
           onMove={() => setIsMoveOpen(true)}
-          onDublicate={() => handleDublicateClick(selectedRow.id)}
+          onDublicate={() => onDuplicateClick(selectedRow.id)}
           onMarkAs={() => setIsMarkAsOpen(true)}
-          onArchive={() => {}}
+          onArchive={() => { }}
           onDelete={() => setIsDeleteOpen(true)}
           onImproveWithAI={
             selectedRow.status === "Ready for Review"
-              ? () => setIsImproveOpen(true)
+              ? () => {
+                onDuplicateClick(selectedRow.id)
+                setIsImproveOpen(true)
+              }
               : undefined
           }
           position={popupPosition}
@@ -212,14 +174,16 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
           onComplete={onStatusComplete}
           currentStatus={
             selectedRow!.status as
-              | "Raw"
-              | "Ready for Review"
-              | "Waiting"
-              | "Second Review Requested"
-              | "Ready to Publish"
-              | "Live"
-              | "Archived"
+            | "Raw"
+            | "Ready for Review"
+            | "Waiting"
+            | "Second Review Requested"
+            | "Ready to Publish"
+            | "Live"
+            | "Archived"
           }
+          handleMoveClick={onMoveClick}
+          contentId={selectedRow?.id}
         />
       )}
 
@@ -227,17 +191,17 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
         <DeleteMessagePopup
           contentId={selectedRow?.id!}
           onCancel={() => setIsDeleteOpen(false)}
-          onDelete={handleDeleteClick}
+          onDelete={onDeleteClick}
         />
       )}
       {isDublicateOpen && (
         <ChooseSubfolderPopup
           title={"Duplicate"}
           contentId={idToDuplicate}
-          handleSave={handleDublicateAndMoveClick}
+          handleSave={onDuplicateAndMoveClick}
           onClose={() => setIsDublicateOpen(false)}
           parentFolderId={
-            findParentFolderId(folders.folders, idToDuplicate) || ""
+            findParentFolderId(folders, idToDuplicate) || ""
           }
         />
       )}
@@ -245,10 +209,10 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
         <ChooseSubfolderPopup
           title={"Move"}
           contentId={selectedRow?.id!}
-          handleSave={handleMoveClick}
+          handleSave={onMoveClick}
           onClose={() => setIsMoveOpen(false)}
           parentFolderId={
-            findParentFolderId(folders.folders, selectedRow!.id) || ""
+            findParentFolderId(folders, selectedRow!.id) || ""
           }
         />
       )}
@@ -256,10 +220,10 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
         <ChooseSubfolderPopup
           title={"Improve with AI"}
           description="Lorem ipsum dolor sit amet consectetur. Convallis ut rutrum diam quam."
-          contentId={selectedRow?.id!}
-          handleSave={handleMoveClick}
+          contentId={idToDuplicate}
+          handleSave={onDuplicateAndMoveClick}
           onClose={() => setIsImproveOpen(false)}
-          parentFolderId={folders.folders[0].id}
+          parentFolderId={folders[0].id}
         />
       )}
     </>
@@ -419,12 +383,12 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
                     <li
                       key={index}
                       className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
-                      // onClick={() => {
-                      //   nav(
-                      //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
-                      //   );
-                      //   setPopupRow(null);
-                      // }}
+                    // onClick={() => {
+                    //   nav(
+                    //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
+                    //   );
+                    //   setPopupRow(null);
+                    // }}
                     >
                       <DocumentIcon />
                       {item.filename}
@@ -585,12 +549,12 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
                   <li
                     key={index}
                     className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
-                    // onClick={() => {
-                    //   nav(
-                    //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
-                    //   );
-                    //   setPopupRow(null);
-                    // }}
+                  // onClick={() => {
+                  //   nav(
+                  //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
+                  //   );
+                  //   setPopupRow(null);
+                  // }}
                   >
                     <DocumentIcon />
                     {item.filename}

@@ -218,13 +218,13 @@ export const ContentManagerFolder: React.FC = () => {
             onComplete={onStatusComplete}
             currentStatus={
               folder!.status as
-                | "Raw"
-                | "Ready for Review"
-                | "Waiting"
-                | "Second Review Requested"
-                | "Ready to Publish"
-                | "Live"
-                | "Archived"
+              | "Raw"
+              | "Ready for Review"
+              | "Waiting"
+              | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
             }
           />
         )}

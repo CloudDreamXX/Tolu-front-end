@@ -93,15 +93,14 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 max-h-[300px] overflow-y-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto">
         {subfolders.map((subfolder) => (
           <button
             key={subfolder.id}
-            className={`flex justify-between items-center py-2 px-3 rounded-[10px] shadow-lg ${
-              selectedFolderId === subfolder.id
+            className={`flex justify-between items-center py-2 px-3 rounded-[10px] shadow-lg ${selectedFolderId === subfolder.id
                 ? "bg-blue-50 border border-blue-200"
                 : "bg-white"
-            }`}
+              }`}
             onClick={() => onSelect(subfolder.id)}
           >
             <span className="text-lg font-semibold text-gray-900 truncate">

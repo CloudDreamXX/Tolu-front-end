@@ -36,7 +36,7 @@ export const BadRateResponse: React.FC<Props> = ({
       role="dialog"
       aria-labelledby="modal-title"
     >
-      <div className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative">
+      <div className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px]">
         <button
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
@@ -52,16 +52,15 @@ export const BadRateResponse: React.FC<Props> = ({
           What was wrong with this response?
         </h3>
 
-        <div className="grid grid-cols-2 gap-[8px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px]">
           {reasons.map((reason) => (
             <button
               key={reason}
               onClick={() => setSelectedReason(reason)}
-              className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${
-                selectedReason === reason
-                  ? "border-[#1C63DB] text-[#676767]"
-                  : "border-[#E3E3E3] text-[#676767]"
-              }`}
+              className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${selectedReason === reason
+                ? "border-[#1C63DB] text-[#676767]"
+                : "border-[#E3E3E3] text-[#676767]"
+                }`}
             >
               {reason}
             </button>
@@ -75,7 +74,7 @@ export const BadRateResponse: React.FC<Props> = ({
           onChange={(e) => setComment(e.target.value)}
         />
 
-        <div className="flex justify-between mt-[24px] w-full">
+        <div className="flex flex-col flex-col-reverse gap-[8px] md:flex-row md:justify-between mt-[24px] w-full">
           <button
             className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] text-[16px] font-[600]"
             onClick={onClose}

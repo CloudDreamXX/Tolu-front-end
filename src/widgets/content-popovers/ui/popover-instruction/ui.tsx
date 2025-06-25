@@ -87,7 +87,7 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-full xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
+      <PopoverContent className="w-[358px] md::w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         <h4 className="flex flex-row gap-2 text-xl font-bold">
           <Setting width={28} height={28} />
           {title}
@@ -143,7 +143,7 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
             )}
           </div>
           <Button
-            variant={"blue"}
+            variant={"brightblue"}
             className="w-[128px]"
             onClick={handleSave}
             disabled={!instructionText.trim()}
