@@ -17,9 +17,8 @@ export const DropArea = ({
     <button
       type="button"
       aria-label="Drop files here or click to browse"
-      className={`w-full mt-4 p-6 border border-dashed rounded-2xl text-left ${
-        dragActive ? "border-blue-700 bg-blue-50" : "border-blue-500 bg-white"
-      } focus:outline-none`}
+      className={`w-full mt-4 p-6 border border-dashed rounded-2xl text-left ${dragActive ? "border-blue-700 bg-blue-50" : "border-blue-500 bg-white"
+        } focus:outline-none`}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
@@ -28,8 +27,7 @@ export const DropArea = ({
       <div className="flex flex-col items-center justify-center text-center pointer-events-none">
         <UploadCloud />
         <p className="mt-3 mb-1 text-base">
-          <span className="text-blue-500">Click to upload</span> or drag and
-          drop
+          <span className="text-blue-500">Click to upload</span>
         </p>
         <p className="text-sm text-gray-500">
           SVG, PNG, JPG or GIF (max. 800x400px)

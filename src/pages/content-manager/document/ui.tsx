@@ -396,7 +396,7 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:px-[60px] py-6 h-[calc(100vh-78px)] w-full">
+    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:px-[60px] pt-6 h-[calc(100vh-78px)] w-full">
       <div className="flex flex-row w-full h-full gap-[26px]">
         <div className="relative flex flex-col w-full h-full gap-2">
           <Breadcrumb className="flex flex-row gap-2 text-sm text-muted-foreground">
@@ -704,7 +704,7 @@ export const ContentManagerDocument: React.FC = () => {
                               compareIndex === index ? null : index
                             )
                           }
-                          className="py-[4px] px-[10px] rounded-[8px] text-[18px] text-[#5F5F65] ml-[24px] hover:bg-[#EDF3FF] hover:text-[#1C63DB]"
+                          className="py-[4px] px-[10px] rounded-[8px] text-[18px] text-[#5F5F65] ml-[16px] md:ml-[24px] hover:bg-[#EDF3FF] hover:text-[#1C63DB]"
                         >
                           {compareIndex === index ? "Return" : "Compare"}
                         </button>
@@ -737,58 +737,69 @@ export const ContentManagerDocument: React.FC = () => {
             </ScrollArea>
           </div>
 
-          <Textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Let’s start with a subject or writing request..."
-            disabled={isSendingMessage}
-            containerClassName="absolute bottom-8 xl:left-[50%] xl:translate-x-[-50%] w-full xl:w-[1080px] bg-white z-10 rounded-3xl overflow-hidden border border-[#008FF6]"
-            className="h-20 text-lg font-medium text-gray-900 resize-none placeholder:text-gray-500"
-            footer={
-              <div className="flex flex-row w-full gap-[10px]">
-                <PopoverAttach
-                  setFiles={setFiles}
-                  disabled={!folderId}
-                  customTrigger={
-                    <button className="flex items-center justify-center w-[48px] h-[48px] rounded-full bg-[#F3F6FB]">
-                      <Attach />
-                    </button>
-                  }
-                />
-                <PopoverClient
-                  setClientId={setClientId}
-                  documentId={documentId}
-                />
-                <div className="flex items-center gap-[32px] ml-auto">
-                  <div className="flex items-center gap-2">
+          <div className="absolute bottom-0 w-full h-[150px] xl:left-1/2 xl:-translate-x-1/2 xl:w-[1080px] bg-[#F2F4F6] z-10">
+            <Textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Let’s start with a subject or writing request..."
+              disabled={isSendingMessage}
+              containerClassName="w-full rounded-3xl overflow-hidden border border-[#008FF6] absolute bottom-[40px]"
+              className="h-20 text-lg font-medium text-gray-900 resize-none placeholder:text-gray-500"
+              footer={
+                <div className="flex flex-col gap-[8px] w-full">
+                  <div className="flex flex-row w-full gap-[10px]">
+                    <PopoverAttach
+                      setFiles={setFiles}
+                      disabled={!folderId}
+                      customTrigger={
+                        <button className="flex items-center justify-center w-[48px] h-[48px] rounded-full bg-[#F3F6FB]">
+                          <Attach />
+                        </button>
+                      }
+                    />
+                    <PopoverClient
+                      setClientId={setClientId}
+                      documentId={documentId}
+                    />
+                    <div className="flex items-center gap-[32px] ml-auto">
+                      <div className="hidden md:block flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]"
+                        >
+                          <span className="inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300" />
+                        </button>
+                        <span className="text-[#5F5F65] font-semibold text-[16px]">
+                          Case-based generation
+                        </span>
+                      </div>
+                      <Button
+                        variant="black"
+                        className="ml-auto w-12 h-12 p-[10px] rounded-full"
+                        onClick={handleSendMessage}
+                        disabled={isSendingMessage}
+                      >
+                        <Send color="#fff" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="md:hidden flex items-center gap-2">
                     <button
                       type="button"
-                      // aria-pressed={enabled}
-                      // onClick={() => setEnabled(!enabled)}
-                      className={`relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]`}
-                    // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
+                      className="relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]"
                     >
-                      <span
-                        className={`inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300`}
-                      // enabled ? "translate-x-[26.8px]" : "translate-x-0"
-                      />
+                      <span className="inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300" />
                     </button>
                     <span className="text-[#5F5F65] font-semibold text-[16px]">
                       Case-based generation
                     </span>
                   </div>
-                  <Button
-                    variant="black"
-                    className="ml-auto w-12 h-12 p-[10px] rounded-full"
-                    onClick={handleSendMessage}
-                    disabled={isSendingMessage}
-                  >
-                    <Send color="#fff" />
-                  </Button>
                 </div>
-              </div>
-            }
-          />
+              }
+            />
+          </div>
+
         </div>
 
         {folder && folder.name === "Published" && (

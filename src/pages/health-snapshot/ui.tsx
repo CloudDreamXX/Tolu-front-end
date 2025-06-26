@@ -22,7 +22,6 @@ export const HealthSnapshot = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [networkSupportOpen, setNetworkSupportOpen] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
-  const user = useSelector((state: RootState) => state.user);
   const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth > 1536);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1280);
 

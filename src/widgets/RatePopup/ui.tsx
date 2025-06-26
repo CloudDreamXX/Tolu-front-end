@@ -62,7 +62,7 @@ export const RatePopup: React.FC<RatePopupProps> = ({
         onMouseDown={() => (ignoreClickRef.current = true)}
         className={`
           relative flex flex-col bg-white shadow-md border border-[#C7D7F9] rounded-[20px] p-6 w-full mx-4 
-          md:absolute z-[999] md:top-[-130px] md:left-[-50px] md:rounded-[8px] md:w-[197px] md:p-4
+          md:absolute z-[999] md:top-[-130px] md:left-[-50px] md:rounded-[8px] md:w-[239px] xl:w-[203px] md:p-4
         `}
       >
         <button
@@ -72,7 +72,7 @@ export const RatePopup: React.FC<RatePopupProps> = ({
         >
           <Close />
         </button>
-        <p className="text-[20px] md:text-[16px] text-[#1D1D1F] font-[500] mb-[16px] md:mb-[8px] leading-[140%]">
+        <p className="text-[20px] md:text-[18px] xl:text-[16px] text-center text-[#1D1D1F] font-[500] mb-[16px] md:mb-[8px] leading-[140%]">
           Please rate the quality
         </p>
 

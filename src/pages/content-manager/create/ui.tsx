@@ -66,39 +66,58 @@ export const ContentManagerCreatePage: React.FC = () => {
           containerClassName="border-[#008FF6]"
           className="h-20 text-lg font-medium resize-none placeholder:text-[#1D1D1F80] text-[#1D1D1F]"
           footer={
-            <div className="flex flex-row w-full gap-[10px]">
-              <PopoverClient setClientId={setClientId} />
-              <PopoverFolder
-                setFolderId={setFolderId}
-                setExistingFiles={setExistingFiles}
-                setExistingInstruction={setExistingInstruction}
-              />
-              <div className="flex items-center gap-[32px] ml-auto">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    // aria-pressed={enabled}
-                    // onClick={() => setEnabled(!enabled)}
-                    className={`relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]`}
-                  // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
+            <div className="flex flex-col gap-[8px] w-full">
+              <div className="flex flex-row w-full gap-[10px]">
+                <PopoverClient setClientId={setClientId} />
+                <PopoverFolder
+                  setFolderId={setFolderId}
+                  setExistingFiles={setExistingFiles}
+                  setExistingInstruction={setExistingInstruction}
+                />
+                <div className="flex items-center gap-[32px] ml-auto">
+                  <div className="hidden md:block flex items-center gap-2">
+                    <button
+                      type="button"
+                      // aria-pressed={enabled}
+                      // onClick={() => setEnabled(!enabled)}
+                      className={`relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]`}
+                    // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
+                    >
+                      <span
+                        className={`inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300`}
+                      // enabled ? "translate-x-[26.8px]" : "translate-x-0"
+                      />
+                    </button>
+                    <span className="text-[#5F5F65] font-semibold text-[16px]">
+                      Case-based generation
+                    </span>
+                  </div>
+                  <Button
+                    variant="black"
+                    className="ml-auto w-12 h-12 p-[10px] rounded-full"
+                    onClick={handleSendMessage}
+                    disabled={isSending || !folderId || !message.trim()}
                   >
-                    <span
-                      className={`inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300`}
-                    // enabled ? "translate-x-[26.8px]" : "translate-x-0"
-                    />
-                  </button>
-                  <span className="text-[#5F5F65] font-semibold text-[16px]">
-                    Case-based generation
-                  </span>
+                    <Send color="#fff" />
+                  </Button>
                 </div>
-                <Button
-                  variant="black"
-                  className="ml-auto w-12 h-12 p-[10px] rounded-full"
-                  onClick={handleSendMessage}
-                  disabled={isSending || !folderId || !message.trim()}
+              </div>
+              <div className="md:hidden flex items-center gap-2">
+                <button
+                  type="button"
+                  // aria-pressed={enabled}
+                  // onClick={() => setEnabled(!enabled)}
+                  className={`relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]`}
+                // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
                 >
-                  <Send color="#fff" />
-                </Button>
+                  <span
+                    className={`inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300`}
+                  // enabled ? "translate-x-[26.8px]" : "translate-x-0"
+                  />
+                </button>
+                <span className="text-[#5F5F65] font-semibold text-[16px]">
+                  Case-based generation
+                </span>
               </div>
             </div>
           }

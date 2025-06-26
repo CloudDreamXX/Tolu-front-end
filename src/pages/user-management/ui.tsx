@@ -88,45 +88,48 @@ export const UserManagement: React.FC = () => {
             {loading ? (
                 <div className="text-center py-8">Loading users...</div>
             ) : (
-                <div className="lg:mt-8 md:rounded-[8px]">
-                    <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
-                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Name</div>
-                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Email</div>
-                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Phone number</div>
-                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Sign Up date</div>
-                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Role</div>
-                    </div>
+                <div className="overflow-x-auto">
+                    <div className="min-w-[1400px]">
+                        <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
+                            <div className="px-[4px]">Name</div>
+                            <div className="px-[4px]">Email</div>
+                            <div className="px-[4px]">Phone number</div>
+                            <div className="px-[4px]">Sign Up date</div>
+                            <div className="px-[4px]">Role</div>
+                        </div>
 
-                    <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] md:bg-white rounded-b-[8px]">
-                        {paginatedData.map((user, index) => (
-                            <div
-                                key={index}
-                                className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
-                            >
-                                <div className="break-words whitespace-normal overflow-hidden px-[4px]">{user.name}</div>
-                                <div className="break-words whitespace-normal overflow-hidden px-[4px]">{user.email}</div>
-                                <div className="break-words whitespace-normal overflow-hidden px-[4px]">{user.phone_number}</div>
-                                <div className="break-words whitespace-normal overflow-hidden px-[4px]">{user.signup_date}</div>
-                                <div>
-                                    <span
-                                        className={`text-sm font-semibold px-2 py-1 rounded-full ${user.role === 0
-                                            ? "bg-green-100 text-green-700"
-                                            : user.role === 1
-                                                ? "bg-[#F0F3FF] text-[#000E66]"
-                                                : user.role === 2
-                                                    ? "bg-red-100 text-red-700"
-                                                    : user.role === 3
-                                                        ? "bg-purple-100 text-purple-700"
-                                                        : "bg-orange-100 text-orange-700"
-                                            }`}
-                                    >
-                                        {ROLE_MAP[user.role] ?? "Unknown"}
-                                    </span>
+                        <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
+                            {paginatedData.map((user, index) => (
+                                <div
+                                    key={index}
+                                    className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
+                                >
+                                    <div className="px-[4px]">{user.name}</div>
+                                    <div className="px-[4px]">{user.email}</div>
+                                    <div className="px-[4px]">{user.phone_number}</div>
+                                    <div className="px-[4px]">{user.signup_date}</div>
+                                    <div>
+                                        <span
+                                            className={`text-sm font-semibold px-2 py-1 rounded-full ${user.role === 0
+                                                ? "bg-green-100 text-green-700"
+                                                : user.role === 1
+                                                    ? "bg-[#F0F3FF] text-[#000E66]"
+                                                    : user.role === 2
+                                                        ? "bg-red-100 text-red-700"
+                                                        : user.role === 3
+                                                            ? "bg-purple-100 text-purple-700"
+                                                            : "bg-orange-100 text-orange-700"
+                                                }`}
+                                        >
+                                            {ROLE_MAP[user.role] ?? "Unknown"}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>)}
+                </div>
+            )}
 
             {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 pb-4">

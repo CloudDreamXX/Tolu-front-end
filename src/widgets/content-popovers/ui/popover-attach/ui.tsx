@@ -233,6 +233,13 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           >
             Cancel
           </Button>
+          <Button
+            variant={"brightblue"}
+            className="w-[128px]"
+            onClick={handleSave}
+          >
+            Attach
+          </Button>
         </div>
       </PopoverContent>
     </Popover>

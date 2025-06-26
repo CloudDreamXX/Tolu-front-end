@@ -153,7 +153,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
           {customTrigger ?? (
             <Button
               variant="secondary"
-              className="w-12 h-12 p-[10px] rounded-full relative"
+              className="w-12 h-12 p-[10px] rounded-full relative bg-[#F3F6FB]"
             >
               <ClosedFolder />
               {selectedFolder && (

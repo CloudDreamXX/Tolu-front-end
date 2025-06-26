@@ -118,7 +118,7 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
 
         <Textarea
           className="h-32 resize-none"
-          placeholder="Enter your instructions here..."
+          placeholder="Here will be instructions to folder ..."
           value={instructionText}
           onChange={(e) => setInstructionText(e.target.value)}
         />

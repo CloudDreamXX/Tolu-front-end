@@ -5,6 +5,9 @@ import { TableRow } from "../../models";
 import { getIcon } from "../../lib/lib";
 import DocumentIcon from "shared/assets/icons/document";
 import { useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import React from "react";
+import CloseIcon from "shared/assets/icons/close";
 
 interface LibraryItemCardProps {
   item: TableRow;
@@ -23,6 +26,40 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
   onClick,
   onDotsClick
 }) => {
+  const [popupRow, setPopupRow] = useState<TableRow | null>(null);
+  const fileRef = useRef<HTMLDivElement | null>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [popupStyle, setPopupStyle] = useState<{ top: number; left: number }>({
+    top: 0,
+    left: 0,
+  });
+
+  useEffect(() => {
+    if (popupRow && fileRef.current) {
+      const rect = fileRef.current.getBoundingClientRect();
+      setPopupStyle({
+        top: rect.top + window.scrollY - 250,
+        left: rect.left + window.scrollX,
+      });
+    }
+  }, [popupRow]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setPopupRow(null);
+      }
+    };
+
+    if (popupRow) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [popupRow]);
+
   const hasChildren =
     (item.subfolders && item.subfolders.length > 0) ||
     (item.content && item.content.length > 0);
@@ -70,13 +107,20 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
       </div>
 
       <div className="mt-[8px]">
-        <DetailRow label="Q-ty" value={`${item.filesCount ?? 0} Items`} />
+        <DetailRow
+          label="Files"
+          value={`${item.filesCount ?? 0} Items`}
+          isClickable
+          onClick={(e) => {
+            e.stopPropagation();
+            setPopupRow(item);
+          }}
+          ref={fileRef}
+        />
         <DetailRow
           label="Created"
           value={formatDateToSlash(new Date(item.createdAt))}
         />
-        <DetailRow label="Reviewers" value={item.reviewers} />
-        <DetailRow label="Price" value={item.price} />
         <DetailRow label="Status" value={item.status} isLast />
       </div>
 
@@ -131,7 +175,12 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                     {truncateTitle(msg.title)}
                   </span>
                 </div>
-                <button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDotsClick?.(item, e);
+                  }}
+                >
                   <Dots color="#1D1D1F" />
                 </button>
               </div>
@@ -140,12 +189,42 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                   label="Created"
                   value={formatDateToSlash(new Date(msg.createdAt))}
                 />
-                <DetailRow label="Reviewers" value={msg.reviewers ?? "-"} />
-                <DetailRow label="Price" value={msg.price ?? "-"} />
                 <DetailRow label="Status" value={msg.status ?? "-"} isLast />
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {popupRow && (
+        <div
+          ref={popupRef}
+          className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm"
+        >
+          <div className="relative flex flex-col bg-white shadow-md border border-[#C7D7F9] rounded-[20px] p-[16px] w-full mx-4">
+            <div className="flex justify-between items-baseline mb-4">
+              <h2 className="text-[20px] font-[700] text-[#1D1D1F]">
+                Files in "{popupRow.title}"
+              </h2>
+              <button onClick={() => setPopupRow(null)}>
+                <CloseIcon />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto" style={{ height: "179px" }}>
+              <ul className="space-y-[10px]">
+                {popupRow.fileNames?.map((item, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
+                  >
+                    <DocumentIcon />
+                    {item.filename}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -156,20 +235,23 @@ interface DetailRowProps {
   label: string;
   value: string | null;
   isLast?: boolean;
+  isClickable?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
-const DetailRow: React.FC<DetailRowProps> = ({
-  label,
-  value,
-  isLast = false,
-}) => {
-  return (
-    <div
-      className={`py-[8px] flex items-center ${!isLast ? "border-b border-[#F3F6FB]" : ""
-        }`}
-    >
-      <span className="text-[14px] text-[#5F5F65] w-full">{label}</span>
-      <span className="text-[16px] text-[#000000] w-full">{value ?? "-"}</span>
-    </div>
-  );
-};
+const DetailRow = React.forwardRef<HTMLDivElement, DetailRowProps>(
+  ({ label, value, isLast = false, isClickable = false, onClick }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={`py-[8px] flex items-center ${!isLast ? "border-b border-[#F3F6FB]" : ""
+          } ${isClickable ? "cursor-pointer hover:underline text-[#1C63DB]" : ""}`}
+        onClick={onClick}
+      >
+        <span className="text-[14px] text-[#5F5F65] w-full">{label}</span>
+        <span className="text-[16px] text-[#000000] w-full">{value ?? "-"}</span>
+      </div>
+    );
+  }
+);
+
