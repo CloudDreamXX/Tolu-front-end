@@ -1,10 +1,10 @@
 import { Archive } from "lucide-react";
 import ArrowRight from "shared/assets/icons/arrow-right";
-import Dublicate from "shared/assets/icons/dublicate";
 import Edit from "shared/assets/icons/edit";
 import Improve from "shared/assets/icons/ai-create";
-import { Eye } from "shared/assets/icons/eye";
+import MarkAs from "shared/assets/icons/grey-mark-as";
 import Trash from "shared/assets/icons/trash-icon";
+import Folders from "shared/assets/icons/grey-folders";
 
 type Props = {
   onEdit: () => void;
@@ -53,10 +53,10 @@ export const EditDocumentPopup: React.FC<Props> = ({
       {type !== "subfolder" && (
         <MenuItem icon={<ArrowRight />} label="Move" onClick={onMove} />
       )}
-      <MenuItem icon={<Dublicate />} label="Duplicate" onClick={onDublicate} />
+      <MenuItem icon={<Folders />} label="Duplicate" onClick={onDublicate} />
       {type !== "subfolder" && (
         <MenuItem
-          icon={<Eye width={24} height={24} />}
+          icon={<MarkAs width={24} height={24} />}
           label="Mark as"
           onClick={onMarkAs}
         />

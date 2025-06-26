@@ -1,3 +1,4 @@
+import Close from "shared/assets/icons/close";
 import TrashIcon from "shared/assets/icons/trash-icon";
 
 type Props = {
@@ -13,7 +14,14 @@ export const DeleteMessagePopup: React.FC<Props> = ({
 }) => {
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[500px] lg:max-w-[742px] w-full shadow-lg mx-[16px]">
+      <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[500px] lg:max-w-[742px] w-full shadow-lg mx-[16px] relative">
+        <button
+          className="absolute top-[16px] right-[16px]"
+          aria-label="Close modal"
+          onClick={onCancel}
+        >
+          <Close />
+        </button>
         <h2 className="text-[20px] font-[700] text-[#FF1F0F] flex md:items-center gap-[10px] md:gap-[8px] mb-[12px]">
           <TrashIcon fill="#FF1F0F" /> Delete Message?
         </h2>

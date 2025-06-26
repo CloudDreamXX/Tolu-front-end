@@ -1,6 +1,7 @@
 import { FOLDER_STATUS_MAPPING, ORDERED_STATUSES } from "entities/folder";
 import React, { useState } from "react";
 import Close from "shared/assets/icons/close";
+import MarkAs from "shared/assets/icons/grey-mark-as";
 import { toast } from "shared/lib";
 import { ChooseSubfolderPanel } from "widgets/ChooseSubfolderPanel";
 
@@ -100,9 +101,9 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
 
         <h3
           id="modal-title"
-          className="text-[20px] font-semibold text-[#1D1D1F]"
+          className="text-[20px] font-semibold text-[#1D1D1F] flex items-center gap-[16px]"
         >
-          Mark as
+          <MarkAs /> Mark as
         </h3>
         <p className="text-[14px] text-[#5F5F65] font-[500]">
           Lorem ipsum dolor sit amet consectetur. Convallis ut rutrum diam quam.
@@ -124,7 +125,7 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
                   key={status}
                   onClick={() => {
                     isEnabled && setSelectedStatus(status)
-                    selectedStatus === "AI-Generated" && setSubfoldersOpen(true)
+                    status === "AI-Generated" && setSubfoldersOpen(true)
                   }}
                   disabled={!isEnabled}
                   className={`text-left w-full px-[12px] py-[12px] text-[18px] font-semibold rounded-[8px] border

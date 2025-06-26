@@ -1,6 +1,8 @@
 import Close from "shared/assets/icons/close";
 import React, { useState } from "react";
 import { ChooseSubfolderPanel } from "widgets/ChooseSubfolderPanel";
+import ArrowRight from "shared/assets/icons/arrow-right";
+import Duplicate from "shared/assets/icons/duplicate";
 
 interface Props {
   title: string;
@@ -34,8 +36,10 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
 
         <h3
           id="modal-title"
-          className="text-[20px] font-semibold text-[#1D1D1F]"
+          className="text-[20px] font-semibold text-[#1D1D1F] flex items-center gap-[16px]"
         >
+          {title === "Move" && <ArrowRight />}
+          {title === "Duplicate" && <Duplicate />}
           {title}
         </h3>
         {description && (

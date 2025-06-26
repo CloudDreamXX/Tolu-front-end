@@ -24,7 +24,7 @@ export const UserManagement: React.FC = () => {
     const paginatedData = useMemo(() => {
         const start = (page - 1) * PAGE_SIZE;
         return usersData.slice(start, start + PAGE_SIZE);
-    }, [page]);
+    }, [page, usersData]);
 
     const totalPages = Math.ceil(usersData.length / PAGE_SIZE);
 
@@ -64,7 +64,7 @@ export const UserManagement: React.FC = () => {
 
     return (
         <div className="flex flex-col gap-[16px] md:gap-[35px] p-8 overflow-y-auto h-[100%]">
-            <div className="flex flex-col lg:flex-row gap-[16px] justify-between lg:items-end">
+            <div className="flex flex-col md:flex-row gap-[16px] justify-between md:items-end">
                 <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
                     <ClientsIcon />
                     Users
@@ -87,45 +87,46 @@ export const UserManagement: React.FC = () => {
 
             {loading ? (
                 <div className="text-center py-8">Loading users...</div>
-            ) : (<div className="lg:mt-8 md:rounded-[8px]">
-                <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
-                    <div>Name</div>
-                    <div>Email</div>
-                    <div>Phone number</div>
-                    <div>Sign Up date</div>
-                    <div>Role</div>
-                </div>
+            ) : (
+                <div className="lg:mt-8 md:rounded-[8px]">
+                    <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
+                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Name</div>
+                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Email</div>
+                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Phone number</div>
+                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Sign Up date</div>
+                        <div className="break-words whitespace-normal overflow-hidden px-[4px]">Role</div>
+                    </div>
 
-                <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] md:bg-white">
-                    {paginatedData.map((user, index) => (
-                        <div
-                            key={index}
-                            className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
-                        >
-                            <div>{user.name}</div>
-                            <div>{user.email}</div>
-                            <div>{user.phone_number}</div>
-                            <div>{user.signup_date}</div>
-                            <div>
-                                <span
-                                    className={`text-sm font-semibold px-2 py-1 rounded-full ${user.role === 0
-                                        ? "bg-green-100 text-green-700"
-                                        : user.role === 1
-                                            ? "bg-[#F0F3FF] text-[#000E66]"
-                                            : user.role === 2
-                                                ? "bg-red-100 text-red-700"
-                                                : user.role === 3
-                                                    ? "bg-purple-100 text-purple-700"
-                                                    : "bg-orange-100 text-orange-700"
-                                        }`}
-                                >
-                                    {ROLE_MAP[user.role] ?? "Unknown"}
-                                </span>
+                    <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] md:bg-white rounded-b-[8px]">
+                        {paginatedData.map((user, index) => (
+                            <div
+                                key={index}
+                                className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
+                            >
+                                <div className="break-words whitespace-normal overflow-hidden px-[4px]">{user.name}</div>
+                                <div className="break-words whitespace-normal overflow-hidden px-[4px]">{user.email}</div>
+                                <div className="break-words whitespace-normal overflow-hidden px-[4px]">{user.phone_number}</div>
+                                <div className="break-words whitespace-normal overflow-hidden px-[4px]">{user.signup_date}</div>
+                                <div>
+                                    <span
+                                        className={`text-sm font-semibold px-2 py-1 rounded-full ${user.role === 0
+                                            ? "bg-green-100 text-green-700"
+                                            : user.role === 1
+                                                ? "bg-[#F0F3FF] text-[#000E66]"
+                                                : user.role === 2
+                                                    ? "bg-red-100 text-red-700"
+                                                    : user.role === 3
+                                                        ? "bg-purple-100 text-purple-700"
+                                                        : "bg-orange-100 text-orange-700"
+                                            }`}
+                                    >
+                                        {ROLE_MAP[user.role] ?? "Unknown"}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            </div>)}
+                        ))}
+                    </div>
+                </div>)}
 
             {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 pb-4">

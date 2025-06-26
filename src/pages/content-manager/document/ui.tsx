@@ -9,6 +9,7 @@ import {
   FoldersService,
   IContentItem,
   IFolder,
+  InstructionInfo,
   ISubfolder,
 } from "entities/folder";
 import {
@@ -19,7 +20,7 @@ import {
   Share,
   ShareContentData,
 } from "entities/coach";
-import { PopoverClient } from "widgets/content-popovers";
+import { PopoverAttach, PopoverClient, PopoverFolder, PopoverInstruction } from "widgets/content-popovers";
 import Star from "shared/assets/icons/grey-star";
 import Bin from "shared/assets/icons/grey-bin";
 import Arrow from "shared/assets/icons/grey-arrow";
@@ -47,8 +48,9 @@ import { BadRateResponse } from "widgets/BadRateResponsePopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
 import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
 import { ContentService } from "entities/content";
-import Chevron from "shared/assets/icons/chevron";
 import BlueChevron from "shared/assets/icons/blue-chevron";
+import Voiceover from "shared/assets/icons/voiceover";
+import Attach from "shared/assets/icons/attach";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -62,6 +64,10 @@ export const ContentManagerDocument: React.FC = () => {
   const [folder, setFolder] = useState<IFolder | null>(null);
   const [message, setMessage] = useState<string>("");
   const [clientId, setClientId] = useState<string | null>(null);
+  const [existingFiles, setExistingFiles] = useState<string[]>([]);
+  const [existingInstruction, setExistingInstruction] = useState<string>("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [instruction, setInstruction] = useState<string>("");
 
   const [isCreatingDocument, setIsCreatingDocument] = useState(false);
   const [streamingContent, setStreamingContent] = useState<string>("");
@@ -90,6 +96,7 @@ export const ContentManagerDocument: React.FC = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [sharedClients, setSharedClients] = useState<Share[] | null>(null);
   const [mobilePage, setMobilePage] = useState<1 | 2>(1);
+  const [ratingsMap, setRatingsMap] = useState<Record<string, { rating: number; comment: string }>>({});
 
   useEffect(() => {
     if (isNewDocument && location.state) {
@@ -237,7 +244,7 @@ export const ContentManagerDocument: React.FC = () => {
         },
         folderId,
         undefined,
-        undefined,
+        files,
         clientId,
         (chunk) => {
           if (chunk.reply) {
@@ -335,6 +342,10 @@ export const ContentManagerDocument: React.FC = () => {
     comment: string,
     down: boolean
   ) => {
+    setRatingsMap(prev => ({
+      ...prev,
+      [id]: { rating, comment }
+    }));
     const payload: RateContent = {
       content_id: id,
       rating: rating,
@@ -430,6 +441,11 @@ export const ContentManagerDocument: React.FC = () => {
             ) : (
               <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
             )}
+            {document ? (
+              <InstructionInfo instructions={document.originalInstructions} />
+            ) : (
+              <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
+            )}
             {sharedClients ? (
               <ClientsInfo clients={sharedClients} documentId={documentId} refreshSharedClients={refreshSharedClients} />
             ) : (
@@ -437,7 +453,7 @@ export const ContentManagerDocument: React.FC = () => {
             )}
           </div>
 
-          <div className="flex flex-col h-full pt-6">
+          <div className="flex flex-col h-full pt-6 max-w-[1080px] m-auto">
             <ScrollArea className="h-[calc(100%-64px)]">
               <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px] flex flex-col gap-[8px] mb-[40px]">
                 <p className="text-[24px] font-[500] text-[#1D1D1F]">
@@ -633,7 +649,7 @@ export const ContentManagerDocument: React.FC = () => {
                             contentId={pair.id}
                             onClose={() => setIsRateOpen(false)}
                             handleRateClick={handleRateClick}
-                          />
+                            ratingsMap={ratingsMap} />
                         )}
                         <button className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
                           <Edit />
@@ -660,6 +676,9 @@ export const ContentManagerDocument: React.FC = () => {
                           }}
                         >
                           <MarkAs />
+                        </button>
+                        <button className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
+                          <Voiceover />
                         </button>
                         <button
                           className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
@@ -721,24 +740,52 @@ export const ContentManagerDocument: React.FC = () => {
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Continue the conversation..."
+            placeholder="Let’s start with a subject or writing request..."
             disabled={isSendingMessage}
-            containerClassName="absolute bottom-8 xl:left-[140px] w-full xl:w-[70%] bg-white z-10 rounded-3xl overflow-hidden border border-[#008FF6]"
+            containerClassName="absolute bottom-8 xl:left-[50%] xl:translate-x-[-50%] w-full xl:w-[1080px] bg-white z-10 rounded-3xl overflow-hidden border border-[#008FF6]"
             className="h-20 text-lg font-medium text-gray-900 resize-none placeholder:text-gray-500"
             footer={
               <div className="flex flex-row w-full gap-[10px]">
+                <PopoverAttach
+                  setFiles={setFiles}
+                  disabled={!folderId}
+                  customTrigger={
+                    <button className="flex items-center justify-center w-[48px] h-[48px] rounded-full bg-[#F3F6FB]">
+                      <Attach />
+                    </button>
+                  }
+                />
                 <PopoverClient
                   setClientId={setClientId}
                   documentId={documentId}
                 />
-                <Button
-                  variant="black"
-                  className="ml-auto w-12 h-12 p-[10px] rounded-full"
-                  onClick={handleSendMessage}
-                  disabled={isSendingMessage}
-                >
-                  <Send color="#fff" />
-                </Button>
+                <div className="flex items-center gap-[32px] ml-auto">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      // aria-pressed={enabled}
+                      // onClick={() => setEnabled(!enabled)}
+                      className={`relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]`}
+                    // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
+                    >
+                      <span
+                        className={`inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300`}
+                      // enabled ? "translate-x-[26.8px]" : "translate-x-0"
+                      />
+                    </button>
+                    <span className="text-[#5F5F65] font-semibold text-[16px]">
+                      Case-based generation
+                    </span>
+                  </div>
+                  <Button
+                    variant="black"
+                    className="ml-auto w-12 h-12 p-[10px] rounded-full"
+                    onClick={handleSendMessage}
+                    disabled={isSendingMessage}
+                  >
+                    <Send color="#fff" />
+                  </Button>
+                </div>
               </div>
             }
           />
@@ -791,7 +838,6 @@ export const ContentManagerDocument: React.FC = () => {
             contentId={selectedDocumentId}
           />
         )}
-
         {isBadResponseOpen && (
           <BadRateResponse
             contentId={selectedDocumentId}

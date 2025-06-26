@@ -55,7 +55,7 @@ export const ContentManagerCreatePage: React.FC = () => {
       <h1 className="text-[24px] md:text-[40px] xl:text-[36px] font-semibold text-center">
         Hi, how can I help you?
       </h1>
-      <div className="flex flex-col-reverse md:flex-col gap-[8px] md:gap-[16px] xl:gap-[24px]">
+      <div className="flex flex-col-reverse md:flex-col gap-[8px] md:gap-[16px] xl:gap-[24px] xl:w-[1070px] m-auto">
         <Textarea
           isTitleVisible={true}
           titleValue={title}
@@ -73,14 +73,33 @@ export const ContentManagerCreatePage: React.FC = () => {
                 setExistingFiles={setExistingFiles}
                 setExistingInstruction={setExistingInstruction}
               />
-              <Button
-                variant="black"
-                className="ml-auto w-12 h-12 p-[10px] rounded-full"
-                onClick={handleSendMessage}
-                disabled={isSending || !folderId || !message.trim()}
-              >
-                <Send color="#fff" />
-              </Button>
+              <div className="flex items-center gap-[32px] ml-auto">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    // aria-pressed={enabled}
+                    // onClick={() => setEnabled(!enabled)}
+                    className={`relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]`}
+                  // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
+                  >
+                    <span
+                      className={`inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300`}
+                    // enabled ? "translate-x-[26.8px]" : "translate-x-0"
+                    />
+                  </button>
+                  <span className="text-[#5F5F65] font-semibold text-[16px]">
+                    Case-based generation
+                  </span>
+                </div>
+                <Button
+                  variant="black"
+                  className="ml-auto w-12 h-12 p-[10px] rounded-full"
+                  onClick={handleSendMessage}
+                  disabled={isSending || !folderId || !message.trim()}
+                >
+                  <Send color="#fff" />
+                </Button>
+              </div>
             </div>
           }
           footerClassName="rounded-b-[18px] border-[#008FF6] border-t-0"

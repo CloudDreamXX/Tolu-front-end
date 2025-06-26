@@ -87,7 +87,7 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
         {selectedFolderName}
         <button
           onClick={() => setCreatePopup(true)}
-          className="p-1 rounded hover:bg-gray-100"
+          className="p-1 rounded hover:bg-gray-100 ml-auto"
         >
           <Plus />
         </button>
@@ -98,8 +98,8 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
           <button
             key={subfolder.id}
             className={`flex justify-between items-center py-2 px-3 rounded-[10px] shadow-lg ${selectedFolderId === subfolder.id
-                ? "bg-blue-50 border border-blue-200"
-                : "bg-white"
+              ? "bg-blue-50 border border-blue-200"
+              : "bg-white"
               }`}
             onClick={() => onSelect(subfolder.id)}
           >

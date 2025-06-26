@@ -5,6 +5,10 @@ import GreyStar from "shared/assets/icons/grey-star";
 
 interface RatePopupProps {
   contentId: string;
+  ratingsMap: Record<string, {
+    rating: number;
+    comment: string;
+  }>
   handleRateClick: (
     id: string,
     rating: number,
@@ -16,12 +20,14 @@ interface RatePopupProps {
 
 export const RatePopup: React.FC<RatePopupProps> = ({
   contentId,
+  ratingsMap,
   handleRateClick,
   onClose,
 }) => {
-  const [rating, setRating] = useState<number>(0);
+  const data = ratingsMap[contentId] ?? { rating: 0, comment: "" };
+  const [rating, setRating] = useState<number>(data.rating);
+  const [comment, setComment] = useState<string>(data.comment);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
-  const [comment, setComment] = useState<string>("");
 
   const popupRef = useRef<HTMLDivElement>(null);
   const ignoreClickRef = useRef(false);

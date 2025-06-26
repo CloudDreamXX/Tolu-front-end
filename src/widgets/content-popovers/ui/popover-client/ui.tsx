@@ -92,7 +92,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
         {customTrigger ?? (
           <Button
             variant="secondary"
-            className="w-12 h-12 p-[10px] rounded-full relative"
+            className="w-12 h-12 p-[10px] rounded-full relative bg-[#F3F6FB]"
           >
             <Personalized />
             {selectedClient && (

@@ -76,7 +76,7 @@ export const BadRateResponse: React.FC<Props> = ({
 
         <div className="flex flex-col flex-col-reverse gap-[8px] md:flex-row md:justify-between mt-[24px] w-full">
           <button
-            className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] text-[16px] font-[600]"
+            className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] text-[16px] font-[600] md:w-[128px]"
             onClick={onClose}
           >
             Cancel

@@ -21,6 +21,9 @@ import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
 import { ContentService } from "entities/content";
 import CloseIcon from "shared/assets/icons/close";
+import Pending from "shared/assets/icons/pending";
+import ReadyForReview from "shared/assets/icons/ready-for-review";
+import SecondReview from "shared/assets/icons/second-review";
 
 type LibraryDesktopViewProps = {
   filteredItems: TableRow[];
@@ -116,22 +119,22 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
         <table className="min-w-full text-sm">
           <thead className="bg-white text-[#5F5F65] text-left mb-[10px] font-[500]">
             <tr>
-              <th className="pb-[24px] text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
                 Type
               </th>
-              <th className="pb-[24px] text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
                 Title
               </th>
-              <th className="pb-[24px] text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
                 Files
               </th>
-              <th className="pb-[24px] text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
                 Created
               </th>
-              <th className="pb-[24px] text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
                 Status
               </th>
-              <th className="pb-[24px] text-[18px] font-inter font-[500]"> </th>
+              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]"> </th>
             </tr>
           </thead>
           <tbody className="text-[#1D1D1F] bg-white">
@@ -305,12 +308,12 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
             {getIcon(row.type)}
           </div>
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-black font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black font-inter">
           {row.title}
         </td>
         <td
           ref={fileCellRef}
-          className={`py-[12px] pr-[8px] text-[18px] font-inter font-[500] ${popupRow === row ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
+          className={`py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-inter font-[500] ${popupRow === row ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
           onClick={(e) => {
             e.stopPropagation();
             setPopupRow(row);
@@ -318,11 +321,28 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
         >
           {row.filesCount} Files
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] font-inter text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
           {formatDateToSlash(new Date(row.createdAt))}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] font-inter text-[#5F5F65]">
-          {row.status === "Raw" ? "Pending review" : row.status}
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+          <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+            {row.status === "Raw" && (
+              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                <Pending />Pending review
+              </span>
+            )}
+            {row.status === "Ready for Review" && (
+              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                <ReadyForReview />Ready for Review
+              </span>
+            )}
+            {row.status === "Second review" && (
+              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                <SecondReview />Second review
+              </span>
+            )}
+            {["Raw", "Ready for Review", "Second review"].includes(row.status) === false && row.status}
+          </td>
         </td>
         <td className="py-[12px] pr-[8px]"></td>
       </tr>
@@ -480,12 +500,12 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
           )}
           {getIcon(subfolder.type)}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] font-inter text-black">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-black">
           {subfolder.title}
         </td>
         <td
           ref={fileCellRef}
-          className={`py-[12px] pr-[8px] text-[18px] font-inter font-[500] ${popupRow === subfolder ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
+          className={`py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-inter font-[500] ${popupRow === subfolder ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
           onClick={(e) => {
             e.stopPropagation();
             setPopupRow(subfolder);
@@ -493,11 +513,26 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
         >
           {subfolder.filesCount} Files
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] font-inter text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
           {formatDateToSlash(new Date(subfolder.createdAt))}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] font-inter text-[#5F5F65]">
-          {subfolder.status === "Raw" ? "Pending review" : subfolder.status}
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+          {subfolder.status === "Raw" && (
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <Pending />Pending review
+            </span>
+          )}
+          {subfolder.status === "Ready for Review" && (
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <ReadyForReview />Ready for Review
+            </span>
+          )}
+          {subfolder.status === "Second review" && (
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <SecondReview />Second review
+            </span>
+          )}
+          {["Raw", "Ready for Review", "Second review"].includes(subfolder.status) === false && subfolder.status}
         </td>
         <td className="py-[12px] pr-[8px]">
           <button
@@ -505,6 +540,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
               e.stopPropagation();
               onDotsClick(subfolder, e);
             }}
+            className="rounded-full hover:bg-[#AAC6EC40]"
           >
             <Dots />
           </button>
@@ -602,20 +638,35 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
         <td className={`pl-3 pr-[18px] ${paddingLeft}`}>
           {getIcon(content.type, "ml-auto")}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-black font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black font-inter">
           {content.title}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
           {(content.content &&
             content.content?.length > 0 &&
             content.content?.length) ||
             "-"}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
           {formatDateToSlash(new Date(content.createdAt))}
         </td>
-        <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
-          {content.status === "Raw" ? "Pending review" : content.status}
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
+          {content.status === "Raw" && (
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <Pending />Pending review
+            </span>
+          )}
+          {content.status === "Ready for Review" && (
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <ReadyForReview />Ready for Review
+            </span>
+          )}
+          {content.status === "Second review" && (
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <SecondReview />Second review
+            </span>
+          )}
+          {["Raw", "Ready for Review", "Second review"].includes(content.status) === false && content.status}
         </td>
         <td className="py-[12px] pr-[8px]">
           <div
@@ -645,20 +696,35 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
             <td className={`pl-[68px]`}>
               <DocumentIcon className="ml-auto" />
             </td>
-            <td className="py-[12px] pl-[18px] pr-[8px] text-[18px] font-[500] text-black font-inter">
+            <td className="py-[12px] pl-[18px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black font-inter">
               {msg.title}
             </td>
-            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
+            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
               {(msg.content &&
                 msg.content?.length > 0 &&
                 msg.content?.length) ||
                 "-"}
             </td>
-            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
+            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
               {formatDateToSlash(new Date(msg.created_at || ""))}
             </td>
-            <td className="py-[12px] pr-[8px] text-[18px] font-[500] text-[#5F5F65] font-inter">
-              {msg.status === "Raw" ? "Pending review" : msg.status}
+            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
+              {msg.status === "Raw" && (
+                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                  <Pending />Pending review
+                </span>
+              )}
+              {msg.status === "Ready for Review" && (
+                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                  <ReadyForReview />Ready for Review
+                </span>
+              )}
+              {msg.status === "Second review" && (
+                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                  <SecondReview />Second review
+                </span>
+              )}
+              {["Raw", "Ready for Review", "Second review"].includes(msg.status) === false && msg.status}
             </td>
             <td className="py-[12px] pr-[8px]">
               <button
