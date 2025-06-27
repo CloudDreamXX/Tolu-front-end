@@ -109,7 +109,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
       <div className="mt-[8px]">
         <DetailRow
           label="Files"
-          value={`${item.filesCount ?? 0} Items`}
+          value={`${item.filesCount ?? 0} Files`}
           isClickable
           onClick={(e) => {
             e.stopPropagation();
@@ -245,11 +245,10 @@ const DetailRow = React.forwardRef<HTMLDivElement, DetailRowProps>(
       <div
         ref={ref}
         className={`py-[8px] flex items-center ${!isLast ? "border-b border-[#F3F6FB]" : ""
-          } ${isClickable ? "cursor-pointer hover:underline text-[#1C63DB]" : ""}`}
-        onClick={onClick}
+          }`}
       >
         <span className="text-[14px] text-[#5F5F65] w-full">{label}</span>
-        <span className="text-[16px] text-[#000000] w-full">{value ?? "-"}</span>
+        <span className={`text-[16px] w-full text-[#000000] ${isClickable ? "cursor-pointer underline" : ""}`} onClick={onClick}>{value ?? "-"}</span>
       </div>
     );
   }

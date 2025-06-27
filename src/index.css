@@ -141,3 +141,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
   display: none;
 }
+
+.ql-editor {
+  padding: 0 !important;
+  border: none !important;
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+}
+
+.ql-toolbar.ql-snow {
+  border: none !important;
+  margin-bottom: 16px;
+}

@@ -61,6 +61,7 @@ export const API_ROUTES = {
     BY_STATUS: "/content/by-status/{status}",
     CONTENT_BY_ID: "/content/{content_id}",
     DUPLICATE_CONTENT: "/content/duplicate",
+    EDIT_CONTENT: "/content/edit-content",
   },
   HEALTH_HISTORY: {
     GET: "/health-history",

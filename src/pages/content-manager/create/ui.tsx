@@ -64,7 +64,7 @@ export const ContentManagerCreatePage: React.FC = () => {
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Let's start with a subject or writing request..."
           containerClassName="border-[#008FF6]"
-          className="h-20 text-lg font-medium resize-none placeholder:text-[#1D1D1F80] text-[#1D1D1F]"
+          className="h-20 text-[14px] md:text-lg font-medium resize-none placeholder:text-[#1D1D1F80] text-[#1D1D1F]"
           footer={
             <div className="flex flex-col gap-[8px] w-full">
               <div className="flex flex-row w-full gap-[10px]">
@@ -75,7 +75,7 @@ export const ContentManagerCreatePage: React.FC = () => {
                   setExistingInstruction={setExistingInstruction}
                 />
                 <div className="flex items-center gap-[32px] ml-auto">
-                  <div className="hidden md:block flex items-center gap-2">
+                  <div className="hidden md:flex items-center gap-2">
                     <button
                       type="button"
                       // aria-pressed={enabled}

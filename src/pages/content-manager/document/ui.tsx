@@ -20,7 +20,7 @@ import {
   Share,
   ShareContentData,
 } from "entities/coach";
-import { PopoverAttach, PopoverClient, PopoverFolder, PopoverInstruction } from "widgets/content-popovers";
+import { PopoverAttach, PopoverClient } from "widgets/content-popovers";
 import Star from "shared/assets/icons/grey-star";
 import Bin from "shared/assets/icons/grey-bin";
 import Arrow from "shared/assets/icons/grey-arrow";
@@ -47,10 +47,13 @@ import { RatePopup } from "widgets/RatePopup";
 import { BadRateResponse } from "widgets/BadRateResponsePopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
 import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
-import { ContentService } from "entities/content";
+import { ContentService, ContentToEdit } from "entities/content";
 import BlueChevron from "shared/assets/icons/blue-chevron";
 import Voiceover from "shared/assets/icons/voiceover";
 import Attach from "shared/assets/icons/attach";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import FilledStar from "shared/assets/icons/filled-star";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -64,10 +67,7 @@ export const ContentManagerDocument: React.FC = () => {
   const [folder, setFolder] = useState<IFolder | null>(null);
   const [message, setMessage] = useState<string>("");
   const [clientId, setClientId] = useState<string | null>(null);
-  const [existingFiles, setExistingFiles] = useState<string[]>([]);
-  const [existingInstruction, setExistingInstruction] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
-  const [instruction, setInstruction] = useState<string>("");
 
   const [isCreatingDocument, setIsCreatingDocument] = useState(false);
   const [streamingContent, setStreamingContent] = useState<string>("");
@@ -97,6 +97,11 @@ export const ContentManagerDocument: React.FC = () => {
   const [sharedClients, setSharedClients] = useState<Share[] | null>(null);
   const [mobilePage, setMobilePage] = useState<1 | 2>(1);
   const [ratingsMap, setRatingsMap] = useState<Record<string, { rating: number; comment: string }>>({});
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editedContent, setEditedContent] = useState<string>("");
+  const [editedTitle, setEditedTitle] = useState<string>("");
+  const [editedQuery, setEditedQuery] = useState<string>("");
 
   useEffect(() => {
     if (isNewDocument && location.state) {
@@ -395,6 +400,22 @@ export const ContentManagerDocument: React.FC = () => {
     setSharedClients(response.shares);
   };
 
+  const handleSaveEdit = async (contentId: string) => {
+    try {
+      const payload: ContentToEdit = {
+        content_id: contentId,
+        new_title: editedTitle,
+        new_query: editedQuery,
+        new_content: editedContent,
+      };
+      await ContentService.editContent(payload);
+      await loadDocument(documentId);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Failed to save content edit", err);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:px-[60px] pt-6 h-[calc(100vh-78px)] w-full">
       <div className="flex flex-row w-full h-full gap-[26px]">
@@ -476,7 +497,7 @@ export const ContentManagerDocument: React.FC = () => {
 
               <div className="pb-80 flex flex-col gap-[32px]">
                 {isCreatingDocument && (
-                  <div className="prose-sm prose max-w-none">
+                  <div className="prose-sm prose">
                     {streamingIsHtml || isHtmlContent(streamingContent) ? (
                       <>
                         {parse(streamingContent)}
@@ -497,9 +518,9 @@ export const ContentManagerDocument: React.FC = () => {
                   const isHTML = isHtmlContent(pair.content);
 
                   return (
-                    <div key={index} className="flex flex-col gap-4">
+                    <div key={index} className="flex flex-col gap-[24px]">
                       {index > 0 && pair.query && (
-                        <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px]">
+                        <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-full md:max-w-[563px] xl:max-w-[800px]">
                           <p className="text-[18px] font-[500] text-[#1D1D1F]">
                             {pair.query}
                           </p>
@@ -623,7 +644,30 @@ export const ContentManagerDocument: React.FC = () => {
                           </div>
                         </div>
                       ) : compareIndex !== index ? (
-                        isHTML ? (
+                        isEditing && selectedDocumentId === pair.id ? (
+                          <>
+                            <input
+                              type="text"
+                              value={editedTitle}
+                              onChange={(e) => setEditedTitle(e.target.value)}
+                              placeholder="Title"
+                              className="text-xl font-bold w-full border border-[#008FF6] rounded-[16px] p-[16px] outline-none"
+                            />
+                            <input
+                              type="text"
+                              value={editedQuery}
+                              onChange={(e) => setEditedQuery(e.target.value)}
+                              placeholder="Query"
+                              className="text-md font-medium w-full border border-[#008FF6] rounded-[16px] p-[16px] outline-none"
+                            />
+                            <ReactQuill
+                              theme="snow"
+                              value={editedContent}
+                              onChange={setEditedContent}
+                              className="bg-white border border-[#008FF6] rounded-[16px] p-[16px]"
+                            />
+                          </>
+                        ) : isHTML ? (
                           <div className="prose-sm prose max-w-none">
                             {parse(pair.content)}
                           </div>
@@ -633,81 +677,96 @@ export const ContentManagerDocument: React.FC = () => {
                           </div>
                         )
                       ) : null}
-                      <div className="relative flex items-center">
-                        <button
-                          className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
-                          onClick={() => {
-                            setSelectedDocumentId(pair.id);
-                            setIsRateOpen(true);
-                          }}
-                        >
-                          <Star />
-                        </button>
+                      <div className="flex items-center justify-between">
+                        <div className="relative flex items-center">
+                          <button
+                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            onClick={() => {
+                              setSelectedDocumentId(pair.id);
+                              setIsRateOpen(true);
+                            }}
+                          >
+                            {!ratingsMap[pair.id] ? <Star /> : <FilledStar />}
+                          </button>
 
-                        {isRateOpen && selectedDocumentId === pair.id && (
-                          <RatePopup
-                            contentId={pair.id}
-                            onClose={() => setIsRateOpen(false)}
-                            handleRateClick={handleRateClick}
-                            ratingsMap={ratingsMap} />
-                        )}
-                        <button className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
-                          <Edit />
-                        </button>
-                        <button
-                          className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
-                          onClick={() => {
-                            setSelectedDocumentId(pair.id);
-                            setIsMoveOpen(true);
-                          }}
-                        >
-                          <Arrow />
-                        </button>
-                        <button
-                          className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
-                          onClick={() => handleDublicateClick(pair.id)}
-                        >
-                          <Folders />
-                        </button>
-                        <button
-                          className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
-                          onClick={() => {
-                            handleMarkAsClick(pair.id);
-                          }}
-                        >
-                          <MarkAs />
-                        </button>
-                        <button className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
-                          <Voiceover />
-                        </button>
-                        <button
-                          className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
-                          onClick={() => {
-                            setSelectedDocumentId(pair.id);
-                            setIsBadResponseOpen(true);
-                          }}
-                        >
-                          <Dislike />
-                        </button>
-                        <button
-                          className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
-                          onClick={() => {
-                            setSelectedDocumentId(pair.id);
-                            setIsDeleteOpen(true);
-                          }}
-                        >
-                          <Bin />
-                        </button>
-                        <button
-                          onClick={() =>
-                            setCompareIndex(
-                              compareIndex === index ? null : index
-                            )
-                          }
-                          className="py-[4px] px-[10px] rounded-[8px] text-[18px] text-[#5F5F65] ml-[16px] md:ml-[24px] hover:bg-[#EDF3FF] hover:text-[#1C63DB]"
-                        >
-                          {compareIndex === index ? "Return" : "Compare"}
-                        </button>
+                          {isRateOpen && selectedDocumentId === pair.id && (
+                            <RatePopup
+                              contentId={pair.id}
+                              onClose={() => setIsRateOpen(false)}
+                              handleRateClick={handleRateClick}
+                              ratingsMap={ratingsMap} />
+                          )}
+                          <button
+                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            onClick={() => {
+                              setSelectedDocumentId(pair.id);
+                              setEditedContent(pair.content);
+                              setEditedTitle(document?.title ?? "");
+                              setEditedQuery(document?.query ?? "");
+                              setIsEditing(true);
+                            }}
+                          >
+                            <Edit />
+                          </button>
+                          <button
+                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            onClick={() => {
+                              setSelectedDocumentId(pair.id);
+                              setIsMoveOpen(true);
+                            }}
+                          >
+                            <Arrow />
+                          </button>
+                          <button
+                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            onClick={() => handleDublicateClick(pair.id)}
+                          >
+                            <Folders />
+                          </button>
+                          <button
+                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            onClick={() => {
+                              handleMarkAsClick(pair.id);
+                            }}
+                          >
+                            <MarkAs />
+                          </button>
+                          <button className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
+                            <Voiceover />
+                          </button>
+                          <button
+                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            onClick={() => {
+                              setSelectedDocumentId(pair.id);
+                              setIsBadResponseOpen(true);
+                            }}
+                          >
+                            <Dislike />
+                          </button>
+                          <button
+                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            onClick={() => {
+                              setSelectedDocumentId(pair.id);
+                              setIsDeleteOpen(true);
+                            }}
+                          >
+                            <Bin />
+                          </button>
+                          <button
+                            onClick={() =>
+                              setCompareIndex(
+                                compareIndex === index ? null : index
+                              )
+                            }
+                            className="py-[4px] px-[10px] rounded-[8px] text-[18px] text-[#5F5F65] ml-[16px] md:ml-[24px] hover:bg-[#EDF3FF] hover:text-[#1C63DB]"
+                          >
+                            {compareIndex === index ? "Return" : "Compare"}
+                          </button>
+                        </div>
+                        {isEditing && <div className="flex gap-[8px]">
+                          <Button variant="secondary" className="text-[#1C63DB] text-[16px] font-semibold" onClick={() => setIsEditing(false)}>Cancel</Button>
+                          <Button variant="brightblue" className="font-semibold text-[16px]" onClick={() => handleSaveEdit(pair.id)}>Save changes</Button>
+                        </div>}
                       </div>
                     </div>
                   );
@@ -762,7 +821,7 @@ export const ContentManagerDocument: React.FC = () => {
                       documentId={documentId}
                     />
                     <div className="flex items-center gap-[32px] ml-auto">
-                      <div className="hidden md:block flex items-center gap-2">
+                      <div className="hidden md:flex items-center gap-2">
                         <button
                           type="button"
                           className="relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]"

@@ -19,3 +19,10 @@ export interface ContentItemResponse {
   comments: string;
   social_media_shares: string;
 }
+
+export interface ContentToEdit {
+  content_id: string,
+  new_title: string,
+  new_content: string,
+  new_query: string
+}
