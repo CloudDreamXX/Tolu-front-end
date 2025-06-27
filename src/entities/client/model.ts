@@ -26,3 +26,27 @@ export interface AcceptInviteResponse {
   success: boolean;
   message: string;
 }
+
+export interface ContentItem {
+  id: string;
+  title: string;
+  created_at: string;
+  read_count: number;
+  saved_for_later_count: number;
+  author_name: string;
+}
+
+export interface Folder {
+  id: string;
+  name: string;
+  description: string;
+  creator_id: string;
+  created_at: string;
+  total_content_items: number;
+  content: ContentItem[];
+}
+
+export interface FoldersResponse {
+  folders: Folder[];
+}
+

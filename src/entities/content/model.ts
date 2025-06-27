@@ -26,3 +26,8 @@ export interface ContentToEdit {
   new_content: string,
   new_query: string
 }
+
+export interface ContentStatus {
+  content_id: string,
+  status: "read" | "saved_for_later",
+}

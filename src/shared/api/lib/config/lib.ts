@@ -18,6 +18,7 @@ export const API_ROUTES = {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",
     ACCEPT_COACH_INVITE: "/client/accept-coach-invite",
     GET_SHARED_CONTENT_BY_ID: "/client/shared-coach-content/{content_id}",
+    GET_LIBRARY_CONTENT: "/client/library",
   },
   AI: {
     SEARCH: "/ai-search/",
@@ -62,6 +63,7 @@ export const API_ROUTES = {
     CONTENT_BY_ID: "/content/{content_id}",
     DUPLICATE_CONTENT: "/content/duplicate",
     EDIT_CONTENT: "/content/edit-content",
+    UPDATE_CONTENT_STATUS: "/content/{content_id}/read-status",
   },
   HEALTH_HISTORY: {
     GET: "/health-history",

@@ -79,7 +79,7 @@ export const renderRecommendedBy = (
 ) => {
   if (!recommendedBy) return null;
   return (
-    <div className={cn("flex items-center gap-2 text-base font-semibold")}>
+    <div className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
       {withText ? (
         <span className="text-sm font-medium">Recommended by</span>
       ) : (
@@ -113,7 +113,7 @@ export const renderDate = (date: string | undefined, withText?: boolean) => {
   if (!date) return null;
   const dateObj = new Date(date);
   return (
-    <p className={cn("flex items-center gap-2 text-base font-semibold")}>
+    <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
       {withText ? (
         <span className="text-sm font-medium">Date</span>
       ) : (
@@ -130,13 +130,47 @@ export const renderAuthor = (
 ) => {
   if (!author) return null;
   return (
-    <p className={cn("flex items-center gap-2 text-base font-semibold")}>
+    <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
       {withText ? (
-        <span className="text-sm font-medium">Author</span>
+        <span className="text-[14px] font-[500] text-[#5F5F65]">Author</span>
       ) : (
         <Expert />
       )}
-      {author}
+      <span className="text-[16px] font-[600] text-[#1D1D1F]">{author}</span>
+    </p>
+  );
+};
+
+export const renderStatus = (
+  status: string | undefined,
+  withText?: boolean
+) => {
+  if (!status) return null;
+  return (
+    <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
+      {withText ? (
+        <span className="text-[14px] font-[500] text-[#5F5F65]">Status</span>
+      ) : (
+        <Expert />
+      )}
+      <span className="text-[16px] font-[600] text-[#1C63DB]">{status}</span>
+    </p>
+  );
+};
+
+export const renderDocumentType = (
+  type: string | undefined,
+  withText?: boolean
+) => {
+  if (!type) return null;
+  return (
+    <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
+      {withText ? (
+        <span className="text-[14px] font-[500] text-[#5F5F65]">Document Type</span>
+      ) : (
+        <Expert />
+      )}
+      <span className="text-[16px] font-[600] text-[#1D1D1F]">{type}</span>
     </p>
   );
 };

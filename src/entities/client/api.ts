@@ -3,6 +3,7 @@ import {
   ClientInvitationInfo,
   AcceptInvitePayload,
   AcceptInviteResponse,
+  FoldersResponse,
 } from "./model";
 
 export class ClientService {
@@ -44,5 +45,9 @@ export class ClientService {
         "Content-Type": "application/json",
       },
     });
+  }
+
+  static async getLibraryContent(): Promise<FoldersResponse> {
+    return ApiService.get<FoldersResponse>(API_ROUTES.CLIENT.GET_LIBRARY_CONTENT);
   }
 }

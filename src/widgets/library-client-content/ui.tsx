@@ -1,6 +1,10 @@
+import { ClientService, Folder } from "entities/client";
+import { ContentService, ContentStatus } from "entities/content";
 import { HealthHistoryService } from "entities/health-history";
 import { LibraryCard } from "features/library-card";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BookMark from "shared/assets/icons/book-mark";
 import Search from "shared/assets/icons/search";
 import {
   Accordion,
@@ -12,6 +16,37 @@ import {
 
 export const LibraryClientContent = () => {
   const [search, setSearch] = useState("");
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const [status, setStatus] = useState<ContentStatus>();
+  const nav = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await ClientService.getLibraryContent();
+        setFolders(response.folders);
+      } catch (error) {
+        console.error("Failed to fetch library content:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const onStatusChange = async (id: string, status: "read" | "saved_for_later") => {
+    const newStatus: ContentStatus = {
+      content_id: id,
+      status: status
+    }
+    const response = await ContentService.updateStatus(newStatus)
+    if (response) {
+      setStatus(newStatus);
+    }
+  }
+
+  const onDocumentClick = (id: string) => {
+    nav(`/library/document/${id}`)
+  }
 
   return (
     <div className="flex flex-col w-full">
@@ -27,32 +62,6 @@ export const LibraryClientContent = () => {
         type="single"
         collapsible
         className="w-full mt-4"
-        defaultValue="item-1"
-      >
-        <AccordionItem value="item-1">
-          <AccordionTrigger className="pt-0">
-            Chronic constipation relief
-          </AccordionTrigger>
-          <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
-            <LibraryCard
-              title="Gut Reset"
-              author="Jessica Gale MD CFNP"
-              recomendedBy="TOLU"
-              timestamp="3/12/25"
-            />
-            <LibraryCard
-              title="Eating for Hormones"
-              author="Jessica Gale MD CFNP"
-              recomendedBy="TOLU"
-              timestamp="3/12/25"
-            />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full mt-4"
         defaultValue="item-2"
       >
         <AccordionItem value="item-2">
@@ -63,18 +72,54 @@ export const LibraryClientContent = () => {
             <LibraryCard
               title="Sleep Disturbance"
               author="Jessica Gale MD CFNP"
-              recomendedBy="TOLU"
-              timestamp="3/12/25"
-            />
+              id={""}
+              onStatusChange={() => { }}
+              type={"Text"}
+              status={"Read"}
+              progress={100}
+              onDocumentClick={onDocumentClick} />
             <LibraryCard
               title="Sleep Disturbance"
               author="Jessica Gale MD CFNP"
-              recomendedBy="TOLU"
-              timestamp="3/12/25"
-            />
+              id={""}
+              onStatusChange={() => { }}
+              type={"Text"}
+              status={"Read"}
+              progress={100}
+              onDocumentClick={onDocumentClick} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+      {folders.map((folder, index) => (
+        <Accordion
+          key={folder.id}
+          type="single"
+          collapsible
+          className="w-full mt-4"
+          defaultValue={`item-${index}`}
+        >
+          <AccordionItem value={`item-${index}`}>
+            <AccordionTrigger className="pt-0">
+              {folder.name}
+            </AccordionTrigger>
+            <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
+              {folder.content.map((item) => (
+                <LibraryCard
+                  id={item.id}
+                  key={item.id}
+                  title={item.title}
+                  author={item.author_name}
+                  type={"Text"}
+                  status={"To read"}
+                  progress={item.read_count}
+                  onStatusChange={onStatusChange}
+                  contentStatus={status}
+                  onDocumentClick={onDocumentClick} />
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      ))}
     </div>
   );
 };
