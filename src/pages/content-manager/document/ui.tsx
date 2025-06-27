@@ -474,7 +474,7 @@ export const ContentManagerDocument: React.FC = () => {
             )}
           </div>
 
-          <div className="flex flex-col h-full pt-6 max-w-[1080px] m-auto">
+          <div className="flex flex-col h-full pt-6 w-full overflow-hidden xl:max-w-[1080px] m-auto">
             <ScrollArea className="h-[calc(100%-64px)]">
               <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px] flex flex-col gap-[8px] mb-[40px]">
                 <p className="text-[24px] font-[500] text-[#1D1D1F]">
@@ -518,7 +518,7 @@ export const ContentManagerDocument: React.FC = () => {
                   const isHTML = isHtmlContent(pair.content);
 
                   return (
-                    <div key={index} className="flex flex-col gap-[24px]">
+                    <div key={index} className="flex flex-col gap-[24px] pb-[100px]">
                       {index > 0 && pair.query && (
                         <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-full md:max-w-[563px] xl:max-w-[800px]">
                           <p className="text-[18px] font-[500] text-[#1D1D1F]">

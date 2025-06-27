@@ -36,7 +36,7 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-[999] flex flex-col items-center overflow-y-auto flex items-center justify-center`}
+      className={`fixed inset-0 z-[999] flex flex-col items-center px-[16px] overflow-y-auto flex items-center justify-center`}
       style={{
         background: "rgba(0, 0, 0, 0.30)",
         backdropFilter: "blur(2px)",
@@ -51,7 +51,8 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
           flex flex-col 
           bg-white 
           rounded-[18px] 
-          w-[742px] 
+          w-full
+          md:w-[742px] 
           px-[24px] 
           py-[24px] 
           gap-[24px] 
@@ -105,18 +106,18 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
             disabled={isCreating}
           />
         </div>
-        <div className="flex gap-[16px] flex-row justify-between w-full">
+        <div className="flex flex-col-reverse gap-[8px] md:gap-[16px] md:flex-row justify-between w-full">
           <button
             onClick={onClose}
             disabled={isCreating}
-            className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-[128px] text-[16px] font-[600] leading-[22px] disabled:opacity-50"
+            className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px] disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleComplete}
             disabled={!name.trim() || isCreating}
-            className="px-[16px] py-[11px] rounded-[1000px] w-[128px] text-[16px] font-[600] leading-[22px] bg-[#1C63DB] text-white disabled:opacity-50 flex items-center justify-center"
+            className="px-[16px] py-[11px] rounded-[1000px] w-full md:w-[128px] text-[16px] font-[600] leading-[22px] bg-[#1C63DB] text-white disabled:opacity-50 flex items-center justify-center"
           >
             {isCreating ? (
               <div className="w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin" />
