@@ -62,6 +62,17 @@ export const UserManagement: React.FC = () => {
         return Array.from({ length: end - start + 1 }, (_, i) => start + i);
     };
 
+    const getRoleStyle = (role: number) => {
+        switch (role) {
+            case 0: return "bg-green-100 text-green-700";
+            case 1: return "bg-[#F0F3FF] text-[#000E66]";
+            case 2: return "bg-red-100 text-red-700";
+            case 3: return "bg-purple-100 text-purple-700";
+            case 4: return "bg-orange-100 text-orange-700";
+            default: return "bg-gray-100 text-gray-700";
+        }
+    };
+
     return (
         <div className="flex flex-col gap-[16px] md:gap-[35px] p-8 overflow-y-auto h-[100%]">
             <div className="flex flex-col md:flex-row gap-[16px] justify-between md:items-end">
@@ -88,45 +99,74 @@ export const UserManagement: React.FC = () => {
             {loading ? (
                 <div className="text-center py-8">Loading users...</div>
             ) : (
-                <div className="overflow-x-auto">
-                    <div className="min-w-[1400px]">
-                        <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
-                            <div className="px-[4px]">Name</div>
-                            <div className="px-[4px]">Email</div>
-                            <div className="px-[4px]">Phone number</div>
-                            <div className="px-[4px]">Sign Up date</div>
-                            <div className="px-[4px]">Role</div>
-                        </div>
+                <div>{/* Table View for Desktop */}
+                    <div className="hidden md:block overflow-x-auto">
+                        <div className="min-w-[1400px]">
+                            <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
+                                <div className="px-[4px]">Name</div>
+                                <div className="px-[4px]">Email</div>
+                                <div className="px-[4px]">Phone number</div>
+                                <div className="px-[4px]">Sign Up date</div>
+                                <div className="px-[4px]">Role</div>
+                            </div>
 
-                        <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
-                            {paginatedData.map((user, index) => (
-                                <div
-                                    key={index}
-                                    className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
-                                >
-                                    <div className="px-[4px]">{user.name}</div>
-                                    <div className="px-[4px]">{user.email}</div>
-                                    <div className="px-[4px]">{user.phone_number}</div>
-                                    <div className="px-[4px]">{user.signup_date}</div>
-                                    <div>
-                                        <span
-                                            className={`text-sm font-semibold px-2 py-1 rounded-full ${user.role === 0
-                                                ? "bg-green-100 text-green-700"
-                                                : user.role === 1
-                                                    ? "bg-[#F0F3FF] text-[#000E66]"
-                                                    : user.role === 2
-                                                        ? "bg-red-100 text-red-700"
-                                                        : user.role === 3
-                                                            ? "bg-purple-100 text-purple-700"
-                                                            : "bg-orange-100 text-orange-700"
-                                                }`}
-                                        >
-                                            {ROLE_MAP[user.role] ?? "Unknown"}
+                            <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
+                                {paginatedData.map((user, index) => (
+                                    <div
+                                        key={index}
+                                        className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
+                                    >
+                                        <div className="px-[4px]">{user.name}</div>
+                                        <div className="px-[4px]">{user.email}</div>
+                                        <div className="px-[4px]">{user.phone_number}</div>
+                                        <div className="px-[4px]">{user.signup_date || "-"}</div>
+                                        <div>
+                                            <span className={`text-sm font-semibold px-2 py-1 rounded-full ${getRoleStyle(user.role)}`}>
+                                                {ROLE_MAP[user.role] ?? "Unknown"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card View for Mobile */}
+                    <div className="md:hidden flex flex-col gap-4">
+                        {paginatedData.map((user, index) => (
+                            <div key={index} className="bg-white rounded-[8px] border border-[#AAC6EC] p-[16px]">
+                                <div className="bg-[#AAC6EC1A] rounded-[4px] p-[8px] mb-[24px]">
+                                    <h2 className="text-[18px] text-[#1D1D1F] font-[500] leading-[24px]">{user.name}</h2>
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <div className="flex text-[14px] leading-[20px] py-[8px] border-b border-[#F3F6FB]">
+                                        <span className="w-full text-[#5F5F65] font-medium">Email</span>
+                                        <span className="w-full text-black font-normal">{user.email}</span>
+                                    </div>
+
+                                    <div className="flex text-[14px] leading-[20px] py-[8px] border-b border-[#F3F6FB]">
+                                        <span className="w-full text-[#5F5F65] font-medium">Phone number</span>
+                                        <span className="w-full text-black font-normal">{user.phone_number}</span>
+                                    </div>
+
+                                    <div className="flex text-[14px] leading-[20px] py-[8px] border-b border-[#F3F6FB]">
+                                        <span className="w-full text-[#5F5F65] font-medium">Sign up date</span>
+                                        <span className="w-full text-black font-normal">{user.signup_date || "-"}</span>
+                                    </div>
+
+                                    <div className="flex text-[14px] leading-[20px] items-center py-[8px] border-b border-[#F3F6FB]">
+                                        <span className="w-full text-[#5F5F65] font-medium">Role</span>
+                                        <span className="w-full">
+                                            <span className={`font-[500] px-2 py-[2px] rounded-full whitespace-nowrap ${getRoleStyle(user.role)}`}>
+                                                {ROLE_MAP[user.role] ?? "Unknown"}
+                                            </span>
                                         </span>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+
+                        ))}
                     </div>
                 </div>
             )}
