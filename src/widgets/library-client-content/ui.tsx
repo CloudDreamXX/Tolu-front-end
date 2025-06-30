@@ -17,7 +17,7 @@ import {
 export const LibraryClientContent = () => {
   const [search, setSearch] = useState("");
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [status, setStatus] = useState<ContentStatus>();
+  const [statusMap, setStatusMap] = useState<Record<string, ContentStatus>>({});
   const nav = useNavigate();
 
   useEffect(() => {
@@ -36,13 +36,16 @@ export const LibraryClientContent = () => {
   const onStatusChange = async (id: string, status: "read" | "saved_for_later") => {
     const newStatus: ContentStatus = {
       content_id: id,
-      status: status
-    }
-    const response = await ContentService.updateStatus(newStatus)
+      status,
+    };
+    const response = await ContentService.updateStatus(newStatus);
     if (response) {
-      setStatus(newStatus);
+      setStatusMap(prev => ({
+        ...prev,
+        [id]: newStatus,
+      }));
     }
-  }
+  };
 
   const onDocumentClick = (id: string) => {
     nav(`/library/document/${id}`)
@@ -58,38 +61,6 @@ export const LibraryClientContent = () => {
         icon={<Search className="w-4 h-4" />}
         autoFocus
       />
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full mt-4"
-        defaultValue="item-2"
-      >
-        <AccordionItem value="item-2">
-          <AccordionTrigger className="pt-0">
-            Personalized for you
-          </AccordionTrigger>
-          <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
-            <LibraryCard
-              title="Sleep Disturbance"
-              author="Jessica Gale MD CFNP"
-              id={""}
-              onStatusChange={() => { }}
-              type={"Text"}
-              status={"Read"}
-              progress={100}
-              onDocumentClick={onDocumentClick} />
-            <LibraryCard
-              title="Sleep Disturbance"
-              author="Jessica Gale MD CFNP"
-              id={""}
-              onStatusChange={() => { }}
-              type={"Text"}
-              status={"Read"}
-              progress={100}
-              onDocumentClick={onDocumentClick} />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
       {folders.map((folder, index) => (
         <Accordion
           key={folder.id}
@@ -113,7 +84,7 @@ export const LibraryClientContent = () => {
                   status={"To read"}
                   progress={item.read_count}
                   onStatusChange={onStatusChange}
-                  contentStatus={status}
+                  contentStatus={statusMap[item.id]}
                   onDocumentClick={onDocumentClick} />
               ))}
             </AccordionContent>
