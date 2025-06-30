@@ -49,23 +49,21 @@ export const NavigationClient: React.FC = () => {
       {/* Top nav for desktop */}
       <div className="hidden bg-white items-center justify-between h-[78px] px-[48px] py-[19px]">
         <div className="flex flex-row gap-[30px] w-full">
-          <NavLink
+          {/* <NavLink
             to={"/health-snapshot"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
             <Heartbeat />
             Health Snapshot
-          </NavLink>
+          </NavLink> */}
 
           <NavLink
             to={"/library"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -76,8 +74,7 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -181,7 +178,7 @@ export const NavigationClient: React.FC = () => {
             </Button>
 
             <nav className="flex flex-col mb-auto">
-              <NavLink
+              {/* <NavLink
                 to={"/health-snapshot"}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
@@ -192,13 +189,12 @@ export const NavigationClient: React.FC = () => {
               >
                 <Heartbeat />
                 Health Snapshot
-              </NavLink>
+              </NavLink> */}
 
               <NavLink
                 to={"/library"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={() => setMenuMobOpen(false)}
@@ -210,8 +206,7 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/messages"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={() => setMenuMobOpen(false)}

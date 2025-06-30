@@ -67,7 +67,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
         <div
           className={`flex flex-col w-full ${isNarrow ? "items-center" : "items-start"}`}
         >
-          <NavLink
+          {/* <NavLink
             to={"/health-snapshot"}
             className={({ isActive }) =>
               `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
@@ -77,13 +77,12 @@ export const HealthSnapshotSidebar: React.FC = () => {
           >
             <Heartbeat />
             {isNarrow ? "" : "Health Snapshot"}
-          </NavLink>
+          </NavLink> */}
 
           <NavLink
             to={"/library"}
             className={({ isActive }) =>
-              `flex items-center gap-3 justify-center 2xl:justify-start w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
-                isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+              `flex items-center gap-3 justify-center 2xl:justify-start w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
               }`
             }
           >
@@ -94,8 +93,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
               }`
             }
           >
@@ -105,7 +103,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
         </div>
       </div>
       <button
-        onClick={isNarrow ? () => setMenuOpen(!menuOpen) : () => {}}
+        onClick={isNarrow ? () => setMenuOpen(!menuOpen) : () => { }}
         className={`flex gap-4 items-center ${isNarrow ? "" : "pl-4"}`}
       >
         <Avatar>
