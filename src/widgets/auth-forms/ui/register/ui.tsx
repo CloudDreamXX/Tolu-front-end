@@ -59,14 +59,6 @@ export const Register = () => {
     try {
       const data = await UserService.registerUser(dataBE);
       if (data.success) {
-        if (token) {
-          try {
-            await ClientService.acceptCoachInvite({ token });
-          } catch (err) {
-            console.warn("Coach link acceptance failed", err);
-          }
-        }
-
         toast({
           title: "Register successful",
           description: "Welcome!",

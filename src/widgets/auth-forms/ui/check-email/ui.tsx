@@ -1,3 +1,4 @@
+import { ClientService } from "entities/client";
 import { setCredentials, UserService } from "entities/user";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -21,6 +22,15 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       const verifyEmail = async () => {
         try {
           const msg = await UserService.verifyEmail({ email, token });
+
+          if (token) {
+            try {
+              await ClientService.acceptCoachInvite({ token });
+            } catch (err) {
+              console.warn("Coach link acceptance failed", err);
+            }
+          }
+
 
           if (msg.user && msg.accessToken) {
             dispatch(
