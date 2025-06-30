@@ -17,15 +17,12 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
   const query = new URLSearchParams(search);
   const token = query.get("token") ?? "";
   const email = query.get("email") ?? "";
-  const inviteToken = useSelector((state: RootState) => state.user.inviteToken);
 
   useEffect(() => {
     if (from === "register" && token && email) {
       const verifyEmail = async () => {
         try {
           const msg = await UserService.verifyEmail({ email, token });
-          await ClientService.acceptCoachInvite({ token: inviteToken ? inviteToken : "" });
-
           if (msg.user && msg.accessToken) {
             dispatch(
               setCredentials({
