@@ -23,16 +23,13 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
         try {
           const msg = await UserService.verifyEmail({ email, token });
 
-          if (token) {
+          if (msg.user && msg.accessToken) {
             try {
-              await ClientService.acceptCoachInvite({ token });
+              await ClientService.acceptCoachInvite({ token: msg.accessToken });
             } catch (err) {
               console.warn("Coach link acceptance failed", err);
             }
-          }
 
-
-          if (msg.user && msg.accessToken) {
             dispatch(
               setCredentials({
                 user: msg.user,

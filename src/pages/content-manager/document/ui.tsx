@@ -476,7 +476,7 @@ export const ContentManagerDocument: React.FC = () => {
 
           <div className="flex flex-col h-full pt-6 w-full overflow-hidden xl:max-w-[1080px] m-auto">
             <ScrollArea className="h-[calc(100%-64px)]">
-              <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px] flex flex-col gap-[8px] mb-[40px]">
+              <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] w-full md:max-w-[563px] xl:max-w-[800px] flex flex-col gap-[8px] mb-[40px]">
                 <p className="text-[24px] font-[500] text-[#1D1D1F]">
                   {documentTitle}
                 </p>
@@ -520,7 +520,7 @@ export const ContentManagerDocument: React.FC = () => {
                   return (
                     <div key={index} className="flex flex-col gap-[24px] pb-[100px]">
                       {index > 0 && pair.query && (
-                        <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-full md:max-w-[563px] xl:max-w-[800px]">
+                        <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] w-full md:max-w-[563px] xl:max-w-[800px]">
                           <p className="text-[18px] font-[500] text-[#1D1D1F]">
                             {pair.query}
                           </p>
@@ -680,7 +680,7 @@ export const ContentManagerDocument: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div className="relative flex items-center">
                           <button
-                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
                             onClick={() => {
                               setSelectedDocumentId(pair.id);
                               setIsRateOpen(true);
@@ -697,7 +697,7 @@ export const ContentManagerDocument: React.FC = () => {
                               ratingsMap={ratingsMap} />
                           )}
                           <button
-                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
                             onClick={() => {
                               setSelectedDocumentId(pair.id);
                               setEditedContent(pair.content);
@@ -709,7 +709,7 @@ export const ContentManagerDocument: React.FC = () => {
                             <Edit />
                           </button>
                           <button
-                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
                             onClick={() => {
                               setSelectedDocumentId(pair.id);
                               setIsMoveOpen(true);
@@ -718,24 +718,24 @@ export const ContentManagerDocument: React.FC = () => {
                             <Arrow />
                           </button>
                           <button
-                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
                             onClick={() => handleDublicateClick(pair.id)}
                           >
                             <Folders />
                           </button>
                           <button
-                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
                             onClick={() => {
                               handleMarkAsClick(pair.id);
                             }}
                           >
                             <MarkAs />
                           </button>
-                          <button className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
+                          <button className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
                             <Voiceover />
                           </button>
                           <button
-                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
                             onClick={() => {
                               setSelectedDocumentId(pair.id);
                               setIsBadResponseOpen(true);
@@ -744,7 +744,7 @@ export const ContentManagerDocument: React.FC = () => {
                             <Dislike />
                           </button>
                           <button
-                            className="p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+                            className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
                             onClick={() => {
                               setSelectedDocumentId(pair.id);
                               setIsDeleteOpen(true);
@@ -774,7 +774,7 @@ export const ContentManagerDocument: React.FC = () => {
 
                 {isSendingMessage && message && (
                   <div className="flex flex-col gap-4">
-                    <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px]">
+                    <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] w-full md:max-w-[563px] xl:max-w-[800px]">
                       <p className="text-[18px] font-[500] text-[#1D1D1F]">
                         {message}
                       </p>

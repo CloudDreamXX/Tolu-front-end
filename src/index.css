@@ -155,3 +155,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border: none !important;
   margin-bottom: 16px;
 }
+
+@media (max-width: 640px) {
+  .scroll-area-viewport>div {
+    display: block !important;
+  }
+}
