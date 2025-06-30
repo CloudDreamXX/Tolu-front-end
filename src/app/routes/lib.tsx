@@ -140,7 +140,7 @@ export const AppRoutes = () => {
 
       <Route
         element={
-          <MainLayout mainLocation="health-snapshot">
+          <MainLayout mainLocation="library">
             <ProtectedRoute allowedRoles={["Client"]} />
           </MainLayout>
         }

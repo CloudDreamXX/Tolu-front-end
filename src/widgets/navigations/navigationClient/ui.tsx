@@ -135,7 +135,7 @@ export const NavigationClient: React.FC = () => {
         </h1>
         <div className="flex items-center gap-[16px]">
           <button
-            onClick={() => nav("/health-snapshot")}
+            onClick={() => nav("/library")}
             className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px]"
           >
             AI Assistant
@@ -169,7 +169,7 @@ export const NavigationClient: React.FC = () => {
               variant={"brightblue"}
               className="w-full h-[44px] text-base font-semibold mb-[72px] mt-[8px]"
               onClick={() => {
-                nav("/health-snapshot");
+                nav("/library");
                 setMenuMobOpen(false);
               }}
             >

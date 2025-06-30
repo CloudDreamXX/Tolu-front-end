@@ -7,7 +7,7 @@ export const getSideBar = (location: string): React.ReactNode => {
   switch (location) {
     case "content-manager":
       return <ContentManagerSidebar />;
-    case "health-snapshot":
+    case "library":
       return <HealthSnapshotSidebar />;
     case "user-management":
       return <UserManagementSideBar />;

@@ -22,7 +22,7 @@ const getRouteByRole = (role: string): string => {
     case "Admin":
       return "/user-management";
     case "Client":
-      return "/health-snapshot";
+      return "/library";
     default:
       return "/auth";
   }

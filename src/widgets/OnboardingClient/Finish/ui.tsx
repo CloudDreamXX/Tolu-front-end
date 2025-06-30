@@ -36,7 +36,7 @@ export const FinishClientOnboarding = () => {
     };
     handleLast();
     const timer = setTimeout(() => {
-      nav("/health-snapshot");
+      nav("/library");
     }, 5000);
 
     return () => clearTimeout(timer);
