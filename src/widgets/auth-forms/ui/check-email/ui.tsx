@@ -1,7 +1,8 @@
 import { ClientService } from "entities/client";
+import { RootState } from "entities/store";
 import { setCredentials, UserService } from "entities/user";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
 
@@ -16,20 +17,16 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
   const query = new URLSearchParams(search);
   const token = query.get("token") ?? "";
   const email = query.get("email") ?? "";
+  const inviteToken = useSelector((state: RootState) => state.user.inviteToken);
 
   useEffect(() => {
     if (from === "register" && token && email) {
       const verifyEmail = async () => {
         try {
           const msg = await UserService.verifyEmail({ email, token });
+          await ClientService.acceptCoachInvite({ token: inviteToken ? inviteToken : "" });
 
           if (msg.user && msg.accessToken) {
-            try {
-              await ClientService.acceptCoachInvite({ token: msg.accessToken });
-            } catch (err) {
-              console.warn("Coach link acceptance failed", err);
-            }
-
             dispatch(
               setCredentials({
                 user: msg.user,

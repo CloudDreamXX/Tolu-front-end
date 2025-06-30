@@ -1,9 +1,11 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { SelectType, SignUp } from "./components";
-import { UserService, setRoleID } from "entities/user";
+import { UserService, setInviteToken, setRoleID } from "entities/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
 import { ClientService } from "entities/client";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "entities/store";
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ export const Register = () => {
     newPassword: "",
   });
   const { token } = useParams();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchInviteDetails = async () => {
@@ -24,6 +27,7 @@ export const Register = () => {
 
       try {
         const data = await ClientService.getInvitationDetails(token);
+        dispatch(setInviteToken(token));
         setFormData((prev) => ({
           ...prev,
           name: data.client.full_name || "",
@@ -46,6 +50,7 @@ export const Register = () => {
   }, [token]);
 
   const handleSubmit = async (e: FormEvent) => {
+
     e.preventDefault();
     const dataBE = {
       name: formData.name,

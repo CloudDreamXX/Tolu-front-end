@@ -4,6 +4,7 @@ import { IUser } from "./model";
 interface InitialState {
   user: IUser | null;
   token: string | null;
+  inviteToken: string | null;
   tokenNewPassword: string | null;
   userType: { role: string } | null;
   isLoading: boolean;
@@ -12,6 +13,7 @@ interface InitialState {
 const initialState: InitialState = {
   user: null,
   token: null,
+  inviteToken: null,
   tokenNewPassword: null,
   userType: null,
   isLoading: true,
@@ -31,6 +33,9 @@ export const userSlice = createSlice({
           role: action.payload.user.roleName,
         };
       }
+    },
+    setInviteToken: (state, action) => {
+      state.inviteToken = action.payload;
     },
     setCredentials: (state, action) => {
       state.user = action.payload.user;
@@ -62,6 +67,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout, setUser, setRoleID, setLoading } =
+export const { setCredentials, logout, setUser, setRoleID, setLoading, setInviteToken } =
   userSlice.actions;
 export default userSlice.reducer;
