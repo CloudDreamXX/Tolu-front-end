@@ -1,10 +1,8 @@
 import { ClientService, Folder } from "entities/client";
 import { ContentService, ContentStatus } from "entities/content";
-import { HealthHistoryService } from "entities/health-history";
 import { LibraryCard } from "features/library-card";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BookMark from "shared/assets/icons/book-mark";
 import Search from "shared/assets/icons/search";
 import {
   Accordion,

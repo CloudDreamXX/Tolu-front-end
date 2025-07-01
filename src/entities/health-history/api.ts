@@ -1,5 +1,5 @@
 import { API_ROUTES, ApiService } from "shared/api";
-import { HealthHistory } from "./model";
+import { HealthHistory, HealthHistoryPostData } from "./model";
 
 export class HealthHistoryService {
   static async getUserHealthHistory(): Promise<HealthHistory> {
@@ -11,12 +11,12 @@ export class HealthHistoryService {
   }
 
   static async createHealthHistory(
-    healthData: string,
+    healthData: HealthHistoryPostData,
     labFile?: File,
     clientId?: string | null
   ): Promise<any> {
     const formData = new FormData();
-    formData.append("health_data", healthData);
+    formData.append("health_data", JSON.stringify(healthData));
 
     if (labFile) {
       formData.append("lab_file", labFile);
@@ -27,7 +27,7 @@ export class HealthHistoryService {
     }
 
     return ApiService.post<any>(
-      API_ROUTES.CLIENT.ACCEPT_COACH_INVITE,
+      API_ROUTES.HEALTH_HISTORY.POST,
       formData,
       {
         headers: {

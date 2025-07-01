@@ -5,6 +5,7 @@ import Expert from "shared/assets/icons/expert";
 import Flag from "shared/assets/icons/flag";
 import NotReadyForNext from "shared/assets/icons/not-ready-for-next";
 import ReadyForNext from "shared/assets/icons/ready-for-next";
+import ToRead from "shared/assets/icons/to-read";
 import { cn, formatDateToSlash } from "shared/lib";
 
 export const renderReadyForReview = (readyForReview: boolean | undefined) => {
@@ -149,11 +150,14 @@ export const renderStatus = (
   return (
     <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
       {withText ? (
-        <span className="text-[14px] font-[500] text-[#5F5F65]">Status</span>
+        <span className="flex gap-[4px] items-center text-[14px] font-[500] text-[#5F5F65]">Status</span>
       ) : (
         <Expert />
       )}
-      <span className="text-[16px] font-[600] text-[#1C63DB]">{status}</span>
+      <span className="flex gap-[4px] items-center text-[16px] font-[600] text-[#1C63DB]">
+        {status === "To read" && <ToRead />}
+        {status}
+      </span>
     </p>
   );
 };

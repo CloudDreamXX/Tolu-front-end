@@ -66,17 +66,6 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
           <h2 className="text-xl font-bold text-left truncate max-w-30 flex items-center justify-between">
             {trimToThreeWords(title)}
             <div className="flex items-center gap-[12px]">
-              {status === "To read" && <div
-                style={{
-                  backgroundImage: `linear-gradient(to right, #1C63DB 0%, #1C63DB ${progress}%, rgba(0,0,0,0) ${progress}%, rgba(0,0,0,0) 100%)`,
-                }}
-                className="flex h-[32px] text-[14px] text-nowrap items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-[6px] gap-8 px-[16px]"
-              >
-                <span className={progress > 40 ? "text-white" : ""}>
-                  In progress ...
-                </span>
-                <span>{progress}%</span>
-              </div>}
               <button className="bg-white" onClick={(e) => {
                 e.stopPropagation();
                 onStatusChange(
@@ -88,10 +77,24 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
               }}>{contentStatus?.content_id === id && contentStatus.status === "saved_for_later" ? <BookMarkFilled /> : <BookMark />}</button>
             </div>
           </h2>
+          {status === "To read" && (
+            <div className="w-full flex flex-col gap-[8px]">
+              <div className="flex justify-between">
+                <span className="text-[16px] text-[#1B2559] font-[600] px-[8px] py-[2px] bg-[#DDEBF6] rounded-[8px]">Chronic constipation relief</span>
+                <span className="text-[16px] text-[#1B2559] font-[600]">{progress}%</span>
+              </div>
+              <div className="h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#1C63DB]"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          )}
           <div className="flex items-center justify-between">
-            {renderAuthor(author, true)}
             {renderStatus(status, true)}
             {renderDocumentType(type, true)}
+            {renderAuthor(author, true)}
           </div>
         </CardContent>
       </Card>
