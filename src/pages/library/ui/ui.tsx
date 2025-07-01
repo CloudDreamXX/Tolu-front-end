@@ -26,11 +26,6 @@ export const Library = () => {
         setSymptoms(data.Symptoms);
       } catch (error) {
         console.error("Failed to load steps", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to load steps",
-          description: "Failed to load steps. Please try again.",
-        });
       }
     };
 

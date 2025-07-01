@@ -32,10 +32,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       >
         <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
       </button>
-      <button
-        className="flex flex-row items-center gap-2 p-2 text-sm font-medium text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"
-        onClick={onNewSearch}
-      >
+      <button className="flex flex-row items-center gap-2 p-2 text-sm font-medium text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200">
         <DotsThreeVerticalIcon width={24} height={24} color="#000" />
       </button>
     </div>

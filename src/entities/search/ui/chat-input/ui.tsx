@@ -2,6 +2,7 @@ import { Paperclip, Send } from "lucide-react";
 import { useState } from "react";
 import { cn } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
+import { HealthProfileForm } from "widgets/health-profile-form";
 
 interface SearchAiChatInputProps {
   placeholder?: string;
@@ -64,7 +65,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
           className="p-0 border-none resize-none h-14 focus:border-blue-500"
         />
 
-        <div className="flex flex-row items-center justify-between w-full">
+        <div className="flex flex-row items-center w-full gap-4">
           <label className="relative flex items-center text-gray-600 transition-colors cursor-pointer gap-2text-sm hover:text-gray-800 hover:bg-gray-100">
             <Paperclip size={24} />
             {attachedFiles.length > 0 && (
@@ -83,10 +84,11 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
               disabled={!isFormValid || disabled}
             />
           </label>
+          <HealthProfileForm />
           <Button
             onClick={handleSend}
             disabled={!isFormValid}
-            className="w-10 h-10 p-0 bg-blue-500 rounded-full bottom-3 right-3 hover:bg-blue-600 disabled:opacity-50"
+            className="w-10 h-10 p-0 ml-auto bg-blue-500 rounded-full bottom-3 right-3 hover:bg-blue-600 disabled:opacity-50"
             title={
               isFormValid
                 ? "Send message (Ctrl+Enter)"
