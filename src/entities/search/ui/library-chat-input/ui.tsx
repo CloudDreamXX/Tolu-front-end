@@ -11,6 +11,7 @@ import {
   Input,
   Switch,
 } from "shared/ui";
+import { HealthProfileForm } from "widgets/health-profile-form";
 
 interface LibraryChatInputProps {
   placeholder?: string;
@@ -142,6 +143,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               disabled={disabled}
             />
           </label>
+          <HealthProfileForm />
         </div>
         <Button
           onClick={handleSend}
