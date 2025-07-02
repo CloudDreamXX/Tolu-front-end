@@ -1,15 +1,28 @@
-import { UserCircleGearIcon } from "@phosphor-icons/react";
-import { Paperclip, Send, User } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Paperclip,
+  Send,
+} from "lucide-react";
 import React, { useState } from "react";
 import { cn } from "shared/lib";
-import { Button, Input, Switch, Textarea } from "shared/ui";
-import { HealthProfileForm } from "widgets/health-profile-form";
+import {
+  Button,
+  Input,
+  Switch,
+} from "shared/ui";
 
 interface LibraryChatInputProps {
   placeholder?: string;
-  onSend?: (message: string, files: File[], personalize: boolean) => void;
+  onSend?: (
+    message: string,
+    files: File[],
+    selectedOption: string | null
+  ) => void;
   disabled?: boolean;
   className?: string;
+  personalize?: boolean;
+  togglePersonalize?: () => void;
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -17,14 +30,17 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   onSend,
   disabled = false,
   className,
+  personalize,
+  togglePersonalize
 }) => {
   const [message, setMessage] = useState("");
-  const [personalize, setPersonalize] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState(false);
 
   const handleSend = () => {
     if ((!message.trim() && attachedFiles.length === 0) || disabled) return;
-    onSend?.(message, attachedFiles, personalize);
+    onSend?.(message, attachedFiles, personalize ? selectedOption : null);
     setMessage("");
     setAttachedFiles([]);
   };
@@ -44,20 +60,65 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const isSendDisabled =
     (!message.trim() && attachedFiles.length === 0) || disabled;
 
+  const toggleDropdown = () => {
+    setActiveDropdown(!activeDropdown);
+  };
+
+  const handleSelection = (value: string) => {
+    setSelectedOption(value);
+    setActiveDropdown(false);
+  };
+
   return (
     <div className={cn("p-4 bg-white border-t border-gray-200", className)}>
-      <div className="flex items-center gap-2 mb-4">
-        <Switch
-          checked={personalize}
-          onCheckedChange={setPersonalize}
-          id="personalize-search"
-        />
-        <label
-          htmlFor="personalize-search"
-          className="text-sm text-gray-700 cursor-pointer"
-        >
-          Personalize search
-        </label>
+      <div className="flex justify-between items-center mb-4 h-[44px]">
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={personalize}
+            onCheckedChange={togglePersonalize}
+            id="personalize-search"
+          />
+          <label
+            htmlFor="personalize-search"
+            className={`text-sm ${personalize ? "text-[#1C63DB]" : "text-gray-700"
+              } cursor-pointer`}
+          >
+            Personalize search
+          </label>
+        </div>
+        {personalize && (
+          <div className="relative">
+            <button
+              type="button"
+              className="flex w-[300px] h-[44px] items-center justify-between border-[#DFDFDF] border rounded-[8px] py-[11px] px-[16px] cursor-pointer"
+              onClick={toggleDropdown}
+            >
+              <span className="text-[#1D1D1F] font-medium text-[16px]">
+                {selectedOption || "Personal Story"}
+              </span>
+              {activeDropdown ? (
+                <ChevronUp className="text-[#5F5F65]" />
+              ) : (
+                <ChevronDown className="text-[#5F5F65]" />
+              )}
+            </button>
+            {activeDropdown && (
+              <div className="absolute z-10 flex flex-col items-start w-[300px] mt-1 bg-white border rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto">
+                {["Personal Story", "Health Profile"].map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className={`p-3 w-full text-left text-[16px] font-medium text-[#1D1D1F] hover:text-[#1C63DB] ${selectedOption === item ? "bg-[#E4E9F2]" : ""
+                      }`}
+                    onClick={() => handleSelection(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <div className="relative mb-4">
         <Input
@@ -81,7 +142,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               disabled={disabled}
             />
           </label>
-          <HealthProfileForm />
         </div>
         <Button
           onClick={handleSend}

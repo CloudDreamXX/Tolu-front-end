@@ -15,6 +15,43 @@ import {
   CardTitle,
 } from "shared/ui";
 import { MessageList } from "widgets/message-list";
+import { Steps } from "features/steps/ui";
+import { SymptomsForm } from "./components/symptoms-form";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useWatch } from "react-hook-form";
+import { HealthHistoryForm } from "./components/health-history-form";
+import { LifestyleForm } from "./components/lifestyle-form";
+import { GoalsForm } from "./components/goals-form";
+
+const steps = ["Symptoms", "Your Health History", "Your Lifestyle", "Your Goals"];
+
+export const baseSchema = z.object({
+  age: z.string(),
+  maritalStatus: z.string(),
+  job: z.string(),
+  children: z.string(),
+  menopauseStatus: z.string(),
+  mainSymptoms: z.string(),
+  otherChallenges: z.string(),
+  strategiesTried: z.string(),
+  diagnosedConditions: z.string(),
+  geneticTraits: z.string(),
+  maternalSide: z.string(),
+  paternalSide: z.string(),
+  notableConcern: z.string(),
+  stressLevel: z.string(),
+  takeout: z.string(),
+  homeCooked: z.string(),
+  dietType: z.string(),
+  exercise: z.string(),
+  limitations: z.string(),
+  medications: z.string(),
+  period: z.string(),
+  sexLife: z.string(),
+  supportSystem: z.string(),
+  goals: z.string(),
+});
 
 export const LibrarySmallChat = () => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -26,20 +63,54 @@ export const LibrarySmallChat = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentChatId, setCurrentChatId] = useState<string>("");
   const [chatTitle, setChatTitle] = useState<string>("");
+  const [personalize, setPersonalize] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const form = useForm<z.infer<typeof baseSchema>>({
+    resolver: zodResolver(baseSchema),
+    defaultValues: {
+      age: "",
+      maritalStatus: "",
+      job: "",
+      children: "",
+      menopauseStatus: "",
+      mainSymptoms: "",
+      otherChallenges: "",
+      strategiesTried: "",
+      diagnosedConditions: "",
+      geneticTraits: "",
+      maternalSide: "",
+      paternalSide: "",
+      notableConcern: "",
+      stressLevel: "",
+      takeout: "",
+      homeCooked: "",
+      dietType: "",
+      exercise: "",
+      limitations: "",
+      medications: "",
+      period: "",
+      sexLife: "",
+      supportSystem: "",
+      goals: "",
+    },
+  });
+
+  const watchedValues = useWatch({ control: form.control });
 
   const handleExpandClick = () => {
-    if (currentChatId) {
-      navigate(`/library/${currentChatId}`);
-    } else {
-      navigate("/library");
-    }
+    navigate(currentChatId ? `/library/${currentChatId}` : "/library");
+  };
+
+  const togglePersonalize = () => {
+    setPersonalize(!personalize);
   };
 
   const handleNewMessage = async (
     message: string,
     files: File[],
-    personalize: boolean
-  ) => {
+    option: string | null
+  ): Promise<string | undefined> => {
     if ((!message.trim() && files.length === 0) || isSearching) return;
 
     const userMessage: Message = {
@@ -54,11 +125,8 @@ export const LibrarySmallChat = () => {
     setStreamingText("");
     setError(null);
 
-    const {
-      image,
-      pdf,
-      errors: fileErrors,
-    } = await SearchService.prepareFilesForSearch(files);
+    const { image, pdf, errors: fileErrors } =
+      await SearchService.prepareFilesForSearch(files);
 
     if (fileErrors.length > 0) {
       setError(fileErrors.join("\n"));
@@ -67,6 +135,7 @@ export const LibrarySmallChat = () => {
     }
 
     let accumulatedText = "";
+    let returnedChatId = currentChatId;
 
     try {
       await SearchService.aiSearchStream(
@@ -76,7 +145,7 @@ export const LibrarySmallChat = () => {
             is_new: !currentChatId,
             chat_id: currentChatId,
             regenerate_id: null,
-            personalize,
+            personalize: personalize,
           }),
           ...(image && { image }),
           ...(pdf && { pdf }),
@@ -102,6 +171,7 @@ export const LibrarySmallChat = () => {
 
           if (finalData.chat_id && finalData.chat_id !== currentChatId) {
             setCurrentChatId(finalData.chat_id);
+            returnedChatId = finalData.chat_id;
           }
 
           if (finalData.chat_title) {
@@ -119,38 +189,137 @@ export const LibrarySmallChat = () => {
       setError(error instanceof Error ? error.message : "Search failed");
       console.error("Search error:", error);
     }
+
+    return returnedChatId;
+  };
+
+  const handleNextStep = async () => {
+    const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
+      ["age", "maritalStatus", "job", "children", "menopauseStatus", "mainSymptoms", "otherChallenges", "strategiesTried"],
+      ["diagnosedConditions", "geneticTraits", "maternalSide", "paternalSide", "notableConcern"],
+      ["stressLevel", "takeout", "homeCooked", "dietType", "exercise", "limitations", "medications", "period", "sexLife", "supportSystem"],
+      ["goals"],
+    ];
+
+    const isValid = await form.trigger(stepFields[currentStep]);
+    if (!isValid) return;
+
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      const values = form.getValues();
+      const message = `Hi Tolu. I’m a ${values.age}-year-old ${values.maritalStatus} woman working ${values.job}, and I have ${values.children} children. I’m ${values.menopauseStatus} but lately I’ve been dealing with ${values.mainSymptoms}. I’ve also noticed ${values.otherChallenges}, and it feels like no matter ${values.strategiesTried}, things aren’t getting better. My health history includes ${values.diagnosedConditions}, and I have ${values.geneticTraits}. In my family, there’s a history of ${values.maternalSide} on my mom’s side and ${values.paternalSide} on my dad’s side. Someone in my family was recently diagnosed with ${values.notableConcern}, which has me thinking more about prevention. Right now, my lifestyle includes ${values.stressLevel}, eating about ${values.takeout} takeout and ${values.homeCooked} home-cooked meals. I usually follow a ${values.dietType} diet. I ${values.exercise} get time to exercise or relax, and ${values.limitations}. I’m currently taking ${values.medications}, my periods are ${values.period}, and my sex life is ${values.sexLife}. I usually rely on ${values.supportSystem} for emotional support. What I really want is to ${values.goals}.`;
+
+      setPersonalize(false);
+
+      const newChatId = await handleNewMessage(message, [], null);
+      form.reset();
+      setCurrentStep(0);
+
+      navigate(newChatId ? `/library/${newChatId}` : "/library");
+    }
+  };
+
+  const isStepComplete = (): boolean => {
+    const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
+      ["age", "maritalStatus", "job", "children", "menopauseStatus", "mainSymptoms", "otherChallenges", "strategiesTried"],
+      ["diagnosedConditions", "geneticTraits", "maternalSide", "paternalSide", "notableConcern"],
+      ["stressLevel", "takeout", "homeCooked", "dietType", "exercise", "limitations", "medications", "period", "sexLife", "supportSystem"],
+      ["goals"],
+    ];
+
+    const currentFields = stepFields[currentStep];
+
+    return currentFields.every((field) => watchedValues[field]?.trim?.() !== "");
   };
 
   return (
-    <Card className="flex flex-col w-full h-full border-none rounded-2xl">
-      <CardHeader className="relative flex flex-col items-center gap-4">
-        <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
-          <Tolu />
-        </div>
-        <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
-        <button
-          className="absolute top-4 left-4"
-          onClick={handleExpandClick}
-          title="Expand chat"
-        >
-          <Expand className="w-6 h-6 text-[#5F5F65]" />
-        </button>
-      </CardHeader>
-      <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
-        <MessageList
-          messages={messages}
-          isSearching={isSearching}
-          streamingText={streamingText}
-          error={error}
-        />
-      </CardContent>
-      <CardFooter className="w-full p-0 ">
-        <LibraryChatInput
-          className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
-          onSend={handleNewMessage}
-          disabled={isSearching}
-        />
-      </CardFooter>
-    </Card>
+    <>
+      {personalize ? (
+        <Card className="flex flex-col w-full h-fit border-none rounded-2xl">
+          <CardHeader className="relative flex flex-col items-center gap-4">
+            <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
+              <Tolu />
+            </div>
+            <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            <button
+              className="absolute top-4 left-4"
+              onClick={handleExpandClick}
+              title="Expand chat"
+            >
+              <Expand className="w-6 h-6 text-[#5F5F65]" />
+            </button>
+          </CardHeader>
+          <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
+          <CardContent className="px-6 pb-0">
+            <div className="p-[24px] border border-[#008FF6] rounded-[20px]">
+              <p className="text-[24px] text-[#1D1D1F] font-[500]">Personal story</p>
+              <Steps steps={steps} currentStep={currentStep} ordered />
+              <form onSubmit={(e) => e.preventDefault()}>
+                {currentStep === 0 && <SymptomsForm form={form} />}
+                {currentStep === 1 && <HealthHistoryForm form={form} />}
+                {currentStep === 2 && <LifestyleForm form={form} />}
+                {currentStep === 3 && <GoalsForm form={form} />}
+              </form>
+              <div className="flex justify-end gap-2 mt-6">
+                <button
+                  type="button"
+                  disabled={!isStepComplete()}
+                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 ${isStepComplete()
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5F5F65] events-none"
+                    }`}
+                  onClick={handleNextStep}
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="w-full p-0">
+            <LibraryChatInput
+              className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
+              onSend={handleNewMessage}
+              personalize={personalize}
+              disabled={isSearching}
+              togglePersonalize={togglePersonalize}
+            />
+          </CardFooter>
+        </Card>
+      ) : (
+        <Card className="flex flex-col w-full h-full border-none rounded-2xl">
+          <CardHeader className="relative flex flex-col items-center gap-4">
+            <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
+              <Tolu />
+            </div>
+            <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            <button
+              className="absolute top-4 left-4"
+              onClick={handleExpandClick}
+              title="Expand chat"
+            >
+              <Expand className="w-6 h-6 text-[#5F5F65]" />
+            </button>
+          </CardHeader>
+          <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
+            <MessageList
+              messages={messages}
+              isSearching={isSearching}
+              streamingText={streamingText}
+              error={error}
+            />
+          </CardContent>
+          <CardFooter className="w-full p-0">
+            <LibraryChatInput
+              className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
+              onSend={handleNewMessage}
+              disabled={isSearching}
+              personalize={personalize}
+              togglePersonalize={togglePersonalize}
+            />
+          </CardFooter>
+        </Card>
+      )}
+    </>
   );
 };

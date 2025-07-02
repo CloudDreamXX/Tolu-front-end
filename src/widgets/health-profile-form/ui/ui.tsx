@@ -269,8 +269,6 @@ export const HealthProfileForm = () => {
     }
   };
 
-  console.log(form.watch)
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
