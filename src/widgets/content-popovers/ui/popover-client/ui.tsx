@@ -25,7 +25,7 @@ interface IPopoverClientProps {
   setClientId?: (clientId: string | null) => void;
   customTrigger?: React.ReactNode;
   initialSelectedClientsId?: string[] | null;
-  refreshSharedClients?: () => Promise<void>
+  refreshSharedClients?: () => Promise<void>;
 }
 
 export const PopoverClient: React.FC<IPopoverClientProps> = ({
@@ -33,7 +33,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   setClientId,
   customTrigger,
   initialSelectedClientsId,
-  refreshSharedClients
+  refreshSharedClients,
 }) => {
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");

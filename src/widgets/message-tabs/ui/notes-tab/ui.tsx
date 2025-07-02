@@ -11,7 +11,7 @@ interface NotesTabProps {
   chatId?: string;
 }
 
-export const NotesTab: React.FC<NotesTabProps> = ({ chatId }) => {
+export const NotesTab: React.FC<NotesTabProps> = () => {
   const { isMobileOrTablet } = usePageWidth();
 
   return (

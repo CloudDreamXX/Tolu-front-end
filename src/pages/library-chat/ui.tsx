@@ -24,7 +24,6 @@ export const LibraryChat = () => {
   const [chatTitle, setChatTitle] = useState<string>("");
   const [currentChatId, setCurrentChatId] = useState<string>(chatId ?? "");
   const [isLoadingSession, setIsLoadingSession] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   const initialSearchDone = useRef(false);
   const sessionLoadDone = useRef(false);
@@ -37,11 +36,7 @@ export const LibraryChat = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      console.log("Initializing chat with ID:", chatId);
-
       if (initialMessage && location.state?.message) {
-        console.log("Processing initial message:", initialMessage);
-
         setMessages([]);
         setError(null);
         setChatTitle("");
@@ -78,14 +73,9 @@ export const LibraryChat = () => {
           await handleInitialSearch(initialMessage);
         }
       } else if (isExistingChat) {
-        console.log("Loading existing session for:", chatId);
         sessionLoadDone.current = true;
         await loadExistingSession();
-      } else if (chatId && chatId.startsWith("new_chat_")) {
-        console.log("New chat without initial message:", chatId);
       }
-
-      setIsInitialized(true);
     };
 
     initialize();
@@ -144,7 +134,6 @@ export const LibraryChat = () => {
   const handleInitialSearch = async (message: string) => {
     if (isSearching) return;
 
-    console.log("Starting initial search with message:", message);
     setIsSearching(true);
     setStreamingText("");
     setError(null);
@@ -208,11 +197,7 @@ export const LibraryChat = () => {
     }
   };
 
-  const handleNewMessage = async (
-    message: string,
-    files: File[],
-    searchType: string
-  ) => {
+  const handleNewMessage = async (message: string, files: File[]) => {
     if (!message.trim() || isSearching) return;
 
     const userMessage: Message = {

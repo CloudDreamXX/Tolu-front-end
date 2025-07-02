@@ -21,7 +21,6 @@ interface AttachedFile {
 interface PopoverAttachProps {
   setFiles?: (files: File[]) => void;
   customTrigger?: React.ReactNode;
-  isAttached?: boolean;
   title?: string;
   description?: string;
   existingFiles?: string[];
@@ -31,13 +30,11 @@ interface PopoverAttachProps {
 export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   setFiles,
   customTrigger,
-  isAttached,
   title,
   description,
   existingFiles = [],
   disabled = false,
 }) => {
-  console.log("PopoverAttach rendered with existingFiles:", existingFiles);
   const [dragActive, setDragActive] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [isOpen, setIsOpen] = useState(false);

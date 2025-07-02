@@ -110,8 +110,8 @@ export const API_ROUTES = {
     DETAILS: "/content/retrieve",
   },
   ADMIN: {
-    GET_ALL_USERS: "/admin/users"
-  }
+    GET_ALL_USERS: "/admin/users",
+  },
 };
 
 export const EXCLUDE_TOKEN_ENDPOINTS = [

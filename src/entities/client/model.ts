@@ -49,4 +49,3 @@ export interface Folder {
 export interface FoldersResponse {
   folders: Folder[];
 }
-

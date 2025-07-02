@@ -136,7 +136,7 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   // Handle edit toggle
-  const onEditToggle = (pair: any, doc: any) => {
+  const onEditToggle = (pair: any) => {
     setSelectedDocumentId(pair.id);
     setEditedContent(pair.content);
     setEditedTitle(document?.title ?? "");
@@ -188,7 +188,6 @@ export const ContentManagerDocument: React.FC = () => {
 
               <ConversationList
                 conversation={conversation}
-                document={document}
                 compareIndex={compareIndex}
                 mobilePage={mobilePage}
                 isEditing={isEditing}

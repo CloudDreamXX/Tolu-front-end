@@ -22,10 +22,8 @@ export const OnboardingMain = () => {
   const { isMobile } = usePageWidth();
   const [customButtons, setCustomButtons] = useState(buttons);
   const [otherText, setOtherText] = useState("");
-  const [isClosedHint, setIsClosedHint] = useState(false);
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const [searchText, setSearchText] = useState("");
-  const [isNextHovered, setIsNextHovered] = useState(false);
 
   const handleOther = () => {
     if (!otherText.trim()) return;
@@ -73,16 +71,13 @@ export const OnboardingMain = () => {
     return selectedButtons.includes("Other");
   };
 
-  const handleHintButtonClick = () => {
-    setIsClosedHint(true);
-  };
+  const handleHintButtonClick = () => {};
 
   const isNextDisabled =
     selectedButtons.length === 0 ||
     (selectedButtons.includes("Other") && otherText.trim() === "");
 
   const shouldStickToBottom = isMobile && isOtherSelected();
-  const isShowHint = isNextHovered && !isNextDisabled && !isClosedHint;
 
   const filteredButtons = customButtons.map((row) =>
     row.filter((btn) => btn.toLowerCase().includes(searchText.toLowerCase()))
@@ -136,8 +131,8 @@ export const OnboardingMain = () => {
             <div className="flex gap-[17px] items-center justify-center content-center py-[17px] px-[13px] flex-wrap self-stretch">
               {filteredButtons
                 .filter((row) => row.length > 0)
-                .map((filteredRow, index) => (
-                  <div key={index} className="flex gap-[13px]">
+                .map((filteredRow) => (
+                  <div key={filteredRow.length} className="flex gap-[13px]">
                     {filteredRow.map((buttonText) => {
                       const isSelected = selectedButtons.includes(buttonText);
                       const isDisabled =
@@ -214,8 +209,6 @@ export const OnboardingMain = () => {
                   }
                   tabIndex={isNextDisabled ? -1 : 0}
                   aria-disabled={isNextDisabled}
-                  onMouseEnter={() => !isNextDisabled && setIsNextHovered(true)}
-                  onMouseLeave={() => setIsNextHovered(false)}
                 >
                   Next
                 </Link>

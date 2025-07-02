@@ -6,6 +6,7 @@ export default (props?: React.SVGProps<SVGSVGElement>) => {
       height="25"
       viewBox="0 0 24 25"
       fill="none"
+      {...props}
     >
       <mask
         id="mask0_3733_3383"

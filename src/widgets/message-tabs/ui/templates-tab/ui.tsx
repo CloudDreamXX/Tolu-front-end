@@ -7,7 +7,7 @@ interface TemplatesTabrops {
   chatId?: string;
 }
 
-export const TemplatesTab: React.FC<TemplatesTabrops> = ({ chatId }) => {
+export const TemplatesTab: React.FC<TemplatesTabrops> = () => {
   const [dragActive, setDragActive] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);

@@ -8,7 +8,6 @@ interface SearchAiChatInputProps {
   placeholder?: string;
   onFileAttach?: (files: File[]) => void;
   className?: string;
-  chatId?: string;
   onSend?: (message: string, files: File[], searchType: string) => void;
   disabled?: boolean;
 }
@@ -17,7 +16,6 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
   placeholder = "Your message",
   onFileAttach,
   className = "",
-  chatId = "",
   onSend,
   disabled = false,
 }) => {

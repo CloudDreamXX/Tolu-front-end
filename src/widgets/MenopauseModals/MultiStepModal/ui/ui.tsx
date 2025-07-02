@@ -1,4 +1,4 @@
-import { MenopauseSubmissionRequest, Symptom } from "entities/user";
+import { MenopauseSubmissionRequest } from "entities/user";
 import React, { useEffect, useState } from "react";
 import { steps as initialSteps } from "../mock";
 import { ModalLayout } from "./modal-layout";
@@ -8,18 +8,16 @@ import { ModalNavigation } from "./modal-navigation";
 
 interface MultiStepModalProps {
   isOpen: boolean;
-  symptoms: Symptom[];
   onClose: () => void;
   onComplete: (results: MenopauseSubmissionRequest) => Promise<void>;
 }
 
 export const MultiStepModal: React.FC<MultiStepModalProps> = ({
   isOpen,
-  symptoms,
   onClose,
   onComplete,
 }) => {
-  const [steps, setSteps] = useState(initialSteps);
+  const [steps] = useState(initialSteps);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string[]>
@@ -34,16 +32,6 @@ export const MultiStepModal: React.FC<MultiStepModalProps> = ({
   );
 
   const [otherInputs, setOtherInputs] = useState<string[]>([]);
-
-  // useEffect(() => {
-  //   const newSteps = [...initialSteps];
-  //   newSteps[0] = {
-  //     ...newSteps[0],
-  //     options: symptoms.map((s) => ({ id: s.id, name: s.name })),
-  //   };
-  //   setSteps(newSteps);
-  // }, [symptoms]);
-
   const step = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
   const folderId = step.folder_id;
@@ -116,8 +104,6 @@ export const MultiStepModal: React.FC<MultiStepModalProps> = ({
   };
 
   const handleNextStepClick = async () => {
-    console.log("handleNextStepClick", currentStep, step, isLastStep);
-
     const folderId = step.folder_id;
     const trimmedOther = otherInputs[currentStep]?.trim();
 

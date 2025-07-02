@@ -10,7 +10,6 @@ interface SearchableSelectProps {
   placeholder?: string;
   labelStyle?: string;
   width?: string;
-  arrowTopPosition?: "72" | "48";
   position?: "top" | "bottom";
   dropdownStyle?: string;
 }
@@ -23,7 +22,6 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
   onChange,
   placeholder = "Select",
   width = "w-[100%]",
-  arrowTopPosition,
   position = "bottom",
   dropdownStyle,
 }) => {

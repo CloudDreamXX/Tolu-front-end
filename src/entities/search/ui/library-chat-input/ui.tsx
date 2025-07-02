@@ -1,16 +1,7 @@
-import {
-  ChevronDown,
-  ChevronUp,
-  Paperclip,
-  Send,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, Paperclip, Send } from "lucide-react";
 import React, { useState } from "react";
 import { cn } from "shared/lib";
-import {
-  Button,
-  Input,
-  Switch,
-} from "shared/ui";
+import { Button, Input, Switch } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
 
 interface LibraryChatInputProps {
@@ -32,7 +23,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   disabled = false,
   className,
   personalize,
-  togglePersonalize
+  togglePersonalize,
 }) => {
   const [message, setMessage] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
@@ -81,8 +72,9 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           />
           <label
             htmlFor="personalize-search"
-            className={`text-sm ${personalize ? "text-[#1C63DB]" : "text-gray-700"
-              } cursor-pointer`}
+            className={`text-sm ${
+              personalize ? "text-[#1C63DB]" : "text-gray-700"
+            } cursor-pointer`}
           >
             Personalize search
           </label>
@@ -109,8 +101,9 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                   <button
                     key={item}
                     type="button"
-                    className={`p-3 w-full text-left text-[16px] font-medium text-[#1D1D1F] hover:text-[#1C63DB] ${selectedOption === item ? "bg-[#E4E9F2]" : ""
-                      }`}
+                    className={`p-3 w-full text-left text-[16px] font-medium text-[#1D1D1F] hover:text-[#1C63DB] ${
+                      selectedOption === item ? "bg-[#E4E9F2]" : ""
+                    }`}
                     onClick={() => handleSelection(item)}
                   >
                     {item}

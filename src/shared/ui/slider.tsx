@@ -10,58 +10,63 @@ interface CustomSliderProps
   withSeparator?: boolean;
 }
 
-const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, CustomSliderProps>(
-  ({ className, colors, value = [0], activeIndex, withSeparator, ...props }, ref) => {
-    const isCustomColored = Array.isArray(colors);
-    const active = activeIndex ?? Math.max(value[0] - 1, 0);
+const Slider = React.forwardRef<
+  React.ElementRef<typeof SliderPrimitive.Root>,
+  CustomSliderProps
+>(({ className, colors, value = [0], activeIndex, ...props }, ref) => {
+  const isCustomColored = Array.isArray(colors);
+  const active = activeIndex ?? Math.max(value[0] - 1, 0);
 
-    return (
-      <SliderPrimitive.Root
-        ref={ref}
-        value={value}
-        className={cn("relative flex w-full touch-none select-none items-center", className)}
-        {...props}
-      >
-        {isCustomColored ? (
-          <SliderPrimitive.Track className="relative h-4 w-full rounded-[4px] bg-transparent flex overflow-hidden gap-[2px]">
-            {colors.map((color, index) => {
-              const filledSegments = Math.floor(value[0]);
-              const decimalPart = value[0] - filledSegments;
-              const segmentWidth = decimalPart * 100;
+  return (
+    <SliderPrimitive.Root
+      ref={ref}
+      value={value}
+      className={cn(
+        "relative flex w-full touch-none select-none items-center",
+        className
+      )}
+      {...props}
+    >
+      {isCustomColored ? (
+        <SliderPrimitive.Track className="relative h-4 w-full rounded-[4px] bg-transparent flex overflow-hidden gap-[2px]">
+          {colors.map((color, index) => {
+            const filledSegments = Math.floor(value[0]);
+            const decimalPart = value[0] - filledSegments;
+            const segmentWidth = decimalPart * 100;
 
-              const isLastSegment = index === value.length - 1;
-              console.log(isLastSegment)
+            const isLastSegment = index === value.length - 1;
 
-              return (
+            return (
+              <div
+                key={color}
+                className={`w-1/6 h-full transition-colors duration-200 ${isLastSegment ? "rounded-r-[4px]" : ""}`}
+                style={{
+                  backgroundColor: index < active ? color : "#ECEFF4",
+                }}
+              >
                 <div
-                  key={index}
-                  className={`w-1/6 h-full transition-colors duration-200 ${isLastSegment ? 'rounded-r-[4px]' : ''}`}
+                  className="w-full h-full"
                   style={{
-                    backgroundColor: index < active ? color : "#ECEFF4",
+                    backgroundColor:
+                      index <= filledSegments ? color : "#ECEFF4",
+                    width:
+                      index === filledSegments ? `${segmentWidth}%` : "auto",
                   }}
-                >
-                  <div
-                    className="w-full h-full"
-                    style={{
-                      backgroundColor: index <= filledSegments ? color : "#ECEFF4",
-                      width: index === filledSegments ? `${segmentWidth}%` : "auto",
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </SliderPrimitive.Track>
-        ) : (
-          <SliderPrimitive.Track className="relative h-4 w-full rounded-full bg-[#D9D9D9] overflow-hidden">
-            <SliderPrimitive.Range className="absolute h-4 bg-[#1C63DB]" />
-          </SliderPrimitive.Track>
-        )}
+                />
+              </div>
+            );
+          })}
+        </SliderPrimitive.Track>
+      ) : (
+        <SliderPrimitive.Track className="relative h-4 w-full rounded-full bg-[#D9D9D9] overflow-hidden">
+          <SliderPrimitive.Range className="absolute h-4 bg-[#1C63DB]" />
+        </SliderPrimitive.Track>
+      )}
 
-        <SliderPrimitive.Thumb className="-left-20 relative block focus-visible:outline-none h-6 w-6 rounded-full border-2 border-[#1C63DB] bg-white shadow" />
-      </SliderPrimitive.Root>
-    );
-  }
-);
+      <SliderPrimitive.Thumb className="-left-20 relative block focus-visible:outline-none h-6 w-6 rounded-full border-2 border-[#1C63DB] bg-white shadow" />
+    </SliderPrimitive.Root>
+  );
+});
 
 Slider.displayName = SliderPrimitive.Root.displayName;
 

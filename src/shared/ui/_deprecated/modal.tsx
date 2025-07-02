@@ -42,7 +42,7 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
         </div>
 
         <div className="flex flex-wrap justify-center gap-4">
-          {categories?.map((category, _) => (
+          {categories?.map((category) => (
             <button
               key={category.id}
               onClick={() => onCategoryClick && onCategoryClick(category.name)}

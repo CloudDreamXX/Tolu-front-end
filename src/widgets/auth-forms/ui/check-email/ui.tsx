@@ -1,8 +1,6 @@
-import { ClientService } from "entities/client";
-import { RootState } from "entities/store";
 import { setCredentials, UserService } from "entities/user";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
 

@@ -1,4 +1,4 @@
-import { Fire, Lightning, Moon, MoonStarsIcon } from "@phosphor-icons/react";
+import { Fire, Lightning, MoonStarsIcon } from "@phosphor-icons/react";
 import {
   FormControl,
   FormField,

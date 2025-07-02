@@ -48,6 +48,8 @@ export class ClientService {
   }
 
   static async getLibraryContent(): Promise<FoldersResponse> {
-    return ApiService.get<FoldersResponse>(API_ROUTES.CLIENT.GET_LIBRARY_CONTENT);
+    return ApiService.get<FoldersResponse>(
+      API_ROUTES.CLIENT.GET_LIBRARY_CONTENT
+    );
   }
 }

@@ -4,7 +4,6 @@ import { UserService, setRoleID } from "entities/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
 import { ClientService } from "entities/client";
-import { useDispatch, useSelector } from "react-redux";
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -47,7 +46,6 @@ export const Register = () => {
   }, [token]);
 
   const handleSubmit = async (e: FormEvent) => {
-
     e.preventDefault();
     const dataBE = {
       name: formData.name,

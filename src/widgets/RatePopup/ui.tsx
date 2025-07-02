@@ -5,10 +5,13 @@ import GreyStar from "shared/assets/icons/grey-star";
 
 interface RatePopupProps {
   contentId: string;
-  ratingsMap: Record<string, {
-    rating: number;
-    comment: string;
-  }>
+  ratingsMap: Record<
+    string,
+    {
+      rating: number;
+      comment: string;
+    }
+  >;
   handleRateClick: (
     id: string,
     rating: number,

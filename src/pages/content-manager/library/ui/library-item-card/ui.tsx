@@ -5,8 +5,7 @@ import { TableRow } from "../../models";
 import { getIcon } from "../../lib/lib";
 import DocumentIcon from "shared/assets/icons/document";
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import CloseIcon from "shared/assets/icons/close";
 
 interface LibraryItemCardProps {
@@ -24,29 +23,18 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
   toggleFolder,
   level,
   onClick,
-  onDotsClick
+  onDotsClick,
 }) => {
   const [popupRow, setPopupRow] = useState<TableRow | null>(null);
   const fileRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  const [popupStyle, setPopupStyle] = useState<{ top: number; left: number }>({
-    top: 0,
-    left: 0,
-  });
-
-  useEffect(() => {
-    if (popupRow && fileRef.current) {
-      const rect = fileRef.current.getBoundingClientRect();
-      setPopupStyle({
-        top: rect.top + window.scrollY - 250,
-        left: rect.left + window.scrollX,
-      });
-    }
-  }, [popupRow]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
         setPopupRow(null);
       }
     };
@@ -76,15 +64,16 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
   return (
     <div className="border border-[#AAC6EC] rounded-[8px] p-4 bg-white">
       {/* Header */}
-      <div
+      <button
         className="flex items-center justify-between bg-[#AAC6EC1A] p-[8px] rounded-[4px]"
         onClick={onClick}
       >
         <div className="flex items-center gap-[8px]">
           {hasChildren && (
             <ChevronDown
-              className={`cursor-pointer w-[20px] h-[20px] transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
-                }`}
+              className={`cursor-pointer w-[20px] h-[20px] transition-transform duration-200 ${
+                isExpanded ? "rotate-180" : ""
+              }`}
               onClick={() => toggleFolder(item.id)}
             />
           )}
@@ -103,8 +92,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
         >
           <Dots color="#1D1D1F" />
         </button>
-
-      </div>
+      </button>
 
       <div className="mt-[8px]">
         <DetailRow
@@ -158,7 +146,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
 
           {/* Messages */}
           {item.messages?.map((msg) => (
-            <div
+            <button
               key={msg.id}
               className="border border-[#AAC6EC] rounded-[6px] p-3"
               onClick={(e) => {
@@ -171,7 +159,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
               <div className="flex items-center justify-between bg-[#AAC6EC1A] p-[8px] rounded-[4px]">
                 <div className="flex items-center gap-[8px]">
                   <DocumentIcon className="text-[#4B5E6F]" />
-                  <span className="text-md font-medium">
+                  <span className="font-medium text-md">
                     {truncateTitle(msg.title)}
                   </span>
                 </div>
@@ -191,7 +179,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                 />
                 <DetailRow label="Status" value={msg.status ?? "-"} isLast />
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -202,7 +190,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
           className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm"
         >
           <div className="relative flex flex-col bg-white shadow-md border border-[#C7D7F9] rounded-[20px] p-[16px] w-full mx-4">
-            <div className="flex justify-between items-baseline mb-4">
+            <div className="flex items-baseline justify-between mb-4">
               <h2 className="text-[20px] font-[700] text-[#1D1D1F]">
                 Files in "{popupRow.title}"
               </h2>
@@ -244,13 +232,18 @@ const DetailRow = React.forwardRef<HTMLDivElement, DetailRowProps>(
     return (
       <div
         ref={ref}
-        className={`py-[8px] flex items-center ${!isLast ? "border-b border-[#F3F6FB]" : ""
-          }`}
+        className={`py-[8px] flex items-center ${
+          !isLast ? "border-b border-[#F3F6FB]" : ""
+        }`}
       >
         <span className="text-[14px] text-[#5F5F65] w-full">{label}</span>
-        <span className={`text-[16px] w-full text-[#000000] ${isClickable ? "cursor-pointer underline" : ""}`} onClick={onClick}>{value ?? "-"}</span>
+        <span
+          className={`text-[16px] w-full text-[#000000] ${isClickable ? "cursor-pointer underline" : ""}`}
+          onClick={onClick}
+        >
+          {value ?? "-"}
+        </span>
       </div>
     );
   }
 );
-

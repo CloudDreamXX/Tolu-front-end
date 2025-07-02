@@ -12,7 +12,7 @@ interface MessagesTabProps {
   chatId?: string;
 }
 
-export const MessagesTab: React.FC<MessagesTabProps> = ({ chatId }) => {
+export const MessagesTab: React.FC<MessagesTabProps> = () => {
   const { isMobileOrTablet } = usePageWidth();
 
   return (

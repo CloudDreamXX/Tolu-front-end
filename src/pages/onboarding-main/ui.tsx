@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Footer } from "pages/onboarding-welcome/components";
 import { Button, HeaderOnboarding } from "./components";
 
 export const OnboardingMain = () => {
-  const [_, setShowHint] = useState(false);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (selectedButtons.length > 0) {
-      setShowHint(true);
-    }
-  }, [selectedButtons]);
 
   const handleButtonClick = (buttonText: string) => {
     setSelectedButtons((prevSelected) => {

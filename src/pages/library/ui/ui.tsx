@@ -69,7 +69,6 @@ export const Library = () => {
           isOpen={stepModalOpen}
           onClose={() => setStepModalOpen(false)}
           onComplete={handleFinishCheckIn}
-          symptoms={symptoms}
         />
       )}
 

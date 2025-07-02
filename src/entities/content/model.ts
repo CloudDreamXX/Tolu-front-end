@@ -21,13 +21,13 @@ export interface ContentItemResponse {
 }
 
 export interface ContentToEdit {
-  content_id: string,
-  new_title: string,
-  new_content: string,
-  new_query: string
+  content_id: string;
+  new_title: string;
+  new_content: string;
+  new_query: string;
 }
 
 export interface ContentStatus {
-  content_id: string,
-  status: "read" | "saved_for_later",
+  content_id: string;
+  status: "read" | "saved_for_later";
 }

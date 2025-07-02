@@ -25,9 +25,6 @@ export interface ClientCardProps {
   title: string;
   indicator: string;
   trend: "up" | "down";
-  increased?: boolean;
-  width?: string;
-  height?: string;
   modifiable?: boolean;
   onModify?: () => void;
 }
@@ -36,9 +33,6 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   title,
   indicator,
   trend,
-  increased = false,
-  width,
-  height,
   modifiable = false,
   onModify,
 }) => {
@@ -142,6 +136,10 @@ export const ClientCard: React.FC<ClientCardProps> = ({
               <button
                 type="submit"
                 className="flex justify-center items-center rounded-full bg-[#1C63DB] text-[16px]/[22px] font-semibold font-[Nunito] text-white p-4 w-32 h-[44px]"
+                onClick={() => {
+                  setOpen(false);
+                  if (onModify) onModify();
+                }}
               >
                 Save
               </button>

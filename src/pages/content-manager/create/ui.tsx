@@ -75,17 +75,17 @@ export const ContentManagerCreatePage: React.FC = () => {
                   setExistingInstruction={setExistingInstruction}
                 />
                 <div className="flex items-center gap-[32px] ml-auto">
-                  <div className="hidden md:flex items-center gap-2">
+                  <div className="items-center hidden gap-2 md:flex">
                     <button
                       type="button"
                       // aria-pressed={enabled}
                       // onClick={() => setEnabled(!enabled)}
                       className={`relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]`}
-                    // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
+                      // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
                     >
                       <span
                         className={`inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300`}
-                      // enabled ? "translate-x-[26.8px]" : "translate-x-0"
+                        // enabled ? "translate-x-[26.8px]" : "translate-x-0"
                       />
                     </button>
                     <span className="text-[#5F5F65] font-semibold text-[16px]">
@@ -102,17 +102,17 @@ export const ContentManagerCreatePage: React.FC = () => {
                   </Button>
                 </div>
               </div>
-              <div className="md:hidden flex items-center gap-2">
+              <div className="flex items-center gap-2 md:hidden">
                 <button
                   type="button"
                   // aria-pressed={enabled}
                   // onClick={() => setEnabled(!enabled)}
                   className={`relative inline-flex items-center w-[57.6px] h-[32px] rounded-[80px] border-2 border-[#B0B0B5] transition-colors duration-300 bg-[#B0B0B5]`}
-                // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
+                  // enabled ? "bg-[#8800B5]" : "bg-[#E4E4E7]"
                 >
                   <span
                     className={`inline-block w-[28.8px] h-[28.8px] rounded-full bg-white shadow-md transform transition-transform duration-300`}
-                  // enabled ? "translate-x-[26.8px]" : "translate-x-0"
+                    // enabled ? "translate-x-[26.8px]" : "translate-x-0"
                   />
                 </button>
                 <span className="text-[#5F5F65] font-semibold text-[16px]">

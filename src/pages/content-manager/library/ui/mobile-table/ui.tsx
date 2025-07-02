@@ -1,4 +1,3 @@
-import { RootState } from "entities/store";
 import { TableRow } from "../../models";
 import { LibraryItemCard } from "../library-item-card";
 

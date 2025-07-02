@@ -52,7 +52,7 @@ export const useDocumentCreation = () => {
 
     try {
       await CoachService.aiLearningSearch(
-        { ...chatMessage, instruction: stateInstruction ?? "" },
+        { ...chatMessage, folder_instructions: stateInstruction ?? "" },
         stateFolderId,
         stateFiles ?? [],
         stateClientId,

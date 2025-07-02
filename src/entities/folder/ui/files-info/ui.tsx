@@ -1,18 +1,15 @@
-import { Pencil } from "lucide-react";
 import { PopoverAttach } from "widgets/content-popovers";
 
 interface FilesInfoProps {
   files?: string[];
   title?: string;
   description?: string;
-  isAttached?: boolean;
 }
 
 export const FilesInfo: React.FC<FilesInfoProps> = ({
   files,
   title,
   description,
-  isAttached,
 }) => {
   return (
     <PopoverAttach
@@ -28,7 +25,6 @@ export const FilesInfo: React.FC<FilesInfoProps> = ({
       }
       title={title}
       description={description}
-      isAttached={isAttached}
     />
   );
 };

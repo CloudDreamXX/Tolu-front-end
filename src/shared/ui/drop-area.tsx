@@ -17,8 +17,9 @@ export const DropArea = ({
     <button
       type="button"
       aria-label="Drop files here or click to browse"
-      className={`w-full mt-4 p-6 border border-dashed rounded-2xl text-left ${dragActive ? "border-blue-700 bg-blue-50" : "border-blue-500 bg-white"
-        } focus:outline-none`}
+      className={`w-full mt-4 p-6 border border-dashed rounded-2xl text-left ${
+        dragActive ? "border-blue-700 bg-blue-50" : "border-blue-500 bg-white"
+      } focus:outline-none`}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}

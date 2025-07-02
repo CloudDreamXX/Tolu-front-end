@@ -47,7 +47,7 @@ export const DemographicStep = () => {
   const [race, setRace] = useState("");
   const [household, setHousehold] = useState("");
   const [occupationVal, setOccupationVal] = useState("");
-  const [educationVal, setEducationVal] = useState("");
+  const [educationVal] = useState("");
   const [otherHousehold, setOtherHousehold] = useState("");
   const [otherOccupation, setOtherOccupation] = useState("");
   const [otherRace, setOtherRace] = useState("");
@@ -59,8 +59,6 @@ export const DemographicStep = () => {
     zipCode.trim() &&
     selectedLanguages.length &&
     household.trim();
-
-  const [isOpenSelectLanguage, setIsOpenSelectLanguage] = useState(false);
 
   const handleNext = () => {
     dispatch(setFormField({ field: "age", value: Number(age) }));
@@ -122,7 +120,6 @@ export const DemographicStep = () => {
     setSelectedLanguages((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
-    setIsOpenSelectLanguage(true);
   };
 
   const title = (

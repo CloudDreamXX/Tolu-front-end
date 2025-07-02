@@ -6,6 +6,7 @@ export default (props?: React.SVGProps<SVGSVGElement>) => {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
+      {...props}
     >
       <path
         d="M16.3125 8.0625L20.25 12L16.3125 15.9375"

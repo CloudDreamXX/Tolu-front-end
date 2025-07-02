@@ -1,5 +1,4 @@
 import { Share } from "entities/coach";
-import { Pencil } from "lucide-react";
 import { PopoverClient } from "widgets/content-popovers";
 
 interface ClientsInfoProps {
@@ -11,7 +10,7 @@ interface ClientsInfoProps {
 export const ClientsInfo: React.FC<ClientsInfoProps> = ({
   clients,
   documentId,
-  refreshSharedClients
+  refreshSharedClients,
 }) => {
   return (
     <PopoverClient

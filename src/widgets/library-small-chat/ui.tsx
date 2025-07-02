@@ -120,8 +120,7 @@ export const LibrarySmallChat = () => {
 
   const handleNewMessage = async (
     message: string,
-    files: File[],
-    option: string | null
+    files: File[]
   ): Promise<string | undefined> => {
     if ((!message.trim() && files.length === 0) || isSearching) return;
 
@@ -253,7 +252,7 @@ export const LibrarySmallChat = () => {
 
       setPersonalize(false);
 
-      const newChatId = await handleNewMessage(message, [], null);
+      await handleNewMessage(message, []);
       form.reset();
       setCurrentStep(0);
     }
@@ -323,7 +322,12 @@ export const LibrarySmallChat = () => {
               <p className="text-[24px] text-[#1D1D1F] font-[500]">
                 Personal story
               </p>
-              <Steps steps={steps} stepWidth={"w-[462px]"} currentStep={currentStep} ordered />
+              <Steps
+                steps={steps}
+                stepWidth={"w-[462px]"}
+                currentStep={currentStep}
+                ordered
+              />
               <form onSubmit={(e) => e.preventDefault()}>
                 {currentStep === 0 && <SymptomsForm form={form} />}
                 {currentStep === 1 && <HealthHistoryForm form={form} />}
@@ -334,10 +338,11 @@ export const LibrarySmallChat = () => {
                 <button
                   type="button"
                   disabled={!isStepComplete()}
-                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 ${isStepComplete()
-                    ? "bg-[#1C63DB] text-white"
-                    : "bg-[#D5DAE2] text-[#5F5F65] events-none"
-                    }`}
+                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 ${
+                    isStepComplete()
+                      ? "bg-[#1C63DB] text-white"
+                      : "bg-[#D5DAE2] text-[#5F5F65] events-none"
+                  }`}
                   onClick={handleNextStep}
                 >
                   Continue

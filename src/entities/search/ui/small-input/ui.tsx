@@ -1,26 +1,18 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Chevron from "shared/assets/icons/chevron";
 import Sparkle from "shared/assets/icons/sparkle-2";
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  Input,
-} from "shared/ui";
+import { Button } from "shared/ui";
 
 export const SearchAiSmallInput = () => {
   const nav = useNavigate();
   const { chatId } = useParams();
-  const [searchType, setSearchType] = useState<string>("Search");
   const [search, setSearch] = useState<string>("");
 
   const handleSearch = () => {
     nav(`/library`, {
       state: {
         message: search,
-        searchType: searchType || "Search",
+        searchType: "Search",
       },
       replace: true,
     });
@@ -34,7 +26,7 @@ export const SearchAiSmallInput = () => {
       nav(`/library/${newChatId}`, {
         state: {
           message: search,
-          searchType: searchType || "Search",
+          searchType: "Search",
           isNewSearch: true,
         },
         replace: true,
@@ -44,20 +36,13 @@ export const SearchAiSmallInput = () => {
       nav(`/library/${newChatId}`, {
         state: {
           message: search,
-          searchType: searchType || "Search",
+          searchType: "Search",
         },
         replace: true,
       });
     }
 
     setSearch("");
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSearch();
-    }
   };
 
   return (

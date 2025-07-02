@@ -148,7 +148,10 @@ export const AppRoutes = () => {
         <Route path="/health-snapshot" element={<HealthSnapshot />} />
         <Route path="/library" element={<Library />} />
         <Route path="/library/:chatId" element={<LibraryChat />} />
-        <Route path="/library/document/:documentId" element={<LibraryDocument />} />
+        <Route
+          path="/library/document/:documentId"
+          element={<LibraryDocument />}
+        />
       </Route>
 
       <Route

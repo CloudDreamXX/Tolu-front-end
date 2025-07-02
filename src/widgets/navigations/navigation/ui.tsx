@@ -2,7 +2,7 @@ import { logout } from "entities/user";
 import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Chevron from "shared/assets/icons/chevron";
 import Close from "shared/assets/icons/close";
 import Menu from "shared/assets/icons/menu";
@@ -12,27 +12,16 @@ import { Input } from "shared/ui/input";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 
 type Props = {
-  pageLocation: "content-manager" | "user-management"
-}
+  pageLocation: "content-manager" | "user-management";
+};
 
 export const Navigation: React.FC<Props> = ({ pageLocation }) => {
-  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const nav = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [menuMobOpen, setMenuMobOpen] = useState(false);
   const menuMobRef = useRef<HTMLDivElement>(null);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1280);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth > 1280);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -63,7 +52,9 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
             TOLU
           </h1>
           <p className="text-[16px] md:text-[18px] font-[700] h-[21px] md:h-[27px] font-open leading-normal">
-            {pageLocation === "user-management" ? "Admin" : "Practitioner Admin"}
+            {pageLocation === "user-management"
+              ? "Admin"
+              : "Practitioner Admin"}
           </p>
         </div>
         <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
@@ -111,7 +102,8 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                   to={link.link}
                   onClick={() => setMenuMobOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${
+                      isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                     } hover:text-[#1C63DB]`
                   }
                 >

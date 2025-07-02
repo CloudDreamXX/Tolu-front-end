@@ -9,7 +9,6 @@ const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
 interface ConversationListProps {
   conversation: ISessionResult[];
-  document: IDocument | null;
   compareIndex: number | null;
   mobilePage: 1 | 2;
   isEditing: boolean;
@@ -45,7 +44,6 @@ interface ConversationListProps {
 
 export const ConversationList: React.FC<ConversationListProps> = ({
   conversation,
-  document,
   compareIndex,
   mobilePage,
   isEditing,

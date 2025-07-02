@@ -2,7 +2,6 @@ import { FOLDER_STATUS_MAPPING, ORDERED_STATUSES } from "entities/folder";
 import React, { useState } from "react";
 import Close from "shared/assets/icons/close";
 import MarkAs from "shared/assets/icons/grey-mark-as";
-import { toast } from "shared/lib";
 import { ChooseSubfolderPanel } from "widgets/ChooseSubfolderPanel";
 
 interface ChangeStatusPopupProps {
@@ -18,13 +17,13 @@ interface ChangeStatusPopupProps {
       | "Archived"
   ) => Promise<void>;
   currentStatus:
-  | "Raw"
-  | "Ready for Review"
-  | "Waiting"
-  | "Second Review Requested"
-  | "Ready to Publish"
-  | "Live"
-  | "Archived";
+    | "Raw"
+    | "Ready for Review"
+    | "Waiting"
+    | "Second Review Requested"
+    | "Ready to Publish"
+    | "Live"
+    | "Archived";
   handleMoveClick?: (id: string, subfolderId: string) => Promise<void>;
   contentId?: string;
 }
@@ -48,7 +47,7 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
   onClose,
   onComplete,
   currentStatus,
-  handleMoveClick
+  handleMoveClick,
 }) => {
   const currentIndex = ORDERED_STATUSES.indexOf(currentStatus);
   let prevAllowed = ORDERED_STATUSES[currentIndex - 1];
@@ -63,7 +62,9 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
 
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [subfoldersOpen, setSubfoldersOpen] = useState<boolean>(false);
-  const [selectedSubfolderId, setSelectedSubfolderId] = useState<string | null>(null);
+  const [selectedSubfolderId, setSelectedSubfolderId] = useState<string | null>(
+    null
+  );
 
   const handleSave = async () => {
     const backendValue = UI_TO_BACKEND_STATUS[selectedStatus];
@@ -76,18 +77,18 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
       }
 
       await onComplete(backendValue);
-      handleMoveClick && contentId && await handleMoveClick(contentId, selectedSubfolderId);
+      if (handleMoveClick && contentId) {
+        await handleMoveClick(contentId, selectedSubfolderId);
+      }
     } else {
       await onComplete(backendValue);
     }
   };
 
-
   return (
-    <div
+    <dialog
       className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm"
       aria-modal="true"
-      role="dialog"
       aria-labelledby="modal-title"
     >
       <div className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px]">
@@ -109,12 +110,14 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
           Lorem ipsum dolor sit amet consectetur. Convallis ut rutrum diam quam.
         </p>
 
-        {subfoldersOpen ? <ChooseSubfolderPanel
-          parentFolderId={"cc113783-26db-4bb7-a1e6-3cd3e0032c1f"}
-          selectedFolderId={selectedSubfolderId}
-          onSelect={(folderId) => setSelectedSubfolderId(folderId)}
-        />
-          : <div className="flex flex-col gap-[8px]">
+        {subfoldersOpen ? (
+          <ChooseSubfolderPanel
+            parentFolderId={"cc113783-26db-4bb7-a1e6-3cd3e0032c1f"}
+            selectedFolderId={selectedSubfolderId}
+            onSelect={(folderId) => setSelectedSubfolderId(folderId)}
+          />
+        ) : (
+          <div className="flex flex-col gap-[8px]">
             {STATUS_OPTIONS.map((status) => {
               const backendValue = UI_TO_BACKEND_STATUS[status];
               const isEnabled =
@@ -124,8 +127,8 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
                 <button
                   key={status}
                   onClick={() => {
-                    isEnabled && setSelectedStatus(status)
-                    status === "AI-Generated" && setSubfoldersOpen(true)
+                    if (isEnabled) setSelectedStatus(status);
+                    if (status === "AI-Generated") setSubfoldersOpen(true);
                   }}
                   disabled={!isEnabled}
                   className={`text-left w-full px-[12px] py-[12px] text-[18px] font-semibold rounded-[8px] border
@@ -136,9 +139,10 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
                 </button>
               );
             })}
-          </div>}
+          </div>
+        )}
 
-        <div className="flex flex-col flex-col-reverse gap-[8px] md:flex-row md:justify-between md:mt-[24px]">
+        <div className="flex flex-col-reverse gap-[8px] md:flex-row md:justify-between md:mt-[24px]">
           <button
             onClick={onClose}
             className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600]"
@@ -154,6 +158,6 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 };

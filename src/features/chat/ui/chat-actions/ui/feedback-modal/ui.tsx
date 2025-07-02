@@ -1,5 +1,4 @@
 import { StarIcon } from "@phosphor-icons/react/dist/ssr";
-import { X } from "lucide-react";
 import { useState } from "react";
 import {
   Button,
@@ -9,7 +8,6 @@ import {
   Input,
   RadioGroup,
   RadioGroupItem,
-  Textarea,
 } from "shared/ui";
 
 interface FeedbackModalProps {
@@ -30,7 +28,6 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   const [contentPreference, setContentPreference] = useState("");
 
   const handleSave = () => {
-    console.log({ rating, feedback, contentPreference });
     onOpenChange(false);
   };
 

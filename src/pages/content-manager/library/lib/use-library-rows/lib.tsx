@@ -20,7 +20,6 @@ export const useLibraryLogic = (folders: IFolder[], search: string) => {
   };
 
   const convertToTableRows = (folders: IFolder[]): TableRow[] => {
-    console.log("foldersToConvert", folders);
     return folders.map(
       (folder): TableRow => ({
         id: folder.id,

@@ -26,10 +26,6 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
   existingInstruction = "",
   disabled = false,
 }) => {
-  console.log(
-    "PopoverInstruction rendered with existingInstruction:",
-    existingInstruction
-  );
   const [instructionText, setInstructionText] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const [savedInstruction, setSavedInstruction] = useState<string>("");

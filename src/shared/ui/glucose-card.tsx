@@ -32,16 +32,12 @@ import { useDispatch, useSelector } from "react-redux";
 export interface GlucoseCardProps {
   indicator: string;
   trend: "up" | "down";
-  width?: string;
-  height?: string;
   modifiable?: boolean;
 }
 
 export const GlucoseCard: React.FC<GlucoseCardProps> = ({
   indicator,
   trend,
-  width,
-  height,
   modifiable = false,
 }) => {
   const dispatch = useDispatch();

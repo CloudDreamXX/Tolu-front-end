@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CoachService, RateContent, ShareContentData } from "entities/coach";
+import { CoachService, RateContent } from "entities/coach";
 import {
   FoldersService,
   ContentToMove,
@@ -73,11 +73,10 @@ export const useContentActions = () => {
       | "Ready to Publish"
       | "Live"
       | "Archived",
-    contentId?: string,
-    token?: string
+    contentId?: string
   ) => {
     const newStatus = {
-      id: contentId ? contentId : selectedDocumentId,
+      id: contentId ?? selectedDocumentId,
       status: status,
     };
 

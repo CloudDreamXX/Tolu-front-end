@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 
 export const AuthPageWrapper = ({
   children,
@@ -6,22 +6,6 @@ export const AuthPageWrapper = ({
   children: React.ReactNode;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [useFullViewport, setUseFullViewport] = useState(false);
-
-  useEffect(() => {
-    const checkHeight = () => {
-      if (!containerRef.current) return;
-      const contentHeight = containerRef.current.scrollHeight;
-      const viewportHeight = window.innerHeight;
-
-      setUseFullViewport(contentHeight <= viewportHeight);
-    };
-
-    checkHeight();
-
-    window.addEventListener("resize", checkHeight);
-    return () => window.removeEventListener("resize", checkHeight);
-  }, [children]);
 
   return (
     <div

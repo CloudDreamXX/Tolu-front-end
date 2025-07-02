@@ -35,7 +35,7 @@ export const UserEngagementSidebar: React.FC<UserEngagementSidebarProps> = ({
         User Engagement
       </h3>
       <div className="py-[23px] px-[31px] flex flex-col gap-5">
-        {engagementItems.map((item, idx) => (
+        {engagementItems.map((item) => (
           <div className="flex flex-col" key={item.label}>
             <h5 className="text-sm font-semibold">{item.label}</h5>
             <p className="text-2xl font-bold">

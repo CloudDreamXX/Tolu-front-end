@@ -1,4 +1,3 @@
-import { IDocument } from "entities/document";
 import { Archive, ArrowRight, Trash2 } from "lucide-react";
 import Box from "shared/assets/icons/box";
 import Dots from "shared/assets/icons/dots";
@@ -7,20 +6,13 @@ import Edit from "shared/assets/icons/edit";
 import Expert from "shared/assets/icons/expert";
 import { Eye } from "shared/assets/icons/eye";
 import { Button, Popover, PopoverContent, PopoverTrigger } from "shared/ui";
-import { IFolder } from "../document-card";
 
 interface IPopoverDocumentEditProps {
-  document?: IDocument;
-  folder?: IFolder;
   customTrigger?: React.ReactNode;
-  tab?: string;
 }
 
 export const DocumentEditPopover: React.FC<IPopoverDocumentEditProps> = ({
-  document,
   customTrigger,
-  tab,
-  folder,
 }) => (
   <Popover>
     <PopoverTrigger

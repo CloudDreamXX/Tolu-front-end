@@ -12,13 +12,11 @@ export const Steps: React.FC<StepsProps> = ({
   steps,
   currentStep,
   ordered,
-  stepWidth
+  stepWidth,
 }) => {
   return (
     <div className="flex items-center w-full p-2 border rounded-full">
       {steps.map((step, index) => {
-        let content;
-
         if (index > currentStep) {
           return (
             <>

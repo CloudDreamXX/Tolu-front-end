@@ -14,7 +14,6 @@ export const HistoryPopup: React.FC = () => {
     const fetchHistory = async () => {
       try {
         const res = await SearchService.getSearchHistory();
-        console.log("Search history:", res);
         setHistory(res);
       } catch (error) {
         console.error("Failed to fetch search history:", error);

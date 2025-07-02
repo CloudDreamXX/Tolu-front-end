@@ -15,9 +15,7 @@ export class ContentService {
   }
 
   static async editContent(content: ContentToEdit): Promise<any> {
-    return ApiService.put<any>(
-      API_ROUTES.CONTENT.EDIT_CONTENT, content
-    );
+    return ApiService.put<any>(API_ROUTES.CONTENT.EDIT_CONTENT, content);
   }
 
   static async updateStatus(status: ContentStatus): Promise<any> {

@@ -6,6 +6,7 @@ export default (props?: React.SVGProps<SVGSVGElement>) => {
       height="21"
       viewBox="0 0 22 21"
       fill="none"
+      {...props}
     >
       <path
         fillRule="evenodd"

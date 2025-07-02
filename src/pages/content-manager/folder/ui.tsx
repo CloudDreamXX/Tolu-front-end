@@ -31,14 +31,12 @@ export const ContentManagerFolder: React.FC = () => {
   const folderName = location.pathname.split("/")[3];
   const accumulatedReply = location.state?.accumulatedReply ?? "";
   const contentId = location.state?.contentId ?? "";
-  const token = useSelector((state: RootState) => state.user.token);
   const [search, setSearch] = useState<string>("");
   const { folders } = useSelector((state: RootState) => state.folder);
   const [message, setMessage] = useState<string>("");
   const [newFolderId, setNewFolderId] = useState<string>("");
   const [clientId, setClientId] = useState<string | null>(null);
   const [isSending, setIsSending] = useState<boolean>(false);
-  const [isStreaming, setIsStreaming] = useState(false);
   const nav = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [showChangeStatusPopup, setShowChangeStatusPopup] = useState(false);
@@ -74,27 +72,20 @@ export const ContentManagerFolder: React.FC = () => {
     };
 
     let finalAccumulatedReply = "";
-    let newContentId = "";
 
     try {
-      setIsStreaming(true);
       await CoachService.aiLearningSearch(
         chatMessage,
         newFolderId,
         undefined,
         clientId,
         (chunk) => {
-          newContentId = chunk.saved_content_id;
           if (chunk.reply) {
             finalAccumulatedReply += chunk.reply;
-            console.log("Streaming chunk:", chunk.reply);
           }
         },
-        (completedFolderId) => {
-          setIsStreaming(false);
-          console.log("Final accumulated reply:", finalAccumulatedReply);
-
-          nav(`/content-manager/library/folder/${completedFolderId}`, {
+        (res) => {
+          nav(`/content-manager/library/folder/${res.folderId}`, {
             state: {
               accumulatedReply: finalAccumulatedReply,
               contentId: contentId,
@@ -125,7 +116,6 @@ export const ContentManagerFolder: React.FC = () => {
     };
     await CoachService.changeStatus(newStatus);
     setShowChangeStatusPopup(false);
-    console.log("Selected status:", status);
   };
 
   return (

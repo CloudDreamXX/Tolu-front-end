@@ -64,4 +64,3 @@ export interface HealthHistoryPostData {
   follow_up_recommendations: string;
   recommendation_destination?: string;
 }
-

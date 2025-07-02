@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import ChatsCircle from "shared/assets/icons/chats-circle";
 import Close from "shared/assets/icons/close";
-import Heartbeat from "shared/assets/icons/heartbeat";
 import Library from "shared/assets/icons/library";
 import Menu from "shared/assets/icons/menu";
 import SignOutIcon from "shared/assets/icons/signout";
@@ -63,7 +62,8 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/library"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
+                isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -74,7 +74,8 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
+                isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -194,7 +195,8 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/library"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
+                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={() => setMenuMobOpen(false)}
@@ -206,7 +208,8 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/messages"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
+                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={() => setMenuMobOpen(false)}

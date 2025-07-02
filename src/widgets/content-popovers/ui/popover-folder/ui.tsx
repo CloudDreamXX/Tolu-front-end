@@ -2,7 +2,7 @@ import { IFolder, ISubfolder, NewFolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
 import { RootState } from "entities/store";
 import { Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ClosedFolder from "shared/assets/icons/closed-folder";
 import Dots from "shared/assets/icons/dots";
@@ -31,8 +31,6 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   setExistingFiles,
   setExistingInstruction,
 }) => {
-  const [search, setSearch] = useState<string>("");
-  const { folders } = useSelector((state: RootState) => state.folder);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [selectedFolderName, setSelectedFolderName] = useState<string>("");
   const [subfolders, setSubfolders] = useState<ISubfolder[]>([]);
@@ -65,22 +63,12 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     fetchFolders();
   }, [token, dispatch]);
 
-  const filteredFolders = useMemo(() => {
-    return folders.filter((folder) =>
-      folder.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search, folders]);
-
   const toggleFolderSelection = (folder: IFolder) => {
     if (subfolderPopup) {
       setSelectedFolder(folder.id);
-      // setSelectedFolderName(folder.name);
-      console.log("Selected folder:", folder.name);
-      setFolderId && setFolderId(folder.id);
-      setExistingFiles &&
-        setExistingFiles(folder.fileNames?.map((file) => file.filename) || []);
-      setExistingInstruction &&
-        setExistingInstruction(folder.customInstructions ?? "");
+      setFolderId?.(folder.id);
+      setExistingFiles?.(folder.fileNames?.map((file) => file.filename) || []);
+      setExistingInstruction?.(folder.customInstructions ?? "");
       setPopoverOpen(false);
       return;
     }
@@ -113,7 +101,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       const response = await FoldersService.createFolder(newFolder);
       const newFolderId = response.folder.id;
 
-      setFolderId && setFolderId(newFolderId);
+      setFolderId?.(newFolderId);
       setSelectedFolder(newFolderId);
 
       toast({ title: "Created successfully" });
@@ -260,10 +248,11 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
             <div className="grid w-full md:grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
               {subfolders.map((subfolder) => (
                 <button
-                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${selectedFolder === subfolder.id
-                    ? "bg-blue-50 border border-blue-200"
-                    : "bg-white"
-                    }`}
+                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
+                    selectedFolder === subfolder.id
+                      ? "bg-blue-50 border border-blue-200"
+                      : "bg-white"
+                  }`}
                   key={subfolder.id}
                   onClick={() => toggleFolderSelection(subfolder)}
                 >

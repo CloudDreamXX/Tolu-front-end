@@ -1,4 +1,3 @@
-import { Pencil } from "lucide-react";
 import { PopoverInstruction } from "widgets/content-popovers";
 
 interface InstructionInfoProps {

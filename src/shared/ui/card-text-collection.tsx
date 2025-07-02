@@ -80,7 +80,11 @@ export const renderRecommendedBy = (
 ) => {
   if (!recommendedBy) return null;
   return (
-    <div className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
+    <div
+      className={cn(
+        "flex flex-col gap-[4px] items-start text-base font-semibold"
+      )}
+    >
       {withText ? (
         <span className="text-sm font-medium">Recommended by</span>
       ) : (
@@ -114,7 +118,11 @@ export const renderDate = (date: string | undefined, withText?: boolean) => {
   if (!date) return null;
   const dateObj = new Date(date);
   return (
-    <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
+    <p
+      className={cn(
+        "flex flex-col gap-[4px] items-start text-base font-semibold"
+      )}
+    >
       {withText ? (
         <span className="text-sm font-medium">Date</span>
       ) : (
@@ -131,7 +139,11 @@ export const renderAuthor = (
 ) => {
   if (!author) return null;
   return (
-    <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
+    <p
+      className={cn(
+        "flex flex-col gap-[4px] items-start text-base font-semibold"
+      )}
+    >
       {withText ? (
         <span className="text-[14px] font-[500] text-[#5F5F65]">Author</span>
       ) : (
@@ -148,9 +160,15 @@ export const renderStatus = (
 ) => {
   if (!status) return null;
   return (
-    <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
+    <p
+      className={cn(
+        "flex flex-col gap-[4px] items-start text-base font-semibold"
+      )}
+    >
       {withText ? (
-        <span className="flex gap-[4px] items-center text-[14px] font-[500] text-[#5F5F65]">Status</span>
+        <span className="flex gap-[4px] items-center text-[14px] font-[500] text-[#5F5F65]">
+          Status
+        </span>
       ) : (
         <Expert />
       )}
@@ -168,9 +186,15 @@ export const renderDocumentType = (
 ) => {
   if (!type) return null;
   return (
-    <p className={cn("flex flex-col gap-[4px] items-start text-base font-semibold")}>
+    <p
+      className={cn(
+        "flex flex-col gap-[4px] items-start text-base font-semibold"
+      )}
+    >
       {withText ? (
-        <span className="text-[14px] font-[500] text-[#5F5F65]">Document Type</span>
+        <span className="text-[14px] font-[500] text-[#5F5F65]">
+          Document Type
+        </span>
       ) : (
         <Expert />
       )}

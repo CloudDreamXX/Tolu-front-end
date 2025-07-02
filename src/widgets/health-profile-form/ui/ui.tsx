@@ -11,7 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
   Form,
-  FormMessage,
 } from "shared/ui";
 import {
   BasicInformationForm,
@@ -25,12 +24,24 @@ import {
   LifestyleHabitsForm,
   lifestyleHabitsSchema,
 } from "./lifestyle-habits-form";
-import { NutritionHabitsForm, nutritionHabitsSchema } from "./nutrition-habits-form";
+import {
+  NutritionHabitsForm,
+  nutritionHabitsSchema,
+} from "./nutrition-habits-form";
 import { WomensHealthForm, womensHealthSchema } from "./womens-health";
-import { MetabolicDigestiveHealthForm, metabolicDigestiveHealthSchema } from "./metabolic-digestive-health-form";
+import {
+  MetabolicDigestiveHealthForm,
+  metabolicDigestiveHealthSchema,
+} from "./metabolic-digestive-health-form";
 import { DrivesAndGoalsForm, drivesAndGoalsSchema } from "./drives-and-goals";
-import { ConsentSubmissionForm, consentSubmissionSchema } from "./consent-and-submission";
-import { HealthHistoryPostData, HealthHistoryService } from "entities/health-history";
+import {
+  ConsentSubmissionForm,
+  consentSubmissionSchema,
+} from "./consent-and-submission";
+import {
+  HealthHistoryPostData,
+  HealthHistoryService,
+} from "entities/health-history";
 import { ConfirmCancel } from "./confirm-cancel";
 
 const steps = [
@@ -51,7 +62,7 @@ const baseFormSchema = basicInformationSchema
   .merge(womensHealthSchema)
   .merge(metabolicDigestiveHealthSchema)
   .merge(drivesAndGoalsSchema)
-  .merge(consentSubmissionSchema)
+  .merge(consentSubmissionSchema);
 
 const formSchema = baseFormSchema
   .refine(
@@ -150,12 +161,18 @@ export const HealthProfileForm = () => {
       weight: values.weight,
       current_health_concerns: values.healthConcerns,
       diagnosed_conditions: values.medicalConditions,
-      medications: values.medications === 'other' ? values.otherMedications : values.medications,
+      medications:
+        values.medications === "other"
+          ? values.otherMedications
+          : values.medications,
       supplements: values.supplements,
       allergies_intolerances: values.allergies,
       family_health_history: values.familyHistory,
       specific_diet: values.dietDetails,
-      exercise_habits: values.exerciseHabits === 'other' ? values.otherExerciseHabits : values.exerciseHabits,
+      exercise_habits:
+        values.exerciseHabits === "other"
+          ? values.otherExerciseHabits
+          : values.exerciseHabits,
       eat_decision: values.decisionMaker,
       cook_at_home: values.cookFrequency,
       takeout_food: values.takeoutFrequency,
@@ -170,7 +187,7 @@ export const HealthProfileForm = () => {
       birth_control_use: values.birthControlUse,
       blood_sugar_concerns: values.bloodSugarConcern,
       digestive_issues: values.digestiveIssues,
-      recent_lab_tests: values.recentLabTests === 'Yes',
+      recent_lab_tests: values.recentLabTests === "Yes",
       health_goals: values.goals,
       why_these_goals: values.goalReason,
       desired_results_timeline: values.urgency,
@@ -184,18 +201,14 @@ export const HealthProfileForm = () => {
 
     try {
       await HealthHistoryService.createHealthHistory(transformed, labFile);
-      console.log("Form submitted successfully");
 
       form.reset();
       setCurrentStep(0);
       setIsOpen(false);
-
     } catch (error) {
       console.error("Failed to submit form:", error);
     }
   };
-
-
 
   const handleNextStep = async () => {
     const stepFields = [
@@ -234,7 +247,7 @@ export const HealthProfileForm = () => {
         "hormoneProvider",
         "fertilityConcerns",
         "birthControlUse",
-        "birthControlDetails"
+        "birthControlDetails",
       ],
       [
         "bloodSugarConcern",
@@ -242,18 +255,10 @@ export const HealthProfileForm = () => {
         "digestiveIssues",
         "digestiveOther",
         "recentLabTests",
-        "labTestFile"
+        "labTestFile",
       ],
-      [
-        "goals",
-        "goalReason",
-        "urgency",
-        "healthApproach"
-      ],
-      [
-        "agreeToPrivacy",
-        "followUpPreference"
-      ]
+      ["goals", "goalReason", "urgency", "healthApproach"],
+      ["agreeToPrivacy", "followUpPreference"],
     ];
 
     let isValid = false;
@@ -284,11 +289,11 @@ export const HealthProfileForm = () => {
   };
 
   const onDiscard = () => {
-    setConfirmOpen(false)
-    form.reset()
+    setConfirmOpen(false);
+    form.reset();
     setCurrentStep(0);
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -318,8 +323,8 @@ export const HealthProfileForm = () => {
             variant="blue2"
             className="w-32"
             onClick={() => {
-              setIsOpen(false)
-              setConfirmOpen(true)
+              setIsOpen(false);
+              setConfirmOpen(true);
             }}
           >
             Cancel
@@ -344,10 +349,15 @@ export const HealthProfileForm = () => {
           </div>
         </div>
       </DialogContent>
-      {confirmOpen && <ConfirmCancel onCancel={() => {
-        setConfirmOpen(false)
-        setIsOpen(true)
-      }} onDiscard={onDiscard} />}
+      {confirmOpen && (
+        <ConfirmCancel
+          onCancel={() => {
+            setConfirmOpen(false);
+            setIsOpen(true);
+          }}
+          onDiscard={onDiscard}
+        />
+      )}
     </Dialog>
   );
 };

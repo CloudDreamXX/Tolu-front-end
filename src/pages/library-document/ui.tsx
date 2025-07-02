@@ -7,8 +7,8 @@ import parse from "html-react-parser";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
-  const [messages, setMessages] = useState([]);
-  const [isLoadingSession, setIsLoadingSession] = useState(false);
+  const [messages] = useState([]);
+  const [isLoadingSession] = useState(false);
   const [document, setDocument] = useState<IDocument | null>(null);
 
   const loadDocument = async (docId: string | undefined) => {

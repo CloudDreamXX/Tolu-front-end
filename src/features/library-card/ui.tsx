@@ -31,17 +31,19 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
   progress,
   onStatusChange,
   onDocumentClick,
-  contentStatus
+  contentStatus,
 }) => {
   const trimToThreeWords = (text: string): string => {
     const words = text.trim().split(/\s+/);
     if (words.length <= 3) return text;
-    return words.slice(0, 3).join(' ') + '...';
-  }
-
+    return words.slice(0, 3).join(" ") + "...";
+  };
 
   return (
-    <button className="relative group w-full h-fit max-w-[718px]" onClick={() => onDocumentClick(id)}>
+    <button
+      className="relative group w-full h-fit max-w-[718px]"
+      onClick={() => onDocumentClick(id)}
+    >
       <div
         className="
             absolute inset-0
@@ -66,22 +68,36 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
           <h2 className="text-xl font-bold text-left truncate max-w-30 flex items-center justify-between">
             {trimToThreeWords(title)}
             <div className="flex items-center gap-[12px]">
-              <button className="bg-white" onClick={(e) => {
-                e.stopPropagation();
-                onStatusChange(
-                  id,
-                  !contentStatus || contentStatus.status !== "saved_for_later"
-                    ? "saved_for_later"
-                    : "read"
-                );
-              }}>{contentStatus?.content_id === id && contentStatus.status === "saved_for_later" ? <BookMarkFilled /> : <BookMark />}</button>
+              <button
+                className="bg-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onStatusChange(
+                    id,
+                    !contentStatus || contentStatus.status !== "saved_for_later"
+                      ? "saved_for_later"
+                      : "read"
+                  );
+                }}
+              >
+                {contentStatus?.content_id === id &&
+                contentStatus.status === "saved_for_later" ? (
+                  <BookMarkFilled />
+                ) : (
+                  <BookMark />
+                )}
+              </button>
             </div>
           </h2>
           {status === "To read" && (
             <div className="w-full flex flex-col gap-[8px]">
               <div className="flex justify-between">
-                <span className="text-[16px] text-[#1B2559] font-[600] px-[8px] py-[2px] bg-[#DDEBF6] rounded-[8px]">Chronic constipation relief</span>
-                <span className="text-[16px] text-[#1B2559] font-[600]">{progress}%</span>
+                <span className="text-[16px] text-[#1B2559] font-[600] px-[8px] py-[2px] bg-[#DDEBF6] rounded-[8px]">
+                  Chronic constipation relief
+                </span>
+                <span className="text-[16px] text-[#1B2559] font-[600]">
+                  {progress}%
+                </span>
               </div>
               <div className="h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden">
                 <div

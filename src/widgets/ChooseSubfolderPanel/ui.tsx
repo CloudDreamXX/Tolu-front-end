@@ -1,9 +1,8 @@
 import { ISubfolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
-import { RootState } from "entities/store";
 import { Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Dots from "shared/assets/icons/dots";
 import { Eye } from "shared/assets/icons/eye";
 import Plus from "shared/assets/icons/plus";
@@ -26,8 +25,6 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
   const [selectedFolderName, setSelectedFolderName] = useState<string>("");
   const [createPopup, setCreatePopup] = useState(false);
   const dispatch = useDispatch();
-  const { folders } = useSelector((state: RootState) => state.folder);
-  const token = useSelector((state: RootState) => state.user.token);
 
   useEffect(() => {
     const fetchSubfolders = async () => {
@@ -49,7 +46,7 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
     };
 
     fetchSubfolders();
-  }, [parentFolderId, dispatch, token]);
+  }, [parentFolderId, dispatch]);
 
   const handleCreateSubfolder = async (
     name: string,
@@ -87,7 +84,7 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
         {selectedFolderName}
         <button
           onClick={() => setCreatePopup(true)}
-          className="p-1 rounded hover:bg-gray-100 ml-auto"
+          className="p-1 ml-auto rounded hover:bg-gray-100"
         >
           <Plus />
         </button>
@@ -97,10 +94,11 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
         {subfolders.map((subfolder) => (
           <button
             key={subfolder.id}
-            className={`flex justify-between items-center py-2 px-3 rounded-[10px] shadow-lg ${selectedFolderId === subfolder.id
-              ? "bg-blue-50 border border-blue-200"
-              : "bg-white"
-              }`}
+            className={`flex justify-between items-center py-2 px-3 rounded-[10px] shadow-lg ${
+              selectedFolderId === subfolder.id
+                ? "bg-blue-50 border border-blue-200"
+                : "bg-white"
+            }`}
             onClick={() => onSelect(subfolder.id)}
           >
             <span className="text-lg font-semibold text-gray-900 truncate">

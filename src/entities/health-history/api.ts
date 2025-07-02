@@ -26,14 +26,10 @@ export class HealthHistoryService {
       formData.append("client_id", clientId ?? "");
     }
 
-    return ApiService.post<any>(
-      API_ROUTES.HEALTH_HISTORY.POST,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    return ApiService.post<any>(API_ROUTES.HEALTH_HISTORY.POST, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   }
 }

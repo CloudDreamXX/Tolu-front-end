@@ -57,10 +57,11 @@ export const BadRateResponse: React.FC<Props> = ({
             <button
               key={reason}
               onClick={() => setSelectedReason(reason)}
-              className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${selectedReason === reason
-                ? "border-[#1C63DB] text-[#676767]"
-                : "border-[#E3E3E3] text-[#676767]"
-                }`}
+              className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${
+                selectedReason === reason
+                  ? "border-[#1C63DB] text-[#676767]"
+                  : "border-[#E3E3E3] text-[#676767]"
+              }`}
             >
               {reason}
             </button>

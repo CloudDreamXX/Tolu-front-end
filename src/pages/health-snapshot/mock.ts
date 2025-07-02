@@ -22,7 +22,6 @@ export const smallCards: SmallCard[] = [
     title: "Cravings",
     indicator: "2 days",
     trend: "up",
-    increased: true,
   },
   {
     id: 3,

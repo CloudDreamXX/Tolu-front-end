@@ -87,7 +87,6 @@ export const HealthSnapshot = () => {
               title={card.title}
               indicator={card.indicator}
               trend={card.trend}
-              increased={card.increased}
             />
           ))}
           {isDesktop && <MoodScore />}
@@ -145,31 +144,15 @@ export const HealthSnapshot = () => {
                   title="Sleep duration"
                   indicator="7h 12m"
                   trend="down"
-                  width="226px"
-                  height="120px"
                 />
-                <ClientCard
-                  title="HRV"
-                  indicator="HRV"
-                  trend="up"
-                  width="226px"
-                  height="120px"
-                />
+                <ClientCard title="HRV" indicator="HRV" trend="up" />
               </div>
               <div className="flex items-start flex-1 gap-4 self-stretch mb-[16px]">
-                <GlucoseCard
-                  modifiable
-                  indicator="91 mg/dL"
-                  trend="up"
-                  width="226px"
-                  height="120px"
-                />
+                <GlucoseCard modifiable indicator="91 mg/dL" trend="up" />
                 <ClientCard
                   title="Resting heart rate"
                   indicator="58 bpm"
                   trend="down"
-                  width="226px"
-                  height="120px"
                 />
               </div>
               <div className="flex max-h-[120px] flex-col gap-[23px] p-[16px] md:p-6 items-start center flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">
@@ -259,31 +242,15 @@ export const HealthSnapshot = () => {
                   title="Sleep duration"
                   indicator="7h 12m"
                   trend="down"
-                  width="226px"
-                  height="140px"
                 />
-                <ClientCard
-                  title="HRV"
-                  indicator="HRV"
-                  trend="up"
-                  width="226px"
-                  height="140px"
-                />
+                <ClientCard title="HRV" indicator="HRV" trend="up" />
               </div>
               <div className="flex items-start flex-1 gap-4 self-stretch mb-[16px]">
-                <GlucoseCard
-                  modifiable
-                  indicator="91 mg/dL"
-                  trend="up"
-                  width="226px"
-                  height="140px"
-                />
+                <GlucoseCard modifiable indicator="91 mg/dL" trend="up" />
                 <ClientCard
                   title="Resting heart rate"
                   indicator="58 bpm"
                   trend="down"
-                  width="226px"
-                  height="140px"
                 />
               </div>
               <div className="flex max-h-[120px] flex-col gap-[23px] p-6 items-start center flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">

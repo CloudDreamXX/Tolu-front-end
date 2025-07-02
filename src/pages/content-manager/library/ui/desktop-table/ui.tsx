@@ -7,19 +7,11 @@ import { getIcon } from "../../lib/lib";
 import { useNavigate } from "react-router-dom";
 import DocumentIcon from "shared/assets/icons/document";
 import { EditDocumentPopup } from "widgets/EditDocumentPopup";
-import { CoachService } from "entities/coach";
 import { RootState } from "entities/store";
-import { useDispatch, useSelector } from "react-redux";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
-import {
-  ContentToMove,
-  FoldersService,
-  IFolder,
-  setFolders,
-} from "entities/folder";
+import { IFolder } from "entities/folder";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
-import { ContentService } from "entities/content";
 import CloseIcon from "shared/assets/icons/close";
 import Pending from "shared/assets/icons/pending";
 import ReadyForReview from "shared/assets/icons/ready-for-review";
@@ -41,7 +33,16 @@ type LibraryDesktopViewProps = {
   folders: RootState["folder"]["folders"];
 
   onDotsClick: (row: TableRow, e: React.MouseEvent) => void;
-  onStatusComplete: (status: "Raw" | "Ready for Review" | "Waiting" | "Second Review Requested" | "Ready to Publish" | "Live" | "Archived") => Promise<void>;
+  onStatusComplete: (
+    status:
+      | "Raw"
+      | "Ready for Review"
+      | "Waiting"
+      | "Second Review Requested"
+      | "Ready to Publish"
+      | "Live"
+      | "Archived"
+  ) => Promise<void>;
   onDeleteClick: (id: string) => Promise<void>;
   onDuplicateClick: (id: string) => void;
   onDuplicateAndMoveClick: (id: string, subfolderId: string) => Promise<void>;
@@ -54,7 +55,7 @@ type LibraryDesktopViewProps = {
   setIsImproveOpen: (v: boolean) => void;
   setSelectedRow: (row: TableRow | null) => void;
   setPopupPosition: (coords: { top: number; left: number }) => void;
-}
+};
 
 export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
   filteredItems,
@@ -134,7 +135,9 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
               <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
                 Status
               </th>
-              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]"> </th>
+              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
+                {" "}
+              </th>
             </tr>
           </thead>
           <tbody className="text-[#1D1D1F] bg-white">
@@ -153,18 +156,18 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
       </div>
       {isMenuOpen && selectedRow && (
         <EditDocumentPopup
-          onEdit={() => { }}
+          onEdit={() => {}}
           onMove={() => setIsMoveOpen(true)}
           onDublicate={() => onDuplicateClick(selectedRow.id)}
           onMarkAs={() => setIsMarkAsOpen(true)}
-          onArchive={() => { }}
+          onArchive={() => {}}
           onDelete={() => setIsDeleteOpen(true)}
           onImproveWithAI={
             selectedRow.status === "Ready for Review"
               ? () => {
-                onDuplicateClick(selectedRow.id)
-                setIsImproveOpen(true)
-              }
+                  onDuplicateClick(selectedRow.id);
+                  setIsImproveOpen(true);
+                }
               : undefined
           }
           position={popupPosition}
@@ -177,13 +180,13 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
           onComplete={onStatusComplete}
           currentStatus={
             selectedRow!.status as
-            | "Raw"
-            | "Ready for Review"
-            | "Waiting"
-            | "Second Review Requested"
-            | "Ready to Publish"
-            | "Live"
-            | "Archived"
+              | "Raw"
+              | "Ready for Review"
+              | "Waiting"
+              | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
           }
           handleMoveClick={onMoveClick}
           contentId={selectedRow?.id}
@@ -192,7 +195,7 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
 
       {isDeleteOpen && (
         <DeleteMessagePopup
-          contentId={selectedRow?.id!}
+          contentId={selectedRow?.id ?? ""}
           onCancel={() => setIsDeleteOpen(false)}
           onDelete={onDeleteClick}
         />
@@ -203,19 +206,17 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
           contentId={idToDuplicate}
           handleSave={onDuplicateAndMoveClick}
           onClose={() => setIsDublicateOpen(false)}
-          parentFolderId={
-            findParentFolderId(folders, idToDuplicate) || ""
-          }
+          parentFolderId={findParentFolderId(folders, idToDuplicate) ?? ""}
         />
       )}
       {isMoveOpen && (
         <ChooseSubfolderPopup
           title={"Move"}
-          contentId={selectedRow?.id!}
+          contentId={selectedRow?.id ?? ""}
           handleSave={onMoveClick}
           onClose={() => setIsMoveOpen(false)}
           parentFolderId={
-            findParentFolderId(folders, selectedRow!.id) || ""
+            findParentFolderId(folders, selectedRow?.id ?? "") ?? ""
           }
         />
       )}
@@ -251,7 +252,6 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
   const isExpanded = expandedFolders.has(row.id);
   const hasChildren = row.subfolders?.length ?? row.content?.length;
   const bgClass = index % 2 === 0 ? "bg-white" : "bg-[#AAC6EC1A]";
-  const nav = useNavigate();
   const [popupRow, setPopupRow] = useState<TableRow | null>(null);
   const fileCellRef = useRef<HTMLTableCellElement | null>(null);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -328,20 +328,25 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
           <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
             {row.status === "Raw" && (
               <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                <Pending />Pending review
+                <Pending />
+                Pending review
               </span>
             )}
             {row.status === "Ready for Review" && (
               <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                <ReadyForReview />Ready for Review
+                <ReadyForReview />
+                Ready for Review
               </span>
             )}
             {row.status === "Second review" && (
               <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                <SecondReview />Second review
+                <SecondReview />
+                Second review
               </span>
             )}
-            {["Raw", "Ready for Review", "Second review"].includes(row.status) === false && row.status}
+            {["Raw", "Ready for Review", "Second review"].includes(
+              row.status
+            ) === false && row.status}
           </td>
         </td>
         <td className="py-[12px] pr-[8px]"></td>
@@ -383,7 +388,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
             left: popupStyle.left,
           }}
         >
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-[20px] font-[700] text-[#1D1D1F] font-inter">
               Files in "{popupRow.title}"
             </h2>
@@ -403,12 +408,12 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
                     <li
                       key={index}
                       className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
-                    // onClick={() => {
-                    //   nav(
-                    //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
-                    //   );
-                    //   setPopupRow(null);
-                    // }}
+                      // onClick={() => {
+                      //   nav(
+                      //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
+                      //   );
+                      //   setPopupRow(null);
+                      // }}
                     >
                       <DocumentIcon />
                       {item.filename}
@@ -481,8 +486,6 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
     };
   }, [popupRow]);
 
-  console.log(popupRow);
-
   return (
     <Fragment>
       {/* Subfolder Row */}
@@ -519,20 +522,25 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
         <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
           {subfolder.status === "Raw" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <Pending />Pending review
+              <Pending />
+              Pending review
             </span>
           )}
           {subfolder.status === "Ready for Review" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <ReadyForReview />Ready for Review
+              <ReadyForReview />
+              Ready for Review
             </span>
           )}
           {subfolder.status === "Second review" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <SecondReview />Second review
+              <SecondReview />
+              Second review
             </span>
           )}
-          {["Raw", "Ready for Review", "Second review"].includes(subfolder.status) === false && subfolder.status}
+          {["Raw", "Ready for Review", "Second review"].includes(
+            subfolder.status
+          ) === false && subfolder.status}
         </td>
         <td className="py-[12px] pr-[8px]">
           <button
@@ -569,7 +577,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
             left: popupStyle.left,
           }}
         >
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-[20px] font-[700] text-[#1D1D1F] font-inter">
               Files in "{popupRow.title}"
             </h2>
@@ -585,12 +593,12 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
                   <li
                     key={index}
                     className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
-                  // onClick={() => {
-                  //   nav(
-                  //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
-                  //   );
-                  //   setPopupRow(null);
-                  // }}
+                    // onClick={() => {
+                    //   nav(
+                    //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
+                    //   );
+                    //   setPopupRow(null);
+                    // }}
                   >
                     <DocumentIcon />
                     {item.filename}
@@ -653,20 +661,25 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
         <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
           {content.status === "Raw" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <Pending />Pending review
+              <Pending />
+              Pending review
             </span>
           )}
           {content.status === "Ready for Review" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <ReadyForReview />Ready for Review
+              <ReadyForReview />
+              Ready for Review
             </span>
           )}
           {content.status === "Second review" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <SecondReview />Second review
+              <SecondReview />
+              Second review
             </span>
           )}
-          {["Raw", "Ready for Review", "Second review"].includes(content.status) === false && content.status}
+          {["Raw", "Ready for Review", "Second review"].includes(
+            content.status
+          ) === false && content.status}
         </td>
         <td className="py-[12px] pr-[8px]">
           <div
@@ -711,20 +724,25 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
             <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
               {msg.status === "Raw" && (
                 <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                  <Pending />Pending review
+                  <Pending />
+                  Pending review
                 </span>
               )}
               {msg.status === "Ready for Review" && (
                 <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                  <ReadyForReview />Ready for Review
+                  <ReadyForReview />
+                  Ready for Review
                 </span>
               )}
               {msg.status === "Second review" && (
                 <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                  <SecondReview />Second review
+                  <SecondReview />
+                  Second review
                 </span>
               )}
-              {["Raw", "Ready for Review", "Second review"].includes(msg.status) === false && msg.status}
+              {["Raw", "Ready for Review", "Second review"].includes(
+                msg.status
+              ) === false && msg.status}
             </td>
             <td className="py-[12px] pr-[8px]">
               <button
