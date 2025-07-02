@@ -57,18 +57,8 @@ const commonFoodOptions = [
 ];
 
 const dietTypeOptions = [
-  "Vegetarian",
-  "Vegan",
-  "Pescatarian",
-  "Paleo",
-  "Keto / Low Carb",
-  "Mediterranean",
-  "Intermittent Fasting",
-  "Gluten-Free",
-  "Dairy-Free",
-  "Low FODMAP",
-  "Elimination / Rotation Diet",
-  "Other",
+    "Vegetarian", "Vegan", "Pescatarian", "Paleo", "Keto / Low Carb", "Mediterranean",
+    "Intermittent Fasting", "Gluten-Free", "Dairy-Free", "Low FODMAP", "Elimination / Rotation Diet"
 ];
 
 export const NutritionHabitsForm = ({ form }: { form: any }) => {
@@ -242,21 +232,10 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                           selected={dietDetailsSelected}
                           onChange={handleDietDetailsChange}
                         />
-                        {form.watch("dietDetails") === "Other" && (
-                          <div className="pt-2">
-                            <Input
-                              placeholder="Other"
-                              value={field.value === "Other" ? "" : field.value}
-                              onChange={(e) =>
-                                form.setValue("dietDetails", e.target.value)
-                              }
-                            />
-                          </div>
-                        )}
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    </FormItem>
+                )}
+            />
                 )}
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
