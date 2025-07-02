@@ -10,14 +10,8 @@ interface CustomSliderProps
   withSeparator?: boolean;
 }
 
-const Slider = React.forwardRef<
-  React.ElementRef<typeof SliderPrimitive.Root>,
-  CustomSliderProps
->(
-  (
-    { className, colors, value = [0], activeIndex, withSeparator, ...props },
-    ref
-  ) => {
+const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, CustomSliderProps>(
+  ({ className, colors, value = [0], activeIndex, withSeparator, ...props }, ref) => {
     const isCustomColored = Array.isArray(colors);
     const active = activeIndex ?? Math.max(value[0] - 1, 0);
 
@@ -25,10 +19,7 @@ const Slider = React.forwardRef<
       <SliderPrimitive.Root
         ref={ref}
         value={value}
-        className={cn(
-          "relative flex w-full touch-none select-none items-center",
-          className
-        )}
+        className={cn("relative flex w-full touch-none select-none items-center", className)}
         {...props}
       >
         {isCustomColored ? (
@@ -38,10 +29,13 @@ const Slider = React.forwardRef<
               const decimalPart = value[0] - filledSegments;
               const segmentWidth = decimalPart * 100;
 
+              const isLastSegment = index === value.length - 1;
+              console.log(isLastSegment)
+
               return (
                 <div
                   key={index}
-                  className="w-1/6 h-full transition-colors duration-200"
+                  className={`w-1/6 h-full transition-colors duration-200 ${isLastSegment ? 'rounded-r-[4px]' : ''}`}
                   style={{
                     backgroundColor: index < active ? color : "#ECEFF4",
                   }}
@@ -49,10 +43,8 @@ const Slider = React.forwardRef<
                   <div
                     className="w-full h-full"
                     style={{
-                      backgroundColor:
-                        index <= filledSegments ? color : "#ECEFF4",
-                      width:
-                        index === filledSegments ? `${segmentWidth}%` : "auto",
+                      backgroundColor: index <= filledSegments ? color : "#ECEFF4",
+                      width: index === filledSegments ? `${segmentWidth}%` : "auto",
                     }}
                   />
                 </div>
@@ -60,8 +52,8 @@ const Slider = React.forwardRef<
             })}
           </SliderPrimitive.Track>
         ) : (
-          <SliderPrimitive.Track className="relative h-4 w-full rounded-full bg-[#D9D9D9]">
-            <SliderPrimitive.Range className="absolute h-4 rounded-l-full bg-[#1C63DB]" />
+          <SliderPrimitive.Track className="relative h-4 w-full rounded-full bg-[#D9D9D9] overflow-hidden">
+            <SliderPrimitive.Range className="absolute h-4 bg-[#1C63DB]" />
           </SliderPrimitive.Track>
         )}
 

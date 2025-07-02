@@ -13,10 +13,10 @@ import z from "zod";
 import Upload from "shared/assets/icons/upload";
 
 export const metabolicDigestiveHealthSchema = z.object({
-    bloodSugarConcern: z.string().min(1, "This field is required"),
+    bloodSugarConcern: z.string().optional(),
     bloodSugarOther: z.string().optional(),
 
-    digestiveIssues: z.string().min(1, "This field is required"),
+    digestiveIssues: z.string().optional(),
     digestiveOther: z.string().optional(),
 
     recentLabTests: z.string().min(1, "This field is required"),
@@ -38,7 +38,7 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                 name="bloodSugarConcern"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Blood sugar management concerns</FormLabel>
+                        <FormLabel><p>Blood sugar management concerns</p><p className="text-[14px] text-[#5F5F65] font-[500]">Select if relevant</p></FormLabel>
                         <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-1">
                             {["Yes", "No", "Other"].map((val) => (
                                 <FormItem key={val} className="flex items-center space-x-2 space-y-0">
@@ -71,7 +71,7 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                 name="digestiveIssues"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Digestive issues (e.g., bloating, IBS, reflux)</FormLabel>
+                        <FormLabel><p>Digestive issues (e.g., bloating, IBS, reflux)</p><p className="text-[14px] text-[#5F5F65] font-[500]">Select if relevant</p></FormLabel>
                         <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-1">
                             {["Yes", "No", "Other"].map((val) => (
                                 <FormItem key={val} className="flex items-center space-x-2 space-y-0">

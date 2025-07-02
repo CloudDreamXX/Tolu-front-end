@@ -106,12 +106,20 @@ export const ConsentSubmissionForm = ({ form }: { form: any }) => {
                                                 {...form.register("phoneNumber")}
                                                 className="border-none outline-none px-[12px] py-[6px] text-[16px] w-[160px]"
                                                 placeholder="(415) 555-2671"
+                                                type="tel"
+                                                maxLength={10}
                                             />
                                         </div>
                                     </FormControl>
-                                    <FormMessage />
+
+                                    {form.formState.errors.phoneNumber && (
+                                        <p className="text-sm text-red-500">
+                                            {form.formState.errors.phoneNumber.message as string}
+                                        </p>
+                                    )}
                                 </FormItem>
                             )}
+
 
                             <FormItem key={"None"} className="flex items-center space-x-2 space-y-0">
                                 <FormControl>

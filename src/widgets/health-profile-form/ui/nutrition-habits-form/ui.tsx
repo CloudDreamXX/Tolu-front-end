@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     FormControl,
     FormField,
@@ -14,6 +15,7 @@ import {
     SelectValue,
 } from "shared/ui";
 import z from "zod";
+import { MultiSelect } from "../MultiSelect";
 
 export const nutritionHabitsSchema = z.object({
     decisionMaker: z.string().min(1, "This field is required"),
@@ -46,6 +48,19 @@ const dietTypeOptions = [
 ];
 
 export const NutritionHabitsForm = ({ form }: { form: any }) => {
+    const [commonFoodsSelected, setCommonFoodsSelected] = useState<string[]>([]);
+    const [dietDetailsSelected, setDietDetailsSelected] = useState<string[]>([]);
+
+    const handleCommonFoodsChange = (val: string[]) => {
+        setCommonFoodsSelected(val);
+        form.setValue("commonFoods", val.join(" , "));
+    };
+
+    const handleDietDetailsChange = (val: string[]) => {
+        setDietDetailsSelected(val);
+        form.setValue("dietDetails", val.join(" , "));
+    };
+
     return (
         <div className="space-y-6">
             <p className="text-sm text-gray-500">
@@ -135,20 +150,12 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>What kind of food do you find yourself eating the most each week?</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Choose an option" />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                {commonFoodOptions.map((option) => (
-                                    <SelectItem key={option} value={option}>
-                                        {option}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <MultiSelect
+                            placeholder="Select common foods"
+                            options={commonFoodOptions}
+                            selected={commonFoodsSelected}
+                            onChange={handleCommonFoodsChange}
+                        />
                         <FormMessage />
                     </FormItem>
                 )}
@@ -190,21 +197,12 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                                         name="dietDetails"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Specify your diet</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select diet type" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {dietTypeOptions.map((option) => (
-                                                            <SelectItem key={option} value={option}>
-                                                                {option}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                <MultiSelect
+                                                    placeholder="Select diet"
+                                                    options={dietTypeOptions}
+                                                    selected={dietDetailsSelected}
+                                                    onChange={handleDietDetailsChange}
+                                                />
                                                 {form.watch("dietDetails") === "Other" && (
                                                     <div className="pt-2">
                                                         <Input

@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Form,
+  FormMessage,
 } from "shared/ui";
 import {
   BasicInformationForm,
@@ -30,6 +31,7 @@ import { MetabolicDigestiveHealthForm, metabolicDigestiveHealthSchema } from "./
 import { DrivesAndGoalsForm, drivesAndGoalsSchema } from "./drives-and-goals";
 import { ConsentSubmissionForm, consentSubmissionSchema } from "./consent-and-submission";
 import { HealthHistoryPostData, HealthHistoryService } from "entities/health-history";
+import { ConfirmCancel } from "./confirm-cancel";
 
 const steps = [
   "Basic Information",
@@ -75,11 +77,23 @@ const formSchema = baseFormSchema
       message: "Please specify your other exercise habits.",
       path: ["otherExerciseHabits"],
     }
-  );
+  )
+  .superRefine((data, ctx) => {
+    if (data.followUpMethod === "Text") {
+      if (!data.phoneNumber || !/^\d{10}$/.test(data.phoneNumber)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Phone number must be exactly 10 digits",
+          path: ["phoneNumber"],
+        });
+      }
+    }
+  });
 
 export const HealthProfileForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -269,6 +283,13 @@ export const HealthProfileForm = () => {
     }
   };
 
+  const onDiscard = () => {
+    setConfirmOpen(false)
+    form.reset()
+    setCurrentStep(0);
+    setIsOpen(false)
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -279,7 +300,7 @@ export const HealthProfileForm = () => {
           My health profile 0/7
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl gap-6 max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl gap-6 max-h-[98vh] overflow-y-auto">
         <DialogTitle>Your Health Status Now</DialogTitle>
         <Steps steps={steps} currentStep={currentStep} ordered />
         <Form {...form}>
@@ -296,7 +317,10 @@ export const HealthProfileForm = () => {
           <Button
             variant="blue2"
             className="w-32"
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false)
+              setConfirmOpen(true)
+            }}
           >
             Cancel
           </Button>
@@ -315,11 +339,15 @@ export const HealthProfileForm = () => {
               className="w-32"
               onClick={handleNextStep}
             >
-              Next
+              {currentStep === steps.length - 1 ? "Submit" : "Next"}
             </Button>
           </div>
         </div>
       </DialogContent>
+      {confirmOpen && <ConfirmCancel onCancel={() => {
+        setConfirmOpen(false)
+        setIsOpen(true)
+      }} onDiscard={onDiscard} />}
     </Dialog>
   );
 };

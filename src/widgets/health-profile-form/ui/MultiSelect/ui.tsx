@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Chevron from "shared/assets/icons/chevron";
 import CheckedIcon from "shared/assets/icons/checked";
 import UncheckedIcon from "shared/assets/icons/not-checked";
+import { cn } from "shared/lib/utils";
 
 export const MultiSelect = ({
     placeholder,
@@ -40,7 +41,10 @@ export const MultiSelect = ({
     return (
         <div className={`relative ${className}`} ref={dropdownRef}>
             <button
-                className="w-full text-left border border-[#DBDEE1] rounded-[16px] md:rounded-[1000px] px-[12px] py-[4px] pr-[40px] text-[18px] font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap gap-[8px] items-center"
+                className={cn(
+                    "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 text-sm font-[500] text-[#1D1D1F] bg-white relative flex items-center",
+                    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                )}
                 onClick={() => setOpen(!open)}
                 type="button"
             >
@@ -50,7 +54,7 @@ export const MultiSelect = ({
                     selected.map((option, index) => (
                         <span
                             key={option}
-                            className="flex items-center gap-[8px] text-[18px] font-[500] text-[#1D1D1F]"
+                            className="flex items-center gap-[8px] text-[16px] font-[500] text-[#1D1D1F]"
                         >
                             {index !== 0 && ", "} {option}
                         </span>
@@ -61,12 +65,16 @@ export const MultiSelect = ({
                 </span>
             </button>
             {open && (
-                <ul className="absolute z-10 mt-[4px] w-full min-w-[113px] bg-white border border-[#DBDEE1] rounded-[12px] shadow-sm max-h-[220px] overflow-y-auto text-[16px]">
+                <ul className="absolute z-10 mt-[4px] w-full bg-white border border-[#DBDEE1] rounded-md shadow-sm max-h-[220px] overflow-y-auto">
                     {options.map((option, index) => (
                         <li
                             key={option}
-                            className={`px-[17px] py-[8px] cursor-pointer hover:text-[#1C63DB] flex items-center gap-[8px] font-[500] ${selected.includes(option) ? "text-[#008FF6]" : ""
-                                } ${index < options.length - 1 ? "border-b border-[#C2C6D2]" : ""}`}
+                            className={cn(
+                                "px-[17px] py-[8px] cursor-pointer flex items-center gap-[8px] font-[500] text-[16px] hover:bg-[#F2F2F2]",
+                                {
+                                    "text-[#1C63DB]": selected.includes(option),
+                                }
+                            )}
                             onClick={() => toggleOption(option)}
                         >
                             {selected.includes(option) ? <CheckedIcon /> : <UncheckedIcon />}

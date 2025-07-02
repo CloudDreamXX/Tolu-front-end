@@ -29,7 +29,7 @@ export const WomensHealthForm = ({ form }: { form: any }) => {
                     <FormItem>
                         <FormLabel>Menstrual cycle status</FormLabel>
                         <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-1">
-                            {["Regular", "Irregular", "Post-menopause", "Hysterectomy, No cycle", "Other"].map((option) => (
+                            {["Regular", "Irregular", "Post-menopause", "Other"].map((option) => (
                                 <FormItem key={option} className="flex items-center space-x-2 space-y-0">
                                     <FormControl>
                                         <RadioGroupItem value={option} id={option} />

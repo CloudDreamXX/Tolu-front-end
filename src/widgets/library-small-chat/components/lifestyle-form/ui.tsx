@@ -87,7 +87,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
                 <span>I usually follow a</span>
                 <MultiSelect placeholder={"diet type"} options={dietOptions} selected={dietType} className="w-fit min-w-[302px]" onChange={(val) => {
                     setDietType(val);
-                    setValue("dietType", val.join(" / "));
+                    setValue("dietType", val.join(", "));
                 }} />
                 <span>diet.</span>
             </div>
@@ -116,7 +116,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
                 <span>I’m currently taking</span>
                 <MultiSelect placeholder={"medications or supplements"} options={["Medications", "Supplements", "Nothing"]} className="w-fit" selected={medications} onChange={(val) => {
                     setMedications(val);
-                    setValue("medications", val.join(" / "));
+                    setValue("medications", val.join(", "));
                 }} />
             </div>
 

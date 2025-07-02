@@ -53,8 +53,8 @@ export interface HealthHistoryPostData {
   hormone_replacement_therapy: string;
   fertility_concerns: string;
   birth_control_use: string;
-  blood_sugar_concerns: string;
-  digestive_issues: string;
+  blood_sugar_concerns?: string;
+  digestive_issues?: string;
   recent_lab_tests: boolean;
   health_goals: string;
   why_these_goals: string;
