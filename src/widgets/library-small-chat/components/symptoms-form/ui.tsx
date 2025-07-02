@@ -43,7 +43,7 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
                         "Perimenopausal (Irregular cycles)",
                         "Post menopausal (No cycles)",
                     ]}
-                    className="w-fit"
+                    className="w-fit min-w-[160px]"
                 />
                 <span>but lately I’ve been dealing with</span>
                 <input {...register("mainSymptoms")} placeholder="main symptoms – e.g., trouble sleeping, mood swings, weight gain" className={`${inputClass} w-[568px]`} />

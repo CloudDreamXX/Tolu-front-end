@@ -5,12 +5,14 @@ interface StepsProps {
   steps: string[];
   currentStep: number;
   ordered?: boolean;
+  stepWidth?: string;
 }
 
 export const Steps: React.FC<StepsProps> = ({
   steps,
   currentStep,
   ordered,
+  stepWidth
 }) => {
   return (
     <div className="flex items-center w-full p-2 border rounded-full">
@@ -32,7 +34,7 @@ export const Steps: React.FC<StepsProps> = ({
           return (
             <>
               <div
-                className={`flex-shrink-0 w-fit px-4 h-10 flex justify-center items-center bg-gray-100 border border-gray-300 rounded-full`}
+                className={`flex-shrink-0 w-fit ${stepWidth ? stepWidth : ""} px-4 h-10 flex justify-center items-center bg-gray-100 border border-gray-300 rounded-full`}
               >
                 {ordered && `${index + 1}.`} {step}
               </div>

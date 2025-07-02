@@ -156,6 +156,17 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                             selected={commonFoodsSelected}
                             onChange={handleCommonFoodsChange}
                         />
+                        {form.watch("commonFoods") === "Other" && (
+                            <div className="pt-2">
+                                <Input
+                                    placeholder="Other"
+                                    value={field.value === "Other" ? "" : field.value}
+                                    onChange={(e) =>
+                                        form.setValue("dietDetails", e.target.value)
+                                    }
+                                />
+                            </div>
+                        )}
                         <FormMessage />
                     </FormItem>
                 )}
@@ -206,7 +217,7 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                                                 {form.watch("dietDetails") === "Other" && (
                                                     <div className="pt-2">
                                                         <Input
-                                                            placeholder="Enter your specific diet"
+                                                            placeholder="Other"
                                                             value={field.value === "Other" ? "" : field.value}
                                                             onChange={(e) =>
                                                                 form.setValue("dietDetails", e.target.value)

@@ -18,6 +18,25 @@
   font-family: var(--nunito-text) !important;
 }
 
+.custom-small-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  border-radius: 20px;
+}
+
+.custom-small-scroll::-webkit-scrollbar-track {
+  background: #ffffff66;
+  border-radius: 20px;
+  padding-top: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.custom-small-scroll::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 20px;
+}
+
 .custom-scroll::-webkit-scrollbar {
   width: 6px;
   height: 6px;

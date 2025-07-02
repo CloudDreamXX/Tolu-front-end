@@ -256,8 +256,6 @@ export const LibrarySmallChat = () => {
       const newChatId = await handleNewMessage(message, [], null);
       form.reset();
       setCurrentStep(0);
-
-      navigate(newChatId ? `/library/${newChatId}` : "/library");
     }
   };
 
@@ -325,7 +323,7 @@ export const LibrarySmallChat = () => {
               <p className="text-[24px] text-[#1D1D1F] font-[500]">
                 Personal story
               </p>
-              <Steps steps={steps} currentStep={currentStep} ordered />
+              <Steps steps={steps} stepWidth={"w-[462px]"} currentStep={currentStep} ordered />
               <form onSubmit={(e) => e.preventDefault()}>
                 {currentStep === 0 && <SymptomsForm form={form} />}
                 {currentStep === 1 && <HealthHistoryForm form={form} />}
@@ -336,11 +334,10 @@ export const LibrarySmallChat = () => {
                 <button
                   type="button"
                   disabled={!isStepComplete()}
-                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 ${
-                    isStepComplete()
-                      ? "bg-[#1C63DB] text-white"
-                      : "bg-[#D5DAE2] text-[#5F5F65] events-none"
-                  }`}
+                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 ${isStepComplete()
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5F5F65] events-none"
+                    }`}
                   onClick={handleNextStep}
                 >
                   Continue
