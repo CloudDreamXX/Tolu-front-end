@@ -57,8 +57,17 @@ const commonFoodOptions = [
 ];
 
 const dietTypeOptions = [
-    "Vegetarian", "Vegan", "Pescatarian", "Paleo", "Keto / Low Carb", "Mediterranean",
-    "Intermittent Fasting", "Gluten-Free", "Dairy-Free", "Low FODMAP", "Elimination / Rotation Diet"
+  "Vegetarian",
+  "Vegan",
+  "Pescatarian",
+  "Paleo",
+  "Keto / Low Carb",
+  "Mediterranean",
+  "Intermittent Fasting",
+  "Gluten-Free",
+  "Dairy-Free",
+  "Low FODMAP",
+  "Elimination / Rotation Diet",
 ];
 
 export const NutritionHabitsForm = ({ form }: { form: any }) => {
@@ -175,13 +184,9 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
               selected={commonFoodsSelected}
               onChange={handleCommonFoodsChange}
             />
-            {form.watch("commonFoods") === "Other" && (
+            {commonFoodsSelected.includes("Other") && (
               <div className="pt-2">
-                <Input
-                  placeholder="Other"
-                  value={field.value === "Other" ? "" : field.value}
-                  onChange={(e) => form.setValue("dietDetails", e.target.value)}
-                />
+                <Input placeholder="Other" {...field} />
               </div>
             )}
             <FormMessage />
@@ -224,7 +229,7 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                   <FormField
                     control={form.control}
                     name="dietDetails"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <MultiSelect
                           placeholder="Select diet"
@@ -233,9 +238,9 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                           onChange={handleDietDetailsChange}
                         />
                         <FormMessage />
-                    </FormItem>
-                )}
-            />
+                      </FormItem>
+                    )}
+                  />
                 )}
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
