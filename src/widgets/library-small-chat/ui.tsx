@@ -24,7 +24,12 @@ import { HealthHistoryForm } from "./components/health-history-form";
 import { LifestyleForm } from "./components/lifestyle-form";
 import { GoalsForm } from "./components/goals-form";
 
-const steps = ["Symptoms", "Your Health History", "Your Lifestyle", "Your Goals"];
+const steps = [
+  "Symptoms",
+  "Your Health History",
+  "Your Lifestyle",
+  "Your Goals",
+];
 
 export const baseSchema = z.object({
   age: z.string(),
@@ -99,7 +104,14 @@ export const LibrarySmallChat = () => {
   const watchedValues = useWatch({ control: form.control });
 
   const handleExpandClick = () => {
-    navigate(currentChatId ? `/library/${currentChatId}` : "/library");
+    if (isSearching) return;
+
+    if (currentChatId) {
+      navigate(`/library/${currentChatId}`);
+    } else {
+      const newChatId = `new_chat_${Date.now()}`;
+      navigate(`/library/${newChatId}`);
+    }
   };
 
   const togglePersonalize = () => {
@@ -125,8 +137,11 @@ export const LibrarySmallChat = () => {
     setStreamingText("");
     setError(null);
 
-    const { image, pdf, errors: fileErrors } =
-      await SearchService.prepareFilesForSearch(files);
+    const {
+      image,
+      pdf,
+      errors: fileErrors,
+    } = await SearchService.prepareFilesForSearch(files);
 
     if (fileErrors.length > 0) {
       setError(fileErrors.join("\n"));
@@ -195,9 +210,35 @@ export const LibrarySmallChat = () => {
 
   const handleNextStep = async () => {
     const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
-      ["age", "maritalStatus", "job", "children", "menopauseStatus", "mainSymptoms", "otherChallenges", "strategiesTried"],
-      ["diagnosedConditions", "geneticTraits", "maternalSide", "paternalSide", "notableConcern"],
-      ["stressLevel", "takeout", "homeCooked", "dietType", "exercise", "limitations", "medications", "period", "sexLife", "supportSystem"],
+      [
+        "age",
+        "maritalStatus",
+        "job",
+        "children",
+        "menopauseStatus",
+        "mainSymptoms",
+        "otherChallenges",
+        "strategiesTried",
+      ],
+      [
+        "diagnosedConditions",
+        "geneticTraits",
+        "maternalSide",
+        "paternalSide",
+        "notableConcern",
+      ],
+      [
+        "stressLevel",
+        "takeout",
+        "homeCooked",
+        "dietType",
+        "exercise",
+        "limitations",
+        "medications",
+        "period",
+        "sexLife",
+        "supportSystem",
+      ],
       ["goals"],
     ];
 
@@ -222,21 +263,49 @@ export const LibrarySmallChat = () => {
 
   const isStepComplete = (): boolean => {
     const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
-      ["age", "maritalStatus", "job", "children", "menopauseStatus", "mainSymptoms", "otherChallenges", "strategiesTried"],
-      ["diagnosedConditions", "geneticTraits", "maternalSide", "paternalSide", "notableConcern"],
-      ["stressLevel", "takeout", "homeCooked", "dietType", "exercise", "limitations", "medications", "period", "sexLife", "supportSystem"],
+      [
+        "age",
+        "maritalStatus",
+        "job",
+        "children",
+        "menopauseStatus",
+        "mainSymptoms",
+        "otherChallenges",
+        "strategiesTried",
+      ],
+      [
+        "diagnosedConditions",
+        "geneticTraits",
+        "maternalSide",
+        "paternalSide",
+        "notableConcern",
+      ],
+      [
+        "stressLevel",
+        "takeout",
+        "homeCooked",
+        "dietType",
+        "exercise",
+        "limitations",
+        "medications",
+        "period",
+        "sexLife",
+        "supportSystem",
+      ],
       ["goals"],
     ];
 
     const currentFields = stepFields[currentStep];
 
-    return currentFields.every((field) => watchedValues[field]?.trim?.() !== "");
+    return currentFields.every(
+      (field) => watchedValues[field]?.trim?.() !== ""
+    );
   };
 
   return (
     <>
       {personalize ? (
-        <Card className="flex flex-col w-full h-fit border-none rounded-2xl">
+        <Card className="flex flex-col w-full border-none h-fit rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
@@ -253,7 +322,9 @@ export const LibrarySmallChat = () => {
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
           <CardContent className="px-6 pb-0">
             <div className="p-[24px] border border-[#008FF6] rounded-[20px]">
-              <p className="text-[24px] text-[#1D1D1F] font-[500]">Personal story</p>
+              <p className="text-[24px] text-[#1D1D1F] font-[500]">
+                Personal story
+              </p>
               <Steps steps={steps} currentStep={currentStep} ordered />
               <form onSubmit={(e) => e.preventDefault()}>
                 {currentStep === 0 && <SymptomsForm form={form} />}
@@ -265,10 +336,11 @@ export const LibrarySmallChat = () => {
                 <button
                   type="button"
                   disabled={!isStepComplete()}
-                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 ${isStepComplete()
-                    ? "bg-[#1C63DB] text-white"
-                    : "bg-[#D5DAE2] text-[#5F5F65] events-none"
-                    }`}
+                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 ${
+                    isStepComplete()
+                      ? "bg-[#1C63DB] text-white"
+                      : "bg-[#D5DAE2] text-[#5F5F65] events-none"
+                  }`}
                   onClick={handleNextStep}
                 >
                   Continue

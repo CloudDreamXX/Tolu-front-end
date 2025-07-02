@@ -81,6 +81,8 @@ export const LibraryChat = () => {
         console.log("Loading existing session for:", chatId);
         sessionLoadDone.current = true;
         await loadExistingSession();
+      } else if (chatId && chatId.startsWith("new_chat_")) {
+        console.log("New chat without initial message:", chatId);
       }
 
       setIsInitialized(true);
@@ -155,7 +157,9 @@ export const LibraryChat = () => {
           chat_message: JSON.stringify({
             user_prompt: message,
             is_new: true,
-            chat_id: currentChatId,
+            chat_id: currentChatId.startsWith("new_chat_")
+              ? undefined
+              : currentChatId,
             regenerate_id: null,
           }),
           ...(files?.length > 0 ? { image: files } : {}),
@@ -225,15 +229,31 @@ export const LibraryChat = () => {
 
     let accumulatedText = "";
 
+    const {
+      image,
+      pdf,
+      errors: fileErrors,
+    } = await SearchService.prepareFilesForSearch(files);
+
+    if (fileErrors.length > 0) {
+      setError(fileErrors.join("\n"));
+      setIsSearching(false);
+      return;
+    }
+
     try {
       await SearchService.aiSearchStream(
         {
           chat_message: JSON.stringify({
             user_prompt: message,
             is_new: false,
-            chat_id: currentChatId,
+            chat_id: currentChatId.startsWith("new_chat_")
+              ? undefined
+              : currentChatId,
             regenerate_id: null,
           }),
+          ...(image && { image }),
+          ...(pdf && { pdf }),
         },
         (chunk: StreamChunk) => {
           if (chunk.reply) {
@@ -303,7 +323,9 @@ export const LibraryChat = () => {
           chat_message: JSON.stringify({
             user_prompt: lastUserMessage.content,
             is_new: false,
-            chat_id: currentChatId,
+            chat_id: currentChatId.startsWith("new_chat_")
+              ? undefined
+              : currentChatId,
             regenerate_id: Date.now().toString(),
           }),
         },
@@ -343,6 +365,12 @@ export const LibraryChat = () => {
     chatTitle ||
     (currentChatId ? `Chat ${currentChatId.slice(0, 8)}...` : "New Chat");
 
+  const isEmpty =
+    messages.length === 0 &&
+    !isSearching &&
+    !streamingText &&
+    !isLoadingSession;
+
   return (
     <div className="flex flex-col w-full h-full gap-6 p-6">
       <ChatBreadcrumb displayChatTitle={displayChatTitle} />
@@ -359,15 +387,33 @@ export const LibraryChat = () => {
             <ChatHeader
               displayChatTitle={displayChatTitle}
               isExistingChat={!!isExistingChat}
-              onNewSearch={() => navigate("/library")}
+              onNewSearch={() => {
+                const newChatId = `new_chat_${Date.now()}`;
+                navigate(`/library/${newChatId}`);
+              }}
             />
 
-            <MessageList
-              messages={messages}
-              isSearching={isSearching}
-              streamingText={streamingText}
-              error={error}
-            />
+            {isEmpty ? (
+              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
+                <div className="max-w-md space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-700">
+                    Start a new conversation
+                  </h3>
+                  <p className="text-gray-500">
+                    Ask me anything about your health, nutrition, or wellness
+                    goals. I'm here to help with personalized insights and
+                    recommendations.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <MessageList
+                messages={messages}
+                isSearching={isSearching}
+                streamingText={streamingText}
+                error={error}
+              />
+            )}
 
             {/* Input */}
             <SearchAiChatInput

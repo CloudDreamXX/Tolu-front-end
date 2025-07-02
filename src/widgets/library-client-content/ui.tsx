@@ -10,6 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   Input,
+  ScrollArea,
 } from "shared/ui";
 
 export const LibraryClientContent = () => {
@@ -31,14 +32,17 @@ export const LibraryClientContent = () => {
     fetchData();
   }, []);
 
-  const onStatusChange = async (id: string, status: "read" | "saved_for_later") => {
+  const onStatusChange = async (
+    id: string,
+    status: "read" | "saved_for_later"
+  ) => {
     const newStatus: ContentStatus = {
       content_id: id,
       status,
     };
     const response = await ContentService.updateStatus(newStatus);
     if (response) {
-      setStatusMap(prev => ({
+      setStatusMap((prev) => ({
         ...prev,
         [id]: newStatus,
       }));
@@ -46,8 +50,8 @@ export const LibraryClientContent = () => {
   };
 
   const onDocumentClick = (id: string) => {
-    nav(`/library/document/${id}`)
-  }
+    nav(`/library/document/${id}`);
+  };
 
   return (
     <div className="flex flex-col w-full">
@@ -59,36 +63,39 @@ export const LibraryClientContent = () => {
         icon={<Search className="w-4 h-4" />}
         autoFocus
       />
-      {folders.map((folder, index) => (
-        <Accordion
-          key={folder.id}
-          type="single"
-          collapsible
-          className="w-full mt-4"
-          defaultValue={`item-${index}`}
-        >
-          <AccordionItem value={`item-${index}`}>
-            <AccordionTrigger className="pt-0">
-              {folder.name}
-            </AccordionTrigger>
-            <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
-              {folder.content.map((item) => (
-                <LibraryCard
-                  id={item.id}
-                  key={item.id}
-                  title={item.title}
-                  author={item.author_name}
-                  type={"Text"}
-                  status={"To read"}
-                  progress={item.read_count}
-                  onStatusChange={onStatusChange}
-                  contentStatus={statusMap[item.id]}
-                  onDocumentClick={onDocumentClick} />
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      ))}
+      <ScrollArea className="flex-1 min-h-0 pr-2 mt-4">
+        {folders.map((folder, index) => (
+          <Accordion
+            key={folder.id}
+            type="single"
+            collapsible
+            className="w-full mb-4"
+            defaultValue={`item-${index}`}
+          >
+            <AccordionItem value={`item-${index}`}>
+              <AccordionTrigger className="pt-0">
+                {folder.name}
+              </AccordionTrigger>
+              <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
+                {folder.content.map((item) => (
+                  <LibraryCard
+                    id={item.id}
+                    key={item.id}
+                    title={item.title}
+                    author={item.author_name}
+                    type={"Text"}
+                    status={"To read"}
+                    progress={item.read_count}
+                    onStatusChange={onStatusChange}
+                    contentStatus={statusMap[item.id]}
+                    onDocumentClick={onDocumentClick}
+                  />
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ))}
+      </ScrollArea>
     </div>
   );
 };

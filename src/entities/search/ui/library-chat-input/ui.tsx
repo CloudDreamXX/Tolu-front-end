@@ -142,6 +142,11 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               className="hidden"
               disabled={disabled}
             />
+            {attachedFiles.length > 0 && (
+              <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
+                {attachedFiles.length > 99 ? "99+" : attachedFiles.length}
+              </span>
+            )}
           </label>
           <HealthProfileForm />
         </div>

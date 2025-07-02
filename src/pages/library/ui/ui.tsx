@@ -77,7 +77,7 @@ export const Library = () => {
         onClose={() => setCompletionModalOpen(false)}
         variant="completion"
       />
-      <div className="flex flex-row w-full h-full gap-6">
+      <div className="flex flex-row flex-1 w-full h-full min-h-0 gap-6">
         <LibraryClientContent />
         <LibrarySmallChat />
       </div>

@@ -22,7 +22,6 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
   disabled = false,
 }) => {
   const [message, setMessage] = useState<string>("");
-  const [searchType, setSearchType] = useState<string>("Search");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
   const handleSend = () => {
@@ -81,7 +80,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
               accept="image/*,.pdf"
               onChange={handleFileChange}
               className="hidden"
-              disabled={!isFormValid || disabled}
+              disabled={disabled}
             />
           </label>
           <HealthProfileForm />
