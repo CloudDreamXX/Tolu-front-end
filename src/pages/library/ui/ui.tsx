@@ -5,7 +5,6 @@ import {
   Symptom,
   UserService,
 } from "entities/user";
-import { toast } from "shared/lib/hooks/use-toast";
 import { SystemCheck } from "./system-check";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { LibraryClientContent } from "widgets/library-client-content";
@@ -39,13 +38,16 @@ export const Library = () => {
 
   const handleFinishCheckIn = async (results: MenopauseSubmissionRequest) => {
     await UserService.submitMenopauseResults(results);
-    const data = await UserService.getMenopauseRecommendations();
-
-    setRecommendations(data.content);
-
     setStepModalOpen(false);
     setCompletionModalOpen(true);
     setShowResults(true);
+
+    try {
+      const data = await UserService.getMenopauseRecommendations();
+      setRecommendations(data.content);
+    } catch (error) {
+      console.error("Failed to load recommendations", error);
+    }
   };
 
   return (

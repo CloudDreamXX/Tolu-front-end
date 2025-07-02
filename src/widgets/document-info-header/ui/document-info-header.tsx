@@ -1,0 +1,55 @@
+import React from "react";
+import { IDocument } from "entities/document";
+import { Share } from "entities/coach";
+import {
+  DocumentFolderInfo,
+  FilesInfo,
+  InstructionInfo,
+  ClientsInfo,
+} from "entities/folder";
+
+interface DocumentInfoHeaderProps {
+  document: IDocument | null;
+  sharedClients: Share[] | null;
+  documentId?: string;
+  refreshSharedClients: () => Promise<void>;
+}
+
+export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
+  document,
+  sharedClients,
+  documentId,
+  refreshSharedClients,
+}) => {
+  return (
+    <div className="flex w-full flex-col md:flex-row gap-[12px] md:gap-[41px] md:min-h-[50px] md:items-center">
+      {document ? (
+        <DocumentFolderInfo
+          folderId={document.originalFolderId}
+          folderName={document.originalFolderName}
+        />
+      ) : (
+        <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
+      )}
+      {document ? (
+        <FilesInfo files={document.originalFiles} />
+      ) : (
+        <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
+      )}
+      {document ? (
+        <InstructionInfo instructions={document.originalInstructions} />
+      ) : (
+        <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
+      )}
+      {sharedClients ? (
+        <ClientsInfo
+          clients={sharedClients}
+          documentId={documentId}
+          refreshSharedClients={refreshSharedClients}
+        />
+      ) : (
+        <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
+      )}
+    </div>
+  );
+};

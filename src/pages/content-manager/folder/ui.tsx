@@ -82,7 +82,6 @@ export const ContentManagerFolder: React.FC = () => {
         chatMessage,
         newFolderId,
         undefined,
-        undefined,
         clientId,
         (chunk) => {
           newContentId = chunk.saved_content_id;
@@ -124,7 +123,7 @@ export const ContentManagerFolder: React.FC = () => {
       id: folderId ?? "",
       status: status,
     };
-    await CoachService.changeStatus(newStatus, token);
+    await CoachService.changeStatus(newStatus);
     setShowChangeStatusPopup(false);
     console.log("Selected status:", status);
   };
@@ -218,13 +217,13 @@ export const ContentManagerFolder: React.FC = () => {
             onComplete={onStatusComplete}
             currentStatus={
               folder!.status as
-              | "Raw"
-              | "Ready for Review"
-              | "Waiting"
-              | "Second Review Requested"
-              | "Ready to Publish"
-              | "Live"
-              | "Archived"
+                | "Raw"
+                | "Ready for Review"
+                | "Waiting"
+                | "Second Review Requested"
+                | "Ready to Publish"
+                | "Live"
+                | "Archived"
             }
           />
         )}

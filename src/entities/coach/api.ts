@@ -110,7 +110,6 @@ export class CoachService {
   static async aiLearningSearch(
     chatMessage: AIChatMessage,
     folder_id: string,
-    instruction?: string | null,
     files?: File[],
     client_id?: string | null,
     onChunk?: (data: any) => void,
@@ -131,10 +130,6 @@ export class CoachService {
     formData.append("chat_message", JSON.stringify(chatMessage));
 
     formData.append("folder_id", folder_id);
-
-    if (instruction) {
-      formData.append("instruction", instruction);
-    }
 
     if (files?.length) {
       files.forEach((file) => {
@@ -222,32 +217,16 @@ export class CoachService {
     }
   }
 
-  static async changeStatus(
-    status: Status,
-    token: string | null
-  ): Promise<any> {
-    return ApiService.put<any>(API_ROUTES.COACH_ADMIN.CHANGE_STATUS, status, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "application/json",
-      },
-    });
+  static async changeStatus(status: Status): Promise<any> {
+    return ApiService.put<any>(API_ROUTES.COACH_ADMIN.CHANGE_STATUS, status);
   }
 
-  static async getSessionById(
-    chatId: string,
-    token: string | null
-  ): Promise<ISessionResponse> {
+  static async getSessionById(chatId: string): Promise<ISessionResponse> {
     const endpoint = API_ROUTES.COACH_ADMIN.GET_SESSION.replace(
       "{chat_id}",
       chatId
     );
-    return ApiService.get<ISessionResponse>(endpoint, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "application/json",
-      },
-    });
+    return ApiService.get<ISessionResponse>(endpoint);
   }
 
   static async rateContent(

@@ -2,7 +2,14 @@ import AiCreate from "shared/assets/icons/ai-create";
 import Search from "shared/assets/icons/search";
 import { useCallback, useEffect, useState } from "react";
 import { Input } from "shared/ui";
-import { ContentToMove, FoldersService, FolderToDelete, IFolder, ISubfolder, setFolders } from "entities/folder";
+import {
+  ContentToMove,
+  FoldersService,
+  FolderToDelete,
+  IFolder,
+  ISubfolder,
+  setFolders,
+} from "entities/folder";
 import { RootState } from "entities/store";
 import { useSelector, useDispatch } from "react-redux";
 import { DateSelector } from "shared/ui/date-selector";
@@ -21,7 +28,10 @@ export const ContentManagerLibrary: React.FC = () => {
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
-  const [popupPosition, setPopupPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const [popupPosition, setPopupPosition] = useState<{
+    top: number;
+    left: number;
+  }>({ top: 0, left: 0 });
   const [isMarkAsOpen, setIsMarkAsOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDublicateOpen, setIsDublicateOpen] = useState(false);
@@ -67,7 +77,7 @@ export const ContentManagerLibrary: React.FC = () => {
       id: selectedRow?.id ?? "",
       status: status,
     };
-    await CoachService.changeStatus(newStatus, token);
+    await CoachService.changeStatus(newStatus);
     await fetchFolders();
     setIsMarkAsOpen(false);
     setIsMenuOpen(false);
