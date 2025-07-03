@@ -162,3 +162,16 @@ export interface SharedContent {
   shares: Share[];
   total_shares: number;
 }
+
+export interface Content {
+  content: string;
+  created_at: string;
+  id: string;
+  query: string;
+  title: string;
+}
+
+export interface ContentResponse {
+  content: Content[];
+  number_of_content: number;
+}

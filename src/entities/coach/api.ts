@@ -4,6 +4,7 @@ import {
   ClientDetails,
   ClientProfile,
   ClientsResponse,
+  ContentResponse,
   GetClientInfoResponse,
   InviteClientPayload,
   ISessionResponse,
@@ -254,6 +255,12 @@ export class CoachService {
     return ApiService.post<any>(
       API_ROUTES.COACH_ADMIN.REVOKE_CONTENT_ACCESS,
       payload
+    );
+  }
+
+  static async getAllUserContent(): Promise<ContentResponse> {
+    return ApiService.get<ContentResponse>(
+      API_ROUTES.COACH_ADMIN.SEARCH_CONTENT
     );
   }
 }

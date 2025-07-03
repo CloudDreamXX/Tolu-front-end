@@ -17,8 +17,9 @@ import { useLibraryLogic } from "../lib";
 import { LibraryMobileView } from "./mobile-table";
 import { LibraryDesktopView } from "./desktop-table";
 import { TableRow } from "../models";
-import { CoachService } from "entities/coach";
+import { CoachService, Content } from "entities/coach";
 import { ContentService } from "entities/content";
+import { ContentCard } from "./content-card/ui";
 
 export const ContentManagerLibrary: React.FC = () => {
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());
@@ -42,6 +43,17 @@ export const ContentManagerLibrary: React.FC = () => {
     folders.folders,
     search
   );
+  const [allContent, setAllContent] = useState<Content[]>([]);
+  const [contentCardsView, setContentCardsView] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchAllContent = async () => {
+      const data = await CoachService.getAllUserContent();
+      setAllContent(data.content);
+    };
+
+    fetchAllContent();
+  }, []);
 
   const fetchFolders = useCallback(async () => {
     try {
@@ -168,6 +180,16 @@ export const ContentManagerLibrary: React.FC = () => {
     setIsMenuOpen(false);
   };
 
+  const filteredContent =
+    search !== ""
+      ? allContent.filter(
+          (content) =>
+            content.title.toLowerCase().includes(search.toLowerCase()) ||
+            content.query.toLowerCase().includes(search.toLowerCase()) ||
+            content.content.toLowerCase().includes(search.toLowerCase())
+        )
+      : allContent;
+
   return (
     <div className="flex flex-col gap-12 p-8 overflow-y-auto">
       <div className="flex flex-col gap-2">
@@ -178,20 +200,29 @@ export const ContentManagerLibrary: React.FC = () => {
       </div>
 
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col-reverse gap-[16px] md:flex-row justify-between w-full">
+        <div className="flex flex-col-reverse gap-[16px] md:flex-row justify-between items-center w-full">
           <DateSelector
             choosedDate={choosedDate}
             onDateChange={setChoosedDate}
           />
-          <div className="w-full md:w-[300px]">
+          <div
+            className={`w-full ${contentCardsView ? "md:w-[600px]" : "md:w-[300px]"}`}
+          >
             <Input
               placeholder="Search"
               icon={<Search />}
-              className="rounded-full"
+              className="rounded-full focus:border-[#1C63DB]"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onClick={() => setContentCardsView(true)}
+              onBlur={() => setContentCardsView(false)}
             />
           </div>
+          {contentCardsView && (
+            <p className="text-[14px] text-[#5F5F65] font-[500]">
+              Found {allContent.length} files
+            </p>
+          )}
         </div>
 
         <LibraryMobileView
@@ -201,34 +232,49 @@ export const ContentManagerLibrary: React.FC = () => {
           onDotsClick={handleDotsClick}
         />
 
-        <LibraryDesktopView
-          filteredItems={filteredItems}
-          expandedFolders={expandedFolders}
-          toggleFolder={toggleFolder}
-          folders={folders.folders}
-          selectedRow={selectedRow}
-          isMenuOpen={isMenuOpen}
-          popupPosition={popupPosition}
-          isMarkAsOpen={isMarkAsOpen}
-          isDeleteOpen={isDeleteOpen}
-          isDublicateOpen={isDublicateOpen}
-          isMoveOpen={isMoveOpen}
-          isImproveOpen={isImproveOpen}
-          idToDuplicate={idToDuplicate}
-          onDotsClick={handleDotsClick}
-          onStatusComplete={onStatusComplete}
-          onDeleteClick={handleDeleteClick}
-          onDuplicateClick={handleDublicateClick}
-          onDuplicateAndMoveClick={handleDublicateAndMoveClick}
-          onMoveClick={handleMoveClick}
-          setIsMarkAsOpen={setIsMarkAsOpen}
-          setIsDeleteOpen={setIsDeleteOpen}
-          setIsDublicateOpen={setIsDublicateOpen}
-          setIsMoveOpen={setIsMoveOpen}
-          setIsImproveOpen={setIsImproveOpen}
-          setSelectedRow={setSelectedRow}
-          setPopupPosition={setPopupPosition}
-        />
+        {contentCardsView ? (
+          <div className="grid grid-cols-2 gap-4">
+            {filteredContent.map((content) => (
+              <ContentCard
+                key={content.id}
+                title={content.title}
+                content={content.content}
+                query={content.query}
+                id={content.id}
+                searchQuery={search}
+              />
+            ))}
+          </div>
+        ) : (
+          <LibraryDesktopView
+            filteredItems={filteredItems}
+            expandedFolders={expandedFolders}
+            toggleFolder={toggleFolder}
+            folders={folders.folders}
+            selectedRow={selectedRow}
+            isMenuOpen={isMenuOpen}
+            popupPosition={popupPosition}
+            isMarkAsOpen={isMarkAsOpen}
+            isDeleteOpen={isDeleteOpen}
+            isDublicateOpen={isDublicateOpen}
+            isMoveOpen={isMoveOpen}
+            isImproveOpen={isImproveOpen}
+            idToDuplicate={idToDuplicate}
+            onDotsClick={handleDotsClick}
+            onStatusComplete={onStatusComplete}
+            onDeleteClick={handleDeleteClick}
+            onDuplicateClick={handleDublicateClick}
+            onDuplicateAndMoveClick={handleDublicateAndMoveClick}
+            onMoveClick={handleMoveClick}
+            setIsMarkAsOpen={setIsMarkAsOpen}
+            setIsDeleteOpen={setIsDeleteOpen}
+            setIsDublicateOpen={setIsDublicateOpen}
+            setIsMoveOpen={setIsMoveOpen}
+            setIsImproveOpen={setIsImproveOpen}
+            setSelectedRow={setSelectedRow}
+            setPopupPosition={setPopupPosition}
+          />
+        )}
       </div>
     </div>
   );

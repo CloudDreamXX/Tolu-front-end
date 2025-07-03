@@ -105,6 +105,7 @@ export const API_ROUTES = {
     GET_REVIEWERS: "/user/reviewers",
     CHANGE_STATUS: "/library/status",
     RATE_CONTENT: "/coach/rate-content",
+    SEARCH_CONTENT: "/coach/search-content",
   },
   DOCUMENTS: {
     DETAILS: "/content/retrieve",
