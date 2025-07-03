@@ -17,7 +17,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
   const [sexLife, setSexLife] = useState("");
   const [period, setPeriod] = useState("");
   const [dietType, setDietType] = useState<string[]>([]);
-  const [medications, setMedications] = useState<string[]>([]);
+  const [medications, setMedications] = useState<string>("");
 
   const inputClass =
     "input inline-input border border-[#DBDEE1] rounded-full outline-[#008FF6] py-[4px] px-[12px] min-w-[60px] placeholder:text-[#5F5F65]";
@@ -119,15 +119,15 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
 
       <div className={lineClass}>
         <span>I’m currently taking</span>
-        <MultiSelect
-          placeholder={"medications or supplements"}
-          options={["Medications", "Supplements", "Nothing"]}
-          className="w-fit"
-          selected={medications}
+        <CustomSelect
+          value={medications}
           onChange={(val) => {
             setMedications(val);
-            setValue("medications", val.join(", "));
+            setValue("medications", val);
           }}
+          options={["Medications", "Supplements", "Nothing"]}
+          placeholder="medications or supplements"
+          className="w-fit"
         />
       </div>
 
