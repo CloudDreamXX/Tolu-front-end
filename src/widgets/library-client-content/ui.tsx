@@ -64,37 +64,44 @@ export const LibraryClientContent = () => {
         autoFocus
       />
       <ScrollArea className="flex-1 min-h-0 pr-2 mt-4">
-        {folders.map((folder, index) => (
-          <Accordion
-            key={folder.id}
-            type="single"
-            collapsible
-            className="w-full mb-4"
-            defaultValue={`item-${index}`}
-          >
-            <AccordionItem value={`item-${index}`}>
-              <AccordionTrigger className="pt-0">
-                {folder.name}
-              </AccordionTrigger>
-              <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
-                {folder.content.map((item) => (
-                  <LibraryCard
-                    id={item.id}
-                    key={item.id}
-                    title={item.title}
-                    author={item.author_name}
-                    type={"Text"}
-                    status={"To read"}
-                    progress={item.read_count}
-                    onStatusChange={onStatusChange}
-                    contentStatus={statusMap[item.id]}
-                    onDocumentClick={onDocumentClick}
-                  />
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        ))}
+        {folders &&
+          folders.map((folder, index) => (
+            <Accordion
+              key={folder.id}
+              type="single"
+              collapsible
+              className="w-full mb-4"
+              defaultValue={`item-${index}`}
+            >
+              <AccordionItem value={`item-${index}`}>
+                <AccordionTrigger className="pt-0">
+                  {folder.name}
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
+                  {Array.isArray(folder.content) ? (
+                    folder.content.map((item) => (
+                      <LibraryCard
+                        id={item.id}
+                        key={item.id}
+                        title={item.title}
+                        author={item.author_name}
+                        type={"Text"}
+                        status={"To read"}
+                        progress={item.read_count}
+                        onStatusChange={onStatusChange}
+                        contentStatus={statusMap[item.id]}
+                        onDocumentClick={onDocumentClick}
+                      />
+                    ))
+                  ) : (
+                    <div className="text-sm text-muted-foreground">
+                      No content available for this folder.
+                    </div>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ))}
       </ScrollArea>
     </div>
   );
