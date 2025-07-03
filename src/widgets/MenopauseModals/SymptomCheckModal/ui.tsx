@@ -38,7 +38,7 @@ export const SymptomCheckModal: React.FC<SymptomCheckModalProps> = ({
       }}
     >
       <div className="flex flex-col items-center justify-center bg-white rounded-t-[18px] md:rounded-[18px] w-[742px] p-[16px] md:px-[32px] md:py-[24px] lg:px-[72px] lg:py-[24px] gap-[24px] text-center shadow-lg relative">
-        <h2 className="text-[24px] md:text-[32px] font-[700] text-[#1D1D1F] leading-[44px]">
+        <h2 className="text-[24px] md:text-[32px] font-[700] text-[#1D1D1F] leading-[32px] md:leading-[44px]">
           {variant === "completion" ? (
             "You’ve Mapped Out Potential Root Causes! Excellent work!"
           ) : (
@@ -54,9 +54,9 @@ export const SymptomCheckModal: React.FC<SymptomCheckModalProps> = ({
             : "Try the Symptom Checker to get personalized content tailored to your menopause journey."}
         </p>
 
-        <div className="bg-[#DDEBF6] py-[21px] px-[16px] rounded-[20px] flex items-center gap-[16px]">
-          <Stars />
-          <p className="text-[16px] font-normal leading-[22px] text-[#1B2559]">
+        <div className="bg-[#DDEBF6] py-[16px] px-[16px] rounded-[20px] flex items-center gap-[16px]">
+          <Stars className="w-[32px] shrink-0" />
+          <p className="text-[16px] font-normal leading-[22px] text-[#1B2559] text-left">
             {variant === "completion"
               ? "Let’s explore it together."
               : "It’s fast, private, and designed to help you feel better—starting today."}

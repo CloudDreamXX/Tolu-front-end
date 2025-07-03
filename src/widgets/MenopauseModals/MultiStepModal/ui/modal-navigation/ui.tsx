@@ -20,7 +20,7 @@ export const ModalNavigation: React.FC<ModalNavigationProps> = ({
   isMobile,
 }) => {
   return (
-    <div className="flex flex-col flex-col-reverse gap-[16px] md:flex-row justify-between w-full">
+    <div className="flex flex-col-reverse gap-[16px] md:flex-row justify-between w-full">
       <button
         onClick={onClose}
         className="px-[16px] py-[11px] rounded-[1000px] md:bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px]"

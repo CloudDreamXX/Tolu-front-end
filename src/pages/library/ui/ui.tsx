@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
 import {
   MenopauseSubmissionRequest,
   Recommendation,
   Symptom,
   UserService,
 } from "entities/user";
-import { SystemCheck } from "./system-check";
-import { LibrarySmallChat } from "widgets/library-small-chat";
+import { useEffect, useState } from "react";
 import { LibraryClientContent } from "widgets/library-client-content";
+import { LibrarySmallChat } from "widgets/library-small-chat";
 import { MultiStepModal, SymptomCheckModal } from "widgets/MenopauseModals";
+import { SystemCheck } from "./system-check";
 
 export const Library = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,7 +51,7 @@ export const Library = () => {
   };
 
   return (
-    <main className="flex flex-col h-full items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F1F3F5]">
+    <main className="flex flex-col h-full items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F2F4F6]">
       <SystemCheck
         showResults={showResults}
         setModalOpen={setModalOpen}
@@ -78,7 +78,7 @@ export const Library = () => {
         onClose={() => setCompletionModalOpen(false)}
         variant="completion"
       />
-      <div className="flex flex-row flex-1 w-full h-full min-h-0 gap-6">
+      <div className="flex flex-col flex-1 w-full h-full min-h-0 gap-6 xl:flex-row">
         <LibraryClientContent />
         <LibrarySmallChat />
       </div>

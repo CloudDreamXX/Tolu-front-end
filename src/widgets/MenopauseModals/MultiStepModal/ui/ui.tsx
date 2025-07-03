@@ -1,10 +1,11 @@
 import { MenopauseSubmissionRequest } from "entities/user";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { usePageWidth } from "shared/lib";
 import { steps as initialSteps } from "../mock";
 import { ModalLayout } from "./modal-layout";
+import { ModalNavigation } from "./modal-navigation";
 import { ModalStepper } from "./modal-steper";
 import { StepContent } from "./step-content";
-import { ModalNavigation } from "./modal-navigation";
 
 interface MultiStepModalProps {
   isOpen: boolean;
@@ -38,24 +39,7 @@ export const MultiStepModal: React.FC<MultiStepModalProps> = ({
   const hasSelectedOptions = selectedOptions[folderId]?.length > 0;
   const hasOtherInput = !!otherInputs[currentStep]?.trim();
   const isStepValid = hasSelectedOptions || hasOtherInput;
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-  const [isTablet, setIsTablet] = useState<boolean>(
-    window.innerWidth > 768 && window.innerWidth < 1024
-  );
-  const [isTallScreen, setIsTallScreen] = useState<boolean>(
-    window.innerHeight > 1000
-  );
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      setIsTablet(window.innerWidth > 768 && window.innerWidth < 1024);
-      setIsTallScreen(window.innerHeight > 1000);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const { isMobile, isTablet } = usePageWidth();
 
   if (!isOpen) return null;
 
@@ -158,7 +142,6 @@ export const MultiStepModal: React.FC<MultiStepModalProps> = ({
       onBack={handleBack}
       currentStep={currentStep}
       isMobile={isMobile}
-      isTallScreen={isTallScreen}
     >
       <ModalStepper
         steps={steps}

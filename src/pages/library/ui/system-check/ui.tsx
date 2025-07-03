@@ -38,7 +38,9 @@ export const SystemCheck: React.FC<SystemCheckProps> = ({
               />
             )}
             <p className="text-[24px] leading-[32px] font-semibold text-[#1D1D1F]">
-              Noticing changes? It could be menopause.
+              Noticing changes?
+              <br className="block md:hidden" />
+              <span className="md:ml-1">It could be menopause.</span>
             </p>
           </div>
           <p className="text-[16px] leading-[22px] font-normal text-[#5F5F65]">

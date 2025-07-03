@@ -62,6 +62,7 @@ const StepIconRoot = styled("div")<{ ownerState: any; isMobile: boolean }>(
     border: `1px solid ${ownerState.completed ? "#006622" : "#D5DAE2"}`,
     alignItems: "center",
     justifyContent: "center",
+    fontSize: isMobile ? "11.5px" : "14px",
     fontWeight: 600,
   })
 );

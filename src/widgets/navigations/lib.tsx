@@ -8,6 +8,7 @@ export const getNavigation = (location: string): React.ReactNode => {
     case "content-manager":
       return <Navigation pageLocation={location} />;
     case "health-snapshot":
+    case "library":
       return <NavigationClient />;
     case "settings":
       return <div></div>;

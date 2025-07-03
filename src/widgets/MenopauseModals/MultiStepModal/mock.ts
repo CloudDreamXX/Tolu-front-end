@@ -138,6 +138,7 @@ export const steps: Step[] = [
       "No noticeable change in my cycle",
     ],
     other: false,
+    specialCondition: true,
     folder_id: "menstrual_changes",
   },
 ];
