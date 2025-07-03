@@ -73,6 +73,7 @@ const dietTypeOptions = [
 export const NutritionHabitsForm = ({ form }: { form: any }) => {
   const [commonFoodsSelected, setCommonFoodsSelected] = useState<string[]>([]);
   const [dietDetailsSelected, setDietDetailsSelected] = useState<string[]>([]);
+  const [otherFood, setOtherFood] = useState<string>("");
 
   const handleCommonFoodsChange = (val: string[]) => {
     setCommonFoodsSelected(val);
@@ -82,6 +83,16 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
   const handleDietDetailsChange = (val: string[]) => {
     setDietDetailsSelected(val);
     form.setValue("dietDetails", val.join(" , "));
+  };
+
+  const handleOtherFoodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setOtherFood(newValue);
+
+    form.setValue(
+      "commonFoods",
+      [...commonFoodsSelected, newValue].join(" , ")
+    );
   };
 
   return (
@@ -186,7 +197,11 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
             />
             {commonFoodsSelected.includes("Other") && (
               <div className="pt-2">
-                <Input placeholder="Other" {...field} />
+                <Input
+                  placeholder="Other"
+                  value={otherFood}
+                  onChange={handleOtherFoodChange}
+                />
               </div>
             )}
             <FormMessage />
