@@ -36,7 +36,7 @@ export const CustomSelect = ({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         type="button"
-        className="w-full text-left border border-[#DBDEE1] rounded-full py-[4px] px-[12px] text-[18px] font-[500] text-[#1D1D1F] bg-white flex items-center justify-between"
+        className={`w-full text-left border ${isOpen ? "border-[#1C63DB]" : "border-[#DBDEE1]"} rounded-full py-[4px] px-[12px] text-[18px] font-[500] text-[#1D1D1F] bg-white flex items-center justify-between`}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {value || <span className="text-[#5F5F65]">{placeholder}</span>}
@@ -52,8 +52,8 @@ export const CustomSelect = ({
           {options.map((option, index) => (
             <li
               key={option}
-              className={`px-[17px] py-[8px] cursor-pointer hover:text-[#1C63DB] ${
-                value === option ? "text-[#008FF6] font-semibold" : ""
+              className={`px-[17px] py-[8px] cursor-pointer hover:text-[#1C63DB] font-[500] ${
+                value === option ? "text-[#1C63DB]" : ""
               } ${index < options.length - 1 ? "border-b border-[#C2C6D2]" : ""}`}
               onClick={() => {
                 onChange(option);

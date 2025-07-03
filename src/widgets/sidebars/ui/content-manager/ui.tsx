@@ -1,11 +1,13 @@
 import { sideBarContent } from "./lib";
 import { useEffect, useState } from "react";
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
 import Dots from "shared/assets/icons/dots";
 import { FOLDERS } from "pages/content-manager";
 import ClosedFolder from "shared/assets/icons/closed-folder";
 import { MOCK_DOCUMENT } from "pages/content-manager/document/mock";
 import { File } from "lucide-react";
+import { Button } from "shared/ui";
+import AiCreate from "shared/assets/icons/ai-create";
 
 export const ContentManagerSidebar: React.FC = () => {
   const location = useLocation();
@@ -18,6 +20,7 @@ export const ContentManagerSidebar: React.FC = () => {
     folderId: string;
     documentId: string;
   }>();
+  const nav = useNavigate();
 
   useEffect(() => {
     const pathSegments = location.pathname.split("/");
@@ -53,6 +56,14 @@ export const ContentManagerSidebar: React.FC = () => {
         )}
       </div>
       <div className="flex flex-col items-center gap-[24px]">
+        <Button
+          variant="brightblue"
+          className="w-full"
+          onClick={() => nav("/content-manager/create")}
+        >
+          <AiCreate />
+          Create with Tolu
+        </Button>
         <div
           className={`flex flex-col ${isNarrow ? "items-center" : "items-start"}`}
         >

@@ -1,6 +1,5 @@
 import Book from "shared/assets/icons/book";
 import { SideBarItem } from "../model";
-import AiCreate from "shared/assets/icons/ai-create";
 import Approved from "shared/assets/icons/approved";
 import Box from "shared/assets/icons/box";
 import Dashboard from "shared/assets/icons/dashboard";
@@ -8,11 +7,6 @@ import Workshops from "shared/assets/icons/workshops";
 import Community from "shared/assets/icons/community";
 
 export const sideBarContent: SideBarItem[] = [
-  {
-    title: "Create",
-    link: "/content-manager/create",
-    icon: <AiCreate fill="#000" width={24} height={24} />,
-  },
   {
     title: "Clients",
     link: "/clients",
