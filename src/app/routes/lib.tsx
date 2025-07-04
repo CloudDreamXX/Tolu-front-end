@@ -42,6 +42,7 @@ import { LibraryChat } from "pages/library-chat";
 import { ContentManagerMessages } from "pages/content-manager/messages";
 import { UserManagement } from "pages/user-management";
 import { LibraryDocument } from "pages/library-document";
+import { OnboardingPersonalStory } from "widgets/OnboardingClient/OnboardingPersonalStory";
 
 export const AppRoutes = () => {
   return (
@@ -66,6 +67,10 @@ export const AppRoutes = () => {
       <Route path="/new-password" element={<NewPassword />} />
       <Route path="/invite-clients" element={<InviteClients />} />
       <Route path="/onboarding-finish" element={<OnboardingFinish />} />
+      <Route
+        path="/welcome/client/personal-story"
+        element={<OnboardingPersonalStory />}
+      />
       <Route path="/about-you" element={<DemographicStep />} />
       <Route path="/what-brings-you-here" element={<WhatBrringsYouHere />} />
       <Route path="/values" element={<Values />} />

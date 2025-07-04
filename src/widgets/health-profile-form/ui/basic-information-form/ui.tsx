@@ -12,8 +12,8 @@ import { z } from "zod";
 
 export const basicInformationSchema = z.object({
   age: z.string().min(1, { message: "Age is required." }),
-  gender: z.enum(["female", "other"], {
-    required_error: "You need to select a gender.",
+  gender: z.string().min(1, {
+    message: "You need to select a gender.",
   }),
   height: z.string(),
   weight: z.string(),

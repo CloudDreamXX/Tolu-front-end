@@ -32,7 +32,7 @@ export const WelcomeScreen = () => {
             </p>
           </div>
           <button
-            onClick={() => nav("/about-you")}
+            onClick={() => nav("/welcome/client/personal-story")}
             type="button"
             className="py-4 px-6 flex gap-4 items-center w-full md:w-auto justify-center h-16 rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
           >

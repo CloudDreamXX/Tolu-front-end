@@ -19,10 +19,9 @@ import { z } from "zod";
 
 export const lifestyleHabitsSchema = z.object({
   diet: z.string().min(1, "This field is required"),
-  exerciseHabits: z.enum(
-    ["sedentary", "light", "moderate", "intense", "other"],
-    { required_error: "Please select your activity level." }
-  ),
+  exerciseHabits: z
+    .string()
+    .min(1, { message: "Please select your activity level." }),
   otherExerciseHabits: z.string().optional(),
   sleepQuality: z.number().min(0).max(3),
   stressLevels: z.number().min(0).max(3),

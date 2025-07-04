@@ -5,8 +5,8 @@ import { RootState } from "entities/store";
 import { Message } from "features/chat";
 import { Steps } from "features/steps/ui";
 import { Expand } from "lucide-react";
-import { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Tolu from "shared/assets/icons/tolu";
@@ -22,6 +22,8 @@ import z from "zod";
 import { GoalsForm } from "./components/goals-form";
 import { HealthHistoryForm } from "./components/health-history-form";
 import { LifestyleForm } from "./components/lifestyle-form";
+import { HealthHistory, HealthHistoryService } from "entities/health-history";
+import { mapFormToPostData, mapHealthHistoryToFormDefaults } from "./lib";
 import { SymptomsForm } from "./components/symptoms-form";
 
 const steps = [
@@ -58,7 +60,11 @@ export const baseSchema = z.object({
   goals: z.string(),
 });
 
-export const LibrarySmallChat = () => {
+type Props = {
+  healthHistory?: HealthHistory;
+};
+
+export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
@@ -73,35 +79,15 @@ export const LibrarySmallChat = () => {
   const [isContentMode, setIsContentMode] = useState(false);
   const form = useForm<z.infer<typeof baseSchema>>({
     resolver: zodResolver(baseSchema),
-    defaultValues: {
-      age: "",
-      maritalStatus: "",
-      job: "",
-      children: "",
-      menopauseStatus: "",
-      mainSymptoms: "",
-      otherChallenges: "",
-      strategiesTried: "",
-      diagnosedConditions: "",
-      geneticTraits: "",
-      maternalSide: "",
-      paternalSide: "",
-      notableConcern: "",
-      stressLevel: "",
-      takeout: "",
-      homeCooked: "",
-      dietType: "",
-      exercise: "",
-      limitations: "",
-      medications: "",
-      period: "",
-      sexLife: "",
-      supportSystem: "",
-      goals: "",
-    },
+    defaultValues: mapHealthHistoryToFormDefaults(healthHistory),
   });
 
-  const watchedValues = useWatch({ control: form.control });
+  useEffect(() => {
+    if (healthHistory) {
+      const defaults = mapHealthHistoryToFormDefaults(healthHistory);
+      form.reset(defaults);
+    }
+  }, [healthHistory, form]);
 
   const handleExpandClick = () => {
     if (isSearching) return;
@@ -123,6 +109,19 @@ export const LibrarySmallChat = () => {
     files: File[]
   ): Promise<string | undefined> => {
     if ((!message.trim() && files.length === 0) || isSearching) return;
+
+    if (personalize) {
+      try {
+        const formValues = form.getValues();
+        const postData = mapFormToPostData(formValues);
+
+        await HealthHistoryService.createHealthHistory(postData);
+      } catch (error) {
+        console.error("Failed to save health history:", error);
+        setError("Failed to save health history before starting the chat.");
+        return;
+      }
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -221,101 +220,67 @@ export const LibrarySmallChat = () => {
     return returnedChatId;
   };
 
-  const handleNextStep = async () => {
-    const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
-      [
-        "age",
-        "maritalStatus",
-        "job",
-        "children",
-        "menopauseStatus",
-        "mainSymptoms",
-        "otherChallenges",
-        "strategiesTried",
-      ],
-      [
-        "diagnosedConditions",
-        "geneticTraits",
-        "maternalSide",
-        "paternalSide",
-        "notableConcern",
-      ],
-      [
-        "stressLevel",
-        "takeout",
-        "homeCooked",
-        "dietType",
-        "exercise",
-        "limitations",
-        "medications",
-        "period",
-        "sexLife",
-        "supportSystem",
-      ],
-      ["goals"],
-    ];
+  const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
+    [
+      "age",
+      "maritalStatus",
+      "job",
+      "children",
+      "menopauseStatus",
+      "mainSymptoms",
+      "otherChallenges",
+      "strategiesTried",
+    ],
+    [
+      "diagnosedConditions",
+      "geneticTraits",
+      "maternalSide",
+      "paternalSide",
+      "notableConcern",
+    ],
+    [
+      "stressLevel",
+      "takeout",
+      "homeCooked",
+      "dietType",
+      "exercise",
+      "limitations",
+      "medications",
+      "period",
+      "sexLife",
+      "supportSystem",
+    ],
+    ["goals"],
+  ];
 
-    const isValid = await form.trigger(stepFields[currentStep]);
-    if (!isValid) return;
+  const goToStep = async (nextStep: number) => {
+    if (nextStep > currentStep) {
+      const isValid = await form.trigger(stepFields[currentStep]);
+      if (!isValid) return;
+    }
 
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
+    if (nextStep >= steps.length) {
       const values = form.getValues();
       const message = `Hi Tolu. I’m a ${values.age}-year-old ${values.maritalStatus} woman working ${values.job}, and I have ${values.children} children. I’m ${values.menopauseStatus} but lately I’ve been dealing with ${values.mainSymptoms}. I’ve also noticed ${values.otherChallenges}, and it feels like no matter ${values.strategiesTried}, things aren’t getting better. My health history includes ${values.diagnosedConditions}, and I have ${values.geneticTraits}. In my family, there’s a history of ${values.maternalSide} on my mom’s side and ${values.paternalSide} on my dad’s side. Someone in my family was recently diagnosed with ${values.notableConcern}, which has me thinking more about prevention. Right now, my lifestyle includes ${values.stressLevel}, eating about ${values.takeout} takeout and ${values.homeCooked} home-cooked meals. I usually follow a ${values.dietType} diet. I ${values.exercise} get time to exercise or relax, and ${values.limitations}. I’m currently taking ${values.medications}, my periods are ${values.period}, and my sex life is ${values.sexLife}. I usually rely on ${values.supportSystem} for emotional support. What I really want is to ${values.goals}.`;
 
       setPersonalize(false);
-
       await handleNewMessage(message, []);
       form.reset();
       setCurrentStep(0);
+    } else {
+      setCurrentStep(nextStep);
     }
   };
 
-  const isStepComplete = (): boolean => {
-    const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
-      [
-        "age",
-        "maritalStatus",
-        "job",
-        "children",
-        "menopauseStatus",
-        "mainSymptoms",
-        "otherChallenges",
-        "strategiesTried",
-      ],
-      [
-        "diagnosedConditions",
-        "geneticTraits",
-        "maternalSide",
-        "paternalSide",
-        "notableConcern",
-      ],
-      [
-        "stressLevel",
-        "takeout",
-        "homeCooked",
-        "dietType",
-        "exercise",
-        "limitations",
-        "medications",
-        "period",
-        "sexLife",
-        "supportSystem",
-      ],
-      ["goals"],
-    ];
+  const handleNextStep = () => goToStep(currentStep + 1);
 
-    const currentFields = stepFields[currentStep];
-
-    return currentFields.every(
-      (field) => watchedValues[field]?.trim?.() !== ""
-    );
+  const handleStepClick = async (stepIndex: number) => {
+    await goToStep(stepIndex);
   };
 
   return (
     <>
-      {personalize ? (
+      {personalize && healthHistory ? (
         <Card className="flex flex-col w-full border-none h-fit rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
@@ -341,6 +306,7 @@ export const LibrarySmallChat = () => {
                 stepWidth={"w-[462px]"}
                 currentStep={currentStep}
                 ordered
+                onStepClick={handleStepClick}
               />
               <form onSubmit={(e) => e.preventDefault()}>
                 {currentStep === 0 && <SymptomsForm form={form} />}
@@ -351,12 +317,7 @@ export const LibrarySmallChat = () => {
               <div className="flex justify-end gap-2 mt-6">
                 <button
                   type="button"
-                  disabled={!isStepComplete()}
-                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 ${
-                    isStepComplete()
-                      ? "bg-[#1C63DB] text-white"
-                      : "bg-[#D5DAE2] text-[#5F5F65] events-none"
-                  }`}
+                  className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
                   onClick={handleNextStep}
                 >
                   Continue
@@ -404,6 +365,7 @@ export const LibrarySmallChat = () => {
               disabled={isSearching}
               personalize={personalize}
               togglePersonalize={togglePersonalize}
+              healthHistory={healthHistory}
               isContentMode={isContentMode}
               toggleIsContentMode={() => setIsContentMode((prev) => !prev)}
             />
@@ -411,14 +373,5 @@ export const LibrarySmallChat = () => {
         </Card>
       )}
     </>
-  );
-};
-
-const HtmlContent = ({ content }: { content: string }) => {
-  return (
-    <div
-      className="prose max-w-none"
-      dangerouslySetInnerHTML={{ __html: content }}
-    />
   );
 };

@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { FaCheck } from "react-icons/fa";
-import { getStepStyle } from "./uitls";
-import { useState, useEffect } from "react";
+// import { FaCheck } from "react-icons/fa";
+// import { getStepStyle } from "./uitls";
 
 interface HeaderOnboardingProps {
   currentStep: number;
@@ -10,21 +9,11 @@ interface HeaderOnboardingProps {
 }
 
 export const HeaderOnboarding = ({
-  currentStep,
+  // currentStep,
   isClient,
-  steps = 6,
+  // steps = 6,
 }: HeaderOnboardingProps) => {
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
     <header className="w-full bg-gradient-to-b from-[#F3ECFE] to-[#E8EFFE] px-4 pt-4 pb-2 md:h-[160px] flex flex-col md:items-center md:justify-center relative">
@@ -55,11 +44,10 @@ export const HeaderOnboarding = ({
       </div>
 
       {/* Progress Steps */}
-      <div className="mt-4 xl:top-1/2 md:left-[100px] lg:left-[70px] xl:left-0 md:-translate-y-1/2 md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px] md:relative">
-        {/* Base track */}
+      {/* <div className="mt-4 xl:top-1/2 md:left-[100px] lg:left-[70px] xl:left-0 md:-translate-y-1/2 md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px] md:relative">
+
         <div className="absolute top-5 left-0 md:top-1/2 h-[5px] xl:h-[8px] w-full bg-[#E2E2E2] rounded-full relative z-0" />
 
-        {/* Progress fill */}
         <div
           className="absolute left-[16px] top-[104px] md:left-0 md:top-1/2 h-[5px] xl:h-[8px] bg-[#1866E0] rounded-full z-10 transition-all duration-300"
           style={{
@@ -67,7 +55,6 @@ export const HeaderOnboarding = ({
           }}
         />
 
-        {/* Step circles */}
         <div className="relative z-20 flex justify-between items-center w-full mt-[-32px] md:mt-0 h-[95px] md:h-auto xl:h-[95px]">
           {Array.from({ length: steps }).map((_, index) => {
             const isCompleted = index < currentStep;
@@ -93,7 +80,7 @@ export const HeaderOnboarding = ({
             );
           })}
         </div>
-      </div>
+      </div> */}
     </header>
   );
 };

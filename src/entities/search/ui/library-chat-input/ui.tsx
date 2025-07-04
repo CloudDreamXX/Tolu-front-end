@@ -1,3 +1,4 @@
+import { HealthHistory } from "entities/health-history";
 import { ChevronDown, ChevronUp, Paperclip, Send } from "lucide-react";
 import React, { useState } from "react";
 import { cn } from "shared/lib";
@@ -5,6 +6,7 @@ import { Button, Input, Switch } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
 
 interface LibraryChatInputProps {
+  healthHistory?: HealthHistory;
   placeholder?: string;
   onSend?: (
     message: string,
@@ -20,6 +22,7 @@ interface LibraryChatInputProps {
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
+  healthHistory,
   placeholder = "Your message",
   onSend,
   disabled = false,
@@ -163,7 +166,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               </span>
             )}
           </label>
-          <HealthProfileForm />
+          {healthHistory && <HealthProfileForm healthHistory={healthHistory} />}
         </div>
         <Button
           onClick={handleSend}

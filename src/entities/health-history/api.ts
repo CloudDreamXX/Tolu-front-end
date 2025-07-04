@@ -1,13 +1,15 @@
 import { API_ROUTES, ApiService } from "shared/api";
-import { HealthHistory, HealthHistoryPostData } from "./model";
+import {
+  HealthHistory,
+  HealthHistoryPostData,
+  HealthHistoryResponse,
+} from "./model";
 
 export class HealthHistoryService {
   static async getUserHealthHistory(): Promise<HealthHistory> {
-    return ApiService.get<HealthHistory>(API_ROUTES.HEALTH_HISTORY.GET, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    return ApiService.get<HealthHistoryResponse>(
+      API_ROUTES.HEALTH_HISTORY.GET
+    ).then((response) => response.health_history);
   }
 
   static async createHealthHistory(

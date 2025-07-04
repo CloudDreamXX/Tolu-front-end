@@ -1,7 +1,7 @@
 import { UserCircleGearIcon } from "@phosphor-icons/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Steps } from "features/steps/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import {
@@ -39,10 +39,12 @@ import {
   consentSubmissionSchema,
 } from "./consent-and-submission";
 import {
+  HealthHistory,
   HealthHistoryPostData,
   HealthHistoryService,
 } from "entities/health-history";
 import { ConfirmCancel } from "./confirm-cancel";
+import { mapHealthHistoryToFormDefaults } from "./lib";
 
 const steps = [
   "Basic Information",
@@ -55,7 +57,7 @@ const steps = [
   "Consent & Submission",
 ];
 
-const baseFormSchema = basicInformationSchema
+export const baseFormSchema = basicInformationSchema
   .merge(healthStatusHistorySchema)
   .merge(lifestyleHabitsSchema)
   .merge(nutritionHabitsSchema)
@@ -101,57 +103,26 @@ const formSchema = baseFormSchema
     }
   });
 
-export const HealthProfileForm = () => {
+type Props = {
+  healthHistory?: HealthHistory;
+};
+
+export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      age: "",
-      gender: undefined,
-      height: "",
-      weight: "",
-      healthConcerns: "",
-      medicalConditions: "None",
-      medications: "None",
-      otherMedications: "",
-      supplements: "None",
-      allergies: "None",
-      familyHistory: "None",
-      diet: "None",
-      exerciseHabits: undefined,
-      otherExerciseHabits: "",
-      sleepQuality: 1,
-      stressLevels: 1,
-      energyLevels: 2,
-      decisionMaker: "",
-      cookFrequency: "",
-      takeoutFrequency: "",
-      commonFoods: "",
-      dietDetails: "",
-      menstrualCycleStatus: "",
-      menstrualOther: "",
-      hormoneDetails: "",
-      hormoneDuration: "",
-      hormoneProvider: "",
-      fertilityConcerns: "not_applicable",
-      birthControlUse: "not_applicable",
-      birthControlDetails: "",
-      bloodSugarConcern: "",
-      bloodSugarOther: "",
-      digestiveIssues: "",
-      digestiveOther: "",
-      recentLabTests: "",
-      goals: "",
-      goalReason: "",
-      urgency: "",
-      healthApproach: "",
-      agreeToPrivacy: false,
-      followUpMethod: "",
-    },
+    defaultValues: mapHealthHistoryToFormDefaults(healthHistory),
   });
+
+  useEffect(() => {
+    if (healthHistory) {
+      const defaults = mapHealthHistoryToFormDefaults(healthHistory);
+      form.reset(defaults);
+    }
+  }, [healthHistory]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const transformed: HealthHistoryPostData = {
@@ -210,7 +181,9 @@ export const HealthProfileForm = () => {
     }
   };
 
-  const handleNextStep = async () => {
+  const goToStep = async (nextStep: number) => {
+    if (nextStep === currentStep) return;
+
     const stepFields = [
       ["age", "gender", "height", "weight"],
       [
@@ -258,35 +231,30 @@ export const HealthProfileForm = () => {
         "labTestFile",
       ],
       ["goals", "goalReason", "urgency", "healthApproach"],
-      ["agreeToPrivacy", "followUpPreference"],
+      ["agreeToPrivacy", "followUpMethod", "countryCode", "phoneNumber"],
     ];
 
-    let isValid = false;
-    if (currentStep < stepFields.length) {
-      isValid = await form.trigger(stepFields[currentStep] as any);
-    } else {
-      isValid = true; // For other steps without forms yet
-    }
+    const isLastStep = currentStep === steps.length - 1;
+    const currentFields = stepFields[currentStep] as (keyof z.infer<
+      typeof formSchema
+    >)[];
 
-    if (!isValid) {
+    const isValid = await form.trigger(currentFields);
+    if (!isValid) return;
+
+    if (isLastStep) {
+      const allValid = await form.trigger();
+      if (!allValid) return;
+
+      onSubmit(form.getValues());
       return;
     }
 
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      const isValid = await form.trigger();
-      if (!isValid) return;
-      onSubmit(form.getValues());
-      setIsOpen(false);
-    }
+    setCurrentStep(nextStep);
   };
 
-  const handlePreviousStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
+  const handleNextStep = () => goToStep(currentStep + 1);
+  const handlePreviousStep = () => goToStep(currentStep - 1);
 
   const onDiscard = () => {
     setConfirmOpen(false);
@@ -307,7 +275,12 @@ export const HealthProfileForm = () => {
       </DialogTrigger>
       <DialogContent className="max-w-3xl gap-6 max-h-[98vh] overflow-y-auto">
         <DialogTitle>Your Health Status Now</DialogTitle>
-        <Steps steps={steps} currentStep={currentStep} ordered />
+        <Steps
+          steps={steps}
+          currentStep={currentStep}
+          ordered
+          onStepClick={goToStep}
+        />
         <Form {...form}>
           {currentStep === 0 && <BasicInformationForm form={form} />}
           {currentStep === 1 && <HealthStatusHistoryForm form={form} />}

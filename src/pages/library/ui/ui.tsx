@@ -9,6 +9,7 @@ import { LibraryClientContent } from "widgets/library-client-content";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { MultiStepModal, SymptomCheckModal } from "widgets/MenopauseModals";
 import { SystemCheck } from "./system-check";
+import { HealthHistory, HealthHistoryService } from "entities/health-history";
 
 export const Library = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,6 +18,7 @@ export const Library = () => {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [showResults, setShowResults] = useState<boolean>(false);
+  const [healthHistory, setHealthHistory] = useState<HealthHistory>();
 
   useEffect(() => {
     const fetchSteps = async () => {
@@ -29,6 +31,19 @@ export const Library = () => {
     };
 
     fetchSteps();
+  }, []);
+
+  useEffect(() => {
+    const fetchHealthHistory = async () => {
+      try {
+        const data = await HealthHistoryService.getUserHealthHistory();
+        setHealthHistory(data);
+      } catch (error) {
+        console.error("Failed to load user health history", error);
+      }
+    };
+
+    fetchHealthHistory();
   }, []);
 
   const handleStartCheckIn = () => {
@@ -80,7 +95,7 @@ export const Library = () => {
       />
       <div className="flex flex-col flex-1 w-full h-full min-h-0 gap-6 xl:flex-row">
         <LibraryClientContent />
-        <LibrarySmallChat />
+        <LibrarySmallChat healthHistory={healthHistory} />
       </div>
     </main>
   );

@@ -1,8 +1,14 @@
 export interface HealthHistory {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+
   age: number;
   gender: string;
-  height_weight: string;
+  height: string;
   weight: string;
+
   current_health_concerns: string;
   diagnosed_conditions: string;
   medications: string;
@@ -10,6 +16,11 @@ export interface HealthHistory {
   allergies_intolerances: string;
   family_health_history: string;
   specific_diet: string;
+  diet_pattern: string;
+  kind_of_food: string;
+  eat_decision: string;
+  cook_at_home: string;
+  takeout_food: string;
   exercise_habits: string;
   sleep_quality: string;
   stress_levels: string;
@@ -21,11 +32,18 @@ export interface HealthHistory {
   blood_sugar_concerns: string;
   digestive_issues: string;
   recent_lab_tests: boolean;
+  lab_results_file: string | null;
   health_goals: string;
+  why_these_goals: string;
   desired_results_timeline: string;
   health_approach_preference: string;
   privacy_consent: boolean;
-  follow_up_recommendations: string;
+  follow_up_recommendation: string | null;
+  recommendation_destination: string;
+}
+
+export interface HealthHistoryResponse {
+  health_history: HealthHistory;
 }
 
 export interface HealthHistoryPostData {
