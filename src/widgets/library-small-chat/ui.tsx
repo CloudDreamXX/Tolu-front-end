@@ -1,9 +1,12 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
 import { Message } from "features/chat";
+import { Steps } from "features/steps/ui";
 import { Expand } from "lucide-react";
 import { useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Tolu from "shared/assets/icons/tolu";
@@ -15,14 +18,11 @@ import {
   CardTitle,
 } from "shared/ui";
 import { MessageList } from "widgets/message-list";
-import { Steps } from "features/steps/ui";
-import { SymptomsForm } from "./components/symptoms-form";
 import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useWatch } from "react-hook-form";
+import { GoalsForm } from "./components/goals-form";
 import { HealthHistoryForm } from "./components/health-history-form";
 import { LifestyleForm } from "./components/lifestyle-form";
-import { GoalsForm } from "./components/goals-form";
+import { SymptomsForm } from "./components/symptoms-form";
 
 const steps = [
   "Symptoms",
@@ -70,7 +70,7 @@ export const LibrarySmallChat = () => {
   const [chatTitle, setChatTitle] = useState<string>("");
   const [personalize, setPersonalize] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-
+  const [isContentMode, setIsContentMode] = useState(false);
   const form = useForm<z.infer<typeof baseSchema>>({
     resolver: zodResolver(baseSchema),
     defaultValues: {
@@ -150,6 +150,7 @@ export const LibrarySmallChat = () => {
 
     let accumulatedText = "";
     let returnedChatId = currentChatId;
+    let str = "";
 
     try {
       await SearchService.aiSearchStream(
@@ -164,20 +165,32 @@ export const LibrarySmallChat = () => {
           ...(image && { image }),
           ...(pdf && { pdf }),
         },
-        (chunk: StreamChunk) => {
+        async (chunk: StreamChunk) => {
+          if (isContentMode && chunk.content) {
+            if (chunk.content.includes("Relevant Content")) {
+              str = chunk.content;
+            } else {
+              accumulatedText += chunk.content + " ";
+              setStreamingText(accumulatedText);
+            }
+          }
           if (chunk.reply) {
-            accumulatedText += chunk.reply;
+            accumulatedText += chunk.reply + " ";
             setStreamingText(accumulatedText);
           }
         },
-        (finalData) => {
+        async (finalData) => {
           setIsSearching(false);
 
           const aiMessage: Message = {
             id: finalData.chat_id || Date.now().toString(),
             type: "ai",
-            content: accumulatedText,
+            content: accumulatedText
+              .replace(/^#{1,6}\s*/g, "")
+              .replace(/^Conversational Response:?\s*/i, "")
+              .trim(),
             timestamp: new Date(),
+            document: str,
           };
 
           setMessages((prev) => [...prev, aiMessage]);
@@ -196,7 +209,8 @@ export const LibrarySmallChat = () => {
           setIsSearching(false);
           setError(error.message);
           console.error("Search error:", error);
-        }
+        },
+        isContentMode
       );
     } catch (error) {
       setIsSearching(false);
@@ -390,10 +404,21 @@ export const LibrarySmallChat = () => {
               disabled={isSearching}
               personalize={personalize}
               togglePersonalize={togglePersonalize}
+              isContentMode={isContentMode}
+              toggleIsContentMode={() => setIsContentMode((prev) => !prev)}
             />
           </CardFooter>
         </Card>
       )}
     </>
+  );
+};
+
+const HtmlContent = ({ content }: { content: string }) => {
+  return (
+    <div
+      className="prose max-w-none"
+      dangerouslySetInnerHTML={{ __html: content }}
+    />
   );
 };

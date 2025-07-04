@@ -14,6 +14,8 @@ interface LibraryChatInputProps {
   disabled?: boolean;
   className?: string;
   personalize?: boolean;
+  isContentMode?: boolean;
+  toggleIsContentMode?: () => void;
   togglePersonalize?: () => void;
 }
 
@@ -24,6 +26,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   className,
   personalize,
   togglePersonalize,
+  isContentMode,
+  toggleIsContentMode,
 }) => {
   const [message, setMessage] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
@@ -78,6 +82,24 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           >
             Personalize search
           </label>
+
+          {toggleIsContentMode && (
+            <>
+              <Switch
+                checked={isContentMode}
+                onCheckedChange={toggleIsContentMode}
+                id="content-mode"
+              />
+              <label
+                htmlFor="content-mode"
+                className={`text-sm ${
+                  personalize ? "text-[#1C63DB]" : "text-gray-700"
+                } cursor-pointer`}
+              >
+                Content mode
+              </label>
+            </>
+          )}
         </div>
         {personalize && (
           <div className="relative">

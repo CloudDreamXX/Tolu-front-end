@@ -1,8 +1,8 @@
 import {
   ErrorDisplay,
   Message,
-  StreamingResponse,
   MessageBubble,
+  StreamingResponse,
 } from "features/chat";
 
 interface MessageListProps {

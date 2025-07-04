@@ -18,6 +18,8 @@ export interface StreamChunk {
   searched_result_id?: string;
   chat_id?: string;
   chat_title?: string | null;
+  content?: string;
+  done?: boolean;
 }
 
 export class SearchService {
@@ -29,7 +31,8 @@ export class SearchService {
       chat_id: string;
       chat_title?: string | null;
     }) => void,
-    onError: (error: Error) => void
+    onError: (error: Error) => void,
+    conentMode?: boolean
   ): Promise<void> {
     try {
       const formData = this.createSearchRequest(
@@ -42,7 +45,7 @@ export class SearchService {
       const token = user ? JSON.parse(user)?.token?.replace(/"/g, "") : null;
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/ai-search/`,
+        `${import.meta.env.VITE_API_URL}/${conentMode ? "ai-content-search" : "ai-search"}/`,
         {
           method: "POST",
           headers: {
@@ -83,12 +86,19 @@ export class SearchService {
           try {
             const parsed: StreamChunk = JSON.parse(jsonLine);
 
-            if (parsed.message === "Stream completed") {
+            if (parsed.message === "Stream completed" || parsed.done) {
               if (parsed.searched_result_id && parsed.chat_id) {
                 onComplete({
                   searched_result_id: parsed.searched_result_id,
                   chat_id: parsed.chat_id,
                   chat_title: parsed.chat_title ?? null,
+                });
+              }
+              if (parsed.done) {
+                onComplete({
+                  searched_result_id: new Date().toISOString(),
+                  chat_id: new Date().toISOString(),
+                  chat_title: null,
                 });
               }
             } else {

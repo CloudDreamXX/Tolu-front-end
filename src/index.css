@@ -73,6 +73,10 @@ li::marker {
   content: "";
 }
 
+.custom-transparent * {
+  background-color: transparent !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
