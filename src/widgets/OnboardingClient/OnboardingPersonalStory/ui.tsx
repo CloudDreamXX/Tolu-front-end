@@ -82,8 +82,6 @@ export const OnboardingPersonalStory = () => {
     },
   });
 
-  //   const watchedValues = useWatch({ control: form.control });
-
   const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
     [
       "age",
@@ -117,11 +115,6 @@ export const OnboardingPersonalStory = () => {
     ["goals"],
   ];
 
-  // const isStepValid = stepFields[currentStep].every((field) => {
-  //     const value = watchedValues[field];
-  //     return typeof value === "string" ? value.trim() !== "" : value !== undefined && value !== null;
-  // });
-
   const goToStep = async (nextStep: number) => {
     if (nextStep > currentStep) {
       const isValid = await form.trigger(stepFields[currentStep]);
@@ -149,7 +142,7 @@ export const OnboardingPersonalStory = () => {
         </p>
         <Steps
           steps={steps}
-          stepWidth={"w-[462px]"}
+          stepWidth={"lg:w-[462px]"}
           currentStep={currentStep}
           ordered
           onStepClick={handleStepClick}
@@ -162,29 +155,51 @@ export const OnboardingPersonalStory = () => {
         </form>
       </CardContent>
 
-      <div className="flex items-center justify-between w-full max-w-[718px] gap-2 mt-6">
+      {currentStep === 0 && (
+        <div className="lg:hidden flex gap-4 p-4 items-center w-full lg:max-w-[718px] rounded-2xl bg-[#DDEBF6] mt-[8px]">
+          <Info />
+          <p className="text-[#1B2559] font-[Nunito] text-base font-normal">
+            Your information is kept private and secure. It helps us provide
+            smarter, more relevant support.
+          </p>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between w-full lg:max-w-[718px] gap-2 mt-6">
         <button
-          className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
+          className="hidden md:block flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
           onClick={() => nav("/library")}
         >
           Skip this for now
         </button>
         <button
           type="button"
-          className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
+          className={`md:hidden w-full py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#DDEBF6] text-[#1C63DB]`}
           onClick={handleNextStep}
-          // disabled={!isStepValid}
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          className={`py-[11px] px-[30px] w-full md:w-fit rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
+          onClick={handleNextStep}
         >
           Continue
         </button>
       </div>
+      <button
+        className="md:hidden mt-[24px] flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
+        onClick={() => nav("/library")}
+      >
+        Skip this for now
+      </button>
     </Card>
   );
 
   const buttons = (
     <>
       {currentStep === 0 && (
-        <div className="flex gap-4 p-4 items-center max-w-[718px] rounded-2xl bg-[#DDEBF6] mt-[8px]">
+        <div className="hidden lg:flex gap-4 p-4 items-center w-full lg:max-w-[718px] rounded-2xl bg-[#DDEBF6] mt-[8px]">
           <Info />
           <p className="text-[#1B2559] font-[Nunito] text-base font-normal">
             Your information is kept private and secure. It helps us provide

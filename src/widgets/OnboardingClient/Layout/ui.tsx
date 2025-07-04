@@ -31,10 +31,20 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
         />
       )}
 
-      <main className="flex flex-col items-center justify-center flex-1 gap-[8px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+      <main
+        className={`
+    flex flex-col items-center justify-center
+    w-full gap-[16px] md:gap-[8px]
+    lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%]
+    mt-[100px] lg:mt-0
+  `}
+      >
         {title != null && !isMobileOrTablet && title}
 
-        <div className="w-full max-w-[718px] flex flex-col gap-6 items-start justify-center rounded-t-3xl bg-white py-[24px] px-[16px] md:p-[24px] md:rounded-3xl">
+        <div
+          className="w-full lg:max-w-[718px] flex flex-col 
+  items-start justify-center bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px]"
+        >
           {title != null && isMobileOrTablet && title}
           {children}
           {buttons != null && isMobileOrTablet && buttons}
