@@ -1,9 +1,13 @@
-import { UserCircleGearIcon } from "@phosphor-icons/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { UserCircleGearIcon } from "@phosphor-icons/react";
+import {
+  HealthHistory,
+  HealthHistoryPostData,
+  HealthHistoryService,
+} from "entities/health-history";
 import { Steps } from "features/steps/ui";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import {
   Button,
   Dialog,
@@ -12,39 +16,35 @@ import {
   DialogTrigger,
   Form,
 } from "shared/ui";
+import * as z from "zod";
 import {
   BasicInformationForm,
   basicInformationSchema,
 } from "./basic-information-form";
+import { ConfirmCancel } from "./confirm-cancel";
+import {
+  ConsentSubmissionForm,
+  consentSubmissionSchema,
+} from "./consent-and-submission";
+import { DrivesAndGoalsForm, drivesAndGoalsSchema } from "./drives-and-goals";
 import {
   HealthStatusHistoryForm,
   healthStatusHistorySchema,
 } from "./health-status-history-form";
+import { mapHealthHistoryToFormDefaults } from "./lib";
 import {
   LifestyleHabitsForm,
   lifestyleHabitsSchema,
 } from "./lifestyle-habits-form";
 import {
+  MetabolicDigestiveHealthForm,
+  metabolicDigestiveHealthSchema,
+} from "./metabolic-digestive-health-form";
+import {
   NutritionHabitsForm,
   nutritionHabitsSchema,
 } from "./nutrition-habits-form";
 import { WomensHealthForm, womensHealthSchema } from "./womens-health";
-import {
-  MetabolicDigestiveHealthForm,
-  metabolicDigestiveHealthSchema,
-} from "./metabolic-digestive-health-form";
-import { DrivesAndGoalsForm, drivesAndGoalsSchema } from "./drives-and-goals";
-import {
-  ConsentSubmissionForm,
-  consentSubmissionSchema,
-} from "./consent-and-submission";
-import {
-  HealthHistory,
-  HealthHistoryPostData,
-  HealthHistoryService,
-} from "entities/health-history";
-import { ConfirmCancel } from "./confirm-cancel";
-import { mapHealthHistoryToFormDefaults } from "./lib";
 
 const steps = [
   "Basic Information",
@@ -166,6 +166,18 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       privacy_consent: values.agreeToPrivacy,
       follow_up_recommendations: values.followUpMethod,
       recommendation_destination: `${values.countryCode}${values.phoneNumber}`,
+      marital_status: "",
+      job: "",
+      no_children: "",
+      menopause_status: "",
+      other_challenges: "",
+      tried_strategies: "",
+      maternal_health_history: "",
+      paternal_health_history: "",
+      lifestyle_information: "",
+      lifestyle_limitations: "",
+      sex_life: "",
+      support_system: "",
     };
 
     const labFile = values.labTestFile || undefined;

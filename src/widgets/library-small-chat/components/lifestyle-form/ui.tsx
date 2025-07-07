@@ -1,7 +1,6 @@
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
+import { Controller, UseFormReturn } from "react-hook-form";
 import { baseSchema } from "widgets/library-small-chat";
-import { useState } from "react";
+import { z } from "zod";
 import { CustomSelect } from "../CustomSelect/ui";
 import { MultiSelect } from "../MultiSelect";
 
@@ -12,13 +11,7 @@ interface LifestyleFormProps {
 }
 
 export const LifestyleForm = ({ form }: LifestyleFormProps) => {
-  const { register, setValue } = form;
-  const [exercise, setExercise] = useState("");
-  const [sexLife, setSexLife] = useState("");
-  const [period, setPeriod] = useState("");
-  const [dietType, setDietType] = useState<string[]>([]);
-  const [medications, setMedications] = useState<string[]>([]);
-
+  const { register } = form;
   const inputClass =
     "input inline-input border border-[#DBDEE1] rounded-full outline-[#008FF6] py-[4px] px-[12px] min-w-[60px] placeholder:text-[#5F5F65]";
   const lineClass =
@@ -60,7 +53,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
       <div className={lineClass}>
         <span>Right now, my lifestyle includes</span>
         <input
-          {...register("stressLevel")}
+          {...register("lifestyleInfo")}
           placeholder="stress level – e.g., high-stress job"
           className={`${inputClass} w-[296px]`}
         />
@@ -84,30 +77,45 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
 
       <div className={lineClass}>
         <span>I usually follow a</span>
-        <MultiSelect
-          placeholder={"diet type"}
-          options={dietOptions}
-          selected={dietType}
-          className="w-fit"
-          onChange={(val) => {
-            setDietType(val);
-            setValue("dietType", val.join(", "));
-          }}
+        <Controller
+          name="dietType"
+          control={form.control}
+          render={({ field }) => (
+            <MultiSelect
+              placeholder="die type"
+              options={dietOptions}
+              className="w-fit"
+              selected={field.value
+                .split(",")
+                .map((str) => str.trim())
+                .filter(Boolean)}
+              onChange={(val) => {
+                const cleaned = val
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+                  .join(", ");
+                field.onChange(cleaned);
+              }}
+            />
+          )}
         />
         <span>diet.</span>
       </div>
 
       <div className={lineClass}>
         <span>I</span>
-        <CustomSelect
-          value={exercise}
-          onChange={(val) => {
-            setExercise(val);
-            setValue("exercise", val);
-          }}
-          options={["Sometimes", "Rarely", "Never"]}
-          placeholder="rarely"
-          className="w-fit"
+        <Controller
+          name="exercise"
+          control={form.control}
+          render={({ field }) => (
+            <CustomSelect
+              value={field.value}
+              onChange={field.onChange}
+              options={["Sometimes", "Rarely", "Never"]}
+              placeholder="rarely"
+              className="w-fit"
+            />
+          )}
         />
         <span>get time to exercise or relax, and</span>
         <input
@@ -119,40 +127,60 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
 
       <div className={lineClass}>
         <span>I’m currently taking</span>
-        <MultiSelect
-          placeholder={"medications or supplements"}
-          options={["Medications", "Supplements", "Nothing"]}
-          className="w-fit"
-          selected={medications}
-          onChange={(val) => {
-            setMedications(val);
-            setValue("medications", val.join(", "));
-          }}
+        <Controller
+          name="medications"
+          control={form.control}
+          render={({ field }) => (
+            <MultiSelect
+              placeholder={"medications or supplements"}
+              options={dietOptions}
+              className="w-fit"
+              selected={field.value
+                .split(",")
+                .map((str) => str.trim())
+                .filter(Boolean)}
+              onChange={(val) => {
+                const cleaned = val
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+                  .join(", ");
+                field.onChange(cleaned);
+              }}
+            />
+          )}
         />
       </div>
 
       <div className={lineClass}>
         <span>my periods are</span>
-        <CustomSelect
-          value={period}
-          onChange={(val) => {
-            setPeriod(val);
-            setValue("period", val);
-          }}
-          options={["Irregular", "Regular"]}
-          placeholder="regular"
-          className="w-fit"
+        <Controller
+          name="period"
+          control={form.control}
+          render={({ field }) => (
+            <CustomSelect
+              value={field.value}
+              onChange={field.onChange}
+              options={["Irregular", "Regular"]}
+              placeholder="regular"
+              className="w-fit"
+            />
+          )}
         />
+
         <span>, and my sex life is</span>
-        <CustomSelect
-          value={sexLife}
-          onChange={(val) => {
-            setSexLife(val);
-            setValue("sexLife", val);
-          }}
-          options={["Nonexistent", "Active", "Low"]}
-          placeholder="active"
-          className="w-fit"
+
+        <Controller
+          name="sexLife"
+          control={form.control}
+          render={({ field }) => (
+            <CustomSelect
+              value={field.value}
+              onChange={field.onChange}
+              options={["Nonexistent", "Active", "Low"]}
+              placeholder="active"
+              className="w-fit"
+            />
+          )}
         />
       </div>
 

@@ -41,7 +41,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => (
             <span>{message.timestamp.toLocaleDateString()}</span>
           </div>
           <div className="text-sm text-[#1D1D1F] bg-[#ECEFF4] px-[14px] py-[10px] rounded-md">
-            <div className="custom-transparent">{parse(message.content)}</div>{" "}
+            <div>{parse(message.content)}</div>
             {message.document && (
               <div className="grid grid-cols-2 gap-2">
                 {renderResultBlocks(message.document || "")}

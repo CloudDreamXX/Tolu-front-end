@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { HealthHistory, HealthHistoryService } from "entities/health-history";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
@@ -22,9 +23,8 @@ import z from "zod";
 import { GoalsForm } from "./components/goals-form";
 import { HealthHistoryForm } from "./components/health-history-form";
 import { LifestyleForm } from "./components/lifestyle-form";
-import { HealthHistory, HealthHistoryService } from "entities/health-history";
-import { mapFormToPostData, mapHealthHistoryToFormDefaults } from "./lib";
 import { SymptomsForm } from "./components/symptoms-form";
+import { mapFormToPostData, mapHealthHistoryToFormDefaults } from "./lib";
 
 const steps = [
   "Symptoms",
@@ -47,7 +47,7 @@ export const baseSchema = z.object({
   maternalSide: z.string(),
   paternalSide: z.string(),
   notableConcern: z.string(),
-  stressLevel: z.string(),
+  lifestyleInfo: z.string(),
   takeout: z.string(),
   homeCooked: z.string(),
   dietType: z.string(),
@@ -239,7 +239,7 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
       "notableConcern",
     ],
     [
-      "stressLevel",
+      "lifestyleInfo",
       "takeout",
       "homeCooked",
       "dietType",
@@ -261,7 +261,16 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
 
     if (nextStep >= steps.length) {
       const values = form.getValues();
-      const message = `Hi Tolu. I’m a ${values.age}-year-old ${values.maritalStatus} woman working ${values.job}, and I have ${values.children} children. I’m ${values.menopauseStatus} but lately I’ve been dealing with ${values.mainSymptoms}. I’ve also noticed ${values.otherChallenges}, and it feels like no matter ${values.strategiesTried}, things aren’t getting better. My health history includes ${values.diagnosedConditions}, and I have ${values.geneticTraits}. In my family, there’s a history of ${values.maternalSide} on my mom’s side and ${values.paternalSide} on my dad’s side. Someone in my family was recently diagnosed with ${values.notableConcern}, which has me thinking more about prevention. Right now, my lifestyle includes ${values.stressLevel}, eating about ${values.takeout} takeout and ${values.homeCooked} home-cooked meals. I usually follow a ${values.dietType} diet. I ${values.exercise} get time to exercise or relax, and ${values.limitations}. I’m currently taking ${values.medications}, my periods are ${values.period}, and my sex life is ${values.sexLife}. I usually rely on ${values.supportSystem} for emotional support. What I really want is to ${values.goals}.`;
+      const message = `Hi Tolu. I’m a ${values.age}-year-old ${values.maritalStatus} woman working ${values.job}, 
+                      and I have ${values.children} children. I’m ${values.menopauseStatus} but lately I’ve been dealing with ${values.mainSymptoms}. 
+                      I’ve also noticed ${values.otherChallenges}, and it feels like no matter ${values.strategiesTried}, things aren’t getting better. 
+                      My health history includes ${values.diagnosedConditions}, and I have ${values.geneticTraits}. 
+                      In my family, there’s a history of ${values.maternalSide} on my mom’s side and ${values.paternalSide} on my dad’s side. 
+                      Someone in my family was recently diagnosed with ${values.notableConcern}, which has me thinking more about prevention. Right now, 
+                      my lifestyle includes ${values.lifestyleInfo}, eating about ${values.takeout} takeout and ${values.homeCooked} home-cooked meals. 
+                      I usually follow a ${values.dietType} diet. I ${values.exercise} get time to exercise or relax, and ${values.limitations}. 
+                      I’m currently taking ${values.medications}, my periods are ${values.period}, and my sex life is ${values.sexLife}. 
+                      I usually rely on ${values.supportSystem} for emotional support. What I really want is to ${values.goals}.`;
 
       setPersonalize(false);
       await handleNewMessage(message, []);

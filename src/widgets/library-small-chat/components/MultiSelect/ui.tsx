@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import Chevron from "shared/assets/icons/chevron";
 import CheckedIcon from "shared/assets/icons/checked";
+import Chevron from "shared/assets/icons/chevron";
 import UncheckedIcon from "shared/assets/icons/not-checked";
 
 export const MultiSelect = ({
@@ -53,9 +53,10 @@ export const MultiSelect = ({
           selected.map((option, index) => (
             <span
               key={option}
-              className="flex items-center gap-[8px] text-[18px] font-[500] text-[#1D1D1F]"
+              className="flex items-center text-[18px] font-[500] text-[#1D1D1F]"
             >
-              {index !== 0 && ", "} {option}
+              {option}
+              {index < selected.length - 1 && ","}
             </span>
           ))
         )}

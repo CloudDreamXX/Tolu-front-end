@@ -10,9 +10,9 @@ import { GoalsForm } from "widgets/library-small-chat/components/goals-form";
 import { HealthHistoryForm } from "widgets/library-small-chat/components/health-history-form";
 import { LifestyleForm } from "widgets/library-small-chat/components/lifestyle-form";
 import { SymptomsForm } from "widgets/library-small-chat/components/symptoms-form";
-import { OnboardingClientLayout } from "../Layout";
 import { mapFormToPostData } from "widgets/library-small-chat/lib";
 import z from "zod";
+import { OnboardingClientLayout } from "../Layout";
 
 const steps = [
   "Symptoms",
@@ -35,7 +35,7 @@ export const baseSchema = z.object({
   maternalSide: z.string(),
   paternalSide: z.string(),
   notableConcern: z.string(),
-  stressLevel: z.string(),
+  lifestyleInfo: z.string(),
   takeout: z.string(),
   homeCooked: z.string(),
   dietType: z.string(),
@@ -68,7 +68,7 @@ export const OnboardingPersonalStory = () => {
       maternalSide: "",
       paternalSide: "",
       notableConcern: "",
-      stressLevel: "",
+      lifestyleInfo: "",
       takeout: "",
       homeCooked: "",
       dietType: "",
@@ -101,7 +101,7 @@ export const OnboardingPersonalStory = () => {
       "notableConcern",
     ],
     [
-      "stressLevel",
+      "lifestyleInfo",
       "takeout",
       "homeCooked",
       "dietType",

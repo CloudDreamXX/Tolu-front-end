@@ -9,34 +9,58 @@ export interface HealthHistory {
   height: string;
   weight: string;
 
+  marital_status: string;
+  job: string;
+  no_children: string;
+  menopause_status: string;
+
   current_health_concerns: string;
+  other_challenges: string;
+  tried_strategies: string;
   diagnosed_conditions: string;
+
+  maternal_health_history: string;
+  paternal_health_history: string;
+  family_health_history: string;
+
+  genetic_traits?: string | null;
+  lifestyle_information: string;
+  lifestyle_limitations: string;
+
+  takeout_food: string;
+  cook_at_home: string;
+  specific_diet: string;
+  exercise_habits: string;
+  eat_decision: string;
+
   medications: string;
   supplements: string;
   allergies_intolerances: string;
-  family_health_history: string;
-  specific_diet: string;
-  diet_pattern: string;
+
+  menstrual_cycle_status: string;
+  sex_life: string;
+  support_system: string;
+
+  health_goals: string;
+  why_these_goals: string;
+  desired_results_timeline: string;
+  health_approach_preference: string;
+
   kind_of_food: string;
-  eat_decision: string;
-  cook_at_home: string;
-  takeout_food: string;
-  exercise_habits: string;
+  diet_pattern: string;
   sleep_quality: string;
   stress_levels: string;
   energy_levels: string;
-  menstrual_cycle_status: string;
+
   hormone_replacement_therapy: string;
   fertility_concerns: string;
   birth_control_use: string;
   blood_sugar_concerns: string;
   digestive_issues: string;
+
   recent_lab_tests: boolean;
   lab_results_file: string | null;
-  health_goals: string;
-  why_these_goals: string;
-  desired_results_timeline: string;
-  health_approach_preference: string;
+
   privacy_consent: boolean;
   follow_up_recommendation: string | null;
   recommendation_destination: string;
@@ -48,33 +72,45 @@ export interface HealthHistoryResponse {
 
 export interface HealthHistoryPostData {
   age: number;
+  marital_status: string;
+  job: string;
+  no_children: string;
+  menopause_status: string;
+  current_health_concerns: string;
+  other_challenges: string;
+  tried_strategies: string;
+  diagnosed_conditions: string;
+  maternal_health_history: string;
+  paternal_health_history: string;
+  family_health_history: string;
+  lifestyle_information?: string;
+  takeout_food: string;
+  cook_at_home: string;
+  specific_diet?: string;
+  exercise_habits?: string;
+  lifestyle_limitations: string;
+  medications?: string;
+  menstrual_cycle_status: string;
+  sex_life: string;
+  support_system: string;
+  health_goals: string;
   gender: string;
   height: string;
   weight: string;
-  current_health_concerns: string;
-  diagnosed_conditions: string;
-  medications?: string;
   supplements: string;
   allergies_intolerances: string;
-  family_health_history: string;
-  specific_diet?: string;
-  exercise_habits?: string;
   eat_decision: string;
-  cook_at_home: string;
-  takeout_food: string;
   kind_of_food: string;
   diet_pattern: string;
   sleep_quality: string;
   stress_levels: string;
   energy_levels: string;
-  menstrual_cycle_status: string;
   hormone_replacement_therapy: string;
   fertility_concerns: string;
   birth_control_use: string;
   blood_sugar_concerns?: string;
   digestive_issues?: string;
   recent_lab_tests: boolean;
-  health_goals: string;
   why_these_goals: string;
   desired_results_timeline: string;
   health_approach_preference: string;

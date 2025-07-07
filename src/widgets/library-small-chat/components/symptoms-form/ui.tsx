@@ -1,7 +1,6 @@
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
+import { Controller, UseFormReturn } from "react-hook-form";
 import { baseSchema } from "widgets/library-small-chat";
-import { useState } from "react";
+import { z } from "zod";
 import { CustomSelect } from "../CustomSelect/ui";
 
 export type FormValues = z.infer<typeof baseSchema>;
@@ -11,9 +10,7 @@ interface SymptomsFormProps {
 }
 
 export const SymptomsForm = ({ form }: SymptomsFormProps) => {
-  const [menopauseStatus, setMenopauseStatus] = useState("");
   const { register } = form;
-
   const inputClass =
     "input inline-input border border-[#DBDEE1] rounded-full outline-[#008FF6] py-[4px] px-[12px] min-w-[60px] placeholder:text-[#5F5F65]";
   const lineClass =
@@ -47,21 +44,25 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
           className={`${inputClass} w-[88px]`}
         />
         <span>children. I’m</span>
-        <CustomSelect
-          value={menopauseStatus}
-          placeholder="in perimenopause"
-          onChange={(val) => {
-            setMenopauseStatus(val);
-            form.setValue("menopauseStatus", val);
-          }}
-          options={[
-            "Not sure",
-            "Premenopausal (Regular cycles)",
-            "Perimenopausal (Irregular cycles)",
-            "Post menopausal (No cycles)",
-          ]}
-          className="w-fit min-w-[160px]"
+        <Controller
+          name="menopauseStatus"
+          control={form.control}
+          render={({ field }) => (
+            <CustomSelect
+              value={field.value}
+              placeholder="in perimenopause"
+              onChange={field.onChange}
+              options={[
+                "Not sure",
+                "Premenopausal (Regular cycles)",
+                "Perimenopausal (Irregular cycles)",
+                "Post menopausal (No cycles)",
+              ]}
+              className="w-fit min-w-[160px]"
+            />
+          )}
         />
+
         <span>but lately I’ve been dealing with</span>
         <input
           {...register("mainSymptoms")}
