@@ -66,7 +66,7 @@ export class FoldersService {
 
   private static serializeFolder(folder: IFolderItemResponse): IFolder {
     return {
-      id: folder.id,
+      id: folder.id ?? folder.folder_id,
       name: folder.name,
       fileCount: folder.file_count,
       fileNames: this.serializeFileNames(folder?.file_names ?? []),

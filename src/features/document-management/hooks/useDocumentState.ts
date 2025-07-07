@@ -66,13 +66,8 @@ export const useDocumentState = () => {
       try {
         if (!folderId) return;
 
-        const folder = folders.find((f) => f.id === folderId);
-        if (folder) {
-          setFolder(folder);
-          return;
-        }
-
         const response = await FoldersService.getFolder(folderId);
+        console.log("Fetched folder:", response);
         if (response) setFolder(response);
       } catch (error) {
         console.error("Error fetching folder:", error);

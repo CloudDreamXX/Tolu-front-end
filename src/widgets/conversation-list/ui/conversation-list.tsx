@@ -3,7 +3,6 @@ import parse from "html-react-parser";
 import { IDocument } from "entities/document";
 import { ISessionResult } from "entities/coach";
 import { ConversationItem } from "widgets/conversation-item";
-import ReactQuill from "react-quill";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -31,7 +30,6 @@ interface ConversationListProps {
   onCancelEdit: () => void;
   setMobilePage: (page: 1 | 2) => void;
   setSelectedDocumentId: (id: string) => void;
-  setIsRateOpen: (open: boolean) => void;
   setIsBadResponseOpen: (open: boolean) => void;
   setIsDeleteOpen: (open: boolean) => void;
   setIsMoveOpen: (open: boolean) => void;
@@ -66,7 +64,6 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   onCancelEdit,
   setMobilePage,
   setSelectedDocumentId,
-  setIsRateOpen,
   setIsBadResponseOpen,
   setIsDeleteOpen,
   setIsMoveOpen,
@@ -115,7 +112,6 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           onCancelEdit={onCancelEdit}
           setMobilePage={setMobilePage}
           setSelectedDocumentId={setSelectedDocumentId}
-          setIsRateOpen={setIsRateOpen}
           setIsBadResponseOpen={setIsBadResponseOpen}
           setIsDeleteOpen={setIsDeleteOpen}
           setIsMoveOpen={setIsMoveOpen}
@@ -124,7 +120,6 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           setEditedContent={setEditedContent}
           handleDublicateClick={handleDublicateClick}
           handleMarkAsClick={handleMarkAsClick}
-          ReactQuill={ReactQuill}
         />
       ))}
 

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { ScrollArea } from "shared/ui";
-import { RatePopup } from "widgets/RatePopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
 import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
@@ -45,6 +44,8 @@ export const ContentManagerDocument: React.FC = () => {
     location,
   } = useDocumentState();
 
+  console.log(folder);
+
   const {
     message,
     clientId,
@@ -62,7 +63,6 @@ export const ContentManagerDocument: React.FC = () => {
     mobilePage,
     ratingsMap,
     isMarkAsOpen,
-    isRateOpen,
     isBadResponseOpen,
     isDeleteOpen,
     isDublicateOpen,
@@ -76,7 +76,6 @@ export const ContentManagerDocument: React.FC = () => {
     setCompareIndex,
     setMobilePage,
     setIsMarkAsOpen,
-    setIsRateOpen,
     setIsBadResponseOpen,
     setIsDeleteOpen,
     setIsDublicateOpen,
@@ -210,7 +209,6 @@ export const ContentManagerDocument: React.FC = () => {
                 onCancelEdit={onCancelEdit}
                 setMobilePage={setMobilePage}
                 setSelectedDocumentId={setSelectedDocumentId}
-                setIsRateOpen={setIsRateOpen}
                 setIsBadResponseOpen={setIsBadResponseOpen}
                 setIsDeleteOpen={setIsDeleteOpen}
                 setIsMoveOpen={setIsMoveOpen}
@@ -239,16 +237,6 @@ export const ContentManagerDocument: React.FC = () => {
           document={document}
           folderName={folder?.name ?? ""}
         />
-
-        {/* Modals */}
-        {isRateOpen && selectedDocumentId && (
-          <RatePopup
-            contentId={selectedDocumentId}
-            onClose={() => setIsRateOpen(false)}
-            handleRateClick={handleRateClick}
-            ratingsMap={ratingsMap}
-          />
-        )}
 
         {isMarkAsOpen && selectedDocumentId && selectedDocumentStatus && (
           <ChangeStatusPopup
@@ -291,7 +279,7 @@ export const ContentManagerDocument: React.FC = () => {
             contentId={selectedDocumentId}
             handleSave={handleDublicateAndMoveClick}
             onClose={() => setIsDublicateOpen(false)}
-            parentFolderId={folder?.id ?? ""}
+            parentFolderId={folder?.parentFolderId ?? ""}
           />
         )}
 
@@ -301,7 +289,7 @@ export const ContentManagerDocument: React.FC = () => {
             contentId={selectedDocumentId}
             handleSave={handleMoveClick}
             onClose={() => setIsMoveOpen(false)}
-            parentFolderId={folder?.id ?? ""}
+            parentFolderId={folder?.parentFolderId ?? ""}
           />
         )}
       </div>

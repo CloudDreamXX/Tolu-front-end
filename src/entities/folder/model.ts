@@ -36,6 +36,7 @@ export interface ISubfolderResponse {
 
 export interface IFolderItemResponse {
   id: string;
+  folder_id?: string;
   name: string;
   file_count: number;
   file_names: IFileNamesResponse[];

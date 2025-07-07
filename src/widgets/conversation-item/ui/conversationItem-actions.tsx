@@ -1,7 +1,7 @@
 import React from "react";
 import { ISessionResult } from "entities/coach";
 import { Button } from "shared/ui";
-import Star from "shared/assets/icons/grey-star";
+import { RatePopup } from "widgets/RatePopup";
 import Bin from "shared/assets/icons/grey-bin";
 import Arrow from "shared/assets/icons/grey-arrow";
 import Folders from "shared/assets/icons/grey-folders";
@@ -9,7 +9,6 @@ import Edit from "shared/assets/icons/grey-edit";
 import MarkAs from "shared/assets/icons/grey-mark-as";
 import Dislike from "shared/assets/icons/dislike";
 import Voiceover from "shared/assets/icons/voiceover";
-import FilledStar from "shared/assets/icons/filled-star";
 
 interface ConversationItemActionsProps {
   pair: ISessionResult;
@@ -22,7 +21,6 @@ interface ConversationItemActionsProps {
   onSaveEdit: (contentId: string) => Promise<void>;
   onCancelEdit: () => void;
   setSelectedDocumentId: (id: string) => void;
-  setIsRateOpen: (open: boolean) => void;
   setIsBadResponseOpen: (open: boolean) => void;
   setIsDeleteOpen: (open: boolean) => void;
   setIsMoveOpen: (open: boolean) => void;
@@ -43,25 +41,27 @@ export const ConversationItemActions: React.FC<
   onSaveEdit,
   onCancelEdit,
   setSelectedDocumentId,
-  setIsRateOpen,
   setIsBadResponseOpen,
   setIsDeleteOpen,
   setIsMoveOpen,
   handleDublicateClick,
   handleMarkAsClick,
 }) => {
+  const handleRateClick = async (
+    id: string,
+    rating: number,
+    comment: string,
+    down: boolean
+  ) => {};
+
   return (
     <div className="flex items-center justify-between">
       <div className="relative flex items-center">
-        <button
-          className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
-          onClick={() => {
-            setSelectedDocumentId(pair.id);
-            setIsRateOpen(true);
-          }}
-        >
-          {!ratingsMap[pair.id] ? <Star /> : <FilledStar />}
-        </button>
+        <RatePopup
+          contentId={pair.id}
+          ratingsMap={ratingsMap}
+          handleRateClick={handleRateClick}
+        />
 
         <button
           className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"

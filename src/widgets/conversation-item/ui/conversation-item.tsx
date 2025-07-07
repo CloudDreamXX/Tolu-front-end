@@ -4,6 +4,7 @@ import { ISessionResult } from "entities/coach";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
 import BlueChevron from "shared/assets/icons/blue-chevron";
+import ReactQuill from "react-quill";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -26,7 +27,6 @@ interface ConversationItemProps {
   onCancelEdit: () => void;
   setMobilePage: (page: 1 | 2) => void;
   setSelectedDocumentId: (id: string) => void;
-  setIsRateOpen: (open: boolean) => void;
   setIsBadResponseOpen: (open: boolean) => void;
   setIsDeleteOpen: (open: boolean) => void;
   setIsMoveOpen: (open: boolean) => void;
@@ -35,7 +35,6 @@ interface ConversationItemProps {
   setEditedContent: (content: string) => void;
   handleDublicateClick: (id: string) => Promise<void>;
   handleMarkAsClick: (id: string) => void;
-  ReactQuill: any;
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
@@ -57,7 +56,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   onCancelEdit,
   setMobilePage,
   setSelectedDocumentId,
-  setIsRateOpen,
   setIsBadResponseOpen,
   setIsDeleteOpen,
   setIsMoveOpen,
@@ -66,7 +64,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   setEditedContent,
   handleDublicateClick,
   handleMarkAsClick,
-  ReactQuill,
 }) => {
   const isHTML = isHtmlContent(pair.content);
 
@@ -225,6 +222,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         value={editedContent}
         onChange={setEditedContent}
         className="bg-white border border-[#008FF6] rounded-[16px] p-[16px]"
+        modules={{
+          toolbar: false,
+        }}
       />
     </>
   );
@@ -267,7 +267,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         onSaveEdit={onSaveEdit}
         onCancelEdit={onCancelEdit}
         setSelectedDocumentId={setSelectedDocumentId}
-        setIsRateOpen={setIsRateOpen}
         setIsBadResponseOpen={setIsBadResponseOpen}
         setIsDeleteOpen={setIsDeleteOpen}
         setIsMoveOpen={setIsMoveOpen}
