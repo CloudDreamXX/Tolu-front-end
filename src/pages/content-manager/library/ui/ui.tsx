@@ -1,7 +1,7 @@
 import AiCreate from "shared/assets/icons/ai-create";
 import Search from "shared/assets/icons/search";
-import { useCallback, useEffect, useState } from "react";
-import { Input } from "shared/ui";
+import { useCallback, useEffect, useState, useMemo } from "react";
+import { Card, Input } from "shared/ui";
 import {
   ContentToMove,
   FoldersService,
@@ -24,6 +24,7 @@ import { ContentCard } from "./content-card/ui";
 export const ContentManagerLibrary: React.FC = () => {
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());
   const [search, setSearch] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const token = useSelector((state: RootState) => state.user.token);
   const folders = useSelector((state: RootState) => state.folder);
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ export const ContentManagerLibrary: React.FC = () => {
   const [idToDuplicate, setIdToDuplicate] = useState("");
   const { expandedFolders, toggleFolder, filteredItems } = useLibraryLogic(
     folders.folders,
-    search
+    debouncedSearch
   );
   const [allContent, setAllContent] = useState<Content[]>([]);
   const [contentCardsView, setContentCardsView] = useState<boolean>(false);
@@ -54,6 +55,15 @@ export const ContentManagerLibrary: React.FC = () => {
 
     fetchAllContent();
   }, []);
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const fetchFolders = useCallback(async () => {
     try {
@@ -180,15 +190,17 @@ export const ContentManagerLibrary: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  const filteredContent =
-    search !== ""
-      ? allContent.filter(
-          (content) =>
-            content.title.toLowerCase().includes(search.toLowerCase()) ||
-            content.query.toLowerCase().includes(search.toLowerCase()) ||
-            content.content.toLowerCase().includes(search.toLowerCase())
-        )
-      : allContent;
+  const filteredContent = useMemo(() => {
+    if (debouncedSearch === "") return allContent;
+
+    const searchLower = debouncedSearch.toLowerCase();
+    return allContent.filter(
+      (content) =>
+        content.title.toLowerCase().includes(searchLower) ||
+        content.query.toLowerCase().includes(searchLower) ||
+        content.content.toLowerCase().includes(searchLower)
+    );
+  }, [allContent, debouncedSearch]);
 
   return (
     <div className="flex flex-col gap-12 p-8 overflow-y-auto">
@@ -213,14 +225,26 @@ export const ContentManagerLibrary: React.FC = () => {
               icon={<Search />}
               className="rounded-full focus:border-[#1C63DB]"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onClick={() => setContentCardsView(true)}
-              onBlur={() => setContentCardsView(false)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (e.target.value.length > 0) {
+                  setContentCardsView(true);
+                }
+              }}
+              onFocus={() => setContentCardsView(true)}
+              onBlur={() => {
+                // Delay the blur to prevent flickering when clicking on search results
+                setTimeout(() => {
+                  if (search === "") {
+                    setContentCardsView(false);
+                  }
+                }, 150);
+              }}
             />
           </div>
           {contentCardsView && (
             <p className="text-[14px] text-[#5F5F65] font-[500]">
-              Found {allContent.length} files
+              Found {filteredContent.length} files
             </p>
           )}
         </div>
@@ -231,49 +255,59 @@ export const ContentManagerLibrary: React.FC = () => {
           toggleFolder={toggleFolder}
           onDotsClick={handleDotsClick}
         />
-
-        {contentCardsView ? (
-          <div className="grid grid-cols-2 gap-4">
-            {filteredContent.map((content) => (
-              <ContentCard
-                key={content.id}
-                title={content.title}
-                content={content.content}
-                query={content.query}
-                id={content.id}
-                searchQuery={search}
+        {filteredContent.length ? (
+          <>
+            {contentCardsView ? (
+              <div className="grid grid-cols-2 gap-4">
+                {filteredContent.map((content) => (
+                  <ContentCard
+                    key={content.id}
+                    title={content.title}
+                    content={content.content}
+                    query={content.query}
+                    id={content.id}
+                    searchQuery={debouncedSearch}
+                  />
+                ))}
+              </div>
+            ) : (
+              <LibraryDesktopView
+                filteredItems={filteredItems}
+                expandedFolders={expandedFolders}
+                toggleFolder={toggleFolder}
+                folders={folders.folders}
+                selectedRow={selectedRow}
+                isMenuOpen={isMenuOpen}
+                popupPosition={popupPosition}
+                isMarkAsOpen={isMarkAsOpen}
+                isDeleteOpen={isDeleteOpen}
+                isDublicateOpen={isDublicateOpen}
+                isMoveOpen={isMoveOpen}
+                isImproveOpen={isImproveOpen}
+                idToDuplicate={idToDuplicate}
+                onDotsClick={handleDotsClick}
+                onStatusComplete={onStatusComplete}
+                onDeleteClick={handleDeleteClick}
+                onDuplicateClick={handleDublicateClick}
+                onDuplicateAndMoveClick={handleDublicateAndMoveClick}
+                onMoveClick={handleMoveClick}
+                setIsMarkAsOpen={setIsMarkAsOpen}
+                setIsDeleteOpen={setIsDeleteOpen}
+                setIsDublicateOpen={setIsDublicateOpen}
+                setIsMoveOpen={setIsMoveOpen}
+                setIsImproveOpen={setIsImproveOpen}
+                setSelectedRow={setSelectedRow}
+                setPopupPosition={setPopupPosition}
               />
-            ))}
-          </div>
+            )}
+          </>
         ) : (
-          <LibraryDesktopView
-            filteredItems={filteredItems}
-            expandedFolders={expandedFolders}
-            toggleFolder={toggleFolder}
-            folders={folders.folders}
-            selectedRow={selectedRow}
-            isMenuOpen={isMenuOpen}
-            popupPosition={popupPosition}
-            isMarkAsOpen={isMarkAsOpen}
-            isDeleteOpen={isDeleteOpen}
-            isDublicateOpen={isDublicateOpen}
-            isMoveOpen={isMoveOpen}
-            isImproveOpen={isImproveOpen}
-            idToDuplicate={idToDuplicate}
-            onDotsClick={handleDotsClick}
-            onStatusComplete={onStatusComplete}
-            onDeleteClick={handleDeleteClick}
-            onDuplicateClick={handleDublicateClick}
-            onDuplicateAndMoveClick={handleDublicateAndMoveClick}
-            onMoveClick={handleMoveClick}
-            setIsMarkAsOpen={setIsMarkAsOpen}
-            setIsDeleteOpen={setIsDeleteOpen}
-            setIsDublicateOpen={setIsDublicateOpen}
-            setIsMoveOpen={setIsMoveOpen}
-            setIsImproveOpen={setIsImproveOpen}
-            setSelectedRow={setSelectedRow}
-            setPopupPosition={setPopupPosition}
-          />
+          <Card className="w-full max-w-xl py-6 mx-auto text-center px-11 rounded-2xl">
+            <h2 className="text-2xl font-bold">Nothing found?</h2>
+            <h3 className="text-lg font-bold">
+              Try changing your search query
+            </h3>
+          </Card>
         )}
       </div>
     </div>
