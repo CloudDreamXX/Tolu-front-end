@@ -51,6 +51,7 @@
     "html-react-parser": "^5.2.5",
     "html-to-text": "^9.0.5",
     "lucide-react": "^0.488.0",
+    "marked": "^16.0.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.2",
     "quill": "^2.0.3",

@@ -169,12 +169,12 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
             if (chunk.content.includes("Relevant Content")) {
               str = chunk.content;
             } else {
-              accumulatedText += chunk.content + " ";
+              accumulatedText += chunk.content;
               setStreamingText(accumulatedText);
             }
           }
           if (chunk.reply) {
-            accumulatedText += chunk.reply + " ";
+            accumulatedText += chunk.reply;
             setStreamingText(accumulatedText);
           }
         },
@@ -184,10 +184,7 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
           const aiMessage: Message = {
             id: finalData.chat_id || Date.now().toString(),
             type: "ai",
-            content: accumulatedText
-              .replace(/^#{1,6}\s*/g, "")
-              .replace(/^Conversational Response:?\s*/i, "")
-              .trim(),
+            content: accumulatedText,
             timestamp: new Date(),
             document: str,
           };
