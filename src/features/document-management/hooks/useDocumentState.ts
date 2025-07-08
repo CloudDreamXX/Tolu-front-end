@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { DocumentsService, IDocument } from "entities/document";
-import { IFolder, FoldersService } from "entities/folder";
 import { CoachService, ISessionResult, Share } from "entities/coach";
+import { DocumentsService, IDocument } from "entities/document";
+import { FoldersService, IFolder } from "entities/folder";
 import { RootState } from "entities/store";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { findFilePath, PathEntry } from "./util";
 
 export const useDocumentState = () => {
   const { tab, documentId, folderId } = useParams();
@@ -18,6 +19,7 @@ export const useDocumentState = () => {
   const [conversation, setConversation] = useState<ISessionResult[]>([]);
   const [sharedClients, setSharedClients] = useState<Share[] | null>(null);
   const [documentTitle, setDocumentTitle] = useState<string>("");
+  const [documentPath, setDocumentPath] = useState<PathEntry[]>([]);
 
   const [isCreatingDocument, setIsCreatingDocument] = useState(false);
   const [streamingContent, setStreamingContent] = useState<string>("");
@@ -66,8 +68,10 @@ export const useDocumentState = () => {
       try {
         if (!folderId) return;
 
+        const documentPath = findFilePath(folders, documentId ?? "");
+        if (documentPath) setDocumentPath(documentPath);
+
         const response = await FoldersService.getFolder(folderId);
-        console.log("Fetched folder:", response);
         if (response) setFolder(response);
       } catch (error) {
         console.error("Error fetching folder:", error);
@@ -75,7 +79,7 @@ export const useDocumentState = () => {
     };
 
     fetchFolder();
-  }, [folderId, folders]);
+  }, [documentId, folderId, folders]);
 
   useEffect(() => {
     if (!isNewDocument && !isTemporaryDocument && documentId) {
@@ -99,6 +103,7 @@ export const useDocumentState = () => {
     isCreatingDocument,
     streamingContent,
     streamingIsHtml,
+    documentPath,
 
     // Computed
     isNewDocument,

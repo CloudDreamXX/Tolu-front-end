@@ -8,7 +8,9 @@ import Close from "shared/assets/icons/close";
 import Menu from "shared/assets/icons/menu";
 import Search from "shared/assets/icons/search";
 import SignOutIcon from "shared/assets/icons/signout";
+import { ScrollArea } from "shared/ui";
 import { Input } from "shared/ui/input";
+import WrapperFolderTree from "widgets/sidebars/ui/content-manager/FolderTree";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 
 type Props = {
@@ -17,6 +19,8 @@ type Props = {
 
 export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+
   const nav = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
@@ -66,7 +70,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
       {menuMobOpen && (
         <div className="fixed inset-0 bg-[#F1F3F5] top-[70px] md:top-0 md:bg-black md:bg-opacity-40 flex items-center justify-center z-50">
           <div
-            className="fixed top-0 right-0 bottom-0 left-0 bg-white z-[999] p-[16px] flex flex-col 
+            className="fixed top-0 right-0 bottom-0 left-0 bg-white z-[999] p-[4] pr-0 flex flex-col 
              md:w-[390px] md:right-[10px] md:top-[10px] md:bottom-[10px] md:left-auto md:rounded-[16px]"
             ref={menuMobRef}
           >
@@ -82,7 +86,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
               <button
                 onClick={() => setMenuMobOpen(false)}
                 aria-label="Close menu"
-                className="absolute top-[16px] right-[16px]"
+                className="absolute top-[16px] right-[16px] z-10"
               >
                 <span className="text-2xl font-bold">
                   <Close />
@@ -95,23 +99,46 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
               iconRight={<Chevron className="mr-[16px]" />}
               className="rounded-full px-[54px]"
             />
-            <div className="flex flex-col gap-4 mt-6">
-              {sideBarContent.map((link) => (
-                <NavLink
-                  key={link.title}
-                  to={link.link}
-                  onClick={() => setMenuMobOpen(false)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2 text-lg font-semibold rounded-md ${
-                      isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
-                    } hover:text-[#1C63DB]`
-                  }
-                >
-                  {link.icon}
-                  <span>{link.title}</span>
-                </NavLink>
-              ))}
-            </div>
+            <ScrollArea className="h-full pr-4">
+              <div className="flex flex-col gap-4 mt-6">
+                {sideBarContent.map((link) =>
+                  link.title === "Library" ? (
+                    <div key={link.title}>
+                      <div
+                        className={`flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold ${
+                          location.pathname.includes("library")
+                            ? "text-[#1C63DB]"
+                            : "text-[#1D1D1F]"
+                        }`}
+                        onClick={() => setIsLibraryOpen((prev) => !prev)}
+                      >
+                        {link.icon}
+                        {link.title}
+                      </div>
+                      {isLibraryOpen && (
+                        <WrapperFolderTree
+                          onCloseMobMenu={() => setMenuMobOpen(false)}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <NavLink
+                      key={link.title}
+                      to={link.link}
+                      onClick={() => setMenuMobOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold ${
+                          isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                        }`
+                      }
+                    >
+                      {link.icon}
+                      {link.title}
+                    </NavLink>
+                  )
+                )}
+              </div>
+            </ScrollArea>
           </div>
         </div>
       )}

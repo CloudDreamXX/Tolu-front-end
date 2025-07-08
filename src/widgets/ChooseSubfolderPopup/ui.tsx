@@ -24,7 +24,7 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
 
   return (
-    <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] w-full h-full backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[720px] lg:max-w-[742px] w-full shadow-lg mx-[16px] relative">
         <button
           onClick={onClose}
@@ -55,7 +55,7 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
           />
         </div>
 
-        <div className="flex flex-col flex-col-reverse gap-[8px] md:flex-row md:justify-between mt-[24px] md:mt-[48px]">
+        <div className="flex flex-col gap-[8px] md:flex-row md:justify-between mt-[24px] md:mt-[48px]">
           <button
             onClick={onClose}
             className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600]"

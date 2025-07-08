@@ -1,14 +1,16 @@
-import React from "react";
 import { ISessionResult } from "entities/coach";
+import React from "react";
+import Compare from "shared/assets/icons/compare";
+import Dislike from "shared/assets/icons/dislike";
+import Arrow from "shared/assets/icons/grey-arrow";
+import Bin from "shared/assets/icons/grey-bin";
+import Edit from "shared/assets/icons/grey-edit";
+import Folders from "shared/assets/icons/grey-folders";
+import MarkAs from "shared/assets/icons/grey-mark-as";
+
+import Voiceover from "shared/assets/icons/voiceover";
 import { Button } from "shared/ui";
 import { RatePopup } from "widgets/RatePopup";
-import Bin from "shared/assets/icons/grey-bin";
-import Arrow from "shared/assets/icons/grey-arrow";
-import Folders from "shared/assets/icons/grey-folders";
-import Edit from "shared/assets/icons/grey-edit";
-import MarkAs from "shared/assets/icons/grey-mark-as";
-import Dislike from "shared/assets/icons/dislike";
-import Voiceover from "shared/assets/icons/voiceover";
 
 interface ConversationItemActionsProps {
   pair: ISessionResult;
@@ -55,8 +57,8 @@ export const ConversationItemActions: React.FC<
   ) => {};
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="relative flex items-center">
+    <div className="flex flex-col items-start gap-2">
+      <div className="relative flex flex-col items-center gap-2">
         <RatePopup
           contentId={pair.id}
           ratingsMap={ratingsMap}
@@ -64,14 +66,14 @@ export const ConversationItemActions: React.FC<
         />
 
         <button
-          className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
           onClick={() => onEditToggle(pair, null)}
         >
           <Edit />
         </button>
 
         <button
-          className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
           onClick={() => {
             setSelectedDocumentId(pair.id);
             setIsMoveOpen(true);
@@ -81,25 +83,25 @@ export const ConversationItemActions: React.FC<
         </button>
 
         <button
-          className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
           onClick={() => handleDublicateClick(pair.id)}
         >
           <Folders />
         </button>
 
         <button
-          className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
           onClick={() => handleMarkAsClick(pair.id)}
         >
           <MarkAs />
         </button>
 
-        <button className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
+        <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center">
           <Voiceover />
         </button>
 
         <button
-          className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
           onClick={() => {
             setSelectedDocumentId(pair.id);
             setIsBadResponseOpen(true);
@@ -109,7 +111,7 @@ export const ConversationItemActions: React.FC<
         </button>
 
         <button
-          className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]"
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
           onClick={() => {
             setSelectedDocumentId(pair.id);
             setIsDeleteOpen(true);
@@ -120,14 +122,14 @@ export const ConversationItemActions: React.FC<
 
         <button
           onClick={() => onCompareToggle(index)}
-          className="py-[4px] px-[10px] rounded-[8px] text-[18px] text-[#5F5F65] ml-[16px] md:ml-[24px] hover:bg-[#EDF3FF] hover:text-[#1C63DB]"
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
         >
-          {compareIndex === index ? "Return" : "Compare"}
+          <Compare />
         </button>
       </div>
 
       {isEditing && (
-        <div className="flex gap-[8px]">
+        <div className="flex flex-col gap-[8px]">
           <Button
             variant="secondary"
             className="text-[#1C63DB] text-[16px] font-semibold"

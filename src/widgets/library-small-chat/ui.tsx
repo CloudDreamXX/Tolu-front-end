@@ -24,7 +24,12 @@ import { GoalsForm } from "./components/goals-form";
 import { HealthHistoryForm } from "./components/health-history-form";
 import { LifestyleForm } from "./components/lifestyle-form";
 import { SymptomsForm } from "./components/symptoms-form";
-import { mapFormToPostData, mapHealthHistoryToFormDefaults } from "./lib";
+import {
+  baseSchema,
+  mapFormToPostData,
+  mapHealthHistoryToFormDefaults,
+} from "./lib";
+import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 
 const steps = [
   "Symptoms",
@@ -33,40 +38,23 @@ const steps = [
   "Your Goals",
 ];
 
-export const baseSchema = z.object({
-  age: z.string(),
-  maritalStatus: z.string(),
-  job: z.string(),
-  children: z.string(),
-  menopauseStatus: z.string(),
-  mainSymptoms: z.string(),
-  otherChallenges: z.string(),
-  strategiesTried: z.string(),
-  diagnosedConditions: z.string(),
-  geneticTraits: z.string(),
-  maternalSide: z.string(),
-  paternalSide: z.string(),
-  notableConcern: z.string(),
-  lifestyleInfo: z.string(),
-  takeout: z.string(),
-  homeCooked: z.string(),
-  dietType: z.string(),
-  exercise: z.string(),
-  limitations: z.string(),
-  medications: z.string(),
-  period: z.string(),
-  sexLife: z.string(),
-  supportSystem: z.string(),
-  goals: z.string(),
-});
-
-type Props = {
+interface LibrarySmallChatProps {
   healthHistory?: HealthHistory;
-};
+  isCoach?: boolean;
+}
 
-export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
+export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
+  healthHistory,
+  isCoach,
+}) => {
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+
+  const config = isCoach ? SWITCH_CONFIG.coach : SWITCH_CONFIG.default;
+  const [selectedSwitch, setSelectedSwitch] = useState<string>(
+    config.options[0] as string
+  );
+  const isSwitch = (value: SwitchValue) => selectedSwitch === value;
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -74,9 +62,8 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentChatId, setCurrentChatId] = useState<string>("");
   const [chatTitle, setChatTitle] = useState<string>("");
-  const [personalize, setPersonalize] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [isContentMode, setIsContentMode] = useState(false);
+
   const form = useForm<z.infer<typeof baseSchema>>({
     resolver: zodResolver(baseSchema),
     defaultValues: mapHealthHistoryToFormDefaults(healthHistory),
@@ -93,15 +80,11 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
     if (isSearching) return;
 
     if (currentChatId) {
-      navigate(`/library/${currentChatId}`);
+      navigate(`${isCoach ? "/content-manager" : ""}/library/${currentChatId}`);
     } else {
       const newChatId = `new_chat_${Date.now()}`;
-      navigate(`/library/${newChatId}`);
+      navigate(`${isCoach ? "/content-manager" : ""}/library/${newChatId}`);
     }
-  };
-
-  const togglePersonalize = () => {
-    setPersonalize(!personalize);
   };
 
   const handleNewMessage = async (
@@ -110,7 +93,7 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
   ): Promise<string | undefined> => {
     if ((!message.trim() && files.length === 0) || isSearching) return;
 
-    if (personalize) {
+    if (isSwitch(SWITCH_KEYS.PERSONALIZE)) {
       try {
         const formValues = form.getValues();
         const postData = mapFormToPostData(formValues);
@@ -159,13 +142,13 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
             is_new: !currentChatId,
             chat_id: currentChatId,
             regenerate_id: null,
-            personalize: personalize,
+            personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
           }),
           ...(image && { image }),
           ...(pdf && { pdf }),
         },
         async (chunk: StreamChunk) => {
-          if (isContentMode && chunk.content) {
+          if (isSwitch(SWITCH_KEYS.CONTENT) && chunk.content) {
             if (chunk.content.includes("Relevant Content")) {
               str = chunk.content;
             } else {
@@ -206,7 +189,7 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
           setError(error.message);
           console.error("Search error:", error);
         },
-        isContentMode
+        isSwitch(SWITCH_KEYS.CONTENT)
       );
     } catch (error) {
       setIsSearching(false);
@@ -269,7 +252,7 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
                       I’m currently taking ${values.medications}, my periods are ${values.period}, and my sex life is ${values.sexLife}. 
                       I usually rely on ${values.supportSystem} for emotional support. What I really want is to ${values.goals}.`;
 
-      setPersonalize(false);
+      setSelectedSwitch(config.defaultOption);
       await handleNewMessage(message, []);
       form.reset();
       setCurrentStep(0);
@@ -286,8 +269,9 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
 
   return (
     <>
-      {personalize && healthHistory ? (
-        <Card className="flex flex-col w-full border-none h-fit rounded-2xl">
+      {(isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory) ||
+      isSwitch(SWITCH_KEYS.CASE) ? (
+        <Card className="flex flex-col w-full overflow-auto border-none h-fit rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
@@ -302,14 +286,14 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
             </button>
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
-          <CardContent className="px-6 pb-0">
-            <div className="p-[24px] border border-[#008FF6] rounded-[20px]">
+          <CardContent className="w-full px-6 pb-0">
+            <div className="p-[24px] border border-[#008FF6] rounded-[20px] h-[calc(100vh-490.57px)] overflow-y-auto">
               <p className="text-[24px] text-[#1D1D1F] font-[500]">
                 Personal story
               </p>
               <Steps
                 steps={steps}
-                stepWidth={"w-[462px]"}
+                stepWidth={"w-full"}
                 currentStep={currentStep}
                 ordered
                 onStepClick={handleStepClick}
@@ -335,9 +319,10 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
             <LibraryChatInput
               className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
-              personalize={personalize}
               disabled={isSearching}
-              togglePersonalize={togglePersonalize}
+              switchOptions={config.options}
+              selectedSwitch={selectedSwitch}
+              setSelectedSwitch={setSelectedSwitch}
             />
           </CardFooter>
         </Card>
@@ -369,11 +354,10 @@ export const LibrarySmallChat: React.FC<Props> = ({ healthHistory }) => {
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={isSearching}
-              personalize={personalize}
-              togglePersonalize={togglePersonalize}
+              switchOptions={config.options}
+              selectedSwitch={selectedSwitch}
+              setSelectedSwitch={setSelectedSwitch}
               healthHistory={healthHistory}
-              isContentMode={isContentMode}
-              toggleIsContentMode={() => setIsContentMode((prev) => !prev)}
             />
           </CardFooter>
         </Card>

@@ -30,12 +30,12 @@ export const Steps: React.FC<StepsProps> = ({
               type="button"
               disabled={disabled}
               onClick={() => onStepClick(index)}
-              className={`flex items-center justify-center flex-shrink-0 h-10 transition-all rounded-full ${
+              className={`flex items-center justify-center w-10 h-10 transition-all rounded-full  ${
                 isCompleted
-                  ? "w-10 bg-[#BCE2C8] border border-[#062] text-[#062]"
+                  ? "w-10 bg-[#BCE2C8] border border-[#062] text-[#062] shrink-0"
                   : isCurrent
                     ? `px-4 ${stepWidth || ""} bg-gray-100 border border-gray-300 text-black font-medium`
-                    : "w-10 border border-gray-300 text-gray-600"
+                    : "w-10 border border-gray-300 text-gray-600 shrink-0"
               }`}
             >
               {isCompleted ? (
@@ -49,7 +49,7 @@ export const Steps: React.FC<StepsProps> = ({
 
             {index < steps.length - 1 && (
               <div
-                className={`flex-grow h-[1px] ${
+                className={`flex-grow h-[1px] w-[10%] ${
                   isCompleted ? "bg-[#062]" : "bg-gray-300"
                 }`}
               />

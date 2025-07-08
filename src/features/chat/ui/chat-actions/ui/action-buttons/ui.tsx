@@ -25,58 +25,61 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   const [thumbsDownModalOpen, setThumbsDownModalOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col justify-between">
       <HistoryPopup />
-      <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-        <CopyIcon weight="bold" className="w-4 h-4 m-auto text-blue-600" />
-      </button>
-      <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-        <ShareIcon weight="bold" className="w-4 h-4 m-auto text-blue-600" />
-      </button>
-      <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-        <SpeakerSimpleHighIcon
-          weight="bold"
-          className="w-4 h-4 m-auto text-blue-600"
-        />
-      </button>
-      <FeedbackModal
-        initialRating={5}
-        isOpen={thumbsUpModalOpen}
-        onOpenChange={setThumbsUpModalOpen}
-      >
-        <button
-          className="bg-[#DDEBF6] rounded-full h-8 w-8"
-          onClick={() => setThumbsUpModalOpen(true)}
-        >
-          <ThumbsUpIcon
+
+      <div className="flex flex-col gap-2">
+        <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
+          <CopyIcon weight="bold" className="w-4 h-4 m-auto text-blue-600" />
+        </button>
+        <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
+          <ShareIcon weight="bold" className="w-4 h-4 m-auto text-blue-600" />
+        </button>
+        <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
+          <SpeakerSimpleHighIcon
             weight="bold"
             className="w-4 h-4 m-auto text-blue-600"
           />
         </button>
-      </FeedbackModal>
-      <FeedbackModal
-        initialRating={1}
-        isOpen={thumbsDownModalOpen}
-        onOpenChange={setThumbsDownModalOpen}
-      >
+        <FeedbackModal
+          initialRating={5}
+          isOpen={thumbsUpModalOpen}
+          onOpenChange={setThumbsUpModalOpen}
+        >
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            onClick={() => setThumbsUpModalOpen(true)}
+          >
+            <ThumbsUpIcon
+              weight="bold"
+              className="w-4 h-4 m-auto text-blue-600"
+            />
+          </button>
+        </FeedbackModal>
+        <FeedbackModal
+          initialRating={1}
+          isOpen={thumbsDownModalOpen}
+          onOpenChange={setThumbsDownModalOpen}
+        >
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            onClick={() => setThumbsDownModalOpen(true)}
+          >
+            <ThumbsDownIcon
+              weight="bold"
+              className="w-4 h-4 m-auto text-blue-600"
+            />
+          </button>
+        </FeedbackModal>
         <button
           className="bg-[#DDEBF6] rounded-full h-8 w-8"
-          onClick={() => setThumbsDownModalOpen(true)}
+          onClick={onRegenerate}
+          disabled={isSearching || !hasMessages}
+          title="Regenerate response"
         >
-          <ThumbsDownIcon
-            weight="bold"
-            className="w-4 h-4 m-auto text-blue-600"
-          />
+          <RotateCw className="w-4 h-4 m-auto text-blue-600" />
         </button>
-      </FeedbackModal>
-      <button
-        className="bg-[#DDEBF6] rounded-full h-8 w-8"
-        onClick={onRegenerate}
-        disabled={isSearching || !hasMessages}
-        title="Regenerate response"
-      >
-        <RotateCw className="w-4 h-4 m-auto text-blue-600" />
-      </button>
+      </div>
     </div>
   );
 };

@@ -116,7 +116,7 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
 
   return (
     <>
-      <div className="overflow-x-auto rounded-2xl p-[24px] border border-[#E6E6E6] bg-white hidden md:block">
+      <div className="overflow-x-auto rounded-2xl p-[24px] w-full border border-[#E6E6E6] bg-white hidden md:block">
         <table className="min-w-full text-sm">
           <thead className="bg-white text-[#5F5F65] text-left mb-[10px] font-[500]">
             <tr>

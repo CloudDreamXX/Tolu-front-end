@@ -1,48 +1,47 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { MainLayout, ProtectedRoute } from "./ui";
 import { Auth } from "pages/auth";
 import {
+  ContentManagerAiGenerated,
+  ContentManagerApproved,
+  ContentManagerArchived,
   ContentManagerCreatePage,
   ContentManagerDocument,
-  ContentManagerAiGenerated,
-  ContentManagerInReview,
-  ContentManagerApproved,
   ContentManagerFolder,
+  ContentManagerInReview,
   ContentManagerPublished,
-  ContentManagerArchived,
 } from "pages/content-manager";
-import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
-import { NewPassword } from "widgets/auth-forms/ui/new-password";
-import { Register } from "widgets/auth-forms";
-import { CheckEmail } from "widgets/auth-forms/ui/check-email";
-import { OnboardingWelcome } from "widgets/OnboardingPractitioner/onboarding-welcome";
-import { OnboardingMain } from "widgets/OnboardingPractitioner/onboarding-main";
-import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
-import { SelectType } from "widgets/OnboardingPractitioner/select-type";
-import { AboutYourPractice } from "widgets/OnboardingPractitioner/about-your-practice";
-import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
-import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
-import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
-import { WelcomeScreen } from "widgets/OnboardingClient/WelcomeScreen";
-import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
-import { WhatBrringsYouHere } from "widgets/OnboardingClient/WhatBringsYouHere";
-import { Values } from "widgets/OnboardingClient/Values";
-import { Barriers } from "widgets/OnboardingClient/Barriers";
-import { Support } from "widgets/OnboardingClient/Support";
-import { PersonalityType } from "widgets/OnboardingClient/PersonalityType";
-import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
-import { Readiness } from "widgets/OnboardingClient/Readiness";
-import { Summary } from "widgets/OnboardingClient/Summary";
-import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
+import { ContentManagerClients } from "pages/content-manager/clients";
+import { ContentManagerMessages } from "pages/content-manager/messages";
 import { HealthSnapshot } from "pages/health-snapshot";
 import { Library } from "pages/library";
-import { ContentManagerClients } from "pages/content-manager/clients";
-import { ContentManagerLibrary } from "pages/content-manager/library";
 import { LibraryChat } from "pages/library-chat";
-import { ContentManagerMessages } from "pages/content-manager/messages";
-import { UserManagement } from "pages/user-management";
 import { LibraryDocument } from "pages/library-document";
+import { UserManagement } from "pages/user-management";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { Register } from "widgets/auth-forms";
+import { CheckEmail } from "widgets/auth-forms/ui/check-email";
+import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
+import { NewPassword } from "widgets/auth-forms/ui/new-password";
+import { Barriers } from "widgets/OnboardingClient/Barriers";
+import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
+import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
+import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
 import { OnboardingPersonalStory } from "widgets/OnboardingClient/OnboardingPersonalStory";
+import { PersonalityType } from "widgets/OnboardingClient/PersonalityType";
+import { Readiness } from "widgets/OnboardingClient/Readiness";
+import { Summary } from "widgets/OnboardingClient/Summary";
+import { Support } from "widgets/OnboardingClient/Support";
+import { Values } from "widgets/OnboardingClient/Values";
+import { WelcomeScreen } from "widgets/OnboardingClient/WelcomeScreen";
+import { WhatBrringsYouHere } from "widgets/OnboardingClient/WhatBringsYouHere";
+import { AboutYourPractice } from "widgets/OnboardingPractitioner/about-your-practice";
+import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
+import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
+import { OnboardingMain } from "widgets/OnboardingPractitioner/onboarding-main";
+import { OnboardingWelcome } from "widgets/OnboardingPractitioner/onboarding-welcome";
+import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
+import { SelectType } from "widgets/OnboardingPractitioner/select-type";
+import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
+import { MainLayout, ProtectedRoute } from "./ui";
 
 export const AppRoutes = () => {
   return (
@@ -97,10 +96,6 @@ export const AppRoutes = () => {
           element={<ContentManagerMessages />}
         />
         <Route
-          path="/content-manager/library"
-          element={<ContentManagerLibrary />}
-        />
-        <Route
           path="/content-manager/ai-generated"
           element={<ContentManagerAiGenerated />}
         />
@@ -122,6 +117,10 @@ export const AppRoutes = () => {
           element={<ContentManagerArchived />}
         />
         <Route
+          path="/content-manager/library/:chatId"
+          element={<LibraryChat />}
+        />
+        <Route
           path="/content-manager/:tab/folder/:folderId"
           element={<ContentManagerFolder />}
         />
@@ -133,14 +132,8 @@ export const AppRoutes = () => {
           path="/content-manager/published"
           element={<div>Published</div>}
         />
-        <Route
-          path="*"
-          element={<Navigate to={"/content-manager/library"} />}
-        />
-        <Route
-          path="/content-manager"
-          element={<Navigate to={"/content-manager/library"} />}
-        />
+        <Route path="*" element={<Navigate to={"/clients"} />} />
+        <Route path="/content-manager" element={<Navigate to={"/clients"} />} />
       </Route>
 
       <Route

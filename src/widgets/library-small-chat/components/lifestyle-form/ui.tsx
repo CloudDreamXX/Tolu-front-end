@@ -1,7 +1,7 @@
 import { Controller, UseFormReturn } from "react-hook-form";
-import { baseSchema } from "widgets/library-small-chat";
+import { baseSchema } from "widgets/library-small-chat/lib";
 import { z } from "zod";
-import { CustomSelect } from "../CustomSelect/ui";
+import { CustomSelect } from "../CustomSelect";
 import { MultiSelect } from "../MultiSelect";
 
 export type FormValues = z.infer<typeof baseSchema>;

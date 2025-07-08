@@ -1,6 +1,32 @@
 import { HealthHistory, HealthHistoryPostData } from "entities/health-history";
 import z from "zod";
-import { baseSchema } from "./ui";
+
+export const baseSchema = z.object({
+  age: z.string(),
+  maritalStatus: z.string(),
+  job: z.string(),
+  children: z.string(),
+  menopauseStatus: z.string(),
+  mainSymptoms: z.string(),
+  otherChallenges: z.string(),
+  strategiesTried: z.string(),
+  diagnosedConditions: z.string(),
+  geneticTraits: z.string(),
+  maternalSide: z.string(),
+  paternalSide: z.string(),
+  notableConcern: z.string(),
+  lifestyleInfo: z.string(),
+  takeout: z.string(),
+  homeCooked: z.string(),
+  dietType: z.string(),
+  exercise: z.string(),
+  limitations: z.string(),
+  medications: z.string(),
+  period: z.string(),
+  sexLife: z.string(),
+  supportSystem: z.string(),
+  goals: z.string(),
+});
 
 export const mapHealthHistoryToFormDefaults = (
   healthHistory?: HealthHistory

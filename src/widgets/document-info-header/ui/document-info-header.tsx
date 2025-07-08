@@ -1,12 +1,12 @@
-import React from "react";
-import { IDocument } from "entities/document";
 import { Share } from "entities/coach";
+import { IDocument } from "entities/document";
 import {
+  ClientsInfo,
   DocumentFolderInfo,
   FilesInfo,
   InstructionInfo,
-  ClientsInfo,
 } from "entities/folder";
+import React from "react";
 
 interface DocumentInfoHeaderProps {
   document: IDocument | null;
@@ -22,7 +22,7 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
   refreshSharedClients,
 }) => {
   return (
-    <div className="flex w-full flex-col md:flex-row gap-[12px] md:gap-[41px] md:min-h-[50px] md:items-center">
+    <div className="flex w-full flex-col md:flex-row gap-[2px] md:gap-[41px] md:min-h-[50px] md:items-center">
       {document ? (
         <DocumentFolderInfo
           folderId={document.originalFolderId}

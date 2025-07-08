@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
+import { baseSchema } from "widgets/library-small-chat/lib";
 import { z } from "zod";
-import { baseSchema } from "widgets/library-small-chat";
 
 export type FormValues = z.infer<typeof baseSchema>;
 

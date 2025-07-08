@@ -26,7 +26,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   setClientId,
 }) => {
   return (
-    <div className="absolute bottom-0 w-full h-[150px] xl:left-1/2 xl:-translate-x-1/2 xl:w-[1080px] bg-[#F2F4F6] z-10">
+    <div className="absolute bottom-0 w-full h-[150px] xl:left-1/2 xl:-translate-x-1/2  bg-[#F2F4F6] z-10">
       <Textarea
         value={message}
         onChange={(e) => onMessageChange(e.target.value)}

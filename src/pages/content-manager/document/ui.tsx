@@ -1,22 +1,23 @@
 import React, { useEffect } from "react";
 import { ScrollArea } from "shared/ui";
-import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
-import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
+import { BadRateResponse } from "widgets/bad-rate-response-popup";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
-import { DocumentBreadcrumbs } from "widgets/document-breadcrumbs";
-import { DocumentInfoHeader } from "widgets/document-info-header";
-import { DocumentHeader } from "widgets/document-header";
+import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
 import { ConversationList } from "widgets/conversation-list";
+import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
+import { DocumentBreadcrumbs } from "widgets/document-breadcrumbs";
+import { DocumentHeader } from "widgets/document-header";
+import { DocumentInfoHeader } from "widgets/document-info-header";
 import { MessageInput } from "widgets/message-input";
 import { UserEngagementSidebar } from "widgets/user-engagement-sidebar";
-import { BadRateResponse } from "widgets/bad-rate-response-popup";
 
 import {
-  useDocumentState,
-  useMessageState,
   useContentActions,
   useDocumentCreation,
+  useDocumentState,
+  useMessageState,
 } from "features/document-management";
+import { LibrarySmallChat } from "widgets/library-small-chat";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -42,9 +43,8 @@ export const ContentManagerDocument: React.FC = () => {
     refreshSharedClients,
     navigate,
     location,
+    documentPath,
   } = useDocumentState();
-
-  console.log(folder);
 
   const {
     message,
@@ -73,6 +73,7 @@ export const ContentManagerDocument: React.FC = () => {
     editedQuery,
     selectedDocumentId,
     selectedDocumentStatus,
+    isRateOpen,
     setCompareIndex,
     setMobilePage,
     setIsMarkAsOpen,
@@ -85,6 +86,7 @@ export const ContentManagerDocument: React.FC = () => {
     setEditedTitle,
     setEditedQuery,
     setSelectedDocumentId,
+    setIsRateOpen,
     onStatusComplete,
     handleMarkAsClick,
     handleRateClick,
@@ -164,10 +166,10 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:px-[60px] pt-6 h-[calc(100vh-78px)] w-full">
-      <div className="flex flex-row w-full h-full gap-[26px]">
+    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] pt-2 md:pt-6 h-[calc(100vh-78px)] w-full">
+      <div className="flex flex-row justify-end w-full h-full gap-[26px]">
         <div className="relative flex flex-col w-full h-full gap-2">
-          <DocumentBreadcrumbs tab={tab} folder={folder} />
+          <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
 
           <DocumentInfoHeader
             document={document}
@@ -176,8 +178,8 @@ export const ContentManagerDocument: React.FC = () => {
             refreshSharedClients={refreshSharedClients}
           />
 
-          <div className="flex flex-col h-full pt-6 w-full overflow-hidden xl:max-w-[1080px] m-auto">
-            <ScrollArea className="h-[calc(100%-64px)]">
+          <div className="flex flex-col h-full bg-white p-2 pr-0 md:p-8 md:pr-0 w-full overflow-hidden m-auto rounded-tl-[24px] rounded-tr-[24px]">
+            <ScrollArea className="h-[calc(100%-64px)] pr-2 md:pr-6">
               <DocumentHeader
                 documentTitle={documentTitle}
                 query={document?.query}
@@ -212,6 +214,7 @@ export const ContentManagerDocument: React.FC = () => {
                 setIsBadResponseOpen={setIsBadResponseOpen}
                 setIsDeleteOpen={setIsDeleteOpen}
                 setIsMoveOpen={setIsMoveOpen}
+                setIsRateOpen={setIsRateOpen}
                 setEditedTitle={setEditedTitle}
                 setEditedQuery={setEditedQuery}
                 setEditedContent={setEditedContent}
@@ -292,6 +295,10 @@ export const ContentManagerDocument: React.FC = () => {
             parentFolderId={folder?.parentFolderId ?? ""}
           />
         )}
+
+        <div className="hidden xl:block max-w-[40%] w-full">
+          <LibrarySmallChat isCoach />
+        </div>
       </div>
     </div>
   );

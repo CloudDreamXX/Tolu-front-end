@@ -1,10 +1,10 @@
-import Book from "shared/assets/icons/book";
-import { SideBarItem } from "../model";
 import Approved from "shared/assets/icons/approved";
+import Book from "shared/assets/icons/book";
 import Box from "shared/assets/icons/box";
+import Community from "shared/assets/icons/community";
 import Dashboard from "shared/assets/icons/dashboard";
 import Workshops from "shared/assets/icons/workshops";
-import Community from "shared/assets/icons/community";
+import { SideBarItem } from "../model";
 
 export const sideBarContent: SideBarItem[] = [
   {
@@ -19,7 +19,7 @@ export const sideBarContent: SideBarItem[] = [
   },
   {
     title: "Library",
-    link: "/content-manager/library",
+    link: "",
     icon: <Book width={24} height={24} />,
   },
   {

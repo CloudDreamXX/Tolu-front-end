@@ -1,10 +1,10 @@
-import React from "react";
-import parse from "html-react-parser";
 import { ISessionResult } from "entities/coach";
+import parse from "html-react-parser";
+import React from "react";
+import ReactQuill from "react-quill";
+import BlueChevron from "shared/assets/icons/blue-chevron";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
-import BlueChevron from "shared/assets/icons/blue-chevron";
-import ReactQuill from "react-quill";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -157,7 +157,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
       </div>
 
       {/* Desktop layout */}
-      <div className="flex-row hidden gap-4 md:flex">
+      <div className="flex-row w-full gap-4">
         {/* previous version */}
         <div className="flex-1 p-6 flex flex-col gap-[64px]">
           {isHtmlContent(conversation[index - 1].content) ? (
@@ -202,7 +202,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   );
 
   const renderEditView = () => (
-    <>
+    <div className="flex flex-col gap-2">
       <input
         type="text"
         value={editedTitle}
@@ -226,7 +226,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           toolbar: false,
         }}
       />
-    </>
+    </div>
   );
 
   const renderContent = () => {
@@ -248,31 +248,33 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
       {compareIndex === index && index > 0 && renderCompareView()}
 
-      {compareIndex !== index && (
-        <>
-          {isEditing && selectedDocumentId === pair.id
-            ? renderEditView()
-            : renderContent()}
-        </>
-      )}
+      <div className="flex flex-row-reverse gap-2 md:gap-6">
+        {compareIndex !== index && (
+          <>
+            {isEditing && selectedDocumentId === pair.id
+              ? renderEditView()
+              : renderContent()}
+          </>
+        )}
 
-      <ConversationItemActions
-        pair={pair}
-        ratingsMap={ratingsMap}
-        compareIndex={compareIndex}
-        index={index}
-        isEditing={isEditing}
-        onCompareToggle={onCompareToggle}
-        onEditToggle={onEditToggle}
-        onSaveEdit={onSaveEdit}
-        onCancelEdit={onCancelEdit}
-        setSelectedDocumentId={setSelectedDocumentId}
-        setIsBadResponseOpen={setIsBadResponseOpen}
-        setIsDeleteOpen={setIsDeleteOpen}
-        setIsMoveOpen={setIsMoveOpen}
-        handleDublicateClick={handleDublicateClick}
-        handleMarkAsClick={handleMarkAsClick}
-      />
+        <ConversationItemActions
+          pair={pair}
+          ratingsMap={ratingsMap}
+          compareIndex={compareIndex}
+          index={index}
+          isEditing={isEditing}
+          onCompareToggle={onCompareToggle}
+          onEditToggle={onEditToggle}
+          onSaveEdit={onSaveEdit}
+          onCancelEdit={onCancelEdit}
+          setSelectedDocumentId={setSelectedDocumentId}
+          setIsBadResponseOpen={setIsBadResponseOpen}
+          setIsDeleteOpen={setIsDeleteOpen}
+          setIsMoveOpen={setIsMoveOpen}
+          handleDublicateClick={handleDublicateClick}
+          handleMarkAsClick={handleMarkAsClick}
+        />
+      </div>
     </div>
   );
 };

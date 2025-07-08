@@ -42,7 +42,7 @@ export const HistoryPopup: React.FC = () => {
     <div ref={historyRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="bg-[#DDEBF6] rounded-full h-8 w-8 mb-9"
+        className="bg-[#DDEBF6] rounded-full h-8 w-8"
       >
         <BooksIcon weight="regular" className="w-4 h-4 m-auto text-blue-600" />
       </button>

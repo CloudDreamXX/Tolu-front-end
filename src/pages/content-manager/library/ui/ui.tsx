@@ -1,7 +1,5 @@
-import AiCreate from "shared/assets/icons/ai-create";
-import Search from "shared/assets/icons/search";
-import { useCallback, useEffect, useState, useMemo } from "react";
-import { Card, Input } from "shared/ui";
+import { CoachService, Content } from "entities/coach";
+import { ContentService } from "entities/content";
 import {
   ContentToMove,
   FoldersService,
@@ -11,15 +9,16 @@ import {
   setFolders,
 } from "entities/folder";
 import { RootState } from "entities/store";
-import { useSelector, useDispatch } from "react-redux";
-import { DateSelector } from "shared/ui/date-selector";
+import { Search } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import AiCreate from "shared/assets/icons/ai-create";
+import { Card, DateSelector, Input } from "shared/ui";
 import { useLibraryLogic } from "../lib";
-import { LibraryMobileView } from "./mobile-table";
-import { LibraryDesktopView } from "./desktop-table";
 import { TableRow } from "../models";
-import { CoachService, Content } from "entities/coach";
-import { ContentService } from "entities/content";
 import { ContentCard } from "./content-card/ui";
+import { LibraryDesktopView } from "./desktop-table";
+import { LibraryMobileView } from "./mobile-table";
 
 export const ContentManagerLibrary: React.FC = () => {
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());

@@ -87,7 +87,7 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
 
   return (
     <dialog
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      className="fixed inset-0 z-[999] flex items-center w-full h-full justify-center bg-black/30 backdrop-blur-sm"
       aria-modal="true"
       aria-labelledby="modal-title"
     >

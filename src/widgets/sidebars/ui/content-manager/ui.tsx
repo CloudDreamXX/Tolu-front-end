@@ -1,18 +1,21 @@
-import { sideBarContent } from "./lib";
+import { File } from "lucide-react";
+import { FOLDERS } from "pages/content-manager";
+import { MOCK_DOCUMENT } from "pages/content-manager/document/mock";
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
-import Dots from "shared/assets/icons/dots";
-import { FOLDERS } from "pages/content-manager";
-import ClosedFolder from "shared/assets/icons/closed-folder";
-import { MOCK_DOCUMENT } from "pages/content-manager/document/mock";
-import { File } from "lucide-react";
-import { Button } from "shared/ui";
 import AiCreate from "shared/assets/icons/ai-create";
+import ClosedFolder from "shared/assets/icons/closed-folder";
+import Dots from "shared/assets/icons/dots";
+import { Button, ScrollArea } from "shared/ui";
+import WrapperFolderTree from "./FolderTree";
+import { sideBarContent } from "./lib";
 
 export const ContentManagerSidebar: React.FC = () => {
   const location = useLocation();
   const [links] = useState(sideBarContent);
-  const [folder, setFolder] = useState<string | null>(null);
+
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [folder, setFolder] = useState<string | null>();
   const [document, setDocument] = useState<string | null>(null);
   const [tab, setTab] = useState<string | null>(null);
   const [isNarrow, setIsNarrow] = useState(false);
@@ -40,76 +43,99 @@ export const ContentManagerSidebar: React.FC = () => {
   }, []);
 
   return (
-    <div
-      className={`flex flex-col gap-8 h-full ${isNarrow ? "w-[81px] items-center" : "w-[284px]"}`}
-    >
-      <div className="flex flex-col items-center text-center">
-        <h2
-          className={`${isNarrow ? "text-[27px]" : "text-[40px]"} font-bold font-open`}
-        >
-          TOLU
-        </h2>
-        {!isNarrow && (
-          <h3 className="text-[24px] font-semibold font-open">
-            Practitioner Admin
-          </h3>
-        )}
-      </div>
-      <div className="flex flex-col items-center gap-[24px]">
-        <Button
-          variant="brightblue"
-          className="w-full"
-          onClick={() => nav("/content-manager/create")}
-        >
-          <AiCreate />
-          Create with Tolu
-        </Button>
+    <ScrollArea className="h-[calc(100vh-64px)] pr-8">
+      <div
+        className={`flex flex-col gap-8 h-full ${isNarrow ? "w-[81px] items-center" : "w-[316px]"}`}
+      >
+        <div className="flex flex-col items-center text-center">
+          <h2
+            className={`${isNarrow ? "text-[27px]" : "text-[40px]"} font-bold font-open`}
+          >
+            TOLU
+          </h2>
+          {!isNarrow && (
+            <h3 className="text-[24px] font-semibold font-open">
+              Practitioner Admin
+            </h3>
+          )}
+        </div>
         <div
-          className={`flex flex-col ${isNarrow ? "items-center" : "items-start"}`}
+          className={`flex flex-col ${isNarrow ? "items-center" : "items-start"} gap-[24px]`}
         >
-          {links.map((link) => (
-            <div key={link.title} className="flex flex-col w-full">
-              <NavLink
-                to={link.link}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
-                  }`
-                }
-              >
-                {link.icon}
-                {!isNarrow && link.title}
-              </NavLink>
-              {link.title.toLowerCase() === tab && folder && (
-                <NavLink
-                  to={`/content-manager/${tab}/folder/${folderId}`}
-                  className={`flex flex-row w-full gap-2 px-4 py-[7px] ${isNarrow ? "pl-4" : "pl-12"} box-border`}
-                >
-                  <ClosedFolder width={24} height={24} />
-                  {!isNarrow && (
-                    <span className={`${!document && "font-extrabold"}`}>
-                      {folder}
-                    </span>
-                  )}
-                  <Dots className="ml-auto" />
-                </NavLink>
-              )}
-              {link.title.toLowerCase() === tab && document && (
-                <NavLink
-                  to={`/content-manager/${tab}/folder/${folderId}/${documentId}`}
-                  className={`flex flex-row w-full gap-2 px-4 py-[7px] ${isNarrow ? "pl-6" : "pl-16"} box-border`}
-                >
-                  <File width={24} height={24} className="min-w-6" />
-                  {!isNarrow && (
-                    <span className="font-extrabold truncate">{document}</span>
-                  )}
-                  <Dots className="ml-auto min-w-6" />
-                </NavLink>
-              )}
-            </div>
-          ))}
+          <Button
+            variant="brightblue"
+            className="w-full"
+            onClick={() => nav("/content-manager/create")}
+          >
+            <AiCreate />
+            Create with Tolu
+          </Button>
+          <div
+            className={`flex flex-col ${isNarrow ? "items-center" : "items-start"}`}
+          >
+            {links.map((link) => (
+              <div key={link.title} className="flex flex-col w-full">
+                {link.title === "Library" ? (
+                  <div key={link.title}>
+                    <div
+                      className={`flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] cursor-pointer ${
+                        location.pathname.includes("library")
+                          ? "text-[#1C63DB]"
+                          : "text-[#1D1D1F]"
+                      }`}
+                      onClick={() => setIsLibraryOpen((prev) => !prev)}
+                    >
+                      {link.icon}
+                      {!isNarrow && link.title}
+                    </div>
+                    {isLibraryOpen && <WrapperFolderTree />}
+                  </div>
+                ) : (
+                  <NavLink
+                    to={link.link}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] ${
+                        isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                      }`
+                    }
+                  >
+                    {link.icon}
+                    {!isNarrow && link.title}
+                  </NavLink>
+                )}
+                {link.title.toLowerCase() === tab && folder && (
+                  <NavLink
+                    to={`/content-manager/${tab}/folder/${folderId}`}
+                    className={`flex flex-row w-full gap-2 px-4 py-[7px] ${isNarrow ? "pl-4" : "pl-12"} box-border`}
+                  >
+                    <ClosedFolder width={24} height={24} />
+                    {!isNarrow && (
+                      <span className={`${!document && "font-extrabold"}`}>
+                        {folder}
+                      </span>
+                    )}
+                    <Dots className="ml-auto" />
+                  </NavLink>
+                )}
+                {link.title.toLowerCase() === tab && document && (
+                  <NavLink
+                    to={`/content-manager/${tab}/folder/${folderId}/${documentId}`}
+                    className={`flex flex-row w-full gap-2 px-4 py-[7px] ${isNarrow ? "pl-6" : "pl-16"} box-border`}
+                  >
+                    <File width={24} height={24} className="min-w-6" />
+                    {!isNarrow && (
+                      <span className="font-extrabold truncate">
+                        {document}
+                      </span>
+                    )}
+                    <Dots className="ml-auto min-w-6" />
+                  </NavLink>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 };

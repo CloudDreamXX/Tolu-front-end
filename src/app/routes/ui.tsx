@@ -1,9 +1,9 @@
-import { Outlet, Navigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { RootState } from "entities/store";
 import { ReactElement } from "react";
-import { getSideBar } from "widgets/sidebars";
+import { useSelector } from "react-redux";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { getNavigation } from "widgets/navigations/lib";
+import { getSideBar } from "widgets/sidebars";
 
 interface ProtectedRouteProps {
   allowedRoles: string[];
@@ -34,7 +34,7 @@ export const MainLayout: React.FC<{
 }> = ({ children, mainLocation }) => {
   return (
     <div className="flex flex-row w-full h-screen min-h-screen overflow-hidden min-w-screen">
-      <div className="hidden xl:block h-full px-[16px] py-8">
+      <div className="hidden xl:block h-full px-[16px] py-8 pr-0">
         {getSideBar(mainLocation)}
       </div>
       <div className="flex flex-col w-full h-full bg-[#F2F4F6]">

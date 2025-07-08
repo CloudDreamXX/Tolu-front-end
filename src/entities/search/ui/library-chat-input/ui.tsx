@@ -1,11 +1,15 @@
 import { HealthHistory } from "entities/health-history";
-import { ChevronDown, ChevronUp, Paperclip, Send } from "lucide-react";
+import { Paperclip, Send } from "lucide-react";
 import React, { useState } from "react";
 import { cn } from "shared/lib";
-import { Button, Input, Switch } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
+import { SwitchGroup } from "widgets/switch-group";
 
 interface LibraryChatInputProps {
+  switchOptions: string[];
+  selectedSwitch: string;
+  setSelectedSwitch: (option: string) => void;
   healthHistory?: HealthHistory;
   placeholder?: string;
   onSend?: (
@@ -15,10 +19,6 @@ interface LibraryChatInputProps {
   ) => void;
   disabled?: boolean;
   className?: string;
-  personalize?: boolean;
-  isContentMode?: boolean;
-  toggleIsContentMode?: () => void;
-  togglePersonalize?: () => void;
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -27,19 +27,16 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   onSend,
   disabled = false,
   className,
-  personalize,
-  togglePersonalize,
-  isContentMode,
-  toggleIsContentMode,
+  switchOptions,
+  selectedSwitch,
+  setSelectedSwitch,
 }) => {
   const [message, setMessage] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [activeDropdown, setActiveDropdown] = useState(false);
 
   const handleSend = () => {
     if ((!message.trim() && attachedFiles.length === 0) || disabled) return;
-    onSend?.(message, attachedFiles, personalize ? selectedOption : null);
+    onSend?.(message, attachedFiles, null);
     setMessage("");
     setAttachedFiles([]);
   };
@@ -59,86 +56,14 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const isSendDisabled =
     (!message.trim() && attachedFiles.length === 0) || disabled;
 
-  const toggleDropdown = () => {
-    setActiveDropdown(!activeDropdown);
-  };
-
-  const handleSelection = (value: string) => {
-    setSelectedOption(value);
-    setActiveDropdown(false);
-  };
-
   return (
     <div className={cn("p-4 bg-white border-t border-gray-200", className)}>
-      <div className="flex justify-between items-center mb-4 h-[44px]">
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={personalize}
-            onCheckedChange={togglePersonalize}
-            id="personalize-search"
-          />
-          <label
-            htmlFor="personalize-search"
-            className={`text-sm ${
-              personalize ? "text-[#1C63DB]" : "text-gray-700"
-            } cursor-pointer`}
-          >
-            Personalize search
-          </label>
-
-          {toggleIsContentMode && (
-            <>
-              <Switch
-                checked={isContentMode}
-                onCheckedChange={toggleIsContentMode}
-                id="content-mode"
-              />
-              <label
-                htmlFor="content-mode"
-                className={`text-sm ${
-                  personalize ? "text-[#1C63DB]" : "text-gray-700"
-                } cursor-pointer`}
-              >
-                Content mode
-              </label>
-            </>
-          )}
-        </div>
-        {personalize && (
-          <div className="relative">
-            <button
-              type="button"
-              className="flex w-[300px] h-[44px] items-center justify-between border-[#DFDFDF] border rounded-[8px] py-[11px] px-[16px] cursor-pointer"
-              onClick={toggleDropdown}
-            >
-              <span className="text-[#1D1D1F] font-medium text-[16px]">
-                {selectedOption || "Personal Story"}
-              </span>
-              {activeDropdown ? (
-                <ChevronUp className="text-[#5F5F65]" />
-              ) : (
-                <ChevronDown className="text-[#5F5F65]" />
-              )}
-            </button>
-            {activeDropdown && (
-              <div className="absolute z-10 flex flex-col items-start w-[300px] mt-1 bg-white border rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto">
-                {["Personal Story", "Health Profile"].map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    className={`p-3 w-full text-left text-[16px] font-medium text-[#1D1D1F] hover:text-[#1C63DB] ${
-                      selectedOption === item ? "bg-[#E4E9F2]" : ""
-                    }`}
-                    onClick={() => handleSelection(item)}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <SwitchGroup
+        options={switchOptions}
+        activeOption={selectedSwitch}
+        onChange={setSelectedSwitch}
+        classname="mb-4"
+      />
       <div className="relative mb-4">
         <Input
           placeholder={placeholder}

@@ -1,7 +1,7 @@
-import React from "react";
-import parse from "html-react-parser";
-import { IDocument } from "entities/document";
 import { ISessionResult } from "entities/coach";
+import { IDocument } from "entities/document";
+import parse from "html-react-parser";
+import React from "react";
 import { ConversationItem } from "widgets/conversation-item";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
@@ -32,6 +32,7 @@ interface ConversationListProps {
   setSelectedDocumentId: (id: string) => void;
   setIsBadResponseOpen: (open: boolean) => void;
   setIsDeleteOpen: (open: boolean) => void;
+  setIsRateOpen: (open: boolean) => void;
   setIsMoveOpen: (open: boolean) => void;
   setEditedTitle: (title: string) => void;
   setEditedQuery: (query: string) => void;
@@ -74,7 +75,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   handleMarkAsClick,
 }) => {
   return (
-    <div className="pb-80 flex flex-col gap-[32px]">
+    <div className="pb-20 flex flex-col gap-[32px]">
       {isCreatingDocument && (
         <div className="prose-sm prose">
           {streamingIsHtml || isHtmlContent(streamingContent) ? (

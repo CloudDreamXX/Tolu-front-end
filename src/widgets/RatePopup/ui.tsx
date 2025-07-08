@@ -40,8 +40,12 @@ export const RatePopup: React.FC<RatePopupProps> = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="p-[5px] md:p-[8px] rounded-[8px] hover:text-[#1C63DB] text-[#5F5F65] hover:bg-[#EDF3FF]">
-          {!ratingsMap[contentId] ? <GreyStar /> : <FilledStar />}
+        <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] flex items-center justify-center">
+          {!ratingsMap[contentId] ? (
+            <GreyStar className="text-blue-500" />
+          ) : (
+            <FilledStar className="text-blue-500" />
+          )}
         </button>
       </PopoverTrigger>
 
