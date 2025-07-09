@@ -215,11 +215,10 @@ export const OnboardingPersonalStory = () => {
           </button>
           <button
             type="button"
-            className={`py-[11px] px-[30px] w-full md:w-fit rounded-full text-[16px] font-semibold transition-colors duration-200 ${
-              areCurrentStepFieldsFilled
+            className={`py-[11px] px-[30px] w-full md:w-fit rounded-full text-[16px] font-semibold transition-colors duration-200 ${areCurrentStepFieldsFilled
                 ? "bg-[#1C63DB] text-white"
                 : "bg-[#D5DAE2] text-[#5F5F65] events-none"
-            }`}
+              }`}
             onClick={handleNextStep}
             disabled={!areCurrentStepFieldsFilled}
           >
@@ -242,8 +241,8 @@ export const OnboardingPersonalStory = () => {
           }
           backTitle={"Skip this for now"}
           continueTitle={"Continue filling out"}
-          onCancel={() => setIsCancelOpen(false)}
-          onDiscard={() => nav("/library")}
+          onCancel={() => nav("/library")}
+          onDiscard={() => setIsCancelOpen(false)}
         />
       )}
     </Card>
