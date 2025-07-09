@@ -30,10 +30,12 @@ import {
   mapHealthHistoryToFormDefaults,
 } from "./lib";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
+import { MenopauseForm } from "./components/menopause-form/ui";
 
 const steps = [
-  "Symptoms",
-  "Your Health History",
+  "Demographic",
+  "Menopause Status",
+  "Health history",
   "Your Lifestyle",
   "Your Goals",
 ];
@@ -206,27 +208,27 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       "maritalStatus",
       "job",
       "children",
-      "menopauseStatus",
-      "mainSymptoms",
-      "otherChallenges",
-      "strategiesTried",
+      "location",
+      "religion",
+      "financialStatus",
+      "genderAssignedAtBirth",
+      "genderIdentity",
     ],
     [
-      "diagnosedConditions",
-      "geneticTraits",
-      "maternalSide",
-      "paternalSide",
-      "notableConcern",
+      "menopauseStatus",
+      "mainSymptoms",
+      "symptomTracking",
+      "trackingDevice",
+      "biggestChallenge",
+      "successManaging",
     ],
+    ["diagnosedConditions", "geneticTraits", "maternalSide", "medications"],
     [
       "lifestyleInfo",
       "takeout",
       "homeCooked",
       "dietType",
       "exercise",
-      "limitations",
-      "medications",
-      "period",
       "sexLife",
       "supportSystem",
     ],
@@ -241,16 +243,28 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     if (nextStep >= steps.length) {
       const values = form.getValues();
-      const message = `Hi Tolu. I’m a ${values.age}-year-old ${values.maritalStatus} woman working ${values.job}, 
-                      and I have ${values.children} children. I’m ${values.menopauseStatus} but lately I’ve been dealing with ${values.mainSymptoms}. 
-                      I’ve also noticed ${values.otherChallenges}, and it feels like no matter ${values.strategiesTried}, things aren’t getting better. 
-                      My health history includes ${values.diagnosedConditions}, and I have ${values.geneticTraits}. 
-                      In my family, there’s a history of ${values.maternalSide} on my mom’s side and ${values.paternalSide} on my dad’s side. 
-                      Someone in my family was recently diagnosed with ${values.notableConcern}, which has me thinking more about prevention. Right now, 
-                      my lifestyle includes ${values.lifestyleInfo}, eating about ${values.takeout} takeout and ${values.homeCooked} home-cooked meals. 
-                      I usually follow a ${values.dietType} diet. I ${values.exercise} get time to exercise or relax, and ${values.limitations}. 
-                      I’m currently taking ${values.medications}, my periods are ${values.period}, and my sex life is ${values.sexLife}. 
-                      I usually rely on ${values.supportSystem} for emotional support. What I really want is to ${values.goals}.`;
+      const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}. 
+I work as a ${values.job} and I have ${values.children} children. 
+I live in ${values.location} and I'm a ${values.religion}. 
+I consider my financial ability ${values.financialStatus}. 
+I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}. 
+
+I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}. 
+I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}. 
+My biggest challenge is ${values.biggestChallenge}. 
+Currently I ${values.successManaging} successful managing my symptoms.
+
+I have a history of ${values.diagnosedConditions}. 
+My genetic test indicates I have ${values.geneticTraits}. 
+In my family there's history of ${values.maternalSide}. 
+I take ${values.medications} to support my condition.
+
+Right now I have a ${values.lifestyleInfo} lifestyle. 
+I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food. 
+My diet is ${values.dietType} and I exercise ${values.exercise} days during a week. 
+My sex life is ${values.sexLife} and my emotional support network is usually ${values.supportSystem}.
+
+My goal is to ${values.goals}.`;
 
       setSelectedSwitch(config.defaultOption);
       await handleNewMessage(message, []);
@@ -300,9 +314,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               />
               <form onSubmit={(e) => e.preventDefault()}>
                 {currentStep === 0 && <SymptomsForm form={form} />}
-                {currentStep === 1 && <HealthHistoryForm form={form} />}
-                {currentStep === 2 && <LifestyleForm form={form} />}
-                {currentStep === 3 && <GoalsForm form={form} />}
+                {currentStep === 1 && <MenopauseForm form={form} />}
+                {currentStep === 2 && <HealthHistoryForm form={form} />}
+                {currentStep === 3 && <LifestyleForm form={form} />}
+                {currentStep === 4 && <GoalsForm form={form} />}
               </form>
               <div className="flex justify-end gap-2 mt-6">
                 <button

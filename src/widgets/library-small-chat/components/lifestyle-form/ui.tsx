@@ -2,7 +2,6 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import { baseSchema } from "widgets/library-small-chat/lib";
 import { z } from "zod";
 import { CustomSelect } from "../CustomSelect";
-import { MultiSelect } from "../MultiSelect";
 
 export type FormValues = z.infer<typeof baseSchema>;
 
@@ -11,7 +10,8 @@ interface LifestyleFormProps {
 }
 
 export const LifestyleForm = ({ form }: LifestyleFormProps) => {
-  const { register } = form;
+  const { register, control } = form;
+
   const inputClass =
     "input inline-input border border-[#DBDEE1] rounded-full outline-[#008FF6] py-[4px] px-[12px] min-w-[60px] placeholder:text-[#5F5F65]";
   const lineClass =
@@ -31,7 +31,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
     "Specific Carbohydrate Diet (SCD)",
     "Keto / Ketogenic",
     "Intermittent Fasting",
-    "Traditional / WAPF (Weston A. Price Foundation)",
+    "Traditional / WAPF",
     "Nightshade Elimination",
     "Basic Elimination",
     "Full Elimination",
@@ -48,150 +48,82 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
     "Not sure / I don’t follow a specific diet",
   ];
 
+  const sexLifeOptions = ["Irregular", "Regular"];
+
   return (
     <div className="pt-[16px] border-t border-[#DBDEE1] mt-[16px] space-y-[12px]">
       <div className={lineClass}>
-        <span>Right now, my lifestyle includes</span>
+        <span>Right now I have a</span>
         <input
           {...register("lifestyleInfo")}
-          placeholder="stress level – e.g., high-stress job"
-          className={`${inputClass} w-[296px]`}
+          placeholder="stress level"
+          className={`${inputClass} w-[117px]`}
         />
+        <span>lifestyle.</span>
       </div>
 
       <div className={lineClass}>
-        <span>, eating about</span>
+        <span>I eat about</span>
         <input
           {...register("takeout")}
-          placeholder="takeout %"
-          className={`${inputClass} w-[108px]`}
+          placeholder="%"
+          className={`${inputClass} w-[46px]`}
         />
-        <span>takeout and</span>
+        <span>takeout food and</span>
         <input
           {...register("homeCooked")}
-          placeholder="home-cooked %"
-          className={`${inputClass} w-[158px]`}
+          placeholder="%"
+          className={`${inputClass} w-[41px]`}
         />
-        <span>home-cooked meals.</span>
+        <span>home-cooked food.</span>
       </div>
 
       <div className={lineClass}>
-        <span>I usually follow a</span>
+        <span>My diet is</span>
         <Controller
           name="dietType"
-          control={form.control}
-          render={({ field }) => (
-            <MultiSelect
-              placeholder="die type"
-              options={dietOptions}
-              className="w-fit"
-              selected={field.value
-                .split(",")
-                .map((str) => str.trim())
-                .filter(Boolean)}
-              onChange={(val) => {
-                const cleaned = val
-                  .map((s) => s.trim())
-                  .filter(Boolean)
-                  .join(", ");
-                field.onChange(cleaned);
-              }}
-            />
-          )}
-        />
-        <span>diet.</span>
-      </div>
-
-      <div className={lineClass}>
-        <span>I</span>
-        <Controller
-          name="exercise"
-          control={form.control}
+          control={control}
           render={({ field }) => (
             <CustomSelect
               value={field.value}
               onChange={field.onChange}
-              options={["Sometimes", "Rarely", "Never"]}
-              placeholder="rarely"
+              options={dietOptions}
+              placeholder="diet type"
               className="w-fit"
             />
           )}
         />
-        <span>get time to exercise or relax, and</span>
+        <span>and I exercise</span>
         <input
-          {...register("limitations")}
-          placeholder="add any major lifestyle limitation – e.g., we haven’t traveled in years"
-          className={`${inputClass} w-[579px]`}
+          {...register("exercise")}
+          placeholder="days"
+          className={`${inputClass} w-[63px]`}
         />
+        <span>days during a week.</span>
       </div>
 
       <div className={lineClass}>
-        <span>I’m currently taking</span>
-        <Controller
-          name="medications"
-          control={form.control}
-          render={({ field }) => (
-            <MultiSelect
-              placeholder={"medications or supplements"}
-              options={dietOptions}
-              className="w-fit"
-              selected={field.value
-                .split(",")
-                .map((str) => str.trim())
-                .filter(Boolean)}
-              onChange={(val) => {
-                const cleaned = val
-                  .map((s) => s.trim())
-                  .filter(Boolean)
-                  .join(", ");
-                field.onChange(cleaned);
-              }}
-            />
-          )}
-        />
-      </div>
-
-      <div className={lineClass}>
-        <span>my periods are</span>
-        <Controller
-          name="period"
-          control={form.control}
-          render={({ field }) => (
-            <CustomSelect
-              value={field.value}
-              onChange={field.onChange}
-              options={["Irregular", "Regular"]}
-              placeholder="regular"
-              className="w-fit"
-            />
-          )}
-        />
-
-        <span>, and my sex life is</span>
-
+        <span>My sex life is</span>
         <Controller
           name="sexLife"
-          control={form.control}
+          control={control}
           render={({ field }) => (
             <CustomSelect
               value={field.value}
               onChange={field.onChange}
-              options={["Nonexistent", "Active", "Low"]}
-              placeholder="active"
+              options={sexLifeOptions}
+              placeholder="status"
               className="w-fit"
             />
           )}
         />
-      </div>
-
-      <div className={lineClass}>
-        <span>I usually rely on</span>
+        <span>and my emotional support network is usually</span>
         <input
           {...register("supportSystem")}
-          placeholder="support system – e.g., mom and best friend"
-          className={`${inputClass} w-[407px]`}
+          placeholder="option"
+          className={`${inputClass} w-[300px]`}
         />
-        <span>for emotional support.</span>
+        <span>.</span>
       </div>
     </div>
   );

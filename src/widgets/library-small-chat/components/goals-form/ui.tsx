@@ -17,12 +17,13 @@ export const GoalsForm = ({ form }: GoalsFormProps) => {
   return (
     <div className="pt-[16px] border-t border-[#DBDEE1] mt-[16px] space-y-[12px]">
       <div className={lineClass}>
-        <span>What I really want is to</span>
+        <span>My goal is to</span>
         <input
           {...form.register("goals")}
-          placeholder="sleep better, lose weight, feel like myself again"
-          className={`${inputClass} w-[531px]`}
+          placeholder="sleep better, lose weight"
+          className={`${inputClass} w-[227px]`}
         />
+        <span>.</span>
       </div>
     </div>
   );

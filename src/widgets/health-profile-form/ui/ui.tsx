@@ -21,7 +21,7 @@ import {
   BasicInformationForm,
   basicInformationSchema,
 } from "./basic-information-form";
-import { ConfirmCancel } from "./confirm-cancel";
+import { ConfirmCancelModal } from "../../ConfirmCancelModal";
 import {
   ConsentSubmissionForm,
   consentSubmissionSchema,
@@ -335,12 +335,18 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
         </div>
       </DialogContent>
       {confirmOpen && (
-        <ConfirmCancel
+        <ConfirmCancelModal
           onCancel={() => {
             setConfirmOpen(false);
             setIsOpen(true);
           }}
           onDiscard={onDiscard}
+          title={"Are you sure you want to leave personalization?"}
+          description={
+            "Sad to see you go! We’ve saved your progress so you can come back and finish anytime that works for you."
+          }
+          backTitle={"Back to personalization"}
+          continueTitle={"Leave anyway"}
         />
       )}
     </Dialog>

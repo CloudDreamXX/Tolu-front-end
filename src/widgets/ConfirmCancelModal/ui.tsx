@@ -1,10 +1,18 @@
 import Close from "shared/assets/icons/close";
 import { Button } from "shared/ui";
 
-export const ConfirmCancel = ({
+export const ConfirmCancelModal = ({
+  title,
+  description,
+  backTitle,
+  continueTitle,
   onCancel,
   onDiscard,
 }: {
+  title: string;
+  description: string;
+  backTitle: string;
+  continueTitle: string;
   onCancel: () => void;
   onDiscard: () => void;
 }) => (
@@ -14,18 +22,17 @@ export const ConfirmCancel = ({
         <Close />
       </button>
       <h2 className="text-[24px] font-semibold text-[#1D1D1F] mb-[12px]">
-        Are you sure you want to leave personalization?
+        {title}
       </h2>
       <p className="text-[16px] text-[#5F5F65] font-[500] mb-[24px]">
-        Sad to see you go! We’ve saved your progress so you can come back and
-        finish anytime that works for you.
+        {description}
       </p>
       <div className="flex justify-between gap-[16px]">
         <Button variant="light-blue" onClick={onCancel}>
-          Back to personalization
+          {backTitle}
         </Button>
         <Button variant="brightblue" onClick={onDiscard}>
-          Leave anyway
+          {continueTitle}
         </Button>
       </div>
     </div>

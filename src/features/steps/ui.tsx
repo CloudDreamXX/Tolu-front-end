@@ -40,10 +40,12 @@ export const Steps: React.FC<StepsProps> = ({
             >
               {isCompleted ? (
                 <Check className="w-6 h-6" />
-              ) : ordered ? (
-                `${index + 1}${isCurrent ? `. ${step}` : ""}`
               ) : (
-                step
+                <span className="truncate max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                  {ordered
+                    ? `${index + 1}${isCurrent ? `. ${step}` : ""}`
+                    : step}
+                </span>
               )}
             </button>
 

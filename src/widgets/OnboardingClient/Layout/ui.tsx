@@ -3,6 +3,7 @@ import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
 // import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
+import { useScreenHeight } from "./lib";
 
 interface OnboardingClientLayoutProps {
   currentStep?: number;
@@ -20,6 +21,15 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
   children,
 }) => {
   const { isMobileOrTablet } = usePageWidth();
+  const isTallScreen = useScreenHeight();
+
+  const mainClass = `
+    flex flex-col items-center justify-end lg:justify-center
+    w-full gap-[16px] md:gap-[8px]
+    lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full
+    mt-[100px] lg:mt-0
+    ${isTallScreen ? "absolute bottom-0" : ""}
+  `;
 
   return (
     <AuthPageWrapper>
@@ -31,14 +41,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
         />
       )}
 
-      <main
-        className={`
-    flex flex-col items-center justify-center
-    w-full gap-[16px] md:gap-[8px]
-    lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%]
-    mt-[100px] lg:mt-0
-  `}
-      >
+      <main className={mainClass}>
         {title != null && !isMobileOrTablet && title}
 
         <div

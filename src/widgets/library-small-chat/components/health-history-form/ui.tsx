@@ -19,43 +19,35 @@ export const HealthHistoryForm = ({ form }: HealthHistoryFormProps) => {
   return (
     <div className="pt-[16px] border-t border-[#DBDEE1] mt-[16px] space-y-[12px]">
       <div className={lineClass}>
-        <span>My health history includes</span>
+        <span>I have a history of</span>
         <input
           {...register("diagnosedConditions")}
-          placeholder="diagnosed conditions – e.g., Grave’s, arthritis"
-          className={`${inputClass} w-[388px]`}
+          placeholder="diseases and conditions"
+          className={`${inputClass} w-[219px]`}
         />
-        <span>, and I have</span>
+        <span>. My genetic test indicates I have</span>
         <input
           {...register("geneticTraits")}
-          placeholder="genetic traits – e.g., alpha thalassemia"
-          className={`${inputClass} w-[337px]`}
+          placeholder="genetic disease"
+          className={`${inputClass} w-[308px]`}
         />
         <span>.</span>
       </div>
+
       <div className={lineClass}>
-        <span>In my family, there’s a history of</span>
+        <span>In my family there's history of</span>
         <input
           {...register("maternalSide")}
-          placeholder="maternal side issues – e.g., joint pain, cancer"
-          className={`${inputClass} w-[385px]`}
+          placeholder="disease"
+          className={`${inputClass} w-[279px]`}
         />
-        <span>on my mom’s side and</span>
+        <span>. I take</span>
         <input
-          {...register("paternalSide")}
-          placeholder="paternal side issues – e.g., asthma"
-          className={`${inputClass} w-[303px]`}
+          {...register("medications")}
+          placeholder="medication/supplement"
+          className={`${inputClass} w-[221px]`}
         />
-        <span>on my dad’s side.</span>
-      </div>
-      <div className={lineClass}>
-        <span>Someone in my family was recently diagnosed with</span>
-        <input
-          {...register("notableConcern")}
-          placeholder="notable concern – e.g., breast cancer"
-          className={`${inputClass} w-[321px]`}
-        />
-        <span>, which has me thinking more about prevention.</span>
+        <span>to support my condition.</span>
       </div>
     </div>
   );
