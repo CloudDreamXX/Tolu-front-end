@@ -15,7 +15,6 @@ import { RatePopup } from "widgets/RatePopup";
 interface ConversationItemActionsProps {
   pair: ISessionResult;
   ratingsMap: Record<string, { rating: number; comment: string }>;
-  compareIndex: number | null;
   index: number;
   isEditing: boolean;
   onCompareToggle: (index: number) => void;
@@ -35,7 +34,6 @@ export const ConversationItemActions: React.FC<
 > = ({
   pair,
   ratingsMap,
-  compareIndex,
   index,
   isEditing,
   onCompareToggle,
@@ -54,7 +52,14 @@ export const ConversationItemActions: React.FC<
     rating: number,
     comment: string,
     down: boolean
-  ) => {};
+  ) => {
+    console.warn("Rate click not implemented", {
+      id,
+      rating,
+      comment,
+      down,
+    });
+  };
 
   return (
     <div className="flex flex-col items-start gap-2">

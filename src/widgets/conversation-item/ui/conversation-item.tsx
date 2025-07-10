@@ -260,7 +260,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         <ConversationItemActions
           pair={pair}
           ratingsMap={ratingsMap}
-          compareIndex={compareIndex}
           index={index}
           isEditing={isEditing}
           onCompareToggle={onCompareToggle}

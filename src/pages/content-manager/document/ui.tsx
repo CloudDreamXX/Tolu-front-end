@@ -73,7 +73,6 @@ export const ContentManagerDocument: React.FC = () => {
     editedQuery,
     selectedDocumentId,
     selectedDocumentStatus,
-    isRateOpen,
     setCompareIndex,
     setMobilePage,
     setIsMarkAsOpen,
