@@ -49,7 +49,7 @@ export const RatePopup: React.FC<RatePopupProps> = ({
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[425px] md:w-[239px] xl:w-[203px] p-4">
+      <PopoverContent className="w-[425px] md:w-[239px] xl:w-[203px] p-4 shadow-[2px_2px_10px_0px_rgba(0,0,0,0.15)]">
         <div className="mb-4 text-center">
           <h3 className="text-[20px] md:text-[18px] xl:text-[16px] text-[#1D1D1F] font-[500] leading-[140%]">
             Please rate the quality

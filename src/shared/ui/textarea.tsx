@@ -30,7 +30,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div
         className={cn(
-          "flex flex-col w-full rounded-[18px] border border-input bg-background px-6 py-4",
+          "flex flex-col w-full rounded-[18px] border border-input bg-background px-6 py-4 min-h-fit",
           containerClassName
         )}
       >

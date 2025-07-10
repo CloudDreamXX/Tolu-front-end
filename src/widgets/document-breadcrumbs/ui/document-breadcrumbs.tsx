@@ -1,5 +1,5 @@
 import { IFolder } from "entities/folder";
-import { PathEntry } from "features/document-management/hooks/util";
+import { PathEntry } from "features/wrapper-folder-tree";
 import React from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbSeparator } from "shared/ui";
 
@@ -18,18 +18,22 @@ export const DocumentBreadcrumbs: React.FC<DocumentBreadcrumbsProps> = ({
   const documentEntry = path[path.length - 1];
 
   return (
-    <Breadcrumb className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
+    <Breadcrumb className="flex flex-row items-center gap-2 text-sm text-muted-foreground ">
       {folder && (
         <>
-          <BreadcrumbItem className="capitalize ">{tab}</BreadcrumbItem>
+          <BreadcrumbItem className="capitalize text-nowrap">
+            {tab}
+          </BreadcrumbItem>
 
           <BreadcrumbSeparator />
-          <BreadcrumbItem className="capitalize ">{folder.name}</BreadcrumbItem>
+          <BreadcrumbItem className="capitalize text-nowrap ">
+            {folder.name}
+          </BreadcrumbItem>
 
           {subFolderPaths.map((sub) => (
             <>
               <BreadcrumbSeparator />
-              <BreadcrumbItem className="capitalize ">
+              <BreadcrumbItem className="capitalize text-nowrap ">
                 {sub.name}
               </BreadcrumbItem>
             </>
@@ -38,7 +42,7 @@ export const DocumentBreadcrumbs: React.FC<DocumentBreadcrumbsProps> = ({
           {documentEntry && (
             <>
               <BreadcrumbSeparator />
-              <BreadcrumbItem className="capitalize">
+              <BreadcrumbItem className="capitalize truncate">
                 {documentEntry.name}
               </BreadcrumbItem>
             </>

@@ -1,10 +1,10 @@
+import { File } from "lucide-react";
+import { FOLDERS } from "pages/content-manager";
+import { MOCK_DOCUMENT } from "pages/content-manager/document/mock";
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
-import Dots from "shared/assets/icons/dots";
-import { FOLDERS } from "pages/content-manager";
 import ClosedFolder from "shared/assets/icons/closed-folder";
-import { MOCK_DOCUMENT } from "pages/content-manager/document/mock";
-import { File } from "lucide-react";
+import Dots from "shared/assets/icons/dots";
 import { sideBarContent } from "./lib";
 
 export const UserManagementSideBar: React.FC = () => {
@@ -57,7 +57,7 @@ export const UserManagementSideBar: React.FC = () => {
           {links.map((link) => (
             <div key={link.title} className="flex flex-col w-full">
               <NavLink
-                to={link.link}
+                to={link.link || "/"}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] ${
                     isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"

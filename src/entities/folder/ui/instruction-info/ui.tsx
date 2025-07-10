@@ -15,7 +15,7 @@ export const InstructionInfo: React.FC<InstructionInfoProps> = ({
     <PopoverInstruction
       customTrigger={
         <button className="flex flex-row items-baseline group">
-          <h4 className="text-[18px] font-semibold">
+          <h4 className="text-sm font-semibold md:text-base lg:text-lg">
             Instructions: {instructions?.length ? "Yes" : "No"}
           </h4>
           <div className="text-[12px] font-semibold group-hover:text-[#008FF6]">

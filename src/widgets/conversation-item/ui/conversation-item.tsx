@@ -226,6 +226,24 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           toolbar: false,
         }}
       />
+
+      {isEditing && (
+        <div className="flex flex-row self-end gap-[8px]">
+          <button
+            className="text-[#1C63DB] text-[16px] px-4"
+            onClick={onCancelEdit}
+          >
+            Cancel
+          </button>
+          <Button
+            variant="brightblue"
+            className="text-[16px] px-8"
+            onClick={() => onSaveEdit(pair.id)}
+          >
+            Save changes
+          </Button>
+        </div>
+      )}
     </div>
   );
 
@@ -239,7 +257,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-[24px] pb-[100px]">
+    <div key={pair.id} className="flex flex-col gap-[24px]">
       {index > 0 && pair.query && (
         <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] w-full md:max-w-[563px] xl:max-w-[800px]">
           <p className="text-[18px] font-[500] text-[#1D1D1F]">{pair.query}</p>
@@ -261,11 +279,8 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           pair={pair}
           ratingsMap={ratingsMap}
           index={index}
-          isEditing={isEditing}
           onCompareToggle={onCompareToggle}
           onEditToggle={onEditToggle}
-          onSaveEdit={onSaveEdit}
-          onCancelEdit={onCancelEdit}
           setSelectedDocumentId={setSelectedDocumentId}
           setIsBadResponseOpen={setIsBadResponseOpen}
           setIsDeleteOpen={setIsDeleteOpen}

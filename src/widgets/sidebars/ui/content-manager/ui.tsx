@@ -1,36 +1,15 @@
-import { File } from "lucide-react";
-import { FOLDERS } from "pages/content-manager";
-import { MOCK_DOCUMENT } from "pages/content-manager/document/mock";
 import { useEffect, useState } from "react";
-import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AiCreate from "shared/assets/icons/ai-create";
-import ClosedFolder from "shared/assets/icons/closed-folder";
-import Dots from "shared/assets/icons/dots";
+import { cn } from "shared/lib";
 import { Button, ScrollArea } from "shared/ui";
-import WrapperFolderTree from "./FolderTree";
 import { sideBarContent } from "./lib";
+import { CustomNavLink } from "features/custom-nav-link";
 
 export const ContentManagerSidebar: React.FC = () => {
-  const location = useLocation();
-  const [links] = useState(sideBarContent);
-
-  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
-  const [folder, setFolder] = useState<string | null>();
-  const [document, setDocument] = useState<string | null>(null);
-  const [tab, setTab] = useState<string | null>(null);
-  const [isNarrow, setIsNarrow] = useState(false);
-  const { folderId, documentId } = useParams<{
-    folderId: string;
-    documentId: string;
-  }>();
   const nav = useNavigate();
-
-  useEffect(() => {
-    const pathSegments = location.pathname.split("/");
-    setTab(pathSegments[2]);
-    setFolder(FOLDERS.find((f) => f.id === folderId)?.name ?? null);
-    setDocument(MOCK_DOCUMENT.find((d) => d.id === documentId)?.title ?? null);
-  }, [location.pathname, folderId, documentId]);
+  const [links] = useState(sideBarContent);
+  const [isNarrow, setIsNarrow] = useState(false);
 
   useEffect(() => {
     const checkWidth = () => {
@@ -45,11 +24,17 @@ export const ContentManagerSidebar: React.FC = () => {
   return (
     <ScrollArea className="h-[calc(100vh-64px)] pr-8">
       <div
-        className={`flex flex-col gap-8 h-full ${isNarrow ? "w-[81px] items-center" : "w-[316px]"}`}
+        className={cn(
+          "flex flex-col gap-8 h-full",
+          isNarrow ? "w-[81px] items-center" : "w-[316px]"
+        )}
       >
         <div className="flex flex-col items-center text-center">
           <h2
-            className={`${isNarrow ? "text-[27px]" : "text-[40px]"} font-bold font-open`}
+            className={cn(
+              "font-bold font-open",
+              isNarrow ? "text-[27px]" : "text-[40px]"
+            )}
           >
             TOLU
           </h2>
@@ -60,7 +45,10 @@ export const ContentManagerSidebar: React.FC = () => {
           )}
         </div>
         <div
-          className={`flex flex-col ${isNarrow ? "items-center" : "items-start"} gap-[24px]`}
+          className={cn(
+            "flex flex-col gap-[24px]",
+            isNarrow ? "items-center" : "items-start"
+          )}
         >
           <Button
             variant="brightblue"
@@ -71,67 +59,13 @@ export const ContentManagerSidebar: React.FC = () => {
             Create with Tolu
           </Button>
           <div
-            className={`flex flex-col ${isNarrow ? "items-center" : "items-start"}`}
+            className={cn(
+              "flex flex-col",
+              isNarrow ? "items-center" : "items-start"
+            )}
           >
             {links.map((link) => (
-              <div key={link.title} className="flex flex-col w-full">
-                {link.title === "Library" ? (
-                  <div key={link.title}>
-                    <div
-                      className={`flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] cursor-pointer ${
-                        location.pathname.includes("library")
-                          ? "text-[#1C63DB]"
-                          : "text-[#1D1D1F]"
-                      }`}
-                      onClick={() => setIsLibraryOpen((prev) => !prev)}
-                    >
-                      {link.icon}
-                      {!isNarrow && link.title}
-                    </div>
-                    {isLibraryOpen && <WrapperFolderTree />}
-                  </div>
-                ) : (
-                  <NavLink
-                    to={link.link}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] ${
-                        isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
-                      }`
-                    }
-                  >
-                    {link.icon}
-                    {!isNarrow && link.title}
-                  </NavLink>
-                )}
-                {link.title.toLowerCase() === tab && folder && (
-                  <NavLink
-                    to={`/content-manager/${tab}/folder/${folderId}`}
-                    className={`flex flex-row w-full gap-2 px-4 py-[7px] ${isNarrow ? "pl-4" : "pl-12"} box-border`}
-                  >
-                    <ClosedFolder width={24} height={24} />
-                    {!isNarrow && (
-                      <span className={`${!document && "font-extrabold"}`}>
-                        {folder}
-                      </span>
-                    )}
-                    <Dots className="ml-auto" />
-                  </NavLink>
-                )}
-                {link.title.toLowerCase() === tab && document && (
-                  <NavLink
-                    to={`/content-manager/${tab}/folder/${folderId}/${documentId}`}
-                    className={`flex flex-row w-full gap-2 px-4 py-[7px] ${isNarrow ? "pl-6" : "pl-16"} box-border`}
-                  >
-                    <File width={24} height={24} className="min-w-6" />
-                    {!isNarrow && (
-                      <span className="font-extrabold truncate">
-                        {document}
-                      </span>
-                    )}
-                    <Dots className="ml-auto min-w-6" />
-                  </NavLink>
-                )}
-              </div>
+              <CustomNavLink key={link.title} item={link} isNarrow={isNarrow} />
             ))}
           </div>
         </div>

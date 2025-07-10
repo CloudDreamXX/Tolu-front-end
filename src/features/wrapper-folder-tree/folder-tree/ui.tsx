@@ -1,0 +1,195 @@
+import { IFolder } from "entities/folder";
+import { RootState } from "entities/store";
+import {
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  FolderOpen,
+  GripVertical,
+} from "lucide-react";
+import React from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { cn } from "shared/lib";
+import { getNumberOfContent, isSameRoot } from "../utils";
+
+interface FolderTreeProps {
+  folders: IFolder[];
+  level: number;
+  isNarrow: boolean;
+  openFolders: Set<string>;
+  toggleFolder: (folderId: string) => void;
+  handleDrop: (
+    folderId: string,
+    fileId: string,
+    sourceFolderId: string,
+    rootFolderId: string
+  ) => void;
+  dragOverFolderId: string | null;
+  setDragOverFolderId: (id: string | null) => void;
+  rootFolderId?: string;
+  onChildrenItemClick?: () => void;
+  isMoving: boolean;
+}
+
+export const FolderTree: React.FC<FolderTreeProps> = ({
+  folders,
+  level,
+  isNarrow,
+  openFolders,
+  toggleFolder,
+  handleDrop,
+  dragOverFolderId,
+  setDragOverFolderId,
+  rootFolderId,
+  onChildrenItemClick,
+  isMoving,
+}) => {
+  const nav = useNavigate();
+  const { documentId, folderId } = useParams();
+  const { folders: allFolders } = useSelector(
+    (state: RootState) => state.folder
+  );
+
+  const onFolderDragOver = (e: React.DragEvent, folderId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverFolderId(folderId);
+  };
+
+  const onFolderDragLeave = (e: React.DragEvent) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setDragOverFolderId(null);
+    }
+  };
+
+  const onFolderDrop = (e: React.DragEvent, folderId: string) => {
+    if (isMoving) return;
+    const contentId = e.dataTransfer.getData("contentId");
+    const sourceFolderId = e.dataTransfer.getData("sourceFolderId");
+    const sourceRootFolderId = e.dataTransfer.getData("sourceRootFolderId");
+
+    handleDrop(folderId, contentId, sourceFolderId, sourceRootFolderId);
+    setDragOverFolderId(null);
+  };
+
+  const onContentDragStart = (
+    e: React.DragEvent,
+    contentId: string,
+    folderId: string,
+    rootId: string
+  ) => {
+    if (isMoving) return;
+    e.dataTransfer.setData("contentId", contentId);
+    e.dataTransfer.setData("sourceFolderId", folderId);
+    e.dataTransfer.setData("sourceRootFolderId", rootId);
+  };
+
+  const onContentDragEnd = () => {
+    setDragOverFolderId(null);
+  };
+
+  return (
+    <>
+      {folders.map((folder) => (
+        <div key={folder.id} className="ml-4 select-none">
+          <div
+            className={cn(
+              "flex items-center gap-3 px-4 py-[7px] cursor-pointer transition-colors",
+              folderId === folder.id ? "text-blue-500" : "",
+              isSameRoot(allFolders, dragOverFolderId, rootFolderId) &&
+                dragOverFolderId === folder.id &&
+                "bg-blue-50"
+            )}
+            onClick={() => toggleFolder(folder.id)}
+            onDragOver={(e) => onFolderDragOver(e, folder.id)}
+            onDragLeave={onFolderDragLeave}
+            onDrop={(e) => onFolderDrop(e, folder.id)}
+          >
+            {openFolders.has(folder.id) ? (
+              <ChevronUp className="w-5 h-5 shrink-0" />
+            ) : (
+              <ChevronDown className="w-5 h-5 shrink-0" />
+            )}
+            {level === 0 ? null : <FolderOpen className="w-5 h-5 shrink-0" />}
+            <span>{folder.name}</span>
+            <span className="rounded-full bg-[#F3F6FB] text-[10px] text-[#1C63DB] p-2 max-w-5 max-h-5 flex items-center justify-center">
+              {getNumberOfContent(folder)}
+            </span>
+          </div>
+
+          {folder.subfolders && openFolders.has(folder.id) && (
+            <FolderTree
+              folders={folder.subfolders}
+              level={level + 1}
+              isNarrow={isNarrow}
+              openFolders={openFolders}
+              toggleFolder={toggleFolder}
+              handleDrop={handleDrop}
+              dragOverFolderId={dragOverFolderId}
+              setDragOverFolderId={setDragOverFolderId}
+              rootFolderId={folder.id}
+              onChildrenItemClick={onChildrenItemClick}
+              isMoving={isMoving}
+            />
+          )}
+
+          {openFolders.has(folder.id) && (
+            <div
+              className={cn(
+                "pl-8",
+                dragOverFolderId === folder.id && "bg-blue-50"
+              )}
+              onDrop={(e) => onFolderDrop(e, folder.id)}
+              onDragOver={(e) => onFolderDragOver(e, folder.id)}
+              onDragLeave={onFolderDragLeave}
+            >
+              {folder.content?.map((content) => (
+                <div
+                  key={content.id}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-[7px] pl-4 group rounded-md transition cursor-grab ",
+                    documentId === content.id
+                      ? "text-blue-500"
+                      : "hover:bg-gray-100"
+                  )}
+                  draggable
+                  onDragStart={(e) =>
+                    onContentDragStart(
+                      e,
+                      content.id,
+                      folder.id,
+                      rootFolderId ?? folder.id
+                    )
+                  }
+                  onDragEnd={onContentDragEnd}
+                  onClick={() => {
+                    onChildrenItemClick?.();
+                    nav(
+                      `/content-manager/library/folder/${rootFolderId ?? folder.id}/document/${content.id}`
+                    );
+                  }}
+                >
+                  <GripVertical className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
+                  <FileText className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
+                  <span className="text-nowrap text-[14px] font-semibold group-hover:text-blue-500 truncate max-w-[110px] block">
+                    {content.title}
+                  </span>
+                </div>
+              ))}
+
+              {!folder.content?.length && !folder.subfolders?.length && (
+                <p className="px-4 py-2 text-sm italic text-gray-400 transition-colors rounded-md">
+                  Empty folder
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+      {isMoving && (
+        <div className="fixed inset-0 z-50 cursor-wait bg-white/10 backdrop-blur-sm" />
+      )}
+    </>
+  );
+};

@@ -2,25 +2,20 @@ import { ISessionResult } from "entities/coach";
 import React from "react";
 import Compare from "shared/assets/icons/compare";
 import Dislike from "shared/assets/icons/dislike";
+import Dublicate from "shared/assets/icons/dublicate";
 import Arrow from "shared/assets/icons/grey-arrow";
 import Bin from "shared/assets/icons/grey-bin";
 import Edit from "shared/assets/icons/grey-edit";
-import Folders from "shared/assets/icons/grey-folders";
 import MarkAs from "shared/assets/icons/grey-mark-as";
-
 import Voiceover from "shared/assets/icons/voiceover";
-import { Button } from "shared/ui";
 import { RatePopup } from "widgets/RatePopup";
 
 interface ConversationItemActionsProps {
   pair: ISessionResult;
   ratingsMap: Record<string, { rating: number; comment: string }>;
   index: number;
-  isEditing: boolean;
   onCompareToggle: (index: number) => void;
   onEditToggle: (pair: ISessionResult, document: any) => void;
-  onSaveEdit: (contentId: string) => Promise<void>;
-  onCancelEdit: () => void;
   setSelectedDocumentId: (id: string) => void;
   setIsBadResponseOpen: (open: boolean) => void;
   setIsDeleteOpen: (open: boolean) => void;
@@ -35,11 +30,8 @@ export const ConversationItemActions: React.FC<
   pair,
   ratingsMap,
   index,
-  isEditing,
   onCompareToggle,
   onEditToggle,
-  onSaveEdit,
-  onCancelEdit,
   setSelectedDocumentId,
   setIsBadResponseOpen,
   setIsDeleteOpen,
@@ -91,7 +83,7 @@ export const ConversationItemActions: React.FC<
           className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
           onClick={() => handleDublicateClick(pair.id)}
         >
-          <Folders />
+          <Dublicate />
         </button>
 
         <button
@@ -112,7 +104,7 @@ export const ConversationItemActions: React.FC<
             setIsBadResponseOpen(true);
           }}
         >
-          <Dislike />
+          <Dislike className="scale-x-[-1]" />
         </button>
 
         <button
@@ -132,25 +124,6 @@ export const ConversationItemActions: React.FC<
           <Compare />
         </button>
       </div>
-
-      {isEditing && (
-        <div className="flex flex-col gap-[8px]">
-          <Button
-            variant="secondary"
-            className="text-[#1C63DB] text-[16px] font-semibold"
-            onClick={onCancelEdit}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="brightblue"
-            className="font-semibold text-[16px]"
-            onClick={() => onSaveEdit(pair.id)}
-          >
-            Save changes
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

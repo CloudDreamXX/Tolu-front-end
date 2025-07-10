@@ -75,7 +75,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   handleMarkAsClick,
 }) => {
   return (
-    <div className="pb-20 flex flex-col gap-[32px]">
+    <div className="flex flex-col gap-[32px]">
       {isCreatingDocument && (
         <div className="prose-sm prose">
           {streamingIsHtml || isHtmlContent(streamingContent) ? (

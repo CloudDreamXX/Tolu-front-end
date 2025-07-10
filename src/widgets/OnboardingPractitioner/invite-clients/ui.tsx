@@ -268,7 +268,6 @@ export const InviteClients = () => {
           </div>
         )}
       </main>
-      <Footer />
     </AuthPageWrapper>
   );
 };

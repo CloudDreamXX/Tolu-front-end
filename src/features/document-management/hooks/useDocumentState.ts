@@ -2,10 +2,10 @@ import { CoachService, ISessionResult, Share } from "entities/coach";
 import { DocumentsService, IDocument } from "entities/document";
 import { FoldersService, IFolder } from "entities/folder";
 import { RootState } from "entities/store";
+import { findFilePath, PathEntry } from "features/wrapper-folder-tree";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { findFilePath, PathEntry } from "./util";
 
 export const useDocumentState = () => {
   const { tab, documentId, folderId } = useParams();
@@ -95,6 +95,7 @@ export const useDocumentState = () => {
 
   return {
     // State
+    folders,
     document,
     folder,
     conversation,

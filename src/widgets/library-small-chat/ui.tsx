@@ -43,11 +43,13 @@ const steps = [
 interface LibrarySmallChatProps {
   healthHistory?: HealthHistory;
   isCoach?: boolean;
+  isDraft?: boolean;
 }
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   healthHistory,
   isCoach,
+  isDraft,
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
@@ -301,7 +303,7 @@ My goal is to ${values.goals}.`;
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
           <CardContent className="w-full px-6 pb-0">
-            <div className="p-[24px] border border-[#008FF6] rounded-[20px] h-[calc(100vh-490.57px)] overflow-y-auto">
+            <div className="p-[24px] border border-[#008FF6] rounded-[20px]  h-[calc(100vh-438.57px)] overflow-auto ">
               <p className="text-[24px] text-[#1D1D1F] font-[500]">
                 Personal story
               </p>
@@ -335,7 +337,9 @@ My goal is to ${values.goals}.`;
               className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={isSearching}
-              switchOptions={config.options}
+              switchOptions={
+                isDraft ? config.options : config.options.slice(0, -1)
+              }
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
             />
@@ -369,7 +373,9 @@ My goal is to ${values.goals}.`;
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={isSearching}
-              switchOptions={config.options}
+              switchOptions={
+                isDraft ? config.options : config.options.slice(0, -1)
+              }
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
               healthHistory={healthHistory}

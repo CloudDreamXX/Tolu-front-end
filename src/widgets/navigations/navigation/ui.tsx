@@ -1,8 +1,9 @@
 import { logout } from "entities/user";
+import { CustomNavLink } from "features/custom-nav-link";
 import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Chevron from "shared/assets/icons/chevron";
 import Close from "shared/assets/icons/close";
 import Menu from "shared/assets/icons/menu";
@@ -10,7 +11,6 @@ import Search from "shared/assets/icons/search";
 import SignOutIcon from "shared/assets/icons/signout";
 import { ScrollArea } from "shared/ui";
 import { Input } from "shared/ui/input";
-import WrapperFolderTree from "widgets/sidebars/ui/content-manager/FolderTree";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 
 type Props = {
@@ -19,7 +19,6 @@ type Props = {
 
 export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   const nav = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -93,50 +92,22 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 </span>
               </button>
             </div>
-            <Input
-              placeholder="Search"
-              icon={<Search className="ml-[16px]" />}
-              iconRight={<Chevron className="mr-[16px]" />}
-              className="rounded-full px-[54px]"
-            />
-            <ScrollArea className="h-full pr-4">
+            <div className="px-4">
+              <Input
+                placeholder="Search"
+                icon={<Search className="ml-[16px]" />}
+                iconRight={<Chevron className="mr-[16px]" />}
+                className="rounded-full px-[54px]"
+              />
+            </div>
+            <ScrollArea className="h-full px-4">
               <div className="flex flex-col gap-4 mt-6">
-                {sideBarContent.map((link) =>
-                  link.title === "Library" ? (
-                    <div key={link.title}>
-                      <div
-                        className={`flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold ${
-                          location.pathname.includes("library")
-                            ? "text-[#1C63DB]"
-                            : "text-[#1D1D1F]"
-                        }`}
-                        onClick={() => setIsLibraryOpen((prev) => !prev)}
-                      >
-                        {link.icon}
-                        {link.title}
-                      </div>
-                      {isLibraryOpen && (
-                        <WrapperFolderTree
-                          onCloseMobMenu={() => setMenuMobOpen(false)}
-                        />
-                      )}
-                    </div>
-                  ) : (
-                    <NavLink
-                      key={link.title}
-                      to={link.link}
-                      onClick={() => setMenuMobOpen(false)}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold ${
-                          isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
-                        }`
-                      }
-                    >
-                      {link.icon}
-                      {link.title}
-                    </NavLink>
-                  )
-                )}
+                {sideBarContent.map((link) => (
+                  <CustomNavLink
+                    item={link}
+                    onClick={() => setMenuMobOpen(false)}
+                  />
+                ))}
               </div>
             </ScrollArea>
           </div>
@@ -146,7 +117,6 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
       <div className="relative hidden ml-auto xl:flex">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          // aria-label="Toggle menu"
           className="transition-colors duration-200"
         >
           <Menu className={menuOpen ? "text-[#1C63DB]" : "text-black"} />

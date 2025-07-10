@@ -6,10 +6,14 @@ import {
   IFolder,
   ISubfolder,
   IContentItem,
+  setFolders,
 } from "entities/folder";
 import { ContentService, ContentToEdit } from "entities/content";
+import { useDispatch } from "react-redux";
 
 export const useContentActions = () => {
+  const dispatch = useDispatch();
+
   const [compareIndex, setCompareIndex] = useState<number | null>(null);
   const [mobilePage, setMobilePage] = useState<1 | 2>(1);
   const [ratingsMap, setRatingsMap] = useState<
@@ -143,6 +147,8 @@ export const useContentActions = () => {
       target_folder_id: subfolderId,
     };
     await FoldersService.moveFolderContent(payload);
+    const folderResponse = await FoldersService.getFolders();
+    dispatch(setFolders(folderResponse));
     setIsDublicateOpen(false);
   };
 
@@ -152,6 +158,8 @@ export const useContentActions = () => {
       target_folder_id: subfolderId,
     };
     await FoldersService.moveFolderContent(payload);
+    const folderResponse = await FoldersService.getFolders();
+    dispatch(setFolders(folderResponse));
     setIsMoveOpen(false);
   };
 

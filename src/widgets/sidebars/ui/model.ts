@@ -1,6 +1,7 @@
 export interface SideBarItem {
   title: string;
-  link: string;
+  link?: string;
   icon?: React.ReactNode;
   leftIcon?: React.ReactNode;
+  content?: React.ReactElement<{ onChildrenItemClick?: () => void }>;
 }

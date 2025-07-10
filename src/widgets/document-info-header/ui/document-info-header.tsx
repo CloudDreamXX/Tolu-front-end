@@ -22,7 +22,7 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
   refreshSharedClients,
 }) => {
   return (
-    <div className="flex w-full flex-col md:flex-row gap-[2px] md:gap-[41px] md:min-h-[50px] md:items-center">
+    <div className="flex w-full flex-col md:flex-row md:flex-wrap gap-[2px] md:gap-x-4 md:gap-y-2 py-4 md:items-center">
       {document ? (
         <DocumentFolderInfo
           folderId={document.originalFolderId}

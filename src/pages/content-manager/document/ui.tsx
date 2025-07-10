@@ -17,10 +17,13 @@ import {
   useDocumentState,
   useMessageState,
 } from "features/document-management";
+import { cn } from "shared/lib";
 import { LibrarySmallChat } from "widgets/library-small-chat";
+import { findFolderPath } from "features/wrapper-folder-tree";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
+    folders,
     document,
     folder,
     conversation,
@@ -97,6 +100,7 @@ export const ContentManagerDocument: React.FC = () => {
   } = useContentActions();
 
   const { handleDocumentCreation } = useDocumentCreation();
+  const isDraft = documentPath[0]?.name.toLowerCase() === "drafts";
 
   // Handle document creation for new documents
   useEffect(() => {
@@ -165,7 +169,7 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] pt-2 md:pt-6 h-[calc(100vh-78px)] w-full">
+    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] pt-2 md:pt-6 h-full max-h-[calc(100vh-78px)] w-full">
       <div className="flex flex-row justify-end w-full h-full gap-[26px]">
         <div className="relative flex flex-col w-full h-full gap-2">
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
@@ -177,8 +181,18 @@ export const ContentManagerDocument: React.FC = () => {
             refreshSharedClients={refreshSharedClients}
           />
 
-          <div className="flex flex-col h-full bg-white p-2 pr-0 md:p-8 md:pr-0 w-full overflow-hidden m-auto rounded-tl-[24px] rounded-tr-[24px]">
-            <ScrollArea className="h-[calc(100%-64px)] pr-2 md:pr-6">
+          <div
+            className={cn(
+              "flex flex-col bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto",
+              isDraft ? "rounded-[24px] " : " rounded-t-2xl md:pb-0"
+            )}
+          >
+            <ScrollArea
+              className={cn(
+                "pr-2 md:pr-6",
+                isDraft ? "h-[calc(100vh-492px)] " : "h-[calc(100vh-264px)] "
+              )}
+            >
               <DocumentHeader
                 documentTitle={documentTitle}
                 query={document?.query}
@@ -223,16 +237,18 @@ export const ContentManagerDocument: React.FC = () => {
             </ScrollArea>
           </div>
 
-          <MessageInput
-            message={message}
-            isSendingMessage={isSendingMessage}
-            folderId={folderId}
-            documentId={documentId}
-            onMessageChange={setMessage}
-            onSendMessage={onSendMessage}
-            setFiles={setFiles}
-            setClientId={setClientId}
-          />
+          {isDraft && (
+            <MessageInput
+              message={message}
+              isSendingMessage={isSendingMessage}
+              folderId={folderId}
+              documentId={documentId}
+              onMessageChange={setMessage}
+              onSendMessage={onSendMessage}
+              setFiles={setFiles}
+              setClientId={setClientId}
+            />
+          )}
         </div>
 
         <UserEngagementSidebar
@@ -281,7 +297,10 @@ export const ContentManagerDocument: React.FC = () => {
             contentId={selectedDocumentId}
             handleSave={handleDublicateAndMoveClick}
             onClose={() => setIsDublicateOpen(false)}
-            parentFolderId={folder?.parentFolderId ?? ""}
+            parentFolderId={
+              folder?.parentFolderId ||
+              (findFolderPath(folders, folder?.id)?.[0]?.id ?? "")
+            }
           />
         )}
 
@@ -291,12 +310,15 @@ export const ContentManagerDocument: React.FC = () => {
             contentId={selectedDocumentId}
             handleSave={handleMoveClick}
             onClose={() => setIsMoveOpen(false)}
-            parentFolderId={folder?.parentFolderId ?? ""}
+            parentFolderId={
+              folder?.parentFolderId ||
+              (findFolderPath(folders, folder?.id)?.[0]?.id ?? "")
+            }
           />
         )}
 
         <div className="hidden xl:block max-w-[40%] w-full">
-          <LibrarySmallChat isCoach />
+          <LibrarySmallChat isCoach isDraft={isDraft} />
         </div>
       </div>
     </div>

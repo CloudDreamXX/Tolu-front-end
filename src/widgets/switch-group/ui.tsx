@@ -30,7 +30,7 @@ export const SwitchGroup: React.FC<SwitchGroupProps> = ({
               activeOption === option ? "text-[#1C63DB]" : "text-gray-700"
             )}
           >
-            {labelRenderer ? labelRenderer(option) : option}
+            {labelRenderer?.(option) ?? option}
           </span>
         </div>
       ))}

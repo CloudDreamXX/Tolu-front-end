@@ -5,6 +5,7 @@ import Community from "shared/assets/icons/community";
 import Dashboard from "shared/assets/icons/dashboard";
 import Workshops from "shared/assets/icons/workshops";
 import { SideBarItem } from "../model";
+import { WrapperFolderTree } from "features/wrapper-folder-tree";
 
 export const sideBarContent: SideBarItem[] = [
   {
@@ -19,7 +20,7 @@ export const sideBarContent: SideBarItem[] = [
   },
   {
     title: "Library",
-    link: "",
+    content: <WrapperFolderTree />,
     icon: <Book width={24} height={24} />,
   },
   {
