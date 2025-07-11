@@ -47,41 +47,48 @@ export const HistoryPopup: React.FC = () => {
         <BooksIcon weight="regular" className="w-4 h-4 m-auto text-blue-600" />
       </button>
       {isOpen && (
-        <div className="absolute flex flex-col top-0 z-10 w-full max-w-[350px] h-full p-4 bg-white border rounded-xl shadow-lg left-14">
-          <h3 className="mb-2 text-lg font-bold">Your history</h3>
-          <ul className="space-y-[18px] overflow-auto h-full">
-            {history && history.length > 0 ? (
-              history.map((item) => (
-                <li
-                  key={item.id}
-                  className="flex flex-row p-4 border rounded-lg"
-                >
-                  <div className="flex flex-col gap-1">
-                    <span className="text-lg font-bold leading-none text-gray-800">
-                      {item.chatTitle || "Untitled Chat"}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {new Date(item.createdAt).toLocaleString()}
-                    </span>
-                  </div>
-                  <Button
-                    className="ml-auto rounded-full bg-[#DDEBF6] hover:bg-[#CFE2F3] p-2"
-                    onClick={() => {
-                      nav(`/library/${item.chatId}`, {
-                        state: {
-                          isExistingChat: true,
-                        },
-                      });
-                    }}
+        <div
+          className="absolute top-0 left-0 h-full w-full bg-[#0000004D] md:block md:bg-transparent"
+          onClick={() => setIsOpen(false)}
+        >
+          <div className="absolute flex flex-col bottom-0 top-[300px] left-0 md:top-0 md:bottom-auto z-10 w-full md:max-w-[350px] h-full p-4 bg-white border rounded-t-[18px] md:rounded-xl shadow-lg md:left-14">
+            <h3 className="mb-2 text-lg font-bold">Your history</h3>
+            <ul className="space-y-[18px] overflow-auto h-full">
+              {history && history.length > 0 ? (
+                history.map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex flex-row p-4 border rounded-lg"
                   >
-                    <ArrowRightIcon className="text-[#1C63DB]" size={24} />
-                  </Button>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-lg font-bold leading-none text-gray-800">
+                        {item.chatTitle || "Untitled Chat"}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {new Date(item.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <Button
+                      className="ml-auto rounded-full bg-[#DDEBF6] hover:bg-[#CFE2F3] p-2"
+                      onClick={() => {
+                        nav(`/library/${item.chatId}`, {
+                          state: {
+                            isExistingChat: true,
+                          },
+                        });
+                      }}
+                    >
+                      <ArrowRightIcon className="text-[#1C63DB]" size={24} />
+                    </Button>
+                  </li>
+                ))
+              ) : (
+                <li className="text-sm text-gray-500">
+                  No search history found
                 </li>
-              ))
-            ) : (
-              <li className="text-sm text-gray-500">No search history found</li>
-            )}
-          </ul>
+              )}
+            </ul>
+          </div>
         </div>
       )}
     </div>

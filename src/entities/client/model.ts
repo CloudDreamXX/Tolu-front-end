@@ -44,6 +44,7 @@ export interface Folder {
   created_at: string;
   total_content_items: number;
   content: ContentItem[];
+  subfolders?: Folder[];
 }
 
 export interface FoldersResponse {

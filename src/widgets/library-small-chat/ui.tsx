@@ -204,45 +204,40 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     return returnedChatId;
   };
 
-  const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
-    [
-      "age",
-      "maritalStatus",
-      "job",
-      "children",
-      "location",
-      "religion",
-      "financialStatus",
-      "genderAssignedAtBirth",
-      "genderIdentity",
-    ],
-    [
-      "menopauseStatus",
-      "mainSymptoms",
-      "symptomTracking",
-      "trackingDevice",
-      "biggestChallenge",
-      "successManaging",
-    ],
-    ["diagnosedConditions", "geneticTraits", "maternalSide", "medications"],
-    [
-      "lifestyleInfo",
-      "takeout",
-      "homeCooked",
-      "dietType",
-      "exercise",
-      "sexLife",
-      "supportSystem",
-    ],
-    ["goals"],
-  ];
+  // const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
+  //   [
+  //     "age",
+  //     "maritalStatus",
+  //     "job",
+  //     "children",
+  //     "location",
+  //     "religion",
+  //     "financialStatus",
+  //     "genderAssignedAtBirth",
+  //     "genderIdentity",
+  //   ],
+  //   [
+  //     "menopauseStatus",
+  //     "mainSymptoms",
+  //     "symptomTracking",
+  //     "trackingDevice",
+  //     "biggestChallenge",
+  //     "successManaging",
+  //   ],
+  //   ["diagnosedConditions", "geneticTraits", "maternalSide", "medications"],
+  //   [
+  //     "lifestyleInfo",
+  //     "takeout",
+  //     "homeCooked",
+  //     "dietType",
+  //     "exercise",
+  //     "sexLife",
+  //     "supportSystem",
+  //   ],
+  //   ["goals"],
+  // ];
 
   const goToStep = async (nextStep: number) => {
-    if (nextStep > currentStep) {
-      const isValid = await form.trigger(stepFields[currentStep]);
-      if (!isValid) return;
-    }
-
     if (nextStep >= steps.length) {
       const values = form.getValues();
       const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}. 
@@ -287,7 +282,7 @@ My goal is to ${values.goals}.`;
     <>
       {(isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory) ||
       isSwitch(SWITCH_KEYS.CASE) ? (
-        <Card className="flex flex-col w-full overflow-auto border-none h-fit rounded-2xl">
+        <Card className="flex flex-col w-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
@@ -378,7 +373,6 @@ My goal is to ${values.goals}.`;
               }
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
-              healthHistory={healthHistory}
             />
           </CardFooter>
         </Card>

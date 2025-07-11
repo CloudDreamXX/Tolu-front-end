@@ -1,16 +1,20 @@
-import { HealthHistory } from "entities/health-history";
+import { useEffect, useState } from "react";
 import { Paperclip, Send } from "lucide-react";
-import React, { useState } from "react";
+import SymptomsTracker from "shared/assets/icons/symptoms-tracker";
 import { cn } from "shared/lib";
 import { Button, Input } from "shared/ui";
-import { HealthProfileForm } from "widgets/health-profile-form";
 import { SwitchGroup } from "widgets/switch-group";
+import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
+import {
+  MenopauseSubmissionRequest,
+  Symptom,
+  UserService,
+} from "entities/user";
 
 interface LibraryChatInputProps {
   switchOptions: string[];
   selectedSwitch: string;
   setSelectedSwitch: (option: string) => void;
-  healthHistory?: HealthHistory;
   placeholder?: string;
   onSend?: (
     message: string,
@@ -22,7 +26,6 @@ interface LibraryChatInputProps {
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
-  healthHistory,
   placeholder = "Your message",
   onSend,
   disabled = false,
@@ -33,6 +36,23 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
 }) => {
   const [message, setMessage] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [stepModalOpen, setStepModalOpen] = useState(false);
+  const [completionModalOpen, setCompletionModalOpen] = useState(false);
+  const [symptoms, setSymptoms] = useState<Symptom[]>([]);
+
+  useEffect(() => {
+    const fetchSteps = async () => {
+      try {
+        const data = await UserService.getMenopauseSymptoms();
+        setSymptoms(data.Symptoms);
+      } catch (error) {
+        console.error("Failed to load steps", error);
+      }
+    };
+
+    fetchSteps();
+  }, []);
 
   const handleSend = () => {
     if ((!message.trim() && attachedFiles.length === 0) || disabled) return;
@@ -56,14 +76,33 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const isSendDisabled =
     (!message.trim() && attachedFiles.length === 0) || disabled;
 
+  const handleStartCheckIn = () => {
+    setModalOpen(false);
+    setStepModalOpen(true);
+  };
+
+  const handleFinishCheckIn = async (results: MenopauseSubmissionRequest) => {
+    await UserService.submitMenopauseResults(results);
+    setStepModalOpen(false);
+    setCompletionModalOpen(true);
+
+    // try {
+    //   const data = await UserService.getMenopauseRecommendations();
+    // } catch (error) {
+    //   console.error("Failed to load recommendations", error);
+    // }
+  };
+
   return (
     <div className={cn("p-4 bg-white border-t border-gray-200", className)}>
-      <SwitchGroup
-        options={switchOptions}
-        activeOption={selectedSwitch}
-        onChange={setSelectedSwitch}
-        classname="mb-4"
-      />
+      <div className="hidden md:block">
+        <SwitchGroup
+          options={switchOptions}
+          activeOption={selectedSwitch}
+          onChange={setSelectedSwitch}
+          classname="mb-4"
+        />
+      </div>
       <div className="relative mb-4">
         <Input
           placeholder={placeholder}
@@ -91,7 +130,10 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               </span>
             )}
           </label>
-          {healthHistory && <HealthProfileForm healthHistory={healthHistory} />}
+          <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
+            <SymptomsTracker />{" "}
+            <span className="hidden md:block">Symptoms Tracker</span>
+          </Button>
         </div>
         <Button
           onClick={handleSend}
@@ -101,6 +143,37 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           <Send size={20} color="white" />
         </Button>
       </div>
+
+      <div className="md:hidden block mt-[8px]">
+        <SwitchGroup
+          options={switchOptions}
+          activeOption={selectedSwitch}
+          onChange={setSelectedSwitch}
+          classname="mb-4"
+        />
+      </div>
+
+      <SymptomCheckModal
+        isOpen={modalOpen}
+        onStepModalOpen={handleStartCheckIn}
+        onClose={() => setModalOpen(false)}
+        variant="intro"
+      />
+
+      {symptoms && (
+        <MultiStepModal
+          isOpen={stepModalOpen}
+          onClose={() => setStepModalOpen(false)}
+          onComplete={handleFinishCheckIn}
+        />
+      )}
+
+      <SymptomCheckModal
+        isOpen={completionModalOpen}
+        onStepModalOpen={() => setCompletionModalOpen(false)}
+        onClose={() => setCompletionModalOpen(false)}
+        variant="completion"
+      />
     </div>
   );
 };

@@ -7,6 +7,8 @@ import { clientOnboardingReducer } from "./clientOnboardingSlice";
 import { clientMoodReducer } from "./clientMoodSlice";
 import { clientGlucoseReducer } from "./clientGlucoseSlice";
 import { folderReducer } from "entities/folder";
+import { healthHistoryReducer } from "entities/health-history/lib";
+import { clientReducer } from "entities/client/lib";
 
 const userPersistConfig = {
   key: "user",
@@ -25,6 +27,8 @@ const rootReducer = combineReducers({
   clientMood: persistReducer(clientMoodPersistConfig, clientMoodReducer),
   clientGlucose: clientGlucoseReducer,
   folder: folderReducer,
+  healthHistory: healthHistoryReducer,
+  client: clientReducer,
 });
 
 export const store = configureStore({

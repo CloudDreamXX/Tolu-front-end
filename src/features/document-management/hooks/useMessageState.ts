@@ -34,6 +34,7 @@ export const useMessageState = () => {
           chat_id: document.chatId ?? "",
           regenerate_id: null,
           chat_title: document?.title ?? "",
+          instructions: document.originalInstructions ?? "",
         },
         folderId,
         files,

@@ -12,18 +12,23 @@ import {
   Input,
   ScrollArea,
 } from "shared/ui";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "entities/store";
+import { setFolders } from "entities/client/lib";
 
 export const LibraryClientContent = () => {
   const [search, setSearch] = useState("");
-  const [folders, setFolders] = useState<Folder[]>([]);
   const [statusMap, setStatusMap] = useState<Record<string, ContentStatus>>({});
   const nav = useNavigate();
+  const folderId = useSelector((state: RootState) => state.client.folderId);
+  const folders = useSelector((state: RootState) => state.client.folders);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await ClientService.getLibraryContent();
-        setFolders(response.folders);
+        dispatch(setFolders(response.folders));
       } catch (error) {
         console.error("Failed to fetch library content:", error);
       }
@@ -31,6 +36,24 @@ export const LibraryClientContent = () => {
 
     fetchData();
   }, []);
+
+  const findFolderById = (folders: Folder[], id: string): Folder | null => {
+    for (const folder of folders) {
+      if (folder.id === id) return folder;
+      if (folder.subfolders?.length) {
+        const found = findFolderById(folder.subfolders, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const filteredFolders = folderId
+    ? (() => {
+        const result = findFolderById(folders, folderId);
+        return result ? [result] : [];
+      })()
+    : folders;
 
   const onStatusChange = async (
     id: string,
@@ -64,8 +87,8 @@ export const LibraryClientContent = () => {
         autoFocus
       />
       <ScrollArea className="flex-1 min-h-0 pr-2 mt-4">
-        {folders &&
-          folders.map((folder, index) => (
+        {filteredFolders &&
+          filteredFolders.map((folder, index) => (
             <Accordion
               key={folder.id}
               type="single"

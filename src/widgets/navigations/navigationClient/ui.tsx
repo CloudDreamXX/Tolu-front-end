@@ -1,7 +1,7 @@
 import { logout } from "entities/user";
 import { User } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import ChatsCircle from "shared/assets/icons/chats-circle";
 import Close from "shared/assets/icons/close";
@@ -14,13 +14,20 @@ import { Button } from "shared/ui";
 import AvatarWoman from "shared/assets/images/AvatarWoman.png";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import CaretRight from "shared/assets/icons/caretRight";
+import WrapperLibraryFolderTree from "widgets/sidebars/ui/health-snapshot/FolderTree";
+import { setIsMobileChatOpen } from "entities/client/lib";
+import { RootState } from "entities/store";
 
 export const NavigationClient: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [menuMobOpen, setMenuMobOpen] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const nav = useNavigate();
   const menuMobRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
+  const isMobileChatOpen = useSelector(
+    (state: RootState) => state.client.isMobileChatOpen
+  );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -41,6 +48,14 @@ export const NavigationClient: React.FC = () => {
     setMenuMobOpen(false);
     dispatch(logout());
     nav("/auth");
+  };
+
+  const toggleLibrary = () => {
+    setIsLibraryOpen(!isLibraryOpen);
+  };
+
+  const handleOpenChat = () => {
+    dispatch(setIsMobileChatOpen(!isMobileChatOpen));
   };
 
   return (
@@ -136,7 +151,7 @@ export const NavigationClient: React.FC = () => {
         </h1>
         <div className="flex items-center gap-[16px]">
           <button
-            onClick={() => nav("/library")}
+            onClick={handleOpenChat}
             className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px]"
           >
             AI Assistant
@@ -201,11 +216,12 @@ export const NavigationClient: React.FC = () => {
                     isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
-                onClick={() => setMenuMobOpen(false)}
+                onClick={toggleLibrary}
               >
                 <Library />
                 Library
               </NavLink>
+              {isLibraryOpen && <WrapperLibraryFolderTree />}
 
               <NavLink
                 to={"/messages"}

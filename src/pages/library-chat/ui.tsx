@@ -2,16 +2,44 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { SearchResultResponseItem } from "entities/search/model";
-import { SearchAiChatInput } from "entities/search/ui/chat-input";
+import { MessageList } from "widgets/message-list";
+import { LibraryChatInput } from "entities/search";
+import { RootState } from "entities/store";
 import {
   ChatActions,
   ChatBreadcrumb,
   ChatHeader,
   ChatLoading,
   Message,
-  RelatedContent,
 } from "features/chat";
-import { MessageList } from "widgets/message-list";
+import {
+  SWITCH_CONFIG,
+  SWITCH_KEYS,
+  SwitchValue,
+} from "widgets/library-small-chat/switch-config";
+import { Card, CardContent } from "shared/ui";
+import { SymptomsForm } from "widgets/library-small-chat/components/symptoms-form";
+import { MenopauseForm } from "widgets/library-small-chat/components/menopause-form/ui";
+import { HealthHistoryForm } from "widgets/library-small-chat/components/health-history-form";
+import { LifestyleForm } from "widgets/library-small-chat/components/lifestyle-form";
+import { GoalsForm } from "widgets/library-small-chat/components/goals-form";
+import { Steps } from "features/steps/ui";
+import {
+  baseSchema,
+  mapHealthHistoryToFormDefaults,
+} from "widgets/library-small-chat/lib";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { useSelector } from "react-redux";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const steps = [
+  "Demographic",
+  "Menopause Status",
+  "Health history",
+  "Your Lifestyle",
+  "Your Goals",
+];
 
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
@@ -33,6 +61,20 @@ export const LibraryChat = () => {
   const files = location.state?.files;
 
   const isExistingChat = chatId && !chatId.startsWith("new_chat_");
+  const config = SWITCH_CONFIG.default;
+  const [selectedSwitch, setSelectedSwitch] = useState<string>(
+    config.options[0] as string
+  );
+  const isSwitch = (value: SwitchValue) => selectedSwitch === value;
+  const [currentStep, setCurrentStep] = useState(0);
+  const healthHistory = useSelector(
+    (state: RootState) => state.healthHistory.data
+  );
+
+  const form = useForm<z.infer<typeof baseSchema>>({
+    resolver: zodResolver(baseSchema),
+    defaultValues: mapHealthHistoryToFormDefaults(healthHistory),
+  });
 
   useEffect(() => {
     const initialize = async () => {
@@ -258,14 +300,6 @@ export const LibraryChat = () => {
 
           setMessages((prev) => [...prev, aiMessage]);
           setStreamingText("");
-
-          if (finalData.chat_id && finalData.chat_id !== currentChatId) {
-            setCurrentChatId(finalData.chat_id);
-          }
-
-          if (finalData.chat_title) {
-            setChatTitle(finalData.chat_title);
-          }
         },
         (error) => {
           setIsSearching(false);
@@ -356,15 +390,59 @@ export const LibraryChat = () => {
     !streamingText &&
     !isLoadingSession;
 
+  const goToStep = async (nextStep: number) => {
+    if (nextStep >= steps.length) {
+      const values = form.getValues();
+      const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}. 
+I work as a ${values.job} and I have ${values.children} children. 
+I live in ${values.location} and I'm a ${values.religion}. 
+I consider my financial ability ${values.financialStatus}. 
+I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}. 
+
+I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}. 
+I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}. 
+My biggest challenge is ${values.biggestChallenge}. 
+Currently I ${values.successManaging} successful managing my symptoms.
+
+I have a history of ${values.diagnosedConditions}. 
+My genetic test indicates I have ${values.geneticTraits}. 
+In my family there's history of ${values.maternalSide}. 
+I take ${values.medications} to support my condition.
+
+Right now I have a ${values.lifestyleInfo} lifestyle. 
+I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food. 
+My diet is ${values.dietType} and I exercise ${values.exercise} days during a week. 
+My sex life is ${values.sexLife} and my emotional support network is usually ${values.supportSystem}.
+
+My goal is to ${values.goals}.`;
+
+      setSelectedSwitch(config.defaultOption);
+      await handleNewMessage(message, []);
+      form.reset();
+      setCurrentStep(0);
+    } else {
+      setCurrentStep(nextStep);
+    }
+  };
+
+  const handleNextStep = () => goToStep(currentStep + 1);
+
+  const handleStepClick = async (stepIndex: number) => {
+    await goToStep(stepIndex);
+  };
+
   return (
-    <div className="flex flex-col w-full h-full gap-6 p-6">
+    <div className="flex flex-col w-full h-full gap-6 p-6 overflow-y-auto xl:overflow-y-none">
       <ChatBreadcrumb displayChatTitle={displayChatTitle} />
-      <div className="flex flex-row w-full h-full gap-6 max-h-[calc(100vh-6rem)] relative">
-        <ChatActions
-          onRegenerate={handleRegenerateResponse}
-          isSearching={isSearching}
-          hasMessages={messages.length >= 2}
-        />
+      <div className="flex flex-row w-full h-full gap-6 max-h-[calc(100vh-6rem)] md:relative">
+        <div className="hidden xl:block">
+          <ChatActions
+            onRegenerate={handleRegenerateResponse}
+            isSearching={isSearching}
+            hasMessages={messages.length >= 2}
+            isHistoryPopup
+          />
+        </div>
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
@@ -378,9 +456,9 @@ export const LibraryChat = () => {
               }}
             />
 
-            {isEmpty ? (
+            {isEmpty && !isSwitch(SWITCH_KEYS.PERSONALIZE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
-                <div className="max-w-md space-y-4">
+                <div className="max-w-md space-y-4 px-[16px]">
                   <h3 className="text-xl font-semibold text-gray-700">
                     Start a new conversation
                   </h3>
@@ -391,6 +469,49 @@ export const LibraryChat = () => {
                   </p>
                 </div>
               </div>
+            ) : (isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory) ||
+              isSwitch(SWITCH_KEYS.CASE) ? (
+              <>
+                <MessageList
+                  messages={messages}
+                  isSearching={isSearching}
+                  streamingText={streamingText}
+                  error={error}
+                />
+                <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+                  <div className="w-full mb-[24px]" />
+                  <CardContent className="w-full px-6 mt-auto rounded-0">
+                    <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+                      <p className="text-[24px] text-[#1D1D1F] font-[500]">
+                        Personal story
+                      </p>
+                      <Steps
+                        steps={steps}
+                        stepWidth={"w-full"}
+                        currentStep={currentStep}
+                        ordered
+                        onStepClick={handleStepClick}
+                      />
+                      <form onSubmit={(e) => e.preventDefault()}>
+                        {currentStep === 0 && <SymptomsForm form={form} />}
+                        {currentStep === 1 && <MenopauseForm form={form} />}
+                        {currentStep === 2 && <HealthHistoryForm form={form} />}
+                        {currentStep === 3 && <LifestyleForm form={form} />}
+                        {currentStep === 4 && <GoalsForm form={form} />}
+                      </form>
+                      <div className="flex justify-end gap-2 mt-6">
+                        <button
+                          type="button"
+                          className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
+                          onClick={handleNextStep}
+                        >
+                          Continue
+                        </button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
             ) : (
               <MessageList
                 messages={messages}
@@ -400,16 +521,25 @@ export const LibraryChat = () => {
               />
             )}
 
-            {/* Input */}
-            <SearchAiChatInput
-              placeholder="Your message"
+            <div className="xl:hidden block mt-[16px]">
+              <ChatActions
+                onRegenerate={handleRegenerateResponse}
+                isSearching={isSearching}
+                hasMessages={messages.length >= 2}
+                isHistoryPopup
+              />
+            </div>
+
+            <LibraryChatInput
+              className="mt-4"
               onSend={handleNewMessage}
               disabled={isSearching}
-              className="mt-4"
+              switchOptions={config.options}
+              selectedSwitch={selectedSwitch}
+              setSelectedSwitch={setSelectedSwitch}
             />
           </div>
         )}
-        <RelatedContent />
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export const SymptomCheckModal: React.FC<SymptomCheckModalProps> = ({
     <div
       className="fixed top-[69px] md:top-0 inset-0 z-10 flex items-end md:items-center justify-center"
       style={{
-        background: isMobile ? "#F2F4F6" : "rgba(0, 0, 0, 0.30)",
+        background: "rgba(0, 0, 0, 0.30)",
         backdropFilter: "blur(2px)",
         WebkitBackdropFilter: "blur(2px)",
       }}

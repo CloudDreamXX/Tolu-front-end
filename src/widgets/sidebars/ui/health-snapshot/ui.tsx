@@ -12,12 +12,14 @@ import { User } from "lucide-react";
 import SignOutIcon from "shared/assets/icons/signout";
 import { toast } from "shared/lib/hooks/use-toast";
 import { SearchAiSmallInput } from "entities/search";
+import WrapperLibraryFolderTree from "./FolderTree";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
   const token = useSelector((state: RootState) => state.user.token);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [isNarrow, setIsNarrow] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   useEffect(() => {
     const checkWidth = () => {
@@ -47,9 +49,19 @@ export const HealthSnapshotSidebar: React.FC = () => {
     }
   };
 
+  const toggleLibrary = () => {
+    setIsLibraryOpen(!isLibraryOpen);
+    if (isNarrow) {
+      // Close the menu if it's mobile and clicked
+      setMenuOpen(false);
+    }
+  };
+
   return (
     <div
-      className={`flex flex-col justify-between h-full ${isNarrow ? "w-[81px] items-center" : "w-[268px]"}`}
+      className={`flex flex-col justify-between h-full ${
+        isNarrow ? "w-[81px] items-center" : "w-[268px]"
+      } overflow-y-auto`}
     >
       <div className="flex flex-col gap-[32px]">
         <NavLink to={"/"} className="flex flex-col items-center text-center">
@@ -66,36 +78,25 @@ export const HealthSnapshotSidebar: React.FC = () => {
         <div
           className={`flex flex-col w-full ${isNarrow ? "items-center" : "items-start"}`}
         >
-          {/* <NavLink
-            to={"/health-snapshot"}
-            className={({ isActive }) =>
-              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
-                isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
-              }`
-            }
-          >
-            <Heartbeat />
-            {isNarrow ? "" : "Health Snapshot"}
-          </NavLink> */}
-
           <NavLink
             to={"/library"}
+            onClick={(e) => {
+              e.preventDefault();
+              toggleLibrary();
+              nav("/library");
+            }}
             className={({ isActive }) =>
-              `flex items-center gap-3 justify-center 2xl:justify-start w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${
-                isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
-              }`
+              `flex items-center gap-3 justify-center 2xl:justify-start w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"}`
             }
           >
             <Library />
             {isNarrow ? "" : "Library"}
           </NavLink>
-
+          {isLibraryOpen && <WrapperLibraryFolderTree />}
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
-              }`
+              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"}`
             }
           >
             <ChatsCircle />
@@ -103,6 +104,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           </NavLink>
         </div>
       </div>
+
       <button
         onClick={isNarrow ? () => setMenuOpen(!menuOpen) : () => {}}
         className={`flex gap-4 items-center ${isNarrow ? "" : "pl-4"}`}
@@ -128,8 +130,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
 
       {menuOpen && (
         <div
-          className={`
-            absolute ${isNarrow ? "left-[70px] bottom-[20px]" : "left-[90px] bottom-[80px]"} 
+          className={`absolute ${isNarrow ? "left-[70px] bottom-[20px]" : "left-[90px] bottom-[80px]"} 
             mt-2 w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 py-[12px] px-[20px]
             flex flex-col gap-2 z-50
             ${!isNarrow && "before:content-[''] before:absolute before:-bottom-2 before:right-7 before:border-x-8 before:border-t-8 before:border-x-transparent before:border-t-white"}`}

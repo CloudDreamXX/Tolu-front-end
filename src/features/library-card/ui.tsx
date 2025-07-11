@@ -65,7 +65,7 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
           "
       >
         <CardContent className={cn("flex flex-col gap-[8px] p-4")}>
-          <h2 className="text-xl font-bold text-left truncate max-w-30 flex items-center justify-between">
+          <h2 className="text-[18px] xl:text-xl font-bold text-left truncate max-w-30 flex items-center justify-between">
             {trimToThreeWords(title)}
             <div className="flex items-center gap-[12px]">
               <button
@@ -89,7 +89,7 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
               </button>
             </div>
           </h2>
-          {status === "To read" && (
+          {status === "To read" && progress > 0 && (
             <div className="w-full flex flex-col gap-[8px]">
               <div className="flex justify-between">
                 <span className="text-[16px] text-[#1B2559] font-[600] px-[8px] py-[2px] bg-[#DDEBF6] rounded-[8px]">
@@ -110,8 +110,11 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
           <div className="flex items-center justify-between">
             {renderStatus(status, true)}
             {renderDocumentType(type, true)}
-            {renderAuthor(author, true)}
+            <span className="hidden md:block">
+              {renderAuthor(author, true)}
+            </span>
           </div>
+          <span className="md:hidden block">{renderAuthor(author, true)}</span>
         </CardContent>
       </Card>
     </button>

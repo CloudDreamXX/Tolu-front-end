@@ -96,7 +96,7 @@ export interface AIChatMessage {
   chat_id?: string | null;
   regenerate_id?: string | null;
   chat_title: string;
-  folder_instructions?: string | null;
+  instructions: string | null;
 }
 
 export interface Status {

@@ -1,4 +1,5 @@
 import { RootState } from "entities/store";
+import { LibraryChat } from "pages/library-chat";
 import { ReactElement } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
@@ -32,6 +33,10 @@ export const MainLayout: React.FC<{
   children: ReactElement;
   mainLocation: string;
 }> = ({ children, mainLocation }) => {
+  const isMobileChatOpen = useSelector(
+    (state: RootState) => state.client.isMobileChatOpen
+  );
+
   return (
     <div className="flex flex-row w-full h-screen min-h-screen overflow-hidden min-w-screen">
       <div className="hidden xl:block h-full px-[16px] py-8 pr-0">
@@ -40,6 +45,11 @@ export const MainLayout: React.FC<{
       <div className="flex flex-col w-full h-full bg-[#F2F4F6]">
         {getNavigation(mainLocation)}
         {children}
+        {isMobileChatOpen && (
+          <div className="absolute top-[76px] md:top-[117px] z-50 h-full w-full bg-white">
+            <LibraryChat />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,24 +1,16 @@
 import { StarIcon } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  Input,
-  RadioGroup,
-  RadioGroupItem,
-} from "shared/ui";
+import { Button, Input, RadioGroup, RadioGroupItem } from "shared/ui";
+import { X } from "lucide-react";
+import { cn } from "shared/lib/utils";
 
 interface FeedbackModalProps {
-  children: React.ReactNode;
   initialRating: number;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export const FeedbackModal: React.FC<FeedbackModalProps> = ({
-  children,
   initialRating,
   isOpen,
   onOpenChange,
@@ -53,21 +45,30 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-3xl gap-6 p-6">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">
-              Was this helpful for you?
-            </h2>
-          </div>
-
-          <p className="text-gray-600 ">
-            Your input helps us improve our content and better support your
-            needs.
-          </p>
+    <div
+      className={cn(
+        "fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-[16px]",
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      )}
+      onClick={() => onOpenChange(false)}
+    >
+      <div
+        className="relative bg-white rounded-[18px] w-full max-w-3xl p-[16px] xl:p-6 flex flex-col gap-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">Was this helpful for you?</h2>
+          <button
+            onClick={() => onOpenChange(false)}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-900"
+          >
+            <X size={24} />
+          </button>
         </div>
+
+        <p className="text-gray-600">
+          Your input helps us improve our content and better support your needs.
+        </p>
 
         <div className="flex flex-col items-center gap-4 p-6 border rounded-lg">
           <span className="ml-2 text-2xl">{getRatingText()}</span>
@@ -76,7 +77,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
               <button
                 key={star}
                 onClick={() => setRating(star)}
-                className={` ${
+                className={`${
                   star <= rating ? "text-yellow-400" : "text-gray-300"
                 }`}
               >
@@ -145,7 +146,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
             Save
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };

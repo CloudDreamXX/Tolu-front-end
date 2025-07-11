@@ -1,8 +1,11 @@
 import { Paperclip, Send } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "shared/lib";
-import { Button, Textarea } from "shared/ui";
-import { HealthProfileForm } from "widgets/health-profile-form";
+import { Button, Input, Switch } from "shared/ui";
+import SymptomsTracker from "shared/assets/icons/symptoms-tracker";
+import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
+import { MenopauseSubmissionRequest, UserService } from "entities/user";
+import { Symptom } from "entities/user";
 
 interface SearchAiChatInputProps {
   placeholder?: string;
@@ -21,6 +24,10 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
 }) => {
   const [message, setMessage] = useState<string>("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [stepModalOpen, setStepModalOpen] = useState(false);
+  const [completionModalOpen, setCompletionModalOpen] = useState(false);
+  const [symptoms, setSymptoms] = useState<Symptom[]>([]);
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -43,7 +50,35 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
     onFileAttach?.(files);
   };
 
-  const isFormValid = message.trim() !== "";
+  const handleStartCheckIn = () => {
+    setModalOpen(false);
+    setStepModalOpen(true);
+  };
+
+  const handleFinishCheckIn = async (results: MenopauseSubmissionRequest) => {
+    await UserService.submitMenopauseResults(results);
+    setStepModalOpen(false);
+    setCompletionModalOpen(true);
+
+    // try {
+    //   const data = await UserService.getMenopauseRecommendations();
+    // } catch (error) {
+    //   console.error("Failed to load recommendations", error);
+    // }
+  };
+
+  const fetchSymptoms = async () => {
+    try {
+      const data = await UserService.getMenopauseSymptoms();
+      setSymptoms(data.Symptoms);
+    } catch (error) {
+      console.error("Failed to load symptoms", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSymptoms();
+  }, []);
 
   return (
     <div
@@ -52,18 +87,24 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
         className
       )}
     >
-      <div className="relative">
-        <Textarea
-          placeholder={placeholder}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyPress}
-          containerClassName="border-none bg-transparent focus-within:border-blue-500 p-0"
-          className="p-0 border-none resize-none h-14 focus:border-blue-500"
-        />
+      <div className="hidden xl:flex items-center gap-2">
+        <Switch checked={false} onCheckedChange={() => {}} />
+        <span className={cn("text-sm cursor-default ", "text-gray-700")}>
+          Personalize search
+        </span>
+      </div>
 
+      <Input
+        placeholder={placeholder}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyPress}
+        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
+
+      <div className="flex items-center justify-between">
         <div className="flex flex-row items-center w-full gap-4">
-          <label className="relative flex items-center text-gray-600 transition-colors cursor-pointer gap-2text-sm hover:text-gray-800 hover:bg-gray-100">
+          <label className="relative flex items-center text-gray-600 transition-colors cursor-pointer gap-2 text-sm hover:text-gray-800 hover:bg-gray-100">
             <Paperclip size={24} />
             {attachedFiles.length > 0 && (
               <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
@@ -81,25 +122,57 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
               disabled={disabled}
             />
           </label>
-          <HealthProfileForm />
-          <Button
-            onClick={handleSend}
-            disabled={!isFormValid}
-            className="w-10 h-10 p-0 ml-auto bg-blue-500 rounded-full bottom-3 right-3 hover:bg-blue-600 disabled:opacity-50"
-            title={
-              isFormValid
-                ? "Send message (Ctrl+Enter)"
-                : "Please enter a message"
-            }
-          >
-            <Send
-              size={24}
-              color="white"
-              className="relative rotate-45 -left-[2px]"
-            />
+
+          <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
+            <SymptomsTracker />{" "}
+            <span className="hidden md:block">Symptoms Tracker</span>
           </Button>
         </div>
+        <Button
+          onClick={handleSend}
+          disabled={!message.trim() && attachedFiles.length === 0}
+          className="w-10 h-10 p-0 ml-auto bg-blue-500 rounded-full bottom-3 right-3 hover:bg-blue-600 disabled:opacity-50"
+          title={
+            message.trim() || attachedFiles.length
+              ? "Send message (Ctrl+Enter)"
+              : "Please enter a message"
+          }
+        >
+          <Send
+            size={24}
+            color="white"
+            className="relative rotate-45 -left-[2px]"
+          />
+        </Button>
       </div>
+      <div className="flex xl:hidden items-center gap-2">
+        <Switch checked={false} onCheckedChange={() => {}} />
+        <span className={cn("text-sm cursor-default ", "text-gray-700")}>
+          Personalize search
+        </span>
+      </div>
+
+      <SymptomCheckModal
+        isOpen={modalOpen}
+        onStepModalOpen={handleStartCheckIn}
+        onClose={() => setModalOpen(false)}
+        variant="intro"
+      />
+
+      {symptoms && (
+        <MultiStepModal
+          isOpen={stepModalOpen}
+          onClose={() => setStepModalOpen(false)}
+          onComplete={handleFinishCheckIn}
+        />
+      )}
+
+      <SymptomCheckModal
+        isOpen={completionModalOpen}
+        onStepModalOpen={() => setCompletionModalOpen(false)}
+        onClose={() => setCompletionModalOpen(false)}
+        variant="completion"
+      />
     </div>
   );
 };

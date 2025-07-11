@@ -69,6 +69,7 @@ export const ContentManagerFolder: React.FC = () => {
       chat_id: contentId,
       regenerate_id: null,
       chat_title: title,
+      instructions: "",
     };
 
     let finalAccumulatedReply = "";

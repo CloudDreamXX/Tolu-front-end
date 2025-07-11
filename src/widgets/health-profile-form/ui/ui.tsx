@@ -197,7 +197,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     if (nextStep === currentStep) return;
 
     const stepFields = [
-      ["age", "gender", "height", "weight"],
+      ["age", "gender"],
       [
         "healthConcerns",
         "medicalConditions",
@@ -285,10 +285,13 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           My health profile 0/7
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl gap-6 max-h-[98vh] overflow-y-auto">
+      <DialogContent className="md:max-w-3xl gap-6 max-h-[98vh] overflow-y-auto left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
         <DialogTitle>Your Health Status Now</DialogTitle>
         <Steps
           steps={steps}
+          stepWidth={
+            "text-[12px] w-[114px] md:text-[14px] md:w-[416px] lg:w-[389px]"
+          }
           currentStep={currentStep}
           ordered
           onStepClick={goToStep}

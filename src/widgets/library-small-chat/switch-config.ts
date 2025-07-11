@@ -1,6 +1,6 @@
 export const SWITCH_KEYS = {
   PERSONALIZE: "Personalize search",
-  CONTENT: "Content mod",
+  CONTENT: "Learn",
   RESEARCH: "Research",
   CASE: "Case Search",
   CREATE: "Create content",

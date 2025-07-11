@@ -1,12 +1,11 @@
 import { ISessionResult } from "entities/coach";
+import { Folders } from "lucide-react";
 import React from "react";
 import Compare from "shared/assets/icons/compare";
 import Dislike from "shared/assets/icons/dislike";
 import Dublicate from "shared/assets/icons/dublicate";
 import Arrow from "shared/assets/icons/grey-arrow";
-import Bin from "shared/assets/icons/grey-bin";
 import Edit from "shared/assets/icons/grey-edit";
-import MarkAs from "shared/assets/icons/grey-mark-as";
 import Voiceover from "shared/assets/icons/voiceover";
 import { RatePopup } from "widgets/RatePopup";
 
@@ -34,10 +33,8 @@ export const ConversationItemActions: React.FC<
   onEditToggle,
   setSelectedDocumentId,
   setIsBadResponseOpen,
-  setIsDeleteOpen,
   setIsMoveOpen,
   handleDublicateClick,
-  handleMarkAsClick,
 }) => {
   const handleRateClick = async (
     id: string,
@@ -88,13 +85,19 @@ export const ConversationItemActions: React.FC<
 
         <button
           className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-          onClick={() => handleMarkAsClick(pair.id)}
+          onClick={() => {
+            setSelectedDocumentId(pair.id);
+            setIsMoveOpen(true);
+          }}
         >
-          <MarkAs />
+          <Arrow />
         </button>
 
-        <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center">
-          <Voiceover />
+        <button
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+          onClick={() => handleDublicateClick(pair.id)}
+        >
+          <Folders />
         </button>
 
         <button
@@ -107,14 +110,8 @@ export const ConversationItemActions: React.FC<
           <Dislike className="scale-x-[-1]" />
         </button>
 
-        <button
-          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-          onClick={() => {
-            setSelectedDocumentId(pair.id);
-            setIsDeleteOpen(true);
-          }}
-        >
-          <Bin />
+        <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center">
+          <Voiceover />
         </button>
 
         <button
