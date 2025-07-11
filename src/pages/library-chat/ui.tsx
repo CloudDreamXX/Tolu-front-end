@@ -26,12 +26,14 @@ import { GoalsForm } from "widgets/library-small-chat/components/goals-form";
 import { Steps } from "features/steps/ui";
 import {
   baseSchema,
+  mapFormToPostData,
   mapHealthHistoryToFormDefaults,
 } from "widgets/library-small-chat/lib";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { HealthHistoryService } from "entities/health-history";
 
 const steps = [
   "Demographic",
@@ -146,11 +148,21 @@ export const LibraryChat = () => {
           }
 
           if (item.answer) {
+            let content = item.answer;
+            let document = item.answer;
+
+            if (item.answer.includes("Relevant Content")) {
+              const parts = item.answer.split("Relevant Content");
+              content = parts[0].trim();
+              document = item.answer;
+            }
+
             chatMessages.push({
               id: `ai-${item.id}`,
               type: "ai",
-              content: item.answer,
+              content: content,
               timestamp: new Date(item.created_at),
+              document: document,
             });
           }
         });
@@ -239,8 +251,24 @@ export const LibraryChat = () => {
     }
   };
 
-  const handleNewMessage = async (message: string, files: File[]) => {
-    if (!message.trim() || isSearching) return;
+  const handleNewMessage = async (
+    message: string,
+    files: File[]
+  ): Promise<string | undefined> => {
+    if ((!message.trim() && files.length === 0) || isSearching) return;
+
+    if (isSwitch(SWITCH_KEYS.PERSONALIZE)) {
+      try {
+        const formValues = form.getValues();
+        const postData = mapFormToPostData(formValues);
+
+        await HealthHistoryService.createHealthHistory(postData);
+      } catch (error) {
+        console.error("Failed to save health history:", error);
+        setError("Failed to save health history before starting the chat.");
+        return;
+      }
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -254,8 +282,6 @@ export const LibraryChat = () => {
     setStreamingText("");
     setError(null);
 
-    let accumulatedText = "";
-
     const {
       image,
       pdf,
@@ -268,27 +294,41 @@ export const LibraryChat = () => {
       return;
     }
 
+    let accumulatedText = "";
+    let returnedChatId = currentChatId;
+    let str = "";
+
     try {
       await SearchService.aiSearchStream(
         {
           chat_message: JSON.stringify({
             user_prompt: message,
-            is_new: false,
+            is_new: !currentChatId,
             chat_id: currentChatId.startsWith("new_chat_")
               ? undefined
               : currentChatId,
             regenerate_id: null,
+            personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
           }),
           ...(image && { image }),
           ...(pdf && { pdf }),
         },
-        (chunk: StreamChunk) => {
-          if (chunk.reply) {
+        async (chunk: StreamChunk) => {
+          if (!chunk.reply) return;
+
+          if (isSwitch(SWITCH_KEYS.CONTENT)) {
+            if (chunk.reply.includes("Relevant Content")) {
+              str = chunk.reply;
+            } else {
+              accumulatedText += chunk.reply;
+              setStreamingText(accumulatedText);
+            }
+          } else {
             accumulatedText += chunk.reply;
             setStreamingText(accumulatedText);
           }
         },
-        (finalData) => {
+        async (finalData) => {
           setIsSearching(false);
 
           const aiMessage: Message = {
@@ -296,22 +336,35 @@ export const LibraryChat = () => {
             type: "ai",
             content: accumulatedText,
             timestamp: new Date(),
+            document: str,
           };
 
           setMessages((prev) => [...prev, aiMessage]);
           setStreamingText("");
+
+          if (finalData.chat_id && finalData.chat_id !== currentChatId) {
+            setCurrentChatId(finalData.chat_id);
+            returnedChatId = finalData.chat_id;
+          }
+
+          if (finalData.chat_title) {
+            setChatTitle(finalData.chat_title);
+          }
         },
         (error) => {
           setIsSearching(false);
           setError(error.message);
           console.error("Search error:", error);
-        }
+        },
+        isSwitch(SWITCH_KEYS.CONTENT)
       );
     } catch (error) {
       setIsSearching(false);
       setError(error instanceof Error ? error.message : "Search failed");
       console.error("Search error:", error);
     }
+
+    return returnedChatId;
   };
 
   const handleRegenerateResponse = async () => {

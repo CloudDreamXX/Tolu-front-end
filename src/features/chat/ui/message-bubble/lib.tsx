@@ -1,5 +1,5 @@
 import parse from "html-react-parser";
-import { marked } from "marked";
+import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 
 export const smartRender = async (text: string) => {
@@ -10,8 +10,7 @@ export const smartRender = async (text: string) => {
   }
 
   if (type === "markdown") {
-    const html = marked(text, { async: false });
-    return parse(html);
+    return <ReactMarkdown>{text}</ReactMarkdown>;
   }
 
   return <div>{text}</div>;

@@ -152,15 +152,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           ...(pdf && { pdf }),
         },
         async (chunk: StreamChunk) => {
-          if (isSwitch(SWITCH_KEYS.CONTENT) && chunk.content) {
-            if (chunk.content.includes("Relevant Content")) {
-              str = chunk.content;
+          if (isSwitch(SWITCH_KEYS.CONTENT) && chunk.reply) {
+            if (chunk.reply.includes("Relevant Content")) {
+              str = chunk.reply;
             } else {
-              accumulatedText += chunk.content;
+              accumulatedText += chunk.reply;
               setStreamingText(accumulatedText);
             }
           }
-          if (chunk.reply) {
+          if (!isSwitch(SWITCH_KEYS.CONTENT) && chunk.reply) {
             accumulatedText += chunk.reply;
             setStreamingText(accumulatedText);
           }
@@ -369,7 +369,11 @@ My goal is to ${values.goals}.`;
               onSend={handleNewMessage}
               disabled={isSearching}
               switchOptions={
-                isDraft ? config.options : config.options.slice(0, -1)
+                isDraft
+                  ? config.options
+                  : isCoach
+                    ? config.options.slice(0, -1)
+                    : config.options
               }
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}

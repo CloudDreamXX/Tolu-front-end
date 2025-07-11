@@ -16,13 +16,18 @@ interface MessageBubbleProps {
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const [renderedContent, setRenderedContent] = useState<React.ReactNode>(null);
 
+  const cleanedContent = message.content.replace(
+    /Conversational Response/g,
+    ""
+  );
+
   useEffect(() => {
     const render = async () => {
-      const result = await smartRender(message.content);
+      const result = await smartRender(cleanedContent);
       setRenderedContent(result);
     };
     render();
-  }, [message]);
+  }, [cleanedContent]);
 
   return (
     <div
