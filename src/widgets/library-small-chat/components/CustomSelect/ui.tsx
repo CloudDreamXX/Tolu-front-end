@@ -48,7 +48,7 @@ export const CustomSelect = ({
       </button>
 
       {isOpen && (
-        <ul className="absolute z-10 mt-[4px] w-full min-w-[113px] bg-white border border-[#DBDEE1] rounded-[12px] shadow-sm max-h-[220px] overflow-y-auto text-[16px]">
+        <ul className="absolute z-10 mt-[4px] w-full md:w-[302px] bg-white border border-[#DBDEE1] rounded-[12px] shadow-sm max-h-[220px] overflow-y-auto text-[16px]">
           {options.map((option, index) => (
             <li
               key={option}

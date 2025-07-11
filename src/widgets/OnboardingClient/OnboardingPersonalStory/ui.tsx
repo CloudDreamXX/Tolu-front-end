@@ -154,6 +154,7 @@ export const OnboardingPersonalStory = () => {
     }
   };
 
+  const handlePreviousStep = () => setCurrentStep(currentStep - 1);
   const handleNextStep = () => goToStep(currentStep + 1);
   const handleStepClick = (stepIndex: number) => goToStep(stepIndex);
 
@@ -201,7 +202,7 @@ export const OnboardingPersonalStory = () => {
         <button
           type="button"
           className={`w-full md:hidden py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#DDEBF6] text-[#1C63DB]`}
-          onClick={handleNextStep}
+          onClick={handlePreviousStep}
         >
           Back
         </button>
@@ -209,7 +210,7 @@ export const OnboardingPersonalStory = () => {
           <button
             type="button"
             className={`hidden md:block md:w-[128px] py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#DDEBF6] text-[#1C63DB]`}
-            onClick={handleNextStep}
+            onClick={handlePreviousStep}
           >
             Back
           </button>
@@ -244,6 +245,7 @@ export const OnboardingPersonalStory = () => {
           continueTitle={"Continue filling out"}
           onCancel={() => nav("/library")}
           onDiscard={() => setIsCancelOpen(false)}
+          onClose={() => setIsCancelOpen(false)}
         />
       )}
     </Card>

@@ -121,7 +121,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
         <input
           {...register("supportSystem")}
           placeholder="option"
-          className={`${inputClass} w-[300px]`}
+          className={`${inputClass} w-[77px]`}
         />
         <span>.</span>
       </div>

@@ -39,7 +39,7 @@ export const HealthHistoryForm = ({ form }: HealthHistoryFormProps) => {
         <input
           {...register("maternalSide")}
           placeholder="disease"
-          className={`${inputClass} w-[279px]`}
+          className={`${inputClass} w-[90px]`}
         />
         <span>. I take</span>
         <input
