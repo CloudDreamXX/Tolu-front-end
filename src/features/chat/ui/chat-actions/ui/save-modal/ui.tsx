@@ -34,7 +34,7 @@ const SaveModal: React.FC = () => {
           <Button className="hidden"></Button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-3xl gap-6 p-6">
+        <DialogContent className="max-w-3xl gap-6 p-6 md:w-[calc(100%-32px)] lg:w-full">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Saved searches</h2>

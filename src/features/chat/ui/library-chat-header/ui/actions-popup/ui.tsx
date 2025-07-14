@@ -10,7 +10,7 @@ export const ActionsPopup: React.FC<Props> = ({ onEdit, onDelete }) => {
   return (
     <div
       className="absolute z-50 w-[238px] p-[16px_14px] flex flex-col items-start gap-[16px]
-             bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] top-[90px] right-[16px] xl:top-[70px]"
+             bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] top-[160px] md:top-[70px] right-[16px]"
     >
       <MenuItem
         icon={<RenamePencil />}

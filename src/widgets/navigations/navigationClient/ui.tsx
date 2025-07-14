@@ -52,6 +52,9 @@ export const NavigationClient: React.FC = () => {
 
   const toggleLibrary = () => {
     setIsLibraryOpen(!isLibraryOpen);
+    if (isLibraryOpen) {
+      setMenuMobOpen(false);
+    }
   };
 
   const handleOpenChat = () => {
@@ -164,7 +167,7 @@ export const NavigationClient: React.FC = () => {
 
       {/* Full-screen Drawer */}
       {menuMobOpen && (
-        <div className="fixed inset-0 bg-[#F1F3F5] top-[70px] md:top-0 md:bg-black md:bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-[#F1F3F5] top-[70px] md:top-0 md:bg-black md:bg-opacity-40 flex items-center justify-center z-[999]">
           <div
             className="fixed top-0 right-0 bottom-0 left-0 bg-white z-[999] p-[16px] flex flex-col 
              md:w-[390px] md:right-[10px] md:top-[10px] md:bottom-[10px] md:left-auto md:rounded-[16px]"
@@ -221,7 +224,11 @@ export const NavigationClient: React.FC = () => {
                 <Library />
                 Library
               </NavLink>
-              {isLibraryOpen && <WrapperLibraryFolderTree />}
+              {isLibraryOpen && (
+                <WrapperLibraryFolderTree
+                  onPopupClose={() => setMenuMobOpen(false)}
+                />
+              )}
 
               <NavLink
                 to={"/messages"}

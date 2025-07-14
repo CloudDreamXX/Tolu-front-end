@@ -41,7 +41,7 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
 
   return (
     <button
-      className="relative group w-full h-fit max-w-[718px]"
+      className="relative group w-full h-fit"
       onClick={() => onDocumentClick(id)}
     >
       <div

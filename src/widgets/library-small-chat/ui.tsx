@@ -282,7 +282,7 @@ My goal is to ${values.goals}.`;
     <>
       {(isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory) ||
       isSwitch(SWITCH_KEYS.CASE) ? (
-        <Card className="flex flex-col w-full overflow-auto border-none rounded-2xl">
+        <Card className="flex flex-col w-full lg:w-[680px] xl:w-[766px] h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
@@ -297,8 +297,8 @@ My goal is to ${values.goals}.`;
             </button>
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
-          <CardContent className="w-full px-6 pb-0">
-            <div className="p-[24px] border border-[#008FF6] rounded-[20px]  h-[calc(100vh-438.57px)] overflow-auto ">
+          <CardContent className="w-full px-6 pb-0 h-full">
+            <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-auto mt-auto">
               <p className="text-[24px] text-[#1D1D1F] font-[500]">
                 Personal story
               </p>
@@ -341,7 +341,7 @@ My goal is to ${values.goals}.`;
           </CardFooter>
         </Card>
       ) : (
-        <Card className="flex flex-col w-full h-full border-none rounded-2xl">
+        <Card className="flex flex-col w-full lg:w-[680px] xl:w-[766px] h-full border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />

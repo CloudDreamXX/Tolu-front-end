@@ -7,25 +7,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "entities/store";
 import { setFolderId } from "entities/client/lib";
 
-const WrapperLibraryFolderTree = () => {
+type WrapperProps = {
+  onPopupClose?: () => void;
+};
+
+const WrapperLibraryFolderTree: React.FC<WrapperProps> = ({ onPopupClose }) => {
   const folders = useSelector((state: RootState) => state.client.folders);
   const [openFolders, setOpenFolders] = useState<Set<string>>(new Set());
   const dispatch = useDispatch();
   const nav = useNavigate();
 
+  const folderHasChildren = (id: string): boolean => {
+    const folder = folders.find((f) => f.id === id);
+    return !!(folder?.subfolders?.length || folder?.content?.length);
+  };
+
   const toggleFolder = (id: string) => {
+    const isOpen = openFolders.has(id);
     dispatch(setFolderId(id));
     nav("/library");
 
+    if (isOpen || !folderHasChildren(id)) {
+      onPopupClose?.();
+    }
+
     setOpenFolders((prev) => {
       const newSet = new Set(prev);
-
-      if (newSet.has(id)) {
+      if (isOpen) {
         newSet.delete(id);
       } else {
         newSet.add(id);
       }
-
       return newSet;
     });
   };
@@ -37,6 +49,7 @@ const WrapperLibraryFolderTree = () => {
       isNarrow={false}
       openFolders={openFolders}
       toggleFolder={toggleFolder}
+      onCloseMobMenu={onPopupClose}
     />
   );
 };

@@ -2,6 +2,7 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import { baseSchema } from "widgets/library-small-chat/lib";
 import { z } from "zod";
 import { CustomSelect } from "../CustomSelect";
+import { MultiSelect } from "../MultiSelect";
 
 export type FormValues = z.infer<typeof baseSchema>;
 
@@ -83,13 +84,21 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
         <Controller
           name="dietType"
           control={control}
-          render={({ field }) => (
-            <CustomSelect
-              value={field.value}
-              onChange={field.onChange}
-              options={dietOptions}
-              placeholder="diet type"
-              className="w-fit"
+          render={() => (
+            <Controller
+              name="dietType"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  selected={field.value ? field.value.split(",") : []}
+                  onChange={(selectedArray) =>
+                    field.onChange(selectedArray.join(","))
+                  }
+                  options={dietOptions}
+                  placeholder="diet type"
+                  className="w-fit"
+                />
+              )}
             />
           )}
         />

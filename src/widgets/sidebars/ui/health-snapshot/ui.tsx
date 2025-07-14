@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import AvatarWoman from "shared/assets/images/AvatarWoman.png";
 import { UserService } from "entities/user";
 import { RootState } from "entities/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import ChatsCircle from "shared/assets/icons/chats-circle";
 import Library from "shared/assets/icons/library";
@@ -13,6 +13,7 @@ import SignOutIcon from "shared/assets/icons/signout";
 import { toast } from "shared/lib/hooks/use-toast";
 import { SearchAiSmallInput } from "entities/search";
 import WrapperLibraryFolderTree from "./FolderTree";
+import { setFolderId } from "entities/client/lib";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -20,6 +21,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [isNarrow, setIsNarrow] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const checkWidth = () => {
@@ -50,6 +52,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   };
 
   const toggleLibrary = () => {
+    dispatch(setFolderId(""));
     setIsLibraryOpen(!isLibraryOpen);
     if (isNarrow) {
       // Close the menu if it's mobile and clicked
