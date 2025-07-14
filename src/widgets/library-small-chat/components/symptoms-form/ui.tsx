@@ -62,11 +62,14 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
         <TooltipProvider delayDuration={500}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <input
-                {...register("religion")}
-                placeholder="religion"
-                className={`${inputClass} w-[120px]`}
-              />
+              <div>
+                <input
+                  {...register("religion")}
+                  placeholder="religion"
+                  className={`${inputClass} w-[120px]`}
+                />
+                <span>{" ."}</span>
+              </div>
             </TooltipTrigger>
 
             <TooltipContent side="top">
@@ -83,7 +86,6 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <span>.</span>
       </div>
 
       <div className={lineClass}>

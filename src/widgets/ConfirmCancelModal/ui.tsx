@@ -19,7 +19,7 @@ export const ConfirmCancelModal = ({
   onDiscard: () => void;
 }) => (
   <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm flex items-center justify-center z-50">
-    <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[500px] lg:max-w-[742px] w-full shadow-lg mx-[16px] relative">
+    <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] lg:max-w-[742px] w-full shadow-lg mx-[24px] relative">
       <button
         className="absolute top-[16px] right-[16px]"
         onClick={onClose ? onClose : onCancel}
