@@ -18,8 +18,8 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
   const [cardActive, setCardActive] = useState("");
   return (
     <main className="w-full md:w-[550px] flex flex-col items-center gap-[40px] md:gap-[80px]">
-      <h3 className="text-black text-center font-inter font-semibold text-[28px] md:text-[40px]">
-        Select Your Type of Account:
+      <h3 className="text-black text-center font-inter font-semibold text-[24px] md:text-[28px] md:text-[40px]">
+        Select Your Type of Account
       </h3>
       <main className="flex flex-col md:flex-row items-start gap-[24px] md:gap-[40px] 2xl:gap-[80px]">
         <button

@@ -324,7 +324,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
               </label>
               <input
                 type="text"
-                placeholder="Short describing text"
+                placeholder="What's your client's chief concern?"
                 value={client?.primary_health_challenge || ""}
                 onChange={(e) =>
                   updateClient("primary_health_challenge", e.target.value)
@@ -416,7 +416,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 How do you believe your client can benefit from TOLU?
               </label>
               <input
-                placeholder="Some describing text"
+                placeholder="Type here"
                 type="text"
                 value={client?.tolu_benefit || ""}
                 onChange={(e) => updateClient("tolu_benefit", e.target.value)}
