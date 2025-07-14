@@ -24,6 +24,7 @@ export const OnboardingMain = () => {
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const [searchText, setSearchText] = useState("");
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const handleOther = () => {
     if (!otherText.trim()) return;
@@ -71,7 +72,9 @@ export const OnboardingMain = () => {
     return selectedButtons.includes("Other");
   };
 
-  const handleHintButtonClick = () => {};
+  const handleHintButtonClick = () => {
+    setIsTooltipOpen(false);
+  };
 
   const isNextDisabled =
     selectedButtons.length === 0 ||
@@ -156,7 +159,7 @@ export const OnboardingMain = () => {
 
           {isOtherSelected() ? (
             <div
-              className={`w-full ${otherText.length > 0 ? "md:w-[414px]" : "md:w-[300px]"} flex justify-center items-center gap-[8px]`}
+              className={`w-full ${otherText.length > 0 ? "md:w-[414px]" : "md:w-[300px]"} flex justify-center items-center gap-[8px] px-[16px]`}
             >
               <Input
                 onChange={(e) => {
@@ -173,7 +176,7 @@ export const OnboardingMain = () => {
                 }}
                 type="text"
                 placeholder="Please specify your niche"
-                className="flex outline-none w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white focus:border-[#1C63DB] focus:outline-none"
+                className="flex outline-none w-full max-w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white focus:border-[#1C63DB] focus:outline-none mx-auto"
               />
               {otherText.length > 0 && (
                 <button
@@ -198,7 +201,7 @@ export const OnboardingMain = () => {
           </button>
 
           <TooltipProvider delayDuration={500}>
-            <Tooltip>
+            <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
               <TooltipTrigger asChild>
                 <Link
                   to={!isNextDisabled ? "/about-your-practice" : ""}
@@ -217,7 +220,7 @@ export const OnboardingMain = () => {
               <TooltipContent side="bottom">
                 <div className="flex flex-col items-center gap-2">
                   <h3 className="flex gap-2 text-[#1B2559] leading-[1.4]">
-                    <span className="w-6 h-6 shrink-0 ">
+                    <span className="w-6 h-6 shrink-0">
                       <LightIcon className="text-[#1B2559]" />
                     </span>
                     You can update your focus areas anytime from your dashboard.

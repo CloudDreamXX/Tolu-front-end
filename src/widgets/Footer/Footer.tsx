@@ -18,14 +18,14 @@ export const Footer: React.FC<Props> = ({ position }) => {
           ? "py-[24px] px-[16px]"
           : position === "top-right"
             ? "fixed top-[24px] right-[19px] z-10"
-            : "fixed bottom-0 right-8 pl-[40px] pb-[40px]"
+            : "fixed bottom-0 right-8 z-10 pl-[40px] pb-[40px]"
       }`}
     >
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
             <button
-              className={`bg-[#008FF61A] flex items-center justify-center gap-[8px] rounded-full transition-colors duration-200 hover:bg-[#008FF6] hover:bg-opacity-30 ${
+              className={`bg-[#008FF61A] flex items-center justify-center z-[999] gap-[8px] rounded-full transition-colors duration-200 hover:bg-[#008FF6] hover:bg-opacity-30 ${
                 position === "top-left" || position === "top-right"
                   ? "p-[13px]"
                   : "p-[24px]"

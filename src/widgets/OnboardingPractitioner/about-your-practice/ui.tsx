@@ -8,11 +8,17 @@ import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Input } from "shared/ui";
 import LightIcon from "shared/assets/icons/light";
 import { SearchableSelect } from "../components/SearchableSelect";
+import CheckedIcon from "shared/assets/icons/checked";
+import UncheckedIcon from "shared/assets/icons/not-checked";
+import TrashIcon from "shared/assets/icons/trash-icon";
 
 export const AboutYourPractice = () => {
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [filePreviews, setFilePreviews] = useState<
+    { file: File; previewUrl: string }[]
+  >([]);
   const [dragOver, setDragOver] = useState(false);
 
   const [school, setSchool] = useState("");
@@ -23,6 +29,8 @@ export const AboutYourPractice = () => {
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
   const [selectedSchools, setSelectedSchools] = useState<string[]>([]);
   const [schoolDropdownOpen, setSchoolDropdownOpen] = useState(false);
+  const [otherSchoolInput, setOtherSchoolInput] = useState("");
+  const [showOtherInput, setShowOtherInput] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -40,22 +48,34 @@ export const AboutYourPractice = () => {
     );
   };
 
+  const isValidFile = (file: File) => {
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+    return allowedTypes.includes(file.type);
+  };
+
+  const handleFiles = (files: FileList) => {
+    const validFiles = Array.from(files).filter(isValidFile);
+    validFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFilePreviews((prev) => [
+          ...prev,
+          { file, previewUrl: reader.result as string },
+        ]);
+        setSelectedFiles((prev) => [...prev, file]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const validFiles = Array.from(files).filter(isValidFile);
-      setSelectedFiles((prev) => [...prev, ...validFiles]);
-    }
+    if (e.target.files) handleFiles(e.target.files);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setDragOver(false);
-    const files = e.dataTransfer.files;
-    if (files) {
-      const validFiles = Array.from(files).filter(isValidFile);
-      setSelectedFiles((prev) => [...prev, ...validFiles]);
-    }
+    if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -67,13 +87,17 @@ export const AboutYourPractice = () => {
     setDragOver(false);
   };
 
-  const isValidFile = (file: File) => {
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-    return allowedTypes.includes(file.type);
-  };
-
   const triggerFileSelect = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleDeleteFile = (index: number) => {
+    const updatedFiles = [...selectedFiles];
+    const updatedPreviews = [...filePreviews];
+    updatedFiles.splice(index, 1);
+    updatedPreviews.splice(index, 1);
+    setSelectedFiles(updatedFiles);
+    setFilePreviews(updatedPreviews);
   };
 
   const handleFieldChange = (field: string, value: string) => {
@@ -99,11 +123,25 @@ export const AboutYourPractice = () => {
 
   const schoolOptions = [
     "Functional Medicine Coaching Academy (FMCA)",
-    "Functional Nutrition Alliance (FxNA)",
+    "Institute for Integrative Nutrition (IIN)",
+    "National Institute for Integrative Nutrition (NIIN)",
+    "School of Applied Functional Medicine (SAFM)",
+    "Functional Nutrition Alliance / FBS (FXNA)",
     "Nutritional Therapy Association (NTA)",
-    "Nutrition Therapy Institute (NTI)",
-    "Health Coach Institute (HCI)",
+    "Chris Kresser Institute (ADAPT Health Coach Training)",
+    "Duke Integrative Medicine",
+    "Maryland University of Integrative Health (MUIH)",
+    "Saybrook University",
+    "Wellcoaches School of Coaching",
+    "The Integrative Women’s Health Institute (IWHI)",
+    "Primal Health Coach Institute",
+    "Mind Body Food Institute",
+    "Transformation Academy",
+    "National Board for Health & Wellness Coaching (NBHWC)",
+    "Other (please specify)",
   ];
+
+  const OTHER_OPTION = "Other (please specify)";
 
   return (
     <AuthPageWrapper>
@@ -123,17 +161,19 @@ export const AboutYourPractice = () => {
           )}
           {/* School */}
           <div className="flex flex-col items-start self-stretch md:mt-[40px] md:ml-[32px] w-full md:w-[620px] relative">
-            <label className="peer-focus:text-[#1D1D1F] ${labelStyle} font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block">
+            <label className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block">
               Which school did you graduate from? *
             </label>
 
             <div
-              className="peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
+              className={`peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border bg-white outline-none ${
+                schoolDropdownOpen ? "border-[#1C63DB]" : "border-[#DFDFDF]"
+              }`}
               onClick={() => setSchoolDropdownOpen((prev) => !prev)}
             >
               <div className="flex flex-wrap gap-[8px]">
                 {selectedSchools.length === 0 && (
-                  <span className="text-[#9D9D9D]">
+                  <span className="text-[#5F5F65]">
                     Select one or more schools
                   </span>
                 )}
@@ -148,9 +188,22 @@ export const AboutYourPractice = () => {
                       className="ml-1"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedSchools(
-                          selectedSchools.filter((s) => s !== school)
+                        const updated = selectedSchools.filter(
+                          (s) => s !== school
                         );
+                        setSelectedSchools(updated);
+
+                        const processed = updated.map((s) =>
+                          s === OTHER_OPTION ? otherSchoolInput : s
+                        );
+                        dispatch(
+                          updateCoachField({ key: "school", value: processed })
+                        );
+
+                        if (school === OTHER_OPTION) {
+                          setShowOtherInput(false);
+                          setOtherSchoolInput("");
+                        }
                       }}
                     >
                       &times;
@@ -158,7 +211,9 @@ export const AboutYourPractice = () => {
                   </span>
                 ))}
                 <div
-                  className={`pointer-events-none absolute right-4 top-[48px] transition-transform duration-300 ${schoolDropdownOpen ? "rotate-180" : ""}`}
+                  className={`pointer-events-none absolute right-4 top-[48px] transition-transform duration-300 ${
+                    schoolDropdownOpen ? "rotate-180" : ""
+                  }`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -178,43 +233,99 @@ export const AboutYourPractice = () => {
               </div>
 
               {schoolDropdownOpen && (
-                <div className="absolute top-full mt-1 left-0 z-10 w-full max-h-[160px] overflow-y-auto scrollbar-hide border border-[#1C63DB] bg-white rounded-md shadow-md p-[16px] flex flex-col gap-[8px]">
-                  {schoolOptions.map((option) => (
-                    <div
-                      key={option}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (!selectedSchools.includes(option)) {
-                          const updated = [...selectedSchools, option];
+                <div className="absolute top-full mt-1 left-0 z-10 w-full max-h-[174px] overflow-y-auto scrollbar-hide bg-[#FAFAFA] rounded-md shadow-md flex flex-col gap-[8px]">
+                  {schoolOptions.map((option) => {
+                    const isSelected = selectedSchools.includes(option);
+                    return (
+                      <div
+                        key={option}
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          if (option === OTHER_OPTION) {
+                            if (!isSelected) {
+                              const updated = [...selectedSchools, option];
+                              setSelectedSchools(updated);
+                              setShowOtherInput(true);
+                              dispatch(
+                                updateCoachField({
+                                  key: "school",
+                                  value: [
+                                    ...updated.map((s) =>
+                                      s === OTHER_OPTION ? otherSchoolInput : s
+                                    ),
+                                  ],
+                                })
+                              );
+                            }
+                            setSchoolDropdownOpen(false);
+                            return;
+                          }
+
+                          const updated = isSelected
+                            ? selectedSchools.filter((s) => s !== option)
+                            : [...selectedSchools, option];
+
                           setSelectedSchools(updated);
-                          dispatch(
-                            updateCoachField({ key: "school", value: updated })
+
+                          const processed = updated.map((s) =>
+                            s === OTHER_OPTION ? otherSchoolInput : s
                           );
-                        }
-                      }}
-                      className="cursor-pointer hover:bg-[#F3F6FB]"
-                    >
-                      {option}
-                    </div>
-                  ))}
+                          dispatch(
+                            updateCoachField({
+                              key: "school",
+                              value: processed,
+                            })
+                          );
+                        }}
+                        className="cursor-pointer px-[12px] py-[15px] hover:bg-[#F2F2F2] hover:text-[#1C63DB] flex items-center gap-[12px]"
+                      >
+                        <span className="w-[20px] h-[20px] flex items-center justify-center">
+                          {isSelected ? <CheckedIcon /> : <UncheckedIcon />}
+                        </span>
+                        {option}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
+
+            {showOtherInput && (
+              <div className="mt-2 w-full">
+                <input
+                  type="text"
+                  value={otherSchoolInput}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setOtherSchoolInput(value);
+
+                    const processed = selectedSchools.map((s) =>
+                      s === OTHER_OPTION ? value : s
+                    );
+                    dispatch(
+                      updateCoachField({ key: "school", value: processed })
+                    );
+                  }}
+                  placeholder="Type your school"
+                  className="peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
+                />
+              </div>
+            )}
           </div>
 
-          {/* File Upload */}
+          {/* File Upload Section */}
           <div className="flex flex-col items-start w-full gap-2">
-            <p className="md:ml-[32px] font-[Nunito] text-[16px] font-medium text-black ">
+            <p className="md:ml-[32px] font-[Nunito] text-[16px] font-medium text-black">
               Upload a certificate or license *
             </p>
+
             <div
-              className={`flex py-[16px] md:ml-[32px] w-full md:w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${
-                dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
-              } bg-white cursor-pointer transition`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={triggerFileSelect}
+              className={`flex py-[16px] md:ml-[32px] w-full md:w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"} bg-white cursor-pointer transition`}
             >
               <input
                 ref={fileInputRef}
@@ -224,41 +335,44 @@ export const AboutYourPractice = () => {
                 onChange={handleFileSelect}
                 className="hidden"
               />
-              <div className="flex gap-[12px] items-center flex-col">
-                <div className="flex p-[8px] items-center gap-[10px] rounded-[8px] border-[1px] border-[#F3F6FB] bg-white">
-                  <UploadCloud />
-                </div>
-
-                <div className="flex flex-col items-center gap-[4px]">
-                  {selectedFiles.length > 0 ? (
-                    <>
-                      <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                        Uploaded files:
-                      </p>
-                      <ul className="text-[#1C63DB] font-[Nunito] text-[14px] font-normal list-disc pl-4 text-left w-full">
-                        {selectedFiles.map((file, i) => (
-                          <li key={i} className="truncate w-full max-w-[500px]">
-                            {file.name}
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                        Click to upload
-                      </p>
-                      <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                        or drag and drop
-                      </p>
-                      <p className="text-[#5F5F65] font-[Nunito] text-[14px] font-normal">
-                        PDF, JPG or PNG
-                      </p>
-                    </>
-                  )}
-                </div>
+              <div className="flex flex-col items-center gap-[8px]">
+                <UploadCloud />
+                <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                  Click to upload
+                </p>
+                <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
+                  or drag and drop
+                </p>
+                <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
+                  PDF, JPG or PNG
+                </p>
               </div>
             </div>
+
+            {/* File previews */}
+            {filePreviews.length > 0 && (
+              <div className="flex gap-[16px] flex-wrap justify-start w-full mt-4 md:ml-[32px]">
+                {filePreviews.map(({ file, previewUrl }, index) => {
+                  const isPDF = file.type === "application/pdf";
+                  return (
+                    <div key={index} className="relative w-[150px] h-[150px]">
+                      <img
+                        src={isPDF ? "" : previewUrl}
+                        alt={`preview-${index}`}
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteFile(index)}
+                        className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center text-sm"
+                      >
+                        <TrashIcon />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="flex w-full md:ml-[32px] text-[#1C63DB] gap-2 items-center">

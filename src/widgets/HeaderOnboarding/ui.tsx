@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-// import { FaCheck } from "react-icons/fa";
-// import { getStepStyle } from "./uitls";
+import { FaCheck } from "react-icons/fa";
+import { getStepStyle } from "./uitls";
+import { usePageWidth } from "shared/lib";
 
 interface HeaderOnboardingProps {
   currentStep: number;
@@ -9,11 +10,12 @@ interface HeaderOnboardingProps {
 }
 
 export const HeaderOnboarding = ({
-  // currentStep,
+  currentStep,
   isClient,
-  // steps = 6,
+  steps = 6,
 }: HeaderOnboardingProps) => {
   const navigate = useNavigate();
+  const { isMobile } = usePageWidth();
 
   return (
     <header className="w-full bg-gradient-to-b from-[#F3ECFE] to-[#E8EFFE] px-4 pt-4 pb-2 md:h-[160px] flex flex-col md:items-center md:justify-center relative">
@@ -44,8 +46,7 @@ export const HeaderOnboarding = ({
       </div>
 
       {/* Progress Steps */}
-      {/* <div className="mt-4 xl:top-1/2 md:left-[100px] lg:left-[70px] xl:left-0 md:-translate-y-1/2 md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px] md:relative">
-
+      <div className="mt-4 xl:top-1/2 md:left-[100px] lg:left-[70px] xl:left-0 md:-translate-y-1/2 md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px] md:relative">
         <div className="absolute top-5 left-0 md:top-1/2 h-[5px] xl:h-[8px] w-full bg-[#E2E2E2] rounded-full relative z-0" />
 
         <div
@@ -80,7 +81,7 @@ export const HeaderOnboarding = ({
             );
           })}
         </div>
-      </div> */}
+      </div>
     </header>
   );
 };

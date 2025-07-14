@@ -98,7 +98,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
       {isOpen && (
         <ul
           className={cn(
-            "absolute z-10 w-full max-h-[160px] overflow-y-auto scrollbar-hide border border-[#1C63DB] bg-white rounded-md shadow-md p-[16px] flex flex-col gap-[8px]",
+            "bg-[#FAFAFA] absolute z-10 w-full max-h-[160px] overflow-y-auto scrollbar-hide rounded-md shadow-md flex flex-col",
             position === "top" && "bottom-full mb-[-26px]",
             position === "bottom" && "top-full mt-1",
             dropdownStyle
@@ -109,7 +109,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
               <li
                 key={option}
                 onClick={() => handleSelect(option)}
-                className="cursor-pointer hover:bg-[#F3F6FB]"
+                className="cursor-pointer hover:bg-[#F2F2F2] hover:text-[#1C63DB] px-[12px] py-[15px]"
               >
                 {option}
               </li>

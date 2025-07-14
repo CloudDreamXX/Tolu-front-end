@@ -280,7 +280,7 @@ export const ProfileSetup = () => {
                 "What is your favorite book?",
                 "In what city were you born?",
               ]}
-              value={state.timezone}
+              value={state.security_questions}
               onChange={(value) =>
                 dispatch(
                   updateCoachField({

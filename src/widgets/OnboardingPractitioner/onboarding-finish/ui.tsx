@@ -14,7 +14,7 @@ export const OnboardingFinish = () => {
   // );
   // const token = useSelector((state: RootState) => state.user.token);
   const nav = useNavigate();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1280);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
 
   const handleLastClick = async () => {
     try {
@@ -35,7 +35,7 @@ export const OnboardingFinish = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1280);
+      setIsMobile(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);
