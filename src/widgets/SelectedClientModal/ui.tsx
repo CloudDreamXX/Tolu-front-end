@@ -50,20 +50,20 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
             <button className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]">
               <ChatsIcon />
-              Open Chat
+              Chat with client
             </button>
             <button
               className="flex items-center gap-[8px] px-[12px] py-[4px]"
               onClick={onEdit}
             >
-              <EditIcon /> Edit info
+              <EditIcon /> Edit onboarding
             </button>
           </div>
         </div>
 
-        <div className="flex gap-[16px] mb-[24px] border border-[#DBDEE1] bg-white rounded-[1000px] p-[8px]">
+        <div className="flex gap-[16px] mb-[24px] border border-[#DBDEE1] bg-white rounded-[1000px] p-[8px] overflow-x-auto">
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] ${
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "clientInfo"
                 ? "bg-[#F2F4F6] text-[#000000]"
                 : "text-[#000000]"
@@ -73,7 +73,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             Client info
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] ${
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "healthProfile"
                 ? "bg-[#F2F4F6] text-[#000000]"
                 : "text-[#000000]"
@@ -81,6 +81,66 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("healthProfile")}
           >
             Health profile
+          </button>
+          <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
+              activeTab === "symptoms"
+                ? "bg-[#F2F4F6] text-[#000000]"
+                : "text-[#000000]"
+            }`}
+            onClick={() => setActiveTab("symptoms")}
+          >
+            Symptoms
+          </button>
+          <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
+              activeTab === "biometrics"
+                ? "bg-[#F2F4F6] text-[#000000]"
+                : "text-[#000000]"
+            }`}
+            onClick={() => setActiveTab("biometrics")}
+          >
+            Biometrics
+          </button>
+          <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
+              activeTab === "medicationsAndSupplements"
+                ? "bg-[#F2F4F6] text-[#000000]"
+                : "text-[#000000]"
+            }`}
+            onClick={() => setActiveTab("medicationsAndSupplements")}
+          >
+            Medications and Supplements
+          </button>
+          <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
+              activeTab === "healthProviders"
+                ? "bg-[#F2F4F6] text-[#000000]"
+                : "text-[#000000]"
+            }`}
+            onClick={() => setActiveTab("healthProviders")}
+          >
+            Health providers
+          </button>
+          <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
+              activeTab === "journals"
+                ? "bg-[#F2F4F6] text-[#000000]"
+                : "text-[#000000]"
+            }`}
+            onClick={() => setActiveTab("journals")}
+          >
+            Journals
+          </button>
+          <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
+              activeTab === "addOption"
+                ? "bg-[#F2F4F6] text-[#000000]"
+                : "text-[#000000]"
+            }`}
+            onClick={() => setActiveTab("addOption")}
+          >
+            Add option
           </button>
         </div>
 
@@ -216,10 +276,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
                 ))}
                 <div className="flex gap-[8px] border-t border-[#DBDEE1] rounded-b-[8px] px-[16px] py-[12px]">
                   <button className="bg-[#1C63DB] text-white px-[16px] py-[4px] rounded-[1000px] font-semibold">
-                    Recommend
+                    Suggest
                   </button>
                   <button className="text-[#1C63DB] font-semibold self-center">
-                    Show more
+                    View
                   </button>
                 </div>
               </div>

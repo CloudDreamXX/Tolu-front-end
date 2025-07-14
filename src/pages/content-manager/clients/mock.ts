@@ -59,37 +59,37 @@ export const clients = [
 
 export const cards = [
   {
-    title: "Intakes",
+    title: "Complete Intake Form",
     sections: [
-      { heading: "Challenges", content: "Can't sleep continuously" },
+      { heading: "Challenges", content: "" },
       {
         heading: "Symptoms",
-        content: "Anxiety, fatigue, get sleeping after eating",
+        content: "",
       },
     ],
   },
   {
     title: "Health Timeline",
     sections: [
-      { heading: "Diagnosis", content: "IBS and Diabetes" },
-      { heading: "Medication", content: "Metformin 5 mg" },
+      { heading: "Diagnosis", content: "" },
+      { heading: "Medication", content: "" },
     ],
   },
   {
     title: "Personal Insights",
     sections: [
-      { heading: "Challenges", content: "Can't sleep continuously" },
+      { heading: "Challenges", content: "" },
       {
         heading: "Symptoms",
-        content: "Anxiety, fatigue, get sleeping after eating",
+        content: "",
       },
     ],
   },
   {
     title: "Labs",
     sections: [
-      { heading: "Diagnosis", content: "IBS and Diabetes" },
-      { heading: "Medication", content: "Metformin 5 mg" },
+      { heading: "Diagnosis", content: "" },
+      { heading: "Medication", content: "" },
     ],
   },
 ];
