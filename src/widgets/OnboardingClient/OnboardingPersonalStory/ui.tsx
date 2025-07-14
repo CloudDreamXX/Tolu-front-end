@@ -199,27 +199,32 @@ export const OnboardingPersonalStory = () => {
         >
           Skip this for now
         </button>
-        {currentStep !== 0 && <button
-          type="button"
-          className={`w-full md:hidden py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#DDEBF6] text-[#1C63DB]`}
-          onClick={handlePreviousStep}
-        >
-          Back
-        </button>}
-        <div className="w-full md:w-fit flex gap-[16px]">
-          {currentStep !== 0 && <button
+        {currentStep !== 0 && (
+          <button
             type="button"
-            className={`hidden md:block md:w-[128px] py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#DDEBF6] text-[#1C63DB]`}
+            className={`w-full md:hidden py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#DDEBF6] text-[#1C63DB]`}
             onClick={handlePreviousStep}
           >
             Back
-          </button>}
+          </button>
+        )}
+        <div className="w-full md:w-fit flex gap-[16px]">
+          {currentStep !== 0 && (
+            <button
+              type="button"
+              className={`hidden md:block md:w-[128px] py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#DDEBF6] text-[#1C63DB]`}
+              onClick={handlePreviousStep}
+            >
+              Back
+            </button>
+          )}
           <button
             type="button"
-            className={`py-[11px] px-[30px] w-full md:w-fit rounded-full text-[16px] font-semibold transition-colors duration-200 ${areCurrentStepFieldsFilled
+            className={`py-[11px] px-[30px] w-full md:w-fit rounded-full text-[16px] font-semibold transition-colors duration-200 ${
+              areCurrentStepFieldsFilled
                 ? "bg-[#1C63DB] text-white"
                 : "bg-[#D5DAE2] text-[#5F5F65] events-none"
-              }`}
+            }`}
             onClick={handleNextStep}
             disabled={!areCurrentStepFieldsFilled}
           >
