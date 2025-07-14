@@ -271,7 +271,9 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
                     <p className="text-[#5F5F65] text-[12px] font-semibold mb-[4px]">
                       {heading}
                     </p>
-                    <p className="text-[14px] text-[#1D1D1F]">{content}</p>
+                    <p className="text-[14px] text-[#1D1D1F]">
+                      {content === "" ? "-" : content}
+                    </p>
                   </div>
                 ))}
                 <div className="flex gap-[8px] border-t border-[#DBDEE1] rounded-b-[8px] px-[16px] py-[12px]">
