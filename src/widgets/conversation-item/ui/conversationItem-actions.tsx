@@ -5,7 +5,14 @@ import Dislike from "shared/assets/icons/dislike";
 import Dublicate from "shared/assets/icons/dublicate";
 import Arrow from "shared/assets/icons/grey-arrow";
 import Edit from "shared/assets/icons/grey-edit";
+import { TrashIcon } from "shared/assets/icons/trash-blue";
 import Voiceover from "shared/assets/icons/voiceover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui";
 
 interface ConversationItemActionsProps {
   pair: ISessionResult;
@@ -19,6 +26,7 @@ interface ConversationItemActionsProps {
   setIsMoveOpen: (open: boolean) => void;
   handleDublicateClick: (id: string) => Promise<void>;
   handleMarkAsClick: (id: string) => void;
+  handleDelete: (id: string) => void;
 }
 
 export const ConversationItemActions: React.FC<
@@ -32,54 +40,134 @@ export const ConversationItemActions: React.FC<
   setIsBadResponseOpen,
   setIsMoveOpen,
   handleDublicateClick,
+  handleDelete,
 }) => {
   return (
-    <div className="flex flex-col items-start gap-2">
-      <div className="relative flex flex-col items-center gap-2">
-        <button
-          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-          onClick={() => onEditToggle(pair, null)}
-        >
-          <Edit />
-        </button>
+    <div className="flex md:flex-col items-start gap-2">
+      <div className="relative flex md:flex-col items-center gap-2">
+        <TooltipProvider delayDuration={500}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => onEditToggle(pair, null)}
+              >
+                <Edit className="w-[16px] h-[16px]" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Edit
+            </TooltipContent>
+          </Tooltip>
 
-        <button
-          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-          onClick={() => {
-            setSelectedDocumentId(pair.id);
-            setIsMoveOpen(true);
-          }}
-        >
-          <Arrow />
-        </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => {
+                  setSelectedDocumentId(pair.id);
+                  setIsMoveOpen(true);
+                }}
+              >
+                <Arrow className="w-[16px] h-[16px]" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Move
+            </TooltipContent>
+          </Tooltip>
 
-        <button
-          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-          onClick={() => handleDublicateClick(pair.id)}
-        >
-          <Dublicate />
-        </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => handleDublicateClick(pair.id)}
+              >
+                <Dublicate className="w-[16px] h-[16px]" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Duplicate
+            </TooltipContent>
+          </Tooltip>
 
-        <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center">
-          <Voiceover />
-        </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center">
+                <Voiceover className="w-[16px] h-[16px]" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Add voiceover
+            </TooltipContent>
+          </Tooltip>
 
-        <button
-          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-          onClick={() => {
-            setSelectedDocumentId(pair.id);
-            setIsBadResponseOpen(true);
-          }}
-        >
-          <Dislike className="scale-x-[-1]" />
-        </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => {
+                  setSelectedDocumentId(pair.id);
+                  setIsBadResponseOpen(true);
+                }}
+              >
+                <Dislike className="w-[16px] h-[16px]" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Mark as
+            </TooltipContent>
+          </Tooltip>
 
-        <button
-          onClick={() => onCompareToggle(index)}
-          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-        >
-          <Compare />
-        </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => handleDelete(pair.id)}
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+              >
+                <TrashIcon width={16} height={16} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Delete
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => onCompareToggle(index)}
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+              >
+                <Compare />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Compare versions
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );

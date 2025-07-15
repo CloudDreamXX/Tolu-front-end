@@ -19,7 +19,7 @@ const TooltipContent = React.forwardRef<
     side="top"
     align="end"
     className={cn(
-      "ml-[40px] z-50 border border-[#1C63DB] bg-white text-[#1D1D1F] rounded-[8px] shadow-lg p-[20px] text-sm w-[329px] leading-[1.5] relative overflow-visible", // ensure Arrow is visible
+      "ml-[40px] z-50 border border-[#1C63DB] bg-white text-[#1D1D1F] rounded-[8px] shadow-lg p-[20px] text-sm w-[329px] leading-[1.5] relative overflow-visible",
       "data-[state=closed]:animate-fadeOut data-[state=open]:animate-fadeIn",
       "data-[side=top]:slide-in-from-bottom-2",
       className
@@ -29,7 +29,7 @@ const TooltipContent = React.forwardRef<
     {props.children}
 
     <TooltipPrimitive.Arrow
-      className="fill-white stroke-[#1C63DB] ml-auto mr-[40px]"
+      className={`fill-white stroke-[#1C63DB] ml-auto ${props.side === "right" ? "mr-0" : "mr-[40px]"}`}
       width={16}
       height={8}
     />

@@ -194,7 +194,7 @@ export const OnboardingPersonalStory = () => {
 
       <div className="flex items-center justify-between w-full lg:max-w-[718px] gap-2 mt-6">
         <button
-          className={`${currentStep === 0 ? "flex w-full" : "hidden md:flex"} p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]`}
+          className={`${currentStep === 0 ? "flex w-full md:w-fit" : "hidden md:flex"} p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]`}
           onClick={() => setIsCancelOpen(true)}
         >
           Skip this for now

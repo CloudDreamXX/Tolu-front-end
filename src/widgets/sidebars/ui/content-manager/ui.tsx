@@ -26,7 +26,7 @@ export const ContentManagerSidebar: React.FC = () => {
       <div
         className={cn(
           "flex flex-col gap-8 h-full",
-          isNarrow ? "w-[81px] items-center" : "w-[316px]"
+          isNarrow ? "w-[81px] items-center" : "w-[284px]"
         )}
       >
         <div className="flex flex-col items-center text-center">

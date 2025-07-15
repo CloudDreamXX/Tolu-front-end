@@ -39,6 +39,7 @@ interface ConversationListProps {
   setEditedContent: (content: string) => void;
   handleDublicateClick: (id: string) => Promise<void>;
   handleMarkAsClick: (id: string) => void;
+  handleDeleteContent: (id: string) => void;
 }
 
 export const ConversationList: React.FC<ConversationListProps> = ({
@@ -73,6 +74,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   setEditedContent,
   handleDublicateClick,
   handleMarkAsClick,
+  handleDeleteContent,
 }) => {
   return (
     <div className="flex flex-col gap-[32px]">
@@ -121,13 +123,16 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           setEditedContent={setEditedContent}
           handleDublicateClick={handleDublicateClick}
           handleMarkAsClick={handleMarkAsClick}
+          handleDeleteContent={handleDeleteContent}
         />
       ))}
 
       {isSendingMessage && message && (
         <div className="flex flex-col gap-4">
           <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] w-full md:max-w-[563px] xl:max-w-[800px]">
-            <p className="text-[18px] font-[500] text-[#1D1D1F]">{message}</p>
+            <p className="text-[16px] md:text-[18px] font-[500] text-[#1D1D1F]">
+              {message}
+            </p>
           </div>
           {newMessageIsHtml || isHtmlContent(newMessageStreaming) ? (
             <div className="prose-sm prose max-w-none">

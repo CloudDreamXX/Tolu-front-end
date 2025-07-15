@@ -4,13 +4,10 @@ import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Chevron from "shared/assets/icons/chevron";
 import Close from "shared/assets/icons/close";
 import Menu from "shared/assets/icons/menu";
-import Search from "shared/assets/icons/search";
 import SignOutIcon from "shared/assets/icons/signout";
 import { ScrollArea } from "shared/ui";
-import { Input } from "shared/ui/input";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 
 type Props = {
@@ -91,14 +88,6 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                   <Close />
                 </span>
               </button>
-            </div>
-            <div className="px-4">
-              <Input
-                placeholder="Search"
-                icon={<Search className="ml-[16px]" />}
-                iconRight={<Chevron className="mr-[16px]" />}
-                className="rounded-full px-[54px]"
-              />
             </div>
             <ScrollArea className="h-full px-4">
               <div className="flex flex-col gap-4 mt-6">

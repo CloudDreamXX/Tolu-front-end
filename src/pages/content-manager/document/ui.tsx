@@ -8,7 +8,6 @@ import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
 import { DocumentBreadcrumbs } from "widgets/document-breadcrumbs";
 import { DocumentHeader } from "widgets/document-header";
 import { DocumentInfoHeader } from "widgets/document-info-header";
-import { MessageInput } from "widgets/message-input";
 import { UserEngagementSidebar } from "widgets/user-engagement-sidebar";
 
 import {
@@ -55,10 +54,6 @@ export const ContentManagerDocument: React.FC = () => {
     isSendingMessage,
     newMessageStreaming,
     newMessageIsHtml,
-    setMessage,
-    setClientId,
-    setFiles,
-    handleSendMessage,
   } = useMessageState();
 
   const {
@@ -126,14 +121,6 @@ export const ContentManagerDocument: React.FC = () => {
     createDocument();
   }, [isNewDocument, location.state]);
 
-  // Handle message sending
-  const onSendMessage = async () => {
-    if (!document || !folderId) return;
-    await handleSendMessage(document, folderId, async () => {
-      await loadConversation(document?.chatId);
-    });
-  };
-
   // Handle comparison toggle
   const onCompareToggle = (index: number) => {
     setCompareIndex(compareIndex === index ? null : index);
@@ -169,7 +156,7 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] pt-2 md:pt-6 h-full max-h-[calc(100vh-78px)] w-full">
+    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] pt-2 md:pt-6 h-full max-h-[calc(100vh-78px)] w-full overflow-y-auto">
       <div className="flex flex-row justify-end w-full h-full gap-[26px]">
         <div className="relative flex flex-col w-full h-full gap-2">
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
@@ -181,18 +168,8 @@ export const ContentManagerDocument: React.FC = () => {
             refreshSharedClients={refreshSharedClients}
           />
 
-          <div
-            className={cn(
-              "flex flex-col bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto",
-              isDraft ? "rounded-[24px] " : " rounded-t-2xl md:pb-0"
-            )}
-          >
-            <ScrollArea
-              className={cn(
-                "pr-2 md:pr-6",
-                isDraft ? "h-[calc(100vh-492px)] " : "h-[calc(100vh-264px)] "
-              )}
-            >
+          <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">
+            <ScrollArea className={cn("pr-2 md:pr-6")}>
               <DocumentHeader
                 documentTitle={documentTitle}
                 query={document?.query}
@@ -233,22 +210,10 @@ export const ContentManagerDocument: React.FC = () => {
                 setEditedContent={setEditedContent}
                 handleDublicateClick={handleDublicateClick}
                 handleMarkAsClick={onMarkAsClick}
+                handleDeleteContent={handleDeleteClick}
               />
             </ScrollArea>
           </div>
-
-          {isDraft && (
-            <MessageInput
-              message={message}
-              isSendingMessage={isSendingMessage}
-              folderId={folderId}
-              documentId={documentId}
-              onMessageChange={setMessage}
-              onSendMessage={onSendMessage}
-              setFiles={setFiles}
-              setClientId={setClientId}
-            />
-          )}
         </div>
 
         <UserEngagementSidebar

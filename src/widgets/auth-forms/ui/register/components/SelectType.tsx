@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Client from "shared/assets/icons/client";
-import Practitioner from "shared/assets/icons/practitioner";
 
 interface SelectType {
   formData: {
@@ -30,16 +28,12 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
               : "border-[3px] border-[#AAC6EC] bg-white rounded-[24px] flex flex-col px-[40px] py-[24px] md:py-[40px] md:px-[11px] 2xl:p-[40px] gap-[16px] md:gap-[32px] xl:gap-[56px] items-center justify-center"
           }
         >
-          <div className="flex flex-col items-center w-[80px] h-[88px] md:w-[119px] md:h-[130px] xl:w-[157px] xl:h-[171px] gap-[32px]">
-            <Client />
-          </div>
           <div className="flex flex-col items-start self-stretch gap-[16px]">
             <h3 className="h-[31px] flex lfex-col justify-center self-center text-center font-[Nunito] text-[24px] md:text-[28px]/[20px] font-medium">
               Client
             </h3>
             <p className="md:w-[278px] md:h-[47px] flex flex-col justify-center text-[#5F5F65] font-[Nunito] font-medium text-[16px]/[20px] opacity-[0.7]">
-              Say goodbye to confusion. Get real answers for your symptoms—when
-              they happen, not weeks later.
+              Lorem Ipsum Dolores Sit. Manwa jes. Lorem Ipsum Dolores Sit.
             </p>
           </div>
         </button>
@@ -51,16 +45,12 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
               : "border-[3px] border-[#AAC6EC] bg-white rounded-[24px] flex flex-col px-[40px] py-[24px] md:py-[40px] md:px-[11px] 2xl:p-[40px] gap-[16px] md:gap-[32px] xl:gap-[56px] items-center justify-center"
           }
         >
-          <div className="flex flex-col items-center w-[80px] h-[88px] md:w-[119px] md:h-[130px] xl:w-[157px] xl:h-[171px] gap-[32px]">
-            <Practitioner />
-          </div>
           <div className="flex flex-col items-start self-stretch gap-[16px]">
             <h3 className="h-[31px] flex lfex-col justify-center self-center text-center font-[Nunito] text-[24px] md:text-[28px]/[20px] font-medium">
               Practitioner
             </h3>
             <p className="md:w-[278px] md:h-[47px] flex flex-col justify-center text-[#5F5F65] font-[Nunito] font-medium text-[16px]/[20px] opacity-[0.7]">
-              Tolu is your AI-powered partner, helping you deliver fast,
-              precise, evidence-based menopause care to every client.
+              Lorem Ipsum Dolores Sit. Manwa jes. Lorem Ipsum Dolores Sit.
             </p>
           </div>
         </button>

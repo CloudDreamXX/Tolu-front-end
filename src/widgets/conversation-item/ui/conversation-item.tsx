@@ -35,6 +35,7 @@ interface ConversationItemProps {
   setEditedContent: (content: string) => void;
   handleDublicateClick: (id: string) => Promise<void>;
   handleMarkAsClick: (id: string) => void;
+  handleDeleteContent: (id: string) => void;
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
@@ -64,6 +65,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   setEditedContent,
   handleDublicateClick,
   handleMarkAsClick,
+  handleDeleteContent,
 }) => {
   const isHTML = isHtmlContent(pair.content);
 
@@ -260,13 +262,15 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     <div key={pair.id} className="flex flex-col gap-[24px]">
       {index > 0 && pair.query && (
         <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] w-full md:max-w-[563px] xl:max-w-[800px]">
-          <p className="text-[18px] font-[500] text-[#1D1D1F]">{pair.query}</p>
+          <p className="text-[16px] md:text-[18px] font-[500] text-[#1D1D1F]">
+            {pair.query}
+          </p>
         </div>
       )}
 
       {compareIndex === index && index > 0 && renderCompareView()}
 
-      <div className="flex flex-row-reverse gap-2 md:gap-6">
+      <div className="flex flex-col md:flex-row-reverse gap-4 md:gap-2 md:gap-6">
         {compareIndex !== index && (
           <>
             {isEditing && selectedDocumentId === pair.id
@@ -287,6 +291,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           setIsMoveOpen={setIsMoveOpen}
           handleDublicateClick={handleDublicateClick}
           handleMarkAsClick={handleMarkAsClick}
+          handleDelete={handleDeleteContent}
         />
       </div>
     </div>

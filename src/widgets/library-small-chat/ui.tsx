@@ -282,7 +282,7 @@ My goal is to ${values.goals}.`;
     <>
       {(isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory) ||
       isSwitch(SWITCH_KEYS.CASE) ? (
-        <Card className="flex flex-col w-full lg:w-[680px] xl:w-[766px] h-full overflow-auto border-none rounded-2xl">
+        <Card className="flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
@@ -341,7 +341,7 @@ My goal is to ${values.goals}.`;
           </CardFooter>
         </Card>
       ) : (
-        <Card className="flex flex-col w-full lg:w-[680px] xl:w-[766px] h-full border-none rounded-2xl">
+        <Card className="flex flex-col w-full h-full border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />

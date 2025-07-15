@@ -76,10 +76,10 @@ export const LibraryDocument = () => {
             {document && (
               <div className="p-[24px] rounded-[16px] bg-white">
                 <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px] flex flex-col gap-[8px] mb-[40px]">
-                  <p className="text-[24px] font-[500] text-[#1D1D1F]">
+                  <p className="text-[16px] md:text-[24px] font-[600] text-[#1D1D1F]">
                     {document.title}
                   </p>
-                  <p className="text-[18px] font-[500] text-[#1D1D1F]">
+                  <p className="text-[16px] md:text-[18px] font-[500] text-[#1D1D1F]">
                     {document.query}
                   </p>
                 </div>

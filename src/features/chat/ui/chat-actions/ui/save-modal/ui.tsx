@@ -78,7 +78,7 @@ const SaveModal: React.FC = () => {
                         <span className="w-5 h-5 shrink-0">
                           <LightIcon className="text-[#1B2559] w-5 h-5" />
                         </span>
-                        Click to remove this topic from your saved searches
+                        Click to remove this topic from saved searches
                       </h3>
                     </div>
                   </TooltipContent>
