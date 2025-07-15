@@ -43,7 +43,7 @@ export const MultiSelect = ({
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
-        className={`w-full text-left border ${open ? "border-[#094AB8]" : "border-[#DBDEE1]"} rounded-[16px] md:rounded-[1000px] px-[12px] py-[4px] pr-[40px] text-[18px] font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap gap-[8px] items-center`}
+        className={`w-full text-left border ${open ? "border-[#094AB8]" : "border-[#DBDEE1]"} rounded-[16px] md:rounded-[1000px] px-[12px] py-[4px] pr-[40px] text-[14px] md:text-[18px] font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap gap-[8px] items-center`}
         onClick={() => setOpen(!open)}
         type="button"
       >
@@ -53,7 +53,7 @@ export const MultiSelect = ({
           selected.map((option, index) => (
             <span
               key={option}
-              className="flex items-center text-[18px] font-[500] text-[#1D1D1F]"
+              className="flex items-center text-[14px] md:text-[18px] font-[500] text-[#1D1D1F]"
             >
               {option}
               {index < selected.length - 1 && ","}
@@ -65,7 +65,7 @@ export const MultiSelect = ({
         </span>
       </button>
       {open && (
-        <ul className="absolute z-10 mt-[4px] w-full min-w-[302px] bg-white border border-[#DBDEE1] rounded-[12px] shadow-sm max-h-[220px] overflow-y-auto text-[16px]">
+        <ul className="absolute z-10 mt-[4px] w-full min-w-[302px] bg-white border border-[#DBDEE1] rounded-[12px] shadow-sm max-h-[220px] overflow-y-auto text-[14px] md:text-[16px]">
           {options.map((option, index) => (
             <li
               key={option}

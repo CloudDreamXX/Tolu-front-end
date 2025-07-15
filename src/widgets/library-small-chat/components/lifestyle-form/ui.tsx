@@ -16,7 +16,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
   const inputClass =
     "input inline-input border border-[#DBDEE1] rounded-full outline-[#008FF6] py-[4px] px-[12px] min-w-[60px] placeholder:text-[#5F5F65]";
   const lineClass =
-    "flex flex-wrap gap-x-[12px] gap-y-[12px] text-[18px] font-[500] text-[#1D1D1F] items-center";
+    "flex flex-wrap gap-x-[12px] gap-y-[12px] text-[14px] md:text-[18px] font-[500] text-[#1D1D1F] items-center";
 
   const dietOptions = [
     "Standard / No specific diet",

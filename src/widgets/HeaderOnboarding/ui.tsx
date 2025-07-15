@@ -46,42 +46,44 @@ export const HeaderOnboarding = ({
       </div>
 
       {/* Progress Steps */}
-      <div className="mt-4 xl:top-1/2 md:left-[100px] lg:left-[70px] xl:left-0 md:-translate-y-1/2 md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px] md:relative">
-        <div className="absolute top-5 left-0 md:top-1/2 h-[5px] xl:h-[8px] w-full bg-[#E2E2E2] rounded-full relative z-0" />
+      {!isClient && (
+        <div className="mt-4 xl:top-1/2 md:left-[100px] lg:left-[70px] xl:left-0 md:-translate-y-1/2 md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px] md:relative">
+          <div className="absolute top-5 left-0 md:top-1/2 h-[5px] xl:h-[8px] w-full bg-[#E2E2E2] rounded-full relative z-0" />
 
-        <div
-          className="absolute left-[16px] top-[104px] md:left-0 md:top-1/2 h-[5px] xl:h-[8px] bg-[#1866E0] rounded-full z-10 transition-all duration-300"
-          style={{
-            width: `${(currentStep / (steps - 1)) * (isMobile ? 90 : 100)}%`,
-          }}
-        />
+          <div
+            className="absolute left-[16px] top-[104px] md:left-0 md:top-1/2 h-[5px] xl:h-[8px] bg-[#1866E0] rounded-full z-10 transition-all duration-300"
+            style={{
+              width: `${(currentStep / (steps - 1)) * (isMobile ? 90 : 100)}%`,
+            }}
+          />
 
-        <div className="relative z-20 flex justify-between items-center w-full mt-[-32px] md:mt-0 h-[95px] md:h-auto xl:h-[95px]">
-          {Array.from({ length: steps }).map((_, index) => {
-            const isCompleted = index < currentStep;
-            const isCurrent = index === currentStep;
-            const style = getStepStyle({ isCompleted, isCurrent, isMobile });
+          <div className="relative z-20 flex justify-between items-center w-full mt-[-32px] md:mt-0 h-[95px] md:h-auto xl:h-[95px]">
+            {Array.from({ length: steps }).map((_, index) => {
+              const isCompleted = index < currentStep;
+              const isCurrent = index === currentStep;
+              const style = getStepStyle({ isCompleted, isCurrent, isMobile });
 
-            return (
-              <div
-                key={index}
-                className="w-[18px] h-[18px] xl:w-[32px] xl:h-[32px] flex items-center justify-center rounded-full"
-                style={style}
-              >
-                {isCompleted ? (
-                  <FaCheck size={isMobile ? 10 : 14} />
-                ) : isCurrent ? (
-                  <div className="w-[12px] h-[12px] xl:w-[14px] xl:h-[14px] rounded-full border-[3px] border-[#1866E0] bg-white" />
-                ) : (
-                  <div className="text-white font-[Roboto] font-bold">
-                    {index + 1}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={index}
+                  className="w-[18px] h-[18px] xl:w-[32px] xl:h-[32px] flex items-center justify-center rounded-full"
+                  style={style}
+                >
+                  {isCompleted ? (
+                    <FaCheck size={isMobile ? 10 : 14} />
+                  ) : isCurrent ? (
+                    <div className="w-[12px] h-[12px] xl:w-[14px] xl:h-[14px] rounded-full border-[3px] border-[#1866E0] bg-white" />
+                  ) : (
+                    <div className="text-white font-[Roboto] font-bold">
+                      {index + 1}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 };

@@ -185,7 +185,7 @@ export const OnboardingPersonalStory = () => {
       {currentStep === 0 && (
         <div className="lg:hidden flex gap-4 p-4 items-center w-full lg:max-w-[718px] rounded-2xl bg-[#DDEBF6] mt-[8px]">
           <Info />
-          <p className="text-[#1B2559] font-[Nunito] text-base font-normal">
+          <p className="text-[#1B2559] font-[Nunito] text-base font-normal w-fit">
             Your information is kept private and secure. It helps us provide
             smarter, more relevant support.
           </p>
@@ -194,7 +194,7 @@ export const OnboardingPersonalStory = () => {
 
       <div className="flex items-center justify-between w-full lg:max-w-[718px] gap-2 mt-6">
         <button
-          className="hidden md:block flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
+          className={`${currentStep === 0 ? "flex w-full" : "hidden md:flex"} p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]`}
           onClick={() => setIsCancelOpen(true)}
         >
           Skip this for now
@@ -232,12 +232,14 @@ export const OnboardingPersonalStory = () => {
           </button>
         </div>
       </div>
-      <button
-        className="md:hidden mt-[24px] flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
-        onClick={() => setIsCancelOpen(true)}
-      >
-        Skip this for now
-      </button>
+      {currentStep !== 0 && (
+        <button
+          className="md:hidden mt-[24px] flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
+          onClick={() => setIsCancelOpen(true)}
+        >
+          Skip this for now
+        </button>
+      )}
 
       {IsCancelOpen && (
         <ConfirmCancelModal
@@ -271,8 +273,8 @@ export const OnboardingPersonalStory = () => {
 
   return (
     <OnboardingClientLayout
-      currentStep={1}
-      numberOfSteps={8}
+      currentStep={currentStep}
+      numberOfSteps={5}
       children={mainContent}
       buttons={buttons}
     />

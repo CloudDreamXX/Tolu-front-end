@@ -28,7 +28,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
     w-full gap-[16px] md:gap-[8px]
     lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full
     mt-[100px] lg:mt-0
-    ${isTallScreen ? "absolute bottom-0" : ""}
+    ${isTallScreen || currentStep === 4 ? "absolute bottom-0" : ""}
   `;
 
   return (
