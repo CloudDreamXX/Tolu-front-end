@@ -18,7 +18,9 @@ export const MessageList: React.FC<MessageListProps> = ({
   streamingText,
   error,
 }) => (
-  <div className="flex-1 w-full py-4 overflow-y-auto bg-white rounded-b-xl">
+  <div
+    className={`flex-1 w-full ${messages.length && "py-4"} overflow-y-auto bg-white rounded-b-xl`}
+  >
     <div className="max-h-full px-4 space-y-4 overflow-auto">
       {messages.map((message) => (
         <MessageBubble key={message.id} message={message} />

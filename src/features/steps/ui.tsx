@@ -19,7 +19,7 @@ export const Steps: React.FC<StepsProps> = ({
   disabled = false,
 }) => {
   return (
-    <div className="flex items-center w-full p-2 border rounded-full">
+    <div className="flex items-center w-full p-2 border rounded-full overflow-y-auto">
       {steps.map((step, index) => {
         const isCompleted = index < currentStep;
         const isCurrent = index === currentStep;

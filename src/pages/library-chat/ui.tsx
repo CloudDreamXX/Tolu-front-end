@@ -54,6 +54,9 @@ export const LibraryChat = () => {
   const [chatTitle, setChatTitle] = useState<string>("");
   const [currentChatId, setCurrentChatId] = useState<string>(chatId ?? "");
   const [isLoadingSession, setIsLoadingSession] = useState(false);
+  const isMobileChatOpen = useSelector(
+    (state: RootState) => state.client.isMobileChatOpen
+  );
 
   const initialSearchDone = useRef(false);
   const sessionLoadDone = useRef(false);
@@ -533,7 +536,9 @@ My goal is to ${values.goals}.`;
                 />
                 <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
                   <div className="w-full mb-[24px]" />
-                  <CardContent className="w-full px-6 mt-auto rounded-0">
+                  <CardContent
+                    className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+                  >
                     <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
                       <p className="text-[24px] text-[#1D1D1F] font-[500]">
                         Personal story

@@ -1,19 +1,29 @@
 import { ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
 import BookMark from "shared/assets/icons/book-mark";
-import BookMarkFilled from "shared/assets/icons/book-mark-filled"; // Assuming you have this icon
-import { Button, Dialog, DialogContent, DialogTrigger } from "shared/ui";
+import BookMarkFilled from "shared/assets/icons/book-mark-filled";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui";
+import LightIcon from "shared/assets/icons/light";
 
 const SaveModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false); // State to track if bookmarked
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const handleSkip = () => {
     setIsOpen(false);
   };
 
   const handleBookmarkClick = () => {
-    setIsBookmarked(!isBookmarked); // Toggle the bookmark state
+    setIsBookmarked(!isBookmarked);
   };
 
   return (
@@ -46,13 +56,36 @@ const SaveModal: React.FC = () => {
           </div>
 
           <div className="flex flex-row p-4 border rounded-lg items-center gap-[16px]">
-            <button onClick={handleBookmarkClick}>
-              {isBookmarked ? (
-                <BookMarkFilled width={32} height={32} />
-              ) : (
-                <BookMark width={32} height={32} />
-              )}
-            </button>
+            <TooltipProvider delayDuration={500}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button onClick={handleBookmarkClick}>
+                    {isBookmarked ? (
+                      <BookMarkFilled width={32} height={32} />
+                    ) : (
+                      <BookMark width={32} height={32} />
+                    )}
+                  </button>
+                </TooltipTrigger>
+
+                {isBookmarked && (
+                  <TooltipContent
+                    side="top"
+                    className="z-50 p-[16px] w-[309px]"
+                  >
+                    <div className="flex flex-col items-center gap-2 max-w-[240px]">
+                      <h3 className="flex gap-2 text-[#1B2559] text-sm leading-[1.4]">
+                        <span className="w-5 h-5 shrink-0">
+                          <LightIcon className="text-[#1B2559] w-5 h-5" />
+                        </span>
+                        Click to remove this topic from your saved searches
+                      </h3>
+                    </div>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+
             <div className="flex flex-col gap-1">
               <span className="text-lg font-bold leading-none text-gray-800">
                 Labs to track during menopause
