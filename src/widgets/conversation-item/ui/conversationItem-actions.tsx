@@ -1,5 +1,4 @@
 import { ISessionResult } from "entities/coach";
-import { Folders } from "lucide-react";
 import React from "react";
 import Compare from "shared/assets/icons/compare";
 import Dislike from "shared/assets/icons/dislike";
@@ -7,7 +6,6 @@ import Dublicate from "shared/assets/icons/dublicate";
 import Arrow from "shared/assets/icons/grey-arrow";
 import Edit from "shared/assets/icons/grey-edit";
 import Voiceover from "shared/assets/icons/voiceover";
-import { RatePopup } from "widgets/RatePopup";
 
 interface ConversationItemActionsProps {
   pair: ISessionResult;
@@ -27,7 +25,6 @@ export const ConversationItemActions: React.FC<
   ConversationItemActionsProps
 > = ({
   pair,
-  ratingsMap,
   index,
   onCompareToggle,
   onEditToggle,
@@ -36,29 +33,9 @@ export const ConversationItemActions: React.FC<
   setIsMoveOpen,
   handleDublicateClick,
 }) => {
-  const handleRateClick = async (
-    id: string,
-    rating: number,
-    comment: string,
-    down: boolean
-  ) => {
-    console.warn("Rate click not implemented", {
-      id,
-      rating,
-      comment,
-      down,
-    });
-  };
-
   return (
     <div className="flex flex-col items-start gap-2">
       <div className="relative flex flex-col items-center gap-2">
-        <RatePopup
-          contentId={pair.id}
-          ratingsMap={ratingsMap}
-          handleRateClick={handleRateClick}
-        />
-
         <button
           className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
           onClick={() => onEditToggle(pair, null)}
@@ -83,21 +60,8 @@ export const ConversationItemActions: React.FC<
           <Dublicate />
         </button>
 
-        <button
-          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-          onClick={() => {
-            setSelectedDocumentId(pair.id);
-            setIsMoveOpen(true);
-          }}
-        >
-          <Arrow />
-        </button>
-
-        <button
-          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-          onClick={() => handleDublicateClick(pair.id)}
-        >
-          <Folders />
+        <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center">
+          <Voiceover />
         </button>
 
         <button
@@ -108,10 +72,6 @@ export const ConversationItemActions: React.FC<
           }}
         >
           <Dislike className="scale-x-[-1]" />
-        </button>
-
-        <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center">
-          <Voiceover />
         </button>
 
         <button

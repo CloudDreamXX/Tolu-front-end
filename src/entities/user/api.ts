@@ -58,13 +58,8 @@ export class UserService {
     );
   }
 
-  static async registerUser(
-    userInfo: IRegisterUser
-  ): Promise<{ success: boolean }> {
-    return ApiService.post<{ success: boolean }>(
-      API_ROUTES.USER.SIGNUP,
-      userInfo
-    );
+  static async registerUser(userInfo: IRegisterUser): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.USER.SIGNUP, userInfo);
   }
 
   static async verifyEmail({ email, token }: IVerify): Promise<AuthResponse> {

@@ -1,9 +1,10 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { SelectType, SignUp } from "./components";
-import { UserService, setRoleID } from "entities/user";
+import { UserService, setCredentials, setRoleID } from "entities/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
 import { ClientService } from "entities/client";
+import { useDispatch } from "react-redux";
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export const Register = () => {
     newPassword: "",
   });
   const { token } = useParams();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchInviteDetails = async () => {
@@ -47,6 +49,7 @@ export const Register = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     const dataBE = {
       name: formData.name,
       email: formData.email,
@@ -55,10 +58,29 @@ export const Register = () => {
       dob: "2025-05-13",
       roleID: formData.accountType === "client" ? 3 : 2,
     };
-    setRoleID(formData.accountType === "client" ? 3 : 2);
+
+    setRoleID(dataBE.roleID);
+
     try {
-      const data = await UserService.registerUser(dataBE);
-      if (data.success) {
+      const res = await UserService.registerUser(dataBE);
+
+      if (res.user && res.accessToken) {
+        dispatch(
+          setCredentials({
+            user: res.user,
+            accessToken: res.accessToken,
+          })
+        );
+
+        if (res.user.roleID === 3) {
+          navigate("/welcome/client");
+        } else {
+          navigate("/welcome/practitioner");
+        }
+        return;
+      }
+
+      if (!res.accessToken) {
         toast({
           title: "Register successful",
           description: "Welcome!",
