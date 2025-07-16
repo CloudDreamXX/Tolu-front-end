@@ -16,12 +16,14 @@ interface MessageSidebarProps {
   chats: ChatItemModel[];
   onChatClick: (chat: ChatItemModel) => void;
   selectedChat: ChatItemModel | null;
+  loading?: boolean;
 }
 
 export const MessageSidebar: React.FC<MessageSidebarProps> = ({
   chats,
   onChatClick,
   selectedChat,
+  loading,
 }) => {
   return (
     <aside className="lg:w-[360px] lg:min-w-[360px] border border-[#DBDEE1] border-l-0 flex flex-col w-full ">
@@ -57,28 +59,55 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
         </TabsList>
         <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-280px)]">
           <TabsContent value="clients" className="mt-0">
-            {chats
-              .filter((item) => item.role === "client")
-              .map((item) => (
-                <ChatItem
-                  key={item.id}
-                  item={item}
-                  onClick={() => onChatClick(item)}
-                  classname={selectedChat?.id === item.id ? "bg-white" : ""}
-                />
-              ))}
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
+                <p className="font-semibold">Loading client conversations...</p>
+              </div>
+            ) : chats.filter((item) => item.role === "client").length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
+                <p className="font-semibold">No client conversations</p>
+                <p className="text-sm">
+                  Start a conversation with a client to see it here.
+                </p>
+              </div>
+            ) : (
+              chats
+                .filter((item) => item.role === "client")
+                .map((item) => (
+                  <ChatItem
+                    key={item.id}
+                    item={item}
+                    onClick={() => onChatClick(item)}
+                    classname={selectedChat?.id === item.id ? "bg-white" : ""}
+                  />
+                ))
+            )}
           </TabsContent>
+
           <TabsContent value="coaches" className="mt-0">
-            {chats
-              .filter((item) => item.role === "coach")
-              .map((item) => (
-                <ChatItem
-                  key={item.id}
-                  item={item}
-                  onClick={() => onChatClick(item)}
-                  classname={selectedChat?.id === item.id ? "bg-white" : ""}
-                />
-              ))}
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
+                <p className="font-semibold">Loading coach conversations...</p>
+              </div>
+            ) : chats.filter((item) => item.role === "coach").length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
+                <p className="font-semibold">No coach conversations</p>
+                <p className="text-sm">
+                  You haven’t started chatting with any coach yet.
+                </p>
+              </div>
+            ) : (
+              chats
+                .filter((item) => item.role === "coach")
+                .map((item) => (
+                  <ChatItem
+                    key={item.id}
+                    item={item}
+                    onClick={() => onChatClick(item)}
+                    classname={selectedChat?.id === item.id ? "bg-white" : ""}
+                  />
+                ))
+            )}
           </TabsContent>
         </ScrollArea>
       </Tabs>

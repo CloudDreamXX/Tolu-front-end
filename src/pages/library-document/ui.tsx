@@ -18,6 +18,7 @@ export const LibraryDocument = () => {
   const [messages] = useState([]);
   const [isLoadingSession] = useState(false);
   const [document, setDocument] = useState<IDocument | null>(null);
+  const [isLoadingDocument, setIsLoadingDocument] = useState(true);
 
   const healthHistory = useSelector(
     (state: RootState) => state.healthHistory.data
@@ -43,6 +44,7 @@ export const LibraryDocument = () => {
 
   const loadDocument = async (docId: string | undefined) => {
     if (!docId) return;
+    setIsLoadingDocument(true);
     try {
       const response = await DocumentsService.getDocumentById(docId);
       if (response) {
@@ -51,6 +53,8 @@ export const LibraryDocument = () => {
     } catch (error) {
       console.error("Error fetching document:", error);
       setDocument(null);
+    } finally {
+      setIsLoadingDocument(false);
     }
   };
 
@@ -60,7 +64,7 @@ export const LibraryDocument = () => {
 
   return (
     <div className="flex flex-col w-full h-full gap-6 p-6">
-      <div className="flex flex-row w-full h-full gap-6 xl:max-h-[calc(100vh-48px)] relative">
+      <div className="flex flex-row w-full h-full gap-6 xl:h-[calc(100vh-48px)] relative">
         <div className="hidden xl:block">
           <ChatActions
             onRegenerate={() => {}}
@@ -73,7 +77,11 @@ export const LibraryDocument = () => {
           <ChatLoading />
         ) : (
           <div className="relative flex flex-col w-full h-full xl:pr-4">
-            {document && (
+            {isLoadingDocument ? (
+              <div className="p-6 text-center text-muted-foreground">
+                Loading document...
+              </div>
+            ) : document ? (
               <div className="p-[24px] rounded-[16px] bg-white xl:h-[calc(100vh-48px)] xl:overflow-y-auto">
                 <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px] flex flex-col gap-[8px] mb-[40px]">
                   <p className="text-[16px] md:text-[24px] font-[600] text-[#1D1D1F]">
@@ -88,7 +96,12 @@ export const LibraryDocument = () => {
                   {parse(document.content)}
                 </div>
               </div>
+            ) : (
+              <div className="p-6 text-center text-red-500">
+                Failed to load the document.
+              </div>
             )}
+
             <div className="xl:hidden block mt-[16px] mb-[16px]">
               <ChatActions
                 onRegenerate={() => {}}
@@ -99,7 +112,7 @@ export const LibraryDocument = () => {
           </div>
         )}
 
-        <div className="hidden xl:block">
+        <div className="hidden xl:block w-full">
           <LibrarySmallChat healthHistory={healthHistory} />
         </div>
       </div>

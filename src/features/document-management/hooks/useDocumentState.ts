@@ -28,6 +28,8 @@ export const useDocumentState = () => {
   const isNewDocument = location.state?.isNewDocument;
   const isTemporaryDocument = documentId?.startsWith("temp_");
 
+  const [loadingConversation, setLoadingConversation] = useState(false);
+
   const loadDocument = async (docId: string | undefined) => {
     if (!docId) return;
 
@@ -47,6 +49,7 @@ export const useDocumentState = () => {
   const loadConversation = async (chatId: string | undefined) => {
     if (!chatId) return;
 
+    setLoadingConversation(true);
     try {
       const response = await CoachService.getSessionById(chatId);
       if (response?.search_results) {
@@ -54,6 +57,8 @@ export const useDocumentState = () => {
       }
     } catch (error) {
       console.error("Error loading conversation:", error);
+    } finally {
+      setLoadingConversation(false);
     }
   };
 
@@ -128,5 +133,6 @@ export const useDocumentState = () => {
     refreshSharedClients,
     navigate,
     location,
+    loadingConversation,
   };
 };

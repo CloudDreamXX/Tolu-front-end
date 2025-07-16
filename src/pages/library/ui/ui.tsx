@@ -35,7 +35,7 @@ export const Library = () => {
     <main className="flex flex-col h-screen items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F2F4F6]">
       <div className="flex flex-col flex-1 w-full h-full min-h-0 gap-6 xl:flex-row">
         <LibraryClientContent />
-        <div className="hidden xl:block">
+        <div className="hidden xl:block w-full">
           <LibrarySmallChat healthHistory={healthHistory} />
         </div>
       </div>

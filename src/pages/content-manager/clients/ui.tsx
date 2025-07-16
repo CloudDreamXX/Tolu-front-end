@@ -27,6 +27,7 @@ import ConfirmIcon from "shared/assets/icons/confirm";
 import { toast } from "shared/lib/hooks/use-toast";
 import UploadCloud from "shared/assets/icons/upload-cloud";
 import { File, X } from "lucide-react";
+import EmptyClients from "shared/assets/images/EmptyClients.png";
 
 const PAGE_SIZE = 10;
 
@@ -396,7 +397,7 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-[16px] md:gap-[24px] p-8 overflow-y-auto h-[100%]">
+    <div className="flex flex-col gap-[16px] md:gap-[24px] p-8 overflow-y-auto h-full">
       <div className="flex flex-col lg:flex-row gap-[16px] justify-between lg:items-end">
         <div className="flex flex-col gap-2">
           <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
@@ -445,6 +446,19 @@ export const ContentManagerClients: React.FC = () => {
 
       {loading ? (
         <div className="text-center py-8">Loading clients...</div>
+      ) : filteredClients.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
+          <img src={EmptyClients} alt="" className="mb-[32px] w-[163px]" />
+          <div className="text-center flex flex-col items-center justify-center gap-[8px]">
+            <p className="text-[32px] font-[700] text-[#1D1D1F]">
+              There are no clients ...
+            </p>
+            <p className="text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
+              Start adding clients to keep track of observations, updates, and
+              progress.
+            </p>
+          </div>
+        </div>
       ) : (
         <div className="lg:mt-4 md:rounded-[8px]">
           <div className="hidden md:grid grid-cols-7 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">

@@ -1,9 +1,9 @@
 import Plus from "shared/assets/icons/plus";
 import { MessageBubble } from "widgets/message-bubble";
-import { messages } from "./mock";
+// import { messages } from "./mock";
 
 import { Send } from "lucide-react";
-import MessagesIcon from "shared/assets/icons/messages-2";
+import EmptyChat from "shared/assets/images/EmptyChat.png";
 import Smiley from "shared/assets/icons/smiley";
 import { usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
@@ -15,24 +15,23 @@ interface MessagesTabProps {
 
 export const MessagesTab: React.FC<MessagesTabProps> = ({ chat }) => {
   const { isMobileOrTablet } = usePageWidth();
+  const messages: any[] = [];
 
   return (
     <>
       <div className="pr-3 overflow-auto custom-message-scroll h-[calc(100vh-360px)] md:h-[calc(100vh-388px)] lg:h-[calc(100vh-372px)] ">
         {messages.length > 0 ? (
           <div className="flex flex-col justify-end min-h-full gap-2 pb-4 mt-auto">
-            {messages
-              .map((msg) => <MessageBubble key={msg.id} {...msg} />)
-              .reverse()}
+            {messages &&
+              messages
+                .map((msg) => <MessageBubble key={msg.id} {...msg} />)
+                .reverse()}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full">
-            <MessagesIcon
-              className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] lg:w-[128px] lg:h-[128px] border-blue-500"
-              stroke="green"
-            />
-            <p className="text-[#1D1D1F] font-bold text-[18px] md:text-[24px] lg:text-[32px]">
-              There are no messages...
+          <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
+            <img src={EmptyChat} alt="" className="mb-[16px] w-[163px]" />
+            <p className="text-[32px] font-[700] text-[#1D1D1F]">
+              There are no messages ...
             </p>
           </div>
         )}

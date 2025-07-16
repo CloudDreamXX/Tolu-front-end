@@ -46,6 +46,7 @@ export const ContentManagerDocument: React.FC = () => {
     navigate,
     location,
     documentPath,
+    loadingConversation,
   } = useDocumentState();
 
   const {
@@ -97,7 +98,6 @@ export const ContentManagerDocument: React.FC = () => {
   const { handleDocumentCreation } = useDocumentCreation();
   const isDraft = documentPath[0]?.name.toLowerCase() === "drafts";
 
-  // Handle document creation for new documents
   useEffect(() => {
     const createDocument = async () => {
       if (isNewDocument && location.state) {
@@ -121,12 +121,10 @@ export const ContentManagerDocument: React.FC = () => {
     createDocument();
   }, [isNewDocument, location.state]);
 
-  // Handle comparison toggle
   const onCompareToggle = (index: number) => {
     setCompareIndex(compareIndex === index ? null : index);
   };
 
-  // Handle edit toggle
   const onEditToggle = (pair: any) => {
     setSelectedDocumentId(pair.id);
     setEditedContent(pair.content);
@@ -135,22 +133,18 @@ export const ContentManagerDocument: React.FC = () => {
     setIsEditing(true);
   };
 
-  // Handle save edit
   const onSaveEdit = async (contentId: string) => {
     await handleSaveEdit(contentId, documentId, loadDocument);
   };
 
-  // Handle cancel edit
   const onCancelEdit = () => {
     setIsEditing(false);
   };
 
-  // Handle mark as click
   const onMarkAsClick = (contentId: string) => {
     handleMarkAsClick(contentId, folder);
   };
 
-  // Handle status complete
   const onStatusCompleteHandler = async (status: any, contentId?: string) => {
     await onStatusComplete(status, contentId);
   };
@@ -170,48 +164,56 @@ export const ContentManagerDocument: React.FC = () => {
 
           <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">
             <ScrollArea className={cn("pr-2 md:pr-6")}>
-              <DocumentHeader
-                documentTitle={documentTitle}
-                query={document?.query}
-                isCreatingDocument={isCreatingDocument}
-                isSendingMessage={isSendingMessage}
-              />
+              {loadingConversation ? (
+                <div className="w-full py-10 text-center text-[#5F5F65]">
+                  Loading conversation...
+                </div>
+              ) : (
+                <>
+                  <DocumentHeader
+                    documentTitle={documentTitle}
+                    query={document?.query}
+                    isCreatingDocument={isCreatingDocument}
+                    isSendingMessage={isSendingMessage}
+                  />
 
-              <ConversationList
-                conversation={conversation}
-                compareIndex={compareIndex}
-                mobilePage={mobilePage}
-                isEditing={isEditing}
-                selectedDocumentId={selectedDocumentId}
-                editedTitle={editedTitle}
-                editedQuery={editedQuery}
-                editedContent={editedContent}
-                ratingsMap={ratingsMap}
-                streamingContent={streamingContent}
-                streamingIsHtml={streamingIsHtml}
-                isCreatingDocument={isCreatingDocument}
-                isSendingMessage={isSendingMessage}
-                newMessageStreaming={newMessageStreaming}
-                newMessageIsHtml={newMessageIsHtml}
-                message={message}
-                onStatusComplete={onStatusCompleteHandler}
-                onCompareToggle={onCompareToggle}
-                onEditToggle={onEditToggle}
-                onSaveEdit={onSaveEdit}
-                onCancelEdit={onCancelEdit}
-                setMobilePage={setMobilePage}
-                setSelectedDocumentId={setSelectedDocumentId}
-                setIsBadResponseOpen={setIsBadResponseOpen}
-                setIsDeleteOpen={setIsDeleteOpen}
-                setIsMoveOpen={setIsMoveOpen}
-                setIsRateOpen={setIsRateOpen}
-                setEditedTitle={setEditedTitle}
-                setEditedQuery={setEditedQuery}
-                setEditedContent={setEditedContent}
-                handleDublicateClick={handleDublicateClick}
-                handleMarkAsClick={onMarkAsClick}
-                handleDeleteContent={handleDeleteClick}
-              />
+                  <ConversationList
+                    conversation={conversation}
+                    compareIndex={compareIndex}
+                    mobilePage={mobilePage}
+                    isEditing={isEditing}
+                    selectedDocumentId={selectedDocumentId}
+                    editedTitle={editedTitle}
+                    editedQuery={editedQuery}
+                    editedContent={editedContent}
+                    ratingsMap={ratingsMap}
+                    streamingContent={streamingContent}
+                    streamingIsHtml={streamingIsHtml}
+                    isCreatingDocument={isCreatingDocument}
+                    isSendingMessage={isSendingMessage}
+                    newMessageStreaming={newMessageStreaming}
+                    newMessageIsHtml={newMessageIsHtml}
+                    message={message}
+                    onStatusComplete={onStatusCompleteHandler}
+                    onCompareToggle={onCompareToggle}
+                    onEditToggle={onEditToggle}
+                    onSaveEdit={onSaveEdit}
+                    onCancelEdit={onCancelEdit}
+                    setMobilePage={setMobilePage}
+                    setSelectedDocumentId={setSelectedDocumentId}
+                    setIsBadResponseOpen={setIsBadResponseOpen}
+                    setIsDeleteOpen={setIsDeleteOpen}
+                    setIsMoveOpen={setIsMoveOpen}
+                    setIsRateOpen={setIsRateOpen}
+                    setEditedTitle={setEditedTitle}
+                    setEditedQuery={setEditedQuery}
+                    setEditedContent={setEditedContent}
+                    handleDublicateClick={handleDublicateClick}
+                    handleMarkAsClick={onMarkAsClick}
+                    handleDeleteContent={handleDeleteClick}
+                  />
+                </>
+              )}
             </ScrollArea>
           </div>
         </div>

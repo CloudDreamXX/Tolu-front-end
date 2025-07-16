@@ -15,10 +15,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "entities/store";
 import { setFolders } from "entities/client/lib";
+import EmptyLibrary from "shared/assets/images/EmptyLibrary.png";
 
 export const LibraryClientContent = () => {
   const [search, setSearch] = useState("");
   const [statusMap, setStatusMap] = useState<Record<string, ContentStatus>>({});
+  const [loading, setLoading] = useState(true);
   const nav = useNavigate();
   const folderId = useSelector((state: RootState) => state.client.folderId);
   const folders = useSelector((state: RootState) => state.client.folders);
@@ -31,6 +33,8 @@ export const LibraryClientContent = () => {
         dispatch(setFolders(response.folders));
       } catch (error) {
         console.error("Failed to fetch library content:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -87,7 +91,24 @@ export const LibraryClientContent = () => {
         autoFocus
       />
       <ScrollArea className="flex-1 min-h-0 pr-2 mt-4">
-        {filteredFolders &&
+        {loading ? (
+          <div className="py-10 text-center text-muted-foreground">
+            Loading library content...
+          </div>
+        ) : filteredFolders.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
+            <img src={EmptyLibrary} alt="" className="mb-[32px] w-[163px]" />
+            <div className="text-center flex flex-col items-center justify-center gap-[8px]">
+              <p className="text-[32px] font-[700] text-[#1D1D1F]">
+                Your library is currently empty ...
+              </p>
+              <p className="text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
+                Choose and store the materials that help you - and come back to
+                them whenever you need them.
+              </p>
+            </div>
+          </div>
+        ) : (
           filteredFolders.map((folder, index) => (
             <Accordion
               key={folder.id}
@@ -101,7 +122,8 @@ export const LibraryClientContent = () => {
                   {folder.name}
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
-                  {Array.isArray(folder.content) ? (
+                  {Array.isArray(folder.content) &&
+                  folder.content.length > 0 ? (
                     folder.content.map((item) => (
                       <LibraryCard
                         id={item.id}
@@ -124,7 +146,8 @@ export const LibraryClientContent = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          ))}
+          ))
+        )}
       </ScrollArea>
     </div>
   );
