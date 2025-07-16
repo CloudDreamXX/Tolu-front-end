@@ -454,7 +454,7 @@ export const ContentManagerClients: React.FC = () => {
             <div>Last update</div>
             <div>Learning now</div>
             <div>Status</div>
-            <div className="text-right pr-4">Actions</div>
+            <div className="text-right pr-4"></div>
           </div>
 
           <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] md:bg-white">
@@ -564,7 +564,7 @@ export const ContentManagerClients: React.FC = () => {
                     </button>
                     <button className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]">
                       <Messages />
-                      Open Chat
+                      Chat with client
                     </button>
                   </div>
                 ) : isTablet ? (
@@ -689,12 +689,10 @@ export const ContentManagerClients: React.FC = () => {
         </div>
       )}
 
-      {confirmDelete && (
-        <ConfirmDeleteModal
-          onCancel={() => {
-            setConfirmDelete(false);
-          }}
-          onDelete={handleDelete}
+      {confirmDiscard && (
+        <ConfirmDiscardModal
+          onCancel={() => setConfirmDiscard(false)}
+          onDiscard={discardChanges}
         />
       )}
 
@@ -737,10 +735,13 @@ export const ContentManagerClients: React.FC = () => {
         />
       )}
 
-      {confirmDiscard && (
-        <ConfirmDiscardModal
-          onCancel={() => setConfirmDiscard(false)}
-          onDiscard={discardChanges}
+      {confirmDelete && (
+        <ConfirmDeleteModal
+          onCancel={() => {
+            setConfirmDelete(false);
+            cleanState();
+          }}
+          onDelete={handleDelete}
         />
       )}
 
@@ -772,7 +773,7 @@ export const ContentManagerClients: React.FC = () => {
       {importClientsPopup && (
         <div
           ref={modalRef}
-          className="flex flex-col w-full lg:w-[410px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] lg:py-[40px] lg:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px] absolute right-[32px]"
+          className="flex flex-col md:w-[410px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] lg:py-[40px] lg:px-[40px] bg-white rounded-[20px] shadow-md gap-[24px] absolute top-[370px] left-[32px] right-[32px] md:left-auto md:top-[270px] lg:top-[230px] xl:top-[180px]"
         >
           {uploadedFileName ? (
             <div className="w-full max-w-[330px]">

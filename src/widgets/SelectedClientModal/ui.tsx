@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CloseIcon from "shared/assets/icons/close";
 import TrashIcon from "shared/assets/icons/trash-icon";
 import UserIcon from "shared/assets/icons/user-black";
@@ -25,8 +25,16 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
   onEdit,
   onDelete,
 }) => {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
-    <div className="absolute inset-0 top-[85px] min-h-[calc(100vh-85px)] bottom-0 md:top-0 z-10 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex stretch md:items-center justify-center">
+    <div className="fixed inset-0 z-10 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto">
       <div className="bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] pt-[64px] md:p-[24px] top-0 bottom-0 h-full w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-y-auto">
         <button
           className="absolute md:hidden top-[24px] flex justify-center items-center text-[#1D1D1F]"
@@ -298,7 +306,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           </button>
           <button className="w-full md:hidden p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center">
             <ChatsIcon />
-            Open Chat
+            Chat with client
           </button>
           <button
             className="w-full md:w-[144px] h-[46px] md:h-[40px] rounded-[1000px] text-[#FF1F0F] text-[16px] font-semibold flex gap-[8px] items-center justify-center"

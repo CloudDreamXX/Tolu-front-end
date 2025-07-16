@@ -47,7 +47,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
       </div>
 
       <Tabs defaultValue="clients" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 p-0 bg-transparent border-none shadow-none place-items-center">
+        <TabsList className="grid w-full grid-cols-2 p-0 bg-transparent border-none shadow-none place-items-center w-[50%]">
           <TabsTrigger value="clients" className="text-lg">
             Clients
           </TabsTrigger>

@@ -47,6 +47,14 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   const tabsContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  useEffect(() => {
     if (activeEditTab === tabs[tabs.length - 1] && tabsContainerRef.current) {
       tabsContainerRef.current.scrollTo({
         left: tabsContainerRef.current.scrollWidth,
@@ -174,9 +182,9 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 top-[85px] min-h-[calc(100vh-85px)] bottom-0 md:top-0 z-10 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex stretch md:items-center justify-center">
+    <div className="fixed inset-0 z-10 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto">
       <div
-        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] ${isNew && stepIndex ? "pt-[64px]" : ""} md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-fit w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-y-auto`}
+        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] ${isNew && stepIndex ? "pt-[64px]" : ""} md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-y-auto flex flex-col`}
       >
         <span
           className="hidden md:block absolute top-[16px] right-[16px] cursor-pointer z-20"
@@ -494,7 +502,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
           </div>
         )}
 
-        {renderFooter()}
+        <div className="mt-auto">{renderFooter()}</div>
       </div>
     </div>
   );

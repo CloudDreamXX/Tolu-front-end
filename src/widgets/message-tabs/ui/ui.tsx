@@ -33,7 +33,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   goBackMobile,
 }) => {
   const [chat, setChat] = useState<ChatItemModel | null>();
-  const { isMobileOrTablet } = usePageWidth();
+  const { isMobile, isMobileOrTablet } = usePageWidth();
 
   useEffect(() => {
     //mock logic
@@ -77,7 +77,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           </div>
 
           <div className="flex items-center gap-4">
-            {!isMobileOrTablet && <Button variant="blue2">View Profile</Button>}
+            {!isMobile && <Button variant="blue2">View Profile</Button>}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -90,7 +90,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {isMobileOrTablet && (
+                {isMobile && (
                   <DropdownMenuItem className="text-[#1D1D1F]">
                     <User className="w-4 h-4 mr-2" /> Profile
                   </DropdownMenuItem>
@@ -117,7 +117,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           </TabsTrigger>
         </TabsList>
         <TabsContent value="messages">
-          <MessagesTab chatId={chatId} />
+          <MessagesTab chat={chat} />
         </TabsContent>
         <TabsContent value="notes">
           <NotesTab chatId={chatId} />

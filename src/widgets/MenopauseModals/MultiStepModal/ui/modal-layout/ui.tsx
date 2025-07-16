@@ -4,7 +4,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@radix-ui/react-dialog";
-import React from "react";
+import React, { useEffect } from "react";
 import ArrowBack from "shared/assets/icons/arrowBack";
 import Close from "shared/assets/icons/close";
 import { DialogHeader } from "shared/ui";
@@ -24,14 +24,22 @@ export const ModalLayout: React.FC<ModalLayoutProps> = ({
   currentStep,
   isMobile,
 }) => {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent
         className="fixed inset-0 z-10 flex flex-col items-center pt-24 overflow-y-auto md:py-20"
         style={{
           background: isMobile ? "transparent" : "rgba(0, 0, 0, 0.30)",
-          backdropFilter: "blur(2px)",
-          WebkitBackdropFilter: "blur(2px)",
+          backdropFilter: isMobile ? "transparent" : "blur(2px)",
+          WebkitBackdropFilter: isMobile ? "transparent" : "blur(2px)",
         }}
         onClick={(e) => {
           if (e.target === e.currentTarget) {
@@ -64,7 +72,7 @@ export const ModalLayout: React.FC<ModalLayoutProps> = ({
           </DialogClose>
 
           <DialogHeader>
-            <DialogTitle className="text-[24px] font-semibold text-[#1D1D1F]">
+            <DialogTitle className="text-[24px] text-left font-semibold text-[#1D1D1F]">
               Intro questions
             </DialogTitle>
           </DialogHeader>

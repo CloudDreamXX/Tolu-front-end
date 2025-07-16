@@ -7,12 +7,13 @@ import MessagesIcon from "shared/assets/icons/messages-2";
 import Smiley from "shared/assets/icons/smiley";
 import { usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
+import { ChatItemModel } from "pages/content-manager";
 
 interface MessagesTabProps {
-  chatId?: string;
+  chat?: ChatItemModel;
 }
 
-export const MessagesTab: React.FC<MessagesTabProps> = () => {
+export const MessagesTab: React.FC<MessagesTabProps> = ({ chat }) => {
   const { isMobileOrTablet } = usePageWidth();
 
   return (
@@ -39,7 +40,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = () => {
 
       <div className="pt-2">
         <Textarea
-          placeholder="Input message"
+          placeholder={`Message ${chat?.name}`}
           className="resize-none min-h-[60px]"
           containerClassName="px-4 py-3"
           footer={

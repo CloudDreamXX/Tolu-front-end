@@ -14,15 +14,15 @@ export const ConfirmDiscardModal = ({
         You’re about to cancel the changes made to this user’s information.
         Unsaved data will be lost.
       </p>
-      <div className="flex justify-between gap-[16px]">
+      <div className="flex justify-between gap-[8px] md:gap-[16px]">
         <button
-          className="p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
+          className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
           onClick={onCancel}
         >
           Cancel
         </button>
         <button
-          className="px-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#FF1F0F] text-white text-[16px] font-semibold"
+          className="px-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#FF1F0F] text-white text-[16px] font-semibold"
           onClick={onDiscard}
         >
           Discard
