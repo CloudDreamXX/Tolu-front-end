@@ -42,7 +42,7 @@ export const MainLayout: React.FC<{
       <div className="hidden xl:block h-screen px-[16px] py-8 pr-0">
         {getSideBar(mainLocation)}
       </div>
-      <div className="flex flex-col w-full h-full bg-[#F2F4F6] min-h-screen overflow-hidden">
+      <div className="flex flex-col w-full h-full bg-[#F2F4F6] min-h-screen xl:overflow-hidden">
         {getNavigation(mainLocation)}
         {children}
         {isMobileChatOpen && (

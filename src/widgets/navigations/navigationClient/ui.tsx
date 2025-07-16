@@ -11,7 +11,6 @@ import SignOutIcon from "shared/assets/icons/signout";
 import SignOutIconBlue from "shared/assets/icons/signoutBlue";
 import Sparkle from "shared/assets/icons/sparkle-2";
 import { Button } from "shared/ui";
-import AvatarWoman from "shared/assets/images/AvatarWoman.png";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import CaretRight from "shared/assets/icons/caretRight";
 import WrapperLibraryFolderTree from "widgets/sidebars/ui/health-snapshot/FolderTree";
@@ -28,6 +27,7 @@ export const NavigationClient: React.FC = () => {
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
   );
+  const user = useSelector((state: RootState) => state.user.user);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -250,11 +250,17 @@ export const NavigationClient: React.FC = () => {
                 className="flex gap-4 items-center pl-4 bg-[#F3F6FB] w-full py-[8px] px-[16px] rounded-[8px]"
               >
                 <Avatar>
-                  <AvatarImage src={AvatarWoman} alt="Avatar" />
-                  <AvatarFallback>USR</AvatarFallback>
+                  <AvatarImage src={user?.photo} alt="Avatar" />
+                  <AvatarFallback>
+                    {user?.name
+                      ?.split(" ")
+                      .map((part) => part[0])
+                      .join("")
+                      .toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
-                  Frances Swann
+                  {user?.name}
                 </p>
                 <span className="ml-auto">
                   <CaretRight />

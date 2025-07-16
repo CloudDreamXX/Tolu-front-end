@@ -60,7 +60,7 @@ export const LibraryDocument = () => {
 
   return (
     <div className="flex flex-col w-full h-full gap-6 p-6">
-      <div className="flex flex-row w-full h-full gap-6 max-h-[calc(100vh-6rem)] relative">
+      <div className="flex flex-row w-full h-full gap-6 xl:max-h-[calc(100vh-48px)] relative">
         <div className="hidden xl:block">
           <ChatActions
             onRegenerate={() => {}}
@@ -72,9 +72,9 @@ export const LibraryDocument = () => {
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
-          <div className="relative flex flex-col w-full h-full xl:pr-4 overflow-y-auto">
+          <div className="relative flex flex-col w-full h-full xl:pr-4">
             {document && (
-              <div className="p-[24px] rounded-[16px] bg-white">
+              <div className="p-[24px] rounded-[16px] bg-white xl:h-[calc(100vh-48px)] xl:overflow-y-auto">
                 <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px] flex flex-col gap-[8px] mb-[40px]">
                   <p className="text-[16px] md:text-[24px] font-[600] text-[#1D1D1F]">
                     {document.title}

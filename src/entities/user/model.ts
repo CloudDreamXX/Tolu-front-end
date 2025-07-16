@@ -10,6 +10,7 @@ export interface IUser {
   num_clients: string;
   priority: string[];
   roleName: string;
+  photo?: string;
 }
 
 export interface IRegisterUser {

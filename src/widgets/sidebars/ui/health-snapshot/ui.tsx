@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import AvatarWoman from "shared/assets/images/AvatarWoman.png";
 import { UserService } from "entities/user";
 import { RootState } from "entities/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +21,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const [isNarrow, setIsNarrow] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user.user);
 
   useEffect(() => {
     const checkWidth = () => {
@@ -113,12 +113,18 @@ export const HealthSnapshotSidebar: React.FC = () => {
         className={`flex gap-4 items-center ${isNarrow ? "" : "pl-4"}`}
       >
         <Avatar>
-          <AvatarImage src={AvatarWoman} alt="Avatar" />
-          <AvatarFallback>USR</AvatarFallback>
+          <AvatarImage src={user?.photo} alt="Avatar" />
+          <AvatarFallback>
+            {user?.name
+              ?.split(" ")
+              .map((part) => part[0])
+              .join("")
+              .toUpperCase()}
+          </AvatarFallback>
         </Avatar>
         {!isNarrow && (
           <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
-            Frances Swann
+            {user?.name}
           </p>
         )}
         {!isNarrow && (
