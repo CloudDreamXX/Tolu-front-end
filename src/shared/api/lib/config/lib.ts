@@ -64,6 +64,7 @@ export const API_ROUTES = {
     DUPLICATE_CONTENT: "/content/duplicate",
     EDIT_CONTENT: "/content/edit-content",
     UPDATE_CONTENT_STATUS: "/content/{content_id}/read-status",
+    FEEDBACK: "/feedback",
   },
   HEALTH_HISTORY: {
     GET: "/health-history",

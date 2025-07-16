@@ -156,9 +156,9 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] pt-2 md:pt-6 h-full max-h-[calc(100vh-78px)] w-full overflow-y-auto">
+    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] pt-2 md:pt-6 h-[calc(100vh-78px)] w-full overflow-y-auto">
       <div className="flex flex-row justify-end w-full h-full gap-[26px]">
-        <div className="relative flex flex-col w-full h-full gap-2">
+        <div className="relative flex flex-col w-full h-full gap-2 overflow-y-auto">
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
 
           <DocumentInfoHeader

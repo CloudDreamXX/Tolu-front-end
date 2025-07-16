@@ -31,3 +31,21 @@ export interface ContentStatus {
   content_id: string;
   status: "read" | "saved_for_later";
 }
+
+export interface Feedback {
+  source_id: string;
+  satisfaction_score: string;
+  comments: string;
+  content_preference: string;
+}
+
+export interface FeedbackResponse {
+  message: string;
+  feedback: {
+    id: string;
+    satisfaction_score: number;
+    comments: string;
+    content_preference: string;
+    created_at: string;
+  };
+}

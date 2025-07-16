@@ -1,5 +1,11 @@
 import { API_ROUTES, ApiService } from "shared/api";
-import { ContentItemResponse, ContentStatus, ContentToEdit } from "./model";
+import {
+  ContentItemResponse,
+  ContentStatus,
+  ContentToEdit,
+  Feedback,
+  FeedbackResponse,
+} from "./model";
 
 export class ContentService {
   static async getContentEndpoint(id: string): Promise<ContentItemResponse> {
@@ -24,5 +30,14 @@ export class ContentService {
       status.content_id
     );
     return ApiService.post<any>(endpoint, { status: status.status });
+  }
+
+  static async addContentFeedback(
+    feedback: Feedback
+  ): Promise<FeedbackResponse> {
+    return ApiService.post<FeedbackResponse>(
+      API_ROUTES.CONTENT.FEEDBACK,
+      feedback
+    );
   }
 }

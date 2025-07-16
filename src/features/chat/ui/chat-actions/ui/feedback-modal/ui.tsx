@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Button, Input, RadioGroup, RadioGroupItem } from "shared/ui";
 import { X } from "lucide-react";
 import { cn } from "shared/lib/utils";
+import { ContentService, Feedback } from "entities/content";
+import { useParams } from "react-router-dom";
 
 interface FeedbackModalProps {
   initialRating: number;
@@ -15,11 +17,19 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   isOpen,
   onOpenChange,
 }) => {
-  const [rating, setRating] = useState(initialRating);
-  const [feedback, setFeedback] = useState("");
-  const [contentPreference, setContentPreference] = useState("");
+  const [rating, setRating] = useState<number>(initialRating);
+  const [feedback, setFeedback] = useState<string>("");
+  const [contentPreference, setContentPreference] = useState<string>("");
+  const { documentId } = useParams<{ documentId: string }>();
 
   const handleSave = () => {
+    const feedbackRequest: Feedback = {
+      source_id: documentId || "",
+      satisfaction_score: String(rating),
+      comments: feedback,
+      content_preference: contentPreference,
+    };
+    ContentService.addContentFeedback(feedbackRequest);
     onOpenChange(false);
   };
 
@@ -122,8 +132,11 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
               </label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="new" id="new" />
-              <label htmlFor="new" className="font-medium">
+              <RadioGroupItem
+                value="show me something new"
+                id="show me something new"
+              />
+              <label htmlFor="show me something new" className="font-medium">
                 Show me something new
               </label>
             </div>
