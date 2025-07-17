@@ -180,3 +180,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: block !important;
   }
 }
+
+.skeleton-gradient {
+  background: linear-gradient(270deg, #afafaf 0%, #d2d2d2 53.85%, #afafaf 100%);
+  background-size: 400% 400%;
+  animation: skeleton-loading 1.2s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0 50%;
+  }
+}

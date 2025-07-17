@@ -19,17 +19,17 @@ export const WelcomeScreen = () => {
     absolute bottom-0
   "
       >
-        <div className="flex flex-col items-center justify-center gap-8 rounded-t-3xl bg-white py-[24px] px-[16px] md:p-10 md:rounded-3xl">
+        <div className="flex flex-col items-center justify-center gap-8 rounded-t-3xl bg-white py-[24px] px-[16px] md:py-[121px] md:px-[40px] xl:p-10 md:rounded-3xl w-full xl:w-fit">
           <img
             src={ClientWelcomePicture}
             alt="Welcome to the TOLU! Create and configure your account."
           />
           <div className="flex flex-col items-center gap-6">
-            <h2 className="text-black text-center text-[24px] md:text-[40px]/[54px] font-bold font-[Nunito]">
+            <h2 className="text-black text-center text-[24px] md:text-[32px] xl:text-[40px]/[54px] font-bold font-[Nunito]">
               Welcome to A Healthy Menopause
               <br /> Transformation
             </h2>
-            <p className="text-[#5F5F65] text-[16px] md:text-[24px]/[32px] font-normal font-[Nunito] text-center">
+            <p className="text-[#5F5F65] text-[16px] md:text-[18px] xl:text-[24px]/[32px] font-normal font-[Nunito] text-center">
               TOLU supports you through your menopause journey with personalized
               tools,
               <br /> guidance, and insights based on who you are and how you

@@ -396,6 +396,41 @@ export const ContentManagerClients: React.FC = () => {
     }
   };
 
+  const ClientSkeletonRow = () => {
+    return (
+      <div
+        className="
+      md:grid md:grid-cols-6 md:items-center md:py-[12px]
+      flex flex-col gap-2 p-[12px] border border-[#AAC6EC] rounded-[8px] bg-white 
+      md:rounded-none md:border-x-0 md:border-t-0 md:border-b md:border-[#DBDEE1] animate-pulse
+    "
+      >
+        {Array(6)
+          .fill(0)
+          .map((_, i) =>
+            i === 5 ? (
+              <div
+                key={i}
+                className="hidden md:flex items-center justify-end gap-[24px]"
+              >
+                {[...Array(3)].map((_, j) => (
+                  <div
+                    key={j}
+                    className="h-[24px] w-[39px] skeleton-gradient rounded-[1000px]"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div
+                key={i}
+                className="h-[10px] w-full md:w-[80px] lg:w-[126px] skeleton-gradient rounded-[24px]"
+              />
+            )
+          )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-[16px] md:gap-[24px] p-8 overflow-y-auto h-full">
       <div className="flex flex-col lg:flex-row gap-[16px] justify-between lg:items-end">
@@ -444,8 +479,22 @@ export const ContentManagerClients: React.FC = () => {
         </div>
       </div>
 
-      {loading ? (
-        <div className="text-center py-8">Loading clients...</div>
+      {!loading ? (
+        <div className="lg:mt-4 md:rounded-[8px]">
+          <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
+            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+            <div className="text-right pr-4"></div>
+          </div>
+          <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] md:bg-white">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <ClientSkeletonRow key={i} />
+            ))}
+          </div>
+        </div>
       ) : filteredClients.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
           <img src={EmptyClients} alt="" className="mb-[32px] w-[163px]" />
@@ -662,7 +711,7 @@ export const ContentManagerClients: React.FC = () => {
         </div>
       )}
 
-      {totalPages > 1 && (
+      {totalPages > 1 && !loading && (
         <div className="flex justify-center items-center gap-2 pb-4">
           <button
             disabled={currentPage === 1}
