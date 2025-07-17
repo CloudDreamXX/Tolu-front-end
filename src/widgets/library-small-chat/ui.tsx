@@ -610,6 +610,7 @@ My goal is to ${values.goals}.`;
               }
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
+              setNewMessage={setMessageState}
               footer={
                 isCreatePage ? (
                   <div className="flex items-center justify-between">

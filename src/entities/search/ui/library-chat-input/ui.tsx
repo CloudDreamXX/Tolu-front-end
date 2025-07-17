@@ -20,6 +20,7 @@ interface LibraryChatInputProps {
   disabled?: boolean;
   className?: string;
   footer?: React.ReactNode;
+  setNewMessage?: React.Dispatch<React.SetStateAction<string>>
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -30,6 +31,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   switchOptions,
   selectedSwitch,
   setSelectedSwitch,
+  setNewMessage,
   footer,
 }) => {
   const [message, setMessage] = useState("");
@@ -93,6 +95,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);
+            setNewMessage && setNewMessage(e.target.value)
           }}
           onKeyDown={handleKeyPress}
           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
