@@ -57,18 +57,14 @@ const SaveModal: React.FC = () => {
 
           <div className="flex flex-row p-4 border rounded-lg items-center gap-[16px]">
             <TooltipProvider delayDuration={500}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button onClick={handleBookmarkClick}>
-                    {isBookmarked ? (
+              {isBookmarked ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button onClick={handleBookmarkClick}>
                       <BookMarkFilled width={32} height={32} />
-                    ) : (
-                      <BookMark width={32} height={32} />
-                    )}
-                  </button>
-                </TooltipTrigger>
+                    </button>
+                  </TooltipTrigger>
 
-                {isBookmarked && (
                   <TooltipContent
                     side="top"
                     className="z-50 p-[16px] w-[309px]"
@@ -82,8 +78,12 @@ const SaveModal: React.FC = () => {
                       </h3>
                     </div>
                   </TooltipContent>
-                )}
-              </Tooltip>
+                </Tooltip>
+              ) : (
+                <button onClick={handleBookmarkClick}>
+                  <BookMark width={32} height={32} />
+                </button>
+              )}
             </TooltipProvider>
 
             <div className="flex flex-col gap-1">

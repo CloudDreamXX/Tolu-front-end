@@ -6,8 +6,14 @@ import Dashboard from "shared/assets/icons/dashboard";
 import Workshops from "shared/assets/icons/workshops";
 import { SideBarItem } from "../model";
 import { WrapperFolderTree } from "features/wrapper-folder-tree";
+import AiCreate from "shared/assets/icons/ai-create";
 
 export const sideBarContent: SideBarItem[] = [
+  {
+    title: "Create",
+    link: "/content-manager/create",
+    icon: <AiCreate width={24} height={24} />,
+  },
   {
     title: "Clients",
     link: "/clients",

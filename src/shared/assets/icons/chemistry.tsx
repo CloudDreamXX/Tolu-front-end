@@ -9,16 +9,16 @@ export default () => (
     <path
       d="M12.04 1.5V3.986C12.04 5.734 12.04 6.608 12.255 7.447C12.468 8.287 12.888 9.057 13.727 10.597L14.863 12.685C17.001 16.611 18.07 18.575 17.193 20.03L17.179 20.052C16.29 21.5 14.026 21.5 9.50001 21.5C4.97401 21.5 2.71001 21.5 1.82001 20.052L1.80701 20.03C0.930008 18.575 1.99901 16.611 4.13701 12.685L5.27301 10.597C6.11301 9.057 6.53101 8.287 6.74501 7.447C6.95901 6.607 6.95901 5.734 6.95901 3.987V1.5M6.50001 15.502L6.50901 15.5M12.5 17.502L12.509 17.5M5.50001 1.5H13.5"
       stroke="#1B2559"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M5 11.0561C6 9.90305 7.6 10.7341 9.5 11.8181C12 13.2441 13.5 12.1501 14 11.1151"
       stroke="#1B2559"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

@@ -11,9 +11,9 @@ export default (props?: React.SVGProps<SVGSVGElement>) => {
       <path
         d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
         stroke="#1D1D1F"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M8.625 11.25C9.24632 11.25 9.75 10.7463 9.75 10.125C9.75 9.50368 9.24632 9 8.625 9C8.00368 9 7.5 9.50368 7.5 10.125C7.5 10.7463 8.00368 11.25 8.625 11.25Z"
@@ -26,9 +26,9 @@ export default (props?: React.SVGProps<SVGSVGElement>) => {
       <path
         d="M15.9 14.25C15.5035 14.9331 14.9346 15.5 14.2501 15.8941C13.5657 16.2882 12.7898 16.4956 12 16.4956C11.2102 16.4956 10.4342 16.2882 9.74981 15.8941C9.06538 15.5 8.49645 14.9331 8.09998 14.25"
         stroke="#1D1D1F"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

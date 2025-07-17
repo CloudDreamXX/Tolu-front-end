@@ -29,11 +29,16 @@ import {
   mapFormToPostData,
   mapHealthHistoryToFormDefaults,
 } from "widgets/library-small-chat/lib";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import z from "zod";
 import { useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HealthHistoryService } from "entities/health-history";
+import {
+  CaseSearchForm,
+  FormValues,
+} from "pages/content-manager/create/case-search";
+import { caseBaseSchema } from "pages/content-manager";
 
 const steps = [
   "Demographic",
@@ -66,7 +71,21 @@ export const LibraryChat = () => {
   const files = location.state?.files;
 
   const isExistingChat = chatId && !chatId.startsWith("new_chat_");
-  const config = SWITCH_CONFIG.default;
+
+  const userPersisted = localStorage.getItem("persist:user");
+  let isCoach = false;
+  if (userPersisted) {
+    try {
+      const parsed = JSON.parse(userPersisted);
+      const user = parsed?.user ? JSON.parse(parsed.user) : null;
+      const roleID = user?.roleID;
+      isCoach = roleID === 2;
+    } catch (error) {
+      console.error("Failed to parse persisted user:", error);
+    }
+  }
+
+  const config = isCoach ? SWITCH_CONFIG.coach : SWITCH_CONFIG.default;
   const [selectedSwitch, setSelectedSwitch] = useState<string>(
     config.options[0] as string
   );
@@ -75,6 +94,26 @@ export const LibraryChat = () => {
   const healthHistory = useSelector(
     (state: RootState) => state.healthHistory.data
   );
+
+  const caseForm = useForm<FormValues>({
+    resolver: zodResolver(caseBaseSchema),
+    defaultValues: {
+      age: "",
+      employmentStatus: "",
+      menopausePhase: "",
+      symptoms: "",
+      diagnosedConditions: "",
+      medication: "",
+      lifestyleFactors: "",
+      previousInterventions: "",
+      interventionOutcome: "",
+      suspectedRootCauses: "",
+      protocol: "",
+      goal: "",
+    },
+  });
+
+  const watchedCaseValues = useWatch({ control: caseForm.control });
 
   const form = useForm<z.infer<typeof baseSchema>>({
     resolver: zodResolver(baseSchema),
@@ -252,6 +291,30 @@ export const LibraryChat = () => {
       setError(error instanceof Error ? error.message : "Search failed");
       console.error("Search error:", error);
     }
+  };
+
+  const generateCaseStory = () => {
+    const {
+      age,
+      employmentStatus,
+      menopausePhase,
+      symptoms,
+      diagnosedConditions,
+      medication,
+      lifestyleFactors,
+      previousInterventions,
+      interventionOutcome,
+      suspectedRootCauses,
+      protocol,
+      goal,
+    } = watchedCaseValues;
+
+    return `This case involves a ${age}-year-old ${employmentStatus} woman in the ${menopausePhase} phase, presenting with ${symptoms}.
+Her health history includes ${diagnosedConditions}, and she is currently taking ${medication}.
+Lifestyle factors such as ${lifestyleFactors} may be contributing.
+Previous interventions have included ${previousInterventions}, with ${interventionOutcome}.
+The suspected root causes include ${suspectedRootCauses}.
+This case is being used to create a ${protocol} aimed at ${goal}.`;
   };
 
   const handleNewMessage = async (
@@ -488,9 +551,9 @@ My goal is to ${values.goals}.`;
   };
 
   return (
-    <div className="flex flex-col w-full h-full gap-6 p-6 overflow-y-auto xl:overflow-y-none">
+    <div className="flex flex-col w-full h-screen gap-6 p-6 overflow-y-auto xl:overflow-y-none">
       <ChatBreadcrumb displayChatTitle={displayChatTitle} />
-      <div className="flex flex-row w-full h-full gap-6 max-h-[calc(100vh-6rem)] md:relative">
+      <div className="flex flex-row w-full gap-6 h-full md:relative">
         <div className="hidden xl:block">
           <ChatActions
             onRegenerate={handleRegenerateResponse}
@@ -512,7 +575,9 @@ My goal is to ${values.goals}.`;
               }}
             />
 
-            {isEmpty && !isSwitch(SWITCH_KEYS.PERSONALIZE) ? (
+            {isEmpty &&
+            !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
+            !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
                 <div className="max-w-md space-y-4 px-[16px]">
                   <h3 className="text-xl font-semibold text-gray-700">
@@ -525,8 +590,7 @@ My goal is to ${values.goals}.`;
                   </p>
                 </div>
               </div>
-            ) : (isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory) ||
-              isSwitch(SWITCH_KEYS.CASE) ? (
+            ) : isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
               <>
                 <MessageList
                   messages={messages}
@@ -570,6 +634,42 @@ My goal is to ${values.goals}.`;
                   </CardContent>
                 </Card>
               </>
+            ) : isSwitch(SWITCH_KEYS.CASE) ? (
+              <>
+                <MessageList
+                  messages={messages}
+                  isSearching={isSearching}
+                  streamingText={streamingText}
+                  error={error}
+                />
+                <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+                  <div className="w-full mb-[24px]" />
+                  <CardContent
+                    className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+                  >
+                    <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+                      <p className="text-[24px] text-[#1D1D1F] font-[500]">
+                        Case Story
+                      </p>
+                      <form onSubmit={(e) => e.preventDefault()}>
+                        <CaseSearchForm form={caseForm} />
+                      </form>
+                      <div className="flex justify-end gap-2 mt-6">
+                        <button
+                          type="button"
+                          className="py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white"
+                          onClick={async () => {
+                            setSelectedSwitch(config.defaultOption);
+                            await handleNewMessage(generateCaseStory(), []);
+                          }}
+                        >
+                          Continue
+                        </button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
             ) : (
               <MessageList
                 messages={messages}
@@ -592,7 +692,9 @@ My goal is to ${values.goals}.`;
               className="mt-4"
               onSend={handleNewMessage}
               disabled={isSearching}
-              switchOptions={config.options}
+              switchOptions={
+                isCoach ? config.options.slice(0, -1) : config.options
+              }
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
             />

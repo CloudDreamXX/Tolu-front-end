@@ -1,13 +1,4 @@
-import { usePageWidth } from "shared/lib";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from ".";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from ".";
 
 interface TooltipWrapperProps {
   content: React.ReactNode;
@@ -21,23 +12,6 @@ export const TooltipWrapper: React.FC<TooltipWrapperProps> = ({
   content,
   children,
 }) => {
-  const { isMobileOrTablet } = usePageWidth();
-
-  if (isMobileOrTablet) {
-    return (
-      <Popover>
-        <PopoverTrigger asChild>
-          <button type="button" className={tooltipTriggerStyle}>
-            {children}
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className={tooltipContentStyle}>
-          {content}
-        </PopoverContent>
-      </Popover>
-    );
-  }
-
   return (
     <TooltipProvider>
       <Tooltip>

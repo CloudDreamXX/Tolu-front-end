@@ -25,8 +25,8 @@ export default () => {
         <path
           d="M11.25 20.25H6C5.80109 20.25 5.61032 20.171 5.46967 20.0303C5.32902 19.8897 5.25 19.6989 5.25 19.5V4.5C5.25 4.30109 5.32902 4.11032 5.46967 3.96967C5.61032 3.82902 5.80109 3.75 6 3.75H11.25"
           stroke="#1C63DB"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           shape-rendering="crispEdges"
         />
       </g>

@@ -1,11 +1,10 @@
 import { Paperclip, Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "shared/lib";
 import { Button, Input, Switch } from "shared/ui";
 import SymptomsTracker from "shared/assets/icons/symptoms-tracker";
 import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
 import { MenopauseSubmissionRequest, UserService } from "entities/user";
-import { Symptom } from "entities/user";
 
 interface SearchAiChatInputProps {
   placeholder?: string;
@@ -27,7 +26,6 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [stepModalOpen, setStepModalOpen] = useState(false);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
-  const [symptoms, setSymptoms] = useState<Symptom[]>([]);
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -66,19 +64,6 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
     //   console.error("Failed to load recommendations", error);
     // }
   };
-
-  const fetchSymptoms = async () => {
-    try {
-      const data = await UserService.getMenopauseSymptoms();
-      setSymptoms(data.Symptoms);
-    } catch (error) {
-      console.error("Failed to load symptoms", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchSymptoms();
-  }, []);
 
   return (
     <div
@@ -159,13 +144,11 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
         variant="intro"
       />
 
-      {symptoms && (
-        <MultiStepModal
-          isOpen={stepModalOpen}
-          onClose={() => setStepModalOpen(false)}
-          onComplete={handleFinishCheckIn}
-        />
-      )}
+      <MultiStepModal
+        isOpen={stepModalOpen}
+        onClose={() => setStepModalOpen(false)}
+        onComplete={handleFinishCheckIn}
+      />
 
       <SymptomCheckModal
         isOpen={completionModalOpen}

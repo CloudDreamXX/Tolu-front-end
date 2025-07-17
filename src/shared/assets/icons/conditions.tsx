@@ -11,21 +11,21 @@ export default () => {
         d="M10 10H16.875"
         stroke="#1D1D1F"
         strokeWidth="1.5"
-        stroke-linecap="round"
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M10 5H16.875"
         stroke="#1D1D1F"
         strokeWidth="1.5"
-        stroke-linecap="round"
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M10 15H16.875"
         stroke="#1D1D1F"
         strokeWidth="1.5"
-        stroke-linecap="round"
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path

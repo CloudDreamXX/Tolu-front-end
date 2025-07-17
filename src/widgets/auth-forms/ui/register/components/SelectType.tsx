@@ -33,7 +33,8 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
               Client
             </h3>
             <p className="md:w-[278px] md:h-[47px] flex flex-col justify-center text-[#5F5F65] font-[Nunito] font-medium text-[16px]/[20px] opacity-[0.7]">
-              Lorem Ipsum Dolores Sit. Manwa jes. Lorem Ipsum Dolores Sit.
+              Say goodbye to confusion. Get real answers for your symptoms—when
+              they happen, not weeks later.
             </p>
           </div>
         </button>
@@ -50,7 +51,8 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
               Practitioner
             </h3>
             <p className="md:w-[278px] md:h-[47px] flex flex-col justify-center text-[#5F5F65] font-[Nunito] font-medium text-[16px]/[20px] opacity-[0.7]">
-              Lorem Ipsum Dolores Sit. Manwa jes. Lorem Ipsum Dolores Sit.
+              Tolu is your AI-powered partner, helping you deliver fast,
+              precise, evidence-based menopause care to every client.
             </p>
           </div>
         </button>

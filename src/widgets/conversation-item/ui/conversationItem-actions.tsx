@@ -110,7 +110,7 @@ export const ConversationItemActions: React.FC<
               side="right"
               className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
             >
-              Add voiceover
+              Read aloud
             </TooltipContent>
           </Tooltip>
 
@@ -130,7 +130,7 @@ export const ConversationItemActions: React.FC<
               side="right"
               className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
             >
-              Mark as
+              Bad response
             </TooltipContent>
           </Tooltip>
 

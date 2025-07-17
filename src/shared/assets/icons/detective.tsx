@@ -9,37 +9,37 @@ export default () => (
     <path
       d="M6.9375 16.25C8.14562 16.25 9.125 15.2706 9.125 14.0625C9.125 12.8544 8.14562 11.875 6.9375 11.875C5.72938 11.875 4.75 12.8544 4.75 14.0625C4.75 15.2706 5.72938 16.25 6.9375 16.25Z"
       stroke="#1B2559"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M15.0625 16.25C16.2706 16.25 17.25 15.2706 17.25 14.0625C17.25 12.8544 16.2706 11.875 15.0625 11.875C13.8544 11.875 12.875 12.8544 12.875 14.0625C12.875 15.2706 13.8544 16.25 15.0625 16.25Z"
       stroke="#1B2559"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M9.125 14.0625H12.875"
       stroke="#1B2559"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M1.625 9.375H20.375"
       stroke="#1B2559"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M4.125 9.37497L7.97656 3.87497C8.03459 3.79162 8.11206 3.72366 8.20226 3.67698C8.29246 3.6303 8.39268 3.6063 8.49425 3.60707C8.59581 3.60784 8.69565 3.63335 8.78514 3.68139C8.87463 3.72943 8.95105 3.79856 9.00781 3.88279L10.4766 6.09372C10.5334 6.18077 10.611 6.25228 10.7024 6.30178C10.7938 6.35128 10.8961 6.3772 11 6.3772C11.1039 6.3772 11.2062 6.35128 11.2976 6.30178C11.389 6.25228 11.4666 6.18077 11.5234 6.09372L12.9922 3.88279C13.0489 3.79856 13.1254 3.72943 13.2149 3.68139C13.3043 3.63335 13.4042 3.60784 13.5058 3.60707C13.6073 3.6063 13.7075 3.6303 13.7977 3.67698C13.8879 3.72366 13.9654 3.79162 14.0234 3.87497L17.875 9.37497"
       stroke="#1B2559"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

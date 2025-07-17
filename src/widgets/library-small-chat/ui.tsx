@@ -3,15 +3,16 @@ import { HealthHistory, HealthHistoryService } from "entities/health-history";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
-import { Message } from "features/chat";
+import { ChatBreadcrumb, Message } from "features/chat";
 import { Steps } from "features/steps/ui";
-import { Expand } from "lucide-react";
+import { Expand, Paperclip, Send, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Tolu from "shared/assets/icons/tolu";
 import {
+  Button,
   Card,
   CardContent,
   CardFooter,
@@ -31,6 +32,18 @@ import {
 } from "./lib";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import { MenopauseForm } from "./components/menopause-form/ui";
+import {
+  CaseSearchForm,
+  FormValues,
+} from "pages/content-manager/create/case-search";
+import { caseBaseSchema } from "pages/content-manager";
+import {
+  PopoverAttach,
+  PopoverClient,
+  PopoverFolder,
+  PopoverInstruction,
+} from "widgets/content-popovers";
+import { CoachService } from "entities/coach";
 
 const steps = [
   "Demographic",
@@ -44,12 +57,15 @@ interface LibrarySmallChatProps {
   healthHistory?: HealthHistory;
   isCoach?: boolean;
   isDraft?: boolean;
+  footer?: React.ReactNode;
+  setMessage?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   healthHistory,
   isCoach,
   isDraft,
+  footer,
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
@@ -67,11 +83,49 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [currentChatId, setCurrentChatId] = useState<string>("");
   const [chatTitle, setChatTitle] = useState<string>("");
   const [currentStep, setCurrentStep] = useState(0);
+  const [message, setMessageState] = useState<string>("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [clientId, setClientId] = useState<string | null>(null);
+  const [folderId, setFolderId] = useState<string | null>(null);
+  const [existingFiles, setExistingFiles] = useState<string[]>([]);
+  const [existingInstruction, setExistingInstruction] = useState<string>("");
+  const [instruction, setInstruction] = useState<string>("");
 
+  const location = useLocation();
+  const isCreatePage = location.pathname === "/content-manager/create";
+
+  const caseForm = useForm<FormValues>({
+    resolver: zodResolver(caseBaseSchema),
+    defaultValues: {
+      age: "",
+      employmentStatus: "",
+      menopausePhase: "",
+      symptoms: "",
+      diagnosedConditions: "",
+      medication: "",
+      lifestyleFactors: "",
+      previousInterventions: "",
+      interventionOutcome: "",
+      suspectedRootCauses: "",
+      protocol: "",
+      goal: "",
+    },
+  });
+
+  const watchedCaseValues = useWatch({ control: caseForm.control });
   const form = useForm<z.infer<typeof baseSchema>>({
     resolver: zodResolver(baseSchema),
     defaultValues: mapHealthHistoryToFormDefaults(healthHistory),
   });
+
+  const { isValid } = useFormState({ control: caseForm.control });
+
+  useEffect(() => {
+    if (isValid) {
+      const message = generateCaseStory();
+      setMessageState?.(message);
+    }
+  }, [isValid]);
 
   useEffect(() => {
     if (healthHistory) {
@@ -139,62 +193,114 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     let str = "";
 
     try {
-      await SearchService.aiSearchStream(
-        {
-          chat_message: JSON.stringify({
-            user_prompt: message,
-            is_new: !currentChatId,
-            chat_id: currentChatId,
-            regenerate_id: null,
-            personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
-          }),
-          ...(image && { image }),
-          ...(pdf && { pdf }),
-        },
-        async (chunk: StreamChunk) => {
-          if (isSwitch(SWITCH_KEYS.CONTENT) && chunk.reply) {
-            if (chunk.reply.includes("Relevant Content")) {
-              str = chunk.reply;
-            } else {
+      if (isCreatePage) {
+        try {
+          await CoachService.aiLearningSearch(
+            {
+              user_prompt: message,
+              is_new: !currentChatId,
+              chat_id: currentChatId,
+              regenerate_id: null,
+              chat_title: "",
+              instructions: instruction,
+            },
+            folderId!,
+            files,
+            clientId,
+            (chunk) => {
+              if (chunk.reply) {
+                if (
+                  isSwitch(SWITCH_KEYS.CONTENT) &&
+                  chunk.reply.includes("Relevant Content")
+                ) {
+                  str = chunk.reply;
+                } else {
+                  accumulatedText += chunk.reply;
+                  setStreamingText(accumulatedText);
+                }
+              }
+            },
+            (finalData) => {
+              setIsSearching(false);
+              const aiMessage: Message = {
+                id: finalData.chatId,
+                type: "ai",
+                content: accumulatedText,
+                timestamp: new Date(),
+                document: str,
+              };
+              setMessages((prev) => [...prev, aiMessage]);
+              setStreamingText("");
+
+              if (finalData.chatId && finalData.chatId !== currentChatId) {
+                setCurrentChatId(finalData.chatId);
+                returnedChatId = finalData.chatId;
+              }
+            }
+          );
+        } catch (err: any) {
+          setIsSearching(false);
+          setError(err.message || "Search failed");
+          console.error("Search error:", err);
+        }
+      } else {
+        await SearchService.aiSearchStream(
+          {
+            chat_message: JSON.stringify({
+              user_prompt: message,
+              is_new: !currentChatId,
+              chat_id: currentChatId,
+              regenerate_id: null,
+              personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
+            }),
+            ...(image && { image }),
+            ...(pdf && { pdf }),
+          },
+          async (chunk: StreamChunk) => {
+            if (isSwitch(SWITCH_KEYS.CONTENT) && chunk.reply) {
+              if (chunk.reply.includes("Relevant Content")) {
+                str = chunk.reply;
+              } else {
+                accumulatedText += chunk.reply;
+                setStreamingText(accumulatedText);
+              }
+            }
+            if (!isSwitch(SWITCH_KEYS.CONTENT) && chunk.reply) {
               accumulatedText += chunk.reply;
               setStreamingText(accumulatedText);
             }
-          }
-          if (!isSwitch(SWITCH_KEYS.CONTENT) && chunk.reply) {
-            accumulatedText += chunk.reply;
-            setStreamingText(accumulatedText);
-          }
-        },
-        async (finalData) => {
-          setIsSearching(false);
+          },
+          async (finalData) => {
+            setIsSearching(false);
 
-          const aiMessage: Message = {
-            id: finalData.chat_id || Date.now().toString(),
-            type: "ai",
-            content: accumulatedText,
-            timestamp: new Date(),
-            document: str,
-          };
+            const aiMessage: Message = {
+              id: finalData.chat_id || Date.now().toString(),
+              type: "ai",
+              content: accumulatedText,
+              timestamp: new Date(),
+              document: str,
+            };
 
-          setMessages((prev) => [...prev, aiMessage]);
-          setStreamingText("");
+            setMessages((prev) => [...prev, aiMessage]);
+            setStreamingText("");
 
-          if (finalData.chat_id && finalData.chat_id !== currentChatId) {
-            setCurrentChatId(finalData.chat_id);
-            returnedChatId = finalData.chat_id;
-          }
+            if (finalData.chat_id && finalData.chat_id !== currentChatId) {
+              setCurrentChatId(finalData.chat_id);
+              returnedChatId = finalData.chat_id;
+            }
 
-          if (finalData.chat_title) {
-            setChatTitle(finalData.chat_title);
-          }
-        },
-        (error) => {
-          setIsSearching(false);
-          setError(error.message);
-          console.error("Search error:", error);
-        },
-        isSwitch(SWITCH_KEYS.CONTENT)
-      );
+            if (finalData.chat_title) {
+              setChatTitle(finalData.chat_title);
+            }
+          },
+          (error) => {
+            setIsSearching(false);
+            setError(error.message);
+            console.error("Search error:", error);
+          },
+          isSwitch(SWITCH_KEYS.CONTENT)
+        );
+      }
     } catch (error) {
       setIsSearching(false);
       setError(error instanceof Error ? error.message : "Search failed");
@@ -204,38 +310,31 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     return returnedChatId;
   };
 
-  // const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
-  //   [
-  //     "age",
-  //     "maritalStatus",
-  //     "job",
-  //     "children",
-  //     "location",
-  //     "religion",
-  //     "financialStatus",
-  //     "genderAssignedAtBirth",
-  //     "genderIdentity",
-  //   ],
-  //   [
-  //     "menopauseStatus",
-  //     "mainSymptoms",
-  //     "symptomTracking",
-  //     "trackingDevice",
-  //     "biggestChallenge",
-  //     "successManaging",
-  //   ],
-  //   ["diagnosedConditions", "geneticTraits", "maternalSide", "medications"],
-  //   [
-  //     "lifestyleInfo",
-  //     "takeout",
-  //     "homeCooked",
-  //     "dietType",
-  //     "exercise",
-  //     "sexLife",
-  //     "supportSystem",
-  //   ],
-  //   ["goals"],
-  // ];
+  const generateCaseStory = () => {
+    const {
+      age,
+      employmentStatus,
+      menopausePhase,
+      symptoms,
+      diagnosedConditions,
+      medication,
+      lifestyleFactors,
+      previousInterventions,
+      interventionOutcome,
+      suspectedRootCauses,
+      protocol,
+      goal,
+    } = watchedCaseValues;
+
+    return `
+    This case involves a ${age}-year-old ${employmentStatus} woman in the ${menopausePhase} phase, presenting with ${symptoms}.
+    Her health history includes ${diagnosedConditions}, and she is currently taking ${medication}.
+    Lifestyle factors such as ${lifestyleFactors} may be contributing.
+    Previous interventions have included ${previousInterventions}, with ${interventionOutcome}.
+    The suspected root causes include ${suspectedRootCauses}.
+    This case is being used to create a ${protocol} aimed at ${goal}.
+  `;
+  };
 
   const goToStep = async (nextStep: number) => {
     if (nextStep >= steps.length) {
@@ -280,8 +379,14 @@ My goal is to ${values.goals}.`;
 
   return (
     <>
-      {(isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory) ||
-      isSwitch(SWITCH_KEYS.CASE) ? (
+      <div className="xl:hidden mb-[16px]">
+        <ChatBreadcrumb
+          displayChatTitle={chatTitle}
+          path={"/content-manager/create"}
+          pathTitle={"Ask Tolu"}
+        />
+      </div>
+      {isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
         <Card className="flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
@@ -289,7 +394,7 @@ My goal is to ${values.goals}.`;
             </div>
             <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
             <button
-              className="absolute top-4 left-4"
+              className="hidden xl:block xl:absolute top-4 left-4"
               onClick={handleExpandClick}
               title="Expand chat"
             >
@@ -337,6 +442,122 @@ My goal is to ${values.goals}.`;
               }
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
+              footer={footer}
+            />
+          </CardFooter>
+        </Card>
+      ) : isSwitch(SWITCH_KEYS.CASE) ? (
+        <Card className="flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
+          <CardHeader className="relative flex flex-col items-center gap-4">
+            <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
+              <Tolu />
+            </div>
+            <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            <button
+              className="hidden xl:block xl:absolute top-4 left-4"
+              onClick={handleExpandClick}
+              title="Expand chat"
+            >
+              <Expand className="w-6 h-6 text-[#5F5F65]" />
+            </button>
+          </CardHeader>
+          <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
+          <CardContent className="w-full px-6 pb-0 h-full overflow-auto">
+            <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-auto mt-auto">
+              {!isCreatePage && (
+                <p className="text-[24px] text-[#1D1D1F] font-[500]">
+                  Case Search
+                </p>
+              )}
+              <form onSubmit={(e) => e.preventDefault()}>
+                <CaseSearchForm form={caseForm} />
+              </form>
+              {!isCreatePage && (
+                <div className="flex justify-end gap-2 mt-6">
+                  <button
+                    type="button"
+                    className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
+                    onClick={async () => {
+                      setSelectedSwitch(config.defaultOption);
+                      await handleNewMessage(generateCaseStory(), []);
+                    }}
+                  >
+                    Continue
+                  </button>
+                </div>
+              )}
+            </div>
+          </CardContent>
+          <CardFooter className="w-full p-0">
+            <LibraryChatInput
+              className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
+              onSend={handleNewMessage}
+              disabled={isSearching}
+              switchOptions={
+                isDraft ? config.options : config.options.slice(0, -1)
+              }
+              selectedSwitch={selectedSwitch}
+              setSelectedSwitch={setSelectedSwitch}
+              footer={
+                isCreatePage ? (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-[10px]">
+                      <PopoverAttach
+                        setFiles={setFiles}
+                        existingFiles={existingFiles}
+                        disabled={!folderId}
+                        customTrigger={
+                          <Button
+                            variant="ghost"
+                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                          >
+                            <Paperclip size={24} />
+                            {files.length > 0 && (
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length > 99 ? "99+" : files.length}
+                              </span>
+                            )}
+                          </Button>
+                        }
+                      />
+                      <PopoverClient setClientId={setClientId} />
+                      <PopoverFolder
+                        setFolderId={setFolderId}
+                        setExistingFiles={setExistingFiles}
+                        setExistingInstruction={setExistingInstruction}
+                      />
+                      <PopoverInstruction
+                        customTrigger={
+                          <Button
+                            variant="ghost"
+                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                            disabled={!folderId}
+                          >
+                            <Settings />
+                            {instruction?.length > 0 && (
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
+                          </Button>
+                        }
+                        existingInstruction={existingInstruction}
+                        setInstruction={setInstruction}
+                      />
+                    </div>
+                    <Button
+                      onClick={() => {
+                        setSelectedSwitch(config.defaultOption);
+                        handleNewMessage(message, files);
+                      }}
+                      disabled={isSearching || !folderId || message === ""}
+                      className="w-12 h-12 p-0 bg-[#1D1D1F] rounded-full hover:bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                    >
+                      <Send size={28} color="white" />
+                    </Button>
+                  </div>
+                ) : undefined
+              }
             />
           </CardFooter>
         </Card>
@@ -348,7 +569,7 @@ My goal is to ${values.goals}.`;
             </div>
             <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
             <button
-              className="absolute top-4 left-4"
+              className="hidden xl:block xl:absolute top-4 left-4"
               onClick={handleExpandClick}
               title="Expand chat"
             >
@@ -356,12 +577,24 @@ My goal is to ${values.goals}.`;
             </button>
           </CardHeader>
           <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
-            <MessageList
-              messages={messages}
-              isSearching={isSearching}
-              streamingText={streamingText}
-              error={error}
-            />
+            {messages.length ? (
+              <MessageList
+                messages={messages}
+                isSearching={isSearching}
+                streamingText={streamingText}
+                error={error}
+              />
+            ) : (
+              <div className="flex flex-col ietms-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
+                <h2 className="text-[24px] text-[#1B2559] font-[700]">
+                  Start a conversation
+                </h2>
+                <p className="text-[18px] text-[#1C63DB]">
+                  Select an action below and enter a query to start a
+                  conversation with Tolu.
+                </p>
+              </div>
+            )}
           </CardContent>
           <CardFooter className="w-full p-0">
             <LibraryChatInput
@@ -377,6 +610,66 @@ My goal is to ${values.goals}.`;
               }
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
+              footer={
+                isCreatePage ? (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-[10px]">
+                      <PopoverAttach
+                        setFiles={setFiles}
+                        existingFiles={existingFiles}
+                        disabled={!folderId}
+                        customTrigger={
+                          <Button
+                            variant="ghost"
+                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                          >
+                            <Paperclip size={24} />
+                            {files.length > 0 && (
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length > 99 ? "99+" : files.length}
+                              </span>
+                            )}
+                          </Button>
+                        }
+                      />
+                      <PopoverClient setClientId={setClientId} />
+                      <PopoverFolder
+                        setFolderId={setFolderId}
+                        setExistingFiles={setExistingFiles}
+                        setExistingInstruction={setExistingInstruction}
+                      />
+                      <PopoverInstruction
+                        customTrigger={
+                          <Button
+                            variant="ghost"
+                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                            disabled={!folderId}
+                          >
+                            <Settings />
+                            {instruction?.length > 0 && (
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
+                          </Button>
+                        }
+                        existingInstruction={existingInstruction}
+                        setInstruction={setInstruction}
+                      />
+                    </div>
+                    <Button
+                      onClick={() => {
+                        setSelectedSwitch(config.defaultOption);
+                        handleNewMessage(message, files);
+                      }}
+                      disabled={isSearching || !folderId || message === ""}
+                      className="w-12 h-12 p-0 bg-[#1D1D1F] rounded-full hover:bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                    >
+                      <Send size={28} color="white" />
+                    </Button>
+                  </div>
+                ) : undefined
+              }
             />
           </CardFooter>
         </Card>

@@ -1,10 +1,10 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { baseSchema } from "../ui";
+import { caseBaseSchema } from "../ui";
 import { useState } from "react";
 import { CustomSelect } from "widgets/library-small-chat/components/CustomSelect/ui";
 
-export type FormValues = z.infer<typeof baseSchema>;
+export type FormValues = z.infer<typeof caseBaseSchema>;
 
 interface CaseSearchFormProps {
   form: UseFormReturn<FormValues>;
