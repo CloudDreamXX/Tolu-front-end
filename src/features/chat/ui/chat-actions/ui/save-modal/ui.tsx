@@ -56,8 +56,8 @@ const SaveModal: React.FC = () => {
           </div>
 
           <div className="flex flex-row p-4 border rounded-lg items-center gap-[16px]">
-            <TooltipProvider delayDuration={500}>
-              {isBookmarked ? (
+            {isBookmarked ? (
+              <TooltipProvider delayDuration={500} disableHoverableContent>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button onClick={handleBookmarkClick}>
@@ -79,12 +79,12 @@ const SaveModal: React.FC = () => {
                     </div>
                   </TooltipContent>
                 </Tooltip>
-              ) : (
-                <button onClick={handleBookmarkClick}>
-                  <BookMark width={32} height={32} />
-                </button>
-              )}
-            </TooltipProvider>
+              </TooltipProvider>
+            ) : (
+              <button onClick={handleBookmarkClick}>
+                <BookMark width={32} height={32} />
+              </button>
+            )}
 
             <div className="flex flex-col gap-1">
               <span className="text-lg font-bold leading-none text-gray-800">

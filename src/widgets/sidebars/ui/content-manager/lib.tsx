@@ -14,11 +14,6 @@ export const sideBarContent: SideBarItem[] = [
     icon: <Approved width={24} height={24} />,
   },
   {
-    title: "Messages",
-    link: "/content-manager/messages",
-    icon: <Box />,
-  },
-  {
     title: "Library",
     content: <WrapperFolderTree />,
     icon: <Book width={24} height={24} />,
@@ -38,29 +33,9 @@ export const sideBarContent: SideBarItem[] = [
     link: "/",
     icon: <Community width={24} height={24} />,
   },
-  // {
-  //   title: "AI-Generated",
-  //   link: "/content-manager/ai-generated",
-  //   icon: <AiCreate fill="#000" width={24} height={24} />,
-  // },
-  // {
-  //   title: "In-Review",
-  //   link: "/content-manager/in-review",
-  //   icon: <Eye width={24} height={24} />,
-  // },
-  // {
-  //   title: "Approved",
-  //   link: "/content-manager/approved",
-  //   icon: <Approved width={24} height={24} />,
-  // },
-  // {
-  //   title: "Published",
-  //   link: "/content-manager/published",
-  //   icon: <Published width={24} height={24} />,
-  // },
-  // {
-  //   title: "Archived",
-  //   link: "/content-manager/archived",
-  //   icon: <Archived width={24} height={24} />,
-  // },
+  {
+    title: "Messages",
+    link: "/content-manager/messages",
+    icon: <Box />,
+  },
 ];

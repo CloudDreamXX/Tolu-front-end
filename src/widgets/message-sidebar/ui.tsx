@@ -11,6 +11,7 @@ import {
 import { ChatItemModel } from "pages/content-manager";
 import Search from "shared/assets/icons/search";
 import { ChatItem } from "features/chat-item";
+import LoadingIcon from "shared/assets/icons/loading-icon";
 
 interface MessageSidebarProps {
   chats: ChatItemModel[];
@@ -61,6 +62,12 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
 
   return (
     <aside className="lg:w-[360px] lg:min-w-[360px] border border-[#DBDEE1] border-l-0 flex flex-col w-full ">
+      {loading && (
+        <div className="xl:hidden flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
+          <LoadingIcon />
+          Please wait, we are loading the information...
+        </div>
+      )}
       <div className="px-4 py-6 pb-0 md:p-6 md:pb-0 lg:p-8 lg:pb-0">
         <div className="flex items-center justify-between pb-4">
           <div className="flex items-center justify-center text-[24px] md:text-[32px] font-bold text-[#1D1D1F] gap-2">

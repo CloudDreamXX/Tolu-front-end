@@ -29,8 +29,12 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat }) => {
           </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
-            <img src={EmptyChat} alt="" className="mb-[16px] w-[163px]" />
-            <p className="text-[32px] font-[700] text-[#1D1D1F]">
+            <img
+              src={EmptyChat}
+              alt=""
+              className="mb-[16px] w-[122px] md:w-[135px] xl:w-[163px]"
+            />
+            <p className="text-[18px] md:text-[28px] xl:text-[32px] font-[700] text-[#1D1D1F]">
               There are no messages ...
             </p>
           </div>

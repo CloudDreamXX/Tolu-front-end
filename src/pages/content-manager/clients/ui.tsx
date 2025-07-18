@@ -497,12 +497,16 @@ export const ContentManagerClients: React.FC = () => {
         </div>
       ) : filteredClients.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
-          <img src={EmptyClients} alt="" className="mb-[32px] w-[163px]" />
+          <img
+            src={EmptyClients}
+            alt=""
+            className="mb-[32px] w-[111px] md:w-[142px] xl:w-[163px]"
+          />
           <div className="text-center flex flex-col items-center justify-center gap-[8px]">
-            <p className="text-[32px] font-[700] text-[#1D1D1F]">
+            <p className="text-[18px] md:text-[28px] xl:text-[32px] font-[700] text-[#1D1D1F]">
               There are no clients ...
             </p>
-            <p className="text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
+            <p className="text-[16px] md:text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
               Start adding clients to keep track of observations, updates, and
               progress.
             </p>

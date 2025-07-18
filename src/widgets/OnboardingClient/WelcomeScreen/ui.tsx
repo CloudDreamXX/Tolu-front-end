@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ClientWelcomePicture from "shared/assets/images/Illustration.png";
@@ -6,20 +7,38 @@ import { ClientHeader } from "widgets/Header";
 
 export const WelcomeScreen = () => {
   const nav = useNavigate();
+  const [isTallScreen, setIsTallScreen] = useState(false);
+
+  useEffect(() => {
+    const checkHeight = () => {
+      setIsTallScreen(window.innerHeight > 1000);
+    };
+
+    checkHeight(); // Check on mount
+
+    window.addEventListener("resize", checkHeight);
+    return () => window.removeEventListener("resize", checkHeight);
+  }, []);
 
   return (
     <AuthPageWrapper>
       <ClientHeader />
       <main
         className="
-    flex flex-col items-center justify-end lg:justify-center
-    w-full gap-[16px] md:gap-[8px]
-    lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full
-    mt-[100px] lg:mt-0
-    absolute bottom-0
-  "
+        flex flex-col items-center justify-end lg:justify-center
+        w-full gap-[16px] md:gap-[8px]
+        lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full
+        mt-[100px] lg:mt-0
+        absolute bottom-0
+      "
       >
-        <div className="flex flex-col items-center justify-center gap-8 rounded-t-3xl bg-white py-[24px] px-[16px] md:py-[121px] md:px-[40px] xl:p-10 md:rounded-3xl w-full xl:w-fit">
+        <div
+          className={`
+            flex flex-col items-center justify-center gap-8 rounded-t-3xl bg-white 
+            py-[24px] px-[16px] md:px-[40px] xl:p-10 md:rounded-3xl w-full xl:w-fit
+            ${isTallScreen ? "md:py-[121px]" : ""}
+          `}
+        >
           <img
             src={ClientWelcomePicture}
             alt="Welcome to the TOLU! Create and configure your account."
