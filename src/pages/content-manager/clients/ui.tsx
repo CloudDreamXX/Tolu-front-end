@@ -479,7 +479,7 @@ export const ContentManagerClients: React.FC = () => {
         </div>
       </div>
 
-      {!loading ? (
+      {loading ? (
         <div className="lg:mt-4 md:rounded-[8px]">
           <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
             <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />

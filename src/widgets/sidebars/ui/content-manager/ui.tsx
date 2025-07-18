@@ -8,7 +8,7 @@ import { CustomNavLink } from "features/custom-nav-link";
 
 export const ContentManagerSidebar: React.FC = () => {
   const nav = useNavigate();
-  const [links] = useState(sideBarContent.slice(1));
+  const [links] = useState(sideBarContent);
   const [isNarrow, setIsNarrow] = useState(false);
 
   useEffect(() => {

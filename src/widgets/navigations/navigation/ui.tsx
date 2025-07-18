@@ -43,6 +43,10 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
     nav("/auth");
   };
 
+  const handleOpenChat = () => {
+    nav("/content-manager/create");
+  };
+
   return (
     <div className="bg-white xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] relative px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]">
       {/* Mobile Hamburger */}
@@ -57,9 +61,17 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
               : "Practitioner Admin"}
           </p>
         </div>
-        <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
-          <Menu className="text-black w-[32px] md:w-[40px]" />
-        </button>
+        <div className="flex items-center gap-[16px]">
+          <button
+            onClick={handleOpenChat}
+            className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px]"
+          >
+            AI Assistant
+          </button>
+          <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
+            <Menu className="text-black w-[32px] md:w-[40px]" />
+          </button>
+        </div>
       </div>
 
       {/* Full-screen Drawer */}
@@ -70,7 +82,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
              md:w-[390px] md:right-[10px] md:top-[10px] md:bottom-[10px] md:left-auto md:rounded-[16px]"
             ref={menuMobRef}
           >
-            <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center justify-center mb-6 pt-4">
               <div className="flex flex-col items-center">
                 <h1 className="text-[32px] md:text-[40px] font-[700] font-open leading-normal">
                   TOLU

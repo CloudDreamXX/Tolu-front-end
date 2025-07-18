@@ -9,12 +9,14 @@ import {
   setLoading,
 } from "entities/health-history/lib";
 import { RootState } from "entities/store";
+import LoadingIcon from "shared/assets/icons/loading-icon";
 
 export const Library = () => {
   const dispatch = useDispatch();
   const healthHistory = useSelector(
     (state: RootState) => state.healthHistory.data
   );
+  const loading = useSelector((state: RootState) => state.client.loading);
 
   useEffect(() => {
     const fetchHealthHistory = async () => {
@@ -33,6 +35,12 @@ export const Library = () => {
 
   return (
     <main className="flex flex-col h-screen items-start gap-6 p-6 self-stretch overflow-y-auto bg-[#F2F4F6]">
+      {loading && (
+        <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-25%]">
+          <LoadingIcon />
+          Please wait, we are loading the information...
+        </div>
+      )}
       <div className="flex flex-col flex-1 w-full h-full min-h-0 gap-6 xl:flex-row">
         <LibraryClientContent />
         <div className="hidden xl:block w-full">

@@ -13,9 +13,42 @@ type WrapperProps = {
 
 const WrapperLibraryFolderTree: React.FC<WrapperProps> = ({ onPopupClose }) => {
   const folders = useSelector((state: RootState) => state.client.folders);
+  const isLoading = useSelector((state: RootState) => state.client.loading);
   const [openFolders, setOpenFolders] = useState<Set<string>>(new Set());
   const dispatch = useDispatch();
   const nav = useNavigate();
+
+  const FolderSkeletonRow = () => {
+    const getRandomWidth = () => {
+      const min = 60;
+      const max = 180;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    return (
+      <>
+        {[...Array(3)].map((_, index) => {
+          const randomWidth = getRandomWidth();
+
+          return (
+            <div
+              key={index}
+              className="
+              md:grid md:grid-cols-6 md:items-center md:py-[12px]
+              flex flex-col gap-2 p-[10px] rounded-[8px] bg-white 
+              md:rounded-none md:border-x-0 animate-pulse
+            "
+            >
+              <div
+                className="h-[10px] skeleton-gradient rounded-[24px]"
+                style={{ width: `${randomWidth}px` }}
+              />
+            </div>
+          );
+        })}
+      </>
+    );
+  };
 
   const folderHasChildren = (id: string): boolean => {
     const folder = folders.find((f) => f.id === id);
@@ -42,7 +75,9 @@ const WrapperLibraryFolderTree: React.FC<WrapperProps> = ({ onPopupClose }) => {
     });
   };
 
-  return (
+  return isLoading ? (
+    <FolderSkeletonRow />
+  ) : (
     <LibraryFolderTree
       folders={folders}
       level={0}

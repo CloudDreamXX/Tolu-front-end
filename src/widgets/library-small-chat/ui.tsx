@@ -90,6 +90,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [existingFiles, setExistingFiles] = useState<string[]>([]);
   const [existingInstruction, setExistingInstruction] = useState<string>("");
   const [instruction, setInstruction] = useState<string>("");
+  const loading = useSelector((state: RootState) => state.client.loading);
 
   const location = useLocation();
   const isCreatePage = location.pathname === "/content-manager/create";
@@ -143,6 +144,58 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       const newChatId = `new_chat_${Date.now()}`;
       navigate(`${isCoach ? "/content-manager" : ""}/library/${newChatId}`);
     }
+  };
+
+  const MessageLoadingSkeleton = () => {
+    const Bubble = ({
+      align = "left",
+      lines = 3,
+    }: {
+      align?: "left" | "right";
+      lines?: number;
+    }) => {
+      const isRight = align === "right";
+
+      const getRandomWidth = (min: number, max: number) =>
+        `${Math.floor(Math.random() * (max - min + 1)) + min}px`;
+
+      return (
+        <div
+          className={`flex ${isRight ? "justify-end" : "justify-start"} w-full`}
+        >
+          <div
+            className={`flex flex-col gap-[8px] p-[16px] bg-[#F6F6F6] rounded-[8px] max-w-[90%] w-fit`}
+          >
+            <div className="flex justify-between items-center w-full mb-[6px]">
+              <div
+                className="h-[10px] skeleton-gradient rounded-[4px]"
+                style={{ width: getRandomWidth(60, 100) }}
+              />
+              <div
+                className="h-[10px] skeleton-gradient rounded-[4px]"
+                style={{ width: getRandomWidth(60, 100) }}
+              />
+            </div>
+
+            {[...Array(lines)].map((_, i) => (
+              <div
+                key={i}
+                className="h-[12px] skeleton-gradient rounded-[6px]"
+                style={{ width: getRandomWidth(160, 300) }}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <div className="flex flex-col gap-6 animate-pulse w-full">
+        <Bubble align="left" lines={2} />
+        <Bubble align="right" lines={3} />
+        <Bubble align="left" lines={5} />
+      </div>
+    );
   };
 
   const handleNewMessage = async (
@@ -392,7 +445,11 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            {loading ? (
+              <div className="h-[12px] skeleton-gradient rounded-[6px] w-[218px]" />
+            ) : (
+              <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            )}
             <button
               className="hidden xl:block xl:absolute top-4 left-4"
               onClick={handleExpandClick}
@@ -452,7 +509,11 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            {loading ? (
+              <div className="h-[12px] skeleton-gradient rounded-[6px] w-[218px]" />
+            ) : (
+              <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            )}
             <button
               className="hidden xl:block xl:absolute top-4 left-4"
               onClick={handleExpandClick}
@@ -567,7 +628,11 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            {loading ? (
+              <div className="h-[12px] skeleton-gradient rounded-[6px] w-[218px]" />
+            ) : (
+              <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+            )}
             <button
               className="hidden xl:block xl:absolute top-4 left-4"
               onClick={handleExpandClick}
@@ -577,7 +642,9 @@ My goal is to ${values.goals}.`;
             </button>
           </CardHeader>
           <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
-            {messages.length ? (
+            {loading ? (
+              <MessageLoadingSkeleton />
+            ) : messages.length ? (
               <MessageList
                 messages={messages}
                 isSearching={isSearching}
@@ -586,10 +653,10 @@ My goal is to ${values.goals}.`;
               />
             ) : (
               <div className="flex flex-col ietms-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
-                <h2 className="text-[24px] text-[#1B2559] font-[700]">
+                <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
                   Start a conversation
                 </h2>
-                <p className="text-[18px] text-[#1C63DB]">
+                <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
                   Select an action below and enter a query to start a
                   conversation with Tolu.
                 </p>

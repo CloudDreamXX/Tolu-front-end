@@ -3,9 +3,14 @@ import React from "react";
 interface SvgIconProps {
   width?: string | number;
   height?: string | number;
+  color?: string;
 }
 
-const BookMark: React.FC<SvgIconProps> = ({ width = 24, height = 24 }) => {
+const BookMark: React.FC<SvgIconProps> = ({
+  width = 24,
+  height = 24,
+  color = "#1C63DB",
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +21,7 @@ const BookMark: React.FC<SvgIconProps> = ({ width = 24, height = 24 }) => {
     >
       <path
         d="M18 21L12 17.25L6 21V4.5C6 4.30109 6.07902 4.11032 6.21967 3.96967C6.36032 3.82902 6.55109 3.75 6.75 3.75H17.25C17.4489 3.75 17.6397 3.82902 17.7803 3.96967C17.921 4.11032 18 4.30109 18 4.5V21Z"
-        stroke="#1C63DB"
+        stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

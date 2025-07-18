@@ -14,32 +14,97 @@ import {
 } from "shared/ui";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "entities/store";
-import { setFolders } from "entities/client/lib";
-import EmptyLibrary from "shared/assets/images/EmptyLibrary.png";
+import { setFolders, setLoading } from "entities/client/lib";
+import BookMark from "shared/assets/icons/book-mark";
 
 export const LibraryClientContent = () => {
   const [search, setSearch] = useState("");
   const [statusMap, setStatusMap] = useState<Record<string, ContentStatus>>({});
-  const [loading, setLoading] = useState(true);
   const nav = useNavigate();
   const folderId = useSelector((state: RootState) => state.client.folderId);
   const folders = useSelector((state: RootState) => state.client.folders);
   const dispatch = useDispatch();
+  const loading = useSelector((state: RootState) => state.client.loading);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        dispatch(setLoading(true));
+
         const response = await ClientService.getLibraryContent();
         dispatch(setFolders(response.folders));
       } catch (error) {
         console.error("Failed to fetch library content:", error);
       } finally {
-        setLoading(false);
+        dispatch(setLoading(false));
       }
     };
 
     fetchData();
   }, []);
+
+  const LibraryCardSkeleton = () => {
+    const getRandomWidth = (min: number, max: number) =>
+      `${Math.floor(Math.random() * (max - min + 1)) + min}px`;
+
+    return (
+      <div
+        className="w-full flex flex-col items-start p-4 gap-[8px] animate-pulse"
+        style={{
+          borderRadius: "18px",
+          border: "1px solid #5F5F65",
+          backgroundColor: "#FFF",
+          boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.04)",
+        }}
+      >
+        <div className="flex justify-between items-center w-full">
+          <div
+            className="h-[12px] rounded-[8px] skeleton-gradient"
+            style={{ width: getRandomWidth(160, 250) }}
+          />
+          <BookMark color="#5F5F65" />
+        </div>
+        <div className="bg-[#F5F5F5] p-[8px] rounded-[8px]">
+          <div
+            className="h-[12px] rounded-[8px] skeleton-gradient max-w-[250px] md:max-w-none"
+            style={{ width: getRandomWidth(180, 300) }}
+          />
+        </div>
+        <div className="flex w-full justify-between pt-[8px]">
+          <div className="flex flex-col items-left gap-[4px]">
+            <div
+              className="h-[10px] rounded-[6px] skeleton-gradient"
+              style={{ width: getRandomWidth(100, 150) }}
+            />
+            <div
+              className="h-[10px] rounded-[6px] skeleton-gradient"
+              style={{ width: getRandomWidth(100, 150) }}
+            />
+          </div>
+          <div className="hidden md:flex flex-col items-left gap-[4px]">
+            <div
+              className="h-[10px] rounded-[6px] skeleton-gradient"
+              style={{ width: getRandomWidth(100, 150) }}
+            />
+            <div
+              className="h-[10px] rounded-[6px] skeleton-gradient"
+              style={{ width: getRandomWidth(100, 150) }}
+            />
+          </div>
+          <div className="hidden md:flex flex-col items-left gap-[4px]">
+            <div
+              className="h-[10px] rounded-[6px] skeleton-gradient"
+              style={{ width: getRandomWidth(100, 150) }}
+            />
+            <div
+              className="h-[10px] rounded-[6px] skeleton-gradient"
+              style={{ width: getRandomWidth(100, 150) }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const findFolderById = (folders: Folder[], id: string): Folder | null => {
     for (const folder of folders) {
@@ -92,21 +157,27 @@ export const LibraryClientContent = () => {
       />
       <ScrollArea className="flex-1 min-h-0 pr-2 mt-4">
         {loading ? (
-          <div className="py-10 text-center text-muted-foreground">
-            Loading library content...
-          </div>
-        ) : filteredFolders.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
-            <img src={EmptyLibrary} alt="" className="mb-[32px] w-[163px]" />
-            <div className="text-center flex flex-col items-center justify-center gap-[8px]">
-              <p className="text-[32px] font-[700] text-[#1D1D1F]">
-                Your library is currently empty ...
-              </p>
-              <p className="text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
-                Choose and store the materials that help you - and come back to
-                them whenever you need them.
-              </p>
-            </div>
+          <div className="w-full flex flex-col gap-4 px-2">
+            {[...Array(5)].map((_, idx) => (
+              <Accordion
+                key={idx}
+                type="single"
+                collapsible
+                className="w-full mb-4"
+                defaultValue={`item-${idx}`}
+              >
+                <AccordionItem value={`item-${idx}`}>
+                  <AccordionTrigger className="pt-0">
+                    <div className="h-[16px] w-[177px] skeleton-gradient rounded-[24px]" />
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
+                    {[...Array(3)].map((_, cardIdx) => (
+                      <LibraryCardSkeleton key={cardIdx} />
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))}
           </div>
         ) : (
           filteredFolders.map((folder, index) => (
@@ -121,7 +192,7 @@ export const LibraryClientContent = () => {
                 <AccordionTrigger className="pt-0">
                   {folder.name}
                 </AccordionTrigger>
-                <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
+                <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2 w-full">
                   {Array.isArray(folder.content) &&
                   folder.content.length > 0 ? (
                     folder.content.map((item) => (

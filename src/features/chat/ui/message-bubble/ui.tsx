@@ -39,7 +39,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         className={`w-full ${
           message.type === "user"
             ? "order-2 max-w-[40%]"
-            : "order-1 max-w-[70%]"
+            : "order-1 w-full md:max-w-[70%]"
         }`}
       >
         {message.type === "user" ? (
