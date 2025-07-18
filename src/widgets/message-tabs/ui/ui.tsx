@@ -22,6 +22,8 @@ import {
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { TemplatesTab } from "./templates-tab";
+import Plus from "shared/assets/icons/plus";
+import Smiley from "shared/assets/icons/smiley";
 
 interface MessageTabsProps {
   chatId?: string;
@@ -34,14 +36,109 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 }) => {
   const [chat, setChat] = useState<ChatItemModel | null>();
   const { isMobile, isMobileOrTablet } = usePageWidth();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    //mock logic
-    const result = chatItems.find((e) => e.id === chatId);
-    setChat(result);
+    if (!chatId) return;
+
+    setLoading(true);
+    const timeout = setTimeout(() => {
+      const result = chatItems.find((e) => e.id === chatId);
+      setChat(result || null);
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timeout);
   }, [chatId]);
 
   if (!chat) return null;
+
+  const MessageTabsLoadingSkeleton = () => {
+    return (
+      <main className="flex flex-col w-full h-[calc(100vh-78px)] px-4 py-6 md:p-6 lg:p-8 animate-pulse">
+        {/* Header: Avatar and Name */}
+        <div className="flex items-center justify-between mb-[16px]">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-full skeleton-gradient mr-3" />
+            <div className="flex flex-col gap-2">
+              <div className="w-28 h-[10px] rounded-[24px] skeleton-gradient" />
+              <div className="w-20 h-[10px] rounded-[24px] skeleton-gradient" />
+            </div>
+          </div>
+          <div className="flex items-center gap-[12px]">
+            <div className="bg-[#D6ECFD] p-[16px] rounded-full">
+              <div className="w-16 h-[10px] rounded-[24px] bg-[#AAC6EC]" />
+            </div>
+            <MoreVertical />
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-4 py-[8px] mb-4 w-full border-b border-[#DBDEE1]">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="w-[120px] h-[10px] rounded-[24px] skeleton-gradient"
+            />
+          ))}
+        </div>
+
+        {/* Chat Body */}
+        <div className="mt-auto">
+          <div className="flex-1 flex flex-col gap-8 py-6">
+            {/* Divider line */}
+            <div className="w-full border-t border-[#DBDEE1]">
+              <div className="w-[80px] h-[6px] rounded-[24px] skeleton-gradient mx-auto mt-[-3px]" />
+            </div>
+
+            {/* Message from left */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full skeleton-gradient mr-3" />
+                <div className="flex flex-col gap-2">
+                  <div className="w-28 h-[10px] rounded-[24px] skeleton-gradient" />
+                  <div className="w-20 h-[10px] rounded-[24px] skeleton-gradient" />
+                </div>
+              </div>
+              <div className="w-[45%] h-[10px] rounded-[24px] skeleton-gradient" />
+              <div className="w-[35%] h-[10px] rounded-[24px] skeleton-gradient" />
+            </div>
+
+            {/* Message from right */}
+            <div className="flex justify-end items-end flex-col gap-2">
+              <div className="flex items-center">
+                <div className="flex flex-col items-end gap-2">
+                  <div className="w-28 h-[10px] rounded-[24px] skeleton-gradient" />
+                  <div className="w-20 h-[10px] rounded-[24px] skeleton-gradient" />
+                </div>
+                <div className="w-10 h-10 rounded-full skeleton-gradient ml-3" />
+              </div>
+              <div className="w-[45%] h-[10px] rounded-[24px] skeleton-gradient" />
+              <div className="w-[35%] h-[10px] rounded-[24px] skeleton-gradient" />
+              <div className="w-[20%] h-[10px] rounded-[24px] skeleton-gradient" />
+            </div>
+          </div>
+
+          {/* Input area */}
+          <div className="w-full rounded-lg border border-[#DBDEE1] p-4 mt-auto pt-6">
+            <div className="w-[40%] mb-2 h-[10px] rounded-[24px] skeleton-gradient" />
+            <div className="w-[60%] h-[10px] rounded-[24px] skeleton-gradient" />
+            <div className="flex items-end justify-between mt-[24px]">
+              <div className="flex items-center gap-[16px]">
+                <Plus />
+                <Smiley />
+              </div>
+              <div className="bg-[#1C63DB] p-[16px] rounded-full">
+                <div className="w-[92px] h-[10px] rounded-[24px] bg-[#AAC6EC]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  };
+
+  if (loading) return <MessageTabsLoadingSkeleton />;
 
   return (
     <main className="flex flex-col w-full h-full px-4 py-6 md:p-6 lg:p-8">

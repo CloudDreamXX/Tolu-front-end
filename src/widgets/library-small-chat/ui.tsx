@@ -59,6 +59,7 @@ interface LibrarySmallChatProps {
   isDraft?: boolean;
   footer?: React.ReactNode;
   setMessage?: React.Dispatch<React.SetStateAction<string>>;
+  isLoading?: boolean;
 }
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
@@ -66,6 +67,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   isCoach,
   isDraft,
   footer,
+  isLoading,
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
@@ -168,11 +170,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           >
             <div className="flex justify-between items-center w-full mb-[6px]">
               <div
-                className="h-[10px] skeleton-gradient rounded-[4px]"
+                className="h-[10px] skeleton-gradient rounded-[24px]"
                 style={{ width: getRandomWidth(60, 100) }}
               />
               <div
-                className="h-[10px] skeleton-gradient rounded-[4px]"
+                className="h-[10px] skeleton-gradient rounded-[24px]"
                 style={{ width: getRandomWidth(60, 100) }}
               />
             </div>
@@ -180,7 +182,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             {[...Array(lines)].map((_, i) => (
               <div
                 key={i}
-                className="h-[12px] skeleton-gradient rounded-[6px]"
+                className="h-[12px] skeleton-gradient rounded-[24px]"
                 style={{ width: getRandomWidth(160, 300) }}
               />
             ))}
@@ -445,8 +447,8 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading ? (
-              <div className="h-[12px] skeleton-gradient rounded-[6px] w-[218px]" />
+            {loading || isLoading ? (
+              <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
             )}
@@ -500,6 +502,7 @@ My goal is to ${values.goals}.`;
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
               footer={footer}
+              isLoading={isLoading}
             />
           </CardFooter>
         </Card>
@@ -509,8 +512,8 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading ? (
-              <div className="h-[12px] skeleton-gradient rounded-[6px] w-[218px]" />
+            {loading || isLoading ? (
+              <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
             )}
@@ -619,6 +622,7 @@ My goal is to ${values.goals}.`;
                   </div>
                 ) : undefined
               }
+              isLoading={isLoading}
             />
           </CardFooter>
         </Card>
@@ -628,8 +632,8 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading ? (
-              <div className="h-[12px] skeleton-gradient rounded-[6px] w-[218px]" />
+            {loading || isLoading ? (
+              <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
             )}
@@ -642,7 +646,7 @@ My goal is to ${values.goals}.`;
             </button>
           </CardHeader>
           <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
-            {loading ? (
+            {loading || isLoading ? (
               <MessageLoadingSkeleton />
             ) : messages.length ? (
               <MessageList
@@ -738,6 +742,7 @@ My goal is to ${values.goals}.`;
                   </div>
                 ) : undefined
               }
+              isLoading={isLoading}
             />
           </CardFooter>
         </Card>

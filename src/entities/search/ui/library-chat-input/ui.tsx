@@ -6,6 +6,8 @@ import { Button, Input } from "shared/ui";
 import { SwitchGroup } from "widgets/switch-group";
 import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
 import { MenopauseSubmissionRequest, UserService } from "entities/user";
+import { RootState } from "entities/store";
+import { useSelector } from "react-redux";
 
 interface LibraryChatInputProps {
   switchOptions: string[];
@@ -21,6 +23,7 @@ interface LibraryChatInputProps {
   className?: string;
   footer?: React.ReactNode;
   setNewMessage?: React.Dispatch<React.SetStateAction<string>>;
+  isLoading?: boolean;
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -33,12 +36,14 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   setSelectedSwitch,
   setNewMessage,
   footer,
+  isLoading,
 }) => {
   const [message, setMessage] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [stepModalOpen, setStepModalOpen] = useState(false);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
+  const loading = useSelector((state: RootState) => state.client.loading);
 
   const handleSend = () => {
     if ((!message.trim() && attachedFiles.length === 0) || disabled) return;
@@ -81,14 +86,22 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
 
   return (
     <div className={cn("p-4 bg-white border-t border-gray-200", className)}>
-      <div className="hidden md:block">
-        <SwitchGroup
-          options={switchOptions}
-          activeOption={selectedSwitch}
-          onChange={setSelectedSwitch}
-          classname="mb-4"
-        />
-      </div>
+      {loading || isLoading ? (
+        <div className="flex items-center gap-[16px] mb-[27px]">
+          <div className="h-[22px] skeleton-gradient w-[110px] rounded-[24px]" />
+          <div className="h-[22px] skeleton-gradient w-[110px] rounded-[24px]" />
+          <div className="h-[22px] skeleton-gradient w-[110px] rounded-[24px]" />
+        </div>
+      ) : (
+        <div className="hidden md:block">
+          <SwitchGroup
+            options={switchOptions}
+            activeOption={selectedSwitch}
+            onChange={setSelectedSwitch}
+            classname="mb-4"
+          />
+        </div>
+      )}
       <div className="relative mb-4">
         <Input
           placeholder={placeholder}

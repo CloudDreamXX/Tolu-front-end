@@ -12,6 +12,8 @@ import {
   setLoading,
   setError,
 } from "entities/health-history/lib";
+import LoadingIcon from "shared/assets/icons/loading-icon";
+import { DocumentLoadingSkeleton } from "./lib";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -64,6 +66,12 @@ export const LibraryDocument = () => {
 
   return (
     <div className="flex flex-col w-full h-full gap-6 p-6">
+      {isLoadingDocument && (
+        <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-25%]">
+          <LoadingIcon />
+          Please wait, we are loading the information...
+        </div>
+      )}
       <div className="flex flex-row w-full h-full gap-6 xl:h-[calc(100vh-48px)] relative">
         <div className="hidden xl:block">
           <ChatActions
@@ -78,9 +86,7 @@ export const LibraryDocument = () => {
         ) : (
           <div className="relative flex flex-col w-full h-full xl:pr-4">
             {isLoadingDocument ? (
-              <div className="p-6 text-center text-muted-foreground">
-                Loading document...
-              </div>
+              <DocumentLoadingSkeleton />
             ) : document ? (
               <div className="p-[24px] rounded-[16px] bg-white xl:h-[calc(100vh-48px)] xl:overflow-y-auto">
                 <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] max-w-[310px] md:max-w-[563px] xl:max-w-[800px] flex flex-col gap-[8px] mb-[40px]">
@@ -113,7 +119,10 @@ export const LibraryDocument = () => {
         )}
 
         <div className="hidden xl:block w-full">
-          <LibrarySmallChat healthHistory={healthHistory} />
+          <LibrarySmallChat
+            healthHistory={healthHistory}
+            isLoading={isLoadingDocument}
+          />
         </div>
       </div>
     </div>

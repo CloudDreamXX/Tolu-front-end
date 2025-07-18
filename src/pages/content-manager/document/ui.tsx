@@ -19,6 +19,7 @@ import {
 import { cn } from "shared/lib";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { findFolderPath } from "features/wrapper-folder-tree";
+import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -165,9 +166,7 @@ export const ContentManagerDocument: React.FC = () => {
           <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">
             <ScrollArea className={cn("pr-2 md:pr-6")}>
               {loadingConversation ? (
-                <div className="w-full py-10 text-center text-[#5F5F65]">
-                  Loading conversation...
-                </div>
+                <DocumentLoadingSkeleton />
               ) : (
                 <>
                   <DocumentHeader
@@ -285,7 +284,11 @@ export const ContentManagerDocument: React.FC = () => {
         )}
 
         <div className="hidden xl:block max-w-[40%] w-full">
-          <LibrarySmallChat isCoach isDraft={isDraft} />
+          <LibrarySmallChat
+            isCoach
+            isDraft={isDraft}
+            isLoading={loadingConversation}
+          />
         </div>
       </div>
     </div>

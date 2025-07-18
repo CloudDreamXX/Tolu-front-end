@@ -73,31 +73,31 @@ export const LibraryClientContent = () => {
         <div className="flex w-full justify-between pt-[8px]">
           <div className="flex flex-col items-left gap-[4px]">
             <div
-              className="h-[10px] rounded-[6px] skeleton-gradient"
+              className="h-[10px] rounded-[24px] skeleton-gradient"
               style={{ width: getRandomWidth(100, 150) }}
             />
             <div
-              className="h-[10px] rounded-[6px] skeleton-gradient"
-              style={{ width: getRandomWidth(100, 150) }}
-            />
-          </div>
-          <div className="hidden md:flex flex-col items-left gap-[4px]">
-            <div
-              className="h-[10px] rounded-[6px] skeleton-gradient"
-              style={{ width: getRandomWidth(100, 150) }}
-            />
-            <div
-              className="h-[10px] rounded-[6px] skeleton-gradient"
+              className="h-[10px] rounded-[24px] skeleton-gradient"
               style={{ width: getRandomWidth(100, 150) }}
             />
           </div>
           <div className="hidden md:flex flex-col items-left gap-[4px]">
             <div
-              className="h-[10px] rounded-[6px] skeleton-gradient"
+              className="h-[10px] rounded-[24px] skeleton-gradient"
               style={{ width: getRandomWidth(100, 150) }}
             />
             <div
-              className="h-[10px] rounded-[6px] skeleton-gradient"
+              className="h-[10px] rounded-[24px] skeleton-gradient"
+              style={{ width: getRandomWidth(100, 150) }}
+            />
+          </div>
+          <div className="hidden md:flex flex-col items-left gap-[4px]">
+            <div
+              className="h-[10px] rounded-[24px] skeleton-gradient"
+              style={{ width: getRandomWidth(100, 150) }}
+            />
+            <div
+              className="h-[10px] rounded-[24px] skeleton-gradient"
               style={{ width: getRandomWidth(100, 150) }}
             />
           </div>
