@@ -2,7 +2,6 @@ import { Paperclip, Send } from "lucide-react";
 import { useState } from "react";
 import { cn } from "shared/lib";
 import { Button, Input, Switch } from "shared/ui";
-import SymptomsTracker from "shared/assets/icons/symptoms-tracker";
 import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
 import { MenopauseSubmissionRequest, UserService } from "entities/user";
 
@@ -109,8 +108,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
           </label>
 
           <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
-            <SymptomsTracker />{" "}
-            <span className="hidden md:block">Symptoms Tracker</span>
+            Symptoms Tracker
           </Button>
         </div>
         <Button

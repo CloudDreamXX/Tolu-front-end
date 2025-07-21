@@ -34,6 +34,7 @@ interface ConversationListProps {
   setIsDeleteOpen: (open: boolean) => void;
   setIsRateOpen: (open: boolean) => void;
   setIsMoveOpen: (open: boolean) => void;
+  setIsMarkAsOpen: (open: boolean) => void;
   setEditedTitle: (title: string) => void;
   setEditedQuery: (query: string) => void;
   setEditedContent: (content: string) => void;
@@ -69,6 +70,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   setIsBadResponseOpen,
   setIsDeleteOpen,
   setIsMoveOpen,
+  setIsMarkAsOpen,
   setEditedTitle,
   setEditedQuery,
   setEditedContent,
@@ -118,6 +120,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           setIsBadResponseOpen={setIsBadResponseOpen}
           setIsDeleteOpen={setIsDeleteOpen}
           setIsMoveOpen={setIsMoveOpen}
+          setIsMarkAsOpen={setIsMarkAsOpen}
           setEditedTitle={setEditedTitle}
           setEditedQuery={setEditedQuery}
           setEditedContent={setEditedContent}

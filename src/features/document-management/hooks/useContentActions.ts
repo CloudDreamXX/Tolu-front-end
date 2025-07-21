@@ -9,7 +9,9 @@ import {
   setFolders,
 } from "entities/folder";
 import { ContentService, ContentToEdit } from "entities/content";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "entities/store";
 
 export const useContentActions = () => {
   const dispatch = useDispatch();
@@ -39,6 +41,10 @@ export const useContentActions = () => {
   const [selectedDocumentStatus, setSelectedDocumentStatus] = useState<
     string | undefined
   >(undefined);
+
+  const { folders } = useSelector((state: RootState) => state.folder);
+
+  const nav = useNavigate();
 
   const findContentItemByIdInFolder = (
     currentFolder: IFolder | ISubfolder,
@@ -128,8 +134,52 @@ export const useContentActions = () => {
   };
 
   const handleDeleteClick = async (id: string) => {
-    await FoldersService.deleteContent(id);
+    const currentContentId = id;
+    let nextContentId: string | null = null;
+    let parentFolderId: string | null = null;
+
+    const findNextContentInFolder = (folder: IFolder | ISubfolder): boolean => {
+      const index = folder.content.findIndex(
+        (item) => item.id === currentContentId
+      );
+
+      if (index >= 0) {
+        if (index + 1 < folder.content.length) {
+          nextContentId = folder.content[index + 1].id;
+        }
+        parentFolderId = folder.id;
+        return true;
+      }
+
+      for (const subfolder of folder.subfolders) {
+        const found = findNextContentInFolder(subfolder);
+        if (found) {
+          if (!parentFolderId) parentFolderId = subfolder.id;
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    for (const folder of folders) {
+      const found = findNextContentInFolder(folder);
+      if (found) break;
+    }
+
+    await FoldersService.deleteContent(currentContentId);
+
+    const folderResponse = await FoldersService.getFolders();
+    dispatch(setFolders(folderResponse));
     setIsDeleteOpen(false);
+
+    if (nextContentId && parentFolderId) {
+      nav(
+        `/content-manager/library/folder/${parentFolderId}/document/${nextContentId}`
+      );
+    } else {
+      nav("/content-manager/create");
+    }
   };
 
   const handleDublicateClick = async (id: string) => {
@@ -146,10 +196,24 @@ export const useContentActions = () => {
       content_id: id,
       target_folder_id: subfolderId,
     };
-    await FoldersService.moveFolderContent(payload);
-    const folderResponse = await FoldersService.getFolders();
-    dispatch(setFolders(folderResponse));
-    setIsDublicateOpen(false);
+
+    try {
+      const response = await FoldersService.moveFolderContent(payload);
+
+      const movedContentId = response.content.id;
+      const movedFolderId = response.content.folder_id;
+
+      const folderResponse = await FoldersService.getFolders();
+      dispatch(setFolders(folderResponse));
+
+      setIsDublicateOpen(false);
+
+      nav(
+        `/content-manager/library/folder/${movedFolderId}/document/${movedContentId}`
+      );
+    } catch (err) {
+      console.error("Failed to duplicate and move content:", err);
+    }
   };
 
   const handleMoveClick = async (id: string, subfolderId: string) => {

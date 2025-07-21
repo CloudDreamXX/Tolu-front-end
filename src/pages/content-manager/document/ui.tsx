@@ -211,6 +211,7 @@ export const ContentManagerDocument: React.FC = () => {
                     setIsDeleteOpen={setIsDeleteOpen}
                     setIsMoveOpen={setIsMoveOpen}
                     setIsRateOpen={setIsRateOpen}
+                    setIsMarkAsOpen={setIsMarkAsOpen}
                     setEditedTitle={setEditedTitle}
                     setEditedQuery={setEditedQuery}
                     setEditedContent={setEditedContent}

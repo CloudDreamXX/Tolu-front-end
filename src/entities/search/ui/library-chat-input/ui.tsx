@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Paperclip, Send } from "lucide-react";
-import SymptomsTracker from "shared/assets/icons/symptoms-tracker";
 import { cn } from "shared/lib";
 import { Button, Input } from "shared/ui";
 import { SwitchGroup } from "widgets/switch-group";
@@ -138,8 +137,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               )}
             </label>
             <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
-              <SymptomsTracker />{" "}
-              <span className="hidden md:block">Symptoms Tracker</span>
+              Symptoms Tracker
             </Button>
           </div>
           <Button

@@ -30,6 +30,7 @@ interface ConversationItemProps {
   setIsBadResponseOpen: (open: boolean) => void;
   setIsDeleteOpen: (open: boolean) => void;
   setIsMoveOpen: (open: boolean) => void;
+  setIsMarkAsOpen: (open: boolean) => void;
   setEditedTitle: (title: string) => void;
   setEditedQuery: (query: string) => void;
   setEditedContent: (content: string) => void;
@@ -60,6 +61,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   setIsBadResponseOpen,
   setIsDeleteOpen,
   setIsMoveOpen,
+  setIsMarkAsOpen,
   setEditedTitle,
   setEditedQuery,
   setEditedContent,
@@ -289,6 +291,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           setIsBadResponseOpen={setIsBadResponseOpen}
           setIsDeleteOpen={setIsDeleteOpen}
           setIsMoveOpen={setIsMoveOpen}
+          setIsMarkAsOpen={setIsMarkAsOpen}
           handleDublicateClick={handleDublicateClick}
           handleMarkAsClick={handleMarkAsClick}
           handleDelete={handleDeleteContent}

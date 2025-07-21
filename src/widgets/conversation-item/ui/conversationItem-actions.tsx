@@ -24,6 +24,7 @@ interface ConversationItemActionsProps {
   setIsBadResponseOpen: (open: boolean) => void;
   setIsDeleteOpen: (open: boolean) => void;
   setIsMoveOpen: (open: boolean) => void;
+  setIsMarkAsOpen: (open: boolean) => void;
   handleDublicateClick: (id: string) => Promise<void>;
   handleMarkAsClick: (id: string) => void;
   handleDelete: (id: string) => void;
@@ -33,14 +34,13 @@ export const ConversationItemActions: React.FC<
   ConversationItemActionsProps
 > = ({
   pair,
-  index,
-  onCompareToggle,
+  handleMarkAsClick,
   onEditToggle,
   setSelectedDocumentId,
   setIsBadResponseOpen,
   setIsMoveOpen,
   handleDublicateClick,
-  handleDelete,
+  setIsDeleteOpen,
 }) => {
   return (
     <div className="flex md:flex-col items-start gap-2">
@@ -137,7 +137,10 @@ export const ConversationItemActions: React.FC<
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={() => handleDelete(pair.id)}
+                onClick={() => {
+                  setSelectedDocumentId(pair.id);
+                  setIsDeleteOpen(true);
+                }}
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
               >
                 <TrashIcon width={16} height={16} />
@@ -154,7 +157,7 @@ export const ConversationItemActions: React.FC<
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={() => onCompareToggle(index)}
+                onClick={() => handleMarkAsClick(pair.id)}
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
               >
                 <Compare />
@@ -164,7 +167,7 @@ export const ConversationItemActions: React.FC<
               side="right"
               className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
             >
-              Compare versions
+              Mark as
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
