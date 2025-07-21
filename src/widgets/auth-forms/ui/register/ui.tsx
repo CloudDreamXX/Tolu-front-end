@@ -117,7 +117,7 @@ export const Register = () => {
           </h3>
         </aside>
       </div>
-      <div className="w-full md:h-full px-[16px] py-[24px] mt-[40px] md:p-0 md:mt-[63px] flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
+      <div className="w-full px-[16px] py-[24px] mt-[40px] md:p-0 md:mt-[63px] flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
         {formData.accountType.length > 1 ? (
           <SignUp
             formData={formData}

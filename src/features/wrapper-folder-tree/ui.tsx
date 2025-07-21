@@ -17,12 +17,14 @@ export const WrapperFolderTree = ({
   const [openFolders, setOpenFolders] = useState<Set<string>>(new Set());
   const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
   const [isMoving, setIsMoving] = useState(false);
+  const [loading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchFolders = async () => {
       try {
         const { folders, foldersMap } = await FoldersService.getFolders();
         dispatch(setFolders({ folders, foldersMap }));
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching folders:", error);
       }
@@ -30,6 +32,38 @@ export const WrapperFolderTree = ({
 
     fetchFolders();
   }, [dispatch]);
+
+  const FolderSkeletonRow = () => {
+    const getRandomWidth = () => {
+      const min = 60;
+      const max = 180;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    return (
+      <>
+        {[...Array(3)].map((_, index) => {
+          const randomWidth = getRandomWidth();
+
+          return (
+            <div
+              key={index}
+              className="
+              md:grid md:grid-cols-6 md:items-center md:py-[12px]
+              flex flex-col gap-2 p-[10px] rounded-[8px] bg-white 
+              md:rounded-none md:border-x-0 animate-pulse
+            "
+            >
+              <div
+                className="h-[10px] skeleton-gradient rounded-[24px]"
+                style={{ width: `${randomWidth}px` }}
+              />
+            </div>
+          );
+        })}
+      </>
+    );
+  };
 
   const toggleFolder = (folderId: string) => {
     setOpenFolders((prev) => {
@@ -71,7 +105,9 @@ export const WrapperFolderTree = ({
     }
   };
 
-  return (
+  return loading ? (
+    <FolderSkeletonRow />
+  ) : (
     <FolderTree
       folders={folders}
       level={0}

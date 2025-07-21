@@ -1,4 +1,4 @@
-import { EyeClosed, EyeIcon } from "lucide-react";
+import { EyeClosed, EyeIcon, Loader2 } from "lucide-react";
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Input } from "shared/ui";
@@ -46,6 +46,7 @@ export const SignUp: React.FC<SignUpProps> = ({
   const [showPassword, setShowPassword] = useState(true);
   const [showNewPassword, setShowNewPassword] = useState(true);
   const [formattedPhone, setFormattedPhone] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const formatPhoneNumber = (val: string) => {
     const digits = val.replace(/\D/g, "");
@@ -88,8 +89,9 @@ export const SignUp: React.FC<SignUpProps> = ({
     setFormattedPhone(formatPhoneNumber(digitsOnly));
   };
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const result = signUpSchema.safeParse(formData);
 
     if (!result.success) {
@@ -101,9 +103,13 @@ export const SignUp: React.FC<SignUpProps> = ({
       setErrors(fieldErrors);
       return;
     }
-
     setErrors({});
-    handleSubmit(e);
+    setLoading(true);
+    try {
+      await handleSubmit(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const clearError = (field: keyof typeof formData) => {
@@ -288,14 +294,14 @@ export const SignUp: React.FC<SignUpProps> = ({
       <div className="flex flex-col w-full items-center gap-[24px] self-stretch">
         <button
           type="submit"
-          disabled={!isFormValid()}
+          disabled={!isFormValid() || loading}
           className={
-            isFormValid()
-              ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
-              : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] font-[Nunito] text-[16px] font-semibold cursor-not-allowed"
+            !isFormValid() || loading
+              ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] font-[Nunito] text-[16px] font-semibold cursor-not-allowed"
+              : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
           }
         >
-          Proceed
+          {loading ? <Loader2 size={18} className="animate-spin" /> : "Proceed"}
         </button>
         <p className="text-[14px] font-[Nunito] font-medium">
           Already have an account?{" "}
