@@ -671,7 +671,7 @@ My goal is to ${values.goals}.`;
             <LibraryChatInput
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
-              disabled={isSearching}
+              disabled={isSearching || !folderId || message === ""}
               switchOptions={
                 isDraft
                   ? config.options
