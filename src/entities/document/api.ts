@@ -26,11 +26,8 @@ export class DocumentsService {
   }
 
   static async getDocumentById(id: string): Promise<IDocument | null> {
-    const response = await ApiService.post<IDocumentResponse>(
-      API_ROUTES.DOCUMENTS.DETAILS,
-      {
-        content_id: id,
-      }
+    const response = await ApiService.get<IDocumentResponse>(
+      `${API_ROUTES.DOCUMENTS.DETAILS}/${id}`
     );
     return DocumentsService.serealizeDocument(response) ?? null;
   }
