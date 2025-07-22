@@ -9,9 +9,9 @@ import {
 
 export class ContentService {
   static async getContentEndpoint(id: string): Promise<ContentItemResponse> {
-    return ApiService.post<ContentItemResponse>(API_ROUTES.CONTENT.RETRIEVE, {
-      content_id: id,
-    });
+    return ApiService.get<ContentItemResponse>(
+      `${API_ROUTES.CONTENT.RETRIEVE}/${id}`
+    );
   }
 
   static async duplicateContentById(contentId: string): Promise<any> {
