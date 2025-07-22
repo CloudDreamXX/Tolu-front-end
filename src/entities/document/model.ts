@@ -20,6 +20,7 @@ export interface IDocumentResponse {
   comments: string;
   social_media_shares: string;
   chat_id: string;
+  status: string;
 }
 
 export interface IDocument {
@@ -43,6 +44,7 @@ export interface IDocument {
   comments: string;
   socialMediaShares: string;
   chatId: string;
+  status: string;
 }
 
 export interface SharedClient {

@@ -35,7 +35,7 @@ interface ConversationItemProps {
   setEditedQuery: (query: string) => void;
   setEditedContent: (content: string) => void;
   handleDublicateClick: (id: string) => Promise<void>;
-  handleMarkAsClick: (id: string) => void;
+  handleMarkAsClick: () => void;
   handleDeleteContent: (id: string) => void;
 }
 

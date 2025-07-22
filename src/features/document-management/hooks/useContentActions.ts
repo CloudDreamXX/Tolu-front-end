@@ -5,13 +5,13 @@ import {
   ContentToMove,
   IFolder,
   ISubfolder,
-  IContentItem,
   setFolders,
 } from "entities/folder";
 import { ContentService, ContentToEdit } from "entities/content";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "entities/store";
+import { IDocument } from "entities/document";
 
 export const useContentActions = () => {
   const dispatch = useDispatch();
@@ -46,34 +46,6 @@ export const useContentActions = () => {
 
   const nav = useNavigate();
 
-  const findContentItemByIdInFolder = (
-    currentFolder: IFolder | ISubfolder,
-    contentItemId: string
-  ): IContentItem | null => {
-    for (const contentItem of currentFolder.content) {
-      if (contentItem.id === contentItemId) {
-        return contentItem;
-      }
-
-      if (Array.isArray(contentItem.messages)) {
-        for (const message of contentItem.messages) {
-          if (message.id === contentItemId) {
-            return contentItem;
-          }
-        }
-      }
-    }
-
-    for (const subfolder of currentFolder.subfolders) {
-      const result = findContentItemByIdInFolder(subfolder, contentItemId);
-      if (result) {
-        return result;
-      }
-    }
-
-    return null;
-  };
-
   const onStatusComplete = async (
     status:
       | "Raw"
@@ -98,18 +70,11 @@ export const useContentActions = () => {
     }
   };
 
-  const handleMarkAsClick = (contentId: string, folder: IFolder | null) => {
-    if (!folder) return;
-
-    const status = findContentItemByIdInFolder(folder, contentId)?.status;
-
-    if (status) {
-      setSelectedDocumentId(contentId);
-      setSelectedDocumentStatus(status);
-      setIsMarkAsOpen(true);
-    } else {
-      console.warn("Status not found for content ID:", contentId);
-    }
+  const handleMarkAsClick = (document: IDocument | null) => {
+    if (!document) return;
+    setSelectedDocumentId(document.id);
+    setSelectedDocumentStatus(document.status);
+    setIsMarkAsOpen(true);
   };
 
   const handleRateClick = async (

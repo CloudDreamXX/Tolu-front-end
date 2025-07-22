@@ -143,8 +143,8 @@ export const ContentManagerDocument: React.FC = () => {
     setIsEditing(false);
   };
 
-  const onMarkAsClick = (contentId: string) => {
-    handleMarkAsClick(contentId, folder);
+  const onMarkAsClick = () => {
+    handleMarkAsClick(document);
   };
 
   const onStatusCompleteHandler = async (status: any, contentId?: string) => {

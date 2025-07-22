@@ -26,7 +26,7 @@ interface ConversationItemActionsProps {
   setIsMoveOpen: (open: boolean) => void;
   setIsMarkAsOpen: (open: boolean) => void;
   handleDublicateClick: (id: string) => Promise<void>;
-  handleMarkAsClick: (id: string) => void;
+  handleMarkAsClick: () => void;
   handleDelete: (id: string) => void;
 }
 
@@ -157,7 +157,7 @@ export const ConversationItemActions: React.FC<
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={() => handleMarkAsClick(pair.id)}
+                onClick={() => handleMarkAsClick()}
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
               >
                 <Compare />

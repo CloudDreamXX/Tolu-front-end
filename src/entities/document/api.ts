@@ -21,6 +21,7 @@ export class DocumentsService {
       comments: response.comments,
       socialMediaShares: response.social_media_shares,
       chatId: response.chat_id,
+      status: response.status,
     };
   }
 
