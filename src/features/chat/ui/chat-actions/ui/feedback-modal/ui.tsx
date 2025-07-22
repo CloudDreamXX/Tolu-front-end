@@ -5,6 +5,8 @@ import { X } from "lucide-react";
 import { cn } from "shared/lib/utils";
 import { ContentService, Feedback } from "entities/content";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "entities/store";
 
 interface FeedbackModalProps {
   initialRating: number;
@@ -20,16 +22,21 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   const [rating, setRating] = useState<number>(initialRating);
   const [feedback, setFeedback] = useState<string>("");
   const [contentPreference, setContentPreference] = useState<string>("");
-  const { documentId } = useParams<{ documentId: string }>();
+  const { documentId } = useParams();
+  const chat = useSelector((state: RootState) => state.client.chat);
+  const chatId = chat.length > 0 ? chat[0].id : null;
 
   const handleSave = () => {
-    const feedbackRequest: Feedback = {
-      source_id: documentId || "",
-      satisfaction_score: String(rating),
-      comments: feedback,
-      content_preference: contentPreference,
-    };
-    ContentService.addContentFeedback(feedbackRequest);
+    if (documentId || chatId) {
+      const feedbackRequest: Feedback = {
+        source_id: documentId || chatId || "",
+        satisfaction_score: String(rating),
+        comments: feedback,
+        content_preference: contentPreference,
+      };
+      ContentService.addContentFeedback(feedbackRequest);
+    }
+
     onOpenChange(false);
   };
 

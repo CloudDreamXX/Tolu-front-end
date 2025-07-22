@@ -14,6 +14,7 @@ import {
 } from "entities/health-history/lib";
 import LoadingIcon from "shared/assets/icons/loading-icon";
 import { DocumentLoadingSkeleton } from "./lib";
+import { ContentService, ContentStatus } from "entities/content";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -64,6 +65,16 @@ export const LibraryDocument = () => {
     loadDocument(documentId);
   }, [documentId]);
 
+  const onStatusChange = async (status: string) => {
+    if (documentId) {
+      const newStatus: ContentStatus = {
+        content_id: documentId,
+        status: status,
+      };
+      await ContentService.updateStatus(newStatus);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full gap-6 p-6">
       {isLoadingDocument && (
@@ -75,9 +86,12 @@ export const LibraryDocument = () => {
       <div className="flex flex-row w-full h-full gap-6 xl:h-[calc(100vh-48px)] relative">
         <div className="hidden xl:block">
           <ChatActions
+            initialStatus={document?.readStatus}
+            initialRating={document?.rating}
             onRegenerate={() => {}}
             isSearching={false}
             hasMessages={messages.length >= 2}
+            onStatusChange={onStatusChange}
           />
         </div>
 
@@ -110,9 +124,12 @@ export const LibraryDocument = () => {
 
             <div className="xl:hidden block mt-[16px] mb-[16px]">
               <ChatActions
+                initialStatus={document?.readStatus}
+                initialRating={document?.rating}
                 onRegenerate={() => {}}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
+                onStatusChange={onStatusChange}
               />
             </div>
           </div>

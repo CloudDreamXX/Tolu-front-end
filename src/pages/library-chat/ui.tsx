@@ -31,7 +31,7 @@ import {
 } from "widgets/library-small-chat/lib";
 import { useForm, useWatch } from "react-hook-form";
 import z from "zod";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HealthHistoryService } from "entities/health-history";
 import {
@@ -39,6 +39,8 @@ import {
   FormValues,
 } from "pages/content-manager/create/case-search";
 import { caseBaseSchema } from "pages/content-manager";
+import { setChat } from "entities/client/lib";
+// import { useNavigationHistory } from "./lib";
 
 const steps = [
   "Demographic",
@@ -71,6 +73,7 @@ export const LibraryChat = () => {
   const files = location.state?.files;
 
   const isExistingChat = chatId && !chatId.startsWith("new_chat_");
+  const chat = useSelector((state: RootState) => state.client.chat);
 
   const userPersisted = localStorage.getItem("persist:user");
   let isCoach = false;
@@ -85,7 +88,13 @@ export const LibraryChat = () => {
     }
   }
 
-  const config = isCoach ? SWITCH_CONFIG.coach : SWITCH_CONFIG.default;
+  const { documentId } = useParams();
+
+  const config = isCoach
+    ? SWITCH_CONFIG.coach
+    : documentId
+      ? SWITCH_CONFIG.personalize
+      : SWITCH_CONFIG.default;
   const [selectedSwitch, setSelectedSwitch] = useState<string>(
     config.options[0] as string
   );
@@ -94,6 +103,9 @@ export const LibraryChat = () => {
   const healthHistory = useSelector(
     (state: RootState) => state.healthHistory.data
   );
+  const dispatch = useDispatch();
+  const nav = useNavigate();
+  // const { findPreviousLibraryDocumentPath } = useNavigationHistory();
 
   const caseForm = useForm<FormValues>({
     resolver: zodResolver(caseBaseSchema),
@@ -175,6 +187,8 @@ export const LibraryChat = () => {
 
     try {
       const sessionData = await SearchService.getSession(chatId);
+      const newChat = sessionData.filter((item) => item.chat_id === chatId);
+      dispatch(setChat(newChat));
 
       if (sessionData && sessionData.length > 0) {
         const chatMessages: Message[] = [];
@@ -382,7 +396,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         async (chunk: StreamChunk) => {
           if (!chunk.reply) return;
 
-          if (isSwitch(SWITCH_KEYS.CONTENT)) {
+          if (isSwitch(SWITCH_KEYS.LEARN)) {
             if (chunk.reply.includes("Relevant Content")) {
               str = chunk.reply;
             } else {
@@ -422,7 +436,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           setError(error.message);
           console.error("Search error:", error);
         },
-        isSwitch(SWITCH_KEYS.CONTENT)
+        isSwitch(SWITCH_KEYS.LEARN)
       );
     } catch (error) {
       setIsSearching(false);
@@ -550,6 +564,15 @@ My goal is to ${values.goals}.`;
     await goToStep(stepIndex);
   };
 
+  // const handleClose = () => {
+  //   const prevPath = findPreviousLibraryDocumentPath();
+  //   if (prevPath) {
+  //     navigate(prevPath);
+  //   } else {
+  //     navigate("/library");
+  //   }
+  // };
+
   return (
     <div className="flex flex-col w-full h-screen gap-6 p-6 overflow-y-auto xl:overflow-y-none">
       <ChatBreadcrumb displayChatTitle={displayChatTitle} />
@@ -560,6 +583,7 @@ My goal is to ${values.goals}.`;
             isSearching={isSearching}
             hasMessages={messages.length >= 2}
             isHistoryPopup
+            initialRating={chat.length ? (chat[0].liked ? 5 : 1) : undefined}
           />
         </div>
         {isLoadingSession ? (
@@ -573,11 +597,12 @@ My goal is to ${values.goals}.`;
                 const newChatId = `new_chat_${Date.now()}`;
                 navigate(`/library/${newChatId}`);
               }}
+              onClose={() => nav(-1)}
             />
 
             {isEmpty &&
-            !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
-            !isSwitch(SWITCH_KEYS.CASE) ? (
+              !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
+              !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
                 <div className="max-w-md space-y-4 px-[16px]">
                   <h3 className="text-xl font-semibold text-gray-700">
@@ -685,6 +710,9 @@ My goal is to ${values.goals}.`;
                 isSearching={isSearching}
                 hasMessages={messages.length >= 2}
                 isHistoryPopup
+                initialRating={
+                  chat.length ? (chat[0].liked ? 5 : 1) : undefined
+                }
               />
             </div>
 

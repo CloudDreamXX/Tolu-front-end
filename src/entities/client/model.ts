@@ -34,6 +34,7 @@ export interface ContentItem {
   read_count: number;
   saved_for_later_count: number;
   author_name: string;
+  status: string;
 }
 
 export interface Folder {
@@ -45,6 +46,7 @@ export interface Folder {
   total_content_items: number;
   content: ContentItem[];
   subfolders?: Folder[];
+  reading_percentage: number;
 }
 
 export interface FoldersResponse {

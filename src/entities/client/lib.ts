@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Folder } from "./model";
+import { SearchResultResponseItem } from "entities/search";
 
 export interface IClientState {
   isMobileChatOpen: boolean;
   folderId: string;
+  chat: SearchResultResponseItem[];
   folders: Folder[];
   loading: boolean;
   error: string | null;
@@ -12,6 +14,7 @@ export interface IClientState {
 const initialState: IClientState = {
   isMobileChatOpen: false,
   folderId: "",
+  chat: [],
   folders: [],
   loading: false,
   error: null,
@@ -26,6 +29,9 @@ const clientSlice = createSlice({
     },
     setFolderId(state, action: PayloadAction<string>) {
       state.folderId = action.payload;
+    },
+    setChat(state, action: PayloadAction<SearchResultResponseItem[]>) {
+      state.chat = action.payload;
     },
     setFolders(state, action: PayloadAction<Folder[]>) {
       state.folders = action.payload;
@@ -53,5 +59,6 @@ export const {
   setError,
   clearError,
   setIsMobileChatOpen,
+  setChat,
 } = clientSlice.actions;
 export const clientReducer = clientSlice.reducer;

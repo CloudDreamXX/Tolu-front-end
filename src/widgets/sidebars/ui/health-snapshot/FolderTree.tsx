@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { cn } from "shared/lib";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "entities/store";
-import { setFolderId } from "entities/client/lib";
+import { setChat, setFolderId } from "entities/client/lib";
 
 type WrapperProps = {
   onPopupClose?: () => void;
@@ -58,6 +58,7 @@ const WrapperLibraryFolderTree: React.FC<WrapperProps> = ({ onPopupClose }) => {
   const toggleFolder = (id: string) => {
     const isOpen = openFolders.has(id);
     dispatch(setFolderId(id));
+    dispatch(setChat([]));
     nav("/library");
 
     if (isOpen || !folderHasChildren(id)) {
@@ -109,6 +110,7 @@ const LibraryFolderTree: React.FC<Props> = ({
   const nav = useNavigate();
   const { documentId } = useParams();
   const folderId = useSelector((state: RootState) => state.client.folderId);
+  const dispatch = useDispatch();
 
   return (
     <div className="ml-4">
@@ -145,6 +147,7 @@ const LibraryFolderTree: React.FC<Props> = ({
                       )}
                       onClick={() => {
                         onCloseMobMenu?.();
+                        dispatch(setChat([]));
                         nav(`/library/document/${doc.id}`);
                       }}
                     >

@@ -22,6 +22,8 @@ export class DocumentsService {
       socialMediaShares: response.social_media_shares,
       chatId: response.chat_id,
       status: response.status,
+      readStatus: response.read_status,
+      rating: response.rating,
     };
   }
 

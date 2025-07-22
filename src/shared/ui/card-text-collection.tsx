@@ -145,7 +145,9 @@ export const renderAuthor = (
       )}
     >
       {withText ? (
-        <span className="text-[14px] font-[500] text-[#5F5F65]">Author</span>
+        <span className="text-[14px] font-[500] text-[#5F5F65]">
+          Recommended by
+        </span>
       ) : (
         <Expert />
       )}

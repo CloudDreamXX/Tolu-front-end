@@ -6,17 +6,20 @@ import {
 import { ActionsPopup } from "./ui/actions-popup";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { RenamePopup } from "./ui/rename-popup";
+import Collapse from "shared/assets/icons/collapse";
 
 interface ChatHeaderProps {
   displayChatTitle: string;
   isExistingChat: boolean;
   onNewSearch: () => void;
+  onClose: () => void;
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   displayChatTitle,
   isExistingChat,
   onNewSearch,
+  onClose,
 }) => {
   const [isActionsPopupOpen, setIsActionsPopupOpen] = useState(false);
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
@@ -40,7 +43,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   return (
     <div className="flex flex-col md:flex-row items-center justify-between w-full p-4 bg-white border-b rounded-t-xl">
       <div className="flex items-center gap-3">
-        <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800">
+        <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px]">
+          <button onClick={onClose}>
+            <Collapse />
+          </button>
           {displayChatTitle}
         </div>
         {isExistingChat && (

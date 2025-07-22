@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookMark from "shared/assets/icons/book-mark";
 import BookMarkFilled from "shared/assets/icons/book-mark-filled";
 import {
@@ -13,10 +13,31 @@ import {
   TooltipTrigger,
 } from "shared/ui";
 import LightIcon from "shared/assets/icons/light";
+import { useParams } from "react-router-dom";
+import { DocumentsService } from "entities/document";
 
-const SaveModal: React.FC = () => {
+type Props = {
+  onStatusChange?: (status: string) => void;
+};
+
+const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const { documentId } = useParams();
+  const [status, setStatus] = useState<string>("saved_for_later");
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      if (documentId) {
+        const response = await DocumentsService.getDocumentById(documentId);
+        if (response) {
+          setStatus(response.readStatus);
+        }
+      }
+    };
+
+    fetchContent();
+  }, []);
 
   const handleSkip = () => {
     setIsOpen(false);
@@ -26,13 +47,29 @@ const SaveModal: React.FC = () => {
     setIsBookmarked(!isBookmarked);
   };
 
+  const onDocumentStatusChange = async () => {
+    const isSaved = status === "saved_for_later";
+    onStatusChange && onStatusChange(isSaved ? "read" : "saved_for_later");
+    if (documentId) {
+      const response = await DocumentsService.getDocumentById(documentId);
+      if (response) {
+        setStatus(response.readStatus);
+      }
+    }
+  };
+
   return (
     <>
       <button
         className="bg-[#DDEBF6] rounded-full p-[8px] flex items-center justify-center cursor-pointer"
-        onClick={() => setIsOpen(true)}
+        onClick={
+          documentId && onStatusChange
+            ? onDocumentStatusChange
+            : () => setIsOpen(true)
+        }
       >
-        {isBookmarked ? (
+        {(documentId && onStatusChange && status === "saved_for_later") ||
+        isBookmarked ? (
           <BookMarkFilled width={16} height={16} />
         ) : (
           <BookMark width={16} height={16} />

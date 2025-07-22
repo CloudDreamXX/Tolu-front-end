@@ -29,7 +29,7 @@ export interface ContentToEdit {
 
 export interface ContentStatus {
   content_id: string;
-  status: "read" | "saved_for_later";
+  status: string;
 }
 
 export interface Feedback {

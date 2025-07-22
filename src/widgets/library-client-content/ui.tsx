@@ -33,6 +33,24 @@ export const LibraryClientContent = () => {
 
         const response = await ClientService.getLibraryContent();
         dispatch(setFolders(response.folders));
+
+        const statusMapFromContent: Record<string, ContentStatus> = {};
+        const collectStatuses = (folders: Folder[]) => {
+          folders.forEach((folder) => {
+            folder.content?.forEach((item) => {
+              if (item.status) {
+                statusMapFromContent[item.id] = {
+                  content_id: item.id,
+                  status: item.status,
+                };
+              }
+            });
+            if (folder.subfolders) collectStatuses(folder.subfolders);
+          });
+        };
+
+        collectStatuses(response.folders);
+        setStatusMap(statusMapFromContent);
       } catch (error) {
         console.error("Failed to fetch library content:", error);
       } finally {
@@ -192,18 +210,92 @@ export const LibraryClientContent = () => {
                 <AccordionTrigger className="pt-0">
                   {folder.name}
                 </AccordionTrigger>
+                {folder.reading_percentage > 0 && (
+                  <div className="w-full flex flex-col gap-[8px] mb-[24px]">
+                    <div className="flex justify-end">
+                      <span className="text-[16px] text-[#1B2559] font-[600]">
+                        {folder.reading_percentage}%
+                      </span>
+                    </div>
+                    <div className="h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-[#1C63DB]"
+                        style={{ width: `${folder.reading_percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
                 <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2 w-full">
-                  {Array.isArray(folder.content) &&
-                  folder.content.length > 0 ? (
+                  {Array.isArray(folder.subfolders) &&
+                  folder.subfolders.length > 0 ? (
+                    folder.subfolders.map((item) => (
+                      <Accordion
+                        key={item.id}
+                        type="single"
+                        collapsible
+                        className="w-full mb-4 relative
+            border border-[#008FF6]
+            rounded-[18px]
+            transition-transform duration-200
+            shadow-[0px_4px_4px_rgba(0,0,0,0.25)]
+            group-hover:shadow-[4px_4px_4px_rgba(0,0,0,0.25)]"
+                        defaultValue={`item-${index}`}
+                      >
+                        <AccordionItem
+                          className="text-[16px]"
+                          value={`item-${index}`}
+                        >
+                          <AccordionTrigger className="pt-0">
+                            {item.name}
+                          </AccordionTrigger>
+                          {item.reading_percentage > 0 && (
+                            <div className="w-full flex flex-col gap-[8px] mb-[24px]">
+                              <div className="flex justify-end">
+                                <span className="text-[16px] text-[#1B2559] font-[600]">
+                                  {item.reading_percentage}%
+                                </span>
+                              </div>
+                              <div className="h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-[#1C63DB]"
+                                  style={{
+                                    width: `${item.reading_percentage}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                          <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2 w-full">
+                            {Array.isArray(item.content) &&
+                            item.content.length > 0 ? (
+                              item.content.map((item) => (
+                                <LibraryCard
+                                  id={item.id}
+                                  key={item.id}
+                                  title={item.title}
+                                  author={item.author_name}
+                                  onStatusChange={onStatusChange}
+                                  contentStatus={statusMap[item.id]}
+                                  onDocumentClick={onDocumentClick}
+                                />
+                              ))
+                            ) : (
+                              <div className="text-sm text-muted-foreground">
+                                No content available for this folder.
+                              </div>
+                            )}
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    ))
+                  ) : Array.isArray(folder.content) &&
+                    folder.content.length > 0 ? (
                     folder.content.map((item) => (
                       <LibraryCard
                         id={item.id}
                         key={item.id}
                         title={item.title}
                         author={item.author_name}
-                        type={"Text"}
-                        status={"To read"}
-                        progress={item.read_count}
                         onStatusChange={onStatusChange}
                         contentStatus={statusMap[item.id]}
                         onDocumentClick={onDocumentClick}

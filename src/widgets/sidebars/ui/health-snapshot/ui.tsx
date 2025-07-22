@@ -7,12 +7,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import ChatsCircle from "shared/assets/icons/chats-circle";
 import Library from "shared/assets/icons/library";
 import Dots from "shared/assets/icons/threeDots";
-import { User } from "lucide-react";
+import { ChevronDown, ChevronUp, User } from "lucide-react";
 import SignOutIcon from "shared/assets/icons/signout";
 import { toast } from "shared/lib/hooks/use-toast";
 import { SearchAiSmallInput } from "entities/search";
 import WrapperLibraryFolderTree from "./FolderTree";
-import { setFolderId } from "entities/client/lib";
+import { setChat, setFolderId } from "entities/client/lib";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -86,6 +86,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
             onClick={(e) => {
               e.preventDefault();
               toggleLibrary();
+              dispatch(setChat([]));
               nav("/library");
             }}
             className={({ isActive }) =>
@@ -94,6 +95,11 @@ export const HealthSnapshotSidebar: React.FC = () => {
           >
             <Library />
             {isNarrow ? "" : "Library"}
+            {isLibraryOpen ? (
+              <ChevronUp className="w-5 h-5 shrink-0" />
+            ) : (
+              <ChevronDown className="w-5 h-5 shrink-0" />
+            )}
           </NavLink>
           {isLibraryOpen && <WrapperLibraryFolderTree />}
           <NavLink

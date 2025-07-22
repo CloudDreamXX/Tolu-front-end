@@ -9,7 +9,7 @@ import { Expand, Paperclip, Send, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Tolu from "shared/assets/icons/tolu";
 import {
   Button,
@@ -44,6 +44,7 @@ import {
   PopoverInstruction,
 } from "widgets/content-popovers";
 import { CoachService } from "entities/coach";
+import { ClientService } from "entities/client";
 
 const steps = [
   "Demographic",
@@ -72,7 +73,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
-  const config = isCoach ? SWITCH_CONFIG.coach : SWITCH_CONFIG.default;
+  const { documentId } = useParams();
+  const config = isCoach
+    ? SWITCH_CONFIG.coach
+    : documentId
+      ? SWITCH_CONFIG.personalize
+      : SWITCH_CONFIG.default;
   const [selectedSwitch, setSelectedSwitch] = useState<string>(
     config.options[0] as string
   );
@@ -93,6 +99,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [existingInstruction, setExistingInstruction] = useState<string>("");
   const [instruction, setInstruction] = useState<string>("");
   const loading = useSelector((state: RootState) => state.client.loading);
+  const chat = useSelector((state: RootState) => state.client.chat);
+  const [isLoadingSession, setIsLoadingSession] = useState(false);
 
   const location = useLocation();
   const isCreatePage = location.pathname === "/content-manager/create";
@@ -124,6 +132,16 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const { isValid } = useFormState({ control: caseForm.control });
 
   useEffect(() => {
+    if (
+      chat.length &&
+      !chat[0].chat_id.startsWith("new_chat_") &&
+      !messages.length
+    ) {
+      loadExistingSession(chat[0].chat_id);
+    }
+  }, []);
+
+  useEffect(() => {
     if (isValid) {
       const message = generateCaseStory();
       setMessageState?.(message);
@@ -136,6 +154,66 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       form.reset(defaults);
     }
   }, [healthHistory, form]);
+
+  const loadExistingSession = async (chatId: string) => {
+    setIsLoadingSession(true);
+    setError(null);
+
+    try {
+      const sessionData = await SearchService.getSession(chatId);
+
+      if (sessionData && sessionData.length > 0) {
+        const chatMessages: Message[] = [];
+
+        sessionData.forEach((item) => {
+          if (item.query) {
+            chatMessages.push({
+              id: `user-${item.id}`,
+              type: "user",
+              content: item.query,
+              timestamp: new Date(item.created_at),
+            });
+          }
+
+          if (item.answer) {
+            let content = item.answer;
+            let document = item.answer;
+
+            if (item.answer.includes("Relevant Content")) {
+              const parts = item.answer.split("Relevant Content");
+              content = parts[0].trim();
+              document = item.answer;
+            }
+
+            chatMessages.push({
+              id: `ai-${item.id}`,
+              type: "ai",
+              content,
+              timestamp: new Date(item.created_at),
+              document,
+            });
+          }
+        });
+
+        chatMessages.sort(
+          (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+        );
+
+        setMessages(chatMessages);
+
+        if (sessionData[0]?.chat_title) {
+          setChatTitle(sessionData[0].chat_title);
+        }
+
+        setCurrentChatId(chatId);
+      }
+    } catch (error) {
+      console.error("Error loading chat session:", error);
+      setError("Failed to load chat session");
+    } finally {
+      setIsLoadingSession(false);
+    }
+  };
 
   const handleExpandClick = () => {
     if (isSearching) return;
@@ -249,55 +327,91 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     try {
       if (isCreatePage) {
-        try {
-          await CoachService.aiLearningSearch(
-            {
-              user_prompt: message,
-              is_new: !currentChatId,
-              chat_id: currentChatId,
-              regenerate_id: null,
-              chat_title: "",
-              instructions: instruction,
-            },
-            folderId!,
-            files,
-            clientId,
-            (chunk) => {
-              if (chunk.reply) {
-                if (
-                  isSwitch(SWITCH_KEYS.CONTENT) &&
-                  chunk.reply.includes("Relevant Content")
-                ) {
-                  str = chunk.reply;
-                } else {
-                  accumulatedText += chunk.reply;
-                  setStreamingText(accumulatedText);
-                }
-              }
-            },
-            (finalData) => {
-              setIsSearching(false);
-              const aiMessage: Message = {
-                id: finalData.chatId,
-                type: "ai",
-                content: accumulatedText,
-                timestamp: new Date(),
-                document: str,
-              };
-              setMessages((prev) => [...prev, aiMessage]);
-              setStreamingText("");
-
-              if (finalData.chatId && finalData.chatId !== currentChatId) {
-                setCurrentChatId(finalData.chatId);
-                returnedChatId = finalData.chatId;
+        await CoachService.aiLearningSearch(
+          {
+            user_prompt: message,
+            is_new: !currentChatId,
+            chat_id: currentChatId,
+            regenerate_id: null,
+            chat_title: "",
+            instructions: instruction,
+          },
+          folderId!,
+          files,
+          clientId,
+          (chunk) => {
+            if (chunk.reply) {
+              if (
+                isSwitch(SWITCH_KEYS.LEARN) &&
+                chunk.reply.includes("Relevant Content")
+              ) {
+                str = chunk.reply;
+              } else {
+                accumulatedText += chunk.reply;
+                setStreamingText(accumulatedText);
               }
             }
-          );
-        } catch (err: any) {
-          setIsSearching(false);
-          setError(err.message || "Search failed");
-          console.error("Search error:", err);
-        }
+          },
+          (finalData) => {
+            setIsSearching(false);
+            const aiMessage: Message = {
+              id: finalData.chatId,
+              type: "ai",
+              content: accumulatedText,
+              timestamp: new Date(),
+              document: str,
+            };
+            setMessages((prev) => [...prev, aiMessage]);
+            setStreamingText("");
+
+            if (finalData.chatId && finalData.chatId !== currentChatId) {
+              setCurrentChatId(finalData.chatId);
+              returnedChatId = finalData.chatId;
+            }
+          }
+        );
+      } else if (isSwitch(SWITCH_KEYS.CONTENT) && documentId) {
+        await ClientService.aiPersonalizedSearch(
+          JSON.stringify({
+            user_prompt: message,
+            is_new: !currentChatId,
+            chat_id: currentChatId.startsWith("new_chat_")
+              ? undefined
+              : currentChatId,
+            regenerate_id: null,
+            personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
+          }),
+          documentId,
+          image,
+          pdf,
+          (chunk) => {
+            if (chunk.reply) {
+              accumulatedText += chunk.reply;
+              setStreamingText(accumulatedText);
+            }
+          },
+          (finalData) => {
+            setIsSearching(false);
+            const aiMessage: Message = {
+              id: finalData?.chat_id || Date.now().toString(),
+              type: "ai",
+              content: accumulatedText,
+              timestamp: new Date(),
+            };
+
+            setMessages((prev) => [...prev, aiMessage]);
+            setStreamingText("");
+
+            if (finalData?.chat_id && finalData.chat_id !== currentChatId) {
+              setCurrentChatId(finalData.chat_id);
+              returnedChatId = finalData.chat_id;
+            }
+
+            if (finalData?.chat_title) {
+              setChatTitle(finalData.chat_title);
+            }
+          }
+        );
       } else {
         await SearchService.aiSearchStream(
           {
@@ -312,7 +426,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             ...(pdf && { pdf }),
           },
           async (chunk: StreamChunk) => {
-            if (isSwitch(SWITCH_KEYS.CONTENT) && chunk.reply) {
+            if (isSwitch(SWITCH_KEYS.LEARN) && chunk.reply) {
               if (chunk.reply.includes("Relevant Content")) {
                 str = chunk.reply;
               } else {
@@ -320,7 +434,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 setStreamingText(accumulatedText);
               }
             }
-            if (!isSwitch(SWITCH_KEYS.CONTENT) && chunk.reply) {
+            if (!isSwitch(SWITCH_KEYS.LEARN) && chunk.reply) {
               accumulatedText += chunk.reply;
               setStreamingText(accumulatedText);
             }
@@ -353,7 +467,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             setError(error.message);
             console.error("Search error:", error);
           },
-          isSwitch(SWITCH_KEYS.CONTENT)
+          isSwitch(SWITCH_KEYS.LEARN)
         );
       }
     } catch (error) {
@@ -447,7 +561,7 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading || isLoading ? (
+            {loading || isLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
@@ -512,7 +626,7 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading || isLoading ? (
+            {loading || isLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
@@ -632,7 +746,7 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading || isLoading ? (
+            {loading || isLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
@@ -646,7 +760,7 @@ My goal is to ${values.goals}.`;
             </button>
           </CardHeader>
           <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
-            {loading || isLoading ? (
+            {loading || isLoading || isLoadingSession ? (
               <MessageLoadingSkeleton />
             ) : messages.length ? (
               <MessageList
@@ -671,7 +785,7 @@ My goal is to ${values.goals}.`;
             <LibraryChatInput
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
-              disabled={isSearching || !folderId || message === ""}
+              disabled={isSearching || (isCoach && !folderId) || message === ""}
               switchOptions={
                 isDraft
                   ? config.options
