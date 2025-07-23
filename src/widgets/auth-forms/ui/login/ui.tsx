@@ -1,11 +1,12 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "shared/lib/hooks/use-toast";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { setCredentials, UserService } from "entities/user";
 import { EyeClosed, EyeIcon } from "lucide-react";
 import { Input } from "shared/ui";
+import { ClientService } from "entities/client";
 
 export const LoginForm = () => {
   const loginSchema = z.object({
@@ -19,6 +20,8 @@ export const LoginForm = () => {
   const [passwordError, setPasswordError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isInvitedClient = location.state?.isInvitedClient === true || null;
 
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginError("");
@@ -73,6 +76,38 @@ export const LoginForm = () => {
         variant: "destructive",
         title: "Login failed",
         description: message,
+      });
+    }
+  };
+
+  const handleRequestInvite = async () => {
+    try {
+      if (!formData.email) {
+        toast({
+          variant: "destructive",
+          title: "Missing email",
+          description: "Please enter your email before requesting an invite.",
+        });
+        return;
+      }
+
+      await ClientService.requestNewInvite({
+        email: formData.email,
+      });
+
+      toast({
+        title: "Invite Requested",
+        description: "We've sent your invite request successfully.",
+      });
+    } catch (error: any) {
+      const msg =
+        error?.response?.data?.message ||
+        error.message ||
+        "Failed to send invite request.";
+      toast({
+        variant: "destructive",
+        title: "Request Failed",
+        description: msg,
       });
     }
   };
@@ -135,65 +170,85 @@ export const LoginForm = () => {
               )}
             </div>
 
-            <div className="flex flex-col items-start gap-[4px] w-full">
-              <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
-                Password
-              </label>
-              <div className="flex flex-row-reverse items-center w-full relative">
-                <Input
-                  type={showPassword ? "password" : "text"}
-                  placeholder="Enter Password"
-                  name="password"
-                  onChange={formDataChangeHandler}
-                  className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in ${
-                    passwordError
-                      ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
-                      : "border border-[#DFDFDF] focus:border-[#1C63DB]"
-                  }`}
-                />
-                {formData.password.length > 0 && (
-                  <button
-                    type="button"
-                    className="absolute right-4"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeClosed size={16} />
-                    ) : (
-                      <EyeIcon size={16} />
-                    )}
-                  </button>
+            {!isInvitedClient && (
+              <div className="flex flex-col items-start gap-[4px] w-full">
+                <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+                  Password
+                </label>
+                <div className="flex flex-row-reverse items-center w-full relative">
+                  <Input
+                    type={showPassword ? "password" : "text"}
+                    placeholder="Enter Password"
+                    name="password"
+                    onChange={formDataChangeHandler}
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in ${
+                      passwordError
+                        ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
+                        : "border border-[#DFDFDF] focus:border-[#1C63DB]"
+                    }`}
+                  />
+                  {formData.password.length > 0 && (
+                    <button
+                      type="button"
+                      className="absolute right-4"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeClosed size={16} />
+                      ) : (
+                        <EyeIcon size={16} />
+                      )}
+                    </button>
+                  )}
+                </div>
+                {passwordError && (
+                  <p className="text-[#FF1F0F] font-[Nunito] text-[14px] font-medium px-[4px] pt-[4px]">
+                    {passwordError}
+                  </p>
                 )}
               </div>
-              {passwordError && (
-                <p className="text-[#FF1F0F] font-[Nunito] text-[14px] font-medium px-[4px] pt-[4px]">
-                  {passwordError}
-                </p>
-              )}
-            </div>
+            )}
 
-            <Link
-              to="/forgot-password"
-              className="self-stretch text-[14px] text-[#5F5F65] underline font-[Nunito] hover:text-[#1C63DB]"
-            >
-              Forgot password
-            </Link>
+            {!isInvitedClient && (
+              <Link
+                to="/forgot-password"
+                className="self-stretch text-[14px] text-[#5F5F65] underline font-[Nunito] hover:text-[#1C63DB]"
+              >
+                Forgot password
+              </Link>
+            )}
           </main>
 
           <div className="flex flex-col items-center gap-[24px] w-full mt-auto md:mt-0">
-            <button
-              type="submit"
-              className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
-                formData.email &&
-                formData.password &&
-                !passwordError &&
-                !loginError
-                  ? "bg-[#1C63DB] text-white"
-                  : "bg-[#D5DAE2] text-[#5F5F65]"
-              }`}
-            >
-              Log In
-            </button>
+            <div className="flex flex-col gap-[8px]">
+              {isInvitedClient && (
+                <button
+                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
+                    formData.email && !loginError
+                      ? "bg-[#1C63DB] text-white"
+                      : "bg-[#D5DAE2] text-[#5F5F65]"
+                  }`}
+                  onClick={handleRequestInvite}
+                >
+                  Request invite
+                </button>
+              )}
+              {!isInvitedClient && (
+                <button
+                  type="submit"
+                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
+                    formData.email &&
+                    formData.password &&
+                    !passwordError &&
+                    !loginError
+                      ? "bg-[#1C63DB] text-white"
+                      : "bg-[#D5DAE2] text-[#5F5F65]"
+                  }`}
+                >
+                  Log In
+                </button>
+              )}
+            </div>
             <p className="text-black font-[Nunito] text-[14px] font-medium">
               Don&apos;t have an account yet?{" "}
               <Link to="/register" className="underline text-[#1C63DB]">

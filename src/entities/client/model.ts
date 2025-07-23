@@ -52,3 +52,9 @@ export interface Folder {
 export interface FoldersResponse {
   folders: Folder[];
 }
+
+export interface RequestInvitePayload {
+  email: string;
+  coach_name?: string;
+  message?: string;
+}

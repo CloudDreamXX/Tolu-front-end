@@ -4,6 +4,7 @@ import {
   AcceptInvitePayload,
   AcceptInviteResponse,
   FoldersResponse,
+  RequestInvitePayload,
 } from "./model";
 
 export class ClientService {
@@ -130,5 +131,9 @@ export class ClientService {
       console.error("Error processing AI personalized search:", error);
       throw error;
     }
+  }
+
+  static async requestNewInvite(payload: RequestInvitePayload): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.CLIENT.REQUEST_INVITE, payload);
   }
 }

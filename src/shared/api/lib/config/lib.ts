@@ -19,6 +19,7 @@ export const API_ROUTES = {
     ACCEPT_COACH_INVITE: "/client/accept-coach-invite",
     GET_SHARED_CONTENT_BY_ID: "/client/shared-coach-content/{content_id}",
     GET_LIBRARY_CONTENT: "/client/library",
+    REQUEST_INVITE: "/client/request-new-invite",
   },
   AI: {
     SEARCH: "/ai-search/",

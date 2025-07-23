@@ -87,7 +87,7 @@ export interface ClientDetails {
   tolu_benefit: string;
   collaborative_usage: string;
   created_at?: string;
-  permission_type?: string;
+  permission_type: string;
 }
 
 export interface AIChatMessage {

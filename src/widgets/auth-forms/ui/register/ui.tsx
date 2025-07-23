@@ -40,7 +40,9 @@ export const Register = () => {
           description: "Please check your invite link or request a new one.",
           variant: "destructive",
         });
-        navigate("/auth");
+        navigate("/auth", {
+          state: { isInvitedClient: true },
+        });
       }
     };
 

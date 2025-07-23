@@ -77,6 +77,7 @@ export const ContentManagerClients: React.FC = () => {
     tolu_benefit: "",
     collaborative_usage: "",
     created_at: "",
+    permission_type: "",
   });
   const [newClient, setNewClient] = useState<InviteClientPayload>({
     full_name: "",
@@ -222,6 +223,7 @@ export const ContentManagerClients: React.FC = () => {
       tolu_benefit: "",
       collaborative_usage: "",
       created_at: "",
+      permission_type: "",
     });
     setNewClient({
       full_name: "",
@@ -431,6 +433,28 @@ export const ContentManagerClients: React.FC = () => {
     );
   };
 
+  const handleResendInvite = async (clientId: string) => {
+    try {
+      const currentClientInfo = await CoachService.getClientInfo(
+        clientId,
+        token
+      );
+
+      await handleInviteClient(currentClientInfo.client);
+
+      toast({
+        title: "Invite resent successfully",
+      });
+    } catch (e) {
+      console.error("Failed to resend invite", e);
+      toast({
+        variant: "destructive",
+        title: "Failed to resend invite",
+        description: "Please try again.",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-[16px] md:gap-[24px] p-8 overflow-y-auto h-full">
       <div className="flex flex-col lg:flex-row gap-[16px] justify-between lg:items-end">
@@ -613,10 +637,22 @@ export const ContentManagerClients: React.FC = () => {
                   <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
                     Status
                   </div>
-                  <div className="w-full text-[16px]">
-                    {client.status === "waiting to accept invite"
-                      ? "pending"
-                      : client.status}
+                  <div className="w-full text-[16px] flex items-center justify-center">
+                    {client.status === "waiting to accept invite" ? (
+                      <div className="flex flex-col items-center">
+                        Pending
+                        <button
+                          className="flex items-center justify-center text-[14px] text-[#1C63DB]"
+                          onClick={() => handleResendInvite(client.client_id)}
+                        >
+                          Resend invitation
+                        </button>
+                      </div>
+                    ) : client.status === "active" ? (
+                      "Active"
+                    ) : (
+                      client.status
+                    )}
                   </div>
                 </div>
 
