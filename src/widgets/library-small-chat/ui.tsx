@@ -72,6 +72,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isCreatePage = location.pathname === "/content-manager/create";
 
   const { documentId } = useParams();
   const config = isCoach
@@ -80,7 +82,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       ? SWITCH_CONFIG.personalize
       : SWITCH_CONFIG.default;
   const [selectedSwitch, setSelectedSwitch] = useState<string>(
-    config.options[0] as string
+    isCreatePage ? SWITCH_KEYS.CREATE : (config.options[0] as string)
   );
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
 
@@ -101,9 +103,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const loading = useSelector((state: RootState) => state.client.loading);
   const chat = useSelector((state: RootState) => state.client.chat);
   const [isLoadingSession, setIsLoadingSession] = useState(false);
-
-  const location = useLocation();
-  const isCreatePage = location.pathname === "/content-manager/create";
 
   const caseForm = useForm<FormValues>({
     resolver: zodResolver(caseBaseSchema),
@@ -329,7 +328,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     try {
       if (isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CASE)) {
-        await CoachService.aiLearningSearch(
+        const res = await CoachService.aiLearningSearch(
           {
             user_prompt: message,
             is_new: !currentChatId,
@@ -372,6 +371,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             }
           }
         );
+
+        if (res.documentId) {
+          navigate(
+            `/content-manager/library/folder/${folderId}/document/${res.documentId}`
+          );
+        }
       } else if (isSwitch(SWITCH_KEYS.CONTENT) && documentId) {
         await ClientService.aiPersonalizedSearch(
           JSON.stringify({
@@ -652,20 +657,6 @@ My goal is to ${values.goals}.`;
               <form onSubmit={(e) => e.preventDefault()}>
                 <CaseSearchForm form={caseForm} />
               </form>
-              {!isCreatePage && (
-                <div className="flex justify-end gap-2 mt-6">
-                  <button
-                    type="button"
-                    className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
-                    onClick={async () => {
-                      setSelectedSwitch(config.defaultOption);
-                      await handleNewMessage(generateCaseStory(), []);
-                    }}
-                  >
-                    Continue
-                  </button>
-                </div>
-              )}
             </div>
           </CardContent>
           <CardFooter className="w-full p-0">
@@ -679,64 +670,62 @@ My goal is to ${values.goals}.`;
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
               footer={
-                isCreatePage ? (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-[10px]">
-                      <PopoverAttach
-                        setFiles={setFiles}
-                        existingFiles={existingFiles}
-                        disabled={!folderId}
-                        customTrigger={
-                          <Button
-                            variant="ghost"
-                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
-                          >
-                            <Paperclip size={24} />
-                            {files.length > 0 && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {files.length > 99 ? "99+" : files.length}
-                              </span>
-                            )}
-                          </Button>
-                        }
-                      />
-                      <PopoverClient setClientId={setClientId} />
-                      <PopoverFolder
-                        setFolderId={setFolderId}
-                        setExistingFiles={setExistingFiles}
-                        setExistingInstruction={setExistingInstruction}
-                      />
-                      <PopoverInstruction
-                        customTrigger={
-                          <Button
-                            variant="ghost"
-                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
-                            disabled={!folderId}
-                          >
-                            <Settings />
-                            {instruction?.length > 0 && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
-                          </Button>
-                        }
-                        existingInstruction={existingInstruction}
-                        setInstruction={setInstruction}
-                      />
-                    </div>
-                    <Button
-                      onClick={() => {
-                        setSelectedSwitch(config.defaultOption);
-                        handleNewMessage(message, files);
-                      }}
-                      disabled={isSearching || !folderId || message === ""}
-                      className="w-12 h-12 p-0 bg-[#1D1D1F] rounded-full hover:bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
-                    >
-                      <Send size={28} color="white" />
-                    </Button>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-[10px]">
+                    <PopoverAttach
+                      setFiles={setFiles}
+                      existingFiles={existingFiles}
+                      disabled={!folderId}
+                      customTrigger={
+                        <Button
+                          variant="ghost"
+                          className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                        >
+                          <Paperclip size={24} />
+                          {files.length > 0 && (
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              {files.length > 99 ? "99+" : files.length}
+                            </span>
+                          )}
+                        </Button>
+                      }
+                    />
+                    <PopoverClient setClientId={setClientId} />
+                    <PopoverFolder
+                      setFolderId={setFolderId}
+                      setExistingFiles={setExistingFiles}
+                      setExistingInstruction={setExistingInstruction}
+                    />
+                    <PopoverInstruction
+                      customTrigger={
+                        <Button
+                          variant="ghost"
+                          className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                          disabled={!folderId}
+                        >
+                          <Settings />
+                          {instruction?.length > 0 && (
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
+                        </Button>
+                      }
+                      existingInstruction={existingInstruction}
+                      setInstruction={setInstruction}
+                    />
                   </div>
-                ) : undefined
+                  <Button
+                    onClick={() => {
+                      setSelectedSwitch(config.defaultOption);
+                      handleNewMessage(message, files);
+                    }}
+                    disabled={isSearching || !folderId || message === ""}
+                    className="w-12 h-12 p-0 bg-[#1D1D1F] rounded-full hover:bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                  >
+                    <Send size={28} color="white" />
+                  </Button>
+                </div>
               }
               isLoading={isLoading}
             />
@@ -851,7 +840,6 @@ My goal is to ${values.goals}.`;
                     </div>
                     <Button
                       onClick={() => {
-                        setSelectedSwitch(config.defaultOption);
                         handleNewMessage(message, files);
                       }}
                       disabled={isSearching || !folderId || message === ""}

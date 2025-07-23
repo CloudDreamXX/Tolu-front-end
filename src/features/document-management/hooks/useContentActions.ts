@@ -63,14 +63,18 @@ export const useContentActions = () => {
     };
 
     try {
-      await CoachService.changeStatus(newStatus);
+      const res = await CoachService.changeStatus(newStatus);
       setIsMarkAsOpen(false);
+      nav(
+        `/content-manager/library/folder/${res.content.folder_id}/document/${selectedDocumentId}`
+      );
+      window.location.reload();
     } catch (error) {
       console.error("Error changing status:", error);
     }
   };
 
-  const handleMarkAsClick = (document: IDocument | null) => {
+  const handleMarkAsClick = async (document: IDocument | null) => {
     if (!document) return;
     setSelectedDocumentId(document.id);
     setSelectedDocumentStatus(document.status);
