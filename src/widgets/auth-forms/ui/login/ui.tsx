@@ -99,6 +99,8 @@ export const LoginForm = () => {
         title: "Invite Requested",
         description: "We've sent your invite request successfully.",
       });
+
+      navigate("/verify-email", { state: { isInvitedClient: true } });
     } catch (error: any) {
       const msg =
         error?.response?.data?.message ||

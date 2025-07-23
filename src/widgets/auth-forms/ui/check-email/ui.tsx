@@ -15,6 +15,8 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
   const query = new URLSearchParams(search);
   const token = query.get("token") ?? "";
   const email = query.get("email") ?? "";
+  const location = useLocation();
+  const isInvitedClient = location.state?.isInvitedClient === true || null;
 
   useEffect(() => {
     if (from === "register" && token && email) {
@@ -85,7 +87,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
           </h3>
         </aside>
       </div>
-      {token.length > 0 && email.length > 0 ? (
+      {token.length > 0 && email.length > 0 && !isInvitedClient ? (
         <div className="w-full xl:w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
           <div className="flex flex-col items-end self-stretch justify-end gap-[24px] md:gap-[16px] mt-auto md:mt-0">
             <h1 className="text-center self-stretch text-black font-inter text-[28px] md:text-[40px] font-semibold">
