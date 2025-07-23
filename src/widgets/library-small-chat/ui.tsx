@@ -740,13 +740,15 @@ My goal is to ${values.goals}.`;
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
             )}
-            <button
-              className="hidden xl:block xl:absolute top-4 left-4"
-              onClick={handleExpandClick}
-              title="Expand chat"
-            >
-              <Expand className="w-6 h-6 text-[#5F5F65]" />
-            </button>
+            {!isSwitch(SWITCH_KEYS.CONTENT) && (
+              <button
+                className="hidden xl:block xl:absolute top-4 left-4"
+                onClick={handleExpandClick}
+                title="Expand chat"
+              >
+                <Expand className="w-6 h-6 text-[#5F5F65]" />
+              </button>
+            )}
           </CardHeader>
           <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
             {loading || isLoading || isLoadingSession ? (
