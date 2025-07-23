@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { cloneElement, isValidElement, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "shared/lib";
@@ -49,6 +50,11 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
         >
           {item.icon}
           {!isNarrow && item.title}
+          {open ? (
+            <ChevronUp className="w-5 h-5 shrink-0" />
+          ) : (
+            <ChevronDown className="w-5 h-5 shrink-0" />
+          )}
         </button>
         {open && (
           <div className="pl-6">

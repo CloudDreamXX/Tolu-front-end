@@ -664,9 +664,7 @@ My goal is to ${values.goals}.`;
               className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={isSearching}
-              switchOptions={
-                isDraft ? config.options : config.options.slice(0, -1)
-              }
+              switchOptions={config.options}
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
               footer={
@@ -717,7 +715,7 @@ My goal is to ${values.goals}.`;
                   </div>
                   <Button
                     onClick={() => {
-                      setSelectedSwitch(config.defaultOption);
+                      setSelectedSwitch(SWITCH_KEYS.CREATE);
                       handleNewMessage(message, files);
                     }}
                     disabled={isSearching || !folderId || message === ""}
@@ -781,13 +779,7 @@ My goal is to ${values.goals}.`;
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderId) ||
                 message === ""
               }
-              switchOptions={
-                isDraft
-                  ? config.options
-                  : isCoach
-                    ? config.options.slice(0, -1)
-                    : config.options
-              }
+              switchOptions={config.options}
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={setSelectedSwitch}
               setNewMessage={setMessageState}

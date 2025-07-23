@@ -7,6 +7,7 @@ import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
 import { MenopauseSubmissionRequest, UserService } from "entities/user";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 interface LibraryChatInputProps {
   switchOptions: string[];
@@ -43,6 +44,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const [stepModalOpen, setStepModalOpen] = useState(false);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const loading = useSelector((state: RootState) => state.client.loading);
+  const location = useLocation();
+  const isContentManager = location.pathname.includes("content-manager");
 
   const handleSend = () => {
     if ((!message.trim() && attachedFiles.length === 0) || disabled) return;
@@ -136,9 +139,11 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                 </span>
               )}
             </label>
-            <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
-              Symptoms Tracker
-            </Button>
+            {!isContentManager && (
+              <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
+                Symptoms Tracker
+              </Button>
+            )}
           </div>
           <Button
             onClick={handleSend}
