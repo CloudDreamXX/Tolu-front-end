@@ -24,6 +24,9 @@ export class DocumentsService {
       status: response.status,
       readStatus: response.read_status,
       rating: response.rating,
+      userRating: response.user_rating,
+      userComments: response.user_comments,
+      thumbsDown: response.thumbs_down,
     };
   }
 

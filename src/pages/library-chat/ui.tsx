@@ -40,7 +40,6 @@ import {
 } from "pages/content-manager/create/case-search";
 import { caseBaseSchema } from "pages/content-manager";
 import { setChat } from "entities/client/lib";
-// import { useNavigationHistory } from "./lib";
 
 const steps = [
   "Demographic",
@@ -105,7 +104,6 @@ export const LibraryChat = () => {
   );
   const dispatch = useDispatch();
   const nav = useNavigate();
-  // const { findPreviousLibraryDocumentPath } = useNavigationHistory();
 
   const caseForm = useForm<FormValues>({
     resolver: zodResolver(caseBaseSchema),
@@ -564,15 +562,6 @@ My goal is to ${values.goals}.`;
     await goToStep(stepIndex);
   };
 
-  // const handleClose = () => {
-  //   const prevPath = findPreviousLibraryDocumentPath();
-  //   if (prevPath) {
-  //     navigate(prevPath);
-  //   } else {
-  //     navigate("/library");
-  //   }
-  // };
-
   return (
     <div className="flex flex-col w-full h-screen gap-6 p-6 overflow-y-auto xl:overflow-y-none">
       <ChatBreadcrumb displayChatTitle={displayChatTitle} />
@@ -583,6 +572,7 @@ My goal is to ${values.goals}.`;
             isSearching={isSearching}
             hasMessages={messages.length >= 2}
             isHistoryPopup
+            fromPath={location.state?.from?.pathname ?? null}
             initialRating={chat.length ? (chat[0].liked ? 5 : 1) : undefined}
           />
         </div>
@@ -597,12 +587,21 @@ My goal is to ${values.goals}.`;
                 const newChatId = `new_chat_${Date.now()}`;
                 navigate(`/library/${newChatId}`);
               }}
-              onClose={() => nav(-1)}
+              onClose={() => {
+                const fromPath =
+                  location.state?.from?.pathname ||
+                  location.state?.from ||
+                  null;
+                if (fromPath) {
+                  nav(fromPath);
+                } else {
+                  nav(-1);
+                }
+              }}
             />
-
             {isEmpty &&
-              !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
-              !isSwitch(SWITCH_KEYS.CASE) ? (
+            !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
+            !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
                 <div className="max-w-md space-y-4 px-[16px]">
                   <h3 className="text-xl font-semibold text-gray-700">

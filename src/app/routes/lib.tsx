@@ -132,8 +132,11 @@ export const AppRoutes = () => {
           path="/content-manager/published"
           element={<div>Published</div>}
         />
-        <Route path="*" element={<Navigate to={"/clients"} />} />
-        <Route path="/content-manager" element={<Navigate to={"/clients"} />} />
+        <Route path="*" element={<Navigate to={"/content-manager/create"} />} />
+        <Route
+          path="/content-manager"
+          element={<Navigate to={"/content-manager/create"} />}
+        />
       </Route>
 
       <Route

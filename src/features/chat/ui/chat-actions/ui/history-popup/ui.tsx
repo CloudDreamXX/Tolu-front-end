@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "shared/ui";
 
-export const HistoryPopup: React.FC = () => {
+type Props = {
+  fromPath?: string | null;
+};
+
+export const HistoryPopup: React.FC<Props> = ({ fromPath }) => {
   const nav = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [history, setHistory] = useState<SearchHistoryItem[]>();
@@ -37,6 +41,8 @@ export const HistoryPopup: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const isContentManager = window.location.pathname.includes("content-manager");
 
   return (
     <div ref={historyRef}>
@@ -71,11 +77,15 @@ export const HistoryPopup: React.FC = () => {
                     <Button
                       className="ml-auto rounded-full bg-[#DDEBF6] hover:bg-[#CFE2F3] p-2"
                       onClick={() => {
-                        nav(`/library/${item.chatId}`, {
-                          state: {
-                            isExistingChat: true,
-                          },
-                        });
+                        nav(
+                          `${isContentManager ? "/content-manager/library" : "/library"}/${item.chatId}`,
+                          {
+                            state: {
+                              isExistingChat: true,
+                              from: fromPath,
+                            },
+                          }
+                        );
                       }}
                     >
                       <ArrowRightIcon className="text-[#1C63DB]" size={24} />

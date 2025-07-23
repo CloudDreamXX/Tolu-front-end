@@ -33,6 +33,11 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         satisfaction_score: String(rating),
         comments: feedback,
         content_preference: contentPreference,
+        location: "",
+        feedback_type: "",
+        membership_type: "",
+        severity: "",
+        device: "",
       };
       ContentService.addContentFeedback(feedbackRequest);
     }

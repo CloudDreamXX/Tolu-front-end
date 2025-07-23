@@ -87,7 +87,7 @@ export const LibraryDocument = () => {
         <div className="hidden xl:block">
           <ChatActions
             initialStatus={document?.readStatus}
-            initialRating={document?.rating}
+            initialRating={document?.userRating}
             onRegenerate={() => {}}
             isSearching={false}
             hasMessages={messages.length >= 2}

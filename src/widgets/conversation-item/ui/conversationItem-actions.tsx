@@ -1,7 +1,9 @@
 import { ISessionResult } from "entities/coach";
+import { useDocumentState } from "features/document-management";
 import React from "react";
 import Compare from "shared/assets/icons/compare";
 import Dislike from "shared/assets/icons/dislike";
+import DislikeFilled from "shared/assets/icons/dislike-filled";
 import Dublicate from "shared/assets/icons/dublicate";
 import Arrow from "shared/assets/icons/grey-arrow";
 import Edit from "shared/assets/icons/grey-edit";
@@ -42,6 +44,8 @@ export const ConversationItemActions: React.FC<
   handleDublicateClick,
   setIsDeleteOpen,
 }) => {
+  const { document } = useDocumentState();
+
   return (
     <div className="flex md:flex-col items-start gap-2">
       <div className="relative flex md:flex-col items-center gap-2">
@@ -123,7 +127,11 @@ export const ConversationItemActions: React.FC<
                   setIsBadResponseOpen(true);
                 }}
               >
-                <Dislike className="w-[16px] h-[16px]" />
+                {document?.thumbsDown ? (
+                  <DislikeFilled className="w-[16px] h-[16px]" />
+                ) : (
+                  <Dislike className="w-[16px] h-[16px]" />
+                )}
               </button>
             </TooltipTrigger>
             <TooltipContent

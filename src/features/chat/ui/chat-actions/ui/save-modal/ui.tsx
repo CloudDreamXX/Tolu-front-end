@@ -49,7 +49,9 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
 
   const onDocumentStatusChange = async () => {
     const isSaved = status === "saved_for_later";
-    onStatusChange && onStatusChange(isSaved ? "read" : "saved_for_later");
+    if (onStatusChange) {
+      onStatusChange(isSaved ? "read" : "saved_for_later");
+    }
     if (documentId) {
       const response = await DocumentsService.getDocumentById(documentId);
       if (response) {

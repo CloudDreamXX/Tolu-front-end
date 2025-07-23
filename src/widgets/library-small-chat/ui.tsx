@@ -218,12 +218,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const handleExpandClick = () => {
     if (isSearching) return;
 
-    if (currentChatId) {
-      navigate(`${isCoach ? "/content-manager" : ""}/library/${currentChatId}`);
-    } else {
-      const newChatId = `new_chat_${Date.now()}`;
-      navigate(`${isCoach ? "/content-manager" : ""}/library/${newChatId}`);
-    }
+    const basePath = isCoach ? "/content-manager" : "";
+    const chatId = currentChatId || `new_chat_${Date.now()}`;
+
+    navigate(`${basePath}/library/${chatId}`, {
+      state: {
+        from: location,
+      },
+    });
   };
 
   const MessageLoadingSkeleton = () => {
@@ -326,7 +328,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     let str = "";
 
     try {
-      if (isCreatePage) {
+      if (isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CASE)) {
         await CoachService.aiLearningSearch(
           {
             user_prompt: message,
@@ -785,7 +787,11 @@ My goal is to ${values.goals}.`;
             <LibraryChatInput
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
-              disabled={isSearching || (isCoach && !folderId) || message === ""}
+              disabled={
+                isSearching ||
+                (isSwitch(SWITCH_KEYS.CREATE) && !folderId) ||
+                message === ""
+              }
               switchOptions={
                 isDraft
                   ? config.options
@@ -797,7 +803,7 @@ My goal is to ${values.goals}.`;
               setSelectedSwitch={setSelectedSwitch}
               setNewMessage={setMessageState}
               footer={
-                isCreatePage ? (
+                isSwitch(SWITCH_KEYS.CREATE) ? (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
                       <PopoverAttach

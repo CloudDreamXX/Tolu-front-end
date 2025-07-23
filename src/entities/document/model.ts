@@ -23,6 +23,9 @@ export interface IDocumentResponse {
   status: string;
   read_status: string;
   rating: number;
+  user_rating: number;
+  user_comments: string;
+  thumbs_down: boolean;
 }
 
 export interface IDocument {
@@ -48,7 +51,10 @@ export interface IDocument {
   chatId: string;
   status: string;
   readStatus: string;
+  thumbsDown: boolean;
   rating: number;
+  userRating: number;
+  userComments: string;
 }
 
 export interface SharedClient {

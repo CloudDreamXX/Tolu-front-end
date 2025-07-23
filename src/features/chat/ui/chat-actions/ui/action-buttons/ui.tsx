@@ -3,7 +3,7 @@ import {
   StarIcon,
   ThumbsDownIcon,
 } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FeedbackModal } from "../feedback-modal";
 import { HistoryPopup } from "../history-popup";
 import Share from "shared/assets/icons/share";
@@ -18,6 +18,7 @@ interface ChatActionsProps {
   onStatusChange?: (status: string) => void;
   initialRating?: number;
   initialStatus?: string;
+  fromPath?: string | null;
 }
 
 export const ChatActions: React.FC<ChatActionsProps> = ({
@@ -25,23 +26,30 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   onStatusChange,
   initialRating,
   initialStatus,
+  fromPath,
 }) => {
   const [thumbsUpModalOpen, setThumbsUpModalOpen] = useState(false);
   const [thumbsDownModalOpen, setThumbsDownModalOpen] = useState(false);
   const [rating, setRating] = useState<number | undefined>(initialRating);
   const [readStatus, setReadStatus] = useState<string>(initialStatus || "");
 
+  useEffect(() => {
+    if (initialRating !== undefined) {
+      setRating(initialRating);
+    }
+  }, [initialRating]);
+
   return (
     <div className="flex flex-row gap-2 xl:flex-col xl:justify-between w-full h-full">
       {isHistoryPopup && (
         <div className="xl:hidden block">
-          <HistoryPopup />
+          <HistoryPopup fromPath={fromPath} />
         </div>
       )}
       <div>
         {isHistoryPopup && (
           <div className="hidden xl:block">
-            <HistoryPopup />
+            <HistoryPopup fromPath={fromPath} />
           </div>
         )}
         <SaveModal onStatusChange={onStatusChange} />

@@ -40,7 +40,7 @@ export const ContentManagerCreatePage: React.FC = () => {
         </div>
       </div>
       <div className="w-full h-full">
-        <LibrarySmallChat isCoach />
+        <LibrarySmallChat isCoach isDraft />
       </div>
     </div>
   );

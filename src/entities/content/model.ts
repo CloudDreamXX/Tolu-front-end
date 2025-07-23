@@ -37,6 +37,11 @@ export interface Feedback {
   satisfaction_score: string;
   comments: string;
   content_preference: string;
+  location: string;
+  feedback_type: string;
+  membership_type: string;
+  severity: string;
+  device: string;
 }
 
 export interface FeedbackResponse {
