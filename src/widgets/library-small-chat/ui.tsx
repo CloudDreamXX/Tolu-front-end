@@ -45,6 +45,7 @@ import {
 } from "widgets/content-popovers";
 import { CoachService } from "entities/coach";
 import { ClientService } from "entities/client";
+import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 
 const steps = [
   "Demographic",
@@ -289,7 +290,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       try {
         const formValues = form.getValues();
         const postData = mapFormToPostData(formValues);
-
         await HealthHistoryService.createHealthHistory(postData);
       } catch (error) {
         console.error("Failed to save health history:", error);
@@ -322,7 +322,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       return;
     }
 
-    let accumulatedText = "";
+    const replyChunks: string[] = [];
     let returnedChatId = currentChatId;
     let str = "";
 
@@ -348,20 +348,22 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               ) {
                 str = chunk.reply;
               } else {
-                accumulatedText += chunk.reply;
-                setStreamingText(accumulatedText);
+                replyChunks.push(chunk.reply);
+                setStreamingText(joinReplyChunksSafely(replyChunks));
               }
             }
           },
           (finalData) => {
             setIsSearching(false);
+
             const aiMessage: Message = {
               id: finalData.chatId,
               type: "ai",
-              content: accumulatedText,
+              content: joinReplyChunksSafely(replyChunks),
               timestamp: new Date(),
               document: str,
             };
+
             setMessages((prev) => [...prev, aiMessage]);
             setStreamingText("");
 
@@ -393,16 +395,17 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           pdf,
           (chunk) => {
             if (chunk.reply) {
-              accumulatedText += chunk.reply;
-              setStreamingText(accumulatedText);
+              replyChunks.push(chunk.reply);
+              setStreamingText(joinReplyChunksSafely(replyChunks));
             }
           },
           (finalData) => {
             setIsSearching(false);
+
             const aiMessage: Message = {
               id: finalData?.chat_id || Date.now().toString(),
               type: "ai",
-              content: accumulatedText,
+              content: joinReplyChunksSafely(replyChunks),
               timestamp: new Date(),
             };
 
@@ -433,17 +436,16 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             ...(pdf && { pdf }),
           },
           async (chunk: StreamChunk) => {
-            if (isSwitch(SWITCH_KEYS.LEARN) && chunk.reply) {
-              if (chunk.reply.includes("Relevant Content")) {
+            if (chunk.reply) {
+              if (
+                isSwitch(SWITCH_KEYS.LEARN) &&
+                chunk.reply.includes("Relevant Content")
+              ) {
                 str = chunk.reply;
               } else {
-                accumulatedText += chunk.reply;
-                setStreamingText(accumulatedText);
+                replyChunks.push(chunk.reply);
+                setStreamingText(joinReplyChunksSafely(replyChunks));
               }
-            }
-            if (!isSwitch(SWITCH_KEYS.LEARN) && chunk.reply) {
-              accumulatedText += chunk.reply;
-              setStreamingText(accumulatedText);
             }
           },
           async (finalData) => {
@@ -452,7 +454,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             const aiMessage: Message = {
               id: finalData.chat_id || Date.now().toString(),
               type: "ai",
-              content: accumulatedText,
+              content: joinReplyChunksSafely(replyChunks),
               timestamp: new Date(),
               document: str,
             };

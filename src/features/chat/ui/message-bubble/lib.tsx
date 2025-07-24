@@ -1,76 +1,79 @@
 import parse from "html-react-parser";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 
 export const smartRender = async (text: string) => {
   const type = detectContentType(text);
 
   if (type === "html") {
-    return <div className="font-inter">{parse(cleanHtml(text))}</div>;
+    return (
+      <div className="font-inter bg-[#ECEFF4]">{parse(cleanHtml(text))}</div>
+    );
   }
 
   if (type === "markdown") {
+    const cleaned = cleanMarkdown(text);
+
     return (
-      <div className="font-inter" style={{ fontFamily: "Inter, sans-serif" }}>
-        <ReactMarkdown>{text}</ReactMarkdown>
+      <div className="font-inter bg-[#ECEFF4] p-4">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm, remarkBreaks]}
+          components={{
+            body: (props) => (
+              <body className="font-inter bg-[#ECEFF4]" {...props} />
+            ),
+            h1: (props) => <h1 className="font-inter" {...props} />,
+            h2: (props) => <h1 className="font-inter" {...props} />,
+            h3: (props) => <h1 className="font-inter" {...props} />,
+            h4: (props) => <h1 className="font-inter" {...props} />,
+            p: (props) => <p className="font-inter" {...props} />,
+            ul: (props) => <ul className="font-inter" {...props} />,
+            li: (props) => <li className="font-inter" {...props} />,
+          }}
+        >
+          {cleaned}
+        </ReactMarkdown>
       </div>
     );
   }
 
   return (
-    <div className="font-inter" style={{ fontFamily: "Inter, sans-serif" }}>
+    <div
+      className="font-inter bg-[#ECEFF4]"
+      style={{ fontFamily: "Inter, sans-serif" }}
+    >
       {text}
     </div>
   );
 };
 
-// export const smartRender = async (text: string) => {
-//   const type = detectContentType(text);
+export const joinReplyChunksSafely = (chunks: string[]): string => {
+  return chunks.reduce((acc, curr) => {
+    if (!acc) return curr;
 
-//   if (type === "html") {
-//     return (
-//       <div style={{ fontFamily: "'Inter', sans-serif" }}>
-//         {parse(cleanHtml(text))}
-//       </div>
-//     );
-//   }
+    const prevLastChar = acc.slice(-1);
+    const currFirstChar = curr.slice(0, 1);
 
-//   if (type === "markdown") {
-//     return (
-//       <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "#ECEFF4" }}>
-//         <ReactMarkdown
-//           remarkPlugins={[remarkGfm, remarkBreaks]}
-//           components={{
-//             p: ({ node, children, ...props }) => (
-//               <p style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "#ECEFF4" }} {...props}>
-//                 {children}
-//               </p>
-//             ),
-//             a: ({ node, children, ...props }) => (
-//               <a style={{ fontFamily: "'Inter', sans-serif'", color: "#2563eb" }} {...props}>
-//                 {children}
-//               </a>
-//             ),
-//             strong: ({ node, children, ...props }) => (
-//               <strong style={{ fontFamily: "'Inter', sans-serif" }} {...props}>
-//                 {children}
-//               </strong>
-//             ),
-//             li: ({ node, children, ...props }) => (
-//               <li style={{ fontFamily: "'Inter', sans-serif" }} {...props}>
-//                 {children}
-//               </li>
-//             ),
-//           }}
-//         >
-//           {text}
-//         </ReactMarkdown>
-//       </div>
-//     );
-//   }
+    const needsSpace =
+      (/\w/.test(prevLastChar) && /\w/.test(currFirstChar)) ||
+      (/[.,!?;:)]/.test(prevLastChar) && /[A-Za-z]/.test(currFirstChar));
 
-//   return <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "#ECEFF4" }}>{text}</div>;
-// };
+    if (needsSpace) {
+      return acc + " " + curr;
+    }
+
+    return acc + curr;
+  }, "");
+};
+
+const cleanMarkdown = (raw: string): string => {
+  return raw
+    .replace(/<\/?html.*?>/gi, "")
+    .replace(/<\/?body.*?>/gi, "")
+    .trim();
+};
 
 const detectContentType = (text: string): "html" | "markdown" | "plain" => {
   const trimmed = text.trim();
@@ -95,8 +98,13 @@ const detectContentType = (text: string): "html" | "markdown" | "plain" => {
 const cleanHtml = (raw: string): string => {
   if (!raw) return "";
 
-  const startIndex = raw.search(/<\s*[\w!]/);
-  const trimmedStart = startIndex >= 0 ? raw.slice(startIndex) : raw;
+  const noHtmlBody = raw
+    .replace(/<\/?html.*?>/gi, "")
+    .replace(/<\/?body.*?>/gi, "");
+
+  const startIndex = noHtmlBody.search(/<\s*[\w!]/);
+  const trimmedStart =
+    startIndex >= 0 ? noHtmlBody.slice(startIndex) : noHtmlBody;
 
   const lastTagClose = trimmedStart.lastIndexOf(">");
   const trimmedEnd =
@@ -124,10 +132,7 @@ export const renderResultBlocks = (rawContent: string) => {
     const created = createdMatch?.[1];
 
     return (
-      <div
-        className="!font-inter"
-        style={{ fontFamily: "'Inter', sans-serif" }}
-      >
+      <div style={{ fontFamily: "'Inter', sans-serif" }}>
         <div
           key={index}
           className="p-4 my-3 bg-white border rounded-md shadow-sm h-[140px] flex flex-col justify-between"
@@ -140,7 +145,7 @@ export const renderResultBlocks = (rawContent: string) => {
             nav(``);
           }}
         >
-          <p className="mb-1 font-bold cursor-pointer hover:underline line-clamp-3">
+          <p className="mb-1 font-bold font-inter cursor-pointer hover:underline line-clamp-3">
             {heading}
           </p>
           <p className="mb-2 text-sm text-gray-500 font-inter">{folder}</p>

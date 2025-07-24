@@ -1,7 +1,8 @@
-import { ArrowRightIcon, BooksIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { SearchHistoryItem, SearchService } from "entities/search";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import History from "shared/assets/icons/history";
 import { Button } from "shared/ui";
 
 type Props = {
@@ -48,9 +49,9 @@ export const HistoryPopup: React.FC<Props> = ({ fromPath }) => {
     <div ref={historyRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="bg-[#DDEBF6] rounded-full h-8 w-8"
+        className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center mb-[8px]"
       >
-        <BooksIcon weight="regular" className="w-4 h-4 m-auto text-blue-600" />
+        <History />
       </button>
       {isOpen && (
         <div
