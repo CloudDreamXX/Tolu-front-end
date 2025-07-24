@@ -381,7 +381,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         {
           chat_message: JSON.stringify({
             user_prompt: message,
-            is_new: !currentChatId,
+            is_new: currentChatId.startsWith("new_chat_") ? true : false,
             chat_id: currentChatId.startsWith("new_chat_")
               ? undefined
               : currentChatId,
@@ -423,6 +423,14 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           if (finalData.chat_id && finalData.chat_id !== currentChatId) {
             setCurrentChatId(finalData.chat_id);
             returnedChatId = finalData.chat_id;
+          }
+
+          if (
+            finalData.chat_id &&
+            finalData.chat_id !== currentChatId &&
+            currentChatId.startsWith("new_chat_")
+          ) {
+            navigate(`/library/${finalData.chat_id}`, { replace: true });
           }
 
           if (finalData.chat_title) {
@@ -585,7 +593,23 @@ My goal is to ${values.goals}.`;
               isExistingChat={!!isExistingChat}
               onNewSearch={() => {
                 const newChatId = `new_chat_${Date.now()}`;
-                navigate(`/library/${newChatId}`);
+
+                setCurrentChatId(newChatId);
+                setMessages([]);
+                setStreamingText("");
+                setChatTitle("");
+                setError(null);
+                initialSearchDone.current = false;
+                sessionLoadDone.current = false;
+
+                navigate(`/library/${newChatId}`, {
+                  replace: true,
+                  state: {
+                    message: "",
+                    isNewSearch: true,
+                    searchType: searchType ?? undefined,
+                  },
+                });
               }}
               onClose={() => {
                 const fromPath =

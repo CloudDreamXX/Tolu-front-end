@@ -6,15 +6,71 @@ export const smartRender = async (text: string) => {
   const type = detectContentType(text);
 
   if (type === "html") {
-    return parse(cleanHtml(text));
+    return <div className="font-inter">{parse(cleanHtml(text))}</div>;
   }
 
   if (type === "markdown") {
-    return <ReactMarkdown>{text}</ReactMarkdown>;
+    return (
+      <div className="font-inter" style={{ fontFamily: "Inter, sans-serif" }}>
+        <ReactMarkdown>{text}</ReactMarkdown>
+      </div>
+    );
   }
 
-  return <div>{text}</div>;
+  return (
+    <div className="font-inter" style={{ fontFamily: "Inter, sans-serif" }}>
+      {text}
+    </div>
+  );
 };
+
+// export const smartRender = async (text: string) => {
+//   const type = detectContentType(text);
+
+//   if (type === "html") {
+//     return (
+//       <div style={{ fontFamily: "'Inter', sans-serif" }}>
+//         {parse(cleanHtml(text))}
+//       </div>
+//     );
+//   }
+
+//   if (type === "markdown") {
+//     return (
+//       <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "#ECEFF4" }}>
+//         <ReactMarkdown
+//           remarkPlugins={[remarkGfm, remarkBreaks]}
+//           components={{
+//             p: ({ node, children, ...props }) => (
+//               <p style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "#ECEFF4" }} {...props}>
+//                 {children}
+//               </p>
+//             ),
+//             a: ({ node, children, ...props }) => (
+//               <a style={{ fontFamily: "'Inter', sans-serif'", color: "#2563eb" }} {...props}>
+//                 {children}
+//               </a>
+//             ),
+//             strong: ({ node, children, ...props }) => (
+//               <strong style={{ fontFamily: "'Inter', sans-serif" }} {...props}>
+//                 {children}
+//               </strong>
+//             ),
+//             li: ({ node, children, ...props }) => (
+//               <li style={{ fontFamily: "'Inter', sans-serif" }} {...props}>
+//                 {children}
+//               </li>
+//             ),
+//           }}
+//         >
+//           {text}
+//         </ReactMarkdown>
+//       </div>
+//     );
+//   }
+
+//   return <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "#ECEFF4" }}>{text}</div>;
+// };
 
 const detectContentType = (text: string): "html" | "markdown" | "plain" => {
   const trimmed = text.trim();
@@ -69,22 +125,27 @@ export const renderResultBlocks = (rawContent: string) => {
 
     return (
       <div
-        key={index}
-        className="p-4 my-3 bg-white border rounded-md shadow-sm h-[140px] flex flex-col justify-between"
-        onClick={() => {
-          window.open(
-            `/library/document/${id}`,
-            "_blank",
-            "noopener,noreferrer"
-          );
-          nav(``);
-        }}
+        className="!font-inter"
+        style={{ fontFamily: "'Inter', sans-serif" }}
       >
-        <p className="mb-1 font-bold cursor-pointer hover:underline line-clamp-3">
-          {heading}
-        </p>
-        <p className="mb-2 text-sm text-gray-500">{folder}</p>
-        <div className="text-sm line-clamp-2">{created}</div>
+        <div
+          key={index}
+          className="p-4 my-3 bg-white border rounded-md shadow-sm h-[140px] flex flex-col justify-between"
+          onClick={() => {
+            window.open(
+              `/library/document/${id}`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+            nav(``);
+          }}
+        >
+          <p className="mb-1 font-bold cursor-pointer hover:underline line-clamp-3">
+            {heading}
+          </p>
+          <p className="mb-2 text-sm text-gray-500 font-inter">{folder}</p>
+          <div className="text-sm line-clamp-2 font-inter">{created}</div>
+        </div>
       </div>
     );
   });
