@@ -40,6 +40,7 @@ import {
 } from "pages/content-manager/create/case-search";
 import { caseBaseSchema } from "pages/content-manager";
 import { setChat } from "entities/client/lib";
+import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 
 const steps = [
   "Demographic",
@@ -151,10 +152,17 @@ export const LibraryChat = () => {
         if (isExistingChat && location.state?.isNewSearch) {
           const newChatId = `new_chat_${Date.now()}`;
           setCurrentChatId(newChatId);
-          navigate(`/library/${newChatId}`, {
-            replace: true,
-            state: { message: initialMessage, searchType },
-          });
+          if (isCoach) {
+            navigate(`/content-manager/library/${newChatId}`, {
+              replace: true,
+              state: { message: initialMessage, searchType },
+            });
+          } else {
+            navigate(`/library/${newChatId}`, {
+              replace: true,
+              state: { message: initialMessage, searchType },
+            });
+          }
           return;
         }
 
@@ -284,7 +292,13 @@ export const LibraryChat = () => {
             setCurrentChatId(finalData.chat_id);
 
             if (currentChatId.startsWith("new_chat_")) {
-              navigate(`/library/${finalData.chat_id}`, { replace: true });
+              if (isCoach) {
+                navigate(`/content-manager/library/${finalData.chat_id}`, {
+                  replace: true,
+                });
+              } else {
+                navigate(`/library/${finalData.chat_id}`, { replace: true });
+              }
             }
           }
 
@@ -375,6 +389,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     let accumulatedText = "";
     let returnedChatId = currentChatId;
     let str = "";
+    const replyChunks: string[] = [];
 
     try {
       await SearchService.aiSearchStream(
@@ -398,8 +413,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             if (chunk.reply.includes("Relevant Content")) {
               str = chunk.reply;
             } else {
-              accumulatedText += chunk.reply;
-              setStreamingText(accumulatedText);
+              replyChunks.push(chunk.reply);
+              const joined = joinReplyChunksSafely(replyChunks);
+              setStreamingText(joined);
             }
           } else {
             accumulatedText += chunk.reply;
@@ -412,7 +428,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           const aiMessage: Message = {
             id: finalData.chat_id || Date.now().toString(),
             type: "ai",
-            content: accumulatedText,
+            content: isSwitch(SWITCH_KEYS.LEARN)
+              ? joinReplyChunksSafely(replyChunks) // Use joined chunks for LEARN switch
+              : accumulatedText,
             timestamp: new Date(),
             document: str,
           };
@@ -423,14 +441,6 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           if (finalData.chat_id && finalData.chat_id !== currentChatId) {
             setCurrentChatId(finalData.chat_id);
             returnedChatId = finalData.chat_id;
-          }
-
-          if (
-            finalData.chat_id &&
-            finalData.chat_id !== currentChatId &&
-            currentChatId.startsWith("new_chat_")
-          ) {
-            navigate(`/library/${finalData.chat_id}`, { replace: true });
           }
 
           if (finalData.chat_title) {
@@ -570,6 +580,32 @@ My goal is to ${values.goals}.`;
     await goToStep(stepIndex);
   };
 
+  const handleNewChatOpen = () => {
+    const newChatId = `new_chat_${Date.now()}`;
+
+    setCurrentChatId(newChatId);
+    setMessages([]);
+    setStreamingText("");
+    setChatTitle("");
+    setError(null);
+    initialSearchDone.current = false;
+    sessionLoadDone.current = false;
+
+    navigate(
+      isCoach
+        ? `/content-manager/library/${newChatId}`
+        : `/library/${newChatId}`,
+      {
+        replace: true,
+        state: {
+          message: "",
+          isNewSearch: true,
+          searchType: searchType ?? undefined,
+        },
+      }
+    );
+  };
+
   return (
     <div className="flex flex-col w-full h-screen gap-6 p-6 overflow-y-auto xl:overflow-y-none">
       <ChatBreadcrumb displayChatTitle={displayChatTitle} />
@@ -591,26 +627,7 @@ My goal is to ${values.goals}.`;
             <ChatHeader
               displayChatTitle={displayChatTitle}
               isExistingChat={!!isExistingChat}
-              onNewSearch={() => {
-                const newChatId = `new_chat_${Date.now()}`;
-
-                setCurrentChatId(newChatId);
-                setMessages([]);
-                setStreamingText("");
-                setChatTitle("");
-                setError(null);
-                initialSearchDone.current = false;
-                sessionLoadDone.current = false;
-
-                navigate(`/library/${newChatId}`, {
-                  replace: true,
-                  state: {
-                    message: "",
-                    isNewSearch: true,
-                    searchType: searchType ?? undefined,
-                  },
-                });
-              }}
+              onNewSearch={handleNewChatOpen}
               onClose={() => {
                 const fromPath =
                   location.state?.from?.pathname ||
@@ -747,7 +764,10 @@ My goal is to ${values.goals}.`;
                 isCoach ? config.options.slice(0, -1) : config.options
               }
               selectedSwitch={selectedSwitch}
-              setSelectedSwitch={setSelectedSwitch}
+              setSelectedSwitch={(value) => {
+                handleNewChatOpen();
+                setSelectedSwitch(value);
+              }}
             />
           </div>
         )}

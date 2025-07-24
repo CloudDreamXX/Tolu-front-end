@@ -1,15 +1,62 @@
-import parse from "html-react-parser";
+import parse, {
+  domToReact,
+  Element as HtmlParserElement,
+  HTMLReactParserOptions,
+  DOMNode,
+} from "html-react-parser";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import React from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui";
 
 export const smartRender = async (text: string) => {
   const type = detectContentType(text);
 
   if (type === "html") {
+    const options: HTMLReactParserOptions = {
+      replace: (domNode: DOMNode) => {
+        if (
+          domNode.type === "tag" &&
+          [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "p",
+            "ul",
+            "ol",
+            "li",
+            "a",
+          ].includes(domNode.name)
+        ) {
+          const el = domNode as HtmlParserElement;
+          const props = {
+            ...el.attribs,
+            className: [el.attribs?.class, "font-inter"]
+              .filter(Boolean)
+              .join(" "),
+          };
+
+          return React.createElement(
+            el.name,
+            props,
+            domToReact(el.children as DOMNode[], options)
+          );
+        }
+      },
+    };
+
     return (
-      <div className="font-inter bg-[#ECEFF4]">{parse(cleanHtml(text))}</div>
+      <div className="bg-[#ECEFF4]">{parse(cleanHtml(text), options)}</div>
     );
   }
 
@@ -132,10 +179,9 @@ export const renderResultBlocks = (rawContent: string) => {
     const created = createdMatch?.[1];
 
     return (
-      <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div style={{ fontFamily: "'Inter', sans-serif" }} key={index}>
         <div
-          key={index}
-          className="p-4 my-3 bg-white border rounded-md shadow-sm h-[140px] flex flex-col justify-between"
+          className="p-4 my-3 bg-white border rounded-md shadow-sm min-h-[160px] flex flex-col justify-between cursor-pointer h-full"
           onClick={() => {
             window.open(
               `/library/document/${id}`,
@@ -145,11 +191,26 @@ export const renderResultBlocks = (rawContent: string) => {
             nav(``);
           }}
         >
-          <p className="mb-1 font-bold font-inter cursor-pointer hover:underline line-clamp-3">
-            {heading}
-          </p>
-          <p className="mb-2 text-sm text-gray-500 font-inter">{folder}</p>
-          <div className="text-sm line-clamp-2 font-inter">{created}</div>
+          <TooltipProvider delayDuration={500} disableHoverableContent>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="font-bold font-inter text-base line-clamp-3 hover:underline mb-2">
+                  {heading}
+                </p>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className="z-50 p-[16px] max-w-[309px]"
+              >
+                <div className="text-[#1B2559] text-sm leading-[1.4] font-medium">
+                  {heading}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <p className="mb-1 text-sm text-gray-500 font-inter">{folder}</p>
+          <div className="text-sm text-gray-400 font-inter">{created}</div>
         </div>
       </div>
     );
@@ -166,7 +227,7 @@ const extractAndCleanPreview = (
     const parser = new DOMParser();
     const doc = parser.parseFromString(previewHtml, "text/html");
 
-    const headingElement = doc.querySelector("h1, h2, h3, h4, h5, h6");
+    const headingElement = doc.querySelector("h1, h2, h3, h4, h5, h6, p");
     const heading = headingElement?.textContent?.trim() || null;
 
     if (headingElement?.parentNode) {

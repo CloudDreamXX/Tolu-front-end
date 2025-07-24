@@ -322,11 +322,58 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       return;
     }
 
+    let accumulatedText = "";
     const replyChunks: string[] = [];
     let returnedChatId = currentChatId;
     let str = "";
 
     try {
+      const isLearn = isSwitch(SWITCH_KEYS.LEARN);
+
+      const processChunk = (chunk: StreamChunk) => {
+        if (!chunk.reply) return;
+
+        if (isLearn && chunk.reply.includes("Relevant Content")) {
+          str = chunk.reply;
+          return;
+        }
+
+        if (isLearn) {
+          replyChunks.push(chunk.reply);
+          const joined = joinReplyChunksSafely(replyChunks);
+          setStreamingText(joined);
+        } else {
+          accumulatedText += chunk.reply;
+          setStreamingText(accumulatedText);
+        }
+      };
+
+      const processFinal = (finalData: any) => {
+        setIsSearching(false);
+
+        const aiMessage: Message = {
+          id: finalData.chat_id || Date.now().toString(),
+          type: "ai",
+          content: isLearn
+            ? joinReplyChunksSafely(replyChunks)
+            : accumulatedText,
+          timestamp: new Date(),
+          document: str,
+        };
+
+        setMessages((prev) => [...prev, aiMessage]);
+        setStreamingText("");
+
+        if (finalData.chat_id && finalData.chat_id !== currentChatId) {
+          setCurrentChatId(finalData.chat_id);
+          returnedChatId = finalData.chat_id;
+        }
+
+        if (finalData.chat_title) {
+          setChatTitle(finalData.chat_title);
+        }
+      };
+
       if (isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CASE)) {
         const res = await CoachService.aiLearningSearch(
           {
@@ -340,38 +387,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           folderId!,
           files,
           clientId,
-          (chunk) => {
-            if (chunk.reply) {
-              if (
-                isSwitch(SWITCH_KEYS.LEARN) &&
-                chunk.reply.includes("Relevant Content")
-              ) {
-                str = chunk.reply;
-              } else {
-                replyChunks.push(chunk.reply);
-                setStreamingText(joinReplyChunksSafely(replyChunks));
-              }
-            }
-          },
-          (finalData) => {
-            setIsSearching(false);
-
-            const aiMessage: Message = {
-              id: finalData.chatId,
-              type: "ai",
-              content: joinReplyChunksSafely(replyChunks),
-              timestamp: new Date(),
-              document: str,
-            };
-
-            setMessages((prev) => [...prev, aiMessage]);
-            setStreamingText("");
-
-            if (finalData.chatId && finalData.chatId !== currentChatId) {
-              setCurrentChatId(finalData.chatId);
-              returnedChatId = finalData.chatId;
-            }
-          }
+          processChunk,
+          processFinal
         );
 
         if (res.documentId) {
@@ -384,43 +401,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           JSON.stringify({
             user_prompt: message,
             is_new: !currentChatId,
-            chat_id: currentChatId.startsWith("new_chat_")
-              ? undefined
-              : currentChatId,
+            chat_id: currentChatId,
             regenerate_id: null,
             personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
           }),
           documentId,
           image,
           pdf,
-          (chunk) => {
-            if (chunk.reply) {
-              replyChunks.push(chunk.reply);
-              setStreamingText(joinReplyChunksSafely(replyChunks));
-            }
-          },
-          (finalData) => {
-            setIsSearching(false);
-
-            const aiMessage: Message = {
-              id: finalData?.chat_id || Date.now().toString(),
-              type: "ai",
-              content: joinReplyChunksSafely(replyChunks),
-              timestamp: new Date(),
-            };
-
-            setMessages((prev) => [...prev, aiMessage]);
-            setStreamingText("");
-
-            if (finalData?.chat_id && finalData.chat_id !== currentChatId) {
-              setCurrentChatId(finalData.chat_id);
-              returnedChatId = finalData.chat_id;
-            }
-
-            if (finalData?.chat_title) {
-              setChatTitle(finalData.chat_title);
-            }
-          }
+          processChunk,
+          processFinal
         );
       } else {
         await SearchService.aiSearchStream(
@@ -435,48 +424,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             ...(image && { image }),
             ...(pdf && { pdf }),
           },
-          async (chunk: StreamChunk) => {
-            if (chunk.reply) {
-              if (
-                isSwitch(SWITCH_KEYS.LEARN) &&
-                chunk.reply.includes("Relevant Content")
-              ) {
-                str = chunk.reply;
-              } else {
-                replyChunks.push(chunk.reply);
-                setStreamingText(joinReplyChunksSafely(replyChunks));
-              }
-            }
-          },
-          async (finalData) => {
-            setIsSearching(false);
-
-            const aiMessage: Message = {
-              id: finalData.chat_id || Date.now().toString(),
-              type: "ai",
-              content: joinReplyChunksSafely(replyChunks),
-              timestamp: new Date(),
-              document: str,
-            };
-
-            setMessages((prev) => [...prev, aiMessage]);
-            setStreamingText("");
-
-            if (finalData.chat_id && finalData.chat_id !== currentChatId) {
-              setCurrentChatId(finalData.chat_id);
-              returnedChatId = finalData.chat_id;
-            }
-
-            if (finalData.chat_title) {
-              setChatTitle(finalData.chat_title);
-            }
-          },
+          processChunk,
+          processFinal,
           (error) => {
             setIsSearching(false);
             setError(error.message);
             console.error("Search error:", error);
           },
-          isSwitch(SWITCH_KEYS.LEARN)
+          isLearn
         );
       }
     } catch (error) {
@@ -555,6 +510,14 @@ My goal is to ${values.goals}.`;
     await goToStep(stepIndex);
   };
 
+  const handleNewChatOpen = () => {
+    setCurrentChatId("");
+    setMessages([]);
+    setStreamingText("");
+    setChatTitle("");
+    setError(null);
+  };
+
   return (
     <>
       <div className="xl:hidden mb-[16px]">
@@ -623,7 +586,10 @@ My goal is to ${values.goals}.`;
                 isDraft ? config.options : config.options.slice(0, -1)
               }
               selectedSwitch={selectedSwitch}
-              setSelectedSwitch={setSelectedSwitch}
+              setSelectedSwitch={(value) => {
+                handleNewChatOpen();
+                setSelectedSwitch(value);
+              }}
               footer={footer}
               isLoading={isLoading}
             />
@@ -668,7 +634,10 @@ My goal is to ${values.goals}.`;
               disabled={isSearching}
               switchOptions={config.options}
               selectedSwitch={selectedSwitch}
-              setSelectedSwitch={setSelectedSwitch}
+              setSelectedSwitch={(value) => {
+                handleNewChatOpen();
+                setSelectedSwitch(value);
+              }}
               footer={
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-[10px]">
@@ -785,7 +754,10 @@ My goal is to ${values.goals}.`;
               }
               switchOptions={config.options}
               selectedSwitch={selectedSwitch}
-              setSelectedSwitch={setSelectedSwitch}
+              setSelectedSwitch={(value) => {
+                handleNewChatOpen();
+                setSelectedSwitch(value);
+              }}
               setNewMessage={setMessageState}
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) ? (
