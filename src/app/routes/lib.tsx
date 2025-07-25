@@ -16,7 +16,7 @@ import { Library } from "pages/library";
 import { LibraryChat } from "pages/library-chat";
 import { LibraryDocument } from "pages/library-document";
 import { UserManagement } from "pages/user-management";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
 import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
@@ -80,6 +80,10 @@ export const AppRoutes = () => {
       <Route path="/readiness" element={<Readiness />} />
       <Route path="/summary" element={<Summary />} />
       <Route path="/finish" element={<FinishClientOnboarding />} />
+      <Route
+        path="/content/:documentId"
+        element={<RedirectContentToLibrary />}
+      />
       <Route
         element={
           <MainLayout mainLocation="content-manager">
@@ -169,4 +173,9 @@ export const AppRoutes = () => {
       {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
     </Routes>
   );
+};
+
+const RedirectContentToLibrary = () => {
+  const { documentId } = useParams();
+  return <Navigate to={`/library/document/${documentId}`} replace />;
 };

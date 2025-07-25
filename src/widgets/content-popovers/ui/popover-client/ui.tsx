@@ -32,7 +32,6 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   documentId,
   setClientId,
   customTrigger,
-  initialSelectedClientsId,
   refreshSharedClients,
 }) => {
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
@@ -63,9 +62,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   }, [search, clients]);
 
   const toggleClientSelection = async (client_id: string) => {
-    const isAlreadySelected =
-      selectedClient === client_id ||
-      initialSelectedClientsId?.includes(client_id);
+    const isAlreadySelected = selectedClient === client_id;
 
     setSelectedClient(isAlreadySelected ? null : client_id);
 
@@ -124,10 +121,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
               >
                 <Checkbox
                   id={`client-${client.client_id}`}
-                  checked={
-                    selectedClient === client.client_id ||
-                    initialSelectedClientsId?.includes(client.client_id)
-                  }
+                  checked={selectedClient === client.client_id}
                   onCheckedChange={() =>
                     toggleClientSelection(client.client_id)
                   }
