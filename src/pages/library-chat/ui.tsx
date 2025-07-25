@@ -18,22 +18,14 @@ import {
   SwitchValue,
 } from "widgets/library-small-chat/switch-config";
 import { Card, CardContent } from "shared/ui";
-import { SymptomsForm } from "widgets/library-small-chat/components/symptoms-form";
-import { MenopauseForm } from "widgets/library-small-chat/components/menopause-form/ui";
-import { HealthHistoryForm } from "widgets/library-small-chat/components/health-history-form";
-import { LifestyleForm } from "widgets/library-small-chat/components/lifestyle-form";
-import { GoalsForm } from "widgets/library-small-chat/components/goals-form";
-import { Steps } from "features/steps/ui";
 import {
   baseSchema,
-  mapFormToPostData,
   mapHealthHistoryToFormDefaults,
 } from "widgets/library-small-chat/lib";
 import { useForm, useWatch } from "react-hook-form";
 import z from "zod";
 import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HealthHistoryService } from "entities/health-history";
 import {
   CaseSearchForm,
   FormValues,
@@ -349,18 +341,18 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
   ): Promise<string | undefined> => {
     if ((!message.trim() && files.length === 0) || isSearching) return;
 
-    if (isSwitch(SWITCH_KEYS.PERSONALIZE)) {
-      try {
-        const formValues = form.getValues();
-        const postData = mapFormToPostData(formValues);
+    // if (isSwitch(SWITCH_KEYS.PERSONALIZE)) {
+    //   try {
+    //     const formValues = form.getValues();
+    //     const postData = mapFormToPostData(formValues);
 
-        await HealthHistoryService.createHealthHistory(postData);
-      } catch (error) {
-        console.error("Failed to save health history:", error);
-        setError("Failed to save health history before starting the chat.");
-        return;
-      }
-    }
+    //     await HealthHistoryService.createHealthHistory(postData);
+    //   } catch (error) {
+    //     console.error("Failed to save health history:", error);
+    //     setError("Failed to save health history before starting the chat.");
+    //     return;
+    //   }
+    // }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -401,7 +393,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               ? undefined
               : currentChatId,
             regenerate_id: null,
-            personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
+            personalize: false,
+            // personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
           }),
           ...(image && { image }),
           ...(pdf && { pdf }),
@@ -539,46 +532,46 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     !streamingText &&
     !isLoadingSession;
 
-  const goToStep = async (nextStep: number) => {
-    if (nextStep >= steps.length) {
-      const values = form.getValues();
-      const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}. 
-I work as a ${values.job} and I have ${values.children} children. 
-I live in ${values.location} and I'm a ${values.religion}. 
-I consider my financial ability ${values.financialStatus}. 
-I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}. 
+  //   const goToStep = async (nextStep: number) => {
+  //     if (nextStep >= steps.length) {
+  //       const values = form.getValues();
+  //       const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}. 
+  // I work as a ${values.job} and I have ${values.children} children. 
+  // I live in ${values.location} and I'm a ${values.religion}. 
+  // I consider my financial ability ${values.financialStatus}. 
+  // I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}. 
 
-I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}. 
-I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}. 
-My biggest challenge is ${values.biggestChallenge}. 
-Currently I ${values.successManaging} successful managing my symptoms.
+  // I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}. 
+  // I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}. 
+  // My biggest challenge is ${values.biggestChallenge}. 
+  // Currently I ${values.successManaging} successful managing my symptoms.
 
-I have a history of ${values.diagnosedConditions}. 
-My genetic test indicates I have ${values.geneticTraits}. 
-In my family there's history of ${values.maternalSide}. 
-I take ${values.medications} to support my condition.
+  // I have a history of ${values.diagnosedConditions}. 
+  // My genetic test indicates I have ${values.geneticTraits}. 
+  // In my family there's history of ${values.maternalSide}. 
+  // I take ${values.medications} to support my condition.
 
-Right now I have a ${values.lifestyleInfo} lifestyle. 
-I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food. 
-My diet is ${values.dietType} and I exercise ${values.exercise} days during a week. 
-My sex life is ${values.sexLife} and my emotional support network is usually ${values.supportSystem}.
+  // Right now I have a ${values.lifestyleInfo} lifestyle. 
+  // I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food. 
+  // My diet is ${values.dietType} and I exercise ${values.exercise} days during a week. 
+  // My sex life is ${values.sexLife} and my emotional support network is usually ${values.supportSystem}.
 
-My goal is to ${values.goals}.`;
+  // My goal is to ${values.goals}.`;
 
-      setSelectedSwitch(config.defaultOption);
-      await handleNewMessage(message, []);
-      form.reset();
-      setCurrentStep(0);
-    } else {
-      setCurrentStep(nextStep);
-    }
-  };
+  //       setSelectedSwitch(config.defaultOption);
+  //       await handleNewMessage(message, []);
+  //       form.reset();
+  //       setCurrentStep(0);
+  //     } else {
+  //       setCurrentStep(nextStep);
+  //     }
+  //   };
 
-  const handleNextStep = () => goToStep(currentStep + 1);
+  // const handleNextStep = () => goToStep(currentStep + 1);
 
-  const handleStepClick = async (stepIndex: number) => {
-    await goToStep(stepIndex);
-  };
+  // const handleStepClick = async (stepIndex: number) => {
+  //   await goToStep(stepIndex);
+  // };
 
   const handleNewChatOpen = () => {
     const newChatId = `new_chat_${Date.now()}`;
@@ -641,8 +634,8 @@ My goal is to ${values.goals}.`;
               }}
             />
             {isEmpty &&
-            !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
-            !isSwitch(SWITCH_KEYS.CASE) ? (
+              // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
+              !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
                 <div className="max-w-md space-y-4 px-[16px]">
                   <h3 className="text-xl font-semibold text-gray-700">
@@ -655,94 +648,95 @@ My goal is to ${values.goals}.`;
                   </p>
                 </div>
               </div>
-            ) : isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
-              <>
+            ) : // isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
+              //   <>
+              //     <MessageList
+              //       messages={messages}
+              //       isSearching={isSearching}
+              //       streamingText={streamingText}
+              //       error={error}
+              //     />
+              //     <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+              //       <div className="w-full mb-[24px]" />
+              //       <CardContent
+              //         className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+              //       >
+              //         <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+              //           <p className="text-[24px] text-[#1D1D1F] font-[500]">
+              //             Personal story
+              //           </p>
+              //           <Steps
+              //             steps={steps}
+              //             stepWidth={"w-full"}
+              //             currentStep={currentStep}
+              //             ordered
+              //             onStepClick={handleStepClick}
+              //           />
+              //           <form onSubmit={(e) => e.preventDefault()}>
+              //             {currentStep === 0 && <SymptomsForm form={form} />}
+              //             {currentStep === 1 && <MenopauseForm form={form} />}
+              //             {currentStep === 2 && <HealthHistoryForm form={form} />}
+              //             {currentStep === 3 && <LifestyleForm form={form} />}
+              //             {currentStep === 4 && <GoalsForm form={form} />}
+              //           </form>
+              //           <div className="flex justify-end gap-2 mt-6">
+              //             <button
+              //               type="button"
+              //               className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
+              //               onClick={handleNextStep}
+              //             >
+              //               Continue
+              //             </button>
+              //           </div>
+              //         </div>
+              //       </CardContent>
+              //     </Card>
+              //   </>
+              // ) :
+              isSwitch(SWITCH_KEYS.CASE) ? (
+                <>
+                  <MessageList
+                    messages={messages}
+                    isSearching={isSearching}
+                    streamingText={streamingText}
+                    error={error}
+                  />
+                  <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+                    <div className="w-full mb-[24px]" />
+                    <CardContent
+                      className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+                    >
+                      <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+                        <p className="text-[24px] text-[#1D1D1F] font-[500]">
+                          Case Story
+                        </p>
+                        <form onSubmit={(e) => e.preventDefault()}>
+                          <CaseSearchForm form={caseForm} />
+                        </form>
+                        <div className="flex justify-end gap-2 mt-6">
+                          <button
+                            type="button"
+                            className="py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white"
+                            onClick={async () => {
+                              setSelectedSwitch(config.defaultOption);
+                              await handleNewMessage(generateCaseStory(), []);
+                            }}
+                          >
+                            Continue
+                          </button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
+              ) : (
                 <MessageList
                   messages={messages}
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
                 />
-                <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
-                  <div className="w-full mb-[24px]" />
-                  <CardContent
-                    className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
-                  >
-                    <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
-                      <p className="text-[24px] text-[#1D1D1F] font-[500]">
-                        Personal story
-                      </p>
-                      <Steps
-                        steps={steps}
-                        stepWidth={"w-full"}
-                        currentStep={currentStep}
-                        ordered
-                        onStepClick={handleStepClick}
-                      />
-                      <form onSubmit={(e) => e.preventDefault()}>
-                        {currentStep === 0 && <SymptomsForm form={form} />}
-                        {currentStep === 1 && <MenopauseForm form={form} />}
-                        {currentStep === 2 && <HealthHistoryForm form={form} />}
-                        {currentStep === 3 && <LifestyleForm form={form} />}
-                        {currentStep === 4 && <GoalsForm form={form} />}
-                      </form>
-                      <div className="flex justify-end gap-2 mt-6">
-                        <button
-                          type="button"
-                          className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
-                          onClick={handleNextStep}
-                        >
-                          Continue
-                        </button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            ) : isSwitch(SWITCH_KEYS.CASE) ? (
-              <>
-                <MessageList
-                  messages={messages}
-                  isSearching={isSearching}
-                  streamingText={streamingText}
-                  error={error}
-                />
-                <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
-                  <div className="w-full mb-[24px]" />
-                  <CardContent
-                    className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
-                  >
-                    <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
-                      <p className="text-[24px] text-[#1D1D1F] font-[500]">
-                        Case Story
-                      </p>
-                      <form onSubmit={(e) => e.preventDefault()}>
-                        <CaseSearchForm form={caseForm} />
-                      </form>
-                      <div className="flex justify-end gap-2 mt-6">
-                        <button
-                          type="button"
-                          className="py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white"
-                          onClick={async () => {
-                            setSelectedSwitch(config.defaultOption);
-                            await handleNewMessage(generateCaseStory(), []);
-                          }}
-                        >
-                          Continue
-                        </button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            ) : (
-              <MessageList
-                messages={messages}
-                isSearching={isSearching}
-                streamingText={streamingText}
-                error={error}
-              />
-            )}
+              )}
 
             <div className="xl:hidden block mt-[16px]">
               <ChatActions

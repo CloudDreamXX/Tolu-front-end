@@ -47,7 +47,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   isEditing,
   selectedDocumentId,
   editedTitle,
-  editedQuery,
   editedContent,
   ratingsMap,
   conversation,
@@ -63,7 +62,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   setIsMoveOpen,
   setIsMarkAsOpen,
   setEditedTitle,
-  setEditedQuery,
   setEditedContent,
   handleDublicateClick,
   handleMarkAsClick,
@@ -213,13 +211,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         onChange={(e) => setEditedTitle(e.target.value)}
         placeholder="Title"
         className="text-xl font-bold w-full border border-[#008FF6] rounded-[16px] p-[16px] outline-none"
-      />
-      <input
-        type="text"
-        value={editedQuery}
-        onChange={(e) => setEditedQuery(e.target.value)}
-        placeholder="Query"
-        className="text-md font-medium w-full border border-[#008FF6] rounded-[16px] p-[16px] outline-none"
       />
       <ReactQuill
         theme="snow"

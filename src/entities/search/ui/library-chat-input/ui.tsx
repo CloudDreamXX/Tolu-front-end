@@ -8,6 +8,7 @@ import { MenopauseSubmissionRequest, UserService } from "entities/user";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { UserCircleGearIcon } from "@phosphor-icons/react";
 
 interface LibraryChatInputProps {
   switchOptions: string[];
@@ -115,7 +116,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             }
           }}
           onKeyDown={handleKeyPress}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 h-[50px] text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       {footer ? (
@@ -148,6 +149,13 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
                 Symptoms Tracker
               </Button>
+            )}
+            {!isContentManager && (
+              <button className="flex items-center w-fit gap-2 p-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-full hover:bg-blue-200">
+                <div className="flex items-center justify-center border border-white rounded-full h-9 w-9">
+                  <UserCircleGearIcon size={24} />
+                </div>
+              </button>
             )}
           </div>
           <Button

@@ -112,12 +112,31 @@ export class FoldersService {
     return ApiService.post<any>(API_ROUTES.FOLDERS.CREATE, payload);
   }
 
-  static async getFolders(): Promise<{
+  static async getFolders(
+    page?: number,
+    page_size?: number,
+    folder_id?: string
+  ): Promise<{
     folders: IFolder[];
     foldersMap: IFolderMap;
   }> {
     try {
-      const response = await ApiService.get<any>(API_ROUTES.FOLDERS.STRUCTURE);
+      const params: Record<string, any> = {};
+
+      if (page) {
+        params.page = page;
+      }
+      if (page_size) {
+        params.page_size = page_size;
+      }
+
+      if (folder_id) {
+        params.folder_id = folder_id;
+      }
+
+      const response = await ApiService.get<any>(API_ROUTES.FOLDERS.STRUCTURE, {
+        params,
+      });
 
       const foldersData = response.data ?? response;
       const allFolders: IFolder[] = [];

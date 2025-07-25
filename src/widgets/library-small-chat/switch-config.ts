@@ -1,5 +1,5 @@
 export const SWITCH_KEYS = {
-  PERSONALIZE: "Personalize search",
+  // PERSONALIZE: "Personalize search",
   CONTENT: "Smart Content",
   LEARN: "Learn",
   RESEARCH: "Research",
@@ -19,7 +19,7 @@ export const SWITCH_CONFIG: Record<
   }
 > = {
   default: {
-    options: [SWITCH_KEYS.DEF, SWITCH_KEYS.PERSONALIZE, SWITCH_KEYS.LEARN],
+    options: [SWITCH_KEYS.DEF, SWITCH_KEYS.LEARN],
     defaultOption: SWITCH_KEYS.DEF,
   },
   coach: {

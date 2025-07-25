@@ -1,10 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HealthHistory, HealthHistoryService } from "entities/health-history";
+import { HealthHistory } from "entities/health-history";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
 import { ChatBreadcrumb, Message } from "features/chat";
-import { Steps } from "features/steps/ui";
 import { Expand, Paperclip, Send, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm, useFormState, useWatch } from "react-hook-form";
@@ -21,17 +20,8 @@ import {
 } from "shared/ui";
 import { MessageList } from "widgets/message-list";
 import z from "zod";
-import { GoalsForm } from "./components/goals-form";
-import { HealthHistoryForm } from "./components/health-history-form";
-import { LifestyleForm } from "./components/lifestyle-form";
-import { SymptomsForm } from "./components/symptoms-form";
-import {
-  baseSchema,
-  mapFormToPostData,
-  mapHealthHistoryToFormDefaults,
-} from "./lib";
+import { baseSchema, mapHealthHistoryToFormDefaults } from "./lib";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
-import { MenopauseForm } from "./components/menopause-form/ui";
 import {
   CaseSearchForm,
   FormValues,
@@ -67,8 +57,6 @@ interface LibrarySmallChatProps {
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   healthHistory,
   isCoach,
-  isDraft,
-  footer,
   isLoading,
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -104,7 +92,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [currentChatId, setCurrentChatId] = useState<string>("");
   const [chatTitle, setChatTitle] = useState<string>("");
-  const [currentStep, setCurrentStep] = useState(0);
+  // const [currentStep, setCurrentStep] = useState(0);
   const [message, setMessageState] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
   const [clientId, setClientId] = useState<string | null>(null);
@@ -305,17 +293,17 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   ): Promise<string | undefined> => {
     if ((!message.trim() && files.length === 0) || isSearching) return;
 
-    if (isSwitch(SWITCH_KEYS.PERSONALIZE)) {
-      try {
-        const formValues = form.getValues();
-        const postData = mapFormToPostData(formValues);
-        await HealthHistoryService.createHealthHistory(postData);
-      } catch (error) {
-        console.error("Failed to save health history:", error);
-        setError("Failed to save health history before starting the chat.");
-        return;
-      }
-    }
+    // if (isSwitch(SWITCH_KEYS.PERSONALIZE)) {
+    //   try {
+    //     const formValues = form.getValues();
+    //     const postData = mapFormToPostData(formValues);
+    //     await HealthHistoryService.createHealthHistory(postData);
+    //   } catch (error) {
+    //     console.error("Failed to save health history:", error);
+    //     setError("Failed to save health history before starting the chat.");
+    //     return;
+    //   }
+    // }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -454,7 +442,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             is_new: !currentChatId,
             chat_id: currentChatId,
             regenerate_id: null,
-            personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
+            personalize: false,
+            // personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
           }),
           documentId,
           image,
@@ -470,7 +459,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               is_new: !currentChatId,
               chat_id: currentChatId,
               regenerate_id: null,
-              personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
+              personalize: false,
+              // personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
             }),
             ...(image && { image }),
             ...(pdf && { pdf }),
@@ -520,46 +510,40 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   `;
   };
 
-  const goToStep = async (nextStep: number) => {
-    if (nextStep >= steps.length) {
-      const values = form.getValues();
-      const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}. 
-I work as a ${values.job} and I have ${values.children} children. 
-I live in ${values.location} and I'm a ${values.religion}. 
-I consider my financial ability ${values.financialStatus}. 
-I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}. 
+  //   const goToStep = async (nextStep: number) => {
+  //     if (nextStep >= steps.length) {
+  //       const values = form.getValues();
+  //       const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}.
+  // I work as a ${values.job} and I have ${values.children} children.
+  // I live in ${values.location} and I'm a ${values.religion}.
+  // I consider my financial ability ${values.financialStatus}.
+  // I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}.
 
-I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}. 
-I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}. 
-My biggest challenge is ${values.biggestChallenge}. 
-Currently I ${values.successManaging} successful managing my symptoms.
+  // I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}.
+  // I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}.
+  // My biggest challenge is ${values.biggestChallenge}.
+  // Currently I ${values.successManaging} successful managing my symptoms.
 
-I have a history of ${values.diagnosedConditions}. 
-My genetic test indicates I have ${values.geneticTraits}. 
-In my family there's history of ${values.maternalSide}. 
-I take ${values.medications} to support my condition.
+  // I have a history of ${values.diagnosedConditions}.
+  // My genetic test indicates I have ${values.geneticTraits}.
+  // In my family there's history of ${values.maternalSide}.
+  // I take ${values.medications} to support my condition.
 
-Right now I have a ${values.lifestyleInfo} lifestyle. 
-I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food. 
-My diet is ${values.dietType} and I exercise ${values.exercise} days during a week. 
-My sex life is ${values.sexLife} and my emotional support network is usually ${values.supportSystem}.
+  // Right now I have a ${values.lifestyleInfo} lifestyle.
+  // I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food.
+  // My diet is ${values.dietType} and I exercise ${values.exercise} days during a week.
+  // My sex life is ${values.sexLife} and my emotional support network is usually ${values.supportSystem}.
 
-My goal is to ${values.goals}.`;
+  // My goal is to ${values.goals}.`;
 
-      handleSwitchChange(config.defaultOption);
-      await handleNewMessage(message, []);
-      form.reset();
-      setCurrentStep(0);
-    } else {
-      setCurrentStep(nextStep);
-    }
-  };
-
-  const handleNextStep = () => goToStep(currentStep + 1);
-
-  const handleStepClick = async (stepIndex: number) => {
-    await goToStep(stepIndex);
-  };
+  //       handleSwitchChange(config.defaultOption);
+  //       await handleNewMessage(message, []);
+  //       form.reset();
+  //       // setCurrentStep(0);
+  //     } else {
+  //       // setCurrentStep(nextStep);
+  //     }
+  //   };
 
   const handleNewChatOpen = () => {
     setCurrentChatId("");
@@ -578,7 +562,7 @@ My goal is to ${values.goals}.`;
           pathTitle={"Ask Tolu"}
         />
       </div>
-      {isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
+      {/* {isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
         <Card className="flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
@@ -646,7 +630,8 @@ My goal is to ${values.goals}.`;
             />
           </CardFooter>
         </Card>
-      ) : isSwitch(SWITCH_KEYS.CASE) ? (
+      ) :  */}
+      {isSwitch(SWITCH_KEYS.CASE) ? (
         <Card className="flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
