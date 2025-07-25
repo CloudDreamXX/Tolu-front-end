@@ -82,9 +82,19 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     : documentId
       ? SWITCH_CONFIG.personalize
       : SWITCH_CONFIG.default;
-  const [selectedSwitch, setSelectedSwitch] = useState<string>(
-    isCreatePage ? SWITCH_KEYS.CREATE : (config.options[0] as string)
+  const selectedSwitchFromState = location.state?.selectedSwitch;
+  const isValidSwitch = Object.values(SWITCH_KEYS).includes(
+    selectedSwitchFromState
   );
+
+  const [selectedSwitch, setSelectedSwitch] = useState<string>(
+    selectedSwitchFromState && isValidSwitch
+      ? selectedSwitchFromState
+      : isCreatePage
+        ? SWITCH_KEYS.CREATE
+        : config.options[0]
+  );
+
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -374,7 +384,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         }
       };
 
-      if (isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CASE)) {
+      if (isSwitch(SWITCH_KEYS.CREATE)) {
         const res = await CoachService.aiLearningSearch(
           {
             user_prompt: message,
@@ -393,7 +403,39 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
         if (res.documentId) {
           navigate(
-            `/content-manager/library/folder/${folderId}/document/${res.documentId}`
+            `/content-manager/library/folder/${folderId}/document/${res.documentId}`,
+            {
+              state: {
+                selectedSwitch: SWITCH_KEYS.CREATE,
+              },
+            }
+          );
+        }
+      } else if (isSwitch(SWITCH_KEYS.CASE)) {
+        const res = await CoachService.aiLearningSearch(
+          {
+            user_prompt: message,
+            is_new: !currentChatId,
+            chat_id: currentChatId,
+            regenerate_id: null,
+            chat_title: "",
+            instructions: instruction,
+          },
+          folderId!,
+          files,
+          clientId,
+          processChunk,
+          processFinal
+        );
+
+        if (res.documentId) {
+          navigate(
+            `/content-manager/library/folder/${folderId}/document/${res.documentId}`,
+            {
+              state: {
+                selectedSwitch: SWITCH_KEYS.CASE,
+              },
+            }
           );
         }
       } else if (isSwitch(SWITCH_KEYS.CONTENT) && documentId) {

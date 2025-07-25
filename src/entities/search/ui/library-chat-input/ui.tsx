@@ -124,7 +124,12 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <label className="relative flex items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800">
-              <Paperclip size={24} />
+              <Button
+                variant="ghost"
+                className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+              >
+                <Paperclip size={24} />
+              </Button>
               <input
                 type="file"
                 multiple

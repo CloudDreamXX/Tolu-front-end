@@ -1,11 +1,11 @@
 export const SWITCH_KEYS = {
   PERSONALIZE: "Personalize search",
-  CONTENT: "Personalize content",
+  CONTENT: "Smart Content",
   LEARN: "Learn",
   RESEARCH: "Research",
   CASE: "Case Search",
   CREATE: "Create content",
-  DEF: "Search",
+  DEF: "Smart Search",
 } as const;
 
 export type SwitchKey = keyof typeof SWITCH_KEYS;
