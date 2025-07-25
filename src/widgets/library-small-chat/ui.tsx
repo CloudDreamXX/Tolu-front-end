@@ -75,6 +75,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const isCreatePage = location.pathname === "/content-manager/create";
+  const [isSwitchLoading, setIsSwitchLoading] = useState(false);
 
   const { documentId } = useParams();
   const config = isCoach
@@ -223,6 +224,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     } finally {
       setIsLoadingSession(false);
     }
+  };
+
+  const handleSwitchChange = (value: string) => {
+    setIsSwitchLoading(true);
+
+    setSelectedSwitch(value);
+
+    setIsSwitchLoading(false);
   };
 
   const handleExpandClick = () => {
@@ -537,7 +546,7 @@ My sex life is ${values.sexLife} and my emotional support network is usually ${v
 
 My goal is to ${values.goals}.`;
 
-      setSelectedSwitch(config.defaultOption);
+      handleSwitchChange(config.defaultOption);
       await handleNewMessage(message, []);
       form.reset();
       setCurrentStep(0);
@@ -575,7 +584,7 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading || isLoading || isLoadingSession ? (
+            {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
@@ -630,7 +639,7 @@ My goal is to ${values.goals}.`;
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {
                 handleNewChatOpen();
-                setSelectedSwitch(value);
+                handleSwitchChange(value);
               }}
               footer={footer}
               isLoading={isLoading}
@@ -643,7 +652,7 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading || isLoading || isLoadingSession ? (
+            {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
@@ -678,7 +687,7 @@ My goal is to ${values.goals}.`;
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {
                 handleNewChatOpen();
-                setSelectedSwitch(value);
+                handleSwitchChange(value);
               }}
               footer={
                 <div className="flex items-center justify-between">
@@ -728,7 +737,7 @@ My goal is to ${values.goals}.`;
                   </div>
                   <Button
                     onClick={() => {
-                      setSelectedSwitch(SWITCH_KEYS.CREATE);
+                      handleSwitchChange(SWITCH_KEYS.CREATE);
                       handleNewMessage(message, files);
                     }}
                     disabled={isSearching || !folderId || message === ""}
@@ -748,7 +757,7 @@ My goal is to ${values.goals}.`;
             <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
               <Tolu />
             </div>
-            {loading || isLoading || isLoadingSession ? (
+            {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
               <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
@@ -764,7 +773,7 @@ My goal is to ${values.goals}.`;
             )}
           </CardHeader>
           <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
-            {loading || isLoading || isLoadingSession ? (
+            {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <MessageLoadingSkeleton />
             ) : messages.length ? (
               <MessageList
@@ -798,7 +807,7 @@ My goal is to ${values.goals}.`;
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {
                 handleNewChatOpen();
-                setSelectedSwitch(value);
+                handleSwitchChange(value);
               }}
               setNewMessage={setMessageState}
               footer={

@@ -44,7 +44,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     <div className="flex flex-col md:flex-row items-center justify-between w-full p-4 bg-white border-b rounded-t-xl">
       <div className="flex items-center gap-3">
         <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px]">
-          <button onClick={onClose}>
+          <button onClick={onClose} className="hidden xl:block">
             <Collapse />
           </button>
           {displayChatTitle}

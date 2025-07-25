@@ -27,6 +27,9 @@ export const LibraryDocument = () => {
     (state: RootState) => state.healthHistory.data
   );
   const dispatch = useDispatch();
+  const isMobileChatOpen = useSelector(
+    (state: RootState) => state.client.isMobileChatOpen
+  );
 
   useEffect(() => {
     const fetchHealthHistory = async () => {
@@ -76,7 +79,7 @@ export const LibraryDocument = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full gap-6 p-6">
+    <div className={`flex flex-col w-full h-full gap-6 p-6`}>
       {isLoadingDocument && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <LoadingIcon />
@@ -98,7 +101,9 @@ export const LibraryDocument = () => {
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
-          <div className="relative flex flex-col w-full h-full xl:pr-4">
+          <div
+            className={`relative flex flex-col w-full h-full xl:pr-4 ${isMobileChatOpen ? "hidden" : "block"}`}
+          >
             {isLoadingDocument ? (
               <DocumentLoadingSkeleton />
             ) : document ? (

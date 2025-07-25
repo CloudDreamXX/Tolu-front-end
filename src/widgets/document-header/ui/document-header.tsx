@@ -26,7 +26,6 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
         )}
       </div>
       <div className="flex items-center gap-2 mb-4 ml-[56px]">
-        <h1 className="text-[20px] md:text-3xl font-bold">{documentTitle}</h1>
         {(isCreatingDocument || isSendingMessage) && (
           <span className="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded">
             {isCreatingDocument ? "Creating..." : "Generating..."}

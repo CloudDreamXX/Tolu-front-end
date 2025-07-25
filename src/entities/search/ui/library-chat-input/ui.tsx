@@ -135,8 +135,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                 multiple
                 accept="image/*,.pdf"
                 onChange={handleFileChange}
-                className="hidden"
-                disabled={disabled}
+                className="absolute w-[50px] z-[9999] cursor-pointer opacity-0"
+                disabled={false}
               />
               {attachedFiles.length > 0 && (
                 <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">

@@ -1,9 +1,5 @@
-import { ClientService, Folder } from "entities/client";
-import { ContentService, ContentStatus } from "entities/content";
-import { LibraryCard } from "features/library-card";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Search from "shared/assets/icons/search";
 import {
   Accordion,
   AccordionContent,
@@ -12,16 +8,21 @@ import {
   Input,
   ScrollArea,
 } from "shared/ui";
+import { LibraryCard } from "features/library-card";
+import { ClientService, Folder } from "entities/client";
+import { ContentStatus, ContentService } from "entities/content";
+import BookMark from "shared/assets/icons/book-mark";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "entities/store";
 import { setFolders, setLoading } from "entities/client/lib";
-import BookMark from "shared/assets/icons/book-mark";
+import { Search } from "lucide-react";
 
 export const LibraryClientContent = () => {
   const [search, setSearch] = useState("");
   const [statusMap, setStatusMap] = useState<Record<string, ContentStatus>>({});
+  const [filteredFolders, setFilteredFolders] = useState<Folder[]>([]);
+
   const nav = useNavigate();
-  const folderId = useSelector((state: RootState) => state.client.folderId);
   const folders = useSelector((state: RootState) => state.client.folders);
   const dispatch = useDispatch();
   const loading = useSelector((state: RootState) => state.client.loading);
@@ -60,6 +61,44 @@ export const LibraryClientContent = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const filterFoldersAndContent = (folders: Folder[], searchTerm: string) => {
+      return folders
+        .filter((folder) => {
+          const folderMatches = folder.name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase());
+
+          const contentMatches = folder.content?.some((item) =>
+            item.title.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+
+          const subfolderMatches = folder.subfolders?.some((subfolder) =>
+            subfolder.name.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+
+          return folderMatches || contentMatches || subfolderMatches;
+        })
+        .map((folder) => {
+          const filteredContent = folder.content?.filter((item) =>
+            item.title.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+          const filteredSubfolders = folder.subfolders?.filter((subfolder) =>
+            subfolder.name.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+
+          return {
+            ...folder,
+            content: filteredContent,
+            subfolders: filteredSubfolders,
+          };
+        });
+    };
+
+    const filtered = filterFoldersAndContent(folders, search);
+    setFilteredFolders(filtered);
+  }, [search, folders]);
 
   const LibraryCardSkeleton = () => {
     const getRandomWidth = (min: number, max: number) =>
@@ -124,24 +163,6 @@ export const LibraryClientContent = () => {
     );
   };
 
-  const findFolderById = (folders: Folder[], id: string): Folder | null => {
-    for (const folder of folders) {
-      if (folder.id === id) return folder;
-      if (folder.subfolders?.length) {
-        const found = findFolderById(folder.subfolders, id);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
-  const filteredFolders = folderId
-    ? (() => {
-        const result = findFolderById(folders, folderId);
-        return result ? [result] : [];
-      })()
-    : folders;
-
   const onStatusChange = async (
     id: string,
     status: "read" | "saved_for_later"
@@ -197,7 +218,7 @@ export const LibraryClientContent = () => {
               </Accordion>
             ))}
           </div>
-        ) : (
+        ) : filteredFolders.length > 0 ? (
           filteredFolders.map((folder, index) => (
             <Accordion
               key={folder.id}
@@ -310,6 +331,11 @@ export const LibraryClientContent = () => {
               </AccordionItem>
             </Accordion>
           ))
+        ) : (
+          <div className="w-full text-center text-gray-500">
+            We couldn’t find anything matching your search. Try adjusting the
+            filters or search terms.
+          </div>
         )}
       </ScrollArea>
     </div>

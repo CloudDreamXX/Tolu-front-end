@@ -21,27 +21,12 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
   onDocumentClick,
   contentStatus,
 }) => {
-  const trimToThreeWords = (text: string): string => {
-    const words = text.trim().split(/\s+/);
-    if (words.length <= 3) return text;
-    return words.slice(0, 3).join(" ") + "...";
-  };
-
   return (
     <button
       className="relative group w-full h-fit"
       onClick={() => onDocumentClick(id)}
     >
-      <div
-        className="
-            absolute inset-0
-            bg-[#D0EFFF]
-            rounded-[18px]
-            transition-transform duration-200
-            group-hover:translate-x-2
-            group-hover:translate-y-2
-          "
-      />
+      <div className="absolute inset-0 bg-[#D0EFFF] rounded-[18px] transition-transform duration-200 group-hover:translate-x-2 group-hover:translate-y-2" />
       <Card
         className="
             relative
@@ -54,13 +39,14 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
       >
         <CardContent className={cn("flex justify-between items-center p-4")}>
           <div className="flex flex-col gap-[8px]">
-            <h2 className="text-[18px] xl:text-xl font-bold text-left truncate max-w-30 flex items-center justify-between">
-              {trimToThreeWords(title)}
+            <h2
+              className="text-[18px] xl:text-xl font-bold text-left flex items-center justify-between 
+                line-clamp-2"
+            >
+              {title}
             </h2>
             <div className="flex items-center">
-              <span className="hidden md:block">
-                {renderAuthor(author, true)}
-              </span>
+              <span>{renderAuthor(author, true)}</span>
             </div>
           </div>
           <div className="flex items-center gap-[12px]">
@@ -80,7 +66,6 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
               )}
             </button>
           </div>
-          <span className="md:hidden block">{renderAuthor(author, true)}</span>
         </CardContent>
       </Card>
     </button>
