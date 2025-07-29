@@ -25,7 +25,7 @@ import { Barriers } from "widgets/OnboardingClient/Barriers";
 import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
 import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
 import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
-import { OnboardingPersonalStory } from "widgets/OnboardingClient/OnboardingPersonalStory";
+import { OnboardingHealthProfile } from "widgets/OnboardingClient/OnboardingPersonalStory";
 import { PersonalityType } from "widgets/OnboardingClient/PersonalityType";
 import { Readiness } from "widgets/OnboardingClient/Readiness";
 import { Summary } from "widgets/OnboardingClient/Summary";
@@ -68,7 +68,7 @@ export const AppRoutes = () => {
       <Route path="/onboarding-finish" element={<OnboardingFinish />} />
       <Route
         path="/welcome/client/personal-story"
-        element={<OnboardingPersonalStory />}
+        element={<OnboardingHealthProfile />}
       />
       <Route path="/about-you" element={<DemographicStep />} />
       <Route path="/what-brings-you-here" element={<WhatBrringsYouHere />} />

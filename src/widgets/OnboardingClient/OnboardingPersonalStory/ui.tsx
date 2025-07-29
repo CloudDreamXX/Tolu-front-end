@@ -1,153 +1,291 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HealthHistoryService } from "entities/health-history";
+import {
+  HealthHistoryPostData,
+  HealthHistoryService,
+} from "entities/health-history";
 import { Steps } from "features/steps/ui";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import Info from "shared/assets/icons/info";
-import { Card, CardContent } from "shared/ui";
-import { GoalsForm } from "widgets/library-small-chat/components/goals-form";
-import { HealthHistoryForm } from "widgets/library-small-chat/components/health-history-form";
-import { LifestyleForm } from "widgets/library-small-chat/components/lifestyle-form";
-import { SymptomsForm } from "widgets/library-small-chat/components/symptoms-form";
-import { mapFormToPostData } from "widgets/library-small-chat/lib";
+import { Card, CardContent, Form } from "shared/ui";
 import z from "zod";
-import { OnboardingClientLayout } from "../Layout";
 import { ConfirmCancelModal } from "widgets/ConfirmCancelModal";
-import { MenopauseForm } from "widgets/library-small-chat/components/menopause-form/ui";
+import { OnboardingClientLayout } from "../Layout";
+import {
+  basicInformationSchema,
+  BasicInformationForm,
+} from "widgets/health-profile-form/ui/basic-information-form";
+import {
+  consentSubmissionSchema,
+  ConsentSubmissionForm,
+} from "widgets/health-profile-form/ui/consent-and-submission";
+import {
+  drivesAndGoalsSchema,
+  DrivesAndGoalsForm,
+} from "widgets/health-profile-form/ui/drives-and-goals";
+import {
+  healthStatusHistorySchema,
+  HealthStatusHistoryForm,
+} from "widgets/health-profile-form/ui/health-status-history-form";
+import {
+  lifestyleHabitsSchema,
+  LifestyleHabitsForm,
+} from "widgets/health-profile-form/ui/lifestyle-habits-form";
+import {
+  metabolicDigestiveHealthSchema,
+  MetabolicDigestiveHealthForm,
+} from "widgets/health-profile-form/ui/metabolic-digestive-health-form";
+import {
+  nutritionHabitsSchema,
+  NutritionHabitsForm,
+} from "widgets/health-profile-form/ui/nutrition-habits-form";
+import {
+  womensHealthSchema,
+  WomensHealthForm,
+} from "widgets/health-profile-form/ui/womens-health";
 
 const steps = [
-  "Demographic",
-  "Menopause Status",
-  "Health history",
-  "Your Lifestyle",
-  "Your Goals",
+  "Basic Information",
+  "Health Status & History",
+  "Lifestyle & Habits",
+  "Nutrition Habits",
+  "Women’s Health",
+  "Metabolic & Digestive Health",
+  "Drives and Goals",
+  "Consent & Submission",
 ];
 
-export const baseSchema = z.object({
-  age: z.string().min(1),
-  maritalStatus: z.string().min(1),
-  job: z.string().min(1),
-  children: z.string().min(1),
-  location: z.string().min(1),
-  religion: z.string().min(1),
-  financialStatus: z.string().min(1),
-  genderAssignedAtBirth: z.string().min(1),
-  genderIdentity: z.string().min(1),
+const baseFormSchema = basicInformationSchema
+  .merge(healthStatusHistorySchema)
+  .merge(lifestyleHabitsSchema)
+  .merge(nutritionHabitsSchema)
+  .merge(womensHealthSchema)
+  .merge(metabolicDigestiveHealthSchema)
+  .merge(drivesAndGoalsSchema)
+  .merge(consentSubmissionSchema);
 
-  menopauseStatus: z.string().min(1),
-  mainSymptoms: z.string().min(1),
-  symptomTracking: z.string().min(1),
-  trackingDevice: z.string().min(1),
-  biggestChallenge: z.string().min(1),
-  successManaging: z.string().min(1),
+const formSchema = baseFormSchema
+  .refine(
+    (data) => {
+      if (data.medications === "other") {
+        return data.otherMedications && data.otherMedications.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Please specify your other medications.",
+      path: ["otherMedications"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.exerciseHabits === "other") {
+        return data.otherExerciseHabits && data.otherExerciseHabits.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Please specify your other exercise habits.",
+      path: ["otherExerciseHabits"],
+    }
+  )
+  .superRefine((data, ctx) => {
+    if (data.followUpMethod === "Text") {
+      if (!data.phoneNumber || !/^\d{10}$/.test(data.phoneNumber)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Phone number must be exactly 10 digits",
+          path: ["phoneNumber"],
+        });
+      }
+    }
+  });
 
-  diagnosedConditions: z.string().min(1),
-  geneticTraits: z.string().min(1),
-  maternalSide: z.string().min(1),
-  medications: z.string().min(1),
-
-  lifestyleInfo: z.string().min(1),
-  takeout: z.string().min(1),
-  homeCooked: z.string().min(1),
-  dietType: z.string().min(1),
-  exercise: z.string().min(1),
-  sexLife: z.string().min(1),
-  supportSystem: z.string().min(1),
-
-  goals: z.string().min(1),
-});
-
-export const OnboardingPersonalStory = () => {
+export const OnboardingHealthProfile = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [IsCancelOpen, setIsCancelOpen] = useState(false);
   const nav = useNavigate();
-  const [IsCancelOpen, setIsCancelOpen] = useState<boolean>(false);
 
-  const form = useForm<z.infer<typeof baseSchema>>({
-    resolver: zodResolver(baseSchema),
+  const form = useForm<z.infer<typeof baseFormSchema>>({
+    resolver: zodResolver(baseFormSchema),
     defaultValues: {
       age: "",
-      maritalStatus: "",
-      job: "",
-      children: "",
-      location: "",
-      religion: "",
-      financialStatus: "",
-      genderAssignedAtBirth: "",
-      genderIdentity: "",
+      gender: "female",
+      height: "",
+      weight: "",
 
-      menopauseStatus: "",
-      mainSymptoms: "",
-      symptomTracking: "",
-      trackingDevice: "",
-      biggestChallenge: "",
-      successManaging: "",
+      healthConcerns: "",
+      medicalConditions: "None",
+      medications: "None",
+      otherMedications: "",
+      supplements: "None",
+      allergies: "None",
+      familyHistory: "None",
 
-      diagnosedConditions: "",
-      geneticTraits: "",
-      maternalSide: "",
-      medications: "",
-
-      lifestyleInfo: "",
-      takeout: "",
-      homeCooked: "",
+      diet: "None",
       dietType: "",
-      exercise: "",
-      sexLife: "",
-      supportSystem: "",
+      dietDetails: "",
+      cookFrequency: "",
+      takeoutFrequency: "",
+      decisionMaker: "",
+
+      exerciseHabits: "light",
+      otherExerciseHabits: "",
+
+      sleepQuality: 1,
+      stressLevels: 1,
+      energyLevels: 2,
+
+      menstrualCycleStatus: "",
+      menstrualOther: "",
+      hormoneTherapy: "",
+      hormoneDetails: "",
+      hormoneDuration: "",
+      hormoneProvider: "",
+      fertilityConcerns: "not_applicable",
+      birthControlUse: "not_applicable",
+      birthControlDetails: "",
+
+      bloodSugarConcern: "",
+      bloodSugarOther: "",
+      digestiveIssues: "",
+      digestiveOther: "",
+
+      recentLabTests: "No",
+      labTestFile: undefined,
 
       goals: "",
+      goalReason: "",
+      urgency: "",
+      healthApproach: "",
+
+      agreeToPrivacy: false,
+      followUpMethod: "",
+      countryCode: "",
+      phoneNumber: "",
     },
   });
 
-  const stepFields: (keyof z.infer<typeof baseSchema>)[][] = [
-    [
-      "age",
-      "maritalStatus",
-      "job",
-      "children",
-      "location",
-      "religion",
-      "financialStatus",
-      "genderAssignedAtBirth",
-      "genderIdentity",
-    ],
-    [
-      "menopauseStatus",
-      "mainSymptoms",
-      "symptomTracking",
-      "trackingDevice",
-      "biggestChallenge",
-      "successManaging",
-    ],
-    ["diagnosedConditions", "geneticTraits", "maternalSide", "medications"],
-    [
-      "lifestyleInfo",
-      "takeout",
-      "homeCooked",
-      "dietType",
-      "exercise",
-      "sexLife",
-      "supportSystem",
-    ],
-    ["goals"],
-  ];
-
-  const watchedValues = form.watch();
-  const areCurrentStepFieldsFilled = stepFields[currentStep].every(
-    (field) => watchedValues[field]?.trim() !== ""
-  );
-
   const goToStep = async (nextStep: number) => {
-    if (nextStep > currentStep) {
-      const isValid = await form.trigger(stepFields[currentStep]);
-      if (!isValid) return;
-    }
+    if (nextStep === currentStep) return;
 
-    if (nextStep >= steps.length) {
+    const stepFields = [
+      ["age", "gender"],
+      [
+        "healthConcerns",
+        "medicalConditions",
+        "medications",
+        "otherMedications",
+        "supplements",
+        "allergies",
+        "familyHistory",
+      ],
+      [
+        "diet",
+        "exerciseHabits",
+        "otherExerciseHabits",
+        "sleepQuality",
+        "stressLevels",
+        "energyLevels",
+      ],
+      [
+        "decisionMaker",
+        "cookFrequency",
+        "takeoutFrequency",
+        "commonFoods",
+        "dietType",
+        "dietDetails",
+      ],
+      [
+        "menstrualCycleStatus",
+        "menstrualOther",
+        "hormoneTherapy",
+        "hormoneDetails",
+        "hormoneDuration",
+        "hormoneProvider",
+        "fertilityConcerns",
+        "birthControlUse",
+        "birthControlDetails",
+      ],
+      [
+        "bloodSugarConcern",
+        "bloodSugarOther",
+        "digestiveIssues",
+        "digestiveOther",
+        "recentLabTests",
+        "labTestFile",
+      ],
+      ["goals", "goalReason", "urgency", "healthApproach"],
+      ["agreeToPrivacy", "followUpMethod", "countryCode", "phoneNumber"],
+    ];
+
+    const isLastStep = currentStep === steps.length - 1;
+    const currentFields = stepFields[currentStep] as (keyof z.infer<
+      typeof formSchema
+    >)[];
+
+    const isValid = await form.trigger(currentFields);
+    if (!isValid) return;
+
+    if (isLastStep) {
       const formValues = form.getValues();
-      const postData = mapFormToPostData(formValues);
-      await HealthHistoryService.createHealthHistory(postData);
+      const transformed: HealthHistoryPostData = {
+        age: Number(formValues.age),
+        gender: formValues.gender,
+        height: formValues.height,
+        weight: formValues.weight,
+        current_health_concerns: formValues.healthConcerns,
+        diagnosed_conditions: formValues.medicalConditions,
+        medications:
+          formValues.medications === "other"
+            ? formValues.otherMedications
+            : formValues.medications,
+        supplements: formValues.supplements,
+        allergies_intolerances: formValues.allergies,
+        family_health_history: formValues.familyHistory,
+        specific_diet: formValues.dietDetails,
+        exercise_habits:
+          formValues.exerciseHabits === "other"
+            ? formValues.otherExerciseHabits
+            : formValues.exerciseHabits,
+        eat_decision: formValues.decisionMaker,
+        cook_at_home: formValues.cookFrequency,
+        takeout_food: formValues.takeoutFrequency,
+        kind_of_food: formValues.commonFoods,
+        diet_pattern: formValues.dietType,
+        sleep_quality: String(formValues.sleepQuality),
+        stress_levels: String(formValues.stressLevels),
+        energy_levels: String(formValues.energyLevels),
+        menstrual_cycle_status: formValues.menstrualCycleStatus,
+        hormone_replacement_therapy: formValues.hormoneTherapy,
+        fertility_concerns: formValues.fertilityConcerns,
+        birth_control_use: formValues.birthControlUse,
+        blood_sugar_concerns: formValues.bloodSugarConcern,
+        digestive_issues: formValues.digestiveIssues,
+        recent_lab_tests: formValues.recentLabTests === "Yes",
+        health_goals: formValues.goals,
+        why_these_goals: formValues.goalReason,
+        desired_results_timeline: formValues.urgency,
+        health_approach_preference: formValues.healthApproach,
+        privacy_consent: formValues.agreeToPrivacy,
+        follow_up_recommendations: formValues.followUpMethod,
+        recommendation_destination: `${formValues.countryCode}${formValues.phoneNumber}`,
+        marital_status: "",
+        job: "",
+        no_children: "",
+        menopause_status: "",
+        other_challenges: "",
+        tried_strategies: "",
+        maternal_health_history: "",
+        paternal_health_history: "",
+        lifestyle_information: "",
+        lifestyle_limitations: "",
+        sex_life: "",
+        support_system: "",
+      };
+      const labFile = formValues.labTestFile || undefined;
+
+      await HealthHistoryService.createHealthHistory(transformed, labFile);
       nav("/finish");
     } else {
       setCurrentStep(nextStep);
@@ -159,10 +297,10 @@ export const OnboardingPersonalStory = () => {
   const handleStepClick = (stepIndex: number) => goToStep(stepIndex);
 
   const mainContent = (
-    <Card className="flex flex-col w-full border-none shadow-none h-fit">
+    <Card className="flex flex-col w-full border-none shadow-none h-full overflow-y-auto">
       <CardContent className="p-0">
         <p className="text-[24px] text-[#1D1D1F] font-[500] mb-[16px]">
-          Personal story
+          Your Health Status Now
         </p>
         <Steps
           steps={steps}
@@ -173,24 +311,17 @@ export const OnboardingPersonalStory = () => {
           ordered
           onStepClick={handleStepClick}
         />
-        <form onSubmit={(e) => e.preventDefault()}>
-          {currentStep === 0 && <SymptomsForm form={form} />}
-          {currentStep === 1 && <MenopauseForm form={form} />}
-          {currentStep === 2 && <HealthHistoryForm form={form} />}
-          {currentStep === 3 && <LifestyleForm form={form} />}
-          {currentStep === 4 && <GoalsForm form={form} />}
-        </form>
+        <Form {...form}>
+          {currentStep === 0 && <BasicInformationForm form={form} />}
+          {currentStep === 1 && <HealthStatusHistoryForm form={form} />}
+          {currentStep === 2 && <LifestyleHabitsForm form={form} />}
+          {currentStep === 3 && <NutritionHabitsForm form={form} />}
+          {currentStep === 4 && <WomensHealthForm form={form} />}
+          {currentStep === 5 && <MetabolicDigestiveHealthForm form={form} />}
+          {currentStep === 6 && <DrivesAndGoalsForm form={form} />}
+          {currentStep === 7 && <ConsentSubmissionForm form={form} />}
+        </Form>
       </CardContent>
-
-      {currentStep === 0 && (
-        <div className="lg:hidden flex gap-4 p-4 items-center w-full lg:max-w-[718px] rounded-2xl bg-[#DDEBF6] mt-[8px]">
-          <Info />
-          <p className="text-[#1B2559] font-[Nunito] text-base font-normal w-fit">
-            Your information is kept private and secure. It helps us provide
-            smarter, more relevant support.
-          </p>
-        </div>
-      )}
 
       <div className="flex items-center justify-between w-full lg:max-w-[718px] gap-2 mt-6">
         <button
@@ -220,26 +351,13 @@ export const OnboardingPersonalStory = () => {
           )}
           <button
             type="button"
-            className={`py-[11px] px-[30px] w-full md:w-fit rounded-full text-[16px] font-semibold transition-colors duration-200 ${
-              areCurrentStepFieldsFilled
-                ? "bg-[#1C63DB] text-white"
-                : "bg-[#D5DAE2] text-[#5F5F65] events-none"
-            }`}
+            className={`py-[11px] px-[30px] w-full md:w-fit rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
             onClick={handleNextStep}
-            disabled={!areCurrentStepFieldsFilled}
           >
             Continue
           </button>
         </div>
       </div>
-      {currentStep !== 0 && (
-        <button
-          className="md:hidden mt-[24px] flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
-          onClick={() => setIsCancelOpen(true)}
-        >
-          Skip this for now
-        </button>
-      )}
 
       {IsCancelOpen && (
         <ConfirmCancelModal
@@ -257,26 +375,11 @@ export const OnboardingPersonalStory = () => {
     </Card>
   );
 
-  const buttons = (
-    <>
-      {currentStep === 0 && (
-        <div className="hidden lg:flex gap-4 p-4 items-center w-full lg:max-w-[718px] rounded-2xl bg-[#DDEBF6] mt-[8px]">
-          <Info />
-          <p className="text-[#1B2559] font-[Nunito] text-base font-normal">
-            Your information is kept private and secure. It helps us provide
-            smarter, more relevant support.
-          </p>
-        </div>
-      )}
-    </>
-  );
-
   return (
     <OnboardingClientLayout
       currentStep={currentStep}
-      numberOfSteps={5}
+      numberOfSteps={steps.length}
       children={mainContent}
-      buttons={buttons}
     />
   );
 };

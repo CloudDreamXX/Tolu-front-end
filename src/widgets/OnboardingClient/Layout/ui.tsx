@@ -26,7 +26,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
   const mainClass = `
     flex flex-col items-center justify-end lg:justify-center
     w-full gap-[16px] md:gap-[8px]
-    lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full
+    lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full 
     mt-[100px] lg:mt-0
     ${isTallScreen || currentStep === 4 ? "absolute bottom-0" : ""}
   `;
@@ -46,7 +46,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
 
         <div
           className="w-full lg:max-w-[718px] flex flex-col 
-  items-start justify-center bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px]"
+  items-start justify-center bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] max-h-[90%]"
         >
           {title != null && isMobileOrTablet && title}
           {children}
