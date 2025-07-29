@@ -1,11 +1,7 @@
 import React, { useState, useMemo, useRef, useCallback } from "react";
-import ClientsIcon from "shared/assets/icons/clients";
-import Search from "shared/assets/icons/search";
-import Plus from "shared/assets/icons/white-plus";
 import Eye from "shared/assets/icons/blue-eye";
 import TrashIcon from "shared/assets/icons/trash-icon";
 import Messages from "shared/assets/icons/blue-messages";
-import { Button } from "shared/ui";
 import Arrow from "shared/assets/icons/pages-arrow";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
@@ -26,13 +22,13 @@ import CloseIcon from "shared/assets/icons/close";
 import ConfirmIcon from "shared/assets/icons/confirm";
 import { toast } from "shared/lib/hooks/use-toast";
 import UploadCloud from "shared/assets/icons/upload-cloud";
-import { File, X } from "lucide-react";
+import { File, MessageCircle, X } from "lucide-react";
 import EmptyClients from "shared/assets/images/EmptyClients.png";
+import { LibrarySmallChat } from "widgets/library-small-chat";
 
 const PAGE_SIZE = 10;
 
 export const ContentManagerClients: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedClient, setSelectedClient] = useState<ClientProfile>({
     client_info: {
@@ -107,7 +103,6 @@ export const ContentManagerClients: React.FC = () => {
     window.innerWidth > 767 && window.innerWidth < 1024
   );
   const [popupClientId, setPopupClientId] = useState<string | null>(null);
-  const [hoveredClientId, setHoveredClientId] = useState<string | null>(null);
   const [inviteSuccessPopup, setInviteSuccessPopup] = useState<boolean>(false);
   const [importClientsPopup, setImportClientsPopup] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -162,18 +157,12 @@ export const ContentManagerClients: React.FC = () => {
     fetchClients();
   }, []);
 
-  const filteredClients = useMemo(() => {
-    return clientsData.filter((client) =>
-      client.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm, clientsData]);
-
   const paginatedClients = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredClients.slice(start, start + PAGE_SIZE);
-  }, [filteredClients, currentPage]);
+    return clientsData.slice(start, start + PAGE_SIZE);
+  }, [clientsData, currentPage]);
 
-  const totalPages = Math.ceil(filteredClients.length / PAGE_SIZE);
+  const totalPages = Math.ceil(clientsData.length / PAGE_SIZE);
 
   const handleCancelEdit = () => {
     setConfirmDiscard(true);
@@ -456,496 +445,407 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-[16px] md:gap-[24px] p-8 overflow-y-auto h-full">
-      <div className="flex flex-col lg:flex-row gap-[16px] justify-between lg:items-end">
-        <div className="flex flex-col gap-2">
-          <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
-            <ClientsIcon />
-            Clients
-          </h1>
-          <p className="text-sm font-medium">
-            Use the list below to filter, search, and take action on individual
-            client records.
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row flex-row gap-2 md:gap-[20px] lg:gap-2">
-          <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] p-[12px] bg-white h-[44px]">
-            <Search />
-            <input
-              placeholder="Search"
-              className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000]"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
+    <div className="flex gap-[24px] p-8">
+      <div className="flex flex-col gap-[16px] md:gap-[24px] overflow-y-auto h-full w-full">
+        {loading ? (
+          <div className="lg:mt-4 md:rounded-[8px]">
+            <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
+              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+              <div className="text-right pr-4"></div>
+            </div>
+            <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <ClientSkeletonRow key={i} />
+              ))}
+            </div>
+          </div>
+        ) : clientsData.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
+            <img
+              src={EmptyClients}
+              alt=""
+              className="mb-[32px] w-[111px] md:w-[142px] xl:w-[163px]"
             />
+            <div className="text-center flex flex-col items-center justify-center gap-[8px]">
+              <p className="text-[18px] md:text-[28px] xl:text-[32px] font-[700] text-[#1D1D1F]">
+                There are no clients ...
+              </p>
+              <p className="text-[16px] md:text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
+                Start adding clients to keep track of observations, updates, and
+                progress.
+              </p>
+            </div>
           </div>
-          <Button
-            variant={"brightblue"}
-            className="h-[44px]"
-            onClick={() => {
-              cleanState();
-              setActiveEditTab("editClientInfo");
-              setAddModal(true);
-            }}
-          >
-            Add new client
-            <Plus />
-          </Button>
-          <Button
-            variant={"light-blue"}
-            className="h-[44px]"
-            onClick={() => setImportClientsPopup(true)}
-          >
-            Upload CSV/XLSX
-          </Button>
-        </div>
-      </div>
+        ) : (
+          <div className="md:rounded-[8px]">
+            <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
+              <div className="flex items-center justify-center">Name</div>
+              <div className="flex items-center justify-center">Last seen</div>
+              <div className="flex items-center justify-center">Status</div>
+              <div className="flex items-center justify-center">View</div>
+              <div className="flex items-center justify-center">Message</div>
+              <div className="flex items-center justify-center">Delete</div>
+            </div>
 
-      {loading ? (
-        <div className="lg:mt-4 md:rounded-[8px]">
-          <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
-            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-            <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-            <div className="text-right pr-4"></div>
-          </div>
-          <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] md:bg-white">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <ClientSkeletonRow key={i} />
-            ))}
-          </div>
-        </div>
-      ) : filteredClients.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
-          <img
-            src={EmptyClients}
-            alt=""
-            className="mb-[32px] w-[111px] md:w-[142px] xl:w-[163px]"
-          />
-          <div className="text-center flex flex-col items-center justify-center gap-[8px]">
-            <p className="text-[18px] md:text-[28px] xl:text-[32px] font-[700] text-[#1D1D1F]">
-              There are no clients ...
-            </p>
-            <p className="text-[16px] md:text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
-              Start adding clients to keep track of observations, updates, and
-              progress.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="lg:mt-4 md:rounded-[8px]">
-          <div className="hidden md:grid grid-cols-7 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
-            <div>Full name</div>
-            <div>Gender</div>
-            <div>Last seen</div>
-            <div>Last update</div>
-            <div>Learning now</div>
-            <div>Status</div>
-            <div className="text-right pr-4"></div>
-          </div>
-
-          <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] md:bg-white">
-            {paginatedClients.map((client, idx) => (
-              <div
-                key={idx}
-                className="
-            md:grid md:grid-cols-7 md:items-center md:p-[12px]
+            <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
+              {paginatedClients.map((client, idx) => (
+                <div
+                  key={idx}
+                  className="
+            md:grid md:grid-cols-6 md:items-center md:p-[12px]
             flex flex-col gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white md:rounded-none md:border-x-0 md:border-t-0 md:border-b md:border-[#DBDEE1]
           "
-              >
-                <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                  <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                    Full name
+                >
+                  <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
+                    <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
+                      Name
+                    </div>
+                    <div className="flex items-center justify-center w-full text-[16px] font-semibold">
+                      {client.name}
+                    </div>
                   </div>
-                  <div className="w-full text-[16px] font-semibold">
-                    {client.name}
-                  </div>
-                </div>
 
-                <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                  <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                    Gender
+                  <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
+                    <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
+                      Last seen
+                    </div>
+                    <div className="flex items-center justify-center w-full text-[16px]">
+                      {client.last_activity
+                        ? new Date(client.last_activity).toLocaleDateString(
+                            "en-GB"
+                          )
+                        : "-"}
+                    </div>
                   </div>
-                  <div className="w-full text-[16px]">{client.gender}</div>
-                </div>
 
-                <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                  <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                    Last seen
+                  <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
+                    <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
+                      Status
+                    </div>
+                    <div className="w-full text-[16px]">
+                      {client.status === "waiting to accept invite" ? (
+                        <div className="flex flex-col items-center justify-center ">
+                          Pending
+                          <button
+                            className="text-[14px] text-[#1C63DB]"
+                            onClick={() => handleResendInvite(client.client_id)}
+                          >
+                            Resend invitation
+                          </button>
+                        </div>
+                      ) : client.status === "active" ? (
+                        "Active"
+                      ) : (
+                        client.status
+                      )}
+                    </div>
                   </div>
-                  <div className="w-full text-[16px]">
-                    {client.last_activity
-                      ? new Date(client.last_activity).toLocaleDateString(
-                          "en-GB"
-                        )
-                      : "-"}
-                  </div>
-                </div>
-
-                <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                  <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                    Last update
-                  </div>
-                  <div className="w-full text-[16px]">
-                    {client.last_activity
-                      ? new Date(client.last_activity).toLocaleDateString(
-                          "en-GB"
-                        )
-                      : "-"}
-                  </div>
-                </div>
-
-                <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0 relative">
-                  <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                    Learning now
-                  </div>
-                  <div className="flex gap-1 items-center flex-wrap">
-                    <span className="w-full text-black text-[16px] underline">
-                      {client.learning_now[0]?.title || ""}
-                    </span>
-                    {client.learning_now.length > 1 && (
-                      <>
-                        <span className="text-black">and</span>
-                        <button
-                          onMouseEnter={() =>
-                            setHoveredClientId(client.client_id)
-                          }
-                          onMouseLeave={() => setHoveredClientId(null)}
-                          className="text-[#1C63D8] font-semibold underline underline-offset-2"
-                        >
-                          {client.learning_now.length - 1} more
-                        </button>
-                      </>
-                    )}
-                    {hoveredClientId === client.client_id && (
-                      <div className="absolute left-0 top-full mt-1 z-[9999] bg-white border border-gray-200 shadow-md rounded-md p-2 text-sm">
-                        <ul className="flex flex-col gap-[4px] text-black space-y-1">
-                          {client.learning_now.slice(1).map((item, index) => (
-                            <li key={index}>{item?.title || ""}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                  <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                    Status
-                  </div>
-                  <div className="w-full text-[16px] flex items-center justify-center">
-                    {client.status === "waiting to accept invite" ? (
-                      <div className="flex flex-col items-center">
-                        Pending
-                        <button
-                          className="flex items-center justify-center text-[14px] text-[#1C63DB]"
-                          onClick={() => handleResendInvite(client.client_id)}
-                        >
-                          Resend invitation
-                        </button>
-                      </div>
-                    ) : client.status === "active" ? (
-                      "Active"
-                    ) : (
-                      client.status
-                    )}
-                  </div>
-                </div>
-
-                {isMobile ? (
-                  <div className="w-full flex flex-col gap-[8px] mt-[24px]">
-                    <button
-                      className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]"
-                      onClick={() => handleSelectClient(client.client_id)}
-                    >
-                      <Eye />
-                      View profile
-                    </button>
-                    <button className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]">
-                      <Messages />
-                      Chat with client
-                    </button>
-                  </div>
-                ) : isTablet ? (
-                  <div className="relative ml-auto h-[24px]">
-                    <button
-                      className="w-fit h-fit"
-                      onClick={() => {
-                        setPopupClientId(
-                          popupClientId === client.client_id
-                            ? null
-                            : client.client_id
-                        );
-                      }}
-                    >
-                      <BlueDots />
-                    </button>
-
-                    {popupClientId === client.client_id && (
-                      <div
-                        className="
-        absolute right-0 top-[34px]
-        w-[238px] bg-white shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
-        rounded-[10px] px-[14px] py-[16px] flex flex-col gap-[16px] z-50
-      "
-                      >
-                        <button
-                          className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
-                          onClick={() => {
-                            handleSelectClient(client.client_id);
-                            setPopupClientId(null);
-                          }}
-                        >
-                          <Eye /> View profile
-                        </button>
-
-                        <button
-                          className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
-                          onClick={() => {
-                            setPopupClientId(null);
-                          }}
-                        >
-                          <Messages /> Open Chat
-                        </button>
-
-                        <button
-                          className="flex items-center gap-[8px] text-[#FF1F0F] font-[500] text-[16px]"
-                          onClick={() => {
-                            handleSelectClient(client.client_id);
-                            setConfirmDelete(true);
-                            setPopupClientId(null);
-                          }}
-                        >
-                          <TrashIcon /> Delete user
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex justify-end items-center gap-4 mt-2 md:mt-0 md:justify-end">
+                  {!isMobile && !isTablet && (
                     <button
                       onClick={() => handleSelectClient(client.client_id)}
+                      className="flex items-center justify-center text-[#000]"
                     >
                       <Eye />
                     </button>
-                    <button>
-                      <Messages />
+                  )}
+                  {!isMobile && !isTablet && (
+                    <button className="flex items-center justify-center ">
+                      <MessageCircle />
                     </button>
+                  )}
+                  {!isMobile && !isTablet && (
                     <button
                       onClick={() => {
                         handleSelectClient(client.client_id);
                         setConfirmDelete(true);
                       }}
+                      className="flex items-center justify-center "
                     >
-                      <TrashIcon />
+                      <TrashIcon fill="#000" />
                     </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+                  )}
 
-      {totalPages > 1 && !loading && (
-        <div className="flex justify-center items-center gap-2 pb-4">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
-          >
-            <span className="rotate-[180deg]">
-              <Arrow />
-            </span>
-          </button>
+                  {isMobile ? (
+                    <div className="w-full flex flex-col gap-[8px] mt-[24px]">
+                      <button
+                        className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]"
+                        onClick={() => handleSelectClient(client.client_id)}
+                      >
+                        <Eye />
+                        View profile
+                      </button>
+                      <button className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]">
+                        <Messages />
+                        Chat with client
+                      </button>
+                    </div>
+                  ) : isTablet ? (
+                    <div className="relative ml-auto h-[24px]">
+                      <button
+                        className="w-fit h-fit"
+                        onClick={() => {
+                          setPopupClientId(
+                            popupClientId === client.client_id
+                              ? null
+                              : client.client_id
+                          );
+                        }}
+                      >
+                        <BlueDots />
+                      </button>
 
-          {Array.from({ length: totalPages }).map((_, i) => {
-            const page = i + 1;
-            return (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                  currentPage === page
-                    ? "border-[#1C63DB] text-[#1C63DB]"
-                    : "border-[#DBDEE1]"
-                }`}
-              >
-                {page}
-              </button>
-            );
-          })}
+                      {popupClientId === client.client_id && (
+                        <div
+                          className="
+        absolute right-0 top-[34px]
+        w-[238px] bg-white shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
+        rounded-[10px] px-[14px] py-[16px] flex flex-col gap-[16px] z-50
+      "
+                        >
+                          <button
+                            className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
+                            onClick={() => {
+                              handleSelectClient(client.client_id);
+                              setPopupClientId(null);
+                            }}
+                          >
+                            <Eye /> View profile
+                          </button>
 
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
-          >
-            <Arrow />
-          </button>
-        </div>
-      )}
+                          <button
+                            className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
+                            onClick={() => {
+                              setPopupClientId(null);
+                            }}
+                          >
+                            <Messages /> Open Chat
+                          </button>
 
-      {confirmDiscard && (
-        <ConfirmDiscardModal
-          onCancel={() => setConfirmDiscard(false)}
-          onDiscard={discardChanges}
-        />
-      )}
-
-      {selectedClient.client_info.id !== "" && !confirmDelete && !editModal && (
-        <SelectedClientModal
-          client={selectedClient}
-          onClose={() => {
-            setConfirmDelete(false);
-            cleanState();
-          }}
-          onEdit={() => setEditModal(true)}
-          onDelete={() => setConfirmDelete(true)}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
-      )}
-
-      {editModal && (
-        <EditClientModal
-          client={clientInfo}
-          activeEditTab={activeEditTab}
-          setActiveEditTab={setActiveEditTab}
-          onCancel={handleCancelEdit}
-          onSave={handleEditSuccess}
-          isNew={false}
-          updateClient={updateClient}
-        />
-      )}
-
-      {addModal && (
-        <EditClientModal
-          client={newClient}
-          activeEditTab={activeEditTab}
-          setActiveEditTab={setActiveEditTab}
-          onCancel={handleCancelEdit}
-          onNext={handleNextAddStep}
-          onBack={handleBackAddStep}
-          isNew={true}
-          updateClient={updateClient}
-        />
-      )}
-
-      {confirmDelete && (
-        <ConfirmDeleteModal
-          onCancel={() => {
-            setConfirmDelete(false);
-            cleanState();
-          }}
-          onDelete={handleDelete}
-        />
-      )}
-
-      {inviteSuccessPopup && (
-        <div className="absolute inset-0 top-0 min-h-[calc(100vh-85px)] bottom-0 z-10 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex stretch items-center justify-center">
-          <div className="bg-white rounded-[16px] shadow-xl p-[24px] w-full h-fit text-center relative mx-[16px] md:w-[550px]">
-            <button
-              className="absolute top-[24px] right-[24px] cursor-pointer"
-              onClick={() => setInviteSuccessPopup(false)}
-            >
-              <CloseIcon />
-            </button>
-            <div className="flex justify-center items-center mb-[24px]">
-              <ConfirmIcon />
-            </div>
-            <p className="text-[#1D1D1F] text-[28px] font-semibold mb-[24px]">
-              Client has been invited successfully
-            </p>
-            <button
-              className="bg-[#1C63DB] text-white px-[16px] py-[10px] w-full max-w-[250px] rounded-full font-semibold text-[16px] leading-normal"
-              onClick={() => setInviteSuccessPopup(false)}
-            >
-              Go Back to Home
-            </button>
-          </div>
-        </div>
-      )}
-
-      {importClientsPopup && (
-        <div
-          ref={modalRef}
-          className="flex flex-col md:w-[410px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] lg:py-[40px] lg:px-[40px] bg-white rounded-[20px] shadow-md gap-[24px] absolute top-[370px] left-[32px] right-[32px] md:left-auto md:top-[270px] lg:top-[230px] xl:top-[180px]"
-        >
-          {uploadedFileName ? (
-            <div className="w-full max-w-[330px]">
-              <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
-                Import PDF
-              </p>
-              <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
-                <File stroke="#1C63DB" />
-                <div className="flex flex-col leading-[1.2]">
-                  <p className="text-[14px] font-[Nunito] text-black font-semibold">
-                    {uploadedFileName}
-                  </p>
-                  <p className="text-[12px] font-[Nunito] text-[#5F5F65]">
-                    {uploadedFileSize}
-                  </p>
+                          <button
+                            className="flex items-center gap-[8px] text-[#FF1F0F] font-[500] text-[16px]"
+                            onClick={() => {
+                              handleSelectClient(client.client_id);
+                              setConfirmDelete(true);
+                              setPopupClientId(null);
+                            }}
+                          >
+                            <TrashIcon /> Delete user
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : undefined}
                 </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {totalPages > 1 && !loading && (
+          <div className="flex justify-center items-center gap-2 pb-4">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
+            >
+              <span className="rotate-[180deg]">
+                <Arrow />
+              </span>
+            </button>
+
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const page = i + 1;
+              return (
                 <button
-                  onClick={() => {
-                    setUploadedFileName(null);
-                    setUploadedFileSize(null);
-                  }}
-                  className="absolute top-[6px] right-[6px]"
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                    currentPage === page
+                      ? "border-[#1C63DB] text-[#1C63DB]"
+                      : "border-[#DBDEE1]"
+                  }`}
                 >
-                  <X size={16} stroke="#A7A7A7" />
+                  {page}
                 </button>
-              </div>
-            </div>
-          ) : (
-            // Drop Zone
-            <div className="w-full">
-              <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
-                Import СSV/XLSX
-              </p>
-              <div
-                className={`w-full border ${
-                  dragOver
-                    ? "border-[#0057C2]"
-                    : "border-dashed border-[#1C63DB]"
-                } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
-                onClick={handleUploadClick}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setDragOver(true);
-                }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={handleDrop}
-              >
-                <div className="flex p-2 items-center justify-center bg-white border rounded-[8px] border-[#F3F6FB]">
-                  <UploadCloud />
-                </div>
-                <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                  Click {isMobile || isTablet ? "" : "or drag"} to upload
-                </div>
-                <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
-                  СSV/XLSX
-                </p>
-              </div>
-            </div>
+              );
+            })}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
+            >
+              <Arrow />
+            </button>
+          </div>
+        )}
+
+        {confirmDiscard && (
+          <ConfirmDiscardModal
+            onCancel={() => setConfirmDiscard(false)}
+            onDiscard={discardChanges}
+          />
+        )}
+
+        {selectedClient.client_info.id !== "" &&
+          !confirmDelete &&
+          !editModal && (
+            <SelectedClientModal
+              client={selectedClient}
+              onClose={() => {
+                setConfirmDelete(false);
+                cleanState();
+              }}
+              onEdit={() => setEditModal(true)}
+              onDelete={() => setConfirmDelete(true)}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
           )}
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            className="hidden"
-            onChange={handleFileChange}
+        {editModal && (
+          <EditClientModal
+            client={clientInfo}
+            activeEditTab={activeEditTab}
+            setActiveEditTab={setActiveEditTab}
+            onCancel={handleCancelEdit}
+            onSave={handleEditSuccess}
+            isNew={false}
+            updateClient={updateClient}
           />
-        </div>
-      )}
+        )}
+
+        {addModal && (
+          <EditClientModal
+            client={newClient}
+            activeEditTab={activeEditTab}
+            setActiveEditTab={setActiveEditTab}
+            onCancel={handleCancelEdit}
+            onNext={handleNextAddStep}
+            onBack={handleBackAddStep}
+            isNew={true}
+            updateClient={updateClient}
+          />
+        )}
+
+        {confirmDelete && (
+          <ConfirmDeleteModal
+            onCancel={() => {
+              setConfirmDelete(false);
+              cleanState();
+            }}
+            onDelete={handleDelete}
+          />
+        )}
+
+        {inviteSuccessPopup && (
+          <div className="absolute inset-0 top-0 min-h-[calc(100vh-85px)] bottom-0 z-10 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex stretch items-center justify-center">
+            <div className="bg-white rounded-[16px] shadow-xl p-[24px] w-full h-fit text-center relative mx-[16px] md:w-[550px]">
+              <button
+                className="absolute top-[24px] right-[24px] cursor-pointer"
+                onClick={() => setInviteSuccessPopup(false)}
+              >
+                <CloseIcon />
+              </button>
+              <div className="flex justify-center items-center mb-[24px]">
+                <ConfirmIcon />
+              </div>
+              <p className="text-[#1D1D1F] text-[28px] font-semibold mb-[24px]">
+                Client has been invited successfully
+              </p>
+              <button
+                className="bg-[#1C63DB] text-white px-[16px] py-[10px] w-full max-w-[250px] rounded-full font-semibold text-[16px] leading-normal"
+                onClick={() => setInviteSuccessPopup(false)}
+              >
+                Go Back to Home
+              </button>
+            </div>
+          </div>
+        )}
+
+        {importClientsPopup && (
+          <div
+            ref={modalRef}
+            className="flex flex-col md:w-[410px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] lg:py-[40px] lg:px-[40px] bg-white rounded-[20px] shadow-md gap-[24px] absolute top-[370px] left-[32px] right-[32px] md:left-auto md:top-[270px] lg:top-[230px] xl:top-[180px]"
+          >
+            {uploadedFileName ? (
+              <div className="w-full max-w-[330px]">
+                <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                  Import PDF
+                </p>
+                <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
+                  <File stroke="#1C63DB" />
+                  <div className="flex flex-col leading-[1.2]">
+                    <p className="text-[14px] font-[Nunito] text-black font-semibold">
+                      {uploadedFileName}
+                    </p>
+                    <p className="text-[12px] font-[Nunito] text-[#5F5F65]">
+                      {uploadedFileSize}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setUploadedFileName(null);
+                      setUploadedFileSize(null);
+                    }}
+                    className="absolute top-[6px] right-[6px]"
+                  >
+                    <X size={16} stroke="#A7A7A7" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // Drop Zone
+              <div className="w-full">
+                <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                  Import СSV/XLSX
+                </p>
+                <div
+                  className={`w-full border ${
+                    dragOver
+                      ? "border-[#0057C2]"
+                      : "border-dashed border-[#1C63DB]"
+                  } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
+                  onClick={handleUploadClick}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragOver(true);
+                  }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
+                >
+                  <div className="flex p-2 items-center justify-center bg-white border rounded-[8px] border-[#F3F6FB]">
+                    <UploadCloud />
+                  </div>
+                  <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                    Click {isMobile || isTablet ? "" : "or drag"} to upload
+                  </div>
+                  <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
+                    СSV/XLSX
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </div>
+        )}
+      </div>
+      <div className="hidden xl:block w-full">
+        <LibrarySmallChat isCoach isLoading={loading} />
+      </div>
     </div>
   );
 };
