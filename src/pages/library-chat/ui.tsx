@@ -18,12 +18,7 @@ import {
   SwitchValue,
 } from "widgets/library-small-chat/switch-config";
 import { Card, CardContent } from "shared/ui";
-import {
-  baseSchema,
-  mapHealthHistoryToFormDefaults,
-} from "widgets/library-small-chat/lib";
 import { useForm, useWatch } from "react-hook-form";
-import z from "zod";
 import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -33,6 +28,14 @@ import {
 import { caseBaseSchema } from "pages/content-manager";
 import { setChat } from "entities/client/lib";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
+
+// const steps = [
+//   "Demographic",
+//   "Menopause Status",
+//   "Health history",
+//   "Your Lifestyle",
+//   "Your Goals",
+// ];
 
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();

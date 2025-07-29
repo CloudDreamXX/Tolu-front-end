@@ -37,6 +37,14 @@ import { CoachService } from "entities/coach";
 import { ClientService } from "entities/client";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 
+// const steps = [
+//   "Demographic",
+//   "Menopause Status",
+//   "Health history",
+//   "Your Lifestyle",
+//   "Your Goals",
+// ];
+
 interface LibrarySmallChatProps {
   healthHistory?: HealthHistory;
   isCoach?: boolean;
@@ -464,7 +472,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             setError(error.message);
             console.error("Search error:", error);
           },
-          isLearn
+          isLearn,
+          clientId !== null ? clientId : undefined
         );
       }
     } catch (error) {
@@ -839,6 +848,39 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         handleNewMessage(message, files);
                       }}
                       disabled={isSearching || !folderId || message === ""}
+                      className="w-12 h-12 p-0 bg-[#1D1D1F] rounded-full hover:bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                    >
+                      <Send size={28} color="white" />
+                    </Button>
+                  </div>
+                ) : isSwitch(SWITCH_KEYS.RESEARCH) ? (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-[10px]">
+                      <PopoverAttach
+                        setFiles={setFiles}
+                        existingFiles={existingFiles}
+                        disabled={false}
+                        customTrigger={
+                          <Button
+                            variant="ghost"
+                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                          >
+                            <Paperclip size={24} />
+                            {files.length > 0 && (
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length > 99 ? "99+" : files.length}
+                              </span>
+                            )}
+                          </Button>
+                        }
+                      />
+                      <PopoverClient setClientId={setClientId} />
+                    </div>
+                    <Button
+                      onClick={() => {
+                        handleNewMessage(message, files);
+                      }}
+                      disabled={isSearching || message === ""}
                       className="w-12 h-12 p-0 bg-[#1D1D1F] rounded-full hover:bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
                     >
                       <Send size={28} color="white" />

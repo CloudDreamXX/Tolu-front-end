@@ -1,99 +1,100 @@
-import parse, {
-  domToReact,
-  Element as HtmlParserElement,
-  HTMLReactParserOptions,
-  DOMNode,
-} from "html-react-parser";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
-import React from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "shared/ui";
+import sanitizeHtml from "sanitize-html";
 
 export const smartRender = async (text: string) => {
-  const type = detectContentType(text);
-
-  if (type === "html") {
-    const options: HTMLReactParserOptions = {
-      replace: (domNode: DOMNode) => {
-        if (
-          domNode.type === "tag" &&
-          [
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "h6",
-            "p",
-            "ul",
-            "ol",
-            "li",
-            "a",
-          ].includes(domNode.name)
-        ) {
-          const el = domNode as HtmlParserElement;
-          const props = {
-            ...el.attribs,
-            className: [el.attribs?.class, "font-inter"]
-              .filter(Boolean)
-              .join(" "),
-          };
-
-          return React.createElement(
-            el.name,
-            props,
-            domToReact(el.children as DOMNode[], options)
-          );
-        }
+  try {
+    const sanitizedText = sanitizeHtml(text, {
+      allowedTags: [
+        "p",
+        "a",
+        "b",
+        "i",
+        "ul",
+        "ol",
+        "li",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "em",
+      ],
+      allowedAttributes: {
+        "*": ["class", "id", "style", "href"],
       },
-    };
+    });
+
+    const type = detectContentType(sanitizedText);
+
+    if (type === "html") {
+      return (
+        <div
+          className="bg-[#ECEFF4]"
+          dangerouslySetInnerHTML={{ __html: sanitizedText }}
+        />
+      );
+    }
+
+    if (type === "markdown") {
+      const cleaned = cleanMarkdown(sanitizedText);
+
+      return (
+        <div className="font-inter bg-[#ECEFF4] p-4">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm, remarkBreaks]}
+            components={{
+              body: (props) => (
+                <body className="font-inter bg-[#ECEFF4]" {...props} />
+              ),
+              h1: (props) => <h1 className="font-inter" {...props} />,
+              h2: (props) => <h2 className="font-inter" {...props} />,
+              h3: (props) => <h3 className="font-inter" {...props} />,
+              h4: (props) => <h4 className="font-inter" {...props} />,
+              p: (props) => <p className="font-inter" {...props} />,
+              ul: (props) => <ul className="font-inter" {...props} />,
+              li: (props) => <li className="font-inter" {...props} />,
+              a: (props) => {
+                return (
+                  <a
+                    {...props}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-inter text-wrap"
+                  />
+                );
+              },
+            }}
+          >
+            {cleaned}
+          </ReactMarkdown>
+        </div>
+      );
+    }
 
     return (
-      <div className="bg-[#ECEFF4]">{parse(cleanHtml(text), options)}</div>
-    );
-  }
-
-  if (type === "markdown") {
-    const cleaned = cleanMarkdown(text);
-
-    return (
-      <div className="font-inter bg-[#ECEFF4] p-4">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm, remarkBreaks]}
-          components={{
-            body: (props) => (
-              <body className="font-inter bg-[#ECEFF4]" {...props} />
-            ),
-            h1: (props) => <h1 className="font-inter" {...props} />,
-            h2: (props) => <h1 className="font-inter" {...props} />,
-            h3: (props) => <h1 className="font-inter" {...props} />,
-            h4: (props) => <h1 className="font-inter" {...props} />,
-            p: (props) => <p className="font-inter" {...props} />,
-            ul: (props) => <ul className="font-inter" {...props} />,
-            li: (props) => <li className="font-inter" {...props} />,
-          }}
-        >
-          {cleaned}
-        </ReactMarkdown>
+      <div
+        className="font-inter bg-[#ECEFF4]"
+        style={{ fontFamily: "Inter, sans-serif" }}
+      >
+        {sanitizedText}
       </div>
     );
+  } catch (error) {
+    console.error("Error rendering response:", error);
+    return (
+      <div className="font-inter bg-[#ECEFF4]">Error rendering content.</div>
+    );
   }
-
-  return (
-    <div
-      className="font-inter bg-[#ECEFF4]"
-      style={{ fontFamily: "Inter, sans-serif" }}
-    >
-      {text}
-    </div>
-  );
 };
 
 export const joinReplyChunksSafely = (chunks: string[]): string => {
@@ -140,24 +141,6 @@ const detectContentType = (text: string): "html" | "markdown" | "plain" => {
   }
 
   return "plain";
-};
-
-const cleanHtml = (raw: string): string => {
-  if (!raw) return "";
-
-  const noHtmlBody = raw
-    .replace(/<\/?html.*?>/gi, "")
-    .replace(/<\/?body.*?>/gi, "");
-
-  const startIndex = noHtmlBody.search(/<\s*[\w!]/);
-  const trimmedStart =
-    startIndex >= 0 ? noHtmlBody.slice(startIndex) : noHtmlBody;
-
-  const lastTagClose = trimmedStart.lastIndexOf(">");
-  const trimmedEnd =
-    lastTagClose >= 0 ? trimmedStart.slice(0, lastTagClose + 1) : trimmedStart;
-
-  return trimmedEnd.trim();
 };
 
 export const renderResultBlocks = (rawContent: string) => {

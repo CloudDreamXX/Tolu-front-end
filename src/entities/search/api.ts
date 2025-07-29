@@ -32,20 +32,22 @@ export class SearchService {
       chat_title?: string | null;
     }) => void,
     onError: (error: Error) => void,
-    conentMode?: boolean
+    contentMode?: boolean,
+    clientId?: string
   ): Promise<void> {
     try {
       const formData = this.createSearchRequest(
         searchData.chat_message,
         searchData.image,
-        searchData.pdf
+        searchData.pdf,
+        clientId
       );
 
       const user = localStorage.getItem("persist:user");
       const token = user ? JSON.parse(user)?.token?.replace(/"/g, "") : null;
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/${conentMode ? "ai-content-search" : "ai-search"}/`,
+        `${import.meta.env.VITE_API_URL}/${contentMode ? "ai-content-search" : "ai-search"}/`,
         {
           method: "POST",
           headers: {
@@ -61,6 +63,7 @@ export class SearchService {
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
+      let accumulatedText = ""; // Buffer for chunk accumulation
 
       if (!reader) {
         throw new Error("No response body reader available");
@@ -72,7 +75,10 @@ export class SearchService {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n");
+        accumulatedText += chunk; // Append the chunk to the buffer
+
+        // Check if accumulated text contains a complete response
+        const lines = accumulatedText.split("\n");
 
         for (const line of lines) {
           if (line.trim() === "") continue;
@@ -102,12 +108,15 @@ export class SearchService {
                 });
               }
             } else {
-              onChunk(parsed);
+              onChunk(parsed); // Pass the chunk as is to the callback
             }
           } catch (parseError) {
             console.warn("Failed to parse JSON chunk:", jsonLine, parseError);
           }
         }
+
+        // Clear the accumulated buffer if we processed all valid chunks
+        accumulatedText = "";
       }
     } catch (error) {
       onError(error instanceof Error ? error : new Error(String(error)));
@@ -164,7 +173,8 @@ export class SearchService {
   static createSearchRequest(
     message: string,
     imageFile?: File,
-    pdfFile?: File
+    pdfFile?: File,
+    clientId?: string
   ) {
     const formData = new FormData();
     formData.append("chat_message", message);
@@ -175,6 +185,10 @@ export class SearchService {
 
     if (pdfFile) {
       formData.append("pdf", pdfFile);
+    }
+
+    if (clientId) {
+      formData.append("client_id", clientId);
     }
 
     return formData;
