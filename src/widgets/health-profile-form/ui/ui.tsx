@@ -278,11 +278,10 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-2 p-1 pr-4 text-sm font-medium text-blue-700 bg-blue-100 rounded-full hover:bg-blue-200">
+        <button className="flex items-center w-fit gap-2 p-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-full hover:bg-blue-200">
           <div className="flex items-center justify-center border border-white rounded-full h-9 w-9">
             <UserCircleGearIcon size={24} />
           </div>
-          My health profile 0/7
         </button>
       </DialogTrigger>
       <DialogContent className="md:max-w-3xl gap-6 max-h-[98vh] overflow-y-auto left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">

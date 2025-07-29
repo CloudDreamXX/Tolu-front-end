@@ -8,7 +8,8 @@ import { MenopauseSubmissionRequest, UserService } from "entities/user";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { UserCircleGearIcon } from "@phosphor-icons/react";
+import { HealthProfileForm } from "widgets/health-profile-form";
+import { HealthHistory } from "entities/health-history";
 
 interface LibraryChatInputProps {
   switchOptions: string[];
@@ -25,6 +26,7 @@ interface LibraryChatInputProps {
   footer?: React.ReactNode;
   setNewMessage?: React.Dispatch<React.SetStateAction<string>>;
   isLoading?: boolean;
+  healthHistory?: HealthHistory;
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -38,6 +40,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   setNewMessage,
   footer,
   isLoading,
+  healthHistory,
 }) => {
   const [message, setMessage] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
@@ -151,11 +154,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               </Button>
             )}
             {!isContentManager && (
-              <button className="flex items-center w-fit gap-2 p-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-full hover:bg-blue-200">
-                <div className="flex items-center justify-center border border-white rounded-full h-9 w-9">
-                  <UserCircleGearIcon size={24} />
-                </div>
-              </button>
+              <HealthProfileForm healthHistory={healthHistory} />
             )}
           </div>
           <Button

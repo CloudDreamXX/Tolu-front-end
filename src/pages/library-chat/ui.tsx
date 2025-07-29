@@ -28,6 +28,8 @@ import {
 import { caseBaseSchema } from "pages/content-manager";
 import { setChat } from "entities/client/lib";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
+import { HealthHistoryService } from "entities/health-history";
+import { setHealthHistory, setLoading } from "entities/health-history/lib";
 
 // const steps = [
 //   "Demographic",
@@ -50,6 +52,9 @@ export const LibraryChat = () => {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
+  );
+  const healthHistory = useSelector(
+    (state: RootState) => state.healthHistory.data
   );
 
   const initialSearchDone = useRef(false);
@@ -108,6 +113,21 @@ export const LibraryChat = () => {
   });
 
   const watchedCaseValues = useWatch({ control: caseForm.control });
+
+  useEffect(() => {
+    const fetchHealthHistory = async () => {
+      try {
+        dispatch(setLoading(true));
+        const data = await HealthHistoryService.getUserHealthHistory();
+        dispatch(setHealthHistory(data));
+      } catch (error: any) {
+        setError("Failed to load user health history");
+        console.error("Health history fetch error:", error);
+      }
+    };
+
+    fetchHealthHistory();
+  }, [dispatch]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -748,6 +768,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 handleNewChatOpen();
                 setSelectedSwitch(value);
               }}
+              healthHistory={healthHistory}
             />
           </div>
         )}

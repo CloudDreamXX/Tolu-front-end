@@ -359,7 +359,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         setIsSearching(false);
 
         const aiMessage: Message = {
-          id: finalData.chat_id || Date.now().toString(),
+          id: finalData ? finalData.chat_id : Date.now().toString(),
           type: "ai",
           content: isLearn
             ? joinReplyChunksSafely(replyChunks)
@@ -675,6 +675,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 handleNewChatOpen();
                 handleSwitchChange(value);
               }}
+              healthHistory={healthHistory}
               footer={
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-[10px]">
@@ -795,6 +796,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 handleNewChatOpen();
                 handleSwitchChange(value);
               }}
+              healthHistory={healthHistory}
               setNewMessage={setMessageState}
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) ? (

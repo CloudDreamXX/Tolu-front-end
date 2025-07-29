@@ -17,11 +17,12 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
 
   const inputClass =
     "input inline-input border border-[#DBDEE1] rounded-full outline-[#008FF6] py-[4px] px-[12px] min-w-[60px] placeholder:text-[#5F5F65]";
+
   const lineClass =
-    "flex flex-wrap gap-x-[12px] gap-y-[12px] text-[16px] md:text-[18px] font-[500] text-[#1D1D1F] items-center";
+    "flex gap-[12px] text-[16px] md:text-[18px] font-[500] text-[#1D1D1F] items-center text-wrap flex-wrap w-full";
 
   return (
-    <div className="pb-[16px] space-y-[12px]">
+    <div className="pb-[16px] space-y-[12px] w-full">
       <div className={lineClass}>
         <span>This case involves a</span>
         <input
@@ -53,8 +54,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
           className={`${inputClass} w-[115px]`}
         />
         <span>.</span>
-      </div>
-      <div className={lineClass}>
+
         <span>Her health history includes</span>
         <input
           {...register("diagnosedConditions")}
@@ -68,8 +68,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
           className={`${inputClass} w-[136px]`}
         />
         <span>.</span>
-      </div>
-      <div className={lineClass}>
+
         <span>Lifestyle factors such as</span>
         <input
           {...register("lifestyleFactors")}
@@ -77,8 +76,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
           className={`${inputClass} w-[328px]`}
         />
         <span>may be contributing.</span>
-      </div>
-      <div className={lineClass}>
+
         <span>Previous interventions have included</span>
         <input
           {...register("previousInterventions")}
@@ -92,8 +90,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
           className={`${inputClass} w-[303px]`}
         />
         <span>.</span>
-      </div>
-      <div className={lineClass}>
+
         <span>The suspected root causes include</span>
         <input
           {...register("suspectedRootCauses")}
@@ -101,8 +98,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
           className={`${inputClass} w-[602px]`}
         />
         <span>.</span>
-      </div>
-      <div className={lineClass}>
+
         <span>This case is being used to create a</span>
         <CustomSelect
           value={protocol}
