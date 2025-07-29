@@ -34,14 +34,6 @@ import { caseBaseSchema } from "pages/content-manager";
 import { setChat } from "entities/client/lib";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 
-const steps = [
-  "Demographic",
-  "Menopause Status",
-  "Health history",
-  "Your Lifestyle",
-  "Your Goals",
-];
-
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
   const location = useLocation();
@@ -91,10 +83,6 @@ export const LibraryChat = () => {
     config.options[0] as string
   );
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
-  const [currentStep, setCurrentStep] = useState(0);
-  const healthHistory = useSelector(
-    (state: RootState) => state.healthHistory.data
-  );
   const dispatch = useDispatch();
   const nav = useNavigate();
 
@@ -117,11 +105,6 @@ export const LibraryChat = () => {
   });
 
   const watchedCaseValues = useWatch({ control: caseForm.control });
-
-  const form = useForm<z.infer<typeof baseSchema>>({
-    resolver: zodResolver(baseSchema),
-    defaultValues: mapHealthHistoryToFormDefaults(healthHistory),
-  });
 
   useEffect(() => {
     const initialize = async () => {
@@ -535,25 +518,25 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
   //   const goToStep = async (nextStep: number) => {
   //     if (nextStep >= steps.length) {
   //       const values = form.getValues();
-  //       const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}. 
-  // I work as a ${values.job} and I have ${values.children} children. 
-  // I live in ${values.location} and I'm a ${values.religion}. 
-  // I consider my financial ability ${values.financialStatus}. 
-  // I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}. 
+  //       const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}.
+  // I work as a ${values.job} and I have ${values.children} children.
+  // I live in ${values.location} and I'm a ${values.religion}.
+  // I consider my financial ability ${values.financialStatus}.
+  // I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}.
 
-  // I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}. 
-  // I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}. 
-  // My biggest challenge is ${values.biggestChallenge}. 
+  // I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}.
+  // I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}.
+  // My biggest challenge is ${values.biggestChallenge}.
   // Currently I ${values.successManaging} successful managing my symptoms.
 
-  // I have a history of ${values.diagnosedConditions}. 
-  // My genetic test indicates I have ${values.geneticTraits}. 
-  // In my family there's history of ${values.maternalSide}. 
+  // I have a history of ${values.diagnosedConditions}.
+  // My genetic test indicates I have ${values.geneticTraits}.
+  // In my family there's history of ${values.maternalSide}.
   // I take ${values.medications} to support my condition.
 
-  // Right now I have a ${values.lifestyleInfo} lifestyle. 
-  // I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food. 
-  // My diet is ${values.dietType} and I exercise ${values.exercise} days during a week. 
+  // Right now I have a ${values.lifestyleInfo} lifestyle.
+  // I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food.
+  // My diet is ${values.dietType} and I exercise ${values.exercise} days during a week.
   // My sex life is ${values.sexLife} and my emotional support network is usually ${values.supportSystem}.
 
   // My goal is to ${values.goals}.`;
@@ -634,8 +617,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               }}
             />
             {isEmpty &&
-              // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
-              !isSwitch(SWITCH_KEYS.CASE) ? (
+            // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
+            !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
                 <div className="max-w-md space-y-4 px-[16px]">
                   <h3 className="text-xl font-semibold text-gray-700">
@@ -649,94 +632,94 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 </div>
               </div>
             ) : // isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
-              //   <>
-              //     <MessageList
-              //       messages={messages}
-              //       isSearching={isSearching}
-              //       streamingText={streamingText}
-              //       error={error}
-              //     />
-              //     <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
-              //       <div className="w-full mb-[24px]" />
-              //       <CardContent
-              //         className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
-              //       >
-              //         <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
-              //           <p className="text-[24px] text-[#1D1D1F] font-[500]">
-              //             Personal story
-              //           </p>
-              //           <Steps
-              //             steps={steps}
-              //             stepWidth={"w-full"}
-              //             currentStep={currentStep}
-              //             ordered
-              //             onStepClick={handleStepClick}
-              //           />
-              //           <form onSubmit={(e) => e.preventDefault()}>
-              //             {currentStep === 0 && <SymptomsForm form={form} />}
-              //             {currentStep === 1 && <MenopauseForm form={form} />}
-              //             {currentStep === 2 && <HealthHistoryForm form={form} />}
-              //             {currentStep === 3 && <LifestyleForm form={form} />}
-              //             {currentStep === 4 && <GoalsForm form={form} />}
-              //           </form>
-              //           <div className="flex justify-end gap-2 mt-6">
-              //             <button
-              //               type="button"
-              //               className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
-              //               onClick={handleNextStep}
-              //             >
-              //               Continue
-              //             </button>
-              //           </div>
-              //         </div>
-              //       </CardContent>
-              //     </Card>
-              //   </>
-              // ) :
-              isSwitch(SWITCH_KEYS.CASE) ? (
-                <>
-                  <MessageList
-                    messages={messages}
-                    isSearching={isSearching}
-                    streamingText={streamingText}
-                    error={error}
-                  />
-                  <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
-                    <div className="w-full mb-[24px]" />
-                    <CardContent
-                      className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
-                    >
-                      <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
-                        <p className="text-[24px] text-[#1D1D1F] font-[500]">
-                          Case Story
-                        </p>
-                        <form onSubmit={(e) => e.preventDefault()}>
-                          <CaseSearchForm form={caseForm} />
-                        </form>
-                        <div className="flex justify-end gap-2 mt-6">
-                          <button
-                            type="button"
-                            className="py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white"
-                            onClick={async () => {
-                              setSelectedSwitch(config.defaultOption);
-                              await handleNewMessage(generateCaseStory(), []);
-                            }}
-                          >
-                            Continue
-                          </button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </>
-              ) : (
+            //   <>
+            //     <MessageList
+            //       messages={messages}
+            //       isSearching={isSearching}
+            //       streamingText={streamingText}
+            //       error={error}
+            //     />
+            //     <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+            //       <div className="w-full mb-[24px]" />
+            //       <CardContent
+            //         className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+            //       >
+            //         <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+            //           <p className="text-[24px] text-[#1D1D1F] font-[500]">
+            //             Personal story
+            //           </p>
+            //           <Steps
+            //             steps={steps}
+            //             stepWidth={"w-full"}
+            //             currentStep={currentStep}
+            //             ordered
+            //             onStepClick={handleStepClick}
+            //           />
+            //           <form onSubmit={(e) => e.preventDefault()}>
+            //             {currentStep === 0 && <SymptomsForm form={form} />}
+            //             {currentStep === 1 && <MenopauseForm form={form} />}
+            //             {currentStep === 2 && <HealthHistoryForm form={form} />}
+            //             {currentStep === 3 && <LifestyleForm form={form} />}
+            //             {currentStep === 4 && <GoalsForm form={form} />}
+            //           </form>
+            //           <div className="flex justify-end gap-2 mt-6">
+            //             <button
+            //               type="button"
+            //               className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
+            //               onClick={handleNextStep}
+            //             >
+            //               Continue
+            //             </button>
+            //           </div>
+            //         </div>
+            //       </CardContent>
+            //     </Card>
+            //   </>
+            // ) :
+            isSwitch(SWITCH_KEYS.CASE) ? (
+              <>
                 <MessageList
                   messages={messages}
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
                 />
-              )}
+                <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+                  <div className="w-full mb-[24px]" />
+                  <CardContent
+                    className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+                  >
+                    <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+                      <p className="text-[24px] text-[#1D1D1F] font-[500]">
+                        Case Story
+                      </p>
+                      <form onSubmit={(e) => e.preventDefault()}>
+                        <CaseSearchForm form={caseForm} />
+                      </form>
+                      <div className="flex justify-end gap-2 mt-6">
+                        <button
+                          type="button"
+                          className="py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white"
+                          onClick={async () => {
+                            setSelectedSwitch(config.defaultOption);
+                            await handleNewMessage(generateCaseStory(), []);
+                          }}
+                        >
+                          Continue
+                        </button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <MessageList
+                messages={messages}
+                isSearching={isSearching}
+                streamingText={streamingText}
+                error={error}
+              />
+            )}
 
             <div className="xl:hidden block mt-[16px]">
               <ChatActions

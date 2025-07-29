@@ -37,14 +37,6 @@ import { CoachService } from "entities/coach";
 import { ClientService } from "entities/client";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 
-const steps = [
-  "Demographic",
-  "Menopause Status",
-  "Health history",
-  "Your Lifestyle",
-  "Your Goals",
-];
-
 interface LibrarySmallChatProps {
   healthHistory?: HealthHistory;
   isCoach?: boolean;

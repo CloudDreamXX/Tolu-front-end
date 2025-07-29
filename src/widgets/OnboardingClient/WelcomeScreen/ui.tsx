@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import ClientWelcomePicture from "shared/assets/images/Illustration.png";
 import { AuthPageWrapper } from "shared/ui";
 import { ClientHeader } from "widgets/Header";
+import { ConfirmCancelModal } from "widgets/ConfirmCancelModal";
 
 export const WelcomeScreen = () => {
   const nav = useNavigate();
   const [isTallScreen, setIsTallScreen] = useState(false);
+  const [IsCancelOpen, setIsCancelOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const checkHeight = () => {
@@ -55,18 +57,39 @@ export const WelcomeScreen = () => {
               live your life.
             </p>
           </div>
-          <button
-            onClick={() => nav("/welcome/client/personal-story")}
-            type="button"
-            className="py-4 px-6 flex gap-4 items-center w-full md:w-auto justify-center h-16 rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
-          >
-            <span className="text-center text-white text-2xl font-semibold font-[Nunito]">
-              Let’s Begin
-            </span>
-            <ArrowRight color="#fff" size={32} />
-          </button>
+          <div className="flex flex-col-reverse md:flex-row gap-[16px] justify-between items-center w-full">
+            <button
+              className={`flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]`}
+              onClick={() => setIsCancelOpen(true)}
+            >
+              Skip onboarding
+            </button>
+            <button
+              onClick={() => nav("/welcome/client/personal-story")}
+              type="button"
+              className="py-4 px-6 flex gap-4 items-center w-full md:w-auto justify-center h-16 rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
+            >
+              <span className="text-center text-white text-2xl font-semibold font-[Nunito]">
+                Let’s Begin
+              </span>
+              <ArrowRight color="#fff" size={32} />
+            </button>
+          </div>
         </div>
       </main>
+      {IsCancelOpen && (
+        <ConfirmCancelModal
+          title={"Are you sure you want to skip this form?"}
+          description={
+            "This helps us tailor your journey and ensure the right support — nothing is ever shared without your permission."
+          }
+          backTitle={"Skip this for now"}
+          continueTitle={"Continue filling out"}
+          onCancel={() => nav("/library")}
+          onDiscard={() => setIsCancelOpen(false)}
+          onClose={() => setIsCancelOpen(false)}
+        />
+      )}
     </AuthPageWrapper>
   );
 };
