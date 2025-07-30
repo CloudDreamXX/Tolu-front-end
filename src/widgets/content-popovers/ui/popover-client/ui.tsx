@@ -399,7 +399,10 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
         <Button
           variant="brightblue"
           className="w-fit px-[40px] ml-auto mt-2"
-          onClick={handleSave}
+          onClick={() => {
+            handleSave();
+            setPopoverOpen(false);
+          }}
           disabled={
             tempSelectedClient === selectedClient ||
             (!tempSelectedClient && !selectedClient)

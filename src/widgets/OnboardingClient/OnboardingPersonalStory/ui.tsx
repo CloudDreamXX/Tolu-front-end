@@ -106,8 +106,8 @@ export const OnboardingHealthProfile = () => {
   const [IsCancelOpen, setIsCancelOpen] = useState(false);
   const nav = useNavigate();
 
-  const form = useForm<z.infer<typeof baseFormSchema>>({
-    resolver: zodResolver(baseFormSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       age: "",
       gender: "female",

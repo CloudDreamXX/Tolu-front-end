@@ -152,13 +152,11 @@ export const renderResultBlocks = (rawContent: string) => {
   return blocks.map((block, index) => {
     const idmatch = block.match(/\/content\/retrieve\/([a-f0-9-]{36})/i);
     const folderMatch = block.match(/\*\*Folder:\*\* (.+)/);
-    const previewMatch = block.match(/\*\*Preview:\*\* (.+)/);
     const createdMatch = block.match(/\*\*Created:\*\* (.+)/);
 
     const id = idmatch?.[1];
     const folder = folderMatch?.[1];
-    const previewHtml = previewMatch?.[1];
-    const { heading } = extractAndCleanPreview(previewHtml || "");
+    const heading = extractTitleFromPreview(rawContent);
     const created = createdMatch?.[1];
 
     return (
@@ -166,12 +164,7 @@ export const renderResultBlocks = (rawContent: string) => {
         <div
           className="p-4 my-3 bg-white border rounded-md shadow-sm min-h-[160px] flex flex-col justify-between cursor-pointer h-full"
           onClick={() => {
-            window.open(
-              `/library/document/${id}`,
-              "_blank",
-              "noopener,noreferrer"
-            );
-            nav(``);
+            nav(`/library/document/${id}`);
           }}
         >
           <TooltipProvider delayDuration={500} disableHoverableContent>
@@ -200,27 +193,8 @@ export const renderResultBlocks = (rawContent: string) => {
   });
 };
 
-const extractAndCleanPreview = (
-  previewHtml: string
-): {
-  heading: string | null;
-  cleanedHtml: string;
-} => {
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(previewHtml, "text/html");
-
-    const headingElement = doc.querySelector("h1, h2, h3, h4, h5, h6, p");
-    const heading = headingElement?.textContent?.trim() || null;
-
-    if (headingElement?.parentNode) {
-      headingElement.parentNode.removeChild(headingElement);
-    }
-
-    const cleanedHtml = doc.body.innerHTML.trim();
-
-    return { heading, cleanedHtml };
-  } catch {
-    return { heading: null, cleanedHtml: previewHtml };
-  }
+const extractTitleFromPreview = (rawContent: string) => {
+  const match = rawContent.match(/target="_self">([^<]+)<\/a>/);
+  const title = match ? match[1] : "No title found";
+  return title;
 };

@@ -92,7 +92,6 @@ export const LibraryChat = () => {
   );
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
   const dispatch = useDispatch();
-  const nav = useNavigate();
 
   const caseForm = useForm<FormValues>({
     resolver: zodResolver(caseBaseSchema),
@@ -706,9 +705,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   location.state?.from ||
                   null;
                 if (fromPath) {
-                  nav(fromPath);
+                  navigate(fromPath);
                 } else {
-                  nav(-1);
+                  navigate(-1);
                 }
               }}
             />
