@@ -38,11 +38,49 @@ export const LibraryDocument = () => {
     useState<SpeechSynthesisVoice | null>(null);
 
   useEffect(() => {
-    const availableVoices = speechSynthesis.getVoices();
+    const loadVoices = () => {
+      const availableVoices = speechSynthesis.getVoices();
 
-    if (availableVoices.length > 0) {
-      setSelectedVoice(availableVoices[5]);
+      const storedVoice = localStorage.getItem("selectedVoice");
+
+      let voice: SpeechSynthesisVoice | null = null;
+
+      if (storedVoice) {
+        const storedVoiceSettings = JSON.parse(storedVoice);
+        voice =
+          availableVoices.find(
+            (v) =>
+              v.name === storedVoiceSettings.name &&
+              v.lang === storedVoiceSettings.lang
+          ) || null;
+      }
+
+      if (!voice) {
+        voice =
+          availableVoices.find(
+            (v) => v.name === "Google UK English Male" && v.lang === "en-GB"
+          ) || null;
+      }
+
+      setSelectedVoice(voice);
+
+      if (voice) {
+        const voiceSettings = { name: voice.name, lang: voice.lang };
+        localStorage.setItem("selectedVoice", JSON.stringify(voiceSettings));
+      }
+    };
+
+    if (speechSynthesis.getVoices().length === 0) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    } else {
+      loadVoices();
     }
+
+    return () => {
+      if (speechSynthesis.onvoiceschanged) {
+        speechSynthesis.onvoiceschanged = null;
+      }
+    };
   }, []);
 
   const handleReadAloud = () => {
