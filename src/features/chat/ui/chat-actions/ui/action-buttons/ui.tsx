@@ -8,7 +8,8 @@ import { FeedbackModal } from "../feedback-modal";
 import { HistoryPopup } from "../history-popup";
 import Share from "shared/assets/icons/share";
 import SaveModal from "../save-modal/ui";
-import { Eye } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, Eye } from "@phosphor-icons/react/dist/ssr";
+import { useNavigate } from "react-router-dom";
 
 interface ChatActionsProps {
   onRegenerate: () => void;
@@ -16,6 +17,7 @@ interface ChatActionsProps {
   hasMessages: boolean;
   isHistoryPopup?: boolean;
   onStatusChange?: (status: string) => void;
+  onReadAloud: () => void;
   initialRating?: number;
   initialStatus?: string;
   fromPath?: string | null;
@@ -26,12 +28,15 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   onStatusChange,
   initialRating,
   initialStatus,
+  onReadAloud,
   fromPath,
 }) => {
   const [thumbsUpModalOpen, setThumbsUpModalOpen] = useState(false);
   const [thumbsDownModalOpen, setThumbsDownModalOpen] = useState(false);
   const [rating, setRating] = useState<number | undefined>(initialRating);
   const [readStatus, setReadStatus] = useState<string>(initialStatus || "");
+  const [isReadingAloud, setIsReadingAloud] = useState(false);
+  const nav = useNavigate();
 
   useEffect(() => {
     if (initialRating !== undefined) {
@@ -39,14 +44,53 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
     }
   }, [initialRating]);
 
+  const handleShare = async () => {
+    const shareData = {
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (error) {
+        console.error("Error sharing:", error);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      } catch (err) {
+        console.error("Error copying link:", err);
+      }
+    }
+  };
+
+  const handleReadAloud = () => {
+    setIsReadingAloud((prev) => !prev);
+    onReadAloud();
+  };
+
   return (
     <div className="flex flex-row gap-2 xl:flex-col xl:justify-between w-full h-full">
+      {!isHistoryPopup && (
+        <button className="xl:hidden block h-8 w-8" onClick={() => nav(-1)}>
+          <ArrowLeft className="w-4 h-4 m-auto text-black" />
+        </button>
+      )}
       {isHistoryPopup && (
         <div className="xl:hidden block">
           <HistoryPopup fromPath={fromPath} />
         </div>
       )}
       <div>
+        {!isHistoryPopup && (
+          <button
+            className="hidden xl:block h-8 w-8 mb-[8px]"
+            onClick={() => nav(-1)}
+          >
+            <ArrowLeft className="w-5 h-5 m-auto text-black" />
+          </button>
+        )}
         {isHistoryPopup && (
           <div className="hidden xl:block">
             <HistoryPopup fromPath={fromPath} />
@@ -57,10 +101,10 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           <button
             className="hidden xl:block bg-[#DDEBF6] rounded-full h-8 w-8 mt-[8px]"
             onClick={() => {
-              onStatusChange(
-                readStatus === "read" ? "saved_for_later" : "read"
-              );
-              setReadStatus(readStatus === "read" ? "saved_for_later" : "read");
+              const newStatus =
+                readStatus === "read" ? "saved_for_later" : "read";
+              setReadStatus(newStatus);
+              onStatusChange(newStatus);
             }}
           >
             <Eye
@@ -76,10 +120,10 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           <button
             className="xl:hidden block bg-[#DDEBF6] rounded-full h-8 w-8"
             onClick={() => {
-              onStatusChange(
-                readStatus === "read" ? "saved_for_later" : "read"
-              );
-              setReadStatus(readStatus === "read" ? "saved_for_later" : "read");
+              const newStatus =
+                readStatus === "read" ? "saved_for_later" : "read";
+              setReadStatus(newStatus);
+              onStatusChange(newStatus);
             }}
           >
             <Eye
@@ -88,11 +132,20 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             />
           </button>
         )}
-        <button className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center">
+        <button
+          className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center"
+          onClick={handleShare}
+        >
           <Share />
         </button>
-        <button className="bg-[#DDEBF6] rounded-full h-8 w-8">
-          <SpeakerSimpleHighIcon className="w-4 h-4 m-auto text-blue-600" />
+        <button
+          className="bg-[#DDEBF6] rounded-full h-8 w-8"
+          onClick={handleReadAloud}
+        >
+          <SpeakerSimpleHighIcon
+            weight={isReadingAloud ? "fill" : "regular"}
+            className="w-4 h-4 m-auto text-blue-600"
+          />
         </button>
         <button
           className="bg-[#DDEBF6] rounded-full h-8 w-8"

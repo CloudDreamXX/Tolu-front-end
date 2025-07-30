@@ -1,6 +1,7 @@
+import { SpeakerSimpleHighIcon } from "@phosphor-icons/react";
 import { ISessionResult } from "entities/coach";
 import { useDocumentState } from "features/document-management";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Compare from "shared/assets/icons/compare";
 import Dislike from "shared/assets/icons/dislike";
 import DislikeFilled from "shared/assets/icons/dislike-filled";
@@ -8,7 +9,6 @@ import Dublicate from "shared/assets/icons/dublicate";
 import Arrow from "shared/assets/icons/grey-arrow";
 import Edit from "shared/assets/icons/grey-edit";
 import { TrashIcon } from "shared/assets/icons/trash-blue";
-import Voiceover from "shared/assets/icons/voiceover";
 import {
   Tooltip,
   TooltipContent,
@@ -45,6 +45,39 @@ export const ConversationItemActions: React.FC<
   setIsDeleteOpen,
 }) => {
   const { document } = useDocumentState();
+  const [textContent, setTextContent] = useState("");
+  const [selectedVoice, setSelectedVoice] =
+    useState<SpeechSynthesisVoice | null>(null);
+  const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
+
+  useEffect(() => {
+    const availableVoices = speechSynthesis.getVoices();
+
+    if (availableVoices.length > 0) {
+      setSelectedVoice(availableVoices[5]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (document) {
+      const strippedText = document.content.replace(/<\/?[^>]+(>|$)/g, "");
+      setTextContent(strippedText);
+    }
+  }, [document]);
+
+  const handleReadAloud = () => {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      setIsReadingAloud(false);
+    } else {
+      const utterance = new SpeechSynthesisUtterance(textContent);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      speechSynthesis.speak(utterance);
+      setIsReadingAloud(true);
+    }
+  };
 
   return (
     <div className="flex md:flex-col items-start gap-2">
@@ -106,8 +139,14 @@ export const ConversationItemActions: React.FC<
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center">
-                <Voiceover className="w-[16px] h-[16px]" />
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={handleReadAloud}
+              >
+                <SpeakerSimpleHighIcon
+                  weight={isReadingAloud ? "fill" : "regular"}
+                  className="w-[16px] h-[16px]"
+                />
               </button>
             </TooltipTrigger>
             <TooltipContent

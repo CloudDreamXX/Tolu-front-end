@@ -30,11 +30,11 @@ export const ContentManagerCreatePage: React.FC = () => {
           <img src={EmptyArticle} alt="" className="mb-[32px] w-[163px]" />
           <div className="text-center flex flex-col items-center justify-center gap-[8px]">
             <p className="text-[32px] font-[700] text-[#1D1D1F]">
-              Article not selected...
+              Select or Create a Topic
             </p>
             <p className="text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
-              To get started, choose a topic from the library or create a new
-              document.
+              To get started, choose a topic from the library or use Tolu's AI
+              assistant to create a new one.
             </p>
           </div>
         </div>

@@ -15,6 +15,8 @@ import {
 import LoadingIcon from "shared/assets/icons/loading-icon";
 import { DocumentLoadingSkeleton } from "./lib";
 import { ContentService, ContentStatus } from "entities/content";
+import { ClientService } from "entities/client";
+import { setFolders } from "entities/client/lib";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -30,6 +32,37 @@ export const LibraryDocument = () => {
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
   );
+
+  const [textContent, setTextContent] = useState("");
+  const [selectedVoice, setSelectedVoice] =
+    useState<SpeechSynthesisVoice | null>(null);
+
+  useEffect(() => {
+    const availableVoices = speechSynthesis.getVoices();
+
+    if (availableVoices.length > 0) {
+      setSelectedVoice(availableVoices[5]);
+    }
+  }, []);
+
+  const handleReadAloud = () => {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    } else {
+      const utterance = new SpeechSynthesisUtterance(textContent);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      speechSynthesis.speak(utterance);
+    }
+  };
+
+  useEffect(() => {
+    if (document) {
+      const strippedText = document.content.replace(/<\/?[^>]+(>|$)/g, "");
+      setTextContent(strippedText);
+    }
+  }, [document]);
 
   useEffect(() => {
     const fetchHealthHistory = async () => {
@@ -76,6 +109,9 @@ export const LibraryDocument = () => {
       };
       await ContentService.updateStatus(newStatus);
     }
+
+    const folders = await ClientService.getLibraryContent();
+    dispatch(setFolders(folders.folders));
   };
 
   return (
@@ -95,6 +131,7 @@ export const LibraryDocument = () => {
             isSearching={false}
             hasMessages={messages.length >= 2}
             onStatusChange={onStatusChange}
+            onReadAloud={handleReadAloud}
           />
         </div>
 
@@ -126,6 +163,7 @@ export const LibraryDocument = () => {
                 isSearching={false}
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}
+                onReadAloud={handleReadAloud}
               />
             </div>
           </div>

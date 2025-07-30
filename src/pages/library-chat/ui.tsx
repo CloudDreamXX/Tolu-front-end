@@ -114,6 +114,40 @@ export const LibraryChat = () => {
 
   const watchedCaseValues = useWatch({ control: caseForm.control });
 
+  const [textContent, setTextContent] = useState("");
+  const [selectedVoice, setSelectedVoice] =
+    useState<SpeechSynthesisVoice | null>(null);
+
+  useEffect(() => {
+    const availableVoices = speechSynthesis.getVoices();
+
+    if (availableVoices.length > 0) {
+      setSelectedVoice(availableVoices[5]);
+    }
+  }, []);
+
+  const handleReadAloud = () => {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    } else {
+      const utterance = new SpeechSynthesisUtterance(textContent);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      speechSynthesis.speak(utterance);
+    }
+  };
+
+  useEffect(() => {
+    if (messages.length) {
+      const combinedText = messages.map((message) => message.content).join(" ");
+
+      const strippedText = combinedText.replace(/<\/?[^>]+(>|$)/g, "");
+
+      setTextContent(strippedText);
+    }
+  }, [messages]);
+
   useEffect(() => {
     const fetchHealthHistory = async () => {
       try {
@@ -428,7 +462,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             id: finalData.chat_id || Date.now().toString(),
             type: "ai",
             content: isSwitch(SWITCH_KEYS.LEARN)
-              ? joinReplyChunksSafely(replyChunks) // Use joined chunks for LEARN switch
+              ? joinReplyChunksSafely(replyChunks)
               : accumulatedText,
             timestamp: new Date(),
             document: str,
@@ -617,6 +651,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             isHistoryPopup
             fromPath={location.state?.from?.pathname ?? null}
             initialRating={chat.length ? (chat[0].liked ? 5 : 1) : undefined}
+            onReadAloud={handleReadAloud}
           />
         </div>
         {isLoadingSession ? (
@@ -753,6 +788,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 initialRating={
                   chat.length ? (chat[0].liked ? 5 : 1) : undefined
                 }
+                onReadAloud={handleReadAloud}
               />
             </div>
 

@@ -112,6 +112,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   const [editModal, setEditModal] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("clientInfo");
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
 
   const token = useSelector((state: RootState) => state.user.token);
 
@@ -319,12 +320,13 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   };
 
   return (
-    <Popover>
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
         {customTrigger ?? (
           <Button
             variant="secondary"
             className="w-12 h-12 p-[10px] rounded-full relative bg-[#F3F6FB]"
+            onClick={() => setPopoverOpen(true)}
           >
             <Personalized />
             {selectedClient ||

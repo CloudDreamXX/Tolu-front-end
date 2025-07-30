@@ -178,6 +178,9 @@ export const LibraryClientContent = () => {
         [id]: newStatus,
       }));
     }
+
+    const folders = await ClientService.getLibraryContent();
+    dispatch(setFolders(folders.folders));
   };
 
   const onDocumentClick = (id: string) => {
