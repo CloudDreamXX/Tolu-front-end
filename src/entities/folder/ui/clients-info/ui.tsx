@@ -19,11 +19,8 @@ export const ClientsInfo: React.FC<ClientsInfoProps> = ({
       refreshSharedClients={refreshSharedClients}
       customTrigger={
         <button className="flex flex-row items-baseline group">
-          <h4 className="text-sm font-semibold md:text-base lg:text-lg">
-            Clients: {clients?.length ?? "N/A"}
-          </h4>
-          <div className="text-[12px] font-semibold group-hover:text-[#008FF6]">
-            &nbsp;/ Edit
+          <div className="text-sm font-semibold md:text-base lg:text-lg group-hover:text-[#008FF6]">
+            Clients
           </div>
         </button>
       }

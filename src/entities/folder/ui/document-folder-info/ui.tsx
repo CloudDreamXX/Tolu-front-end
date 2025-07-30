@@ -7,7 +7,6 @@ interface DocumentFolderInfoProps {
 
 export const DocumentFolderInfo: React.FC<DocumentFolderInfoProps> = ({
   folderId,
-  folderName,
 }) => {
   const location = window.location.pathname;
   const tab = location.split("/")[3];
@@ -17,11 +16,8 @@ export const DocumentFolderInfo: React.FC<DocumentFolderInfoProps> = ({
       to={`/content-manager/folder/${tab}/${folderId}`}
       className="flex flex-row items-end group"
     >
-      <h4 className="text-sm font-semibold md:text-base lg:text-lg">
-        Original folder: {folderName}
-      </h4>
-      <div className="mb-1 ml-1 text-xs font-semibold group-hover:text-[#008FF6]">
-        / Go to folder
+      <div className="text-sm font-semibold md:text-base lg:text-lg group-hover:text-[#008FF6]">
+        Original folder
       </div>
     </NavLink>
   );

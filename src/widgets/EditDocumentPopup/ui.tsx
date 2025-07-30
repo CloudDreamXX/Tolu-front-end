@@ -77,7 +77,7 @@ export const EditDocumentPopup: React.FC<Props> = ({
   );
 };
 
-const MenuItem: React.FC<{
+export const MenuItem: React.FC<{
   icon: React.ReactNode;
   label: string;
   className?: string;

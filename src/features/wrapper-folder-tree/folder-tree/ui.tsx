@@ -1,4 +1,9 @@
-import { IFolder } from "entities/folder";
+import {
+  FoldersService,
+  IFolder,
+  NewFolder,
+  setFolders,
+} from "entities/folder";
 import { RootState } from "entities/store";
 import {
   ChevronDown,
@@ -7,11 +12,17 @@ import {
   FolderOpen,
   GripVertical,
 } from "lucide-react";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { cn } from "shared/lib";
+import { cn, toast } from "shared/lib";
 import { getNumberOfContent, isSameRoot } from "../utils";
+import Dots from "shared/assets/icons/dots";
+import { MenuItem } from "widgets/EditDocumentPopup";
+import Plus from "shared/assets/icons/plus";
+import TrashIcon from "shared/assets/icons/trash-icon";
+import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
+import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 
 interface FolderTreeProps {
   folders: IFolder[];
@@ -50,6 +61,10 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   const { folders: allFolders } = useSelector(
     (state: RootState) => state.folder
   );
+  const [menuOpenFolderId, setMenuOpenFolderId] = useState<string | null>(null);
+  const [createPopup, setCreatePopup] = useState<boolean>(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
   const onFolderDragOver = (e: React.DragEvent, folderId: string) => {
     e.preventDefault();
@@ -89,35 +104,112 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
     setDragOverFolderId(null);
   };
 
+  const handleDotsClick = (folderId: string) => {
+    setMenuOpenFolderId((prevId) => (prevId === folderId ? null : folderId));
+  };
+
+  const handleDeleteFolder = async () => {
+    try {
+      await FoldersService.deleteFolder({
+        folder_id: menuOpenFolderId as string,
+        force_delete: false,
+      });
+
+      toast({ title: "Deleted successfully" });
+      setIsDeleteOpen(false);
+
+      const folderResponse = await FoldersService.getFolders();
+      dispatch(setFolders(folderResponse));
+    } catch (error) {
+      console.error("Error deleting a folder:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to delete a folder",
+        description: "Failed to delete a folder. Please try again.",
+      });
+    }
+  };
+
+  const createFolder = async (name: string, description: string) => {
+    try {
+      const newFolder: NewFolder = {
+        name: name,
+        description: description,
+        parent_folder_id: menuOpenFolderId as string,
+      };
+
+      await FoldersService.createFolder(newFolder);
+
+      toast({ title: "Created successfully" });
+      setCreatePopup(false);
+
+      const folderResponse = await FoldersService.getFolders();
+      dispatch(setFolders(folderResponse));
+    } catch (error) {
+      console.error("Error creating a folder:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to create a folder",
+        description: "Failed to create a folder. Please try again.",
+      });
+    }
+  };
+
   return (
     <>
       {folders.map((folder) => (
         <div key={folder.id} className="ml-4 select-none">
           <div
-            className={cn(
-              "flex items-center gap-3 px-4 py-[7px] cursor-pointer transition-colors",
-              folderId === folder.id ? "text-blue-500" : "",
-              isSameRoot(allFolders, dragOverFolderId, rootFolderId) &&
-                dragOverFolderId === folder.id &&
-                "bg-blue-50"
-            )}
-            onClick={() => toggleFolder(folder.id)}
+            className="flex items-center px-4 py-[7px]"
             onDragOver={(e) => onFolderDragOver(e, folder.id)}
             onDragLeave={onFolderDragLeave}
             onDrop={(e) => onFolderDrop(e, folder.id)}
           >
-            {openFolders.has(folder.id) ? (
-              <ChevronUp className="w-5 h-5 shrink-0" />
-            ) : (
-              <ChevronDown className="w-5 h-5 shrink-0" />
-            )}
-            {level === 0 ? null : <FolderOpen className="w-5 h-5 shrink-0" />}
-            <span>{folder.name}</span>
+            <div
+              className={cn(
+                "flex items-center gap-3 cursor-pointer transition-colors",
+                folderId === folder.id ? "text-blue-500" : "",
+                isSameRoot(allFolders, dragOverFolderId, rootFolderId) &&
+                  dragOverFolderId === folder.id &&
+                  "bg-blue-50"
+              )}
+              onClick={() => toggleFolder(folder.id)}
+            >
+              {openFolders.has(folder.id) ? (
+                <ChevronUp className="w-5 h-5 shrink-0" />
+              ) : (
+                <ChevronDown className="w-5 h-5 shrink-0" />
+              )}
+              {level === 0 ? null : <FolderOpen className="w-5 h-5 shrink-0" />}
+              <span>{folder.name}</span>
+            </div>
             <span className="rounded-full bg-[#F3F6FB] text-[10px] text-[#1C63DB] p-2 max-w-5 max-h-5 flex items-center justify-center">
               {getNumberOfContent(folder)}
             </span>
+            <span
+              className="ml-auto px-[8px] cursor-pointer"
+              onClick={() => handleDotsClick(folder.id)}
+            >
+              <Dots />
+            </span>
           </div>
-
+          {menuOpenFolderId === folder.id && (
+            <div
+              className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px]
+             bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-8"
+            >
+              <MenuItem
+                icon={<Plus />}
+                label={"Create folders"}
+                onClick={() => setCreatePopup(true)}
+              />
+              <MenuItem
+                icon={<TrashIcon />}
+                label={"Delete"}
+                onClick={() => setIsDeleteOpen(true)}
+              />
+            </div>
+          )}
           {folder.subfolders && openFolders.has(folder.id) && (
             <FolderTree
               folders={folder.subfolders}
@@ -189,6 +281,19 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
       ))}
       {isMoving && (
         <div className="fixed inset-0 z-50 cursor-wait bg-white/10 backdrop-blur-sm" />
+      )}
+      {createPopup && (
+        <CreateSubfolderPopup
+          onClose={() => setCreatePopup(false)}
+          onComplete={createFolder}
+        />
+      )}
+      {isDeleteOpen && (
+        <DeleteMessagePopup
+          contentId={menuOpenFolderId ?? ""}
+          onCancel={() => setIsDeleteOpen(false)}
+          onDelete={handleDeleteFolder}
+        />
       )}
     </>
   );
