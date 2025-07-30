@@ -358,8 +358,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       const processFinal = (finalData: any) => {
         setIsSearching(false);
 
+        const chatId = (finalData?.chat_id || finalData?.chatId) ?? "";
+
         const aiMessage: Message = {
-          id: finalData ? finalData.chat_id : Date.now().toString(),
+          id: chatId || Date.now().toString(),
           type: "ai",
           content: isLearn
             ? joinReplyChunksSafely(replyChunks)
@@ -371,12 +373,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         setMessages((prev) => [...prev, aiMessage]);
         setStreamingText("");
 
-        if (finalData.chat_id && finalData.chat_id !== currentChatId) {
-          setCurrentChatId(finalData.chat_id);
-          returnedChatId = finalData.chat_id;
+        if (chatId && chatId !== currentChatId) {
+          setCurrentChatId(chatId);
+          returnedChatId = chatId;
         }
 
-        if (finalData.chat_title) {
+        if (finalData?.chat_title) {
           setChatTitle(finalData.chat_title);
         }
       };

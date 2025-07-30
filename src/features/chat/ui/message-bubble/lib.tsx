@@ -48,35 +48,47 @@ export const smartRender = async (text: string) => {
     if (type === "markdown") {
       const cleaned = cleanMarkdown(sanitizedText);
 
+      const htmlParts = extractHtmlFromMarkdown(cleaned);
+
       return (
         <div className="font-inter bg-[#ECEFF4] p-4">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkBreaks]}
-            components={{
-              body: (props) => (
-                <body className="font-inter bg-[#ECEFF4]" {...props} />
-              ),
-              h1: (props) => <h1 className="font-inter" {...props} />,
-              h2: (props) => <h2 className="font-inter" {...props} />,
-              h3: (props) => <h3 className="font-inter" {...props} />,
-              h4: (props) => <h4 className="font-inter" {...props} />,
-              p: (props) => <p className="font-inter" {...props} />,
-              ul: (props) => <ul className="font-inter" {...props} />,
-              li: (props) => <li className="font-inter" {...props} />,
-              a: (props) => {
-                return (
-                  <a
-                    {...props}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-inter text-wrap"
-                  />
-                );
-              },
-            }}
-          >
-            {cleaned}
-          </ReactMarkdown>
+          {htmlParts.map((part, index) =>
+            part.isHtml ? (
+              <div
+                key={index}
+                className="bg-[#ECEFF4]"
+                dangerouslySetInnerHTML={{ __html: part.content }}
+              />
+            ) : (
+              <ReactMarkdown
+                key={index}
+                remarkPlugins={[remarkGfm, remarkBreaks]}
+                skipHtml
+                components={{
+                  body: (props) => (
+                    <body className="font-inter bg-[#ECEFF4]" {...props} />
+                  ),
+                  h1: (props) => <h1 className="font-inter" {...props} />,
+                  h2: (props) => <h2 className="font-inter" {...props} />,
+                  h3: (props) => <h3 className="font-inter" {...props} />,
+                  h4: (props) => <h4 className="font-inter" {...props} />,
+                  p: (props) => <p className="font-inter" {...props} />,
+                  ul: (props) => <ul className="font-inter" {...props} />,
+                  li: (props) => <li className="font-inter" {...props} />,
+                  a: (props) => (
+                    <a
+                      {...props}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-inter text-wrap"
+                    />
+                  ),
+                }}
+              >
+                {part.content}
+              </ReactMarkdown>
+            )
+          )}
         </div>
       );
     }
@@ -95,6 +107,33 @@ export const smartRender = async (text: string) => {
       <div className="font-inter bg-[#ECEFF4]">Error rendering content.</div>
     );
   }
+};
+
+const extractHtmlFromMarkdown = (markdown: string) => {
+  const regex = /```html\n([\s\S]*?)\n```/g;
+  const parts: { isHtml: boolean; content: string }[] = [];
+
+  let match;
+  let lastIndex = 0;
+
+  while ((match = regex.exec(markdown)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push({
+        isHtml: false,
+        content: markdown.slice(lastIndex, match.index),
+      });
+    }
+
+    parts.push({ isHtml: true, content: match[1] });
+
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < markdown.length) {
+    parts.push({ isHtml: false, content: markdown.slice(lastIndex) });
+  }
+
+  return parts;
 };
 
 export const joinReplyChunksSafely = (chunks: string[]): string => {

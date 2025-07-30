@@ -85,6 +85,7 @@ export class ClientService {
         method: "POST",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          withCredentials: "true",
         },
         body: formData,
       });
@@ -93,42 +94,62 @@ export class ClientService {
         throw new Error(`HTTP error. Status: ${response.status}`);
       }
 
-      if (response.headers.get("content-type")?.includes("text/event-stream")) {
-        const reader = response.body!.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          buffer += chunk;
-
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
-
-          for (const line of lines) {
-            if (line.startsWith("data:")) {
-              try {
-                const jsonData = JSON.parse(line.substring(5).trim());
-                if (onChunk) onChunk(jsonData);
-              } catch (e) {
-                console.error("Error parsing SSE data:", e);
-              }
-            }
-          }
-        }
-
-        if (onComplete) onComplete(null);
-        return null;
-      } else {
+      if (
+        !response.headers.get("content-type")?.includes("text/event-stream")
+      ) {
         const data = await response.json();
         if (onComplete) onComplete(data);
         return data;
       }
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let folderId = "";
+      let documentId = "";
+      let chatId = "";
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (line.startsWith("data:")) {
+            try {
+              const jsonData = JSON.parse(line.substring(5).trim());
+
+              folderId = jsonData.folder_id || folderId;
+              documentId = jsonData.content_id || documentId;
+              chatId = jsonData.chat_id || chatId;
+
+              if (onChunk) onChunk(jsonData);
+            } catch (e) {
+              console.error("Error parsing SSE data:", e);
+            }
+          }
+        }
+      }
+
+      if (onComplete)
+        onComplete({
+          folderId,
+          documentId,
+          chatId,
+        });
+
+      return {
+        folderId,
+        documentId,
+        chatId,
+      };
     } catch (error) {
-      console.error("Error processing AI personalized search:", error);
+      console.error("Error processing stream:", error);
       throw error;
     }
   }
