@@ -16,7 +16,14 @@ import { Library } from "pages/library";
 import { LibraryChat } from "pages/library-chat";
 import { LibraryDocument } from "pages/library-document";
 import { UserManagement } from "pages/user-management";
-import { Navigate, Route, Routes, useParams } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
 import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
@@ -63,6 +70,7 @@ export const AppRoutes = () => {
       <Route path="/welcome/client" element={<WelcomeScreen />} />
       <Route path="/welcome/practitioner" element={<OnboardingWelcome />} />
       <Route path="/onboarding-welcome" element={<OnboardingMain />} />
+      <Route path="/reset-password" element={<RedirectToNewPassword />} />
       <Route path="/new-password" element={<NewPassword />} />
       <Route path="/invite-clients" element={<InviteClients />} />
       <Route path="/onboarding-finish" element={<OnboardingFinish />} />
@@ -178,4 +186,21 @@ export const AppRoutes = () => {
 const RedirectContentToLibrary = () => {
   const { documentId } = useParams();
   return <Navigate to={`/library/document/${documentId}`} replace />;
+};
+
+const RedirectToNewPassword = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const params = new URLSearchParams(location.search);
+  const token = params.get("token");
+  const email = params.get("email");
+
+  if (token && email) {
+    navigate("/new-password", {
+      state: { token, email },
+    });
+  }
+
+  return <div>Redirecting...</div>;
 };

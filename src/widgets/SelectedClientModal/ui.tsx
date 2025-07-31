@@ -64,7 +64,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
               className="flex items-center gap-[8px] px-[12px] py-[4px]"
               onClick={onEdit}
             >
-              <EditIcon /> Edit onboarding
+              <EditIcon /> View profile
             </button>
           </div>
         </div>

@@ -137,6 +137,7 @@ li::marker {
 
   body {
     @apply bg-background text-foreground;
+    max-width: 100% !important;
   }
 }
 

@@ -1,21 +1,18 @@
-import { RootState } from "entities/store";
 import { UserService } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Input } from "shared/ui";
 
 export const NewPassword = () => {
-  const { user: userData, tokenNewPassword } = useSelector(
-    (state: RootState) => state.user
-  );
   const nav = useNavigate();
   const [formData, setFormData] = useState({
     newPassword: "",
     newPasswordRepeat: "",
   });
   const [passwordError, setPasswordError] = useState("");
+  const location = useLocation();
+  const { token, email } = location.state || {};
 
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setPasswordError("");
@@ -31,10 +28,10 @@ export const NewPassword = () => {
     }
 
     try {
-      if (userData?.email && tokenNewPassword) {
+      if (email && token) {
         const msg = await UserService.setNewPassword(
-          userData.email,
-          tokenNewPassword,
+          email,
+          token,
           formData.newPassword
         );
 

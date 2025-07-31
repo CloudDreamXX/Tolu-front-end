@@ -226,11 +226,13 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                 label={"Create folders"}
                 onClick={() => setCreatePopup(true)}
               />
-              <MenuItem
-                icon={<TrashIcon />}
-                label={"Delete"}
-                onClick={() => setIsDeleteOpen(true)}
-              />
+              {!allFolders.find((item) => item.id === menuOpenFolderId) && (
+                <MenuItem
+                  icon={<TrashIcon />}
+                  label={"Delete"}
+                  onClick={() => setIsDeleteOpen(true)}
+                />
+              )}
             </div>
           )}
           {folder.subfolders && openFolders.has(folder.id) && (

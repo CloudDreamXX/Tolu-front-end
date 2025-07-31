@@ -6,7 +6,11 @@ interface FilesInfoProps {
   description?: string;
 }
 
-export const FilesInfo: React.FC<FilesInfoProps> = ({ title, description }) => {
+export const FilesInfo: React.FC<FilesInfoProps> = ({
+  title,
+  description,
+  files,
+}) => {
   return (
     <PopoverAttach
       customTrigger={
@@ -18,6 +22,8 @@ export const FilesInfo: React.FC<FilesInfoProps> = ({ title, description }) => {
       }
       title={title}
       description={description}
+      isDocumentPage
+      existingFiles={files}
     />
   );
 };

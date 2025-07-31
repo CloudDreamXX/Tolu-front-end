@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ClosedFolder from "shared/assets/icons/closed-folder";
 import Dots from "shared/assets/icons/dots";
-import { Eye } from "shared/assets/icons/eye";
 import Plus from "shared/assets/icons/plus";
 import { toast } from "shared/lib/hooks/use-toast";
 import {
@@ -273,8 +272,11 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                       <Button
                         variant="ghost"
                         className="items-center justify-start w-full h-8 p-1 font-medium"
+                        onClick={() =>
+                          handleCreateSubfolder(subfolder.id, subfolder.name)
+                        }
                       >
-                        <Eye /> View source files
+                        <Plus /> Create folder
                       </Button>
                       <Button
                         variant="ghost"

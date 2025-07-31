@@ -2,6 +2,7 @@ import { ISessionResult } from "entities/coach";
 import parse from "html-react-parser";
 import React from "react";
 import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import BlueChevron from "shared/assets/icons/blue-chevron";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
@@ -218,7 +219,26 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         onChange={setEditedContent}
         className="bg-white border border-[#008FF6] rounded-[16px] p-[16px]"
         modules={{
-          toolbar: false,
+          toolbar: [
+            [
+              { header: "1" },
+              { header: "2" },
+              { header: "3" },
+              { header: "4" },
+              { list: "ordered" },
+              { list: "bullet" },
+              { align: [] },
+              "bold",
+              "italic",
+              "underline",
+              { lineHeight: [] },
+              { indent: "-1" },
+              { indent: "+1" },
+              "link",
+              "blockquote",
+              "code-block",
+            ],
+          ],
         }}
       />
 

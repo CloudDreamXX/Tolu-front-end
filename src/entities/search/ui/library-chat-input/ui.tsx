@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Paperclip, Send } from "lucide-react";
 import { cn } from "shared/lib";
-import { Button, Input } from "shared/ui";
+import { Button, Textarea } from "shared/ui";
 import { SwitchGroup } from "widgets/switch-group";
 import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
 import { MenopauseSubmissionRequest, UserService } from "entities/user";
@@ -109,7 +109,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         </div>
       )}
       <div className="relative mb-4">
-        <Input
+        <Textarea
           placeholder={placeholder}
           value={message}
           onChange={(e) => {
@@ -119,7 +119,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             }
           }}
           onKeyDown={handleKeyPress}
-          className="w-full px-3 py-2 h-[50px] text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full h-[80px] text-sm md:text-sm xl:text-sm resize-none"
+          containerClassName="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       {footer ? (

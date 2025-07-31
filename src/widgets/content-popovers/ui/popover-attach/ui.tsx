@@ -23,8 +23,9 @@ interface PopoverAttachProps {
   customTrigger?: React.ReactNode;
   title?: string;
   description?: string;
-  existingFiles?: string[];
+  existingFiles?: any[];
   disabled?: boolean;
+  isDocumentPage?: boolean;
 }
 
 export const PopoverAttach: React.FC<PopoverAttachProps> = ({
@@ -32,8 +33,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   customTrigger,
   title,
   description,
-  existingFiles = [],
+  existingFiles,
   disabled = false,
+  isDocumentPage,
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
@@ -150,35 +152,38 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       <PopoverContent className="w-[358px] md::w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <Attach />
-          {attachedFiles.length > 0
-            ? "Attached files"
+          {attachedFiles.length > 0 ||
+          (existingFiles && existingFiles?.length > 0)
+            ? "Sources"
             : (title ?? "Attach files to folder")}
         </h4>
         <p className="text-[12px] xl:text-[14px] text-[#5F5F65]">
           {description ??
             "Add credible references to support information integrity"}
         </p>
-        {existingFiles.length > 0 && (
-          <div className="flex flex-col gap-2">
-            {existingFiles.map((file, index) => (
-              <div
-                key={`${file}-${index}`}
-                className="flex flex-row items-center justify-between w-full px-3 py-2 bg-white border border-green-300 rounded-lg"
-              >
-                <div className="flex flex-row items-center flex-1 gap-2">
-                  <FileIcon color="#008FF6" size={20} />
-                  <div className="flex flex-col flex-1">
-                    <span className="text-sm font-medium text-gray-800 truncate">
-                      {file}
-                    </span>
+        {existingFiles &&
+          Array.isArray(existingFiles) &&
+          existingFiles.length > 0 && (
+            <div className="flex flex-col gap-2">
+              {existingFiles.map((file, index) => (
+                <div
+                  key={`${file}-${index}`}
+                  className="flex flex-row items-center justify-between w-full px-3 py-2 bg-white border border-green-300 rounded-lg"
+                >
+                  <div className="flex flex-row items-center flex-1 gap-2">
+                    <FileIcon color="#008FF6" size={20} />
+                    <div className="flex flex-col flex-1">
+                      <span className="text-sm font-medium text-gray-800 truncate">
+                        {file.filename}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
-        {attachedFiles.length > 0 && (
+        {!isDocumentPage && attachedFiles.length > 0 && (
           <div className="flex flex-col gap-2 mb-4">
             {attachedFiles.map((file, index) => (
               <div
@@ -194,50 +199,58 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                     <span className="text-xs text-[#5F5F65]">{file.size}</span>
                   </div>
                 </div>
-                <button
-                  onClick={() => removeFile(index)}
-                  className="p-1 rounded hover:bg-red-50"
-                >
-                  <Trash2 color="#FF1F0F" size={16} />
-                </button>
+                {!isDocumentPage && (
+                  <button
+                    onClick={() => removeFile(index)}
+                    className="p-1 rounded hover:bg-red-50"
+                  >
+                    <Trash2 color="#FF1F0F" size={16} />
+                  </button>
+                )}
               </div>
             ))}
           </div>
         )}
 
-        <DropArea
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          dragActive={dragActive}
-          onBrowseClick={handleBrowseClick}
-        />
+        {!isDocumentPage && (
+          <DropArea
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            dragActive={dragActive}
+            onBrowseClick={handleBrowseClick}
+          />
+        )}
 
-        <Input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          className="hidden"
-          accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif"
-          onChange={handleFileChange}
-        />
+        {!isDocumentPage && (
+          <Input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            className="hidden"
+            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif"
+            onChange={handleFileChange}
+          />
+        )}
 
-        <div className="flex flex-row justify-between">
-          <Button
-            variant={"light-blue"}
-            className="w-[128px]"
-            onClick={handleSave}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant={"brightblue"}
-            className="w-[128px]"
-            onClick={handleSave}
-          >
-            Attach
-          </Button>
-        </div>
+        {!isDocumentPage && (
+          <div className="flex flex-row justify-between">
+            <Button
+              variant={"light-blue"}
+              className="w-[128px]"
+              onClick={handleSave}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={"brightblue"}
+              className="w-[128px]"
+              onClick={handleSave}
+            >
+              Attach
+            </Button>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );
