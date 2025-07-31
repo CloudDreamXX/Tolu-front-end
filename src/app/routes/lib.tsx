@@ -21,7 +21,6 @@ import {
   Route,
   Routes,
   useLocation,
-  useNavigate,
   useParams,
 } from "react-router-dom";
 import { Register } from "widgets/auth-forms";
@@ -190,17 +189,10 @@ const RedirectContentToLibrary = () => {
 
 const RedirectToNewPassword = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const params = new URLSearchParams(location.search);
   const token = params.get("token");
   const email = params.get("email");
 
-  if (token && email) {
-    navigate("/new-password", {
-      state: { token, email },
-    });
-  }
-
-  return <div>Redirecting...</div>;
+  return <Navigate to="/new-password" replace state={{ token, email }} />;
 };
