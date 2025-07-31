@@ -103,6 +103,15 @@ export const ConversationItemActions: React.FC<
     }
   }, [document]);
 
+  useEffect(() => {
+    return () => {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+      }
+      setIsReadingAloud(false);
+    };
+  }, [document]);
+
   const handleReadAloud = () => {
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
@@ -112,6 +121,11 @@ export const ConversationItemActions: React.FC<
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
+
+      utterance.onend = () => {
+        setIsReadingAloud(false);
+      };
+
       speechSynthesis.speak(utterance);
       setIsReadingAloud(true);
     }

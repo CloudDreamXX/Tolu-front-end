@@ -5,12 +5,16 @@ type Props = {
   contentId: string;
   onCancel: () => void;
   onDelete: (contentId: string) => Promise<void>;
+  title?: string;
+  text?: string;
 };
 
 export const DeleteMessagePopup: React.FC<Props> = ({
   contentId,
   onCancel,
   onDelete,
+  title,
+  text,
 }) => {
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm flex items-center justify-center z-50">
@@ -23,11 +27,13 @@ export const DeleteMessagePopup: React.FC<Props> = ({
           <Close />
         </button>
         <h2 className="text-[20px] font-[700] text-[#FF1F0F] flex md:items-center gap-[10px] md:gap-[8px] mb-[12px]">
-          <TrashIcon fill="#FF1F0F" /> Delete Message?
+          <TrashIcon fill="#FF1F0F" />
+          {title ? title : "Delete folder?"}
         </h2>
         <p className="text-[16px] text-[#5F5F65] font-[500] mb-[24px]">
-          Are you sure you want to delete this message? This action cannot be
-          undone.
+          {text
+            ? text
+            : "Are you sure you want to delete this folder? This action cannot be undone."}
         </p>
         <div className="flex justify-between gap-[8px]">
           <button

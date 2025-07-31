@@ -163,6 +163,14 @@ export const LibraryChat = () => {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+      }
+    };
+  }, [chatId]);
+
   const handleReadAloud = () => {
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
@@ -171,6 +179,11 @@ export const LibraryChat = () => {
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
+
+      utterance.onend = () => {
+        speechSynthesis.cancel();
+      };
+
       speechSynthesis.speak(utterance);
     }
   };

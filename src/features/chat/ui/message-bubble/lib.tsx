@@ -12,7 +12,10 @@ import sanitizeHtml from "sanitize-html";
 
 export const smartRender = async (text: string) => {
   try {
-    const sanitizedText = sanitizeHtml(text, {
+    const cutIndex = text.indexOf("Relevant content");
+    const trimmedText = cutIndex !== -1 ? text.slice(0, cutIndex) : text;
+
+    const sanitizedText = sanitizeHtml(trimmedText, {
       allowedTags: [
         "p",
         "a",

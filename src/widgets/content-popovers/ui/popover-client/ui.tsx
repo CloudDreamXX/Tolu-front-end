@@ -365,10 +365,11 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
                   onClick={() => {
                     setTempSelectedClient((prev) =>
                       prev === client.client_id ? null : client.client_id
-                    )
-                    setClientId && setClientId(tempSelectedClient)
-                  }
-                  }
+                    );
+                    if (setClientId) {
+                      setClientId(tempSelectedClient);
+                    }
+                  }}
                 >
                   <Checkbox
                     id={`client-${client.client_id}`}
@@ -377,7 +378,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
                     className={cn(
                       "w-4 h-4 p-0.5 border-gray-300 rounded-full",
                       tempSelectedClient === client.client_id &&
-                      "border-gray-600"
+                        "border-gray-600"
                     )}
                     checkClassName="min-w-2.5 w-2.5 h-2.5 border-gray-300 rounded-full bg-gray-600 text-gray-600"
                   />

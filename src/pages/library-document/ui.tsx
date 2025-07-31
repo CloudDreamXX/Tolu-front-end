@@ -83,6 +83,13 @@ export const LibraryDocument = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (document) {
+      const strippedText = document.content.replace(/<\/?[^>]+(>|$)/g, "");
+      setTextContent(strippedText);
+    }
+  }, [document]);
+
   const handleReadAloud = () => {
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
@@ -91,16 +98,14 @@ export const LibraryDocument = () => {
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
+
+      utterance.onend = () => {
+        speechSynthesis.cancel();
+      };
+
       speechSynthesis.speak(utterance);
     }
   };
-
-  useEffect(() => {
-    if (document) {
-      const strippedText = document.content.replace(/<\/?[^>]+(>|$)/g, "");
-      setTextContent(strippedText);
-    }
-  }, [document]);
 
   useEffect(() => {
     const fetchHealthHistory = async () => {
@@ -151,6 +156,14 @@ export const LibraryDocument = () => {
     const folders = await ClientService.getLibraryContent();
     dispatch(setFolders(folders.folders));
   };
+
+  useEffect(() => {
+    return () => {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+      }
+    };
+  }, [document]);
 
   return (
     <div className={`flex flex-col w-full h-full gap-6 p-6`}>

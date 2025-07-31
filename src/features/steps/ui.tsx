@@ -19,7 +19,7 @@ export const Steps: React.FC<StepsProps> = ({
   disabled = false,
 }) => {
   return (
-    <div className="flex items-center w-full p-2 border rounded-full overflow-y-auto">
+    <div className="flex items-center md:gap-0 w-full p-2 border rounded-full overflow-y-auto">
       {steps.map((step, index) => {
         const isCompleted = index < currentStep;
         const isCurrent = index === currentStep;
@@ -34,14 +34,14 @@ export const Steps: React.FC<StepsProps> = ({
                 isCompleted
                   ? "w-10 bg-[#BCE2C8] border border-[#062] text-[#062] shrink-0"
                   : isCurrent
-                    ? `px-4 ${stepWidth || ""} bg-gray-100 border border-gray-300 text-black text-[12px] md:text-[16px] font-medium`
+                    ? `px-4 ${stepWidth || ""} w-fit bg-gray-100 border border-gray-300 text-black text-[12px] md:text-[16px] font-medium`
                     : "w-10 border border-gray-300 text-gray-600 shrink-0"
               }`}
             >
               {isCompleted ? (
                 <Check className="w-6 h-6" />
               ) : (
-                <span className="truncate max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[14px] md:text-[16px]">
+                <span className="max-w-full whitespace-nowrap text-[14px] md:text-[16px]">
                   {ordered
                     ? `${index + 1}${isCurrent ? `. ${step}` : ""}`
                     : step}
@@ -51,9 +51,7 @@ export const Steps: React.FC<StepsProps> = ({
 
             {index < steps.length - 1 && (
               <div
-                className={`flex-grow h-[1px] w-[10%] ${
-                  isCompleted ? "bg-[#062]" : "bg-gray-300"
-                }`}
+                className={`flex-grow min-w-[16px] h-[1px] ${isCompleted ? "bg-[#062]" : "bg-gray-300"}`}
               />
             )}
           </React.Fragment>

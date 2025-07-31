@@ -7,6 +7,7 @@ import {
   RadioGroup,
   RadioGroupItem,
   Input,
+  Textarea,
 } from "shared/ui";
 import z from "zod";
 
@@ -49,8 +50,10 @@ export const DrivesAndGoalsForm = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>Why this specific goal?</FormLabel>
             <FormControl>
-              <Input
+              <Textarea
                 placeholder="To stay away from the hospital or to boost performance at work"
+                className="resize-none text-[16px] md:text-sm xl:text-sm pb-0 min-h-auto h-fit"
+                containerClassName="px-[16px] py-[8px] rounded-md min-h-fit"
                 {...field}
               />
             </FormControl>

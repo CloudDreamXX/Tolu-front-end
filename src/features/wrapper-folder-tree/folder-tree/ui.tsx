@@ -66,6 +66,29 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
 
+  const findFolder = (
+    folderId: string,
+    folders: IFolder[]
+  ): IFolder | undefined => {
+    for (const folder of folders) {
+      if (folder.id === folderId) {
+        return folder;
+      }
+      if (folder.subfolders) {
+        const foundInSubfolders = findFolder(folderId, folder.subfolders);
+        if (foundInSubfolders) {
+          return foundInSubfolders;
+        }
+      }
+    }
+    return undefined;
+  };
+
+  const folderToDelete = findFolder(menuOpenFolderId as string, allFolders);
+
+  const hasContentInside =
+    (folderToDelete && folderToDelete?.content?.length > 0) || false;
+
   const onFolderDragOver = (e: React.DragEvent, folderId: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
@@ -112,7 +135,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
     try {
       await FoldersService.deleteFolder({
         folder_id: menuOpenFolderId as string,
-        force_delete: false,
+        force_delete: hasContentInside,
       });
 
       toast({ title: "Deleted successfully" });
@@ -158,7 +181,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   return (
     <>
       {folders.map((folder) => (
-        <div key={folder.id} className="ml-4 select-none">
+        <div key={folder.id} className="ml-4 select-none relative">
           <div
             className="flex items-center px-4 py-[7px]"
             onDragOver={(e) => onFolderDragOver(e, folder.id)}
@@ -293,6 +316,11 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
           contentId={menuOpenFolderId ?? ""}
           onCancel={() => setIsDeleteOpen(false)}
           onDelete={handleDeleteFolder}
+          text={
+            hasContentInside
+              ? "This folder contains documents. Are you sure you want to delete it?"
+              : undefined
+          }
         />
       )}
     </>
