@@ -52,12 +52,14 @@ interface LibrarySmallChatProps {
   footer?: React.ReactNode;
   setMessage?: React.Dispatch<React.SetStateAction<string>>;
   isLoading?: boolean;
+  selectedText?: string;
 }
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   healthHistory,
   isCoach,
   isLoading,
+  selectedText,
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
@@ -93,7 +95,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [currentChatId, setCurrentChatId] = useState<string>("");
   const [chatTitle, setChatTitle] = useState<string>("");
   // const [currentStep, setCurrentStep] = useState(0);
-  const [message, setMessageState] = useState<string>("");
+  const [message, setMessageState] = useState<string>(selectedText || "");
   const [files, setFiles] = useState<File[]>([]);
   const [clientId, setClientId] = useState<string | null>(null);
   const [folderId, setFolderId] = useState<string | null>(null);
@@ -139,6 +141,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       loadExistingSession(chat[0].chat_id);
     }
   }, []);
+
+  useEffect(() => {
+    setMessageState(selectedText || "");
+  }, [selectedText]);
 
   useEffect(() => {
     if (isValid) {
@@ -669,7 +675,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           <CardFooter className="w-full p-0">
             <LibraryChatInput
               className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
-              onSend={handleNewMessage}
+              onSend={() => handleNewMessage(message, files)}
               disabled={isSearching}
               switchOptions={config.options}
               selectedSwitch={selectedSwitch}
@@ -677,6 +683,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 handleNewChatOpen();
                 handleSwitchChange(value);
               }}
+              message={message}
               healthHistory={healthHistory}
               footer={
                 <div className="flex items-center justify-between">
@@ -786,12 +793,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           <CardFooter className="w-full p-0">
             <LibraryChatInput
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
-              onSend={handleNewMessage}
+              onSend={() => handleNewMessage(message, files)}
               disabled={
                 isSearching ||
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderId) ||
                 message === ""
               }
+              message={message}
               switchOptions={config.options}
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {

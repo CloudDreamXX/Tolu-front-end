@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollArea } from "shared/ui";
 import { BadRateResponse } from "widgets/bad-rate-response-popup";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
@@ -25,7 +25,7 @@ import LoadingIcon from "shared/assets/icons/loading-icon";
 export const ContentManagerDocument: React.FC = () => {
   const {
     folders,
-    document,
+    document: selectedDocument,
     folder,
     conversation,
     sharedClients,
@@ -99,6 +99,44 @@ export const ContentManagerDocument: React.FC = () => {
 
   const { handleDocumentCreation } = useDocumentCreation();
   const isDraft = documentPath[0]?.name.toLowerCase() === "drafts";
+  const [selectedText, setSelectedText] = useState<string>("");
+  const [textForInput, setTextForInput] = useState<string>("");
+  const [tooltipPosition, setTooltipPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (selection?.toString()) {
+      setSelectedText(selection.toString());
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      setTooltipPosition({
+        top: rect.top - 150,
+        left: rect.left - 150,
+      });
+      setShowTooltip(true);
+    } else {
+      setShowTooltip(false);
+    }
+  };
+
+  const handleTooltipClick = () => {
+    setTextForInput(selectedText);
+    setShowTooltip(false);
+  };
+
+  useEffect(() => {
+    document.addEventListener("mouseup", handleTextSelection);
+    document.addEventListener("selectionchange", handleTextSelection);
+
+    return () => {
+      document.removeEventListener("mouseup", handleTextSelection);
+      document.removeEventListener("selectionchange", handleTextSelection);
+    };
+  }, []);
 
   useEffect(() => {
     const createDocument = async () => {
@@ -130,8 +168,8 @@ export const ContentManagerDocument: React.FC = () => {
   const onEditToggle = (pair: any) => {
     setSelectedDocumentId(pair.id);
     setEditedContent(pair.content);
-    setEditedTitle(document?.title ?? "");
-    setEditedQuery(document?.query ?? "");
+    setEditedTitle(selectedDocument?.title ?? "");
+    setEditedQuery(selectedDocument?.query ?? "");
     setIsEditing(true);
   };
 
@@ -144,7 +182,7 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   const onMarkAsClick = () => {
-    handleMarkAsClick(document);
+    handleMarkAsClick(selectedDocument);
   };
 
   const onStatusCompleteHandler = async (status: any, contentId?: string) => {
@@ -164,13 +202,31 @@ export const ContentManagerDocument: React.FC = () => {
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
 
           <DocumentInfoHeader
-            document={document}
+            document={selectedDocument}
             sharedClients={sharedClients}
             documentId={documentId}
             refreshSharedClients={refreshSharedClients}
           />
 
           <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">
+            {showTooltip && tooltipPosition && (
+              <div
+                className="absolute bg-white border border-blue-500 px-2 py-1 rounded-md"
+                style={{
+                  top: `${tooltipPosition.top}px`,
+                  left: `${tooltipPosition.left}px`,
+                  transform: "translateX(-50%)",
+                  zIndex: 9999,
+                }}
+              >
+                <button
+                  onClick={handleTooltipClick}
+                  className="text-black text-[16px] font-semibold"
+                >
+                  Ask TOLU
+                </button>
+              </div>
+            )}
             <ScrollArea className={cn("pr-2 md:pr-6")}>
               {loadingConversation ? (
                 <DocumentLoadingSkeleton />
@@ -178,7 +234,7 @@ export const ContentManagerDocument: React.FC = () => {
                 <>
                   <DocumentHeader
                     documentTitle={documentTitle}
-                    query={document?.query}
+                    query={selectedDocument?.query}
                     isCreatingDocument={isCreatingDocument}
                     isSendingMessage={isSendingMessage}
                   />
@@ -226,7 +282,7 @@ export const ContentManagerDocument: React.FC = () => {
         </div>
 
         <UserEngagementSidebar
-          document={document}
+          document={selectedDocument}
           folderName={folder?.name ?? ""}
         />
 
@@ -296,6 +352,7 @@ export const ContentManagerDocument: React.FC = () => {
             isCoach
             isDraft={isDraft}
             isLoading={loadingConversation}
+            selectedText={textForInput}
           />
         </div>
       </div>

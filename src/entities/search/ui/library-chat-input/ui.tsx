@@ -27,6 +27,7 @@ interface LibraryChatInputProps {
   setNewMessage?: React.Dispatch<React.SetStateAction<string>>;
   isLoading?: boolean;
   healthHistory?: HealthHistory;
+  message: string;
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -41,8 +42,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   footer,
   isLoading,
   healthHistory,
+  message,
 }) => {
-  const [message, setMessage] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [stepModalOpen, setStepModalOpen] = useState(false);
@@ -54,7 +55,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const handleSend = () => {
     if ((!message.trim() && attachedFiles.length === 0) || disabled) return;
     onSend?.(message, attachedFiles, null);
-    setMessage("");
     setAttachedFiles([]);
   };
 
@@ -82,12 +82,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
     await UserService.submitMenopauseResults(results);
     setStepModalOpen(false);
     setCompletionModalOpen(true);
-
-    // try {
-    //   const data = await UserService.getMenopauseRecommendations();
-    // } catch (error) {
-    //   console.error("Failed to load recommendations", error);
-    // }
   };
 
   return (
@@ -113,7 +107,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           placeholder={placeholder}
           value={message}
           onChange={(e) => {
-            setMessage(e.target.value);
             if (setNewMessage) {
               setNewMessage(e.target.value);
             }

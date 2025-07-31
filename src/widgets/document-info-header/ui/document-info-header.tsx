@@ -2,7 +2,6 @@ import { Share } from "entities/coach";
 import { IDocument } from "entities/document";
 import {
   ClientsInfo,
-  DocumentFolderInfo,
   FilesInfo,
   InstructionInfo,
 } from "entities/folder";
@@ -23,14 +22,6 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
 }) => {
   return (
     <div className="flex w-full flex-col md:flex-row md:flex-wrap gap-[2px] md:gap-x-4 md:gap-y-2 py-4 md:items-center sticky -top-[10px] z-30 bg-[#F2F4F6]">
-      {document ? (
-        <DocumentFolderInfo
-          folderId={document.originalFolderId}
-          folderName={document.originalFolderName}
-        />
-      ) : (
-        <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
-      )}
       {document ? (
         <FilesInfo files={document.originalFiles} />
       ) : (

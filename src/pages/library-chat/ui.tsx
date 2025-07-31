@@ -855,6 +855,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 setSelectedSwitch(value);
               }}
               healthHistory={healthHistory}
+              message={""}
             />
           </div>
         )}
