@@ -17,7 +17,7 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
   refreshSharedClients,
 }) => {
   return (
-    <div className="flex w-full flex-col md:flex-row md:flex-wrap gap-[2px] md:gap-x-4 md:gap-y-2 py-4 md:items-center sticky -top-[10px] z-30 bg-[#F2F4F6]">
+    <div className="flex w-full flex-col md:flex-row md:flex-wrap gap-[2px] md:gap-x-4 md:gap-y-2 py-4 md:items-center sticky -top-[10px] z-30 xl:z-10 bg-[#F2F4F6]">
       {document ? (
         <FilesInfo files={document.originalFiles} />
       ) : (

@@ -341,7 +341,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[358px] md:w-[419px] p-6 flex flex-col z-10">
+      <PopoverContent className="w-[358px] md:w-[419px] p-6 flex flex-col z-50">
         <button
           className="absolute top-[24px] right-[24px] z-[999]"
           onClick={handleAddClientModal}

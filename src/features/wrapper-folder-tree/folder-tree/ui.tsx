@@ -139,6 +139,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
       });
 
       toast({ title: "Deleted successfully" });
+      setMenuOpenFolderId(null);
       setIsDeleteOpen(false);
 
       const folderResponse = await FoldersService.getFolders();
@@ -164,6 +165,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
       await FoldersService.createFolder(newFolder);
 
       toast({ title: "Created successfully" });
+      setMenuOpenFolderId(null);
       setCreatePopup(false);
 
       const folderResponse = await FoldersService.getFolders();

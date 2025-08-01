@@ -16,7 +16,7 @@ export const FilesInfo: React.FC<FilesInfoProps> = ({
       customTrigger={
         <button className="flex flex-row items-baseline group">
           <div className="text-sm font-semibold md:text-base lg:text-lg group-hover:text-[#008FF6]">
-            Attached files
+            Sources
           </div>
         </button>
       }
