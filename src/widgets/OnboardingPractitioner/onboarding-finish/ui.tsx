@@ -53,18 +53,15 @@ export const OnboardingFinish = () => {
               You’re all set!
             </h3>
             <p className="self-stretch text-center text-black font-[Nunito] text-[16px] md:text-[24px] font-medium leading-[35px]">
-              We’ve set up your dashboard with tools, templates, and content
-              tailored to: {""}
-              <span className="self-stretch text-center text-black font-[Nunito] text-[16px] md:text-[24px] font-bold">
-                Functional Nutrition and Lifestyle Support for Menopause Health
-              </span>
+              Start creating personalized research and content for all types of
+              clients. Create, get paid, and grow! Nothing can stop you now
             </p>
           </div>
           <button
             onClick={handleLastClick}
             className="flex justify-center items-center h-[44px] w-full md:w-[250px] p-[16px] rounded-full bg-[#1C63DB] text-white"
           >
-            Go to My Dashboard
+            Go to my library
           </button>
         </div>
       </main>

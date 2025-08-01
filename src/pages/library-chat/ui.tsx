@@ -746,7 +746,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   onClick={handleTooltipClick}
                   className="text-black text-[16px] font-semibold"
                 >
-                  Ask TOLU
+                  Ask Tolu
                 </button>
               </div>
             )}

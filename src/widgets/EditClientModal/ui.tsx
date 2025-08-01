@@ -439,7 +439,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
             </div>
             <div>
               <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Do you plan to use TOLU collaboratively during your sessions?
+                Do you plan to use Tolu collaboratively during your sessions?
               </label>
               <div className="flex flex-col gap-2 mt-2">
                 <CustomRadio
@@ -478,7 +478,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
           <div className="flex flex-col gap-[16px] md:gap-[24px]">
             <div>
               <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Who will complete the client’s TOLU health profile?
+                Who will complete the client’s Tolu health profile?
               </label>
               <div className="flex flex-col gap-2 mt-2">
                 <CustomRadio

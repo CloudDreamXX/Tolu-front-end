@@ -36,7 +36,7 @@ export const ContentManagerSidebar: React.FC = () => {
               isNarrow ? "text-[27px]" : "text-[40px]"
             )}
           >
-            TOLU
+            Tolu AI
           </h2>
           {!isNarrow && (
             <h3 className="text-[24px] font-semibold font-open">

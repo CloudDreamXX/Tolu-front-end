@@ -31,14 +31,14 @@ export const SelectType = () => {
     setActiveDropdown((prev) => (prev === index ? null : index));
   };
 
-  const isAllSelected = () => {
-    return selectedOptions.every((option) => option !== "");
+  const isSelected = () => {
+    return selectedOptions.find((option) => option !== "");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isAllSelected()) return;
+    if (!isSelected()) return;
 
     const filledTypes = selectedOptions.map((option) =>
       option === "Other (please specify)" ? otherText : option
@@ -127,9 +127,9 @@ export const SelectType = () => {
             <button
               onClick={handleSubmit}
               type="submit"
-              disabled={!isAllSelected()}
+              disabled={!isSelected()}
               className={`flex items-center justify-center w-full md:h-[44px] p-[16px] rounded-full ${
-                isAllSelected()
+                isSelected()
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5F5F65]"
               }`}
@@ -143,9 +143,9 @@ export const SelectType = () => {
             <button
               onClick={handleSubmit}
               type="submit"
-              disabled={!isAllSelected()}
+              disabled={!isSelected()}
               className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
-                isAllSelected()
+                isSelected()
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5F5F65]"
               }`}

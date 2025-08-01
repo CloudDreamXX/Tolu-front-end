@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper, Input } from "shared/ui";
-import { Switch } from "shared/ui/switch";
 import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { SearchableSelect } from "../components/SearchableSelect";
@@ -64,14 +63,17 @@ export const ProfileSetup = () => {
     }
   };
 
+  const ageOptions = Array.from({ length: 83 }, (_, i) => {
+    const age = (i + 18).toString();
+    return age;
+  });
+
   const isFormValid =
     !!state.first_name?.trim() &&
     !!state.last_name?.trim() &&
     !!state.age &&
     !!state.gender &&
-    !!state.timezone &&
-    !!state.security_questions &&
-    !!state.security_answers?.trim();
+    !!state.timezone;
 
   return (
     <AuthPageWrapper>
@@ -83,7 +85,7 @@ export const ProfileSetup = () => {
             Profile Setup
           </h1>
         )}
-        <form className="flex flex-col w-full lg:w-[700px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] md:py-[40px] md:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px]">
+        <form className="flex flex-col w-full lg:w-[700px] overflow-y-auto py-[24px] px-[16px] md:py-[40px] md:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px]">
           {isMobile && (
             <h1 className="flex text-center items-center justify-center font-inter text-[24px] font-medium text-black">
               Profile Setup
@@ -123,20 +125,15 @@ export const ProfileSetup = () => {
 
           {/* Age */}
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
-              Age
-            </label>
-            <Input
-              min={0}
-              max={120}
-              type="number"
+            <SearchableSelect
+              label="Age"
+              labelStyle="text-[#5F5F65]"
               placeholder="Enter Age"
-              onChange={(e) =>
-                dispatch(
-                  updateCoachField({ key: "age", value: e.target.value })
-                )
+              options={ageOptions}
+              value={state.age.toString()}
+              onChange={(value) =>
+                dispatch(updateCoachField({ key: "age", value: value }))
               }
-              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
             />
           </div>
           {/* Gender */}
@@ -219,98 +216,6 @@ export const ProfileSetup = () => {
             />
           </div>
 
-          {/* Two-Factor Auth */}
-          <div className="flex flex-col gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
-              Two-factor authentication
-            </label>
-            <label className="flex items-center gap-[8px] text-[16px] font-[Nunito] text-black">
-              <Switch
-                className="data-[state=checked]:bg-[#1C63DB]"
-                checked={state.two_factor_enabled}
-                onCheckedChange={(value: boolean) =>
-                  dispatch(
-                    updateCoachField({
-                      key: "two_factor_enabled",
-                      value: value,
-                    })
-                  )
-                }
-              />
-              Enable two-factor authentication
-            </label>
-          </div>
-
-          {/* Choose Method */}
-          <div className="flex flex-col gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
-              Choose method:
-            </label>
-            <div className="flex flex-col md:flex-row gap-[24px]">
-              {["SMS", "Authenticator App", "Email"].map((method) => (
-                <label key={method} className="flex items-center gap-[8px]">
-                  <input
-                    type="radio"
-                    name="2fa"
-                    className="w-[16px] h-[16px]"
-                    onChange={() =>
-                      dispatch(
-                        updateCoachField({
-                          key: "two_factor_method",
-                          value: method,
-                        })
-                      )
-                    }
-                  />
-                  {method}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Recovery Question */}
-          <div className="flex flex-col md:flex-row items-center gap-[12px]">
-            <SearchableSelect
-              label="Set recovery question"
-              labelStyle="text-[#5F5F65]"
-              placeholder="Select recovery question"
-              options={[
-                "What was the name of your first pet?",
-                "What is your mother's maiden name?",
-                "What is your favorite book?",
-                "In what city were you born?",
-              ]}
-              value={state.security_questions}
-              onChange={(value) =>
-                dispatch(
-                  updateCoachField({
-                    key: "security_questions",
-                    value: value,
-                  })
-                )
-              }
-              position={!isMobile ? "top" : "bottom"}
-              dropdownStyle="text-nowrap"
-            />
-            <div className="flex flex-col gap-[8px] w-[100%]">
-              <label className="fontcl text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
-                Answer the questions for recovery
-              </label>
-              <Input
-                type="text"
-                className="flex-1 border rounded-[8px] min-h-[48px] px-[12px] py-[16px] text-[16px]"
-                placeholder="Enter your answer"
-                onChange={(e) =>
-                  dispatch(
-                    updateCoachField({
-                      key: "security_answers",
-                      value: e.target.value,
-                    })
-                  )
-                }
-              />
-            </div>
-          </div>
           {isMobile && (
             <div className="flex items-center gap-[16px] w-full md:w-fit">
               <button

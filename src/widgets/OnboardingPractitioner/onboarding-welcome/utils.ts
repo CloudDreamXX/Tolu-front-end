@@ -1,6 +1,8 @@
 export interface Content {
   title: string;
   description: string;
+  link?: string;
+  includes?: string[];
   icon?: React.ReactNode;
 }
 
@@ -8,28 +10,63 @@ type Contents = Content[];
 
 export const contents: Contents = [
   {
-    title: "Your Account is Secure!",
+    title: "Privacy Policy",
     description:
       "We Use Encryption and Role-based access to protect your data!",
+    link: "https://tolu.health/privacy-policy",
   },
   {
-    title: "HIPAA-Compliant!",
+    title: "Independent Contractor Agreement",
     description:
-      "We safeguard any client health information you access or manage on the platform.",
+      "If Educator Admins are earning commissions or selling content/products, you’ll need a formal contract to define the relationship.",
+    includes: [
+      "Independent contractor status (not employees)",
+      "Revenue share/commission terms",
+      "Content ownership and licensing (see below)",
+      "Confidentiality obligations",
+      "Termination conditions",
+      "Non-compete and/or non-solicitation clauses (if desired)",
+      "Liability disclaimers",
+    ],
   },
   {
-    title: "Your Content is Yours!",
+    title: "Content Licensing Agreement",
     description:
-      "You control what you publish and share. Your storefront activity and commissions are tracked privately.",
+      "Educator Admins create and upload educational content. You need permission to use, modify, and publish that content on your platform.",
+    includes: [
+      "Ownership vs. license (i.e., Tolu gets a royalty-free, worldwide license to use the content, but the creator retains IP)",
+      "Right to display, distribute, and sell",
+      "Quality and originality standards (no plagiarism)",
+      "Permission for edits or co-branding",
+      "Handling of takedowns or disputes",
+    ],
   },
   {
-    title: "We Don't Share Your Data!",
+    title: "Affiliate/Promoter Terms (if selling products/labs/supplements)",
     description:
-      "With third parties without your consent - unless required by law.",
+      "If they promote 3rd-party products via affiliate links, this agreement ensures compliance and defines their earnings.",
+    includes: [
+      "Commission structure",
+      "Permitted promotional practices (no false claims)",
+      "Disclosure obligations (FTC compliance)",
+      "Relationship with vendors or manufacturers",
+      "Payment timelines and thresholds",
+    ],
   },
   {
-    title: "You’re in control!",
+    title: "Confidentiality and Data Protection Addendum",
     description:
-      "You can update or delete your information, and request support anytime.",
+      "Reinforces HIPAA obligations and limits data use outside Tolu’s platform.",
+    includes: [
+      "PHI access restrictions",
+      "Agreement not to store or transmit PHI outside secure channels",
+      "Mandatory breach reporting within [24–72] hours",
+      "Consequences for violations (termination, liability)",
+    ],
+  },
+  {
+    title: "Media & Testimonial Release Form",
+    description:
+      "If Educator Admins will appear in marketing, give testimonials, or submit success stories, get their permission in writing.",
   },
 ];

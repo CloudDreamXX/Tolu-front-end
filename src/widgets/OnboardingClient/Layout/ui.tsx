@@ -46,7 +46,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
 
         <div
           className="w-full lg:max-w-[718px] flex flex-col 
-  items-start justify-center bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] max-h-[85%] md:max-h-[80%] max-h-[95%]"
+  items-start justify-center bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] max-h-[85%] md:max-h-[80%] xl:max-h-[620px]"
         >
           {title != null && isMobileOrTablet && title}
           {children}

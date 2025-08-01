@@ -26,6 +26,9 @@ export const OnboardingWelcome = () => {
   contents.forEach((content, index) => {
     content.icon = icons[index];
   });
+  const [checkedStates, setCheckedStates] = useState<boolean[]>(
+    new Array(contents.length).fill(false)
+  );
 
   const addStep = () => {
     setCurentWindow((prev) => prev + 1);
@@ -44,7 +47,7 @@ export const OnboardingWelcome = () => {
           <div className="flex flex-col items-center justify-center gap-[40px] shadow-wrapper xl:mx-0 md:gap-[32px] py-[24px] px-[24px] md:py-[40px] md:mx-[40px] md:px-[40px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
             <div className="flex flex-col items-center gap-[40px] md:gap-[24px] ">
               <h3 className="w-full md:w-[597px] xl:w-[860px] text-black font-inter text-center text-[24px] md:text-[32px] xl:text-[40px]/[59px] font-semibold">
-                Welcome to TOLU,
+                Welcome to Tolu,
                 <br /> your AI-powered assistant for
                 <br /> functional and holistic practice.
               </h3>
@@ -64,12 +67,20 @@ export const OnboardingWelcome = () => {
           <MiddleCard
             title={contents[curentWindow - 1].title}
             description={contents[curentWindow - 1].description}
+            link={contents[curentWindow - 1].link}
+            includes={contents[curentWindow - 1].includes}
             icon={
               <span className="w-[100px]">
                 {contents[curentWindow - 1].icon}
               </span>
             }
             handleNext={addStep}
+            isChecked={checkedStates[curentWindow - 1]}
+            setIsChecked={(value) => {
+              const updated = [...checkedStates];
+              updated[curentWindow - 1] = value;
+              setCheckedStates(updated);
+            }}
           />
         )}
       </main>

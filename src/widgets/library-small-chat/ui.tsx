@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import Tolu from "shared/assets/icons/tolu";
 import {
   Button,
   Card,
@@ -61,7 +60,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   isLoading,
   selectedText,
 }) => {
-  const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
   const location = useLocation();
   const isCreatePage = location.pathname === "/content-manager/create";
@@ -575,13 +573,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       {/* {isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
         <Card className="flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
-            <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
-              <Tolu />
+            <div className="p-2.5 bg-[#1C63DB] w-[70px] h-[40px] rounded-lg text-white font-semibold text-[24px] flex items-center justify-center font-open">
+              Tolu
             </div>
             {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
-              <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+              <CardTitle>Creator Studio</CardTitle>
             )}
             <button
               className="hidden xl:block xl:absolute top-4 left-4"
@@ -644,13 +642,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       {isSwitch(SWITCH_KEYS.CASE) ? (
         <Card className="flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
-            <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
-              <Tolu />
+            <div className="p-2.5 bg-[#1C63DB] w-[70px] h-[40px] rounded-lg text-white font-semibold text-[24px] flex items-center justify-center font-open">
+              Tolu
             </div>
             {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
-              <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+              <CardTitle>Creator Studio</CardTitle>
             )}
             <button
               className="hidden xl:block xl:absolute top-4 left-4"
@@ -751,13 +749,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       ) : (
         <Card className="flex flex-col w-full h-full border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
-            <div className="p-2.5 bg-[#1C63DB] w-fit rounded-lg">
-              <Tolu />
+            <div className="p-2.5 bg-[#1C63DB] w-[70px] h-[40px] rounded-lg text-white font-semibold text-[24px] flex items-center justify-center font-open">
+              Tolu
             </div>
             {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
-              <CardTitle>{chatTitle || `${user?.name} AI assistant`}</CardTitle>
+              <CardTitle>Creator Studio</CardTitle>
             )}
             {!isSwitch(SWITCH_KEYS.CONTENT) && (
               <button

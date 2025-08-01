@@ -70,7 +70,7 @@ export const PersonalityType = () => {
           Want Deeper Personalization?
         </h3>
         <p className="text-[#5F5F65] font-[Nunto] text-[16px] font-medium">
-          Understanding your personality can help TOLU tailor support to how you
+          Understanding your personality can help Tolu tailor support to how you
           best learn and take action.
         </p>
       </div>

@@ -188,7 +188,7 @@ export const ContentManagerDocument: React.FC = () => {
                   onClick={handleTooltipClick}
                   className="text-black text-[16px] font-semibold"
                 >
-                  Ask TOLU
+                  Ask Tolu
                 </button>
               </div>
             )}

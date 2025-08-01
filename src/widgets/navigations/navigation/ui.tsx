@@ -53,7 +53,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
       <div className="flex items-center justify-between w-full xl:hidden">
         <div className="flex flex-col">
           <h1 className="text-[32px] md:text-[40px] font-[700] h-[40px] md:h-[50px] font-open leading-normal">
-            TOLU
+            Tolu
           </h1>
           <p className="text-[16px] md:text-[18px] font-[700] h-[21px] md:h-[27px] font-open leading-normal">
             {pageLocation === "user-management"
@@ -85,7 +85,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
             <div className="flex items-center justify-center mb-6 pt-4">
               <div className="flex flex-col items-center">
                 <h1 className="text-[32px] md:text-[40px] font-[700] font-open leading-normal">
-                  TOLU
+                  Tolu
                 </h1>
                 <p className="text-[16px] md:text-[18px] font-[700] font-open leading-normal">
                   Practitioner Admin

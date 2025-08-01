@@ -71,9 +71,10 @@ export const HealthSnapshotSidebar: React.FC = () => {
           <h2
             className={`${isNarrow ? "text-[27px]" : "text-[46.667px]"} font-bold font-open`}
           >
-            TOLU
+            Tolu AI
           </h2>
         </NavLink>
+
         <div className="flex flex-col px-[14px] gap-[18px]">
           <SearchAiSmallInput />
         </div>

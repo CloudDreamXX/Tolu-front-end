@@ -150,7 +150,7 @@ export const NavigationClient: React.FC = () => {
       {/* Mobile Hamburger */}
       <div className="flex xl:hidden justify-between items-center p-[16px] md:p-6">
         <h1 className="text-[27px] md:text-[46px] font-[700] font-open">
-          TOLU
+          Tolu
         </h1>
         <div className="flex items-center gap-[16px]">
           <button
@@ -175,7 +175,7 @@ export const NavigationClient: React.FC = () => {
           >
             <div className="flex items-center justify-between mb-6">
               <h1 className="md:text-[36.5px] text-[27px] font-[700] font-open">
-                TOLU
+                Tolu
               </h1>
               <button
                 onClick={() => setMenuMobOpen(false)}
@@ -195,7 +195,7 @@ export const NavigationClient: React.FC = () => {
               }}
             >
               <Sparkle />
-              Ask TOLU
+              Ask Tolu
             </Button>
 
             <nav className="flex flex-col mb-auto">

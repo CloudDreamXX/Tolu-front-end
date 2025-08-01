@@ -37,7 +37,8 @@ export const Register = () => {
         console.error("Failed to fetch invitation details", error);
         toast({
           title: "Invalid or expired invitation",
-          description: "Please check your invite link or request a new one.",
+          description:
+            "This link has expired. Please request a new login link.",
           variant: "destructive",
         });
         navigate("/auth", {
@@ -93,7 +94,8 @@ export const Register = () => {
       console.error("Error registering user:", error);
       toast({
         title: "Email already exists",
-        description: "Please use your email to log in, or use another email.",
+        description:
+          "Your email address is already verified. Welcome back to Tolu AI.",
         variant: "destructive",
       });
     }
@@ -112,7 +114,7 @@ export const Register = () => {
       <div className="w-full xl:max-w-[550px] 2xl:max-w-[665px] h-[150px] xl:h-full bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
         <aside className="py-[10px] px-[95px] xl:p-[40px] flex items-center justify-center flex-col">
           <h1 className="text-white font-open text-center text-[44.444px] xl:text-[96px] font-bold">
-            TOLU
+            Tolu AI
           </h1>
           <h3 className="capitalize font-open text-white text-center text-[14px] md:text-[15px] xl:text-[32px] font-semibold xl:font-medium">
             THE HOLISTIC MENOPAUSE HEALTH ASSISTANT

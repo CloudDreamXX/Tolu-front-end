@@ -6,6 +6,7 @@ import Dashboard from "shared/assets/icons/dashboard";
 import Workshops from "shared/assets/icons/workshops";
 import { SideBarItem } from "../model";
 import { WrapperFolderTree } from "features/wrapper-folder-tree";
+import { FileText } from "lucide-react";
 
 export const sideBarContent: SideBarItem[] = [
   {
@@ -37,5 +38,10 @@ export const sideBarContent: SideBarItem[] = [
     title: "Messages",
     link: "/content-manager/messages",
     icon: <Box />,
+  },
+  {
+    title: "Agreements",
+    link: "/content-manager/agreements",
+    icon: <FileText />,
   },
 ];
