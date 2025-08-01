@@ -298,8 +298,8 @@ export const OnboardingHealthProfile = () => {
 
   const mainContent = (
     <Card className="flex flex-col w-full border-none shadow-none h-full overflow-y-auto">
-      <CardContent className="px-1">
-        <p className="text-[24px] text-[#1D1D1F] font-[500] mb-[16px]">
+      <CardContent className="px-1 flex flex-col gap-[16px]">
+        <p className="text-[24px] text-[#1D1D1F] font-[500]">
           Your Health Status Now
         </p>
         <Steps

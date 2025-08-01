@@ -41,6 +41,7 @@ export const LibraryDocument = () => {
     useState<SpeechSynthesisVoice | null>(null);
   const { textForInput, tooltipPosition, showTooltip, handleTooltipClick } =
     useTextSelectionTooltip();
+  const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
 
   useEffect(() => {
     const loadVoices = () => {
@@ -99,6 +100,7 @@ export const LibraryDocument = () => {
   }, [selectedDocument]);
 
   const handleReadAloud = () => {
+    setIsReadingAloud((prev) => !prev);
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
     } else {
@@ -169,6 +171,7 @@ export const LibraryDocument = () => {
     return () => {
       if (speechSynthesis.speaking) {
         speechSynthesis.cancel();
+        setIsReadingAloud(false);
       }
     };
   }, [selectedDocument]);
@@ -191,6 +194,7 @@ export const LibraryDocument = () => {
             hasMessages={messages.length >= 2}
             onStatusChange={onStatusChange}
             onReadAloud={handleReadAloud}
+            isReadingAloud={isReadingAloud}
           />
         </div>
 
@@ -241,6 +245,7 @@ export const LibraryDocument = () => {
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}
                 onReadAloud={handleReadAloud}
+                isReadingAloud={isReadingAloud}
               />
             </div>
           </div>

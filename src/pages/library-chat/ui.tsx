@@ -117,6 +117,7 @@ export const LibraryChat = () => {
   const [textContent, setTextContent] = useState("");
   const [selectedVoice, setSelectedVoice] =
     useState<SpeechSynthesisVoice | null>(null);
+  const [isReadingAloud, setIsReadingAloud] = useState(false);
 
   const { textForInput, tooltipPosition, showTooltip, handleTooltipClick } =
     useTextSelectionTooltip();
@@ -171,11 +172,13 @@ export const LibraryChat = () => {
     return () => {
       if (speechSynthesis.speaking) {
         speechSynthesis.cancel();
+        setIsReadingAloud(false);
       }
     };
   }, [chatId]);
 
   const handleReadAloud = () => {
+    setIsReadingAloud((prev) => !prev);
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
     } else {
@@ -706,6 +709,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             fromPath={location.state?.from?.pathname ?? null}
             initialRating={chat.length ? (chat[0].liked ? 5 : 1) : undefined}
             onReadAloud={handleReadAloud}
+            isReadingAloud={isReadingAloud}
           />
         </div>
         {isLoadingSession ? (
@@ -861,6 +865,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   chat.length ? (chat[0].liked ? 5 : 1) : undefined
                 }
                 onReadAloud={handleReadAloud}
+                isReadingAloud={isReadingAloud}
               />
             </div>
 

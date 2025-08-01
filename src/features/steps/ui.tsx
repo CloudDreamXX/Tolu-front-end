@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 interface StepsProps {
   steps: string[];
@@ -18,8 +18,35 @@ export const Steps: React.FC<StepsProps> = ({
   onStepClick,
   disabled = false,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const stepRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    const stepNode = stepRefs.current[currentStep];
+    const containerNode = containerRef.current;
+
+    if (stepNode && containerNode) {
+      const stepRect = stepNode.getBoundingClientRect();
+      const containerRect = containerNode.getBoundingClientRect();
+
+      const scrollLeft =
+        stepNode.offsetLeft -
+        containerNode.offsetLeft -
+        containerRect.width / 2 +
+        stepRect.width / 2;
+
+      containerNode.scrollTo({
+        left: scrollLeft,
+        behavior: "smooth",
+      });
+    }
+  }, [currentStep]);
+
   return (
-    <div className="flex items-center md:gap-0 w-full p-2 border rounded-full overflow-y-auto">
+    <div
+      className="flex items-center md:gap-0 w-full p-2 border rounded-full overflow-y-auto"
+      ref={containerRef}
+    >
       {steps.map((step, index) => {
         const isCompleted = index < currentStep;
         const isCurrent = index === currentStep;
@@ -27,6 +54,7 @@ export const Steps: React.FC<StepsProps> = ({
         return (
           <React.Fragment key={index}>
             <button
+              ref={(el) => (stepRefs.current[index] = el)}
               type="button"
               disabled={disabled}
               onClick={() => onStepClick(index)}

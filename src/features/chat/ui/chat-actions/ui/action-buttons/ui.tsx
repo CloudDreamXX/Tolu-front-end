@@ -21,6 +21,7 @@ interface ChatActionsProps {
   initialRating?: number;
   initialStatus?: string;
   fromPath?: string | null;
+  isReadingAloud?: boolean;
 }
 
 export const ChatActions: React.FC<ChatActionsProps> = ({
@@ -30,12 +31,12 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   initialStatus,
   onReadAloud,
   fromPath,
+  isReadingAloud,
 }) => {
   const [thumbsUpModalOpen, setThumbsUpModalOpen] = useState(false);
   const [thumbsDownModalOpen, setThumbsDownModalOpen] = useState(false);
   const [rating, setRating] = useState<number | undefined>(initialRating);
   const [readStatus, setReadStatus] = useState<string>(initialStatus || "");
-  const [isReadingAloud, setIsReadingAloud] = useState(false);
   const nav = useNavigate();
 
   useEffect(() => {
@@ -63,11 +64,6 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
         console.error("Error copying link:", err);
       }
     }
-  };
-
-  const handleReadAloud = () => {
-    setIsReadingAloud((prev) => !prev);
-    onReadAloud();
   };
 
   return (
@@ -140,7 +136,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
         </button>
         <button
           className="bg-[#DDEBF6] rounded-full h-8 w-8"
-          onClick={handleReadAloud}
+          onClick={onReadAloud}
         >
           <SpeakerSimpleHighIcon
             weight={isReadingAloud ? "fill" : "regular"}

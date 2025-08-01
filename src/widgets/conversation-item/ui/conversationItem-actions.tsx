@@ -107,8 +107,8 @@ export const ConversationItemActions: React.FC<
     return () => {
       if (speechSynthesis.speaking) {
         speechSynthesis.cancel();
+        setIsReadingAloud(false);
       }
-      setIsReadingAloud(false);
     };
   }, [document]);
 

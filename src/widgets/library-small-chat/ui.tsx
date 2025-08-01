@@ -319,6 +319,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     };
     setMessages((prev) => [...prev, userMessage]);
 
+    setMessageState("");
     setIsSearching(true);
     setStreamingText("");
     setError(null);
