@@ -17,12 +17,15 @@ import { DocumentLoadingSkeleton } from "./lib";
 import { ContentService, ContentStatus } from "entities/content";
 import { ClientService } from "entities/client";
 import { setFolders } from "entities/client/lib";
+import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
   const [messages] = useState([]);
   const [isLoadingSession] = useState(false);
-  const [document, setDocument] = useState<IDocument | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<IDocument | null>(
+    null
+  );
   const [isLoadingDocument, setIsLoadingDocument] = useState(true);
 
   const healthHistory = useSelector(
@@ -36,6 +39,8 @@ export const LibraryDocument = () => {
   const [textContent, setTextContent] = useState("");
   const [selectedVoice, setSelectedVoice] =
     useState<SpeechSynthesisVoice | null>(null);
+  const { textForInput, tooltipPosition, showTooltip, handleTooltipClick } =
+    useTextSelectionTooltip();
 
   useEffect(() => {
     const loadVoices = () => {
@@ -84,11 +89,14 @@ export const LibraryDocument = () => {
   }, []);
 
   useEffect(() => {
-    if (document) {
-      const strippedText = document.content.replace(/<\/?[^>]+(>|$)/g, "");
+    if (selectedDocument) {
+      const strippedText = selectedDocument.content.replace(
+        /<\/?[^>]+(>|$)/g,
+        ""
+      );
       setTextContent(strippedText);
     }
-  }, [document]);
+  }, [selectedDocument]);
 
   const handleReadAloud = () => {
     if (speechSynthesis.speaking) {
@@ -130,11 +138,11 @@ export const LibraryDocument = () => {
     try {
       const response = await DocumentsService.getDocumentById(docId);
       if (response) {
-        setDocument(response);
+        setSelectedDocument(response);
       }
     } catch (error) {
       console.error("Error fetching document:", error);
-      setDocument(null);
+      setSelectedDocument(null);
     } finally {
       setIsLoadingDocument(false);
     }
@@ -163,7 +171,7 @@ export const LibraryDocument = () => {
         speechSynthesis.cancel();
       }
     };
-  }, [document]);
+  }, [selectedDocument]);
 
   return (
     <div className={`flex flex-col w-full h-full gap-6 p-6`}>
@@ -176,8 +184,8 @@ export const LibraryDocument = () => {
       <div className="flex flex-row w-full h-full gap-6 xl:h-[calc(100vh-48px)] relative">
         <div className="hidden xl:block">
           <ChatActions
-            initialStatus={document?.readStatus}
-            initialRating={document?.userRating}
+            initialStatus={selectedDocument?.readStatus}
+            initialRating={selectedDocument?.userRating}
             onRegenerate={() => {}}
             isSearching={false}
             hasMessages={messages.length >= 2}
@@ -194,10 +202,28 @@ export const LibraryDocument = () => {
           >
             {isLoadingDocument ? (
               <DocumentLoadingSkeleton />
-            ) : document ? (
+            ) : selectedDocument ? (
               <div className="p-[24px] rounded-[16px] bg-white xl:h-[calc(100vh-48px)] xl:overflow-y-auto">
                 <div className="prose-sm prose max-w-none">
-                  {parse(document.content)}
+                  {showTooltip && tooltipPosition && (
+                    <div
+                      className="fixed bg-white border border-blue-500 px-2 py-1 rounded-md"
+                      style={{
+                        top: `${tooltipPosition.top}px`,
+                        left: `${tooltipPosition.left}px`,
+                        transform: "translateX(-50%)",
+                        zIndex: 9999,
+                      }}
+                    >
+                      <button
+                        onClick={handleTooltipClick}
+                        className="text-black text-[16px] font-semibold"
+                      >
+                        Ask TOLU
+                      </button>
+                    </div>
+                  )}
+                  {parse(selectedDocument.content)}
                 </div>
               </div>
             ) : (
@@ -208,8 +234,8 @@ export const LibraryDocument = () => {
 
             <div className="xl:hidden block mt-[16px] mb-[16px]">
               <ChatActions
-                initialStatus={document?.readStatus}
-                initialRating={document?.rating}
+                initialStatus={selectedDocument?.readStatus}
+                initialRating={selectedDocument?.rating}
                 onRegenerate={() => {}}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
@@ -224,6 +250,7 @@ export const LibraryDocument = () => {
           <LibrarySmallChat
             healthHistory={healthHistory}
             isLoading={isLoadingDocument}
+            selectedText={textForInput}
           />
         </div>
       </div>

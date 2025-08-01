@@ -1,10 +1,6 @@
 import { Share } from "entities/coach";
 import { IDocument } from "entities/document";
-import {
-  ClientsInfo,
-  FilesInfo,
-  InstructionInfo,
-} from "entities/folder";
+import { ClientsInfo, FilesInfo, InstructionInfo } from "entities/folder";
 import React from "react";
 
 interface DocumentInfoHeaderProps {

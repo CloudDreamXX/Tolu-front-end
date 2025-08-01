@@ -445,7 +445,7 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   return (
-    <div className="flex gap-[24px] p-8">
+    <div className="flex gap-[24px] p-8 h-[calc(100vh-78px)]">
       <div className="flex flex-col gap-[16px] md:gap-[24px] overflow-y-auto h-full w-full">
         {loading ? (
           <div className="lg:mt-4 md:rounded-[8px]">

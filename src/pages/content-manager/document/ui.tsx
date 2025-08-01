@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { ScrollArea } from "shared/ui";
 import { BadRateResponse } from "widgets/bad-rate-response-popup";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
@@ -21,6 +21,7 @@ import { LibrarySmallChat } from "widgets/library-small-chat";
 import { findFolderPath } from "features/wrapper-folder-tree";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 import LoadingIcon from "shared/assets/icons/loading-icon";
+import { useTextSelectionTooltip } from "./lib";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -99,44 +100,8 @@ export const ContentManagerDocument: React.FC = () => {
 
   const { handleDocumentCreation } = useDocumentCreation();
   const isDraft = documentPath[0]?.name.toLowerCase() === "drafts";
-  const [selectedText, setSelectedText] = useState<string>("");
-  const [textForInput, setTextForInput] = useState<string>("");
-  const [tooltipPosition, setTooltipPosition] = useState<{
-    top: number;
-    left: number;
-  } | null>(null);
-  const [showTooltip, setShowTooltip] = useState<boolean>(false);
-
-  const handleTextSelection = () => {
-    const selection = window.getSelection();
-    if (selection?.toString()) {
-      setSelectedText(selection.toString());
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-      setTooltipPosition({
-        top: rect.top - 150,
-        left: rect.left - 150,
-      });
-      setShowTooltip(true);
-    } else {
-      setShowTooltip(false);
-    }
-  };
-
-  const handleTooltipClick = () => {
-    setTextForInput(selectedText);
-    setShowTooltip(false);
-  };
-
-  useEffect(() => {
-    document.addEventListener("mouseup", handleTextSelection);
-    document.addEventListener("selectionchange", handleTextSelection);
-
-    return () => {
-      document.removeEventListener("mouseup", handleTextSelection);
-      document.removeEventListener("selectionchange", handleTextSelection);
-    };
-  }, []);
+  const { textForInput, tooltipPosition, showTooltip, handleTooltipClick } =
+    useTextSelectionTooltip();
 
   useEffect(() => {
     const createDocument = async () => {
@@ -211,7 +176,7 @@ export const ContentManagerDocument: React.FC = () => {
           <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">
             {showTooltip && tooltipPosition && (
               <div
-                className="absolute bg-white border border-blue-500 px-2 py-1 rounded-md"
+                className="fixed bg-white border border-blue-500 px-2 py-1 rounded-md"
                 style={{
                   top: `${tooltipPosition.top}px`,
                   left: `${tooltipPosition.left}px`,

@@ -1,7 +1,7 @@
 import { IFolder, ISubfolder, NewFolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
 import { RootState } from "entities/store";
-import { Trash2 } from "lucide-react";
+import { ArrowLeft, Folder, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ClosedFolder from "shared/assets/icons/closed-folder";
@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from "shared/ui";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
+import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 
 interface PopoverFolderProps {
   setFolderId?: (folderId: string) => void;
@@ -38,7 +39,41 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   const [subfolderPopup, setSubfolderPopup] = useState<boolean>(false);
   const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
   const [parentFolderId, setParentFolderId] = useState<string | null>(null);
+  const { folders: allFolders } = useSelector(
+    (state: RootState) => state.folder
+  );
+  const [folderHistory, setFolderHistory] = useState<
+    {
+      id: string;
+      name: string;
+      subfolders: ISubfolder[];
+    }[]
+  >([]);
+
   const dispatch = useDispatch();
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const findFolder = (
+    folderId: string,
+    folders: IFolder[]
+  ): IFolder | undefined => {
+    for (const folder of folders) {
+      if (folder.id === folderId) {
+        return folder;
+      }
+      if (folder.subfolders) {
+        const foundInSubfolders = findFolder(folderId, folder.subfolders);
+        if (foundInSubfolders) {
+          return foundInSubfolders;
+        }
+      }
+    }
+    return undefined;
+  };
+
+  const folderToDelete = findFolder(selectedFolder as string, allFolders);
+
+  const hasContentInside =
+    (folderToDelete && folderToDelete?.content?.length > 0) || false;
 
   useEffect(() => {
     const fetchFolders = async () => {
@@ -127,10 +162,40 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     }
   };
 
-  const handleCreateSubfolder = (parentId: string, parentName: string) => {
+  const handleCreateSubfolder = (parentId: string) => {
     setParentFolderId(parentId);
-    setSelectedFolderName(parentName);
     setCreatePopup(true);
+  };
+
+  const handleDeleteOpen = (id: string, name: string) => {
+    setSelectedFolder(id);
+    setSelectedFolderName(name);
+    setIsDeleteOpen(true);
+  };
+
+  const handleDeleteFolder = async () => {
+    try {
+      await FoldersService.deleteFolder({
+        folder_id: selectedFolder as string,
+        force_delete: hasContentInside,
+      });
+
+      toast({ title: "Deleted successfully" });
+      setIsDeleteOpen(false);
+      setSelectedFolder(null);
+      setSelectedFolderName("");
+
+      const folderResponse = await FoldersService.getFolders();
+      dispatch(setFolders(folderResponse));
+      setSubfolders(folderResponse.folders[0].subfolders);
+    } catch (error) {
+      console.error("Error deleting a folder:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to delete a folder",
+        description: "Failed to delete a folder. Please try again.",
+      });
+    }
   };
 
   return (
@@ -155,90 +220,28 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
           )}
         </PopoverTrigger>
         <PopoverContent className="w-[358px] md:w-[526px] p-6 flex flex-col gap-6">
-          {/* {!subfolderPopup ? (
-            <>
-              <Input
-                variant="bottom-border"
-                placeholder="Choose a folder"
-                className="py-1/2 h-[26px] pl-2 bg-transparent"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <div className="grid w-full grid-cols-2 overflow-y-auto max-h-[250px] gap-x-6 gap-y-2">
-                {filteredFolders.map((folder) => (
-                  <button
-                    className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
-                      selectedFolder === folder.id
-                        ? "bg-blue-50 border border-blue-200"
-                        : "bg-white"
-                    }`}
-                    key={folder.id}
-                    onClick={() => toggleFolderSelection(folder)}
-                  >
-                    <span className="text-lg font-semibold text-gray-900 truncate">
-                      {folder.name}
-                    </span>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="w-8 h-8 p-0 rounded-full"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Dots />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
-                        <Button
-                          variant="ghost"
-                          className="items-center justify-start w-full h-8 p-1 font-medium"
-                          onClick={() =>
-                            handleCreateSubfolder(folder.id, folder.name)
-                          }
-                        >
-                          <Plus width={24} height={24} /> Add subfolder
-                        </Button>
-                        {folder.subfolders && folder.subfolders.length > 0 && (
-                          <Button
-                            variant="ghost"
-                            className="items-center justify-start w-full h-8 p-1 font-medium"
-                            onClick={() => toggleFolderSelection(folder)}
-                          >
-                            <SubfolderIcon width={24} height={24} /> View
-                            subfolders
-                          </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          className="items-center justify-start w-full h-8 p-1 font-medium"
-                        >
-                          <Edit width={24} height={24} /> Rename
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        >
-                          <Trash2
-                            width={24}
-                            height={24}
-                            className="text-destructive"
-                          />{" "}
-                          Delete
-                        </Button>
-                      </PopoverContent>
-                    </Popover>
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : ( */}
           <>
             <div className="text-[18px] font-semibold text-black flex items-center justify-between gap-2">
-              {selectedFolderName}
+              <div className="flex gap-[8px] items-center">
+                {folderHistory.length > 0 && (
+                  <button
+                    className="p-1 rounded w-fit hover:bg-gray-100"
+                    onClick={() => {
+                      const previous = folderHistory[folderHistory.length - 1];
+                      setFolderHistory((prev) => prev.slice(0, -1));
+                      setSelectedFolder(null);
+                      setSubfolders(previous.subfolders);
+                      setSelectedFolderName(previous.name);
+                      setParentFolderId(previous.id);
+                    }}
+                  >
+                    <ArrowLeft />
+                  </button>
+                )}
+                {selectedFolderName}
+              </div>
               <button
-                onClick={() =>
-                  handleCreateSubfolder(parentFolderId!, selectedFolderName)
-                }
+                onClick={() => handleCreateSubfolder(parentFolderId!)}
                 className="p-1 rounded hover:bg-gray-100"
               >
                 <Plus />
@@ -272,15 +275,50 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                       <Button
                         variant="ghost"
                         className="items-center justify-start w-full h-8 p-1 font-medium"
-                        onClick={() =>
-                          handleCreateSubfolder(subfolder.id, subfolder.name)
-                        }
+                        onClick={() => handleCreateSubfolder(subfolder.id)}
                       >
                         <Plus /> Create folder
                       </Button>
                       <Button
                         variant="ghost"
+                        className="items-center justify-start w-full h-8 p-1 font-medium"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (
+                            subfolder.subfolders &&
+                            subfolder.subfolders.length > 0
+                          ) {
+                            setFolderHistory((prev) => [
+                              ...prev,
+                              {
+                                id: parentFolderId!,
+                                name: selectedFolderName,
+                                subfolders: subfolders,
+                              },
+                            ]);
+                            setSelectedFolder(null);
+                            setSubfolders(subfolder.subfolders);
+                            setSelectedFolderName(subfolder.name);
+                            setParentFolderId(subfolder.id);
+                            setSubfolderPopup(true);
+                          } else {
+                            toast({
+                              title: "No subfolders available",
+                              description:
+                                "This folder has no further nested subfolders.",
+                              variant: "default",
+                            });
+                          }
+                        }}
+                      >
+                        <Folder /> Open folders
+                      </Button>
+                      <Button
+                        variant="ghost"
                         className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        onClick={() =>
+                          handleDeleteOpen(subfolder.id, subfolder.name)
+                        }
                       >
                         <Trash2
                           width={24}
@@ -298,6 +336,19 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
           {/* )} */}
         </PopoverContent>
       </Popover>
+
+      {isDeleteOpen && (
+        <DeleteMessagePopup
+          contentId={selectedFolder ?? ""}
+          onCancel={() => setIsDeleteOpen(false)}
+          onDelete={handleDeleteFolder}
+          text={
+            hasContentInside
+              ? "This folder contains documents. Are you sure you want to delete it?"
+              : undefined
+          }
+        />
+      )}
 
       {createPopup && (
         <CreateSubfolderPopup

@@ -30,6 +30,7 @@ import { setChat } from "entities/client/lib";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 import { HealthHistoryService } from "entities/health-history";
 import { setHealthHistory, setLoading } from "entities/health-history/lib";
+import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 
 // const steps = [
 //   "Demographic",
@@ -116,6 +117,9 @@ export const LibraryChat = () => {
   const [textContent, setTextContent] = useState("");
   const [selectedVoice, setSelectedVoice] =
     useState<SpeechSynthesisVoice | null>(null);
+
+  const { textForInput, tooltipPosition, showTooltip, handleTooltipClick } =
+    useTextSelectionTooltip();
 
   useEffect(() => {
     const loadVoices = () => {
@@ -724,6 +728,24 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 }
               }}
             />
+            {showTooltip && tooltipPosition && (
+              <div
+                className="fixed bg-white border border-blue-500 px-2 py-1 rounded-md"
+                style={{
+                  top: `${tooltipPosition.top}px`,
+                  left: `${tooltipPosition.left}px`,
+                  transform: "translateX(-50%)",
+                  zIndex: 9999,
+                }}
+              >
+                <button
+                  onClick={handleTooltipClick}
+                  className="text-black text-[16px] font-semibold"
+                >
+                  Ask TOLU
+                </button>
+              </div>
+            )}
             {isEmpty &&
             // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
             !isSwitch(SWITCH_KEYS.CASE) ? (
@@ -855,7 +877,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 setSelectedSwitch(value);
               }}
               healthHistory={healthHistory}
-              message={""}
+              message={textForInput}
             />
           </div>
         )}
