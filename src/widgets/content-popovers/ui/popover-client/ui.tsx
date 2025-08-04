@@ -358,7 +358,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
         <ScrollArea className="h-[139px] w-full">
           <div className="flex flex-col gap-2 pr-3">
             {filteredClients.map((client) => (
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <button
                   key={client.client_id}
                   className="flex items-center w-full py-2 px-[14px] gap-2 rounded-md cursor-pointer bg-white"

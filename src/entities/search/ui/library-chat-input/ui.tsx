@@ -1,15 +1,16 @@
-import { useState } from "react";
-import { Paperclip, Send } from "lucide-react";
-import { cn } from "shared/lib";
-import { Button, Textarea } from "shared/ui";
-import { SwitchGroup } from "widgets/switch-group";
-import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
-import { MenopauseSubmissionRequest, UserService } from "entities/user";
+import { HealthHistory } from "entities/health-history";
 import { RootState } from "entities/store";
+import { MenopauseSubmissionRequest, UserService } from "entities/user";
+import { Paperclip, Send } from "lucide-react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { cn } from "shared/lib";
+import { Button, Textarea } from "shared/ui";
+import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
 import { HealthProfileForm } from "widgets/health-profile-form";
-import { HealthHistory } from "entities/health-history";
+import { MultiStepModal, SymptomCheckModal } from "widgets/MenopauseModals";
+import { SwitchGroup } from "widgets/switch-group";
 
 interface LibraryChatInputProps {
   switchOptions: string[];
@@ -28,6 +29,7 @@ interface LibraryChatInputProps {
   isLoading?: boolean;
   healthHistory?: HealthHistory;
   message: string;
+  setClientId?: (clientId: string | null) => void;
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -43,6 +45,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   isLoading,
   healthHistory,
   message,
+  setClientId,
 }) => {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -142,6 +145,9 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                 </span>
               )}
             </label>
+            <div className="flex items-center gap-[10px]">
+              <PopoverClient setClientId={setClientId} />
+            </div>
             {!isContentManager && (
               <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
                 Symptoms Tracker

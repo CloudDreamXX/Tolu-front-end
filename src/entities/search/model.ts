@@ -4,6 +4,11 @@ export interface AiSearchRequest {
   pdf?: File;
 }
 
+export interface AIChatMessageResearch extends AiSearchRequest {
+  contentId?: string;
+  clientId?: string;
+}
+
 export interface UpdateChatTitleRequest {
   chat_id: string;
   new_title: string;
@@ -19,12 +24,14 @@ export interface SearchHistoryResponse {
   answer: string;
   chat_id: string;
   chat_title: string;
+  content_id: string | null;
   created_at: string;
   feedback: string;
   id: string;
   liked: number;
   query: string;
   reported: number;
+  text_quote: string | null;
   user_id: string;
 }
 
@@ -119,6 +126,7 @@ export interface SearchResultResponseItem {
   active: boolean;
   created_at: string;
   chat_title: string;
+  text_quote: string | null;
 }
 
 export interface SearchResultResponse {

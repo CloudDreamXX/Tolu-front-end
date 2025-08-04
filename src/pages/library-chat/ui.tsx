@@ -51,6 +51,7 @@ export const LibraryChat = () => {
   const [chatTitle, setChatTitle] = useState<string>("");
   const [currentChatId, setCurrentChatId] = useState<string>(chatId ?? "");
   const [isLoadingSession, setIsLoadingSession] = useState(false);
+  const [clientId, setClientId] = useState<string | null>(null);
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
   );
@@ -70,6 +71,7 @@ export const LibraryChat = () => {
 
   const userPersisted = localStorage.getItem("persist:user");
   let isCoach = false;
+
   if (userPersisted) {
     try {
       const parsed = JSON.parse(userPersisted);
@@ -194,16 +196,6 @@ export const LibraryChat = () => {
       speechSynthesis.speak(utterance);
     }
   };
-
-  useEffect(() => {
-    if (messages.length) {
-      const combinedText = messages.map((message) => message.content).join(" ");
-
-      const strippedText = combinedText.replace(/<\/?[^>]+(>|$)/g, "");
-
-      setTextContent(strippedText);
-    }
-  }, [messages]);
 
   useEffect(() => {
     const fetchHealthHistory = async () => {
@@ -461,6 +453,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
 
     setIsSearching(true);
     setStreamingText("");
+    setTextContent("");
     setError(null);
 
     const {
@@ -480,70 +473,95 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     let str = "";
     const replyChunks: string[] = [];
 
+    const processChunk = (chunk: StreamChunk) => {
+      if (!chunk.reply) return;
+
+      if (isSwitch(SWITCH_KEYS.LEARN)) {
+        if (chunk.reply.includes("Relevant Content")) {
+          str = chunk.reply;
+        } else {
+          replyChunks.push(chunk.reply);
+          const joined = joinReplyChunksSafely(replyChunks);
+          setStreamingText(joined);
+        }
+      } else {
+        accumulatedText += chunk.reply;
+        setStreamingText(accumulatedText);
+      }
+    };
+
+    const processFinalData = async (finalData: any) => {
+      setIsSearching(false);
+
+      const aiMessage: Message = {
+        id: finalData.chat_id || Date.now().toString(),
+        type: "ai",
+        content: isSwitch(SWITCH_KEYS.LEARN)
+          ? joinReplyChunksSafely(replyChunks)
+          : accumulatedText,
+        timestamp: new Date(),
+        document: str,
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
+      setStreamingText("");
+
+      if (finalData.chat_id && finalData.chat_id !== currentChatId) {
+        setCurrentChatId(finalData.chat_id);
+        returnedChatId = finalData.chat_id;
+      }
+
+      if (finalData.chat_title) {
+        setChatTitle(finalData.chat_title);
+      }
+    };
+
     try {
-      await SearchService.aiSearchStream(
-        {
-          chat_message: JSON.stringify({
-            user_prompt: message,
-            is_new: currentChatId.startsWith("new_chat_") ? true : false,
-            chat_id: currentChatId.startsWith("new_chat_")
-              ? undefined
-              : currentChatId,
-            regenerate_id: null,
-            personalize: false,
-            // personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
-          }),
-          ...(image && { image }),
-          ...(pdf && { pdf }),
-        },
-        async (chunk: StreamChunk) => {
-          if (!chunk.reply) return;
-
-          if (isSwitch(SWITCH_KEYS.LEARN)) {
-            if (chunk.reply.includes("Relevant Content")) {
-              str = chunk.reply;
-            } else {
-              replyChunks.push(chunk.reply);
-              const joined = joinReplyChunksSafely(replyChunks);
-              setStreamingText(joined);
-            }
-          } else {
-            accumulatedText += chunk.reply;
-            setStreamingText(accumulatedText);
+      if (isCoach) {
+        await SearchService.aiCoachResearchStream(
+          {
+            chat_message: JSON.stringify({
+              user_prompt: message,
+              is_new: false,
+            }),
+            image,
+            pdf,
+            contentId: documentId,
+            clientId: clientId ?? undefined,
+          },
+          processChunk,
+          processFinalData,
+          (error) => {
+            setIsSearching(false);
+            setError(error.message);
+            console.error("Search error:", error);
           }
-        },
-        async (finalData) => {
-          setIsSearching(false);
-
-          const aiMessage: Message = {
-            id: finalData.chat_id || Date.now().toString(),
-            type: "ai",
-            content: isSwitch(SWITCH_KEYS.LEARN)
-              ? joinReplyChunksSafely(replyChunks)
-              : accumulatedText,
-            timestamp: new Date(),
-            document: str,
-          };
-
-          setMessages((prev) => [...prev, aiMessage]);
-          setStreamingText("");
-
-          if (finalData.chat_id && finalData.chat_id !== currentChatId) {
-            setCurrentChatId(finalData.chat_id);
-            returnedChatId = finalData.chat_id;
-          }
-
-          if (finalData.chat_title) {
-            setChatTitle(finalData.chat_title);
-          }
-        },
-        (error) => {
-          setIsSearching(false);
-          setError(error.message);
-          console.error("Search error:", error);
-        },
-        isSwitch(SWITCH_KEYS.LEARN)
-      );
+        );
+      } else {
+        await SearchService.aiSearchStream(
+          {
+            chat_message: JSON.stringify({
+              user_prompt: message,
+              is_new: currentChatId.startsWith("new_chat_"),
+              chat_id: currentChatId.startsWith("new_chat_")
+                ? undefined
+                : currentChatId,
+              regenerate_id: null,
+              personalize: false,
+            }),
+            ...(image && { image }),
+            ...(pdf && { pdf }),
+          },
+          processChunk,
+          processFinalData,
+          (error) => {
+            setIsSearching(false);
+            setError(error.message);
+            console.error("Search error:", error);
+          },
+          isSwitch(SWITCH_KEYS.LEARN)
+        );
+      }
     } catch (error) {
       setIsSearching(false);
       setError(error instanceof Error ? error.message : "Search failed");
@@ -699,7 +717,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
   return (
     <div className="flex flex-col w-full h-screen gap-6 p-6 overflow-y-auto xl:overflow-y-none">
       <ChatBreadcrumb displayChatTitle={displayChatTitle} />
-      <div className="flex flex-row w-full gap-6 h-full md:relative">
+      <div className="flex flex-row w-full h-full gap-6 md:relative">
         <div className="hidden xl:block">
           <ChatActions
             onRegenerate={handleRegenerateResponse}
@@ -734,7 +752,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             />
             {showTooltip && tooltipPosition && (
               <div
-                className="fixed bg-white border border-blue-500 px-2 py-1 rounded-md"
+                className="fixed px-2 py-1 bg-white border border-blue-500 rounded-md"
                 style={{
                   top: `${tooltipPosition.top}px`,
                   left: `${tooltipPosition.left}px`,
@@ -882,7 +900,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 setSelectedSwitch(value);
               }}
               healthHistory={healthHistory}
-              message={textForInput}
+              message={textContent}
+              setNewMessage={setTextContent}
+              setClientId={setClientId}
             />
           </div>
         )}

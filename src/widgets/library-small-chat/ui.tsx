@@ -80,7 +80,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     selectedSwitchFromState && isValidSwitch
       ? selectedSwitchFromState
       : isCreatePage
-        ? SWITCH_KEYS.CREATE
+        ? SWITCH_KEYS.RESEARCH
         : config.options[0]
   );
 
@@ -283,7 +283,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     };
 
     return (
-      <div className="flex flex-col gap-6 animate-pulse w-full">
+      <div className="flex flex-col w-full gap-6 animate-pulse">
         <Bubble align="left" lines={2} />
         <Bubble align="right" lines={3} />
         <Bubble align="left" lines={5} />
@@ -450,13 +450,33 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             chat_id: currentChatId,
             regenerate_id: null,
             personalize: false,
-            // personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
           }),
           documentId,
           image,
           pdf,
           processChunk,
           processFinal
+        );
+      } else if (isSwitch(SWITCH_KEYS.RESEARCH)) {
+        await SearchService.aiCoachResearchStream(
+          {
+            chat_message: JSON.stringify({
+              user_prompt: message,
+              is_new: !currentChatId,
+              text_quote: selectedText,
+            }),
+            image,
+            pdf,
+            contentId: documentId,
+            clientId: clientId ?? undefined,
+          },
+          processChunk,
+          processFinal,
+          (error) => {
+            setIsSearching(false);
+            setError(error.message);
+            console.error("Search error:", error);
+          }
         );
       } else {
         await SearchService.aiSearchStream(
@@ -478,9 +498,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             setIsSearching(false);
             setError(error.message);
             console.error("Search error:", error);
-          },
-          isLearn,
-          clientId !== null ? clientId : undefined
+          }
         );
       }
     } catch (error) {
@@ -590,7 +608,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             </button>
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
-          <CardContent className="w-full px-6 pb-0 h-full">
+          <CardContent className="w-full h-full px-6 pb-0">
             <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-auto mt-auto">
               <p className="text-[24px] text-[#1D1D1F] font-[500]">
                 Personal story
@@ -659,7 +677,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             </button>
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
-          <CardContent className="w-full px-6 pb-0 h-full overflow-auto">
+          <CardContent className="w-full h-full px-6 pb-0 overflow-auto">
             <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-auto mt-auto">
               {!isCreatePage && (
                 <p className="text-[24px] text-[#1D1D1F] font-[500]">
