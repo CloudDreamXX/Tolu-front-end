@@ -1,6 +1,4 @@
-import { HealthHistory } from "entities/health-history";
 import { RootState } from "entities/store";
-import { MenopauseSubmissionRequest, UserService } from "entities/user";
 import { Paperclip, Send } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -8,8 +6,7 @@ import { useLocation } from "react-router-dom";
 import { cn } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
 import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
-import { HealthProfileForm } from "widgets/health-profile-form";
-import { MultiStepModal, SymptomCheckModal } from "widgets/MenopauseModals";
+import { DailyJournal } from "widgets/dayli-journal";
 import { SwitchGroup } from "widgets/switch-group";
 
 interface LibraryChatInputProps {
@@ -27,7 +24,6 @@ interface LibraryChatInputProps {
   footer?: React.ReactNode;
   setNewMessage?: React.Dispatch<React.SetStateAction<string>>;
   isLoading?: boolean;
-  healthHistory?: HealthHistory;
   message: string;
   setClientId?: (clientId: string | null) => void;
 }
@@ -43,14 +39,11 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   setNewMessage,
   footer,
   isLoading,
-  healthHistory,
   message,
   setClientId,
 }) => {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [stepModalOpen, setStepModalOpen] = useState(false);
-  const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const loading = useSelector((state: RootState) => state.client.loading);
   const location = useLocation();
   const isContentManager = location.pathname.includes("content-manager");
@@ -75,17 +68,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
 
   const isSendDisabled =
     (!message.trim() && attachedFiles.length === 0) || disabled;
-
-  const handleStartCheckIn = () => {
-    setModalOpen(false);
-    setStepModalOpen(true);
-  };
-
-  const handleFinishCheckIn = async (results: MenopauseSubmissionRequest) => {
-    await UserService.submitMenopauseResults(results);
-    setStepModalOpen(false);
-    setCompletionModalOpen(true);
-  };
 
   return (
     <div className={cn("p-4 bg-white border-t border-gray-200", className)}>
@@ -119,9 +101,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           containerClassName="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
-      {footer ? (
-        footer
-      ) : (
+      {footer ?? (
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <label className="relative flex items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800">
@@ -145,16 +125,18 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                 </span>
               )}
             </label>
-            <div className="flex items-center gap-[10px]">
-              <PopoverClient setClientId={setClientId} />
-            </div>
-            {!isContentManager && (
-              <Button variant={"brightblue"} onClick={() => setModalOpen(true)}>
-                Symptoms Tracker
+            {isContentManager ? (
+              <div className="flex items-center gap-[10px]">
+                <PopoverClient setClientId={setClientId} />
+              </div>
+            ) : (
+              <Button
+                variant={"brightblue"}
+                onClick={() => setModalOpen(true)}
+                className="hidden md:block"
+              >
+                Daily Journal
               </Button>
-            )}
-            {!isContentManager && (
-              <HealthProfileForm healthHistory={healthHistory} />
             )}
           </div>
           <Button
@@ -176,25 +158,13 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         />
       </div>
 
-      <SymptomCheckModal
-        isOpen={modalOpen}
-        onStepModalOpen={handleStartCheckIn}
-        onClose={() => setModalOpen(false)}
-        variant="intro"
-      />
-
-      <MultiStepModal
-        isOpen={stepModalOpen}
-        onClose={() => setStepModalOpen(false)}
-        onComplete={handleFinishCheckIn}
-      />
-
-      <SymptomCheckModal
-        isOpen={completionModalOpen}
-        onStepModalOpen={() => setCompletionModalOpen(false)}
-        onClose={() => setCompletionModalOpen(false)}
-        variant="completion"
-      />
+      <div className="hidden mt-4 md:block">
+        <DailyJournal
+          isOpen={modalOpen}
+          onCancel={() => setModalOpen(false)}
+          onDone={() => setModalOpen(false)}
+        />
+      </div>
     </div>
   );
 };

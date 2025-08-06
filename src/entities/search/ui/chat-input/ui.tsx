@@ -71,7 +71,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
         className
       )}
     >
-      <div className="hidden xl:flex items-center gap-2">
+      <div className="items-center hidden gap-2 xl:flex">
         <Switch checked={false} onCheckedChange={() => {}} />
         <span className={cn("text-sm cursor-default ", "text-gray-700")}>
           Personalize search
@@ -88,7 +88,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
 
       <div className="flex items-center justify-between">
         <div className="flex flex-row items-center w-full gap-4">
-          <label className="relative flex items-center text-gray-600 transition-colors cursor-pointer gap-2 text-sm hover:text-gray-800 hover:bg-gray-100">
+          <label className="relative flex items-center gap-2 text-sm text-gray-600 transition-colors cursor-pointer hover:text-gray-800 hover:bg-gray-100">
             <Paperclip size={24} />
             {attachedFiles.length > 0 && (
               <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
@@ -128,7 +128,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
           />
         </Button>
       </div>
-      <div className="flex xl:hidden items-center gap-2">
+      <div className="flex items-center gap-2 xl:hidden">
         <Switch checked={false} onCheckedChange={() => {}} />
         <span className={cn("text-sm cursor-default ", "text-gray-700")}>
           Personalize search

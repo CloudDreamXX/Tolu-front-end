@@ -82,7 +82,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
              md:w-[390px] md:right-[10px] md:top-[10px] md:bottom-[10px] md:left-auto md:rounded-[16px]"
             ref={menuMobRef}
           >
-            <div className="flex items-center justify-center mb-6 pt-4">
+            <div className="flex items-center justify-center pt-4 mb-6">
               <div className="flex flex-col items-center">
                 <h1 className="text-[32px] md:text-[40px] font-[700] font-open leading-normal">
                   Tolu

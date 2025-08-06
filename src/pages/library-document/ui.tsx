@@ -211,7 +211,7 @@ export const LibraryDocument = () => {
                 <div className="prose-sm prose max-w-none">
                   {showTooltip && tooltipPosition && (
                     <div
-                      className="fixed bg-white border border-blue-500 px-2 py-1 rounded-md"
+                      className="fixed px-2 py-1 bg-white border border-blue-500 rounded-md"
                       style={{
                         top: `${tooltipPosition.top}px`,
                         left: `${tooltipPosition.left}px`,
@@ -251,9 +251,8 @@ export const LibraryDocument = () => {
           </div>
         )}
 
-        <div className="hidden xl:block w-full">
+        <div className="hidden w-full xl:block">
           <LibrarySmallChat
-            healthHistory={healthHistory}
             isLoading={isLoadingDocument}
             selectedText={textForInput}
           />

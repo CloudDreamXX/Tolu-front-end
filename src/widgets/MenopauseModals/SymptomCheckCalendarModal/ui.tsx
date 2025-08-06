@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Close from "shared/assets/icons/close";
+import { usePageWidth } from "shared/lib";
 
 interface SymptomCheckModalProps {
   isOpen: boolean;
-  onStepModalOpen: () => void;
+  onStepModalOpen?: () => void;
   onClose: () => void;
 }
 
@@ -12,17 +13,11 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
   onStepModalOpen,
   onClose,
 }) => {
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+  const { isMobile } = usePageWidth();
   const [selectedDateIndex, setSelectedDateIndex] = useState<number | null>(
     null
   );
   const [weekDates, setWeekDates] = useState<Date[]>([]);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const today = new Date();
@@ -110,7 +105,7 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
         {!isMobile && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-black"
+            className="absolute text-gray-400 top-4 right-4 hover:text-black"
           >
             <Close />
           </button>

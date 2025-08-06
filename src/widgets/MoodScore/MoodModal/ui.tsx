@@ -1,41 +1,12 @@
-import {
-  lastMood,
-  setLastLogIn,
-  setLastMood,
-} from "entities/store/clientMoodSlice";
+import { setLastLogIn, setLastMood } from "entities/store/clientMoodSlice";
 import { X } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import ArrowBack from "shared/assets/icons/arrowBack";
 import InfoIcon from "shared/assets/icons/info-icon";
-import Angry from "shared/assets/images/Angry.svg";
-import Happy from "shared/assets/images/Excellent.svg";
-import Neutral from "shared/assets/images/Neutrak.svg";
-import Sad from "shared/assets/images/Sad.svg";
-import Smile from "shared/assets/images/Smile.svg";
-import Smiley from "shared/assets/images/Smiley.svg";
 import { Input } from "shared/ui";
 import { Slider } from "shared/ui/slider";
-
-const moods: lastMood[] = [
-  "Angry",
-  "Sad",
-  "Neutral",
-  "Stable",
-  "Happy",
-  "Excellent",
-];
-
-const moodLabels = [
-  "Angry",
-  "Sad",
-  "Neutral",
-  "Balanced and steady",
-  "Happy",
-  "Excellent",
-];
-
-const moodImages = [Angry, Sad, Neutral, Smile, Smiley, Happy];
+import { moodLabels, moodMap } from "../ui";
 
 interface MoodModalProps {
   onClose: () => void;
@@ -44,10 +15,10 @@ interface MoodModalProps {
 export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
   const [rawValue, setRawValue] = useState(2.5);
   const dispatch = useDispatch();
-  const moodIndex = Math.floor(rawValue);
+  const moodLabel = moodLabels[Math.floor(rawValue / 10)];
 
   const handleSubmit = () => {
-    dispatch(setLastMood(moods[moodIndex]));
+    dispatch(setLastMood(moodLabel));
     dispatch(setLastLogIn(new Date().toISOString()));
     onClose();
   };
@@ -89,12 +60,12 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
           <div className="border-2 border-[#F3F7FD] rounded-2xl w-full max-w-[600px] p-6 flex flex-col items-center gap-6">
             <div className="flex items-center gap-4">
               <img
-                src={moodImages[moodIndex]}
-                alt={moods[moodIndex]}
+                src={moodMap[moodLabel]}
+                alt={moodLabel}
                 className="w-8 h-8"
               />
               <h2 className="text-[#1C3C8D] font-[Nunito] text-[18px] font-semibold">
-                {moodLabels[moodIndex]}
+                {moodLabel}
               </h2>
               <span className="w-[20px] h-[20px]">
                 <InfoIcon />
@@ -111,7 +82,6 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
                 const roundedValue = Math.ceil(rawValue) - 0.5;
                 setRawValue(roundedValue);
               }}
-              activeIndex={rawValue}
               colors={[
                 "#FF1F0F",
                 "#F6B448",
@@ -123,11 +93,11 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
             />
 
             <div className="flex items-center justify-between w-full px-4">
-              {moodImages.map((img, idx) => (
+              {moodLabels.map((label, idx) => (
                 <div key={idx} className="flex justify-center w-1/6">
                   <img
-                    src={img}
-                    alt={`Mood ${moods[idx]}`}
+                    src={moodMap[label]}
+                    alt={`Mood ${label}`}
                     className="w-6 h-6"
                   />
                 </div>

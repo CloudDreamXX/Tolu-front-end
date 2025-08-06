@@ -14,10 +14,15 @@ import { Button } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import CaretRight from "shared/assets/icons/caretRight";
 import WrapperLibraryFolderTree from "widgets/sidebars/ui/health-snapshot/FolderTree";
-import { setIsMobileChatOpen } from "entities/client/lib";
+import {
+  setIsMobileDailyJournalOpen,
+  setIsMobileChatOpen,
+} from "entities/client/lib";
 import { RootState } from "entities/store";
+import { usePageWidth } from "shared/lib";
 
 export const NavigationClient: React.FC = () => {
+  const { isMobile } = usePageWidth();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [menuMobOpen, setMenuMobOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
@@ -26,6 +31,9 @@ export const NavigationClient: React.FC = () => {
   const dispatch = useDispatch();
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
+  );
+  const isDailyJournalOpen = useSelector(
+    (state: RootState) => state.client.isMobileDailyJournalOpen
   );
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -57,7 +65,12 @@ export const NavigationClient: React.FC = () => {
     }
   };
 
-  const handleOpenChat = () => {
+  const handleOpenDailyJournal = () => {
+    dispatch(setIsMobileChatOpen(false));
+    dispatch(setIsMobileDailyJournalOpen(!isDailyJournalOpen));
+  };
+
+  const handleOpentChat = () => {
     dispatch(setIsMobileChatOpen(!isMobileChatOpen));
   };
 
@@ -154,10 +167,10 @@ export const NavigationClient: React.FC = () => {
         </h1>
         <div className="flex items-center gap-[16px]">
           <button
-            onClick={handleOpenChat}
-            className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px]"
+            onClick={isMobile ? handleOpenDailyJournal : handleOpentChat}
+            className="px-[8px] py-[6px] md:py-4 rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[14px]  md:text-[16px] font-[600] leading-[22px]"
           >
-            AI Assistant
+            {isMobile ? "Daily Journal" : "AI Assistant"}
           </button>
           <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
             <Menu className="text-black w-[32px]" />
@@ -192,6 +205,8 @@ export const NavigationClient: React.FC = () => {
               onClick={() => {
                 nav("/library");
                 setMenuMobOpen(false);
+                dispatch(setIsMobileDailyJournalOpen(false));
+                dispatch(setIsMobileChatOpen(true));
               }}
             >
               <Sparkle />

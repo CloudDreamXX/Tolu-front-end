@@ -1,27 +1,40 @@
-import { useState, useEffect } from "react";
+import { ClientService, Folder } from "entities/client";
+import { setFolders, setLoading } from "entities/client/lib";
+import { ContentService, ContentStatus } from "entities/content";
+import { HealthHistory } from "entities/health-history";
+import { RootState } from "entities/store";
+import { LibraryCard } from "features/library-card";
+import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import BookMark from "shared/assets/icons/book-mark";
+import GlobeIcon from "shared/assets/icons/globe";
+import TwoUsersIcon from "shared/assets/icons/two-users";
+import { usePageWidth } from "shared/lib";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Button,
   Input,
   ScrollArea,
 } from "shared/ui";
-import { LibraryCard } from "features/library-card";
-import { ClientService, Folder } from "entities/client";
-import { ContentStatus, ContentService } from "entities/content";
-import BookMark from "shared/assets/icons/book-mark";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "entities/store";
-import { setFolders, setLoading } from "entities/client/lib";
-import { Search } from "lucide-react";
+import { HealthProfileForm } from "widgets/health-profile-form";
 
-export const LibraryClientContent = () => {
+interface LibraryClientContentProps {
+  healthHistory?: HealthHistory;
+}
+
+export const LibraryClientContent = ({
+  healthHistory,
+}: LibraryClientContentProps) => {
   const [search, setSearch] = useState("");
   const [statusMap, setStatusMap] = useState<Record<string, ContentStatus>>({});
   const [filteredFolders, setFilteredFolders] = useState<Folder[]>([]);
 
+  const { isMobile } = usePageWidth();
   const nav = useNavigate();
   const folders = useSelector((state: RootState) => state.client.folders);
   const dispatch = useDispatch();
@@ -114,7 +127,7 @@ export const LibraryClientContent = () => {
           boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.04)",
         }}
       >
-        <div className="flex justify-between items-center w-full">
+        <div className="flex items-center justify-between w-full">
           <div
             className="h-[12px] rounded-[8px] skeleton-gradient"
             style={{ width: getRandomWidth(160, 250) }}
@@ -189,6 +202,24 @@ export const LibraryClientContent = () => {
 
   return (
     <div className="flex flex-col w-full">
+      <div className="flex items-center gap-2 mb-4 md:gap-4">
+        <HealthProfileForm healthHistory={healthHistory} />
+        <Button
+          variant="brightblue"
+          size={isMobile ? "sm" : "icon"}
+          className="px-[10px] rounded-full md:h-14 md:w-14"
+        >
+          {isMobile ? "Providers" : <TwoUsersIcon />}
+        </Button>
+        <Button
+          variant="blue2"
+          size={isMobile ? "sm" : "icon"}
+          className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+        >
+          {isMobile ? "Communities (soon)" : <GlobeIcon />}{" "}
+        </Button>
+      </div>
+
       <Input
         placeholder="Search by name or content"
         value={search}
@@ -199,7 +230,7 @@ export const LibraryClientContent = () => {
       />
       <ScrollArea className="flex-1 min-h-0 pr-2 mt-4">
         {loading ? (
-          <div className="w-full flex flex-col gap-4 px-2">
+          <div className="flex flex-col w-full gap-4 px-2">
             {[...Array(5)].map((_, idx) => (
               <Accordion
                 key={idx}
@@ -249,7 +280,7 @@ export const LibraryClientContent = () => {
                     </div>
                   </div>
                 )}
-                <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2 w-full">
+                <AccordionContent className="flex flex-row flex-wrap w-full gap-4 pb-2">
                   {Array.isArray(folder.subfolders) &&
                   folder.subfolders.length > 0 ? (
                     folder.subfolders.map((item) => (
@@ -289,7 +320,7 @@ export const LibraryClientContent = () => {
                               </div>
                             </div>
                           )}
-                          <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2 w-full">
+                          <AccordionContent className="flex flex-row flex-wrap w-full gap-4 pb-2">
                             {Array.isArray(item.content) &&
                             item.content.length > 0 ? (
                               item.content.map((item) => (

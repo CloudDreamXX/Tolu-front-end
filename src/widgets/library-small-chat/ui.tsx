@@ -1,10 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HealthHistory } from "entities/health-history";
+import { ClientService } from "entities/client";
+import { CoachService } from "entities/coach";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
 import { ChatBreadcrumb, Message } from "features/chat";
+import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 import { Expand, Paperclip, Send, Settings } from "lucide-react";
+import { caseBaseSchema } from "pages/content-manager";
+import {
+  CaseSearchForm,
+  FormValues,
+} from "pages/content-manager/create/case-search";
 import { useEffect, useState } from "react";
 import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -17,25 +24,14 @@ import {
   CardHeader,
   CardTitle,
 } from "shared/ui";
-import { MessageList } from "widgets/message-list";
-import z from "zod";
-import { baseSchema, mapHealthHistoryToFormDefaults } from "./lib";
-import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
-import {
-  CaseSearchForm,
-  FormValues,
-} from "pages/content-manager/create/case-search";
-import { caseBaseSchema } from "pages/content-manager";
 import {
   PopoverAttach,
   PopoverClient,
   PopoverFolder,
   PopoverInstruction,
 } from "widgets/content-popovers";
-import { CoachService } from "entities/coach";
-import { ClientService } from "entities/client";
-import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
-
+import { MessageList } from "widgets/message-list";
+import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 // const steps = [
 //   "Demographic",
 //   "Menopause Status",
@@ -45,7 +41,6 @@ import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 // ];
 
 interface LibrarySmallChatProps {
-  healthHistory?: HealthHistory;
   isCoach?: boolean;
   isDraft?: boolean;
   footer?: React.ReactNode;
@@ -55,7 +50,6 @@ interface LibrarySmallChatProps {
 }
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
-  healthHistory,
   isCoach,
   isLoading,
   selectedText,
@@ -123,11 +117,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   });
 
   const watchedCaseValues = useWatch({ control: caseForm.control });
-  const form = useForm<z.infer<typeof baseSchema>>({
-    resolver: zodResolver(baseSchema),
-    defaultValues: mapHealthHistoryToFormDefaults(healthHistory),
-  });
-
   const { isValid } = useFormState({ control: caseForm.control });
 
   useEffect(() => {
@@ -150,13 +139,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       setMessageState?.(message);
     }
   }, [isValid]);
-
-  useEffect(() => {
-    if (healthHistory) {
-      const defaults = mapHealthHistoryToFormDefaults(healthHistory);
-      form.reset(defaults);
-    }
-  }, [healthHistory, form]);
 
   const loadExistingSession = async (chatId: string) => {
     setIsLoadingSession(true);
@@ -666,7 +648,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <div className="h-[12px] skeleton-gradient rounded-[24px] w-[218px]" />
             ) : (
-              <CardTitle>Creator Studio</CardTitle>
+              <CardTitle>
+                {isCoach ? "Creator Studio" : "[user's name] AI assistant"}
+              </CardTitle>
             )}
             <button
               className="hidden xl:block xl:absolute top-4 left-4"
@@ -701,7 +685,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 handleSwitchChange(value);
               }}
               message={message}
-              healthHistory={healthHistory}
               footer={
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-[10px]">
@@ -801,8 +784,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                   Start a conversation
                 </h2>
                 <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                  Select an action below and enter a query to start a
-                  conversation with Tolu.
+                  Slide on your{" "}
+                  <span className="font-bold">Smart Search bot</span> to
+                  personalize the answer to any wellness question.
+                </p>
+
+                <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
+                  Slide on your <span className="font-bold">Learn bot</span> to
+                  receive expert verified content to boost your knowledge.
                 </p>
               </div>
             )}
@@ -823,7 +812,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 handleNewChatOpen();
                 handleSwitchChange(value);
               }}
-              healthHistory={healthHistory}
               setNewMessage={setMessageState}
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) ? (

@@ -1,21 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export type lastMood =
-  | "Angry"
-  | "Sad"
-  | "Neutral"
-  | "Stable"
-  | "Happy"
-  | "Excellent";
+import { MoodLabel } from "widgets/MoodScore";
 
 export interface MoodState {
   lastLogIn: string;
-  lastMood: lastMood;
+  lastMood: MoodLabel;
 }
 
 const initialState = {
   lastLogIn: "",
-  lastMood: "",
+  lastMood: "Neutral",
 };
 
 const clientMoodSlice = createSlice({
@@ -25,7 +18,7 @@ const clientMoodSlice = createSlice({
     setLastLogIn: (state, action: PayloadAction<string>) => {
       state.lastLogIn = action.payload;
     },
-    setLastMood: (state, action: PayloadAction<lastMood>) => {
+    setLastMood: (state, action: PayloadAction<MoodLabel>) => {
       state.lastMood = action.payload;
     },
   },

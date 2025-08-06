@@ -1,8 +1,10 @@
+import { setIsMobileDailyJournalOpen } from "entities/client/lib";
 import { RootState } from "entities/store";
 import { LibraryChat } from "pages/library-chat";
 import { ReactElement } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { DailyJournal } from "widgets/dayli-journal";
 import { getNavigation } from "widgets/navigations/lib";
 import { getSideBar } from "widgets/sidebars";
 
@@ -33,8 +35,12 @@ export const MainLayout: React.FC<{
   children: ReactElement;
   mainLocation: string;
 }> = ({ children, mainLocation }) => {
+  const dispatch = useDispatch();
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
+  );
+  const isMobileDailyJournalOpen = useSelector(
+    (state: RootState) => state.client.isMobileDailyJournalOpen
   );
 
   return (
@@ -46,8 +52,17 @@ export const MainLayout: React.FC<{
         {getNavigation(mainLocation)}
         {children}
         {isMobileChatOpen && (
-          <div className="absolute top-[76px] md:top-[117px] z-50 h-full w-full bg-white">
+          <div className="absolute top-[76px] md:top-[117px] z-50 h-full w-full bg-white lg:hidden">
             <LibraryChat />
+          </div>
+        )}
+        {isMobileDailyJournalOpen && (
+          <div className="absolute top-[76px] md:hidden">
+            <DailyJournal
+              isOpen={isMobileDailyJournalOpen}
+              onCancel={() => dispatch(setIsMobileDailyJournalOpen(false))}
+              onDone={() => dispatch(setIsMobileDailyJournalOpen(false))}
+            />
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import Stars from "shared/assets/icons/stars";
+import React from "react";
 import Close from "shared/assets/icons/close";
+import Stars from "shared/assets/icons/stars";
+import { usePageWidth } from "../../../shared/lib/hooks/use-page-width";
 
 interface SymptomCheckModalProps {
   isOpen: boolean;
@@ -15,16 +16,7 @@ export const SymptomCheckModal: React.FC<SymptomCheckModalProps> = ({
   onStepModalOpen,
   onClose,
 }) => {
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const { isMobile } = usePageWidth();
 
   if (!isOpen) return null;
 
@@ -81,7 +73,7 @@ export const SymptomCheckModal: React.FC<SymptomCheckModalProps> = ({
         {!isMobile && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-sm text-gray-500 hover:text-black"
+            className="absolute text-sm text-gray-500 top-4 right-4 hover:text-black"
           >
             <Close />
           </button>

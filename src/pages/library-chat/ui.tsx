@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { setChat } from "entities/client/lib";
+import { HealthHistoryService } from "entities/health-history";
+import { setHealthHistory, setLoading } from "entities/health-history/lib";
+import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { SearchResultResponseItem } from "entities/search/model";
-import { MessageList } from "widgets/message-list";
-import { LibraryChatInput } from "entities/search";
 import { RootState } from "entities/store";
 import {
   ChatActions,
@@ -12,25 +13,24 @@ import {
   ChatLoading,
   Message,
 } from "features/chat";
+import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
+import { caseBaseSchema } from "pages/content-manager";
+import {
+  CaseSearchForm,
+  FormValues,
+} from "pages/content-manager/create/case-search";
+import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
+import { useEffect, useRef, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Card, CardContent } from "shared/ui";
 import {
   SWITCH_CONFIG,
   SWITCH_KEYS,
   SwitchValue,
 } from "widgets/library-small-chat/switch-config";
-import { Card, CardContent } from "shared/ui";
-import { useForm, useWatch } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  CaseSearchForm,
-  FormValues,
-} from "pages/content-manager/create/case-search";
-import { caseBaseSchema } from "pages/content-manager";
-import { setChat } from "entities/client/lib";
-import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
-import { HealthHistoryService } from "entities/health-history";
-import { setHealthHistory, setLoading } from "entities/health-history/lib";
-import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
+import { MessageList } from "widgets/message-list";
 
 // const steps = [
 //   "Demographic",
@@ -54,9 +54,6 @@ export const LibraryChat = () => {
   const [clientId, setClientId] = useState<string | null>(null);
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
-  );
-  const healthHistory = useSelector(
-    (state: RootState) => state.healthHistory.data
   );
 
   const initialSearchDone = useRef(false);
@@ -121,7 +118,7 @@ export const LibraryChat = () => {
     useState<SpeechSynthesisVoice | null>(null);
   const [isReadingAloud, setIsReadingAloud] = useState(false);
 
-  const { textForInput, tooltipPosition, showTooltip, handleTooltipClick } =
+  const { tooltipPosition, showTooltip, handleTooltipClick } =
     useTextSelectionTooltip();
 
   useEffect(() => {
@@ -772,14 +769,19 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
             !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
-                <div className="max-w-md space-y-4 px-[16px]">
-                  <h3 className="text-xl font-semibold text-gray-700">
-                    Start a new conversation
-                  </h3>
-                  <p className="text-gray-500">
-                    Ask me anything about your health, nutrition, or wellness
-                    goals. I'm here to help with personalized insights and
-                    recommendations.
+                <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit md:mt-0 xl: xl:max-w-xl ">
+                  <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
+                    Start a conversation
+                  </h2>
+                  <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-xl">
+                    Slide on your{" "}
+                    <span className="font-bold">Smart Search bot</span> to
+                    personalize the answer to any wellness question.
+                  </p>
+
+                  <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-xl">
+                    Slide on your <span className="font-bold">Learn bot</span>{" "}
+                    to receive expert verified content to boost your knowledge.
                   </p>
                 </div>
               </div>
@@ -899,7 +901,6 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 handleNewChatOpen();
                 setSelectedSwitch(value);
               }}
-              healthHistory={healthHistory}
               message={textContent}
               setNewMessage={setTextContent}
               setClientId={setClientId}

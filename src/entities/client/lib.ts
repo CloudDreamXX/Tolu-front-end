@@ -4,6 +4,7 @@ import { SearchResultResponseItem } from "entities/search";
 
 export interface IClientState {
   isMobileChatOpen: boolean;
+  isMobileDailyJournalOpen?: boolean;
   folderId: string;
   chat: SearchResultResponseItem[];
   folders: Folder[];
@@ -13,6 +14,7 @@ export interface IClientState {
 
 const initialState: IClientState = {
   isMobileChatOpen: false,
+  isMobileDailyJournalOpen: false,
   folderId: "",
   chat: [],
   folders: [],
@@ -26,6 +28,9 @@ const clientSlice = createSlice({
   reducers: {
     setIsMobileChatOpen(state, action: PayloadAction<boolean>) {
       state.isMobileChatOpen = action.payload;
+    },
+    setIsMobileDailyJournalOpen(state, action: PayloadAction<boolean>) {
+      state.isMobileDailyJournalOpen = action.payload;
     },
     setFolderId(state, action: PayloadAction<string>) {
       state.folderId = action.payload;
@@ -60,5 +65,6 @@ export const {
   clearError,
   setIsMobileChatOpen,
   setChat,
+  setIsMobileDailyJournalOpen,
 } = clientSlice.actions;
 export const clientReducer = clientSlice.reducer;
