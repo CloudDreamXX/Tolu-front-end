@@ -54,6 +54,7 @@ export class FoldersService {
       price: this.normalizePrice(subfolder.price),
       status: subfolder.status,
       totalContentItems: subfolder.total_content_items,
+      pagination: subfolder.pagination,
       subfolders: (Array.isArray(subfolder?.subfolders)
         ? subfolder?.subfolders
         : []
@@ -89,6 +90,7 @@ export class FoldersService {
       isRootFolder: true,
       isSubfolder: false,
       isEmpty: folder.total_content_items === 0,
+      pagination: folder.pagination,
     };
   }
 

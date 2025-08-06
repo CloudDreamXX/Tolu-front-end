@@ -122,7 +122,6 @@ export const OnboardingHealthProfile = () => {
       allergies: "None",
       familyHistory: "None",
 
-      diet: "None",
       dietType: "",
       dietDetails: "",
       cookFrequency: "",

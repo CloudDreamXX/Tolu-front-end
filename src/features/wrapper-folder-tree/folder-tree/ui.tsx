@@ -29,7 +29,7 @@ interface FolderTreeProps {
   level: number;
   isNarrow: boolean;
   openFolders: Set<string>;
-  toggleFolder: (folderId: string) => void;
+  toggleFolder: (folder: IFolder) => void;
   handleDrop: (
     folderId: string,
     fileId: string,
@@ -198,7 +198,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                   dragOverFolderId === folder.id &&
                   "bg-blue-50"
               )}
-              onClick={() => toggleFolder(folder.id)}
+              onClick={() => toggleFolder(folder)}
             >
               {openFolders.has(folder.id) ? (
                 <ChevronUp className="w-5 h-5 shrink-0" />

@@ -1,9 +1,9 @@
-import { FoldersService, setFolders } from "entities/folder";
+import { FoldersService, IFolder, setFolders } from "entities/folder";
 import { RootState } from "entities/store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { findFolderPath } from "./utils";
 import { FolderTree } from "./folder-tree";
+import { findFolderPath } from "./utils";
 
 interface WrapperFolderTreeProps {
   onChildrenItemClick?: () => void;
@@ -18,20 +18,87 @@ export const WrapperFolderTree = ({
   const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
   const [isMoving, setIsMoving] = useState(false);
   const [loading, setIsLoading] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [targetFolder, setTargetFolder] = useState<IFolder | undefined>(
+    undefined
+  );
+  const [hasMore, setHasMore] = useState<boolean>(false);
+
+  const findFolderInSubfolders = (
+    folderId: string,
+    folders: IFolder[]
+  ): IFolder | null => {
+    for (const folder of folders) {
+      if (folder.id === folderId) {
+        return folder;
+      }
+      if (folder.subfolders) {
+        const foundInSubfolder = findFolderInSubfolders(
+          folderId,
+          folder.subfolders
+        );
+        if (foundInSubfolder) {
+          return foundInSubfolder;
+        }
+      }
+    }
+    return null;
+  };
 
   useEffect(() => {
     const fetchFolders = async () => {
       try {
-        const { folders, foldersMap } = await FoldersService.getFolders();
-        dispatch(setFolders({ folders, foldersMap }));
+        const { folders: newFolders, foldersMap } =
+          await FoldersService.getFolders(page, limit, targetFolder?.id);
+
+        if (targetFolder) {
+          const updatedFolder = findFolderInSubfolders(
+            targetFolder.id,
+            newFolders
+          );
+
+          if (updatedFolder) {
+            updatedFolder.content = [
+              ...(targetFolder.content || []),
+              ...(updatedFolder.content || []),
+            ];
+
+            const updatedFolders = newFolders.map((folder) =>
+              folder.id === updatedFolder.id ? updatedFolder : folder
+            );
+
+            dispatch(setFolders({ folders: updatedFolders, foldersMap }));
+          } else {
+            dispatch(setFolders({ folders: newFolders, foldersMap }));
+          }
+        } else {
+          dispatch(setFolders({ folders: newFolders, foldersMap }));
+        }
+
         setIsLoading(false);
+        setHasMore(
+          (targetFolder && targetFolder.pagination.total_pages > page) || false
+        );
       } catch (error) {
         console.error("Error fetching folders:", error);
       }
     };
 
     fetchFolders();
-  }, [dispatch]);
+  }, [dispatch, page, limit, targetFolder?.id]);
+
+  const handleScroll = () => {
+    if (
+      containerRef.current &&
+      containerRef.current.scrollTop + containerRef.current.clientHeight >=
+        containerRef.current.scrollHeight &&
+      hasMore
+    ) {
+      setPage(page + 1);
+    }
+  };
 
   const FolderSkeletonRow = () => {
     const getRandomWidth = () => {
@@ -48,11 +115,7 @@ export const WrapperFolderTree = ({
           return (
             <div
               key={index}
-              className="
-              md:grid md:grid-cols-6 md:items-center md:py-[12px]
-              flex flex-col gap-2 p-[10px] rounded-[8px] bg-white 
-              md:rounded-none md:border-x-0 animate-pulse
-            "
+              className="md:grid md:grid-cols-6 md:items-center md:py-[12px] flex flex-col gap-2 p-[10px] rounded-[8px] bg-white md:rounded-none md:border-x-0 animate-pulse"
             >
               <div
                 className="h-[10px] skeleton-gradient rounded-[24px]"
@@ -65,13 +128,14 @@ export const WrapperFolderTree = ({
     );
   };
 
-  const toggleFolder = (folderId: string) => {
+  const toggleFolder = (folder: IFolder) => {
+    setTargetFolder(folder);
     setOpenFolders((prev) => {
       const newOpenFolders = new Set(prev);
-      if (newOpenFolders.has(folderId)) {
-        newOpenFolders.delete(folderId);
+      if (newOpenFolders.has(folder.id)) {
+        newOpenFolders.delete(folder.id);
       } else {
-        newOpenFolders.add(folderId);
+        newOpenFolders.add(folder.id);
       }
       return newOpenFolders;
     });
@@ -96,7 +160,11 @@ export const WrapperFolderTree = ({
         content_id: sourceContentId,
       });
 
-      const { folders, foldersMap } = await FoldersService.getFolders();
+      const { folders, foldersMap } = await FoldersService.getFolders(
+        page,
+        limit,
+        targetFolder?.id
+      );
       dispatch(setFolders({ folders, foldersMap }));
     } catch (error) {
       console.error("Error moving file:", error);
@@ -105,20 +173,28 @@ export const WrapperFolderTree = ({
     }
   };
 
-  return loading ? (
-    <FolderSkeletonRow />
-  ) : (
-    <FolderTree
-      folders={folders}
-      level={0}
-      isNarrow={false}
-      openFolders={openFolders}
-      toggleFolder={toggleFolder}
-      handleDrop={handleDrop}
-      dragOverFolderId={dragOverFolderId}
-      setDragOverFolderId={setDragOverFolderId}
-      onChildrenItemClick={onChildrenItemClick}
-      isMoving={isMoving}
-    />
+  return (
+    <div
+      ref={containerRef}
+      onScroll={handleScroll}
+      style={{ maxHeight: "400px", overflowY: "auto" }}
+    >
+      {loading ? (
+        <FolderSkeletonRow />
+      ) : (
+        <FolderTree
+          folders={folders}
+          level={0}
+          isNarrow={false}
+          openFolders={openFolders}
+          toggleFolder={toggleFolder}
+          handleDrop={handleDrop}
+          dragOverFolderId={dragOverFolderId}
+          setDragOverFolderId={setDragOverFolderId}
+          onChildrenItemClick={onChildrenItemClick}
+          isMoving={isMoving}
+        />
+      )}
+    </div>
   );
 };

@@ -23,7 +23,6 @@ export const mapHealthHistoryToFormDefaults = (
     allergies: healthHistory.allergies_intolerances || "None",
     familyHistory: healthHistory.family_health_history || "None",
 
-    diet: "None",
     dietType: healthHistory.diet_pattern || "",
     dietDetails: healthHistory.specific_diet || "",
     cookFrequency: healthHistory.cook_at_home || "",

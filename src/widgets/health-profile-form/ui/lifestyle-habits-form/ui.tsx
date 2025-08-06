@@ -18,7 +18,7 @@ import {
 import { z } from "zod";
 
 export const lifestyleHabitsSchema = z.object({
-  diet: z.string().min(1, "This field is required"),
+  dietDetails: z.string().min(1, "This field is required"),
   exerciseHabits: z
     .string()
     .min(1, { message: "Please select your activity level." }),
@@ -57,7 +57,7 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
       </p>
       <FormField
         control={form.control}
-        name="diet"
+        name="dietDetails"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Are you on any specific diet?</FormLabel>

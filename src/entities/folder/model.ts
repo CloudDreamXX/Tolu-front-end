@@ -32,6 +32,7 @@ export interface ISubfolderResponse {
   total_content_items: number;
   subfolders: ISubfolderResponse[];
   content: IContentItemResponse[];
+  pagination: Pagination;
 }
 
 export interface IFolderItemResponse {
@@ -52,6 +53,7 @@ export interface IFolderItemResponse {
   parent_folder_id?: string;
   parent_folder_name?: string;
   description?: string;
+  pagination: Pagination;
 }
 
 export interface IFolderResponse {
@@ -101,6 +103,7 @@ export interface ISubfolder {
   totalContentItems: number;
   subfolders: ISubfolder[];
   content: IContentItem[];
+  pagination: Pagination;
 }
 
 export interface IFolder {
@@ -124,6 +127,16 @@ export interface IFolder {
   isRootFolder?: boolean;
   isSubfolder?: boolean;
   isEmpty?: boolean;
+  pagination: Pagination;
+}
+
+export interface Pagination {
+  current_page: number;
+  page_size: number;
+  total_items: number;
+  total_pages: number;
+  has_next: boolean;
+  has_previous: boolean;
 }
 
 export interface IFolderMap {
