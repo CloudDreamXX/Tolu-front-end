@@ -19,7 +19,7 @@ export const WrapperFolderTree = ({
   const [isMoving, setIsMoving] = useState(false);
   const [loading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [limit] = useState(5);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [targetFolder, setTargetFolder] = useState<IFolder | undefined>(
     undefined
@@ -53,7 +53,7 @@ export const WrapperFolderTree = ({
         const { folders: newFolders, foldersMap } =
           await FoldersService.getFolders(page, limit, targetFolder?.id);
 
-        if (targetFolder) {
+        if (targetFolder && page !== 1) {
           const updatedFolder = findFolderInSubfolders(
             targetFolder.id,
             newFolders
