@@ -766,113 +766,113 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               </div>
             )}
             {isEmpty &&
-            // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
-            !isSwitch(SWITCH_KEYS.CASE) ? (
-              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl">
-                <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit md:mt-0 xl: xl:max-w-xl ">
+              // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
+              !isSwitch(SWITCH_KEYS.CASE) ? (
+              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px]">
+                <div className="flex flex-col ietms-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
                   <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
                     Start a conversation
                   </h2>
-                  <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-xl">
+                  <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
                     Slide on your{" "}
                     <span className="font-bold">Smart Search bot</span> to
                     personalize the answer to any wellness question.
                   </p>
-                  <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-xl">
+                  <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
                     Slide on your <span className="font-bold">Learn bot</span>{" "}
                     to receive expert verified content to boost your knowledge.
                   </p>
                 </div>
               </div>
             ) : // isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
-            //   <>
-            //     <MessageList
-            //       messages={messages}
-            //       isSearching={isSearching}
-            //       streamingText={streamingText}
-            //       error={error}
-            //     />
-            //     <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
-            //       <div className="w-full mb-[24px]" />
-            //       <CardContent
-            //         className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
-            //       >
-            //         <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
-            //           <p className="text-[24px] text-[#1D1D1F] font-[500]">
-            //             Personal story
-            //           </p>
-            //           <Steps
-            //             steps={steps}
-            //             stepWidth={"w-full"}
-            //             currentStep={currentStep}
-            //             ordered
-            //             onStepClick={handleStepClick}
-            //           />
-            //           <form onSubmit={(e) => e.preventDefault()}>
-            //             {currentStep === 0 && <SymptomsForm form={form} />}
-            //             {currentStep === 1 && <MenopauseForm form={form} />}
-            //             {currentStep === 2 && <HealthHistoryForm form={form} />}
-            //             {currentStep === 3 && <LifestyleForm form={form} />}
-            //             {currentStep === 4 && <GoalsForm form={form} />}
-            //           </form>
-            //           <div className="flex justify-end gap-2 mt-6">
-            //             <button
-            //               type="button"
-            //               className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
-            //               onClick={handleNextStep}
-            //             >
-            //               Continue
-            //             </button>
-            //           </div>
-            //         </div>
-            //       </CardContent>
-            //     </Card>
-            //   </>
-            // ) :
-            isSwitch(SWITCH_KEYS.CASE) ? (
-              <>
+              //   <>
+              //     <MessageList
+              //       messages={messages}
+              //       isSearching={isSearching}
+              //       streamingText={streamingText}
+              //       error={error}
+              //     />
+              //     <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+              //       <div className="w-full mb-[24px]" />
+              //       <CardContent
+              //         className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+              //       >
+              //         <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+              //           <p className="text-[24px] text-[#1D1D1F] font-[500]">
+              //             Personal story
+              //           </p>
+              //           <Steps
+              //             steps={steps}
+              //             stepWidth={"w-full"}
+              //             currentStep={currentStep}
+              //             ordered
+              //             onStepClick={handleStepClick}
+              //           />
+              //           <form onSubmit={(e) => e.preventDefault()}>
+              //             {currentStep === 0 && <SymptomsForm form={form} />}
+              //             {currentStep === 1 && <MenopauseForm form={form} />}
+              //             {currentStep === 2 && <HealthHistoryForm form={form} />}
+              //             {currentStep === 3 && <LifestyleForm form={form} />}
+              //             {currentStep === 4 && <GoalsForm form={form} />}
+              //           </form>
+              //           <div className="flex justify-end gap-2 mt-6">
+              //             <button
+              //               type="button"
+              //               className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
+              //               onClick={handleNextStep}
+              //             >
+              //               Continue
+              //             </button>
+              //           </div>
+              //         </div>
+              //       </CardContent>
+              //     </Card>
+              //   </>
+              // ) :
+              isSwitch(SWITCH_KEYS.CASE) ? (
+                <>
+                  <MessageList
+                    messages={messages}
+                    isSearching={isSearching}
+                    streamingText={streamingText}
+                    error={error}
+                  />
+                  <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+                    <div className="w-full mb-[24px]" />
+                    <CardContent
+                      className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+                    >
+                      <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+                        <p className="text-[24px] text-[#1D1D1F] font-[500]">
+                          Case Story
+                        </p>
+                        <form onSubmit={(e) => e.preventDefault()}>
+                          <CaseSearchForm form={caseForm} />
+                        </form>
+                        <div className="flex justify-end gap-2 mt-6">
+                          <button
+                            type="button"
+                            className="py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white"
+                            onClick={async () => {
+                              setSelectedSwitch(config.defaultOption);
+                              await handleNewMessage(generateCaseStory(), []);
+                            }}
+                          >
+                            Continue
+                          </button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
+              ) : (
                 <MessageList
                   messages={messages}
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
                 />
-                <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
-                  <div className="w-full mb-[24px]" />
-                  <CardContent
-                    className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
-                  >
-                    <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
-                      <p className="text-[24px] text-[#1D1D1F] font-[500]">
-                        Case Story
-                      </p>
-                      <form onSubmit={(e) => e.preventDefault()}>
-                        <CaseSearchForm form={caseForm} />
-                      </form>
-                      <div className="flex justify-end gap-2 mt-6">
-                        <button
-                          type="button"
-                          className="py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white"
-                          onClick={async () => {
-                            setSelectedSwitch(config.defaultOption);
-                            await handleNewMessage(generateCaseStory(), []);
-                          }}
-                        >
-                          Continue
-                        </button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            ) : (
-              <MessageList
-                messages={messages}
-                isSearching={isSearching}
-                streamingText={streamingText}
-                error={error}
-              />
-            )}
+              )}
 
             <div className="xl:hidden block mt-[16px]">
               <ChatActions
