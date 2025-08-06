@@ -166,7 +166,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       desired_results_timeline: values.urgency,
       health_approach_preference: values.healthApproach,
       privacy_consent: values.agreeToPrivacy,
-      follow_up_recommendations: values.followUpMethod,
+      follow_up_recommendation: values.followUpMethod,
       recommendation_destination: `${values.countryCode}${values.phoneNumber}`,
       marital_status: "",
       job: "",

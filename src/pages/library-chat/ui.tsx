@@ -712,7 +712,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
   };
 
   return (
-    <div className="flex flex-col w-full h-screen gap-6 p-6 overflow-y-auto xl:overflow-y-none">
+    <div className="flex flex-col w-full bg-[#F2F4F6] h-screen gap-6 p-6 overflow-y-auto xl:overflow-y-none">
       <ChatBreadcrumb displayChatTitle={displayChatTitle} />
       <div className="flex flex-row w-full h-full gap-6 md:relative">
         <div className="hidden xl:block">
@@ -778,7 +778,6 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                     <span className="font-bold">Smart Search bot</span> to
                     personalize the answer to any wellness question.
                   </p>
-
                   <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-xl">
                     Slide on your <span className="font-bold">Learn bot</span>{" "}
                     to receive expert verified content to boost your knowledge.
@@ -890,7 +889,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             </div>
 
             <LibraryChatInput
-              className="mt-4"
+              className="mt-4 border border-[#DBDEE1] xl:border-0 xl:border-t xl:rounded-none"
               onSend={handleNewMessage}
               disabled={isSearching}
               switchOptions={

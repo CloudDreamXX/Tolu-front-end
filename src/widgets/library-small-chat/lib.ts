@@ -141,7 +141,7 @@ export const mapFormToPostData = (
   desired_results_timeline: "",
   health_approach_preference: "",
   privacy_consent: true,
-  follow_up_recommendations: "",
+  follow_up_recommendation: "",
   recommendation_destination: "",
   other_challenges: "",
   tried_strategies: "",

@@ -138,7 +138,7 @@ export const DemographicStep = () => {
   );
 
   const hintBlock = (
-    <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6]">
+    <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6] w-full lg:w-fit">
       <Info />
       <p className="text-[#1B2559] font-[Nunito] text-base font-normal">
         Your information is kept private and secure. It helps us provide
@@ -149,7 +149,7 @@ export const DemographicStep = () => {
   );
 
   const buttonsBlock = (
-    <div className="flex justify-between w-full max-w-[700px] items-center">
+    <div className="flex justify-between w-full lg:max-w-[700px] items-center">
       <button className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]">
         Skip this for now
       </button>

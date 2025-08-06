@@ -12,8 +12,8 @@ const ROLE_MAP: Record<number, string> = {
   0: "Super Admin",
   1: "Admin",
   2: "Practitioner",
-  3: "Reviewer",
-  4: "Client",
+  3: "Client",
+  4: "Reviewer",
 };
 
 export const UserManagement: React.FC = () => {
@@ -70,13 +70,17 @@ export const UserManagement: React.FC = () => {
       case 2:
         return "bg-red-100 text-red-700";
       case 3:
-        return "bg-purple-100 text-purple-700";
-      case 4:
         return "bg-orange-100 text-orange-700";
+      case 4:
+        return "bg-purple-100 text-purple-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
   };
+
+  const filteredUsers = paginatedData.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col gap-[16px] md:gap-[35px] p-8 overflow-y-auto h-[100%]">
@@ -117,7 +121,7 @@ export const UserManagement: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
-                {paginatedData.map((user, index) => (
+                {filteredUsers.map((user, index) => (
                   <div
                     key={index}
                     className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"

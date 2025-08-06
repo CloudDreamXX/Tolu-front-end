@@ -67,17 +67,16 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   };
 
   return (
-    <div className="flex flex-row gap-2 xl:flex-col xl:justify-between w-full h-full">
-      {!isHistoryPopup && (
-        <button className="xl:hidden block h-8 w-8" onClick={() => nav(-1)}>
-          <ArrowLeft className="w-4 h-4 m-auto text-black" />
-        </button>
-      )}
-      {isHistoryPopup && (
-        <div className="xl:hidden block">
-          <HistoryPopup fromPath={fromPath} />
-        </div>
-      )}
+    <div className="flex flex-row gap-2 xl:flex-col justify-between w-full h-[32px] xl:h-full">
+      <div className="xl:hidden block flex flex-row gap-2">
+        {!isHistoryPopup && (
+          <button className="h-8 w-8" onClick={() => nav(-1)}>
+            <ArrowLeft className="w-4 h-4 m-auto text-black" />
+          </button>
+        )}
+        {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
+        <SaveModal onStatusChange={onStatusChange} />
+      </div>
       <div>
         {!isHistoryPopup && (
           <button
@@ -92,7 +91,9 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             <HistoryPopup fromPath={fromPath} />
           </div>
         )}
-        <SaveModal onStatusChange={onStatusChange} />
+        <div className="hidden xl:block">
+          <SaveModal onStatusChange={onStatusChange} />
+        </div>
         {onStatusChange && (
           <button
             className="hidden xl:block bg-[#DDEBF6] rounded-full h-8 w-8 mt-[8px]"

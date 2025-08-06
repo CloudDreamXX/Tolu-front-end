@@ -70,7 +70,12 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
     (!message.trim() && attachedFiles.length === 0) || disabled;
 
   return (
-    <div className={cn("p-4 bg-white border-t border-gray-200", className)}>
+    <div
+      className={cn(
+        "p-4 bg-white border-t border-gray-200 rounded-[8px]",
+        className
+      )}
+    >
       {loading || isLoading ? (
         <div className="flex items-center gap-[16px] mb-[27px]">
           <div className="h-[22px] skeleton-gradient w-[110px] rounded-[24px]" />

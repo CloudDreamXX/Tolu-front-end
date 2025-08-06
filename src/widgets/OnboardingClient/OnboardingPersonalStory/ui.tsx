@@ -268,7 +268,7 @@ export const OnboardingHealthProfile = () => {
         desired_results_timeline: formValues.urgency,
         health_approach_preference: formValues.healthApproach,
         privacy_consent: formValues.agreeToPrivacy,
-        follow_up_recommendations: formValues.followUpMethod,
+        follow_up_recommendation: formValues.followUpMethod,
         recommendation_destination: `${formValues.countryCode}${formValues.phoneNumber}`,
         marital_status: "",
         job: "",

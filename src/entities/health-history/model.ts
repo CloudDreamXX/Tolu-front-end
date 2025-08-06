@@ -115,6 +115,6 @@ export interface HealthHistoryPostData {
   desired_results_timeline: string;
   health_approach_preference: string;
   privacy_consent: boolean;
-  follow_up_recommendations: string;
+  follow_up_recommendation: string;
   recommendation_destination?: string;
 }

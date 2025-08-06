@@ -29,6 +29,7 @@ export const mapHealthHistoryToFormDefaults = (
     cookFrequency: healthHistory.cook_at_home || "",
     takeoutFrequency: healthHistory.takeout_food || "",
     decisionMaker: healthHistory.eat_decision || "",
+    commonFoods: healthHistory.kind_of_food || "",
 
     exerciseHabits: healthHistory.exercise_habits || "light",
     otherExerciseHabits: "",

@@ -3,7 +3,6 @@ import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
 // import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
-import { useScreenHeight } from "./lib";
 
 interface OnboardingClientLayoutProps {
   currentStep?: number;
@@ -21,14 +20,10 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
   children,
 }) => {
   const { isMobileOrTablet } = usePageWidth();
-  const isTallScreen = useScreenHeight();
-
   const mainClass = `
     flex flex-col items-center justify-end lg:justify-center
-    w-full gap-[16px] md:gap-[8px]
-    lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full 
-    mt-[100px] lg:mt-0
-    ${isTallScreen || currentStep === 4 ? "absolute bottom-0" : ""}
+    w-full gap-[16px] md:gap-[32px]
+    h-full xl:pb-[120px]
   `;
 
   return (
@@ -46,7 +41,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
 
         <div
           className="w-full lg:max-w-[718px] flex flex-col 
-  items-start justify-center bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] max-h-[85%] md:max-h-[80%] xl:max-h-[620px]"
+  items-start justify-center gap-[24px] bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px]"
         >
           {title != null && isMobileOrTablet && title}
           {children}

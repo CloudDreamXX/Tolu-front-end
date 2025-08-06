@@ -12,8 +12,8 @@ export const AdminHeader: React.FC = () => (
 );
 
 export const ClientHeader: React.FC = () => (
-  <header className="flex self-start md:justify-between md:items-end md:pr-[40px]">
-    <div className="w-full flex flex-col items-center py-[21px] px-[13px] md:p-[40px] lg:py-[25px] lg:pl-[90px] lg:pr-[0px] justify-center">
+  <header className="flex md:pr-[40px]">
+    <div className="w-fit flex flex-col py-[21px] px-[13px] md:p-[40px] lg:py-[35px] lg:pl-[90px] lg:pr-[0px]">
       <h2 className="text-[#1D1D1F] text-center h-[38px] text-[27px] md:text-[44.444px] font-bold font-open md:h-[61px]">
         Tolu AI
       </h2>

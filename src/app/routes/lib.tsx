@@ -31,7 +31,6 @@ import { Barriers } from "widgets/OnboardingClient/Barriers";
 import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
 import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
 import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
-import { OnboardingHealthProfile } from "widgets/OnboardingClient/OnboardingPersonalStory";
 import { PersonalityType } from "widgets/OnboardingClient/PersonalityType";
 import { Readiness } from "widgets/OnboardingClient/Readiness";
 import { Summary } from "widgets/OnboardingClient/Summary";
@@ -73,10 +72,10 @@ export const AppRoutes = () => {
       <Route path="/new-password" element={<NewPassword />} />
       <Route path="/invite-clients" element={<InviteClients />} />
       <Route path="/onboarding-finish" element={<OnboardingFinish />} />
-      <Route
+      {/* <Route
         path="/welcome/client/personal-story"
         element={<OnboardingHealthProfile />}
-      />
+      /> */}
       <Route path="/about-you" element={<DemographicStep />} />
       <Route path="/what-brings-you-here" element={<WhatBrringsYouHere />} />
       <Route path="/values" element={<Values />} />

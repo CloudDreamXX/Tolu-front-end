@@ -8,12 +8,14 @@ export const MultiSelect = ({
   placeholder,
   options,
   selected,
+  defaultValue,
   className,
   onChange,
 }: {
   placeholder: string;
   options: string[];
   selected: string[];
+  defaultValue?: string;
   className?: string;
   onChange: (val: string[]) => void;
 }) => {
@@ -30,8 +32,17 @@ export const MultiSelect = ({
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
+
+  useEffect(() => {
+    if (defaultValue && selected.length === 0) {
+      onChange([defaultValue]);
+    }
+  }, [defaultValue, selected, onChange]);
 
   const toggleOption = (option: string) => {
     if (selected.includes(option)) {

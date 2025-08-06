@@ -66,7 +66,7 @@ export const WelcomeScreen = () => {
               Skip onboarding
             </button>
             <button
-              onClick={() => nav("/welcome/client/personal-story")}
+              onClick={() => nav("/about-you")}
               type="button"
               className="py-4 px-6 flex gap-4 items-center w-full md:w-auto justify-center h-16 rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
             >

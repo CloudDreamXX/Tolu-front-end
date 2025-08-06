@@ -184,12 +184,13 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
       <FormField
         control={form.control}
         name="commonFoods"
-        render={() => (
+        render={({ field }) => (
           <FormItem>
             <FormLabel>
               What kind of food do you find yourself eating the most each week?
             </FormLabel>
             <MultiSelect
+              defaultValue={field.value}
               placeholder="Select common foods"
               options={commonFoodOptions}
               selected={commonFoodsSelected}
