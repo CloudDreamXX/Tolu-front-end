@@ -19,7 +19,7 @@ export const WrapperFolderTree = ({
   const [isMoving, setIsMoving] = useState(false);
   const [loading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
-  const [limit] = useState(5);
+  const [limit] = useState(10);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [targetFolder, setTargetFolder] = useState<IFolder | undefined>(
     undefined
@@ -93,7 +93,7 @@ export const WrapperFolderTree = ({
     if (
       containerRef.current &&
       containerRef.current.scrollTop + containerRef.current.clientHeight >=
-        containerRef.current.scrollHeight &&
+      containerRef.current.scrollHeight &&
       hasMore
     ) {
       setPage(page + 1);
