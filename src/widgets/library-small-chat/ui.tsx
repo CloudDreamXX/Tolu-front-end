@@ -47,12 +47,14 @@ interface LibrarySmallChatProps {
   setMessage?: React.Dispatch<React.SetStateAction<string>>;
   isLoading?: boolean;
   selectedText?: string;
+  deleteSelectedText?: () => void;
 }
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   isCoach,
   isLoading,
   selectedText,
+  deleteSelectedText,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -87,7 +89,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [currentChatId, setCurrentChatId] = useState<string>("");
   const [chatTitle, setChatTitle] = useState<string>("");
   // const [currentStep, setCurrentStep] = useState(0);
-  const [message, setMessageState] = useState<string>(selectedText || "");
+  const [message, setMessageState] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
   const [clientId, setClientId] = useState<string | null>(null);
   const [folderId, setFolderId] = useState<string | null>(null);
@@ -128,10 +130,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       loadExistingSession(chat[0].chat_id);
     }
   }, []);
-
-  useEffect(() => {
-    setMessageState(selectedText || "");
-  }, [selectedText]);
 
   useEffect(() => {
     if (isValid) {
@@ -445,6 +443,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             chat_message: JSON.stringify({
               user_prompt: message,
               is_new: !currentChatId,
+              chat_id: currentChatId,
               text_quote: selectedText,
             }),
             image,
@@ -684,6 +683,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 handleNewChatOpen();
                 handleSwitchChange(value);
               }}
+              deleteSelectedText={deleteSelectedText}
               message={message}
               footer={
                 <div className="flex items-center justify-between">
@@ -779,20 +779,28 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 error={error}
               />
             ) : (
-              <div className="flex flex-col ietms-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
+              <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
                 <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
                   Start a conversation
                 </h2>
-                <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                  Slide on your{" "}
-                  <span className="font-bold">Smart Search bot</span> to
-                  personalize the answer to any wellness question.
-                </p>
+                {isCoach ? (
+                  <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-[464px]">
+                    Select an action below and enter a query to start a
+                    conversation with Tolu.
+                  </p>
+                ) : (
+                  <div className="flex flex-col items-baseline justify-center">
+                    <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
+                      Activate <span className="font-bold">Smart Search</span>{" "}
+                      for personalized health answers.
+                    </p>
 
-                <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                  Slide on your <span className="font-bold">Learn bot</span> to
-                  receive expert verified content to boost your knowledge.
-                </p>
+                    <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
+                      Activate <span className="font-bold">Learn</span> for
+                      expert‑verified guidance you can trust.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
@@ -805,7 +813,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderId) ||
                 message === ""
               }
+              selectedText={selectedText}
               message={message}
+              deleteSelectedText={deleteSelectedText}
               switchOptions={config.options}
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {

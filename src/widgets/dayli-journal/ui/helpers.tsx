@@ -36,7 +36,7 @@ export const SUSPECTED_TRIGGERS = [
   "Emotional stress",
 ];
 
-type FellBackOption = "Easy" | "Medium" | "Hard";
+export type FellBackOption = "Easy" | "Medium" | "Hard";
 
 export const FELL_BACK_OPTIONS: FellBackOption[] = ["Easy", "Medium", "Hard"];
 

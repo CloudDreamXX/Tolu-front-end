@@ -61,7 +61,7 @@ export const MainLayout: React.FC<{
             <DailyJournal
               isOpen={isMobileDailyJournalOpen}
               onCancel={() => dispatch(setIsMobileDailyJournalOpen(false))}
-              onDone={() => dispatch(setIsMobileDailyJournalOpen(false))}
+              onClose={() => dispatch(setIsMobileDailyJournalOpen(false))}
             />
           </div>
         )}

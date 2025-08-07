@@ -39,8 +39,13 @@ export const LibraryDocument = () => {
   const [textContent, setTextContent] = useState("");
   const [selectedVoice, setSelectedVoice] =
     useState<SpeechSynthesisVoice | null>(null);
-  const { textForInput, tooltipPosition, showTooltip, handleTooltipClick } =
-    useTextSelectionTooltip();
+  const {
+    textForInput,
+    tooltipPosition,
+    showTooltip,
+    handleTooltipClick,
+    handleDeleteSelectedText,
+  } = useTextSelectionTooltip();
   const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
 
   useEffect(() => {
@@ -255,6 +260,7 @@ export const LibraryDocument = () => {
           <LibrarySmallChat
             isLoading={isLoadingDocument}
             selectedText={textForInput}
+            deleteSelectedText={handleDeleteSelectedText}
           />
         </div>
       </div>

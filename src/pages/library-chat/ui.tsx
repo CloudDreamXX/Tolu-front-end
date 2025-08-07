@@ -769,19 +769,28 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
             !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px]">
-                <div className="flex flex-col ietms-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
+                <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
                   <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
                     Start a conversation
                   </h2>
-                  <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                    Slide on your{" "}
-                    <span className="font-bold">Smart Search bot</span> to
-                    personalize the answer to any wellness question.
-                  </p>
-                  <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                    Slide on your <span className="font-bold">Learn bot</span>{" "}
-                    to receive expert verified content to boost your knowledge.
-                  </p>
+                  {isCoach ? (
+                    <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-[464px]">
+                      Select an action below and enter a query to start a
+                      conversation with Tolu.
+                    </p>
+                  ) : (
+                    <div className="flex flex-col items-baseline justify-center">
+                      <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
+                        Activate <span className="font-bold">Smart Search</span>{" "}
+                        for personalized health answers.
+                      </p>
+
+                      <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
+                        Activate <span className="font-bold">Learn</span> for
+                        expert‑verified guidance you can trust.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : // isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (

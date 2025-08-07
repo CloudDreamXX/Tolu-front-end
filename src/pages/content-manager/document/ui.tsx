@@ -100,8 +100,13 @@ export const ContentManagerDocument: React.FC = () => {
 
   const { handleDocumentCreation } = useDocumentCreation();
   const isDraft = documentPath[0]?.name.toLowerCase() === "drafts";
-  const { textForInput, tooltipPosition, showTooltip, handleTooltipClick } =
-    useTextSelectionTooltip();
+  const {
+    textForInput,
+    tooltipPosition,
+    showTooltip,
+    handleTooltipClick,
+    handleDeleteSelectedText,
+  } = useTextSelectionTooltip();
 
   useEffect(() => {
     const createDocument = async () => {
@@ -318,6 +323,7 @@ export const ContentManagerDocument: React.FC = () => {
             isDraft={isDraft}
             isLoading={loadingConversation}
             selectedText={textForInput}
+            deleteSelectedText={handleDeleteSelectedText}
           />
         </div>
       </div>

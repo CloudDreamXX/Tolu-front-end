@@ -40,11 +40,17 @@ export function useTextSelectionTooltip() {
     };
   }, []);
 
+  const handleDeleteSelectedText = () => {
+    setSelectedText("");
+    setTextForInput("");
+  };
+
   return {
     selectedText,
     textForInput,
     tooltipPosition,
     showTooltip,
     handleTooltipClick,
+    handleDeleteSelectedText,
   };
 }

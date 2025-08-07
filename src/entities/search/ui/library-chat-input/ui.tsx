@@ -1,3 +1,5 @@
+import { XIcon } from "@phosphor-icons/react";
+import { ArrowBendDownRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { RootState } from "entities/store";
 import { Paperclip, Send } from "lucide-react";
 import { useState } from "react";
@@ -26,6 +28,8 @@ interface LibraryChatInputProps {
   isLoading?: boolean;
   message: string;
   setClientId?: (clientId: string | null) => void;
+  selectedText?: string;
+  deleteSelectedText?: () => void;
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -41,6 +45,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   isLoading,
   message,
   setClientId,
+  selectedText,
+  deleteSelectedText,
 }) => {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -76,6 +82,22 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         className
       )}
     >
+      {selectedText && (
+        <div className="flex gap-[16px] justify-between items-baseline mb-[8px] text-[14px]">
+          <div className="flex gap-[8px] items-baseline">
+            <div>
+              <ArrowBendDownRightIcon />
+            </div>
+            <div className="truncate-text">{selectedText}</div>
+          </div>
+          <button
+            className="w-[20px] h-[20px] flex items-center justify-center"
+            onClick={deleteSelectedText}
+          >
+            <XIcon width={18} />
+          </button>
+        </div>
+      )}
       {loading || isLoading ? (
         <div className="flex items-center gap-[16px] mb-[27px]">
           <div className="h-[22px] skeleton-gradient w-[110px] rounded-[24px]" />
@@ -167,7 +189,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         <DailyJournal
           isOpen={modalOpen}
           onCancel={() => setModalOpen(false)}
-          onDone={() => setModalOpen(false)}
+          onClose={() => setModalOpen(false)}
         />
       </div>
     </div>

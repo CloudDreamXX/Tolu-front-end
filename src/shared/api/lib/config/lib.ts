@@ -114,6 +114,12 @@ export const API_ROUTES = {
   ADMIN: {
     GET_ALL_USERS: "/admin/users",
   },
+  SYMPTOMS_TRACKER: {
+    POST_SYMPTOMS: "/symptom-tracker/log-symptoms",
+    GET_SYMPTOMS: "/symptom-tracker/{target_date}",
+    GET_SUGGESTIONS: "/symptom-tracker/ai-suggestions",
+    DELETE_SYMPTOM: "/symptom-tracker/symptoms/{symptom_id}",
+  },
 };
 
 export const EXCLUDE_TOKEN_ENDPOINTS = [

@@ -7,7 +7,7 @@ import {
   Salad,
   Utensils,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "shared/lib";
 import {
   Button,
@@ -29,22 +29,21 @@ import {
   MOOD_COLORS,
   SLEEP_RANGES,
   SleepState,
-  Snapshot,
-  snapshots,
   SUSPECTED_TRIGGERS,
   SYMPTOMS,
 } from ".";
+import { SymptomData, SymptomsTrackerService } from "entities/symptoms-tracker";
 
 interface DayliJournalProps {
   isOpen: boolean;
   onCancel: () => void;
-  onDone: () => void;
+  onClose: () => void;
 }
 
 export const DailyJournal: React.FC<DayliJournalProps> = ({
   isOpen,
   onCancel,
-  onDone,
+  onClose,
 }) => {
   const [moodValue, setMoodValue] = useState(30);
   const [sleep, setSleep] = useState<SleepState>({
@@ -60,6 +59,95 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     lunch: { food: "", time: "" },
     dinner: { food: "", time: "" },
   });
+
+  const photoInputRef = useRef<HTMLInputElement | null>(null);
+  const voiceInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [userNote, setUserNote] = useState<string>("");
+  const [symptomValue, setSymptomValue] = useState<string>("");
+  const [triggerValue, setTriggerValue] = useState<string>("");
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [durationCategory, setDurationCategory] = useState<string>("");
+  const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
+  const [selectedMealExamples, setSelectedMealExamples] = useState<string[]>(
+    []
+  );
+  const [mealExampleValue, setMealExampleValue] = useState<string>("");
+
+  const handleSelect = (
+    type: "symptom" | "trigger" | "mealExample",
+    value: string
+  ) => {
+    if (type === "symptom" && value) {
+      setSelectedSymptoms((prevSymptoms) => {
+        if (prevSymptoms.includes(value)) {
+          return prevSymptoms.filter((symptom) => symptom !== value);
+        } else {
+          return [...prevSymptoms, value];
+        }
+      });
+    } else if (type === "trigger" && value) {
+      setSelectedTriggers((prevTriggers) => {
+        if (prevTriggers.includes(value)) {
+          return prevTriggers.filter((trigger) => trigger !== value);
+        } else {
+          return [...prevTriggers, value];
+        }
+      });
+    } else if (type === "mealExample" && value) {
+      setSelectedMealExamples((prevMealExamples) => {
+        if (prevMealExamples.includes(value)) {
+          return prevMealExamples.filter((item) => item !== value);
+        } else {
+          return [...prevMealExamples, value];
+        }
+      });
+    }
+  };
+
+  const handleAddSymptom = () => {
+    if (symptomValue && !SYMPTOMS.includes(symptomValue)) {
+      SYMPTOMS.push(symptomValue);
+      handleSelect("symptom", symptomValue);
+      setSymptomValue("");
+    }
+  };
+
+  const handleAddTrigger = () => {
+    if (triggerValue && !SUSPECTED_TRIGGERS.includes(triggerValue)) {
+      SUSPECTED_TRIGGERS.push(triggerValue);
+      handleSelect("trigger", triggerValue);
+      setTriggerValue("");
+    }
+  };
+
+  const handleAddMealExample = () => {
+    if (mealExampleValue && !selectedMealExamples.includes(mealExampleValue)) {
+      MEAL_EXAMPLES.push(mealExampleValue);
+      handleSelect("mealExample", mealExampleValue);
+      setMealExampleValue("");
+    }
+  };
+
+  const handleDurationCategoryChange = (category: string) => {
+    setDurationCategory(category);
+  };
+
+  const handleUserNoteChange = (note: string) => {
+    setUserNote(note);
+  };
+
+  // const handleFileChange = (
+  //   type: "photo" | "voice",
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0] || null;
+  //   if (type === "photo") {
+  //     console.log("Photo file selected:", file);
+  //   } else if (type === "voice") {
+  //     console.log("Voice file selected:", file);
+  //   }
+  // };
 
   const handleSleepSelectChange = (name: keyof SleepState, value: string) => {
     setSleep((prev) => ({
@@ -82,12 +170,79 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     }));
   };
 
+  const handleSubmit = async () => {
+    const sleepQuality = mapMoodToSleepQuality(moodValue);
+
+    const data: SymptomData = {
+      tracking_date: new Date().toISOString(),
+      user_notes: userNote,
+      symptoms: selectedSymptoms,
+      symptom_intensities: [],
+      duration_category: durationCategory,
+      suspected_triggers: selectedTriggers,
+      sleep_quality: sleepQuality,
+      sleep_hours: sleep.hours,
+      sleep_minutes: sleep.minutes,
+      times_woke_up: sleep.wokeUpTimes,
+      how_fell_asleep: sleep.fellBack,
+      meal_notes: selectedMealExamples.join(", "),
+      meal_details: [
+        {
+          meal_type: "breakfast",
+          food_items: meal.breakfast.food,
+          time: meal.breakfast.time,
+        },
+        {
+          meal_type: "lunch",
+          food_items: meal.lunch.food,
+          time: meal.lunch.time,
+        },
+        {
+          meal_type: "dinner",
+          food_items: meal.dinner.food,
+          time: meal.dinner.time,
+        },
+      ],
+    };
+
+    const photo = photoInputRef.current?.files?.[0] || null;
+    const voice = voiceInputRef.current?.files?.[0] || null;
+
+    try {
+      await SymptomsTrackerService.addSymptoms(data, photo, voice);
+      onClose();
+    } catch (error) {
+      console.error("Error submitting journal:", error);
+    }
+  };
+
   const isButtonDisabled = !(
     sleep.hours &&
     sleep.minutes &&
     sleep.wokeUpTimes &&
     sleep.fellBack
   );
+
+  const mapMoodToSleepQuality = (
+    moodValue: number
+  ): "Very Poor" | "Poor" | "Fair" | "Good" | "Very Good" => {
+    switch (moodValue) {
+      case 0:
+        return "Very Poor";
+      case 10:
+        return "Poor";
+      case 20:
+        return "Fair";
+      case 30:
+        return "Fair";
+      case 40:
+        return "Good";
+      case 50:
+        return "Very Good";
+      default:
+        return "Fair";
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -107,10 +262,32 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <Input
             placeholder="Leave feedback about your wellness"
             className="font-semibold h-[44px] text-base"
+            onChange={(e) => handleUserNoteChange(e.target.value)}
           />
-          <div className="flex gap-4 font-semibold ">
-            <Paperclip className="stroke-[1.5]" />
-            <Mic className="stroke-[1.5]" />
+          <div className="flex gap-4 font-semibold">
+            <input
+              ref={photoInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              id="photoInput"
+              // onChange={(e) => handleFileChange("photo", e)}
+            />
+            <label htmlFor="photoInput" className="cursor-pointer">
+              <Paperclip className="stroke-[1.5]" />
+            </label>
+
+            <input
+              ref={voiceInputRef}
+              type="file"
+              accept="audio/*"
+              className="hidden"
+              id="voiceInput"
+              // onChange={(e) => handleFileChange("voice", e)}
+            />
+            <label htmlFor="voiceInput" className="cursor-pointer">
+              <Mic className="stroke-[1.5]" />
+            </label>
           </div>
         </BlockWrapper>
 
@@ -129,7 +306,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
               <Button
                 variant="ghost"
                 key={symptom}
-                className="flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base"
+                onClick={() => handleSelect("symptom", symptom)}
+                className={`flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base ${
+                  selectedSymptoms.includes(symptom) ? "bg-[#D1E8FF]" : ""
+                }`}
               >
                 {symptom}
               </Button>
@@ -140,8 +320,14 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
             <Input
               placeholder="Type other symptoms here..."
               className="font-semibold h-[44px] text-base"
+              value={symptomValue}
+              onChange={(e) => setSymptomValue(e.target.value)}
             />
-            <Button variant="ghost" className="h-[44px] w-[44px]">
+            <Button
+              variant="ghost"
+              className="h-[44px] w-[44px]"
+              onClick={handleAddSymptom}
+            >
               <Plus className="stroke-[1.5] text-[#5F5F65]" />
             </Button>
           </div>
@@ -150,16 +336,17 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         <BlockWrapper>
           <h2 className="text-lg font-semibold text-[#1D1D1F]">Duration</h2>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex gap-2">
             {SLEEP_RANGES.map((range) => (
               <Button
                 variant="ghost"
                 key={range.text}
-                className="flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md gap-2 text-base"
-                font-normal
+                onClick={() => handleDurationCategoryChange(range.text)}
+                className={`flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base ${
+                  durationCategory === range.text ? "bg-[#D1E8FF]" : ""
+                }`}
               >
-                {range.icon}
-                {range.text}
+                {range.icon} {range.text}
               </Button>
             ))}
           </div>
@@ -180,7 +367,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
               <Button
                 variant="ghost"
                 key={trigger}
-                className="flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base"
+                onClick={() => handleSelect("trigger", trigger)}
+                className={`flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base ${
+                  selectedTriggers.includes(trigger) ? "bg-[#D1E8FF]" : ""
+                }`}
               >
                 {trigger}
               </Button>
@@ -191,8 +381,14 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
             <Input
               placeholder="Type other symptoms here..."
               className="font-semibold h-[44px] text-base"
+              value={triggerValue}
+              onChange={(e) => setTriggerValue(e.target.value)}
             />
-            <Button variant="ghost" className="h-[44px] w-[44px]">
+            <Button
+              variant="ghost"
+              className="h-[44px] w-[44px]"
+              onClick={handleAddTrigger}
+            >
               <Plus className="stroke-[1.5] text-[#5F5F65]" />
             </Button>
           </div>
@@ -340,7 +536,12 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                 <Button
                   variant="ghost"
                   key={mealExample}
-                  className="flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base"
+                  onClick={() => handleSelect("mealExample", mealExample)}
+                  className={`flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base ${
+                    selectedMealExamples.includes(mealExample)
+                      ? "bg-[#D1E8FF]"
+                      : ""
+                  }`}
                 >
                   {mealExample}
                 </Button>
@@ -348,17 +549,20 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 text-[#1D1D1F]">
-            <label className="font-medium">Notes:</label>
-            <div className="flex gap-2 ">
-              <Input
-                placeholder="Type some notes here..."
-                className="font-semibold h-[44px] text-base"
-              />
-              <Button variant="ghost" className="h-[44px] w-[44px]">
-                <Plus className="stroke-[1.5] text-[#5F5F65]" />
-              </Button>
-            </div>
+          <div className="flex gap-2 ">
+            <Input
+              placeholder="Type other meal examples here..."
+              className="font-semibold h-[44px] text-base"
+              value={mealExampleValue}
+              onChange={(e) => setMealExampleValue(e.target.value)}
+            />
+            <Button
+              variant="ghost"
+              className="h-[44px] w-[44px]"
+              onClick={handleAddMealExample}
+            >
+              <Plus className="stroke-[1.5] text-[#5F5F65]" />
+            </Button>
           </div>
 
           <div className="flex flex-col gap-4 text-[#1D1D1F]">
@@ -467,7 +671,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           </div>
         </BlockWrapper>
 
-        <BlockWrapper>
+        {/* <BlockWrapper>
           <h2 className="text-lg font-semibold text-[#1D1D1F]">
             Wearable Data Summary
           </h2>
@@ -485,7 +689,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
               />
             ))}
           </div>
-        </BlockWrapper>
+        </BlockWrapper> */}
       </div>
 
       <BlockWrapper className="flex flex-row items-center justify-between rounded-none md:rounded-t-none">
@@ -494,7 +698,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         </Button>
         <Button
           variant="brightblue"
-          onClick={onDone}
+          onClick={handleSubmit}
           className={cn("w-[128px] ", {
             "bg-[#D5DAE2] text-[#5F5F65] hover:bg-[#C4C8D4] hover:text-[#5F5F65] hover:cursor-not-allowed":
               isButtonDisabled,
