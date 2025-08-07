@@ -1,5 +1,5 @@
 import { API_ROUTES, ApiService } from "shared/api";
-import { AiSuggestions, SymptomData } from "./model";
+import { AiSuggestions, SymptomData, SymptomResponse } from "./model";
 
 export class SymptomsTrackerService {
   static async addSymptoms(
@@ -25,12 +25,12 @@ export class SymptomsTrackerService {
     );
   }
 
-  static async getSymptomByDate(date: string): Promise<any> {
-    const endpoint = API_ROUTES.SYMPTOMS_TRACKER.POST_SYMPTOMS.replace(
+  static async getSymptomByDate(date: string): Promise<SymptomResponse> {
+    const endpoint = API_ROUTES.SYMPTOMS_TRACKER.GET_SYMPTOMS.replace(
       "{target_date}",
       date
     );
-    return ApiService.get<any>(endpoint);
+    return ApiService.get<SymptomResponse>(endpoint);
   }
 
   static async getAiSuggestions(): Promise<AiSuggestions> {

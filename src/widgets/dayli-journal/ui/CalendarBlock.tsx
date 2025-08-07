@@ -4,7 +4,15 @@ import { cn } from "shared/lib";
 import { Button } from "shared/ui";
 import { SymptomCheckCalendarModal } from "widgets/MenopauseModals/SymptomCheckCalendarModal/ui";
 
-export const CalendarBlock = () => {
+type Props = {
+  selectedDate: string;
+  handleDateChange: (date: Date) => void;
+};
+
+export const CalendarBlock: React.FC<Props> = ({
+  selectedDate,
+  handleDateChange,
+}) => {
   const today = new Date();
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
 
@@ -13,13 +21,21 @@ export const CalendarBlock = () => {
       <div className="flex flex-col justify-center gap-4 p-4 md:p-6 border-b shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)] bg-white">
         <div className="flex items-center gap-4">
           <p className="text-lg font-bold text-[#1D1D1F] flex-1">
-            {today.toLocaleDateString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-            })}
+            {selectedDate
+              ? new Date(selectedDate).toLocaleDateString("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })
+              : today.toLocaleDateString("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })}
           </p>
-          <p className="text-[#1C63DB] text-sm font-semibold">Today</p>
+          {selectedDate === today.toISOString().split("T")[0] && (
+            <p className="text-[#1C63DB] text-sm font-semibold">Today</p>
+          )}
           <Button variant={"ghost"} onClick={() => setOpenCalendarModal(true)}>
             <Calendar className="text-[#5F5F65]" />
           </Button>
@@ -35,19 +51,19 @@ export const CalendarBlock = () => {
               </p>
               <p
                 className={cn(
-                  "font-medium text-[#1D1D1F] flex-1 min-h-[34px] flex justify-center items-center ",
+                  "font-medium text-[#1D1D1F] flex-1 min-h-[34px] flex justify-center items-center w-full rounded-full text-center cursor-pointer hover:bg-[#ECEFF4] hover:text-[#1D1D1F]",
                   {
-                    "text-white": day.getDate() === today.getDate(),
                     "text-[#B3BCC8]": day.getDate() > today.getDate(),
                     "text-[#1D1D1F]": day.getDate() < today.getDate(),
                   },
                   {
-                    "bg-[#1C63DB] rounded-full  w-full text-center":
-                      day.getDate() === today.getDate(),
+                    "bg-[#1C63DB] text-white":
+                      day.toISOString().split("T")[0] === selectedDate,
                   }
                 )}
+                onClick={() => handleDateChange(day)}
               >
-                {day.getDay()}
+                {day.getDate()}
               </p>
             </div>
           ))}
@@ -55,6 +71,7 @@ export const CalendarBlock = () => {
       </div>
 
       <SymptomCheckCalendarModal
+        handleDateChange={handleDateChange}
         isOpen={openCalendarModal}
         onClose={() => setOpenCalendarModal(false)}
       />

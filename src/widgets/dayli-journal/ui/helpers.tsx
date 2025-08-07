@@ -48,7 +48,7 @@ export interface SleepState {
 }
 
 type MealTime = {
-  food: string;
+  food_items: string;
   time: string;
 };
 

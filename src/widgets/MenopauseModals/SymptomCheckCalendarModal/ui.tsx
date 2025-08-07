@@ -3,14 +3,15 @@ import Close from "shared/assets/icons/close";
 import { usePageWidth } from "shared/lib";
 
 interface SymptomCheckModalProps {
+  handleDateChange: (date: Date) => void;
   isOpen: boolean;
   onStepModalOpen?: () => void;
   onClose: () => void;
 }
 
 export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
+  handleDateChange,
   isOpen,
-  onStepModalOpen,
   onClose,
 }) => {
   const { isMobile } = usePageWidth();
@@ -38,6 +39,12 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
   if (!isOpen) return null;
 
   const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const handleContinue = () => {
+    if (selectedDateIndex !== null) {
+      onClose();
+    }
+  };
 
   return (
     <div
@@ -68,12 +75,15 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
               return (
                 <button
                   key={i}
-                  onClick={() => setSelectedDateIndex(i)}
+                  onClick={() => {
+                    setSelectedDateIndex(i);
+                    handleDateChange(weekDates[i]);
+                  }}
                   className={`text-center py-[6px] rounded-full font-semibold text-[16px] ${
                     isSelected
                       ? "bg-[#ECEFF4] text-[#1D1D1F] font-semibold"
                       : "text-[#1D1D1F] hover:bg-[#ECEFF4]"
-                  }`}
+                  } `}
                 >
                   {date.getDate()}
                 </button>
@@ -90,7 +100,7 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
             Cancel
           </button>
           <button
-            onClick={onStepModalOpen}
+            onClick={handleContinue}
             disabled={selectedDateIndex === null}
             className={`w-full md:w-[128px] py-[11px] px-[24px] text-white font-semibold text-[16px] rounded-full ${
               selectedDateIndex !== null

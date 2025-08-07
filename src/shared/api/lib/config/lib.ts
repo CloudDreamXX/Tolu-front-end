@@ -115,10 +115,10 @@ export const API_ROUTES = {
     GET_ALL_USERS: "/admin/users",
   },
   SYMPTOMS_TRACKER: {
-    POST_SYMPTOMS: "/symptom-tracker/log-symptoms",
+    POST_SYMPTOMS: "/symptom-tracker/log-symptoms/",
     GET_SYMPTOMS: "/symptom-tracker/{target_date}",
-    GET_SUGGESTIONS: "/symptom-tracker/ai-suggestions",
-    DELETE_SYMPTOM: "/symptom-tracker/symptoms/{symptom_id}",
+    GET_SUGGESTIONS: "/symptom-tracker/ai-suggestions/",
+    DELETE_SYMPTOM: "/symptom-tracker/symptoms/{symptom_id}/",
   },
 };
 

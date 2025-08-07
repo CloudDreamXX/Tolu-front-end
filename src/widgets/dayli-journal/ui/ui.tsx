@@ -7,8 +7,8 @@ import {
   Salad,
   Utensils,
 } from "lucide-react";
-import { useRef, useState } from "react";
-import { cn } from "shared/lib";
+import { useEffect, useRef, useState } from "react";
+import { cn, toast } from "shared/lib";
 import {
   Button,
   Checkbox,
@@ -33,6 +33,7 @@ import {
   SYMPTOMS,
 } from ".";
 import { SymptomData, SymptomsTrackerService } from "entities/symptoms-tracker";
+import { XIcon } from "@phosphor-icons/react";
 
 interface DayliJournalProps {
   isOpen: boolean;
@@ -55,9 +56,9 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
 
   const [meal, setMeal] = useState<MealState>({
     notes: "",
-    breakfast: { food: "", time: "" },
-    lunch: { food: "", time: "" },
-    dinner: { food: "", time: "" },
+    breakfast: { food_items: "", time: "" },
+    lunch: { food_items: "", time: "" },
+    dinner: { food_items: "", time: "" },
   });
 
   const photoInputRef = useRef<HTMLInputElement | null>(null);
@@ -73,6 +74,129 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     []
   );
   const [mealExampleValue, setMealExampleValue] = useState<string>("");
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [selectedVoice, setSelectedVoice] = useState<File | null>(null);
+
+  const getFormattedDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = ("0" + (today.getMonth() + 1)).slice(-2);
+    const day = ("0" + today.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
+
+  const [selectedDate, setSelectedDate] = useState<string>(getFormattedDate());
+
+  const mapSleepQualityToMoodValue = (sleepQuality: string) => {
+    switch (sleepQuality) {
+      case "Very Poor":
+        return 0;
+      case "Poor":
+        return 10;
+      case "Fair":
+        return 20;
+      case "Good":
+        return 40;
+      case "Very Good":
+        return 50;
+      default:
+        return 30;
+    }
+  };
+
+  useEffect(() => {
+    const fetchSymptoms = async () => {
+      try {
+        const response =
+          await SymptomsTrackerService.getSymptomByDate(selectedDate);
+        const data = response.data;
+
+        if (data === null) {
+          setUserNote("");
+          setSelectedSymptoms([]);
+          setDurationCategory("");
+          setSelectedTriggers([]);
+          setMoodValue(30);
+          setSleep({
+            hours: 0,
+            minutes: 0,
+            wokeUpTimes: 0,
+            fellBack: "Easy",
+          });
+          setMeal({
+            notes: "",
+            breakfast: { food_items: "", time: "" },
+            lunch: { food_items: "", time: "" },
+            dinner: { food_items: "", time: "" },
+          });
+          setSelectedMealExamples([]);
+        } else {
+          setUserNote(data.user_notes || "");
+          setSelectedSymptoms(data.symptoms || []);
+          setDurationCategory(data.duration_category || "");
+          setSelectedTriggers(data.suspected_triggers || []);
+          setMoodValue(mapSleepQualityToMoodValue(data.sleep_quality || ""));
+          setSleep({
+            hours: data.sleep_hours || 0,
+            minutes: data.sleep_minutes || 0,
+            wokeUpTimes: data.times_woke_up || 0,
+            fellBack: data.how_fell_asleep || "Easy",
+          });
+          setMeal({
+            notes: data.meal_notes || "",
+            breakfast: data.meal_details?.find(
+              (meal) => meal.meal_type === "breakfast"
+            ) || { food_items: "", time: "" },
+            lunch: data.meal_details?.find(
+              (meal) => meal.meal_type === "lunch"
+            ) || { food_items: "", time: "" },
+            dinner: data.meal_details?.find(
+              (meal) => meal.meal_type === "dinner"
+            ) || { food_items: "", time: "" },
+          });
+          setSelectedMealExamples(
+            data.meal_notes ? data.meal_notes.split(",") : []
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching symptoms:", error);
+        toast({
+          variant: "destructive",
+          title: "Failed to load symptoms data",
+          description:
+            "Could not retrieve your symptoms data. Please try again later.",
+        });
+      }
+    };
+
+    fetchSymptoms();
+  }, [selectedDate]);
+
+  const handleFileChange = (
+    type: "photo" | "voice",
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0] || null;
+    if (type === "photo") {
+      setSelectedPhoto(file);
+    } else if (type === "voice") {
+      setSelectedVoice(file);
+    }
+  };
+
+  const handleDeleteFile = (type: "photo" | "voice") => {
+    if (type === "photo") {
+      setSelectedPhoto(null);
+      if (photoInputRef.current) {
+        photoInputRef.current.value = "";
+      }
+    } else if (type === "voice") {
+      setSelectedVoice(null);
+      if (voiceInputRef.current) {
+        voiceInputRef.current.value = "";
+      }
+    }
+  };
 
   const handleSelect = (
     type: "symptom" | "trigger" | "mealExample",
@@ -137,18 +261,6 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     setUserNote(note);
   };
 
-  // const handleFileChange = (
-  //   type: "photo" | "voice",
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const file = event.target.files?.[0] || null;
-  //   if (type === "photo") {
-  //     console.log("Photo file selected:", file);
-  //   } else if (type === "voice") {
-  //     console.log("Voice file selected:", file);
-  //   }
-  // };
-
   const handleSleepSelectChange = (name: keyof SleepState, value: string) => {
     setSleep((prev) => ({
       ...prev,
@@ -174,7 +286,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     const sleepQuality = mapMoodToSleepQuality(moodValue);
 
     const data: SymptomData = {
-      tracking_date: new Date().toISOString(),
+      tracking_date: selectedDate,
       user_notes: userNote,
       symptoms: selectedSymptoms,
       symptom_intensities: [],
@@ -189,17 +301,17 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
       meal_details: [
         {
           meal_type: "breakfast",
-          food_items: meal.breakfast.food,
+          food_items: meal.breakfast.food_items,
           time: meal.breakfast.time,
         },
         {
           meal_type: "lunch",
-          food_items: meal.lunch.food,
+          food_items: meal.lunch.food_items,
           time: meal.lunch.time,
         },
         {
           meal_type: "dinner",
-          food_items: meal.dinner.food,
+          food_items: meal.dinner.food_items,
           time: meal.dinner.time,
         },
       ],
@@ -211,9 +323,23 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     try {
       await SymptomsTrackerService.addSymptoms(data, photo, voice);
       onClose();
+      toast({
+        title: "Symptoms were added successfully",
+      });
     } catch (error) {
       console.error("Error submitting journal:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to add symptoms",
+        description:
+          "Failed to add symptoms. Please check your answers and try again.",
+      });
     }
+  };
+
+  const handleDateChange = (date: Date) => {
+    const formattedDate = date.toISOString().split("T")[0];
+    setSelectedDate(formattedDate);
   };
 
   const isButtonDisabled = !(
@@ -248,7 +374,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
 
   return (
     <div className="md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto  inset-0 z-10 flex max-w-[766px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)]">
-      <CalendarBlock />
+      <CalendarBlock
+        selectedDate={selectedDate}
+        handleDateChange={handleDateChange}
+      />
 
       <div className="flex flex-col bg-[#F2F4F6] px-4 md:px-6 py-8 gap-6 overflow-y-auto lg:max-h-[calc(100vh-288px)] md:max-h-[calc(100vh-235px)]">
         <h1 className="text-2xl font-semibold text-[#1D1D1F]">
@@ -262,20 +391,35 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <Input
             placeholder="Leave feedback about your wellness"
             className="font-semibold h-[44px] text-base"
+            value={userNote}
             onChange={(e) => handleUserNoteChange(e.target.value)}
           />
-          <div className="flex gap-4 font-semibold">
+          <div className="flex items-center gap-4 font-semibold">
             <input
               ref={photoInputRef}
               type="file"
               accept="image/*"
               className="hidden"
               id="photoInput"
-              // onChange={(e) => handleFileChange("photo", e)}
+              onChange={(e) => handleFileChange("photo", e)}
             />
             <label htmlFor="photoInput" className="cursor-pointer">
               <Paperclip className="stroke-[1.5]" />
             </label>
+
+            {selectedPhoto && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-[#5F5F65]">
+                  {selectedPhoto.name}
+                </span>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleDeleteFile("photo")}
+                >
+                  <XIcon />
+                </Button>
+              </div>
+            )}
 
             <input
               ref={voiceInputRef}
@@ -283,11 +427,25 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
               accept="audio/*"
               className="hidden"
               id="voiceInput"
-              // onChange={(e) => handleFileChange("voice", e)}
+              onChange={(e) => handleFileChange("voice", e)}
             />
             <label htmlFor="voiceInput" className="cursor-pointer">
               <Mic className="stroke-[1.5]" />
             </label>
+
+            {selectedVoice && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-[#5F5F65]">
+                  {selectedVoice.name}
+                </span>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleDeleteFile("voice")}
+                >
+                  <XIcon />
+                </Button>
+              </div>
+            )}
           </div>
         </BlockWrapper>
 
@@ -576,9 +734,9 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                 <Input
                   placeholder="Type what you ate here..."
                   className="font-semibold h-[44px] text-base"
-                  value={meal.breakfast.food}
+                  value={meal.breakfast.food_items}
                   onChange={(e) =>
-                    handleMealChange("breakfast", "food", e.target.value)
+                    handleMealChange("breakfast", "food_items", e.target.value)
                   }
                 />
               </div>
@@ -611,9 +769,9 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                 <Input
                   placeholder="Type what you ate here..."
                   className="font-semibold h-[44px] text-base"
-                  value={meal.lunch.food}
+                  value={meal.lunch.food_items}
                   onChange={(e) =>
-                    handleMealChange("lunch", "food", e.target.value)
+                    handleMealChange("lunch", "food_items", e.target.value)
                   }
                 />
               </div>
@@ -646,9 +804,9 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                 <Input
                   placeholder="Type what you ate here..."
                   className="font-semibold h-[44px] text-base"
-                  value={meal.dinner.food}
+                  value={meal.dinner.food_items}
                   onChange={(e) =>
-                    handleMealChange("dinner", "food", e.target.value)
+                    handleMealChange("dinner", "food_items", e.target.value)
                   }
                 />
               </div>

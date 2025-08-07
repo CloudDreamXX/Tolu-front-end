@@ -69,6 +69,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+      if (deleteSelectedText) deleteSelectedText();
     }
   };
 
@@ -167,7 +168,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             )}
           </div>
           <Button
-            onClick={handleSend}
+            onClick={() => handleSend()}
             disabled={isSendDisabled}
             className="w-10 h-10 p-0 bg-blue-600 rounded-full hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
@@ -185,13 +186,15 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         />
       </div>
 
-      <div className="hidden mt-4 md:block">
-        <DailyJournal
-          isOpen={modalOpen}
-          onCancel={() => setModalOpen(false)}
-          onClose={() => setModalOpen(false)}
-        />
-      </div>
+      {!isContentManager && (
+        <div className="hidden mt-4 md:block">
+          <DailyJournal
+            isOpen={modalOpen}
+            onCancel={() => setModalOpen(false)}
+            onClose={() => setModalOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

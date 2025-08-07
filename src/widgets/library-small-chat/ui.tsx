@@ -342,6 +342,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
       const processFinal = (finalData: any) => {
         setIsSearching(false);
+        if (deleteSelectedText) deleteSelectedText();
 
         const chatId = (finalData?.chat_id || finalData?.chatId) ?? "";
 
