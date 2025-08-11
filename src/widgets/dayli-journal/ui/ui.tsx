@@ -338,7 +338,11 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
   };
 
   const handleDateChange = (date: Date) => {
-    const formattedDate = date.toISOString().split("T")[0];
+    const formattedDate = new Date(
+      date.getTime() - date.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split("T")[0];
     setSelectedDate(formattedDate);
   };
 
@@ -373,7 +377,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto  inset-0 z-10 flex max-w-[766px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)]">
+    <div className="md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto inset-0 z-[60] flex lg:max-w-[766px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)]">
       <CalendarBlock
         selectedDate={selectedDate}
         handleDateChange={handleDateChange}
@@ -494,7 +498,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         <BlockWrapper>
           <h2 className="text-lg font-semibold text-[#1D1D1F]">Duration</h2>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {SLEEP_RANGES.map((range) => (
               <Button
                 variant="ghost"

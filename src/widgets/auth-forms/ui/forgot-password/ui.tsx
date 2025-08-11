@@ -39,7 +39,7 @@ export const ForgotPassword = () => {
             Tolu AI
           </h1>
           <h3 className="capitalize font-open text-white text-center text-[14px] md:text-[15px] xl:text-[32px] font-semibold xl:font-medium">
-            THE HOLISTIC MENOPAUSE HEALTH ASSISTANT
+            Knowledge Before Care
           </h3>
         </aside>
       </div>

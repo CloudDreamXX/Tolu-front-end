@@ -8,6 +8,7 @@ import {
   GetClientInfoResponse,
   InviteClientPayload,
   ISessionResponse,
+  NewChatTitle,
   RateContent,
   ShareContentData,
   SharedContent,
@@ -262,5 +263,9 @@ export class CoachService {
     return ApiService.get<ContentResponse>(
       API_ROUTES.COACH_ADMIN.SEARCH_CONTENT
     );
+  }
+
+  static async updateChatTitle(data: NewChatTitle): Promise<any> {
+    return ApiService.put<any>(API_ROUTES.AI.UPDATE_CHAT_TITLE, data);
   }
 }

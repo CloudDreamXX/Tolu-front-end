@@ -126,7 +126,6 @@ export const EXCLUDE_TOKEN_ENDPOINTS = [
   "/user/login",
   "/user/signup",
   "/ai-personalized-search/",
-  "/update-chat-title",
   "/update-folder-content",
   "/chat/{chat_id}",
 ];

@@ -175,3 +175,8 @@ export interface ContentResponse {
   content: Content[];
   number_of_content: number;
 }
+
+export interface NewChatTitle {
+  chat_id: string;
+  new_title: string;
+}

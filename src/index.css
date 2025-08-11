@@ -210,3 +210,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.ql-container {
+  height: fit-content !important;
+}
+
+.richtext ul {
+  list-style: disc !important;
+  list-style-position: outside;
+  padding-left: 1.25rem;
+}
+
+.richtext ol {
+  list-style: decimal !important;
+  list-style-position: outside;
+  padding-left: 1.25rem;
+}
+
+.richtext li {
+  display: list-item !important;
+}
+
+.richtext li::marker {
+  content: initial !important;
+}

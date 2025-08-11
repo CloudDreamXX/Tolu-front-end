@@ -1,5 +1,5 @@
 import { Calendar } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "shared/lib";
 import { Button } from "shared/ui";
 import { SymptomCheckCalendarModal } from "widgets/MenopauseModals/SymptomCheckCalendarModal/ui";
@@ -15,6 +15,17 @@ export const CalendarBlock: React.FC<Props> = ({
 }) => {
   const today = new Date();
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
+
+  useEffect(() => {
+    if (openCalendarModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [openCalendarModal]);
 
   return (
     <>

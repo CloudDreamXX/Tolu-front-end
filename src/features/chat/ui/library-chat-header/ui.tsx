@@ -7,6 +7,9 @@ import { ActionsPopup } from "./ui/actions-popup";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { RenamePopup } from "./ui/rename-popup";
 import Collapse from "shared/assets/icons/collapse";
+import { CoachService, NewChatTitle } from "entities/coach";
+import { useParams } from "react-router-dom";
+import { toast } from "shared/lib";
 
 interface ChatHeaderProps {
   displayChatTitle: string;
@@ -24,6 +27,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const [isActionsPopupOpen, setIsActionsPopupOpen] = useState(false);
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const { chatId } = useParams();
 
   const handleEdit = () => {
     setIsEditPopupOpen(true);
@@ -38,6 +42,27 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const handleClosePopup = () => {
     setIsEditPopupOpen(false);
     setIsDeletePopupOpen(false);
+  };
+
+  const handleSaveTitle = async (title: string) => {
+    try {
+      if (chatId) {
+        const data: NewChatTitle = {
+          chat_id: chatId,
+          new_title: title,
+        };
+        await CoachService.updateChatTitle(data);
+        handleClosePopup();
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Failed to change title",
+        description: "Failed to change chat title. Please try again.",
+      });
+    }
   };
 
   return (
@@ -73,12 +98,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         <ActionsPopup onEdit={handleEdit} onDelete={handleDelete} />
       )}
       {isEditPopupOpen && (
-        <RenamePopup
-          onCancel={handleClosePopup}
-          onSave={function (): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
+        <RenamePopup onCancel={handleClosePopup} onSave={handleSaveTitle} />
       )}
       {isDeletePopupOpen && (
         <ConfirmDeleteModal

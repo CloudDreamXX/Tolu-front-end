@@ -76,7 +76,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
       <div className="block md:hidden">
         {mobilePage === 1 && (
           <div className="p-6 flex flex-col gap-[16px]">
-            <div className="prose-sm prose max-w-none">
+            <div className="prose-sm prose max-w-none richtext">
               {isHtmlContent(conversation[index - 1].content) ? (
                 parse(conversation[index - 1].content)
               ) : (
@@ -120,7 +120,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
         {mobilePage === 2 && (
           <div className="p-6 flex flex-col gap-[16px]">
-            <div className="prose-sm prose max-w-none">
+            <div className="prose-sm prose max-w-none richtext">
               {isHtmlContent(pair.content) ? (
                 parse(pair.content)
               ) : (
@@ -164,7 +164,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         {/* previous version */}
         <div className="flex-1 p-6 flex flex-col gap-[64px]">
           {isHtmlContent(conversation[index - 1].content) ? (
-            <div className="prose-sm prose max-w-none">
+            <div className="prose-sm prose max-w-none richtext">
               {parse(conversation[index - 1].content)}
             </div>
           ) : (
@@ -186,7 +186,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         {/* current version */}
         <div className="flex-1 p-6 flex flex-col gap-[64px]">
           {isHtmlContent(pair.content) ? (
-            <div className="prose-sm prose max-w-none">
+            <div className="prose-sm prose max-w-none richtext">
               {parse(pair.content)}
             </div>
           ) : (
@@ -217,7 +217,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         theme="snow"
         value={editedContent}
         onChange={setEditedContent}
-        className="bg-white border border-[#008FF6] rounded-[16px] p-[16px]"
+        className="bg-white border border-[#008FF6] rounded-[16px] p-[16px] h-fit"
         modules={{
           toolbar: [
             [
@@ -265,7 +265,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   const renderContent = () => {
     if (isHTML) {
       return (
-        <div className="prose-sm prose max-w-none">{parse(pair.content)}</div>
+        <div className="prose-sm prose max-w-none richtext">
+          {parse(pair.content)}
+        </div>
       );
     }
     return <div className="whitespace-pre-wrap">{pair.content}</div>;

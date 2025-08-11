@@ -1,7 +1,6 @@
 import { ApiService } from "shared/api";
 import {
   AiSearchRequest,
-  UpdateChatTitleRequest,
   SearchHistoryParams,
   SearchResultResponse,
   SearchResultResponseItem,
@@ -251,12 +250,6 @@ export class SearchService {
       createdAt: item.created_at,
       userId: item.user_id,
     }));
-  }
-
-  static async updateChatTitle(
-    updateData: UpdateChatTitleRequest
-  ): Promise<string> {
-    return ApiService.put<string>("/update-chat-title", updateData);
   }
 
   static async getSession(chatId: string): Promise<SearchResultResponseItem[]> {

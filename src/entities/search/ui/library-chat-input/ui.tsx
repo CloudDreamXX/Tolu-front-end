@@ -1,9 +1,13 @@
 import { XIcon } from "@phosphor-icons/react";
 import { ArrowBendDownRightIcon } from "@phosphor-icons/react/dist/ssr";
+import {
+  setIsMobileChatOpen,
+  setIsMobileDailyJournalOpen,
+} from "entities/client/lib";
 import { RootState } from "entities/store";
 import { Paperclip, Send } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { cn } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
@@ -53,6 +57,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const loading = useSelector((state: RootState) => state.client.loading);
   const location = useLocation();
   const isContentManager = location.pathname.includes("content-manager");
+  const dispatch = useDispatch();
 
   const handleSend = () => {
     if ((!message.trim() && attachedFiles.length === 0) || disabled) return;
@@ -160,8 +165,11 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             ) : (
               <Button
                 variant={"brightblue"}
-                onClick={() => setModalOpen(true)}
-                className="hidden md:block"
+                onClick={() => {
+                  dispatch(setIsMobileChatOpen(false));
+                  dispatch(setIsMobileDailyJournalOpen(true));
+                  setModalOpen(true);
+                }}
               >
                 Daily Journal
               </Button>

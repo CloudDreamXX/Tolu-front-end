@@ -19,10 +19,8 @@ import {
   setIsMobileChatOpen,
 } from "entities/client/lib";
 import { RootState } from "entities/store";
-import { usePageWidth } from "shared/lib";
 
 export const NavigationClient: React.FC = () => {
-  const { isMobile } = usePageWidth();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [menuMobOpen, setMenuMobOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
@@ -31,9 +29,6 @@ export const NavigationClient: React.FC = () => {
   const dispatch = useDispatch();
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
-  );
-  const isDailyJournalOpen = useSelector(
-    (state: RootState) => state.client.isMobileDailyJournalOpen
   );
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -65,12 +60,8 @@ export const NavigationClient: React.FC = () => {
     }
   };
 
-  const handleOpenDailyJournal = () => {
-    dispatch(setIsMobileChatOpen(false));
-    dispatch(setIsMobileDailyJournalOpen(!isDailyJournalOpen));
-  };
-
   const handleOpentChat = () => {
+    dispatch(setIsMobileDailyJournalOpen(false));
     dispatch(setIsMobileChatOpen(!isMobileChatOpen));
   };
 
@@ -161,16 +152,18 @@ export const NavigationClient: React.FC = () => {
       </div>
 
       {/* Mobile Hamburger */}
-      <div className="flex xl:hidden justify-between items-center p-[16px] md:p-6">
+      <div
+        className={`flex xl:hidden justify-between items-center p-[16px] md:p-6 ${isMobileChatOpen ? "bg-white md:bg-transparent" : ""}`}
+      >
         <h1 className="text-[27px] md:text-[46px] font-[700] font-open">
           Tolu
         </h1>
         <div className="flex items-center gap-[16px]">
           <button
-            onClick={isMobile ? handleOpenDailyJournal : handleOpentChat}
+            onClick={handleOpentChat}
             className="px-[8px] py-[6px] md:py-4 rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[14px]  md:text-[16px] font-[600] leading-[22px]"
           >
-            {isMobile ? "Daily Journal" : "AI Assistant"}
+            AI Assistant
           </button>
           <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
             <Menu className="text-black w-[32px]" />
