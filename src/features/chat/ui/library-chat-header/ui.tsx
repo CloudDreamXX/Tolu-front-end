@@ -14,6 +14,7 @@ import { toast } from "shared/lib";
 interface ChatHeaderProps {
   displayChatTitle: string;
   isExistingChat: boolean;
+  isCoach: boolean;
   onNewSearch: () => void;
   onClose: () => void;
 }
@@ -21,6 +22,7 @@ interface ChatHeaderProps {
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   displayChatTitle,
   isExistingChat,
+  isCoach,
   onNewSearch,
   onClose,
 }) => {
@@ -66,13 +68,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between w-full p-4 bg-white border-b rounded-t-xl">
+    <div
+      className={`flex flex-col md:flex-row items-center justify-between w-full p-4 bg-white ${isCoach ? "border-b" : "md:border-b"} rounded-t-xl`}
+    >
       <div className="flex items-center gap-3">
         <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px]">
           <button onClick={onClose} className="hidden xl:block">
             <Collapse />
           </button>
-          {displayChatTitle}
+          {(isCoach || isExistingChat) && <span>{displayChatTitle}</span>}
         </div>
         {isExistingChat && (
           <div className="hidden xl:block px-2 py-1 text-xs text-green-700 bg-green-100 rounded">
@@ -87,12 +91,14 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         >
           <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
         </button>
-        <button
-          className="flex flex-row items-center gap-2 p-2 text-sm font-medium text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"
-          onClick={() => setIsActionsPopupOpen(!isActionsPopupOpen)}
-        >
-          <DotsThreeVerticalIcon width={24} height={24} color="#000" />
-        </button>
+        {isExistingChat && (
+          <button
+            className="flex flex-row items-center gap-2 p-2 text-sm font-medium text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"
+            onClick={() => setIsActionsPopupOpen(!isActionsPopupOpen)}
+          >
+            <DotsThreeVerticalIcon width={24} height={24} color="#000" />
+          </button>
+        )}
       </div>
       {isActionsPopupOpen && (
         <ActionsPopup onEdit={handleEdit} onDelete={handleDelete} />

@@ -19,7 +19,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   error,
 }) => (
   <div
-    className={`flex-1 w-full ${messages.length && "py-4"} overflow-y-auto bg-white rounded-b-xl`}
+    className={`flex-1 w-full ${messages.length && "py-4"} overflow-y-auto bg-white rounded-b-xl h-full`}
   >
     <div className="max-h-full md:px-4 space-y-4 overflow-auto">
       {messages.map((message) => (

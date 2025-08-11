@@ -52,12 +52,16 @@ export const MainLayout: React.FC<{
         {getNavigation(mainLocation)}
         {children}
         {isMobileChatOpen && (
-          <div className="absolute top-[76px] md:top-[117px] z-50 h-[calc(100vh-76px)] md:h-[calc(100vh-117px)] w-full bg-white lg:hidden">
+          <div
+            className={`absolute ${mainLocation === "content-manager" ? "top-[85px]" : "top-[72px]"} md:top-[117px] z-50 h-[calc(100vh-72px)] md:h-[calc(100vh-117px)] w-full bg-white lg:hidden`}
+          >
             <LibraryChat />
           </div>
         )}
         {isMobileDailyJournalOpen && (
-          <div className="absolute top-[76px] md:hidden">
+          <div
+            className={`absolute ${mainLocation === "content-manager" ? "top-[85px]" : "top-[72px]"} md:hidden`}
+          >
             <DailyJournal
               isOpen={isMobileDailyJournalOpen}
               onCancel={() => dispatch(setIsMobileDailyJournalOpen(false))}

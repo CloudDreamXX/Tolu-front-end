@@ -234,3 +234,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .richtext li::marker {
   content: initial !important;
 }
+
+.box-shadow-input {
+  box-shadow: 0 -4px 15px 0 rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 768px) {
+  .box-shadow-input {
+    box-shadow: none;
+  }
+}

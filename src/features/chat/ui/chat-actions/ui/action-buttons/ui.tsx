@@ -77,26 +77,17 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
         {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
         <SaveModal onStatusChange={onStatusChange} />
       </div>
-      <div>
+      <div className="hidden xl:block">
         {!isHistoryPopup && (
-          <button
-            className="hidden xl:block h-8 w-8 mb-[8px]"
-            onClick={() => nav(-1)}
-          >
+          <button className="h-8 w-8 mb-[8px]" onClick={() => nav(-1)}>
             <ArrowLeft className="w-5 h-5 m-auto text-black" />
           </button>
         )}
-        {isHistoryPopup && (
-          <div className="hidden xl:block">
-            <HistoryPopup fromPath={fromPath} />
-          </div>
-        )}
-        <div className="hidden xl:block">
-          <SaveModal onStatusChange={onStatusChange} />
-        </div>
+        {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
+        <SaveModal onStatusChange={onStatusChange} />
         {onStatusChange && (
           <button
-            className="hidden xl:block bg-[#DDEBF6] rounded-full h-8 w-8 mt-[8px]"
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 mt-[8px]"
             onClick={() => {
               const newStatus =
                 readStatus === "read" ? "saved_for_later" : "read";

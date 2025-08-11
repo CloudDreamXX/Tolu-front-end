@@ -24,6 +24,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { usePageWidth } from "shared/lib";
 import { Card, CardContent } from "shared/ui";
 import {
   SWITCH_CONFIG,
@@ -55,6 +56,7 @@ export const LibraryChat = () => {
   const isMobileChatOpen = useSelector(
     (state: RootState) => state.client.isMobileChatOpen
   );
+  const { isMobile } = usePageWidth();
 
   const initialSearchDone = useRef(false);
   const sessionLoadDone = useRef(false);
@@ -712,8 +714,12 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
   };
 
   return (
-    <div className="flex flex-col w-full bg-[#F2F4F6] h-screen gap-6 p-6 overflow-y-auto xl:overflow-y-none">
-      <ChatBreadcrumb displayChatTitle={displayChatTitle} />
+    <div
+      className={`flex flex-col w-full h-screen gap-6 ${isCoach ? "p-6 bg-[#F2F4F6]" : "md:p-6 bg-white md:bg-[#F2F4F6]"} overflow-y-auto xl:overflow-y-none`}
+    >
+      <div className={`${isCoach ? "" : "hidden md:block"}`}>
+        <ChatBreadcrumb displayChatTitle={displayChatTitle} />
+      </div>
       <div className="flex flex-row w-full h-full gap-6 md:relative">
         <div className="hidden xl:block">
           <ChatActions
@@ -734,6 +740,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             <ChatHeader
               displayChatTitle={displayChatTitle}
               isExistingChat={!!isExistingChat}
+              isCoach={isCoach}
               onNewSearch={handleNewChatOpen}
               onClose={() => {
                 const fromPath =
@@ -769,29 +776,49 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
             !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px]">
-                <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
-                  <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
-                    Start a conversation
-                  </h2>
-                  {isCoach ? (
+                {isCoach ? (
+                  <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
+                    <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
+                      Start a conversation
+                    </h2>
                     <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-[464px]">
                       Select an action below and enter a query to start a
                       conversation with Tolu.
                     </p>
-                  ) : (
-                    <div className="flex flex-col items-baseline justify-center">
-                      <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                        Activate <span className="font-bold">Smart Search</span>{" "}
-                        for personalized health answers.
-                      </p>
-
-                      <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                        Activate <span className="font-bold">Learn</span> for
-                        expert‑verified guidance you can trust.
-                      </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="md:hidden flex flex-col items-center justify-center flex-1">
+                      <div className="max-w-[300px] sm:max-w-[360px] mx-auto">
+                        <h2 className="text-[24px] leading-tight font-[700] text-[#1D1D1F]">
+                          Hey, what’s going on in your world today?
+                        </h2>
+                        <p className="mt-3 text-[14px] leading-[1.45] text-[#5F5F65]">
+                          Tell me what’s feeling off or what you’re working on.
+                          I’ll help you make sense of it and find your next
+                          step.
+                        </p>
+                      </div>
                     </div>
-                  )}
-                </div>
+
+                    <div className="hidden md:flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
+                      <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
+                        Start a conversation
+                      </h2>
+                      <div className="flex flex-col items-baseline justify-center">
+                        <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
+                          Activate{" "}
+                          <span className="font-bold">Smart Search</span> for
+                          personalized health answers.
+                        </p>
+                        <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
+                          Activate <span className="font-bold">Learn</span> for
+                          expert-verified guidance you can trust.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             ) : // isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
             //   <>
@@ -875,15 +902,19 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 </Card>
               </>
             ) : (
-              <MessageList
-                messages={messages}
-                isSearching={isSearching}
-                streamingText={streamingText}
-                error={error}
-              />
+              <div className={`${isCoach ? "" : "px-[16px] md:px-0 h-full"}`}>
+                <MessageList
+                  messages={messages}
+                  isSearching={isSearching}
+                  streamingText={streamingText}
+                  error={error}
+                />
+              </div>
             )}
 
-            <div className="xl:hidden block mt-[16px]">
+            <div
+              className={`xl:hidden block mt-[16px] ${isCoach ? "" : "px-[16px] w-fit mx-auto md:px-0 md:w-full md: mx-0"}`}
+            >
               <ChatActions
                 onRegenerate={handleRegenerateResponse}
                 isSearching={isSearching}
@@ -898,7 +929,11 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             </div>
 
             <LibraryChatInput
-              className="mt-4 border border-[#DBDEE1] xl:border-0 xl:border-t xl:rounded-none"
+              className={`mt-4 xl:border-0 xl:border-t xl:rounded-none ${
+                !isCoach
+                  ? "border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none"
+                  : "border xl:border-0"
+              }`}
               onSend={handleNewMessage}
               disabled={isSearching}
               switchOptions={
@@ -912,6 +947,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               message={textContent}
               setNewMessage={setTextContent}
               setClientId={setClientId}
+              placeholder={
+                isCoach || !isMobile ? "Your message" : "I'm listening..."
+              }
             />
           </div>
         )}

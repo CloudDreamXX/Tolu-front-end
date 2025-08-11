@@ -218,6 +218,16 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         value={editedContent}
         onChange={setEditedContent}
         className="bg-white border border-[#008FF6] rounded-[16px] p-[16px] h-fit"
+        formats={[
+          "bold",
+          "italic",
+          "underline",
+          "list",
+          "align",
+          "link",
+          "blockquote",
+          "code-block",
+        ]}
         modules={{
           toolbar: [
             [
@@ -253,7 +263,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           <Button
             variant="brightblue"
             className="text-[16px] px-8"
-            onClick={() => onSaveEdit(pair.id)}
+            onClick={() => {
+              onSaveEdit(pair.id);
+            }}
           >
             Save changes
           </Button>
