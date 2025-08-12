@@ -240,6 +240,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           "bullet",
           "paragraph",
           "image",
+          "strike",
+          "script",
+          "direction",
         ]}
         modules={{
           toolbar: [
