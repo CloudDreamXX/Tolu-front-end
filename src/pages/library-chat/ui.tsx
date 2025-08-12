@@ -113,6 +113,7 @@ export const LibraryChat = () => {
   const watchedCaseValues = useWatch({ control: caseForm.control });
 
   const [textContent, setTextContent] = useState("");
+  const [voiceContent, setVoiceContent] = useState("");
   const [selectedVoice, setSelectedVoice] =
     useState<SpeechSynthesisVoice | null>(null);
   const [isReadingAloud, setIsReadingAloud] = useState(false);
@@ -175,12 +176,19 @@ export const LibraryChat = () => {
     };
   }, [chatId]);
 
+  useEffect(() => {
+    if (chat) {
+      const strippedText = chat[0]?.answer.replace(/<\/?[^>]+(>|$)/g, "");
+      setVoiceContent(strippedText);
+    }
+  }, [chat]);
+
   const handleReadAloud = () => {
     setIsReadingAloud((prev) => !prev);
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
     } else {
-      const utterance = new SpeechSynthesisUtterance(textContent);
+      const utterance = new SpeechSynthesisUtterance(voiceContent);
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
@@ -712,7 +720,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
 
   return (
     <div
-      className={`flex flex-col w-full gap-6 ${isCoach ? "p-6 bg-[#F2F4F6] h-[calc(100vh-85px)]" : "md:p-6 bg-white md:bg-[#F2F4F6] h-[calc(100vh-72px)]"}`}
+      className={`flex flex-col w-full gap-6 ${isCoach ? "p-6 bg-[#F2F4F6] h-full" : "md:p-6 bg-white md:bg-[#F2F4F6] h-[calc(100vh-72px)]"}`}
     >
       <div className={`${isCoach ? "" : "hidden md:block"}`}>
         <ChatBreadcrumb displayChatTitle={displayChatTitle} />
@@ -725,7 +733,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             hasMessages={messages.length >= 2}
             isHistoryPopup
             fromPath={location.state?.from?.pathname ?? null}
-            initialRating={chat.length ? (chat[0].liked ? 5 : 1) : undefined}
+            initialRating={
+              chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+            }
             onReadAloud={handleReadAloud}
             isReadingAloud={isReadingAloud}
           />
@@ -824,6 +834,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             //       isSearching={isSearching}
             //       streamingText={streamingText}
             //       error={error}
+            //       isCoach={isCoach}
             //     />
             //     <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
             //       <div className="w-full mb-[24px]" />
@@ -869,6 +880,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
+                  isCoach={isCoach}
                 />
                 <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
                   <div className="w-full mb-[24px]" />
@@ -898,13 +910,14 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               </>
             ) : (
               <div
-                className={`overflow-y-auto ${isCoach ? "" : "px-[16px] md:px-0 h-full"}`}
+                className={`overflow-y-auto h-full ${isCoach ? "" : "px-[16px] md:px-0"}`}
               >
                 <MessageList
                   messages={messages}
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
+                  isCoach={isCoach}
                 />
               </div>
             )}
@@ -918,7 +931,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 hasMessages={messages.length >= 2}
                 isHistoryPopup
                 initialRating={
-                  chat.length ? (chat[0].liked ? 5 : 1) : undefined
+                  chat.length ? (chat[0].liked ? 5 : undefined) : undefined
                 }
                 onReadAloud={handleReadAloud}
                 isReadingAloud={isReadingAloud}

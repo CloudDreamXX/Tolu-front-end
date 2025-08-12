@@ -12,7 +12,7 @@ import { ArrowLeft, Eye } from "@phosphor-icons/react/dist/ssr";
 import { useNavigate } from "react-router-dom";
 
 interface ChatActionsProps {
-  onRegenerate: () => void;
+  onRegenerate?: () => void;
   isSearching: boolean;
   hasMessages: boolean;
   isHistoryPopup?: boolean;
@@ -22,6 +22,7 @@ interface ChatActionsProps {
   initialStatus?: string;
   fromPath?: string | null;
   isReadingAloud?: boolean;
+  currentChatId?: string;
 }
 
 export const ChatActions: React.FC<ChatActionsProps> = ({
@@ -32,6 +33,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   onReadAloud,
   fromPath,
   isReadingAloud,
+  currentChatId,
 }) => {
   const [thumbsUpModalOpen, setThumbsUpModalOpen] = useState(false);
   const [thumbsDownModalOpen, setThumbsDownModalOpen] = useState(false);
@@ -159,16 +161,18 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           isOpen={thumbsUpModalOpen}
           onOpenChange={(open) => {
             setThumbsUpModalOpen(open);
-            if (!open) setRating(5);
           }}
+          setNewRating={setRating}
+          currentChatId={currentChatId}
         />
         <FeedbackModal
           initialRating={1}
           isOpen={thumbsDownModalOpen}
           onOpenChange={(open) => {
             setThumbsDownModalOpen(open);
-            if (!open) setRating(1);
           }}
+          setNewRating={setRating}
+          currentChatId={currentChatId}
         />
         {/* <button
           className="bg-[#DDEBF6] rounded-full h-8 w-8"

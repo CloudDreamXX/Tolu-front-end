@@ -12,12 +12,16 @@ interface FeedbackModalProps {
   initialRating: number;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  setNewRating: React.Dispatch<React.SetStateAction<number | undefined>>;
+  currentChatId?: string;
 }
 
 export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   initialRating,
   isOpen,
   onOpenChange,
+  setNewRating,
+  currentChatId,
 }) => {
   const [rating, setRating] = useState<number>(initialRating);
   const [feedback, setFeedback] = useState<string>("");
@@ -26,10 +30,10 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   const chat = useSelector((state: RootState) => state.client.chat);
   const chatId = chat.length > 0 ? chat[0].id : null;
 
-  const handleSave = () => {
-    if (documentId || chatId) {
+  const handleSave = async () => {
+    if (currentChatId || documentId || chatId) {
       const feedbackRequest: Feedback = {
-        source_id: documentId || chatId || "",
+        source_id: currentChatId || documentId || chatId || "",
         satisfaction_score: String(rating),
         comments: feedback,
         content_preference: contentPreference,
@@ -39,7 +43,9 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         severity: "",
         device: "",
       };
-      ContentService.addContentFeedback(feedbackRequest);
+      const res = await ContentService.addContentFeedback(feedbackRequest);
+      setNewRating(res.feedback.satisfaction_score);
+      setRating(res.feedback.satisfaction_score);
     }
 
     onOpenChange(false);

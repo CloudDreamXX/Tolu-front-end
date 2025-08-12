@@ -58,9 +58,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
             Tolu
           </h1>
           <p className="text-[16px] md:text-[18px] font-[700] h-[21px] md:h-[27px] font-open leading-normal">
-            {pageLocation === "user-management"
-              ? "Admin"
-              : "Practitioner Admin"}
+            {pageLocation === "user-management" ? "Admin" : "Creator Studio"}
           </p>
         </div>
         <div className="flex items-center gap-[16px]">
@@ -90,7 +88,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                   Tolu
                 </h1>
                 <p className="text-[16px] md:text-[18px] font-[700] font-open leading-normal">
-                  Practitioner Admin
+                  Creator Studio
                 </p>
               </div>
               <button

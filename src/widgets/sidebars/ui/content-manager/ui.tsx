@@ -40,7 +40,7 @@ export const ContentManagerSidebar: React.FC = () => {
           </h2>
           {!isNarrow && (
             <h3 className="text-[24px] font-semibold font-open">
-              Practitioner Admin
+              Creator Studio
             </h3>
           )}
         </div>
