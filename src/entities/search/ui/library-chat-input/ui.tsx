@@ -129,8 +129,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             }
           }}
           onKeyDown={handleKeyPress}
-          className="w-full h-[80px] text-sm md:text-sm xl:text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          containerClassName={`${isContentManager ? "border border-gray-300" : "border-0 md:border border-gray-300"} rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+          className="w-full h-[80px] text-base sm:text-base md:text-base xl:text-base resize-none focus:outline-none focus:ring-0 focus:border-transparent"
+          containerClassName={`${isContentManager ? "border border-gray-300" : "border-0 md:border border-gray-300"} rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base`}
           style={{
             WebkitTextSizeAdjust: "100%",
             textSizeAdjust: "100%",
