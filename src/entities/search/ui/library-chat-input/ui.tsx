@@ -1,9 +1,6 @@
 import { ArrowUpIcon, XIcon } from "@phosphor-icons/react";
 import { ArrowBendDownRightIcon } from "@phosphor-icons/react/dist/ssr";
-import {
-  setIsMobileChatOpen,
-  setIsMobileDailyJournalOpen,
-} from "entities/client/lib";
+import { setIsMobileDailyJournalOpen } from "entities/client/lib";
 import { RootState } from "entities/store";
 import { Paperclip, Send } from "lucide-react";
 import { useState } from "react";
@@ -179,7 +176,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               <Button
                 variant={"brightblue"}
                 onClick={() => {
-                  dispatch(setIsMobileChatOpen(false));
                   dispatch(setIsMobileDailyJournalOpen(true));
                   setModalOpen(true);
                 }}

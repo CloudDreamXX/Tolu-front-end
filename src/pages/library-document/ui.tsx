@@ -32,9 +32,6 @@ export const LibraryDocument = () => {
     (state: RootState) => state.healthHistory.data
   );
   const dispatch = useDispatch();
-  const isMobileChatOpen = useSelector(
-    (state: RootState) => state.client.isMobileChatOpen
-  );
 
   const [textContent, setTextContent] = useState("");
   const [selectedVoice, setSelectedVoice] =
@@ -206,9 +203,7 @@ export const LibraryDocument = () => {
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
-          <div
-            className={`relative flex flex-col w-full h-full xl:pr-4 ${isMobileChatOpen ? "hidden" : "block"}`}
-          >
+          <div className={`relative flex flex-col w-full h-full xl:pr-4`}>
             {isLoadingDocument ? (
               <DocumentLoadingSkeleton />
             ) : selectedDocument ? (

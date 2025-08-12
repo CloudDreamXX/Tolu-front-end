@@ -1,6 +1,5 @@
 import { setIsMobileDailyJournalOpen } from "entities/client/lib";
 import { RootState } from "entities/store";
-import { LibraryChat } from "pages/library-chat";
 import { ReactElement } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
@@ -36,9 +35,6 @@ export const MainLayout: React.FC<{
   mainLocation: string;
 }> = ({ children, mainLocation }) => {
   const dispatch = useDispatch();
-  const isMobileChatOpen = useSelector(
-    (state: RootState) => state.client.isMobileChatOpen
-  );
   const isMobileDailyJournalOpen = useSelector(
     (state: RootState) => state.client.isMobileDailyJournalOpen
   );
@@ -51,13 +47,6 @@ export const MainLayout: React.FC<{
       <div className="flex flex-col w-full h-full bg-[#F2F4F6] min-h-screen xl:overflow-hidden">
         {getNavigation(mainLocation)}
         {children}
-        {isMobileChatOpen && (
-          <div
-            className={`absolute ${mainLocation === "content-manager" ? "top-[85px]" : "top-[72px]"} md:top-[117px] z-50 h-[calc(100vh-72px)] md:h-[calc(100vh-117px)] w-full bg-white lg:hidden`}
-          >
-            <LibraryChat />
-          </div>
-        )}
         {isMobileDailyJournalOpen && (
           <div
             className={`absolute ${mainLocation === "content-manager" ? "top-[85px]" : "top-[72px]"} md:hidden`}

@@ -6,6 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import BlueChevron from "shared/assets/icons/blue-chevron";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
+import "react-quill/dist/quill.snow.css";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -227,6 +228,18 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           "link",
           "blockquote",
           "code-block",
+          "header",
+          "font",
+          "size",
+          "color",
+          "background",
+          "lineHeight",
+          "indent",
+          "list",
+          "ordered",
+          "bullet",
+          "paragraph",
+          "image",
         ]}
         modules={{
           toolbar: [
@@ -249,6 +262,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               "code-block",
             ],
           ],
+          clipboard: {
+            matchVisual: false,
+          },
         }}
       />
 

@@ -53,9 +53,6 @@ export const LibraryChat = () => {
   const [currentChatId, setCurrentChatId] = useState<string>(chatId ?? "");
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [clientId, setClientId] = useState<string | null>(null);
-  const isMobileChatOpen = useSelector(
-    (state: RootState) => state.client.isMobileChatOpen
-  );
   const { isMobile } = usePageWidth();
 
   const initialSearchDone = useRef(false);
@@ -715,7 +712,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
 
   return (
     <div
-      className={`flex flex-col w-full h-screen gap-6 ${isCoach ? "p-6 bg-[#F2F4F6]" : "md:p-6 bg-white md:bg-[#F2F4F6]"} overflow-y-auto xl:overflow-y-none`}
+      className={`flex flex-col w-full gap-6 ${isCoach ? "p-6 bg-[#F2F4F6] h-[calc(100vh-85px)]" : "md:p-6 bg-white md:bg-[#F2F4F6] h-[calc(100vh-72px)]"}`}
     >
       <div className={`${isCoach ? "" : "hidden md:block"}`}>
         <ChatBreadcrumb displayChatTitle={displayChatTitle} />
@@ -775,7 +772,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             {isEmpty &&
             // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
             !isSwitch(SWITCH_KEYS.CASE) ? (
-              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px]">
+              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px] overflow-y-auto">
                 {isCoach ? (
                   <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
                     <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
@@ -831,7 +828,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             //     <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
             //       <div className="w-full mb-[24px]" />
             //       <CardContent
-            //         className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
+            //         className={`w-full px-6 mt-auto rounded-0`}
             //       >
             //         <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
             //           <p className="text-[24px] text-[#1D1D1F] font-[500]">
@@ -875,10 +872,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 />
                 <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
                   <div className="w-full mb-[24px]" />
-                  <CardContent
-                    className={`w-full ${isMobileChatOpen ? "px-0" : "px-6"} mt-auto rounded-0`}
-                  >
-                    <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
+                  <CardContent className={`w-full px-6 mt-auto rounded-0`}>
+                    <div className="p-[24px] border border-[#008FF6] rounded-[20px]">
                       <p className="text-[24px] text-[#1D1D1F] font-[500]">
                         Case Story
                       </p>
@@ -902,7 +897,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 </Card>
               </>
             ) : (
-              <div className={`${isCoach ? "" : "px-[16px] md:px-0 h-full"}`}>
+              <div
+                className={`overflow-y-auto ${isCoach ? "" : "px-[16px] md:px-0 h-full"}`}
+              >
                 <MessageList
                   messages={messages}
                   isSearching={isSearching}
@@ -913,7 +910,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             )}
 
             <div
-              className={`xl:hidden block mt-[16px] ${isCoach ? "" : "px-[16px] w-fit mx-auto md:px-0 md:w-full md: mx-0"}`}
+              className={`xl:hidden block ${isCoach ? "mt-[16px]" : "px-[16px] w-fit mx-auto md:px-0 md:w-full md: mx-0"}`}
             >
               <ChatActions
                 onRegenerate={handleRegenerateResponse}

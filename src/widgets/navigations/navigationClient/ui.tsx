@@ -2,7 +2,7 @@ import { logout } from "entities/user";
 import { User } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import ChatsCircle from "shared/assets/icons/chats-circle";
 import Close from "shared/assets/icons/close";
 import Library from "shared/assets/icons/library";
@@ -14,10 +14,6 @@ import { Button } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import CaretRight from "shared/assets/icons/caretRight";
 import WrapperLibraryFolderTree from "widgets/sidebars/ui/health-snapshot/FolderTree";
-import {
-  setIsMobileDailyJournalOpen,
-  setIsMobileChatOpen,
-} from "entities/client/lib";
 import { RootState } from "entities/store";
 
 export const NavigationClient: React.FC = () => {
@@ -27,10 +23,11 @@ export const NavigationClient: React.FC = () => {
   const nav = useNavigate();
   const menuMobRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const isMobileChatOpen = useSelector(
-    (state: RootState) => state.client.isMobileChatOpen
-  );
   const user = useSelector((state: RootState) => state.user.user);
+  const location = useLocation();
+  const isCoach = location.pathname.startsWith("/content-manager");
+  const basePath = isCoach ? "/content-manager" : "";
+  const chatId = `new_chat_${Date.now()}`;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -60,9 +57,21 @@ export const NavigationClient: React.FC = () => {
     }
   };
 
-  const handleOpentChat = () => {
-    dispatch(setIsMobileDailyJournalOpen(false));
-    dispatch(setIsMobileChatOpen(!isMobileChatOpen));
+  const handleOpenChat = () => {
+    if (
+      location.pathname.startsWith(`${basePath}/library`) &&
+      location.pathname.split("/").length > 2
+    ) {
+      setMenuMobOpen(false);
+      nav(`${basePath}/library`);
+    } else {
+      setMenuMobOpen(false);
+      nav(`${basePath}/library/${chatId}`, {
+        state: {
+          from: location,
+        },
+      });
+    }
   };
 
   return (
@@ -153,14 +162,14 @@ export const NavigationClient: React.FC = () => {
 
       {/* Mobile Hamburger */}
       <div
-        className={`flex xl:hidden justify-between items-center p-[16px] md:p-6 ${isMobileChatOpen ? "bg-white md:bg-transparent" : ""}`}
+        className={`flex xl:hidden justify-between items-center p-[16px] md:p-6 ${location.pathname.startsWith(`${basePath}/library`) && location.pathname.split("/").length > 2 ? "bg-white md:bg-transparent" : ""}`}
       >
         <h1 className="text-[27px] md:text-[46px] font-[700] font-open">
           Tolu
         </h1>
         <div className="flex items-center gap-[16px]">
           <button
-            onClick={handleOpentChat}
+            onClick={handleOpenChat}
             className="px-[8px] py-[6px] md:py-4 rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[14px]  md:text-[16px] font-[600] leading-[22px]"
           >
             AI Assistant
@@ -196,10 +205,12 @@ export const NavigationClient: React.FC = () => {
               variant={"brightblue"}
               className="w-full h-[44px] text-base font-semibold mb-[72px] mt-[8px]"
               onClick={() => {
-                nav("/library");
                 setMenuMobOpen(false);
-                dispatch(setIsMobileDailyJournalOpen(false));
-                dispatch(setIsMobileChatOpen(true));
+                nav(`${basePath}/library/${chatId}`, {
+                  state: {
+                    from: location,
+                  },
+                });
               }}
             >
               <Sparkle />
