@@ -21,12 +21,24 @@ export const UserManagement: React.FC = () => {
   const [usersData, setUsersData] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
+  const filteredUsers = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return usersData;
+    return usersData.filter((u) => {
+      return (
+        (u.name || "").toLowerCase().includes(term) ||
+        (u.email || "").toLowerCase().includes(term) ||
+        (u.phone_number || "").toLowerCase().includes(term)
+      );
+    });
+  }, [usersData, searchTerm]);
+
   const paginatedData = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return usersData.slice(start, start + PAGE_SIZE);
-  }, [page, usersData]);
+    return filteredUsers.slice(start, start + PAGE_SIZE);
+  }, [page, filteredUsers]);
 
-  const totalPages = Math.ceil(usersData.length / PAGE_SIZE);
+  const totalPages = Math.ceil(filteredUsers.length / PAGE_SIZE) || 1;
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -78,10 +90,6 @@ export const UserManagement: React.FC = () => {
     }
   };
 
-  const filteredUsers = paginatedData.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="flex flex-col gap-[16px] md:gap-[35px] p-8 overflow-y-auto h-[100%]">
       <div className="flex flex-col md:flex-row gap-[16px] justify-between md:items-end">
@@ -121,7 +129,7 @@ export const UserManagement: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
-                {filteredUsers.map((user, index) => (
+                {paginatedData.map((user, index) => (
                   <div
                     key={index}
                     className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"

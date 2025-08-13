@@ -165,15 +165,15 @@ export const AppRoutes = () => {
         />
       </Route>
 
-      <Route
+      {/* <Route
         element={
           <MainLayout mainLocation="user-management">
             <ProtectedRoute allowedRoles={["Admin", "Super Admin", "admin"]} />
           </MainLayout>
         }
-      >
-        <Route path="/user-management" element={<UserManagement />} />
-      </Route>
+      > */}
+      <Route path="/user-management" element={<UserManagement />} />
+      {/* </Route> */}
 
       {/* 404 route */}
       {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
