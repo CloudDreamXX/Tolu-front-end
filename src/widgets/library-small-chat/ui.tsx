@@ -144,14 +144,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   }, []);
 
   useEffect(() => {
-    if (messages) {
-      setVoiceContent(messages[1]?.content);
-    }
     if (chat) {
       const strippedText = chat[0]?.answer.replace(/<\/?[^>]+(>|$)/g, "");
       setVoiceContent(strippedText);
     }
-  }, [chat, messages]);
+  }, [chat]);
 
   useEffect(() => {
     return () => {
@@ -437,6 +434,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         };
 
         setMessages((prev) => [...prev, aiMessage]);
+        const strippedText = aiMessage.content.replace(/<\/?[^>]+(>|$)/g, "");
+        setVoiceContent(strippedText);
         setStreamingText("");
 
         if (chatId && chatId !== currentChatId) {
