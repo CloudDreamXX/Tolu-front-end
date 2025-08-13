@@ -1,12 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CloseIcon from "shared/assets/icons/close";
-import TrashIcon from "shared/assets/icons/trash-icon";
 import UserIcon from "shared/assets/icons/user-black";
 import ChatsIcon from "shared/assets/icons/chats";
-import EditIcon from "shared/assets/icons/edit-blue";
 import { ClientProfile } from "entities/coach";
-import { cards } from "pages/content-manager/clients/mock";
 import ArrowLeft from "shared/assets/icons/arrowLeft";
+import ClientsIntake from "shared/assets/icons/clientsIntake";
+import { ShareFmpModal } from "widgets/ShareFmpModal";
+import HealthProfile from "./components/HealthProfile";
+import ClientInfo from "./components/ClientInfo";
+import FoodMoodPoop from "./components/FoodMoodPoop";
+import { ClientStory, StorySections } from "./components/ClientStory";
+import Symptoms, { SymptomsData } from "./components/Symptoms";
+import LifestyleSkills, {
+  LifestyleSkillsData,
+} from "./components/LifestyleSkills";
+import MedicationsSupplements, {
+  MedsData,
+  MedsEditing,
+} from "./components/MedicationsSupplements";
+import Biometrics, { BiometricsData } from "./components/Biometrics";
+import Labs from "./components/Labs";
 
 interface SelectedClientModalProps {
   client: ClientProfile;
@@ -23,8 +36,100 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
   setActiveTab,
   onClose,
   onEdit,
-  onDelete,
 }) => {
+  const [shareOpen, setShareOpen] = useState(false);
+
+  const [isEditingStory, setIsEditingStory] = useState(false);
+  const [story, setStory] = useState<StorySections>({
+    genetics: [
+      "Family history of heart disease and type 2 diabetes",
+      "Maternal depression during childhood",
+    ],
+    antecedents: [
+      "Childhood asthma, which resolved by age 12 but may affect lung capacity today",
+    ],
+    triggers: [
+      "Diagnosed with depression at age 25 after the death of father",
+      "Major career change at age 40, increased stress and lifestyle changes",
+    ],
+    mediators: [
+      "Low sleep quality exacerbates anxiety and depression symptoms",
+    ],
+  });
+  const [isEditingSymptoms, setIsEditingSymptoms] = useState(false);
+  const [symptoms, setSymptoms] = useState<SymptomsData>({
+    hormones:
+      "Hot flashes (3–5/day), Low libido, Interrupted sleep, Mood instability",
+    mind: "",
+  });
+  const [isEditingLifestyle, setIsEditingLifestyle] = useState(false);
+  const [activeLifestyleSection, setActiveLifestyleSection] =
+    useState<keyof LifestyleSkillsData>("sleepRelaxation");
+  const [lifestyleSkills, setLifestyleSkills] = useState<LifestyleSkillsData>({
+    sleepRelaxation: [
+      { text: "Breathwork", sign: "plus" },
+      { text: "Sunshine", sign: "plus" },
+      { text: "Erratic sleep", sign: "minus" },
+    ],
+    exerciseMovement: [
+      { text: "Breathwork", sign: "plus" },
+      { text: "Sunshine", sign: "plus" },
+    ],
+  });
+  const [meds, setMeds] = useState<MedsData>({
+    previous: [
+      {
+        name: "Levothyroxine",
+        dosage: "50 mcg daily",
+        takingSince: "17.02.2024",
+        prescribed: "Jill Hartmann",
+        status: "not active",
+      },
+      {
+        name: "Levothyroxine",
+        dosage: "50 mcg daily",
+        takingSince: "17.02.2024",
+        prescribed: "Jill Hartmann",
+        status: "not active",
+      },
+    ],
+    current: [
+      {
+        name: "Levothyroxine",
+        dosage: "50 mcg daily",
+        takingSince: "17.02.2024",
+        prescribed: "Jill Hartmann",
+        status: "Active",
+      },
+    ],
+  });
+  const [medsEditing, setMedsEditing] = useState<MedsEditing>(null);
+  const [isEditingBiometrics, setIsEditingBiometrics] = useState(false);
+  const [biometrics, setBiometrics] = useState<BiometricsData>({
+    hrv: "52 ms",
+    sleepQuality: "7h 30m (75% sleep efficiency)",
+    movementIntensity: "5,000 steps/day",
+    bloodPressure: "130/85 mmHg (Normal)",
+    fertilityTracking: "Ovulation Day 14 (2025-07-20)",
+    glucoseTracking: "95 mg/dL (Fasting)",
+  });
+
+  const addLifestyleItem = () => {
+    setLifestyleSkills((curr) => {
+      const key = activeLifestyleSection || "sleepRelaxation";
+      const list = curr[key] || [];
+      return { ...curr, [key]: [...list, { text: "" }] };
+    });
+  };
+
+  const saveLifestyle = async () => {
+    setIsEditingLifestyle(false);
+  };
+
+  const saveStory = async () => {
+    setIsEditingStory(false);
+  };
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
@@ -58,13 +163,13 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
             <button className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]">
               <ChatsIcon />
-              Chat with client
+              Chat
             </button>
             <button
               className="flex items-center gap-[8px] px-[12px] py-[4px]"
               onClick={onEdit}
             >
-              <EditIcon /> View profile
+              <ClientsIntake /> Client's Intake
             </button>
           </div>
         </div>
@@ -78,7 +183,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             }`}
             onClick={() => setActiveTab("clientInfo")}
           >
-            Client info
+            Personal information
           </button>
           <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
@@ -88,7 +193,27 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             }`}
             onClick={() => setActiveTab("healthProfile")}
           >
-            Health profile
+            Health summary
+          </button>
+          <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
+              activeTab === "foodMoodPoop"
+                ? "bg-[#F2F4F6] text-[#000000]"
+                : "text-[#000000]"
+            }`}
+            onClick={() => setActiveTab("foodMoodPoop")}
+          >
+            Food Mood Poop Journal
+          </button>
+          <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
+              activeTab === "clientStory"
+                ? "bg-[#F2F4F6] text-[#000000]"
+                : "text-[#000000]"
+            }`}
+            onClick={() => setActiveTab("clientStory")}
+          >
+            Client Story
           </button>
           <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
@@ -102,13 +227,13 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           </button>
           <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "biometrics"
+              activeTab === "lifestyleSkills"
                 ? "bg-[#F2F4F6] text-[#000000]"
                 : "text-[#000000]"
             }`}
-            onClick={() => setActiveTab("biometrics")}
+            onClick={() => setActiveTab("lifestyleSkills")}
           >
-            Biometrics
+            Lifestyle Skills
           </button>
           <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
@@ -122,182 +247,72 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           </button>
           <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "healthProviders"
+              activeTab === "biometrics"
                 ? "bg-[#F2F4F6] text-[#000000]"
                 : "text-[#000000]"
             }`}
-            onClick={() => setActiveTab("healthProviders")}
+            onClick={() => setActiveTab("biometrics")}
           >
-            Health providers
+            Biometrics
           </button>
           <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "journals"
+              activeTab === "labs"
                 ? "bg-[#F2F4F6] text-[#000000]"
                 : "text-[#000000]"
             }`}
-            onClick={() => setActiveTab("journals")}
+            onClick={() => setActiveTab("labs")}
           >
-            Journals
-          </button>
-          <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "addOption"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
-            onClick={() => setActiveTab("addOption")}
-          >
-            Add option
+            Labs
           </button>
         </div>
 
-        {activeTab === "clientInfo" && (
-          <div className="bg-white p-[16px] md:p-0 rounded-[8px] md:rounded-0 border border-[#DBDEE1] md:border-none md:bg-transparent grid grid-cols-2 md:grid-cols-3 gap-[24px] text-[14px]">
-            <div className="flex flex-col gap-[24px]">
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Gender
-                </p>
-                <p className="text-[16px] text-[#5F5F65]">
-                  {client.client_info.gender}
-                </p>
-              </div>
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Recent updates
-                </p>
-                <p className="text-[16px] text-[#1D1D1F]">
-                  {client.client_info.last_activity
-                    ? new Date(
-                        client.client_info.last_activity
-                      ).toLocaleDateString("en-GB")
-                    : "-"}
-                </p>
-              </div>
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Learning now
-                </p>
-                {client.client_info.learning_now.recent_items.length > 0 && (
-                  <p className="text-[16px] text-[#1D1D1F]">
-                    <span className="underline">
-                      {client.client_info.learning_now.recent_items[0].title}
-                    </span>
-                    <span> and </span>
-                    <span className="text-[#1C63D8] underline cursor-pointer">
-                      {client.client_info.learning_now.recent_items.length >
-                        1 &&
-                        `${client.client_info.learning_now.recent_items.length - 1} more`}
-                    </span>
-                  </p>
-                )}
-              </div>
-            </div>
+        <div className="max-h-[350px] overflow-y-auto">
+          {activeTab === "clientInfo" && <ClientInfo client={client} />}
+          {activeTab === "healthProfile" && <HealthProfile client={client} />}
+          {activeTab === "foodMoodPoop" && <FoodMoodPoop />}
+          {activeTab === "clientStory" && (
+            <ClientStory
+              value={story}
+              edit={isEditingStory}
+              onChange={setStory}
+            />
+          )}
+          {activeTab === "symptoms" && (
+            <Symptoms
+              value={symptoms}
+              edit={isEditingSymptoms}
+              onChange={setSymptoms}
+            />
+          )}
+          {activeTab === "lifestyleSkills" && (
+            <LifestyleSkills
+              value={lifestyleSkills}
+              edit={isEditingLifestyle}
+              onChange={setLifestyleSkills}
+              activeSection={activeLifestyleSection}
+              onSectionFocus={setActiveLifestyleSection}
+            />
+          )}
+          {activeTab === "medicationsAndSupplements" && (
+            <MedicationsSupplements
+              value={meds}
+              onChange={setMeds}
+              editing={medsEditing}
+              setEditing={setMedsEditing}
+            />
+          )}
+          {activeTab === "biometrics" && (
+            <Biometrics
+              value={biometrics}
+              edit={isEditingBiometrics}
+              onChange={setBiometrics}
+            />
+          )}
+          {activeTab === "labs" && <Labs />}
+        </div>
 
-            <div className="flex flex-col gap-[24px]">
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Last seen
-                </p>
-                <p className="text-[16px] text-[#1D1D1F]">
-                  {client.client_info.last_activity
-                    ? new Date(
-                        client.client_info.last_activity
-                      ).toLocaleDateString("en-GB")
-                    : "-"}
-                </p>
-              </div>
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Cycle status
-                </p>
-                {client.client_info.cycle_status && (
-                  <span className="inline-flex items-center gap-[4px] bg-[#E0F5FF] px-[12px] py-[4px] rounded-full">
-                    <span className="w-[6px] h-[6px] bg-[#1C63DB] rounded-full"></span>
-                    <span className="text-[#000000] text-[16px]">
-                      {client.client_info.cycle_status}
-                    </span>
-                  </span>
-                )}
-              </div>
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Recent Interventions
-                </p>
-                <p className="text-[16px] text-[#1D1D1F]">
-                  {client.client_info.recent_interventions}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-[24px]">
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Chief Concern
-                </p>
-                <p className="text-[16px] text-[#1D1D1F]">
-                  {client.client_info.chief_concerns}
-                </p>
-              </div>
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Menopause Status
-                </p>
-                {client.client_info.menopause_status !== "" && (
-                  <span className="inline-flex items-center gap-[4px] bg-[#F7501826] px-[12px] py-[4px] rounded-full">
-                    <span className="w-[6px] h-[6px] bg-[#F75018] rounded-full"></span>
-                    <span className="text-[#000000] text-[16px]">
-                      {client.client_info.menopause_status}
-                    </span>
-                  </span>
-                )}
-              </div>
-              <div className="h-[50px]">
-                <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
-                  Recent Labs
-                </p>
-                <p className="text-[16px] text-[#1D1D1F]">
-                  {client.client_info.recent_labs}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-        {activeTab === "healthProfile" && (
-          <div className="md:h-[286px] md:overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-[16px] md:gap-[24px] text-[14px]">
-            {cards.map(({ title, sections }) => (
-              <div
-                key={title}
-                className="bg-white border border-[#DBDEE1] rounded-[8px] flex flex-col gap-[12px] h-fit min-w-[280px] flex-shrink-0"
-              >
-                <h3 className="text-[#1C63DB] font-[700] text-[20px] border-b border-[#DBDEE1] rounded-t-[8px] px-[16px] py-[12px] bg-[#F3F6FB]">
-                  {title}
-                </h3>
-                {sections.map(({ heading, content }) => (
-                  <div key={heading} className="px-[16px]">
-                    <p className="text-[#5F5F65] text-[12px] font-semibold mb-[4px]">
-                      {heading}
-                    </p>
-                    <p className="text-[14px] text-[#1D1D1F]">
-                      {content === "" ? "-" : content}
-                    </p>
-                  </div>
-                ))}
-                <div className="flex gap-[8px] border-t border-[#DBDEE1] rounded-b-[8px] px-[16px] py-[12px]">
-                  <button className="bg-[#1C63DB] text-white px-[16px] py-[4px] rounded-[1000px] font-semibold">
-                    Suggest
-                  </button>
-                  <button className="text-[#1C63DB] font-semibold self-center">
-                    View
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="flex flex-col gap-[8px] md:flex-row md:justify-between items-center mt-[18px] md:mt-[48px]">
+        <div className="flex flex-col gap-[8px] md:flex-row md:justify-between items-center mt-[18px] md:mt-[24px]">
           <button
             className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
             onClick={onClose}
@@ -306,16 +321,123 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           </button>
           <button className="w-full md:hidden p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center">
             <ChatsIcon />
-            Chat with client
+            Chat
           </button>
-          <button
-            className="w-full md:w-[144px] h-[46px] md:h-[40px] rounded-[1000px] text-[#FF1F0F] text-[16px] font-semibold flex gap-[8px] items-center justify-center"
-            onClick={onDelete}
-          >
-            <TrashIcon fill="#FF1F0F" /> Delete user
-          </button>
+          {activeTab === "foodMoodPoop" && (
+            <button
+              onClick={() => setShareOpen(true)}
+              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+            >
+              Share FMP
+            </button>
+          )}
+          {activeTab === "clientStory" && !isEditingStory && (
+            <button
+              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              onClick={() => setIsEditingStory(true)}
+            >
+              Edit
+            </button>
+          )}
+          {activeTab === "clientStory" && isEditingStory && (
+            <button
+              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              onClick={saveStory}
+            >
+              Save
+            </button>
+          )}
+          {activeTab === "symptoms" && !isEditingSymptoms && (
+            <button
+              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              onClick={() => setIsEditingSymptoms(true)}
+            >
+              Edit
+            </button>
+          )}
+          {activeTab === "symptoms" && isEditingSymptoms && (
+            <button
+              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              onClick={() => setIsEditingSymptoms(false)}
+            >
+              Save
+            </button>
+          )}
+          {activeTab === "lifestyleSkills" && !isEditingLifestyle && (
+            <button
+              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              onClick={() => setIsEditingLifestyle(true)}
+            >
+              Edit
+            </button>
+          )}
+          {activeTab === "lifestyleSkills" && isEditingLifestyle && (
+            <div className="hidden md:flex items-center gap-3">
+              <button
+                type="button"
+                onClick={addLifestyleItem}
+                className="p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"
+              >
+                <span className="text-[24px]">+</span> Add
+              </button>
+              <button
+                className="p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+                onClick={saveLifestyle}
+              >
+                Save
+              </button>
+            </div>
+          )}
+          {activeTab === "medicationsAndSupplements" && medsEditing && (
+            <button
+              onClick={() => {
+                setMedsEditing(null);
+              }}
+              disabled={medsEditing === null}
+              className={[
+                "p-[16px] py-[10px] w-[128px] rounded-[1000px] text-white text-[16px] font-semibold",
+                medsEditing === null
+                  ? "bg-[#1C63DB]/60 cursor-not-allowed"
+                  : "bg-[#1C63DB]",
+              ].join(" ")}
+            >
+              Save
+            </button>
+          )}
+          {activeTab === "biometrics" && !isEditingBiometrics && (
+            <button
+              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              onClick={() => setIsEditingBiometrics(true)}
+            >
+              Edit
+            </button>
+          )}
+          {activeTab === "biometrics" && isEditingBiometrics && (
+            <div className="hidden md:flex items-center gap-3">
+              <button
+                type="button"
+                className="p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"
+              >
+                <span className="text-[24px]">+</span> Add
+              </button>
+              <button
+                className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+                onClick={() => setIsEditingBiometrics(false)}
+              >
+                Save
+              </button>
+            </div>
+          )}
         </div>
       </div>
+      <ShareFmpModal
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        onShare={() => {
+          setShareOpen(false);
+        }}
+        clientName={client.client_info.name}
+      />
     </div>
   );
 };

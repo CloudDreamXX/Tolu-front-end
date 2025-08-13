@@ -25,6 +25,7 @@ import UploadCloud from "shared/assets/icons/upload-cloud";
 import { File, MessageCircle, X } from "lucide-react";
 import EmptyClients from "shared/assets/images/EmptyClients.png";
 import { LibrarySmallChat } from "widgets/library-small-chat";
+import Dots from "shared/assets/icons/dots";
 
 const PAGE_SIZE = 10;
 
@@ -89,6 +90,7 @@ export const ContentManagerClients: React.FC = () => {
     collaborative_usage: "",
     permission_type: "",
   });
+  const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("clientInfo");
@@ -482,13 +484,14 @@ export const ContentManagerClients: React.FC = () => {
           </div>
         ) : (
           <div className="md:rounded-[8px]">
-            <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
-              <div className="flex items-center justify-center">Name</div>
-              <div className="flex items-center justify-center">Last seen</div>
+            <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]">
+              <div className="flex items-center justify-center">Full name</div>
               <div className="flex items-center justify-center">Status</div>
-              <div className="flex items-center justify-center">View</div>
+              <div className="flex items-center justify-center">
+                View summary
+              </div>
               <div className="flex items-center justify-center">Message</div>
-              <div className="flex items-center justify-center">Delete</div>
+              <div className="flex items-center justify-center"></div>
             </div>
 
             <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
@@ -496,7 +499,7 @@ export const ContentManagerClients: React.FC = () => {
                 <div
                   key={idx}
                   className="
-            md:grid md:grid-cols-6 md:items-center md:p-[12px]
+            md:grid md:grid-cols-5 md:items-center md:p-[12px]
             flex flex-col gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white md:rounded-none md:border-x-0 md:border-t-0 md:border-b md:border-[#DBDEE1]
           "
                 >
@@ -506,19 +509,6 @@ export const ContentManagerClients: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-center w-full text-[16px] font-semibold">
                       {client.name}
-                    </div>
-                  </div>
-
-                  <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                    <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                      Last seen
-                    </div>
-                    <div className="flex items-center justify-center w-full text-[16px]">
-                      {client.last_activity
-                        ? new Date(client.last_activity).toLocaleDateString(
-                            "en-GB"
-                          )
-                        : "-"}
                     </div>
                   </div>
 
@@ -558,15 +548,35 @@ export const ContentManagerClients: React.FC = () => {
                     </button>
                   )}
                   {!isMobile && !isTablet && (
-                    <button
-                      onClick={() => {
-                        handleSelectClient(client.client_id);
-                        setConfirmDelete(true);
-                      }}
-                      className="flex items-center justify-center "
-                    >
-                      <TrashIcon fill="#000" />
-                    </button>
+                    <div className="relative ml-auto">
+                      <button
+                        onClick={() =>
+                          setDeleteMenuId(
+                            deleteMenuId === client.client_id
+                              ? null
+                              : client.client_id
+                          )
+                        }
+                        className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
+                      >
+                        <Dots />
+                      </button>
+
+                      {deleteMenuId === client.client_id && (
+                        <div className="absolute top-[30px] right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50">
+                          <button
+                            className="flex items-center gap-[8px] w-full text-left"
+                            onClick={async () => {
+                              handleSelectClient(client.client_id);
+                              setConfirmDelete(true);
+                            }}
+                          >
+                            <TrashIcon />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   )}
 
                   {isMobile ? (
@@ -580,7 +590,7 @@ export const ContentManagerClients: React.FC = () => {
                       </button>
                       <button className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]">
                         <Messages />
-                        Chat with client
+                        Chat
                       </button>
                     </div>
                   ) : isTablet ? (

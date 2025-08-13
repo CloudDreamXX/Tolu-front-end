@@ -1,0 +1,98 @@
+import { ClientProfile } from "entities/coach";
+
+type Props = {
+  client: ClientProfile;
+};
+
+const HealthProfile: React.FC<Props> = ({ client }) => {
+  return (
+    <div className="bg-white p-[16px] md:p-0 rounded-[8px] md:rounded-0 border border-[#DBDEE1] md:border-none md:bg-transparent grid grid-cols-2 md:grid-cols-3 gap-[24px] text-[14px]">
+      <div className="flex flex-col gap-[24px]">
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Primary complaint
+          </p>
+          <p className="text-[16px] text-[#1D1D1F]">Lorem ipsum dolores ames</p>
+        </div>
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Cycle status
+          </p>
+          {client.client_info.cycle_status && (
+            <span className="inline-flex items-center gap-[4px] bg-[#E0F5FF] px-[12px] py-[4px] rounded-full">
+              <span className="w-[6px] h-[6px] bg-[#1C63DB] rounded-full"></span>
+              <span className="text-[#000000] text-[16px]">
+                {client.client_info.cycle_status}
+              </span>
+            </span>
+          )}
+        </div>
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Learning now
+          </p>
+          {client.client_info.learning_now.recent_items.length > 0 && (
+            <p className="text-[16px] text-[#1D1D1F]">
+              <span className="underline">
+                {client.client_info.learning_now.recent_items[0].title}
+              </span>
+              <span> and </span>
+              <span className="text-[#1C63D8] underline cursor-pointer">
+                {client.client_info.learning_now.recent_items.length > 1 &&
+                  `${client.client_info.learning_now.recent_items.length - 1} more`}
+              </span>
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-[24px]">
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Working with this client since
+          </p>
+          <p className="text-[16px] text-[#1D1D1F]">May 30, 2025 (63 days)</p>
+        </div>
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Working on now
+          </p>
+          <p className="text-[16px] text-[#1D1D1F]">Lorem ipsum dolores ames</p>
+        </div>
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Tracking
+          </p>
+          <p className="text-[16px] text-[#1D1D1F]">Lorem ipsum dolores ames</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-[24px]">
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Client age
+          </p>
+          <p className="text-[16px] text-[#1D1D1F]">
+            {/* {client.client_info.age} */}
+          </p>
+        </div>
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Recent Labs
+          </p>
+          <p className="text-[16px] text-[#1D1D1F]">
+            {client.client_info.recent_labs}
+          </p>
+        </div>
+        <div className="h-[50px]">
+          <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
+            Personal insight
+          </p>
+          <p className="text-[16px] text-[#1D1D1F]">Lorem ipsum dolores</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HealthProfile;
