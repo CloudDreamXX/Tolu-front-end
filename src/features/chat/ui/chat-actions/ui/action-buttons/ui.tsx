@@ -6,7 +6,7 @@ import {
 import { useEffect, useState } from "react";
 import { FeedbackModal } from "../feedback-modal";
 import { HistoryPopup } from "../history-popup";
-import Share from "shared/assets/icons/share";
+// import Share from "shared/assets/icons/share";
 import SaveModal from "../save-modal/ui";
 import { ArrowLeft, Eye } from "@phosphor-icons/react/dist/ssr";
 import { useNavigate } from "react-router-dom";
@@ -47,26 +47,26 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
     }
   }, [initialRating]);
 
-  const handleShare = async () => {
-    const shareData = {
-      url: window.location.href,
-    };
+  // const handleShare = async () => {
+  //   const shareData = {
+  //     url: window.location.href,
+  //   };
 
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (error) {
-        console.error("Error sharing:", error);
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        alert("Link copied to clipboard!");
-      } catch (err) {
-        console.error("Error copying link:", err);
-      }
-    }
-  };
+  //   if (navigator.share) {
+  //     try {
+  //       await navigator.share(shareData);
+  //     } catch (error) {
+  //       console.error("Error sharing:", error);
+  //     }
+  //   } else {
+  //     try {
+  //       await navigator.clipboard.writeText(window.location.href);
+  //       alert("Link copied to clipboard!");
+  //     } catch (err) {
+  //       console.error("Error copying link:", err);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="flex flex-row gap-2 xl:flex-col justify-between w-full h-[32px] xl:h-full">
@@ -122,12 +122,12 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             />
           </button>
         )}
-        <button
+        {/* <button
           className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center"
           onClick={handleShare}
         >
           <Share />
-        </button>
+        </button> */}
         <button
           className="bg-[#DDEBF6] rounded-full h-8 w-8"
           onClick={onReadAloud}
