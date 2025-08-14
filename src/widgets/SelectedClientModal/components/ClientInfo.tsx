@@ -6,7 +6,7 @@ type Props = {
 
 const ClientInfo: React.FC<Props> = ({ client }) => {
   return (
-    <div className="bg-white p-[16px] md:p-0 rounded-[8px] md:rounded-0 border border-[#DBDEE1] md:border-none md:bg-transparent grid grid-cols-2 gap-[24px] text-[14px]">
+    <div className="bg-white p-[16px] md:p-0 rounded-[8px] md:rounded-0 border border-[#DBDEE1] md:border-none md:bg-transparent grid grid-cols-1 md:grid-cols-2 gap-[24px] text-[14px]">
       <div className="flex flex-col gap-[24px]">
         <div className="h-[50px]">
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">

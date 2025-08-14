@@ -50,7 +50,7 @@ const Symptoms: React.FC<Props> = ({ value, edit = false, onChange }) => {
               {title}
             </div>
 
-            <div className="py-[12px] px-[27px]">
+            <div className="py-[12px] px-[27px] bg-white rounded-b-[8px]">
               <p className="text-[12px] text-[#5F5F65] font-semibold">
                 {label}
               </p>

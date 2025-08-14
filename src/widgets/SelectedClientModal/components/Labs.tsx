@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from "react";
+import Search from "shared/assets/icons/search";
+import { Input } from "shared/ui";
 
 type LabReport = {
   id: string;
@@ -102,6 +104,13 @@ const Labs: React.FC = () => {
     () => `${preview.page + 1} / ${Math.max(totalPages, 1)}`,
     [preview.page, totalPages]
   );
+  const [search, setSearch] = useState<string>("");
+
+  const filteredRows = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter((r) => r.name.toLowerCase().includes(q) || r.description.toLowerCase().includes(q));
+  }, [rows, search]);
 
   const openPreview = (file: LabReport) =>
     setPreview({ open: true, file, page: 0 });
@@ -131,28 +140,42 @@ const Labs: React.FC = () => {
 
   return (
     <>
+      <div className="md:hidden w-full mb-[16px]">
+        <Input
+          placeholder="Search"
+          icon={<Search />}
+          className="rounded-full"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
       <div className="rounded-[12px] border border-[#DBDEE1] overflow-hidden">
-        <div className="bg-[#F3F6FB] text-[#1C63DB] font-semibold px-6 py-3 flex">
-          <div className="w-1/3">Name</div>
-          <div className="w-2/3">Description</div>
+        <div className="bg-[#F3F6FB] text-[#1C63DB] font-semibold px-6 py-3 flex italic">
+          <div className="w-full md:w-1/3">Name</div>
+          <div className="hidden md:block md:w-2/3">Description</div>
         </div>
 
-        <div>
-          {rows.map((r, i) => (
+        <div className="bg-white">
+          {filteredRows.map((r, i) => (
             <div
               key={r.id}
               className={[
-                "px-6 py-3 flex items-center",
+                "px-6 py-3 flex items-center justify-between",
                 i !== rows.length - 1 ? "border-b border-[#DBDEE1]" : "",
               ].join(" ")}
             >
-              <div className="w-1/3 flex items-center gap-3">
-                <PdfIcon />
-                <span className="text-[14px] text-[#1D1D1F]">{r.name}</span>
+              <div className="flex flex-col gap-[16px]">
+                <div className="w-full md:w-1/3 flex items-center gap-3">
+                  <PdfIcon />
+                  <span className="text-[14px] text-[#1D1D1F]">{r.name}</span>
+                </div>
+                <div className="md:hidden text-[14px] text-[#1D1D1F] leading-[18px] italic max-w-[200px]">
+                  {r.description}
+                </div>
               </div>
 
-              <div className="w-2/3 flex items-center justify-between gap-3">
-                <div className="text-[14px] text-[#1D1D1F] leading-[18px] italic max-w-[200px]">
+              <div className="w-fit md:w-2/3 flex items-center justify-between gap-3">
+                <div className="hidden md:block text-[14px] text-[#1D1D1F] leading-[18px] italic max-w-[200px]">
                   {r.description}
                 </div>
 
@@ -183,7 +206,7 @@ const Labs: React.FC = () => {
       {/* Preview modal */}
       {preview.open && preview.file && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/30">
-          <div className="bg-white w-[720px] max-w-[92vw] max-h-[90vh] rounded-[16px] shadow-xl overflow-hidden flex flex-col">
+          <div className="bg-white w-[720px] max-w-[92vw] max-h-[640px] md:max-h-[90vh] rounded-[16px] shadow-xl overflow-hidden flex flex-col">
             <div className="px-5 py-4 flex items-center justify-between">
               <h2 className="text-[18px] font-bold">
                 Preview{" "}
@@ -197,12 +220,12 @@ const Labs: React.FC = () => {
               </button>
             </div>
 
-            <div className="relative flex-1 bg-[#F7F7F8] rounded-[8px] mx-[40px] mb-[24px] px-6 py-6 overflow-auto">
+            <div className="relative flex-1 bg-[#F7F7F8] rounded-[8px] mx-[5px] md:mx-[40px] mb-[24px] px-[5px] md:px-6 py-6 overflow-auto">
               <div className="absolute left-1/2 -translate-x-1/2 top-3 bg-[#161616BF] rounded-full px-3 py-1 text-[12px] font-semibold text-white">
                 {pageDisplay}
               </div>
 
-              <div className="mx-auto w-[560px] bg-white rounded-[12px] shadow p-6 space-y-5">
+              <div className="mx-auto w-full md:w-[560px] bg-white rounded-[12px] shadow p-6 space-y-5">
                 {Array.from({ length: 6 }).map((_, idx) => (
                   <p key={idx} className="text-[13px] leading-6 text-[#1D1D1F]">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut

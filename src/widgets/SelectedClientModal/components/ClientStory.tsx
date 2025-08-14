@@ -46,7 +46,7 @@ export const ClientStory: React.FC<Props> = ({
     );
 
   return (
-    <div className="flex flex-col gap-[24px] px-[24px]">
+    <div className={`flex flex-col gap-[24px] ${edit ? "" : "border border-[#DBDEE1] md:border-0 bg-white rounded-[8px] md:bg-transparent py-[16px] md:py-0"} md:px-[24px]`}>
       {!edit ? (
         SECTIONS.map(([label, key]) => (
           <section key={key}>
@@ -67,42 +67,51 @@ export const ClientStory: React.FC<Props> = ({
       ) : (
         <div className="flex flex-col gap-[24px]">
           {SECTIONS.map(([label, key]) => (
-            <section key={key}>
-              <p className="text-[12px] text-[#5F5F65] font-semibold mb-[8px]">
-                {label}
-              </p>
-              <div className="flex flex-col gap-[12px]">
-                {value[key]?.map((val, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-[8px] rounded-full border border-[#DBDEE1] bg-white px-[16px] py-[10px]"
-                  >
-                    <input
-                      value={val}
-                      onChange={(e) => handleChange(key, i, e.target.value)}
-                      placeholder={`Enter ${label.toLowerCase()} item`}
-                      className="w-full outline-none text-[16px] text-[#1D1D1F]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeItem(key, i)}
-                      className="shrink-0 text-[#E86C4A] hover:opacity-80"
-                      aria-label="Remove"
-                      title="Remove"
+            <div>
+              <section key={key} className={`${edit ? "border border-[#DBDEE1] md:border-0 bg-white rounded-[8px] md:bg-transparent p-[10px] md:p-0" : ""}`}>
+                <p className="text-[12px] text-[#5F5F65] font-semibold mb-[8px]">
+                  {label}
+                </p>
+                <div className="flex flex-col gap-[12px]">
+                  {value[key]?.map((val, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-[8px] rounded-full border border-[#DBDEE1] bg-white px-[20px] py-[12px] h-[68px] md:h-fit md:px-[16px] md:py-[10px]"
                     >
-                      <TrashIcon />
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => addItem(key)}
-                  className="inline-flex items-center gap-2 text-[#008FF6] font-semibold ml-auto"
-                >
-                  <span className="text-[20px] leading-none">+</span> Add
-                </button>
-              </div>
-            </section>
+                      <input
+                        value={val}
+                        onChange={(e) => handleChange(key, i, e.target.value)}
+                        placeholder={`Enter ${label.toLowerCase()} item`}
+                        className="w-full outline-none text-[16px] text-[#1D1D1F]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeItem(key, i)}
+                        className="shrink-0 text-[#E86C4A] hover:opacity-80"
+                        aria-label="Remove"
+                        title="Remove"
+                      >
+                        <TrashIcon />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addItem(key)}
+                    className=" hidden md:inline-flex items-center gap-2 text-[#008FF6] font-semibold ml-auto"
+                  >
+                    <span className="text-[20px] leading-none">+</span> Add
+                  </button>
+                </div>
+              </section>
+              <button
+                type="button"
+                onClick={() => addItem(key)}
+                className="inline-flex md:hidden items-center justify-end mt-[24px] w-full gap-2 text-[#008FF6] font-semibold ml-auto"
+              >
+                <span className="text-[20px] leading-none">+</span> Add
+              </button>
+            </div>
           ))}
         </div>
       )}

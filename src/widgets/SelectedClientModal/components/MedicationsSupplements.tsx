@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import Chevron from "shared/assets/icons/chevron";
 import EditIcon from "shared/assets/icons/edit";
+import { usePageWidth } from "shared/lib";
 
 export type Medication = {
   name: string;
@@ -46,23 +48,28 @@ const RowView: React.FC<{ med: Medication; onEdit: () => void }> = ({
   onEdit,
 }) => (
   <div className="relative">
-    <div className="grid grid-cols-5 gap-x-[8px] gap-y-1">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-x-[8px] gap-y-1 p-[16px] md:p-0 bg-white md:bg-transparent rounded-[8px] md:rounded-0 border border-[#DBDEE1] md:border-0">
       <ColumnLabel>Name</ColumnLabel>
+      <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.name}</div>
       <ColumnLabel>Dosage</ColumnLabel>
+      <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.dosage}</div>
       <ColumnLabel>Taking since</ColumnLabel>
+      <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.takingSince}</div>
       <ColumnLabel>Prescribed</ColumnLabel>
+      <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.prescribed}</div>
       <ColumnLabel>Status</ColumnLabel>
+      <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.status}</div>
 
-      <div className="text-[16px] text-[#1D1D1F]">{med.name}</div>
-      <div className="text-[16px] text-[#1D1D1F]">{med.dosage}</div>
-      <div className="text-[16px] text-[#1D1D1F]">{med.takingSince}</div>
-      <div className="text-[16px] text-[#1D1D1F]">{med.prescribed}</div>
-      <div className="text-[16px] text-[#1D1D1F]">{med.status}</div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.name}</div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.dosage}</div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.takingSince}</div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.prescribed}</div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.status}</div>
     </div>
 
     <button
       onClick={onEdit}
-      className="absolute -right-1 top-1 p-1 rounded hover:bg-black/5"
+      className="absolute right-[16px] md:-right-1 top-[16px] md:top-1 p-1 rounded hover:bg-black/5"
       title="Edit"
       aria-label="Edit row"
     >
@@ -75,37 +82,72 @@ const RowEdit: React.FC<{
   med: Medication;
   onChange: (next: Medication) => void;
 }> = ({ med, onChange }) => (
-  <div className="grid grid-cols-5 gap-x-[8px] gap-y-1 py-[8px]">
+  <div className="grid grid-cols-1 md:grid-cols-5 gap-x-[8px] gap-y-1 md:py-[8px] p-[16px] md:p-0 bg-white md:bg-transparent rounded-[8px] md:rounded-0 border border-[#DBDEE1] md:border-0">
     <ColumnLabel>Name</ColumnLabel>
+    <PillInput
+      value={med.name}
+      onChange={(e) => onChange({ ...med, name: e.target.value })}
+      placeholder="Medication name"
+      className="md:hidden"
+    />
     <ColumnLabel>Dosage</ColumnLabel>
+    <PillInput
+      value={med.dosage}
+      onChange={(e) => onChange({ ...med, dosage: e.target.value })}
+      placeholder="e.g., 50 mcg daily"
+      className="md:hidden"
+    />
     <ColumnLabel>Taking since</ColumnLabel>
+    <PillInput
+      value={med.takingSince}
+      onChange={(e) => onChange({ ...med, takingSince: e.target.value })}
+      placeholder="DD.MM.YYYY"
+      className="md:hidden"
+    />
     <ColumnLabel>Prescribed</ColumnLabel>
+    <PillInput
+      value={med.prescribed}
+      onChange={(e) => onChange({ ...med, prescribed: e.target.value })}
+      placeholder="Prescriber"
+      className="md:hidden"
+    />
     <ColumnLabel>Status</ColumnLabel>
+    <PillInput
+      value={med.status}
+      onChange={(e) => onChange({ ...med, status: e.target.value })}
+      placeholder="Active / not active"
+      className="md:hidden"
+    />
 
     <PillInput
       value={med.name}
       onChange={(e) => onChange({ ...med, name: e.target.value })}
       placeholder="Medication name"
+      className="hidden md:block"
     />
     <PillInput
       value={med.dosage}
       onChange={(e) => onChange({ ...med, dosage: e.target.value })}
       placeholder="e.g., 50 mcg daily"
+      className="hidden md:block"
     />
     <PillInput
       value={med.takingSince}
       onChange={(e) => onChange({ ...med, takingSince: e.target.value })}
       placeholder="DD.MM.YYYY"
+      className="hidden md:block"
     />
     <PillInput
       value={med.prescribed}
       onChange={(e) => onChange({ ...med, prescribed: e.target.value })}
       placeholder="Prescriber"
+      className="hidden md:block"
     />
     <PillInput
       value={med.status}
       onChange={(e) => onChange({ ...med, status: e.target.value })}
       placeholder="Active / not active"
+      className="hidden md:block"
     />
   </div>
 );
@@ -119,12 +161,14 @@ const TableCard: React.FC<{
   section: "previous" | "current";
 }> = ({ title, rows, onRowsChange, editing, setEditing, section }) => {
   const editingIndex = editing?.section === section ? editing.index : -1;
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const { isMobile } = usePageWidth();
 
   return (
     <div>
-      <SectionTitle>{title}</SectionTitle>
+      <div className="flex justify-between text-[#1C63DB]" onClick={() => setIsExpanded(!isExpanded)}><SectionTitle>{title}</SectionTitle><span className={`md:hidden ${isExpanded ? "rotate-[180deg]" : ""}`}><Chevron /></span></div>
 
-      <div className="flex flex-col gap-[16px] mt-[8px]">
+      {(isExpanded || !isMobile) && <div className="flex flex-col gap-[16px] mt-[8px]">
         {rows.map((med, idx) => (
           <div key={idx}>
             {editingIndex === idx ? (
@@ -144,7 +188,7 @@ const TableCard: React.FC<{
             )}
           </div>
         ))}
-      </div>
+      </div>}
     </div>
   );
 };

@@ -62,7 +62,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
       "Hot flashes (3–5/day), Low libido, Interrupted sleep, Mood instability",
     mind: "",
   });
-  const [isEditingLifestyle, setIsEditingLifestyle] = useState(false);
+  const [isEditingLifestyle, setIsEditingLifestyle] = useState<keyof LifestyleSkillsData | null>(null)
   const [activeLifestyleSection, setActiveLifestyleSection] =
     useState<keyof LifestyleSkillsData>("sleepRelaxation");
   const [lifestyleSkills, setLifestyleSkills] = useState<LifestyleSkillsData>({
@@ -123,7 +123,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
   };
 
   const saveLifestyle = async () => {
-    setIsEditingLifestyle(false);
+    setIsEditingLifestyle(null);
   };
 
   const saveStory = async () => {
@@ -176,98 +176,89 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
 
         <div className="flex gap-[16px] mb-[24px] border border-[#DBDEE1] bg-white rounded-[1000px] p-[8px] overflow-x-auto">
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "clientInfo"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "clientInfo"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("clientInfo")}
           >
             Personal information
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "healthProfile"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "healthProfile"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("healthProfile")}
           >
             Health summary
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "foodMoodPoop"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "foodMoodPoop"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("foodMoodPoop")}
           >
             Food Mood Poop Journal
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "clientStory"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "clientStory"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("clientStory")}
           >
             Client Story
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "symptoms"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "symptoms"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("symptoms")}
           >
             Symptoms
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "lifestyleSkills"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "lifestyleSkills"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("lifestyleSkills")}
           >
             Lifestyle Skills
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "medicationsAndSupplements"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "medicationsAndSupplements"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("medicationsAndSupplements")}
           >
             Medications and Supplements
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "biometrics"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "biometrics"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("biometrics")}
           >
             Biometrics
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "labs"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "labs"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("labs")}
           >
             Labs
           </button>
         </div>
 
-        <div className="max-h-[350px] overflow-y-auto">
+        <div className="md:max-h-[350px] overflow-y-auto">
           {activeTab === "clientInfo" && <ClientInfo client={client} />}
           {activeTab === "healthProfile" && <HealthProfile client={client} />}
           {activeTab === "foodMoodPoop" && <FoodMoodPoop />}
@@ -288,7 +279,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           {activeTab === "lifestyleSkills" && (
             <LifestyleSkills
               value={lifestyleSkills}
-              edit={isEditingLifestyle}
+              isEditing={isEditingLifestyle}
+              setIsEditing={setIsEditingLifestyle}
               onChange={setLifestyleSkills}
               activeSection={activeLifestyleSection}
               onSectionFocus={setActiveLifestyleSection}
@@ -303,16 +295,24 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             />
           )}
           {activeTab === "biometrics" && (
-            <Biometrics
-              value={biometrics}
-              edit={isEditingBiometrics}
-              onChange={setBiometrics}
-            />
+            <>
+              <button
+                type="button"
+                className="md:hidden p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold text-end w-full"
+              >
+                <span className="text-[24px]">+</span> Add
+              </button>
+              <Biometrics
+                value={biometrics}
+                edit={isEditingBiometrics}
+                onChange={setBiometrics}
+              />
+            </>
           )}
           {activeTab === "labs" && <Labs />}
         </div>
 
-        <div className="flex flex-col gap-[8px] md:flex-row md:justify-between items-center mt-[18px] md:mt-[24px]">
+        <div className="flex flex-col-reverse gap-[8px] md:flex-row md:justify-between items-center mt-[18px] md:mt-[24px]">
           <button
             className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
             onClick={onClose}
@@ -326,14 +326,14 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           {activeTab === "foodMoodPoop" && (
             <button
               onClick={() => setShareOpen(true)}
-              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
             >
               Share FMP
             </button>
           )}
           {activeTab === "clientStory" && !isEditingStory && (
             <button
-              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={() => setIsEditingStory(true)}
             >
               Edit
@@ -341,7 +341,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           )}
           {activeTab === "clientStory" && isEditingStory && (
             <button
-              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={saveStory}
             >
               Save
@@ -349,7 +349,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           )}
           {activeTab === "symptoms" && !isEditingSymptoms && (
             <button
-              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={() => setIsEditingSymptoms(true)}
             >
               Edit
@@ -357,31 +357,23 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           )}
           {activeTab === "symptoms" && isEditingSymptoms && (
             <button
-              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={() => setIsEditingSymptoms(false)}
             >
               Save
             </button>
           )}
-          {activeTab === "lifestyleSkills" && !isEditingLifestyle && (
-            <button
-              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
-              onClick={() => setIsEditingLifestyle(true)}
-            >
-              Edit
-            </button>
-          )}
           {activeTab === "lifestyleSkills" && isEditingLifestyle && (
-            <div className="hidden md:flex items-center gap-3">
+            <div className="flex items-center gap-3 w-full md:w-fit">
               <button
                 type="button"
                 onClick={addLifestyleItem}
-                className="p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"
+                className="hidden md:block p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"
               >
                 <span className="text-[24px]">+</span> Add
               </button>
               <button
-                className="p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+                className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
                 onClick={saveLifestyle}
               >
                 Save
@@ -395,7 +387,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
               }}
               disabled={medsEditing === null}
               className={[
-                "p-[16px] py-[10px] w-[128px] rounded-[1000px] text-white text-[16px] font-semibold",
+                "p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] text-white text-[16px] font-semibold",
                 medsEditing === null
                   ? "bg-[#1C63DB]/60 cursor-not-allowed"
                   : "bg-[#1C63DB]",
@@ -406,22 +398,22 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           )}
           {activeTab === "biometrics" && !isEditingBiometrics && (
             <button
-              className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={() => setIsEditingBiometrics(true)}
             >
               Edit
             </button>
           )}
           {activeTab === "biometrics" && isEditingBiometrics && (
-            <div className="hidden md:flex items-center gap-3">
+            <div className="flex items-center gap-3 w-full md:w-fit">
               <button
                 type="button"
-                className="p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"
+                className="hidden md:block p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"
               >
                 <span className="text-[24px]">+</span> Add
               </button>
               <button
-                className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+                className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
                 onClick={() => setIsEditingBiometrics(false)}
               >
                 Save

@@ -58,13 +58,13 @@ export const ShareFmpModal: React.FC<Props> = ({
           <div className="flex items-center justify-between gap-3">
             <button
               onClick={onClose}
-              className="px-[39px] py-[11px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
+              className="w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
             >
               Cancel
             </button>
             <button
               onClick={onShare}
-              className="px-[39px] py-[11px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              className="w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
             >
               Share
             </button>
