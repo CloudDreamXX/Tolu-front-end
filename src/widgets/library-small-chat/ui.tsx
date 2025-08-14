@@ -738,7 +738,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
           <CardContent className="flex flex-1 w-full h-full px-6 pb-0 overflow-auto">
-            {!isCoach && (
+            {!isCoach && messages.length && (
               <div className="w-fit h-fit">
                 <ChatActions
                   isSearching={isSearching}
