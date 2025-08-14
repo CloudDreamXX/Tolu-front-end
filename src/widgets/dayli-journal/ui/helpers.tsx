@@ -15,12 +15,12 @@ export const MOOD_COLORS = [
   "#1F4B8A",
   "#2F65B3",
   "#4085D8",
-  "#80D19A",
-  "#51C776",
+  "#5299EF",
+  "#75A9F9",
 ];
 
 export const SLEEP_RANGES = [
-  { text: "Less than 4 hours", icon: <Clock2 className="stroke-[1.5]" /> },
+  { text: "Less than 1 hours", icon: <Clock2 className="stroke-[1.5]" /> },
   { text: "1–3 hours", icon: <Clock3 className="stroke-[1.5]" /> },
   { text: "3 -6 hours", icon: <Clock4 className="stroke-[1.5]" /> },
   { text: "All day", icon: <Calendar className="stroke-[1.5]" /> },
@@ -36,9 +36,9 @@ export const SUSPECTED_TRIGGERS = [
   "Emotional stress",
 ];
 
-export type FellBackOption = "Easy" | "Medium" | "Hard";
+export type FellBackOption = "Easy" | "Never" | "Hard";
 
-export const FELL_BACK_OPTIONS: FellBackOption[] = ["Easy", "Medium", "Hard"];
+export const FELL_BACK_OPTIONS: FellBackOption[] = ["Easy", "Never", "Hard"];
 
 export interface SleepState {
   hours: number;

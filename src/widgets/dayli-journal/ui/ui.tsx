@@ -1,3 +1,5 @@
+import { XIcon } from "@phosphor-icons/react";
+import { SymptomData, SymptomsTrackerService } from "entities/symptoms-tracker";
 import {
   Clock4,
   Coffee,
@@ -32,8 +34,6 @@ import {
   SUSPECTED_TRIGGERS,
   SYMPTOMS,
 } from ".";
-import { SymptomData, SymptomsTrackerService } from "entities/symptoms-tracker";
-import { XIcon } from "@phosphor-icons/react";
 
 interface DayliJournalProps {
   isOpen: boolean;
@@ -377,7 +377,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto inset-0 z-[60] flex lg:max-w-[766px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)]">
+    <div className="md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto inset-0 flex lg:max-w-[800px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)]">
       <CalendarBlock
         selectedDate={selectedDate}
         handleDateChange={handleDateChange}
@@ -713,7 +713,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
 
           <div className="flex gap-2 ">
             <Input
-              placeholder="Type other meal examples here..."
+              placeholder="Type some notes here..."
               className="font-semibold h-[44px] text-base"
               value={mealExampleValue}
               onChange={(e) => setMealExampleValue(e.target.value)}
