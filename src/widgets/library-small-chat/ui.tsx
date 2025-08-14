@@ -566,7 +566,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             setIsSearching(false);
             setError(error.message);
             console.error("Search error:", error);
-          }
+          },
+          isSwitch(SWITCH_KEYS.LEARN)
         );
       }
     } catch (error) {
