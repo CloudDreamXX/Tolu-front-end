@@ -7,6 +7,7 @@ export interface Message {
   content: string;
   timestamp: Date;
   document?: string;
+  images?: string[];
 }
 
 interface MessageBubbleProps {
@@ -53,6 +54,30 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
               </div>
               <div className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg font-inter">
                 {message.content}
+                {!!message.images?.length && (
+                  <div
+                    className={`mt-2 grid gap-2 grid-cols-1
+                      `}
+                  >
+                    {message.images.map((src, idx) => (
+                      <a
+                        key={src + idx}
+                        href={src}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                        title="Open image"
+                      >
+                        <img
+                          src={src}
+                          alt={`uploaded-${idx + 1}`}
+                          className="w-full h-32 object-cover rounded-lg border border-[#E5E7EB]"
+                          loading="lazy"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ) : (

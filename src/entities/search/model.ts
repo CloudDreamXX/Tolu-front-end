@@ -1,6 +1,6 @@
 export interface AiSearchRequest {
   chat_message: string;
-  image?: File;
+  images?: File[];
   pdf?: File;
 }
 

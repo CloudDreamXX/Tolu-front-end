@@ -365,12 +365,17 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     //     return;
     //   }
     // }
+    const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const previewImages = files
+      .filter((f) => imageMime.includes(f.type))
+      .map((f) => URL.createObjectURL(f));
 
     const userMessage: Message = {
       id: Date.now().toString(),
       type: "user",
       content: message,
       timestamp: new Date(),
+      images: previewImages,
     };
     setMessages((prev) => [...prev, userMessage]);
 
@@ -380,7 +385,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setError(null);
 
     const {
-      image,
+      images,
       pdf,
       errors: fileErrors,
     } = await SearchService.prepareFilesForSearch(files);
@@ -513,7 +518,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             text_quote: selectedText,
           }),
           documentId,
-          image,
+          images,
           pdf,
           processChunk,
           processFinal
@@ -527,7 +532,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               chat_id: currentChatId,
               text_quote: selectedText,
             }),
-            image,
+            images,
             pdf,
             contentId: documentId,
             clientId: clientId ?? undefined,
@@ -552,7 +557,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               text_quote: selectedText,
               // personalize: isSwitch(SWITCH_KEYS.PERSONALIZE),
             }),
-            ...(image && { image }),
+            ...(images && { images }),
             ...(pdf && { pdf }),
           },
           processChunk,
@@ -763,7 +768,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           <CardFooter className="w-full p-0">
             <LibraryChatInput
               className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
-              onSend={() => handleNewMessage(message, files)}
+              onSend={handleNewMessage}
               disabled={isSearching}
               switchOptions={config.options}
               selectedSwitch={selectedSwitch}
@@ -906,7 +911,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           <CardFooter className="w-full p-0">
             <LibraryChatInput
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
-              onSend={() => handleNewMessage(message, files)}
+              onSend={handleNewMessage}
               disabled={
                 isSearching ||
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderId) ||

@@ -352,7 +352,7 @@ export const LibraryChat = () => {
               : currentChatId,
             regenerate_id: null,
           }),
-          ...(files?.length > 0 ? { image: files } : {}),
+          ...(files?.length > 0 ? { images: files } : {}),
         },
         (chunk: StreamChunk) => {
           if (chunk.reply) {
@@ -447,11 +447,17 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     //   }
     // }
 
+    const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const previewImages = files
+      .filter((f) => imageMime.includes(f.type))
+      .map((f) => URL.createObjectURL(f));
+
     const userMessage: Message = {
       id: Date.now().toString(),
       type: "user",
       content: message,
       timestamp: new Date(),
+      images: previewImages,
     };
     setMessages((prev) => [...prev, userMessage]);
 
@@ -461,7 +467,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     setError(null);
 
     const {
-      image,
+      images,
       pdf,
       errors: fileErrors,
     } = await SearchService.prepareFilesForSearch(files);
@@ -528,7 +534,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               user_prompt: message,
               is_new: false,
             }),
-            image,
+            images: images,
             pdf,
             contentId: documentId,
             clientId: clientId ?? undefined,
@@ -553,7 +559,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               regenerate_id: null,
               personalize: false,
             }),
-            ...(image && { image }),
+            ...(images && { images: images }),
             ...(pdf && { pdf }),
           },
           processChunk,

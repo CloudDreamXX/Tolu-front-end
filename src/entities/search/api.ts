@@ -39,7 +39,7 @@ export class SearchService {
     try {
       const formData = this.createSearchRequest(
         searchData.chat_message,
-        searchData.image,
+        searchData.images,
         searchData.pdf,
         clientId,
         documentId
@@ -65,7 +65,7 @@ export class SearchService {
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
-      let accumulatedText = ""; // Buffer for chunk accumulation
+      let accumulatedText = "";
 
       if (!reader) {
         throw new Error("No response body reader available");
@@ -77,9 +77,8 @@ export class SearchService {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        accumulatedText += chunk; // Append the chunk to the buffer
+        accumulatedText += chunk;
 
-        // Check if accumulated text contains a complete response
         const lines = accumulatedText.split("\n");
 
         for (const line of lines) {
@@ -110,14 +109,13 @@ export class SearchService {
                 });
               }
             } else {
-              onChunk(parsed); // Pass the chunk as is to the callback
+              onChunk(parsed);
             }
           } catch (parseError) {
             console.warn("Failed to parse JSON chunk:", jsonLine, parseError);
           }
         }
 
-        // Clear the accumulated buffer if we processed all valid chunks
         accumulatedText = "";
       }
     } catch (error) {
@@ -138,7 +136,7 @@ export class SearchService {
     try {
       const formData = this.createSearchRequest(
         searchData.chat_message,
-        searchData.image,
+        searchData.images,
         searchData.pdf,
         searchData.clientId,
         searchData.contentId
@@ -267,7 +265,7 @@ export class SearchService {
 
   static createSearchRequest(
     message: string,
-    imageFile?: File,
+    imageFiles?: File[],
     pdfFile?: File,
     clientId?: string,
     contentId?: string
@@ -275,12 +273,14 @@ export class SearchService {
     const formData = new FormData();
     formData.append("chat_message", message);
 
-    if (imageFile) {
-      formData.append("image", imageFile);
+    if (imageFiles && imageFiles.length) {
+      imageFiles.forEach((file) => {
+        formData.append("images", file, file.name);
+      });
     }
 
     if (pdfFile) {
-      formData.append("pdf", pdfFile);
+      formData.append("pdf", pdfFile, pdfFile.name);
     }
 
     if (clientId) {
@@ -305,14 +305,15 @@ export class SearchService {
 
   static async prepareFilesForSearch(
     files: File[]
-  ): Promise<{ image?: File; pdf?: File; errors: string[] }> {
+  ): Promise<{ images: File[]; pdf?: File; errors: string[] }> {
     const errors: string[] = [];
-    let image: File | undefined;
+    const images: File[] = [];
     let pdf: File | undefined;
 
     const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     const pdfTypes = ["application/pdf"];
     const maxSizeInMB = 10;
+    const maxImages = 10;
 
     for (const file of files) {
       if (!this.validateFileSize(file, maxSizeInMB)) {
@@ -321,10 +322,10 @@ export class SearchService {
       }
 
       if (imageTypes.includes(file.type)) {
-        if (image) {
-          errors.push("Only one image file is allowed");
+        if (images.length >= maxImages) {
+          errors.push(`Only ${maxImages} image files are allowed`);
         } else {
-          image = file;
+          images.push(file);
         }
       } else if (pdfTypes.includes(file.type)) {
         if (pdf) {
@@ -337,6 +338,6 @@ export class SearchService {
       }
     }
 
-    return { image, pdf, errors };
+    return { images, pdf, errors };
   }
 }

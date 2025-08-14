@@ -57,7 +57,7 @@ export class ClientService {
   static async aiPersonalizedSearch(
     chatMessage: string,
     referenceContentId: string,
-    image?: File,
+    images?: File[],
     pdf?: File,
     onChunk?: (data: any) => void,
     onComplete?: (result: any) => void
@@ -68,8 +68,9 @@ export class ClientService {
     formData.append("chat_message", chatMessage);
     formData.append("reference_content_id", referenceContentId);
 
-    if (image) {
-      formData.append("image", image);
+    if (images?.length) {
+      images.forEach((file) => formData.append("images", file, file.name));
+      formData.append("image", images[0], images[0].name);
     }
 
     if (pdf) {
