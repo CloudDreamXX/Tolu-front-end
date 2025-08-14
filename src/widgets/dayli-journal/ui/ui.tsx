@@ -711,20 +711,23 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
             </div>
           </div>
 
-          <div className="flex gap-2 ">
-            <Input
-              placeholder="Type some notes here..."
-              className="font-semibold h-[44px] text-base"
-              value={mealExampleValue}
-              onChange={(e) => setMealExampleValue(e.target.value)}
-            />
-            <Button
-              variant="ghost"
-              className="h-[44px] w-[44px]"
-              onClick={handleAddMealExample}
-            >
-              <Plus className="stroke-[1.5] text-[#5F5F65]" />
-            </Button>
+          <div className="flex flex-col gap-2">
+            <label>Notes:</label>
+            <div className="flex gap-2 ">
+              <Input
+                placeholder="Type some notes here..."
+                className="font-semibold h-[44px] text-base"
+                value={mealExampleValue}
+                onChange={(e) => setMealExampleValue(e.target.value)}
+              />
+              <Button
+                variant="ghost"
+                className="h-[44px] w-[44px]"
+                onClick={handleAddMealExample}
+              >
+                <Plus className="stroke-[1.5] text-[#5F5F65]" />
+              </Button>
+            </div>
           </div>
 
           <div className="flex flex-col gap-4 text-[#1D1D1F]">
