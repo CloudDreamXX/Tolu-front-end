@@ -47,6 +47,7 @@ import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
 import { SelectType } from "widgets/OnboardingPractitioner/select-type";
 import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
 import { MainLayout, ProtectedRoute } from "./ui";
+import { ClientMessages } from "pages/messages/ui";
 
 export const AppRoutes = () => {
   return (
@@ -106,6 +107,10 @@ export const AppRoutes = () => {
           element={<ContentManagerMessages />}
         />
         <Route
+          path="/content-manager/messages/:chatId"
+          element={<ContentManagerMessages />}
+        />
+        <Route
           path="/content-manager/ai-generated"
           element={<ContentManagerAiGenerated />}
         />
@@ -159,6 +164,7 @@ export const AppRoutes = () => {
         <Route path="/health-snapshot" element={<HealthSnapshot />} />
         <Route path="/library" element={<Library />} />
         <Route path="/library/:chatId" element={<LibraryChat />} />
+        <Route path="/messages/:chatId" element={<ClientMessages />} />
         <Route
           path="/library/document/:documentId"
           element={<LibraryDocument />}

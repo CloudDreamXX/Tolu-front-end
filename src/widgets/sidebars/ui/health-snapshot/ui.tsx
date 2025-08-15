@@ -13,6 +13,7 @@ import { toast } from "shared/lib/hooks/use-toast";
 import { SearchAiSmallInput } from "entities/search";
 import WrapperLibraryFolderTree from "./FolderTree";
 import { setChat, setFolderId } from "entities/client/lib";
+import { ClientChatList } from "./ClientChatList";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -105,13 +106,15 @@ export const HealthSnapshotSidebar: React.FC = () => {
           {isLibraryOpen && <WrapperLibraryFolderTree />}
           <NavLink
             to={"/messages"}
+            end={false}
             className={({ isActive }) =>
-              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"}`
+              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold  hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"}`
             }
           >
             <ChatsCircle />
             {isNarrow ? "" : "Messages"}
           </NavLink>
+          <ClientChatList />
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import { clientGlucoseReducer } from "./clientGlucoseSlice";
 import { folderReducer } from "entities/folder";
 import { healthHistoryReducer } from "entities/health-history/lib";
 import { clientReducer } from "entities/client/lib";
+import chatReducer from "entities/chat/lib";
 
 const userPersistConfig = {
   key: "user",
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   folder: folderReducer,
   healthHistory: healthHistoryReducer,
   client: clientReducer,
+  chat: chatReducer,
 });
 
 export const store = configureStore({

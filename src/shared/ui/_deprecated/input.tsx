@@ -2,7 +2,6 @@ interface InputProps {
   type?: string;
   label?: string;
   style?: string;
-  [x: string]: any;
 }
 
 export const Input: React.FC<InputProps> = ({

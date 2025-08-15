@@ -20,6 +20,7 @@ import MedicationsSupplements, {
 } from "./components/MedicationsSupplements";
 import Biometrics, { BiometricsData } from "./components/Biometrics";
 import Labs from "./components/Labs";
+import { useNavigate } from "react-router-dom";
 
 interface SelectedClientModalProps {
   client: ClientProfile;
@@ -37,6 +38,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
   onClose,
   onEdit,
 }) => {
+  const navigate = useNavigate();
   const [shareOpen, setShareOpen] = useState(false);
 
   const [isEditingStory, setIsEditingStory] = useState(false);
@@ -163,7 +165,12 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             </h2>
           </div>
           <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
-            <button className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]">
+            <button
+              className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]"
+              onClick={() =>
+                navigate(`/content-manager/messages/${client.client_info.id}`)
+              }
+            >
               <ChatsIcon />
               Chat
             </button>
@@ -330,7 +337,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           >
             Cancel
           </button>
-          <button className="w-full md:hidden p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center">
+          <button className="md:hidden p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center">
             <ChatsIcon />
             Chat
           </button>
@@ -375,7 +382,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             </button>
           )}
           {activeTab === "lifestyleSkills" && isEditingLifestyle && (
-            <div className="flex items-center gap-3 w-full md:w-fit">
+            <div className="flex items-center w-full gap-3 md:w-fit">
               <button
                 type="button"
                 onClick={addLifestyleItem}
@@ -416,7 +423,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             </button>
           )}
           {activeTab === "biometrics" && isEditingBiometrics && (
-            <div className="flex items-center gap-3 w-full md:w-fit">
+            <div className="flex items-center w-full gap-3 md:w-fit">
               <button
                 type="button"
                 className="hidden md:block p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"

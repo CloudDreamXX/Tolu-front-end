@@ -1,6 +1,6 @@
-import z from "zod";
-import { LibrarySmallChat } from "widgets/library-small-chat";
 import EmptyArticle from "shared/assets/images/EmptyArticle.png";
+import { LibrarySmallChat } from "widgets/library-small-chat";
+import z from "zod";
 
 export const caseBaseSchema = z.object({
   age: z
@@ -25,7 +25,7 @@ export const ContentManagerCreatePage: React.FC = () => {
     <div
       className={`flex gap-[24px] items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-[calc(100vh-78px)] p-[16px]`}
     >
-      <div className="hidden xl:block w-full h-full">
+      <div className="hidden w-full h-full xl:block">
         <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
           <img src={EmptyArticle} alt="" className="mb-[32px] w-[163px]" />
           <div className="text-center flex flex-col items-center justify-center gap-[8px]">

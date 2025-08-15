@@ -1,8 +1,10 @@
+import { RootState } from "entities/store";
 import { logout } from "entities/user";
 import { User } from "lucide-react";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import CaretRight from "shared/assets/icons/caretRight";
 import ChatsCircle from "shared/assets/icons/chats-circle";
 import Close from "shared/assets/icons/close";
 import Library from "shared/assets/icons/library";
@@ -12,9 +14,8 @@ import SignOutIconBlue from "shared/assets/icons/signoutBlue";
 import Sparkle from "shared/assets/icons/sparkle-2";
 import { Button } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
-import CaretRight from "shared/assets/icons/caretRight";
+import { ClientChatList } from "widgets/sidebars/ui/health-snapshot/ClientChatList";
 import WrapperLibraryFolderTree from "widgets/sidebars/ui/health-snapshot/FolderTree";
-import { RootState } from "entities/store";
 
 export const NavigationClient: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -261,6 +262,7 @@ export const NavigationClient: React.FC = () => {
                 <ChatsCircle />
                 Messages
               </NavLink>
+              <ClientChatList onPopupClose={() => setMenuMobOpen(false)} />
             </nav>
 
             <div className="flex flex-col gap-[16px] mt-6">

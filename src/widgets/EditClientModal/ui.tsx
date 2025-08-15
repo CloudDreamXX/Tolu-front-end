@@ -79,7 +79,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
           >
             Cancel
           </button>
-          <div className="flex gap-2 w-full md:w-fit">
+          <div className="flex w-full gap-2 md:w-fit">
             {activeEditTab !== tabs[0] && (
               <button
                 className="hidden md:block px-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] text-[#008FF6] text-[16px] font-semibold"
@@ -409,14 +409,14 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
             <MultiSelectField
               label="What are your client’s current focus areas?"
               options={[
-                "Hormone Health",
-                "Gut Health",
-                "Autoimmunity or Inflammation",
-                "Metabolic or Weight Issues",
-                "Sleep & Stress",
-                "Emotional Well-being",
-                "Chronic Illness Management",
-                "General Wellness / Optimization",
+                { label: "Hormone Health" },
+                { label: "Gut Health" },
+                { label: "Autoimmunity or Inflammation" },
+                { label: "Metabolic or Weight Issues" },
+                { label: "Sleep & Stress" },
+                { label: "Emotional Well-being" },
+                { label: "Chronic Illness Management" },
+                { label: "General Wellness / Optimization" },
               ]}
               selected={client.focus_areas || ""}
               onChange={(value) => updateClient("focus_areas", value)}

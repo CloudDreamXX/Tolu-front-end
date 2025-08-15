@@ -42,7 +42,7 @@ export class CoachService {
 
   static async getClientProfile(
     clientId: string,
-    token: string | null
+    token?: string | null
   ): Promise<ClientProfile> {
     const endpoint = API_ROUTES.COACH_ADMIN.GET_CLIENT_PROFILE.replace(
       "{client_id}",

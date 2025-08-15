@@ -1,55 +1,88 @@
-import { ChatItemModel, chatItems } from "pages/content-manager";
-import { useEffect, useState } from "react";
+import { ChatMessage } from "entities/chat";
+import React from "react";
 import { cn, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
 import { FileItem } from "widgets/file-item";
 
 interface MessageBubbleProps {
-  chatId?: string;
-  text?: string;
-  time: string;
-  name?: string;
+  message: ChatMessage;
+  avatar?: string;
+  author?: string;
+  isOnlaine?: boolean;
   isOwn?: boolean;
   className?: string;
-  file?: {
-    id: string;
-    file: File;
-  }[];
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
-  chatId,
-  text,
-  time,
-  name = "",
+  message,
+  avatar,
+  author,
+  isOnlaine = false,
   isOwn = false,
   className = "",
-  file = [],
 }) => {
-  const [chat, setChat] = useState<ChatItemModel | null>();
   const { isMobile } = usePageWidth();
+  const isFileMessage =
+    message.file_name !== null &&
+    message.file_size !== null &&
+    message.file_url !== null;
 
-  useEffect(() => {
-    //mock logic
-    const result = chatItems.find((e) => e.id === chatId);
-    setChat(result);
-  }, [chatId]);
+  const formatTextWithBreaks = (text: string) => {
+    return text.split("\n").map((line) => (
+      <React.Fragment key={line}>
+        {line}
+        <br />
+      </React.Fragment>
+    ));
+  };
 
-  return (
+  const renderFileMessage = () => (
     <div
       className={cn(
-        "flex flex-col w-full h-fit",
-        isOwn ? "items-end" : "items-start"
+        "rounded-lg  p-2 text-base text-[#1D1D1F] flex flex-wrap gap-2 w-fit",
+        isOwn
+          ? "bg-[#AAC6EC] rounded-tr-none"
+          : "bg-white border border-[#DBDEE1] rounded-tl-none",
+        className
       )}
     >
+      <FileItem
+        key={message.id}
+        fileName={message.file_name}
+        fileSize={message.file_size}
+        fileUrl={message.file_url}
+        fileType={message.file_type}
+        className={cn(isOwn ? "bg-white " : "bg-[#AAC6EC] ")}
+      />
+    </div>
+  );
+
+  const renderTextMessage = () => (
+    <span
+      className={cn(
+        "rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F] w-fit",
+        isOwn
+          ? "bg-[#AAC6EC] rounded-tr-none self-end"
+          : "bg-white border border-[#DBDEE1] rounded-tl-none",
+        className
+      )}
+    >
+      {formatTextWithBreaks(message.content)}
+    </span>
+  );
+
+  return (
+    <div className={cn("flex flex-col w-full ", isOwn ? "" : "items-start")}>
       <div className={cn("flex", isOwn && "justify-end")}>
         {!isMobile && !isOwn && (
           <div className="relative mr-3">
             <Avatar className="w-10 h-10 ">
-              <AvatarImage src={chat?.avatar} />
-              <AvatarFallback className="bg-slate-300">AF</AvatarFallback>
+              <AvatarImage src={avatar} />
+              <AvatarFallback className="bg-slate-300">
+                {author?.slice(0, 2).toLocaleUpperCase() || "UN"}
+              </AvatarFallback>
             </Avatar>
-            {chat?.isOnline && (
+            {isOnlaine && (
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
             )}
           </div>
@@ -61,43 +94,17 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           )}
         >
           <div className="flex justify-between font-semibold text-[#1D1D1F] text-[12px] md:text-[14px]">
-            {!isMobile && <span>{isOwn ? "You" : name}</span>}
-            <span className="text-muted-foreground whitespace-nowrap">
-              {time}
+            {!isMobile && (
+              <span className="text-nowrap">{isOwn ? "You" : author}</span>
+            )}
+            <span className="ml-4 text-muted-foreground whitespace-nowrap">
+              {new Date(message.created_at).toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </span>
           </div>
-          {text && text.trim().length > 0 && (
-            <span
-              className={cn(
-                "rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F]",
-                isOwn
-                  ? "bg-[#AAC6EC] rounded-tr-none"
-                  : "bg-white border border-[#DBDEE1] rounded-tl-none",
-                className
-              )}
-            >
-              {text}
-            </span>
-          )}
-          {file.length > 0 && (
-            <div
-              className={cn(
-                "rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F] flex flex-wrap gap-2",
-                isOwn
-                  ? "bg-[#AAC6EC] rounded-tr-none"
-                  : "bg-white border border-[#DBDEE1] rounded-tl-none",
-                className
-              )}
-            >
-              {file.map((f) => (
-                <FileItem
-                  key={f.id}
-                  file={f.file}
-                  classname={cn(isOwn ? "bg-white " : "bg-[#AAC6EC] ")}
-                />
-              ))}
-            </div>
-          )}
+          {isFileMessage ? renderFileMessage() : renderTextMessage()}
         </div>
       </div>
     </div>

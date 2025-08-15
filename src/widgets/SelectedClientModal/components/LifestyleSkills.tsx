@@ -84,7 +84,7 @@ const LifestyleSkills: React.FC<Props> = ({
                 <li className="list-disc ml-[15px]">
                   {(value[key] || []).map((it, i) => (
                     <div key={i} className="flex items-start gap-2">
-                      <span className="font-bold w-3 text-center">
+                      <span className="w-3 font-bold text-center">
                         {it.sign === "minus" ? "–" : "+"}
                       </span>
                       <span className="text-[14px]">{it.text || "—"}</span>

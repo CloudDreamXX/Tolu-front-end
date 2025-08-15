@@ -1,35 +1,42 @@
-import React, { useState, useMemo, useRef, useCallback } from "react";
+import {
+  Client,
+  ClientDetails,
+  ClientProfile,
+  CoachService,
+  InviteClientPayload,
+} from "entities/coach";
+import { RootState } from "entities/store";
+import { File, MessageCircle, X } from "lucide-react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import BlueDots from "shared/assets/icons/blue-dots";
 import Eye from "shared/assets/icons/blue-eye";
-import TrashIcon from "shared/assets/icons/trash-icon";
 import Messages from "shared/assets/icons/blue-messages";
+import CloseIcon from "shared/assets/icons/close";
+import ConfirmIcon from "shared/assets/icons/confirm";
+import Dots from "shared/assets/icons/dots";
 import Arrow from "shared/assets/icons/pages-arrow";
+import TrashIcon from "shared/assets/icons/trash-icon";
+import UploadCloud from "shared/assets/icons/upload-cloud";
+import EmptyClients from "shared/assets/images/EmptyClients.png";
+import { toast } from "shared/lib/hooks/use-toast";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
 import { EditClientModal } from "widgets/EditClientModal";
-import {
-  ClientProfile,
-  Client,
-  CoachService,
-  InviteClientPayload,
-  ClientDetails,
-} from "entities/coach";
-import { useEffect } from "react";
-import { RootState } from "entities/store";
-import { useSelector } from "react-redux";
-import { SelectedClientModal } from "widgets/SelectedClientModal";
-import BlueDots from "shared/assets/icons/blue-dots";
-import CloseIcon from "shared/assets/icons/close";
-import ConfirmIcon from "shared/assets/icons/confirm";
-import { toast } from "shared/lib/hooks/use-toast";
-import UploadCloud from "shared/assets/icons/upload-cloud";
-import { File, MessageCircle, X } from "lucide-react";
-import EmptyClients from "shared/assets/images/EmptyClients.png";
 import { LibrarySmallChat } from "widgets/library-small-chat";
-import Dots from "shared/assets/icons/dots";
+import { SelectedClientModal } from "widgets/SelectedClientModal";
 
 const PAGE_SIZE = 10;
 
 export const ContentManagerClients: React.FC = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedClient, setSelectedClient] = useState<ClientProfile>({
     client_info: {
@@ -457,7 +464,7 @@ export const ContentManagerClients: React.FC = () => {
               <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
               <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
               <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-              <div className="text-right pr-4"></div>
+              <div className="pr-4 text-right"></div>
             </div>
             <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
               {Array.from({ length: 10 }).map((_, i) => (
@@ -543,7 +550,15 @@ export const ContentManagerClients: React.FC = () => {
                     </button>
                   )}
                   {!isMobile && !isTablet && (
-                    <button className="flex items-center justify-center ">
+                    <button
+                      className="flex items-center justify-center "
+                      onClick={() => {
+                        if (client.status !== "active") return;
+                        navigate(
+                          `/content-manager/messages/${client.client_id}`
+                        );
+                      }}
+                    >
                       <MessageCircle />
                     </button>
                   )}
@@ -656,7 +671,7 @@ export const ContentManagerClients: React.FC = () => {
         )}
 
         {totalPages > 1 && !loading && (
-          <div className="flex justify-center items-center gap-2 pb-4">
+          <div className="flex items-center justify-center gap-2 pb-4">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -853,7 +868,7 @@ export const ContentManagerClients: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="hidden xl:block w-full">
+      <div className="hidden w-full xl:block">
         <LibrarySmallChat isCoach isLoading={loading} />
       </div>
     </div>

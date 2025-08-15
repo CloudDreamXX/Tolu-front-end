@@ -1,6 +1,32 @@
-import { ChatItemModel } from "pages/content-manager";
+import { ChatItemModel } from "entities/chat";
 import { cn } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
+
+export const timeAgo = (date: string | Date | null) => {
+  if (!date) return "—";
+
+  const t =
+    typeof date === "string" ? new Date(date).getTime() : date.getTime();
+  if (Number.isNaN(t)) return "—";
+
+  const diffMs = Math.max(0, Date.now() - t);
+  const minutes = Math.floor(diffMs / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60)
+    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days} ${days === 1 ? "day" : "days"} ago`;
+
+  return new Date(t).toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+};
 
 interface ChatItemProps {
   item: ChatItemModel;
@@ -25,28 +51,28 @@ export const ChatItem: React.FC<ChatItemProps> = ({
         <div className="flex items-center ">
           <div className="relative mr-3">
             <Avatar className="w-10 h-10 ">
-              <AvatarImage src={item.avatar} />
-              <AvatarFallback className="bg-slate-300">AF</AvatarFallback>
+              <AvatarImage src={item.avatar_url} />
+              <AvatarFallback className="bg-slate-300">
+                {item.participants[0].name.slice(0, 2).toUpperCase() || "UN"}
+              </AvatarFallback>
             </Avatar>
-            {item.isOnline && (
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
-            )}
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
           </div>
           <div className="flex flex-col">
             <span className="font-semibold text-[18px] text-[#1D1D1F]">
-              {item.name}
+              {item.name || item.participants[0].name}
             </span>
-            <span className="font-semibold text-muted-foreground text-[14px]">
-              {item.username}
+            <span className="font-semibold text-muted-foreground text-[14px] text-nowrap max-w-[150px] truncate">
+              @{item.name || item.participants[0].email}
             </span>
           </div>
         </div>
-        <span className="text-muted-foreground text-[14px] font-semibold self-start">
-          {item.lastSeen}
+        <span className="text-muted-foreground text-[14px] font-semibold self-start text-nowrap">
+          {timeAgo(item.last_message?.created_at ?? null)}
         </span>
       </div>
       <p className="text-muted-foreground text-[14px] font-normal ">
-        {item.lastMessage}
+        {item.last_message?.content || "There are no messages ..."}
       </p>
     </button>
   );

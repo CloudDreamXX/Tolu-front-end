@@ -9,6 +9,8 @@ interface TextareaProps
   isTitleVisible?: boolean;
   titleValue?: string;
   onTitleChange?: React.ChangeEventHandler<HTMLInputElement>;
+  value?: string;
+  onValueChange?: (value: string) => void;
   children?: React.ReactNode;
 }
 
@@ -22,6 +24,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       isTitleVisible,
       titleValue,
       onTitleChange,
+      value,
+      onValueChange,
       children,
       ...props
     },
@@ -46,6 +50,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           <div className="w-full">{children}</div>
         ) : (
           <textarea
+            value={value}
+            onChange={(e) => onValueChange?.(e.target.value)}
             className={cn(
               "flex min-h-[80px] w-full text-[14px] md:text-[18px] xl:text-[18px] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
               footer ? "rounded-b-none border-b-0" : "pb-4",
