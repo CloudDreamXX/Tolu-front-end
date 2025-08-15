@@ -1,6 +1,7 @@
 import { FileIcon, Trash2 } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
 import Attach from "shared/assets/icons/attach";
+import { toast } from "shared/lib";
 import {
   Badge,
   Button,
@@ -77,6 +78,15 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   };
 
   const processFiles = (files: File[]) => {
+    const totalFiles = attachedFiles.length + files.length;
+    if (totalFiles > 10) {
+      toast({
+        variant: "destructive",
+        title: "You cannot add more than 10 files.",
+      });
+      return;
+    }
+
     const validFiles = files.filter((file) => {
       const extension = file.name
         .toLowerCase()

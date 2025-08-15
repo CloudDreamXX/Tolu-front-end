@@ -34,6 +34,8 @@ export interface ContentItem {
   read_count: number;
   saved_for_later_count: number;
   author_name: string;
+  document_type: string;
+  relevance_score: number;
   status: string;
 }
 
@@ -41,16 +43,27 @@ export interface Folder {
   id: string;
   name: string;
   description: string;
-  creator_id: string;
-  created_at: string;
+  creator_id: string | null;
+  created_at: string | null;
   total_content_items: number;
+  reading_percentage: number;
   content: ContentItem[];
   subfolders?: Folder[];
-  reading_percentage: number;
+  pagination: Pagination;
+}
+
+export interface Pagination {
+  current_page: number;
+  page_size: number;
+  total_items: number;
+  total_pages: number;
+  has_next: boolean;
+  has_previous: boolean;
 }
 
 export interface FoldersResponse {
   folders: Folder[];
+  pagination: Pagination;
 }
 
 export interface RequestInvitePayload {

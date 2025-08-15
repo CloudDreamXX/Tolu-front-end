@@ -312,12 +312,11 @@ export class SearchService {
 
     const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     const pdfTypes = ["application/pdf"];
-    const maxSizeInMB = 10;
+    const maxSizeInMB = 30;
     const maxImages = 10;
 
     for (const file of files) {
       if (!this.validateFileSize(file, maxSizeInMB)) {
-        errors.push(`File ${file.name} exceeds ${maxSizeInMB}MB limit`);
         continue;
       }
 

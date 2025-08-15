@@ -48,9 +48,22 @@ export class ClientService {
     });
   }
 
-  static async getLibraryContent(): Promise<FoldersResponse> {
+  static async getLibraryContent(
+    page: number = 1,
+    page_size: number = 10,
+    folder_id: string | null = null
+  ): Promise<FoldersResponse> {
+    const params = {
+      page,
+      page_size,
+      folder_id,
+    };
+
     return ApiService.get<FoldersResponse>(
-      API_ROUTES.CLIENT.GET_LIBRARY_CONTENT
+      API_ROUTES.CLIENT.GET_LIBRARY_CONTENT,
+      {
+        params,
+      }
     );
   }
 

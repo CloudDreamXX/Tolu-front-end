@@ -137,25 +137,6 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
     });
   };
 
-  const buildMedsSummary = (ms: MedicationsAndSupplements | null): string => {
-    if (!ms) return "";
-    const fmt = (m: any) =>
-      [
-        m?.name,
-        m?.dosage,
-        m?.status ? `(${m.status})` : "",
-        m?.prescribed_date ? `since ${m.prescribed_date}` : "",
-        m?.prescribed_by ? `— ${m.prescribed_by}` : "",
-      ]
-        .filter(Boolean)
-        .join(" ");
-    const lines = [
-      ...(ms.current_medications || []).map((m) => `Current: ${fmt(m)}`),
-      ...(ms.previous_medications || []).map((m) => `Previous: ${fmt(m)}`),
-    ];
-    return lines.join("\n");
-  };
-
   const updateComprehensive = async (
     partial: ComprehensiveProfile,
     reason: string
@@ -210,10 +191,88 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
     );
   };
 
+  const buildMedicationOperations = (
+    medications: MedicationsAndSupplements
+  ) => {
+    const operations: {
+      action: string;
+      medication:
+        | {
+            name: string;
+            dosage: string;
+            prescribed_date: string;
+            prescribed_by: string;
+            status: string;
+          }
+        | { dosage: string; status: string }
+        | {
+            name: string;
+            dosage: string;
+            prescribed_date: string;
+            prescribed_by: string;
+            status: string;
+          }
+        | { dosage: any };
+      medication_id?: any;
+    }[] = [];
+
+    medications.previous_medications.forEach((med) => {
+      operations.push({
+        action: "add",
+        medication: {
+          name: med.name,
+          dosage: med.dosage,
+          prescribed_date: med.prescribed_date,
+          prescribed_by: med.prescribed_by,
+          status: med.status,
+        },
+      });
+    });
+
+    medications.current_medications.forEach((med) => {
+      if (med.medication_id) {
+        operations.push({
+          action: "update",
+          medication_id: med.medication_id || "",
+          medication: {
+            dosage: med.dosage,
+            status: med.status,
+          },
+        });
+      } else {
+        operations.push({
+          action: "add",
+          medication: {
+            name: med.name,
+            dosage: med.dosage,
+            prescribed_date: med.prescribed_date,
+            prescribed_by: med.prescribed_by,
+            status: med.status,
+          },
+        });
+      }
+    });
+
+    // medications.deleted_medications.forEach((med) => {
+    //   operations.push({
+    //     action: "delete",
+    //     medication_id: med.medication_id,
+    //     medication: {
+    //       dosage: med.dosage,
+    //     },
+    //   });
+    // });
+
+    return operations;
+  };
+
   const saveMeds = async () => {
     setMedsEditing(null);
-    const medications = buildMedsSummary(medsSnapshot);
-    await updateComprehensive({ medications }, "Updated medications");
+    const medsOperations = buildMedicationOperations(medsSnapshot!);
+    await updateComprehensive(
+      { medication_operations: medsOperations },
+      "Updated medications"
+    );
   };
 
   useEffect(() => {
@@ -264,7 +323,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         custom_message: "",
       };
       await CoachService.updateHealthHistory(data);
-      nav("/content-manager/messages");
+      nav(`/content-manager/messages/${clientId}`);
     } catch (error) {
       toast({
         variant: "destructive",

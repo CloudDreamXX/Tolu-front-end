@@ -278,6 +278,7 @@ export interface SymptomsInfo {
 }
 
 export interface MedicationInfo {
+  medication_id: string;
   name: string;
   dosage: string;
   prescribed_date: string;

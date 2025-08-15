@@ -5,6 +5,7 @@ import EditIcon from "shared/assets/icons/edit";
 import { usePageWidth } from "shared/lib";
 
 export type Medication = {
+  medication_id: string;
   name: string;
   dosage: string;
   takingSince: string;
@@ -226,6 +227,7 @@ type Props = {
 };
 
 const EMPTY_MED: Medication = {
+  medication_id: "",
   name: "",
   dosage: "",
   takingSince: "",
@@ -237,6 +239,7 @@ const ensureAtLeastOneRow = (arr: Medication[]): Medication[] =>
   arr && arr.length > 0 ? arr : [{ ...EMPTY_MED }];
 
 const fromInfo = (m: MedicationInfo): Medication => ({
+  medication_id: m.medication_id ?? "",
   name: m.name ?? "",
   dosage: m.dosage ?? "",
   takingSince: m.prescribed_date ?? "",
@@ -245,6 +248,7 @@ const fromInfo = (m: MedicationInfo): Medication => ({
 });
 
 const toInfo = (m: Medication): MedicationInfo => ({
+  medication_id: m.medication_id,
   name: m.name,
   dosage: m.dosage,
   prescribed_date: m.takingSince,

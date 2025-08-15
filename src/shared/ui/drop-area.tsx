@@ -33,6 +33,9 @@ export const DropArea = ({
         <p className="text-sm text-gray-500">
           SVG, PNG, JPG or GIF (max. 800x400px)
         </p>
+        <p className="text-sm text-gray-500">
+          The size of the file should be less than 30mb
+        </p>
       </div>
     </button>
   );
