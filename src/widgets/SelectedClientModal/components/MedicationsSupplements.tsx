@@ -54,17 +54,31 @@ const RowView: React.FC<{ med: Medication; onEdit: () => void }> = ({
       <ColumnLabel>Dosage</ColumnLabel>
       <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.dosage}</div>
       <ColumnLabel>Taking since</ColumnLabel>
-      <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.takingSince}</div>
+      <div className="md:hidden text-[16px] text-[#1D1D1F]">
+        {med.takingSince}
+      </div>
       <ColumnLabel>Prescribed</ColumnLabel>
-      <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.prescribed}</div>
+      <div className="md:hidden text-[16px] text-[#1D1D1F]">
+        {med.prescribed}
+      </div>
       <ColumnLabel>Status</ColumnLabel>
       <div className="md:hidden text-[16px] text-[#1D1D1F]">{med.status}</div>
 
-      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.name}</div>
-      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.dosage}</div>
-      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.takingSince}</div>
-      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.prescribed}</div>
-      <div className="hidden md:block text-[16px] text-[#1D1D1F]">{med.status}</div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">
+        {med.name}
+      </div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">
+        {med.dosage}
+      </div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">
+        {med.takingSince}
+      </div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">
+        {med.prescribed}
+      </div>
+      <div className="hidden md:block text-[16px] text-[#1D1D1F]">
+        {med.status}
+      </div>
     </div>
 
     <button
@@ -166,29 +180,39 @@ const TableCard: React.FC<{
 
   return (
     <div>
-      <div className="flex justify-between text-[#1C63DB]" onClick={() => setIsExpanded(!isExpanded)}><SectionTitle>{title}</SectionTitle><span className={`md:hidden ${isExpanded ? "rotate-[180deg]" : ""}`}><Chevron /></span></div>
+      <div
+        className="flex justify-between text-[#1C63DB]"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <SectionTitle>{title}</SectionTitle>
+        <span className={`md:hidden ${isExpanded ? "rotate-[180deg]" : ""}`}>
+          <Chevron />
+        </span>
+      </div>
 
-      {(isExpanded || !isMobile) && <div className="flex flex-col gap-[16px] mt-[8px]">
-        {rows.map((med, idx) => (
-          <div key={idx}>
-            {editingIndex === idx ? (
-              <RowEdit
-                med={med}
-                onChange={(next) => {
-                  const copy = [...rows];
-                  copy[idx] = next;
-                  onRowsChange(copy);
-                }}
-              />
-            ) : (
-              <RowView
-                med={med}
-                onEdit={() => setEditing({ section, index: idx })}
-              />
-            )}
-          </div>
-        ))}
-      </div>}
+      {(isExpanded || !isMobile) && (
+        <div className="flex flex-col gap-[16px] mt-[8px]">
+          {rows.map((med, idx) => (
+            <div key={idx}>
+              {editingIndex === idx ? (
+                <RowEdit
+                  med={med}
+                  onChange={(next) => {
+                    const copy = [...rows];
+                    copy[idx] = next;
+                    onRowsChange(copy);
+                  }}
+                />
+              ) : (
+                <RowView
+                  med={med}
+                  onEdit={() => setEditing({ section, index: idx })}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

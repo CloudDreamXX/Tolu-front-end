@@ -109,7 +109,11 @@ const Labs: React.FC = () => {
   const filteredRows = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return rows;
-    return rows.filter((r) => r.name.toLowerCase().includes(q) || r.description.toLowerCase().includes(q));
+    return rows.filter(
+      (r) =>
+        r.name.toLowerCase().includes(q) ||
+        r.description.toLowerCase().includes(q)
+    );
   }, [rows, search]);
 
   const openPreview = (file: LabReport) =>

@@ -46,7 +46,9 @@ export const ClientStory: React.FC<Props> = ({
     );
 
   return (
-    <div className={`flex flex-col gap-[24px] ${edit ? "" : "border border-[#DBDEE1] md:border-0 bg-white rounded-[8px] md:bg-transparent py-[16px] md:py-0"} md:px-[24px]`}>
+    <div
+      className={`flex flex-col gap-[24px] ${edit ? "" : "border border-[#DBDEE1] md:border-0 bg-white rounded-[8px] md:bg-transparent py-[16px] md:py-0"} md:px-[24px]`}
+    >
       {!edit ? (
         SECTIONS.map(([label, key]) => (
           <section key={key}>
@@ -68,7 +70,10 @@ export const ClientStory: React.FC<Props> = ({
         <div className="flex flex-col gap-[24px]">
           {SECTIONS.map(([label, key]) => (
             <div>
-              <section key={key} className={`${edit ? "border border-[#DBDEE1] md:border-0 bg-white rounded-[8px] md:bg-transparent p-[10px] md:p-0" : ""}`}>
+              <section
+                key={key}
+                className={`${edit ? "border border-[#DBDEE1] md:border-0 bg-white rounded-[8px] md:bg-transparent p-[10px] md:p-0" : ""}`}
+              >
                 <p className="text-[12px] text-[#5F5F65] font-semibold mb-[8px]">
                   {label}
                 </p>

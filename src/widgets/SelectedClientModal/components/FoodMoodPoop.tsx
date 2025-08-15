@@ -3,12 +3,15 @@ import Calendar from "shared/assets/icons/calendar";
 const FoodMoodPoop = () => {
   return (
     <div>
-      <p className="pb-[16px] text-[#5F5F65] text-[14px] font-[500] flex items-center gap-[8px]"><Calendar />{new Intl.DateTimeFormat("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        timeZone: "Europe/Stockholm",
-      }).format(new Date())}</p>
+      <p className="pb-[16px] text-[#5F5F65] text-[14px] font-[500] flex items-center gap-[8px]">
+        <Calendar />
+        {new Intl.DateTimeFormat("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          timeZone: "Europe/Stockholm",
+        }).format(new Date())}
+      </p>
       <div className="max-w-5xl overflow-hidden rounded-[8px] border border-[#DBDEE1] bg-white">
         <div className="md:max-h-[286px] overflow-y-auto">
           <table className="w-full table-fixed">

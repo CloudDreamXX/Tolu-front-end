@@ -9,6 +9,7 @@ interface InstructionInfoProps {
 export const InstructionInfo: React.FC<InstructionInfoProps> = ({
   title,
   description,
+  instructions,
 }) => {
   return (
     <PopoverInstruction
@@ -21,6 +22,7 @@ export const InstructionInfo: React.FC<InstructionInfoProps> = ({
       }
       title={title}
       description={description}
+      existingInstruction={instructions || ""}
     />
   );
 };

@@ -316,7 +316,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
       {compareIndex === index && index > 0 && renderCompareView()}
 
-      <div className="flex flex-col md:flex-row-reverse gap-4 md:gap-2 md:gap-6">
+      <div className="flex flex-col md:flex-row-reverse gap-4 md:gap-2 md:gap-6 mr-auto">
         {compareIndex !== index && (
           <>
             {isEditing && selectedDocumentId === pair.id

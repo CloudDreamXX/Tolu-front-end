@@ -33,9 +33,14 @@ const Biometrics: React.FC<Props> = ({ value, edit = false, onChange }) => {
     onChange({ ...value, [key]: "" });
 
   return (
-    <div className={`grid ${edit ? "grid-cols-1" : "grid-cols-2"} md:grid-cols-3 gap-[8px] md:gap-[24px] text-[14px]`}>
+    <div
+      className={`grid ${edit ? "grid-cols-1" : "grid-cols-2"} md:grid-cols-3 gap-[8px] md:gap-[24px] text-[14px]`}
+    >
       {FIELDS.map(({ key, label }) => (
-        <div key={key} className="flex flex-col justify-center gap-[4px] md:gap-[8px] px-[10px] py-[8px] md:p-0 rounded-[8px] md:rounded-0 border border-[#DBDEE1] md:border-none bg-white md:bg-transparent">
+        <div
+          key={key}
+          className="flex flex-col justify-center gap-[4px] md:gap-[8px] px-[10px] py-[8px] md:p-0 rounded-[8px] md:rounded-0 border border-[#DBDEE1] md:border-none bg-white md:bg-transparent"
+        >
           <div className="text-[12px] text-[#5F5F65] font-semibold flex justify-between items-center">
             {label}{" "}
             {edit && (

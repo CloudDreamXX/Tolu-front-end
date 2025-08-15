@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import TrashIcon from "shared/assets/icons/trash-icon";
-import EditIcon from "shared/assets/icons/edit"; // Add the Edit Icon
+import EditIcon from "shared/assets/icons/edit";
 
 export type LifestyleItem = { text: string; sign?: "plus" | "minus" };
 export type LifestyleSkillsData = {
@@ -10,8 +10,10 @@ export type LifestyleSkillsData = {
 
 type Props = {
   value: LifestyleSkillsData;
-  isEditing: keyof LifestyleSkillsData | null
-  setIsEditing: React.Dispatch<React.SetStateAction<keyof LifestyleSkillsData | null>>
+  isEditing: keyof LifestyleSkillsData | null;
+  setIsEditing: React.Dispatch<
+    React.SetStateAction<keyof LifestyleSkillsData | null>
+  >;
   onChange?: (next: LifestyleSkillsData) => void;
   activeSection?: keyof LifestyleSkillsData;
   onSectionFocus?: (key: keyof LifestyleSkillsData) => void;
@@ -27,19 +29,26 @@ const LifestyleSkills: React.FC<Props> = ({
   onChange,
   onSectionFocus,
   isEditing,
-  setIsEditing
+  setIsEditing,
 }) => {
   const update = (key: keyof LifestyleSkillsData, nextArr: LifestyleItem[]) =>
     onChange?.({ ...value, [key]: nextArr });
 
-  const changeItem = (key: keyof LifestyleSkillsData, i: number, text: string) => {
+  const changeItem = (
+    key: keyof LifestyleSkillsData,
+    i: number,
+    text: string
+  ) => {
     const arr = [...(value[key] || [])];
     arr[i] = { ...arr[i], text };
     update(key, arr);
   };
 
   const removeItem = (key: keyof LifestyleSkillsData, i: number) =>
-    update(key, value[key].filter((_, idx) => idx !== i));
+    update(
+      key,
+      value[key].filter((_, idx) => idx !== i)
+    );
 
   return (
     <div className="flex flex-col">
@@ -51,19 +60,23 @@ const LifestyleSkills: React.FC<Props> = ({
         {SECTIONS.map(({ key, title }) => (
           <div key={String(key)} onClick={() => onSectionFocus?.(key)}>
             <div className="flex items-center justify-between">
-              <p className={`text-[14px] ${isEditing === key ? "text-[#5F5F65]" : "text-[#1D1D1F]"} font-semibold mb-[12px]`}>
+              <p
+                className={`text-[14px] ${isEditing === key ? "text-[#5F5F65]" : "text-[#1D1D1F]"} font-semibold mb-[12px]`}
+              >
                 {isEditing !== key && <span>•</span>} {title}
               </p>
-              {isEditing !== key && <button
-                type="button"
-                onClick={() => {
-                  setIsEditing(key);
-                }}
-                className="p-1 rounded hover:bg-black/5"
-                aria-label={isEditing === key ? "Save" : "Edit"}
-              >
-                <EditIcon />
-              </button>}
+              {isEditing !== key && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditing(key);
+                  }}
+                  className="p-1 rounded hover:bg-black/5"
+                  aria-label={isEditing === key ? "Save" : "Edit"}
+                >
+                  <EditIcon />
+                </button>
+              )}
             </div>
 
             {isEditing !== key ? (

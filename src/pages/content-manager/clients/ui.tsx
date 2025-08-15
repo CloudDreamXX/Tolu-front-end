@@ -673,10 +673,11 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                    ? "border-[#1C63DB] text-[#1C63DB]"
-                    : "border-[#DBDEE1]"
-                    }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                    currentPage === page
+                      ? "border-[#1C63DB] text-[#1C63DB]"
+                      : "border-[#DBDEE1]"
+                  }`}
                 >
                   {page}
                 </button>
@@ -816,10 +817,11 @@ export const ContentManagerClients: React.FC = () => {
                   Import СSV/XLSX
                 </p>
                 <div
-                  className={`w-full border ${dragOver
-                    ? "border-[#0057C2]"
-                    : "border-dashed border-[#1C63DB]"
-                    } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
+                  className={`w-full border ${
+                    dragOver
+                      ? "border-[#0057C2]"
+                      : "border-dashed border-[#1C63DB]"
+                  } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
                   onClick={handleUploadClick}
                   onDragOver={(e) => {
                     e.preventDefault();
