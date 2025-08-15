@@ -1,7 +1,7 @@
-import { ClientProfile } from "entities/coach";
+import { PersonalInfo } from "entities/coach";
 
 type Props = {
-  client: ClientProfile;
+  client: PersonalInfo;
 };
 
 const ClientInfo: React.FC<Props> = ({ client }) => {
@@ -12,25 +12,19 @@ const ClientInfo: React.FC<Props> = ({ client }) => {
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
             Full name
           </p>
-          <p className="text-[16px] text-[#1D1D1F]">
-            {client.client_info.name}
-          </p>
+          <p className="text-[16px] text-[#1D1D1F]">{client.name}</p>
         </div>
         <div className="h-[50px]">
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
             Email
           </p>
-          <p className="text-[16px] text-[#1D1D1F]">
-            {/* {client.client_info.email} */}
-          </p>
+          <p className="text-[16px] text-[#1D1D1F]">{client.email}</p>
         </div>
         <div className="h-[50px]">
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
             Date of birth
           </p>
-          <p className="text-[16px] text-[#1D1D1F]">
-            {/* {client.client_info.date_of_birth} */}
-          </p>
+          <p className="text-[16px] text-[#1D1D1F]">{client.date_of_birth}</p>
         </div>
       </div>
 
@@ -39,17 +33,13 @@ const ClientInfo: React.FC<Props> = ({ client }) => {
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
             Phone number
           </p>
-          <p className="text-[16px] text-[#1D1D1F]">
-            {/* {client.client_info.number} */}
-          </p>
+          <p className="text-[16px] text-[#1D1D1F]">{client.phone}</p>
         </div>
         <div className="h-[50px]">
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
             Location:
           </p>
-          <p className="text-[16px] text-[#1D1D1F]">
-            {/* {client.client_info.location} */}
-          </p>
+          <p className="text-[16px] text-[#1D1D1F]">{client.location}</p>
         </div>
       </div>
     </div>

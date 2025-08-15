@@ -349,8 +349,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   const handleNewMessage = async (
-    message: string,
-    files: File[]
+    message: string
   ): Promise<string | undefined> => {
     if ((!message.trim() && files.length === 0) || isSearching) return;
 
@@ -464,7 +463,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             instructions: instruction,
           },
           folderId!,
-          files,
+          images,
           clientId,
           processChunk,
           processFinal
@@ -491,7 +490,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             instructions: instruction,
           },
           folderId!,
-          files,
+          images,
           clientId,
           processChunk,
           processFinal
@@ -828,7 +827,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                   <Button
                     onClick={() => {
                       handleSwitchChange(SWITCH_KEYS.CREATE);
-                      handleNewMessage(message, files);
+                      handleNewMessage(message);
                     }}
                     disabled={isSearching || !folderId || message === ""}
                     className="w-6 h-6 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
@@ -977,7 +976,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                     </div>
                     <Button
                       onClick={() => {
-                        handleNewMessage(message, files);
+                        handleNewMessage(message);
                       }}
                       disabled={isSearching || !folderId || message === ""}
                       className="w-6 h-6 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
@@ -1010,7 +1009,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                     </div>
                     <Button
                       onClick={() => {
-                        handleNewMessage(message, files);
+                        handleNewMessage(message);
                       }}
                       disabled={isSearching || message === ""}
                       className="w-6 h-6 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"

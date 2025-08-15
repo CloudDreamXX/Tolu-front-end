@@ -1,10 +1,14 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import {
   AIChatMessage,
+  ClientComprehensiveProfile,
   ClientDetails,
   ClientProfile,
   ClientsResponse,
+  ComprehensiveProfile,
   ContentResponse,
+  FmpShareRequest,
+  FmpTracker,
   GetClientInfoResponse,
   InviteClientPayload,
   ISessionResponse,
@@ -13,6 +17,7 @@ import {
   ShareContentData,
   SharedContent,
   Status,
+  UpdateHealthHistoryRequest,
 } from "./model";
 
 export class CoachService {
@@ -112,7 +117,7 @@ export class CoachService {
   static async aiLearningSearch(
     chatMessage: AIChatMessage,
     folder_id: string,
-    files?: File[],
+    images: File[] = [],
     client_id?: string | null,
     onChunk?: (data: any) => void,
     onComplete?: (folderId: {
@@ -133,8 +138,8 @@ export class CoachService {
 
     formData.append("folder_id", folder_id);
 
-    if (files?.length) {
-      files.forEach((file) => {
+    if (images?.length) {
+      images.forEach((file) => {
         formData.append("files", file);
       });
     }
@@ -267,5 +272,60 @@ export class CoachService {
 
   static async updateChatTitle(data: NewChatTitle): Promise<any> {
     return ApiService.put<any>(API_ROUTES.AI.UPDATE_CHAT_TITLE, data);
+  }
+
+  static async shareTracker(data: FmpShareRequest): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.COACH_ADMIN.SHARE_FMP, data);
+  }
+
+  static async submitTracker(data: FmpTracker): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.COACH_ADMIN.POST_FMP, data);
+  }
+
+  static async deleteTracker(id: string): Promise<any> {
+    const endpoint = API_ROUTES.COACH_ADMIN.DELETE_FMP.replace(
+      "{tracker_id}",
+      id
+    );
+    return ApiService.delete<any>(endpoint);
+  }
+
+  static async getComprehensiveClient(
+    id: string
+  ): Promise<ClientComprehensiveProfile> {
+    const endpoint = API_ROUTES.COACH_ADMIN.GET_COMPREHENSIVE_CLIENT.replace(
+      "{client_id}",
+      id
+    );
+    return ApiService.get<ClientComprehensiveProfile>(endpoint);
+  }
+
+  static async getLabFile(client_id: string, file_name: string): Promise<any> {
+    let endpoint = API_ROUTES.COACH_ADMIN.GET_LAB_FILE.replace(
+      "{client_id}",
+      client_id
+    );
+    endpoint = endpoint.replace("{file_name}", file_name);
+    return ApiService.get<any>(endpoint);
+  }
+
+  static async updateComprehensiveClient(
+    id: string,
+    data: ComprehensiveProfile
+  ): Promise<any> {
+    const endpoint = API_ROUTES.COACH_ADMIN.UPDATE_COMPREHENSIVE_CLIENT.replace(
+      "{client_id}",
+      id
+    );
+    return ApiService.put<any>(endpoint, data);
+  }
+
+  static async updateHealthHistory(
+    data: UpdateHealthHistoryRequest
+  ): Promise<any> {
+    return ApiService.post<any>(
+      API_ROUTES.COACH_ADMIN.UPDATE_HEALTH_HISTORY,
+      data
+    );
   }
 }

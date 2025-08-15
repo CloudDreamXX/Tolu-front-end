@@ -435,7 +435,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
         !confirmDelete &&
         !editModal && (
           <SelectedClientModal
-            client={selectedFullClient}
+            clientId={selectedFullClient.client_info.id}
             onClose={() => {
               setConfirmDelete(false);
               cleanState();

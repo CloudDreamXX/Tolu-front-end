@@ -1,19 +1,28 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useId } from "react";
 import CloseIcon from "shared/assets/icons/close";
 
-type Props = {
+type ConfirmModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onShare: () => void;
-  clientName: string;
+  onConfirm?: () => void;
+  title: React.ReactNode;
+  description?: React.ReactNode;
+  confirmText?: string;
+  cancelText?: string;
 };
 
-export const ShareFmpModal: React.FC<Props> = ({
+export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   onClose,
-  onShare,
-  clientName,
+  onConfirm,
+  title,
+  description,
+  confirmText = "Confirm",
+  cancelText = "Cancel",
 }) => {
+  const titleId = useId();
+  const descId = useId();
+
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -26,47 +35,55 @@ export const ShareFmpModal: React.FC<Props> = ({
   return (
     <div
       className="fixed inset-0 z-[70] flex items-center justify-center bg-black/30 backdrop-blur-[2px] p-4"
-      onClick={onClose}
+      onClick={() => onClose()}
     >
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="shareFmpTitle"
-        aria-describedby="shareFmpDesc"
-        className="w-full max-w-[724px] rounded-[18px] bg-[#F9FAFB] border border-[#DBDEE1] shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
+        aria-labelledby={titleId}
+        aria-describedby={description ? descId : undefined}
+        className={
+          "w-full md:max-w-[742px] rounded-[18px] bg-[#F9FAFB] border border-[#DBDEE1] shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
+        }
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col gap-6 p-6">
           <div className="flex items-start justify-between">
             <h3
-              id="shareFmpTitle"
+              id={titleId}
               className="text-[20px] font-semibold text-[#1D1D1F]"
             >
-              Share FMP tool with{" "}
-              <span className="font-bold">[{clientName}]</span> ?
+              {title}
             </h3>
-            <button onClick={onClose} className="text-[#1D1D1F]">
+            <button
+              onClick={onClose}
+              className="text-[#1D1D1F]"
+              aria-label="Close"
+            >
               <CloseIcon />
             </button>
           </div>
 
-          <p id="shareFmpDesc" className="text-[14px] text-[#5F5F65]">
-            This tool helps clients track their food, mood, and physical
-            patterns. You can share this multiple times during the therapy.
-          </p>
+          {description ? (
+            <p id={descId} className="text-[14px] text-[#5F5F65]">
+              {description}
+            </p>
+          ) : null}
 
           <div className="flex items-center justify-between gap-3">
             <button
               onClick={onClose}
               className="w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
             >
-              Cancel
+              {cancelText}
             </button>
             <button
-              onClick={onShare}
-              className="w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              onClick={onConfirm}
+              className={
+                "w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+              }
             >
-              Share
+              {confirmText}
             </button>
           </div>
         </div>

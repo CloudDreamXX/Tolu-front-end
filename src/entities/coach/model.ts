@@ -180,3 +180,150 @@ export interface NewChatTitle {
   chat_id: string;
   new_title: string;
 }
+
+export interface FmpShareRequest {
+  user_id: string;
+  tracking_date: string;
+}
+
+export interface Fmp {
+  food_eaten: string;
+  mood: string;
+  poop: string;
+}
+
+export interface FmpTracker {
+  morning: Fmp;
+  mid_morning: Fmp;
+  lunch: Fmp;
+  snack: Fmp;
+  dinner: Fmp;
+}
+
+export interface Medication {
+  id?: string;
+  name?: string;
+  dosage?: string;
+  prescribed_date?: string;
+  prescribed_by?: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface MedicationOperation {
+  action?: string;
+  operation?: string;
+  medication?: Medication;
+  medication_id?: string;
+}
+
+export interface ComprehensiveProfile {
+  family_health_history?: string;
+  diagnosed_conditions?: string;
+  medications?: string;
+  supplements?: string;
+  current_health_concerns?: string;
+  support_system?: string;
+  lifestyle_information?: string;
+  specific_diet?: string;
+  exercise_habits?: string;
+  stress_levels?: string;
+  energy_levels?: string;
+  lifestyle_limitations?: string;
+  edit_reason?: string;
+  client_story?: ClientStoryInfo;
+  medication_operations?: MedicationOperation[];
+}
+
+export interface UpdateHealthHistoryRequest {
+  client_id: string;
+  custom_message: string;
+}
+
+export interface PersonalInfo {
+  name: string;
+  email: string;
+  phone: string | null;
+  date_of_birth: string | null;
+  location: string | null;
+}
+
+export interface HealthSummary {
+  primary_complaint: string | null;
+  working_with_client_since: string | null;
+  client_age: number | null;
+  menopause_cycle_status: string | null;
+  working_on_now: string[];
+  recent_labs: string | null;
+  learning_now: string[];
+  tracking: string[];
+  personal_insights: string[];
+}
+
+export interface ClientStoryInfo {
+  genetic_influences: {
+    notes?: string;
+  };
+  pivotal_incidents: {
+    year?: string | number | undefined;
+    description?: string | undefined;
+  }[];
+  symptom_influencers: Record<string, string>;
+}
+
+export interface SymptomsInfo {
+  hormones_and_neurotransmitters_reported_symptoms: string[];
+  mind_spirit_emotions_community_reported_state: string | null;
+}
+
+export interface MedicationInfo {
+  name: string;
+  dosage: string;
+  prescribed_date: string;
+  prescribed_by: string;
+  status: string;
+}
+
+export interface MedicationsAndSupplements {
+  previous_medications: MedicationInfo[];
+  current_medications: MedicationInfo[];
+}
+
+export interface BiometricsInfo {
+  hrv: string | null;
+  sleep_quality: string | null;
+  movement_and_intensity: string | null;
+  cycle_tracking: string | null;
+  blood_pressure: string | null;
+  fertility_tracking: string | null;
+  glucose_tracking: string | null;
+}
+
+export interface HealthTimeline {
+  genetic_health: string[];
+  history_of_diagnosis: string[];
+}
+
+export interface LifestyleSkillsInfo {
+  [key: string]: string | string[] | undefined;
+}
+
+export interface FoodMoodPoopJournal {
+  [key: string]: any;
+}
+
+export type LabsInfo = Record<string, any>;
+
+export interface ClientComprehensiveProfile {
+  personal_info: PersonalInfo;
+  health_summary: HealthSummary;
+  food_mood_poop_journal: FoodMoodPoopJournal[];
+  health_timeline: HealthTimeline;
+  client_story: ClientStoryInfo;
+  symptoms: SymptomsInfo;
+  lifestyle_skills: LifestyleSkillsInfo;
+  medications_and_supplements: MedicationsAndSupplements;
+  biometrics: BiometricsInfo;
+  labs: LabsInfo[];
+}

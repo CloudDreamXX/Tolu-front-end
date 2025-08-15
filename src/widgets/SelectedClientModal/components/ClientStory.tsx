@@ -1,125 +1,267 @@
+import { ClientStoryInfo } from "entities/coach";
 import React from "react";
 import TrashIcon from "shared/assets/icons/trash-icon";
 
-export type StorySections = {
-  genetics: string[];
-  antecedents: string[];
-  triggers: string[];
-  mediators: string[];
-};
-
 type Props = {
-  value: StorySections;
+  client: ClientStoryInfo;
   edit?: boolean;
-  onChange?: (next: StorySections) => void;
-  className?: string;
+  onChange?: (next: ClientStoryInfo) => void;
 };
 
-const SECTIONS: [label: string, key: keyof StorySections][] = [
-  ["Genetics", "genetics"],
-  ["Antecedents", "antecedents"],
-  ["Triggering events", "triggers"],
-  ["Mediators", "mediators"],
-];
+const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <p className="text-[12px] text-[#5F5F65] font-semibold mb-[4px]">
+    {children}
+  </p>
+);
+
+const CURRENT_YEAR = new Date().getFullYear();
+const YEARS: number[] = Array.from({ length: 120 }, (_, i) => CURRENT_YEAR - i);
 
 export const ClientStory: React.FC<Props> = ({
-  value,
+  client,
   edit = false,
   onChange,
 }) => {
-  const update = (key: keyof StorySections, nextArr: string[]) =>
-    onChange?.({ ...value, [key]: nextArr });
+  const update = (patch: Partial<ClientStoryInfo>) =>
+    onChange?.({ ...client, ...patch });
 
-  const handleChange = (key: keyof StorySections, i: number, v: string) => {
-    const arr = [...value[key]];
-    arr[i] = v;
-    update(key, arr);
+  const notes = client.genetic_influences?.notes;
+  const setNotes = (v: string) => update({ genetic_influences: { notes: v } });
+
+  const pivots = client.pivotal_incidents ?? [];
+
+  const setPivot = (
+    idx: number,
+    field: "year" | "description",
+    value: string
+  ) => {
+    const copy = [...pivots];
+    const curr = copy[idx] ?? {};
+    copy[idx] = { ...curr, [field]: value };
+    update({ pivotal_incidents: copy });
   };
 
-  const addItem = (key: keyof StorySections) =>
-    update(key, [...value[key], ""]);
+  const addPivot = () =>
+    update({
+      pivotal_incidents: [...pivots, { year: "", description: "" }],
+    });
 
-  const removeItem = (key: keyof StorySections, i: number) =>
-    update(
-      key,
-      value[key].filter((_, idx) => idx !== i)
-    );
+  const removePivot = (idx: number) =>
+    update({
+      pivotal_incidents: pivots.filter((_, i) => i !== idx),
+    });
+
+  const symptomEntries: Array<[string, string]> = Object.entries(
+    client.symptom_influencers ?? {}
+  );
+
+  const setSymptomEntry = (
+    idx: number,
+    field: "key" | "value",
+    value: string
+  ) => {
+    const entries = [...symptomEntries];
+    const curr = entries[idx] ?? ["", ""];
+    entries[idx] = field === "key" ? [value, curr[1]] : [curr[0], value];
+    const nextObj = entries.reduce<Record<string, string>>((acc, [k, v]) => {
+      acc[k] = v;
+      return acc;
+    }, {});
+    update({ symptom_influencers: nextObj });
+  };
+
+  const addSymptom = () => {
+    const entries = [...symptomEntries, ["", ""]];
+    const nextObj = entries.reduce<Record<string, string>>((acc, [k, v]) => {
+      acc[k] = v;
+      return acc;
+    }, {});
+    update({ symptom_influencers: nextObj });
+  };
+
+  const removeSymptom = (idx: number) => {
+    const entries = symptomEntries.filter((_, i) => i !== idx);
+    const nextObj = entries.reduce<Record<string, string>>((acc, [k, v]) => {
+      acc[k] = v;
+      return acc;
+    }, {});
+    update({ symptom_influencers: nextObj });
+  };
 
   return (
-    <div
-      className={`flex flex-col gap-[24px] ${edit ? "" : "border border-[#DBDEE1] md:border-0 bg-white rounded-[8px] md:bg-transparent py-[16px] md:py-0"} md:px-[24px]`}
-    >
-      {!edit ? (
-        SECTIONS.map(([label, key]) => (
-          <section key={key}>
-            <p className="text-[12px] text-[#5F5F65] font-semibold mb-[4px]">
-              {label}
-            </p>
-            {value[key]?.length ? (
-              <ul className="list-disc text-[16px] text-[#1D1D1F] space-y-1">
-                {value[key].map((t, i) => (
-                  <li key={i}>• {t}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-[14px] text-[#5F5F65]">—</p>
-            )}
-          </section>
-        ))
-      ) : (
-        <div className="flex flex-col gap-[24px]">
-          {SECTIONS.map(([label, key]) => (
-            <div>
-              <section
-                key={key}
-                className={`${edit ? "border border-[#DBDEE1] md:border-0 bg-white rounded-[8px] md:bg-transparent p-[10px] md:p-0" : ""}`}
-              >
-                <p className="text-[12px] text-[#5F5F65] font-semibold mb-[8px]">
-                  {label}
-                </p>
-                <div className="flex flex-col gap-[12px]">
-                  {value[key]?.map((val, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-[8px] rounded-full border border-[#DBDEE1] bg-white px-[20px] py-[12px] h-[68px] md:h-fit md:px-[16px] md:py-[10px]"
+    <div className="flex flex-col gap-[24px] border border-[#DBDEE1] bg-white rounded-[8px] p-[16px]">
+      <section>
+        <SectionTitle>Genetic &amp; Early Influences</SectionTitle>
+        {!edit ? (
+          notes ? (
+            <p className="text-[16px] text-[#1D1D1F]">{notes}</p>
+          ) : (
+            <p className="text-[14px] text-[#5F5F65]">—</p>
+          )
+        ) : (
+          <div className="flex gap-[8px] items-center w-full">
+            <div className="w-full flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[10px]">
+              <input
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Add notes (e.g., “Father had a stroke at 62”)"
+                className="w-full outline-none text-[16px] text-[#1D1D1F]"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setNotes("")}
+              className="shrink-0 text-[#E86C4A] hover:opacity-80"
+              title="Remove"
+              aria-label="Remove"
+            >
+              <TrashIcon />
+            </button>
+          </div>
+        )}
+      </section>
+
+      <section>
+        <SectionTitle>Pivotal Incidents</SectionTitle>
+        {!edit ? (
+          pivots?.length ? (
+            <ul className="list-disc pl-4 text-[16px] text-[#1D1D1F] space-y-1">
+              {pivots.map((p, i) => (
+                <li key={i}>
+                  {p?.year ?? "—"} — {p?.description || "—"}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[14px] text-[#5F5F65]">—</p>
+          )
+        ) : (
+          <div className="flex flex-col gap-[12px]">
+            {pivots.map((p, i) => {
+              const selectedYearStr =
+                p?.year !== undefined && p?.year !== null && p?.year !== ""
+                  ? String(p.year)
+                  : "";
+              const hasCustomYear =
+                !!selectedYearStr &&
+                !YEARS.some((y) => String(y) === selectedYearStr);
+
+              return (
+                <div key={i} className="flex flex-col md:flex-row gap-[8px]">
+                  <div className="flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[8px] md:w-[180px]">
+                    <select
+                      value={selectedYearStr}
+                      onChange={(e) => setPivot(i, "year", e.target.value)}
+                      className="w-full outline-none text-[16px] text-[#1D1D1F] bg-transparent"
                     >
-                      <input
-                        value={val}
-                        onChange={(e) => handleChange(key, i, e.target.value)}
-                        placeholder={`Enter ${label.toLowerCase()} item`}
-                        className="w-full outline-none text-[16px] text-[#1D1D1F]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeItem(key, i)}
-                        className="shrink-0 text-[#E86C4A] hover:opacity-80"
-                        aria-label="Remove"
-                        title="Remove"
-                      >
-                        <TrashIcon />
-                      </button>
-                    </div>
-                  ))}
+                      <option value="">Year</option>
+                      {hasCustomYear && (
+                        <option value={selectedYearStr}>
+                          {selectedYearStr}
+                        </option>
+                      )}
+                      {YEARS.map((y) => (
+                        <option key={y} value={String(y)}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[10px] flex-1">
+                    <input
+                      value={p?.description ?? ""}
+                      onChange={(e) =>
+                        setPivot(i, "description", e.target.value)
+                      }
+                      placeholder="Description"
+                      className="w-full outline-none text-[16px] text-[#1D1D1F]"
+                    />
+                  </div>
                   <button
                     type="button"
-                    onClick={() => addItem(key)}
-                    className=" hidden md:inline-flex items-center gap-2 text-[#008FF6] font-semibold ml-auto"
+                    onClick={() => removePivot(i)}
+                    className="shrink-0 text-[#E86C4A] hover:opacity-80"
+                    title="Remove"
+                    aria-label="Remove"
                   >
-                    <span className="text-[20px] leading-none">+</span> Add
+                    <TrashIcon />
                   </button>
                 </div>
-              </section>
-              <button
-                type="button"
-                onClick={() => addItem(key)}
-                className="inline-flex md:hidden items-center justify-end mt-[24px] w-full gap-2 text-[#008FF6] font-semibold ml-auto"
-              >
-                <span className="text-[20px] leading-none">+</span> Add
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+              );
+            })}
+            <button
+              type="button"
+              onClick={addPivot}
+              className="text-[#008FF6] font-semibold flex items-center gap-1"
+            >
+              <span className="text-[20px]">+</span> Add
+            </button>
+          </div>
+        )}
+      </section>
+
+      <section>
+        <SectionTitle>Symptom Influencers</SectionTitle>
+        {!edit ? (
+          symptomEntries.length ? (
+            <ul className="list-disc pl-4 text-[16px] text-[#1D1D1F] space-y-1">
+              {symptomEntries.map(([k, v], i) => (
+                <li key={i}>
+                  <span className="font-semibold">{k || "—"}</span>
+                  {" : "}
+                  {v || "—"}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[14px] text-[#5F5F65]">—</p>
+          )
+        ) : (
+          <div className="flex flex-col gap-[12px]">
+            {symptomEntries.map(([k, v], i) => (
+              <div key={i} className="flex flex-col md:flex-row gap-[8px]">
+                <div className="flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[10px] md:w-[240px]">
+                  <input
+                    value={k}
+                    onChange={(e) => setSymptomEntry(i, "key", e.target.value)}
+                    placeholder="Symptom (e.g., Work stress)"
+                    className="w-full outline-none text-[16px] text-[#1D1D1F]"
+                  />
+                </div>
+                <div className="flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[10px] flex-1">
+                  <input
+                    value={v}
+                    onChange={(e) =>
+                      setSymptomEntry(i, "value", e.target.value)
+                    }
+                    placeholder="Description"
+                    className="w-full outline-none text-[16px] text-[#1D1D1F]"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeSymptom(i)}
+                  className="shrink-0 text-[#E86C4A] hover:opacity-80"
+                  title="Remove"
+                  aria-label="Remove"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addSymptom}
+              className="text-[#008FF6] font-semibold flex items-center gap-1"
+            >
+              <span className="text-[20px]">+</span> Add
+            </button>
+          </div>
+        )}
+      </section>
     </div>
   );
 };

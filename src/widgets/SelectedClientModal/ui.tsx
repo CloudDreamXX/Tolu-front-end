@@ -2,28 +2,37 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "shared/assets/icons/close";
 import UserIcon from "shared/assets/icons/user-black";
 import ChatsIcon from "shared/assets/icons/chats";
-import { ClientProfile } from "entities/coach";
+import {
+  ClientComprehensiveProfile,
+  CoachService,
+  FmpShareRequest,
+  LifestyleSkillsInfo,
+  UpdateHealthHistoryRequest,
+  MedicationsAndSupplements,
+  ComprehensiveProfile,
+} from "entities/coach";
 import ArrowLeft from "shared/assets/icons/arrowLeft";
 import ClientsIntake from "shared/assets/icons/clientsIntake";
-import { ShareFmpModal } from "widgets/ShareFmpModal";
+import { ConfirmModal } from "widgets/ConfirmModal";
 import HealthProfile from "./components/HealthProfile";
 import ClientInfo from "./components/ClientInfo";
 import FoodMoodPoop from "./components/FoodMoodPoop";
-import { ClientStory, StorySections } from "./components/ClientStory";
-import Symptoms, { SymptomsData } from "./components/Symptoms";
+import { ClientStory } from "./components/ClientStory";
+import Symptoms from "./components/Symptoms";
 import LifestyleSkills, {
-  LifestyleSkillsData,
+  LifestyleItem,
+  LifestyleSkillsValue,
 } from "./components/LifestyleSkills";
 import MedicationsSupplements, {
-  MedsData,
   MedsEditing,
 } from "./components/MedicationsSupplements";
-import Biometrics, { BiometricsData } from "./components/Biometrics";
+import Biometrics from "./components/Biometrics";
 import Labs from "./components/Labs";
+import { toast } from "shared/lib";
 import { useNavigate } from "react-router-dom";
 
 interface SelectedClientModalProps {
-  client: ClientProfile;
+  clientId: string;
   activeTab: string;
   setActiveTab: (tab: string) => void;
   onClose: () => void;
@@ -32,98 +41,145 @@ interface SelectedClientModalProps {
 }
 
 export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
-  client,
+  clientId,
   activeTab,
   setActiveTab,
   onClose,
   onEdit,
 }) => {
-  const navigate = useNavigate();
+  const nav = useNavigate();
+  const [client, setClient] = useState<ClientComprehensiveProfile>({
+    personal_info: {
+      name: "",
+      email: "",
+      phone: null,
+      date_of_birth: null,
+      location: null,
+    },
+    health_summary: {
+      primary_complaint: null,
+      working_with_client_since: null,
+      client_age: null,
+      menopause_cycle_status: null,
+      working_on_now: [],
+      recent_labs: null,
+      learning_now: [],
+      tracking: [],
+      personal_insights: [],
+    },
+    food_mood_poop_journal: [],
+    health_timeline: {
+      genetic_health: [],
+      history_of_diagnosis: [],
+    },
+    client_story: {
+      genetic_influences: { notes: "" },
+      pivotal_incidents: [],
+      symptom_influencers: {},
+    },
+    symptoms: {
+      hormones_and_neurotransmitters_reported_symptoms: [],
+      mind_spirit_emotions_community_reported_state: null,
+    },
+    lifestyle_skills: {},
+    medications_and_supplements: {
+      previous_medications: [],
+      current_medications: [],
+    },
+    biometrics: {
+      hrv: null,
+      sleep_quality: null,
+      movement_and_intensity: null,
+      cycle_tracking: null,
+      blood_pressure: null,
+      fertility_tracking: null,
+      glucose_tracking: null,
+    },
+    labs: [],
+  });
+
   const [shareOpen, setShareOpen] = useState(false);
+  const [suggestOpen, setSuggestOpen] = useState(false);
 
   const [isEditingStory, setIsEditingStory] = useState(false);
-  const [story, setStory] = useState<StorySections>({
-    genetics: [
-      "Family history of heart disease and type 2 diabetes",
-      "Maternal depression during childhood",
-    ],
-    antecedents: [
-      "Childhood asthma, which resolved by age 12 but may affect lung capacity today",
-    ],
-    triggers: [
-      "Diagnosed with depression at age 25 after the death of father",
-      "Major career change at age 40, increased stress and lifestyle changes",
-    ],
-    mediators: [
-      "Low sleep quality exacerbates anxiety and depression symptoms",
-    ],
-  });
   const [isEditingSymptoms, setIsEditingSymptoms] = useState(false);
-  const [symptoms, setSymptoms] = useState<SymptomsData>({
-    hormones:
-      "Hot flashes (3–5/day), Low libido, Interrupted sleep, Mood instability",
-    mind: "",
-  });
-  const [isEditingLifestyle, setIsEditingLifestyle] = useState<
-    keyof LifestyleSkillsData | null
-  >(null);
+  const [isEditingLifestyle, setIsEditingLifestyle] = useState<string | null>(
+    null
+  );
   const [activeLifestyleSection, setActiveLifestyleSection] =
-    useState<keyof LifestyleSkillsData>("sleepRelaxation");
-  const [lifestyleSkills, setLifestyleSkills] = useState<LifestyleSkillsData>({
-    sleepRelaxation: [
-      { text: "Breathwork", sign: "plus" },
-      { text: "Sunshine", sign: "plus" },
-      { text: "Erratic sleep", sign: "minus" },
-    ],
-    exerciseMovement: [
-      { text: "Breathwork", sign: "plus" },
-      { text: "Sunshine", sign: "plus" },
-    ],
-  });
-  const [meds, setMeds] = useState<MedsData>({
-    previous: [
-      {
-        name: "Levothyroxine",
-        dosage: "50 mcg daily",
-        takingSince: "17.02.2024",
-        prescribed: "Jill Hartmann",
-        status: "not active",
-      },
-      {
-        name: "Levothyroxine",
-        dosage: "50 mcg daily",
-        takingSince: "17.02.2024",
-        prescribed: "Jill Hartmann",
-        status: "not active",
-      },
-    ],
-    current: [
-      {
-        name: "Levothyroxine",
-        dosage: "50 mcg daily",
-        takingSince: "17.02.2024",
-        prescribed: "Jill Hartmann",
-        status: "Active",
-      },
-    ],
-  });
+    useState<string>("");
+  const [lifestyleSkills, setLifestyleSkills] = useState<LifestyleSkillsValue>(
+    {}
+  );
   const [medsEditing, setMedsEditing] = useState<MedsEditing>(null);
   const [isEditingBiometrics, setIsEditingBiometrics] = useState(false);
-  const [biometrics, setBiometrics] = useState<BiometricsData>({
-    hrv: "52 ms",
-    sleepQuality: "7h 30m (75% sleep efficiency)",
-    movementIntensity: "5,000 steps/day",
-    bloodPressure: "130/85 mmHg (Normal)",
-    fertilityTracking: "Ovulation Day 14 (2025-07-20)",
-    glucoseTracking: "95 mg/dL (Fasting)",
-  });
+
+  const [medsSnapshot, setMedsSnapshot] =
+    useState<MedicationsAndSupplements | null>(null);
+
+  const [saving, setSaving] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const res = await CoachService.getComprehensiveClient(clientId);
+      setClient(res);
+    };
+    fetchProfile();
+  }, [clientId]);
 
   const addLifestyleItem = () => {
     setLifestyleSkills((curr) => {
-      const key = activeLifestyleSection || "sleepRelaxation";
-      const list = curr[key] || [];
-      return { ...curr, [key]: [...list, { text: "" }] };
+      const section =
+        activeLifestyleSection || Object.keys(curr)[0] || "Sleep & Relaxation";
+      const list = curr[section] || [];
+      const next: LifestyleItem[] = [...list, { text: "" }];
+      return { ...curr, [section]: next };
     });
+  };
+
+  const buildMedsSummary = (ms: MedicationsAndSupplements | null): string => {
+    if (!ms) return "";
+    const fmt = (m: any) =>
+      [
+        m?.name,
+        m?.dosage,
+        m?.status ? `(${m.status})` : "",
+        m?.prescribed_date ? `since ${m.prescribed_date}` : "",
+        m?.prescribed_by ? `— ${m.prescribed_by}` : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+    const lines = [
+      ...(ms.current_medications || []).map((m) => `Current: ${fmt(m)}`),
+      ...(ms.previous_medications || []).map((m) => `Previous: ${fmt(m)}`),
+    ];
+    return lines.join("\n");
+  };
+
+  const updateComprehensive = async (
+    partial: ComprehensiveProfile,
+    reason: string
+  ) => {
+    setSaving(true);
+    try {
+      await CoachService.updateComprehensiveClient(clientId, {
+        ...partial,
+        edit_reason: reason,
+      });
+      toast({
+        title: "Profile updated",
+        description: "Comprehensive profile was saved successfully.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Update failed",
+        description: "Could not save comprehensive profile.",
+      });
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const saveLifestyle = async () => {
@@ -132,15 +188,92 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
 
   const saveStory = async () => {
     setIsEditingStory(false);
+    await updateComprehensive(
+      { client_story: client.client_story },
+      "Updated client story"
+    );
+  };
+
+  const saveSymptoms = async () => {
+    setIsEditingSymptoms(false);
+    const concerns = [
+      ...(client.symptoms?.hormones_and_neurotransmitters_reported_symptoms ||
+        []),
+      client.symptoms?.mind_spirit_emotions_community_reported_state || "",
+    ]
+      .flat()
+      .filter(Boolean)
+      .join("; ");
+    await updateComprehensive(
+      { current_health_concerns: concerns },
+      "Updated symptoms"
+    );
+  };
+
+  const saveMeds = async () => {
+    setMedsEditing(null);
+    const medications = buildMedsSummary(medsSnapshot);
+    await updateComprehensive({ medications }, "Updated medications");
   };
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = "";
     };
   }, []);
+
+  const handleDownloadFile = async (name: string) => {
+    try {
+      await CoachService.getLabFile(clientId, name);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to download the file",
+        description: "Failed to download the file. Please try again.",
+      });
+      console.error(error);
+    }
+  };
+
+  const shareFMP = async () => {
+    const dateInStockholm = new Date().toLocaleString("sv-SE", {
+      timeZone: "Europe/Stockholm",
+    });
+    const currentDate = dateInStockholm.split(" ")[0];
+    try {
+      const data: FmpShareRequest = {
+        user_id: clientId,
+        tracking_date: currentDate,
+      };
+      await CoachService.shareTracker(data);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to share tracker",
+        description: "Failed to share FMP tracker. Please try again.",
+      });
+      console.error(error);
+    }
+  };
+
+  const requestHealthHistory = async () => {
+    try {
+      const data: UpdateHealthHistoryRequest = {
+        client_id: clientId,
+        custom_message: "",
+      };
+      await CoachService.updateHealthHistory(data);
+      nav("/content-manager/messages");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to request health history",
+        description: "Failed to request health history. Please try again.",
+      });
+      console.error(error);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[60] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto">
@@ -161,15 +294,13 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           <div className="flex items-center gap-[8px]">
             <UserIcon />
             <h2 className="text-[20px] font-[700]">
-              {client.client_info.name}
+              {client?.personal_info.name}
             </h2>
           </div>
           <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
             <button
               className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]"
-              onClick={() =>
-                navigate(`/content-manager/messages/${client.client_info.id}`)
-              }
+              onClick={() => nav(`/content-manager/messages/${clientId}`)}
             >
               <ChatsIcon />
               Chat
@@ -277,25 +408,37 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         </div>
 
         <div className="md:max-h-[350px] overflow-y-auto">
-          {activeTab === "clientInfo" && <ClientInfo client={client} />}
-          {activeTab === "healthProfile" && <HealthProfile client={client} />}
-          {activeTab === "foodMoodPoop" && <FoodMoodPoop />}
+          {activeTab === "clientInfo" && (
+            <ClientInfo client={client.personal_info} />
+          )}
+          {activeTab === "healthProfile" && (
+            <HealthProfile client={client.health_summary} />
+          )}
+          {activeTab === "foodMoodPoop" && (
+            <FoodMoodPoop client={client.food_mood_poop_journal} />
+          )}
           {activeTab === "clientStory" && (
             <ClientStory
-              value={story}
+              client={client.client_story}
               edit={isEditingStory}
-              onChange={setStory}
+              onChange={(next) =>
+                setClient((curr) => ({ ...curr, client_story: next }))
+              }
             />
           )}
+
           {activeTab === "symptoms" && (
             <Symptoms
-              value={symptoms}
+              client={client.symptoms}
               edit={isEditingSymptoms}
-              onChange={setSymptoms}
+              onChange={(next) =>
+                setClient((curr) => ({ ...curr, symptoms: next }))
+              }
             />
           )}
           {activeTab === "lifestyleSkills" && (
             <LifestyleSkills
+              client={client.lifestyle_skills as LifestyleSkillsInfo}
               value={lifestyleSkills}
               isEditing={isEditingLifestyle}
               setIsEditing={setIsEditingLifestyle}
@@ -306,10 +449,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           )}
           {activeTab === "medicationsAndSupplements" && (
             <MedicationsSupplements
-              value={meds}
-              onChange={setMeds}
+              client={client.medications_and_supplements}
               editing={medsEditing}
               setEditing={setMedsEditing}
+              onChange={setMedsSnapshot}
             />
           )}
           {activeTab === "biometrics" && (
@@ -321,13 +464,45 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
                 <span className="text-[24px]">+</span> Add
               </button>
               <Biometrics
-                value={biometrics}
+                client={client.biometrics}
                 edit={isEditingBiometrics}
-                onChange={setBiometrics}
+                onChange={(next) =>
+                  setClient((curr) => ({ ...curr, biometrics: next }))
+                }
               />
             </>
           )}
-          {activeTab === "labs" && <Labs />}
+          {activeTab === "labs" && (
+            <Labs
+              handleDownloadFile={handleDownloadFile}
+              client={
+                (client.labs && client.labs.length > 0 && client.labs) || [
+                  {
+                    id: "lab-001",
+                    name: "CBC_Results_2025-05-12.pdf",
+                    description:
+                      "Hemoglobin within range, platelets slightly elevated.",
+                    pages: 3,
+                    url: "https://example.com/labs/CBC_Results_2025-05-12.pdf",
+                    collected_at: "2025-05-11",
+                    reported_at: "2025-05-12",
+                    labName: "Acme Diagnostics",
+                  },
+                  {
+                    lab_id: "lab-002",
+                    file_name: "Lipid_Panel_2025-04-03.pdf",
+                    summary: "LDL decreased by 12% since previous test.",
+                    page_count: 2,
+                    file_url:
+                      "https://example.com/labs/Lipid_Panel_2025-04-03.pdf",
+                    collected_at: "2025-04-02",
+                    reported_at: "2025-04-03",
+                    specimen: "Blood",
+                  },
+                ]
+              }
+            />
+          )}
         </div>
 
         <div className="flex flex-col-reverse gap-[8px] md:flex-row md:justify-between items-center mt-[18px] md:mt-[24px]">
@@ -337,16 +512,25 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           >
             Cancel
           </button>
-          <button className="md:hidden p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center">
+          <button className="w-full md:hidden p-[16px] py-[10px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center">
             <ChatsIcon />
             Chat
           </button>
+
           {activeTab === "foodMoodPoop" && (
             <button
               onClick={() => setShareOpen(true)}
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
             >
               Share FMP
+            </button>
+          )}
+          {activeTab === "healthProfile" && (
+            <button
+              onClick={() => setSuggestOpen(true)}
+              className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+            >
+              Suggest
             </button>
           )}
           {activeTab === "clientStory" && !isEditingStory && (
@@ -361,8 +545,9 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             <button
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={saveStory}
+              disabled={saving}
             >
-              Save
+              {saving ? "Saving..." : "Save"}
             </button>
           )}
           {activeTab === "symptoms" && !isEditingSymptoms && (
@@ -376,9 +561,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           {activeTab === "symptoms" && isEditingSymptoms && (
             <button
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
-              onClick={() => setIsEditingSymptoms(false)}
+              onClick={saveSymptoms}
+              disabled={saving}
             >
-              Save
+              {saving ? "Saving..." : "Save"}
             </button>
           )}
           {activeTab === "lifestyleSkills" && isEditingLifestyle && (
@@ -386,24 +572,23 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
               <button
                 type="button"
                 onClick={addLifestyleItem}
-                className="hidden md:block p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"
+                className="hidden md:block p-[16px] py-[10px] rounded-[1000px] text:[16px] text-[#008FF6] font-semibold"
               >
                 <span className="text-[24px]">+</span> Add
               </button>
               <button
                 className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
                 onClick={saveLifestyle}
+                disabled={saving}
               >
-                Save
+                {saving ? "Saving..." : "Save"}
               </button>
             </div>
           )}
           {activeTab === "medicationsAndSupplements" && medsEditing && (
             <button
-              onClick={() => {
-                setMedsEditing(null);
-              }}
-              disabled={medsEditing === null}
+              onClick={saveMeds}
+              disabled={saving || medsEditing === null}
               className={[
                 "p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] text-white text-[16px] font-semibold",
                 medsEditing === null
@@ -411,7 +596,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
                   : "bg-[#1C63DB]",
               ].join(" ")}
             >
-              Save
+              {saving ? "Saving..." : "Save"}
             </button>
           )}
           {activeTab === "biometrics" && !isEditingBiometrics && (
@@ -440,13 +625,45 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           )}
         </div>
       </div>
-      <ShareFmpModal
+
+      <ConfirmModal
         isOpen={shareOpen}
         onClose={() => setShareOpen(false)}
-        onShare={() => {
+        title={`Share FMP tool with [${client.personal_info.name}] ?`}
+        description={
+          <p>
+            This tool helps clients track their food, mood, and physical
+            patterns. <br />
+            You can share this multiple times during the therapy journey.
+          </p>
+        }
+        cancelText="Cancel"
+        confirmText="Share"
+        onConfirm={() => {
+          shareFMP();
           setShareOpen(false);
         }}
-        clientName={client.client_info.name}
+      />
+
+      <ConfirmModal
+        isOpen={suggestOpen}
+        onClose={() => setSuggestOpen(false)}
+        title={"Send a request to complete missing information?"}
+        description={
+          <p>
+            You are about to send a request to the client with a link to
+            complete the Comprehensive Intake Form. <br />
+            This will help build a complete and up-to-date health profile,
+            ensuring more personalized and effective care. <br />
+            Would you like to proceed?
+          </p>
+        }
+        cancelText="Cancel"
+        confirmText="Send"
+        onConfirm={() => {
+          requestHealthHistory();
+          setSuggestOpen(false);
+        }}
       />
     </div>
   );

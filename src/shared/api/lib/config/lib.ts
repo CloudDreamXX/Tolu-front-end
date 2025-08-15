@@ -107,6 +107,14 @@ export const API_ROUTES = {
     CHANGE_STATUS: "/library/status",
     RATE_CONTENT: "/coach/rate-content",
     SEARCH_CONTENT: "/coach/search-content",
+    SHARE_FMP: "/coach/fmp-tracker/share",
+    POST_FMP: "/coach/client/fmp-tracker/{tracker_id}/entries",
+    DELETE_FMP: "/coach/fmp-tracker/{tracker_id}",
+    GET_COMPREHENSIVE_CLIENT: "/coach/client/{client_id}/comprehensive-profile",
+    GET_LAB_FILE: "/coach/client/{client_id}/labs/download/{file_name}",
+    UPDATE_COMPREHENSIVE_CLIENT:
+      "/coach/client/{client_id}/comprehensive-update",
+    UPDATE_HEALTH_HISTORY: "/coach/client/request-health-history-update",
   },
   DOCUMENTS: {
     DETAILS: "/content/retrieve",

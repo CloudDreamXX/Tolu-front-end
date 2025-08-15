@@ -1,53 +1,93 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import TrashIcon from "shared/assets/icons/trash-icon";
 import EditIcon from "shared/assets/icons/edit";
+import { LifestyleSkillsInfo } from "entities/coach";
 
 export type LifestyleItem = { text: string; sign?: "plus" | "minus" };
-export type LifestyleSkillsData = {
-  sleepRelaxation: LifestyleItem[];
-  exerciseMovement: LifestyleItem[];
-};
+
+export type LifestyleSkillsValue = Record<string, LifestyleItem[]>;
 
 type Props = {
-  value: LifestyleSkillsData;
-  isEditing: keyof LifestyleSkillsData | null;
-  setIsEditing: React.Dispatch<
-    React.SetStateAction<keyof LifestyleSkillsData | null>
-  >;
-  onChange?: (next: LifestyleSkillsData) => void;
-  activeSection?: keyof LifestyleSkillsData;
-  onSectionFocus?: (key: keyof LifestyleSkillsData) => void;
+  client: LifestyleSkillsInfo;
+  value: LifestyleSkillsValue;
+  isEditing: string | null;
+  setIsEditing: React.Dispatch<React.SetStateAction<string | null>>;
+  onChange?: (next: LifestyleSkillsValue) => void;
+  activeSection?: string;
+  onSectionFocus?: (key: string) => void;
 };
 
-const SECTIONS: { key: keyof LifestyleSkillsData; title: string }[] = [
-  { key: "sleepRelaxation", title: "Sleep & Relaxation" },
-  { key: "exerciseMovement", title: "Exercise & Movement" },
-];
+const FALLBACK_SECTION_TITLES = ["Sleep & Relaxation", "Exercise & Movement"];
+
+const toItems = (v: string | string[] | undefined): LifestyleItem[] => {
+  if (Array.isArray(v)) return v.map((t) => ({ text: String(t) }));
+  if (typeof v === "string" && v.trim().length > 0) return [{ text: v }];
+  return [];
+};
 
 const LifestyleSkills: React.FC<Props> = ({
+  client,
   value,
   onChange,
   onSectionFocus,
   isEditing,
   setIsEditing,
 }) => {
-  const update = (key: keyof LifestyleSkillsData, nextArr: LifestyleItem[]) =>
-    onChange?.({ ...value, [key]: nextArr });
+  const sectionTitles = useMemo(() => {
+    const entries = Object.entries(client || {}).filter(
+      ([, v]) => v !== undefined
+    );
+    return entries.length > 0
+      ? entries.map(([k]) => k)
+      : FALLBACK_SECTION_TITLES;
+  }, [client]);
 
-  const changeItem = (
-    key: keyof LifestyleSkillsData,
-    i: number,
-    text: string
-  ) => {
-    const arr = [...(value[key] || [])];
+  useEffect(() => {
+    if (!onChange) return;
+
+    let needsInit = false;
+    const next: LifestyleSkillsValue = { ...value };
+
+    if (sectionTitles === FALLBACK_SECTION_TITLES) {
+      for (const title of sectionTitles) {
+        if (!next[title]) {
+          next[title] = [];
+          needsInit = true;
+        }
+      }
+    } else {
+      for (const title of sectionTitles) {
+        if (!next[title]) {
+          next[title] = toItems(client[title]);
+          needsInit = true;
+        }
+      }
+    }
+
+    const keys = Object.keys(next);
+    for (const k of keys) {
+      if (!sectionTitles.includes(k)) {
+        delete next[k];
+        needsInit = true;
+      }
+    }
+
+    if (needsInit) onChange(next);
+  }, [client, sectionTitles.join("|")]);
+
+  const update = (title: string, nextArr: LifestyleItem[]) =>
+    onChange?.({ ...value, [title]: nextArr });
+
+  const changeItem = (title: string, i: number, text: string) => {
+    const arr = [...(value[title] || [])];
     arr[i] = { ...arr[i], text };
-    update(key, arr);
+    update(title, arr);
   };
 
-  const removeItem = (key: keyof LifestyleSkillsData, i: number) =>
+  const removeItem = (title: string, i: number) =>
     update(
-      key,
-      value[key].filter((_, idx) => idx !== i)
+      title,
+      (value[title] || []).filter((_, idx) => idx !== i)
     );
 
   return (
@@ -57,69 +97,78 @@ const LifestyleSkills: React.FC<Props> = ({
       </div>
 
       <div className="rounded-b-[8px] px-[20px] py-[16px] border border-[#DBDEE1] bg-white flex flex-col gap-[16px]">
-        {SECTIONS.map(({ key, title }) => (
-          <div key={String(key)} onClick={() => onSectionFocus?.(key)}>
-            <div className="flex items-center justify-between">
-              <p
-                className={`text-[14px] ${isEditing === key ? "text-[#5F5F65]" : "text-[#1D1D1F]"} font-semibold mb-[12px]`}
-              >
-                {isEditing !== key && <span>•</span>} {title}
-              </p>
-              {isEditing !== key && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsEditing(key);
-                  }}
-                  className="p-1 rounded hover:bg-black/5"
-                  aria-label={isEditing === key ? "Save" : "Edit"}
-                >
-                  <EditIcon />
-                </button>
-              )}
-            </div>
+        {sectionTitles.map((title) => {
+          const items = value[title] || [];
+          const editing = isEditing === title;
 
-            {isEditing !== key ? (
-              <ul className="text-[14px] font-semibold text-[#1D1D1F]">
-                <li className="list-disc ml-[15px]">
-                  {(value[key] || []).map((it, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <span className="w-3 font-bold text-center">
-                        {it.sign === "minus" ? "–" : "+"}
-                      </span>
-                      <span className="text-[14px]">{it.text || "—"}</span>
+          return (
+            <div key={title} onClick={() => onSectionFocus?.(title)}>
+              <div className="flex items-center justify-between">
+                <p
+                  className={`text-[14px] ${
+                    editing ? "text-[#5F5F65]" : "text-[#1D1D1F]"
+                  } font-semibold mb-[12px]`}
+                >
+                  {!editing && <span>•</span>} {title}
+                </p>
+                {!editing && (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(title)}
+                    className="p-1 rounded hover:bg-black/5"
+                    aria-label={editing ? "Save" : "Edit"}
+                  >
+                    <EditIcon />
+                  </button>
+                )}
+              </div>
+
+              {!editing ? (
+                <ul className="text-[14px] font-semibold text-[#1D1D1F]">
+                  <li className="list-disc ml-[15px]">
+                    {items.length === 0 ? (
+                      <div className="text-[#5F5F65]">—</div>
+                    ) : (
+                      items.map((it, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="font-bold w-3 text-center">
+                            {it.sign === "minus" ? "–" : "+"}
+                          </span>
+                          <span className="text-[14px]">{it.text || "—"}</span>
+                        </div>
+                      ))
+                    )}
+                  </li>
+                </ul>
+              ) : (
+                <div className="flex flex-col gap-[10px]">
+                  {items.map((it, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-[8px] rounded-full border border-[#DBDEE1] bg-white px-[16px] py-[10px]"
+                    >
+                      <input
+                        value={it.text}
+                        onChange={(e) => changeItem(title, i, e.target.value)}
+                        placeholder="Enter item"
+                        className="w-full outline-none text-[16px] text-[#1D1D1F]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeItem(title, i)}
+                        className="shrink-0 text-[#E86C4A] hover:opacity-80"
+                        aria-label="Remove"
+                        title="Remove"
+                      >
+                        <TrashIcon />
+                      </button>
                     </div>
                   ))}
-                </li>
-              </ul>
-            ) : (
-              <div className="flex flex-col gap-[10px]">
-                {(value[key] || []).map((it, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-[8px] rounded-full border border-[#DBDEE1] bg-white px-[16px] py-[10px]"
-                  >
-                    <input
-                      value={it.text}
-                      onChange={(e) => changeItem(key, i, e.target.value)}
-                      placeholder="Enter item"
-                      className="w-full outline-none text-[16px] text-[#1D1D1F]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeItem(key, i)}
-                      className="shrink-0 text-[#E86C4A] hover:opacity-80"
-                      aria-label="Remove"
-                      title="Remove"
-                    >
-                      <TrashIcon />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

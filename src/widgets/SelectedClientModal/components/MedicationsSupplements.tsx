@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { MedicationsAndSupplements, MedicationInfo } from "entities/coach";
 import Chevron from "shared/assets/icons/chevron";
 import EditIcon from "shared/assets/icons/edit";
 import { usePageWidth } from "shared/lib";
@@ -218,37 +219,95 @@ const TableCard: React.FC<{
 };
 
 type Props = {
-  value: MedsData;
-  onChange: (next: MedsData) => void;
+  client: MedicationsAndSupplements;
   editing: MedsEditing;
   setEditing: (e: MedsEditing) => void;
+  onChange?: (next: MedicationsAndSupplements) => void;
+};
+
+const EMPTY_MED: Medication = {
+  name: "",
+  dosage: "",
+  takingSince: "",
+  prescribed: "",
+  status: "",
+};
+
+const ensureAtLeastOneRow = (arr: Medication[]): Medication[] =>
+  arr && arr.length > 0 ? arr : [{ ...EMPTY_MED }];
+
+const fromInfo = (m: MedicationInfo): Medication => ({
+  name: m.name ?? "",
+  dosage: m.dosage ?? "",
+  takingSince: m.prescribed_date ?? "",
+  prescribed: m.prescribed_by ?? "",
+  status: m.status ?? "",
+});
+
+const toInfo = (m: Medication): MedicationInfo => ({
+  name: m.name,
+  dosage: m.dosage,
+  prescribed_date: m.takingSince,
+  prescribed_by: m.prescribed,
+  status: m.status,
+});
+
+const toApiShape = (v: MedsData): MedicationsAndSupplements => ({
+  previous_medications: (v.previous || []).map(toInfo),
+  current_medications: (v.current || []).map(toInfo),
+});
+
+const fromClient = (c: MedicationsAndSupplements): MedsData => {
+  const prev = ensureAtLeastOneRow(
+    (c?.previous_medications ?? []).map(fromInfo)
+  );
+  const curr = ensureAtLeastOneRow(
+    (c?.current_medications ?? []).map(fromInfo)
+  );
+  return { previous: prev, current: curr };
 };
 
 const MedicationsSupplements: React.FC<Props> = ({
-  value,
-  onChange,
+  client,
   editing,
   setEditing,
-}) => (
-  <div className="flex flex-col gap-[24px]">
-    <TableCard
-      title="Previous Medications"
-      rows={value.previous}
-      onRowsChange={(rows) => onChange({ ...value, previous: rows })}
-      editing={editing}
-      setEditing={setEditing}
-      section="previous"
-    />
+  onChange,
+}) => {
+  const [rows, setRows] = useState<MedsData>(() => fromClient(client));
 
-    <TableCard
-      title="Current Medications"
-      rows={value.current}
-      onRowsChange={(rows) => onChange({ ...value, current: rows })}
-      editing={editing}
-      setEditing={setEditing}
-      section="current"
-    />
-  </div>
-);
+  useEffect(() => {
+    setRows(fromClient(client));
+  }, [client]);
+
+  useEffect(() => {
+    if (onChange) onChange(toApiShape(rows));
+  }, [rows, onChange]);
+
+  return (
+    <div className="flex flex-col gap-[24px]">
+      <TableCard
+        title="Previous Medications"
+        rows={rows.previous}
+        onRowsChange={(next) =>
+          setRows((r) => ({ ...r, previous: ensureAtLeastOneRow(next) }))
+        }
+        editing={editing}
+        setEditing={setEditing}
+        section="previous"
+      />
+
+      <TableCard
+        title="Current Medications"
+        rows={rows.current}
+        onRowsChange={(next) =>
+          setRows((r) => ({ ...r, current: ensureAtLeastOneRow(next) }))
+        }
+        editing={editing}
+        setEditing={setEditing}
+        section="current"
+      />
+    </div>
+  );
+};
 
 export default MedicationsSupplements;

@@ -523,7 +523,7 @@ export const ContentManagerClients: React.FC = () => {
                     <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
                       Status
                     </div>
-                    <div className="w-full text-[16px]">
+                    <div className="w-full text-[16px] flex items-center justify-center">
                       {client.status === "waiting to accept invite" ? (
                         <div className="flex flex-col items-center justify-center ">
                           Pending
@@ -722,7 +722,7 @@ export const ContentManagerClients: React.FC = () => {
           !confirmDelete &&
           !editModal && (
             <SelectedClientModal
-              client={selectedClient}
+              clientId={selectedClient.client_info.id}
               onClose={() => {
                 setConfirmDelete(false);
                 cleanState();

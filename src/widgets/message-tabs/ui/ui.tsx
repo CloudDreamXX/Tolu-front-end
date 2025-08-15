@@ -419,7 +419,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
       {selectedClient && (
         <SelectedClientModal
-          client={selectedClient}
+          clientId={selectedClient.client_info.id}
           onClose={() => {
             setSelectedClient(null);
           }}
