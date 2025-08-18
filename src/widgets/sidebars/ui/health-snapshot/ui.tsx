@@ -120,7 +120,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
 
       <button
         onClick={isNarrow ? () => setMenuOpen(!menuOpen) : () => {}}
-        className={`flex gap-4 items-center ${isNarrow ? "" : "pl-4"}`}
+        className={`flex gap-4 items-center justify-between ${isNarrow ? "" : "pl-4"}`}
       >
         <Avatar>
           <AvatarImage src={user?.photo} alt="Avatar" />

@@ -726,12 +726,12 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
 
   return (
     <div
-      className={`flex flex-col w-full gap-6 ${isCoach ? "p-6 bg-[#F2F4F6] h-full" : "md:p-6 bg-white md:bg-[#F2F4F6]"}`}
+      className={`flex flex-col w-full gap-6 flex-1 ${isCoach ? "p-6 bg-[#F2F4F6] h-full" : "md:p-6 bg-white md:bg-[#F2F4F6]"}`}
     >
       <div className={`${isCoach ? "" : "hidden md:block"}`}>
         <ChatBreadcrumb displayChatTitle={displayChatTitle} />
       </div>
-      <div className="flex flex-row w-full h-full gap-6 md:relative">
+      <div className="flex flex-row flex-1 w-full h-full gap-6 md:relative">
         <div className="hidden xl:block">
           <ChatActions
             onRegenerate={handleRegenerateResponse}
@@ -749,7 +749,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
-          <div className="flex flex-col w-full h-full overflow-clip">
+          <div className="flex flex-col flex-1 w-full min-h-0 overflow-clip">
             <ChatHeader
               displayChatTitle={displayChatTitle}
               isExistingChat={!!isExistingChat}
@@ -801,7 +801,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   </div>
                 ) : (
                   <>
-                    <div className="md:hidden flex flex-col items-center justify-center flex-1">
+                    <div className="flex flex-col items-center justify-center flex-1 md:hidden">
                       <div className="max-w-[300px] sm:max-w-[360px] mx-auto">
                         <h2 className="text-[24px] leading-tight font-[700] text-[#1D1D1F]">
                           Hey, what’s going on in your world today?

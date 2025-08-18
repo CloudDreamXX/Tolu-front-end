@@ -163,7 +163,7 @@ export const NavigationClient: React.FC = () => {
 
       {/* Mobile Hamburger */}
       <div
-        className={`flex xl:hidden justify-between items-center p-[16px] md:p-6 ${location.pathname.startsWith(`${basePath}/library`) && location.pathname.split("/").length > 2 ? "bg-white md:bg-transparent" : ""}`}
+        className={`flex 2xl:hidden justify-between items-center p-[16px] md:p-6 ${location.pathname.startsWith(`${basePath}/library`) && location.pathname.split("/").length > 2 ? "bg-white md:bg-transparent" : ""}`}
       >
         <h1 className="text-[27px] md:text-[46px] font-[700] font-open">
           Tolu
@@ -268,7 +268,7 @@ export const NavigationClient: React.FC = () => {
             <div className="flex flex-col gap-[16px] mt-6">
               <button
                 onClick={() => setMenuMobOpen(false)}
-                className="flex gap-4 items-center pl-4 bg-[#F3F6FB] w-full py-[8px] px-[16px] rounded-[8px]"
+                className="flex gap-4 items-center pl-4 bg-[#F3F6FB] w-full py-[8px] px-[16px] rounded-[8px] justify-between"
               >
                 <Avatar>
                   <AvatarImage src={user?.photo} alt="Avatar" />
