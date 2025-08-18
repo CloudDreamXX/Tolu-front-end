@@ -726,7 +726,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
 
   return (
     <div
-      className={`flex flex-col w-full gap-6 ${isCoach ? "p-6 bg-[#F2F4F6] h-full" : "md:p-6 bg-white md:bg-[#F2F4F6] h-[calc(100vh-72px)]"}`}
+      className={`flex flex-col w-full gap-6 ${isCoach ? "p-6 bg-[#F2F4F6] h-full" : "md:p-6 bg-white md:bg-[#F2F4F6]"}`}
     >
       <div className={`${isCoach ? "" : "hidden md:block"}`}>
         <ChatBreadcrumb displayChatTitle={displayChatTitle} />

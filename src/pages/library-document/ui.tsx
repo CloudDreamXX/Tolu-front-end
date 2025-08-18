@@ -18,6 +18,11 @@ import { ContentService, ContentStatus } from "entities/content";
 import { ClientService } from "entities/client";
 import { setFolders } from "entities/client/lib";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
+import GlobeIcon from "shared/assets/icons/globe";
+import { HealthProfileForm } from "widgets/health-profile-form";
+import { Button } from "shared/ui";
+import TwoUsersIcon from "shared/assets/icons/two-users";
+import { usePageWidth } from "shared/lib";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -44,6 +49,7 @@ export const LibraryDocument = () => {
     handleDeleteSelectedText,
   } = useTextSelectionTooltip();
   const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
+  const { isMobile } = usePageWidth();
 
   useEffect(() => {
     const loadVoices = () => {
@@ -180,6 +186,23 @@ export const LibraryDocument = () => {
 
   return (
     <div className={`flex flex-col w-full h-full gap-6 p-6`}>
+      <div className="flex items-center gap-2 mb-4 md:gap-4">
+        <HealthProfileForm healthHistory={healthHistory} />
+        <Button
+          variant="brightblue"
+          size={isMobile ? "sm" : "icon"}
+          className="px-[10px] rounded-full md:h-14 md:w-14"
+        >
+          {isMobile ? "Providers" : <TwoUsersIcon />}
+        </Button>
+        <Button
+          variant="blue2"
+          size={isMobile ? "sm" : "icon"}
+          className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+        >
+          {isMobile ? "Communities (soon)" : <GlobeIcon />}{" "}
+        </Button>
+      </div>
       {isLoadingDocument && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <LoadingIcon />

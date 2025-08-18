@@ -842,10 +842,20 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         </Card>
       ) : (
         <Card className="flex flex-col w-full h-full border-none rounded-2xl relative">
-          <CardHeader className="relative flex flex-col items-center gap-4">
+          <CardHeader className="relative flex flex-col items-center gap-2">
             <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
               {selectedSwitch}
             </div>
+            {isSwitch(SWITCH_KEYS.DEF) && (
+              <p className="text-[18px] text-[#1D1D1F] font-[600]">
+                personalized health answers
+              </p>
+            )}
+            {isSwitch(SWITCH_KEYS.LEARN) && (
+              <p className="text-[18px] text-[#1D1D1F] font-[600]">
+                expert-verified guidance you can trust
+              </p>
+            )}
             {!isSwitch(SWITCH_KEYS.CONTENT) && isCoach && (
               <button
                 className="hidden xl:block xl:absolute top-4 left-4"
@@ -883,29 +893,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 error={error}
               />
             ) : (
-              <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
-                <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
-                  Start a conversation
-                </h2>
-                {isCoach ? (
-                  <p className="text-[16px] md:text-[18px] text-[#1C63DB] max-w-[464px]">
-                    Select an action below and enter a query to start a
-                    conversation with Tolu.
-                  </p>
-                ) : (
-                  <div className="flex flex-col items-baseline justify-center">
-                    <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                      Activate <span className="font-bold">Smart Search</span>{" "}
-                      for personalized health answers.
-                    </p>
-
-                    <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                      Activate <span className="font-bold">Learn</span> for
-                      expert‑verified guidance you can trust.
-                    </p>
-                  </div>
-                )}
-              </div>
+              <div></div>
             )}
           </CardContent>
           <CardFooter className="w-full p-0">
