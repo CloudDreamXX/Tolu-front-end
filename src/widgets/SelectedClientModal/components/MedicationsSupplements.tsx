@@ -43,7 +43,7 @@ const ColumnLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
   children,
-}) => <h3 className="text-[18px] font-bold text-[#1C63DB]">{children}</h3>;
+}) => <h3 className="text-[16px] font-bold text-[#1C63DB]">{children}</h3>;
 
 const RowView: React.FC<{ med: Medication; onEdit: () => void }> = ({
   med,
@@ -85,7 +85,7 @@ const RowView: React.FC<{ med: Medication; onEdit: () => void }> = ({
 
     <button
       onClick={onEdit}
-      className="absolute right-[16px] md:-right-1 top-[16px] md:top-1 p-1 rounded hover:bg-black/5"
+      className="absolute right-[16px] md:right-0 top-[16px] md:top-1 p-1 rounded hover:bg-black/5"
       title="Edit"
       aria-label="Edit row"
     >

@@ -1,5 +1,6 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import {
+  ContentHashtags,
   ContentItemResponse,
   ContentStatus,
   ContentToEdit,
@@ -39,5 +40,35 @@ export class ContentService {
       API_ROUTES.CONTENT.FEEDBACK,
       feedback
     );
+  }
+
+  static async addHashtags(data: ContentHashtags): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.CONTENT.ADD_HASHTAGS, data);
+  }
+
+  static async deleteHashtags(data: ContentHashtags): Promise<any> {
+    return ApiService.delete<any>(API_ROUTES.CONTENT.DELETE_HASHTAGS, data);
+  }
+
+  static async getContentHashtags(id: string): Promise<any> {
+    const endpoint = API_ROUTES.CONTENT.GET_CONTENT_HASHTAGS.replace(
+      "{content_id}",
+      id
+    );
+    return ApiService.get<any>(endpoint);
+  }
+
+  static async getContentWithSimilarTags(id: string): Promise<any> {
+    const data = {
+      content_id: id,
+    };
+    return ApiService.post<any>(
+      API_ROUTES.CONTENT.GET_CONTENTS_WITH_SIMILAR_TAGS,
+      data
+    );
+  }
+
+  static async getAllHashtags(): Promise<any> {
+    return ApiService.get<any>(API_ROUTES.CONTENT.GET_ALL_HASHTAGS);
   }
 }

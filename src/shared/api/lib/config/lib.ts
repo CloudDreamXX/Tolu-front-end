@@ -66,6 +66,11 @@ export const API_ROUTES = {
     EDIT_CONTENT: "/content/edit-content",
     UPDATE_CONTENT_STATUS: "/content/{content_id}/read-status",
     FEEDBACK: "/feedback",
+    ADD_HASHTAGS: "/content/hashtags/add",
+    DELETE_HASHTAGS: "/content/hashtags/remove",
+    GET_CONTENT_HASHTAGS: "/content/hashtags/{content_id}",
+    GET_CONTENTS_WITH_SIMILAR_TAGS: "/content/similar-tags",
+    GET_ALL_HASHTAGS: "/content/all-hashtags",
   },
   HEALTH_HISTORY: {
     GET: "/health-history",

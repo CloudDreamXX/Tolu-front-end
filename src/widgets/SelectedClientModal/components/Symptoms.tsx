@@ -127,7 +127,7 @@ const Symptoms: React.FC<Props> = ({
               value={mind}
               onChange={(e) => updateMind(e.target.value)}
               placeholder="Irritability, fatigue, anxiety around peers …"
-              className="mt-[8px] w-full rounded-full border border-[#DBDEE1] bg-white px/[16px] py-[10px] text-[14px] text-[#1D1D1F] outline-none"
+              className="mt-[8px] w-full rounded-full border border-[#DBDEE1] bg-white px-[16px] py-[10px] text-[14px] text-[#1D1D1F] outline-none"
             />
           )}
         </div>
