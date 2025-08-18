@@ -38,6 +38,7 @@ export const useMessageState = () => {
         },
         folderId,
         files,
+        undefined,
         clientId,
         (chunk) => {
           if (chunk.reply) {

@@ -79,6 +79,7 @@ export const ContentManagerFolder: React.FC = () => {
         chatMessage,
         newFolderId,
         undefined,
+        undefined,
         clientId,
         (chunk) => {
           if (chunk.reply) {

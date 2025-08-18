@@ -51,7 +51,7 @@ export const CreateGroupModal = ({
     dragOver,
     remove,
   } = useFilePicker({
-    accept: ["image/png", "image/jpeg"],
+    accept: ["image/png", "image/jpeg", "application/pdf", ".pdf"],
   });
   const [selectedOption, setSelectedOption] = useState<string[]>(
     chat?.participants.map((p) => p.user.name || "") || []
@@ -176,7 +176,7 @@ export const CreateGroupModal = ({
                 </p>
                 <p className="text-[#5F5F65] text-sm">or drag and drop</p>
                 <p className="text-[#5F5F65] text-sm">
-                  SVG, PNG, JPG or GIF (max. 400x400px)
+                  SVG, PNG, JPG, PDF or GIF (max. 400x400px)
                 </p>
               </>
             )}

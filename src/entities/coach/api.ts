@@ -118,6 +118,7 @@ export class CoachService {
     chatMessage: AIChatMessage,
     folder_id: string,
     images: File[] = [],
+    pdf?: File,
     client_id?: string | null,
     onChunk?: (data: any) => void,
     onComplete?: (folderId: {
@@ -142,6 +143,10 @@ export class CoachService {
       images.forEach((file) => {
         formData.append("files", file);
       });
+    }
+
+    if (pdf) {
+      formData.append("files", pdf);
     }
 
     if (client_id) {

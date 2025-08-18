@@ -275,12 +275,12 @@ export class SearchService {
 
     if (imageFiles && imageFiles.length) {
       imageFiles.forEach((file) => {
-        formData.append("images", file, file.name);
+        formData.append("files", file, file.name);
       });
     }
 
     if (pdfFile) {
-      formData.append("pdf", pdfFile, pdfFile.name);
+      formData.append("files", pdfFile, pdfFile.name);
     }
 
     if (clientId) {

@@ -464,6 +464,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           },
           folderId!,
           images,
+          pdf,
           clientId,
           processChunk,
           processFinal
@@ -491,6 +492,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           },
           folderId!,
           images,
+          pdf,
           clientId,
           processChunk,
           processFinal

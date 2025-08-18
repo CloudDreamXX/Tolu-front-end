@@ -55,6 +55,7 @@ export const useDocumentCreation = () => {
         { ...chatMessage, folder_instructions: stateInstruction ?? "" },
         stateFolderId,
         stateFiles ?? [],
+        undefined,
         stateClientId,
         (chunk) => {
           if (chunk.reply) {
