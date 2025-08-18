@@ -31,10 +31,21 @@ export const smartRender = async (text: string) => {
         "h5",
         "h6",
         "em",
+        "strong",
+        "blockquote",
+        "pre",
+        "code",
+        "br",
+        "hr",
+        "div",
+        "span",
+        "img",
+        "style",
       ],
       allowedAttributes: {
-        "*": ["class", "id", "style", "href"],
+        "*": ["class", "id", "style", "href", "title", "alt", "target", "rel"],
       },
+      allowVulnerableTags: true,
     });
 
     const type = detectContentType(sanitizedText);
@@ -43,7 +54,7 @@ export const smartRender = async (text: string) => {
       return (
         <div
           className="bg-[#ECEFF4]"
-          dangerouslySetInnerHTML={{ __html: sanitizedText }}
+          dangerouslySetInnerHTML={{ __html: text }}
         />
       );
     }
@@ -54,7 +65,7 @@ export const smartRender = async (text: string) => {
       const htmlParts = extractHtmlFromMarkdown(cleaned);
 
       return (
-        <div className="font-inter bg-[#ECEFF4] p-4">
+        <div className="font-inter bg-[#ECEFF4]">
           {htmlParts.map((part, index) =>
             part.isHtml ? (
               <div

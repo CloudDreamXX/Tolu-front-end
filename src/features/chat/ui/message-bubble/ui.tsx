@@ -88,7 +88,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                   {message.timestamp.toLocaleDateString()}
                 </span>
               </div>
-              <div className="text-sm text-[#1D1D1F] font-inter bg-[#ECEFF4] px-[14px] py-[10px] rounded-md font-inter">
+              <div className="text-[#1D1D1F] font-inter bg-[#ECEFF4] px-[14px] py-[10px] rounded-md font-inter">
                 {renderedContent}
                 {message.document && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 font-inter pb-[10px]">
