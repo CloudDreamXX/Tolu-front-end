@@ -1,6 +1,7 @@
 import { Share } from "entities/coach";
 import { IDocument } from "entities/document";
 import { ClientsInfo, FilesInfo, InstructionInfo } from "entities/folder";
+import { HashtagsInfo } from "entities/folder/ui/hashtags-info/ui";
 import React from "react";
 
 interface DocumentInfoHeaderProps {
@@ -34,6 +35,11 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
           documentId={documentId}
           refreshSharedClients={refreshSharedClients}
         />
+      ) : (
+        <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
+      )}
+      {document ? (
+        <HashtagsInfo contentId={document.id} />
       ) : (
         <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
       )}

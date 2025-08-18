@@ -54,3 +54,8 @@ export interface FeedbackResponse {
     created_at: string;
   };
 }
+
+export interface ContentHashtags {
+  content_id: string;
+  hashtags: string[];
+}
