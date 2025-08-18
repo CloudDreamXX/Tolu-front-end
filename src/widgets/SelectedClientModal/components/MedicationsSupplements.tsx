@@ -288,7 +288,7 @@ const MedicationsSupplements: React.FC<Props> = ({
   }, [rows, onChange]);
 
   return (
-    <div className="flex flex-col gap-[24px]">
+    <div className="flex flex-col gap-[24px] pr-1">
       <TableCard
         title="Previous Medications"
         rows={rows.previous}

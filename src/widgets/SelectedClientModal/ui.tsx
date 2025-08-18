@@ -466,7 +466,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           </button>
         </div>
 
-        <div className="md:max-h-[350px] overflow-y-auto">
+        <div className="md:max-h-[350px] min-h-60 overflow-y-auto">
           {activeTab === "clientInfo" && (
             <ClientInfo client={client.personal_info} />
           )}
