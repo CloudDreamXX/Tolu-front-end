@@ -12,6 +12,7 @@ import { toast, usePageWidth } from "shared/lib";
 import { MessageSidebar } from "widgets/message-sidebar";
 import { getAvatarUrl } from "widgets/message-tabs/helpers";
 import { MessageTabs } from "widgets/message-tabs/ui";
+
 export const ContentManagerMessages: React.FC = () => {
   const { chatId: routeChatId } = useParams();
   const navigate = useNavigate();

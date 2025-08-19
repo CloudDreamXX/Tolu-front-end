@@ -48,6 +48,7 @@ import { SelectType } from "widgets/OnboardingPractitioner/select-type";
 import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
 import { MainLayout, ProtectedRoute } from "./ui";
 import { ClientMessages } from "pages/messages/ui";
+import { ContentManagerProfile } from "pages/content-manager/profile";
 
 export const AppRoutes = () => {
   return (
@@ -98,6 +99,10 @@ export const AppRoutes = () => {
           </MainLayout>
         }
       >
+        <Route
+          path="/content-manager/profile"
+          element={<ContentManagerProfile />}
+        />
         <Route
           path="/content-manager/create"
           element={<ContentManagerCreatePage />}
