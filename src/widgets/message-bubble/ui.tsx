@@ -1,11 +1,12 @@
-import { ChatMessage } from "entities/chat";
+import { ChatMessageModel } from "entities/chat";
 import React from "react";
 import { cn, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
 import { FileItem } from "widgets/file-item";
+import { toUserTZ } from "widgets/message-tabs/helpers";
 
 interface MessageBubbleProps {
-  message: ChatMessage;
+  message: ChatMessageModel;
   avatar?: string;
   author?: string;
   isOnlaine?: boolean;
@@ -22,6 +23,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   className = "",
 }) => {
   const { isMobile } = usePageWidth();
+  const instant = toUserTZ(message.created_at);
+
   const isFileMessage =
     message.file_name !== null &&
     message.file_size !== null &&
@@ -98,7 +101,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               <span className="text-nowrap">{isOwn ? "You" : author}</span>
             )}
             <span className="ml-4 text-muted-foreground whitespace-nowrap">
-              {new Date(message.created_at).toLocaleTimeString("en-US", {
+              {instant.toLocaleTimeString(undefined, {
                 hour: "2-digit",
                 minute: "2-digit",
               })}

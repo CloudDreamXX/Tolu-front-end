@@ -1,12 +1,12 @@
 import { Edit, MoreVertical, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ArrowLeft from "shared/assets/icons/arrowLeft";
 
-import { ChatService, DetailsChatItemModel } from "entities/chat";
+import { DetailsChatItemModel } from "entities/chat";
+import { useFetchChatDetailsByIdQuery } from "entities/chat/chatApi";
 import { Client, ClientProfile, CoachService } from "entities/coach";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Person from "shared/assets/icons/person";
 import Plus from "shared/assets/icons/plus";
 import Search from "shared/assets/icons/search";
@@ -30,15 +30,17 @@ import {
 } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { SelectedClientModal } from "widgets/SelectedClientModal";
-import { CreateGroupModal } from "./CreateGroupModal";
+import { ParticipantsModal } from "./components/ParticipantsModal";
 import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
+import { NotesTab } from "./notes-tab";
 import { RecommendedTab } from "./recommended-tab";
-import { getAvatarUrl } from "../helpers";
 
 interface MessageTabsProps {
-  chatId?: string;
   goBackMobile: () => void;
+  onEditGroup?: (chat: DetailsChatItemModel) => void;
+  onCreateGroup?: (clients?: string[]) => void;
+  chatId?: string;
   clientsData?: Client[];
 }
 
@@ -46,71 +48,79 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   chatId,
   goBackMobile,
   clientsData = [],
+  onCreateGroup,
+  onEditGroup,
 }) => {
-  const navigate = useNavigate();
-  const [chat, setChat] = useState<DetailsChatItemModel | null>(null);
-  const profile = useSelector((state: RootState) => state.user.user);
   const { isMobile, isMobileOrTablet } = usePageWidth();
-  const [loading, setLoading] = useState(true);
+  const profile = useSelector((state: RootState) => state.user.user);
+
+  const {
+    data: chatDetails,
+    isLoading,
+    isError,
+  } = useFetchChatDetailsByIdQuery({ chatId: chatId! }, { skip: !chatId });
+  const [chat, setChat] = useState<DetailsChatItemModel | null>(null);
+
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(
     null
   );
   const [activeTab, setActiveTab] = useState<string>("clientInfo");
   const [search, setSearch] = useState<string>("");
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  const [groupModalOpen, setGroupModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!chatId) return;
+    let cancelled = false;
+    (async () => {
+      if (!chatId) return;
 
-    const fetchDetails = async () => {
-      setLoading(true);
-      try {
-        const response = await ChatService.fetchChatDetailsById(chatId);
-        if (response.avatar_url) {
-          response.avatar_url = await getAvatarUrl(
-            response.avatar_url.split("/").pop() || null
-          );
-        }
-        setChat(response);
-      } catch {
-        const clients = await CoachService.getManagedClients();
-        const client = clients.clients.find(
-          (client) => client.client_id === chatId
-        );
+      if (chatDetails) {
+        if (!cancelled) setChat(chatDetails);
+        return;
+      }
 
-        if (client) {
-          setChat({
-            chat_id: chatId,
-            name: client.name,
-            avatar_url: "",
-            chat_type: "new_chat",
-            last_message_at: "",
-            unread_count: 0,
-            last_message: {} as any,
-            participants: [
-              {
-                user: {
-                  user_id: client.client_id,
-                  email: "",
-                  name: client.name,
-                },
-              } as any,
-            ],
-            description: "",
-            created_by: "",
-            created_at: "",
-            updated_at: "",
+      if (isError) {
+        try {
+          const clients = await CoachService.getManagedClients();
+          const client = clients.clients.find((c) => c.client_id === chatId);
+          if (client && !cancelled) {
+            setChat({
+              chat_id: chatId,
+              name: client.name,
+              avatar_url: "",
+              chat_type: "new_chat",
+              last_message_at: "",
+              unread_count: 0,
+              last_message: {} as any,
+              participants: [
+                {
+                  user: {
+                    user_id: client.client_id,
+                    email: "",
+                    name: client.name,
+                  },
+                } as any,
+              ],
+              description: "",
+              created_by: "",
+              created_at: "",
+              updated_at: "",
+            });
+          }
+        } catch {
+          toast({
+            title: "Error",
+            description: "Failed to load chat details. Please try again.",
+            variant: "destructive",
           });
         }
-      } finally {
-        setLoading(false);
       }
+    })();
+    return () => {
+      cancelled = true;
     };
-
-    fetchDetails();
-  }, [chatId]);
+  }, [chatId, chatDetails, isError]);
 
   const handleSelectClient = async (clientId: string | undefined) => {
     if (!clientId) {
@@ -136,88 +146,16 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         title: "No clients selected",
         description: "Please select at least two clients.",
       });
-      return;
-    }
-    setGroupModalOpen(true);
-  };
-
-  const createGroupChat = async ({
-    name,
-    image,
-  }: {
-    name: string;
-    image: File | null;
-  }) => {
-    try {
-      const response = await ChatService.createGroupChat({
-        request: {
-          name,
-          participant_ids: selectedOption.map(
-            (name) => clientsData.find((c) => c.name === name)?.client_id || ""
-          ),
-        },
-        avatar_image: image,
-      });
-      navigate(`content-manager/messages/${response.chat_id}`);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error creating group chat",
-        description:
-          JSON.stringify(error) ||
-          "An error occurred while creating the group chat.",
-      });
-    } finally {
-      setGroupModalOpen(false);
+    } else {
+      onCreateGroup?.(selectedOption);
     }
   };
 
-  const onEdit = async ({
-    name,
-    image,
-    description,
-    add_participant,
-    remove_participant,
-  }: {
-    name: string;
-    image: File | null;
-    description?: string;
-    add_participant?: string[];
-    remove_participant?: string[];
-  }) => {
-    try {
-      const response = await ChatService.updateGroupChat(chat?.chat_id || "", {
-        request: {
-          name,
-          description,
-          add_participant_ids: add_participant,
-          remove_participant_ids: remove_participant,
-        },
-        avatar_image: image,
-      });
-      setChat((prev) =>
-        prev
-          ? {
-              ...prev,
-              name: response.name,
-              description: response.description ?? "",
-              avatar_url: image ? URL.createObjectURL(image) : prev.avatar_url,
-              participants: response.participants,
-            }
-          : null
-      );
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error editing group chat",
-        description:
-          JSON.stringify(error) ||
-          "An error occurred while editing the group chat.",
-      });
-    } finally {
-      setGroupModalOpen(false);
-    }
-  };
+  const receiver = useMemo(
+    () => chat?.participants?.find((p) => p.user.email !== profile?.email),
+    [chat, profile?.email]
+  );
+  const isClient = profile?.roleName === "Client";
 
   if (!chatId)
     return (
@@ -235,23 +173,11 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onChange={setSelectedOption}
           onSave={onSaveClients}
         />
-        <CreateGroupModal
-          showModal={groupModalOpen}
-          onSave={createGroupChat}
-          onClose={() => setGroupModalOpen(false)}
-        />
       </main>
     );
 
-  if (loading) return <MessageTabsLoadingSkeleton />;
-
+  if (isLoading) return <MessageTabsLoadingSkeleton />;
   if (!chat) return null;
-
-  const receiver = chat.participants?.find(
-    (p) => p.user.email !== profile?.email
-  );
-
-  const isClient = profile?.roleName === "Client";
 
   return (
     <main className="flex flex-col w-full h-full px-4 py-6 md:p-6 lg:p-8">
@@ -281,7 +207,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 {chat.name || receiver?.user.name || "Unknown name"}
               </span>
               <span className="font-semibold text-muted-foreground text-[14px]">
-                @{chat.name || receiver?.user.email || "Unknown email"}
+                @{chat.description || receiver?.user.email || "Unknown email"}
               </span>
             </div>
           </div>
@@ -316,6 +242,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                   <Button
                     variant="ghost"
                     className="p-2 bg-white border hover:bg-white"
+                    onClick={() => setParticipantsModalOpen(true)}
                   >
                     <div className="flex items-center">
                       {chat.participants.slice(0, 3).map((p, i) => (
@@ -366,7 +293,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                     className="text-[#1D1D1F]"
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      setGroupModalOpen(true);
+                      onEditGroup?.(chat);
                     }}
                   >
                     <Edit className="w-4 h-4 mr-2" /> Edit
@@ -400,11 +327,16 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <TabsTrigger value="files" className="w-[120px]">
             Files
           </TabsTrigger>
-          {/* {isClient && (
+          {!isClient && (
+            <TabsTrigger value="notes" className="w-[fit]">
+              Notes
+            </TabsTrigger>
+          )}
+          {isClient && (
             <TabsTrigger value="recommended" className="w-[fit]">
               Recommended for you
             </TabsTrigger>
-          )} */}
+          )}
         </TabsList>
         <TabsContent value="messages">
           <MessagesTab chat={chat} search={search} />
@@ -414,6 +346,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         </TabsContent>
         <TabsContent value="recommended">
           <RecommendedTab />
+        </TabsContent>
+        <TabsContent value="notes">
+          <NotesTab chat={chat} search={search} />
         </TabsContent>
       </Tabs>
 
@@ -430,13 +365,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         />
       )}
 
-      <CreateGroupModal
-        showModal={groupModalOpen}
-        onSave={onEdit}
-        onClose={() => setGroupModalOpen(false)}
-        isEdit
-        clientsData={clientsData}
-        chat={chat}
+      <ParticipantsModal
+        open={participantsModalOpen}
+        onClose={() => setParticipantsModalOpen(false)}
+        participants={chat.participants || []}
       />
     </main>
   );

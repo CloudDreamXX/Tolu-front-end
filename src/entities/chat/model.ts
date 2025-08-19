@@ -1,22 +1,33 @@
-interface User {
+export interface MessageUser {
   id: string;
   email: string;
   name: string;
 }
 
 export interface ChatItemModel {
+  id: string;
+  name: string;
+  avatar_url: string;
+  type: string;
+  lastMessageAt: string;
+  unreadCount: number;
+  lastMessage: ChatMessageModel | null;
+  participants: MessageUser[];
+}
+
+export interface ServerChatItemModel {
   chat_id: string;
   name: string;
   avatar_url: string;
   chat_type: string;
   last_message_at: string;
   unread_count: number;
-  last_message: ChatMessage | null;
-  participants: User[];
+  last_message: ChatMessageModel | null;
+  participants: MessageUser[];
 }
 
 export interface DetailsChatItemModel
-  extends Omit<ChatItemModel, "participants"> {
+  extends Omit<ServerChatItemModel, "participants"> {
   description: string | null;
   participants: Participant[];
   created_by: string;
@@ -25,7 +36,7 @@ export interface DetailsChatItemModel
 }
 
 export interface Participant {
-  user: User;
+  user: MessageUser;
   role: string;
   joinedAt: string;
   lastReadAt: string;
@@ -42,12 +53,12 @@ export interface SendMessagePayload {
   target_user_id?: string;
 }
 
-export type FetchAllChatsResponse = ChatItemModel[];
-export type CreateChatResponse = ChatItemModel;
+export type FetchAllChatsResponse = ServerChatItemModel[];
+export type CreateChatResponse = ServerChatItemModel;
 export type FetchChatDetailsResponse = DetailsChatItemModel;
 
 export interface FetchChatMessagesResponse {
-  messages: ChatMessage[];
+  messages: ChatMessageModel[];
   total: number;
   page: number;
   limit: number;
@@ -55,7 +66,7 @@ export interface FetchChatMessagesResponse {
   has_prev: boolean;
 }
 
-export type SendMessageResponse = ChatMessage;
+export type SendMessageResponse = ChatMessageModel;
 
 export interface CreateChatPayload {
   request: {
@@ -77,7 +88,7 @@ export interface UploadChatFileResponse {
   file_name: string;
   file_size: number;
   file_type: string;
-  message: ChatMessage;
+  message: ChatMessageModel;
 }
 
 export interface UpdateGroupChatPayload {
@@ -90,7 +101,7 @@ export interface UpdateGroupChatPayload {
   avatar_image?: File | null;
 }
 
-export interface ChatMessage {
+export interface ChatMessageModel {
   id: string;
   chat_id: string;
   content: string;
@@ -99,14 +110,14 @@ export interface ChatMessage {
   file_name: string | null;
   file_size: number | null;
   file_type: string | null;
-  sender?: User;
+  sender?: MessageUser;
   files?: UploadChatFileResponse[];
 }
 
 export type WebSocketMessage =
   | {
       type: "new_message";
-      data: ChatMessage;
+      data: ChatMessageModel;
     }
   | {
       type: "message_deleted";
@@ -136,7 +147,7 @@ export interface FileMessage {
   file_type: string;
   message_type: "text" | "image" | "document" | "file";
   content: string;
-  sender: User;
+  sender: MessageUser;
   created_at: string;
 }
 
@@ -147,4 +158,44 @@ export interface FetchChatFilesResponse {
   limit: number;
   has_next: boolean;
   has_prev: boolean;
+}
+
+export interface SendChatNotePayload {
+  noteData: {
+    chat_id?: string;
+    target_user_id?: string;
+    title: string;
+    content?: string;
+  };
+  file?: File;
+}
+
+export interface ChatNoteResponse {
+  id: string;
+  chat_id: string;
+  title: string;
+  content: string;
+  file_info: {
+    file_url: string;
+    file_name: string;
+    file_size: number;
+    file_type: string;
+    file_category: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GetAllChatNotesResponse {
+  notes: ChatNoteResponse[];
+  total: number;
+}
+
+export interface UpdateChatNotePayload {
+  noteData: {
+    title: string;
+    content: string;
+    remove_file?: boolean;
+  };
+  file?: File;
 }

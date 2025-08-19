@@ -1,13 +1,18 @@
 import { API_ROUTES, ApiService } from "shared/api";
+import { onDownloadProgress } from "./helpers";
 import {
+  ChatNoteResponse,
   CreateChatGroupResponse,
   CreateChatPayload,
   FetchAllChatsResponse,
   FetchChatDetailsResponse,
   FetchChatFilesResponse,
   FetchChatMessagesResponse,
+  GetAllChatNotesResponse,
+  SendChatNotePayload,
   SendMessagePayload,
   SendMessageResponse,
+  UpdateChatNotePayload,
   UpdateGroupChatPayload,
   UpdateGroupChatResponse,
   UploadChatFileResponse,
@@ -100,10 +105,18 @@ export class ChatService {
     );
   }
 
-  static async getUploadedChatFiles(fileUrl: string): Promise<Blob> {
+  static async getUploadedChatFiles(
+    fileUrl: string,
+    onProgress?: (percent: number) => void,
+    opts?: { signal?: AbortSignal }
+  ): Promise<Blob> {
     return ApiService.get<Blob>(
       API_ROUTES.CHAT.UPLOADED_FILE.replace("{filename}", fileUrl),
-      { responseType: "blob" }
+      {
+        responseType: "blob",
+        signal: opts?.signal,
+        onDownloadProgress: (e) => onDownloadProgress(e, onProgress),
+      }
     );
   }
 
@@ -127,6 +140,65 @@ export class ChatService {
     return ApiService.get<Blob>(
       API_ROUTES.CHAT.UPLOADED_AVATAR.replace("{filename}", fileUrl),
       { responseType: "blob" }
+    );
+  }
+
+  static async sendChatNote(
+    payload: SendChatNotePayload
+  ): Promise<ChatNoteResponse> {
+    const formData = new FormData();
+    formData.append("note_data", JSON.stringify(payload.noteData));
+    if (payload.file) {
+      formData.append("file", payload.file);
+    }
+    return ApiService.post<ChatNoteResponse>(
+      API_ROUTES.CHAT.SEND_CHAT_NOTE,
+      formData
+    );
+  }
+
+  static async getAllChatNotes(
+    chatId: string,
+    payload: { page?: number; limit?: number } = { page: 1, limit: 50 }
+  ): Promise<GetAllChatNotesResponse> {
+    return ApiService.get<GetAllChatNotesResponse>(
+      API_ROUTES.CHAT.GET_ALL_CHAT_NOTES.replace("{chat_id}", chatId),
+      { params: payload }
+    );
+  }
+
+  static async updateChatNote(
+    noteId: string,
+    payload: UpdateChatNotePayload
+  ): Promise<ChatNoteResponse> {
+    const formData = new FormData();
+    formData.append("note_data", JSON.stringify(payload.noteData));
+    if (payload.file) {
+      formData.append("file", payload.file);
+    }
+
+    return ApiService.put<ChatNoteResponse>(
+      API_ROUTES.CHAT.UPDATE_CHAT_NOTE.replace("{note_id}", noteId),
+      formData
+    );
+  }
+
+  static async deleteChatNote(noteId: string): Promise<string> {
+    return ApiService.delete<string>(
+      API_ROUTES.CHAT.DELETE_CHAT_NOTE.replace("{note_id}", noteId)
+    );
+  }
+
+  static async getFileOfChatNotes(
+    fileId: string,
+    onProgress?: (percent: number) => void
+  ): Promise<Blob> {
+    return ApiService.get<Blob>(
+      API_ROUTES.CHAT.UPLOADED_FILE_CHAT_NOTE.replace("{file_uuid}", fileId),
+      {
+        responseType: "blob",
+        onDownloadProgress: (e) => onDownloadProgress(e, onProgress),
+      }
     );
   }
 }

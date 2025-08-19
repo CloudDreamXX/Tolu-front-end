@@ -4,7 +4,7 @@ import { MessageBubble } from "widgets/message-bubble";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import {
-  ChatMessage,
+  ChatMessageModel,
   ChatService,
   ChatSocketService,
   DetailsChatItemModel,
@@ -15,12 +15,14 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Smiley from "shared/assets/icons/smiley";
 import EmptyChat from "shared/assets/images/EmptyChat.png";
-import { usePageWidth } from "shared/lib";
+import { cn, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
 import { useFilePicker } from "./useFilePicker";
 import { useNavigate } from "react-router-dom";
+import { DaySeparator } from "../components/DaySeparator";
+import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 
-function getUniqueMessages(messages: ChatMessage[]): ChatMessage[] {
+function getUniqueMessages(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
   return messages.filter((msg) => {
     if (seen.has(msg.id)) return false;
@@ -37,7 +39,7 @@ interface MessagesTabProps {
 export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
   const nav = useNavigate();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessageModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [sending, setSending] = useState(false);
@@ -46,7 +48,15 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
   const firstScrollRef = useRef<HTMLDivElement>(null);
 
   const profile = useSelector((state: RootState) => state.user.user);
-  const { items, files, open, getInputProps, remove } = useFilePicker({
+  const {
+    items,
+    files,
+    open,
+    getInputProps,
+    remove,
+    getDropzoneProps,
+    dragOver,
+  } = useFilePicker({
     accept: ["application/pdf", "image/jpeg", "image/png"],
     maxFiles: 4,
     maxFileSize: 10 * 1024 * 1024,
@@ -101,7 +111,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
     }
   }, [chat?.chat_id, page]);
 
-  const handleNewMessage = (msg: ChatMessage) => {
+  const handleNewMessage = (msg: ChatMessageModel) => {
     if (msg.chat_id !== chat?.chat_id) return;
     setMessages((prev) => {
       return prev.some((m) => m.id === msg.id) ? prev : [msg, ...prev];
@@ -134,7 +144,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
 
   const sendAll = async () => {
     if (!input.trim() && files.length === 0) return;
-    const optimistic: ChatMessage = {
+    const optimistic: ChatMessageModel = {
       id: `tmp-${Date.now()}`,
       content: input,
       chat_id: "",
@@ -273,21 +283,52 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
               <Loader2Icon className="animate-spin" />
             </div>
           )}
-          {messages
-            .filter((msg) =>
-              msg.content.toLowerCase().includes(search?.toLowerCase() || "")
-            )
-            .map((msg) => (
-              <MessageBubble
-                message={msg}
-                avatar={chat.avatar_url}
-                isOwn={msg.sender?.email === profile?.email}
-                author={msg.sender?.name || "Unknown User"}
-                key={msg.id}
-              />
-            ))
-            .reverse()}
+          {(() => {
+            const sorted = [...messages]
+              .sort((a, b) => {
+                const da = new Date(a.created_at || 0).getTime();
+                const db = new Date(b.created_at || 0).getTime();
+                return da - db;
+              })
+              .filter((msg) => {
+                if (!search) return true;
 
+                return msg.content.toLowerCase().includes(search.toLowerCase());
+              });
+
+            const nodes: React.ReactNode[] = [];
+            let lastKey: string | null = null;
+
+            for (let i = 0; i < sorted.length; i++) {
+              const msg = sorted[i];
+              const d = new Date(msg.created_at || 0);
+              const k = dayKey(d);
+
+              if (k !== lastKey) {
+                nodes.push(
+                  <DaySeparator
+                    key={`sep-${k}-${i}`}
+                    label={formatDayLabel(d)}
+                  />
+                );
+                lastKey = k;
+              }
+
+              nodes.push(
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  avatar={
+                    chat.chat_type === "group" ? undefined : chat.avatar_url
+                  }
+                  isOwn={msg.sender?.email === profile?.email}
+                  author={msg.sender?.name || "Unknown User"}
+                />
+              );
+            }
+
+            return nodes;
+          })()}
           {!loading && messages.length === 0 && (
             <div className="flex flex-col items-center justify-center mt-20 text-center lg:mt-40">
               <img src={EmptyChat} alt="No files" className="mb-6 md:mb-12" />
@@ -307,11 +348,16 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
       <div className="pt-2">
         <Textarea
           placeholder={`Message ${receiver?.user.name}`}
-          className="resize-none min-h-[80px]"
-          containerClassName="px-4 py-3"
+          className={cn("resize-none min-h-[80px]")}
+          containerClassName={cn(
+            "px-4 py-3",
+            dragOver ? "border-2 border-dashed border-blue-500" : undefined
+          )}
           value={input}
           onValueChange={setInput}
           onKeyDown={handleKeyPress}
+          {...getDropzoneProps()}
+          onClick={() => ({})}
           footer={
             <div className="flex flex-col w-full">
               {files.length > 0 && (
@@ -319,11 +365,11 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                   <p className="text-sm font-medium text-[#1D1D1F]">
                     Attached Files:
                   </p>
-                  <div className="flex max-w-[600px] gap-4 mt-2 overflow-x-auto">
+                  <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
                     {items.map((file) => (
                       <div key={file.id} className="flex items-center gap-2">
                         <div className="flex flex-col items-start">
-                          <span className="text-sm text-[#4B5563] text-nowrap">
+                          <span className="text-sm text-[#4B5563] text-nowrap max-w-20 truncate">
                             {file.file.name}
                           </span>
                           <span className="text-xs text-[#6B7280]">
@@ -365,7 +411,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                           data={data}
                           onEmojiSelect={(emoji: { native: string }) => {
                             setInput((prev) => prev + emoji.native);
-                            setEmojiModalOpen(false);
                           }}
                           onClickOutside={() => setEmojiModalOpen(false)}
                           theme="light"

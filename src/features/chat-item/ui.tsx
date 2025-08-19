@@ -1,6 +1,7 @@
 import { ChatItemModel } from "entities/chat";
 import { cn } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
+import { toUserTZ } from "../../widgets/message-tabs/helpers";
 
 export const timeAgo = (date: string | Date | null) => {
   if (!date) return "—";
@@ -47,13 +48,13 @@ export const ChatItem: React.FC<ChatItemProps> = ({
       )}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between ">
+      <div className="flex justify-between ">
         <div className="flex items-center ">
           <div className="relative mr-3">
             <Avatar className="w-10 h-10 ">
               <AvatarImage src={item.avatar_url} />
               <AvatarFallback className="bg-slate-300">
-                {item.participants[0].name.slice(0, 2).toUpperCase() || "UN"}
+                {item.participants[0]?.name.slice(0, 2).toUpperCase() || "UN"}
               </AvatarFallback>
             </Avatar>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
@@ -67,12 +68,18 @@ export const ChatItem: React.FC<ChatItemProps> = ({
             </span>
           </div>
         </div>
-        <span className="text-muted-foreground text-[14px] font-semibold self-start text-nowrap">
-          {timeAgo(item.last_message?.created_at ?? null)}
-        </span>
+        <div className="flex flex-col h-fit">
+          <p className="text-muted-foreground text-[14px] font-semibold self-start text-nowrap">
+            {timeAgo(toUserTZ(item.lastMessage?.created_at ?? "") ?? "")}
+          </p>
+
+          <p className="text-blue-500 text-[14px] self-end mt-2">
+            {item.unreadCount ? `(${item.unreadCount})` : ""}
+          </p>
+        </div>
       </div>
-      <p className="text-muted-foreground text-[14px] font-normal ">
-        {item.last_message?.content || "There are no messages ..."}
+      <p className="text-muted-foreground text-[14px] font-normal max-w-[250px] truncate">
+        {item.lastMessage?.content || "There are no messages ..."}
       </p>
     </button>
   );

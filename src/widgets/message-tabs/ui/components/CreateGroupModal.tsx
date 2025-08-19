@@ -8,16 +8,23 @@ import UploadCloud from "shared/assets/icons/upload-cloud";
 import { cn } from "shared/lib";
 import { Button, Dialog, DialogContent, DialogTitle, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
-import { useFilePicker } from "./messages-tab/useFilePicker";
+import { useFilePicker } from "../messages-tab/useFilePicker";
 
 interface CreateGroupModalProps {
-  showModal: boolean;
-  onSave: ({
+  open: boolean;
+  mode: "create" | "edit";
+  chat: DetailsChatItemModel | null;
+  initialSelectedClients: string[];
+  clientsData: Client[];
+  onSubmit: ({
+    mode,
     name,
     image,
+    description,
     add_participant,
     remove_participant,
   }: {
+    mode: "create" | "edit";
     name: string;
     image: File | null;
     description?: string;
@@ -25,19 +32,18 @@ interface CreateGroupModalProps {
     remove_participant?: string[];
   }) => void;
   onClose: () => void;
-  isEdit?: boolean;
-  clientsData?: Client[];
-  chat?: DetailsChatItemModel;
 }
 
 export const CreateGroupModal = ({
-  showModal,
-  onSave,
-  onClose,
-  isEdit,
-  clientsData,
+  open,
+  mode,
   chat,
+  initialSelectedClients,
+  clientsData,
+  onSubmit,
+  onClose,
 }: CreateGroupModalProps) => {
+  const isEdit = mode === "edit";
   const [groupName, setGroupName] = useState(isEdit ? chat?.name || "" : "");
   const [groupDescription, setGroupDescription] = useState(
     isEdit ? chat?.description || "" : ""
@@ -46,7 +52,7 @@ export const CreateGroupModal = ({
     files,
     items,
     getInputProps,
-    open,
+    open: openFilePicker,
     getDropzoneProps,
     dragOver,
     remove,
@@ -56,26 +62,38 @@ export const CreateGroupModal = ({
   const [selectedOption, setSelectedOption] = useState<string[]>(
     chat?.participants.map((p) => p.user.name || "") || []
   );
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    chat?.avatar_url || null
-  );
+  const [previewUrl, setPreviewUrl] = useState<string | null>();
+  const file = files?.[0] ?? null;
 
   useEffect(() => {
-    if (files.length > 0) {
-      setPreviewUrl(URL.createObjectURL(files[0]));
-    } else if (isEdit && chat?.avatar_url) {
-      setPreviewUrl(chat.avatar_url);
-    } else {
-      setPreviewUrl(null);
-    }
-  }, [files, setPreviewUrl, chat?.avatar_url, isEdit]);
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    setPreviewUrl((prev) => (prev === url ? prev : url));
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [file]);
+
+  useEffect(() => {
+    if (file) return;
+
+    const next = isEdit && chat?.avatar_url ? chat.avatar_url : null;
+    setPreviewUrl((prev) => (prev === next ? prev : next));
+  }, [file, isEdit, chat?.avatar_url]);
 
   const localSave = () => {
     if (!isEdit) {
-      onSave({
+      onSubmit({
+        mode,
         name: groupName,
         image: files[0] || null,
-        add_participant: selectedOption,
+        description: groupDescription,
+        add_participant:
+          initialSelectedClients.length > 0
+            ? initialSelectedClients
+            : selectedOption,
       });
       return;
     }
@@ -92,19 +110,18 @@ export const CreateGroupModal = ({
         .filter((p) => !selectedOption.includes(p.user.name || ""))
         .map((p) => p.user.id) || [];
 
-    onSave({
-      description: groupDescription,
+    onSubmit({
+      mode,
       name: groupName,
       image: files[0] || null,
+      description: groupDescription,
       add_participant: namesToAdd,
       remove_participant: namesToRemove,
     });
   };
 
-  if (!showModal) return null;
-
   return (
-    <Dialog open={showModal} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl gap-6">
         <DialogTitle className="hidden">Title </DialogTitle>
         <div>
@@ -124,7 +141,7 @@ export const CreateGroupModal = ({
             {...getDropzoneProps()}
             onClick={() => {
               if (files.length > 0) return;
-              open();
+              openFilePicker();
             }}
             className={cn(
               "mt-1 text-center  rounded-lg w-52 h-52 flex flex-col items-center justify-center gap-[2px]",
@@ -147,7 +164,7 @@ export const CreateGroupModal = ({
                     className="flex items-center w-[104px] gap-1 px-3 py-2 text-black bg-white rounded-md hover:bg-gray-100"
                     onClick={(e) => {
                       e.stopPropagation();
-                      open();
+                      openFilePicker();
                       if (items[0]) remove(items[0].id);
                     }}
                   >
@@ -195,7 +212,7 @@ export const CreateGroupModal = ({
             />
           </div>
 
-          {isEdit && (
+          {!initialSelectedClients.length && (
             <>
               <div>
                 <p className="text-sm font-semibold text-gray-700">

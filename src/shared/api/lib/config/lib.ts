@@ -146,6 +146,11 @@ export const API_ROUTES = {
     FETCH_CHAT_MESSAGES: "/chats/{chat_id}/messages",
     FETCH_CHAT_FILES: "/chats/{chat_id}/files",
     DELETE_MESSAGE: "/chats/{chat_id}/messages/{message_id}",
+    SEND_CHAT_NOTE: "/chat-notes",
+    GET_ALL_CHAT_NOTES: "/chat-notes/{chat_id}",
+    UPDATE_CHAT_NOTE: "/chat-notes/{note_id}",
+    DELETE_CHAT_NOTE: "/chat-notes/{note_id}",
+    UPLOADED_FILE_CHAT_NOTE: "/chat-notes/uploads/{file_uuid}",
   },
 };
 

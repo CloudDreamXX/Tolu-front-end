@@ -1,15 +1,18 @@
-import storage from "redux-persist/lib/storage";
-import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import userReducer from "../user";
-import coachOnboardingReducer from "./coachOnboardingSlice";
-import { clientOnboardingReducer } from "./clientOnboardingSlice";
-import { clientMoodReducer } from "./clientMoodSlice";
-import { clientGlucoseReducer } from "./clientGlucoseSlice";
+import { chatApi } from "entities/chat/chatApi";
+import chatReducer from "entities/chat/chatsSlice";
+import messagesReducer from "entities/chat/messagesSlice";
+import { clientReducer } from "entities/client/lib";
 import { folderReducer } from "entities/folder";
 import { healthHistoryReducer } from "entities/health-history/lib";
-import { clientReducer } from "entities/client/lib";
-import chatReducer from "entities/chat/lib";
+import { persistReducer, persistStore } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import userReducer from "../user";
+import { clientGlucoseReducer } from "./clientGlucoseSlice";
+import { clientMoodReducer } from "./clientMoodSlice";
+import { clientOnboardingReducer } from "./clientOnboardingSlice";
+import coachOnboardingReducer from "./coachOnboardingSlice";
+import downloadsReducer from "entities/chat/downloadSlice";
 
 const userPersistConfig = {
   key: "user",
@@ -30,7 +33,10 @@ const rootReducer = combineReducers({
   folder: folderReducer,
   healthHistory: healthHistoryReducer,
   client: clientReducer,
-  chat: chatReducer,
+  chats: chatReducer,
+  messages: messagesReducer,
+  [chatApi.reducerPath]: chatApi.reducer,
+  downloads: downloadsReducer,
 });
 
 export const store = configureStore({
@@ -47,7 +53,7 @@ export const store = configureStore({
           "persist/REGISTER",
         ],
       },
-    }),
+    }).concat(chatApi.middleware),
 });
 
 export const persistor = persistStore(store);

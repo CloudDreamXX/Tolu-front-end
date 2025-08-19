@@ -1,26 +1,37 @@
 import { ChatItemModel } from "entities/chat";
+import { useFetchAllChatsQuery } from "entities/chat/chatApi";
+import { chatsSelectors } from "entities/chat/chatsSlice";
 import { ChatItem } from "features/chat-item";
 import { Plus } from "lucide-react";
+import { useSelector } from "react-redux";
 import Inbox from "shared/assets/icons/inbox";
 import LoadingIcon from "shared/assets/icons/loading-icon";
 import Search from "shared/assets/icons/search";
-import { Input, ScrollArea, Tabs, TabsContent } from "shared/ui";
+import {
+  Input,
+  ScrollArea,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "shared/ui";
 
 interface MessageSidebarProps {
-  chats: ChatItemModel[];
-  onChatClick: (chat: ChatItemModel) => void;
   selectedChat: ChatItemModel | null;
-  loading?: boolean;
+  onChatClick: (chat: ChatItemModel) => void;
+  onCreateGroup: (clients?: string[]) => void;
 }
 
 export const MessageSidebar: React.FC<MessageSidebarProps> = ({
-  chats,
-  onChatClick,
   selectedChat,
-  loading,
+  onChatClick,
+  onCreateGroup,
 }) => {
+  const { isLoading } = useFetchAllChatsQuery();
+  const chats = useSelector(chatsSelectors.selectAll);
+
   const unreadCount = chats.reduce((count, chat) => {
-    return count + (chat.unread_count || 0);
+    return count + (chat.unreadCount || 0);
   }, 0);
 
   const SidebarLoadingSkeleton = () => {
@@ -59,7 +70,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
 
   return (
     <aside className="lg:w-[360px] lg:min-w-[360px] border border-[#DBDEE1] border-l-0 flex flex-col w-full ">
-      {loading && (
+      {isLoading && (
         <div className="xl:hidden flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <LoadingIcon />
           Please wait, we are loading the information...
@@ -76,9 +87,12 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
               </span>
             )}
           </div>
-          <div className="w-[40px] md:w-[44px] h-[40px] md:h-[44px] rounded-full bg-blue-500 flex items-center justify-center">
+          <button
+            className="w-[40px] md:w-[44px] h-[40px] md:h-[44px] rounded-full bg-blue-500 flex items-center justify-center"
+            onClick={() => onCreateGroup()}
+          >
             <Plus color="white" />
-          </div>
+          </button>
         </div>
 
         <div className="pb-4 md:pb-6">
@@ -90,22 +104,21 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
         </div>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <SidebarLoadingSkeleton />
       ) : (
         <Tabs defaultValue="clients" className="w-full">
-          {/* <TabsList className="grid w-full grid-cols-2 p-0 bg-transparent border-none shadow-none place-items-center">
+          <TabsList className="hidden w-full grid-cols-2 p-0 bg-transparent border-none shadow-none place-items-center">
             <TabsTrigger value="clients" className="text-lg">
               Clients
             </TabsTrigger>
             <TabsTrigger value="coaches" className="text-lg">
               Coaches
             </TabsTrigger>
-          </TabsList> */}
-          <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-238px)]">
+          </TabsList>
+          <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-236px)]">
             <TabsContent value="clients" className="mt-0">
-              {chats.filter((item) => item.chat_type === "direct").length ===
-              0 ? (
+              {chats.filter((item) => item.type === "direct").length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
                   <p className="font-semibold">No client conversations</p>
                   <p className="text-sm">
@@ -115,25 +128,21 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
               ) : (
                 chats
                   .filter(
-                    (item) =>
-                      item.chat_type === "direct" || item.chat_type === "group"
+                    (item) => item.type === "direct" || item.type === "group"
                   )
                   .map((item) => (
                     <ChatItem
-                      key={item.chat_id}
+                      key={item.id}
                       item={item}
                       onClick={() => onChatClick(item)}
-                      classname={
-                        selectedChat?.chat_id === item.chat_id ? "bg-white" : ""
-                      }
+                      classname={selectedChat?.id === item.id ? "bg-white" : ""}
                     />
                   ))
               )}
             </TabsContent>
 
-            {/* <TabsContent value="coaches" className="mt-0">
-              {chats.filter((item) => item.chat_type === "coach").length ===
-              0 ? (
+            <TabsContent value="coaches" className="hidden mt-0">
+              {chats.filter((item) => item.type === "coach").length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
                   <p className="font-semibold">No coach conversations</p>
                   <p className="text-sm">
@@ -142,19 +151,17 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                 </div>
               ) : (
                 chats
-                  .filter((item) => item.chat_type === "coach")
+                  .filter((item) => item.type === "coach")
                   .map((item) => (
                     <ChatItem
-                      key={item.chat_id}
+                      key={item.id}
                       item={item}
                       onClick={() => onChatClick(item)}
-                      classname={
-                        selectedChat?.chat_id === item.chat_id ? "bg-white" : ""
-                      }
+                      classname={selectedChat?.id === item.id ? "bg-white" : ""}
                     />
                   ))
               )}
-            </TabsContent> */}
+            </TabsContent>
           </ScrollArea>
         </Tabs>
       )}

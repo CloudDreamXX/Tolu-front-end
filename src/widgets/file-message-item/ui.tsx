@@ -1,9 +1,13 @@
 import { ChatService, FileMessage } from "entities/chat";
+import {
+  clearDownloadProgress,
+  setDownloadProgress,
+} from "entities/chat/downloadSlice";
+import { fileKeyFromUrl } from "entities/chat/helpers";
 import { RootState } from "entities/store";
-import { File, Loader2Icon } from "lucide-react";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import DownloadIcon from "shared/assets/icons/upload-cloud";
+import { CloudDownload, File, Loader2Icon } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 interface FileMessageProps {
   message: FileMessage;
@@ -14,31 +18,35 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
   message,
   avatar,
 }) => {
+  const dispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.user?.user);
+  const normalized = useMemo(
+    () => fileKeyFromUrl(message.file_url ?? ""),
+    [message.file_url]
+  );
+  const dlPct = useSelector(
+    (state: RootState) => state.downloads.byKey[normalized]
+  );
+
   const [loading, setLoading] = useState(false);
 
   const onDownloadClick = async () => {
+    if (!normalized || !message.file_name || !message.file_type) return;
+
     setLoading(true);
-    if (message.file_url && message.file_name && message.file_type) {
-      try {
-        const response = await ChatService.getUploadedChatFiles(
-          message.file_url.split("/")[message.file_url.split("/").length - 1]
-        );
-        const arrayBuffer = await response.arrayBuffer();
-        const byteArray = new Uint8Array(arrayBuffer);
-        const blob = new Blob([byteArray], { type: message.file_type });
-
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = message.file_name;
-        link.click();
-
-        URL.revokeObjectURL(link.href);
-      } catch (error) {
-        console.error("Error downloading file:", error);
-      } finally {
-        setLoading(false);
-      }
+    try {
+      const blob = await ChatService.getUploadedChatFiles(normalized, (pct) => {
+        dispatch(setDownloadProgress({ key: normalized, pct }));
+      });
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objUrl;
+      a.download = message.file_name;
+      a.click();
+      URL.revokeObjectURL(objUrl);
+      dispatch(clearDownloadProgress(normalized));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,10 +65,18 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
           </div>
         </div>
         {loading ? (
-          <Loader2Icon className="w-8 h-10 text-blue-500 animate-spin" />
+          (() => {
+            if (dlPct) {
+              return <span className="text-sm">{dlPct}%</span>;
+            } else {
+              return (
+                <Loader2Icon className="w-8 h-10 text-blue-500 animate-spin" />
+              );
+            }
+          })()
         ) : (
           <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
-            <DownloadIcon />
+            <CloudDownload />
           </Button>
         )}
       </div>

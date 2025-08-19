@@ -1,13 +1,13 @@
-import { ChatService, ChatSocketService } from "entities/chat";
-import { setChatList } from "entities/chat/lib";
+import { ChatSocketService } from "entities/chat";
+import { useFetchAllChatsQuery } from "entities/chat/chatApi";
+import { chatsSelectors } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
 import { Loader2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
-import { getAvatarUrl } from "widgets/message-tabs/helpers";
 
 interface ClientChatListProps {
   onPopupClose?: () => void;
@@ -17,35 +17,9 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
   onPopupClose,
 }) => {
   const nav = useNavigate();
-  const dispatch = useDispatch();
-  const chatList = useSelector((state: RootState) => state.chat.chats);
+  const { isLoading } = useFetchAllChatsQuery();
+  const chatList = useSelector(chatsSelectors.selectAll);
   const profile = useSelector((state: RootState) => state.user.user);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-
-      try {
-        const chats = await ChatService.fetchAllChats();
-        for (const chat of chats) {
-          if (chat.avatar_url) {
-            chat.avatar_url = await getAvatarUrl(
-              chat.avatar_url.split("/").pop() || null
-            );
-          }
-        }
-
-        dispatch(setChatList(chats));
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const init = async () => {
@@ -78,11 +52,11 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
 
         return (
           <button
-            key={chat.chat_id}
+            key={chat.id}
             className="flex pl-8 mb-4"
             onClick={() => {
               onPopupClose?.();
-              nav(`/messages/${chat.chat_id}`);
+              nav(`/messages/${chat.id}`);
             }}
           >
             <div className="relative">
