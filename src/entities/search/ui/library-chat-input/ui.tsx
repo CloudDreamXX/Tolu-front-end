@@ -16,7 +16,9 @@ import { SwitchGroup } from "widgets/switch-group";
 interface LibraryChatInputProps {
   switchOptions: string[];
   selectedSwitch: string;
+  files: File[];
   setSelectedSwitch: (option: string) => void;
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
   placeholder?: string;
   onSend?: (
     message: string,
@@ -36,6 +38,8 @@ interface LibraryChatInputProps {
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   placeholder = "Your message",
+  files,
+  setFiles,
   onSend,
   disabled = false,
   className,
@@ -50,7 +54,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   selectedText,
   deleteSelectedText,
 }) => {
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const loading = useSelector((state: RootState) => state.client.loading);
   const location = useLocation();
@@ -58,14 +61,14 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const dispatch = useDispatch();
 
   const handleSend = () => {
-    if ((!message.trim() && attachedFiles.length === 0) || disabled) return;
-    onSend?.(message, attachedFiles, null);
-    setAttachedFiles([]);
+    if ((!message.trim() && files.length === 0) || disabled) return;
+    onSend?.(message, files, null);
+    setFiles([]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setAttachedFiles(files);
+    const newFiles = Array.from(e.target.files || []);
+    setFiles(newFiles);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -74,6 +77,22 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
       handleSend();
       if (deleteSelectedText) deleteSelectedText();
     }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const pasted: File[] = [];
+    for (let i = 0; i < items.length; i++) {
+      const it = items[i];
+      if (it.kind === "file") {
+        const f = it.getAsFile();
+        if (f) {
+          pasted.push(f);
+        }
+      }
+    }
+    setFiles((prev) => [...prev, ...pasted]);
   };
 
   const isSendDisabled = !message.trim() || disabled;
@@ -123,6 +142,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         <Textarea
           placeholder={placeholder}
           value={message}
+          onPaste={handlePaste}
           onChange={(e) => {
             if (setNewMessage) {
               setNewMessage(e.target.value);
@@ -166,9 +186,9 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                 className="absolute w-[50px] z-[9999] cursor-pointer opacity-0"
                 disabled={false}
               />
-              {attachedFiles.length > 0 && (
+              {files.length > 0 && (
                 <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
-                  {attachedFiles.length > 99 ? "99+" : attachedFiles.length}
+                  {files.length > 99 ? "99+" : files.length}
                 </span>
               )}
             </label>
@@ -221,9 +241,9 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               className="absolute w-[24px] h-[24px] z-[9999] cursor-pointer opacity-0"
               disabled={false}
             />
-            {attachedFiles.length > 0 && (
+            {files.length > 0 && (
               <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-2 -left-2 z-[9999]">
-                {attachedFiles.length > 99 ? "99+" : attachedFiles.length}
+                {files.length > 99 ? "99+" : files.length}
               </span>
             )}
           </label>

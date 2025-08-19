@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { FeedbackModal } from "../feedback-modal";
 import { HistoryPopup } from "../history-popup";
 // import Share from "shared/assets/icons/share";
-import SaveModal from "../save-modal/ui";
+// import SaveModal from "../save-modal/ui";
 import { ArrowLeft, Eye } from "@phosphor-icons/react/dist/ssr";
 import { useNavigate } from "react-router-dom";
 
@@ -77,7 +77,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           </button>
         )}
         {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
-        <SaveModal onStatusChange={onStatusChange} />
+        {/* <SaveModal onStatusChange={onStatusChange} /> */}
       </div>
       <div className="hidden xl:block">
         {!isHistoryPopup && (
@@ -86,7 +86,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           </button>
         )}
         {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
-        <SaveModal onStatusChange={onStatusChange} />
+        {/* <SaveModal onStatusChange={onStatusChange} /> */}
         {onStatusChange && (
           <button
             className="bg-[#DDEBF6] rounded-full h-8 w-8 mt-[8px]"

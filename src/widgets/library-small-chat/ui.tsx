@@ -6,7 +6,7 @@ import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
 import { ChatActions, ChatBreadcrumb, Message } from "features/chat";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
-import { Expand, Paperclip, Send, Settings } from "lucide-react";
+import { Paperclip, Send, Settings } from "lucide-react";
 import { caseBaseSchema } from "pages/content-manager";
 import {
   CaseSearchForm,
@@ -97,6 +97,37 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [isReadingAloud, setIsReadingAloud] = useState(false);
   const [voiceContent, setVoiceContent] = useState<string>("");
 
+  const extractVoiceText = (input: string): string => {
+    if (!input) return "";
+
+    let s = input;
+
+    s = s.replace(/^```[^\n\r]*\r?\n?/gm, "").replace(/```/g, "");
+
+    s = s
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
+
+    s = s.replace(/<\/?[^>]+>/g, "");
+
+    s = s.replace(/^[^{\n]+{[^}]*}\s*/gm, "");
+
+    s = s.replace(/^\s{0,3}#{1,6}\s*/gm, "");
+    s = s.replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1");
+    s = s.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+    s = s.replace(/(\*\*|__)(.*?)\1/g, "$2");
+    s = s.replace(/(\*|_)(.*?)\1/g, "$2");
+    s = s.replace(/`([^`]+)`/g, "$1");
+    s = s.replace(/[#*]/g, "");
+
+    return s
+      .replace(/\u00A0/g, " ")
+      .replace(/[ \t]+/g, " ")
+      .replace(/\s*\r?\n\s*/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  };
+
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = speechSynthesis.getVoices();
@@ -144,9 +175,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   }, []);
 
   useEffect(() => {
-    if (chat) {
-      const strippedText = chat[0]?.answer.replace(/<\/?[^>]+(>|$)/g, "");
-      setVoiceContent(strippedText);
+    if (chat?.[0]?.answer) {
+      setVoiceContent(extractVoiceText(chat[0].answer));
     }
   }, [chat]);
 
@@ -281,19 +311,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setSelectedSwitch(value);
 
     setIsSwitchLoading(false);
-  };
-
-  const handleExpandClick = () => {
-    if (isSearching) return;
-
-    const basePath = isCoach ? "/content-manager" : "";
-    const chatId = currentChatId || `new_chat_${Date.now()}`;
-
-    navigate(`${basePath}/library/${chatId}`, {
-      state: {
-        from: location,
-      },
-    });
   };
 
   const MessageLoadingSkeleton = () => {
@@ -438,8 +455,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         };
 
         setMessages((prev) => [...prev, aiMessage]);
-        const strippedText = aiMessage.content.replace(/<\/?[^>]+(>|$)/g, "");
-        setVoiceContent(strippedText);
+        setVoiceContent(extractVoiceText(aiMessage.content));
         setStreamingText("");
 
         if (chatId && chatId !== currentChatId) {
@@ -728,19 +744,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
               {selectedSwitch}
             </div>
-            {isCoach && (
-              <button
-                className="hidden xl:block xl:absolute top-4 left-4"
-                onClick={handleExpandClick}
-                title="Expand chat"
-              >
-                <Expand className="w-6 h-6 text-[#5F5F65]" />
-              </button>
-            )}
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
           <CardContent className="flex flex-1 w-full h-full px-6 pb-0 overflow-auto">
-            {!isCoach && messages.length > 0 && (
+            {messages.length > 0 && (
               <div className="w-fit h-fit">
                 <ChatActions
                   isSearching={isSearching}
@@ -769,6 +776,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           </CardContent>
           <CardFooter className="w-full p-0">
             <LibraryChatInput
+              setFiles={setFiles}
+              files={files}
               className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={isSearching}
@@ -858,18 +867,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 expert-verified guidance you can trust
               </p>
             )}
-            {!isSwitch(SWITCH_KEYS.CONTENT) && isCoach && (
-              <button
-                className="hidden xl:block xl:absolute top-4 left-4"
-                onClick={handleExpandClick}
-                title="Expand chat"
-              >
-                <Expand className="w-6 h-6 text-[#5F5F65]" />
-              </button>
-            )}
           </CardHeader>
           <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
-            {!isCoach && messages.length > 0 && (
+            {messages.length > 0 && (
               <div className="w-fit h-fit">
                 <ChatActions
                   isSearching={isSearching}
@@ -900,6 +900,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           </CardContent>
           <CardFooter className="w-full p-0">
             <LibraryChatInput
+              files={files}
+              setFiles={setFiles}
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={

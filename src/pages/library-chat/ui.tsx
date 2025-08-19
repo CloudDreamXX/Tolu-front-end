@@ -20,7 +20,7 @@ import {
   FormValues,
 } from "pages/content-manager/create/case-search";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
-import { useEffect, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -54,6 +54,7 @@ export const LibraryChat = () => {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [clientId, setClientId] = useState<string | null>(null);
   const { isMobile } = usePageWidth();
+  const [newFiles, setNewFiles] = useState<File[]>([]);
 
   const initialSearchDone = useRef(false);
   const sessionLoadDone = useRef(false);
@@ -966,6 +967,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               placeholder={
                 isCoach || !isMobile ? "Your message" : "I'm listening..."
               }
+              files={newFiles}
+              setFiles={setNewFiles}
             />
           </div>
         )}
