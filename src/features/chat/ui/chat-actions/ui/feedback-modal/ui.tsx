@@ -51,10 +51,6 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
     onOpenChange(false);
   };
 
-  const handleSkip = () => {
-    onOpenChange(false);
-  };
-
   const getRatingText = () => {
     switch (rating) {
       case 1:
@@ -95,7 +91,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         </div>
 
         <p className="text-gray-600">
-          Your input helps us improve our content and better support your needs.
+          Your input helps us improve our answers and better support your needs.
         </p>
 
         <div className="flex flex-col items-center gap-4 p-6 border rounded-lg">
@@ -117,8 +113,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
         <div className="mb-4">
           <label className="block mb-2 font-medium">
-            What did you like or not like?{" "}
-            <span className="text-gray-500">(Optional)</span>
+            What did you like? <span className="text-gray-500">(Optional)</span>
           </label>
           <Input
             placeholder="Leave your short feedback"
@@ -130,7 +125,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
         <div className="mb-6">
           <p className="mb-3 font-medium">
-            Would you like to see more content like this?
+            Would you like to see more answers like this?
           </p>
           <RadioGroup
             value={contentPreference}
@@ -161,22 +156,13 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
           </RadioGroup>
         </div>
 
-        <div className="flex justify-between gap-3">
-          <Button
-            variant="blue2"
-            onClick={handleSkip}
-            className="w-fit text-[#1C63DB]"
-          >
-            Skip Feedback
-          </Button>
-          <Button
-            variant={"brightblue"}
-            onClick={handleSave}
-            className="w-fit min-w-32"
-          >
-            Save
-          </Button>
-        </div>
+        <Button
+          variant={"brightblue"}
+          onClick={handleSave}
+          className="w-fit min-w-32 ml-auto"
+        >
+          Save
+        </Button>
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ import {
   FormValues,
 } from "pages/content-manager/create/case-search";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";

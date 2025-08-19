@@ -442,7 +442,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         setIsSearching(false);
         if (deleteSelectedText) deleteSelectedText();
 
-        const chatId = (finalData?.chat_id || finalData?.chatId) ?? "";
+        const chatId = finalData?.searched_result_id ?? "";
 
         const aiMessage: Message = {
           id: chatId || Date.now().toString(),
@@ -755,11 +755,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                   isHistoryPopup
                   fromPath={location.state?.from?.pathname ?? null}
                   initialRating={
-                    chat.length ? (chat[0].liked ? 5 : 1) : undefined
+                    chat.length ? (chat[0].liked ? 5 : undefined) : undefined
                   }
                   onReadAloud={handleReadAloud}
                   isReadingAloud={isReadingAloud}
-                  currentChatId={chat ? chat[0]?.id : undefined}
+                  currentChatId={
+                    (chat && chat[0]?.id) || currentChatId || undefined
+                  }
                 />
               </div>
             )}
@@ -881,7 +883,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                   }
                   onReadAloud={handleReadAloud}
                   isReadingAloud={isReadingAloud}
-                  currentChatId={chat ? chat[0]?.id : undefined}
+                  currentChatId={
+                    (chat && chat[0]?.id) || currentChatId || undefined
+                  }
                 />
               </div>
             )}
