@@ -9,9 +9,13 @@ import { setChat, setFolderId } from "entities/client/lib";
 
 type WrapperProps = {
   onPopupClose?: () => void;
+  onCloseSideBar?: () => void;
 };
 
-const WrapperLibraryFolderTree: React.FC<WrapperProps> = ({ onPopupClose }) => {
+const WrapperLibraryFolderTree: React.FC<WrapperProps> = ({
+  onPopupClose,
+  onCloseSideBar,
+}) => {
   const folders = useSelector((state: RootState) => state.client.folders);
   const isLoading = useSelector((state: RootState) => state.client.loading);
   const [openFolders, setOpenFolders] = useState<Set<string>>(new Set());
@@ -86,6 +90,7 @@ const WrapperLibraryFolderTree: React.FC<WrapperProps> = ({ onPopupClose }) => {
       openFolders={openFolders}
       toggleFolder={toggleFolder}
       onCloseMobMenu={onPopupClose}
+      onCloseSideBar={onCloseSideBar}
     />
   );
 };
@@ -97,6 +102,7 @@ interface Props {
   openFolders: Set<string>;
   toggleFolder: (id: string) => void;
   onCloseMobMenu?: () => void;
+  onCloseSideBar?: () => void;
 }
 
 const LibraryFolderTree: React.FC<Props> = ({
@@ -106,6 +112,7 @@ const LibraryFolderTree: React.FC<Props> = ({
   openFolders,
   toggleFolder,
   onCloseMobMenu,
+  onCloseSideBar,
 }) => {
   const nav = useNavigate();
   const { documentId } = useParams();
@@ -147,6 +154,7 @@ const LibraryFolderTree: React.FC<Props> = ({
                       )}
                       onClick={() => {
                         onCloseMobMenu?.();
+                        onCloseSideBar?.();
                         dispatch(setChat([]));
                         nav(`/library/document/${doc.id}`);
                       }}
@@ -171,6 +179,7 @@ const LibraryFolderTree: React.FC<Props> = ({
                   openFolders={openFolders}
                   toggleFolder={toggleFolder}
                   onCloseMobMenu={onCloseMobMenu}
+                  onCloseSideBar={onCloseSideBar}
                 />
               )}
             </div>

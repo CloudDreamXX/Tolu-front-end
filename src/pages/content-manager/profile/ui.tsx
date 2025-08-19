@@ -1,21 +1,17 @@
+import { QuestionIcon } from "@phosphor-icons/react";
+import { Edit, EyeClosed, EyeIcon, Microscope } from "lucide-react";
 import React, { useState } from "react";
-import {
-  Edit,
-  Leaf,
-  Brain,
-  Info,
-  EyeIcon,
-  EyeClosed,
-  Microscope,
-  TestTube,
-} from "lucide-react";
+import BrainIcon from "shared/assets/icons/brain_2";
+import LeavesIcon from "shared/assets/icons/leaves";
 import ProfileCoach from "shared/assets/icons/profile-coach";
-import { Button, Input } from "shared/ui";
+import TestTubeIcon from "shared/assets/icons/test-tube";
+import WomansLine from "shared/assets/icons/womans-line";
+import Certificate from "shared/assets/images/Certificate.png";
+import SecondCertificate from "shared/assets/images/SecondCertificate.png";
+import FocusAreasIcon from "shared/assets/images/FocusAreas.png";
 import SafetyIcon from "shared/assets/images/Safety.png";
 import UsersIcon from "shared/assets/images/Users.png";
-import FocusAreasIcon from "shared/assets/images/FocusAreas.png";
-import Certificate from "shared/assets/images/Certificate.png";
-import WomansLine from "shared/assets/icons/womans-line";
+import { Button, Input } from "shared/ui";
 
 export const ContentManagerProfile = () => {
   const [twoFA, setTwoFA] = useState(true);
@@ -93,7 +89,7 @@ export const ContentManagerProfile = () => {
                   <p className="text-[16px] font-semibold text-[#1D1D1F]">
                     Current password
                   </p>
-                  <div className="flex flex-row-reverse items-center w-full relative">
+                  <div className="relative flex flex-row-reverse items-center w-[70%]">
                     <Input
                       type={showPassword ? "password" : "text"}
                       placeholder="Enter Password"
@@ -127,7 +123,7 @@ export const ContentManagerProfile = () => {
                   <p className="text-[16px] font-semibold text-[#1D1D1F]">
                     New password
                   </p>
-                  <div className="flex flex-row-reverse items-center w-full relative">
+                  <div className="relative flex flex-row-reverse items-center w-[70%]">
                     <Input
                       type={showPassword ? "password" : "text"}
                       placeholder="Enter Password"
@@ -191,17 +187,19 @@ export const ContentManagerProfile = () => {
               subtitle="Physician Assistant (PA)"
             />
             <PractitionerItem
-              icon={<TestTube className="w-[24px] h-[24px] text-[#1B2559]" />}
+              icon={
+                <TestTubeIcon className="w-[24px] h-[24px] text-[#1B2559]" />
+              }
               title="Other"
               subtitle="Healthcare Professional (General/Other)"
             />
             <PractitionerItem
-              icon={<Leaf className="w-[24px] h-[24px] text-[#1B2559]" />}
+              icon={<LeavesIcon className="w-[24px] h-[24px] text-[#1B2559]" />}
               title="Functional & Holistic Health Practitioners"
               subtitle="Functional Nutrition Counselor / Coach"
             />
             <PractitionerItem
-              icon={<Brain className="w-[24px] h-[24px] text-[#1B2559]" />}
+              icon={<BrainIcon className="w-[24px] h-[24px] text-[#1B2559]" />}
               title="Lifestyle, Mind-Body, and Wellness Coaches"
               subtitle="Mind-Body Therapist (e.g., somatic, breathwork)"
             />
@@ -267,16 +265,16 @@ export const ContentManagerProfile = () => {
               <span className="text-[#5F5F65] text-[18px] font-[500]">
                 Certificates:
               </span>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <img
                   src={Certificate}
                   alt="Certificate 1"
                   className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-cover"
                 />
                 <img
-                  src={Certificate}
+                  src={SecondCertificate}
                   alt="Certificate 2"
-                  className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-cover"
+                  className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-fill"
                 />
               </div>
             </div>
@@ -356,7 +354,7 @@ const PractitionerItem = ({
       <div>
         <div className="flex items-center gap-[8px] text-[#1B2559] font-[600] text-[20px]">
           {title}
-          <Info className="w-[16px] h-[16px] text-[#1B2559]" />
+          <QuestionIcon className="w-[16px] h-[16px] text-[#1B2559]" />
         </div>
       </div>
     </div>

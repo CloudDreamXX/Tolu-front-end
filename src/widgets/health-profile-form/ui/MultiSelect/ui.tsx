@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import Chevron from "shared/assets/icons/chevron";
 import CheckedIcon from "shared/assets/icons/checked";
+import Chevron from "shared/assets/icons/chevron";
 import UncheckedIcon from "shared/assets/icons/not-checked";
 import { cn } from "shared/lib/utils";
 
@@ -56,8 +56,8 @@ export const MultiSelect = ({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         className={cn(
-          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 text-sm font-[500] text-[#1D1D1F] bg-white relative flex items-center",
-          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center",
+          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 gap-2"
         )}
         onClick={() => setOpen(!open)}
         type="button"

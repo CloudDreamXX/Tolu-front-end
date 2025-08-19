@@ -7,13 +7,14 @@ import {
 } from "entities/chat/chatApi";
 import { RootState } from "entities/store";
 import { Loader2Icon, Plus, Send, TrashIcon } from "lucide-react";
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
-import { useFilePicker } from "../messages-tab/useFilePicker";
 import { NoteItem } from "widgets/notes-item/ui";
+import { useFilePicker } from "../messages-tab/useFilePicker";
+import { ChatScroller } from "../components/ChatScroller";
 
 interface NotesTabProps {
   search?: string;
@@ -207,7 +208,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
           atBottomStateChange={setAtBottom}
           increaseViewportBy={{ top: 200, bottom: 400 }}
           components={{
-            Scroller: NotesScroller,
+            Scroller: ChatScroller,
             Footer: () =>
               isLoading || isSending || isUpdating ? (
                 <div className="flex justify-center py-2">
@@ -292,10 +293,3 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
     </div>
   );
 };
-
-const NotesScroller = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={`notes-scroller ${className ?? ""}`} {...props} />
-));

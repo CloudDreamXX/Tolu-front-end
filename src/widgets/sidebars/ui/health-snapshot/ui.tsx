@@ -7,13 +7,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import ChatsCircle from "shared/assets/icons/chats-circle";
 import Library from "shared/assets/icons/library";
 import Dots from "shared/assets/icons/threeDots";
-import { ChevronDown, ChevronUp, User } from "lucide-react";
+import { ChevronDown, ChevronLast, ChevronUp, User } from "lucide-react";
 import SignOutIcon from "shared/assets/icons/signout";
 import { toast } from "shared/lib/hooks/use-toast";
 import { SearchAiSmallInput } from "entities/search";
 import WrapperLibraryFolderTree from "./FolderTree";
 import { setChat, setFolderId } from "entities/client/lib";
 import { ClientChatList } from "./ClientChatList";
+import { Button } from "shared/ui";
+import { cn } from "shared/lib";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -23,6 +25,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     const checkWidth = () => {
@@ -55,133 +58,188 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const toggleLibrary = () => {
     dispatch(setFolderId(""));
     setIsLibraryOpen(!isLibraryOpen);
+    setSidebarOpen(true);
     if (isNarrow) {
       // Close the menu if it's mobile and clicked
       setMenuOpen(false);
     }
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+    setIsLibraryOpen(false);
+  };
+
   return (
-    <div
-      className={`flex flex-col justify-between h-full ${
-        isNarrow ? "w-[81px] items-center" : "w-[268px]"
-      } overflow-y-auto`}
-    >
-      <div className="flex flex-col gap-[32px]">
-        <NavLink to={"/"} className="flex flex-col items-center text-center">
-          <h2
-            className={`${isNarrow ? "text-[27px]" : "text-[46.667px]"} font-bold font-open`}
-          >
-            Tolu AI
-          </h2>
-        </NavLink>
-
-        <div className="flex flex-col px-[14px] gap-[18px]">
-          <SearchAiSmallInput />
-        </div>
-
-        <div
-          className={`flex flex-col w-full ${isNarrow ? "items-center" : "items-start"}`}
+    <>
+      {isNarrow && (
+        <Button
+          variant={"brightblue"}
+          size={"icon"}
+          onClick={toggleSidebar}
+          className={cn(
+            "absolute z-20 text-white top-4",
+            "transition-all duration-300",
+            sidebarOpen ? "left-[320px]" : "left-[110px]"
+          )}
         >
-          <NavLink
-            to={"/library"}
-            onClick={(e) => {
-              e.preventDefault();
-              toggleLibrary();
-              dispatch(setChat([]));
-              nav("/library");
-            }}
-            className={({ isActive }) =>
-              `flex items-center gap-3 justify-center 2xl:justify-start w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"}`
-            }
-          >
-            <Library />
-            {isNarrow ? "" : "Library"}
-            {isLibraryOpen ? (
-              <ChevronUp className="w-5 h-5 shrink-0" />
-            ) : (
-              <ChevronDown className="w-5 h-5 shrink-0" />
+          <ChevronLast
+            className={cn(
+              "transition-transform duration-300",
+              sidebarOpen ? "rotate-180" : "rotate-0"
             )}
-          </NavLink>
-          {isLibraryOpen && <WrapperLibraryFolderTree />}
-          <NavLink
-            to={"/messages"}
-            end={false}
-            className={({ isActive }) =>
-              `flex items-center justify-center 2xl:justify-start gap-3 w-full px-[16px] py-[16px] text-lg font-semibold  hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"}`
-            }
-          >
-            <ChatsCircle />
-            {isNarrow ? "" : "Messages"}
-          </NavLink>
-          <ClientChatList />
-        </div>
-      </div>
+          />
+        </Button>
+      )}
 
-      <button
-        onClick={isNarrow ? () => setMenuOpen(!menuOpen) : () => {}}
-        className={`flex gap-4 items-center justify-between ${isNarrow ? "" : "pl-4"}`}
+      <div
+        className={cn(
+          "transition-all duration-300 pr-1",
+          "flex flex-col h-full ",
+          sidebarOpen ? "w-[300px]" : "w-[81px]"
+        )}
       >
-        <Avatar>
-          <AvatarImage src={user?.photo} alt="Avatar" />
-          <AvatarFallback>
-            {user?.name
-              ?.split(" ")
-              .map((part) => part[0])
-              .join("")
-              .toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        {!isNarrow && (
-          <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
-            {user?.name}
-          </p>
-        )}
-        {!isNarrow && (
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 transition-colors duration-200"
-          >
-            <Dots color={menuOpen ? "#1C63DB" : "black"} />
-          </button>
-        )}
-      </button>
-
-      {menuOpen && (
         <div
-          className={`absolute ${isNarrow ? "left-[70px] bottom-[20px]" : "left-[90px] bottom-[80px]"} 
+          className={`flex flex-col justify-between h-full overflow-y-hidden ${
+            sidebarOpen ? "w-[268px]" : "w-[81px] items-center"
+          } `}
+        >
+          <div className="flex flex-col gap-[32px]">
+            <NavLink
+              to={"/"}
+              className="flex flex-col items-center text-center"
+            >
+              <h2
+                className={`${sidebarOpen ? "text-[46.667px] " : "text-[27px]"} font-bold font-open`}
+              >
+                Tolu AI
+              </h2>
+            </NavLink>
+
+            <div className="flex flex-col px-[14px] gap-[18px]">
+              <SearchAiSmallInput />
+            </div>
+
+            <div
+              className={`flex flex-col w-full ${sidebarOpen ? "items-start" : "items-center"}`}
+            >
+              <NavLink
+                to={"/library"}
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleLibrary();
+                  dispatch(setChat([]));
+                  nav("/library");
+                }}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB]",
+                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]",
+                    sidebarOpen ? "" : "justify-center "
+                  )
+                }
+              >
+                <Library />
+                {!sidebarOpen ? "" : "Library"}
+                {sidebarOpen &&
+                  (isLibraryOpen ? (
+                    <ChevronUp className="w-5 h-5 shrink-0" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 shrink-0" />
+                  ))}
+              </NavLink>
+              {isLibraryOpen && (
+                <WrapperLibraryFolderTree
+                  onCloseSideBar={() => {
+                    setSidebarOpen(false);
+                    setIsLibraryOpen(false);
+                  }}
+                />
+              )}
+              <NavLink
+                to={"/messages"}
+                end={false}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB]",
+                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]",
+                    sidebarOpen ? "" : "justify-center "
+                  )
+                }
+              >
+                <ChatsCircle />
+                {isNarrow ? "" : "Messages"}
+              </NavLink>
+              <ClientChatList />
+            </div>
+          </div>
+
+          <button
+            onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
+            className={`flex gap-4 items-center justify-between ${sidebarOpen ? "pl-4" : ""}`}
+          >
+            <Avatar>
+              <AvatarImage src={user?.photo} alt="Avatar" />
+              <AvatarFallback>
+                {user?.name
+                  ?.split(" ")
+                  .map((part) => part[0])
+                  .join("")
+                  .toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            {sidebarOpen && (
+              <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
+                {user?.name}
+              </p>
+            )}
+            {sidebarOpen && (
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 transition-colors duration-200"
+              >
+                <Dots color={menuOpen ? "#1C63DB" : "black"} />
+              </button>
+            )}
+          </button>
+
+          {menuOpen && (
+            <div
+              className={`absolute ${sidebarOpen ? "left-[90px] bottom-[80px]" : "left-[70px] bottom-[20px]"} 
             mt-2 w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 py-[12px] px-[20px]
             flex flex-col gap-2 z-50
-            ${!isNarrow && "before:content-[''] before:absolute before:-bottom-2 before:right-7 before:border-x-8 before:border-t-8 before:border-x-transparent before:border-t-white"}`}
-          style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
-        >
-          <button
-            onClick={() => {
-              setMenuOpen(false);
-              nav("/profile");
-            }}
-            className="flex items-center gap-3 text-gray-800 rounded-lg hover:bg-gray-100"
-          >
-            <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-              <User size={24} />
-            </div>
-            Profile
-          </button>
+            ${sidebarOpen && "before:content-[''] before:absolute before:-bottom-2 before:right-7 before:border-x-8 before:border-t-8 before:border-x-transparent before:border-t-white"}`}
+              style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
+            >
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  nav("/profile");
+                }}
+                className="flex items-center gap-3 text-gray-800 rounded-lg hover:bg-gray-100"
+              >
+                <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
+                  <User size={24} />
+                </div>
+                Profile
+              </button>
 
-          <button
-            onClick={() => {
-              setMenuOpen(false);
-              handleSignOut();
-            }}
-            className="flex items-center gap-3 text-gray-800 rounded-lg hover:bg-gray-100"
-          >
-            <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-              <SignOutIcon />
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleSignOut();
+                }}
+                className="flex items-center gap-3 text-gray-800 rounded-lg hover:bg-gray-100"
+              >
+                <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
+                  <SignOutIcon />
+                </div>
+                Sign out
+              </button>
             </div>
-            Sign out
-          </button>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 };

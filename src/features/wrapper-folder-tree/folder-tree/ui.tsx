@@ -15,14 +15,14 @@ import {
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { cn, toast } from "shared/lib";
-import { getNumberOfContent, isSameRoot } from "../utils";
 import Dots from "shared/assets/icons/dots";
-import { MenuItem } from "widgets/EditDocumentPopup";
 import Plus from "shared/assets/icons/plus";
 import TrashIcon from "shared/assets/icons/trash-icon";
+import { cn, toast } from "shared/lib";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
+import { MenuItem } from "widgets/EditDocumentPopup";
+import { getNumberOfContent, isSameRoot } from "../utils";
 
 interface FolderTreeProps {
   folders: IFolder[];
@@ -183,7 +183,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   return (
     <>
       {folders.map((folder) => (
-        <div key={folder.id} className="ml-4 select-none relative">
+        <div key={folder.id} className="relative ml-4 select-none">
           <div
             className="flex items-center px-4 py-[7px]"
             onDragOver={(e) => onFolderDragOver(e, folder.id)}
@@ -291,7 +291,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                 >
                   <GripVertical className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
                   <FileText className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
-                  <span className="text-nowrap text-[14px] font-semibold group-hover:text-blue-500 truncate max-w-[110px] block">
+                  <span className="text-nowrap text-[14px] font-semibold group-hover:text-blue-500 truncate max-w-[80px] block">
                     {content.title}
                   </span>
                 </div>

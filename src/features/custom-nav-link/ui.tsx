@@ -1,28 +1,38 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { cloneElement, isValidElement, useState } from "react";
+import { cloneElement, isValidElement, useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "shared/lib";
 import { SideBarItem } from "widgets/sidebars/ui/model";
-
 interface CustomNavLinkProps {
   item: SideBarItem;
   onClick?: () => void;
   isNarrow?: boolean;
+  setOpenSidebar?: (open: boolean) => void;
 }
 
 export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
   item,
   onClick,
   isNarrow,
+  setOpenSidebar,
 }) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (isNarrow) {
+      setOpen(false);
+    }
+  }, [isNarrow]);
 
   if (item.link) {
     return (
       <NavLink
         to={item.link}
-        onClick={onClick}
+        onClick={() => {
+          setOpenSidebar?.(false);
+          onClick?.();
+        }}
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB]",
@@ -46,20 +56,29 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
               ? "text-[#1C63DB]"
               : "text-[#1D1D1F]"
           )}
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={() => {
+            setOpenSidebar?.(true);
+            setOpen((prev) => !prev);
+          }}
         >
           {item.icon}
           {!isNarrow && item.title}
-          {open ? (
-            <ChevronUp className="w-5 h-5 shrink-0" />
-          ) : (
-            <ChevronDown className="w-5 h-5 shrink-0" />
-          )}
+          {!isNarrow &&
+            (open ? (
+              <ChevronUp className="w-5 h-5 shrink-0" />
+            ) : (
+              <ChevronDown className="w-5 h-5 shrink-0" />
+            ))}
         </button>
         {open && (
           <div className="pl-6">
             {isValidElement(item.content)
-              ? cloneElement(item.content, { onChildrenItemClick: onClick })
+              ? cloneElement(item.content, {
+                  onChildrenItemClick: () => {
+                    setOpenSidebar?.(false);
+                    onClick?.();
+                  },
+                })
               : item.content}
           </div>
         )}
