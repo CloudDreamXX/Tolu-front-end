@@ -43,19 +43,23 @@ export const WomensHealthForm = ({ form }: { form: any }) => {
               defaultValue={field.value}
               className="space-y-1"
             >
-              {["Regular", "Irregular", "Post-menopause", "Other"].map(
-                (option) => (
-                  <FormItem
-                    key={option}
-                    className="flex items-center space-x-2 space-y-0"
-                  >
-                    <FormControl>
-                      <RadioGroupItem value={option} id={option} />
-                    </FormControl>
-                    <FormLabel htmlFor={option}>{option}</FormLabel>
-                  </FormItem>
-                )
-              )}
+              {[
+                "Regular",
+                "Irregular",
+                "Post-menopause",
+                "Other",
+                "Not applicable",
+              ].map((option) => (
+                <FormItem
+                  key={option}
+                  className="flex items-center space-x-2 space-y-0"
+                >
+                  <FormControl>
+                    <RadioGroupItem value={option} id={option} />
+                  </FormControl>
+                  <FormLabel htmlFor={option}>{option}</FormLabel>
+                </FormItem>
+              ))}
             </RadioGroup>
             {form.watch("menstrualCycleStatus") === "Other" && (
               <FormField
@@ -159,6 +163,18 @@ export const WomensHealthForm = ({ form }: { form: any }) => {
                   <RadioGroupItem value={"Considering"} id={"Considering"} />
                 </FormControl>
                 <FormLabel htmlFor={"Considering"}>Considering</FormLabel>
+              </FormItem>
+              <FormItem
+                key={"Not applicable"}
+                className="flex items-center space-x-2 space-y-0"
+              >
+                <FormControl>
+                  <RadioGroupItem
+                    value={"Not applicable"}
+                    id={"Not applicable"}
+                  />
+                </FormControl>
+                <FormLabel htmlFor={"Not applicable"}>Not applicable</FormLabel>
               </FormItem>
             </RadioGroup>
           </FormItem>

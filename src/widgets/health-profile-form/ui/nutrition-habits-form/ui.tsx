@@ -74,6 +74,14 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
   const [commonFoodsSelected, setCommonFoodsSelected] = useState<string[]>([]);
   const [dietDetailsSelected, setDietDetailsSelected] = useState<string[]>([]);
   const [otherFood, setOtherFood] = useState<string>("");
+  const [decisionMakersSelected, setDecisionMakersSelected] = useState<
+    string[]
+  >([]);
+
+  const handleDecisionMakersChange = (val: string[]) => {
+    setDecisionMakersSelected(val);
+    form.setValue("decisionMaker", val.join(" , "));
+  };
 
   const handleCommonFoodsChange = (val: string[]) => {
     setCommonFoodsSelected(val);
@@ -91,7 +99,9 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
 
     form.setValue(
       "commonFoods",
-      [...commonFoodsSelected, newValue].join(" , ")
+      [...commonFoodsSelected, newValue]
+        .filter((v) => v !== "Other")
+        .join(" , ")
     );
   };
 
@@ -110,20 +120,13 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
             <FormLabel>
               Who typically decides what to eat in your household each day?
             </FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose an option" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {decisionMakerOptions.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              defaultValue={field.value}
+              placeholder="Choose option(s)"
+              options={decisionMakerOptions}
+              selected={decisionMakersSelected}
+              onChange={handleDecisionMakersChange}
+            />
             <FormMessage />
           </FormItem>
         )}

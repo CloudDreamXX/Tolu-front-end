@@ -8,14 +8,11 @@ import {
   Input,
   RadioGroup,
   RadioGroupItem,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Slider,
 } from "shared/ui";
 import { z } from "zod";
+import { useState } from "react";
+import { MultiSelect } from "../MultiSelect";
 
 export const lifestyleHabitsSchema = z.object({
   dietDetails: z.string().min(1, "This field is required"),
@@ -27,6 +24,32 @@ export const lifestyleHabitsSchema = z.object({
   stressLevels: z.number().min(0).max(3),
   energyLevels: z.number().min(0).max(3),
 });
+
+const dietDetailsOptions = [
+  "Basic Elimination",
+  "Full Elimination",
+  "Nightshade Elimination",
+  "Specific Carbohydrate Diet (SCD)",
+  "Paleo",
+  "Primal",
+  "Traditional/WAPF",
+  "Low Lectin",
+  "Autoimmune Paleo",
+  "Minus Glutamates",
+  "Minus Oxalates",
+  "Low FODMAP",
+  "Minus Salicylates",
+  "Minus Amines",
+  "GAPS (Gut & Psychology Syndrome)",
+  "Elemental (Food-Based)",
+  "Ketogenic",
+  "Low Carb",
+  "Low Glycemic",
+  "Body Ecology",
+  "Anti-Candida",
+  "Raw or Live Food Diet",
+  "Other",
+];
 
 const sleepQualityLabels = [
   "Poor: Restless, interrupted sleep",
@@ -47,37 +70,60 @@ const energyLevelsLabels = [
   "Varies: Energy levels fluctuate significantly",
 ];
 
+const joinVals = (vals: string[], extra?: string) => {
+  const filtered = vals.filter((v) => v !== "Other");
+  return [...filtered, ...(extra ? [extra] : [])].join(" , ");
+};
+
 export const LifestyleHabitsForm = ({ form }: { form: any }) => {
   const exerciseHabits = form.watch("exerciseHabits");
+
+  const [dietDetailsSel, setDietDetailsSel] = useState<string[]>([]);
+  const [dietDetailsOther, setDietDetailsOther] = useState("");
+
+  const onDietDetailsChange = (val: string[]) => {
+    setDietDetailsSel(val);
+    form.setValue("dietDetails", joinVals(val, dietDetailsOther));
+  };
 
   return (
     <div className="space-y-6">
       <p className="text-gray-500 ">
         Tell us about your daily routines — diet, exercise, and sleep.
       </p>
+
       <FormField
         control={form.control}
         name="dietDetails"
-        render={({ field }) => (
+        render={() => (
           <FormItem>
             <FormLabel>Are you on any specific diet?</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="None" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="None">None</SelectItem>
-                <SelectItem value="Vegetarian">Vegetarian</SelectItem>
-                <SelectItem value="Vegan">Vegan</SelectItem>
-                <SelectItem value="Keto">Keto</SelectItem>
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              placeholder="None"
+              options={dietDetailsOptions}
+              selected={dietDetailsSel}
+              onChange={onDietDetailsChange}
+              defaultValue={form.getValues("dietDetails")}
+            />
+            {dietDetailsSel.includes("Other") && (
+              <div className="pt-2">
+                <Input
+                  placeholder="Type your diet"
+                  value={dietDetailsOther}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setDietDetailsOther(v);
+                    form.setValue("dietDetails", joinVals(dietDetailsSel, v));
+                  }}
+                />
+              </div>
+            )}
             <FormMessage />
           </FormItem>
         )}
       />
+
+      {/* Exercise habits (unchanged) */}
       <FormField
         control={form.control}
         name="exerciseHabits"
@@ -156,6 +202,8 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
           )}
         />
       )}
+
+      {/* Sleep quality */}
       <FormField
         control={form.control}
         name="sleepQuality"
@@ -199,6 +247,8 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
           </FormItem>
         )}
       />
+
+      {/* Stress levels */}
       <FormField
         control={form.control}
         name="stressLevels"
@@ -242,6 +292,8 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
           </FormItem>
         )}
       />
+
+      {/* Energy levels */}
       <FormField
         control={form.control}
         name="energyLevels"

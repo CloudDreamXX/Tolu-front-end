@@ -65,14 +65,16 @@ export const MultiSelect = ({
         {selected.length === 0 ? (
           <span className="text-[#5F5F65]">{placeholder}</span>
         ) : (
-          selected.map((option, index) => (
-            <span
-              key={option}
-              className="flex items-center gap-[8px] text-[16px] font-[500] text-[#1D1D1F]"
-            >
-              {index !== 0 && ", "} {option}
-            </span>
-          ))
+          selected
+            .filter((item) => item !== "Other")
+            .map((option, index) => (
+              <span
+                key={option}
+                className="flex items-center gap-[8px] text-[16px] font-[500] text-[#1D1D1F]"
+              >
+                {index !== 0 && ", "} {option}
+              </span>
+            ))
         )}
         <span className="pointer-events-none absolute right-[12px] top-1/2 -translate-y-1/2">
           <Chevron />

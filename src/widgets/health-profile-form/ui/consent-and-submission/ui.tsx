@@ -7,11 +7,9 @@ import {
   Checkbox,
   RadioGroup,
   RadioGroupItem,
-  Input,
 } from "shared/ui";
 import { Link } from "react-router-dom";
 import z from "zod";
-import { useState } from "react";
 
 export const consentSubmissionSchema = z.object({
   agreeToPrivacy: z.boolean(),
@@ -21,8 +19,8 @@ export const consentSubmissionSchema = z.object({
 });
 
 export const ConsentSubmissionForm = ({ form }: { form: any }) => {
-  const watchFollowUp = form.watch("followUpMethod");
-  const [countryCode, setCountryCode] = useState("+1");
+  // const watchFollowUp = form.watch("followUpMethod");
+  // const [countryCode, setCountryCode] = useState("+1");
 
   return (
     <div className="space-y-6">
@@ -86,17 +84,33 @@ export const ConsentSubmissionForm = ({ form }: { form: any }) => {
                 </FormControl>
                 <FormLabel htmlFor={"Email"}>Email</FormLabel>
               </FormItem>
+
               <FormItem
-                key={"Text"}
+                key={"None"}
                 className="flex items-center space-x-2 space-y-0"
               >
                 <FormControl>
-                  <RadioGroupItem value={"Text"} id={"Text"} />
+                  <RadioGroupItem value={"None"} id={"None"} />
                 </FormControl>
-                <FormLabel htmlFor={"Text"}>Text</FormLabel>
+                <FormLabel htmlFor={"None"}>None</FormLabel>
               </FormItem>
 
-              {watchFollowUp === "Text" && (
+              <FormItem
+                key={"Text"}
+                className="flex items-center space-x-2 space-y-0 opacity-60 cursor-not-allowed"
+              >
+                <FormControl>
+                  <RadioGroupItem value={"Text"} id={"Text"} disabled />
+                </FormControl>
+                <FormLabel htmlFor={"Text"}>
+                  Text{" "}
+                  <span className="ml-1 text-sm text-[#5F5F65]">
+                    (Coming Soon)
+                  </span>
+                </FormLabel>
+              </FormItem>
+
+              {/* {watchFollowUp === "Text" && (
                 <FormItem>
                   <FormLabel>Phone number</FormLabel>
                   <FormControl>
@@ -127,17 +141,7 @@ export const ConsentSubmissionForm = ({ form }: { form: any }) => {
                     </p>
                   )}
                 </FormItem>
-              )}
-
-              <FormItem
-                key={"None"}
-                className="flex items-center space-x-2 space-y-0"
-              >
-                <FormControl>
-                  <RadioGroupItem value={"None"} id={"None"} />
-                </FormControl>
-                <FormLabel htmlFor={"None"}>None</FormLabel>
-              </FormItem>
+              )} */}
             </RadioGroup>
             <FormMessage />
           </FormItem>
