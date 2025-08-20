@@ -21,7 +21,7 @@ export const ContentManagerInReview: React.FC = () => {
 
   const filteredDocuments = useMemo(() => {
     return documents.filter((doc) => {
-      return doc.title.toLowerCase().includes(search.toLowerCase());
+      return doc.aiTitle.toLowerCase().includes(search.toLowerCase());
     });
   }, [documents, choosedDate]);
 
@@ -68,7 +68,7 @@ export const ContentManagerInReview: React.FC = () => {
         </div>
         <div className="flex flex-row flex-wrap w-full gap-4">
           {filteredDocuments.map((doc) => (
-            <DocumentCard key={doc.title} document={doc} />
+            <DocumentCard key={doc.aiTitle} document={doc} />
           ))}
         </div>
       </div>

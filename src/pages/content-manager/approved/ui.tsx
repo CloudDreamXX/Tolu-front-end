@@ -34,7 +34,7 @@ export const ContentManagerApproved: React.FC = () => {
       return folder.name.toLowerCase().includes(search.toLowerCase());
     });
     const documentItems = documents.filter((document) => {
-      return document.title.toLowerCase().includes(search.toLowerCase());
+      return document.aiTitle.toLowerCase().includes(search.toLowerCase());
     });
     return [...folderItems, ...documentItems];
   }, [folders, choosedDate]);

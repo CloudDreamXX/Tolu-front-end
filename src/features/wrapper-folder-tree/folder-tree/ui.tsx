@@ -292,7 +292,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                   <GripVertical className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
                   <FileText className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
                   <span className="text-nowrap text-[14px] font-semibold group-hover:text-blue-500 truncate max-w-[80px] block">
-                    {content.title}
+                    {content.aiTitle ?? content.title}
                   </span>
                 </div>
               ))}

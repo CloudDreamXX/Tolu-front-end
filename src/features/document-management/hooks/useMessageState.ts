@@ -33,7 +33,7 @@ export const useMessageState = () => {
           is_new: false,
           chat_id: document.chatId ?? "",
           regenerate_id: null,
-          chat_title: document?.title ?? "",
+          chat_title: document?.aiTitle ?? "",
           instructions: document.originalInstructions ?? "",
         },
         folderId,

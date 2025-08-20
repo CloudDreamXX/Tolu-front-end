@@ -20,6 +20,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: true,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "2",
@@ -34,6 +35,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: false,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "3",
@@ -47,6 +49,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: true,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "4",
@@ -60,6 +63,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: true,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "5",
@@ -69,6 +73,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: false,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "6",
@@ -78,6 +83,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: false,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "7",
@@ -87,6 +93,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: true,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "8",
@@ -96,6 +103,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: true,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "9",
@@ -105,6 +113,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: false,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "10",
@@ -114,6 +123,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     readyForReview: true,
     folderId: "2",
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "11",
@@ -135,6 +145,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "waiting",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "12",
@@ -156,6 +167,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "second-review",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "13",
@@ -177,6 +189,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "under-review",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "14",
@@ -198,6 +211,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "waiting",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "15",
@@ -219,6 +233,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "waiting",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "16",
@@ -240,6 +255,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "waiting",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "17",
@@ -261,6 +277,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "second-review",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "18",
@@ -282,6 +299,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "under-review",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "19",
@@ -303,6 +321,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     reviewStatus: "waiting",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "20",
@@ -323,6 +342,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "2",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "21",
@@ -344,6 +364,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "22",
@@ -365,6 +386,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "23",
@@ -386,6 +408,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "24",
@@ -407,6 +430,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "25",
@@ -428,6 +452,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "26",
@@ -449,6 +474,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "27",
@@ -470,6 +496,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "28",
@@ -491,6 +518,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "29",
@@ -512,6 +540,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "30",
@@ -533,6 +562,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "31",
@@ -554,6 +584,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "32",
@@ -575,6 +606,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "33",
@@ -596,6 +628,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "34",
@@ -617,6 +650,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "35",
@@ -638,6 +672,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "36",
@@ -659,6 +694,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "37",
@@ -680,6 +716,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "38",
@@ -701,6 +738,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "39",
@@ -722,6 +760,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -743,6 +782,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     folderId: "3",
     reviewers: ["Jessica Gale MD FDN"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "41",
@@ -756,6 +796,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -776,6 +817,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -796,6 +838,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -816,6 +859,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -836,6 +880,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -856,6 +901,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -876,6 +922,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -896,6 +943,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -916,6 +964,7 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
   {
     id: "40",
@@ -936,5 +985,6 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     author: "Alice Johnson",
     reviewers: ["Jessica Gale MD CFNP"],
     createdAt: new Date().toISOString(),
+    aiTitle: "",
   },
 ];

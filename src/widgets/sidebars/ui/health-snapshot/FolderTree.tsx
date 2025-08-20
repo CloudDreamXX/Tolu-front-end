@@ -161,7 +161,7 @@ const LibraryFolderTree: React.FC<Props> = ({
                     >
                       <FileText className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
                       <span className="truncate max-w-[110px] text-[16px] font-semibold group-hover:text-blue-500">
-                        {doc.title}
+                        {doc.ai_title ?? doc.title}
                       </span>
                     </div>
                   ))

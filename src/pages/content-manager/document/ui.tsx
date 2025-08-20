@@ -138,7 +138,7 @@ export const ContentManagerDocument: React.FC = () => {
   const onEditToggle = (pair: any) => {
     setSelectedDocumentId(pair.id);
     setEditedContent(pair.content);
-    setEditedTitle(selectedDocument?.title ?? "");
+    setEditedTitle(selectedDocument?.aiTitle ?? selectedDocument?.title ?? "");
     setEditedQuery(selectedDocument?.query ?? "");
     setIsEditing(true);
   };

@@ -1,6 +1,7 @@
 export interface IDocumentResponse {
   id: string;
   title: string;
+  ai_title: string;
   query: string;
   content: string;
   created_at: string;
@@ -31,6 +32,7 @@ export interface IDocumentResponse {
 export interface IDocument {
   id: string;
   title: string;
+  aiTitle: string;
   query: string;
   content: string;
   createdAt: string;

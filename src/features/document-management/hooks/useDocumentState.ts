@@ -37,7 +37,7 @@ export const useDocumentState = () => {
       const response = await DocumentsService.getDocumentById(docId);
       if (response) {
         setDocument(response);
-        setDocumentTitle(response.title);
+        setDocumentTitle(response.aiTitle);
         loadConversation(response.chatId);
       }
     } catch (error) {

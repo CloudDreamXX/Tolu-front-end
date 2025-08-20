@@ -30,6 +30,7 @@ export interface AcceptInviteResponse {
 export interface ContentItem {
   id: string;
   title: string;
+  ai_title: string;
   created_at: string;
   read_count: number;
   saved_for_later_count: number;

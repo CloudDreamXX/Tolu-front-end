@@ -33,7 +33,10 @@ export const findFilePath = (
 
     const foundFile = folder.content.find((file) => file.id === contentId);
     if (foundFile) {
-      return [...newPath, { id: foundFile.id, name: foundFile.title }];
+      return [
+        ...newPath,
+        { id: foundFile.id, name: foundFile.aiTitle ?? foundFile.title },
+      ];
     }
 
     const subfolderPath = findInSubfolders(
@@ -57,7 +60,7 @@ const findInSubfolders = (
 
     const foundFile = sub.content.find((file) => file.id === contentId);
     if (foundFile) {
-      return [...newPath, { id: foundFile.id, name: foundFile.title }];
+      return [...newPath, { id: foundFile.id, name: foundFile.aiTitle }];
     }
 
     const deeper = findInSubfolders(sub.subfolders, contentId, newPath);

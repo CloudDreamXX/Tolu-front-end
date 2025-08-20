@@ -9,6 +9,7 @@ export interface IFileNamesResponse {
 export interface IContentItemResponse {
   id: string;
   title: string;
+  ai_title: string;
   chat_id: string;
   creator_id: string;
   created_at: string;
@@ -69,6 +70,7 @@ export interface IFileNames {
 export interface IMessage {
   id: string;
   title: string;
+  ai_title: string;
   chat_id: string;
   creator_id: string;
   created_at: string;
@@ -80,6 +82,7 @@ export interface IMessage {
 export interface IContentItem {
   id: string;
   title: string;
+  aiTitle: string;
   chatId: string;
   creatorId: string;
   createdAt: string;
@@ -160,6 +163,7 @@ export interface IFolderMock {
 export interface IDocumentMock {
   id: string;
   title: string;
+  aiTitle: string;
   folder: string;
   attachedFiles?: string[];
   instructions?: string[];
@@ -210,6 +214,7 @@ export interface NewFolder {
 export interface ContentItem {
   id: string;
   title: string;
+  ai_title: string;
   status: string | null;
   created_at: string;
   updated_at: string | null;

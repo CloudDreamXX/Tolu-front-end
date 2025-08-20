@@ -38,6 +38,7 @@ export class FoldersService {
       price: item.price,
       status: item.status,
       messages: item.messages,
+      aiTitle: item.ai_title,
     };
   }
 

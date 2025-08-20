@@ -27,6 +27,7 @@ export class DocumentsService {
       userRating: response.user_rating,
       userComments: response.user_comments,
       thumbsDown: response.thumbs_down,
+      aiTitle: response.ai_title,
     };
   }
 
