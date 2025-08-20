@@ -159,6 +159,16 @@ export const ContentManagerDocument: React.FC = () => {
     await onStatusComplete(status, contentId);
   };
 
+  const onMarkAsFinalHandler = async (contentId?: string) => {
+    const itemsToArchive = conversation.filter((item) => item.id !== contentId);
+
+    for (const item of itemsToArchive) {
+      await onStatusComplete("Archived", item.id);
+    }
+
+    navigate(location.pathname);
+  };
+
   return (
     <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] pt-2 md:pt-6 h-[calc(100vh-78px)] w-full overflow-y-auto">
       {loadingConversation && (
@@ -244,6 +254,7 @@ export const ContentManagerDocument: React.FC = () => {
                     handleDublicateClick={handleDublicateClick}
                     handleMarkAsClick={onMarkAsClick}
                     handleDeleteContent={handleDeleteClick}
+                    onMarkAsFinalHandler={onMarkAsFinalHandler}
                   />
                 </>
               )}

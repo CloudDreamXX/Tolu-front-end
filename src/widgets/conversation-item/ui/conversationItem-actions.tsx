@@ -1,6 +1,7 @@
 import { SpeakerSimpleHighIcon } from "@phosphor-icons/react";
 import { ISessionResult } from "entities/coach";
 import { useDocumentState } from "features/document-management";
+import { Check } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Compare from "shared/assets/icons/compare";
 import Dislike from "shared/assets/icons/dislike";
@@ -20,6 +21,7 @@ interface ConversationItemActionsProps {
   pair: ISessionResult;
   ratingsMap: Record<string, { rating: number; comment: string }>;
   index: number;
+  compareIndex: number | null;
   onCompareToggle: (index: number) => void;
   onEditToggle: (pair: ISessionResult, document: any) => void;
   setSelectedDocumentId: (id: string) => void;
@@ -30,6 +32,7 @@ interface ConversationItemActionsProps {
   handleDublicateClick: (id: string) => Promise<void>;
   handleMarkAsClick: () => void;
   handleDelete: (id: string) => void;
+  onMarkAsFinalHandler: (contentId?: string | undefined) => Promise<void>;
 }
 
 export const ConversationItemActions: React.FC<
@@ -43,6 +46,7 @@ export const ConversationItemActions: React.FC<
   setIsMoveOpen,
   handleDublicateClick,
   setIsDeleteOpen,
+  onMarkAsFinalHandler,
 }) => {
   const { document } = useDocumentState();
   const [textContent, setTextContent] = useState("");
@@ -133,7 +137,7 @@ export const ConversationItemActions: React.FC<
 
   return (
     <div className="flex md:flex-col items-start gap-2">
-      <div className="relative flex md:flex-col items-center gap-2">
+      <div className="flex md:flex-col items-center gap-2">
         <TooltipProvider delayDuration={500}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -267,6 +271,23 @@ export const ConversationItemActions: React.FC<
               className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
             >
               Mark as
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => onMarkAsFinalHandler(pair.id)}
+              >
+                <Check className="w-[16px] h-[16px]" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Mark as final
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

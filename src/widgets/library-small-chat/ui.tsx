@@ -14,7 +14,7 @@ import {
 } from "pages/content-manager/create/case-search";
 import { useEffect, useState } from "react";
 import { useForm, useFormState, useWatch } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Card, CardContent, CardFooter, CardHeader } from "shared/ui";
 import {
@@ -25,6 +25,8 @@ import {
 } from "widgets/content-popovers";
 import { MessageList } from "widgets/message-list";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
+import { MagnifyingGlassPlusIcon } from "@phosphor-icons/react";
+import { setLastChatId } from "entities/client/lib";
 // const steps = [
 //   "Demographic",
 //   "Menopause Status",
@@ -73,6 +75,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         : config.options[0]
   );
 
+  const lastId = location.state?.lastId;
+
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -91,11 +95,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [instruction, setInstruction] = useState<string>("");
   const loading = useSelector((state: RootState) => state.client.loading);
   const chat = useSelector((state: RootState) => state.client.chat);
+  const lastChatId = useSelector((state: RootState) => state.client.lastChatId);
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [selectedVoice, setSelectedVoice] =
     useState<SpeechSynthesisVoice | null>(null);
   const [isReadingAloud, setIsReadingAloud] = useState(false);
   const [voiceContent, setVoiceContent] = useState<string>("");
+  const dispatch = useDispatch();
 
   const extractVoiceText = (input: string): string => {
     if (!input) return "";
@@ -229,13 +235,21 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const { isValid } = useFormState({ control: caseForm.control });
 
   useEffect(() => {
-    if (
-      chat.length &&
-      !chat[0].chat_id.startsWith("new_chat_") &&
-      !messages.length
-    ) {
-      loadExistingSession(chat[0].chat_id);
-    }
+    const fetchChat = async () => {
+      if (lastId) {
+        await loadExistingSession(lastId);
+      }
+    };
+    fetchChat();
+  }, []);
+
+  useEffect(() => {
+    const fetchChat = async () => {
+      if (lastChatId) {
+        await loadExistingSession(lastChatId);
+      }
+    };
+    fetchChat();
   }, []);
 
   useEffect(() => {
@@ -250,12 +264,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setError(null);
 
     try {
-      const sessionData = await SearchService.getSession(chatId);
+      const sessionData = await CoachService.getSessionById(chatId);
+      dispatch(setLastChatId(chatId));
+      // const newChat = sessionData.search_results.filter((item) => item.chat_id === chatId);
+      // dispatch(setChat(newChat));
 
-      if (sessionData && sessionData.length > 0) {
+      if (sessionData && sessionData.search_results.length > 0) {
         const chatMessages: Message[] = [];
 
-        sessionData.forEach((item) => {
+        sessionData.search_results.forEach((item) => {
           if (item.query) {
             chatMessages.push({
               id: `user-${item.id}`,
@@ -265,14 +282,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             });
           }
 
-          if (item.answer) {
-            let content = item.answer;
-            let document = item.answer;
+          if (item.content) {
+            let content = item.content;
+            let document = item.content;
 
-            if (item.answer.includes("Relevant Content")) {
-              const parts = item.answer.split("Relevant Content");
+            if (item.content.includes("Relevant Content")) {
+              const parts = item.content.split("Relevant Content");
               content = parts[0].trim();
-              document = item.answer;
+              document = item.content;
             }
 
             chatMessages.push({
@@ -291,8 +308,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
         setMessages(chatMessages);
 
-        if (sessionData[0]?.chat_title) {
-          setChatTitle(sessionData[0].chat_title);
+        if (sessionData.search_results[0]?.title) {
+          setChatTitle(sessionData.search_results[0].title);
         }
 
         setCurrentChatId(chatId);
@@ -442,7 +459,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         setIsSearching(false);
         if (deleteSelectedText) deleteSelectedText();
 
-        const chatId = finalData?.searched_result_id ?? "";
+        const chatId =
+          finalData?.searched_result_id ||
+          finalData?.chat_id ||
+          finalData?.chatId ||
+          "";
+        dispatch(setLastChatId(chatId));
 
         const aiMessage: Message = {
           id: chatId || Date.now().toString(),
@@ -458,7 +480,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         setVoiceContent(extractVoiceText(aiMessage.content));
         setStreamingText("");
 
-        if (chatId && chatId !== currentChatId) {
+        if (!lastId && chatId && chatId !== currentChatId) {
           setCurrentChatId(chatId);
           returnedChatId = chatId;
         }
@@ -485,13 +507,17 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processChunk,
           processFinal
         );
+        dispatch(setLastChatId(res.documentId));
+        await loadExistingSession(res.documentId);
 
-        if (res.documentId) {
+        if (res.chatId && res.documentId) {
           navigate(
             `/content-manager/library/folder/${folderId}/document/${res.documentId}`,
             {
               state: {
                 selectedSwitch: SWITCH_KEYS.CREATE,
+                lastId: res.chatId,
+                docId: res.documentId,
               },
             }
           );
@@ -514,12 +540,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processFinal
         );
 
-        if (res.documentId) {
+        if (res.chatId && res.documentId) {
           navigate(
             `/content-manager/library/folder/${folderId}/document/${res.documentId}`,
             {
               state: {
                 selectedSwitch: SWITCH_KEYS.CASE,
+                lastId: res.chatId,
+                docId: res.documentId,
               },
             }
           );
@@ -663,6 +691,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setStreamingText("");
     setChatTitle("");
     setError(null);
+    setFolderId(null);
+    setClientId(null);
+    setFiles([]);
   };
 
   return (
@@ -744,6 +775,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
               {selectedSwitch}
             </div>
+            <button
+              className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full xl:w-fit"
+              onClick={handleNewChatOpen}
+            >
+              <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
+            </button>
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
           <CardContent className="flex flex-1 w-full h-full px-6 pb-0 overflow-auto">
@@ -869,6 +906,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 expert-verified guidance you can trust
               </p>
             )}
+            <button
+              className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full xl:w-fit"
+              onClick={handleNewChatOpen}
+            >
+              <MagnifyingGlassPlusIcon width={24} height={24} />{" "}
+              {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
+            </button>
           </CardHeader>
           <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
             {messages.length > 0 && (

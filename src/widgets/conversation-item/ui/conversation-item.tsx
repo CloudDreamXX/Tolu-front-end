@@ -39,6 +39,7 @@ interface ConversationItemProps {
   handleDublicateClick: (id: string) => Promise<void>;
   handleMarkAsClick: () => void;
   handleDeleteContent: (id: string) => void;
+  onMarkAsFinalHandler: (contentId?: string | undefined) => Promise<void>;
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
@@ -68,6 +69,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   handleDublicateClick,
   handleMarkAsClick,
   handleDeleteContent,
+  onMarkAsFinalHandler,
 }) => {
   const isHTML = isHtmlContent(pair.content);
 
@@ -306,8 +308,8 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
   return (
     <div key={pair.id} className="flex flex-col gap-[24px]">
-      {index > 0 && pair.query && (
-        <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] w-full md:max-w-[563px] xl:max-w-[800px]">
+      {pair.query && (
+        <div className="ml-auto p-[24px] bg-[#F6F6F6] border border-[#EAEAEA] rounded-[16px] w-full md:max-w-[563px] xl:max-w-[400px]">
           <p className="text-[16px] md:text-[18px] font-[500] text-[#1D1D1F]">
             {pair.query}
           </p>
@@ -324,7 +326,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               : renderContent()}
           </>
         )}
-
         <ConversationItemActions
           pair={pair}
           ratingsMap={ratingsMap}
@@ -339,6 +340,8 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           handleDublicateClick={handleDublicateClick}
           handleMarkAsClick={handleMarkAsClick}
           handleDelete={handleDeleteContent}
+          compareIndex={compareIndex}
+          onMarkAsFinalHandler={onMarkAsFinalHandler}
         />
       </div>
     </div>

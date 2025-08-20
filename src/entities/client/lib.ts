@@ -6,6 +6,7 @@ export interface IClientState {
   isMobileDailyJournalOpen?: boolean;
   folderId: string;
   chat: SearchResultResponseItem[];
+  lastChatId: string;
   folders: Folder[];
   loading: boolean;
   error: string | null;
@@ -15,6 +16,7 @@ const initialState: IClientState = {
   isMobileDailyJournalOpen: false,
   folderId: "",
   chat: [],
+  lastChatId: "",
   folders: [],
   loading: false,
   error: null,
@@ -32,6 +34,9 @@ const clientSlice = createSlice({
     },
     setChat(state, action: PayloadAction<SearchResultResponseItem[]>) {
       state.chat = action.payload;
+    },
+    setLastChatId(state, action: PayloadAction<string>) {
+      state.lastChatId = action.payload;
     },
     setFolders(state, action: PayloadAction<Folder[]>) {
       state.folders = action.payload;
@@ -60,5 +65,6 @@ export const {
   clearError,
   setChat,
   setIsMobileDailyJournalOpen,
+  setLastChatId,
 } = clientSlice.actions;
 export const clientReducer = clientSlice.reducer;

@@ -41,6 +41,7 @@ interface ConversationListProps {
   handleDublicateClick: (id: string) => Promise<void>;
   handleMarkAsClick: () => void;
   handleDeleteContent: (id: string) => void;
+  onMarkAsFinalHandler: (contentId?: string | undefined) => Promise<void>;
 }
 
 export const ConversationList: React.FC<ConversationListProps> = ({
@@ -77,6 +78,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   handleDublicateClick,
   handleMarkAsClick,
   handleDeleteContent,
+  onMarkAsFinalHandler,
 }) => {
   return (
     <div className="flex flex-col gap-[32px]">
@@ -127,6 +129,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           handleDublicateClick={handleDublicateClick}
           handleMarkAsClick={handleMarkAsClick}
           handleDeleteContent={handleDeleteContent}
+          onMarkAsFinalHandler={onMarkAsFinalHandler}
         />
       ))}
 

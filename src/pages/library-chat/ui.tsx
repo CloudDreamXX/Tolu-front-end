@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { setChat } from "entities/client/lib";
+import { setLastChatId } from "entities/client/lib";
+import { CoachService } from "entities/coach";
 import { HealthHistoryService } from "entities/health-history";
 import { setHealthHistory, setLoading } from "entities/health-history/lib";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
-import { SearchResultResponseItem } from "entities/search/model";
 import { RootState } from "entities/store";
 import {
   ChatActions,
@@ -278,14 +278,15 @@ export const LibraryChat = () => {
     setError(null);
 
     try {
-      const sessionData = await SearchService.getSession(chatId);
-      const newChat = sessionData.filter((item) => item.chat_id === chatId);
-      dispatch(setChat(newChat));
+      const sessionData = await CoachService.getSessionById(chatId);
+      dispatch(setLastChatId(chatId));
+      // const newChat = sessionData.search_results.filter((item) => item.chat_id === chatId);
+      // dispatch(setChat(newChat));
 
-      if (sessionData && sessionData.length > 0) {
+      if (sessionData && sessionData.search_results.length > 0) {
         const chatMessages: Message[] = [];
 
-        sessionData.forEach((item: SearchResultResponseItem) => {
+        sessionData.search_results.forEach((item) => {
           if (item.query) {
             chatMessages.push({
               id: `user-${item.id}`,
@@ -295,22 +296,22 @@ export const LibraryChat = () => {
             });
           }
 
-          if (item.answer) {
-            let content = item.answer;
-            let document = item.answer;
+          if (item.content) {
+            let content = item.content;
+            let document = item.content;
 
-            if (item.answer.includes("Relevant Content")) {
-              const parts = item.answer.split("Relevant Content");
+            if (item.content.includes("Relevant Content")) {
+              const parts = item.content.split("Relevant Content");
               content = parts[0].trim();
-              document = item.answer;
+              document = item.content;
             }
 
             chatMessages.push({
               id: `ai-${item.id}`,
               type: "ai",
-              content: content,
+              content,
               timestamp: new Date(item.created_at),
-              document: document,
+              document,
             });
           }
         });
@@ -321,9 +322,11 @@ export const LibraryChat = () => {
 
         setMessages(chatMessages);
 
-        if (sessionData[0]?.chat_title) {
-          setChatTitle(sessionData[0].chat_title);
+        if (sessionData.search_results[0]?.title) {
+          setChatTitle(sessionData.search_results[0].title);
         }
+
+        setCurrentChatId(chatId);
       }
     } catch (error) {
       console.error("Error loading chat session:", error);
