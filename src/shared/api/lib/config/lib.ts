@@ -159,7 +159,7 @@ export const API_ROUTES = {
     DISMISS_NOTIFICATION: "/notifications/{notification_id}/dismiss",
     GET_NOTIFICATION_PREFERENCES: "/notifications/preferences",
     UPDATE_NOTIFICATION_PREFERENCES: "/notifications/preferences",
-  }
+  },
 };
 
 export const EXCLUDE_TOKEN_ENDPOINTS = [

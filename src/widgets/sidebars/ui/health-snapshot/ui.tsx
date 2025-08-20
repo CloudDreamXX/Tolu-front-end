@@ -31,6 +31,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
     const checkWidth = () => {
       const w = window.innerWidth;
       setIsNarrow(w >= 1280 && w <= 1536);
+      setSidebarOpen(w >= 1536);
     };
     checkWidth();
     window.addEventListener("resize", checkWidth);

@@ -1,0 +1,82 @@
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import CircleQuestion from "shared/assets/icons/circle-question";
+import { TooltipWrapper } from "shared/ui";
+import { titlesAndIcons } from "widgets/OnboardingPractitioner/select-type";
+
+export function StepType() {
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(
+    new Array(5).fill("")
+  );
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+
+  const toggleDropdown = (index: number) => {
+    setActiveDropdown((prev) => (prev === index ? null : index));
+  };
+
+  const handleSelection = (index: number, value: string) => {
+    const updatedOptions = [...selectedOptions];
+    updatedOptions[index] = value;
+    setSelectedOptions(updatedOptions);
+    setActiveDropdown(null);
+  };
+  const [otherText, setOtherText] = useState<string>("");
+
+  return (
+    <div className="flex flex-col gap-8 mt-2">
+      {titlesAndIcons.map((item, index) => (
+        <div
+          key={item.title}
+          className="flex flex-col items-start w-full gap-5"
+        >
+          <div className="flex items-center self-stretch gap-[8px]">
+            {item.icon}
+            <label className="text-[#1B2559]  text-[16px] md:text-[20px] font-semibold">
+              {item.title}
+            </label>
+            <TooltipWrapper content={item.tooltipContent}>
+              <CircleQuestion className="text-[#1B2559]" />
+            </TooltipWrapper>
+          </div>
+
+          {/* Custom Dropdown */}
+          <div className="relative w-full">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between bg-[#FAFAFA] border-[#9D9D9D] border-[1px] rounded-[8px] h-[52px] px-[12px] cursor-pointer"
+              onClick={() => toggleDropdown(index)}
+            >
+              <span className="text-[#000] font-[Nunito] text-[16px]">
+                {selectedOptions[index] || "Select your type"}
+              </span>
+              <ChevronDown className="text-[#9D9D9D]" />
+            </button>
+            {activeDropdown === index && (
+              <div className="border border-[#9D9D9D] absolute z-10 flex flex-col w-full mt-[4px] bg-[#FAFAFA] rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto scrollbar-hide">
+                {item.options.map((option) => (
+                  <button
+                    type="button"
+                    key={option}
+                    className="py-[15px] px-[12px] text-left text-[#1D1D1F] text-[16px] font-medium cursor-pointer hover:bg-[#F2F2F2] hover:text-[#1C63DB]"
+                    onClick={() => handleSelection(index, option)}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
+            {selectedOptions[index] === "Other (please specify)" && (
+              <input
+                type="text"
+                value={otherText}
+                onChange={(e) => setOtherText(e.target.value)}
+                placeholder="Other text"
+                className="mt-[4px] outline-none w-full h-[52px] px-[12px] border-[1px] border-[#9D9D9D] rounded-[8px] bg-[#FAFAFA] text-[16px] text-[#000] font-[Nunito]"
+              />
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

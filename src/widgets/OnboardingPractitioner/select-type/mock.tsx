@@ -64,7 +64,7 @@ const OtherOptions = [
 export const titlesAndIcons = [
   {
     title: "Clinical & Licensed Healthcare Providers",
-    icon: <Microscope size={20} />,
+    icon: <Microscope size={20} className="text-[#1B2559]" />,
     options: ClinicalOptions,
     tooltipContent:
       "For licensed professionals supporting\nhealth transformation through\ndiagnostics and medical oversight.",

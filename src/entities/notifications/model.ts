@@ -1,7 +1,7 @@
 export interface Notifications {
-    notification_ids: string[]
+  notification_ids: string[];
 }
 
 export interface NotificationPreferences {
-    notifications_enabled: boolean;
+  notifications_enabled: boolean;
 }

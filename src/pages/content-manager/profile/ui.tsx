@@ -12,276 +12,297 @@ import FocusAreasIcon from "shared/assets/images/FocusAreas.png";
 import SafetyIcon from "shared/assets/images/Safety.png";
 import UsersIcon from "shared/assets/images/Users.png";
 import { Button, Input } from "shared/ui";
+import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
 
 export const ContentManagerProfile = () => {
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [twoFA, setTwoFA] = useState(true);
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
-    <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px]">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-[4.5px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
-          <ProfileCoach /> My profile
-        </div>
-        <Button
-          variant={"brightblue"}
-          className="w-full md:w-[300px] justify-center"
-        >
-          <Edit color="white" width={17} height={17} /> Edit
-        </Button>
-      </div>
-
-      <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] grid md:grid-cols-[180px_1fr] gap-x-[16px] md:gap-x-[24px] gap-y-[16px] lg:grid-cols-[200px_1fr] lg:gap-[32px]">
-        <img
-          className="w-[143px] h-[133px] md:w-[200px] md:h-[185px] rounded-[12px] object-cover block"
-          src="/profile.png"
-          alt="Profile photo"
-        />
-
-        <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px] lg:hidden">
-          <Field label="Full name:" value="Sophia Turner" />
-          <Field label="Gender:" value="Woman" />
-          <Field label="Email:" value="smith@gmail.com" />
-          <Field label="Phone number:" value="+1 (310) 555-7493" />
-          <Field label="Alternative name:" value="Sophia Reynolds" />
-          <Field label="Age:" value="38" />
-          <div className="col-span-2">
-            <Field
-              label="Time zone:"
-              value="(GMT-08:00) Pacific Time (US & Canada)"
-            />
+    <>
+      <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px]">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-[4.5px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
+            <ProfileCoach /> My profile
           </div>
+          <Button
+            variant={"brightblue"}
+            className="w-full md:w-[300px] justify-center"
+            onClick={() => setEditModalOpen(true)}
+          >
+            <Edit color="white" width={17} height={17} /> Edit
+          </Button>
         </div>
 
-        <div className="hidden lg:flex gap-[32px] w-full">
-          <div className="flex flex-col gap-[56px] justify-between w-full max-w-[289px]">
+        <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] grid md:grid-cols-[180px_1fr] gap-x-[16px] md:gap-x-[24px] gap-y-[16px] lg:grid-cols-[200px_1fr] lg:gap-[32px]">
+          <img
+            className="w-[143px] h-[133px] md:w-[200px] md:h-[185px] rounded-[12px] object-cover block"
+            src="/profile.png"
+            alt="Profile photo"
+          />
+
+          <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px] lg:hidden">
             <Field label="Full name:" value="Sophia Turner" />
-            <Field label="Email:" value="smith@gmail.com" />
-          </div>
-          <div className="flex flex-col gap-[56px] justify-between w-full max-w-[289px]">
             <Field label="Gender:" value="Woman" />
+            <Field label="Email:" value="smith@gmail.com" />
             <Field label="Phone number:" value="+1 (310) 555-7493" />
-          </div>
-          <div className="flex flex-col gap-[56px] justify-between w-full">
-            <div className="flex gap-[150px] max-w-full">
-              <Field label="Alternative name:" value="Sophia Reynolds" />
-              <Field label="Age:" value="38" />
+            <Field label="Alternative name:" value="Sophia Reynolds" />
+            <Field label="Age:" value="38" />
+            <div className="col-span-2">
+              <Field
+                label="Time zone:"
+                value="(GMT-08:00) Pacific Time (US & Canada)"
+              />
             </div>
-            <Field
-              label="Time zone:"
-              value="(GMT-08:00) Pacific Time (US & Canada)"
-            />
           </div>
+
+          <div className="hidden lg:flex gap-[32px] w-full">
+            <div className="flex flex-col gap-[56px] justify-between w-full max-w-[289px]">
+              <Field label="Full name:" value="Sophia Turner" />
+              <Field label="Email:" value="smith@gmail.com" />
+            </div>
+            <div className="flex flex-col gap-[56px] justify-between w-full max-w-[289px]">
+              <Field label="Gender:" value="Woman" />
+              <Field label="Phone number:" value="+1 (310) 555-7493" />
+            </div>
+            <div className="flex flex-col gap-[56px] justify-between w-full">
+              <div className="flex gap-[150px] max-w-full">
+                <Field label="Alternative name:" value="Sophia Reynolds" />
+                <Field label="Age:" value="38" />
+              </div>
+              <Field
+                label="Time zone:"
+                value="(GMT-08:00) Pacific Time (US & Canada)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] md:gap-[24px]">
+          {/* Safety */}
+          <Card title="Safety" icon={<img src={SafetyIcon} />}>
+            <div className="flex flex-col gap-[16px]">
+              <div>
+                <h4 className="text-[#5F5F65] text-[18px] font-[500] mb-[16px]">
+                  Change password:
+                </h4>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-[10px]">
+                    <p className="text-[16px] font-semibold text-[#1D1D1F]">
+                      Current password
+                    </p>
+                    <div className="relative flex flex-row-reverse items-center w-[70%]">
+                      <Input
+                        type={showPassword ? "password" : "text"}
+                        placeholder="Enter Password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                        }}
+                        className={
+                          "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+                        }
+                      />
+                      <button
+                        type="button"
+                        className="absolute mr-4"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={
+                          showPassword ? "Show password" : "Hide password"
+                        }
+                      >
+                        {!showPassword ? (
+                          <EyeIcon size={16} />
+                        ) : (
+                          <EyeClosed size={16} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="hidden md:block" />
+                  <div className="flex flex-col gap-[10px]">
+                    <p className="text-[16px] font-semibold text-[#1D1D1F]">
+                      New password
+                    </p>
+                    <div className="relative flex flex-row-reverse items-center w-[70%]">
+                      <Input
+                        type={showPassword ? "password" : "text"}
+                        placeholder="Enter Password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                        }}
+                        className={
+                          "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+                        }
+                      />
+                      <button
+                        type="button"
+                        className="absolute mr-4"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={
+                          showPassword ? "Show password" : "Hide password"
+                        }
+                      >
+                        {!showPassword ? (
+                          <EyeIcon size={16} />
+                        ) : (
+                          <EyeClosed size={16} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="hidden md:block" />
+                </div>
+                <Button
+                  variant="brightblue"
+                  className="mt-3 w-full md:w-[250px]"
+                >
+                  Change
+                </Button>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <h4 className="text-[#1D1D1F] font-semibold">
+                  Two-factor authentication
+                </h4>
+                <p className="text-[#5F5F65] text-[12px] md:text-[14px]">
+                  Two-factor authentication provides an additional layer of
+                  security to your account by requiring you to validate your
+                  identity using your mobile device when you log in.
+                </p>
+                <div className="flex items-center gap-3 mt-2">
+                  <Switch checked={twoFA} onChange={setTwoFA} />
+                  <span className="text-[12px] md:text-[14px] text-[#1D1D1F]">
+                    Two-factor authentication {twoFA ? "active" : "disabled"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Type of practitioner */}
+          <Card title="Type of practitioner" icon={<img src={UsersIcon} />}>
+            <ul className="flex flex-col gap-4">
+              <PractitionerItem
+                icon={
+                  <Microscope className="w-[24px] h-[24px] text-[#1B2559]" />
+                }
+                title="Clinical & Licensed Healthcare Providers"
+                subtitle="Physician Assistant (PA)"
+              />
+              <PractitionerItem
+                icon={
+                  <TestTubeIcon className="w-[24px] h-[24px] text-[#1B2559]" />
+                }
+                title="Other"
+                subtitle="Healthcare Professional (General/Other)"
+              />
+              <PractitionerItem
+                icon={
+                  <LeavesIcon className="w-[24px] h-[24px] text-[#1B2559]" />
+                }
+                title="Functional & Holistic Health Practitioners"
+                subtitle="Functional Nutrition Counselor / Coach"
+              />
+              <PractitionerItem
+                icon={
+                  <BrainIcon className="w-[24px] h-[24px] text-[#1B2559]" />
+                }
+                title="Lifestyle, Mind-Body, and Wellness Coaches"
+                subtitle="Mind-Body Therapist (e.g., somatic, breathwork)"
+              />
+              <PractitionerItem
+                icon={<WomansLine />}
+                title="Women's Health & Specialty Coaches"
+                subtitle="Menopause or Perimenopause Specialist"
+              />
+            </ul>
+          </Card>
+
+          {/* Primary focus area & Setup */}
+          <Card
+            title="Primary focus area & Setup"
+            icon={<img src={FocusAreasIcon} />}
+          >
+            <div className="flex flex-col gap-[24px]">
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Anxiety & Sleep",
+                  "Digital Detox & Tech Overuse Recovery",
+                  "Weight & Metabolic Health",
+                  "Weight & Metabolic Health",
+                  "Postpartum / Pelvic Floor",
+                ].map((t) => (
+                  <Tag key={t} label={t} />
+                ))}
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-[24px]">
+                <div className="flex flex-col gap-[8px]">
+                  <span className="text-[#5F5F65] text-[18px] font-[500]">
+                    Software:
+                  </span>
+                  <span className="text-[#000] text-[16px] font-[500]">
+                    CharmHealth
+                  </span>
+                </div>
+                <div className="flex flex-col gap-[8px]">
+                  <span className="text-[#5F5F65] text-[18px]">
+                    Using of AI:
+                  </span>
+                  <span className="text-[#000] text-[16px] font-[500]">
+                    Daily
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* About your practice */}
+          <Card
+            title="About your practice?"
+            icon={<img src={FocusAreasIcon} />}
+          >
+            <div className="flex flex-col xl:flex-row justify-between gap-[32px]">
+              <div className="md:col-span-2 max-w-[330px]">
+                <div className="flex flex-col gap-2">
+                  <span className="text-[#5F5F65] text-[18px] font-[500]">
+                    Education:
+                  </span>
+                  <span className="text-[#1D1D1F] text-[20px] font-[500]">
+                    Functional Medicine Coaching Academy (FMCA)
+                  </span>
+                </div>
+              </div>
+              <div className="md:col-span-1 flex flex-col gap-[8px]">
+                <span className="text-[#5F5F65] text-[18px] font-[500]">
+                  Certificates:
+                </span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <img
+                    src={Certificate}
+                    alt="Certificate 1"
+                    className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-cover"
+                  />
+                  <img
+                    src={SecondCertificate}
+                    alt="Certificate 2"
+                    className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-fill"
+                  />
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] md:gap-[24px]">
-        {/* Safety */}
-        <Card title="Safety" icon={<img src={SafetyIcon} />}>
-          <div className="flex flex-col gap-[16px]">
-            <div>
-              <h4 className="text-[#5F5F65] text-[18px] font-[500] mb-[16px]">
-                Change password:
-              </h4>
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-[10px]">
-                  <p className="text-[16px] font-semibold text-[#1D1D1F]">
-                    Current password
-                  </p>
-                  <div className="relative flex flex-row-reverse items-center w-[70%]">
-                    <Input
-                      type={showPassword ? "password" : "text"}
-                      placeholder="Enter Password"
-                      name="password"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                      }}
-                      className={
-                        "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
-                      }
-                    />
-                    <button
-                      type="button"
-                      className="absolute mr-4"
-                      onClick={() => setShowPassword(!showPassword)}
-                      aria-label={
-                        showPassword ? "Show password" : "Hide password"
-                      }
-                    >
-                      {!showPassword ? (
-                        <EyeIcon size={16} />
-                      ) : (
-                        <EyeClosed size={16} />
-                      )}
-                    </button>
-                  </div>
-                </div>
-                <div className="hidden md:block" />
-                <div className="flex flex-col gap-[10px]">
-                  <p className="text-[16px] font-semibold text-[#1D1D1F]">
-                    New password
-                  </p>
-                  <div className="relative flex flex-row-reverse items-center w-[70%]">
-                    <Input
-                      type={showPassword ? "password" : "text"}
-                      placeholder="Enter Password"
-                      name="password"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                      }}
-                      className={
-                        "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
-                      }
-                    />
-                    <button
-                      type="button"
-                      className="absolute mr-4"
-                      onClick={() => setShowPassword(!showPassword)}
-                      aria-label={
-                        showPassword ? "Show password" : "Hide password"
-                      }
-                    >
-                      {!showPassword ? (
-                        <EyeIcon size={16} />
-                      ) : (
-                        <EyeClosed size={16} />
-                      )}
-                    </button>
-                  </div>
-                </div>
-                <div className="hidden md:block" />
-              </div>
-              <Button variant="brightblue" className="mt-3 w-full md:w-[250px]">
-                Change
-              </Button>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <h4 className="text-[#1D1D1F] font-semibold">
-                Two-factor authentication
-              </h4>
-              <p className="text-[#5F5F65] text-[12px] md:text-[14px]">
-                Two-factor authentication provides an additional layer of
-                security to your account by requiring you to validate your
-                identity using your mobile device when you log in.
-              </p>
-              <div className="flex items-center gap-3 mt-2">
-                <Switch checked={twoFA} onChange={setTwoFA} />
-                <span className="text-[12px] md:text-[14px] text-[#1D1D1F]">
-                  Two-factor authentication {twoFA ? "active" : "disabled"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Type of practitioner */}
-        <Card title="Type of practitioner" icon={<img src={UsersIcon} />}>
-          <ul className="flex flex-col gap-4">
-            <PractitionerItem
-              icon={<Microscope className="w-[24px] h-[24px] text-[#1B2559]" />}
-              title="Clinical & Licensed Healthcare Providers"
-              subtitle="Physician Assistant (PA)"
-            />
-            <PractitionerItem
-              icon={
-                <TestTubeIcon className="w-[24px] h-[24px] text-[#1B2559]" />
-              }
-              title="Other"
-              subtitle="Healthcare Professional (General/Other)"
-            />
-            <PractitionerItem
-              icon={<LeavesIcon className="w-[24px] h-[24px] text-[#1B2559]" />}
-              title="Functional & Holistic Health Practitioners"
-              subtitle="Functional Nutrition Counselor / Coach"
-            />
-            <PractitionerItem
-              icon={<BrainIcon className="w-[24px] h-[24px] text-[#1B2559]" />}
-              title="Lifestyle, Mind-Body, and Wellness Coaches"
-              subtitle="Mind-Body Therapist (e.g., somatic, breathwork)"
-            />
-            <PractitionerItem
-              icon={<WomansLine />}
-              title="Women's Health & Specialty Coaches"
-              subtitle="Menopause or Perimenopause Specialist"
-            />
-          </ul>
-        </Card>
-
-        {/* Primary focus area & Setup */}
-        <Card
-          title="Primary focus area & Setup"
-          icon={<img src={FocusAreasIcon} />}
-        >
-          <div className="flex flex-col gap-[24px]">
-            <div className="flex flex-wrap gap-2">
-              {[
-                "Anxiety & Sleep",
-                "Digital Detox & Tech Overuse Recovery",
-                "Weight & Metabolic Health",
-                "Weight & Metabolic Health",
-                "Postpartum / Pelvic Floor",
-              ].map((t) => (
-                <Tag key={t} label={t} />
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-[24px]">
-              <div className="flex flex-col gap-[8px]">
-                <span className="text-[#5F5F65] text-[18px] font-[500]">
-                  Software:
-                </span>
-                <span className="text-[#000] text-[16px] font-[500]">
-                  CharmHealth
-                </span>
-              </div>
-              <div className="flex flex-col gap-[8px]">
-                <span className="text-[#5F5F65] text-[18px]">Using of AI:</span>
-                <span className="text-[#000] text-[16px] font-[500]">
-                  Daily
-                </span>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* About your practice */}
-        <Card title="About your practice?" icon={<img src={FocusAreasIcon} />}>
-          <div className="flex flex-col xl:flex-row justify-between gap-[32px]">
-            <div className="md:col-span-2 max-w-[330px]">
-              <div className="flex flex-col gap-2">
-                <span className="text-[#5F5F65] text-[18px] font-[500]">
-                  Education:
-                </span>
-                <span className="text-[#1D1D1F] text-[20px] font-[500]">
-                  Functional Medicine Coaching Academy (FMCA)
-                </span>
-              </div>
-            </div>
-            <div className="md:col-span-1 flex flex-col gap-[8px]">
-              <span className="text-[#5F5F65] text-[18px] font-[500]">
-                Certificates:
-              </span>
-              <div className="flex flex-wrap items-center gap-3">
-                <img
-                  src={Certificate}
-                  alt="Certificate 1"
-                  className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-cover"
-                />
-                <img
-                  src={SecondCertificate}
-                  alt="Certificate 2"
-                  className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-fill"
-                />
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-    </div>
+      <CouchEditProfileModal open={editModalOpen} setOpen={setEditModalOpen} />
+    </>
   );
 };
 

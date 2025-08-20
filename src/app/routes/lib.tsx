@@ -49,6 +49,7 @@ import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-pl
 import { MainLayout, ProtectedRoute } from "./ui";
 import { ClientMessages } from "pages/messages/ui";
 import { ContentManagerProfile } from "pages/content-manager/profile";
+import { ClientProfile } from "pages/profile";
 
 export const AppRoutes = () => {
   return (
@@ -174,6 +175,7 @@ export const AppRoutes = () => {
           path="/library/document/:documentId"
           element={<LibraryDocument />}
         />
+        <Route path="/profile" element={<ClientProfile />} />
       </Route>
 
       <Route

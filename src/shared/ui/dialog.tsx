@@ -32,18 +32,22 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+    showMobileBack?: boolean;
+  }
+>(({ className, children, showMobileBack = true, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
-    <DialogPrimitive.Close>
-      <span
-        aria-label="Close modal"
-        className="absolute z-[999] top-[80px] left-[16px] md:hidden"
-      >
-        <ArrowBack />
-      </span>
-    </DialogPrimitive.Close>
+    {showMobileBack && (
+      <DialogPrimitive.Close>
+        <span
+          aria-label="Close modal"
+          className="absolute z-[999] top-[80px] left-[16px] md:hidden"
+        >
+          <ArrowBack />
+        </span>
+      </DialogPrimitive.Close>
+    )}
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
