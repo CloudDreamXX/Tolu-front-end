@@ -114,6 +114,7 @@ export const ContentManagerDocument: React.FC = () => {
         await handleDocumentCreation({
           location,
           documentId,
+          documentName: documentTitle,
           folderId,
           clientId,
           setIsCreatingDocument,

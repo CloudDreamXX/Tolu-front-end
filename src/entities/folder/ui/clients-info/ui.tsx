@@ -4,17 +4,20 @@ import { PopoverClient } from "widgets/content-popovers";
 interface ClientsInfoProps {
   clients?: Share[];
   documentId?: string;
+  documentTitle?: string;
   refreshSharedClients?: () => Promise<void>;
 }
 
 export const ClientsInfo: React.FC<ClientsInfoProps> = ({
   clients,
   documentId,
+  documentTitle,
   refreshSharedClients,
 }) => {
   return (
     <PopoverClient
       documentId={documentId}
+      documentName={documentTitle}
       initialSelectedClientsId={clients?.map((client) => client.client_id)}
       refreshSharedClients={refreshSharedClients}
       customTrigger={

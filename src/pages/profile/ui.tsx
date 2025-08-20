@@ -1,7 +1,7 @@
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
-import { Plus, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { Bell, Plus, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import SignOutIcon from "shared/assets/icons/signout";
 import { cn, toast } from "shared/lib";
@@ -9,11 +9,110 @@ import { Button } from "shared/ui";
 import { Card } from "./components/Card";
 import { Switch } from "./components/Switch";
 import { Field } from "./components/Field";
+import { NotificationsService } from "entities/notifications";
+
+const mockNotifications = [
+  {
+    id: "1",
+    message: "Tony Reichert requested to join your Acme organization.",
+    time: "2 hours ago",
+    unread: true,
+  },
+  {
+    id: "2",
+    message: "Ben Berman modified the Brand logo file.",
+    time: "7 hours ago",
+    unread: true,
+  },
+  {
+    id: "3",
+    message: "Jane Doe liked your post.",
+    time: "Yesterday",
+    unread: false,
+  },
+  {
+    id: "4",
+    message: "John Smith started following you.",
+    time: "Yesterday",
+    unread: false,
+  },
+];
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [emailNotif, setEmailNotif] = useState(false);
   const [pushNotif, setPushNotif] = useState(true);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await NotificationsService.getNotifications();
+      setNotifications(response.data);
+    } catch (error) {
+      console.error("Failed to fetch notifications", error);
+    }
+  };
+
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await NotificationsService.getUnreadCount();
+      setUnreadCount(response.data.count);
+    } catch (error) {
+      console.error("Failed to fetch unread notifications count", error);
+    }
+  };
+
+  const togglePopup = () => {
+    setIsPopupOpen((prev) => !prev);
+    if (!isPopupOpen) {
+      fetchNotifications();
+    }
+  };
+
+  const markAsRead = async (notificationId: string) => {
+    try {
+      await NotificationsService.markNotificationAsRead({
+        notification_ids: [notificationId],
+      });
+      fetchNotifications();
+    } catch (error) {
+      console.error("Failed to mark notification as read", error);
+    }
+  };
+
+  const dismissNotification = async (notificationId: string) => {
+    try {
+      await NotificationsService.dismissNotifications(notificationId);
+      fetchNotifications();
+    } catch (error) {
+      console.error("Failed to dismiss notification", error);
+    }
+  };
+
+  const fetchNotificationPreferences = async () => {
+    try {
+      await NotificationsService.getNotificationPreferences();
+    } catch (error) {
+      console.error("Failed to fetch notification preferences", error);
+    }
+  };
+
+  // const updateNotificationPreferences = async () => {
+  //   try {
+  //     await NotificationsService.updateNotificationPreferences({
+  //       notifications_enabled: true,
+  //     });
+  //   } catch (error) {
+  //     console.error("Failed to update notification preferences", error);
+  //   }
+  // };
+
+  useEffect(() => {
+    fetchUnreadCount();
+    fetchNotificationPreferences();
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -39,7 +138,91 @@ export const ClientProfile = () => {
         <div className="flex items-center gap-[4.5px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
           Personal profile
         </div>
+        <button onClick={togglePopup}>
+          <Bell />
+          {unreadCount > 0 && (
+            <span className="absolute top-1 right-4 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">
+              {unreadCount}
+            </span>
+          )}
+        </button>
       </div>
+
+      {isPopupOpen && (
+        <div className="absolute top-16 right-4 bg-white p-4 rounded-xl shadow-md w-96 max-h-96 overflow-y-auto">
+          <div className="flex justify-between mb-2">
+            <h4 className="text-lg font-semibold">Notifications</h4>
+            <button onClick={togglePopup} className="text-gray-600">
+              Close
+            </button>
+          </div>
+          <div className="space-y-3">
+            {notifications && notifications.length ? (
+              notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="flex flex-col justify-between gap-[16px] p-3 border-b border-gray-200 rounded-md"
+                >
+                  <div className="flex flex-col">
+                    <p className="text-sm font-medium text-gray-800">
+                      {notification.message}
+                    </p>
+                    <span className="text-xs text-gray-500">
+                      {notification.time}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => markAsRead(notification.id)}
+                      className="text-xs text-white bg-[#1C63DB] p-[8px] rounded-[8px]"
+                    >
+                      Mark as read
+                    </button>
+                    <button
+                      onClick={() => dismissNotification(notification.id)}
+                      className="text-xs text-black bg-[#D5DAE2] p-[8px] rounded-[8px]"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : mockNotifications && mockNotifications.length ? (
+              mockNotifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="flex flex-col justify-between gap-[16px] p-3 border-b border-gray-200 rounded-md"
+                >
+                  <div className="flex flex-col">
+                    <p className="text-sm font-medium text-gray-800">
+                      {notification.message}
+                    </p>
+                    <span className="text-xs text-gray-500">
+                      {notification.time}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => markAsRead(notification.id)}
+                      className="text-xs text-white bg-[#1C63DB] p-[8px] rounded-[8px]"
+                    >
+                      Mark as read
+                    </button>
+                    <button
+                      onClick={() => dismissNotification(notification.id)}
+                      className="text-xs text-black bg-[#D5DAE2] p-[8px] rounded-[8px]"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>No new notifications</p>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center justify-between p-4 bg-white rounded-2xl md:p-6">
         <div className="flex items-center gap-6 ">

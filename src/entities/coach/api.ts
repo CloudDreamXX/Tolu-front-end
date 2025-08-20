@@ -19,6 +19,7 @@ import {
   Status,
   UpdateHealthHistoryRequest,
 } from "./model";
+import { ChatSocketService } from "entities/chat";
 
 export class CoachService {
   static async getManagedClients(): Promise<ClientsResponse> {
@@ -250,8 +251,40 @@ export class CoachService {
     );
   }
 
-  static async shareContent(payload: ShareContentData): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.COACH_ADMIN.SHARE_CONTENT, payload);
+  static async shareContent(
+    payload: ShareContentData,
+    practitionerName: string,
+    contentTitle: string
+  ): Promise<any> {
+    try {
+      const response = await ApiService.post<any>(
+        API_ROUTES.COACH_ADMIN.SHARE_CONTENT,
+        payload
+      );
+
+      const notificationPayload = {
+        user_id: payload.client_id,
+        title: "New Content Shared",
+        message: `${practitionerName} has shared '${contentTitle}' with you.`,
+        notification_type: "content_share",
+        priority: "normal",
+        notification_metadata: {
+          content_id: payload.content_id,
+          practitioner_name: practitionerName,
+          content_title: contentTitle,
+          action_url: `/content/${payload.content_id}`,
+        },
+      };
+
+      ChatSocketService.connect(payload.client_id);
+
+      ChatSocketService.sendMessage(notificationPayload);
+
+      return response;
+    } catch (error) {
+      console.error("Error sharing content:", error);
+      throw error;
+    }
   }
 
   static async getContentShares(contentId: string): Promise<SharedContent> {

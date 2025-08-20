@@ -33,6 +33,7 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
         <ClientsInfo
           clients={sharedClients}
           documentId={documentId}
+          documentTitle={document?.aiTitle}
           refreshSharedClients={refreshSharedClients}
         />
       ) : (

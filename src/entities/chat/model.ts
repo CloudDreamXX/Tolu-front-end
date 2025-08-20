@@ -130,6 +130,10 @@ export type WebSocketMessage =
   | {
       type: "pong";
       data: any;
+    }
+  | {
+      type: "content_share";
+      data: any;
     };
 
 export interface ChatUpdatedPayload {

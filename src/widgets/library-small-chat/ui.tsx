@@ -849,7 +849,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         </Button>
                       }
                     />
-                    <PopoverClient setClientId={setClientId} />
+                    <PopoverClient
+                      setClientId={setClientId}
+                      documentName={chatTitle}
+                    />
                     <PopoverFolder
                       setFolderId={setFolderId}
                       setExistingFiles={setExistingFiles}
@@ -989,7 +992,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           </Button>
                         }
                       />
-                      <PopoverClient setClientId={setClientId} />
+                      <PopoverClient
+                        setClientId={setClientId}
+                        documentName={chatTitle}
+                      />
                       <PopoverFolder
                         setFolderId={setFolderId}
                         setExistingFiles={setExistingFiles}
@@ -1045,7 +1051,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           </Button>
                         }
                       />
-                      <PopoverClient setClientId={setClientId} />
+                      <PopoverClient
+                        setClientId={setClientId}
+                        documentName={chatTitle}
+                      />
                     </div>
                     <Button
                       onClick={() => {
