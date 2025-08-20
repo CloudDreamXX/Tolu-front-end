@@ -152,6 +152,14 @@ export const API_ROUTES = {
     DELETE_CHAT_NOTE: "/chat-notes/{note_id}",
     UPLOADED_FILE_CHAT_NOTE: "/chat-notes/uploads/{file_uuid}",
   },
+  NOTIFICATIONS: {
+    GET_NOTIFICATIONS: "/notifications",
+    GET_UNREAD: "/notifications/unread-count",
+    MARK_AS_READ: "/notifications/mark-read",
+    DISMISS_NOTIFICATION: "/notifications/{notification_id}/dismiss",
+    GET_NOTIFICATION_PREFERENCES: "/notifications/preferences",
+    UPDATE_NOTIFICATION_PREFERENCES: "/notifications/preferences",
+  }
 };
 
 export const EXCLUDE_TOKEN_ENDPOINTS = [

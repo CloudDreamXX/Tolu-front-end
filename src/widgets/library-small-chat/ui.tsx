@@ -898,12 +898,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             </div>
             {isSwitch(SWITCH_KEYS.DEF) && (
               <p className="text-[18px] text-[#1D1D1F] font-[600]">
-                personalized health answers
+                Get Personalized Answers
               </p>
             )}
             {isSwitch(SWITCH_KEYS.LEARN) && (
               <p className="text-[18px] text-[#1D1D1F] font-[600]">
-                expert-verified guidance you can trust
+                Get Expert-verified Guidance You Can Trust
               </p>
             )}
             <button
