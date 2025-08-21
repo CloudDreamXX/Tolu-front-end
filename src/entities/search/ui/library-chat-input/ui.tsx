@@ -11,6 +11,7 @@ import { cn } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
 import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
 import { DailyJournal } from "widgets/dayli-journal";
+import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
 import { SwitchGroup } from "widgets/switch-group";
 
 interface LibraryChatInputProps {
@@ -55,6 +56,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   deleteSelectedText,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [referAFriendOpen, setReferAFriendOpen] = useState<boolean>(false);
   const loading = useSelector((state: RootState) => state.client.loading);
   const location = useLocation();
   const isContentManager = location.pathname.includes("content-manager");
@@ -197,15 +199,26 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                 <PopoverClient setClientId={setClientId} />
               </div>
             ) : (
-              <Button
-                variant={"brightblue"}
-                onClick={() => {
-                  dispatch(setIsMobileDailyJournalOpen(true));
-                  setModalOpen(true);
-                }}
-              >
-                Daily Journal
-              </Button>
+              <div className="flex gap-[8px] items-center">
+                <Button
+                  variant={"brightblue"}
+                  onClick={() => {
+                    dispatch(setIsMobileDailyJournalOpen(true));
+                    setModalOpen(true);
+                  }}
+                >
+                  Daily Journal
+                </Button>
+                <Button
+                  variant={"light-blue"}
+                  onClick={() => {
+                    setReferAFriendOpen(true);
+                  }}
+                  className="hidden md:block"
+                >
+                  Refer a friend
+                </Button>
+              </div>
             )}
           </div>
           <Button
@@ -256,6 +269,14 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             isOpen={modalOpen}
             onCancel={() => setModalOpen(false)}
             onClose={() => setModalOpen(false)}
+          />
+        </div>
+      )}
+      {!isContentManager && (
+        <div className="hidden mt-4 md:block">
+          <ReferAFriendPopup
+            isOpen={referAFriendOpen}
+            onClose={() => setReferAFriendOpen(false)}
           />
         </div>
       )}

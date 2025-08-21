@@ -6,21 +6,23 @@ export const SelectField = ({
   options,
   selected,
   onChange,
+  className,
 }: {
   label: string;
   options: { value: string; label: string }[];
   selected: string;
   onChange: (val: string) => void;
+  className?: string;
 }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="relative w-full">
+    <div className={`relative w-full`}>
       <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
         {label}
       </label>
       <button
-        className="w-full text-left border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] pr-[40px] text-[14px] text-[#1D1D1F] font-semibold bg-white relative"
+        className={`w-full text-left border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] pr-[40px] text-[14px] text-[#1D1D1F] font-semibold bg-white relative ${className}`}
         onClick={() => setOpen(!open)}
         type="button"
       >

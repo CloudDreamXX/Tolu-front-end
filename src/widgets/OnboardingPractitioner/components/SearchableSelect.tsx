@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "shared/lib";
 
 interface SearchableSelectProps {
-  label: string;
+  label?: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
@@ -12,6 +12,7 @@ interface SearchableSelectProps {
   width?: string;
   position?: "top" | "bottom";
   dropdownStyle?: string;
+  inputStyles?: string;
 }
 
 export const SearchableSelect: React.FC<SearchableSelectProps> = ({
@@ -24,6 +25,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
   width = "w-[100%]",
   position = "bottom",
   dropdownStyle,
+  inputStyles,
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const [filteredOptions, setFilteredOptions] = useState(options);
@@ -56,11 +58,13 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
 
   return (
     <div className={`${width} relative`} ref={containerRef}>
-      <label
-        className={`peer-focus:text-[#1D1D1F] ${labelStyle} font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block`}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          className={`peer-focus:text-[#1D1D1F] ${labelStyle} font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block`}
+        >
+          {label}
+        </label>
+      )}
       <div className="relative">
         <input
           type="text"
@@ -71,7 +75,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
             setIsOpen(true);
           }}
           placeholder={placeholder ? placeholder : "Select"}
-          className="peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
+          className={`peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB] ${inputStyles}`}
         />
         <div
           className={cn(

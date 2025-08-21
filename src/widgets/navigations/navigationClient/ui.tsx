@@ -14,6 +14,7 @@ import SignOutIconBlue from "shared/assets/icons/signoutBlue";
 import Sparkle from "shared/assets/icons/sparkle-2";
 import { Button } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
+import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
 import { ClientChatList } from "widgets/sidebars/ui/health-snapshot/ClientChatList";
 import WrapperLibraryFolderTree from "widgets/sidebars/ui/health-snapshot/FolderTree";
 
@@ -29,6 +30,7 @@ export const NavigationClient: React.FC = () => {
   const isCoach = location.pathname.startsWith("/content-manager");
   const basePath = isCoach ? "/content-manager" : "";
   const chatId = `new_chat_${Date.now()}`;
+  const [referAFriendOpen, setReferAFriendOpen] = useState<boolean>(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -202,21 +204,33 @@ export const NavigationClient: React.FC = () => {
                 </span>
               </button>
             </div>
-            <Button
-              variant={"brightblue"}
-              className="w-full h-[44px] text-base font-semibold mb-[72px] mt-[8px]"
-              onClick={() => {
-                setMenuMobOpen(false);
-                nav(`${basePath}/library/${chatId}`, {
-                  state: {
-                    from: location,
-                  },
-                });
-              }}
-            >
-              <Sparkle />
-              Ask Tolu
-            </Button>
+            <div className="flex flex-col gap-[16px] mt-[8px] mb-[72px]">
+              <Button
+                variant={"brightblue"}
+                className="w-full h-[44px] text-base font-semibold"
+                onClick={() => {
+                  setMenuMobOpen(false);
+                  nav(`${basePath}/library/${chatId}`, {
+                    state: {
+                      from: location,
+                    },
+                  });
+                }}
+              >
+                <Sparkle />
+                Ask Tolu
+              </Button>
+              <Button
+                variant={"light-blue"}
+                className="md:hidden w-full h-[44px] text-base font-semibold text-[#1C63DB]"
+                onClick={() => {
+                  setMenuMobOpen(false);
+                  setReferAFriendOpen(true);
+                }}
+              >
+                Refer a friend
+              </Button>
+            </div>
 
             <nav className="flex flex-col mb-auto">
               {/* <NavLink
@@ -333,6 +347,11 @@ export const NavigationClient: React.FC = () => {
           </button>
         </div>
       )}
+
+      <ReferAFriendPopup
+        isOpen={referAFriendOpen}
+        onClose={() => setReferAFriendOpen(false)}
+      />
     </div>
   );
 };

@@ -236,7 +236,7 @@ export const LibraryDocument = () => {
           <ChatActions
             initialStatus={selectedDocument?.readStatus}
             initialRating={selectedDocument?.userRating}
-            onRegenerate={() => { }}
+            onRegenerate={() => {}}
             isSearching={false}
             hasMessages={messages.length >= 2}
             onStatusChange={onStatusChange}
@@ -285,7 +285,7 @@ export const LibraryDocument = () => {
               <ChatActions
                 initialStatus={selectedDocument?.readStatus}
                 initialRating={selectedDocument?.rating}
-                onRegenerate={() => { }}
+                onRegenerate={() => {}}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}
