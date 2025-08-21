@@ -23,7 +23,8 @@ export const SWITCH_CONFIG: Record<
     defaultOption: SWITCH_KEYS.DEF,
   },
   coach: {
-    options: [SWITCH_KEYS.RESEARCH, SWITCH_KEYS.CASE, SWITCH_KEYS.CREATE],
+    //add SWITCH_KEYS.CASE when we will be needed
+    options: [SWITCH_KEYS.RESEARCH, SWITCH_KEYS.CREATE],
     defaultOption: SWITCH_KEYS.RESEARCH,
   },
   personalize: {

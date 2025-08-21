@@ -12,6 +12,7 @@ import { RootState } from "entities/store";
 import LoadingIcon from "shared/assets/icons/loading-icon";
 import { ChatSocketService } from "entities/chat";
 import { toast } from "shared/lib";
+import { clearChatHistoryExceptActive } from "entities/client/lib";
 
 export const Library = () => {
   const dispatch = useDispatch();
@@ -54,6 +55,10 @@ export const Library = () => {
     };
 
     fetchHealthHistory();
+
+    return () => {
+      dispatch(clearChatHistoryExceptActive());
+    };
   }, [dispatch]);
 
   return (

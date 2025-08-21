@@ -1,6 +1,6 @@
 import { ArrowRightIcon } from "@phosphor-icons/react";
 import { SearchHistoryItem, SearchService } from "entities/search";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import History from "shared/assets/icons/history";
 import { Button } from "shared/ui";
@@ -9,7 +9,7 @@ type Props = {
   fromPath?: string | null;
 };
 
-export const HistoryPopup: React.FC<Props> = ({ fromPath }) => {
+const HistoryPopupComponent: React.FC<Props> = ({ fromPath }) => {
   const nav = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [history, setHistory] = useState<SearchHistoryItem[]>();
@@ -105,3 +105,5 @@ export const HistoryPopup: React.FC<Props> = ({ fromPath }) => {
     </div>
   );
 };
+
+export const HistoryPopup = memo(HistoryPopupComponent);

@@ -69,10 +69,10 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   // };
 
   return (
-    <div className="flex flex-row gap-2 xl:flex-col justify-between w-full h-[32px] xl:h-full">
-      <div className="xl:hidden block flex flex-row gap-2">
+    <div className="flex flex-row gap-2 xl:flex-col w-full h-[32px] xl:h-full">
+      <div className="flex flex-row block gap-2 xl:hidden">
         {!isHistoryPopup && (
-          <button className="h-8 w-8" onClick={() => nav(-1)}>
+          <button className="w-8 h-8" onClick={() => nav(-1)}>
             <ArrowLeft className="w-4 h-4 m-auto text-black" />
           </button>
         )}
@@ -105,7 +105,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
         )}
       </div>
 
-      <div className="flex xl:flex-col gap-2">
+      <div className="flex gap-2 xl:flex-col">
         {onStatusChange && (
           <button
             className="xl:hidden block bg-[#DDEBF6] rounded-full h-8 w-8"

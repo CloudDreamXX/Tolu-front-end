@@ -171,6 +171,7 @@ export const AppRoutes = () => {
         <Route path="/library" element={<Library />} />
         <Route path="/library/:chatId" element={<LibraryChat />} />
         <Route path="/messages/:chatId" element={<ClientMessages />} />
+        <Route path="/messages/" element={<ClientMessages />} />
         <Route
           path="/library/document/:documentId"
           element={<LibraryDocument />}

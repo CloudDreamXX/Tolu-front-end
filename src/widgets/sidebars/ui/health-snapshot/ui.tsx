@@ -75,13 +75,13 @@ export const HealthSnapshotSidebar: React.FC = () => {
     <>
       {isNarrow && (
         <Button
-          variant={"brightblue"}
+          variant={"ghost"}
           size={"icon"}
           onClick={toggleSidebar}
           className={cn(
-            "absolute z-20 text-white top-4",
+            "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
             "transition-all duration-300",
-            sidebarOpen ? "left-[320px]" : "left-[110px]"
+            sidebarOpen ? "left-[296px]" : "left-[76px]"
           )}
         >
           <ChevronLast
@@ -117,8 +117,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
               </h2>
             </NavLink>
 
-            <div className="flex flex-col px-[14px] gap-[18px]">
-              <SearchAiSmallInput />
+            <div className="flex flex-col px-[14px] gap-[18px] w-full">
+              <SearchAiSmallInput sidebarOpen={sidebarOpen} />
             </div>
 
             <div
@@ -152,7 +152,9 @@ export const HealthSnapshotSidebar: React.FC = () => {
               {isLibraryOpen && (
                 <WrapperLibraryFolderTree
                   onCloseSideBar={() => {
-                    setSidebarOpen(false);
+                    if (isNarrow) {
+                      setSidebarOpen(false);
+                    }
                     setIsLibraryOpen(false);
                   }}
                 />
@@ -169,7 +171,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 }
               >
                 <ChatsCircle />
-                {isNarrow ? "" : "Messages"}
+                {sidebarOpen ? "Messages" : ""}
               </NavLink>
               <ClientChatList />
             </div>

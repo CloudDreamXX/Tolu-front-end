@@ -63,6 +63,7 @@ export const useDocumentCreation = () => {
         stateFiles ?? [],
         undefined,
         stateClientId,
+        undefined,
         (chunk) => {
           if (chunk.reply) {
             accumulatedReply += chunk.reply;

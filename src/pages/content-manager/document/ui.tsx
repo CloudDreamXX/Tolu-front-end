@@ -22,6 +22,8 @@ import { findFolderPath } from "features/wrapper-folder-tree";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 import LoadingIcon from "shared/assets/icons/loading-icon";
 import { useTextSelectionTooltip } from "./lib";
+import { useDispatch } from "react-redux";
+import { clearAllChatHistory } from "entities/client/lib";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -98,6 +100,7 @@ export const ContentManagerDocument: React.FC = () => {
     handleSaveEdit,
   } = useContentActions();
 
+  const dispatch = useDispatch();
   const { handleDocumentCreation } = useDocumentCreation();
   const isDraft = documentPath[0]?.name.toLowerCase() === "drafts";
   const {
@@ -130,6 +133,10 @@ export const ContentManagerDocument: React.FC = () => {
     };
 
     createDocument();
+
+    return () => {
+      dispatch(clearAllChatHistory());
+    };
   }, [isNewDocument, location.state]);
 
   const onCompareToggle = (index: number) => {
@@ -192,7 +199,7 @@ export const ContentManagerDocument: React.FC = () => {
           <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">
             {showTooltip && tooltipPosition && (
               <div
-                className="fixed bg-white border border-blue-500 px-2 py-1 rounded-md"
+                className="fixed px-2 py-1 bg-white border border-blue-500 rounded-md"
                 style={{
                   top: `${tooltipPosition.top}px`,
                   left: `${tooltipPosition.left}px`,

@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sparkle from "shared/assets/icons/sparkle-2";
+import { cn } from "shared/lib";
 import { Button } from "shared/ui";
 
-export const SearchAiSmallInput = () => {
+export const SearchAiSmallInput = ({
+  sidebarOpen,
+}: {
+  sidebarOpen: boolean;
+}) => {
   const nav = useNavigate();
   const { chatId } = useParams();
   const [search, setSearch] = useState<string>("");
@@ -46,14 +51,17 @@ export const SearchAiSmallInput = () => {
   };
 
   return (
-    <div className="relative flex flex-col w-full gap-4">
+    <div className="relative flex flex-col gap-4 w-f">
       <Button
         variant={"brightblue"}
-        className="w-full h-[44px] text-base font-semibold"
+        className={cn(
+          "h-[44px] text-base font-semibold",
+          sidebarOpen ? "w-full" : "w-[52px] mx-auto"
+        )}
         onClick={handleSearch}
       >
         <Sparkle />
-        <span className="hidden 2xl:inline">Ask TOLU</span>
+        {sidebarOpen && <span>Ask TOLU</span>}
       </Button>
     </div>
   );

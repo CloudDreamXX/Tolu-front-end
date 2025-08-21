@@ -1,5 +1,5 @@
 import { FileIcon, Trash2 } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Attach from "shared/assets/icons/attach";
 import { toast } from "shared/lib";
 import {
@@ -20,6 +20,7 @@ interface AttachedFile {
 }
 
 interface PopoverAttachProps {
+  files?: File[];
   setFiles?: (files: File[]) => void;
   customTrigger?: React.ReactNode;
   title?: string;
@@ -30,6 +31,7 @@ interface PopoverAttachProps {
 }
 
 export const PopoverAttach: React.FC<PopoverAttachProps> = ({
+  files,
   setFiles,
   customTrigger,
   title,
@@ -42,6 +44,19 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (files && files.length > 0) {
+      const newAttachedFiles = files.map((file) => ({
+        name: file.name,
+        size: formatFileSize(file.size),
+        type: file.type,
+        file: file,
+      }));
+
+      setAttachedFiles(newAttachedFiles);
+    }
+  }, []);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 Bytes";

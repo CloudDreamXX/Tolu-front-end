@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Folder } from "./model";
 import { SearchResultResponseItem } from "entities/search";
+import { Message } from "features/chat";
+import { Folder } from "./model";
 
 export interface IClientState {
   isMobileDailyJournalOpen?: boolean;
@@ -10,6 +11,12 @@ export interface IClientState {
   folders: Folder[];
   loading: boolean;
   error: string | null;
+  activeChatKey: string;
+  chatHistory: {
+    [chatKey: string]: Message[];
+  };
+  selectedChatFiles: File[];
+  selectedChatFolder: string | null;
 }
 
 const initialState: IClientState = {
@@ -20,6 +27,10 @@ const initialState: IClientState = {
   folders: [],
   loading: false,
   error: null,
+  activeChatKey: "",
+  chatHistory: {},
+  selectedChatFiles: [],
+  selectedChatFolder: null,
 };
 
 const clientSlice = createSlice({
@@ -54,6 +65,57 @@ const clientSlice = createSlice({
     clearError(state) {
       state.error = null;
     },
+    setActiveChat: (state, action: PayloadAction<string>) => {
+      state.activeChatKey = action.payload;
+    },
+    addMessageToChat: (
+      state,
+      action: PayloadAction<{
+        chatKey: string;
+        message: Message;
+      }>
+    ) => {
+      const { chatKey, message } = action.payload;
+      if (!Array.isArray(state.chatHistory[chatKey])) {
+        state.chatHistory[chatKey] = [];
+      }
+
+      state.chatHistory[chatKey] = [...state.chatHistory[chatKey], message];
+    },
+    setMessagesToChat: (
+      state,
+      action: PayloadAction<{
+        chatKey: string;
+        messages: Message[];
+      }>
+    ) => {
+      const { chatKey, messages } = action.payload;
+
+      if (!Array.isArray(state.chatHistory[chatKey])) {
+        state.chatHistory[chatKey] = [];
+      }
+      state.chatHistory[chatKey] = messages;
+    },
+    setFilesToChat: (state, action: PayloadAction<File[]>) => {
+      state.selectedChatFiles = action.payload;
+    },
+    setFolderToChat: (state, action: PayloadAction<string | null>) => {
+      state.selectedChatFolder = action.payload;
+    },
+    clearChatHistoryExceptActive: (state) => {
+      const activeChatKey = state.activeChatKey;
+
+      Object.keys(state.chatHistory).forEach((chatKey) => {
+        if (chatKey !== activeChatKey) {
+          delete state.chatHistory[chatKey];
+        }
+      });
+    },
+    clearAllChatHistory: (state) => {
+      state.chatHistory = {};
+      state.selectedChatFiles = [];
+      state.selectedChatFolder = null;
+    },
   },
 });
 
@@ -66,5 +128,12 @@ export const {
   setChat,
   setIsMobileDailyJournalOpen,
   setLastChatId,
+  setActiveChat,
+  addMessageToChat,
+  setMessagesToChat,
+  setFilesToChat,
+  setFolderToChat,
+  clearChatHistoryExceptActive,
+  clearAllChatHistory,
 } = clientSlice.actions;
 export const clientReducer = clientSlice.reducer;

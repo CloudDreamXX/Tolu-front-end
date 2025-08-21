@@ -40,6 +40,7 @@ export const useMessageState = () => {
         files,
         undefined,
         clientId,
+        undefined,
         (chunk) => {
           if (chunk.reply) {
             accumulatedReply += chunk.reply;

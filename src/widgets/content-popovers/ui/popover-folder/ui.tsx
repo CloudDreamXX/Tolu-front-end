@@ -19,6 +19,7 @@ import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 
 interface PopoverFolderProps {
+  folderId?: string;
   setFolderId?: (folderId: string) => void;
   customTrigger?: React.ReactNode;
   setExistingFiles?: (files: string[]) => void;
@@ -26,12 +27,15 @@ interface PopoverFolderProps {
 }
 
 export const PopoverFolder: React.FC<PopoverFolderProps> = ({
+  folderId,
   setFolderId,
   customTrigger,
   setExistingFiles,
   setExistingInstruction,
 }) => {
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(
+    folderId || null
+  );
   const [selectedFolderName, setSelectedFolderName] = useState<string>("");
   const [subfolders, setSubfolders] = useState<ISubfolder[]>([]);
   const token = useSelector((state: RootState) => state.user.token);

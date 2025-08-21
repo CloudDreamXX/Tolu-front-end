@@ -73,7 +73,8 @@ export class ClientService {
     images?: File[],
     pdf?: File,
     onChunk?: (data: any) => void,
-    onComplete?: (result: any) => void
+    onComplete?: (result: any) => void,
+    signal?: AbortSignal
   ): Promise<any> {
     const endpoint = import.meta.env.VITE_API_URL + "/ai-personalized-search/";
 
@@ -102,6 +103,7 @@ export class ClientService {
           withCredentials: "true",
         },
         body: formData,
+        signal,
       });
 
       if (!response.ok) {

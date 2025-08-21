@@ -1,12 +1,12 @@
 import { ApiService } from "shared/api";
 import {
+  AIChatMessageResearch,
   AiSearchRequest,
+  SearchHistoryItem,
   SearchHistoryParams,
+  SearchHistoryResponse,
   SearchResultResponse,
   SearchResultResponseItem,
-  SearchHistoryResponse,
-  SearchHistoryItem,
-  AIChatMessageResearch,
 } from "./model";
 
 export interface StreamChunk {
@@ -33,6 +33,7 @@ export class SearchService {
     }) => void,
     onError: (error: Error) => void,
     contentMode?: boolean,
+    signal?: AbortSignal,
     documentId?: string,
     clientId?: string
   ): Promise<void> {
@@ -56,6 +57,7 @@ export class SearchService {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: formData,
+          signal,
         }
       );
 
@@ -131,7 +133,8 @@ export class SearchService {
       chat_id: string;
       chat_title?: string | null;
     }) => void,
-    onError: (error: Error) => void
+    onError: (error: Error) => void,
+    signal?: AbortSignal
   ): Promise<void> {
     try {
       const formData = this.createSearchRequest(
@@ -153,6 +156,7 @@ export class SearchService {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: formData,
+          signal,
         }
       );
 

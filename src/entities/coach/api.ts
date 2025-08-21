@@ -121,6 +121,7 @@ export class CoachService {
     images: File[] = [],
     pdf?: File,
     client_id?: string | null,
+    signal?: AbortSignal,
     onChunk?: (data: any) => void,
     onComplete?: (folderId: {
       folderId: string;
@@ -165,6 +166,7 @@ export class CoachService {
           withCredentials: "true",
         },
         body: formData,
+        signal,
       });
 
       if (!response.ok) {

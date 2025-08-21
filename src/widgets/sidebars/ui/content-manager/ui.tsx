@@ -11,7 +11,7 @@ export const ContentManagerSidebar: React.FC = () => {
   const nav = useNavigate();
   const [links] = useState(sideBarContent);
   const [isNarrow, setIsNarrow] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const checkWidth = () => {
@@ -32,13 +32,13 @@ export const ContentManagerSidebar: React.FC = () => {
     <>
       {isNarrow && (
         <Button
-          variant={"brightblue"}
+          variant={"ghost"}
           size={"icon"}
           onClick={toggleSidebar}
           className={cn(
-            "absolute z-20 text-white top-4",
+            "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
             "transition-all duration-300",
-            sidebarOpen ? "left-[320px]" : "left-[110px]"
+            sidebarOpen ? "left-[296px]" : "left-[76px]"
           )}
         >
           <ChevronLast

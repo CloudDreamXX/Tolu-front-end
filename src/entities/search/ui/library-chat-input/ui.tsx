@@ -19,7 +19,7 @@ interface LibraryChatInputProps {
   selectedSwitch: string;
   files: File[];
   setSelectedSwitch: (option: string) => void;
-  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  setFiles: (files: File[]) => void;
   placeholder?: string;
   onSend?: (
     message: string,
@@ -65,7 +65,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const handleSend = () => {
     if ((!message.trim() && files.length === 0) || disabled) return;
     onSend?.(message, files, null);
-    setFiles([]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,16 +84,16 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
     const items = e.clipboardData?.items;
     if (!items) return;
     const pasted: File[] = [];
-    for (let i = 0; i < items.length; i++) {
-      const it = items[i];
+    Array.from(items).forEach((it) => {
       if (it.kind === "file") {
         const f = it.getAsFile();
         if (f) {
           pasted.push(f);
         }
       }
-    }
-    setFiles((prev) => [...prev, ...pasted]);
+    });
+
+    setFiles([...files, ...pasted]);
   };
 
   const isSendDisabled = !message.trim() || disabled;

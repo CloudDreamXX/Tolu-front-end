@@ -165,7 +165,7 @@ export const NavigationClient: React.FC = () => {
 
       {/* Mobile Hamburger */}
       <div
-        className={`flex 2xl:hidden justify-between items-center p-[16px] md:p-6 ${location.pathname.startsWith(`${basePath}/library`) && location.pathname.split("/").length > 2 ? "bg-white md:bg-transparent" : ""}`}
+        className={`flex xl:hidden justify-between items-center p-[16px] md:p-6 ${location.pathname.startsWith(`${basePath}/library`) && location.pathname.split("/").length > 2 ? "bg-white md:bg-transparent" : ""}`}
       >
         <h1 className="text-[27px] md:text-[46px] font-[700] font-open">
           Tolu

@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { ChatSocketService } from "entities/chat";
+import { ClientService } from "entities/client";
+import { clearAllChatHistory, setFolders } from "entities/client/lib";
+import { ContentService, ContentStatus } from "entities/content";
 import { DocumentsService, IDocument } from "entities/document";
-import { ChatActions, ChatLoading } from "features/chat";
-import parse from "html-react-parser";
-import { LibrarySmallChat } from "widgets/library-small-chat";
-import { RootState } from "entities/store";
-import { useSelector, useDispatch } from "react-redux";
 import { HealthHistoryService } from "entities/health-history";
 import {
+  setError,
   setHealthHistory,
   setLoading,
-  setError,
 } from "entities/health-history/lib";
-import LoadingIcon from "shared/assets/icons/loading-icon";
-import { DocumentLoadingSkeleton } from "./lib";
-import { ContentService, ContentStatus } from "entities/content";
-import { ClientService } from "entities/client";
-import { setFolders } from "entities/client/lib";
+import { RootState } from "entities/store";
+import { ChatActions, ChatLoading } from "features/chat";
+import parse from "html-react-parser";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import GlobeIcon from "shared/assets/icons/globe";
-import { HealthProfileForm } from "widgets/health-profile-form";
-import { Button } from "shared/ui";
+import LoadingIcon from "shared/assets/icons/loading-icon";
 import TwoUsersIcon from "shared/assets/icons/two-users";
 import { toast, usePageWidth } from "shared/lib";
-import { ChatSocketService } from "entities/chat";
+import { Button } from "shared/ui";
+import { HealthProfileForm } from "widgets/health-profile-form";
+import { LibrarySmallChat } from "widgets/library-small-chat";
+import { DocumentLoadingSkeleton } from "./lib";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -182,7 +182,13 @@ export const LibraryDocument = () => {
 
   useEffect(() => {
     loadDocument(documentId);
-  }, [documentId]);
+  }, [documentId, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearAllChatHistory());
+    };
+  }, []);
 
   const onStatusChange = async (status: string) => {
     if (documentId) {
