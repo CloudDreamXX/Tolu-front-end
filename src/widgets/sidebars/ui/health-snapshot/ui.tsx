@@ -162,6 +162,11 @@ export const HealthSnapshotSidebar: React.FC = () => {
               <NavLink
                 to={"/messages"}
                 end={false}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSidebarOpen(true);
+                  nav("/messages");
+                }}
                 className={({ isActive }) =>
                   cn(
                     "flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB]",
@@ -173,7 +178,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 <ChatsCircle />
                 {sidebarOpen ? "Messages" : ""}
               </NavLink>
-              <ClientChatList />
+              {sidebarOpen && <ClientChatList />}
             </div>
           </div>
 
