@@ -9,43 +9,25 @@ import { Button } from "shared/ui";
 import { Card } from "./components/Card";
 import { Switch } from "./components/Switch";
 import { Field } from "./components/Field";
-import { NotificationsService } from "entities/notifications";
+import { Notification, NotificationsService } from "entities/notifications";
 import { ChatSocketService } from "entities/chat";
-
-const mockNotifications = [
-  {
-    id: "1",
-    message: "Tony Reichert requested to join your Acme organization.",
-    time: "2 hours ago",
-    unread: true,
-  },
-  {
-    id: "2",
-    message: "Ben Berman modified the Brand logo file.",
-    time: "7 hours ago",
-    unread: true,
-  },
-  {
-    id: "3",
-    message: "Jane Doe liked your post.",
-    time: "Yesterday",
-    unread: false,
-  },
-  {
-    id: "4",
-    message: "John Smith started following you.",
-    time: "Yesterday",
-    unread: false,
-  },
-];
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const [emailNotif, setEmailNotif] = useState(false);
   const [pushNotif, setPushNotif] = useState(true);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}.${month}.${year}`;
+  };
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -73,7 +55,7 @@ export const ClientProfile = () => {
   const fetchNotifications = async () => {
     try {
       const response = await NotificationsService.getNotifications();
-      setNotifications(response.data);
+      setNotifications(response);
     } catch (error) {
       console.error("Failed to fetch notifications", error);
     }
@@ -192,37 +174,7 @@ export const ClientProfile = () => {
                       {notification.message}
                     </p>
                     <span className="text-xs text-gray-500">
-                      {notification.time}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => markAsRead(notification.id)}
-                      className="text-xs text-white bg-[#1C63DB] p-[8px] rounded-[8px]"
-                    >
-                      Mark as read
-                    </button>
-                    <button
-                      onClick={() => dismissNotification(notification.id)}
-                      className="text-xs text-black bg-[#D5DAE2] p-[8px] rounded-[8px]"
-                    >
-                      Dismiss
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : mockNotifications && mockNotifications.length ? (
-              mockNotifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="flex flex-col justify-between gap-[16px] p-3 border-b border-gray-200 rounded-md"
-                >
-                  <div className="flex flex-col">
-                    <p className="text-sm font-medium text-gray-800">
-                      {notification.message}
-                    </p>
-                    <span className="text-xs text-gray-500">
-                      {notification.time}
+                      {formatDate(notification.created_at)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">

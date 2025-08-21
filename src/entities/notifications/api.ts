@@ -1,5 +1,5 @@
 import { API_ROUTES, ApiService } from "shared/api";
-import { NotificationPreferences, Notifications } from "./model";
+import { NotificationPreferences, Notifications, Notification } from "./model";
 
 export class NotificationsService {
   static async getNotifications(
@@ -7,16 +7,19 @@ export class NotificationsService {
     limit: number = 20,
     unread_only: boolean = false,
     type_filter: string | null = null
-  ): Promise<any> {
+  ): Promise<Notification[]> {
     const params = {
       page,
       limit,
       unread_only,
       type_filter,
     };
-    return ApiService.get<any>(API_ROUTES.NOTIFICATIONS.GET_NOTIFICATIONS, {
-      params,
-    });
+    return ApiService.get<Notification[]>(
+      API_ROUTES.NOTIFICATIONS.GET_NOTIFICATIONS,
+      {
+        params,
+      }
+    );
   }
 
   static async getUnreadCount(): Promise<any> {
