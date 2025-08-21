@@ -10,11 +10,17 @@ import Collapse from "shared/assets/icons/collapse";
 import { CoachService, NewChatTitle } from "entities/coach";
 import { useParams } from "react-router-dom";
 import { toast } from "shared/lib";
+import {
+  SWITCH_KEYS,
+  SwitchValue,
+} from "widgets/library-small-chat/switch-config";
 
 interface ChatHeaderProps {
   displayChatTitle: string;
   isExistingChat: boolean;
   isCoach: boolean;
+  selectedSwitch: string;
+  isSwitch: (value: SwitchValue) => boolean;
   onNewSearch: () => void;
   onClose: () => void;
 }
@@ -23,6 +29,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   displayChatTitle,
   isExistingChat,
   isCoach,
+  selectedSwitch,
+  isSwitch,
   onNewSearch,
   onClose,
 }) => {
@@ -84,9 +92,24 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           </div>
         )}
       </div>
+      <div className="hidden md:block relative flex flex-col items-center gap-2 pl-[140px]">
+        <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
+          {selectedSwitch}
+        </div>
+        {isSwitch(SWITCH_KEYS.DEF) && (
+          <p className="text-[18px] text-[#1D1D1F] font-[600]">
+            Get Personalized Answers
+          </p>
+        )}
+        {isSwitch(SWITCH_KEYS.LEARN) && (
+          <p className="text-[18px] text-[#1D1D1F] font-[600]">
+            Get Expert-verified Guidance You Can Trust
+          </p>
+        )}
+      </div>
       <div className="flex flex-row gap-2 w-full md:w-fit mt-[8px] md:mt-0">
         <button
-          className="flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 w-full xl:w-fit"
+          className="flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hover:bg-blue-700 w-full xl:w-fit"
           onClick={onNewSearch}
         >
           <MagnifyingGlassPlusIcon width={24} height={24} /> New Search

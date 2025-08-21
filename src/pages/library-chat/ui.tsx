@@ -736,20 +736,22 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         <ChatBreadcrumb displayChatTitle={displayChatTitle} />
       </div>
       <div className="flex flex-row flex-1 w-full h-full gap-6 md:relative">
-        <div className="hidden xl:block">
-          <ChatActions
-            onRegenerate={handleRegenerateResponse}
-            isSearching={isSearching}
-            hasMessages={messages.length >= 2}
-            isHistoryPopup
-            fromPath={location.state?.from?.pathname ?? null}
-            initialRating={
-              chat.length ? (chat[0].liked ? 5 : undefined) : undefined
-            }
-            onReadAloud={handleReadAloud}
-            isReadingAloud={isReadingAloud}
-          />
-        </div>
+        {messages.length > 0 && (
+          <div className="hidden xl:block">
+            <ChatActions
+              onRegenerate={handleRegenerateResponse}
+              isSearching={isSearching}
+              hasMessages={messages.length >= 2}
+              isHistoryPopup
+              fromPath={location.state?.from?.pathname ?? null}
+              initialRating={
+                chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+              }
+              onReadAloud={handleReadAloud}
+              isReadingAloud={isReadingAloud}
+            />
+          </div>
+        )}
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
@@ -758,6 +760,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               displayChatTitle={displayChatTitle}
               isExistingChat={!!isExistingChat}
               isCoach={isCoach}
+              isSwitch={isSwitch}
+              selectedSwitch={selectedSwitch}
               onNewSearch={handleNewChatOpen}
               onClose={() => {
                 const fromPath =
@@ -792,7 +796,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             {isEmpty &&
             // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
             !isSwitch(SWITCH_KEYS.CASE) ? (
-              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px] overflow-y-auto">
+              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px] overflow-y-auto md:mb-[16px] xl:mb-0">
                 {isCoach ? (
                   <div className="flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
                     <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
@@ -814,23 +818,6 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                           Tell me what’s feeling off or what you’re working on.
                           I’ll help you make sense of it and find your next
                           step.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="hidden md:flex flex-col items-center justify-center text-center gap-[8px] p-[16px] bg-[#F3F6FB] border border-[#1C63DB] rounded-[16px] w-full h-fit mt-auto">
-                      <h2 className="text-[18px] md:text-[24px] text-[#1B2559] font-[700]">
-                        Start a conversation
-                      </h2>
-                      <div className="flex flex-col items-baseline justify-center">
-                        <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                          Activate{" "}
-                          <span className="font-bold">Smart Search</span> for
-                          personalized health answers.
-                        </p>
-                        <p className="text-[16px] md:text-[18px] text-[#1C63DB]">
-                          Activate <span className="font-bold">Learn</span> for
-                          expert-verified guidance you can trust.
                         </p>
                       </div>
                     </div>
@@ -920,7 +907,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               </>
             ) : (
               <div
-                className={`overflow-y-auto h-full ${isCoach ? "" : "px-[16px] md:px-0"}`}
+                className={`overflow-y-auto h-full ${isCoach ? "" : "px-[16px] md:px-0"} md:mb-[16px] xl:mb-0`}
               >
                 <MessageList
                   messages={messages}
@@ -931,22 +918,23 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 />
               </div>
             )}
-
-            <div
-              className={`xl:hidden block ${isCoach ? "mt-[16px]" : "px-[16px] w-fit mx-auto md:px-0 md:w-full md: mx-0"}`}
-            >
-              <ChatActions
-                onRegenerate={handleRegenerateResponse}
-                isSearching={isSearching}
-                hasMessages={messages.length >= 2}
-                isHistoryPopup
-                initialRating={
-                  chat.length ? (chat[0].liked ? 5 : undefined) : undefined
-                }
-                onReadAloud={handleReadAloud}
-                isReadingAloud={isReadingAloud}
-              />
-            </div>
+            {messages.length > 0 && (
+              <div
+                className={`xl:hidden block ${isCoach ? "mt-[16px]" : "px-[16px] w-fit mx-auto"}`}
+              >
+                <ChatActions
+                  onRegenerate={handleRegenerateResponse}
+                  isSearching={isSearching}
+                  hasMessages={messages.length >= 2}
+                  isHistoryPopup
+                  initialRating={
+                    chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+                  }
+                  onReadAloud={handleReadAloud}
+                  isReadingAloud={isReadingAloud}
+                />
+              </div>
+            )}
 
             <LibraryChatInput
               className={`mt-4 xl:border-0 xl:border-t xl:rounded-none ${

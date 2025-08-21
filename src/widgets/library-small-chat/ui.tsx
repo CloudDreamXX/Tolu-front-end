@@ -27,6 +27,7 @@ import { MessageList } from "widgets/message-list";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import { MagnifyingGlassPlusIcon } from "@phosphor-icons/react";
 import { setLastChatId } from "entities/client/lib";
+import { usePageWidth } from "shared/lib";
 // const steps = [
 //   "Demographic",
 //   "Menopause Status",
@@ -55,6 +56,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const location = useLocation();
   const isCreatePage = location.pathname === "/content-manager/create";
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const { isMobileOrTablet } = usePageWidth();
 
   const { documentId } = useParams();
   const config = isCoach
@@ -776,7 +778,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               {selectedSwitch}
             </div>
             <button
-              className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full xl:w-fit"
+              className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
               onClick={handleNewChatOpen}
             >
               <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
@@ -910,15 +912,17 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               </p>
             )}
             <button
-              className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full xl:w-fit"
+              className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
               onClick={handleNewChatOpen}
             >
               <MagnifyingGlassPlusIcon width={24} height={24} />{" "}
               {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
             </button>
           </CardHeader>
-          <CardContent className="flex flex-1 w-full h-full min-h-0 overflow-y-auto">
-            {messages.length > 0 && (
+          <CardContent
+            className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}
+          >
+            {messages.length > 0 && isCoach && !isMobileOrTablet && (
               <div className="w-fit h-fit">
                 <ChatActions
                   isSearching={isSearching}
@@ -949,6 +953,24 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               <div></div>
             )}
           </CardContent>
+          {messages.length > 0 && isCoach && isMobileOrTablet && (
+            <div className="w-fit mx-auto h-fit mb-[16px]">
+              <ChatActions
+                isSearching={isSearching}
+                hasMessages={messages.length >= 2}
+                isHistoryPopup
+                fromPath={location.state?.from?.pathname ?? null}
+                initialRating={
+                  chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+                }
+                onReadAloud={handleReadAloud}
+                isReadingAloud={isReadingAloud}
+                currentChatId={
+                  (chat && chat[0]?.id) || currentChatId || undefined
+                }
+              />
+            </div>
+          )}
           <CardFooter className="w-full p-0">
             <LibraryChatInput
               files={files}

@@ -42,8 +42,9 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   setClientId,
   customTrigger,
   refreshSharedClients,
+  initialSelectedClientsId,
 }) => {
-  const [selectedClient, setSelectedClient] = useState<string | null>(null);
+  const [selectedClient, setSelectedClient] = useState<string | null>("");
   const [selectedFullClient, setSelectedFullClient] = useState<ClientProfile>({
     client_info: {
       id: "",
@@ -75,7 +76,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
     labs: {},
   });
   const [tempSelectedClient, setTempSelectedClient] = useState<string | null>(
-    null
+    initialSelectedClientsId ? initialSelectedClientsId[0] : null
   );
   const [search, setSearch] = useState<string>("");
   const [clients, setClients] = useState<Client[]>([]);
