@@ -22,7 +22,8 @@ import GlobeIcon from "shared/assets/icons/globe";
 import { HealthProfileForm } from "widgets/health-profile-form";
 import { Button } from "shared/ui";
 import TwoUsersIcon from "shared/assets/icons/two-users";
-import { usePageWidth } from "shared/lib";
+import { toast, usePageWidth } from "shared/lib";
+import { ChatSocketService } from "entities/chat";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -50,6 +51,27 @@ export const LibraryDocument = () => {
   } = useTextSelectionTooltip();
   const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
   const { isMobile } = usePageWidth();
+
+  useEffect(() => {
+    const handleNewMessage = (message: any) => {
+      if (message.notification.type === "content_share") {
+        toast({
+          title: "New Content Shared",
+          description: message.notification.message,
+        });
+      }
+    };
+
+    ChatSocketService.on("notification", (message: any) =>
+      handleNewMessage(message)
+    );
+
+    return () => {
+      ChatSocketService.off("notification", (message: any) =>
+        handleNewMessage(message)
+      );
+    };
+  }, []);
 
   useEffect(() => {
     const loadVoices = () => {
@@ -214,7 +236,7 @@ export const LibraryDocument = () => {
           <ChatActions
             initialStatus={selectedDocument?.readStatus}
             initialRating={selectedDocument?.userRating}
-            onRegenerate={() => {}}
+            onRegenerate={() => { }}
             isSearching={false}
             hasMessages={messages.length >= 2}
             onStatusChange={onStatusChange}
@@ -263,7 +285,7 @@ export const LibraryDocument = () => {
               <ChatActions
                 initialStatus={selectedDocument?.readStatus}
                 initialRating={selectedDocument?.rating}
-                onRegenerate={() => {}}
+                onRegenerate={() => { }}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}

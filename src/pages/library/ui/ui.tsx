@@ -10,6 +10,8 @@ import {
 } from "entities/health-history/lib";
 import { RootState } from "entities/store";
 import LoadingIcon from "shared/assets/icons/loading-icon";
+import { ChatSocketService } from "entities/chat";
+import { toast } from "shared/lib";
 
 export const Library = () => {
   const dispatch = useDispatch();
@@ -17,6 +19,27 @@ export const Library = () => {
     (state: RootState) => state.healthHistory.data
   );
   const loading = useSelector((state: RootState) => state.client.loading);
+
+  useEffect(() => {
+    const handleNewMessage = (message: any) => {
+      if (message.notification.type === "content_share") {
+        toast({
+          title: "New Content Shared",
+          description: message.notification.message,
+        });
+      }
+    };
+
+    ChatSocketService.on("notification", (message: any) =>
+      handleNewMessage(message)
+    );
+
+    return () => {
+      ChatSocketService.off("notification", (message: any) =>
+        handleNewMessage(message)
+      );
+    };
+  }, []);
 
   useEffect(() => {
     const fetchHealthHistory = async () => {
