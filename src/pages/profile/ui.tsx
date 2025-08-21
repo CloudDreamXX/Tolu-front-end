@@ -10,6 +10,7 @@ import { Card } from "./components/Card";
 import { Switch } from "./components/Switch";
 import { Field } from "./components/Field";
 import { NotificationsService } from "entities/notifications";
+import { ChatSocketService } from "entities/chat";
 
 const mockNotifications = [
   {
@@ -45,6 +46,29 @@ export const ClientProfile = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const handleNewMessage = (message: any) => {
+      if (message.notification.type === "content_share") {
+        toast({
+          title: "New Content Shared",
+          description: message.notification.message,
+        });
+
+        fetchNotifications();
+      }
+    };
+
+    ChatSocketService.on("notification", (message: any) =>
+      handleNewMessage(message)
+    );
+
+    return () => {
+      ChatSocketService.off("notification", (message: any) =>
+        handleNewMessage(message)
+      );
+    };
+  }, []);
 
   const fetchNotifications = async () => {
     try {
