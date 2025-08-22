@@ -16,7 +16,7 @@ import {
   useDocumentState,
   useMessageState,
 } from "features/document-management";
-import { cn } from "shared/lib";
+import { cn, toast } from "shared/lib";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { findFolderPath } from "features/wrapper-folder-tree";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
@@ -170,11 +170,19 @@ export const ContentManagerDocument: React.FC = () => {
   const onMarkAsFinalHandler = async (contentId?: string) => {
     const itemsToArchive = conversation.filter((item) => item.id !== contentId);
 
-    for (const item of itemsToArchive) {
-      await onStatusComplete("Archived", item.id);
-    }
+    try {
+      await Promise.all(
+        itemsToArchive.map((item) => onStatusComplete("Archived", item.id))
+      );
 
-    navigate(location.pathname);
+      toast({
+        title: "Content was successfully marked as final",
+      });
+
+      navigate(location.pathname);
+    } catch (err) {
+      console.error(err)
+    }
   };
 
   return (
@@ -281,13 +289,13 @@ export const ContentManagerDocument: React.FC = () => {
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-                | "Raw"
-                | "Ready for Review"
-                | "Waiting"
-                | "Second Review Requested"
-                | "Ready to Publish"
-                | "Live"
-                | "Archived"
+              | "Raw"
+              | "Ready for Review"
+              | "Waiting"
+              | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}
