@@ -3,6 +3,7 @@ import { MagnifyingGlassPlusIcon } from "@phosphor-icons/react";
 import { ClientService } from "entities/client";
 import {
   addMessageToChat,
+  clearAllChatHistory,
   setActiveChat,
   setFilesToChat,
   setFolderToChat,
@@ -391,10 +392,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         if (deleteSelectedText) deleteSelectedText();
 
         const chatId =
-          finalData?.searched_result_id ||
           finalData?.chat_id ||
+          finalData?.searched_result_id ||
           finalData?.chatId ||
           "";
+
         dispatch(setLastChatId(chatId));
 
         const aiMessage: Message = {
@@ -568,6 +570,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setChatTitle("");
     setError(null);
     setClientId(null);
+    dispatch(clearAllChatHistory());
   };
 
   const handleSetFiles = (files: File[]) => {
@@ -641,7 +644,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               switchOptions={config.options}
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {
-                handleNewChatOpen();
                 handleSwitchChange(value);
               }}
               deleteSelectedText={deleteSelectedText}
@@ -807,7 +809,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               switchOptions={config.options}
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {
-                handleNewChatOpen();
                 handleSwitchChange(value);
               }}
               setNewMessage={setMessage}
