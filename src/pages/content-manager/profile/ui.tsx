@@ -1,6 +1,6 @@
 import { QuestionIcon } from "@phosphor-icons/react";
 import { Edit, EyeClosed, EyeIcon, Microscope } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BrainIcon from "shared/assets/icons/brain_2";
 import LeavesIcon from "shared/assets/icons/leaves";
 import ProfileCoach from "shared/assets/icons/profile-coach";
@@ -13,12 +13,49 @@ import SafetyIcon from "shared/assets/images/Safety.png";
 import UsersIcon from "shared/assets/images/Users.png";
 import { Button, Input } from "shared/ui";
 import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
+import {
+  ChangePasswordRequest,
+  UserOnboardingInfo,
+  UserService,
+} from "entities/user";
+import { phoneMask, toast } from "shared/lib";
 
 export const ContentManagerProfile = () => {
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [twoFA, setTwoFA] = useState(true);
-  const [password, setPassword] = useState<string>("");
+  const [oldPassword, setOldPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [user, setUser] = useState<UserOnboardingInfo | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await UserService.getOnboardingUser();
+      setUser(res);
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleChangePassword = async (oldPass: string, newPass: string) => {
+    try {
+      const data: ChangePasswordRequest = {
+        old_password: oldPass,
+        new_password: newPass,
+      };
+      await UserService.changePassword(data);
+      toast({
+        title: "Updated successfully",
+      });
+    } catch (err) {
+      console.error("Failed to change password", err);
+      toast({
+        variant: "destructive",
+        title: "Failed to change password",
+        description: "Failed to change password. Please try again.",
+      });
+    }
+  };
 
   return (
     <>
@@ -44,37 +81,65 @@ export const ContentManagerProfile = () => {
           />
 
           <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px] lg:hidden">
-            <Field label="Full name:" value="Sophia Turner" />
-            <Field label="Gender:" value="Woman" />
-            <Field label="Email:" value="smith@gmail.com" />
-            <Field label="Phone number:" value="+1 (310) 555-7493" />
-            <Field label="Alternative name:" value="Sophia Reynolds" />
-            <Field label="Age:" value="38" />
+            <Field
+              label="Full name:"
+              value={user?.profile.basic_info.name || ""}
+            />
+            {/* <Field label="Gender:" value={user?.basic_info.gender || ""} /> */}
+            <Field label="Gender:" value={""} />
+            <Field
+              label="Email:"
+              value={user?.profile.basic_info.email || ""}
+            />
+            <Field
+              label="Phone number:"
+              value={phoneMask(user?.profile.basic_info.phone || "")}
+            />
+            <Field
+              label="Alternative name:"
+              value={user?.profile.basic_info.alternate_name || ""}
+            />
+            {/* <Field label="Age:" value={user?.basic_info.age || ""} /> */}
+            <Field label="Age:" value={""} />
             <div className="col-span-2">
               <Field
                 label="Time zone:"
-                value="(GMT-08:00) Pacific Time (US & Canada)"
+                value={user?.profile.basic_info.timezone || ""}
               />
             </div>
           </div>
 
           <div className="hidden lg:flex gap-[32px] w-full">
             <div className="flex flex-col gap-[56px] justify-between w-full max-w-[289px]">
-              <Field label="Full name:" value="Sophia Turner" />
-              <Field label="Email:" value="smith@gmail.com" />
+              <Field
+                label="Full name:"
+                value={user?.profile.basic_info.name || ""}
+              />
+              <Field
+                label="Email:"
+                value={user?.profile.basic_info.email || ""}
+              />
             </div>
             <div className="flex flex-col gap-[56px] justify-between w-full max-w-[289px]">
-              <Field label="Gender:" value="Woman" />
-              <Field label="Phone number:" value="+1 (310) 555-7493" />
+              {/* <Field label="Gender:" value={user?.basic_info.gender || ""} /> */}
+              <Field label="Gender:" value={""} />
+              <Field
+                label="Phone number:"
+                value={phoneMask(user?.profile.basic_info.phone || "")}
+              />
             </div>
             <div className="flex flex-col gap-[56px] justify-between w-full">
               <div className="flex gap-[150px] max-w-full">
-                <Field label="Alternative name:" value="Sophia Reynolds" />
-                <Field label="Age:" value="38" />
+                <Field
+                  label="Alternative name:"
+                  value={user?.profile.basic_info.alternate_name || ""}
+                />
+                {/* <Field label="Age:" value={user?.basic_info.age || ""} /> */}
+                <Field label="Age:" value={""} />
               </div>
               <Field
                 label="Time zone:"
-                value="(GMT-08:00) Pacific Time (US & Canada)"
+                value={user?.profile.basic_info.timezone || ""}
               />
             </div>
           </div>
@@ -98,9 +163,9 @@ export const ContentManagerProfile = () => {
                         type={showPassword ? "password" : "text"}
                         placeholder="Enter Password"
                         name="password"
-                        value={password}
+                        value={oldPassword}
                         onChange={(e) => {
-                          setPassword(e.target.value);
+                          setOldPassword(e.target.value);
                         }}
                         className={
                           "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
@@ -132,9 +197,9 @@ export const ContentManagerProfile = () => {
                         type={showPassword ? "password" : "text"}
                         placeholder="Enter Password"
                         name="password"
-                        value={password}
+                        value={newPassword}
                         onChange={(e) => {
-                          setPassword(e.target.value);
+                          setNewPassword(e.target.value);
                         }}
                         className={
                           "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
@@ -161,6 +226,7 @@ export const ContentManagerProfile = () => {
                 <Button
                   variant="brightblue"
                   className="mt-3 w-full md:w-[250px]"
+                  onClick={() => handleChangePassword(oldPassword, newPassword)}
                 >
                   Change
                 </Button>
@@ -301,7 +367,11 @@ export const ContentManagerProfile = () => {
         </div>
       </div>
 
-      <CouchEditProfileModal open={editModalOpen} setOpen={setEditModalOpen} />
+      <CouchEditProfileModal
+        user={user}
+        open={editModalOpen}
+        setOpen={setEditModalOpen}
+      />
     </>
   );
 };

@@ -1,14 +1,20 @@
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-import CircleQuestion from "shared/assets/icons/circle-question";
+import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { TooltipWrapper } from "shared/ui";
 import { titlesAndIcons } from "widgets/OnboardingPractitioner/select-type";
 
-export function StepType() {
+type StepTypeProps = {
+  data: CoachOnboardingState;
+  setDataState: React.Dispatch<React.SetStateAction<CoachOnboardingState>>;
+};
+
+export function StepType({ data, setDataState }: StepTypeProps) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
-    new Array(5).fill("")
+    data.primary_niches || []
   );
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+  const [otherText, setOtherText] = useState<string>("");
 
   const toggleDropdown = (index: number) => {
     setActiveDropdown((prev) => (prev === index ? null : index));
@@ -20,7 +26,13 @@ export function StepType() {
     setSelectedOptions(updatedOptions);
     setActiveDropdown(null);
   };
-  const [otherText, setOtherText] = useState<string>("");
+
+  useEffect(() => {
+    setDataState((prevState) => ({
+      ...prevState,
+      primary_niches: selectedOptions,
+    }));
+  }, [selectedOptions]);
 
   return (
     <div className="flex flex-col gap-8 mt-2">
@@ -35,11 +47,10 @@ export function StepType() {
               {item.title}
             </label>
             <TooltipWrapper content={item.tooltipContent}>
-              <CircleQuestion className="text-[#1B2559]" />
+              <ChevronDown className="text-[#1B2559]" />
             </TooltipWrapper>
           </div>
 
-          {/* Custom Dropdown */}
           <div className="relative w-full">
             <button
               type="button"

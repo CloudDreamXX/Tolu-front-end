@@ -72,3 +72,27 @@ export interface RequestInvitePayload {
   coach_name?: string;
   message?: string;
 }
+
+export interface UserProfileUpdate {
+  name?: string;
+  email?: string;
+  phone?: string;
+  dob?: string;
+  photo_url?: string;
+  timezone?: string;
+  gender?: string;
+}
+export interface Client {
+  name: string;
+  email: string;
+  phone: string;
+  dob: string;
+  photo_url: string;
+  timezone: string;
+  gender: string;
+  id: string;
+  roleID: number;
+  roleName: string;
+  created_at: string;
+  updated_at: string;
+}

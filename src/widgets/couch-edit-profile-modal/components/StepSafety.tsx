@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Input,
   RadioGroup,
@@ -11,11 +11,26 @@ import {
   Switch,
 } from "shared/ui";
 import { RECOVERY_QUESTIONS } from "../helpers";
+import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 
-export function StepSafety() {
-  const [twoFA, setTwoFA] = useState(true);
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+type StepSafetyProps = {
+  data: CoachOnboardingState;
+  setDataState: React.Dispatch<React.SetStateAction<CoachOnboardingState>>;
+};
+
+export function StepSafety({ data, setDataState }: StepSafetyProps) {
+  const [twoFA, setTwoFA] = useState(data.two_factor_enabled || false);
+  const [question, setQuestion] = useState(data.security_questions || "");
+  const [answer, setAnswer] = useState(data.security_answers || "");
+
+  useEffect(() => {
+    setDataState((prevState) => ({
+      ...prevState,
+      two_factor_enabled: twoFA,
+      security_questions: question,
+      security_answers: answer,
+    }));
+  }, [twoFA, question, answer]);
 
   return (
     <div className="flex flex-col gap-8">

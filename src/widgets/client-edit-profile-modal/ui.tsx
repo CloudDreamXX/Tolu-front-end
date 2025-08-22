@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { phoneMask } from "shared/lib";
 import {
   Button,
@@ -14,7 +14,7 @@ import {
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { timezoneOptions } from "widgets/OnboardingPractitioner/profile-setup";
 import { DateOfBirthPicker } from "widgets/date-of-birth-picker";
-import { ClientProfileData, defaultData } from "./types";
+import { ClientProfileData, defaultData, formatDob, parseDob } from "./types";
 
 type ClientEditProfileModalProps = {
   open: boolean;
@@ -30,8 +30,11 @@ export const ClientEditProfileModal = ({
   onSave,
 }: ClientEditProfileModalProps) => {
   const [dataState, setDataState] = useState<ClientProfileData>(initial);
-  const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(undefined);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setDataState(initial);
+  }, [initial]);
 
   const setData = useCallback(
     (p: Partial<ClientProfileData>) =>
@@ -106,8 +109,8 @@ export const ClientEditProfileModal = ({
             <div className="flex flex-col gap-2.5 w-full relative">
               <label>Date of birth</label>
               <DateOfBirthPicker
-                date={dateOfBirth}
-                setDate={setDateOfBirth}
+                date={parseDob(dataState.dob)}
+                setDate={(value) => setData({ dob: formatDob(value) })}
                 portalContainerRef={contentRef}
               />
             </div>
@@ -115,14 +118,20 @@ export const ClientEditProfileModal = ({
 
           <div className="flex flex-col gap-2.5">
             <label>Gender</label>
-            <RadioGroup className="flex flex-col gap-3">
+            <RadioGroup
+              value={dataState.gender}
+              onValueChange={(val) =>
+                setData({ gender: val as ClientProfileData["gender"] })
+              }
+              className="flex flex-col gap-3"
+            >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="male" />
-                <label>Male</label>
+                <RadioGroupItem id="gender-male" value="male" />
+                <label htmlFor="gender-male">Male</label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="female" />
-                <label>Female</label>
+                <RadioGroupItem id="gender-female" value="female" />
+                <label htmlFor="gender-female">Female</label>
               </div>
             </RadioGroup>
           </div>
@@ -131,8 +140,8 @@ export const ClientEditProfileModal = ({
             <SearchableSelect
               placeholder="Search for Time Zone"
               options={timezoneOptions}
-              value={dataState.timeZone}
-              onChange={(value) => setData({ timeZone: value })}
+              value={dataState.timezone}
+              onChange={(value) => setData({ timezone: value })}
               label={"Time zone "}
             />
           </div>

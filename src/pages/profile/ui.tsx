@@ -1,5 +1,5 @@
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { ChangePasswordRequest, UserService } from "entities/user";
 import { Bell, Plus, RefreshCcw, RotateCcw, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -20,6 +20,8 @@ import { ChatSocketService } from "entities/chat";
 import { ClientEditProfileModal } from "widgets/client-edit-profile-modal";
 import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
 import { ChangePasswordModal } from "widgets/change-password-modal";
+import { Client, ClientService } from "entities/client";
+import { ClientProfileData } from "widgets/client-edit-profile-modal/types";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -43,6 +45,17 @@ export const ClientProfile = () => {
 
     return `${day}.${month}.${year}`;
   };
+
+  const [user, setUser] = useState<Client | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await ClientService.getClientProfile();
+      setUser(res);
+    };
+
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -149,6 +162,39 @@ export const ClientProfile = () => {
         variant: "destructive",
         title: "Sign out failed",
         description: "Sign out failed. Please try again",
+      });
+    }
+  };
+
+  const handleChangePassword = async (oldPass: string, newPass: string) => {
+    try {
+      const data: ChangePasswordRequest = {
+        old_password: oldPass,
+        new_password: newPass,
+      };
+      await UserService.changePassword(data);
+      toast({
+        title: "Updated successfully",
+      });
+    } catch (err) {
+      console.error("Failed to change password", err);
+      toast({
+        variant: "destructive",
+        title: "Failed to change password",
+        description: "Failed to change password. Please try again.",
+      });
+    }
+  };
+
+  const handleEditProfile = async (data: ClientProfileData) => {
+    try {
+      await ClientService.updateUserProfile(data);
+    } catch (err) {
+      console.error("Failed to update information", err);
+      toast({
+        variant: "destructive",
+        title: "Failed to update information",
+        description: "Failed to update information. Please try again.",
       });
     }
   };
@@ -275,9 +321,9 @@ export const ClientProfile = () => {
             </DropdownMenu>
           </div>
           <div>
-            <p className="mb-1 text-2xl font-semibold">Frances Swann</p>
+            <p className="mb-1 text-2xl font-semibold">{user?.name || ""}</p>
             <p className="px-2 bg-blue-100 py-1.5 text-blue-600 font-semibold rounded-full inline-block text-nowrap">
-              Member since April 2025
+              Member since {user?.created_at || ""}
             </p>
           </div>
         </div>
@@ -307,17 +353,14 @@ export const ClientProfile = () => {
             }
           >
             <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px]">
-              <Field label="Name" value="Sophia Turner" />
+              <Field label="Name" value={user?.name || ""} />
               <Field label="Phone number" value="+1 (310) 555-7493" />
 
               <Field label="Date of birth" value="10/10/1990" />
-              <Field label="Gender" value="Woman" />
+              <Field label="Gender" value={user?.gender || ""} />
 
-              <Field label="Email:" value="smith@gmail.com" />
-              <Field
-                label="Time zone:"
-                value="(GMT-08:00) Pacific Time (US & Canada)"
-              />
+              <Field label="Email:" value={user?.email || ""} />
+              <Field label="Time zone:" value={user?.timezone || ""} />
             </div>
 
             <div className="flex justify-end border-t border-[#EAECF0] mt-6 pt-6">
@@ -477,10 +520,23 @@ export const ClientProfile = () => {
         </div>
       </div>
 
-      <ClientEditProfileModal open={editModalOpen} setOpen={setEditModalOpen} />
+      <ClientEditProfileModal
+        initial={{
+          name: user?.name || "",
+          email: user?.email || "",
+          phone: user?.phone || "",
+          dob: user?.dob || "",
+          timezone: user?.timezone || "",
+          gender: user?.gender || "",
+        }}
+        onSave={handleEditProfile}
+        open={editModalOpen}
+        setOpen={setEditModalOpen}
+      />
       <ChangePasswordModal
         open={changePasswordModalOpen}
         onOpenChange={setChangePasswordModalOpen}
+        onSubmit={handleChangePassword}
         mode="change" //we have mode for 'create' and 'change'
       />
     </div>

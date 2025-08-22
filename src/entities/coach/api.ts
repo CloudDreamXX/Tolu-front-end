@@ -368,4 +368,29 @@ export class CoachService {
       data
     );
   }
+
+  static async downloadLicenseFile(filename: string): Promise<any> {
+    const endpoint = API_ROUTES.COACH_ADMIN.DOWNLOAD_LICENSE.replace(
+      "{filename}",
+      filename
+    );
+    return ApiService.get<any>(endpoint, {
+      responseType: "blob",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  static async deleteLicenseFile(filename: string): Promise<any> {
+    const endpoint = API_ROUTES.COACH_ADMIN.DELETE_LICENSE.replace(
+      "{filename}",
+      filename
+    );
+    return ApiService.delete<any>(endpoint, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 }

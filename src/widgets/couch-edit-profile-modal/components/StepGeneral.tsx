@@ -1,35 +1,40 @@
+import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { UploadCloud } from "lucide-react";
-import { cn, phoneMask } from "shared/lib";
+import { cn } from "shared/lib";
 import { Input, RadioGroup, RadioGroupItem } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { timezoneOptions } from "widgets/OnboardingPractitioner/profile-setup";
 import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
-import { ProfileData } from "../helpers";
 
 interface StepGeneralProps {
-  data: ProfileData;
-  setData: (p: Partial<ProfileData>) => void;
+  data: CoachOnboardingState;
+  setDataState: React.Dispatch<React.SetStateAction<CoachOnboardingState>>;
 }
 
-export const StepGeneral = ({ data, setData }: StepGeneralProps) => {
+export const StepGeneral = ({ data, setDataState }: StepGeneralProps) => {
   const { items, getDropzoneProps, getInputProps, dragOver } = useFilePicker();
+
+  const handleInputChange = (key: keyof CoachOnboardingState, value: any) => {
+    setDataState((prevState) => ({ ...prevState, [key]: value }));
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2.5">
         <label>Full name</label>
         <Input
           placeholder="John Doe"
-          value={data.fullName}
-          onChange={(e) => setData({ fullName: e.target.value })}
+          value={data.first_name}
+          onChange={(e) => handleInputChange("first_name", e.target.value)}
         />
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <label> Alternative name for your practice profile</label>
+        <label>Alternative name for your practice profile</label>
         <Input
           placeholder="Practice name"
-          value={data.practiceName}
-          onChange={(e) => setData({ practiceName: e.target.value })}
+          value={data.alternate_name || ""}
+          onChange={(e) => handleInputChange("alternate_name", e.target.value)}
         />
       </div>
 
@@ -41,31 +46,33 @@ export const StepGeneral = ({ data, setData }: StepGeneralProps) => {
           type="tel"
           inputMode="tel"
           autoComplete="tel"
-          value={phoneMask(data.phone)}
-          onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-            setData({ phone: digits });
-          }}
+          // value={data..phone || ''}
+          // onChange={(e) => {
+          //   const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+          //   handleInputChange("phone", digits);
+          // }}
         />
       </div>
 
+      {/* Email */}
       <div className="flex flex-col gap-2.5">
         <label>Email</label>
         <Input
           placeholder="john.doe@example.com"
           type="email"
-          value={data.email}
-          onChange={(e) => setData({ email: e.target.value })}
+          // value={data..email || ''}
+          // onChange={(e) => handleInputChange("email", e.target.value)}
         />
       </div>
 
+      {/* Age */}
       <div className="flex flex-col gap-2.5">
         <label>Age</label>
         <Input
           type="number"
           placeholder="25"
-          value={data.age}
-          onChange={(e) => setData({ age: e.target.value })}
+          value={data.age || ""}
+          onChange={(e) => handleInputChange("age", e.target.value)}
         />
       </div>
 
@@ -73,11 +80,19 @@ export const StepGeneral = ({ data, setData }: StepGeneralProps) => {
         <label>Gender</label>
         <RadioGroup className="flex gap-5">
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="male" />
+            <RadioGroupItem
+              value="male"
+              checked={data.gender === "male"}
+              onChange={() => handleInputChange("gender", "male")}
+            />
             <label>Male</label>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="female" />
+            <RadioGroupItem
+              value="female"
+              checked={data.gender === "female"}
+              onChange={() => handleInputChange("gender", "female")}
+            />
             <label>Female</label>
           </div>
         </RadioGroup>
@@ -87,8 +102,8 @@ export const StepGeneral = ({ data, setData }: StepGeneralProps) => {
         <SearchableSelect
           placeholder="Search for Time Zone"
           options={timezoneOptions}
-          value={data.timeZone}
-          onChange={(value) => setData({ timeZone: value })}
+          value={data.timezone || ""}
+          onChange={(value) => handleInputChange("timezone", value)}
           label={"Time zone "}
         />
       </div>

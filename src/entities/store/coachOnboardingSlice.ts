@@ -38,7 +38,9 @@ export interface CoachOnboardingState {
   two_factor_method: string;
   security_questions: string;
   security_answers: string;
-  certificate_file: string;
+  license_certificate_file?: string;
+  license_certificate_files?: string[];
+  alternate_name?: string;
 }
 
 const initialState: CoachOnboardingState = {
@@ -78,7 +80,6 @@ const initialState: CoachOnboardingState = {
   two_factor_method: "",
   security_questions: "",
   security_answers: "",
-  certificate_file: "",
   profile_picture: "",
 };
 

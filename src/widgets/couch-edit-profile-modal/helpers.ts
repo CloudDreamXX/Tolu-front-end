@@ -1,25 +1,3 @@
-export interface ProfileData {
-  fullName: string;
-  practiceName: string;
-  phone: string;
-  email: string;
-  age: string;
-  gender: "Men" | "Women" | "";
-  timeZone: string;
-  focus: string[];
-}
-
-export const defaultData: ProfileData = {
-  fullName: "",
-  practiceName: "",
-  phone: "",
-  email: "",
-  age: "",
-  gender: "",
-  timeZone: "",
-  focus: [],
-};
-
 export const steps = [
   { id: "general", label: "General info" },
   { id: "safety", label: "Safety" },

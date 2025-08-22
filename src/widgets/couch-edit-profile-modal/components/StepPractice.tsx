@@ -1,7 +1,5 @@
-import { TrashIcon, UploadCloud } from "lucide-react";
-import { useState } from "react";
-import LightIcon from "shared/assets/icons/light";
-import { cn } from "shared/lib";
+import { useState, useEffect } from "react";
+import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
 import {
   RadioGroup,
   RadioGroupItem,
@@ -11,19 +9,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "shared/ui";
-import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
+import { TrashIcon, UploadCloud } from "lucide-react";
+import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { PRACTICE_ANSWERS, SCHOOL_OPTIONS } from "../helpers";
 
-export function StepPractice() {
+type StepPracticeProps = {
+  data: CoachOnboardingState;
+  setDataState: React.Dispatch<React.SetStateAction<CoachOnboardingState>>;
+};
+
+export function StepPractice({ data, setDataState }: StepPracticeProps) {
   const { items, remove, getDropzoneProps, getInputProps, dragOver } =
     useFilePicker();
-  const [school, setSchool] = useState("");
-  const [labsUsed, setLabsUsed] = useState("No");
+  const [school, setSchool] = useState(data.school || "");
+  const [labsUsed, setLabsUsed] = useState(data.uses_labs_supplements || "No");
+
+  useEffect(() => {
+    setDataState((prevState) => ({
+      ...prevState,
+      school,
+      uses_labs_supplements: labsUsed,
+    }));
+  }, [school, labsUsed]);
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <label>Which school or institute did you graduate from? *</label>
-        <Select value={school} onValueChange={(v) => setSchool(v)}>
+        <Select value={school} onValueChange={setSchool}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Choose a school" />
           </SelectTrigger>
@@ -41,11 +54,7 @@ export function StepPractice() {
         <label>Upload a certificate or license *</label>
 
         <button
-          className={cn(
-            "flex py-[16px] w-full px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed",
-            "bg-white cursor-pointer transition",
-            dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
-          )}
+          className={`flex py-[16px] w-full px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"}`}
           {...getDropzoneProps()}
         >
           <input className="hidden" {...getInputProps()} />
@@ -63,7 +72,6 @@ export function StepPractice() {
           </div>
         </button>
 
-        {/* File previews */}
         {items.length > 0 && (
           <div className="flex gap-[16px] flex-wrap justify-start w-full">
             {items.map((file, index) => {
@@ -86,13 +94,6 @@ export function StepPractice() {
             })}
           </div>
         )}
-
-        <div className="flex w-full text-[#1C63DB] gap-2 items-center">
-          <LightIcon />
-          <p className="font-[Nunito] text-[16px] font-medium ">
-            Data is securely saved with a HIPAA-compliant notice
-          </p>
-        </div>
       </div>
 
       <div className="flex flex-col gap-4">

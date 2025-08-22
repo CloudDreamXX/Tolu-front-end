@@ -13,6 +13,8 @@ export const API_ROUTES = {
     ONBOARD_CLIENT: "/client/onboarding",
     GET_ONBOARDING_USER: "/client/onboarding",
     SIGNOUT: "/user/signout",
+    CHANGE_PASSWORD: "/user/change-password",
+    DOWNLOAD_PHOTO: "/profile/photo/{filename}",
   },
   CLIENT: {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",
@@ -20,6 +22,8 @@ export const API_ROUTES = {
     GET_SHARED_CONTENT_BY_ID: "/client/shared-coach-content/{content_id}",
     GET_LIBRARY_CONTENT: "/client/library",
     REQUEST_INVITE: "/client/request-new-invite",
+    GET_PROFILE: "/client/profile",
+    UPDATE_PROFILE: "/client/profile",
   },
   AI: {
     SEARCH: "/ai-search/",
@@ -120,6 +124,8 @@ export const API_ROUTES = {
     UPDATE_COMPREHENSIVE_CLIENT:
       "/coach/client/{client_id}/comprehensive-update",
     UPDATE_HEALTH_HISTORY: "/coach/client/request-health-history-update",
+    DOWNLOAD_LICENSE: "/coach/license/{filename}",
+    DELETE_LICENSE: "/coach/license/{filename}",
   },
   DOCUMENTS: {
     DETAILS: "/content/retrieve",

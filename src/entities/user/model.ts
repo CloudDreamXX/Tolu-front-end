@@ -57,3 +57,85 @@ export interface RecommendationsResponse {
   total_items: number;
   content: Recommendation[];
 }
+
+export interface ChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+}
+
+export interface UserOnboardingInfo {
+  onboarding: Onboarding;
+  profile: ProfileSection;
+  onboarding_completed: boolean;
+}
+export interface Onboarding {
+  id: string;
+  agreements: Agreements;
+  practitioner_info: PractitionerInfo;
+  business_setup: BusinessSetup;
+  client_tools: ClientTools;
+}
+
+export interface Agreements {
+  coach_admin_privacy: boolean;
+  independent_contractor: boolean;
+  content_licensing: boolean;
+  affiliate_terms: boolean;
+  confidentiality: boolean;
+  terms_of_use: boolean;
+  media_release: boolean;
+}
+
+export interface PractitionerInfo {
+  types: string[];
+  niches: string[];
+  school: string | null;
+  license_files: string[];
+  recent_clients: string | null;
+  target_clients: string | null;
+  uses_labs_supplements: boolean | null;
+}
+export interface BusinessSetup {
+  challenges: string[];
+  uses_ai: boolean | null;
+  practice_software: string | null;
+  supplement_method: string | null;
+}
+export interface ClientTools {
+  biometrics: boolean | null;
+  lab_ordering: boolean | null;
+  supplement_ordering: boolean | null;
+}
+export interface ProfileSection {
+  basic_info: BasicInfo;
+  expertise: string[];
+  credentials: ProfileCredentials;
+  story: string | null;
+  testimonials: Testimonial[];
+  content_topics: string[];
+}
+
+export interface BasicInfo {
+  first_name: string | null;
+  last_name: string | null;
+  name: string | null;
+  alternate_name: string | null;
+  email: string;
+  phone: string;
+  dob: string | null;
+  credentials: string | null;
+  location: string | null;
+  timezone: string | null;
+  headshot: string | null;
+  roleID: number;
+  roleName: string;
+}
+
+export interface ProfileCredentials {
+  verified: string[];
+  years_experience: number | null;
+  certifications: string[];
+}
+export interface Testimonial {
+  [key: string]: unknown;
+}

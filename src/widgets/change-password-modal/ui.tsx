@@ -15,7 +15,7 @@ import {
 type ChangePasswordModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit?: (newPass: string) => void;
+  onSubmit?: (oldPass: string, newPass: string) => void;
   onForgot?: () => void;
   mode?: "change" | "create";
 };
@@ -57,7 +57,7 @@ export const ChangePasswordModal = ({
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
-    onSubmit?.(next);
+    onSubmit?.(current, next);
     setCurrent("");
     setNext("");
     setConfirm("");

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Search from "shared/assets/icons/search";
 import { cn } from "shared/lib";
 import {
@@ -12,14 +12,30 @@ import {
   SelectValue,
 } from "shared/ui";
 import { FOCUS_OPTIONS, SOFTWARE_OPTIONS, USE_AI_ANSWERS } from "../helpers";
+import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 
 type FocusOption = (typeof FOCUS_OPTIONS)[number];
 
-export const StepFocus = () => {
-  const [softwere, setSoftwere] = useState("");
+type StepFocusProps = {
+  data: CoachOnboardingState;
+  setDataState: React.Dispatch<React.SetStateAction<CoachOnboardingState>>;
+};
+
+export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
+  const [softwere, setSoftwere] = useState(
+    data.practice_management_software || ""
+  );
   const [query, setQuery] = useState("");
   const [otherText, setOtherText] = useState("");
   const [selected, setSelected] = useState<Set<FocusOption>>(new Set());
+
+  useEffect(() => {
+    setDataState((prevState) => ({
+      ...prevState,
+      expertise_areas: Array.from(selected),
+      practice_management_software: softwere,
+    }));
+  }, [selected, softwere]);
 
   const toggle = useCallback((item: FocusOption) => {
     setSelected((prev) => {
