@@ -146,6 +146,10 @@ export const AppRoutes = () => {
           element={<ContentManagerFolder />}
         />
         <Route
+          path="/content-manager/:tab/folder/:folderId/chat/:chatId"
+          element={<ContentManagerDocument />}
+        />
+        <Route
           path="/content-manager/:tab/folder/:folderId/document/:documentId"
           element={<ContentManagerDocument />}
         />

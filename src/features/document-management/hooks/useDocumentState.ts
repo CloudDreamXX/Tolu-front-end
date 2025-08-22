@@ -6,9 +6,10 @@ import { findFilePath, PathEntry } from "features/wrapper-folder-tree";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useEffectiveDocumentId } from "./useEffectiveDocumentId";
 
 export const useDocumentState = () => {
-  const { tab, documentId, folderId } = useParams();
+  const { tab, folderId, documentId } = useEffectiveDocumentId();
   const location = useLocation();
   const navigate = useNavigate();
   const { folders } = useSelector((state: RootState) => state.folder);

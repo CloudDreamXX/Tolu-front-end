@@ -101,6 +101,13 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     fetchFolders();
   }, [token, dispatch]);
 
+  useEffect(() => {
+    if (!folderId) {
+      setSelectedFolder(null);
+      setSelectedFolderName("");
+    }
+  }, [folderId]);
+
   const toggleFolderSelection = (folder: IFolder) => {
     if (subfolderPopup) {
       setSelectedFolder(folder.id);

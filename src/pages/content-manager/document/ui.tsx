@@ -351,6 +351,7 @@ export const ContentManagerDocument: React.FC = () => {
             isLoading={loadingConversation}
             selectedText={textForInput}
             deleteSelectedText={handleDeleteSelectedText}
+            onDocumentRefresh={(docId) => loadDocument(docId)}
           />
         </div>
       </div>
