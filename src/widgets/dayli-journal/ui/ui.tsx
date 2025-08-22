@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { cn, toast } from "shared/lib";
 import {
   Button,
-  Checkbox,
   Input,
   Select,
   SelectContent,
@@ -568,13 +567,6 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
             Sleep Quality{" "}
             <span className="text-[#B3BCC8]">(Synced or Manual)</span>
           </h2>
-
-          {!summaryView && (
-            <div className="flex gap-2 text-[#1D1D1F] font-semibold">
-              <Checkbox />{" "}
-              <span>Auto-sync from Oura / Apple Watch / Garmin</span>
-            </div>
-          )}
 
           {!summaryView && (
             <MoodSelector

@@ -1,16 +1,25 @@
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
-import { Bell, Plus, RotateCcw } from "lucide-react";
+import { Bell, Plus, RefreshCcw, RotateCcw, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import SignOutIcon from "shared/assets/icons/signout";
 import { cn, toast } from "shared/lib";
-import { Button } from "shared/ui";
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "shared/ui";
 import { Card } from "./components/Card";
 import { Switch } from "./components/Switch";
 import { Field } from "./components/Field";
 import { Notification, NotificationsService } from "entities/notifications";
 import { ChatSocketService } from "entities/chat";
+import { ClientEditProfileModal } from "widgets/client-edit-profile-modal";
+import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
+import { ChangePasswordModal } from "widgets/change-password-modal";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -19,6 +28,12 @@ export const ClientProfile = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
+  const { open, getInputProps } = useFilePicker({
+    accept: ["image/*"],
+    maxFiles: 1,
+  });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -139,7 +154,7 @@ export const ClientProfile = () => {
   };
 
   return (
-    <div className="p-[16px] md:pt-0 md:p-6 flex flex-col gap-[24px] md:gap-6">
+    <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 ">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-[4.5px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
           Personal profile
@@ -147,7 +162,7 @@ export const ClientProfile = () => {
         <button onClick={togglePopup}>
           <Bell />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-4 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">
+            <span className="absolute flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full top-1 right-4">
               {unreadCount}
             </span>
           )}
@@ -155,7 +170,7 @@ export const ClientProfile = () => {
       </div>
 
       {isPopupOpen && (
-        <div className="absolute top-16 right-4 bg-white p-4 rounded-xl shadow-md w-96 max-h-96 overflow-y-auto">
+        <div className="absolute p-4 overflow-y-auto bg-white shadow-md top-16 right-4 rounded-xl w-96 max-h-96">
           <div className="flex justify-between mb-2">
             <h4 className="text-lg font-semibold">Notifications</h4>
             <button onClick={togglePopup} className="text-gray-600">
@@ -163,7 +178,7 @@ export const ClientProfile = () => {
             </button>
           </div>
           <div className="space-y-3">
-            {notifications && notifications.length ? (
+            {notifications?.length ? (
               notifications.map((notification) => (
                 <div
                   key={notification.id}
@@ -200,7 +215,7 @@ export const ClientProfile = () => {
         </div>
       )}
 
-      <div className="flex items-center justify-between p-4 bg-white rounded-2xl md:p-6">
+      <div className="flex flex-wrap items-center justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6">
         <div className="flex items-center gap-6 ">
           <div className="relative">
             <img
@@ -208,16 +223,60 @@ export const ClientProfile = () => {
               src="/profile.png"
               alt="Frances Swann"
             />
-            <Button
-              variant="brightblue"
-              className="absolute bottom-0 right-0 w-8 h-8 p-2 rounded-full hover:bg-[#1C63DB]"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
+            <input className="hidden" {...getInputProps()} />
+
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="brightblue"
+                  className="absolute bottom-0 right-0 inline-flex items-center justify-center
+                   w-8 h-8 rounded-full bg-[#1C63DB] text-white
+                   hover:opacity-90 focus:outline-none"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                side="bottom"
+                align="start"
+                sideOffset={8}
+                className="
+        z-50 min-w-[180px] rounded-xl border border-[#E6ECF7]
+        bg-[#F3F7FD] p-2 shadow-lg
+      "
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    open();
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg cursor-pointer focus:bg-white focus:text-inherit"
+                >
+                  <span className="inline-flex items-center justify-center w-8 h-8 bg-white border rounded-lg">
+                    <RefreshCcw className="w-4 h-4" />
+                  </span>
+                  Change photo
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg cursor-pointer focus:bg-white focus:text-inherit"
+                >
+                  <span className="inline-flex items-center justify-center w-8 h-8 bg-white border rounded-lg">
+                    <Trash2 className="w-4 h-4" />
+                  </span>
+                  Delete photo
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div>
             <p className="mb-1 text-2xl font-semibold">Frances Swann</p>
-            <p className="px-2 bg-blue-100 py-1.5 text-blue-600 font-semibold rounded-full inline-block">
+            <p className="px-2 bg-blue-100 py-1.5 text-blue-600 font-semibold rounded-full inline-block text-nowrap">
               Member since April 2025
             </p>
           </div>
@@ -233,40 +292,47 @@ export const ClientProfile = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] md:gap-[24px] md:gap-y-[24px]">
-        <Card
-          title="Account Info"
-          action={
-            <Button
-              variant={"blue2"}
-              className="px-8 text-base font-semibold text-blue-700"
-            >
-              Edit
-            </Button>
-          }
-        >
-          <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px]">
-            <Field label="Name" value="Sophia Turner" />
-            <Field label="Phone number" value="+1 (310) 555-7493" />
+      <div className="flex flex-col gap-[16px] md:gap-[24px] lg:grid lg:grid-cols-2 lg:gap-[24px] lg:gap-y-[24px]">
+        <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
+          <Card
+            title="Account Info"
+            action={
+              <Button
+                variant={"blue2"}
+                className="px-8 text-base font-semibold text-blue-700"
+                onClick={() => setEditModalOpen(true)}
+              >
+                Edit
+              </Button>
+            }
+          >
+            <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px]">
+              <Field label="Name" value="Sophia Turner" />
+              <Field label="Phone number" value="+1 (310) 555-7493" />
 
-            <Field label="Date of birth" value="10/10/1990" />
-            <Field label="Gender" value="Woman" />
+              <Field label="Date of birth" value="10/10/1990" />
+              <Field label="Gender" value="Woman" />
 
-            <Field label="Email:" value="smith@gmail.com" />
-            <Field
-              label="Time zone:"
-              value="(GMT-08:00) Pacific Time (US & Canada)"
-            />
-          </div>
+              <Field label="Email:" value="smith@gmail.com" />
+              <Field
+                label="Time zone:"
+                value="(GMT-08:00) Pacific Time (US & Canada)"
+              />
+            </div>
 
-          <div className="flex justify-end border-t border-[#EAECF0] mt-6 pt-6">
-            <Button variant="link" className="text-[#1C63DB]">
-              Change password
-            </Button>
-          </div>
-        </Card>
+            <div className="flex justify-end border-t border-[#EAECF0] mt-6 pt-6">
+              <Button
+                variant="link"
+                className="text-[#1C63DB]"
+                onClick={() => setChangePasswordModalOpen(true)}
+              >
+                Change password
+              </Button>
+            </div>
+          </Card>
+        </div>
 
-        <div className="row-span-3">
+        <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-3">
           <Card
             title="Daily Journal Overview"
             action={
@@ -291,7 +357,7 @@ export const ClientProfile = () => {
                   Most Noticeable Symptom Today
                 </p>
 
-                <div className="flex items-center gap-[8px]">
+                <div className="flex items-center gap-[8px] flex-wrap">
                   {[
                     "Fatigue",
                     "Brain fog",
@@ -299,7 +365,10 @@ export const ClientProfile = () => {
                     "Headache",
                     "Insomnia",
                   ].map((item) => (
-                    <div className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base">
+                    <div
+                      key={item}
+                      className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                    >
                       {item}
                     </div>
                   ))}
@@ -311,7 +380,10 @@ export const ClientProfile = () => {
 
                 <div className="flex items-center gap-[8px]">
                   {["1–3 hours"].map((item) => (
-                    <div className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base">
+                    <div
+                      key={item}
+                      className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                    >
                       {item}
                     </div>
                   ))}
@@ -324,7 +396,10 @@ export const ClientProfile = () => {
                 <div className="flex items-center gap-[8px]">
                   {["Skipping breakfast", "Poor sleep", "Gluten"].map(
                     (item) => (
-                      <div className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base">
+                      <div
+                        key={item}
+                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                      >
                         {item}
                       </div>
                     )
@@ -343,7 +418,10 @@ export const ClientProfile = () => {
                     "Woke up: 3 times",
                     "Fell back sleep: easy",
                   ].map((item) => (
-                    <div className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base">
+                    <div
+                      key={item}
+                      className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                    >
                       {item}
                     </div>
                   ))}
@@ -356,7 +434,10 @@ export const ClientProfile = () => {
                 <div className="flex items-center gap-[8px]">
                   {["Ate within 1 hour of waking", "Tried new food"].map(
                     (item) => (
-                      <div className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base">
+                      <div
+                        key={item}
+                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                      >
                         {item}
                       </div>
                     )
@@ -371,28 +452,37 @@ export const ClientProfile = () => {
           </Card>
         </div>
 
-        <Card title="Preferences">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2.5">
-              <Switch checked={emailNotif} onChange={setEmailNotif} />
-              <span
-                className={cn(emailNotif ? "text-blue-600" : "text-gray-600")}
-              >
-                Email notifications
-              </span>
-            </div>
+        <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-2">
+          <Card title="Preferences">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-2.5">
+                <Switch checked={emailNotif} onChange={setEmailNotif} />
+                <span
+                  className={cn(emailNotif ? "text-blue-600" : "text-gray-600")}
+                >
+                  Email notifications
+                </span>
+              </div>
 
-            <div className="flex items-center gap-2.5">
-              <Switch checked={pushNotif} onChange={setPushNotif} />
-              <span
-                className={cn(pushNotif ? "text-blue-600" : "text-gray-600")}
-              >
-                Push notifications
-              </span>
+              <div className="flex items-center gap-2.5">
+                <Switch checked={pushNotif} onChange={setPushNotif} />
+                <span
+                  className={cn(pushNotif ? "text-blue-600" : "text-gray-600")}
+                >
+                  Push notifications
+                </span>
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
+
+      <ClientEditProfileModal open={editModalOpen} setOpen={setEditModalOpen} />
+      <ChangePasswordModal
+        open={changePasswordModalOpen}
+        onOpenChange={setChangePasswordModalOpen}
+        mode="change" //we have mode for 'create' and 'change'
+      />
     </div>
   );
 };

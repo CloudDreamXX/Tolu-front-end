@@ -1,10 +1,9 @@
-// useFilePicker.ts
 import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 
 export type PickItem = {
   id: string;
   file: File;
-  previewUrl?: string; // для изображений
+  previewUrl?: string;
   isImage: boolean;
   isPdf: boolean;
 };
