@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface FormState {
   date_of_birth: string;
+  gender: string;
   age: number;
   menopauseStatus: string;
   country: string;
@@ -17,10 +18,12 @@ export interface FormState {
   support: string[];
   personalityType: string;
   readiness: string;
+  ai_experience: string;
 }
 
 const initialState: FormState = {
   date_of_birth: "",
+  gender: "",
   age: 0,
   menopauseStatus: "-",
   country: "-",
@@ -36,6 +39,7 @@ const initialState: FormState = {
   support: [],
   personalityType: "-",
   readiness: "-",
+  ai_experience: "",
 };
 
 const clientOnboardingSlice = createSlice({

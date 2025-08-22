@@ -28,15 +28,15 @@ import {
   TooltipTrigger,
 } from "shared/ui/tooltip";
 import { OnboardingClientLayout } from "../Layout";
-import { countries, languages } from "./index";
+import { languages } from "./index";
 
 export const DemographicStep = () => {
   const dispatch = useDispatch();
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [menopauseStatus, setMenopauseStatus] = useState("");
-  const [country, setCountry] = useState("");
+  const [gender, setGender] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-  const [educationVal] = useState("");
+  const [aiExperience, setAiExperience] = useState("");
   const nav = useNavigate();
 
   const computeAge = (dobStr: string) => {
@@ -59,18 +59,19 @@ export const DemographicStep = () => {
     !!dateOfBirth &&
     isValidAge &&
     menopauseStatus.trim() &&
-    country.trim() &&
-    selectedLanguages.length;
+    gender.trim() &&
+    selectedLanguages.length &&
+    aiExperience.trim();
 
   const handleNext = () => {
     dispatch(setFormField({ field: "date_of_birth", value: dateOfBirth }));
     dispatch(setFormField({ field: "age", value: Number(computedAge) }));
+    dispatch(setFormField({ field: "gender", value: gender }));
     dispatch(
       setFormField({ field: "menopauseStatus", value: menopauseStatus })
     );
-    dispatch(setFormField({ field: "country", value: country }));
-    dispatch(setFormField({ field: "education", value: educationVal }));
     dispatch(setFormField({ field: "language", value: selectedLanguages }));
+    dispatch(setFormField({ field: "ai_experience", value: aiExperience }));
 
     nav("/what-brings-you-here");
   };
@@ -132,7 +133,7 @@ export const DemographicStep = () => {
     <>
       <div className="flex w-full flex-col items-start gap-[10px] ">
         <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-          Birth Date *
+          Birth Date
         </label>
         <Input
           type="date"
@@ -143,9 +144,30 @@ export const DemographicStep = () => {
           placeholder="Select your birth date"
         />
       </div>
+
+      <div className="flex flex-col items-start w-full gap-2">
+        <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+          Gender
+        </label>
+        <Select value={gender} onValueChange={setGender}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select gender" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="female">Female</SelectItem>
+              <SelectItem value="male">Male</SelectItem>
+              <SelectItem value="prefer_not_to_say">
+                Prefer not to say
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="flex w-full flex-col items-start gap-[10px]">
         <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-          Period Status *
+          Cycle health
         </label>
         <div className="flex flex-col w-full gap-[10px] md:flex-row md:items-center md:gap-6">
           <div className="flex items-center flex-1 gap-4">
@@ -244,30 +266,10 @@ export const DemographicStep = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col w-full gap-6 md:flex-row md:items-center">
-        <div className="flex flex-col items-start flex-1 w-full gap-2">
-          <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-            Country *
-          </label>
-          <Select onValueChange={setCountry}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {countries.map((country) => (
-                  <SelectItem key={country} value={country}>
-                    {country}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+
       <div className="flex w-full flex-col items-start gap-[10px]">
         <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-          Language *
+          Language
         </label>
 
         <Popover>
@@ -315,6 +317,24 @@ export const DemographicStep = () => {
             ))}
           </PopoverContent>
         </Popover>
+      </div>
+
+      <div className="flex flex-col items-start w-full gap-2">
+        <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+          Do you use AI in your daily life?
+        </label>
+        <Select value={aiExperience} onValueChange={setAiExperience}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="yes">Yes</SelectItem>
+              <SelectItem value="no">No</SelectItem>
+              <SelectItem value="not_sure">Not sure</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     </>
   );
