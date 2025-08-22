@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FormField,
   FormItem,
@@ -7,9 +8,9 @@ import {
   RadioGroup,
   RadioGroupItem,
   Input,
-  Textarea,
 } from "shared/ui";
 import z from "zod";
+import { MultiSelect } from "../MultiSelect";
 
 export const drivesAndGoalsSchema = z.object({
   goals: z.string().min(1, "This field is required"),
@@ -18,7 +19,147 @@ export const drivesAndGoalsSchema = z.object({
   healthApproach: z.string().min(1, "This field is required"),
 });
 
+const goalOptions = [
+  {
+    title: "Symptom Relief",
+    options: [
+      "Improve energy / reduce fatigue",
+      "Sleep better / reduce insomnia",
+      "Manage hot flashes/night sweats",
+      "Reduce headaches or migraines",
+      "Ease joint or muscle pain",
+      "Improve digestion / reduce bloating",
+    ],
+  },
+  {
+    title: "Mental & Emotional Health",
+    options: [
+      "Manage anxiety",
+      "Reduce depression or mood swings",
+      "Improve focus and concentration",
+      "Enhance emotional resilience",
+      "Reduce brain fog",
+    ],
+  },
+  {
+    title: "Physical Health & Body Composition",
+    options: [
+      "Lose weight",
+      "Build muscle",
+      "Improve metabolism",
+      "Balance blood sugar",
+      "Reduce cholesterol / improve heart health",
+      "Increase bone density",
+    ],
+  },
+  {
+    title: "Hormonal & Reproductive Health",
+    options: [
+      "Balance hormones",
+      "Regulate menstrual cycles",
+      "Reduce PMS symptoms",
+      "Support fertility",
+      "Manage menopause or perimenopause symptoms",
+    ],
+  },
+  {
+    title: "Longevity & Prevention",
+    options: [
+      "Reduce risk of chronic disease",
+      "Support healthy aging",
+      "Strengthen immunity",
+      "Prevent osteoporosis",
+      "Improve cardiovascular health",
+    ],
+  },
+  {
+    title: "Quality of Life & Performance",
+    options: [
+      "Improve libido / sexual health",
+      "Increase physical performance",
+      "Improve recovery after exercise",
+      "Enhance overall well-being",
+      "Feel more confident in body and mind",
+    ],
+  },
+  { title: "Other", options: ["Other"] },
+];
+
+const reasonOptions = [
+  {
+    title: "Health & Longevity Reasons",
+    options: [
+      "I want to stay healthy and independent as I get older.",
+      "To avoid ending up in the hospital like my parents did.",
+      "I want to lower my risk of diabetes and heart disease.",
+      "Because I don’t want to rely on medications if I can prevent it.",
+    ],
+  },
+  {
+    title: "Energy & Daily Function",
+    options: [
+      "So I can keep up with my kids and not feel exhausted all the time.",
+      "To have the stamina to get through my workday without crashing.",
+      "Because I’m tired of waking up with no energy.",
+    ],
+  },
+  {
+    title: "Work & Career Motivation",
+    options: [
+      "I want to perform better at work and focus more.",
+      "To reduce stress and avoid burnout in my career.",
+      "Because my symptoms are affecting my confidence at work.",
+    ],
+  },
+  {
+    title: "Emotional & Mental Well-being",
+    options: [
+      "To feel calmer and less anxious.",
+      "I want to feel like myself again and not moody all the time.",
+      "Because brain fog is affecting my memory and relationships.",
+    ],
+  },
+  {
+    title: "Family & Relationships",
+    options: [
+      "So I can be present and active with my kids/grandkids.",
+      "Because I don’t want my partner to worry about me all the time.",
+      "To be around for my family in the long run.",
+    ],
+  },
+  {
+    title: "Identity & Self-Confidence",
+    options: [
+      "I want to feel confident in my own body again.",
+      "Because I don’t like how I look or feel right now.",
+      "I want to get back to doing the things I used to love.",
+    ],
+  },
+];
+
 export const DrivesAndGoalsForm = ({ form }: { form: any }) => {
+  const [goalsSelected, setGoalsSelected] = useState<string[]>([]);
+  const [otherGoal, setOtherGoal] = useState<string>("");
+  const [reasonsSelected, setReasonsSelected] = useState<string[]>([]);
+
+  const handleGoalsChange = (val: string[]) => {
+    setGoalsSelected(val);
+    form.setValue("goals", val.join(" , "));
+  };
+
+  const handleOtherGoalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setOtherGoal(newValue);
+
+    const merged = [...goalsSelected, newValue].filter((v) => v !== "Other");
+    form.setValue("goals", merged.join(" , "));
+  };
+
+  const handleReasonsChange = (val: string[]) => {
+    setReasonsSelected(val);
+    form.setValue("goalReason", val.join(" , "));
+  };
+
   return (
     <div className="space-y-6">
       <p className="text-sm text-gray-500">
@@ -32,12 +173,22 @@ export const DrivesAndGoalsForm = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>What are you hoping to achieve?</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Improve fatigue, Lose weight, Manage anxiety"
-                {...field}
-              />
-            </FormControl>
+            <MultiSelect
+              defaultValue={field.value}
+              placeholder="Choose goal(s)"
+              options={goalOptions}
+              selected={goalsSelected}
+              onChange={handleGoalsChange}
+            />
+            {goalsSelected.includes("Other") && (
+              <div className="pt-2">
+                <Input
+                  placeholder="Describe your goal"
+                  value={otherGoal}
+                  onChange={handleOtherGoalChange}
+                />
+              </div>
+            )}
             <FormMessage />
           </FormItem>
         )}
@@ -48,15 +199,17 @@ export const DrivesAndGoalsForm = ({ form }: { form: any }) => {
         name="goalReason"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Why this specific goal?</FormLabel>
-            <FormControl>
-              <Textarea
-                placeholder="To stay away from the hospital or to boost performance at work"
-                className="resize-none text-[16px] md:text-sm xl:text-sm pb-0 min-h-auto h-fit"
-                containerClassName="px-[16px] py-[8px] rounded-md min-h-fit"
-                {...field}
-              />
-            </FormControl>
+            <FormLabel>
+              What would reaching this goal allow you to do that you can’t do
+              now?
+            </FormLabel>
+            <MultiSelect
+              defaultValue={field.value}
+              placeholder="Select reason(s)"
+              options={reasonOptions}
+              selected={reasonsSelected}
+              onChange={handleReasonsChange}
+            />
             <FormMessage />
           </FormItem>
         )}

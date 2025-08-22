@@ -28,92 +28,51 @@ import {
   TooltipTrigger,
 } from "shared/ui/tooltip";
 import { OnboardingClientLayout } from "../Layout";
-import {
-  countries,
-  education,
-  householdType,
-  languages,
-  occupation,
-  raceEthnicity,
-} from "./index";
+import { countries, languages } from "./index";
 
 export const DemographicStep = () => {
   const dispatch = useDispatch();
-  const [age, setAge] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [menopauseStatus, setMenopauseStatus] = useState("");
   const [country, setCountry] = useState("");
-  const [zipCode, setZipCode] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-  const [race, setRace] = useState("");
-  const [household, setHousehold] = useState("");
-  const [occupationVal, setOccupationVal] = useState("");
   const [educationVal] = useState("");
-  const [otherHousehold, setOtherHousehold] = useState("");
-  const [otherOccupation, setOtherOccupation] = useState("");
-  const [otherRace, setOtherRace] = useState("");
   const nav = useNavigate();
+
+  const computeAge = (dobStr: string) => {
+    const dob = new Date(dobStr);
+    if (Number.isNaN(dob.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const beforeBirthday =
+      today.getMonth() < dob.getMonth() ||
+      (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate());
+    if (beforeBirthday) age--;
+    return age;
+  };
+
+  const computedAge = computeAge(dateOfBirth);
+  const isValidAge =
+    computedAge !== null && computedAge >= 0 && computedAge <= 120;
+
   const isFormComplete = () =>
-    age.trim() &&
+    !!dateOfBirth &&
+    isValidAge &&
     menopauseStatus.trim() &&
     country.trim() &&
-    zipCode.trim() &&
-    selectedLanguages.length &&
-    household.trim();
+    selectedLanguages.length;
 
   const handleNext = () => {
-    dispatch(setFormField({ field: "age", value: Number(age) }));
+    dispatch(setFormField({ field: "date_of_birth", value: dateOfBirth }));
+    dispatch(setFormField({ field: "age", value: Number(computedAge) }));
     dispatch(
       setFormField({ field: "menopauseStatus", value: menopauseStatus })
     );
     dispatch(setFormField({ field: "country", value: country }));
-    dispatch(setFormField({ field: "ZIP", value: zipCode }));
-    dispatch(setFormField({ field: "race", value: race }));
-    dispatch(setFormField({ field: "household", value: household }));
-    dispatch(setFormField({ field: "occupation", value: occupationVal }));
     dispatch(setFormField({ field: "education", value: educationVal }));
     dispatch(setFormField({ field: "language", value: selectedLanguages }));
-    dispatch(
-      setFormField({
-        field: "race",
-        value: race === "Other" ? otherRace : race,
-      })
-    );
-    dispatch(
-      setFormField({
-        field: "household",
-        value: household === "Other" ? otherHousehold : household,
-      })
-    );
-    dispatch(
-      setFormField({
-        field: "occupation",
-        value: occupationVal === "Other" ? otherOccupation : occupationVal,
-      })
-    );
 
     nav("/what-brings-you-here");
-  };
-
-  const handleZip = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value.length <= 5) {
-      setZipCode(value);
-    }
-  };
-
-  const handleHouseholdChange = (val: string) => {
-    setHousehold(val);
-    if (val !== "Other") setOtherHousehold("");
-  };
-
-  const handleOccupationChange = (val: string) => {
-    setOccupationVal(val);
-    if (val !== "Other") setOtherOccupation("");
-  };
-
-  const handleRaceChange = (val: string) => {
-    setRace(val);
-    if (val !== "Other") setOtherRace("");
   };
 
   const handleLanguageChange = (value: string) => {
@@ -167,19 +126,21 @@ export const DemographicStep = () => {
     </div>
   );
 
+  const todayStr = new Date().toISOString().split("T")[0];
+
   const mainContent = (
     <>
       <div className="flex w-full flex-col items-start gap-[10px] ">
         <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-          Age *
+          Birth Date *
         </label>
         <Input
-          onChange={(e) => setAge(e.target.value)}
+          type="date"
+          max={todayStr}
+          value={dateOfBirth}
+          onChange={(e) => setDateOfBirth(e.target.value)}
           className="w-full text-[14px] font-[Nunito] font-medium py-[11px] px-[16px]"
-          max={120}
-          min={0}
-          type="number"
-          placeholder="Enter your age"
+          placeholder="Select your birth date"
         />
       </div>
       <div className="flex w-full flex-col items-start gap-[10px]">
@@ -303,17 +264,6 @@ export const DemographicStep = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-col items-start flex-1 w-full gap-2">
-          <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-            ZIP/Postal Code *
-          </label>
-          <Input
-            className="w-full text-[14px] font-[Nunito] font-medium py-[11px] px-[16px]"
-            onChange={handleZip}
-            value={zipCode}
-            placeholder="Enter ZIP/Postal Code"
-          />
-        </div>
       </div>
       <div className="flex w-full flex-col items-start gap-[10px]">
         <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
@@ -365,106 +315,6 @@ export const DemographicStep = () => {
             ))}
           </PopoverContent>
         </Popover>
-      </div>
-      <div className="flex w-full flex-col items-start gap-[10px]">
-        <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-          Race / Etnicity
-        </label>
-        <Select onValueChange={setRace}>
-          <SelectTrigger className="">
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {raceEthnicity.map((race) => (
-                <SelectItem key={race} value={race}>
-                  {race}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        {race === "Other (please specify)" && (
-          <Input
-            placeholder="Enter race or ethnicity"
-            value={otherRace}
-            onChange={(e) => setOtherRace(e.target.value)}
-            className="mt-2"
-          />
-        )}
-      </div>
-      <div className="flex w-full flex-col items-start gap-[10px]">
-        <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-          Household Type *
-        </label>
-        <Select onValueChange={handleHouseholdChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {householdType.map((type) => (
-                <SelectItem key={type} value={type}>
-                  {type}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        {household === "Other (please specify)" && (
-          <Input
-            placeholder="Enter household type"
-            value={otherHousehold}
-            onChange={(e) => setOtherHousehold(e.target.value)}
-            className="mt-2"
-          />
-        )}
-      </div>
-      <div className="flex w-full flex-col items-start gap-[10px]">
-        <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-          Occupation
-        </label>
-        <Select onValueChange={handleOccupationChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {occupation.map((type) => (
-                <SelectItem key={type} value={type}>
-                  {type}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        {occupationVal === "Other (please specify)" && (
-          <Input
-            placeholder="Enter occupation"
-            value={otherOccupation}
-            onChange={(e) => setOtherOccupation(e.target.value)}
-            className="mt-2"
-          />
-        )}
-      </div>
-      <div className="flex w-full flex-col items-start gap-[10px]">
-        <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
-          Education Level
-        </label>
-        <Select onValueChange={handleRaceChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {education.map((race) => (
-                <SelectItem key={race} value={race}>
-                  {race}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
       </div>
     </>
   );

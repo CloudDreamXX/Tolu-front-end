@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface FormState {
+  date_of_birth: string;
   age: number;
   menopauseStatus: string;
   country: string;
@@ -19,6 +20,7 @@ export interface FormState {
 }
 
 const initialState: FormState = {
+  date_of_birth: "",
   age: 0,
   menopauseStatus: "-",
   country: "-",

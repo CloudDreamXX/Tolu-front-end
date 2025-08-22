@@ -149,4 +149,11 @@ export const mapFormToPostData = (
   family_health_history: "",
   lifestyle_limitations: "",
   menstrual_cycle_status: "",
+  gender_identity: "",
+  country: "",
+  language: "",
+  ethnicity: "",
+  household: "",
+  education: "",
+  religion: "",
 });

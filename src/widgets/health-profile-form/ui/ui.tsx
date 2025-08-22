@@ -17,16 +17,17 @@ import {
   Form,
 } from "shared/ui";
 import * as z from "zod";
-import { ConfirmCancelModal } from "../../ConfirmCancelModal";
+
 import {
   BasicInformationForm,
   basicInformationSchema,
 } from "./basic-information-form";
+import { SocialFactorsForm, socialFactorsSchema } from "./social-factors";
+
 import {
   ConsentSubmissionForm,
   consentSubmissionSchema,
 } from "./consent-and-submission";
-import { DrivesAndGoalsForm, drivesAndGoalsSchema } from "./drives-and-goals";
 import {
   HealthStatusHistoryForm,
   healthStatusHistorySchema,
@@ -45,10 +46,13 @@ import {
   nutritionHabitsSchema,
 } from "./nutrition-habits-form";
 import { WomensHealthForm, womensHealthSchema } from "./womens-health";
+import { DrivesAndGoalsForm, drivesAndGoalsSchema } from "./drives-and-goals";
 import { usePageWidth } from "shared/lib";
+import { ConfirmCancelModal } from "widgets/ConfirmCancelModal";
 
 const steps = [
-  "Basic Information",
+  "Demographics",
+  "Social Factors",
   "Health Status & History",
   "Lifestyle & Habits",
   "Nutrition Habits",
@@ -59,19 +63,22 @@ const steps = [
 ];
 
 export const baseFormSchema = basicInformationSchema
-  .merge(healthStatusHistorySchema)
-  .merge(lifestyleHabitsSchema)
-  .merge(nutritionHabitsSchema)
-  .merge(womensHealthSchema)
-  .merge(metabolicDigestiveHealthSchema)
-  .merge(drivesAndGoalsSchema)
-  .merge(consentSubmissionSchema);
+  .and(socialFactorsSchema)
+  .and(healthStatusHistorySchema)
+  .and(lifestyleHabitsSchema)
+  .and(nutritionHabitsSchema)
+  .and(womensHealthSchema)
+  .and(metabolicDigestiveHealthSchema)
+  .and(drivesAndGoalsSchema)
+  .and(consentSubmissionSchema);
+
+type BaseValues = z.infer<typeof baseFormSchema>;
 
 const formSchema = baseFormSchema
   .refine(
-    (data) => {
+    (data: BaseValues) => {
       if (data.medications === "other") {
-        return data.otherMedications && data.otherMedications.length > 0;
+        return !!data.otherMedications && data.otherMedications.length > 0;
       }
       return true;
     },
@@ -81,9 +88,11 @@ const formSchema = baseFormSchema
     }
   )
   .refine(
-    (data) => {
+    (data: BaseValues) => {
       if (data.exerciseHabits === "other") {
-        return data.otherExerciseHabits && data.otherExerciseHabits.length > 0;
+        return (
+          !!data.otherExerciseHabits && data.otherExerciseHabits.length > 0
+        );
       }
       return true;
     },
@@ -92,7 +101,7 @@ const formSchema = baseFormSchema
       path: ["otherExerciseHabits"],
     }
   )
-  .superRefine((data, ctx) => {
+  .superRefine((data: BaseValues, ctx) => {
     if (data.followUpMethod === "Text") {
       if (!data.phoneNumber || !/^\d{10}$/.test(data.phoneNumber)) {
         ctx.addIssue({
@@ -104,9 +113,23 @@ const formSchema = baseFormSchema
     }
   });
 
-type Props = {
-  healthHistory?: HealthHistory;
-};
+type Props = { healthHistory?: HealthHistory };
+
+const DEFAULT_NEW_FIELDS = {
+  genderIdentity: "",
+  genderSelfDescribe: "",
+  sexAssignedAtBirth: "",
+  race: "",
+  language: "",
+  country: "",
+  ethnicity: "",
+  otherEthnicity: "",
+  household: "",
+  otherHousehold: "",
+  occupation: "",
+  otherOccupation: "",
+  education: "",
+} as const;
 
 export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -114,24 +137,60 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
   const { isMobile } = usePageWidth();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<BaseValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: mapHealthHistoryToFormDefaults(healthHistory),
+    defaultValues: {
+      ...DEFAULT_NEW_FIELDS,
+      ...mapHealthHistoryToFormDefaults(healthHistory),
+    } as Partial<BaseValues>,
   });
 
   useEffect(() => {
     if (healthHistory) {
-      const defaults = mapHealthHistoryToFormDefaults(healthHistory);
-      form.reset(defaults);
+      const defaults = {
+        ...DEFAULT_NEW_FIELDS,
+        ...mapHealthHistoryToFormDefaults(healthHistory),
+      };
+      form.reset(defaults as any);
     }
   }, [healthHistory]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const genderForApi =
+      values.genderIdentity === "self_describe" &&
+      values.genderSelfDescribe?.trim()
+        ? values.genderSelfDescribe.trim()
+        : values.genderIdentity;
+
+    const resolvedEthnicity =
+      values.ethnicity === "Other (please specify)"
+        ? (values.otherEthnicity?.trim() ?? "")
+        : values.ethnicity;
+
+    const resolvedHousehold =
+      values.household === "Other (please specify)"
+        ? (values.otherHousehold?.trim() ?? "")
+        : values.household;
+
+    const resolvedOccupation =
+      values.occupation === "Other (please specify)"
+        ? (values.otherOccupation?.trim() ?? "")
+        : values.occupation;
+
+    const resolvedEducation = values.education;
+
     const transformed: HealthHistoryPostData = {
       age: Number(values.age),
-      gender: values.gender,
-      height: values.height,
-      weight: values.weight,
+      gender: values.sexAssignedAtBirth,
+      gender_identity: genderForApi,
+      country: values.country,
+      language: values.language,
+      ethnicity: resolvedEthnicity,
+      household: resolvedHousehold,
+      job: resolvedOccupation,
+      education: resolvedEducation,
+      religion: values.religion,
+
       current_health_concerns: values.healthConcerns,
       diagnosed_conditions: values.medicalConditions,
       medications:
@@ -141,6 +200,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       supplements: values.supplements,
       allergies_intolerances: values.allergies,
       family_health_history: values.familyHistory,
+
       specific_diet: values.dietDetails,
       exercise_habits:
         values.exerciseHabits === "other"
@@ -151,25 +211,32 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       takeout_food: values.takeoutFrequency,
       kind_of_food: values.commonFoods,
       diet_pattern: values.dietType,
+
       sleep_quality: String(values.sleepQuality),
       stress_levels: String(values.stressLevels),
       energy_levels: String(values.energyLevels),
+
       menstrual_cycle_status: values.menstrualCycleStatus,
       hormone_replacement_therapy: values.hormoneTherapy,
       fertility_concerns: values.fertilityConcerns,
       birth_control_use: values.birthControlUse,
+
       blood_sugar_concerns: values.bloodSugarConcern,
       digestive_issues: values.digestiveIssues,
       recent_lab_tests: values.recentLabTests === "Yes",
+
       health_goals: values.goals,
       why_these_goals: values.goalReason,
       desired_results_timeline: values.urgency,
       health_approach_preference: values.healthApproach,
+
       privacy_consent: values.agreeToPrivacy,
       follow_up_recommendation: values.followUpMethod,
       recommendation_destination: `${values.countryCode}${values.phoneNumber}`,
+
+      height: "",
+      weight: "",
       marital_status: "",
-      job: "",
       no_children: "",
       menopause_status: "",
       other_challenges: "",
@@ -186,7 +253,6 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
 
     try {
       await HealthHistoryService.createHealthHistory(transformed, labFile);
-
       form.reset();
       setCurrentStep(0);
       setIsOpen(false);
@@ -195,71 +261,86 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     }
   };
 
+  const stepFields: Array<(keyof BaseValues)[]> = [
+    [
+      "age",
+      "genderIdentity",
+      "genderSelfDescribe",
+      "sexAssignedAtBirth",
+      "race",
+      "language",
+      "country",
+    ],
+    [
+      "ethnicity",
+      "otherEthnicity",
+      "household",
+      "otherHousehold",
+      "occupation",
+      "otherOccupation",
+      "education",
+      "religion",
+    ],
+    [
+      "healthConcerns",
+      "medicalConditions",
+      "medications",
+      "otherMedications",
+      "supplements",
+      "allergies",
+      "familyHistory",
+    ],
+    [
+      "dietDetails",
+      "exerciseHabits",
+      "otherExerciseHabits",
+      "sleepQuality",
+      "stressLevels",
+      "energyLevels",
+    ],
+    [
+      "decisionMaker",
+      "cookFrequency",
+      "takeoutFrequency",
+      "commonFoods",
+      "dietType",
+      "dietDetails",
+    ],
+    [
+      "menstrualCycleStatus",
+      "menstrualOther",
+      "hormoneTherapy",
+      "hormoneDetails",
+      "hormoneDuration",
+      "hormoneProvider",
+      "fertilityConcerns",
+      "birthControlUse",
+      "birthControlDetails",
+    ],
+    [
+      "bloodSugarConcern",
+      "bloodSugarOther",
+      "digestiveIssues",
+      "digestiveOther",
+      "recentLabTests",
+      "labTestFile",
+    ],
+    ["goals", "goalReason", "urgency", "healthApproach"],
+    ["agreeToPrivacy", "followUpMethod", "countryCode", "phoneNumber"],
+  ];
+
   const goToStep = async (nextStep: number) => {
     if (nextStep === currentStep) return;
 
-    const stepFields = [
-      ["age", "gender"],
-      [
-        "healthConcerns",
-        "medicalConditions",
-        "medications",
-        "otherMedications",
-        "supplements",
-        "allergies",
-        "familyHistory",
-      ],
-      [
-        "diet",
-        "exerciseHabits",
-        "otherExerciseHabits",
-        "sleepQuality",
-        "stressLevels",
-        "energyLevels",
-      ],
-      [
-        "decisionMaker",
-        "cookFrequency",
-        "takeoutFrequency",
-        "commonFoods",
-        "dietType",
-        "dietDetails",
-      ],
-      [
-        "menstrualCycleStatus",
-        "menstrualOther",
-        "hormoneTherapy",
-        "hormoneDetails",
-        "hormoneDuration",
-        "hormoneProvider",
-        "fertilityConcerns",
-        "birthControlUse",
-        "birthControlDetails",
-      ],
-      [
-        "bloodSugarConcern",
-        "bloodSugarOther",
-        "digestiveIssues",
-        "digestiveOther",
-        "recentLabTests",
-        "labTestFile",
-      ],
-      ["goals", "goalReason", "urgency", "healthApproach"],
-      ["agreeToPrivacy", "followUpMethod", "countryCode", "phoneNumber"],
-    ];
-
     const isLastStep = currentStep === steps.length - 1;
-    const currentFields = stepFields[currentStep] as (keyof z.infer<
-      typeof formSchema
-    >)[];
+    const currentFields = stepFields[currentStep];
 
-    const isValid = await form.trigger(currentFields);
+    const isValid = await form.trigger(currentFields as any);
     if (!isValid) return;
 
     if (isLastStep) {
       const allValid = await form.trigger();
       if (!allValid) return;
-
       onSubmit(form.getValues());
       return;
     }
@@ -288,8 +369,10 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           {isMobile ? "Health profile" : <UserCircleGearIcon size={24} />}
         </Button>
       </DialogTrigger>
+
       <DialogContent className="md:max-w-3xl gap-6 max-h-[98vh] overflow-y-auto left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
         <DialogTitle>Your Health Status Now</DialogTitle>
+
         <Steps
           steps={steps}
           stepWidth={
@@ -299,16 +382,19 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           ordered
           onStepClick={goToStep}
         />
+
         <Form {...form}>
           {currentStep === 0 && <BasicInformationForm form={form} />}
-          {currentStep === 1 && <HealthStatusHistoryForm form={form} />}
-          {currentStep === 2 && <LifestyleHabitsForm form={form} />}
-          {currentStep === 3 && <NutritionHabitsForm form={form} />}
-          {currentStep === 4 && <WomensHealthForm form={form} />}
-          {currentStep === 5 && <MetabolicDigestiveHealthForm form={form} />}
-          {currentStep === 6 && <DrivesAndGoalsForm form={form} />}
-          {currentStep === 7 && <ConsentSubmissionForm form={form} />}
+          {currentStep === 1 && <SocialFactorsForm form={form} />}
+          {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
+          {currentStep === 3 && <LifestyleHabitsForm form={form} />}
+          {currentStep === 4 && <NutritionHabitsForm form={form} />}
+          {currentStep === 5 && <WomensHealthForm form={form} />}
+          {currentStep === 6 && <MetabolicDigestiveHealthForm form={form} />}
+          {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
+          {currentStep === 8 && <ConsentSubmissionForm form={form} />}
         </Form>
+
         <div className="flex flex-row justify-between w-full">
           <Button
             variant="blue2"
@@ -340,6 +426,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           </div>
         </div>
       </DialogContent>
+
       {confirmOpen && (
         <ConfirmCancelModal
           onCancel={() => {

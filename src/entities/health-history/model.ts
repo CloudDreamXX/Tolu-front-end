@@ -73,7 +73,14 @@ export interface HealthHistoryResponse {
 export interface HealthHistoryPostData {
   age: number;
   marital_status: string;
+  gender_identity: string;
+  country: string;
+  language: string;
+  ethnicity: string;
+  household: string;
   job: string;
+  education: string;
+  religion: string;
   no_children: string;
   menopause_status: string;
   current_health_concerns: string;

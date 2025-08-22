@@ -11,9 +11,7 @@ export const mapHealthHistoryToFormDefaults = (
 
   return {
     age: healthHistory.age?.toString() || "",
-    gender: healthHistory.gender || "female",
-    height: healthHistory.height || "",
-    weight: healthHistory.weight || "",
+    genderIdentity: healthHistory.gender || "female",
 
     healthConcerns: healthHistory.current_health_concerns || "",
     medicalConditions: healthHistory.diagnosed_conditions || "None",

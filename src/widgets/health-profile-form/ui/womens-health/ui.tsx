@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Input,
   FormField,
@@ -9,6 +10,7 @@ import {
   RadioGroupItem,
 } from "shared/ui";
 import z from "zod";
+import { MultiSelect } from "../MultiSelect";
 
 export const womensHealthSchema = z.object({
   menstrualCycleStatus: z.string().min(1, "This field is required"),
@@ -24,7 +26,62 @@ export const womensHealthSchema = z.object({
   birthControlDetails: z.string().optional(),
 });
 
+const hormoneOptions = [
+  {
+    title: "Estrogens",
+    options: [
+      "Estradiol (oral, transdermal patch, gel, cream, spray, injection)",
+      "Estrone",
+      "Conjugated equine estrogens (e.g., Premarin)",
+      "Esterified estrogens",
+      "Estriol (often in compounded bioidentical HRT)",
+    ],
+  },
+  {
+    title: "Progestogens",
+    options: [
+      "Micronized Progesterone (Prometrium, compounded versions)",
+      "Medroxyprogesterone acetate (Provera)",
+      "Norethindrone acetate",
+      "Levonorgestrel",
+      "Dydrogesterone (in some countries)",
+      "Drospirenone (often combined with estradiol)",
+    ],
+  },
+  {
+    title: "Combination Estrogen + Progestogen",
+    options: [
+      "Estradiol + Progesterone (e.g., Bijuva)",
+      "Estradiol + Norethindrone acetate (e.g., Activella, CombiPatch)",
+      "Estradiol + Medroxyprogesterone acetate (e.g., Prempro)",
+      "Estradiol + Drospirenone (e.g., Angeliq)",
+      "Estradiol + Levonorgestrel (some patch formulations)",
+    ],
+  },
+  {
+    title: "Androgens (less common, sometimes compounded)",
+    options: [
+      "Testosterone (gel, cream, patch, pellet, injection – usually off-label for women)",
+      "DHEA (prasterone, vaginal insert – e.g., Intrarosa)",
+    ],
+  },
+  {
+    title: "Other / Tissue-Specific Estrogenic Compounds",
+    options: [
+      "Tibolone (synthetic steroid with estrogenic, progestogenic, and androgenic activity – not available in the U.S., but used in Europe/Asia)",
+      "SERMs (e.g., raloxifene, bazedoxifene; combos like Duavee: conjugated estrogens + bazedoxifene)",
+    ],
+  },
+];
+
 export const WomensHealthForm = ({ form }: { form: any }) => {
+  const [hormonesSelected, setHormonesSelected] = useState<string[]>([]);
+
+  const handleHormonesChange = (val: string[]) => {
+    setHormonesSelected(val);
+    form.setValue("hormoneDetails", val.join(" , "));
+  };
+
   return (
     <div className="space-y-6">
       <p className="text-sm text-gray-500">
@@ -86,97 +143,80 @@ export const WomensHealthForm = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>Are you on Hormone Replacement Therapy?</FormLabel>
             <RadioGroup
-              onValueChange={field.onChange}
+              onValueChange={(v) => {
+                field.onChange(v);
+                if (v !== "Yes") {
+                  setHormonesSelected([]);
+                  form.setValue("hormoneDetails", "");
+                  form.setValue("hormoneDuration", "");
+                  form.setValue("hormoneProvider", "");
+                }
+              }}
               defaultValue={field.value}
               className="space-y-1"
             >
-              <FormItem
-                key={"Yes"}
-                className="flex items-center space-x-2 space-y-0"
-              >
-                <FormControl>
-                  <RadioGroupItem value={"Yes"} id={"Yes"} />
-                </FormControl>
-                <FormLabel htmlFor={"Yes"}>Yes</FormLabel>
-              </FormItem>
-              {form.watch("hormoneTherapy") === "Yes" && (
-                <>
+              {["Yes", "No", "Considering", "Not applicable"].map((opt) => (
+                <FormItem
+                  key={opt}
+                  className="flex items-center space-x-2 space-y-0"
+                >
+                  <FormControl>
+                    <RadioGroupItem value={opt} id={`hrt-${opt}`} />
+                  </FormControl>
+                  <FormLabel htmlFor={`hrt-${opt}`}>{opt}</FormLabel>
+                </FormItem>
+              ))}
+            </RadioGroup>
+
+            {form.watch("hormoneTherapy") === "Yes" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="hormoneDetails"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Which hormones / formulations?</FormLabel>
+                      <MultiSelect
+                        placeholder="Select hormone(s)"
+                        options={hormoneOptions}
+                        selected={hormonesSelected}
+                        onChange={handleHormonesChange}
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="hormoneDetails"
+                    name="hormoneDuration"
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel>For how long?</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., 2 months" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="hormoneProvider"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Who's your provider?</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="e.g., Estradiol and Progesterone"
+                            placeholder="e.g., Clinic or clinician name"
                             {...field}
                           />
                         </FormControl>
                       </FormItem>
                     )}
                   />
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="hormoneDuration"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>For how long?</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., 2 months" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="hormoneProvider"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Who's your provider?</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="e.g., Therapist name"
-                              {...field}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </>
-              )}
-              <FormItem
-                key={"No"}
-                className="flex items-center space-x-2 space-y-0"
-              >
-                <FormControl>
-                  <RadioGroupItem value={"No"} id={"No"} />
-                </FormControl>
-                <FormLabel htmlFor={"No"}>No</FormLabel>
-              </FormItem>
-              <FormItem
-                key={"Considering"}
-                className="flex items-center space-x-2 space-y-0"
-              >
-                <FormControl>
-                  <RadioGroupItem value={"Considering"} id={"Considering"} />
-                </FormControl>
-                <FormLabel htmlFor={"Considering"}>Considering</FormLabel>
-              </FormItem>
-              <FormItem
-                key={"Not applicable"}
-                className="flex items-center space-x-2 space-y-0"
-              >
-                <FormControl>
-                  <RadioGroupItem
-                    value={"Not applicable"}
-                    id={"Not applicable"}
-                  />
-                </FormControl>
-                <FormLabel htmlFor={"Not applicable"}>Not applicable</FormLabel>
-              </FormItem>
-            </RadioGroup>
+                </div>
+              </>
+            )}
           </FormItem>
         )}
       />

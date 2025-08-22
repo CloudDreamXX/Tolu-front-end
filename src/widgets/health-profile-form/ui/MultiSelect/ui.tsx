@@ -4,6 +4,12 @@ import Chevron from "shared/assets/icons/chevron";
 import UncheckedIcon from "shared/assets/icons/not-checked";
 import { cn } from "shared/lib/utils";
 
+type Group = { title: string; options: string[] };
+type OptionsInput = Array<string | Group>;
+
+const isGroup = (item: string | Group): item is Group =>
+  typeof item !== "string" && Array.isArray(item.options);
+
 export const MultiSelect = ({
   placeholder,
   options,
@@ -13,7 +19,7 @@ export const MultiSelect = ({
   onChange,
 }: {
   placeholder: string;
-  options: string[];
+  options: OptionsInput;
   selected: string[];
   defaultValue?: string;
   className?: string;
@@ -32,10 +38,7 @@ export const MultiSelect = ({
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -52,15 +55,33 @@ export const MultiSelect = ({
     }
   };
 
-  return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
+  const renderOption = (option: string) => (
+    <li key={option}>
       <button
+        type="button"
+        className={cn(
+          "px-[17px] py-[8px] cursor-pointer flex items-center gap-[8px] font-[500] text-[16px] hover:bg-[#F2F2F2] w-full text-left",
+          { "text-[#1C63DB]": selected.includes(option) }
+        )}
+        onClick={() => toggleOption(option)}
+      >
+        {selected.includes(option) ? <CheckedIcon /> : <UncheckedIcon />}
+        {option}
+      </button>
+    </li>
+  );
+
+  return (
+    <div className={cn("relative", className)} ref={dropdownRef}>
+      <button
+        type="button"
         className={cn(
           "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center",
           "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 gap-2"
         )}
-        onClick={() => setOpen(!open)}
-        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
       >
         {selected.length === 0 ? (
           <span className="text-[#5F5F65]">{placeholder}</span>
@@ -69,7 +90,7 @@ export const MultiSelect = ({
             .filter((item) => item !== "Other")
             .map((option, index) => (
               <span
-                key={option}
+                key={`${option}-${index}`}
                 className="flex items-center gap-[8px] text-[16px] font-[500] text-[#1D1D1F]"
               >
                 {index !== 0 && ", "} {option}
@@ -80,28 +101,24 @@ export const MultiSelect = ({
           <Chevron />
         </span>
       </button>
+
       {open && (
-        <ul className="absolute z-10 mt-[4px] w-full bg-white border border-[#DBDEE1] rounded-md shadow-sm max-h-[220px] overflow-y-auto">
-          {options.map((option) => (
-            <li key={option}>
-              <button
-                className={cn(
-                  "px-[17px] py-[8px] cursor-pointer flex items-center gap-[8px] font-[500] text-[16px] hover:bg-[#F2F2F2]",
-                  {
-                    "text-[#1C63DB]": selected.includes(option),
-                  }
-                )}
-                onClick={() => toggleOption(option)}
-              >
-                {selected.includes(option) ? (
-                  <CheckedIcon />
-                ) : (
-                  <UncheckedIcon />
-                )}
-                {option}
-              </button>
-            </li>
-          ))}
+        <ul
+          role="listbox"
+          className="absolute z-10 mt-[4px] w-full bg-white border border-[#DBDEE1] rounded-md shadow-sm max-h-[260px] overflow-y-auto"
+        >
+          {options.map((item, idx) =>
+            isGroup(item) ? (
+              <li key={`group-${idx}`} className="py-[6px]">
+                <div className="px-[17px] py-[6px] font-[700] text-[16px] text-[#1D1D1F] cursor-default pointer-events-none">
+                  {item.title}
+                </div>
+                <ul>{item.options.map(renderOption)}</ul>
+              </li>
+            ) : (
+              renderOption(item)
+            )
+          )}
         </ul>
       )}
     </div>
