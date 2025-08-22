@@ -731,7 +731,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               </p>
             )}
             <button
-              className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
+              className="md:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
               onClick={handleNewChatOpen}
             >
               <MagnifyingGlassPlusIcon width={24} height={24} />{" "}

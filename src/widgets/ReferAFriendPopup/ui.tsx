@@ -2,6 +2,7 @@ import Close from "shared/assets/icons/close";
 import { Input } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { useState } from "react";
+import { phoneMask, toast } from "shared/lib";
 
 interface Props {
   isOpen: boolean;
@@ -27,6 +28,26 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
     }));
   };
 
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSave = () => {
+    onClose();
+    toast({
+      title: "Refer completed",
+    });
+  };
+
+  const isButtonDisabled =
+    formData.firstName === "" ||
+    formData.age === "" ||
+    formData.gender === "" ||
+    formData.email === "" ||
+    !isValidEmail(formData.email) ||
+    formData.goal === "";
+
   if (!isOpen) return null;
 
   return (
@@ -36,7 +57,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
       role="dialog"
       aria-labelledby="modal-title"
     >
-      <div className="bg-white rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[90%] overflow-y-auto">
+      <div className="bg-white z-[9999] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[90%] overflow-y-auto">
         <button
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
@@ -61,7 +82,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </label>
           <Input
             type="text"
-            placeholder="Enter First Name"
+            placeholder="Enter name"
             value={formData.firstName}
             onChange={(e) => handleChange("firstName", e.target.value)}
             className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
@@ -87,7 +108,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </label>
           <SearchableSelect
             options={["Female", "Male", "Other"]}
-            inputStyles="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            inputStyles="border rounded-[8px] h-[44px] px-[12px] text-[14px]"
             value={formData.gender}
             onChange={(value) => handleChange("gender", value)}
           />
@@ -130,6 +151,13 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             onChange={(e) => handleChange("email", e.target.value)}
             className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
           />
+          {formData.email !== "" &&
+            formData.goal !== "" &&
+            !isValidEmail(formData.email) && (
+              <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] text-[14px]">
+                Email format is incorrect
+              </p>
+            )}
         </div>
 
         <div className="flex flex-col gap-[8px]">
@@ -152,7 +180,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           <Input
             type="text"
             placeholder="Enter phone number"
-            value={formData.phoneNumber}
+            value={phoneMask(formData.phoneNumber)}
             onChange={(e) => handleChange("phoneNumber", e.target.value)}
             className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
           />
@@ -166,8 +194,9 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             Cancel
           </button>
           <button
-            onClick={onClose}
-            className="w-full md:w-[128px] px-[16px] py-[11px] rounded-full text-[16px] font-[600] bg-[#1C63DB] text-white disabled:opacity-50"
+            onClick={handleSave}
+            className={`w-full md:w-[128px] px-[16px] py-[11px] rounded-full text-[16px] font-[600] bg-[#1C63DB] text-white ${isButtonDisabled ? "opacity-50" : ""}`}
+            disabled={isButtonDisabled}
           >
             Refer
           </button>

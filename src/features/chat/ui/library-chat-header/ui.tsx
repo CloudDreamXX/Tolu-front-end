@@ -92,8 +92,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           </div>
         )}
       </div>
-      <div className="hidden md:block relative flex flex-col items-center gap-2 pl-[140px]">
-        <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
+      <div className="hidden relative md:flex flex-col items-center justify-center gap-2 pl-[140px]">
+        <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open w-fit">
           {selectedSwitch}
         </div>
         {isSwitch(SWITCH_KEYS.DEF) && (
