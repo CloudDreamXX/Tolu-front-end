@@ -1,5 +1,6 @@
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { UploadCloud } from "lucide-react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { cn } from "shared/lib";
 import { Input, RadioGroup, RadioGroupItem } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
@@ -9,10 +10,21 @@ import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicke
 interface StepGeneralProps {
   data: CoachOnboardingState;
   setDataState: React.Dispatch<React.SetStateAction<CoachOnboardingState>>;
+  setProfilePhoto: Dispatch<SetStateAction<File | null>>;
 }
 
-export const StepGeneral = ({ data, setDataState }: StepGeneralProps) => {
+export const StepGeneral = ({
+  data,
+  setDataState,
+  setProfilePhoto,
+}: StepGeneralProps) => {
   const { items, getDropzoneProps, getInputProps, dragOver } = useFilePicker();
+
+  useEffect(() => {
+    if (items[0]?.file) {
+      setProfilePhoto(items[0].file);
+    }
+  }, [items, setProfilePhoto]);
 
   const handleInputChange = (key: keyof CoachOnboardingState, value: any) => {
     setDataState((prevState) => ({ ...prevState, [key]: value }));
@@ -110,6 +122,7 @@ export const StepGeneral = ({ data, setDataState }: StepGeneralProps) => {
 
       <div className="flex flex-col gap-[8px]">
         <label>Change Profile Picture</label>
+
         {items[0] ? (
           <img
             src={items[0].previewUrl}
@@ -134,9 +147,10 @@ export const StepGeneral = ({ data, setDataState }: StepGeneralProps) => {
             <p className="text-[#5F5F65] text-[14px] font-[Nunito]">
               JPG or PNG
             </p>
+
+            <input className="hidden" {...getInputProps()} />
           </div>
         )}
-        <input className="hidden" {...getInputProps()} />
       </div>
     </div>
   );

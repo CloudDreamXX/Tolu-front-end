@@ -150,7 +150,7 @@ export const mapFormToPostData = (
   lifestyle_limitations: "",
   menstrual_cycle_status: "",
   gender_identity: "",
-  country: "",
+  location: "",
   language: "",
   ethnicity: "",
   household: "",

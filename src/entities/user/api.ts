@@ -82,11 +82,16 @@ export class UserService {
   }
 
   static async onboardUser(
-    data: CoachOnboardingState
+    data: CoachOnboardingState,
+    photo?: File
   ): Promise<{ message: string }> {
     const formData = new FormData();
 
     formData.append("onboarding_data", JSON.stringify({ data }));
+
+    if (photo) {
+      formData.append("headshot", photo);
+    }
 
     const response = await ApiService.post<string>(
       API_ROUTES.USER.ONBOARD_USER,
@@ -187,8 +192,13 @@ export class UserService {
   static async downloadProfilePhoto(filename: string): Promise<Blob> {
     const endpoint = API_ROUTES.USER.DOWNLOAD_PHOTO.replace(
       "{filename}",
-      filename
+      encodeURIComponent(filename)
     );
-    return ApiService.get<Blob>(endpoint);
+
+    const res = await ApiService.get<Blob>(endpoint, {
+      responseType: "blob" as const,
+      headers: { Accept: "image/*" },
+    });
+    return (res as any).data ?? res;
   }
 }

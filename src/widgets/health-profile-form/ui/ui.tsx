@@ -158,7 +158,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const genderForApi =
       values.genderIdentity === "self_describe" &&
-        values.genderSelfDescribe?.trim()
+      values.genderSelfDescribe?.trim()
         ? values.genderSelfDescribe.trim()
         : values.genderIdentity;
 
@@ -183,7 +183,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       age: Number(values.age),
       gender: values.sexAssignedAtBirth,
       gender_identity: genderForApi,
-      country: values.country,
+      location: values.country,
       language: values.language,
       ethnicity: resolvedEthnicity,
       household: resolvedHousehold,

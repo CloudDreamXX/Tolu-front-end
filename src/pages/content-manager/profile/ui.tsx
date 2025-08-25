@@ -27,14 +27,26 @@ export const ContentManagerProfile = () => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [user, setUser] = useState<UserOnboardingInfo | null>(null);
+  const [photoUrl, setPhotoUrl] = useState<string>("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await UserService.getOnboardingUser();
-      setUser(res);
-    };
+    let objectUrl: string | null = null;
 
-    fetchUser();
+    (async () => {
+      const u = await UserService.getOnboardingUser();
+      setUser(u);
+
+      const filename = u.profile.basic_info.headshot?.split("/").pop() || "";
+      if (!filename) return;
+
+      const blob = await UserService.downloadProfilePhoto(filename);
+      objectUrl = URL.createObjectURL(blob);
+      setPhotoUrl(objectUrl);
+    })();
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, []);
 
   const handleChangePassword = async (oldPass: string, newPass: string) => {
@@ -76,7 +88,7 @@ export const ContentManagerProfile = () => {
         <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] grid md:grid-cols-[180px_1fr] gap-x-[16px] md:gap-x-[24px] gap-y-[16px] lg:grid-cols-[200px_1fr] lg:gap-[32px]">
           <img
             className="w-[143px] h-[133px] md:w-[200px] md:h-[185px] rounded-[12px] object-cover block"
-            src="/profile.png"
+            src={photoUrl || ""}
             alt="Profile photo"
           />
 

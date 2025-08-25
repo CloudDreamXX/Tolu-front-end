@@ -47,14 +47,27 @@ export const ClientProfile = () => {
   };
 
   const [user, setUser] = useState<Client | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [photoUrl, setPhotoUrl] = useState<string>("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await ClientService.getClientProfile();
-      setUser(res);
-    };
+    let objectUrl: string | null = null;
 
-    fetchUser();
+    (async () => {
+      const u = await ClientService.getClientProfile();
+      setUser(u);
+
+      const filename = u.photo_url?.split("/").pop() || "";
+      if (!filename) return;
+
+      const blob = await UserService.downloadProfilePhoto(filename);
+      objectUrl = URL.createObjectURL(blob);
+      setPhotoUrl(objectUrl);
+    })();
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, []);
 
   useEffect(() => {
@@ -186,9 +199,39 @@ export const ClientProfile = () => {
     }
   };
 
-  const handleEditProfile = async (data: ClientProfileData) => {
+  const onPickPhoto = async (file: File) => {
+    if (!user) return;
     try {
-      await ClientService.updateUserProfile(data);
+      setPreviewUrl(URL.createObjectURL(file));
+
+      const payload: ClientProfileData = {
+        name: user.name ?? "",
+        email: user.email ?? "",
+        phone: user.phone ?? "",
+        dob: user.dob ?? "",
+        timezone: user.timezone ?? "",
+        gender: user.gender ?? "",
+      };
+
+      await ClientService.updateUserProfile(payload, file);
+      toast({ title: "Photo updated" });
+
+      const res = await ClientService.getClientProfile();
+      setUser(res);
+    } catch (err) {
+      console.error("Failed to update photo", err);
+      toast({
+        variant: "destructive",
+        title: "Failed to update photo",
+        description: "Please try again.",
+      });
+      setPreviewUrl(null);
+    }
+  };
+
+  const handleEditProfile = async (data: ClientProfileData, photo?: File) => {
+    try {
+      await ClientService.updateUserProfile(data, photo);
     } catch (err) {
       console.error("Failed to update information", err);
       toast({
@@ -266,10 +309,17 @@ export const ClientProfile = () => {
           <div className="relative">
             <img
               className="w-[100px] h-[100px] rounded-full object-cover"
-              src="/profile.png"
-              alt="Frances Swann"
+              src={previewUrl ? previewUrl : photoUrl ? photoUrl : ""}
+              alt={user?.name ?? "Profile"}
             />
-            <input className="hidden" {...getInputProps()} />
+            <input
+              className="hidden"
+              {...getInputProps()}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) onPickPhoto(f);
+              }}
+            />
 
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>

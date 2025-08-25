@@ -130,13 +130,16 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
 
           <div className="flex flex-col gap-[8px]">
             <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-              Diagnosed condition <span className="text-[#B3BCC8]">(if any)</span>
+              Diagnosed condition{" "}
+              <span className="text-[#B3BCC8]">(if any)</span>
             </label>
             <Input
               type="text"
               placeholder="Enter diagnosed condition"
               value={formData.diagnosedCondition}
-              onChange={(e) => handleChange("diagnosedCondition", e.target.value)}
+              onChange={(e) =>
+                handleChange("diagnosedCondition", e.target.value)
+              }
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
             />
           </div>

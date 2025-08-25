@@ -74,7 +74,7 @@ export interface HealthHistoryPostData {
   age: number;
   marital_status: string;
   gender_identity: string;
-  country: string;
+  location: string;
   language: string;
   ethnicity: string;
   household: string;

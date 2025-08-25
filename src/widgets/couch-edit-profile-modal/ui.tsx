@@ -144,14 +144,22 @@ function StepBody({
   id,
   data,
   setDataState,
+  setProfilePhoto,
 }: Readonly<{
   id: string;
   data: CoachOnboardingState;
   setDataState: Dispatch<SetStateAction<CoachOnboardingState>>;
+  setProfilePhoto: Dispatch<SetStateAction<File | null>>;
 }>) {
   switch (id) {
     case "general":
-      return <StepGeneral data={data} setDataState={setDataState} />;
+      return (
+        <StepGeneral
+          data={data}
+          setDataState={setDataState}
+          setProfilePhoto={setProfilePhoto}
+        />
+      );
     case "safety":
       return <StepSafety data={data} setDataState={setDataState} />;
     case "practice":
@@ -180,6 +188,7 @@ export const CouchEditProfileModal = ({
   const [dataState, setDataState] = useState<CoachOnboardingState>(() =>
     user ? mapUserToCoachState(user) : DEFAULT_STATE
   );
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
   useEffect(() => {
     setDataState(user ? mapUserToCoachState(user) : DEFAULT_STATE);
@@ -187,7 +196,10 @@ export const CouchEditProfileModal = ({
 
   const handleSave = async () => {
     try {
-      await UserService.onboardUser(dataState);
+      await UserService.onboardUser(
+        dataState,
+        profilePhoto ? profilePhoto : undefined
+      );
       setOpen(false);
     } catch (error) {
       console.error("Error during onboarding:", error);
@@ -241,6 +253,7 @@ export const CouchEditProfileModal = ({
             id={steps[step].id}
             data={dataState}
             setDataState={setDataState}
+            setProfilePhoto={setProfilePhoto}
           />
         </ScrollArea>
 
@@ -249,6 +262,7 @@ export const CouchEditProfileModal = ({
             id={steps[step].id}
             data={dataState}
             setDataState={setDataState}
+            setProfilePhoto={setProfilePhoto}
           />
         </div>
 

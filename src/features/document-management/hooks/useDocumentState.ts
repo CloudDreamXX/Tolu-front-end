@@ -5,7 +5,7 @@ import { RootState } from "entities/store";
 import { findFilePath, PathEntry } from "features/wrapper-folder-tree";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffectiveDocumentId } from "./useEffectiveDocumentId";
 
 export const useDocumentState = () => {
