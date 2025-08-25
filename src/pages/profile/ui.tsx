@@ -4,7 +4,7 @@ import { Bell, Plus, RefreshCcw, RotateCcw, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import SignOutIcon from "shared/assets/icons/signout";
-import { cn, toast } from "shared/lib";
+import { cn, phoneMask, toast } from "shared/lib";
 import {
   Button,
   DropdownMenu,
@@ -232,6 +232,8 @@ export const ClientProfile = () => {
   const handleEditProfile = async (data: ClientProfileData, photo?: File) => {
     try {
       await ClientService.updateUserProfile(data, photo);
+      const res = await ClientService.getClientProfile();
+      setUser(res);
     } catch (err) {
       console.error("Failed to update information", err);
       toast({
@@ -404,9 +406,12 @@ export const ClientProfile = () => {
           >
             <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px]">
               <Field label="Name" value={user?.name || ""} />
-              <Field label="Phone number" value="+1 (310) 555-7493" />
+              <Field
+                label="Phone number"
+                value={phoneMask(user?.phone || "")}
+              />
 
-              <Field label="Date of birth" value="10/10/1990" />
+              <Field label="Date of birth" value={user?.dob || ""} />
               <Field label="Gender" value={user?.gender || ""} />
 
               <Field label="Email:" value={user?.email || ""} />

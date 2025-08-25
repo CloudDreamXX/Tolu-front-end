@@ -79,7 +79,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
       <div className="block md:hidden">
         {mobilePage === 1 && (
           <div className="p-6 flex flex-col gap-[16px]">
-            <div className="prose-sm prose max-w-none richtext">
+            <div className="prose-sm prose max-w-none">
               {isHtmlContent(conversation[index - 1].content) ? (
                 parse(conversation[index - 1].content)
               ) : (
@@ -167,7 +167,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         {/* previous version */}
         <div className="flex-1 p-6 flex flex-col gap-[64px]">
           {isHtmlContent(conversation[index - 1].content) ? (
-            <div className="prose-sm prose max-w-none richtext">
+            <div className="prose-sm prose max-w-none">
               {parse(conversation[index - 1].content)}
             </div>
           ) : (
@@ -189,7 +189,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         {/* current version */}
         <div className="flex-1 p-6 flex flex-col gap-[64px]">
           {isHtmlContent(pair.content) ? (
-            <div className="prose-sm prose max-w-none richtext">
+            <div className="prose-sm prose max-w-none">
               {parse(pair.content)}
             </div>
           ) : (
@@ -222,50 +222,34 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         onChange={setEditedContent}
         className="bg-white border border-[#008FF6] rounded-[16px] p-[16px] h-fit"
         formats={[
+          "header",
           "bold",
           "italic",
           "underline",
-          "list",
-          "align",
-          "link",
+          "strike",
           "blockquote",
           "code-block",
-          "header",
-          "font",
-          "size",
+          "list",
+          "bullet",
+          "indent",
+          "link",
           "color",
           "background",
-          "lineHeight",
-          "indent",
-          "list",
-          "ordered",
-          "bullet",
-          "paragraph",
-          "image",
-          "strike",
-          "script",
-          "direction",
+          "align",
+          "hr",
+          "br",
+          "blockquote",
+          "\n",
         ]}
         modules={{
           toolbar: [
-            [
-              { header: "1" },
-              { header: "2" },
-              { header: "3" },
-              { header: "4" },
-              { list: "ordered" },
-              { list: "bullet" },
-              { align: [] },
-              "bold",
-              "italic",
-              "underline",
-              { lineHeight: [] },
-              { indent: "-1" },
-              { indent: "+1" },
-              "link",
-              "blockquote",
-              "code-block",
-            ],
+            [{ header: [1, 2, 3, 4] }],
+            ["bold", "italic", "underline", "strike"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            [{ align: [] }],
+            ["blockquote", "code-block"],
+            [{ color: [] }],
+            ["hr"],
           ],
           clipboard: {
             matchVisual: false,
@@ -298,9 +282,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   const renderContent = () => {
     if (isHTML) {
       return (
-        <div className="prose-sm prose max-w-none richtext">
-          {parse(pair.content)}
-        </div>
+        <div className="prose-sm prose max-w-none">{parse(pair.content)}</div>
       );
     }
     return <div className="whitespace-pre-wrap">{pair.content}</div>;

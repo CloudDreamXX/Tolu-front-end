@@ -81,6 +81,38 @@ li::marker {
   scrollbar-width: none;
 }
 
+.ql-editor {
+  white-space: pre-wrap;
+}
+
+.ql-editor {
+  font-family: "Inter", sans-serif;
+}
+
+.ql-editor p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.ql-editor h2 {
+  font-weight: bold;
+  font-size: 1.35em;
+  padding: 14px 0;
+}
+
+.ql-editor hr {
+  border-top: 1px solid #ccc;
+}
+
+.ql-editor ul {
+  margin-left: 20px;
+}
+
+.ql-editor li {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
