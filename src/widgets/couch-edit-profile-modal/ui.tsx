@@ -57,11 +57,9 @@ const DEFAULT_STATE: CoachOnboardingState = {
   security_questions: "",
   security_answers: "",
   profile_picture: "",
-  // If your CoachOnboardingState includes this, keep it; otherwise remove
   // alternate_name: "",
 };
 
-// Helpers
 const computeAge = (dob?: string | null) => {
   if (!dob) return 0;
   const [y, m, d] = dob.split("-").map(Number);
@@ -145,11 +143,13 @@ function StepBody({
   data,
   setDataState,
   setProfilePhoto,
+  setLicenseFiles,
 }: Readonly<{
   id: string;
   data: CoachOnboardingState;
   setDataState: Dispatch<SetStateAction<CoachOnboardingState>>;
   setProfilePhoto: Dispatch<SetStateAction<File | null>>;
+  setLicenseFiles: Dispatch<SetStateAction<File[] | null>>;
 }>) {
   switch (id) {
     case "general":
@@ -163,7 +163,13 @@ function StepBody({
     case "safety":
       return <StepSafety data={data} setDataState={setDataState} />;
     case "practice":
-      return <StepPractice data={data} setDataState={setDataState} />;
+      return (
+        <StepPractice
+          data={data}
+          setDataState={setDataState}
+          setLicenseFiles={setLicenseFiles}
+        />
+      );
     case "type":
       return <StepType data={data} setDataState={setDataState} />;
     case "focus":
@@ -189,6 +195,7 @@ export const CouchEditProfileModal = ({
     user ? mapUserToCoachState(user) : DEFAULT_STATE
   );
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [licenseFiles, setLicenseFiles] = useState<File[] | null>(null);
 
   useEffect(() => {
     setDataState(user ? mapUserToCoachState(user) : DEFAULT_STATE);
@@ -196,9 +203,10 @@ export const CouchEditProfileModal = ({
 
   const handleSave = async () => {
     try {
-      await UserService.onboardUser(
+      await UserService.updateUser(
         dataState,
-        profilePhoto ? profilePhoto : undefined
+        profilePhoto ? profilePhoto : undefined,
+        licenseFiles ? licenseFiles : undefined
       );
       setOpen(false);
     } catch (error) {
@@ -254,6 +262,7 @@ export const CouchEditProfileModal = ({
             data={dataState}
             setDataState={setDataState}
             setProfilePhoto={setProfilePhoto}
+            setLicenseFiles={setLicenseFiles}
           />
         </ScrollArea>
 
@@ -263,6 +272,7 @@ export const CouchEditProfileModal = ({
             data={dataState}
             setDataState={setDataState}
             setProfilePhoto={setProfilePhoto}
+            setLicenseFiles={setLicenseFiles}
           />
         </div>
 

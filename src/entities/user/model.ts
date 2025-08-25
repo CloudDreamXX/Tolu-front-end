@@ -129,6 +129,8 @@ export interface BasicInfo {
   headshot: string | null;
   roleID: number;
   roleName: string;
+  age: number;
+  gender: string;
 }
 
 export interface ProfileCredentials {

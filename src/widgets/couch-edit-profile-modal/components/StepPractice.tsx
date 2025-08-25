@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import {
   RadioGroup,
   RadioGroupItem,
@@ -16,13 +15,21 @@ import { PRACTICE_ANSWERS, SCHOOL_OPTIONS } from "../helpers";
 type StepPracticeProps = {
   data: CoachOnboardingState;
   setDataState: React.Dispatch<React.SetStateAction<CoachOnboardingState>>;
+  setLicenseFiles: Dispatch<SetStateAction<File[] | null>>;
 };
 
-export function StepPractice({ data, setDataState }: StepPracticeProps) {
-  const { items, remove, getDropzoneProps, getInputProps, dragOver } =
-    useFilePicker();
+type PreviewItem = { url: string; isPdf: boolean };
+
+export function StepPractice({
+  data,
+  setDataState,
+  setLicenseFiles,
+}: StepPracticeProps) {
   const [school, setSchool] = useState(data.school || "");
   const [labsUsed, setLabsUsed] = useState(data.uses_labs_supplements || "No");
+
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<PreviewItem[]>([]);
 
   useEffect(() => {
     setDataState((prevState) => ({
@@ -30,7 +37,41 @@ export function StepPractice({ data, setDataState }: StepPracticeProps) {
       school,
       uses_labs_supplements: labsUsed,
     }));
-  }, [school, labsUsed]);
+  }, [school, labsUsed, setDataState]);
+
+  useEffect(() => {
+    const next: PreviewItem[] = selectedFiles.map((file) => {
+      const isPdf =
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf");
+      const url = isPdf ? "" : URL.createObjectURL(file);
+      return { url, isPdf };
+    });
+
+    setPreviews(next);
+
+    return () => {
+      next.forEach((p) => {
+        if (p.url) URL.revokeObjectURL(p.url);
+      });
+    };
+  }, [selectedFiles]);
+
+  useEffect(() => {
+    setLicenseFiles(selectedFiles.length ? selectedFiles : null);
+  }, [selectedFiles, setLicenseFiles]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    setSelectedFiles(files);
+  };
+
+  const removeFile = (idx: number) => {
+    setSelectedFiles((prev) => {
+      const next = prev.filter((_, i) => i !== idx);
+      return next;
+    });
+  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -53,11 +94,19 @@ export function StepPractice({ data, setDataState }: StepPracticeProps) {
       <div className="flex flex-col gap-4">
         <label>Upload a certificate or license *</label>
 
-        <button
-          className={`flex py-[16px] w-full px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"}`}
-          {...getDropzoneProps()}
+        {/* File input trigger */}
+        <label
+          className="flex py-[16px] w-full px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed border-[#1C63DB] cursor-pointer"
+          htmlFor="license-files-input"
         >
-          <input className="hidden" {...getInputProps()} />
+          <input
+            id="license-files-input"
+            className="hidden"
+            type="file"
+            multiple
+            accept="application/pdf,image/png,image/jpeg"
+            onChange={handleFileChange}
+          />
           <div className="flex flex-col items-center gap-[8px]">
             <UploadCloud />
             <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
@@ -70,21 +119,31 @@ export function StepPractice({ data, setDataState }: StepPracticeProps) {
               PDF, JPG or PNG
             </p>
           </div>
-        </button>
+        </label>
 
-        {items.length > 0 && (
+        {selectedFiles.length > 0 && (
           <div className="flex gap-[16px] flex-wrap justify-start w-full">
-            {items.map((file, index) => {
+            {selectedFiles.map((file, index) => {
+              const preview = previews[index];
               return (
-                <div key={index} className="relative w-[150px] h-[150px]">
-                  <img
-                    src={file.isPdf ? "" : file.previewUrl}
-                    alt={`preview-${index}`}
-                    className="object-cover w-full h-full rounded-md"
-                  />
+                <div
+                  key={`${file.name}-${index}`}
+                  className="relative w-[150px] h-[150px]"
+                >
+                  {preview?.isPdf ? (
+                    <div className="w-full h-full rounded-md bg-[#F3F4F6] flex items-center justify-center text-sm text-[#374151]">
+                      PDF: {file.name}
+                    </div>
+                  ) : (
+                    <img
+                      src={preview?.url || ""}
+                      alt={`preview-${index}`}
+                      className="object-cover w-full h-full rounded-md"
+                    />
+                  )}
                   <button
                     type="button"
-                    onClick={() => remove(file.id)}
+                    onClick={() => removeFile(index)}
                     className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center text-sm"
                   >
                     <TrashIcon className="text-red-500" />

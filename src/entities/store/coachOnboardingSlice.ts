@@ -41,6 +41,9 @@ export interface CoachOnboardingState {
   license_certificate_file?: string;
   license_certificate_files?: string[];
   alternate_name?: string;
+  name?: string;
+  phone?: string;
+  email?: string;
 }
 
 const initialState: CoachOnboardingState = {

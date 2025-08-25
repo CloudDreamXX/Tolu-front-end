@@ -6,8 +6,6 @@ import LeavesIcon from "shared/assets/icons/leaves";
 import ProfileCoach from "shared/assets/icons/profile-coach";
 import TestTubeIcon from "shared/assets/icons/test-tube";
 import WomansLine from "shared/assets/icons/womans-line";
-import Certificate from "shared/assets/images/Certificate.png";
-import SecondCertificate from "shared/assets/images/SecondCertificate.png";
 import FocusAreasIcon from "shared/assets/images/FocusAreas.png";
 import SafetyIcon from "shared/assets/images/Safety.png";
 import UsersIcon from "shared/assets/images/Users.png";
@@ -28,24 +26,51 @@ export const ContentManagerProfile = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [user, setUser] = useState<UserOnboardingInfo | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
+  const [licensePhotos, setLicensePhotos] = useState<string[]>([]);
 
   useEffect(() => {
-    let objectUrl: string | null = null;
+    const revokeUrls: string[] = [];
+    const createUrlFromPath = async (
+      path?: string | null
+    ): Promise<string | null> => {
+      if (!path) return null;
+
+      if (/^(https?:|data:|blob:)/i.test(path)) {
+        return path;
+      }
+
+      const filename = path.split("/").pop() || path;
+      try {
+        const blob = await UserService.downloadProfilePhoto(filename);
+        const url = URL.createObjectURL(blob);
+        revokeUrls.push(url);
+        return url;
+      } catch (e) {
+        console.error("Failed to download file:", filename, e);
+        return null;
+      }
+    };
 
     (async () => {
       const u = await UserService.getOnboardingUser();
       setUser(u);
 
-      const filename = u.profile.basic_info.headshot?.split("/").pop() || "";
-      if (!filename) return;
+      const headshotUrl = await createUrlFromPath(
+        u?.profile?.basic_info?.headshot || null
+      );
+      if (headshotUrl) setPhotoUrl(headshotUrl);
 
-      const blob = await UserService.downloadProfilePhoto(filename);
-      objectUrl = URL.createObjectURL(blob);
-      setPhotoUrl(objectUrl);
+      const licensePaths: string[] =
+        u?.onboarding?.practitioner_info?.license_files ?? [];
+
+      const urls = await Promise.all(
+        licensePaths.map((p) => createUrlFromPath(p))
+      );
+      setLicensePhotos(urls.filter((x): x is string => Boolean(x)));
     })();
 
     return () => {
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      revokeUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
 
@@ -97,8 +122,10 @@ export const ContentManagerProfile = () => {
               label="Full name:"
               value={user?.profile.basic_info.name || ""}
             />
-            {/* <Field label="Gender:" value={user?.basic_info.gender || ""} /> */}
-            <Field label="Gender:" value={""} />
+            <Field
+              label="Gender:"
+              value={user?.profile.basic_info.gender || ""}
+            />
             <Field
               label="Email:"
               value={user?.profile.basic_info.email || ""}
@@ -111,8 +138,14 @@ export const ContentManagerProfile = () => {
               label="Alternative name:"
               value={user?.profile.basic_info.alternate_name || ""}
             />
-            {/* <Field label="Age:" value={user?.basic_info.age || ""} /> */}
-            <Field label="Age:" value={""} />
+            <Field
+              label="Age:"
+              value={
+                user?.profile.basic_info.age
+                  ? String(user?.profile.basic_info.age)
+                  : ""
+              }
+            />
             <div className="col-span-2">
               <Field
                 label="Time zone:"
@@ -133,8 +166,10 @@ export const ContentManagerProfile = () => {
               />
             </div>
             <div className="flex flex-col gap-[56px] justify-between w-full max-w-[289px]">
-              {/* <Field label="Gender:" value={user?.basic_info.gender || ""} /> */}
-              <Field label="Gender:" value={""} />
+              <Field
+                label="Gender:"
+                value={user?.profile.basic_info.gender || ""}
+              />
               <Field
                 label="Phone number:"
                 value={phoneMask(user?.profile.basic_info.phone || "")}
@@ -146,8 +181,14 @@ export const ContentManagerProfile = () => {
                   label="Alternative name:"
                   value={user?.profile.basic_info.alternate_name || ""}
                 />
-                {/* <Field label="Age:" value={user?.basic_info.age || ""} /> */}
-                <Field label="Age:" value={""} />
+                <Field
+                  label="Age:"
+                  value={
+                    user?.profile.basic_info.age
+                      ? String(user?.profile.basic_info.age)
+                      : ""
+                  }
+                />
               </div>
               <Field
                 label="Time zone:"
@@ -359,20 +400,19 @@ export const ContentManagerProfile = () => {
               </div>
               <div className="md:col-span-1 flex flex-col gap-[8px]">
                 <span className="text-[#5F5F65] text-[18px] font-[500]">
-                  Certificates:
+                  Certificates:{" "}
+                  {user?.onboarding.practitioner_info.license_files.length ||
+                    licensePhotos.length}
                 </span>
-                <div className="flex flex-wrap items-center gap-3">
-                  <img
-                    src={Certificate}
-                    alt="Certificate 1"
-                    className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-cover"
-                  />
-                  <img
-                    src={SecondCertificate}
-                    alt="Certificate 2"
-                    className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-fill"
-                  />
-                </div>
+                {/* <div className="flex flex-wrap items-center gap-3">
+                  {licensePhotos.map((item) => {
+                    return <img
+                      src={item}
+                      alt="Certificate"
+                      className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-cover"
+                    />
+                  })}
+                </div> */}
               </div>
             </div>
           </Card>

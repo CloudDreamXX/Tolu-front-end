@@ -2,7 +2,7 @@ import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { UploadCloud } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { cn } from "shared/lib";
-import { Input, RadioGroup, RadioGroupItem } from "shared/ui";
+import { Input } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { timezoneOptions } from "widgets/OnboardingPractitioner/profile-setup";
 import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
@@ -58,11 +58,11 @@ export const StepGeneral = ({
           type="tel"
           inputMode="tel"
           autoComplete="tel"
-          // value={data..phone || ''}
-          // onChange={(e) => {
-          //   const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-          //   handleInputChange("phone", digits);
-          // }}
+          value={data.phone || ""}
+          onChange={(e) => {
+            const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+            handleInputChange("phone", digits);
+          }}
         />
       </div>
 
@@ -72,8 +72,8 @@ export const StepGeneral = ({
         <Input
           placeholder="john.doe@example.com"
           type="email"
-          // value={data..email || ''}
-          // onChange={(e) => handleInputChange("email", e.target.value)}
+          value={data.email || ""}
+          onChange={(e) => handleInputChange("email", e.target.value)}
         />
       </div>
 
@@ -90,24 +90,29 @@ export const StepGeneral = ({
 
       <div className="flex flex-col gap-2.5">
         <label>Gender</label>
-        <RadioGroup className="flex gap-5">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
+        <div className="flex gap-5">
+          <label className="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="gender"
               value="male"
               checked={data.gender === "male"}
-              onChange={() => handleInputChange("gender", "male")}
+              onChange={(e) => handleInputChange("gender", e.target.value)}
             />
-            <label>Male</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
+            <span>Male</span>
+          </label>
+
+          <label className="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="gender"
               value="female"
               checked={data.gender === "female"}
-              onChange={() => handleInputChange("gender", "female")}
+              onChange={(e) => handleInputChange("gender", e.target.value)}
             />
-            <label>Female</label>
-          </div>
-        </RadioGroup>
+            <span>Female</span>
+          </label>
+        </div>
       </div>
 
       <div className="flex flex-col gap-[8px]">

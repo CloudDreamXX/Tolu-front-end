@@ -83,8 +83,9 @@ export class UserService {
 
   static async onboardUser(
     data: CoachOnboardingState,
-    photo?: File
-  ): Promise<{ message: string }> {
+    photo?: File,
+    licenseFiles: File[] = []
+  ): Promise<any> {
     const formData = new FormData();
 
     formData.append("onboarding_data", JSON.stringify({ data }));
@@ -93,12 +94,45 @@ export class UserService {
       formData.append("headshot", photo);
     }
 
-    const response = await ApiService.post<string>(
+    for (const file of licenseFiles) {
+      if (file) {
+        formData.append("license_files", file);
+      }
+    }
+
+    const response = await ApiService.post<any>(
       API_ROUTES.USER.ONBOARD_USER,
       formData
     );
 
-    return { message: response };
+    return response;
+  }
+
+  static async updateUser(
+    data: CoachOnboardingState,
+    photo?: File,
+    licenseFiles: File[] = []
+  ): Promise<any> {
+    const formData = new FormData();
+
+    formData.append("onboarding_data", JSON.stringify({ data }));
+
+    if (photo) {
+      formData.append("headshot", photo);
+    }
+
+    for (const file of licenseFiles) {
+      if (file) {
+        formData.append("license_files", file);
+      }
+    }
+
+    const response = await ApiService.put<any>(
+      API_ROUTES.USER.ONBOARD_USER,
+      formData
+    );
+
+    return response;
   }
 
   static async getOnboardingUser(): Promise<UserOnboardingInfo> {
