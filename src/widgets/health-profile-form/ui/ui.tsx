@@ -158,7 +158,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const genderForApi =
       values.genderIdentity === "self_describe" &&
-      values.genderSelfDescribe?.trim()
+        values.genderSelfDescribe?.trim()
         ? values.genderSelfDescribe.trim()
         : values.genderIdentity;
 
@@ -370,7 +370,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="md:max-w-3xl gap-6 max-h-[98vh] overflow-y-auto left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
+      <DialogContent className="md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
         <DialogTitle>Your Health Status Now</DialogTitle>
 
         <Steps
@@ -383,17 +383,19 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           onStepClick={goToStep}
         />
 
-        <Form {...form}>
-          {currentStep === 0 && <BasicInformationForm form={form} />}
-          {currentStep === 1 && <SocialFactorsForm form={form} />}
-          {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
-          {currentStep === 3 && <LifestyleHabitsForm form={form} />}
-          {currentStep === 4 && <NutritionHabitsForm form={form} />}
-          {currentStep === 5 && <WomensHealthForm form={form} />}
-          {currentStep === 6 && <MetabolicDigestiveHealthForm form={form} />}
-          {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
-          {currentStep === 8 && <ConsentSubmissionForm form={form} />}
-        </Form>
+        <div className="max-h-[70vh] overflow-y-auto">
+          <Form {...form}>
+            {currentStep === 0 && <BasicInformationForm form={form} />}
+            {currentStep === 1 && <SocialFactorsForm form={form} />}
+            {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
+            {currentStep === 3 && <LifestyleHabitsForm form={form} />}
+            {currentStep === 4 && <NutritionHabitsForm form={form} />}
+            {currentStep === 5 && <WomensHealthForm form={form} />}
+            {currentStep === 6 && <MetabolicDigestiveHealthForm form={form} />}
+            {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
+            {currentStep === 8 && <ConsentSubmissionForm form={form} />}
+          </Form>
+        </div>
 
         <div className="flex flex-row justify-between w-full">
           <Button

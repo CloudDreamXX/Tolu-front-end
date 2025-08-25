@@ -72,118 +72,120 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
         >
           Refer a friend
         </h3>
-        <p className="text-[16px] text-[#5F5F65] font-[500]">
-          Good things are better when shared.
-        </p>
+        <div className="flex flex-col gap-[24px] max-h-[70vh] overflow-y-auto">
+          <p className="text-[16px] text-[#5F5F65] font-[500]">
+            Good things are better when shared.
+          </p>
 
-        <div className="flex flex-col flex-1 gap-[8px]">
-          <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-            First name*
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter name"
-            value={formData.firstName}
-            onChange={(e) => handleChange("firstName", e.target.value)}
-            className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-          />
-        </div>
+          <div className="flex flex-col flex-1 gap-[8px]">
+            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+              First name*
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter name"
+              value={formData.firstName}
+              onChange={(e) => handleChange("firstName", e.target.value)}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
+          </div>
 
-        <div className="flex flex-col flex-1 gap-[8px]">
-          <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-            Age*
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter age"
-            value={formData.age}
-            onChange={(e) => handleChange("age", e.target.value)}
-            className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-          />
-        </div>
+          <div className="flex flex-col flex-1 gap-[8px]">
+            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+              Age*
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter age"
+              value={formData.age}
+              onChange={(e) => handleChange("age", e.target.value)}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
+          </div>
 
-        <div className="flex flex-col gap-[8px]">
-          <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-            Gender*
-          </label>
-          <SearchableSelect
-            options={["Female", "Male", "Other"]}
-            inputStyles="border rounded-[8px] h-[44px] px-[12px] text-[14px]"
-            value={formData.gender}
-            onChange={(value) => handleChange("gender", value)}
-          />
-        </div>
+          <div className="flex flex-col gap-[8px]">
+            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+              Gender*
+            </label>
+            <SearchableSelect
+              options={["Female", "Male", "Other"]}
+              inputStyles="border rounded-[8px] h-[44px] px-[12px] text-[14px]"
+              value={formData.gender}
+              onChange={(value) => handleChange("gender", value)}
+            />
+          </div>
 
-        <div className="flex flex-col gap-[8px]">
-          <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-            Health concern
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter health concern"
-            value={formData.healthConcern}
-            onChange={(e) => handleChange("healthConcern", e.target.value)}
-            className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-          />
-        </div>
+          <div className="flex flex-col gap-[8px]">
+            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+              Health concern
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter health concern"
+              value={formData.healthConcern}
+              onChange={(e) => handleChange("healthConcern", e.target.value)}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
+          </div>
 
-        <div className="flex flex-col gap-[8px]">
-          <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-            Diagnosed condition <span className="text-[#B3BCC8]">(if any)</span>
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter diagnosed condition"
-            value={formData.diagnosedCondition}
-            onChange={(e) => handleChange("diagnosedCondition", e.target.value)}
-            className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-          />
-        </div>
+          <div className="flex flex-col gap-[8px]">
+            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+              Diagnosed condition <span className="text-[#B3BCC8]">(if any)</span>
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter diagnosed condition"
+              value={formData.diagnosedCondition}
+              onChange={(e) => handleChange("diagnosedCondition", e.target.value)}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
+          </div>
 
-        <div className="flex flex-col gap-[8px]">
-          <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-            Email address*
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter email"
-            value={formData.email}
-            onChange={(e) => handleChange("email", e.target.value)}
-            className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-          />
-          {formData.email !== "" &&
-            formData.goal !== "" &&
-            !isValidEmail(formData.email) && (
-              <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] text-[14px]">
-                Email format is incorrect
-              </p>
-            )}
-        </div>
+          <div className="flex flex-col gap-[8px]">
+            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+              Email address*
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter email"
+              value={formData.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
+            {formData.email !== "" &&
+              formData.goal !== "" &&
+              !isValidEmail(formData.email) && (
+                <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] text-[14px]">
+                  Email format is incorrect
+                </p>
+              )}
+          </div>
 
-        <div className="flex flex-col gap-[8px]">
-          <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-            Goal*
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter goal"
-            value={formData.goal}
-            onChange={(e) => handleChange("goal", e.target.value)}
-            className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-          />
-        </div>
+          <div className="flex flex-col gap-[8px]">
+            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+              Goal*
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter goal"
+              value={formData.goal}
+              onChange={(e) => handleChange("goal", e.target.value)}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
+          </div>
 
-        <div className="flex flex-col gap-[8px]">
-          <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
-            Phone number
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter phone number"
-            value={phoneMask(formData.phoneNumber)}
-            onChange={(e) => handleChange("phoneNumber", e.target.value)}
-            className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-          />
+          <div className="flex flex-col gap-[8px]">
+            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+              Phone number
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter phone number"
+              value={phoneMask(formData.phoneNumber)}
+              onChange={(e) => handleChange("phoneNumber", e.target.value)}
+              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
+          </div>
         </div>
 
         <div className="gap-[16px] flex justify-between mt-[24px] w-full">

@@ -323,7 +323,7 @@ export const ClientProfile = () => {
           <div>
             <p className="mb-1 text-2xl font-semibold">{user?.name || ""}</p>
             <p className="px-2 bg-blue-100 py-1.5 text-blue-600 font-semibold rounded-full inline-block text-nowrap">
-              Member since {user?.created_at || ""}
+              Member since {formatDate(user?.created_at || "")}
             </p>
           </div>
         </div>
