@@ -1,5 +1,5 @@
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import { ChevronDown } from "lucide-react";
+import { CalendarIcon, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
@@ -7,8 +7,9 @@ import Info from "shared/assets/icons/info";
 import SmallTooltip from "shared/assets/icons/small-tooltip";
 import { cn } from "shared/lib";
 import {
+  Button,
+  Calendar,
   Checkbox,
-  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -29,14 +30,19 @@ import {
 } from "shared/ui/tooltip";
 import { OnboardingClientLayout } from "../Layout";
 import { languages } from "./index";
+import { format } from "date-fns";
 
 export const DemographicStep = () => {
   const dispatch = useDispatch();
   const [dateOfBirth, setDateOfBirth] = useState("");
+  const [localDate, setLocalDate] = useState<Date | null>(null);
   const [menopauseStatus, setMenopauseStatus] = useState("");
   const [gender, setGender] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [aiExperience, setAiExperience] = useState("");
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
   const nav = useNavigate();
 
   const computeAge = (dobStr: string) => {
@@ -127,22 +133,74 @@ export const DemographicStep = () => {
     </div>
   );
 
-  const todayStr = new Date().toISOString().split("T")[0];
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    if (localDate) {
+      setLocalDate(new Date(localDate.setFullYear(year)));
+    }
+  };
+
+  const calendarContent = (
+    <>
+      <div className="flex gap-[8px] items-center m-4 mb-1">
+        Choose a year:
+        <select
+          value={selectedYear}
+          onChange={(e) => handleYearChange(Number(e.target.value))}
+          className="px-2 py-1 border rounded-md outline-0"
+        >
+          {Array.from(
+            { length: 100 },
+            (_, index) => new Date().getFullYear() - index
+          ).map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <Calendar
+        mode="single"
+        selected={localDate ?? undefined}
+        onSelect={(selectedDate) => {
+          if (selectedDate) {
+            setLocalDate(selectedDate);
+            setDateOfBirth(selectedDate.toLocaleDateString());
+          }
+        }}
+        initialFocus
+        month={new Date(selectedYear, 0)}
+      />
+    </>
+  );
 
   const mainContent = (
     <>
-      <div className="flex w-full flex-col items-start gap-[10px] ">
-        <label className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+      <div className="flex flex-col gap-[10px] items-start w-full">
+        <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
           Birth Date
         </label>
-        <Input
-          type="date"
-          max={todayStr}
-          value={dateOfBirth}
-          onChange={(e) => setDateOfBirth(e.target.value)}
-          className="w-full text-[14px] font-[Nunito] font-medium py-[11px] px-[16px]"
-          placeholder="Select your birth date"
-        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal border-[#DFDFDF] hover:bg-white",
+                !localDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="w-4 h-4 mr-2" />
+              {localDate ? format(localDate, "PPP") : "Pick a date"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-auto p-0 pointer-events-auto"
+            align="start"
+          >
+            {calendarContent}
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="flex flex-col items-start w-full gap-2">

@@ -65,7 +65,15 @@ export const MultiSelect = ({
         )}
         onClick={() => toggleOption(option)}
       >
-        {selected.includes(option) ? <CheckedIcon /> : <UncheckedIcon />}
+        {selected.includes(option) ? (
+          <span className="w-[16px] h-[16px]">
+            <CheckedIcon />
+          </span>
+        ) : (
+          <span className="w-[16px] h-[16px]">
+            <UncheckedIcon />
+          </span>
+        )}
         {option}
       </button>
     </li>
@@ -75,10 +83,9 @@ export const MultiSelect = ({
     <div className={cn("relative", className)} ref={dropdownRef}>
       <button
         type="button"
-        className={cn(
-          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center",
-          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 gap-2"
-        )}
+        className={
+          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center outline-0"
+        }
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
