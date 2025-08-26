@@ -81,10 +81,10 @@ const yn = (b: boolean | null | undefined) =>
 const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
   const bi = u.profile.basic_info;
   const cred = u.profile.credentials;
-  const pr = u.onboarding.practitioner_info;
-  const bs = u.onboarding.business_setup;
-  const ct = u.onboarding.client_tools;
-  const ag = u.onboarding.agreements;
+  const pr = u.onboarding?.practitioner_info;
+  const bs = u.onboarding?.business_setup;
+  const ct = u.onboarding?.client_tools;
+  const ag = u.onboarding?.agreements;
 
   return {
     ...DEFAULT_STATE,
@@ -102,34 +102,34 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
 
     expertise_areas: u.profile.expertise ?? [],
     years_experience:
-      cred.years_experience != null ? String(cred.years_experience) : "",
-    certifications: cred.certifications ?? [],
+      cred?.years_experience != null ? String(cred.years_experience) : "",
+    certifications: cred?.certifications ?? [],
     personal_story: u.profile.story ?? "",
     content_specialties: u.profile.content_topics ?? [],
 
-    practitioner_types: pr.types ?? [],
-    primary_niches: pr.niches ?? [],
-    school: pr.school ?? "",
-    recent_client_count: pr.recent_clients ?? "",
-    target_client_count: pr.target_clients ?? "",
-    uses_labs_supplements: yn(pr.uses_labs_supplements),
+    practitioner_types: pr?.types ?? [],
+    primary_niches: pr?.niches ?? [],
+    school: pr?.school ?? "",
+    recent_client_count: pr?.recent_clients ?? "",
+    target_client_count: pr?.target_clients ?? "",
+    uses_labs_supplements: yn(pr?.uses_labs_supplements),
 
-    business_challenges: bs.challenges ?? [],
-    uses_ai: yn(bs.uses_ai),
-    practice_management_software: bs.practice_software ?? "",
-    supplement_dispensing_method: bs.supplement_method ?? "",
+    business_challenges: bs?.challenges ?? [],
+    uses_ai: yn(bs?.uses_ai),
+    practice_management_software: bs?.practice_software ?? "",
+    supplement_dispensing_method: bs?.supplement_method ?? "",
 
-    biometrics_monitoring_method: yn(ct.biometrics),
-    lab_ordering_method: yn(ct.lab_ordering),
-    supplement_ordering_method: yn(ct.supplement_ordering),
+    biometrics_monitoring_method: yn(ct?.biometrics),
+    lab_ordering_method: yn(ct?.lab_ordering),
+    supplement_ordering_method: yn(ct?.supplement_ordering),
 
-    coach_admin_privacy_accepted: ag.coach_admin_privacy,
-    independent_contractor_accepted: ag.independent_contractor,
-    content_licensing_accepted: ag.content_licensing,
-    affiliate_terms_accepted: ag.affiliate_terms,
-    confidentiality_accepted: ag.confidentiality,
-    terms_of_use_accepted: ag.terms_of_use,
-    media_release_accepted: ag.media_release,
+    coach_admin_privacy_accepted: ag?.coach_admin_privacy,
+    independent_contractor_accepted: ag?.independent_contractor,
+    content_licensing_accepted: ag?.content_licensing,
+    affiliate_terms_accepted: ag?.affiliate_terms,
+    confidentiality_accepted: ag?.confidentiality,
+    terms_of_use_accepted: ag?.terms_of_use,
+    media_release_accepted: ag?.media_release,
 
     two_factor_enabled: DEFAULT_STATE.two_factor_enabled,
     two_factor_method: DEFAULT_STATE.two_factor_method,

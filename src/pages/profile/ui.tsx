@@ -251,10 +251,10 @@ export const ClientProfile = () => {
     ? user.name.split(" ").length > 1
       ? user.name
           .split(" ")
-          .map((word) => word[0].toLowerCase())
+          .map((word) => word[0].toUpperCase())
           .slice(0, 2)
           .join("")
-      : user.name.slice(0, 2).toLowerCase()
+      : user.name.slice(0, 2).toUpperCase()
     : "UN";
 
   return (

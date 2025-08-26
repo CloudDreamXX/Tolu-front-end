@@ -999,10 +999,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <Button
             variant="brightblue"
             onClick={() => setSummaryView(false)}
-            className={cn("w-[128px] ", {
-              "bg-[#D5DAE2] text-[#5F5F65] hover:bg-[#C4C8D4] hover:text-[#5F5F65] hover:cursor-not-allowed":
-                isButtonDisabled,
-            })}
+            className="w-[128px]"
           >
             Edit
           </Button>
@@ -1010,10 +1007,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <Button
             variant="brightblue"
             onClick={handleSubmit}
-            className={cn("w-[128px] ", {
-              "bg-[#D5DAE2] text-[#5F5F65] hover:bg-[#C4C8D4] hover:text-[#5F5F65] hover:cursor-not-allowed":
-                isButtonDisabled,
-            })}
+            className="w-[128px]"
           >
             Done
           </Button>

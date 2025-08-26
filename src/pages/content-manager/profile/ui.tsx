@@ -98,10 +98,10 @@ export const ContentManagerProfile = () => {
     ? user.profile.basic_info.name.split(" ").length > 1
       ? user.profile.basic_info.name
           .split(" ")
-          .map((word) => word[0].toLowerCase())
+          .map((word) => word[0].toUpperCase())
           .slice(0, 2)
           .join("")
-      : user.profile.basic_info.name.slice(0, 2).toLowerCase()
+      : user.profile.basic_info.name.slice(0, 2).toUpperCase()
     : "UN";
 
   return (
@@ -411,7 +411,7 @@ export const ContentManagerProfile = () => {
               <div className="md:col-span-1 flex flex-col gap-[8px]">
                 <span className="text-[#5F5F65] text-[18px] font-[500]">
                   Certificates:{" "}
-                  {user?.onboarding.practitioner_info.license_files.length ||
+                  {user?.onboarding?.practitioner_info?.license_files.length ||
                     licensePhotos.length}
                 </span>
                 {/* <div className="flex flex-wrap items-center gap-3">
