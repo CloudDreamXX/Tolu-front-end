@@ -247,6 +247,16 @@ export const ClientProfile = () => {
     }
   };
 
+  const initials = user?.name
+    ? user.name.split(" ").length > 1
+      ? user.name
+          .split(" ")
+          .map((word) => word[0].toLowerCase())
+          .slice(0, 2)
+          .join("")
+      : user.name.slice(0, 2).toLowerCase()
+    : "UN";
+
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 ">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -314,8 +324,8 @@ export const ClientProfile = () => {
           <div className="relative w-[100px] h-[100px]">
             <Avatar className="object-cover w-full h-full rounded-full">
               <AvatarImage src={previewUrl || photoUrl || undefined} />
-              <AvatarFallback className="text-3xl bg-slate-300">
-                {user?.name.slice(0, 2).toLowerCase() || "un"}
+              <AvatarFallback className="text-3xl bg-slate-300 ">
+                {initials.toLowerCase()}
               </AvatarFallback>
             </Avatar>
             <input

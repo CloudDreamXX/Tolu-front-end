@@ -1,4 +1,9 @@
 import { QuestionIcon } from "@phosphor-icons/react";
+import {
+  ChangePasswordRequest,
+  UserOnboardingInfo,
+  UserService,
+} from "entities/user";
 import { Edit, EyeClosed, EyeIcon, Microscope } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import BrainIcon from "shared/assets/icons/brain_2";
@@ -9,14 +14,9 @@ import WomansLine from "shared/assets/icons/womans-line";
 import FocusAreasIcon from "shared/assets/images/FocusAreas.png";
 import SafetyIcon from "shared/assets/images/Safety.png";
 import UsersIcon from "shared/assets/images/Users.png";
-import { Button, Input } from "shared/ui";
-import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
-import {
-  ChangePasswordRequest,
-  UserOnboardingInfo,
-  UserService,
-} from "entities/user";
 import { phoneMask, toast } from "shared/lib";
+import { Avatar, AvatarFallback, AvatarImage, Button, Input } from "shared/ui";
+import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
 
 export const ContentManagerProfile = () => {
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
@@ -94,6 +94,16 @@ export const ContentManagerProfile = () => {
     }
   };
 
+  const initials = user?.profile.basic_info.name
+    ? user.profile.basic_info.name.split(" ").length > 1
+      ? user.profile.basic_info.name
+          .split(" ")
+          .map((word) => word[0].toLowerCase())
+          .slice(0, 2)
+          .join("")
+      : user.profile.basic_info.name.slice(0, 2).toLowerCase()
+    : "UN";
+
   return (
     <>
       <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px]">
@@ -111,12 +121,12 @@ export const ContentManagerProfile = () => {
         </div>
 
         <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] grid md:grid-cols-[180px_1fr] gap-x-[16px] md:gap-x-[24px] gap-y-[16px] lg:grid-cols-[200px_1fr] lg:gap-[32px]">
-          <img
-            className="w-[143px] h-[133px] md:w-[200px] md:h-[185px] rounded-[12px] object-cover block"
-            src={photoUrl || ""}
-            alt="Profile photo"
-          />
-
+          <Avatar className="w-[143px] h-[133px] md:w-[200px] md:h-[185px] rounded-[12px] object-cover block">
+            <AvatarImage src={photoUrl || undefined} />
+            <AvatarFallback className="text-3xl bg-slate-300">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
           <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px] lg:hidden">
             <Field
               label="Full name:"
