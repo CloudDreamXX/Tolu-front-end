@@ -1,12 +1,13 @@
 import { ISessionResult } from "entities/coach";
 import parse from "html-react-parser";
+import DOMPurify from "dompurify";
 import React from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import BlueChevron from "shared/assets/icons/blue-chevron";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
-import "react-quill/dist/quill.snow.css";
+import { Editor } from "primereact/editor";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -40,6 +41,7 @@ interface ConversationItemProps {
   handleMarkAsClick: () => void;
   handleDeleteContent: (id: string) => void;
   onMarkAsFinalHandler: (contentId?: string | undefined) => Promise<void>;
+  onRestoreOriginalFormat: () => void;
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
@@ -70,6 +72,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   handleMarkAsClick,
   handleDeleteContent,
   onMarkAsFinalHandler,
+  onRestoreOriginalFormat,
 }) => {
   const isHTML = isHtmlContent(pair.content);
 
@@ -207,6 +210,11 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     </div>
   );
 
+  const handleEditorChange = (e: { htmlValue: any }) => {
+    const formattedContent = e.htmlValue;
+    setEditedContent(formattedContent);
+  };
+
   const renderEditView = () => (
     <div className="flex flex-col gap-2">
       <input
@@ -216,45 +224,11 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         placeholder="Title"
         className="text-xl font-bold w-full border border-[#008FF6] rounded-[16px] p-[16px] outline-none"
       />
-      <ReactQuill
-        theme="snow"
+      <Editor
         value={editedContent}
-        onChange={setEditedContent}
+        onTextChange={handleEditorChange}
+        style={{ height: "200px" }}
         className="bg-white border border-[#008FF6] rounded-[16px] p-[16px] h-fit"
-        formats={[
-          "header",
-          "bold",
-          "italic",
-          "underline",
-          "strike",
-          "blockquote",
-          "code-block",
-          "list",
-          "bullet",
-          "indent",
-          "link",
-          "color",
-          "background",
-          "align",
-          "hr",
-          "br",
-          "blockquote",
-          "\n",
-        ]}
-        modules={{
-          toolbar: [
-            [{ header: [1, 2, 3, 4] }],
-            ["bold", "italic", "underline", "strike"],
-            [{ list: "ordered" }, { list: "bullet" }],
-            [{ align: [] }],
-            ["blockquote", "code-block"],
-            [{ color: [] }],
-            ["hr"],
-          ],
-          clipboard: {
-            matchVisual: false,
-          },
-        }}
       />
 
       {isEditing && (
@@ -265,6 +239,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           >
             Cancel
           </button>
+          <Button variant="light-blue" onClick={onRestoreOriginalFormat}>
+            Restore original format
+          </Button>
           <Button
             variant="brightblue"
             className="text-[16px] px-8"
@@ -279,10 +256,19 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     </div>
   );
 
+  const HtmlContent = (htmlContent: string) => {
+    const sanitizedHtml = DOMPurify.sanitize(htmlContent);
+    const content = parse(sanitizedHtml);
+
+    return <div className="html-content">{content}</div>;
+  };
+
   const renderContent = () => {
     if (isHTML) {
       return (
-        <div className="prose-sm prose max-w-none">{parse(pair.content)}</div>
+        <div className="prose-sm prose max-w-none">
+          {HtmlContent(pair.content)}
+        </div>
       );
     }
     return <div className="whitespace-pre-wrap">{pair.content}</div>;

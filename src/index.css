@@ -113,6 +113,18 @@ li::marker {
   line-height: 1.5;
 }
 
+.prose .ql-editor p,
+.prose .ql-editor li,
+.prose .ql-editor li > p {
+  margin: 0;
+}
+
+.prose .ql-editor ul,
+.prose .ql-editor ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

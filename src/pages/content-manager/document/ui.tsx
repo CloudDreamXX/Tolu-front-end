@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollArea } from "shared/ui";
 import { BadRateResponse } from "widgets/bad-rate-response-popup";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
@@ -111,6 +111,13 @@ export const ContentManagerDocument: React.FC = () => {
     handleDeleteSelectedText,
   } = useTextSelectionTooltip();
 
+  const [originalEdit, setOriginalEdit] = useState<{
+    contentId: string;
+    content: string;
+    title: string;
+    query: string;
+  } | null>(null);
+
   useEffect(() => {
     const createDocument = async () => {
       if (isNewDocument && location.state) {
@@ -149,14 +156,31 @@ export const ContentManagerDocument: React.FC = () => {
     setEditedTitle(selectedDocument?.aiTitle ?? selectedDocument?.title ?? "");
     setEditedQuery(selectedDocument?.query ?? "");
     setIsEditing(true);
+
+    setOriginalEdit({
+      contentId: pair.id,
+      content: pair.content,
+      title: selectedDocument?.aiTitle ?? selectedDocument?.title ?? "",
+      query: selectedDocument?.query ?? "",
+    });
+  };
+
+  const onRestoreOriginalFormat = () => {
+    if (originalEdit && selectedDocumentId === originalEdit.contentId) {
+      setEditedContent(originalEdit.content);
+      setEditedTitle(originalEdit.title);
+      setEditedQuery(originalEdit.query);
+    }
   };
 
   const onSaveEdit = async (contentId: string) => {
     await handleSaveEdit(contentId, documentId, loadDocument);
+    setOriginalEdit(null);
   };
 
   const onCancelEdit = () => {
     setIsEditing(false);
+    setOriginalEdit(null);
   };
 
   const onMarkAsClick = () => {
@@ -271,6 +295,7 @@ export const ContentManagerDocument: React.FC = () => {
                     handleMarkAsClick={onMarkAsClick}
                     handleDeleteContent={handleDeleteClick}
                     onMarkAsFinalHandler={onMarkAsFinalHandler}
+                    onRestoreOriginalFormat={onRestoreOriginalFormat}
                   />
                 </>
               )}
