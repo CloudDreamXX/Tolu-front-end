@@ -9,9 +9,11 @@ import { HistoryPopup } from "../history-popup";
 // import Share from "shared/assets/icons/share";
 // import SaveModal from "../save-modal/ui";
 import { ArrowLeft, Eye } from "@phosphor-icons/react/dist/ssr";
+import { Message } from "features/chat";
 import { useNavigate } from "react-router-dom";
 
 interface ChatActionsProps {
+  chatState?: Message[];
   onRegenerate?: () => void;
   isSearching: boolean;
   hasMessages: boolean;
@@ -26,6 +28,7 @@ interface ChatActionsProps {
 }
 
 export const ChatActions: React.FC<ChatActionsProps> = ({
+  chatState,
   isHistoryPopup,
   onStatusChange,
   initialRating,
@@ -105,76 +108,77 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
         )}
       </div>
 
-      <div className="flex gap-2 xl:flex-col">
-        {onStatusChange && (
-          <button
-            className="xl:hidden block bg-[#DDEBF6] rounded-full h-8 w-8"
-            onClick={() => {
-              const newStatus =
-                readStatus === "read" ? "saved_for_later" : "read";
-              setReadStatus(newStatus);
-              onStatusChange(newStatus);
-            }}
-          >
-            <Eye
-              weight={readStatus === "read" ? "fill" : "regular"}
-              className="w-4 h-4 m-auto text-blue-600"
-            />
-          </button>
-        )}
-        {/* <button
+      {chatState && chatState.length > 0 && (
+        <div className="flex gap-2 xl:flex-col">
+          {onStatusChange && (
+            <button
+              className="xl:hidden block bg-[#DDEBF6] rounded-full h-8 w-8"
+              onClick={() => {
+                const newStatus =
+                  readStatus === "read" ? "saved_for_later" : "read";
+                setReadStatus(newStatus);
+                onStatusChange(newStatus);
+              }}
+            >
+              <Eye
+                weight={readStatus === "read" ? "fill" : "regular"}
+                className="w-4 h-4 m-auto text-blue-600"
+              />
+            </button>
+          )}
+          {/* <button
           className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center"
           onClick={handleShare}
         >
           <Share />
         </button> */}
-        <button
-          className="bg-[#DDEBF6] rounded-full h-8 w-8"
-          onClick={onReadAloud}
-        >
-          <SpeakerSimpleHighIcon
-            weight={isReadingAloud ? "fill" : "regular"}
-            className="w-4 h-4 m-auto text-blue-600"
-          />
-        </button>
-        <button
-          className="bg-[#DDEBF6] rounded-full h-8 w-8"
-          onClick={() => setThumbsUpModalOpen(true)}
-        >
-          <StarIcon
-            weight={rating === 5 ? "fill" : "regular"}
-            className="w-4 h-4 m-auto text-blue-600"
-          />
-        </button>
-        <button
-          className="bg-[#DDEBF6] rounded-full h-8 w-8"
-          onClick={() => setThumbsDownModalOpen(true)}
-        >
-          <ThumbsDownIcon
-            weight={rating === 1 ? "fill" : "regular"}
-            className="w-4 h-4 m-auto text-blue-600"
-          />
-        </button>
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            onClick={onReadAloud}
+          >
+            <SpeakerSimpleHighIcon
+              weight={isReadingAloud ? "fill" : "regular"}
+              className="w-4 h-4 m-auto text-blue-600"
+            />
+          </button>
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            onClick={() => setThumbsUpModalOpen(true)}
+          >
+            <StarIcon
+              weight={rating === 5 ? "fill" : "regular"}
+              className="w-4 h-4 m-auto text-blue-600"
+            />
+          </button>
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            onClick={() => setThumbsDownModalOpen(true)}
+          >
+            <ThumbsDownIcon
+              weight={rating === 1 ? "fill" : "regular"}
+              className="w-4 h-4 m-auto text-blue-600"
+            />
+          </button>
 
-        <FeedbackModal
-          initialRating={5}
-          isOpen={thumbsUpModalOpen}
-          onOpenChange={(open) => {
-            setThumbsUpModalOpen(open);
-          }}
-          setNewRating={setRating}
-          currentChatId={currentChatId}
-        />
-        <FeedbackModal
-          initialRating={1}
-          isOpen={thumbsDownModalOpen}
-          onOpenChange={(open) => {
-            setThumbsDownModalOpen(open);
-          }}
-          setNewRating={setRating}
-          currentChatId={currentChatId}
-        />
-        {/* <button
+          <FeedbackModal
+            initialRating={5}
+            isOpen={thumbsUpModalOpen}
+            onOpenChange={(open) => {
+              setThumbsUpModalOpen(open);
+            }}
+            setNewRating={setRating}
+            currentChatId={currentChatId}
+          />
+          <FeedbackModal
+            initialRating={1}
+            isOpen={thumbsDownModalOpen}
+            onOpenChange={(open) => {
+              setThumbsDownModalOpen(open);
+            }}
+            setNewRating={setRating}
+            currentChatId={currentChatId}
+          />
+          {/* <button
           className="bg-[#DDEBF6] rounded-full h-8 w-8"
           onClick={onRegenerate}
           disabled={isSearching || !hasMessages}
@@ -182,7 +186,8 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
         >
           <RotateCw className="w-4 h-4 m-auto text-blue-600" />
         </button> */}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

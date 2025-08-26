@@ -49,7 +49,7 @@ const HistoryPopupComponent: React.FC<Props> = ({ fromPath }) => {
     <div ref={historyRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center mb-[8px]"
+        className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
       >
         <History />
       </button>

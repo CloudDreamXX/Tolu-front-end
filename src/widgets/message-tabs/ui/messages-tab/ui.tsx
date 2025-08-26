@@ -10,17 +10,19 @@ import {
   DetailsChatItemModel,
 } from "entities/chat";
 import { RootState } from "entities/store";
-import { Loader2Icon, Send, TrashIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ArrowDown, Loader2Icon, Send, TrashIcon } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Smiley from "shared/assets/icons/smiley";
 import EmptyChat from "shared/assets/images/EmptyChat.png";
-import { cn, usePageWidth } from "shared/lib";
+import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
 import { useFilePicker } from "./useFilePicker";
 import { useNavigate } from "react-router-dom";
 import { DaySeparator } from "../components/DaySeparator";
 import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
+import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
+import { ChatScroller } from "../components/ChatScroller";
 
 function getUniqueMessages(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
@@ -36,6 +38,10 @@ interface MessagesTabProps {
   chat: DetailsChatItemModel;
 }
 
+type ListItem =
+  | { type: "separator"; key: string; label: string }
+  | { type: "message"; key: string; msg: ChatMessageModel };
+
 export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
   const nav = useNavigate();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
@@ -44,8 +50,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [sending, setSending] = useState(false);
   const [input, setInput] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const firstScrollRef = useRef<HTMLDivElement>(null);
 
   const profile = useSelector((state: RootState) => state.user.user);
   const {
@@ -56,90 +60,134 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
     remove,
     getDropzoneProps,
     dragOver,
+    clear,
   } = useFilePicker({
     accept: ["application/pdf", "image/jpeg", "image/png"],
-    maxFiles: 4,
     maxFileSize: 10 * 1024 * 1024,
   });
+
+  const activeChatIdRef = useRef<string | undefined>(undefined);
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
+  const [atBottom, setAtBottom] = useState(true);
+  const prevLenRef = useRef(0);
+
+  const initializingRef = useRef(true);
+
   const [page, setPage] = useState<number>(1);
   const [emojiModalOpen, setEmojiModalOpen] = useState(false);
-
   const hasNext = useRef(false);
 
+  const listData: ListItem[] = useMemo(() => {
+    const sorted = [...messages]
+      .sort(
+        (a, b) =>
+          new Date(a.created_at || 0).getTime() -
+          new Date(b.created_at || 0).getTime()
+      )
+      .filter((m) =>
+        search
+          ? (m.content || "").toLowerCase().includes(search.toLowerCase())
+          : true
+      );
+
+    const out: ListItem[] = [];
+    let lastKey: string | null = null;
+
+    for (let i = 0; i < sorted.length; i++) {
+      const msg = sorted[i];
+      const d = new Date(msg.created_at || 0);
+      const k = dayKey(d);
+      if (k !== lastKey) {
+        out.push({
+          type: "separator",
+          key: `sep-${k}-${i}`,
+          label: formatDayLabel(d),
+        });
+        lastKey = k;
+      }
+      out.push({ type: "message", key: msg.id, msg });
+    }
+    return out;
+  }, [messages, search]);
+
   const loadMessages = async (page: number) => {
-    if (loadingMore) return;
+    if (!chat?.chat_id) return;
+    if (loadingMore && page !== 1) return;
 
     try {
-      setLoading(true);
-      const res = await ChatService.fetchChatMessages(chat.chat_id, { page });
-      setMessages((prev) => {
-        const newMessages =
-          page === 1 ? res.messages : [...prev, ...res.messages];
-        return getUniqueMessages(newMessages);
-      });
+      if (page === 1) setLoading(true);
+      else setLoadingMore(true);
 
-      if (page === 1) {
-        firstScrollRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
+      const currentChatId = chat.chat_id;
+      const res = await ChatService.fetchChatMessages(currentChatId, { page });
+
+      if (activeChatIdRef.current !== currentChatId) return;
+
+      setMessages((prev) => {
+        const merged = page === 1 ? res.messages : [...prev, ...res.messages];
+        return getUniqueMessages(merged);
+      });
 
       hasNext.current = res.has_next;
     } catch (error) {
       console.error("Error fetching messages:", error);
+      toast({ title: "Failed to load messages", variant: "destructive" });
     } finally {
       setLoading(false);
       setLoadingMore(false);
     }
   };
 
-  const handleScroll = () => {
-    const scrollElement = scrollRef.current;
-    if (scrollElement) {
-      if (scrollElement.scrollTop === 0 && !loadingMore && hasNext.current) {
-        setLoadingMore(true);
-        setPage((prevPage) => {
-          const newPage = prevPage + 1;
-          loadMessages(newPage);
-          return newPage;
-        });
+  useEffect(() => {
+    if (!chat?.chat_id) return;
+    activeChatIdRef.current = chat.chat_id;
+
+    initializingRef.current = true;
+
+    setMessages([]);
+    setPage(1);
+    hasNext.current = false;
+    setAtBottom(true);
+    prevLenRef.current = 0;
+    setInput("");
+    setEmojiModalOpen(false);
+    clear();
+    setLoading(true);
+
+    (async () => {
+      await loadMessages(1);
+      if (activeChatIdRef.current === chat.chat_id) {
+        const api = virtuosoRef.current;
+        if (api) {
+          api.scrollTo({ top: Number.MAX_SAFE_INTEGER });
+          requestAnimationFrame(() => {
+            api.scrollToIndex({
+              index: Math.max(0, listData.length - 1),
+              align: "end",
+            });
+            requestAnimationFrame(() => {
+              initializingRef.current = false;
+            });
+          });
+        } else {
+          initializingRef.current = false;
+        }
+      } else {
+        initializingRef.current = false;
       }
-    }
-  };
+    })();
+  }, [chat?.chat_id]);
 
   useEffect(() => {
-    if (chat?.chat_id) {
-      loadMessages(page);
-    }
-  }, [chat?.chat_id, page]);
-
-  const handleNewMessage = (msg: ChatMessageModel) => {
-    if (msg.chat_id !== chat?.chat_id) return;
-    setMessages((prev) => {
-      return prev.some((m) => m.id === msg.id) ? prev : [msg, ...prev];
-    });
-    setTimeout(() => {
-      firstScrollRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 50);
-  };
-
-  useEffect(() => {
-    const scrollElement = scrollRef.current;
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
-    }
-    return () => {
-      const scrollElement = scrollRef.current;
-      if (scrollElement) {
-        scrollElement.removeEventListener("scroll", handleScroll);
-      }
+    const onNew = (msg: ChatMessageModel) => {
+      if (msg.chat_id !== chat?.chat_id) return;
+      setMessages((prev) =>
+        prev.some((m) => m.id === msg.id) ? prev : [msg, ...prev]
+      );
     };
-  }, [scrollRef.current, loadingMore]);
 
-  useEffect(() => {
-    ChatSocketService.on("new_message", handleNewMessage);
-
-    return () => {
-      ChatSocketService.off("new_message", handleNewMessage);
-    };
+    ChatSocketService.on("new_message", onNew);
+    return () => ChatSocketService.off("new_message", onNew);
   }, [chat?.chat_id]);
 
   const sendAll = async () => {
@@ -204,10 +252,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
       setMessages((prev) => prev.filter((m) => !m.id.startsWith("tmp-")));
     } finally {
       setSending(false);
-      setTimeout(
-        () => firstScrollRef.current?.scrollIntoView({ behavior: "smooth" }),
-        100
-      );
+
+      if (atBottom) {
+        requestAnimationFrame(() => scrollToBottom("smooth"));
+      }
     }
   };
 
@@ -221,6 +269,26 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
       sendAll();
     }
   };
+
+  useEffect(() => {
+    const prev = prevLenRef.current;
+    const curr = listData.length;
+
+    if (prev === 0 && curr > 0) {
+      virtuosoRef.current?.scrollTo({ top: Number.MAX_SAFE_INTEGER });
+      requestAnimationFrame(() =>
+        virtuosoRef.current?.scrollToIndex({ index: curr - 1, align: "end" })
+      );
+    } else if (curr > prev && atBottom) {
+      virtuosoRef.current?.scrollToIndex({
+        index: curr - 1,
+        align: "end",
+        behavior: "smooth",
+      });
+    }
+
+    prevLenRef.current = curr;
+  }, [listData.length, atBottom]);
 
   if (loading) {
     return (
@@ -256,11 +324,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
   };
 
   let currentStyle = containerStyleLg;
-  if (isMobile) {
-    currentStyle = containerStyle;
-  } else if (isTablet) {
-    currentStyle = containerStyleMd;
-  }
+  if (isMobile) currentStyle = containerStyle;
+  else if (isTablet) currentStyle = containerStyleMd;
 
   const renderSend = () => {
     if (sending) {
@@ -270,79 +335,96 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
     return isMobileOrTablet ? <Send width={23} height={23} /> : "Send";
   };
 
+  const showScrollBtn = !atBottom;
+  const scrollToBottom = (behavior: "auto" | "smooth" | undefined = "auto") => {
+    const api = virtuosoRef.current;
+    if (!api || listData.length === 0) return;
+
+    api.scrollTo({ top: Number.MAX_SAFE_INTEGER, behavior });
+
+    requestAnimationFrame(() => {
+      api.scrollToIndex({
+        index: listData.length - 1,
+        align: "end",
+        behavior,
+      });
+
+      requestAnimationFrame(() => {
+        api.scrollTo({ top: Number.MAX_SAFE_INTEGER, behavior });
+      });
+    });
+  };
+
   return (
     <>
-      <div
-        ref={scrollRef}
-        style={currentStyle}
-        className="w-full pr-3 overflow-auto custom-message-scroll"
-      >
-        <div className="flex flex-col justify-end gap-2 pb-4 mt-auto">
-          {loadingMore && (
-            <div className="flex items-center justify-center mb-2">
-              <Loader2Icon className="animate-spin" />
-            </div>
-          )}
-          {(() => {
-            const sorted = [...messages]
-              .sort((a, b) => {
-                const da = new Date(a.created_at || 0).getTime();
-                const db = new Date(b.created_at || 0).getTime();
-                return da - db;
-              })
-              .filter((msg) => {
-                if (!search) return true;
-
-                return msg.content.toLowerCase().includes(search.toLowerCase());
-              });
-
-            const nodes: React.ReactNode[] = [];
-            let lastKey: string | null = null;
-
-            for (let i = 0; i < sorted.length; i++) {
-              const msg = sorted[i];
-              const d = new Date(msg.created_at || 0);
-              const k = dayKey(d);
-
-              if (k !== lastKey) {
-                nodes.push(
-                  <DaySeparator
-                    key={`sep-${k}-${i}`}
-                    label={formatDayLabel(d)}
-                  />
-                );
-                lastKey = k;
-              }
-
-              nodes.push(
+      <div style={currentStyle} className="relative w-full pr-3">
+        {listData.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <img src={EmptyChat} alt="No files" className="mb-6 md:mb-12" />
+            <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
+              There are no messages yet...
+            </h1>
+            <p className="mt-2 text-base md:text-xl text-[#5F5F65]">
+              Start a conversation with your coach if you have a question or
+              need support.
+            </p>
+          </div>
+        ) : (
+          <Virtuoso
+            key={chat.chat_id || "no-chat"}
+            ref={virtuosoRef}
+            style={{ height: "100%" }}
+            data={listData}
+            initialTopMostItemIndex={Math.max(0, listData.length - 1)}
+            itemContent={(_, item) =>
+              item.type === "separator" ? (
+                <DaySeparator key={item.key} label={item.label} />
+              ) : (
                 <MessageBubble
-                  key={msg.id}
-                  message={msg}
+                  key={item.key}
+                  message={item.msg}
                   avatar={
                     chat.chat_type === "group" ? undefined : chat.avatar_url
                   }
-                  isOwn={msg.sender?.email === profile?.email}
-                  author={msg.sender?.name || "Unknown User"}
+                  isOwn={item.msg.sender?.email === profile?.email}
+                  author={item.msg.sender?.name || "Unknown User"}
                 />
-              );
+              )
             }
+            computeItemKey={(_, item) => item.key}
+            alignToBottom
+            followOutput="smooth"
+            atBottomStateChange={setAtBottom}
+            startReached={async () => {
+              if (initializingRef.current) return;
+              if (loadingMore) return;
+              if (!hasNext.current) return;
 
-            return nodes;
-          })()}
-          {!loading && messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center mt-20 text-center lg:mt-40">
-              <img src={EmptyChat} alt="No files" className="mb-6 md:mb-12" />
-              <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
-                There are no messages yet...
-              </h1>
-              <p className="mt-2 text-base md:text-xl text-[#5F5F65]">
-                Start a conversation with your coach if you have a question or
-                need support.
-              </p>
-            </div>
-          )}
-          <div ref={firstScrollRef} />
-        </div>
+              const next = page + 1;
+              setPage(next);
+              await loadMessages(next);
+            }}
+            increaseViewportBy={{ top: 200, bottom: 400 }}
+            components={{
+              Scroller: ChatScroller,
+              Footer: () =>
+                loadingMore ? (
+                  <div className="flex justify-center py-2">
+                    <Loader2Icon className="w-5 h-5 animate-spin" />
+                  </div>
+                ) : null,
+            }}
+          />
+        )}
+
+        {showScrollBtn && (
+          <button
+            onClick={() => scrollToBottom("auto")}
+            className="absolute p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-12 hover:bg-blue-600"
+          >
+            <ArrowDown className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       <div className="pt-2">
@@ -361,7 +443,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
           footer={
             <div className="flex flex-col w-full">
               {files.length > 0 && (
-                <div className="mе-1">
+                <div className="mt-1">
                   <p className="text-sm font-medium text-[#1D1D1F]">
                     Attached Files:
                   </p>

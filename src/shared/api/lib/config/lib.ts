@@ -18,6 +18,7 @@ export const API_ROUTES = {
   },
   CLIENT: {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",
+    GET_SHARED_COACH_CONTENT: "/client/shared-coach-content/{content_id}",
     ACCEPT_COACH_INVITE: "/client/accept-coach-invite",
     GET_SHARED_CONTENT_BY_ID: "/client/shared-coach-content/{content_id}",
     GET_LIBRARY_CONTENT: "/client/library",

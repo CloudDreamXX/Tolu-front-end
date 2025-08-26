@@ -1,8 +1,17 @@
+import { ClientService } from "entities/client";
 import { setIsMobileDailyJournalOpen } from "entities/client/lib";
 import { RootState } from "entities/store";
-import { ReactElement } from "react";
+import { logout } from "entities/user";
+import { LoadingScreen } from "pages/loading";
+import { ReactElement, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import {
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { DailyJournal } from "widgets/dayli-journal";
 import { getNavigation } from "widgets/navigations/lib";
 import { getSideBar } from "widgets/sidebars";
@@ -83,4 +92,51 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   return <Outlet />;
+};
+
+export const RedirectContentToLibrary = () => {
+  const { documentId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { token, userRole } = useSelector((state: RootState) => ({
+    token: state.user?.token,
+    userRole: state.user?.user?.roleName,
+  }));
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      if (!documentId) return;
+
+      if (userRole === "Coach" && token) {
+        dispatch(logout());
+        localStorage.setItem(
+          "redirectAfterLogin",
+          `/library/document/${documentId}`
+        );
+        dispatch(logout());
+        navigate("/auth", { replace: true });
+        return;
+      }
+
+      try {
+        await ClientService.fetchSharedCoachContentByContentId(documentId);
+        navigate(`/library/document/${documentId}`, { replace: true });
+      } catch {
+        if (userRole !== "Client") {
+          localStorage.removeItem("redirectAfterLogin");
+          dispatch(logout());
+          navigate("/auth", { replace: true });
+        } else {
+          navigate("/library", { replace: true });
+        }
+      } finally {
+        navigate("/library", { replace: true });
+      }
+    };
+
+    fetchContent();
+  }, [documentId, userRole, dispatch]);
+
+  return <LoadingScreen />;
 };

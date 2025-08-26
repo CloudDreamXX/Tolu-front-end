@@ -15,6 +15,7 @@ import { Button, Textarea } from "shared/ui";
 import { NoteItem } from "widgets/notes-item/ui";
 import { useFilePicker } from "../messages-tab/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
+import NoRecommended from "shared/assets/images/NoRecommended.png";
 
 interface NotesTabProps {
   search?: string;
@@ -192,6 +193,17 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
 
     prevLenRef.current = curr;
   }, [dataForList.length, atBottom]);
+
+  if (!isLoading && dataForList.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center mt-20 text-center mb:mt-40">
+        <img src={NoRecommended} alt="No files" className="mb-6 md:mb-12" />
+        <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
+          No notes have been shared yet...
+        </h1>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">

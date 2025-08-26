@@ -22,6 +22,7 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isInvitedClient = location.state?.isInvitedClient === true || null;
+  const redirectPath = localStorage.getItem("redirectAfterLogin");
 
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginError("");
@@ -61,7 +62,13 @@ export const LoginForm = () => {
           title: "Login successful",
           description: "Welcome back!",
         });
-        navigate("/", { replace: true });
+
+        if (redirectPath) {
+          localStorage.removeItem("redirectAfterLogin");
+          navigate(redirectPath, { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
       } else {
         throw new Error("Invalid server response format");
       }
@@ -115,7 +122,7 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="flex flex-col xl:flex-row w-full h-screen">
+    <div className="flex flex-col w-full h-screen xl:flex-row">
       <div className="w-full xl:max-w-[665px] h-[150px] xl:h-full bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
         <aside className="py-[10px] px-[95px] xl:p-[40px] flex items-center justify-center flex-col">
           <h1 className="text-white font-open text-center text-[44.444px] xl:text-[96px] font-bold">
@@ -127,7 +134,7 @@ export const LoginForm = () => {
         </aside>
       </div>
 
-      <div className="w-full h-full flex justify-center xl:items-center flex-1 bg-white">
+      <div className="flex justify-center flex-1 w-full h-full bg-white xl:items-center">
         <form
           className="w-full md:w-[550px] flex flex-col mt-[44px] md:mt-[121px] xl:mt-0 py-[24px] px-[16px] md:p-0 xl:items-center gap-[40px] xl:gap-[60px]"
           onSubmit={handleSubmit}
@@ -177,7 +184,7 @@ export const LoginForm = () => {
                 <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
                   Password
                 </label>
-                <div className="flex flex-row-reverse items-center w-full relative">
+                <div className="relative flex flex-row-reverse items-center w-full">
                   <Input
                     type={showPassword ? "password" : "text"}
                     placeholder="Enter Password"

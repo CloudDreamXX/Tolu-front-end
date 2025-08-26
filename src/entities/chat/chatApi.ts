@@ -1,4 +1,5 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
+import { AxiosError } from "axios";
 import { toast } from "shared/lib";
 import { getAvatarUrl } from "widgets/message-tabs/helpers";
 import { ChatService } from ".";
@@ -308,7 +309,39 @@ export const chatApi = createApi({
           dispatch(clearDownloadProgress(fileUrl));
           return { data: url };
         } catch (e: any) {
-          return { error: e };
+          if (e instanceof AxiosError) {
+            return {
+              error: {
+                status: e.response?.status ?? 500,
+                data: e.response?.data ?? {
+                  message: e.message,
+                  code: e.code ?? "AXIOS_ERROR",
+                },
+              },
+            };
+          }
+
+          if (e instanceof Error) {
+            return {
+              error: {
+                status: 500,
+                data: {
+                  message: e.message,
+                  code: "ERROR",
+                },
+              },
+            };
+          }
+
+          return {
+            error: {
+              status: 500,
+              data: {
+                message: String(e),
+                code: "UNKNOWN",
+              },
+            },
+          };
         }
       },
       keepUnusedDataFor: 600,

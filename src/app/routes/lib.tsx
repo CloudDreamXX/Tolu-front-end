@@ -11,18 +11,15 @@ import {
 } from "pages/content-manager";
 import { ContentManagerClients } from "pages/content-manager/clients";
 import { ContentManagerMessages } from "pages/content-manager/messages";
+import { ContentManagerProfile } from "pages/content-manager/profile";
 import { HealthSnapshot } from "pages/health-snapshot";
 import { Library } from "pages/library";
 import { LibraryChat } from "pages/library-chat";
 import { LibraryDocument } from "pages/library-document";
+import { ClientMessages } from "pages/messages/ui";
+import { ClientProfile } from "pages/profile";
 import { UserManagement } from "pages/user-management";
-import {
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useParams,
-} from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
 import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
@@ -46,10 +43,7 @@ import { OnboardingWelcome } from "widgets/OnboardingPractitioner/onboarding-wel
 import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
 import { SelectType } from "widgets/OnboardingPractitioner/select-type";
 import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
-import { MainLayout, ProtectedRoute } from "./ui";
-import { ClientMessages } from "pages/messages/ui";
-import { ContentManagerProfile } from "pages/content-manager/profile";
-import { ClientProfile } from "pages/profile";
+import { MainLayout, ProtectedRoute, RedirectContentToLibrary } from "./ui";
 
 export const AppRoutes = () => {
   return (
@@ -197,11 +191,6 @@ export const AppRoutes = () => {
       {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
     </Routes>
   );
-};
-
-const RedirectContentToLibrary = () => {
-  const { documentId } = useParams();
-  return <Navigate to={`/library/document/${documentId}`} replace />;
 };
 
 const RedirectToNewPassword = () => {

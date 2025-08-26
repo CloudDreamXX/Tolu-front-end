@@ -96,3 +96,13 @@ export interface Client {
   created_at: string;
   updated_at: string;
 }
+
+export interface SharedCoachContentByContentIdResponse {
+  content: {
+    id: string;
+    title: string;
+    content: string;
+    created_at: string;
+    shared_at: string;
+  };
+}

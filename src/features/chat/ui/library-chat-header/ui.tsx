@@ -87,7 +87,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           {(isCoach || isExistingChat) && <span>{displayChatTitle}</span>}
         </div>
         {isExistingChat && (
-          <div className="hidden xl:block px-2 py-1 text-xs text-green-700 bg-green-100 rounded">
+          <div className="hidden px-2 py-1 text-xs text-green-700 bg-green-100 rounded xl:block">
             Existing Chat
           </div>
         )}
@@ -109,7 +109,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       </div>
       <div className="flex flex-row gap-2 w-full md:w-fit mt-[8px] md:mt-0">
         <button
-          className="flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hover:bg-blue-700 w-full xl:w-fit"
+          className="flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hoverable:hover:bg-blue-700 w-full xl:w-fit"
           onClick={onNewSearch}
         >
           <MagnifyingGlassPlusIcon width={24} height={24} /> New Search

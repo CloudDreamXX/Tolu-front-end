@@ -7,6 +7,7 @@ import {
   RequestInvitePayload,
   UserProfileUpdate,
   Client,
+  SharedCoachContentByContentIdResponse,
 } from "./model";
 
 export class ClientService {
@@ -205,5 +206,16 @@ export class ClientService {
     if (photo) formData.append("photo", photo);
 
     return ApiService.put<any>(endpoint, formData);
+  }
+
+  static async fetchSharedCoachContentByContentId(
+    contentId: string
+  ): Promise<SharedCoachContentByContentIdResponse> {
+    return ApiService.get<SharedCoachContentByContentIdResponse>(
+      API_ROUTES.CLIENT.GET_SHARED_COACH_CONTENT.replace(
+        "{content_id}",
+        contentId
+      )
+    );
   }
 }

@@ -753,9 +753,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           <CardContent
             className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}
           >
-            {chatState.length > 0 && isCoach && !isMobileOrTablet && (
+            {!isMobileOrTablet && (
               <div className="w-fit h-fit">
                 <ChatActions
+                  chatState={chatState}
                   isSearching={isSearching}
                   hasMessages={chatState.length >= 2}
                   isHistoryPopup
@@ -784,9 +785,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               <div></div>
             )}
           </CardContent>
-          {chatState.length > 0 && isCoach && isMobileOrTablet && (
+          {isMobileOrTablet && (
             <div className="w-fit mx-auto h-fit mb-[16px]">
               <ChatActions
+                chatState={chatState}
                 isSearching={isSearching}
                 hasMessages={chatState.length >= 2}
                 isHistoryPopup

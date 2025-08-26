@@ -6,6 +6,9 @@ import { useSelector } from "react-redux";
 import SignOutIcon from "shared/assets/icons/signout";
 import { cn, phoneMask, toast } from "shared/lib";
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -308,12 +311,13 @@ export const ClientProfile = () => {
 
       <div className="flex flex-wrap items-center justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6">
         <div className="flex items-center gap-6 ">
-          <div className="relative">
-            <img
-              className="w-[100px] h-[100px] rounded-full object-cover"
-              src={previewUrl ? previewUrl : photoUrl ? photoUrl : ""}
-              alt={user?.name ?? "Profile"}
-            />
+          <div className="relative w-[100px] h-[100px]">
+            <Avatar className="object-cover w-full h-full rounded-full">
+              <AvatarImage src={previewUrl || photoUrl || undefined} />
+              <AvatarFallback className="text-3xl bg-slate-300">
+                {user?.name.slice(0, 2).toLowerCase() || "un"}
+              </AvatarFallback>
+            </Avatar>
             <input
               className="hidden"
               {...getInputProps()}
