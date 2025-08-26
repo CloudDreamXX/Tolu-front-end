@@ -133,6 +133,7 @@ export const API_ROUTES = {
   },
   ADMIN: {
     GET_ALL_USERS: "/admin/users",
+    GET_FEEDBACK: "/admin/feedback",
   },
   SYMPTOMS_TRACKER: {
     POST_SYMPTOMS: "/symptom-tracker/log-symptoms/",

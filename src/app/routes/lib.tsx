@@ -44,6 +44,7 @@ import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
 import { SelectType } from "widgets/OnboardingPractitioner/select-type";
 import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-plan";
 import { MainLayout, ProtectedRoute, RedirectContentToLibrary } from "./ui";
+import { FeedbackHub } from "pages/feedback-hub/ui";
 
 export const AppRoutes = () => {
   return (
@@ -185,6 +186,7 @@ export const AppRoutes = () => {
         }
       >
         <Route path="/user-management" element={<UserManagement />} />
+        <Route path="/feedback" element={<FeedbackHub />} />
       </Route>
 
       {/* 404 route */}

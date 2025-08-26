@@ -14,8 +14,10 @@ interface TooltipWrapperProps {
   children: React.ReactNode;
 }
 
-const tooltipContentStyle = "max-w-xs p-3 text-sm text-[#1B2559] font-semibold";
-const tooltipTriggerStyle = "bg-transparent border-none p-0 cursor-default";
+const tooltipContentStyle =
+  "max-w-xs p-3 text-sm text-[#1B2559] font-semibold w-fit";
+const tooltipTriggerStyle =
+  "bg-transparent border-none p-0 cursor-default w-fit";
 
 export const TooltipWrapper: React.FC<TooltipWrapperProps> = ({
   content,
