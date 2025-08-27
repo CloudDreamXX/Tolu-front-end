@@ -334,12 +334,12 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     setSelectedDate(formattedDate);
   };
 
-  const isButtonDisabled = !(
-    sleep.hours &&
-    sleep.minutes &&
-    sleep.wokeUpTimes &&
-    sleep.fellBack
-  );
+  // const isButtonDisabled = !(
+  //   sleep.hours &&
+  //   sleep.minutes &&
+  //   sleep.wokeUpTimes &&
+  //   sleep.fellBack
+  // );
 
   const mapMoodToSleepQuality = (
     moodValue: number

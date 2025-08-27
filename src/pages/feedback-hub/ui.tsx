@@ -12,6 +12,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import Arrow from "shared/assets/icons/pages-arrow";
 import { Button, TooltipWrapper } from "shared/ui";
+import { FiltersPopup } from "widgets/filters-popup";
 
 type RowType = "Coach" | "Client";
 
@@ -47,6 +48,28 @@ const fmtDate = (iso?: string | null) =>
       })
     : "—";
 
+export type SortBy = "newest" | "oldest";
+
+type SentimentFilter = "all" | "positive" | "negative";
+
+type DateRange = { start?: string; end?: string };
+
+type TypeFilter = "All" | RowType;
+
+export type AppliedFilters = {
+  sentiment: SentimentFilter;
+  submit: DateRange;
+  rating: DateRange;
+  sort: SortBy;
+};
+
+const defaultFilters: AppliedFilters = {
+  sentiment: "all",
+  submit: {},
+  rating: {},
+  sort: "newest",
+};
+
 export const FeedbackHub = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -54,6 +77,28 @@ export const FeedbackHub = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   //   const [selected, setSelected] = useState<Row | null>(null);
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("All");
+
+  const within = (iso: string | null | undefined, range: DateRange) => {
+    if (!range.start && !range.end) return true;
+    if (!iso) return false;
+
+    const t = new Date(iso).getTime();
+    const s = range.start
+      ? new Date(range.start).setHours(0, 0, 0, 0)
+      : -Infinity;
+    const e = range.end
+      ? new Date(range.end).setHours(23, 59, 59, 999)
+      : Infinity;
+    return t >= s && t <= e;
+  };
+
+  const [isFiltersOpen, setFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState<AppliedFilters>(defaultFilters);
+  const [draftFilters, setDraftFilters] =
+    useState<AppliedFilters>(defaultFilters);
+
+  useEffect(() => setPage(1), [typeFilter]);
 
   useEffect(() => {
     const fetchPage = async () => {
@@ -64,7 +109,7 @@ export const FeedbackHub = () => {
           (page - 1) * PAGE_SIZE
         );
 
-        const coach: Row[] = (res?.coach_feedback?.data ?? []).map(
+        const coach = (res?.coach_feedback?.data ?? []).map(
           (c: any): Row => ({
             type: "Coach",
             name: nameFromEmail(c.coach_email),
@@ -73,6 +118,7 @@ export const FeedbackHub = () => {
             rating: c.rating ?? null,
             date: c.rated_at ?? null,
             htmlContent: c.content,
+            sourceId: c.content_id,
           })
         );
 
@@ -87,8 +133,7 @@ export const FeedbackHub = () => {
                 ? c.satisfaction_score
                 : null,
             date: c.created_at ?? null,
-            sourceId: c.source_id,
-            comments: c.comments ?? "",
+            sourceId: c.content_id,
           })
         );
 
@@ -116,13 +161,32 @@ export const FeedbackHub = () => {
 
   const filtered = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    if (!term) return rows;
-    return rows.filter((r) =>
-      [r.name, r.email, r.query].some((f) =>
-        (f ?? "").toLowerCase().includes(term)
-      )
-    );
-  }, [rows, searchTerm]);
+    return rows.filter((r) => {
+      const matchesType = typeFilter === "All" || r.type === typeFilter;
+      const matchesSearch =
+        !term ||
+        [r.name, r.email, r.query, r.sourceId ?? ""].some((f) =>
+          (f ?? "").toLowerCase().includes(term)
+        );
+
+      const matchesSentiment =
+        filters.sentiment === "all" ||
+        (filters.sentiment === "positive"
+          ? (r.rating ?? 0) >= 4
+          : (r.rating ?? 0) <= 2);
+
+      const matchesSubmit = within(r.date, filters.submit);
+      const matchesRating = within(r.date, filters.rating);
+
+      return (
+        matchesType &&
+        matchesSearch &&
+        matchesSentiment &&
+        matchesSubmit &&
+        matchesRating
+      );
+    });
+  }, [rows, searchTerm, typeFilter, filters]);
 
   const getVisiblePages = (current: number, total: number, maxVisible = 4) => {
     let start = Math.max(1, current - Math.floor(maxVisible / 2));
@@ -134,8 +198,70 @@ export const FeedbackHub = () => {
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
+  const onApplyFilters = () => {
+    setFilters(draftFilters);
+    setPage(1);
+    setFiltersOpen(false);
+  };
+
   return (
     <div className="flex flex-col gap-4 md:gap-[35px] p-8 overflow-y-auto h-full">
+      <div className="hidden md:block flex items-center gap-2 xl:absolute top-[21px] z-[999]">
+        {(["All", "Coach", "Client"] as const).map((tab) => {
+          const isActive = typeFilter === tab;
+          return (
+            <button
+              key={tab}
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => setTypeFilter(tab)}
+              className={[
+                "px-[66px] py-[16px] rounded-t-[16px] text-[#1D1D1F] text-[18px] font-semibold bg-[#F2F4F6]",
+                "transition-colors relative",
+                isActive ? "border border-b-[#F2F4F6] border-[#97999A]" : "",
+              ].join(" ")}
+            >
+              {tab}
+
+              {isActive && (
+                <>
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -bottom-[1px] left-[-16px] right-[-16px] h-[2px]
+                           bg-[#F2F4F6] z-[9999]"
+                  />
+
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -bottom-[1px] -right-[16px] w-[16px] h-[16px]
+                           bg-[#F2F4F6] border-b border-l border-[#97999A]
+                           rounded-bl-[16px] z-[99999]"
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -bottom-[1px] -left-[16px] w-[16px] h-[16px]
+                           bg-[#F2F4F6] border-b border-r border-[#97999A]
+                           rounded-br-[16px] z-[99999]"
+                  />
+
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -bottom-[1px] left-[-1px] w-[2px] h-[16px]
+                 bg-[#F2F4F6] z-30"
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -bottom-[1px] right-[-1px] w-[2px] h-[16px]
+                 bg-[#F2F4F6] z-30"
+                  />
+                </>
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <div className="absolute md:top-[201px] xl:top-[81px] md:left-0 md:right-0 xl:left-[97px] 2xl:left-[300px] border-b border-[#97999A]" />
+
       <div className="flex flex-row gap-4 justify-between md:items-baseline xl:items-center">
         <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
           <ChatTextIcon />
@@ -147,6 +273,10 @@ export const FeedbackHub = () => {
             <Button
               variant={"light-blue"}
               className="text-[#1C63DB] text-[16px] font-semibold py-[10px] px-[16px]"
+              onClick={() => {
+                setDraftFilters(filters);
+                setFiltersOpen(true);
+              }}
             >
               <Settings2 className="rotate-[90deg]" />
               Filter
@@ -291,7 +421,7 @@ export const FeedbackHub = () => {
                         }`}
                         onClick={() => {
                           // if (!r.sourceId) return;
-                          // window.open(`/document/${r.sourceId}`, "_blank");
+                          // window.open(`/library/document/${r.content_id}`, "_blank");
                         }}
                       >
                         <ArrowUpRightIcon className="w-[32px] h-[32px] text-[#1C63DB]" />
@@ -338,6 +468,15 @@ export const FeedbackHub = () => {
             <Arrow />
           </button>
         </div>
+      )}
+
+      {isFiltersOpen && (
+        <FiltersPopup
+          draftFilters={draftFilters}
+          setDraftFilters={setDraftFilters}
+          onSave={onApplyFilters}
+          onClose={() => setFiltersOpen(false)}
+        />
       )}
     </div>
   );
