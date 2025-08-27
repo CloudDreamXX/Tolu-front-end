@@ -43,6 +43,9 @@ export const DemographicStep = () => {
   const [selectedYear, setSelectedYear] = useState<number>(
     new Date().getFullYear()
   );
+  const [displayMonth, setDisplayMonth] = useState<Date>(
+    new Date(selectedYear, 0)
+  );
   const nav = useNavigate();
 
   const computeAge = (dobStr: string) => {
@@ -135,8 +138,11 @@ export const DemographicStep = () => {
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
+    setDisplayMonth((prev) => new Date(year, prev.getMonth()));
     if (localDate) {
-      setLocalDate(new Date(localDate.setFullYear(year)));
+      const d = new Date(localDate);
+      d.setFullYear(year);
+      setLocalDate(d);
     }
   };
 
@@ -166,11 +172,21 @@ export const DemographicStep = () => {
         onSelect={(selectedDate) => {
           if (selectedDate) {
             setLocalDate(selectedDate);
-            setDateOfBirth(selectedDate.toLocaleDateString());
+            setDateOfBirth(format(selectedDate, "yyyy-MM-dd"));
+            const y = selectedDate.getFullYear();
+            if (y !== selectedYear) setSelectedYear(y);
+            setDisplayMonth(
+              new Date(selectedDate.getFullYear(), selectedDate.getMonth())
+            );
           }
         }}
         initialFocus
-        month={new Date(selectedYear, 0)}
+        month={displayMonth}
+        onMonthChange={(m) => {
+          setDisplayMonth(m);
+          const y = m.getFullYear();
+          if (y !== selectedYear) setSelectedYear(y);
+        }}
       />
     </>
   );
