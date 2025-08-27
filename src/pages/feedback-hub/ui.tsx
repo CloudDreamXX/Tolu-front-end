@@ -10,13 +10,14 @@ import {
   Table,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Arrow from "shared/assets/icons/pages-arrow";
 import { Button, TooltipWrapper } from "shared/ui";
 import { FiltersPopup } from "widgets/filters-popup";
 
 type RowType = "Coach" | "Client";
 
-type Row = {
+export type Row = {
   type: RowType;
   name: string;
   email: string;
@@ -39,7 +40,7 @@ const nameFromEmail = (email: string) => {
     .join(" ");
 };
 
-const fmtDate = (iso?: string | null) =>
+export const fmtDate = (iso?: string | null) =>
   iso
     ? new Date(iso).toLocaleDateString(undefined, {
         month: "long",
@@ -76,7 +77,6 @@ export const FeedbackHub = () => {
   const [rows, setRows] = useState<Row[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  //   const [selected, setSelected] = useState<Row | null>(null);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("All");
 
   const within = (iso: string | null | undefined, range: DateRange) => {
@@ -97,6 +97,7 @@ export const FeedbackHub = () => {
   const [filters, setFilters] = useState<AppliedFilters>(defaultFilters);
   const [draftFilters, setDraftFilters] =
     useState<AppliedFilters>(defaultFilters);
+  const navigate = useNavigate();
 
   useEffect(() => setPage(1), [typeFilter]);
 
@@ -119,6 +120,7 @@ export const FeedbackHub = () => {
             date: c.rated_at ?? null,
             htmlContent: c.content,
             sourceId: c.content_id,
+            comments: c.rating_comment,
           })
         );
 
@@ -133,7 +135,9 @@ export const FeedbackHub = () => {
                 ? c.satisfaction_score
                 : null,
             date: c.created_at ?? null,
+            htmlContent: c.content,
             sourceId: c.content_id,
+            comments: c.rating_comment,
           })
         );
 
@@ -406,7 +410,11 @@ export const FeedbackHub = () => {
                     <TooltipWrapper content="View Details">
                       <button
                         className="p-2 rounded-md hover:bg-gray-100"
-                        // onClick={() => setSelected(r)}
+                        onClick={() => {
+                          navigate("/feedback/details", {
+                            state: { document: r },
+                          });
+                        }}
                       >
                         <Eye className="w-[32px] h-[32px] text-[#1C63DB]" />
                       </button>
