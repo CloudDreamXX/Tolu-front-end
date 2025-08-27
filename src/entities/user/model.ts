@@ -131,6 +131,7 @@ export interface BasicInfo {
   roleName: string;
   age: number;
   gender: string;
+  bio: string;
 }
 
 export interface ProfileCredentials {

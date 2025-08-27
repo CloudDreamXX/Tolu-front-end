@@ -397,24 +397,25 @@ export const ContentManagerProfile = () => {
             title="About your practice?"
             icon={<img src={FocusAreasIcon} />}
           >
-            <div className="flex flex-col xl:flex-row justify-between gap-[32px]">
-              <div className="md:col-span-2 max-w-[330px]">
-                <div className="flex flex-col gap-2">
-                  <span className="text-[#5F5F65] text-[18px] font-[500]">
-                    Education:
-                  </span>
-                  <span className="text-[#1D1D1F] text-[20px] font-[500]">
-                    Functional Medicine Coaching Academy (FMCA)
-                  </span>
+            <div className="flex flex-col gap-[32px]">
+              <div className="flex flex-col xl:flex-row justify-between gap-[32px]">
+                <div className="md:col-span-2 max-w-[330px]">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[#5F5F65] text-[18px] font-[500]">
+                      Education:
+                    </span>
+                    <span className="text-[#1D1D1F] text-[20px] font-[500]">
+                      Functional Medicine Coaching Academy (FMCA)
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="md:col-span-1 flex flex-col gap-[8px]">
-                <span className="text-[#5F5F65] text-[18px] font-[500]">
-                  Certificates:{" "}
-                  {user?.onboarding?.practitioner_info?.license_files.length ||
-                    licensePhotos.length}
-                </span>
-                {/* <div className="flex flex-wrap items-center gap-3">
+                <div className="md:col-span-1 flex flex-col gap-[8px]">
+                  <span className="text-[#5F5F65] text-[18px] font-[500]">
+                    Certificates:{" "}
+                    {user?.onboarding?.practitioner_info?.license_files
+                      .length || licensePhotos.length}
+                  </span>
+                  {/* <div className="flex flex-wrap items-center gap-3">
                   {licensePhotos.map((item) => {
                     return <img
                       src={item}
@@ -423,7 +424,9 @@ export const ContentManagerProfile = () => {
                     />
                   })}
                 </div> */}
+                </div>
               </div>
+              <Field label="Bio:" value={user?.profile.basic_info.bio || ""} />
             </div>
           </Card>
         </div>

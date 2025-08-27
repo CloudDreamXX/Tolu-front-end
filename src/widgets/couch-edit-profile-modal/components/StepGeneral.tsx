@@ -36,8 +36,8 @@ export const StepGeneral = ({
         <label>Full name</label>
         <Input
           placeholder="John Doe"
-          value={data.first_name}
-          onChange={(e) => handleInputChange("first_name", e.target.value)}
+          value={data.name}
+          onChange={(e) => handleInputChange("name", e.target.value)}
         />
       </div>
 

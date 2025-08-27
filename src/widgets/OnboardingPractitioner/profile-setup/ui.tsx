@@ -5,7 +5,7 @@ import { DragEvent, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
-import { AuthPageWrapper, Input } from "shared/ui";
+import { AuthPageWrapper, Input, Textarea } from "shared/ui";
 import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { SearchableSelect } from "../components/SearchableSelect";
@@ -120,6 +120,22 @@ export const ProfileSetup = () => {
                 )
               }
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+            />
+          </div>
+
+          <div className="flex flex-col flex-1 gap-[8px]">
+            <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
+              Bio
+            </label>
+            <Textarea
+              placeholder="Enter Bio"
+              onChange={(e) =>
+                dispatch(
+                  updateCoachField({ key: "bio", value: e.target.value })
+                )
+              }
+              className="text-[16px] md:text-[16px] xl:text-[16px]"
+              containerClassName="border rounded-[8px] h-[44px] px-[12px]"
             />
           </div>
 

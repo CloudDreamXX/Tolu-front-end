@@ -1,7 +1,11 @@
 import { ChatSocketService } from "entities/chat";
 import { ClientService } from "entities/client";
 import { clearAllChatHistory, setFolders } from "entities/client/lib";
-import { ContentService, ContentStatus } from "entities/content";
+import {
+  ContentService,
+  ContentStatus,
+  CreatorProfile,
+} from "entities/content";
 import { DocumentsService, IDocument } from "entities/document";
 import { HealthHistoryService } from "entities/health-history";
 import {
@@ -20,7 +24,7 @@ import GlobeIcon from "shared/assets/icons/globe";
 import LoadingIcon from "shared/assets/icons/loading-icon";
 import TwoUsersIcon from "shared/assets/icons/two-users";
 import { toast, usePageWidth } from "shared/lib";
-import { Button } from "shared/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { DocumentLoadingSkeleton } from "./lib";
@@ -33,6 +37,9 @@ export const LibraryDocument = () => {
     null
   );
   const [isLoadingDocument, setIsLoadingDocument] = useState(true);
+  const [creator, setCreator] = useState<CreatorProfile | null>(null);
+  const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
+  const [isCreatorCardOpen, setIsCreatorCardOpen] = useState(false);
 
   const healthHistory = useSelector(
     (state: RootState) => state.healthHistory.data
@@ -171,6 +178,22 @@ export const LibraryDocument = () => {
       const response = await DocumentsService.getDocumentById(docId);
       if (response) {
         setSelectedDocument(response);
+        const creatorData = await ContentService.getCreatorProfile(
+          response.creator_id
+        );
+        setCreator(creatorData);
+        if (creatorData.detailed_profile.personal_info.headshot_url) {
+          const filename =
+            creatorData.detailed_profile.personal_info.headshot_url
+              ?.split("/")
+              .pop() || "";
+          const blob = await ContentService.getCreatorPhoto(
+            creatorData.creator_id,
+            filename
+          );
+          const objectUrl = URL.createObjectURL(blob);
+          setCreatorPhoto(objectUrl);
+        }
       }
     } catch (error) {
       console.error("Error fetching document:", error);
@@ -231,6 +254,77 @@ export const LibraryDocument = () => {
           {isMobile ? "Communities (soon)" : <GlobeIcon />}{" "}
         </Button>
       </div>
+      {!isLoadingDocument && selectedDocument && (
+        <div className="w-full xl:w-[50%] flex justify-end text-[16px] text-[#1D1D1F] font-semibold relative">
+          Created by{" "}
+          {
+            <span
+              tabIndex={0}
+              aria-haspopup="dialog"
+              aria-expanded={isCreatorCardOpen}
+              onMouseEnter={
+                !isMobile ? () => setIsCreatorCardOpen(true) : undefined
+              }
+              onMouseLeave={
+                !isMobile ? () => setIsCreatorCardOpen(false) : undefined
+              }
+              onFocus={!isMobile ? () => setIsCreatorCardOpen(true) : undefined}
+              onBlur={!isMobile ? () => setIsCreatorCardOpen(false) : undefined}
+              onClick={
+                isMobile ? () => setIsCreatorCardOpen((v) => !v) : undefined
+              }
+              className="underline ml-[6px] cursor-pointer"
+            >
+              {selectedDocument.creator_name}
+            </span>
+          }{" "}
+          <span className="ml-[6px]">
+            {selectedDocument.published_date
+              ? `on ${selectedDocument.published_date}`
+              : ""}
+          </span>
+          {isCreatorCardOpen && (
+            <div
+              className="absolute right-0 top-full mt-2 w-full max-w-[500px] rounded-2xl border border-[#E5E7EB] bg-white shadow-xl p-4 z-50 flex items-start gap-6"
+              onMouseEnter={
+                !isMobile ? () => setIsCreatorCardOpen(true) : undefined
+              }
+              onMouseLeave={
+                !isMobile ? () => setIsCreatorCardOpen(false) : undefined
+              }
+              role="dialog"
+              aria-label="Coach details"
+            >
+              <div className="flex flex-col items-center justify-center gap-3">
+                {creatorPhoto && creator?.basic_info && (
+                  <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
+                    <AvatarImage src={creatorPhoto} />
+                    <AvatarFallback className="text-3xl bg-slate-300 ">
+                      {creator.detailed_profile.personal_info.first_name.slice(
+                        0,
+                        1
+                      )}
+                      {creator.detailed_profile.personal_info.last_name.slice(
+                        0,
+                        1
+                      )}
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+
+                <div className="text-[18px] text-[#111827] font-semibold">
+                  {creator?.basic_info.name}
+                </div>
+              </div>
+              <div className="text-[16px] text-[#5F5F65] whitespace-pre-line w-full">
+                Bio: <br />{" "}
+                {creator?.detailed_profile.personal_info.bio ||
+                  "No bio provided."}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {isLoadingDocument && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <LoadingIcon />

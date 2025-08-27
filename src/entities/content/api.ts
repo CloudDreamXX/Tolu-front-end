@@ -4,6 +4,7 @@ import {
   ContentItemResponse,
   ContentStatus,
   ContentToEdit,
+  CreatorProfile,
   Feedback,
   FeedbackResponse,
 } from "./model";
@@ -70,5 +71,26 @@ export class ContentService {
 
   static async getAllHashtags(): Promise<any> {
     return ApiService.get<any>(API_ROUTES.CONTENT.GET_ALL_HASHTAGS);
+  }
+
+  static async getCreatorProfile(id: string): Promise<CreatorProfile> {
+    const endpoint = API_ROUTES.CONTENT.GET_CREATOR_PROFILE.replace(
+      "{creator_id}",
+      id
+    );
+    return ApiService.get<CreatorProfile>(endpoint);
+  }
+
+  static async getCreatorPhoto(id: string, filename: string): Promise<Blob> {
+    const endpoint = API_ROUTES.CONTENT.DOWNLOAD_CREATOR_PHOTO.replace(
+      "{creator_id}",
+      encodeURIComponent(id)
+    ).replace("{filename}", encodeURIComponent(filename));
+
+    const res = await ApiService.get<Blob>(endpoint, {
+      responseType: "blob" as const,
+      headers: { Accept: "image/*" },
+    });
+    return (res as any).data ?? res;
   }
 }

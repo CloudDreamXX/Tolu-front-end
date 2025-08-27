@@ -25,6 +25,9 @@ export const API_ROUTES = {
     REQUEST_INVITE: "/client/request-new-invite",
     GET_PROFILE: "/client/profile",
     UPDATE_PROFILE: "/client/profile",
+    GET_COACHES: "/client/coaches",
+    GET_COACH_PROFILE: "/client/coach/{coach_id}/profile",
+    DOWNLOAD_COACH_PHOTO: "/client/coach/{coach_id}/photo/{filename}",
   },
   AI: {
     SEARCH: "/ai-search/",
@@ -76,6 +79,8 @@ export const API_ROUTES = {
     GET_CONTENT_HASHTAGS: "/content/hashtags/{content_id}",
     GET_CONTENTS_WITH_SIMILAR_TAGS: "/content/similar-tags",
     GET_ALL_HASHTAGS: "/content/all-hashtags",
+    GET_CREATOR_PROFILE: "/creator/{creator_id}/profile",
+    DOWNLOAD_CREATOR_PHOTO: "/creator/{creator_id}/photo/{filename}",
   },
   HEALTH_HISTORY: {
     GET: "/health-history",
@@ -112,7 +117,6 @@ export const API_ROUTES = {
     RENAME_CONTENT: "/folders/rename-content",
     EDIT_FOLDER: "/folders/edit-folder",
     UPDATE_FOLDER_CONTENT: "/folders/update-folder-content",
-    GET_CONTENT: "/content/retrieve",
     GET_REVIEWERS: "/user/reviewers",
     CHANGE_STATUS: "/library/status",
     RATE_CONTENT: "/coach/rate-content",

@@ -5,6 +5,9 @@ export interface IDocumentResponse {
   query: string;
   content: string;
   created_at: string;
+  creator_name: string;
+  creator_id: string;
+  published_date: string;
 
   original_folder_id: string;
   original_folder_name: string;
@@ -57,6 +60,9 @@ export interface IDocument {
   rating: number;
   userRating: number;
   userComments: string;
+  creator_id: string;
+  creator_name: string;
+  published_date: string;
 }
 
 export interface SharedClient {

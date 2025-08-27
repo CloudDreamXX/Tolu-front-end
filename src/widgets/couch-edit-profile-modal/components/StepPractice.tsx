@@ -7,6 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Textarea,
 } from "shared/ui";
 import { TrashIcon, UploadCloud } from "lucide-react";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
@@ -73,6 +74,10 @@ export function StepPractice({
     });
   };
 
+  const handleInputChange = (key: keyof CoachOnboardingState, value: any) => {
+    setDataState((prevState) => ({ ...prevState, [key]: value }));
+  };
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
@@ -89,6 +94,17 @@ export function StepPractice({
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        <label>Bio</label>
+        <Textarea
+          placeholder="Bio"
+          value={data.bio || ""}
+          className="text-base md:text-base xl:text-base"
+          containerClassName="rounded-md py-[8px] px-[16px]"
+          onChange={(e) => handleInputChange("bio", e.target.value)}
+        />
       </div>
 
       <div className="flex flex-col gap-4">

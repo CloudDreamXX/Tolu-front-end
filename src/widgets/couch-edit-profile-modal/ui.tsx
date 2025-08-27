@@ -57,7 +57,8 @@ const DEFAULT_STATE: CoachOnboardingState = {
   security_questions: "",
   security_answers: "",
   profile_picture: "",
-  // alternate_name: "",
+  alternate_name: "",
+  bio: "",
 };
 
 const computeAge = (dob?: string | null) => {
@@ -89,11 +90,12 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
   return {
     ...DEFAULT_STATE,
 
-    first_name: bi.name ?? "",
+    name: bi.name ?? "",
     alternate_name: bi.alternate_name ?? "",
 
     age: computeAge(bi.dob),
     gender: (bi as any).gender ?? "",
+    bio: bi.bio ?? "",
 
     display_credentials: bi.credentials ?? "",
     location: bi.location ?? "",
@@ -209,6 +211,7 @@ export const CouchEditProfileModal = ({
         licenseFiles ? licenseFiles : undefined
       );
       setOpen(false);
+      window.location.reload();
     } catch (error) {
       console.error("Error during onboarding:", error);
     }
