@@ -6,12 +6,18 @@ import AiCreate from "shared/assets/icons/ai-create";
 import { cn } from "shared/lib";
 import { Button, ScrollArea } from "shared/ui";
 import { sideBarContent } from "./lib";
+import { useDispatch } from "react-redux";
+import {
+  clearActiveChatHistory,
+  clearAllChatHistory,
+} from "entities/client/lib";
 
 export const ContentManagerSidebar: React.FC = () => {
   const nav = useNavigate();
   const [links] = useState(sideBarContent);
   const [isNarrow, setIsNarrow] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const checkWidth = () => {
@@ -26,6 +32,12 @@ export const ContentManagerSidebar: React.FC = () => {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const handleCreateWithTolu = () => {
+    dispatch(clearAllChatHistory());
+    dispatch(clearActiveChatHistory());
+    nav("/content-manager/create");
   };
 
   return (
@@ -83,7 +95,7 @@ export const ContentManagerSidebar: React.FC = () => {
               <Button
                 variant="brightblue"
                 className="w-full"
-                onClick={() => nav("/content-manager/create")}
+                onClick={handleCreateWithTolu}
               >
                 <AiCreate />
                 {sidebarOpen && "Create with Tolu"}

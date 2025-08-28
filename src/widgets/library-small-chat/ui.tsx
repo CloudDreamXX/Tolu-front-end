@@ -4,6 +4,7 @@ import { ClientService } from "entities/client";
 import {
   addMessageToChat,
   clearActiveChatHistory,
+  clearAllChatHistory,
   setActiveChat,
   setFilesToChat,
   setFolderToChat,
@@ -575,8 +576,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setChatTitle("");
     setError(null);
     setClientId(null);
+    dispatch(clearAllChatHistory());
     dispatch(clearActiveChatHistory());
     handleSetFolder(null);
+    navigate("/content-manager/create");
   };
 
   const handleSetFiles = (files: File[]) => {
@@ -602,14 +605,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
               {selectedSwitch}
             </div>
-            {chatState.length > 0 && (
-              <button
-                className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
-                onClick={handleNewChatOpen}
-              >
-                <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
-              </button>
-            )}
+            <button
+              className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
+              onClick={handleNewChatOpen}
+            >
+              <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
+            </button>
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
           <CardContent className="flex flex-1 w-full h-full px-6 pb-0 overflow-auto">
@@ -740,15 +741,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 Get Expert-verified Guidance You Can Trust
               </p>
             )}
-            {chatState.length > 0 && (
-              <button
-                className="md:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
-                onClick={handleNewChatOpen}
-              >
-                <MagnifyingGlassPlusIcon width={24} height={24} />
-                {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
-              </button>
-            )}
+            <button
+              className="md:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
+              onClick={handleNewChatOpen}
+            >
+              <MagnifyingGlassPlusIcon width={24} height={24} />
+              {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
+            </button>
           </CardHeader>
           <CardContent
             className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}

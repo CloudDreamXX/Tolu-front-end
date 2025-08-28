@@ -6,7 +6,7 @@ import {
   InviteClientPayload,
 } from "entities/coach";
 import { RootState } from "entities/store";
-import { File, MessageCircle, X } from "lucide-react";
+import { File, MessageCircle, Plus, X } from "lucide-react";
 import React, {
   useCallback,
   useEffect,
@@ -27,6 +27,7 @@ import TrashIcon from "shared/assets/icons/trash-icon";
 import UploadCloud from "shared/assets/icons/upload-cloud";
 import EmptyClients from "shared/assets/images/EmptyClients.png";
 import { toast } from "shared/lib/hooks/use-toast";
+import { Button } from "shared/ui";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
 import { EditClientModal } from "widgets/EditClientModal";
@@ -487,185 +488,214 @@ export const ContentManagerClients: React.FC = () => {
                 Start adding clients to keep track of observations, updates, and
                 progress.
               </p>
+              <Button
+                variant="brightblue"
+                className="mt-[8px]"
+                onClick={() => {
+                  cleanState();
+                  setActiveEditTab("editClientInfo");
+                  setAddModal(true);
+                }}
+              >
+                Invite your first client
+              </Button>
             </div>
           </div>
         ) : (
-          <div className="md:rounded-[8px]">
-            <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]">
-              <div className="flex items-center justify-center">Full name</div>
-              <div className="flex items-center justify-center">Status</div>
-              <div className="flex items-center justify-center">
-                View summary
+          <div className="flex flex-col gap-4">
+            <Button
+              variant={"brightblue"}
+              className="h-[44px] w-fit ml-auto"
+              onClick={() => {
+                cleanState();
+                setActiveEditTab("editClientInfo");
+                setAddModal(true);
+              }}
+            >
+              Add new client
+              <Plus />
+            </Button>
+            <div className="md:rounded-[8px]">
+              <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]">
+                <div className="flex items-center justify-center">
+                  Full name
+                </div>
+                <div className="flex items-center justify-center">Status</div>
+                <div className="flex items-center justify-center">
+                  View summary
+                </div>
+                <div className="flex items-center justify-center">Message</div>
+                <div className="flex items-center justify-center"></div>
               </div>
-              <div className="flex items-center justify-center">Message</div>
-              <div className="flex items-center justify-center"></div>
-            </div>
 
-            <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
-              {paginatedClients.map((client, idx) => (
-                <div
-                  key={idx}
-                  className="
+              <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
+                {paginatedClients.map((client, idx) => (
+                  <div
+                    key={idx}
+                    className="
             md:grid md:grid-cols-5 md:items-center md:p-[12px]
             flex flex-col gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white md:rounded-none md:border-x-0 md:border-t-0 md:border-b md:border-[#DBDEE1]
           "
-                >
-                  <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                    <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                      Name
+                  >
+                    <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
+                      <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
+                        Name
+                      </div>
+                      <div className="flex items-center justify-center w-full text-[16px] font-semibold">
+                        {client.name}
+                      </div>
                     </div>
-                    <div className="flex items-center justify-center w-full text-[16px] font-semibold">
-                      {client.name}
-                    </div>
-                  </div>
 
-                  <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                    <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
-                      Status
+                    <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
+                      <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
+                        Status
+                      </div>
+                      <div className="w-full text-[16px] flex items-center justify-center">
+                        {client.status === "waiting to accept invite" ? (
+                          <div className="flex flex-col items-center justify-center ">
+                            Pending
+                            <button
+                              className="text-[14px] text-[#1C63DB]"
+                              onClick={() =>
+                                handleResendInvite(client.client_id)
+                              }
+                            >
+                              Resend invitation
+                            </button>
+                          </div>
+                        ) : client.status === "active" ? (
+                          "Active"
+                        ) : (
+                          client.status
+                        )}
+                      </div>
                     </div>
-                    <div className="w-full text-[16px] flex items-center justify-center">
-                      {client.status === "waiting to accept invite" ? (
-                        <div className="flex flex-col items-center justify-center ">
-                          Pending
-                          <button
-                            className="text-[14px] text-[#1C63DB]"
-                            onClick={() => handleResendInvite(client.client_id)}
-                          >
-                            Resend invitation
-                          </button>
-                        </div>
-                      ) : client.status === "active" ? (
-                        "Active"
-                      ) : (
-                        client.status
-                      )}
-                    </div>
-                  </div>
-                  {!isMobile && !isTablet && (
-                    <button
-                      onClick={() => handleSelectClient(client.client_id)}
-                      className="flex items-center justify-center text-[#000]"
-                    >
-                      <Eye />
-                    </button>
-                  )}
-                  {!isMobile && !isTablet && (
-                    <button
-                      className="flex items-center justify-center "
-                      onClick={() => {
-                        if (client.status !== "active") return;
-                        navigate(
-                          `/content-manager/messages/${client.client_id}`
-                        );
-                      }}
-                    >
-                      <MessageCircle />
-                    </button>
-                  )}
-                  {!isMobile && !isTablet && (
-                    <div className="relative ml-auto">
+                    {!isMobile && !isTablet && (
                       <button
-                        onClick={() =>
-                          setDeleteMenuId(
-                            deleteMenuId === client.client_id
-                              ? null
-                              : client.client_id
-                          )
-                        }
-                        className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
-                      >
-                        <Dots />
-                      </button>
-
-                      {deleteMenuId === client.client_id && (
-                        <div className="absolute top-[30px] right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50">
-                          <button
-                            className="flex items-center gap-[8px] w-full text-left"
-                            onClick={async () => {
-                              handleSelectClient(client.client_id);
-                              setConfirmDelete(true);
-                            }}
-                          >
-                            <TrashIcon />
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {isMobile ? (
-                    <div className="w-full flex flex-col gap-[8px] mt-[24px]">
-                      <button
-                        className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]"
                         onClick={() => handleSelectClient(client.client_id)}
+                        className="flex items-center justify-center text-[#000]"
                       >
                         <Eye />
-                        View profile
                       </button>
-                      <button className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]">
-                        <Messages />
-                        Chat
-                      </button>
-                    </div>
-                  ) : isTablet ? (
-                    <div className="relative ml-auto h-[24px]">
+                    )}
+                    {!isMobile && !isTablet && (
                       <button
-                        className="w-fit h-fit"
+                        className="flex items-center justify-center "
                         onClick={() => {
-                          setPopupClientId(
-                            popupClientId === client.client_id
-                              ? null
-                              : client.client_id
+                          if (client.status !== "active") return;
+                          navigate(
+                            `/content-manager/messages/${client.client_id}`
                           );
                         }}
                       >
-                        <BlueDots />
+                        <MessageCircle />
                       </button>
+                    )}
+                    {!isMobile && !isTablet && (
+                      <div className="relative ml-auto">
+                        <button
+                          onClick={() =>
+                            setDeleteMenuId(
+                              deleteMenuId === client.client_id
+                                ? null
+                                : client.client_id
+                            )
+                          }
+                          className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
+                        >
+                          <Dots />
+                        </button>
 
-                      {popupClientId === client.client_id && (
-                        <div
-                          className="
+                        {deleteMenuId === client.client_id && (
+                          <div className="absolute top-[30px] right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50">
+                            <button
+                              className="flex items-center gap-[8px] w-full text-left"
+                              onClick={async () => {
+                                handleSelectClient(client.client_id);
+                                setConfirmDelete(true);
+                              }}
+                            >
+                              <TrashIcon />
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {isMobile ? (
+                      <div className="w-full flex flex-col gap-[8px] mt-[24px]">
+                        <button
+                          className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]"
+                          onClick={() => handleSelectClient(client.client_id)}
+                        >
+                          <Eye />
+                          View profile
+                        </button>
+                        <button className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]">
+                          <Messages />
+                          Chat
+                        </button>
+                      </div>
+                    ) : isTablet ? (
+                      <div className="relative ml-auto h-[24px]">
+                        <button
+                          className="w-fit h-fit"
+                          onClick={() => {
+                            setPopupClientId(
+                              popupClientId === client.client_id
+                                ? null
+                                : client.client_id
+                            );
+                          }}
+                        >
+                          <BlueDots />
+                        </button>
+
+                        {popupClientId === client.client_id && (
+                          <div
+                            className="
         absolute right-0 top-[34px]
         w-[238px] bg-white shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
         rounded-[10px] px-[14px] py-[16px] flex flex-col gap-[16px] z-50
       "
-                        >
-                          <button
-                            className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
-                            onClick={() => {
-                              handleSelectClient(client.client_id);
-                              setPopupClientId(null);
-                            }}
                           >
-                            <Eye /> View profile
-                          </button>
+                            <button
+                              className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
+                              onClick={() => {
+                                handleSelectClient(client.client_id);
+                                setPopupClientId(null);
+                              }}
+                            >
+                              <Eye /> View profile
+                            </button>
 
-                          <button
-                            className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
-                            onClick={() => {
-                              setPopupClientId(null);
-                            }}
-                          >
-                            <Messages /> Open Chat
-                          </button>
+                            <button
+                              className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
+                              onClick={() => {
+                                setPopupClientId(null);
+                              }}
+                            >
+                              <Messages /> Open Chat
+                            </button>
 
-                          <button
-                            className="flex items-center gap-[8px] text-[#FF1F0F] font-[500] text-[16px]"
-                            onClick={() => {
-                              handleSelectClient(client.client_id);
-                              setConfirmDelete(true);
-                              setPopupClientId(null);
-                            }}
-                          >
-                            <TrashIcon /> Delete user
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ) : undefined}
-                </div>
-              ))}
+                            <button
+                              className="flex items-center gap-[8px] text-[#FF1F0F] font-[500] text-[16px]"
+                              onClick={() => {
+                                handleSelectClient(client.client_id);
+                                setConfirmDelete(true);
+                                setPopupClientId(null);
+                              }}
+                            >
+                              <TrashIcon /> Delete user
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ) : undefined}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

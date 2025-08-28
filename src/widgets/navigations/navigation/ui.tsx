@@ -9,6 +9,7 @@ import Menu from "shared/assets/icons/menu";
 import SignOutIcon from "shared/assets/icons/signout";
 import { ScrollArea } from "shared/ui";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
+import SignOutIconBlue from "shared/assets/icons/signoutBlue";
 
 type Props = {
   pageLocation: "content-manager" | "user-management";
@@ -111,6 +112,15 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 ))}
               </div>
             </ScrollArea>
+            <div className="flex flex-col gap-[16px] mt-6">
+              <button
+                onClick={handleSignOut}
+                className="flex gap-[12px] py-[16px] px-[32px] text-[16px] text-[#1C63DB] font-semibold cursor-pointer select-none"
+              >
+                <SignOutIconBlue />
+                Sign out
+              </button>
+            </div>
           </div>
         </div>
       )}
