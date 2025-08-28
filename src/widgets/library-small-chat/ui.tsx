@@ -236,7 +236,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       }
     };
     fetchChat();
-  }, []);
+  }, [lastChatId]);
 
   useEffect(() => {
     if (isValid) {
@@ -251,7 +251,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     try {
       const sessionData = await CoachService.getSessionById(chatId);
-      dispatch(setLastChatId(chatId));
 
       if (sessionData && sessionData.search_results.length > 0) {
         const chatMessages: Message[] = [];
@@ -445,7 +444,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processChunk,
           processFinal
         );
-        dispatch(setLastChatId(res.documentId));
         await loadExistingSession(res.documentId);
 
         if (res.chatId && res.documentId) {
@@ -746,15 +744,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 Get Expert-verified Guidance You Can Trust
               </p>
             )}
-            {chatState.length > 0 && (
-              <button
-                className="md:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
-                onClick={handleNewChatOpen}
-              >
-                <MaterialIcon iconName="search" />
-                {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
-              </button>
-            )}
+            <button
+              className="md:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
+              onClick={handleNewChatOpen}
+            >
+              <MaterialIcon iconName="search" />
+              {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
+            </button>
           </CardHeader>
           <CardContent
             className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}

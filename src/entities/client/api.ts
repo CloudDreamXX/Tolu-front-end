@@ -30,12 +30,7 @@ export class ClientService {
   ): Promise<AcceptInviteResponse> {
     return ApiService.post<AcceptInviteResponse>(
       API_ROUTES.CLIENT.ACCEPT_COACH_INVITE,
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      payload
     );
   }
 

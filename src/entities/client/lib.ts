@@ -112,6 +112,7 @@ const clientSlice = createSlice({
       });
     },
     clearActiveChatHistory: (state) => {
+      state.lastChatId = "";
       const activeChatKey = state.activeChatKey;
       if (activeChatKey) {
         delete state.chatHistory[activeChatKey];
@@ -121,6 +122,7 @@ const clientSlice = createSlice({
       state.chatHistory = {};
       state.selectedChatFiles = [];
       state.selectedChatFolder = null;
+      state.lastChatId = "";
     },
   },
 });

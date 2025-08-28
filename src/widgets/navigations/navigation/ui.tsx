@@ -112,10 +112,34 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 ))}
               </div>
             </ScrollArea>
-            <div className="flex flex-col gap-[16px] mt-6">
+            <div className="flex flex-col gap-[16px] mt-6 py-[16px] px-[32px] ">
+              <button
+                onClick={() => {
+                  setMenuMobOpen(false);
+                  nav("/content-manager/profile");
+                }}
+                className="flex gap-4 items-center pl-4 bg-[#F3F6FB] w-full py-[8px] px-[16px] rounded-[8px] justify-between"
+              >
+                {/* <Avatar>
+                  <AvatarImage src={user?.photo} alt="Avatar" />
+                  <AvatarFallback>
+                    {user?.name
+                      ?.split(" ")
+                      .map((part) => part[0])
+                      .join("")
+                      .toUpperCase()}
+                  </AvatarFallback>
+                </Avatar> */}
+                <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
+                  Profile
+                </p>
+                <span className="ml-auto">
+                  <MaterialIcon iconName="keyboard_arrow_right" />
+                </span>
+              </button>
               <button
                 onClick={handleSignOut}
-                className="flex gap-[12px] py-[16px] px-[32px] text-[16px] text-[#1C63DB] font-semibold cursor-pointer select-none"
+                className="flex gap-[12px] py-[16px] text-[16px] text-[#1C63DB] font-semibold cursor-pointer select-none"
               >
                 <MaterialIcon iconName="exit_to_app" />
                 Sign out
@@ -152,7 +176,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
               className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
             >
               <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-                <MaterialIcon iconName="account_circle" fill={1} />
+                <MaterialIcon iconName="exit_to_app" />
               </div>
               Profile
             </button>

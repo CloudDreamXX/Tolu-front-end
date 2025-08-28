@@ -5,6 +5,15 @@ import { SelectField } from "widgets/CRMSelectField";
 import { CustomRadio } from "widgets/CustomRadio";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { StepperWithLabels } from "widgets/StepperWithLabels";
+import {
+  Button,
+  Calendar,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "shared/ui";
+import { cn } from "shared/lib";
+import { format } from "date-fns";
 
 interface EditClientModalProps {
   client: InviteClientPayload | ClientDetails;
@@ -42,6 +51,29 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
 
   const tabsContainerRef = useRef<HTMLDivElement | null>(null);
 
+  const [localDate, setLocalDate] = useState<Date | null>(
+    client?.date_of_birth ? new Date(client.date_of_birth) : null
+  );
+  const [selectedYear, setSelectedYear] = useState<number>(
+    localDate ? localDate.getFullYear() : new Date().getFullYear()
+  );
+  const [displayMonth, setDisplayMonth] = useState<Date>(
+    localDate
+      ? new Date(localDate.getFullYear(), localDate.getMonth())
+      : new Date(selectedYear, 0)
+  );
+
+  useEffect(() => {
+    if (client?.date_of_birth) {
+      const d = new Date(client.date_of_birth);
+      if (!Number.isNaN(d.getTime())) {
+        setLocalDate(d);
+        setSelectedYear(d.getFullYear());
+        setDisplayMonth(new Date(d.getFullYear(), d.getMonth()));
+      }
+    }
+  }, [client?.date_of_birth]);
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
@@ -64,6 +96,16 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
       });
     }
   }, [activeEditTab]);
+
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    setDisplayMonth((prev) => new Date(year, prev.getMonth()));
+    if (localDate) {
+      const d = new Date(localDate);
+      d.setFullYear(year);
+      setLocalDate(d);
+    }
+  };
 
   const renderFooter = () => {
     if (isNew) {
@@ -307,18 +349,74 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
               <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
                 Date of birth
               </label>
-              <div className="flex w-full gap-[8px] bg-white border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px]">
-                <MaterialIcon iconName="calendar_today" fill={1} />
-                <input
-                  type="date"
-                  placeholder="Enter date of birth"
-                  value={client?.date_of_birth || ""}
-                  onChange={(e) =>
-                    updateClient("date_of_birth", e.target.value)
-                  }
-                  className="placeholder-custom w-full outline-none bg-transparent text-[14px] text-[#1D1D1F] font-semibold"
-                />
-              </div>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal border-[#DFDFDF] hover:bg-white rounded-[1000px] px-[12px] py-[12.5px]",
+                      !localDate && "text-muted-foreground"
+                    )}
+                  >
+                    <MaterialIcon iconName="calendar_today" fill={1} />
+                    {localDate ? format(localDate, "PPP") : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent
+                  className="w-auto p-0 pointer-events-auto"
+                  align="start"
+                >
+                  <div className="flex gap-[8px] items-center m-4 mb-1">
+                    Choose a year:
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => handleYearChange(Number(e.target.value))}
+                      className="px-2 py-1 border rounded-md outline-0"
+                    >
+                      {Array.from(
+                        { length: 100 },
+                        (_, i) => new Date().getFullYear() - i
+                      ).map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <Calendar
+                    mode="single"
+                    selected={localDate ?? undefined}
+                    onSelect={(selectedDate) => {
+                      if (selectedDate) {
+                        setLocalDate(selectedDate);
+                        updateClient(
+                          "date_of_birth",
+                          format(selectedDate, "yyyy-MM-dd")
+                        );
+                        const y = selectedDate.getFullYear();
+                        if (y !== selectedYear) setSelectedYear(y);
+                        setDisplayMonth(
+                          new Date(
+                            selectedDate.getFullYear(),
+                            selectedDate.getMonth()
+                          )
+                        );
+                      }
+                    }}
+                    initialFocus
+                    month={displayMonth}
+                    onMonthChange={(m) => {
+                      setDisplayMonth(m);
+                      const y = m.getFullYear();
+                      if (y !== selectedYear) setSelectedYear(y);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
                 <MaterialIcon iconName="info" size={16} />
                 Helps personalize age-appropriate guidance

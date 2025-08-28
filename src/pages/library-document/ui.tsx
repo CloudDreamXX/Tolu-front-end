@@ -298,21 +298,25 @@ export const LibraryDocument = () => {
               aria-label="Coach details"
             >
               <div className="flex flex-col items-center justify-center gap-3">
-                {creatorPhoto && creator?.basic_info && (
-                  <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
-                    <AvatarImage src={creatorPhoto} />
-                    <AvatarFallback className="text-3xl bg-slate-300 ">
-                      {creator.detailed_profile.personal_info.first_name.slice(
-                        0,
-                        1
-                      )}
-                      {creator.detailed_profile.personal_info.last_name.slice(
-                        0,
-                        1
-                      )}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
+                {creatorPhoto ||
+                  (creator && (
+                    <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
+                      <AvatarImage src={creatorPhoto || undefined} />
+                      <AvatarFallback className="text-3xl bg-slate-300 ">
+                        {creator.detailed_profile.personal_info.first_name !==
+                        ""
+                          ? creator.detailed_profile.personal_info.first_name.slice(
+                              0,
+                              1
+                            )
+                          : creator.basic_info.name.slice(0, 1)}
+                        {creator.detailed_profile.personal_info.last_name.slice(
+                          0,
+                          1
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
+                  ))}
 
                 <div className="text-[18px] text-[#111827] font-semibold">
                   {creator?.basic_info.name}

@@ -209,7 +209,9 @@ export const renderResultBlocks = (rawContent: string) => {
 
     const id = idmatch?.[1];
     const folder = folderMatch?.[1];
-    const heading = extractTitleFromPreview(rawContent);
+    const heading =
+      extractTitleFromBlock(block) ||
+      (id ? `Document ${id.slice(0, 8)}` : "Untitled");
     const created = createdMatch?.[1];
 
     return (
@@ -246,8 +248,10 @@ export const renderResultBlocks = (rawContent: string) => {
   });
 };
 
-const extractTitleFromPreview = (rawContent: string) => {
-  const match = rawContent.match(/target="_self">([^<]+)<\/a>/);
-  const title = match ? match[1] : "No title found";
-  return title;
+const extractTitleFromBlock = (block: string) => {
+  const m = block.match(/<a[^>]*target="_self"[^>]*>([^<]+)<\/a>/i);
+  if (m?.[1]) return m[1].trim();
+
+  const h1 = block.match(/^\s*#\s+(.+)$/m);
+  return h1?.[1]?.trim() ?? "";
 };

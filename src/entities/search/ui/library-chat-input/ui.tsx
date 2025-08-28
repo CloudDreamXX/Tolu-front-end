@@ -220,7 +220,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           <Button
             onClick={() => handleSend()}
             disabled={isSendDisabled}
-            className={`w-10 h-10 p-0 bg-blue-600 rounded-full hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed ${isContentManager ? "" : "hidden md:flex"}`}
+            className={`w-10 h-10 p-0 bg-blue-600 rounded-full disabled:bg-blue-300 disabled:cursor-not-allowed ${isContentManager ? "" : "hidden md:flex"}`}
           >
             <MaterialIcon iconName="send" />
           </Button>

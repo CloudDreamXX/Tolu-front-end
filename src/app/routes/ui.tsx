@@ -130,8 +130,6 @@ export const RedirectContentToLibrary = () => {
         } else {
           navigate("/library", { replace: true });
         }
-      } finally {
-        navigate("/library", { replace: true });
       }
     };
 

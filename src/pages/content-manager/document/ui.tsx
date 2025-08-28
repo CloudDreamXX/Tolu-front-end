@@ -21,9 +21,10 @@ import { LibrarySmallChat } from "widgets/library-small-chat";
 import { findFolderPath } from "features/wrapper-folder-tree";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 import { useTextSelectionTooltip } from "./lib";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearAllChatHistory } from "entities/client/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { RootState } from "entities/store";
 
 export const ContentManagerDocument: React.FC = () => {
   const {

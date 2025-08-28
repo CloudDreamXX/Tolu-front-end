@@ -4,9 +4,10 @@ import { FoldersService, IFolder } from "entities/folder";
 import { RootState } from "entities/store";
 import { findFilePath, PathEntry } from "features/wrapper-folder-tree";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffectiveDocumentId } from "./useEffectiveDocumentId";
+import { setLastChatId } from "entities/client/lib";
 
 export const useDocumentState = () => {
   const { tab, folderId, documentId } = useEffectiveDocumentId();
@@ -30,6 +31,7 @@ export const useDocumentState = () => {
   const isTemporaryDocument = documentId?.startsWith("temp_");
 
   const [loadingConversation, setLoadingConversation] = useState(false);
+  const dispatch = useDispatch();
 
   const loadDocument = async (docId: string | undefined) => {
     if (!docId) return;
@@ -40,6 +42,7 @@ export const useDocumentState = () => {
         setDocument(response);
         setDocumentTitle(response.aiTitle);
         loadConversation(response.chatId);
+        dispatch(setLastChatId(response.chatId));
       }
     } catch (error) {
       console.error("Error fetching document:", error);

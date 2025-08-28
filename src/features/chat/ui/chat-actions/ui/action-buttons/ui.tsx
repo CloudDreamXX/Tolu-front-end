@@ -43,7 +43,10 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
     if (initialRating !== undefined) {
       setRating(initialRating);
     }
-  }, [initialRating]);
+    if (initialStatus !== undefined) {
+      setReadStatus(initialStatus);
+    }
+  }, [initialRating, initialStatus]);
 
   // const handleShare = async () => {
   //   const shareData = {
