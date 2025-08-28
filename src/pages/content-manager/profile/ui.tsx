@@ -1,16 +1,13 @@
-import { QuestionIcon } from "@phosphor-icons/react";
 import {
   ChangePasswordRequest,
   UserOnboardingInfo,
   UserService,
 } from "entities/user";
-import { Edit, EyeClosed, EyeIcon, Microscope } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import BrainIcon from "shared/assets/icons/brain_2";
+import BrainIcon from "shared/assets/icons/brain";
 import LeavesIcon from "shared/assets/icons/leaves";
-import ProfileCoach from "shared/assets/icons/profile-coach";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import TestTubeIcon from "shared/assets/icons/test-tube";
-import WomansLine from "shared/assets/icons/womans-line";
 import FocusAreasIcon from "shared/assets/images/FocusAreas.png";
 import SafetyIcon from "shared/assets/images/Safety.png";
 import UsersIcon from "shared/assets/images/Users.png";
@@ -113,14 +110,14 @@ export const ContentManagerProfile = () => {
       <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px]">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-[4.5px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
-            <ProfileCoach /> My profile
+            <MaterialIcon iconName="account_circle" /> My profile
           </div>
           <Button
             variant={"brightblue"}
             className="w-full md:w-[300px] justify-center"
             onClick={() => setEditModalOpen(true)}
           >
-            <Edit color="white" width={17} height={17} /> Edit
+            <MaterialIcon iconName="edit" fill={1} size={20} /> Edit
           </Button>
         </div>
 
@@ -246,11 +243,12 @@ export const ContentManagerProfile = () => {
                           showPassword ? "Show password" : "Hide password"
                         }
                       >
-                        {!showPassword ? (
-                          <EyeIcon size={16} />
-                        ) : (
-                          <EyeClosed size={16} />
-                        )}
+                        <MaterialIcon
+                          iconName={
+                            showPassword ? "visibility_off" : "visibility"
+                          }
+                          size={16}
+                        />
                       </button>
                     </div>
                   </div>
@@ -280,11 +278,12 @@ export const ContentManagerProfile = () => {
                           showPassword ? "Show password" : "Hide password"
                         }
                       >
-                        {!showPassword ? (
-                          <EyeIcon size={16} />
-                        ) : (
-                          <EyeClosed size={16} />
-                        )}
+                        <MaterialIcon
+                          iconName={
+                            showPassword ? "visibility_off" : "visibility"
+                          }
+                          size={16}
+                        />
                       </button>
                     </div>
                   </div>
@@ -306,7 +305,10 @@ export const ContentManagerProfile = () => {
             <ul className="flex flex-col gap-4">
               <PractitionerItem
                 icon={
-                  <Microscope className="w-[24px] h-[24px] text-[#1B2559]" />
+                  <MaterialIcon
+                    iconName="lightbulb"
+                    className="w-[24px] h-[24px] text-[#1B2559]"
+                  />
                 }
                 title="Clinical & Licensed Healthcare Providers"
                 subtitle="Physician Assistant (PA)"
@@ -333,7 +335,7 @@ export const ContentManagerProfile = () => {
                 subtitle="Mind-Body Therapist (e.g., somatic, breathwork)"
               />
               <PractitionerItem
-                icon={<WomansLine />}
+                icon={<MaterialIcon iconName="female" size={20} />}
                 title="Women's Health & Specialty Coaches"
                 subtitle="Menopause or Perimenopause Specialist"
               />
@@ -476,7 +478,12 @@ const PractitionerItem = ({
       <div>
         <div className="flex items-center gap-[8px] text-[#1B2559] font-[600] text-[20px]">
           {title}
-          <QuestionIcon className="w-[16px] h-[16px] text-[#1B2559]" />
+          <MaterialIcon
+            iconName="help"
+            size={16}
+            fill={1}
+            className="text-[#1B2559]"
+          />
         </div>
       </div>
     </div>

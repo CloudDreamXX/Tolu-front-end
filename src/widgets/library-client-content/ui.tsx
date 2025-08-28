@@ -4,13 +4,10 @@ import { ContentService, ContentStatus } from "entities/content";
 import { HealthHistory } from "entities/health-history";
 import { RootState } from "entities/store";
 import { LibraryCard } from "features/library-card";
-import { Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import BookMark from "shared/assets/icons/book-mark";
-import GlobeIcon from "shared/assets/icons/globe";
-import TwoUsersIcon from "shared/assets/icons/two-users";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
 import {
   Accordion,
@@ -358,7 +355,7 @@ export const LibraryClientContent = ({
               className="h-[12px] rounded-[8px] skeleton-gradient"
               style={{ width: getRandomWidth(160, 250) }}
             />
-            <BookMark color="#5F5F65" />
+            <MaterialIcon iconName="bookmark" className="text-[#5F5F65]" />
           </div>
           <div className="bg-[#F5F5F5] p-[8px] rounded-[8px]">
             <div
@@ -460,7 +457,7 @@ export const LibraryClientContent = ({
         />
 
         {isLoading && (
-          <div className="text-xs text-muted-foreground py-2">Loading…</div>
+          <div className="py-2 text-xs text-muted-foreground">Loading…</div>
         )}
       </>
     );
@@ -475,14 +472,18 @@ export const LibraryClientContent = ({
           size={isMobile ? "sm" : "icon"}
           className="px-[10px] rounded-full md:h-14 md:w-14"
         >
-          {isMobile ? "Providers" : <TwoUsersIcon />}
+          {isMobile ? "Providers" : <MaterialIcon iconName="groups" fill={1} />}
         </Button>
         <Button
           variant="blue2"
           size={isMobile ? "sm" : "icon"}
           className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
         >
-          {isMobile ? "Communities (soon)" : <GlobeIcon />}{" "}
+          {isMobile ? (
+            "Communities (soon)"
+          ) : (
+            <MaterialIcon iconName="language" />
+          )}
         </Button>
       </div>
 
@@ -491,7 +492,7 @@ export const LibraryClientContent = ({
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="w-full"
-        icon={<Search className="w-4 h-4" />}
+        icon={<MaterialIcon iconName="search" />}
         autoFocus
       />
 

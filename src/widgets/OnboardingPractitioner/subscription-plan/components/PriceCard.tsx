@@ -1,5 +1,5 @@
-import { Check } from "lucide-react";
 import React from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface PriceCardProps {
   plan: "starting" | "professional";
@@ -42,7 +42,11 @@ export const PriceCard: React.FC<PriceCardProps> = ({
 
         <ul className="flex flex-col justify-center items-start gap-[24px] self-stretch">
           <li className="flex gap-[16px] items-center">
-            <Check color="#1C63DB" size={20} />
+            <MaterialIcon
+              iconName="check"
+              size={20}
+              className="text-[#1C63DB]"
+            />
             <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium">
               Manage up to{" "}
               <span className="!font-bold">
@@ -51,7 +55,11 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             </span>
           </li>
           <li className="flex gap-[16px] items-center">
-            <Check color="#1C63DB" size={20} />
+            <MaterialIcon
+              iconName="check"
+              size={20}
+              className="text-[#1C63DB]"
+            />{" "}
             <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium">
               Host up to{" "}
               <span className="!font-bold">
@@ -61,7 +69,11 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             </span>
           </li>
           <li className="flex gap-[16px] items-center">
-            <Check color="#1C63DB" size={20} />
+            <MaterialIcon
+              iconName="check"
+              size={20}
+              className="text-[#1C63DB]"
+            />
             <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium">
               <span className="!font-bold">
                 {plan === "starting" ? 1 : 15} GB storage
@@ -70,8 +82,8 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             </span>
           </li>
           <li className="flex gap-[16px] items-center">
-            <Check
-              color="#1C63DB"
+            <MaterialIcon
+              iconName="check"
               size={20}
               className="min-w-[20px] min-h-[20px]"
             />

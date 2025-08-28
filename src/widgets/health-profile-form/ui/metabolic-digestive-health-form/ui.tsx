@@ -10,7 +10,7 @@ import {
 } from "shared/ui";
 import { useRef } from "react";
 import z from "zod";
-import Upload from "shared/assets/icons/upload";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const metabolicDigestiveHealthSchema = z.object({
   bloodSugarConcern: z.string().optional(),
@@ -135,7 +135,7 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
         name="recentLabTests"
         render={({ field }) => (
           <FormItem>
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <FormLabel>Recent lab tests available?</FormLabel>
               <a
                 href="https://tolu.health/privacy-policy"
@@ -173,7 +173,7 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                           className="flex items-center gap-[8px] px-[16.5px] py-[6px] text-[14px] font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hover:bg-[#D6ECFD]/80 transition"
                           onClick={() => fileInputRef.current?.click()}
                         >
-                          <Upload />
+                          <MaterialIcon iconName="group" />
                           Upload file
                         </button>
                         <input

@@ -1,8 +1,7 @@
 import { CustomNavLink } from "features/custom-nav-link";
-import { ChevronLast } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AiCreate from "shared/assets/icons/ai-create";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button, ScrollArea } from "shared/ui";
 import { sideBarContent } from "./lib";
@@ -53,7 +52,8 @@ export const ContentManagerSidebar: React.FC = () => {
             sidebarOpen ? "left-[296px]" : "left-[76px]"
           )}
         >
-          <ChevronLast
+          <MaterialIcon
+            iconName="last_page"
             className={cn(
               "transition-transform duration-300",
               sidebarOpen ? "rotate-180" : "rotate-0"
@@ -97,7 +97,7 @@ export const ContentManagerSidebar: React.FC = () => {
                 className="w-full"
                 onClick={handleCreateWithTolu}
               >
-                <AiCreate />
+                <MaterialIcon iconName={"stars_2"} fill={1} />
                 {sidebarOpen && "Create with Tolu"}
               </Button>
               <div

@@ -1,9 +1,7 @@
-import { Card, CardContent } from "shared/ui";
-import { IDocumentMock } from "../../model";
-import { File } from "lucide-react";
-import ClosedFolder from "shared/assets/icons/closed-folder";
 import { useLocation, useNavigate } from "react-router-dom";
-import { DocumentEditPopover } from "../document-edit-popover";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { cn } from "shared/lib";
+import { Card, CardContent } from "shared/ui";
 import {
   renderAuthor,
   renderDate,
@@ -12,7 +10,8 @@ import {
   renderReviewer,
   renderReviewStatus,
 } from "../../../../shared/ui/card-text-collection";
-import { cn } from "shared/lib";
+import { IDocumentMock } from "../../model";
+import { DocumentEditPopover } from "../document-edit-popover";
 
 interface DocumentCardProps {
   document: IDocumentMock;
@@ -70,7 +69,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
           className={cn("flex flex-col gap-3.5 p-4", withText && "gap-2")}
         >
           <div className="flex items-center gap-2">
-            <File className="min-w-6" />
+            <MaterialIcon iconName="draft" className="min-w-6" />
             <h2 className="text-xl font-bold truncate max-w-30">{title}</h2>
             <button
               className="z-10 ml-auto"
@@ -81,7 +80,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
           </div>
           {!withText && (
             <p className="flex items-center gap-2 text-base font-semibold truncate">
-              <ClosedFolder width={20} height={20} className="min-w-5" />
+              <MaterialIcon iconName="folder" className="min-w-5" size={20} />
               {folder}
             </p>
           )}

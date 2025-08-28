@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Setting from "shared/assets/icons/setting";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
   Badge,
   Button,
@@ -66,7 +66,7 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
             className="relative flex flex-col w-full gap-3 py-[8px] px-[16px] md:p-[16px] xl:px-[32px] xl:py-[16px] rounded-[18px] h-fit"
           >
             <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
-              <Setting width={28} height={28} />
+              <MaterialIcon iconName="settings" />
               Add instructions to folder
             </h4>
             <p className="text-[12px] xl:text-[14px] text-[#5F5F65]">
@@ -85,7 +85,7 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
       </PopoverTrigger>
       <PopoverContent className="w-[358px] md::w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         <h4 className="flex flex-row gap-2 text-xl font-bold">
-          <Setting width={28} height={28} />
+          <MaterialIcon iconName="settings" />
           {title}
         </h4>
         <p className="text-sm text-[#5F5F65]">{description}</p>

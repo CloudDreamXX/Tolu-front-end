@@ -1,10 +1,5 @@
-import { Archive, ArrowRight, Trash2 } from "lucide-react";
-import Box from "shared/assets/icons/box";
-import Dots from "shared/assets/icons/dots";
-import Duplicate from "shared/assets/icons/duplicate";
-import Edit from "shared/assets/icons/edit";
 import Expert from "shared/assets/icons/expert";
-import { Eye } from "shared/assets/icons/eye";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button, Popover, PopoverContent, PopoverTrigger } from "shared/ui";
 
 interface IPopoverDocumentEditProps {
@@ -21,7 +16,7 @@ export const DocumentEditPopover: React.FC<IPopoverDocumentEditProps> = ({
         e.stopPropagation();
       }}
     >
-      {customTrigger ?? <Dots className="w-5 h-5" />}
+      {customTrigger ?? <MaterialIcon iconName="more_vert" size={20} />}
     </PopoverTrigger>
     <PopoverContent
       onClick={(e) => {
@@ -32,31 +27,31 @@ export const DocumentEditPopover: React.FC<IPopoverDocumentEditProps> = ({
       side="left"
     >
       <Button variant={"ghost"} className="justify-start h-6 p-0 font-medium">
-        <Edit /> Edit
+        <MaterialIcon iconName="edit" /> Edit
       </Button>
       <Button variant={"ghost"} className="justify-start h-6 p-0 font-medium">
-        <ArrowRight /> Move
+        <MaterialIcon iconName="keyboard_arrow_right" /> Move
       </Button>
       <Button variant={"ghost"} className="justify-start h-6 p-0 font-medium">
-        <Duplicate /> Duplicate
-      </Button>{" "}
+        <MaterialIcon iconName="stack" fill={1} /> Duplicate
+      </Button>
       <Button variant={"ghost"} className="justify-start h-6 p-0 font-medium">
-        <Eye /> Mark as ready for review
+        <MaterialIcon iconName="visibility" fill={1} /> Duplicate
       </Button>
       <Button variant={"ghost"} className="justify-start h-6 p-0 font-medium">
         <Expert className="h-6 min-w-6" /> Mark as approved
       </Button>
       <Button variant={"ghost"} className="justify-start h-6 p-0 font-medium">
-        <Box /> Mark as ready to publish
-      </Button>{" "}
+        <MaterialIcon iconName="forum" fill={1} /> Mark as ready to publish
+      </Button>
       <Button variant={"ghost"} className="justify-start h-6 p-0 font-medium">
-        <Archive /> Archive
-      </Button>{" "}
+        <MaterialIcon iconName="book_2" fill={1} /> Archive
+      </Button>
       <Button
         variant={"ghost"}
         className="justify-start h-6 p-0 font-medium text-destructive"
       >
-        <Trash2 /> Delete
+        <MaterialIcon iconName="delete" /> Delete
       </Button>
     </PopoverContent>
   </Popover>

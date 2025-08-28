@@ -1,4 +1,4 @@
-import { Calendar, Clock2, Clock3, Clock4, Pencil } from "lucide-react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
 
 export const SYMPTOMS = [
@@ -20,10 +20,22 @@ export const MOOD_COLORS = [
 ];
 
 export const SLEEP_RANGES = [
-  { text: "Less than 1 hours", icon: <Clock2 className="stroke-[1.5]" /> },
-  { text: "1–3 hours", icon: <Clock3 className="stroke-[1.5]" /> },
-  { text: "3 -6 hours", icon: <Clock4 className="stroke-[1.5]" /> },
-  { text: "All day", icon: <Calendar className="stroke-[1.5]" /> },
+  {
+    text: "Less than 1 hours",
+    icon: <MaterialIcon iconName="browse_gallery" fill={1} />,
+  },
+  {
+    text: "1–3 hours",
+    icon: <MaterialIcon iconName="browse_gallery" fill={1} />,
+  },
+  {
+    text: "3 -6 hours",
+    icon: <MaterialIcon iconName="browse_gallery" fill={1} />,
+  },
+  {
+    text: "All day",
+    icon: <MaterialIcon iconName="calendar_today" fill={1} />,
+  },
 ];
 
 export const SUSPECTED_TRIGGERS = [
@@ -78,7 +90,12 @@ export const snapshots = [
         variant="blue2"
         className="flex items-center justify-center w-8 h-8 bg-[#DDEBF6] rounded-full"
       >
-        <Pencil className="stroke-[#1C63DB]" width={16} height={16} />
+        <MaterialIcon
+          iconName="edit"
+          fill={1}
+          size={16}
+          className="text-blue-600"
+        />
       </Button>
     ),
     tooltipContent:

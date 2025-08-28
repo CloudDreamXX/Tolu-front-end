@@ -1,5 +1,5 @@
-import { Check } from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface StepsProps {
   steps: string[];
@@ -44,7 +44,7 @@ export const Steps: React.FC<StepsProps> = ({
 
   return (
     <div
-      className="flex items-center md:gap-0 w-full p-2 border rounded-full overflow-y-auto"
+      className="flex items-center w-full p-2 overflow-y-auto border rounded-full md:gap-0"
       ref={containerRef}
     >
       {steps.map((step, index) => {
@@ -67,7 +67,7 @@ export const Steps: React.FC<StepsProps> = ({
               }`}
             >
               {isCompleted ? (
-                <Check className="w-6 h-6" />
+                <MaterialIcon iconName="check" className="w-6 h-6" />
               ) : (
                 <span className="max-w-full whitespace-nowrap text-[14px] md:text-[16px]">
                   {ordered

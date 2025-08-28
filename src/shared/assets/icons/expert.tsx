@@ -5,7 +5,7 @@ export default (props?: React.SVGProps<SVGSVGElement>) => {
       width="20"
       height="20"
       viewBox="0 0 20 20"
-      fill="none"
+      fill="white"
       {...props}
     >
       <path

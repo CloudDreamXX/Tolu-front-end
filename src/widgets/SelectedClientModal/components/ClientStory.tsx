@@ -1,6 +1,6 @@
 import { ClientStoryInfo } from "entities/coach";
 import React from "react";
-import TrashIcon from "shared/assets/icons/trash-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
   client: ClientStoryInfo;
@@ -117,7 +117,7 @@ export const ClientStory: React.FC<Props> = ({
               title="Remove"
               aria-label="Remove"
             >
-              <TrashIcon />
+              <MaterialIcon iconName="delete" />
             </button>
           </div>
         )}
@@ -187,7 +187,7 @@ export const ClientStory: React.FC<Props> = ({
                     title="Remove"
                     aria-label="Remove"
                   >
-                    <TrashIcon />
+                    <MaterialIcon iconName="delete" />
                   </button>
                 </div>
               );
@@ -248,7 +248,7 @@ export const ClientStory: React.FC<Props> = ({
                   title="Remove"
                   aria-label="Remove"
                 >
-                  <TrashIcon />
+                  <MaterialIcon iconName="delete" />
                 </button>
               </div>
             ))}

@@ -1,7 +1,7 @@
 import { Step, StepConnector, StepLabel, Stepper } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Check } from "lucide-react";
 import React from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface StepperWithLabelsProps {
   steps: string[];
@@ -47,7 +47,7 @@ export const StepperWithLabels: React.FC<StepperWithLabelsProps> = ({
     const { active, completed, className, icon } = props;
     return (
       <StepIconRoot ownerState={{ completed, active }} className={className}>
-        {completed ? <Check fontSize="small" /> : icon}
+        {completed ? <MaterialIcon iconName="check" /> : icon}
       </StepIconRoot>
     );
   };

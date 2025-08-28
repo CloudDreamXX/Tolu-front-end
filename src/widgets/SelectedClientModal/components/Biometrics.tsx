@@ -1,6 +1,7 @@
 import React from "react";
-import TrashIcon from "shared/assets/icons/trash-icon";
+
 import { BiometricsInfo } from "entities/coach";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type BiometricKey =
   | "hrv"
@@ -86,7 +87,7 @@ const Biometrics: React.FC<Props> = ({
                 aria-label={`Clear ${label}`}
                 title="Clear"
               >
-                <TrashIcon />
+                <MaterialIcon iconName="delete" />
               </button>
             )}
           </div>

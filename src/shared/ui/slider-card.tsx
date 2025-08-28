@@ -1,6 +1,7 @@
 import { useState } from "react";
-import InfoIcon from "shared/assets/icons/info-icon";
+
 import { Slider } from "./slider";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface SliderCardProps {
   title: string;
@@ -18,7 +19,7 @@ export const SliderCard: React.FC<SliderCardProps> = ({ title, colors }) => {
           {title}
         </h3>
         <span className="w-[20px] h-[20px]">
-          <InfoIcon />
+          <MaterialIcon iconName="help" size={20} />
         </span>
       </div>
 

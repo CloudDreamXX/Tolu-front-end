@@ -9,10 +9,10 @@ import {
   setLoading,
 } from "entities/health-history/lib";
 import { RootState } from "entities/store";
-import LoadingIcon from "shared/assets/icons/loading-icon";
 import { ChatSocketService } from "entities/chat";
 import { toast } from "shared/lib";
 import { clearChatHistoryExceptActive } from "entities/client/lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const Library = () => {
   const dispatch = useDispatch();
@@ -65,7 +65,10 @@ export const Library = () => {
     <main className="flex flex-col h-screen items-start gap-6 p-4 md:p-6 self-stretch overflow-y-auto bg-[#F2F4F6]">
       {loading && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <LoadingIcon />
+          <MaterialIcon
+            iconName="progress_activity"
+            className="text-blue-600 animate-spin"
+          />
           Please wait, we are loading the information...
         </div>
       )}

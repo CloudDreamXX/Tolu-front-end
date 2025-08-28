@@ -1,6 +1,4 @@
-import { Send } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import Attach from "shared/assets/icons/attach";
 import { Button, Textarea } from "shared/ui";
 import { PopoverAttach, PopoverClient } from "widgets/content-popovers";
 import { useForm, useFormState, useWatch } from "react-hook-form";
@@ -10,6 +8,7 @@ import {
   CaseSearchForm,
   FormValues,
 } from "pages/content-manager/create/case-search";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface MessageInputProps {
   message: string;
@@ -138,7 +137,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               disabled={!folderId}
               customTrigger={
                 <button className="flex items-center justify-center w-[48px] h-[48px] rounded-full bg-[#F3F6FB]">
-                  <Attach />
+                  <MaterialIcon iconName="attach_file" />
                 </button>
               }
             />
@@ -177,7 +176,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                   (enabled && !isValid)
                 }
               >
-                <Send color="#fff" />
+                <MaterialIcon iconName="send" />
               </Button>
             </div>
           </div>

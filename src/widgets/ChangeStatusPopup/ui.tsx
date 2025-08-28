@@ -1,7 +1,6 @@
 import { FOLDER_STATUS_MAPPING, ORDERED_STATUSES } from "entities/folder";
 import React, { useState } from "react";
-import Close from "shared/assets/icons/close";
-import MarkAs from "shared/assets/icons/grey-mark-as";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ChooseSubfolderPanel } from "widgets/ChooseSubfolderPanel";
 
 interface ChangeStatusPopupProps {
@@ -97,14 +96,15 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
         >
-          <Close />
+          <MaterialIcon iconName="close" />
         </button>
 
         <h3
           id="modal-title"
           className="text-[20px] font-semibold text-[#1D1D1F] flex items-center gap-[16px]"
         >
-          <MarkAs /> Mark as
+          <MaterialIcon iconName="done_all" />
+          Mark as
         </h3>
         <p className="text-[14px] text-[#5F5F65] font-[500]">
           Lorem ipsum dolor sit amet consectetur. Convallis ut rutrum diam quam.

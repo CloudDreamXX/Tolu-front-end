@@ -1,5 +1,5 @@
 import { FoodMoodPoopJournal } from "entities/coach";
-import Calendar from "shared/assets/icons/calendar";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
   client: FoodMoodPoopJournal[];
@@ -19,7 +19,8 @@ const FoodMoodPoop: React.FC<Props> = ({ client }) => {
   return (
     <div>
       <p className="pb-[16px] text-[#5F5F65] text-[14px] font-[500] flex items-center gap-[8px]">
-        <Calendar />
+        <MaterialIcon iconName="calendar_today" fill={1} />
+
         {new Intl.DateTimeFormat("en-US", {
           month: "long",
           day: "numeric",

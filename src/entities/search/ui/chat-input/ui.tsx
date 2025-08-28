@@ -1,9 +1,9 @@
-import { Paperclip, Send } from "lucide-react";
+import { MenopauseSubmissionRequest, UserService } from "entities/user";
 import { useState } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button, Input, Switch } from "shared/ui";
-import { SymptomCheckModal, MultiStepModal } from "widgets/MenopauseModals";
-import { MenopauseSubmissionRequest, UserService } from "entities/user";
+import { MultiStepModal, SymptomCheckModal } from "widgets/MenopauseModals";
 
 interface SearchAiChatInputProps {
   placeholder?: string;
@@ -89,7 +89,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex flex-row items-center w-full gap-4">
           <label className="relative flex items-center gap-2 text-sm text-gray-600 transition-colors cursor-pointer hover:text-gray-800 hover:bg-gray-100">
-            <Paperclip size={24} />
+            <MaterialIcon iconName="attach_file" />
             {attachedFiles.length > 0 && (
               <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
                 {attachedFiles.length.toString().length > 2
@@ -121,9 +121,8 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
               : "Please enter a message"
           }
         >
-          <Send
-            size={24}
-            color="white"
+          <MaterialIcon
+            iconName="send"
             className="relative rotate-45 -left-[2px]"
           />
         </Button>

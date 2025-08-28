@@ -1,47 +1,41 @@
-import Approved from "shared/assets/icons/approved";
-import Book from "shared/assets/icons/book";
-import Box from "shared/assets/icons/box";
-import Community from "shared/assets/icons/community";
-import Dashboard from "shared/assets/icons/dashboard";
-import Workshops from "shared/assets/icons/workshops";
-import { SideBarItem } from "../model";
 import { WrapperFolderTree } from "features/wrapper-folder-tree";
-import { FileText } from "lucide-react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { SideBarItem } from "../model";
 
 export const sideBarContent: SideBarItem[] = [
   {
     title: "Clients",
     link: "/clients",
-    icon: <Approved width={24} height={24} />,
+    icon: <MaterialIcon iconName="person_search" fill={1} />,
   },
   {
     title: "Library",
     content: <WrapperFolderTree />,
-    icon: <Book width={24} height={24} />,
+    icon: <MaterialIcon iconName="web_stories" fill={1} />,
   },
   {
     title: "Workshops (coming soon)",
     link: "/",
-    icon: <Workshops />,
+    icon: <MaterialIcon iconName="school" fill={1} />,
   },
   {
     title: "Dashboard (coming soon)",
     link: "/",
-    icon: <Dashboard />,
+    icon: <MaterialIcon iconName="bar_chart_4_bars" fill={1} />,
   },
   {
     title: "Community (coming soon)",
     link: "/",
-    icon: <Community width={24} height={24} />,
+    icon: <MaterialIcon iconName="groups" fill={1} />,
   },
   {
     title: "Messages",
     link: "/content-manager/messages",
-    icon: <Box />,
+    icon: <MaterialIcon iconName="forum" fill={1} />,
   },
   {
     title: "Agreements",
     link: "/content-manager/agreements",
-    icon: <FileText />,
+    icon: <MaterialIcon iconName="docs" />,
   },
 ];

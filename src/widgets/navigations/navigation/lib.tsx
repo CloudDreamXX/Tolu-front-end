@@ -1,36 +1,5 @@
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { NavigationItem } from "./model";
-import EditCreate from "shared/assets/icons/edit-create";
-import Sparkle from "shared/assets/icons/sparkle";
-import Review from "shared/assets/icons/review";
-import Approved from "shared/assets/icons/approved";
-import Published from "shared/assets/icons/published";
-import Layer from "shared/assets/icons/layer";
-import Content from "shared/assets/icons/content";
-import Star from "shared/assets/icons/star";
-import Coins from "shared/assets/icons/coins";
-import Setting from "shared/assets/icons/setting";
-import Recomended from "shared/assets/icons/recomended";
-import Referral from "shared/assets/icons/referral";
-import Product from "shared/assets/icons/product";
-import Shop from "shared/assets/icons/shop";
-import User from "shared/assets/icons/user";
-import Assigned from "shared/assets/icons/assigned";
-import UserPlus from "shared/assets/icons/user-plus";
-import Note from "shared/assets/icons/note";
-import Folder from "shared/assets/icons/folder";
-import Inbox from "shared/assets/icons/inbox";
-import Message from "shared/assets/icons/message";
-import Reply from "shared/assets/icons/reply";
-import Users from "shared/assets/icons/users";
-import LaptopPerformance from "shared/assets/icons/laptop-performance";
-import MoneyLinear from "shared/assets/icons/money-linear";
-import Leader from "shared/assets/icons/leader";
-import File from "shared/assets/icons/file";
-import Mail from "shared/assets/icons/mail";
-import Profile from "shared/assets/icons/profile";
-import Tools from "shared/assets/icons/tools";
-import Payment from "shared/assets/icons/payment";
-import Notification from "shared/assets/icons/notification";
 
 export const navigationItems: NavigationItem[] = [
   {
@@ -40,32 +9,32 @@ export const navigationItems: NavigationItem[] = [
       {
         title: "Create New Content",
         link: "/content-manager/create",
-        icon: <EditCreate />,
+        icon: <></>,
       },
       {
         title: "Approved",
         link: "/content-manager/approved",
-        icon: <Approved />,
+        icon: <MaterialIcon iconName="person_search" fill={1} />,
       },
       {
         title: "AI-Generated",
         link: "/content-manager/ai-generated",
-        icon: <Sparkle />,
+        icon: <MaterialIcon iconName="stars_2" fill={1} />,
       },
       {
         title: "Published",
         link: "/content-manager/published",
-        icon: <Published />,
+        icon: <></>,
       },
       {
         title: "In Review",
         link: "/content-manager/in-review",
-        icon: <Review />,
+        icon: <MaterialIcon iconName="mystery" fill={1} />,
       },
       {
         title: "Archived",
         link: "/content-manager/archived",
-        icon: <Layer />,
+        icon: <></>,
       },
     ],
   },
@@ -77,42 +46,42 @@ export const navigationItems: NavigationItem[] = [
       {
         title: "My Content Shop",
         link: "/storefront/my-content-shop",
-        icon: <Content />,
+        icon: <></>,
       },
       {
         title: "Recommended Products",
         link: "/storefront/recommended-products",
-        icon: <Recomended />,
+        icon: <MaterialIcon iconName="thumb_up" />,
       },
       {
         title: "Reviews & Ratings",
         link: "/storefront/reviews-ratings",
-        icon: <Star />,
+        icon: <MaterialIcon iconName="star" />,
       },
       {
         title: "Referral Links",
         link: "/storefront/referral-links",
-        icon: <Referral />,
+        icon: <></>,
       },
       {
         title: "Earnings from Content",
         link: "/storefront/earnings",
-        icon: <Coins />,
+        icon: <MaterialIcon iconName="paid" />,
       },
       {
         title: "Product Sales & Commissions",
         link: "/storefront/product-sales",
-        icon: <Product />,
+        icon: <></>,
       },
       {
         title: "Storefront Settings",
         link: "/storefront/settings",
-        icon: <Setting />,
+        icon: <MaterialIcon iconName="settings" />,
       },
       {
         title: "Shop Configuration",
         link: "/storefront/shop-configuration",
-        icon: <Shop />,
+        icon: <></>,
       },
     ],
   },
@@ -120,26 +89,30 @@ export const navigationItems: NavigationItem[] = [
     title: "Clients",
     mainLink: "/clients",
     links: [
-      { title: "My Clients", link: "/clients/my-clients", icon: <User /> },
+      {
+        title: "My Clients",
+        link: "/clients/my-clients",
+        icon: <MaterialIcon iconName="person" />,
+      },
       {
         title: "Assigned Content",
         link: "/clients/assigned-content",
-        icon: <Assigned />,
+        icon: <></>,
       },
       {
         title: "Add New Client",
         link: "/clients/add-new-client",
-        icon: <UserPlus />,
+        icon: <MaterialIcon iconName="person_add" />,
       },
       {
         title: "Client Notes & Forms",
         link: "/clients/notes-forms",
-        icon: <Note />,
+        icon: <></>,
       },
       {
         title: "Client Folders",
         link: "/clients/client-folders",
-        icon: <Folder />,
+        icon: <></>,
       },
     ],
   },
@@ -150,22 +123,22 @@ export const navigationItems: NavigationItem[] = [
       {
         title: "Inbox",
         link: "/messaging/inbox",
-        icon: <Inbox />,
+        icon: <></>,
       },
       {
         title: "New Message",
         link: "/messaging/new-message",
-        icon: <Message />,
+        icon: <></>,
       },
       {
         title: "Client Replies",
         link: "/messaging/client-replies",
-        icon: <Reply />,
+        icon: <MaterialIcon iconName="reply" />,
       },
       {
         title: "Group Messages",
         link: "/messaging/group-messages",
-        icon: <Users />,
+        icon: <MaterialIcon iconName="groups" />,
       },
     ],
   },
@@ -177,17 +150,17 @@ export const navigationItems: NavigationItem[] = [
       {
         title: "Content Performance",
         link: "/insights/content-performance",
-        icon: <LaptopPerformance />,
+        icon: <></>,
       },
       {
         title: "Subscription & Plan",
         link: "/insights/subscription-plan",
-        icon: <MoneyLinear />,
+        icon: <></>,
       },
       {
         title: "Top Performing Topics",
         link: "/insights/top-performing-topics",
-        icon: <Star />,
+        icon: <MaterialIcon iconName="star" />,
       },
     ],
   },
@@ -198,22 +171,22 @@ export const navigationItems: NavigationItem[] = [
       {
         title: "Coach Community",
         link: "/community/coach-community",
-        icon: <Leader />,
+        icon: <></>,
       },
       {
         title: "Create Group Study",
         link: "/community/create-group-study",
-        icon: <File />,
+        icon: <></>,
       },
       {
         title: "My Groups",
         link: "/community/my-groups",
-        icon: <Users />,
+        icon: <MaterialIcon iconName="groups" />,
       },
       {
         title: "Invite Clients",
         link: "/community/invite-clients",
-        icon: <Mail />,
+        icon: <></>,
       },
     ],
   },
@@ -224,23 +197,23 @@ export const navigationItems: NavigationItem[] = [
       {
         title: "Profile & Credentials",
         link: "/settings/profile-credentials",
-        icon: <Profile />,
+        icon: <></>,
       },
       {
         title: "Connected Tools",
         titleAdditional: "wearables/labs",
         link: "/settings/account-connections",
-        icon: <Tools />,
+        icon: <MaterialIcon iconName="manage_accounts" />,
       },
       {
         title: "Payment Setup",
         link: "/settings/payment-setup",
-        icon: <Payment />,
+        icon: <></>,
       },
       {
         title: "Notification Preferences",
         link: "/settings/notification-preferences",
-        icon: <Notification />,
+        icon: <></>,
       },
     ],
   },

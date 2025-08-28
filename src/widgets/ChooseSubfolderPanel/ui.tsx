@@ -1,11 +1,8 @@
 import { ISubfolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
-import { Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import Dots from "shared/assets/icons/dots";
-import { Eye } from "shared/assets/icons/eye";
-import Plus from "shared/assets/icons/plus";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Button, Popover, PopoverContent, PopoverTrigger } from "shared/ui";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
@@ -86,7 +83,7 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
           onClick={() => setCreatePopup(true)}
           className="p-1 ml-auto rounded hover:bg-gray-100"
         >
-          <Plus />
+          <MaterialIcon iconName="add" />
         </button>
       </div>
 
@@ -112,7 +109,7 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
                     className="w-8 h-8 p-0 rounded-full"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Dots />
+                    <MaterialIcon iconName="more_vert" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
@@ -120,13 +117,18 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
                     variant="ghost"
                     className="items-center justify-start w-full h-8 p-1 font-medium"
                   >
-                    <Eye /> View source files
+                    <MaterialIcon iconName="visibility" />
+                    View source files
                   </Button>
                   <Button
                     variant="ghost"
                     className="items-center justify-start w-full h-8 p-1 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
                   >
-                    <Trash2 className="text-destructive" /> Delete
+                    <MaterialIcon
+                      iconName="delete"
+                      className="text-destructive"
+                    />
+                    Delete
                   </Button>
                 </PopoverContent>
               </Popover>

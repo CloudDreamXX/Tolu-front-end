@@ -1,8 +1,5 @@
 import { DocumentCard, IDocumentMock } from "entities/folder";
-import { ChevronDown } from "lucide-react";
 import React, { useMemo, useState } from "react";
-import AiCreate from "shared/assets/icons/ai-create";
-import Search from "shared/assets/icons/search";
 import { formatDateToSlash } from "shared/lib";
 import {
   DropdownMenu,
@@ -11,6 +8,7 @@ import {
   Input,
 } from "shared/ui";
 import { MOCK_DOCUMENT } from "../document/mock";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const ContentManagerInReview: React.FC = () => {
   const [documents] = useState<IDocumentMock[]>(
@@ -29,8 +27,7 @@ export const ContentManagerInReview: React.FC = () => {
     <div className="flex flex-col gap-12 p-8">
       <div className="flex flex-col gap-2">
         <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
-          <AiCreate width={24} height={24} fill="#000" />
-          In-review contents{" "}
+          <MaterialIcon iconName={"stars_2"} fill={1} /> In-review contents{" "}
         </h1>
         <p className="text-sm font-medium">
           These contents are under review by certified or licensed health
@@ -42,7 +39,8 @@ export const ContentManagerInReview: React.FC = () => {
         <div className="flex flex-row justify-between w-full">
           <DropdownMenu>
             <DropdownMenuTrigger className="flex flex-row gap-1.5 items-center text-sm">
-              {formatDateToSlash(choosedDate)} <ChevronDown size={16} />
+              {formatDateToSlash(choosedDate)}
+              <MaterialIcon iconName="keyboard_arrow_down" size={16} />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[200px]">
               <div className="flex flex-col gap-2 p-4">
@@ -59,7 +57,7 @@ export const ContentManagerInReview: React.FC = () => {
           <div className="max-w-[300px] w-full">
             <Input
               placeholder="Search"
-              icon={<Search />}
+              icon={<MaterialIcon iconName="search" size={16} />}
               className="rounded-full"
               value={search}
               onChange={(e) => setSearch(e.target.value)}

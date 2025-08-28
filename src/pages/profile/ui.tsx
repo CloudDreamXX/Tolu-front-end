@@ -1,9 +1,11 @@
+import { ChatSocketService } from "entities/chat";
+import { Client, ClientService } from "entities/client";
+import { Notification, NotificationsService } from "entities/notifications";
 import { RootState } from "entities/store";
 import { ChangePasswordRequest, UserService } from "entities/user";
-import { Bell, Plus, RefreshCcw, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import SignOutIcon from "shared/assets/icons/signout";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, phoneMask, toast } from "shared/lib";
 import {
   Avatar,
@@ -15,16 +17,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "shared/ui";
-import { Card } from "./components/Card";
-import { Switch } from "./components/Switch";
-import { Field } from "./components/Field";
-import { Notification, NotificationsService } from "entities/notifications";
-import { ChatSocketService } from "entities/chat";
-import { ClientEditProfileModal } from "widgets/client-edit-profile-modal";
-import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
 import { ChangePasswordModal } from "widgets/change-password-modal";
-import { Client, ClientService } from "entities/client";
+import { ClientEditProfileModal } from "widgets/client-edit-profile-modal";
 import { ClientProfileData } from "widgets/client-edit-profile-modal/types";
+import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
+import { Card } from "./components/Card";
+import { Field } from "./components/Field";
+import { Switch } from "./components/Switch";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -264,7 +263,7 @@ export const ClientProfile = () => {
           Personal profile
         </div>
         <button onClick={togglePopup}>
-          <Bell />
+          <MaterialIcon iconName="notifications" fill={1} />
           {unreadCount > 0 && (
             <span className="absolute flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full top-1 right-4">
               {unreadCount}
@@ -325,7 +324,7 @@ export const ClientProfile = () => {
             <Avatar className="object-cover w-full h-full rounded-full">
               <AvatarImage src={previewUrl || photoUrl || undefined} />
               <AvatarFallback className="text-3xl bg-slate-300 ">
-                {initials.toLowerCase()}
+                {initials}
               </AvatarFallback>
             </Avatar>
             <input
@@ -345,7 +344,7 @@ export const ClientProfile = () => {
                    w-8 h-8 rounded-full bg-[#1C63DB] text-white
                    hover:opacity-90 focus:outline-none"
                 >
-                  <Plus className="w-4 h-4" />
+                  <MaterialIcon iconName="add" />
                 </Button>
               </DropdownMenuTrigger>
 
@@ -367,7 +366,7 @@ export const ClientProfile = () => {
                   className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg cursor-pointer focus:bg-white focus:text-inherit"
                 >
                   <span className="inline-flex items-center justify-center w-8 h-8 bg-white border rounded-lg">
-                    <RefreshCcw className="w-4 h-4" />
+                    <MaterialIcon iconName="cached" />
                   </span>
                   Change photo
                 </DropdownMenuItem>
@@ -379,7 +378,7 @@ export const ClientProfile = () => {
                   className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg cursor-pointer focus:bg-white focus:text-inherit"
                 >
                   <span className="inline-flex items-center justify-center w-8 h-8 bg-white border rounded-lg">
-                    <Trash2 className="w-4 h-4" />
+                    <MaterialIcon iconName="delete" />
                   </span>
                   Delete photo
                 </DropdownMenuItem> */}
@@ -399,7 +398,7 @@ export const ClientProfile = () => {
           className="px-8 text-base font-semibold text-blue-700"
           onClick={() => handleSignOut()}
         >
-          <SignOutIcon className="text-blue-700" />
+          <MaterialIcon iconName="exit_to_app" />
           Log out
         </Button>
       </div>
@@ -452,7 +451,8 @@ export const ClientProfile = () => {
                 variant={"blue2"}
                 className="px-8 text-base font-semibold text-blue-700"
               >
-                <RotateCcw className="text-blue-700 " /> Update
+                <MaterialIcon iconName="replay" className="text-blue-700" />
+                Update
               </Button>
             }
           >

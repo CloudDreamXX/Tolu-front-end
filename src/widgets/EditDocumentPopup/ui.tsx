@@ -1,10 +1,4 @@
-import { Archive } from "lucide-react";
-import ArrowRight from "shared/assets/icons/arrow-right";
-import Edit from "shared/assets/icons/edit";
-import Improve from "shared/assets/icons/ai-create";
-import MarkAs from "shared/assets/icons/grey-mark-as";
-import Trash from "shared/assets/icons/trash-icon";
-import Folders from "shared/assets/icons/grey-folders";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
   onEdit: () => void;
@@ -43,32 +37,50 @@ export const EditDocumentPopup: React.FC<Props> = ({
     >
       {onImproveWithAI && type !== "subfolder" && type !== "folder" ? (
         <MenuItem
-          icon={<Improve />}
+          icon={<MaterialIcon iconName={"stars_2"} />}
           label="Improve with AI"
           onClick={onImproveWithAI}
         />
       ) : (
-        <MenuItem icon={<Edit />} label="Edit" onClick={onEdit} />
+        <MenuItem
+          icon={<MaterialIcon iconName="edit" />}
+          label="Edit"
+          onClick={onEdit}
+        />
       )}
-      {type !== "subfolder" && (
-        <MenuItem icon={<ArrowRight />} label="Move" onClick={onMove} />
-      )}
-      <MenuItem icon={<Folders />} label="Duplicate" onClick={onDublicate} />
       {type !== "subfolder" && (
         <MenuItem
-          icon={<MarkAs width={24} height={24} />}
+          icon={<MaterialIcon iconName="keyboard_arrow_right" />}
+          label="Move"
+          onClick={onMove}
+        />
+      )}
+      <MenuItem
+        icon={<MaterialIcon iconName="folder_data" />}
+        label="Duplicate"
+        onClick={onDublicate}
+      />
+      {type !== "subfolder" && (
+        <MenuItem
+          icon={<MaterialIcon iconName="done_all" />}
           label="Mark as"
           onClick={onMarkAs}
         />
       )}
       <div className="h-[1px] w-full bg-[#E3E3E3]" />
       <MenuItem
-        icon={<Archive size={24} />}
+        icon={<MaterialIcon iconName="bookmark" fill={1} />}
         label="Archive"
         onClick={onArchive}
       />
       <MenuItem
-        icon={<Trash />}
+        icon={
+          <MaterialIcon
+            iconName="delete"
+            fill={1}
+            className="color-[#FF1F0F]"
+          />
+        }
         label="Delete"
         className="text-[#FF1F0F]"
         onClick={onDelete}

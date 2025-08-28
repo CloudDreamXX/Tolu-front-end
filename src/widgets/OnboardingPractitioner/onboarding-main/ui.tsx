@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import LightIcon from "shared/assets/icons/light";
-import Search from "shared/assets/icons/search";
 import { usePageWidth } from "shared/lib";
 import {
   AuthPageWrapper,
@@ -16,6 +14,7 @@ import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 import { Footer } from "../../Footer";
 import { Button, HeaderOnboarding } from "./components";
 import { buttons } from "./mock";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const OnboardingMain = () => {
   const nav = useNavigate();
@@ -103,7 +102,9 @@ export const OnboardingMain = () => {
             <Input
               variant="none"
               type="text"
-              icon={<Search className="ml-2" />}
+              icon={
+                <MaterialIcon iconName="search" size={16} className="ml-2" />
+              }
               placeholder="Search"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
@@ -221,7 +222,10 @@ export const OnboardingMain = () => {
                 <div className="flex flex-col items-center gap-2">
                   <h3 className="flex gap-2 text-[#1B2559] leading-[1.4]">
                     <span className="w-6 h-6 shrink-0">
-                      <LightIcon className="text-[#1B2559]" />
+                      <MaterialIcon
+                        iconName="lightbulb"
+                        className="text-[#1B2559]"
+                      />
                     </span>
                     You can update your focus areas anytime from your dashboard.
                   </h3>

@@ -20,10 +20,10 @@ import { cn, toast } from "shared/lib";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { findFolderPath } from "features/wrapper-folder-tree";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
-import LoadingIcon from "shared/assets/icons/loading-icon";
 import { useTextSelectionTooltip } from "./lib";
 import { useDispatch } from "react-redux";
 import { clearAllChatHistory } from "entities/client/lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -213,7 +213,10 @@ export const ContentManagerDocument: React.FC = () => {
     <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] pt-2 md:pt-6 h-[calc(100vh-78px)] w-full overflow-y-auto">
       {loadingConversation && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <LoadingIcon />
+          <MaterialIcon
+            iconName="progress_activity"
+            className="text-blue-600 animate-spin"
+          />
           Please wait, we are loading the information...
         </div>
       )}

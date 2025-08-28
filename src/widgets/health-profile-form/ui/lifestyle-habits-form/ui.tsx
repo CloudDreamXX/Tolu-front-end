@@ -1,4 +1,3 @@
-import { Fire, Lightning, MoonStarsIcon } from "@phosphor-icons/react";
 import {
   FormControl,
   FormField,
@@ -13,6 +12,7 @@ import {
 import { z } from "zod";
 import { useState } from "react";
 import { MultiSelect } from "../MultiSelect";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const lifestyleHabitsSchema = z.object({
   dietDetails: z.string().min(1, "This field is required"),
@@ -214,7 +214,7 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
               How well do you sleep?
             </p>
             <div className="flex items-center gap-2 text-sm text-[#1B2559] font-medium">
-              <MoonStarsIcon size={16} />
+              <MaterialIcon iconName="lightbulb" />
               <span>{sleepQualityLabels[field.value]}</span>
             </div>
             <FormControl>
@@ -259,7 +259,7 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
               Rate your daily stress levels
             </p>
             <div className="flex items-center gap-2 text-sm text-[#1B2559] font-medium">
-              <Lightning size={16} />
+              <MaterialIcon iconName="lightbulb" />
               <span>{stressLevelsLabels[field.value]}</span>
             </div>
             <FormControl>
@@ -304,7 +304,7 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
               How do you feel most days?
             </p>
             <div className="flex items-center gap-2 text-sm text-[#1B2559] font-medium">
-              <Fire size={16} />
+              <MaterialIcon iconName="lightbulb" />
               <span>{energyLevelsLabels[field.value]}</span>
             </div>
             <FormControl>

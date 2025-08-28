@@ -1,14 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import CloseIcon from "shared/assets/icons/close";
-import UserIcon from "shared/assets/icons/user-black";
-import InfoIcon from "shared/assets/icons/info-grey";
-import Calendar from "shared/assets/icons/calendar";
-import { SelectField } from "widgets/CRMSelectField";
-import { MultiSelectField } from "widgets/MultiSelectField";
-import { CustomRadio } from "widgets/CustomRadio";
-import { StepperWithLabels } from "widgets/StepperWithLabels";
 import { ClientDetails, InviteClientPayload } from "entities/coach";
-import ArrowLeft from "shared/assets/icons/arrowLeft";
+import React, { useEffect, useRef, useState } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { SelectField } from "widgets/CRMSelectField";
+import { CustomRadio } from "widgets/CustomRadio";
+import { MultiSelectField } from "widgets/MultiSelectField";
+import { StepperWithLabels } from "widgets/StepperWithLabels";
 
 interface EditClientModalProps {
   client: InviteClientPayload | ClientDetails;
@@ -192,20 +188,20 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
           className="hidden md:block absolute top-[16px] right-[16px] cursor-pointer z-20"
           onClick={onCancel}
         >
-          <CloseIcon />
+          <MaterialIcon iconName="close" />
         </span>
         {isNew && stepIndex > 0 && (
           <button
             className="absolute md:hidden top-[24px] flex justify-center items-center text-[#1D1D1F]"
             onClick={onBack}
           >
-            <ArrowLeft />
+            <MaterialIcon iconName="keyboard_arrow_left" />
           </button>
         )}
 
         <div className="flex gap-[24px] items-center mb-[16px] md:mb-[24px]">
           <div className="flex items-center gap-[8px]">
-            <UserIcon />
+            <MaterialIcon iconName="account_circle" size={24} />
             <h2 className="text-[20px] font-[700]">{getTitle()}</h2>
           </div>
         </div>
@@ -276,7 +272,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 className="placeholder-custom  w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
               />
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <InfoIcon />
+                <MaterialIcon iconName="info" size={16} />
                 Used to send client invite and profile access
               </div>
             </div>
@@ -312,7 +308,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 Date of birth
               </label>
               <div className="flex w-full gap-[8px] bg-white border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px]">
-                <Calendar />
+                <MaterialIcon iconName="calendar_today" fill={1} />
                 <input
                   type="date"
                   placeholder="Enter date of birth"
@@ -324,7 +320,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 />
               </div>
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <InfoIcon />
+                <MaterialIcon iconName="info" size={16} />
                 Helps personalize age-appropriate guidance
               </div>
             </div>
@@ -342,7 +338,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
               />
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <InfoIcon />
+                <MaterialIcon iconName="info" size={16} />
                 e.g., Fatigue, Gut issues, Hormonal imbalance
               </div>
             </div>
@@ -433,7 +429,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
               />
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <InfoIcon />
+                <MaterialIcon iconName="info" size={16} />
                 e.g., personalized education
               </div>
             </div>
@@ -497,7 +493,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 />
               </div>
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <InfoIcon />
+                <MaterialIcon iconName="info" size={16} />
                 You can always edit or review it later
               </div>
             </div>

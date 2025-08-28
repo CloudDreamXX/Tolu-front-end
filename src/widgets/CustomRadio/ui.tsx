@@ -1,5 +1,4 @@
-import RadioChecked from "shared/assets/icons/radio-checked";
-import RadioUnchecked from "shared/assets/icons/radio-unchecked";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface CustomRadioProps {
   label: string;
@@ -24,7 +23,12 @@ export const CustomRadio: React.FC<CustomRadioProps> = ({
       className="flex items-center gap-[12px] cursor-pointer text-[#000] font-[500]"
     >
       <div className="w-[24px] h-[24px] flex items-center justify-center">
-        {isChecked ? <RadioChecked /> : <RadioUnchecked />}
+        <MaterialIcon
+          iconName={
+            isChecked ? "radio_button_checked" : "radio_button_unchecked"
+          }
+          className="text-blue-500"
+        />
       </div>
       <label htmlFor={`${name}-${value}`} className="cursor-pointer">
         {label}

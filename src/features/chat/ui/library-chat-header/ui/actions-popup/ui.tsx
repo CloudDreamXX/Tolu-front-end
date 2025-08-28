@@ -1,5 +1,4 @@
-import RenamePencil from "shared/assets/icons/rename-pencil";
-import Trash from "shared/assets/icons/trash-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
   onEdit: () => void;
@@ -13,13 +12,13 @@ export const ActionsPopup: React.FC<Props> = ({ onEdit, onDelete }) => {
              bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] top-[160px] md:top-[70px] right-[16px]`}
     >
       <MenuItem
-        icon={<RenamePencil />}
+        icon={<MaterialIcon iconName="edit" fill={1} />}
         label="Rename this chat"
         onClick={onEdit}
       />
 
       <MenuItem
-        icon={<Trash />}
+        icon={<MaterialIcon iconName="delete" fill={1} />}
         label="Delete this chat"
         className="text-[#FF1F0F]"
         onClick={onDelete}

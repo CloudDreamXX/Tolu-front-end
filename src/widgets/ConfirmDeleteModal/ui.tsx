@@ -1,5 +1,4 @@
-import Close from "shared/assets/icons/close";
-import TrashIcon from "shared/assets/icons/trash-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const ConfirmDeleteModal = ({
   onCancel,
@@ -23,14 +22,14 @@ export const ConfirmDeleteModal = ({
         aria-label="Close modal"
         onClick={onCancel}
       >
-        <Close />
+        <MaterialIcon iconName="close" />
       </button>
       <h2 className="text-[20px] font-semibold text-[#1D1D1F] flex flex-col md:flex-row md:items-center gap-[10px] md:gap-[8px] mb-[12px]">
         {title ? (
           title
         ) : (
           <span className="flex flex-col md:flex-row md:items-center gap-[10px] md:gap-[8px]">
-            <TrashIcon fill="#1D1D1F" />
+            <MaterialIcon iconName="delete" className="text-[#1D1D1F]" />
             Are you sure you want to delete this user?
           </span>
         )}

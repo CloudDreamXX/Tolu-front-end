@@ -5,19 +5,10 @@ import {
   setFolders,
 } from "entities/folder";
 import { RootState } from "entities/store";
-import {
-  ChevronDown,
-  ChevronUp,
-  FileText,
-  FolderOpen,
-  GripVertical,
-} from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import Dots from "shared/assets/icons/dots";
-import Plus from "shared/assets/icons/plus";
-import TrashIcon from "shared/assets/icons/trash-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast } from "shared/lib";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
@@ -200,22 +191,28 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
               )}
               onClick={() => toggleFolder(folder)}
             >
-              {openFolders.has(folder.id) ? (
-                <ChevronUp className="w-5 h-5 shrink-0" />
-              ) : (
-                <ChevronDown className="w-5 h-5 shrink-0" />
+              <MaterialIcon
+                iconName={
+                  openFolders.has(folder.id)
+                    ? "keyboard_arrow_up"
+                    : "keyboard_arrow_down"
+                }
+                className="shrink-0"
+              />
+
+              {level === 0 ? null : (
+                <MaterialIcon iconName="folder_open" fill={1} />
               )}
-              {level === 0 ? null : <FolderOpen className="w-5 h-5 shrink-0" />}
               <span>{folder.name}</span>
             </div>
-            <span className="rounded-full bg-[#F3F6FB] text-[10px] text-[#1C63DB] p-2 max-w-5 max-h-5 flex items-center justify-center">
+            <span className="rounded-full bg-[#F3F6FB] text-[10px] text-[#1C63DB] mx-1 p-2 max-w-5 max-h-5 flex items-center justify-center">
               {getNumberOfContent(folder)}
             </span>
             <span
               className="ml-auto px-[8px] cursor-pointer"
               onClick={() => handleDotsClick(folder.id)}
             >
-              <Dots />
+              <MaterialIcon iconName="more_vert" />
             </span>
           </div>
           {menuOpenFolderId === folder.id && (
@@ -224,13 +221,18 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
              bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-8"
             >
               <MenuItem
-                icon={<Plus />}
+                icon={<MaterialIcon iconName="add" />}
                 label={"Create folders"}
                 onClick={() => setCreatePopup(true)}
               />
               {!allFolders.find((item) => item.id === menuOpenFolderId) && (
                 <MenuItem
-                  icon={<TrashIcon />}
+                  icon={
+                    <MaterialIcon
+                      iconName="delete"
+                      className="text-[#FF1F0F]"
+                    />
+                  }
                   label={"Delete"}
                   onClick={() => setIsDeleteOpen(true)}
                 />
@@ -267,7 +269,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                 <div
                   key={content.id}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-[7px] pl-4 group rounded-md transition cursor-grab ",
+                    "flex items-center gap-1.5 px-4 py-[7px] pl-4 group rounded-md transition cursor-grab ",
                     documentId === content.id
                       ? "text-blue-500"
                       : "hover:bg-gray-100"
@@ -289,8 +291,18 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                     );
                   }}
                 >
-                  <GripVertical className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
-                  <FileText className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
+                  <MaterialIcon
+                    iconName="drag_indicator"
+                    weight={300}
+                    size={20}
+                    className="shrink-0 group-hover:stroke-blue-500"
+                  />
+                  <MaterialIcon
+                    iconName="docs"
+                    size={20}
+                    weight={300}
+                    className="shrink-0 group-hover:stroke-blue-500"
+                  />
                   <span className="text-nowrap text-[14px] font-semibold group-hover:text-blue-500 truncate max-w-[80px] block">
                     {content.aiTitle ?? content.title}
                   </span>

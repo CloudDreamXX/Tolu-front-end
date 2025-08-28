@@ -1,5 +1,5 @@
-import { ThumbsDownIcon, ThumbsUpIcon } from "@phosphor-icons/react/dist/ssr";
 import { AppliedFilters, SortBy } from "pages/feedback-hub/ui";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { SelectField } from "widgets/CRMSelectField";
 
 type Props = {
@@ -44,10 +44,10 @@ export const FiltersPopup: React.FC<Props> = ({
                 ].join(" ")}
               >
                 {s === "positive" && (
-                  <ThumbsUpIcon className="w-[24px] h-[24px]" />
+                  <MaterialIcon iconName="thumb_up" fill={1} />
                 )}
                 {s === "negative" && (
-                  <ThumbsDownIcon className="w-[24px] h-[24px]" />
+                  <MaterialIcon iconName="thumb_down" fill={1} />
                 )}
                 {s === "all"
                   ? "All"

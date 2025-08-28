@@ -1,14 +1,11 @@
 import { DetailsChatItemModel } from "entities/chat";
 import { Client } from "entities/coach";
-import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import ChatsCircle from "shared/assets/icons/chats-circle";
-import EditIcon from "shared/assets/icons/edit";
-import UploadCloud from "shared/assets/icons/upload-cloud";
 import { cn } from "shared/lib";
 import { Button, Dialog, DialogContent, DialogTitle, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { useFilePicker } from "../messages-tab/useFilePicker";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface CreateGroupModalProps {
   open: boolean;
@@ -126,7 +123,7 @@ export const CreateGroupModal = ({
         <DialogTitle className="hidden">Title </DialogTitle>
         <div>
           <div className="flex gap-2">
-            <ChatsCircle />
+            <MaterialIcon iconName="forum" fill={1} />
             <h3 className="text-xl font-semibold">Multiple chat settings</h3>
           </div>
           <p className="mt-3 text-sm text-gray-700">
@@ -168,7 +165,7 @@ export const CreateGroupModal = ({
                       if (items[0]) remove(items[0].id);
                     }}
                   >
-                    <EditIcon />
+                    <MaterialIcon iconName="edit" fill={1} />
                     Change
                   </button>
 
@@ -180,14 +177,18 @@ export const CreateGroupModal = ({
                       setPreviewUrl(null);
                     }}
                   >
-                    <Trash2 />
+                    <MaterialIcon iconName="delete" />
                     Delete
                   </button>
                 </div>
               </div>
             ) : (
               <>
-                <UploadCloud className="text-[#1C63DB]" />
+                <MaterialIcon
+                  iconName="upload"
+                  fill={1}
+                  className="text-[#1C63DB]"
+                />
                 <p className="text-[#1C63DB] font-semibold text-sm">
                   Click to upload
                 </p>

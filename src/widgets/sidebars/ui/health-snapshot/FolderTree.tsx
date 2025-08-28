@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { ContentItem, Folder } from "entities/client";
-import { ChevronUp, ChevronDown, FileText } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { cn } from "shared/lib";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "entities/store";
 import { setChat, setFolderId } from "entities/client/lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type WrapperProps = {
   onPopupClose?: () => void;
@@ -132,11 +132,14 @@ const LibraryFolderTree: React.FC<Props> = ({
             )}
             onClick={() => toggleFolder(folder.id)}
           >
-            {openFolders.has(folder.id) ? (
-              <ChevronUp className="w-5 h-5 shrink-0" />
-            ) : (
-              <ChevronDown className="w-5 h-5 shrink-0" />
-            )}
+            <MaterialIcon
+              iconName={
+                openFolders.has(folder.id)
+                  ? "keyboard_arrow_up"
+                  : "keyboard_arrow_down"
+              }
+              className="w-5 h-5 shrink-0"
+            />
             <span>{folder.name}</span>
           </div>
 
@@ -159,7 +162,10 @@ const LibraryFolderTree: React.FC<Props> = ({
                         nav(`/library/document/${doc.id}`);
                       }}
                     >
-                      <FileText className="w-5 h-5 shrink-0 group-hover:stroke-blue-500" />
+                      <MaterialIcon
+                        iconName="docs"
+                        className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
+                      />
                       <span className="truncate max-w-[110px] text-[16px] font-semibold group-hover:text-blue-500">
                         {doc.ai_title ?? doc.title}
                       </span>

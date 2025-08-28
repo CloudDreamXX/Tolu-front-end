@@ -1,16 +1,11 @@
-import {
-  SpeakerSimpleHighIcon,
-  StarIcon,
-  ThumbsDownIcon,
-} from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { FeedbackModal } from "../feedback-modal";
 import { HistoryPopup } from "../history-popup";
 // import Share from "shared/assets/icons/share";
 // import SaveModal from "../save-modal/ui";
-import { ArrowLeft, Eye } from "@phosphor-icons/react/dist/ssr";
 import { Message } from "features/chat";
 import { useNavigate } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface ChatActionsProps {
   chatState?: Message[];
@@ -76,7 +71,10 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
       <div className="flex flex-row gap-2 xl:hidden">
         {!isHistoryPopup && (
           <button className="w-8 h-8" onClick={() => nav(-1)}>
-            <ArrowLeft className="w-4 h-4 m-auto text-black" />
+            <MaterialIcon
+              iconName="arrow_back"
+              className="w-4 h-4 m-auto text-black"
+            />
           </button>
         )}
         {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
@@ -85,14 +83,17 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
       <div className="flex-col self-start hidden gap-4 xl:flex">
         {!isHistoryPopup && (
           <button className="w-8 h-8" onClick={() => nav(-1)}>
-            <ArrowLeft className="w-5 h-5 m-auto text-black" />
+            <MaterialIcon
+              iconName="arrow_back"
+              className="w-5 h-5 m-auto text-black"
+            />
           </button>
         )}
         {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
         {/* <SaveModal onStatusChange={onStatusChange} /> */}
         {onStatusChange && (
           <button
-            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => {
               const newStatus =
                 readStatus === "read" ? "saved_for_later" : "read";
@@ -100,9 +101,10 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               onStatusChange(newStatus);
             }}
           >
-            <Eye
-              weight={readStatus === "read" ? "fill" : "regular"}
-              className="w-4 h-4 m-auto text-blue-600"
+            <MaterialIcon
+              iconName="visibility"
+              fill={readStatus === "read" ? 1 : 0}
+              className="text-blue-600 "
             />
           </button>
         )}
@@ -120,8 +122,9 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
                 onStatusChange(newStatus);
               }}
             >
-              <Eye
-                weight={readStatus === "read" ? "fill" : "regular"}
+              <MaterialIcon
+                iconName="visibility"
+                fill={readStatus === "read" ? 1 : 0}
                 className="w-4 h-4 m-auto text-blue-600"
               />
             </button>
@@ -133,30 +136,36 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           <Share />
         </button> */}
           <button
-            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={onReadAloud}
           >
-            <SpeakerSimpleHighIcon
-              weight={isReadingAloud ? "fill" : "regular"}
-              className="w-4 h-4 m-auto text-blue-600"
+            <MaterialIcon
+              iconName="text_to_speech"
+              fill={isReadingAloud ? 1 : 0}
+              size={16}
+              className="text-blue-600"
             />
           </button>
           <button
-            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => setThumbsUpModalOpen(true)}
           >
-            <StarIcon
-              weight={rating === 5 ? "fill" : "regular"}
-              className="w-4 h-4 m-auto text-blue-600"
+            <MaterialIcon
+              iconName="star"
+              fill={rating === 5 ? 1 : 0}
+              size={16}
+              className="text-blue-600"
             />
           </button>
           <button
-            className="bg-[#DDEBF6] rounded-full h-8 w-8"
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => setThumbsDownModalOpen(true)}
           >
-            <ThumbsDownIcon
-              weight={rating === 1 ? "fill" : "regular"}
-              className="w-4 h-4 m-auto text-blue-600"
+            <MaterialIcon
+              iconName="thumb_down"
+              fill={rating === 5 ? 1 : 0}
+              size={16}
+              className="text-blue-600"
             />
           </button>
 

@@ -2,11 +2,8 @@ import { ChatItemModel } from "entities/chat";
 import { useFetchAllChatsQuery } from "entities/chat/chatApi";
 import { chatsSelectors } from "entities/chat/chatsSlice";
 import { ChatItem } from "features/chat-item";
-import { Plus } from "lucide-react";
 import { useSelector } from "react-redux";
-import Inbox from "shared/assets/icons/inbox";
-import LoadingIcon from "shared/assets/icons/loading-icon";
-import Search from "shared/assets/icons/search";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
   Input,
   ScrollArea,
@@ -72,14 +69,17 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
     <aside className="lg:w-[360px] lg:min-w-[360px] border border-[#DBDEE1] border-l-0 flex flex-col w-full ">
       {isLoading && (
         <div className="xl:hidden flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <LoadingIcon />
+          <MaterialIcon
+            iconName="progress_activity"
+            className="text-blue-600 animate-spin"
+          />
           Please wait, we are loading the information...
         </div>
       )}
       <div className="px-4 py-6 pb-0 md:p-6 md:pb-0 lg:p-8 lg:pb-0">
         <div className="flex items-center justify-between pb-4">
           <div className="flex items-center justify-center text-[24px] md:text-[32px] font-bold text-[#1D1D1F] gap-2">
-            <Inbox width={18} height={18} />
+            <MaterialIcon iconName="inbox" size={20} />
             Inbox
             {unreadCount > 0 && (
               <span className="w-[24px] h-[24px] md:w-[26px] md:h-[26px] leading-[22px] bg-white border lg:border-2 flex items-center justify-center border-[#1C63DB] text-[15px] md:text-base text-[#1C63DB] rounded-sm">
@@ -91,7 +91,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             className="w-[40px] md:w-[44px] h-[40px] md:h-[44px] rounded-full bg-blue-500 flex items-center justify-center"
             onClick={() => onCreateGroup()}
           >
-            <Plus color="white" />
+            <MaterialIcon iconName="add" />
           </button>
         </div>
 
@@ -99,7 +99,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
           <Input
             placeholder="Search"
             className="rounded-full "
-            icon={<Search />}
+            icon={<MaterialIcon iconName="search" size={16} />}
           />
         </div>
       </div>

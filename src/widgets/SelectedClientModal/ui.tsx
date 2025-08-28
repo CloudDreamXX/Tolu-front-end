@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from "react";
-import CloseIcon from "shared/assets/icons/close";
-import UserIcon from "shared/assets/icons/user-black";
-import ChatsIcon from "shared/assets/icons/chats";
 import {
   ClientComprehensiveProfile,
   CoachService,
+  ComprehensiveProfile,
   FmpShareRequest,
   LifestyleSkillsInfo,
-  UpdateHealthHistoryRequest,
   MedicationsAndSupplements,
-  ComprehensiveProfile,
+  UpdateHealthHistoryRequest,
 } from "entities/coach";
-import ArrowLeft from "shared/assets/icons/arrowLeft";
-import ClientsIntake from "shared/assets/icons/clientsIntake";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { toast } from "shared/lib";
 import { ConfirmModal } from "widgets/ConfirmModal";
-import HealthProfile from "./components/HealthProfile";
+import Biometrics from "./components/Biometrics";
 import ClientInfo from "./components/ClientInfo";
-import FoodMoodPoop from "./components/FoodMoodPoop";
 import { ClientStory } from "./components/ClientStory";
-import Symptoms from "./components/Symptoms";
+import FoodMoodPoop from "./components/FoodMoodPoop";
+import HealthProfile from "./components/HealthProfile";
+import Labs from "./components/Labs";
 import LifestyleSkills, {
   LifestyleItem,
   LifestyleSkillsValue,
@@ -26,10 +25,7 @@ import LifestyleSkills, {
 import MedicationsSupplements, {
   MedsEditing,
 } from "./components/MedicationsSupplements";
-import Biometrics from "./components/Biometrics";
-import Labs from "./components/Labs";
-import { toast } from "shared/lib";
-import { useNavigate } from "react-router-dom";
+import Symptoms from "./components/Symptoms";
 
 interface SelectedClientModalProps {
   clientId: string;
@@ -341,17 +337,17 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           className="absolute md:hidden top-[24px] flex justify-center items-center text-[#1D1D1F]"
           onClick={onClose}
         >
-          <ArrowLeft />
+          <MaterialIcon iconName="keyboard_arrow_left" />
         </button>
         <span
           className="hidden md:block absolute top-[16px] right-[16px] cursor-pointer"
           onClick={onClose}
         >
-          <CloseIcon />
+          <MaterialIcon iconName="close" />
         </span>
         <div className="flex gap-[24px] items-center justify-between md:justify-start mb-[24px]">
           <div className="flex items-center gap-[8px]">
-            <UserIcon />
+            <MaterialIcon iconName="account_circle" fill={1} />
             <h2 className="text-[20px] font-[700]">
               {client?.personal_info.name}
             </h2>
@@ -361,14 +357,15 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
               className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]"
               onClick={() => nav(`/content-manager/messages/${clientId}`)}
             >
-              <ChatsIcon />
+              <MaterialIcon iconName="forum" fill={1} />
               Chat
             </button>
             <button
               className="flex items-center gap-[8px] px-[12px] py-[4px]"
               onClick={onEdit}
             >
-              <ClientsIntake /> Client's Intake
+              <MaterialIcon iconName="folder_supervised" fill={1} />
+              Client's Intake
             </button>
           </div>
         </div>
@@ -572,7 +569,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             Cancel
           </button>
           <button className="w-full md:hidden p-[16px] py-[10px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center">
-            <ChatsIcon />
+            <MaterialIcon iconName="forum" fill={1} />
             Chat
           </button>
 

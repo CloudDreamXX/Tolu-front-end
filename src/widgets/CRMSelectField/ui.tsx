@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Chevron from "shared/assets/icons/chevron";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const SelectField = ({
   label,
@@ -28,7 +28,7 @@ export const SelectField = ({
       >
         {selected || "Select"}
         <span className="pointer-events-none absolute right-[12px] top-1/2 -translate-y-1/2">
-          <Chevron />
+          <MaterialIcon iconName="keyboard_arrow_down" />
         </span>
       </button>
       {open && (

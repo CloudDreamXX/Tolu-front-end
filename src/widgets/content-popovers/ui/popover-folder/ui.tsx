@@ -1,12 +1,9 @@
 import { IFolder, ISubfolder, NewFolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
 import { RootState } from "entities/store";
-import { ArrowLeft, Folder, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ClosedFolder from "shared/assets/icons/closed-folder";
-import Dots from "shared/assets/icons/dots";
-import Plus from "shared/assets/icons/plus";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib/hooks/use-toast";
 import {
   Badge,
@@ -218,7 +215,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
               variant="secondary"
               className="w-12 h-12 p-[10px] rounded-full relative bg-[#F3F6FB]"
             >
-              <ClosedFolder />
+              <MaterialIcon iconName="folder" />
               {selectedFolder && (
                 <Badge
                   variant="destructive"
@@ -246,7 +243,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                       setParentFolderId(previous.id);
                     }}
                   >
-                    <ArrowLeft />
+                    <MaterialIcon iconName="arrow_back" />
                   </button>
                 )}
                 {selectedFolderName}
@@ -255,7 +252,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                 onClick={() => handleCreateSubfolder(parentFolderId!)}
                 className="p-1 rounded hover:bg-gray-100"
               >
-                <Plus />
+                <MaterialIcon iconName="add" />
               </button>
             </div>
             <div className="grid w-full md:grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
@@ -279,7 +276,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                         className="w-8 h-8 p-0 rounded-full"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Dots />
+                        <MaterialIcon iconName="more_vert" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[200px] p-3 flex flex-col gap-3 bg-white">
@@ -288,7 +285,8 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                         className="items-center justify-start w-full h-8 p-1 font-medium"
                         onClick={() => handleCreateSubfolder(subfolder.id)}
                       >
-                        <Plus /> Create folder
+                        <MaterialIcon iconName="add" />
+                        Create folder
                       </Button>
                       <Button
                         variant="ghost"
@@ -322,7 +320,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                           }
                         }}
                       >
-                        <Folder /> Open folders
+                        <MaterialIcon iconName="folder" fill={1} /> Open folders
                       </Button>
                       <Button
                         variant="ghost"
@@ -331,11 +329,11 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                           handleDeleteOpen(subfolder.id, subfolder.name)
                         }
                       >
-                        <Trash2
-                          width={24}
-                          height={24}
+                        <MaterialIcon
+                          iconName="delete"
+                          fill={1}
                           className="text-destructive"
-                        />{" "}
+                        />
                         Delete
                       </Button>
                     </PopoverContent>

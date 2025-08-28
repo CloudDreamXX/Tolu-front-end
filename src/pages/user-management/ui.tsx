@@ -1,10 +1,8 @@
 import React, { useState, useMemo } from "react";
-import ClientsIcon from "shared/assets/icons/clients";
-import Search from "shared/assets/icons/search";
-import Arrow from "shared/assets/icons/pages-arrow";
 import { useEffect } from "react";
 import { AdminService, User } from "entities/admin";
 import { toast } from "shared/lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const PAGE_SIZE = 10;
 
@@ -94,12 +92,12 @@ export const UserManagement: React.FC = () => {
     <div className="flex flex-col gap-[16px] md:gap-[35px] p-8 overflow-y-auto h-[100%]">
       <div className="flex flex-col md:flex-row gap-[16px] justify-between md:items-end">
         <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
-          <ClientsIcon />
+          <MaterialIcon iconName="groups" fill={1} />
           Users
         </h1>
-        <div className="flex flex-col md:flex-row flex-row gap-2 md:gap-[20px] lg:gap-2">
+        <div className="flex md:flex-row flex-row gap-2 md:gap-[20px] lg:gap-2">
           <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[32px]">
-            <Search />
+            <MaterialIcon iconName="search" size={16} />
             <input
               placeholder="Search"
               className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000]"
@@ -218,9 +216,7 @@ export const UserManagement: React.FC = () => {
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
             className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
           >
-            <span className="rotate-[180deg]">
-              <Arrow />
-            </span>
+            <MaterialIcon iconName="arrow_left_alt" />
           </button>
 
           {getVisiblePages(page, totalPages).map((pageNumber) => (
@@ -242,7 +238,7 @@ export const UserManagement: React.FC = () => {
             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
             className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
           >
-            <Arrow />
+            <MaterialIcon iconName="arrow_right_alt" />
           </button>
         </div>
       )}

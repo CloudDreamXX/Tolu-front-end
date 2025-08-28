@@ -1,4 +1,4 @@
-import UnselectIcon from "shared/assets/icons/unselect-blue";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -29,7 +29,9 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
     >
       {children}
-      {selected && <UnselectIcon />}
+      {selected && (
+        <MaterialIcon iconName="close" className="text-[#1C63DB]" size={16} />
+      )}
     </button>
   );
 };

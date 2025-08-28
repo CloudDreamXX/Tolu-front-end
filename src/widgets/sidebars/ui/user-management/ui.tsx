@@ -1,10 +1,8 @@
-import { File } from "lucide-react";
 import { FOLDERS } from "pages/content-manager";
 import { MOCK_DOCUMENT } from "pages/content-manager/document/mock";
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
-import ClosedFolder from "shared/assets/icons/closed-folder";
-import Dots from "shared/assets/icons/dots";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { sideBarContent } from "./lib";
 
 export const UserManagementSideBar: React.FC = () => {
@@ -72,13 +70,13 @@ export const UserManagementSideBar: React.FC = () => {
                   to={`/content-manager/${tab}/folder/${folderId}`}
                   className={`flex flex-row w-full gap-2 px-4 py-[7px] ${isNarrow ? "pl-4" : "pl-12"} box-border`}
                 >
-                  <ClosedFolder width={24} height={24} />
+                  <MaterialIcon iconName="folder" />
                   {!isNarrow && (
                     <span className={`${!document && "font-extrabold"}`}>
                       {folder}
                     </span>
                   )}
-                  <Dots className="ml-auto" />
+                  <MaterialIcon iconName="more_vert" className="ml-auto" />
                 </NavLink>
               )}
               {link.title.toLowerCase() === tab && document && (
@@ -86,11 +84,14 @@ export const UserManagementSideBar: React.FC = () => {
                   to={`/content-manager/${tab}/folder/${folderId}/${documentId}`}
                   className={`flex flex-row w-full gap-2 px-4 py-[7px] ${isNarrow ? "pl-6" : "pl-16"} box-border`}
                 >
-                  <File width={24} height={24} className="min-w-6" />
+                  <MaterialIcon iconName="docs" fill={1} />
                   {!isNarrow && (
                     <span className="font-extrabold truncate">{document}</span>
                   )}
-                  <Dots className="ml-auto min-w-6" />
+                  <MaterialIcon
+                    iconName="more_vert"
+                    className="ml-auto min-w-6"
+                  />
                 </NavLink>
               )}
             </div>

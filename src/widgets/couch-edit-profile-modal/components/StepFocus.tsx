@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Search from "shared/assets/icons/search";
 import { cn } from "shared/lib";
 import {
   Input,
@@ -13,6 +12,7 @@ import {
 } from "shared/ui";
 import { FOCUS_OPTIONS, SOFTWARE_OPTIONS, USE_AI_ANSWERS } from "../helpers";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type FocusOption = (typeof FOCUS_OPTIONS)[number];
 
@@ -86,7 +86,7 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
 
       <div className="justify-center max-w-[500px] w-full mx-auto">
         <Input
-          icon={<Search />}
+          icon={<MaterialIcon iconName="search" size={16} />}
           type="text"
           placeholder="Search"
           value={query}

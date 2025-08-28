@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { TooltipWrapper } from "shared/ui";
 import { titlesAndIcons } from "widgets/OnboardingPractitioner/select-type";
-import { QuestionIcon } from "@phosphor-icons/react/dist/ssr";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type StepTypeProps = {
   data: CoachOnboardingState;
@@ -54,7 +53,11 @@ export function StepType({ data, setDataState }: StepTypeProps) {
               {item.title}
             </label>
             <TooltipWrapper content={item.tooltipContent}>
-              <QuestionIcon className="text-[#1B2559]" />
+              <MaterialIcon
+                iconName="help"
+                size={16}
+                className="text-[#1B2559] "
+              />
             </TooltipWrapper>
           </div>
 
@@ -67,7 +70,7 @@ export function StepType({ data, setDataState }: StepTypeProps) {
               <span className="text-[#000] font-[Nunito] text-[16px]">
                 {selectedOptions[index] || "Select your type"}
               </span>
-              <ChevronDown className="text-[#9D9D9D]" />
+              <MaterialIcon iconName="keyboard_arrow_down" />
             </button>
 
             {activeDropdown === index && (

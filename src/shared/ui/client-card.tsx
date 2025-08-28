@@ -1,10 +1,6 @@
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+
 import { useState } from "react";
-import InfoIcon from "shared/assets/icons/info-icon";
-import Pencil from "shared/assets/icons/pencil";
-import TrendDown from "shared/assets/icons/trend-down";
-import TrendUp from "shared/assets/icons/trend-up";
 import { cn } from "shared/lib";
 import { Dialog, DialogContent, DialogTrigger } from "shared/ui/dialog";
 import {
@@ -20,6 +16,7 @@ import { Button } from "./button";
 import { Calendar } from "./calendar";
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export interface ClientCardProps {
   title: string;
@@ -44,7 +41,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <button className="absolute right-[12px] top-[12px] py-[6px] px-[8px] h-8 rounded-full bg-[#DDEBF6] flex items-center justify-center ">
-              <Pencil />
+              <MaterialIcon iconName="edit" />
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[742px] flex flex-col gap-6 p-6 items-start">
@@ -102,7 +99,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
                       !date && "text-muted-foreground"
                     )}
                   >
-                    <CalendarIcon />
+                    <MaterialIcon iconName="calendar_today" fill={1} />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                   </Button>
                 </PopoverTrigger>
@@ -152,7 +149,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           {title}
         </h3>
         <span className="w-[16px] h-[16px] md:w-[20px] md:h-[20px]">
-          <InfoIcon />
+          <MaterialIcon iconName="help" size={20} />
         </span>
       </div>
       <div className="flex items-center justify-between w-full gap-3 xl:justify-start">
@@ -166,7 +163,9 @@ export const ClientCard: React.FC<ClientCardProps> = ({
               : "flex p-1 items-center gap-1 justify-center rounded-2xl border border-[#FFB3AE] bg-[#FFF6F5]"
           }
         >
-          {trend === "up" ? <TrendUp /> : <TrendDown />}
+          <MaterialIcon
+            iconName={trend === "up" ? "trending_up" : "trending_down"}
+          />
         </div>
       </div>
     </div>

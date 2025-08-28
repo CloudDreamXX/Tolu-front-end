@@ -1,22 +1,20 @@
 import { useState } from "react";
-import { ChevronDown, Microscope } from "lucide-react";
-import CircleQuestion from "shared/assets/icons/circle-question";
 import { Footer } from "pages/onboarding-welcome/components";
 import { HeaderOnboarding } from "pages/onboarding-main/components";
-import Leaf from "shared/assets/icons/leaf";
+import LeavesIcon from "shared/assets/icons/leaves";
 import Brain from "shared/assets/icons/brain";
-import WomansLine from "shared/assets/icons/womans-line";
 import Chemistry from "shared/assets/icons/chemistry";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const SelectType = () => {
   const titlesAndIcosn = [
     {
       title: "Clinical & Licensed Healthcare Providers",
-      icon: <Microscope size={20} />,
+      icon: <MaterialIcon iconName="lightbulb" size={20} />,
     },
     {
       title: "Functional & Holistic Health Practitioners",
-      icon: <Leaf />,
+      icon: <LeavesIcon />,
     },
     {
       title: "Lifestyle, Mind-Body, and Wellness Coaches",
@@ -24,7 +22,7 @@ export const SelectType = () => {
     },
     {
       title: "Women's Health & Specialty Coaches",
-      icon: <WomansLine />,
+      icon: <MaterialIcon iconName="female" />,
     },
     {
       title: "Other",
@@ -77,7 +75,7 @@ export const SelectType = () => {
                 <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[20px] font-semibold">
                   {item.title}
                 </h2>
-                <CircleQuestion />
+                <MaterialIcon iconName="help" size={20} />
               </div>
               {/* Custom Dropdown */}
               <div className="relative w-full">
@@ -89,7 +87,11 @@ export const SelectType = () => {
                   <span className="text-[#5F5F65] font-[Nunito] text-[16px]">
                     {selectedOptions[index] || "Select your type"}
                   </span>
-                  <ChevronDown className="text-[#9D9D9D]" />
+                  <MaterialIcon
+                    iconName="keyboard_arrow_down"
+                    size={20}
+                    className="text-[#9D9D9D]"
+                  />
                 </button>
                 {/* Dropdown options */}
                 {activeDropdown === index && ( // Only show dropdown if it's the active one

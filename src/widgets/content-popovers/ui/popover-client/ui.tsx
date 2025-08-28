@@ -1,4 +1,3 @@
-import { EditClientModal } from "widgets/EditClientModal";
 import {
   Client,
   ClientDetails,
@@ -10,22 +9,22 @@ import {
 import { RootState } from "entities/store";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import Personalized from "shared/assets/icons/personalized";
-import Plus from "shared/assets/icons/plus";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast } from "shared/lib";
 import {
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Input,
   Badge,
+  Button,
   Checkbox,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "shared/ui";
 import { ScrollArea } from "shared/ui/scroll-area";
-import { SelectedClientModal } from "widgets/SelectedClientModal";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
+import { EditClientModal } from "widgets/EditClientModal";
+import { SelectedClientModal } from "widgets/SelectedClientModal";
 
 interface IPopoverClientProps {
   documentId?: string;
@@ -338,7 +337,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
             className="w-12 h-12 p-[10px] rounded-full relative bg-[#F3F6FB]"
             onClick={() => setPopoverOpen(true)}
           >
-            <Personalized />
+            <MaterialIcon iconName="account_circle" size={24} fill={1} />
             {selectedClient ||
               (tempSelectedClient && (
                 <Badge
@@ -356,7 +355,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
           className="absolute top-[24px] right-[24px] z-[999]"
           onClick={handleAddClientModal}
         >
-          <Plus />
+          <MaterialIcon iconName="add" />
         </button>
         <Input
           variant="bottom-border"

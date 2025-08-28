@@ -1,12 +1,9 @@
-import { ChevronDown } from "lucide-react";
-import { formatDateToSlash } from "shared/lib";
-import Dots from "shared/assets/icons/dots";
-import { TableRow } from "../../models";
-import { getIcon } from "../../lib/lib";
-import DocumentIcon from "shared/assets/icons/document";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import React, { useState, useRef, useEffect } from "react";
-import CloseIcon from "shared/assets/icons/close";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { formatDateToSlash } from "shared/lib";
+import { getIcon } from "../../lib/lib";
+import { TableRow } from "../../models";
 
 interface LibraryItemCardProps {
   item: TableRow;
@@ -70,12 +67,15 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
       >
         <div className="flex items-center gap-[8px]">
           {hasChildren && (
-            <ChevronDown
-              className={`cursor-pointer w-[20px] h-[20px] transition-transform duration-200 ${
-                isExpanded ? "rotate-180" : ""
-              }`}
-              onClick={() => toggleFolder(item.id)}
-            />
+            <button onClick={() => toggleFolder(item.id)}>
+              <MaterialIcon
+                iconName="keyboard_arrow_down"
+                size={16}
+                className={`cursor-pointer w-[20px] h-[20px] transition-transform duration-200 ${
+                  isExpanded ? "rotate-180" : ""
+                }`}
+              />
+            </button>
           )}
           <div className="flex items-center gap-2">
             {getIcon(item.type)}
@@ -90,7 +90,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
             onDotsClick?.(item, e);
           }}
         >
-          <Dots color="#1D1D1F" />
+          <MaterialIcon iconName="more_vert" />
         </button>
       </button>
 
@@ -158,7 +158,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
             >
               <div className="flex items-center justify-between bg-[#AAC6EC1A] p-[8px] rounded-[4px]">
                 <div className="flex items-center gap-[8px]">
-                  <DocumentIcon className="text-[#4B5E6F]" />
+                  <MaterialIcon iconName="docs" />
                   <span className="font-medium text-md">
                     {truncateTitle(msg.title)}
                   </span>
@@ -169,7 +169,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                     onDotsClick?.(item, e);
                   }}
                 >
-                  <Dots color="#1D1D1F" />
+                  <MaterialIcon iconName="more_vert" />
                 </button>
               </div>
               <div className="mt-2 space-y-[4px]">
@@ -195,7 +195,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                 Files in "{popupRow.title}"
               </h2>
               <button onClick={() => setPopupRow(null)}>
-                <CloseIcon />
+                <MaterialIcon iconName="close" />
               </button>
             </div>
 
@@ -206,7 +206,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                     key={index}
                     className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
                   >
-                    <DocumentIcon />
+                    <MaterialIcon iconName="docs" />
                     {item.filename}
                   </li>
                 ))}

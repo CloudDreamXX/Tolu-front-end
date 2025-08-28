@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useState } from "react";
 import { format, parse } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+
 import { Popover, PopoverTrigger, PopoverContent } from "shared/ui/popover";
 import { Calendar } from "shared/ui/calendar";
 import { Input } from "shared/ui/input";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export function DateTimePicker() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -47,7 +48,11 @@ export function DateTimePicker() {
             spellCheck={false}
           />
         </PopoverTrigger>
-        <CalendarIcon className="absolute w-4 h-4 text-gray-500 pointer-events-none left-3 top-3" />
+        <MaterialIcon
+          iconName="calendar_today"
+          fill={1}
+          className="absolute w-4 h-4 text-gray-500 pointer-events-none left-3 top-3"
+        />
         <PopoverContent align="start" className="w-auto p-0">
           <Calendar
             mode="single"

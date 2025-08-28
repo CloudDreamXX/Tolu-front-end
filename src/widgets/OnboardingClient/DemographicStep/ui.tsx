@@ -1,10 +1,7 @@
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import { CalendarIcon, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import Info from "shared/assets/icons/info";
-import SmallTooltip from "shared/assets/icons/small-tooltip";
 import { cn } from "shared/lib";
 import {
   Button,
@@ -31,6 +28,7 @@ import {
 import { OnboardingClientLayout } from "../Layout";
 import { languages } from "./index";
 import { format } from "date-fns";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const DemographicStep = () => {
   const dispatch = useDispatch();
@@ -108,7 +106,7 @@ export const DemographicStep = () => {
 
   const hintBlock = (
     <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6] w-full lg:w-fit">
-      <Info />
+      <MaterialIcon iconName="info" size={20} className="text-[#1C63DB]" />
       <p className="text-[#1B2559] font-[Nunito] text-base font-normal">
         Your information is kept private and secure. It helps us provide
         smarter, more relevant
@@ -206,7 +204,12 @@ export const DemographicStep = () => {
                 !localDate && "text-muted-foreground"
               )}
             >
-              <CalendarIcon className="w-4 h-4 mr-2" />
+              <MaterialIcon
+                iconName="calendar_today"
+                fill={1}
+                size={20}
+                className="w-4 h-4 mr-2"
+              />
               {localDate ? format(localDate, "PPP") : "Pick a date"}
             </Button>
           </PopoverTrigger>
@@ -256,7 +259,7 @@ export const DemographicStep = () => {
               <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Still menstruating
               </p>
-              <SmallTooltip />
+              <MaterialIcon iconName="help" size={20} />
             </div>
           </div>
           <div className="flex items-center flex-1 gap-4">
@@ -271,7 +274,7 @@ export const DemographicStep = () => {
               <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Irregular cycles
               </p>
-              <SmallTooltip />
+              <MaterialIcon iconName="help" size={20} />{" "}
             </div>
           </div>
         </div>
@@ -288,7 +291,7 @@ export const DemographicStep = () => {
               <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 No periods for 12+ months
               </p>
-              <SmallTooltip />
+              <MaterialIcon iconName="help" size={20} />{" "}
             </div>
           </div>
           <div className="flex items-center flex-1 gap-4">
@@ -303,7 +306,7 @@ export const DemographicStep = () => {
               <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Postmenopausal
               </p>
-              <SmallTooltip />
+              <MaterialIcon iconName="help" size={20} />{" "}
             </div>
           </div>
         </div>
@@ -323,7 +326,7 @@ export const DemographicStep = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span>
-                    <SmallTooltip />
+                    <MaterialIcon iconName="help" size={20} />{" "}
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -366,7 +369,10 @@ export const DemographicStep = () => {
                   </button>
                 ))
               )}
-              <ChevronDown className="w-4 h-4 ml-auto opacity-60" />
+              <MaterialIcon
+                iconName="keyboard_arrow_down"
+                className="w-4 h-4 ml-auto opacity-60"
+              />
             </button>
           </PopoverTrigger>
 

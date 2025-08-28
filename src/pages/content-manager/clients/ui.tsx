@@ -6,7 +6,6 @@ import {
   InviteClientPayload,
 } from "entities/coach";
 import { RootState } from "entities/store";
-import { File, MessageCircle, Plus, X } from "lucide-react";
 import React, {
   useCallback,
   useEffect,
@@ -16,15 +15,8 @@ import React, {
 } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import BlueDots from "shared/assets/icons/blue-dots";
-import Eye from "shared/assets/icons/blue-eye";
-import Messages from "shared/assets/icons/blue-messages";
-import CloseIcon from "shared/assets/icons/close";
 import ConfirmIcon from "shared/assets/icons/confirm";
-import Dots from "shared/assets/icons/dots";
-import Arrow from "shared/assets/icons/pages-arrow";
-import TrashIcon from "shared/assets/icons/trash-icon";
-import UploadCloud from "shared/assets/icons/upload-cloud";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import EmptyClients from "shared/assets/images/EmptyClients.png";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Button } from "shared/ui";
@@ -513,7 +505,7 @@ export const ContentManagerClients: React.FC = () => {
               }}
             >
               Add new client
-              <Plus />
+              <MaterialIcon iconName="add" size={20} />
             </Button>
             <div className="md:rounded-[8px]">
               <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]">
@@ -575,7 +567,7 @@ export const ContentManagerClients: React.FC = () => {
                         onClick={() => handleSelectClient(client.client_id)}
                         className="flex items-center justify-center text-[#000]"
                       >
-                        <Eye />
+                        <MaterialIcon iconName="visibility" fill={1} />
                       </button>
                     )}
                     {!isMobile && !isTablet && (
@@ -588,7 +580,7 @@ export const ContentManagerClients: React.FC = () => {
                           );
                         }}
                       >
-                        <MessageCircle />
+                        <MaterialIcon iconName="forum" fill={1} />
                       </button>
                     )}
                     {!isMobile && !isTablet && (
@@ -603,7 +595,7 @@ export const ContentManagerClients: React.FC = () => {
                           }
                           className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
                         >
-                          <Dots />
+                          <MaterialIcon iconName="more_vert" />
                         </button>
 
                         {deleteMenuId === client.client_id && (
@@ -615,7 +607,7 @@ export const ContentManagerClients: React.FC = () => {
                                 setConfirmDelete(true);
                               }}
                             >
-                              <TrashIcon />
+                              <MaterialIcon iconName="delete" fill={1} />
                               Delete
                             </button>
                           </div>
@@ -629,11 +621,11 @@ export const ContentManagerClients: React.FC = () => {
                           className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]"
                           onClick={() => handleSelectClient(client.client_id)}
                         >
-                          <Eye />
+                          <MaterialIcon iconName="visibility" fill={1} />
                           View profile
                         </button>
                         <button className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]">
-                          <Messages />
+                          <MaterialIcon iconName="forum" fill={1} />
                           Chat
                         </button>
                       </div>
@@ -649,7 +641,10 @@ export const ContentManagerClients: React.FC = () => {
                             );
                           }}
                         >
-                          <BlueDots />
+                          <MaterialIcon
+                            iconName="more_vert"
+                            className="text-blue-500"
+                          />
                         </button>
 
                         {popupClientId === client.client_id && (
@@ -667,7 +662,8 @@ export const ContentManagerClients: React.FC = () => {
                                 setPopupClientId(null);
                               }}
                             >
-                              <Eye /> View profile
+                              <MaterialIcon iconName="visibility" fill={1} />
+                              View profile
                             </button>
 
                             <button
@@ -676,7 +672,8 @@ export const ContentManagerClients: React.FC = () => {
                                 setPopupClientId(null);
                               }}
                             >
-                              <Messages /> Open Chat
+                              <MaterialIcon iconName="forum" fill={1} />
+                              Open Chat
                             </button>
 
                             <button
@@ -687,7 +684,8 @@ export const ContentManagerClients: React.FC = () => {
                                 setPopupClientId(null);
                               }}
                             >
-                              <TrashIcon /> Delete user
+                              <MaterialIcon iconName="delete" fill={1} />
+                              Delete user
                             </button>
                           </div>
                         )}
@@ -708,7 +706,7 @@ export const ContentManagerClients: React.FC = () => {
               className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
             >
               <span className="rotate-[180deg]">
-                <Arrow />
+                <MaterialIcon iconName="arrow_right_alt" />
               </span>
             </button>
 
@@ -736,7 +734,7 @@ export const ContentManagerClients: React.FC = () => {
               }
               className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
             >
-              <Arrow />
+              <MaterialIcon iconName="arrow_right_alt" />
             </button>
           </div>
         )}
@@ -806,7 +804,7 @@ export const ContentManagerClients: React.FC = () => {
                 className="absolute top-[24px] right-[24px] cursor-pointer"
                 onClick={() => setInviteSuccessPopup(false)}
               >
-                <CloseIcon />
+                <MaterialIcon iconName="close" />
               </button>
               <div className="flex justify-center items-center mb-[24px]">
                 <ConfirmIcon />
@@ -835,7 +833,7 @@ export const ContentManagerClients: React.FC = () => {
                   Import PDF
                 </p>
                 <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
-                  <File stroke="#1C63DB" />
+                  <MaterialIcon iconName="docs" fill={1} />
                   <div className="flex flex-col leading-[1.2]">
                     <p className="text-[14px] font-[Nunito] text-black font-semibold">
                       {uploadedFileName}
@@ -851,7 +849,7 @@ export const ContentManagerClients: React.FC = () => {
                     }}
                     className="absolute top-[6px] right-[6px]"
                   >
-                    <X size={16} stroke="#A7A7A7" />
+                    <MaterialIcon iconName="close" size={16} />
                   </button>
                 </div>
               </div>
@@ -876,7 +874,7 @@ export const ContentManagerClients: React.FC = () => {
                   onDrop={handleDrop}
                 >
                   <div className="flex p-2 items-center justify-center bg-white border rounded-[8px] border-[#F3F6FB]">
-                    <UploadCloud />
+                    <MaterialIcon iconName="upload" />
                   </div>
                   <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
                     Click {isMobile || isTablet ? "" : "or drag"} to upload

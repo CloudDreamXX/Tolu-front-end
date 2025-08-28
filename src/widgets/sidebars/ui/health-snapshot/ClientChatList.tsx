@@ -3,10 +3,10 @@ import { useFetchAllChatsQuery } from "entities/chat/chatApi";
 import { chatsSelectors } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
-import { Loader2Icon } from "lucide-react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
 
 interface ClientChatListProps {
@@ -40,7 +40,10 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full ">
-        <Loader2Icon className="w-5 h-5 text-blue-500 animate-spin" />
+        <MaterialIcon
+          iconName="progress_activity"
+          className="text-blue-600 animate-spin"
+        />
       </div>
     );
   }

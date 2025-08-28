@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Close from "shared/assets/icons/close";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Input } from "shared/ui";
 
 export const RenamePopup = ({
@@ -23,7 +23,7 @@ export const RenamePopup = ({
           aria-label="Close modal"
           onClick={onCancel}
         >
-          <Close />
+          <MaterialIcon iconName="close" />
         </button>
         <h2 className="text-[20px] font-semibold text-[#1D1D1F] mb-[24px]">
           Rename this chat

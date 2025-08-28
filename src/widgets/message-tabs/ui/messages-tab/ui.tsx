@@ -1,4 +1,3 @@
-import Plus from "shared/assets/icons/plus";
 import { MessageBubble } from "widgets/message-bubble";
 
 import data from "@emoji-mart/data";
@@ -10,10 +9,8 @@ import {
   DetailsChatItemModel,
 } from "entities/chat";
 import { RootState } from "entities/store";
-import { ArrowDown, Loader2Icon, Send, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import Smiley from "shared/assets/icons/smiley";
 import EmptyChat from "shared/assets/images/EmptyChat.png";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
@@ -23,6 +20,7 @@ import { DaySeparator } from "../components/DaySeparator";
 import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { ChatScroller } from "../components/ChatScroller";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 function getUniqueMessages(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
@@ -293,7 +291,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2Icon className="w-8 h-8 text-blue-500 animate-spin" />
+        <MaterialIcon
+          iconName="progress_activity"
+          className="text-blue-500 animate-spin"
+        />
       </div>
     );
   }
@@ -329,10 +330,19 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
 
   const renderSend = () => {
     if (sending) {
-      return <Loader2Icon className="animate-spin" />;
+      return (
+        <MaterialIcon
+          iconName="progress_activity"
+          className="text-blue-600 animate-spin"
+        />
+      );
     }
 
-    return isMobileOrTablet ? <Send width={23} height={23} /> : "Send";
+    return isMobileOrTablet ? (
+      <MaterialIcon iconName="send" className="w-5 h-5" />
+    ) : (
+      "Send"
+    );
   };
 
   const showScrollBtn = !atBottom;
@@ -410,7 +420,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
               Footer: () =>
                 loadingMore ? (
                   <div className="flex justify-center py-2">
-                    <Loader2Icon className="w-5 h-5 animate-spin" />
+                    <MaterialIcon
+                      iconName="progress_activity"
+                      className="w-5 h-5 animate-spin"
+                    />
                   </div>
                 ) : null,
             }}
@@ -420,9 +433,9 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
         {showScrollBtn && (
           <button
             onClick={() => scrollToBottom("auto")}
-            className="absolute p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-12 hover:bg-blue-600"
+            className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-12 hover:bg-blue-600"
           >
-            <ArrowDown className="w-5 h-5" />
+            <MaterialIcon iconName="keyboard_arrow_down" />
           </button>
         )}
       </div>
@@ -463,7 +476,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                           className="text-sm text-red-500 hover:text-red-700"
                           title="Remove File"
                         >
-                          <TrashIcon className="w-5 h-5" />
+                          <MaterialIcon iconName="delete" className="w-5 h-5" />
                         </button>
                       </div>
                     ))}
@@ -474,7 +487,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                 <div className="flex items-center gap-4">
                   <input {...getInputProps()} className="hidden" />
                   <Button value={"ghost"} className="p-0" onClick={open}>
-                    <Plus />
+                    <MaterialIcon iconName="add" />
                   </Button>
                   <div className="relative">
                     <Button
@@ -485,7 +498,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                         e.stopPropagation();
                       }}
                     >
-                      <Smiley />
+                      <MaterialIcon iconName="sentiment_satisfied" />
                     </Button>
                     {emojiModalOpen && (
                       <div className="absolute mb-2 bottom-full">

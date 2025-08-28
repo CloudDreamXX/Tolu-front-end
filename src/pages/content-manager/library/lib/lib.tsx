@@ -1,9 +1,8 @@
 import { TableRow } from "../models";
 import FolderIcon from "shared/assets/icons/library-folder";
 import SubfolderIcon from "shared/assets/icons/subfolder";
-import VoiceIcon from "shared/assets/icons/voice";
 import VideoIcon from "shared/assets/icons/video";
-import DocumentIcon from "shared/assets/icons/document";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const getIcon = (type: TableRow["type"], className?: string) => {
   switch (type) {
@@ -14,9 +13,9 @@ export const getIcon = (type: TableRow["type"], className?: string) => {
     case "video":
       return <VideoIcon className={className} />;
     case "voice":
-      return <VoiceIcon className={className} />;
+      return <MaterialIcon iconName="settings_voice" className={className} />;
     case "content":
-      return <DocumentIcon className={className} />;
+      return <MaterialIcon iconName="docs" className={className} />;
     default:
       return null;
   }

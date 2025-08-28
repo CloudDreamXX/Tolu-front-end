@@ -15,8 +15,8 @@ import { UserService } from "entities/user";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
-import LoadingIcon from "shared/assets/icons/loading-icon";
 import EmptyChat from "shared/assets/images/EmptyChat.png";
 import { toast, usePageWidth } from "shared/lib";
 import { MessageSidebar } from "widgets/message-sidebar";
@@ -231,7 +231,10 @@ export const ContentManagerMessages: React.FC = () => {
     <div className="flex h-full bg-slate-[#DBDEE1] border">
       {isLoading && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <LoadingIcon />
+          <MaterialIcon
+            iconName="progress_activity"
+            className="text-blue-600 animate-spin"
+          />
           Please wait, we are loading the information...
         </div>
       )}

@@ -9,9 +9,9 @@ import {
   SelectValue,
   Textarea,
 } from "shared/ui";
-import { TrashIcon, UploadCloud } from "lucide-react";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { PRACTICE_ANSWERS, SCHOOL_OPTIONS } from "../helpers";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type StepPracticeProps = {
   data: CoachOnboardingState;
@@ -124,7 +124,7 @@ export function StepPractice({
             onChange={handleFileChange}
           />
           <div className="flex flex-col items-center gap-[8px]">
-            <UploadCloud />
+            <MaterialIcon iconName="upload" size={48} />
             <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
               Click to upload
             </p>
@@ -162,7 +162,7 @@ export function StepPractice({
                     onClick={() => removeFile(index)}
                     className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center text-sm"
                   >
-                    <TrashIcon className="text-red-500" />
+                    <MaterialIcon iconName="delete" className="text-red-500" />
                   </button>
                 </div>
               );

@@ -1,21 +1,16 @@
-import { Fragment, useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
-import { formatDateToSlash } from "shared/lib";
-import Dots from "shared/assets/icons/dots";
-import { TableRow } from "../../models";
-import { getIcon } from "../../lib/lib";
-import { useNavigate } from "react-router-dom";
-import DocumentIcon from "shared/assets/icons/document";
-import { EditDocumentPopup } from "widgets/EditDocumentPopup";
-import { RootState } from "entities/store";
-import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
 import { IFolder } from "entities/folder";
-import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
-import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
-import CloseIcon from "shared/assets/icons/close";
-import Pending from "shared/assets/icons/pending";
+import { RootState } from "entities/store";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import ReadyForReview from "shared/assets/icons/ready-for-review";
-import SecondReview from "shared/assets/icons/second-review";
+import { formatDateToSlash } from "shared/lib";
+import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
+import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
+import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
+import { EditDocumentPopup } from "widgets/EditDocumentPopup";
+import { getIcon } from "../../lib/lib";
+import { TableRow } from "../../models";
 
 type LibraryDesktopViewProps = {
   filteredItems: TableRow[];
@@ -300,7 +295,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
                 onClick={() => toggleFolder(row.id)}
                 className={`${isExpanded ? "rotate-[180deg]" : ""} cursor-pointer`}
               >
-                <ChevronDown />
+                <MaterialIcon iconName="keyboard_arrow_down" />
               </button>
             ) : (
               <span className="ml-6"></span>
@@ -328,7 +323,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
           <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
             {row.status === "Raw" && (
               <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                <Pending />
+                <MaterialIcon iconName="schedule" />
                 Pending review
               </span>
             )}
@@ -340,7 +335,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
             )}
             {row.status === "Second review" && (
               <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                <SecondReview />
+                <MaterialIcon iconName="flag" className="text-red-500" />
                 Second review
               </span>
             )}
@@ -393,7 +388,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
               Files in "{popupRow.title}"
             </h2>
             <button onClick={() => setPopupRow(null)}>
-              <CloseIcon />
+              <MaterialIcon iconName="close" />
             </button>
           </div>
 
@@ -415,7 +410,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
                       //   setPopupRow(null);
                       // }}
                     >
-                      <DocumentIcon />
+                      <MaterialIcon iconName="docs" fill={1} />
                       {item.filename}
                     </li>
                   ))}
@@ -496,7 +491,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
               onClick={() => toggleFolder(subfolder.id)}
               className={`${isExpanded ? "rotate-[180deg]" : ""} cursor-pointer`}
             >
-              <ChevronDown />
+              <MaterialIcon iconName="keyboard_arrow_down" />
             </button>
           ) : (
             <span className="ml-6"></span>
@@ -522,7 +517,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
         <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
           {subfolder.status === "Raw" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <Pending />
+              <MaterialIcon iconName="schedule" />
               Pending review
             </span>
           )}
@@ -534,7 +529,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
           )}
           {subfolder.status === "Second review" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <SecondReview />
+              <MaterialIcon iconName="flag" className="text-red-500" />
               Second review
             </span>
           )}
@@ -550,7 +545,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
             }}
             className="rounded-full hover:bg-[#AAC6EC40]"
           >
-            <Dots />
+            <MaterialIcon iconName="more_vert" />
           </button>
         </td>
       </tr>
@@ -582,7 +577,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
               Files in "{popupRow.title}"
             </h2>
             <button onClick={() => setPopupRow(null)}>
-              <CloseIcon />
+              <MaterialIcon iconName="close" />
             </button>
           </div>
 
@@ -600,7 +595,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
                     //   setPopupRow(null);
                     // }}
                   >
-                    <DocumentIcon />
+                    <MaterialIcon iconName="docs" fill={1} />
                     {item.filename}
                   </li>
                 ))}
@@ -661,7 +656,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
         <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
           {content.status === "Raw" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <Pending />
+              <MaterialIcon iconName="schedule" />
               Pending review
             </span>
           )}
@@ -673,7 +668,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
           )}
           {content.status === "Second review" && (
             <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-              <SecondReview />
+              <MaterialIcon iconName="flag" className="text-red-500" />
               Second review
             </span>
           )}
@@ -688,7 +683,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
               onDotsClick(content, e);
             }}
           >
-            <Dots />
+            <MaterialIcon iconName="more_vert" />
           </div>
         </td>
       </tr>
@@ -707,7 +702,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
             }}
           >
             <td className={`pl-[68px]`}>
-              <DocumentIcon className="ml-auto" />
+              <MaterialIcon iconName="docs" fill={1} className="ml-auto" />
             </td>
             <td className="py-[12px] pl-[18px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black font-inter">
               {msg.title}
@@ -724,7 +719,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
             <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
               {msg.status === "Raw" && (
                 <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                  <Pending />
+                  <MaterialIcon iconName="schedule" />
                   Pending review
                 </span>
               )}
@@ -736,7 +731,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
               )}
               {msg.status === "Second review" && (
                 <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-                  <SecondReview />
+                  <MaterialIcon iconName="flag" className="text-red-500" />
                   Second review
                 </span>
               )}
@@ -751,7 +746,7 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
                   onDotsClick(msg, e);
                 }}
               >
-                <Dots />
+                <MaterialIcon iconName="more_vert" />
               </button>
             </td>
           </tr>

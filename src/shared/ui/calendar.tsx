@@ -1,6 +1,6 @@
 import * as React from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 import { cn } from "shared/lib/utils";
 import { buttonVariants } from "shared/ui/button";
@@ -53,10 +53,18 @@ function Calendar({
       }}
       components={{
         IconLeft: ({ className, ...props }) => (
-          <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
+          <MaterialIcon
+            iconName="keyboard_arrow_left"
+            className={cn("h-4 w-4", className)}
+            {...props}
+          />
         ),
         IconRight: ({ className, ...props }) => (
-          <ChevronRight className={cn("h-4 w-4", className)} {...props} />
+          <MaterialIcon
+            iconName="keyboard_arrow_right"
+            className={cn("h-4 w-4", className)}
+            {...props}
+          />
         ),
       }}
       {...props}

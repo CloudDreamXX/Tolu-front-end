@@ -1,21 +1,17 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { UserService } from "entities/user";
-import { RootState } from "entities/store";
-import { useDispatch, useSelector } from "react-redux";
-import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
-import ChatsCircle from "shared/assets/icons/chats-circle";
-import Library from "shared/assets/icons/library";
-import Dots from "shared/assets/icons/threeDots";
-import { ChevronDown, ChevronLast, ChevronUp, User } from "lucide-react";
-import SignOutIcon from "shared/assets/icons/signout";
-import { toast } from "shared/lib/hooks/use-toast";
-import { SearchAiSmallInput } from "entities/search";
-import WrapperLibraryFolderTree from "./FolderTree";
 import { setChat, setFolderId } from "entities/client/lib";
-import { ClientChatList } from "./ClientChatList";
-import { Button } from "shared/ui";
+import { SearchAiSmallInput } from "entities/search";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
+import { toast } from "shared/lib/hooks/use-toast";
+import { Button } from "shared/ui";
+import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
+import { ClientChatList } from "./ClientChatList";
+import WrapperLibraryFolderTree from "./FolderTree";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -84,7 +80,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
             sidebarOpen ? "left-[296px]" : "left-[76px]"
           )}
         >
-          <ChevronLast
+          <MaterialIcon
+            iconName="last_page"
             className={cn(
               "transition-transform duration-300",
               sidebarOpen ? "rotate-180" : "rotate-0"
@@ -140,14 +137,18 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   )
                 }
               >
-                <Library />
+                <MaterialIcon iconName="web_stories" fill={1} />
                 {!sidebarOpen ? "" : "Library"}
-                {sidebarOpen &&
-                  (isLibraryOpen ? (
-                    <ChevronUp className="w-5 h-5 shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 shrink-0" />
-                  ))}
+                {sidebarOpen && (
+                  <MaterialIcon
+                    iconName={
+                      isLibraryOpen
+                        ? "keyboard_arrow_up"
+                        : "keyboard_arrow_down"
+                    }
+                    className="w-5 h-5 shrink-0"
+                  />
+                )}
               </NavLink>
               {isLibraryOpen && (
                 <WrapperLibraryFolderTree
@@ -175,7 +176,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   )
                 }
               >
-                <ChatsCircle />
+                <MaterialIcon iconName="forum" fill={1} />
                 {sidebarOpen ? "Messages" : ""}
               </NavLink>
               {sidebarOpen && <ClientChatList />}
@@ -206,7 +207,10 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="p-2 transition-colors duration-200"
               >
-                <Dots color={menuOpen ? "#1C63DB" : "black"} />
+                <MaterialIcon
+                  iconName="more_vert"
+                  className={cn(menuOpen ? "text-[#1C63DB]" : "text-black")}
+                />
               </button>
             )}
           </button>
@@ -227,7 +231,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 className="flex items-center gap-3 text-gray-800 rounded-lg hover:bg-gray-100"
               >
                 <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-                  <User size={24} />
+                  <MaterialIcon iconName="account_circle" fill={1} />
                 </div>
                 Profile
               </button>
@@ -240,7 +244,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 className="flex items-center gap-3 text-gray-800 rounded-lg hover:bg-gray-100"
               >
                 <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-                  <SignOutIcon />
+                  <MaterialIcon iconName="exit_to_app" />
                 </div>
                 Sign out
               </button>

@@ -1,4 +1,4 @@
-import UploadCloud from "shared/assets/icons/upload-cloud";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const DropArea = ({
   dragActive,
@@ -26,7 +26,7 @@ export const DropArea = ({
       onClick={onBrowseClick}
     >
       <div className="flex flex-col items-center justify-center text-center pointer-events-none">
-        <UploadCloud />
+        <MaterialIcon iconName="upload" />
         <p className="mt-3 mb-1 text-base">
           <span className="text-blue-500">Click to upload</span>
         </p>

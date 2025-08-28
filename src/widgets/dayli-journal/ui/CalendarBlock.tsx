@@ -1,5 +1,5 @@
-import { Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button } from "shared/ui";
 import { SymptomCheckCalendarModal } from "widgets/MenopauseModals/SymptomCheckCalendarModal/ui";
@@ -48,7 +48,7 @@ export const CalendarBlock: React.FC<Props> = ({
             <p className="text-[#1C63DB] text-sm font-semibold">Today</p>
           )}
           <Button variant={"ghost"} onClick={() => setOpenCalendarModal(true)}>
-            <Calendar className="text-[#5F5F65]" />
+            <MaterialIcon iconName="calendar_today" fill={1} />
           </Button>
         </div>
         <div className="flex self-stretch w-full">

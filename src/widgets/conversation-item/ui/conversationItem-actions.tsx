@@ -1,15 +1,7 @@
-import { SpeakerSimpleHighIcon } from "@phosphor-icons/react";
 import { ISessionResult } from "entities/coach";
 import { useDocumentState } from "features/document-management";
-import { Check } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import Compare from "shared/assets/icons/compare";
-import Dislike from "shared/assets/icons/dislike";
-import DislikeFilled from "shared/assets/icons/dislike-filled";
-import Dublicate from "shared/assets/icons/dublicate";
-import Arrow from "shared/assets/icons/grey-arrow";
-import Edit from "shared/assets/icons/grey-edit";
-import { TrashIcon } from "shared/assets/icons/trash-blue";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
   Tooltip,
   TooltipContent,
@@ -136,8 +128,8 @@ export const ConversationItemActions: React.FC<
   };
 
   return (
-    <div className="flex md:flex-col items-start gap-2">
-      <div className="flex md:flex-col items-center gap-2">
+    <div className="flex items-start gap-2 md:flex-col">
+      <div className="flex items-center gap-2 md:flex-col">
         <TooltipProvider delayDuration={500}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -145,7 +137,7 @@ export const ConversationItemActions: React.FC<
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                 onClick={() => onEditToggle(pair, null)}
               >
-                <Edit className="w-[16px] h-[16px]" />
+                <MaterialIcon iconName="edit" size={20} fill={1} />
               </button>
             </TooltipTrigger>
             <TooltipContent
@@ -165,7 +157,7 @@ export const ConversationItemActions: React.FC<
                   setIsMoveOpen(true);
                 }}
               >
-                <Arrow className="w-[16px] h-[16px]" />
+                <MaterialIcon iconName="arrow_right_alt" size={20} />
               </button>
             </TooltipTrigger>
             <TooltipContent
@@ -182,7 +174,7 @@ export const ConversationItemActions: React.FC<
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                 onClick={() => handleDublicateClick(pair.id)}
               >
-                <Dublicate className="w-[16px] h-[16px]" />
+                <MaterialIcon iconName="stack" size={20} fill={1} />
               </button>
             </TooltipTrigger>
             <TooltipContent
@@ -199,9 +191,10 @@ export const ConversationItemActions: React.FC<
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                 onClick={handleReadAloud}
               >
-                <SpeakerSimpleHighIcon
-                  weight={isReadingAloud ? "fill" : "regular"}
-                  className="w-[16px] h-[16px]"
+                <MaterialIcon
+                  iconName="text_to_speech"
+                  size={16}
+                  fill={isReadingAloud ? 1 : 0}
                 />
               </button>
             </TooltipTrigger>
@@ -223,9 +216,9 @@ export const ConversationItemActions: React.FC<
                 }}
               >
                 {document?.thumbsDown ? (
-                  <DislikeFilled className="w-[16px] h-[16px]" />
+                  <MaterialIcon iconName="thumb_up" size={20} fill={1} />
                 ) : (
-                  <Dislike className="w-[16px] h-[16px]" />
+                  <MaterialIcon iconName="thumb_down" size={20} fill={1} />
                 )}
               </button>
             </TooltipTrigger>
@@ -246,7 +239,7 @@ export const ConversationItemActions: React.FC<
                 }}
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
               >
-                <TrashIcon width={16} height={16} />
+                <MaterialIcon iconName="delete" size={20} fill={1} />
               </button>
             </TooltipTrigger>
             <TooltipContent
@@ -263,7 +256,7 @@ export const ConversationItemActions: React.FC<
                 onClick={() => handleMarkAsClick()}
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
               >
-                <Compare />
+                <MaterialIcon iconName="compare_arrows" size={20} />
               </button>
             </TooltipTrigger>
             <TooltipContent
@@ -280,7 +273,7 @@ export const ConversationItemActions: React.FC<
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                 onClick={() => onMarkAsFinalHandler(pair.id)}
               >
-                <Check className="w-[16px] h-[16px]" />
+                <MaterialIcon iconName="check" size={20} />
               </button>
             </TooltipTrigger>
             <TooltipContent

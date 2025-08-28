@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Download, File, X } from "lucide-react";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
-import UploadCloud from "shared/assets/icons/upload-cloud";
-import ArrowLeft from "shared/assets/icons/arrowLeft";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const InviteClients = () => {
   const nav = useNavigate();
@@ -94,7 +92,7 @@ export const InviteClients = () => {
                 Import PDF
               </p>
               <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
-                <File stroke="#1C63DB" />
+                <MaterialIcon iconName="docs" fill={1} />
                 <div className="flex flex-col leading-[1.2]">
                   <p className="text-[14px] font-[Nunito] text-black font-semibold">
                     {uploadedFileName}
@@ -110,7 +108,7 @@ export const InviteClients = () => {
                   }}
                   className="absolute top-[6px] right-[6px]"
                 >
-                  <X size={16} stroke="#A7A7A7" />
+                  <MaterialIcon iconName="close" size={16} />
                 </button>
               </div>
             </div>
@@ -135,7 +133,7 @@ export const InviteClients = () => {
                 onDrop={handleDrop}
               >
                 <div className="flex p-2 items-center justify-center bg-white border rounded-[8px] border-[#F3F6FB]">
-                  <UploadCloud />
+                  <MaterialIcon iconName="upload" />
                 </div>
                 <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
                   Click {isMobile || isTablet ? "" : "or drag"} to upload
@@ -157,7 +155,7 @@ export const InviteClients = () => {
 
           {/* Template Link */}
           <div className="flex gap-2 items-center mt-[4px]">
-            <Download size={16} color="#1C63DB" />
+            <MaterialIcon iconName="download" />
             <a
               href="/template.pdf"
               className="text-[#1C63DB] font-[Nunito] text-base font-medium underline"
@@ -210,7 +208,7 @@ export const InviteClients = () => {
                   style={{ background: "rgba(0, 143, 246, 0.10)" }}
                   onClick={() => nav(-1)}
                 >
-                  <ArrowLeft />
+                  <MaterialIcon iconName="keyboard_arrow_left" />
                   Back
                 </button>
                 <button
@@ -244,7 +242,7 @@ export const InviteClients = () => {
                 style={{ background: "rgba(0, 143, 246, 0.10)" }}
                 onClick={() => nav(-1)}
               >
-                <ArrowLeft />
+                <MaterialIcon iconName="keyboard_arrow_left" />
                 Back
               </button>
               <button

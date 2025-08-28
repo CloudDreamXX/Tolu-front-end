@@ -8,9 +8,8 @@ import {
   renderReviewStatus,
   renderAuthor,
 } from "../../../../shared/ui/card-text-collection";
-import ClosedFolder from "shared/assets/icons/closed-folder";
 import { cn } from "shared/lib";
-import { ArchiveRestore } from "lucide-react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface FolderCardProps {
   folder: IFolderMock;
@@ -63,14 +62,14 @@ export const FolderCard: React.FC<FolderCardProps> = ({ folder, withText }) => {
           className={cn("flex flex-col gap-3.5 p-4", withText && "gap-2")}
         >
           <div className="flex items-center gap-2">
-            <ClosedFolder className="min-w-6" />
+            <MaterialIcon iconName="folder" className="min-w-6" size={20} />
             <h2 className="text-xl font-bold truncate max-w-30">{name}</h2>
             {status === "archived" && (
               <button
                 className="z-10 ml-auto"
                 onClick={(e) => e.stopPropagation()}
               >
-                <ArchiveRestore size={24} />
+                <MaterialIcon iconName="backup" />
               </button>
             )}
           </div>

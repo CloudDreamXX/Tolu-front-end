@@ -1,8 +1,7 @@
-import Leaf from "shared/assets/icons/leaf";
+import LeavesIcon from "shared/assets/icons/leaves";
 import Brain from "shared/assets/icons/brain";
-import WomansLine from "shared/assets/icons/womans-line";
 import Chemistry from "shared/assets/icons/chemistry";
-import { Microscope } from "lucide-react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const ClinicalOptions = [
   "Nurse Practitioner (NP)",
@@ -64,14 +63,16 @@ const OtherOptions = [
 export const titlesAndIcons = [
   {
     title: "Clinical & Licensed Healthcare Providers",
-    icon: <Microscope size={20} className="text-[#1B2559]" />,
+    icon: (
+      <MaterialIcon iconName="lightbulb" size={20} className="text-[#1B2559]" />
+    ),
     options: ClinicalOptions,
     tooltipContent:
       "For licensed professionals supporting\nhealth transformation through\ndiagnostics and medical oversight.",
   },
   {
     title: "Functional & Holistic Health Practitioners",
-    icon: <Leaf />,
+    icon: <LeavesIcon />,
     options: FunctionalOptions,
     tooltipContent:
       "For those trained in integrative\nframeworks and root-cause resolution.",
@@ -85,7 +86,7 @@ export const titlesAndIcons = [
   },
   {
     title: "Women's Health & Specialty Coaches",
-    icon: <WomansLine />,
+    icon: <MaterialIcon iconName="female" className="text-[#1B2559]" />,
     options: WomensOptions,
     tooltipContent:
       "Serving women through transitions like\nperimenopause, menopause, and\nfertility journeys.",

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ClientWelcomePicture from "shared/assets/images/Illustration.png";
 import { AuthPageWrapper } from "shared/ui";
 import { ClientHeader } from "widgets/Header";
 import { ConfirmCancelModal } from "widgets/ConfirmCancelModal";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const WelcomeScreen = () => {
   const nav = useNavigate();
@@ -73,7 +73,10 @@ export const WelcomeScreen = () => {
               <span className="text-center text-white text-2xl font-semibold font-[Nunito]">
                 Let’s Begin
               </span>
-              <ArrowRight color="#fff" size={32} />
+              <MaterialIcon
+                iconName="keyboard_arrow_right"
+                className="w-5 h-5"
+              />
             </button>
           </div>
         </div>

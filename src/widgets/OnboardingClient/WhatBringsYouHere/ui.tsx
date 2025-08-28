@@ -6,9 +6,9 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import SmallTooltip from "shared/assets/icons/small-tooltip";
 import { RadioGroup, RadioGroupItem } from "shared/ui/radio-group"; // <-- import shadcn RadioGroup
 import { cn, usePageWidth } from "shared/lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const WhatBrringsYouHere = () => {
   const [radioValue, setRadioValue] = useState("");
@@ -105,7 +105,7 @@ export const WhatBrringsYouHere = () => {
                       {item}
                     </p>
                     <div className="flex-shrink-0 mt-[3px]">
-                      <SmallTooltip />
+                      <MaterialIcon iconName="help" size={16} />
                     </div>
                   </span>
                 </label>

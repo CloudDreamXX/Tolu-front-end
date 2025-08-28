@@ -1,14 +1,13 @@
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import CircleQuestion from "shared/assets/icons/circle-question";
 import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper, TooltipWrapper } from "shared/ui";
 import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { titlesAndIcons } from "./mock";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const SelectType = () => {
   const dispatch = useDispatch();
@@ -81,7 +80,7 @@ export const SelectType = () => {
                     {item.title}
                   </h2>
                   <TooltipWrapper content={item.tooltipContent}>
-                    <CircleQuestion />
+                    <MaterialIcon iconName="help" size={20} />
                   </TooltipWrapper>
                 </div>
                 {/* Custom Dropdown */}
@@ -94,7 +93,7 @@ export const SelectType = () => {
                     <span className="text-[#000] font-[Nunito] text-[16px]">
                       {selectedOptions[index] || "Select your type"}
                     </span>
-                    <ChevronDown className="text-[#9D9D9D]" />
+                    <MaterialIcon iconName="keyboard_arrow_down" />
                   </button>
                   {activeDropdown === index && (
                     <div className="absolute z-10 flex flex-col w-full mt-[4px] bg-[#FAFAFA] border-none rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto scrollbar-hide">

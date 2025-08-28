@@ -1,9 +1,6 @@
 import { Avatar } from "@radix-ui/react-avatar";
 import { useEffect, useRef, useState } from "react";
-import CheckedIcon from "shared/assets/icons/checked";
-import Chevron from "shared/assets/icons/chevron";
-import CloseIcon from "shared/assets/icons/close";
-import UncheckedIcon from "shared/assets/icons/not-checked";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { AvatarFallback, AvatarImage, Button } from "shared/ui";
 
@@ -84,13 +81,13 @@ export const MultiSelectField = ({
                   removeOption(option);
                 }}
               >
-                <CloseIcon width={16} height={16} />
+                <MaterialIcon iconName="close" size={20} />
               </button>
             </span>
           ))
         )}
         <span className="pointer-events-none absolute right-[12px] top-1/2 -translate-y-1/2">
-          <Chevron />
+          <MaterialIcon iconName="keyboard_arrow_down" />
         </span>
       </button>
       {open && (
@@ -108,11 +105,15 @@ export const MultiSelectField = ({
                 className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${selected.includes(option.label) ? "border-[#1D1D1F]" : "border-white hover:border-[#1D1D1F]"}`}
                 onClick={() => toggleOption(option.label)}
               >
-                {selected.includes(option.label) ? (
-                  <CheckedIcon />
-                ) : (
-                  <UncheckedIcon />
-                )}
+                <MaterialIcon
+                  iconName={
+                    selected.includes(option.label)
+                      ? "check_box"
+                      : "check_box_outline_blank"
+                  }
+                  fill={selected.includes(option.label) ? 1 : 0}
+                  size={20}
+                />
                 {option.avatar && (
                   <Avatar className="w-10 h-10 ">
                     <AvatarImage src={option.avatar} />

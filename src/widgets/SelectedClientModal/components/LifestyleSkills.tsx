@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
-import TrashIcon from "shared/assets/icons/trash-icon";
-import EditIcon from "shared/assets/icons/edit";
+
 import { LifestyleSkillsInfo } from "entities/coach";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export type LifestyleItem = { text: string; sign?: "plus" | "minus" };
 
@@ -118,7 +118,7 @@ const LifestyleSkills: React.FC<Props> = ({
                     className="p-1 rounded hover:bg-black/5"
                     aria-label={editing ? "Save" : "Edit"}
                   >
-                    <EditIcon />
+                    <MaterialIcon iconName="edit" />
                   </button>
                 )}
               </div>
@@ -131,7 +131,7 @@ const LifestyleSkills: React.FC<Props> = ({
                     ) : (
                       items.map((it, i) => (
                         <div key={i} className="flex items-start gap-2">
-                          <span className="font-bold w-3 text-center">
+                          <span className="w-3 font-bold text-center">
                             {it.sign === "minus" ? "–" : "+"}
                           </span>
                           <span className="text-[14px]">{it.text || "—"}</span>
@@ -160,7 +160,7 @@ const LifestyleSkills: React.FC<Props> = ({
                         aria-label="Remove"
                         title="Remove"
                       >
-                        <TrashIcon />
+                        <MaterialIcon iconName="delete" />
                       </button>
                     </div>
                   ))}

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MedicationsAndSupplements, MedicationInfo } from "entities/coach";
-import Chevron from "shared/assets/icons/chevron";
-import EditIcon from "shared/assets/icons/edit";
 import { usePageWidth } from "shared/lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export type Medication = {
   medication_id: string;
@@ -89,7 +88,7 @@ const RowView: React.FC<{ med: Medication; onEdit: () => void }> = ({
       title="Edit"
       aria-label="Edit row"
     >
-      <EditIcon />
+      <MaterialIcon iconName="edit" />
     </button>
   </div>
 );
@@ -188,7 +187,7 @@ const TableCard: React.FC<{
       >
         <SectionTitle>{title}</SectionTitle>
         <span className={`md:hidden ${isExpanded ? "rotate-[180deg]" : ""}`}>
-          <Chevron />
+          <MaterialIcon iconName="keyboard_arrow_right" />
         </span>
       </div>
 

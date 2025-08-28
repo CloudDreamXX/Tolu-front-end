@@ -1,3 +1,4 @@
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import {
   Tooltip,
@@ -5,7 +6,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "shared/ui";
-import TooltipIcon from "shared/assets/icons/circle-question";
 
 interface SnapshotProps {
   title: string;
@@ -52,8 +52,10 @@ export const Snapshot: React.FC<SnapshotProps> = ({
                     "cursor-not-allowed": !active,
                   })}
                 >
-                  <TooltipIcon
-                    className={cn("w-5 h-5 text-[#AAC6EC]", {
+                  <MaterialIcon
+                    iconName="help"
+                    size={20}
+                    className={cn("text-[#AAC6EC]", {
                       "text-[#5F5F6566]": !active,
                     })}
                   />

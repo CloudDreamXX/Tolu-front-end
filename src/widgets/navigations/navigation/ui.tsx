@@ -1,15 +1,11 @@
 import { logout } from "entities/user";
 import { CustomNavLink } from "features/custom-nav-link";
-import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Close from "shared/assets/icons/close";
-import Menu from "shared/assets/icons/menu";
-import SignOutIcon from "shared/assets/icons/signout";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ScrollArea } from "shared/ui";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
-import SignOutIconBlue from "shared/assets/icons/signoutBlue";
 
 type Props = {
   pageLocation: "content-manager" | "user-management";
@@ -70,7 +66,11 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
             AI Assistant
           </button>
           <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
-            <Menu className="text-black w-[32px] md:w-[40px]" />
+            <MaterialIcon
+              iconName="menu"
+              size={40}
+              className="text-black w-[32px] md:w-[40px]"
+            />
           </button>
         </div>
       </div>
@@ -98,7 +98,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 className="absolute top-[16px] right-[16px] z-10"
               >
                 <span className="text-2xl font-bold">
-                  <Close />
+                  <MaterialIcon iconName="close" />
                 </span>
               </button>
             </div>
@@ -117,7 +117,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 onClick={handleSignOut}
                 className="flex gap-[12px] py-[16px] px-[32px] text-[16px] text-[#1C63DB] font-semibold cursor-pointer select-none"
               >
-                <SignOutIconBlue />
+                <MaterialIcon iconName="exit_to_app" />
                 Sign out
               </button>
             </div>
@@ -130,7 +130,11 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
           onClick={() => setMenuOpen(!menuOpen)}
           className="transition-colors duration-200"
         >
-          <Menu className={menuOpen ? "text-[#1C63DB]" : "text-black"} />
+          <MaterialIcon
+            iconName="menu"
+            size={40}
+            className={menuOpen ? "text-[#1C63DB]" : "text-black"}
+          />
         </button>
 
         {menuOpen && (
@@ -148,7 +152,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
               className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
             >
               <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-                <User size={24} />
+                <MaterialIcon iconName="account_circle" fill={1} />
               </div>
               Profile
             </button>
@@ -161,7 +165,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
               className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
             >
               <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-                <SignOutIcon />
+                <MaterialIcon iconName="exit_to_app" />
               </div>
               Sign out
             </button>

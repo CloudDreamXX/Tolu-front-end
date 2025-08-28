@@ -1,10 +1,6 @@
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+
 import React, { useEffect, useState } from "react";
-import InfoIcon from "shared/assets/icons/info-icon";
-import Pencil from "shared/assets/icons/pencil";
-import TrendDown from "shared/assets/icons/trend-down";
-import TrendUp from "shared/assets/icons/trend-up";
 import { cn } from "shared/lib";
 import { Dialog, DialogContent, DialogTrigger } from "shared/ui/dialog";
 import {
@@ -28,6 +24,7 @@ import {
   setDate as setReduxDate,
 } from "entities/store/clientGlucoseSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export interface GlucoseCardProps {
   indicator: string;
@@ -97,7 +94,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <button className="absolute right-[12px] top-[12px] py-[6px] px-[6px] h-[24px] w-[24px] md:w-8 md:h-8 rounded-full bg-[#DDEBF6] flex items-center justify-center">
-              <Pencil />
+              <MaterialIcon iconName="edit" fill={1} />
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-[768px] md:max-w-[742px] flex flex-col gap-6 p-6 items-start">
@@ -162,7 +159,11 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                       !localDate && "text-muted-foreground"
                     )}
                   >
-                    <CalendarIcon className="w-4 h-4 mr-2" />
+                    <MaterialIcon
+                      iconName="calendar_today"
+                      fill={1}
+                      className="w-4 h-4 mr-2"
+                    />
                     {localDate ? format(localDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
@@ -221,7 +222,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
           Glucose
         </h3>
         <span className="w-[20px] h-[20px]">
-          <InfoIcon />
+          <MaterialIcon iconName="help" fill={1} size={20} />
         </span>
       </div>
 
@@ -238,7 +239,9 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                 : "flex p-1 items-center gap-1 justify-center rounded-2xl border border-[#FFB3AE] bg-[#FFF6F5]"
             }
           >
-            {trend === "up" ? <TrendUp /> : <TrendDown />}
+            <MaterialIcon
+              iconName={trend === "up" ? "trending_up" : "trending_down"}
+            />
           </div>
         )}
       </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useId } from "react";
-import CloseIcon from "shared/assets/icons/close";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type ConfirmModalProps = {
   isOpen: boolean;
@@ -60,7 +60,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               className="text-[#1D1D1F]"
               aria-label="Close"
             >
-              <CloseIcon />
+              <MaterialIcon iconName="close" />
             </button>
           </div>
 

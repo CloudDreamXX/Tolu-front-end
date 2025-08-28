@@ -1,12 +1,7 @@
 import { RootState } from "entities/store";
-import { ArrowRight, Bookmark } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import ClockAfternoon from "shared/assets/icons/clock-afternoon";
-import Heartbeat from "shared/assets/icons/heartbeat";
-import InfoIcon from "shared/assets/icons/info-icon";
-import PaperPlane from "shared/assets/icons/paper-plane";
-import Share from "shared/assets/icons/share";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import avatar from "shared/assets/images/Avatar.png";
 import { ClientCard, GlucoseCard, Input, SliderCard } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
@@ -64,14 +59,14 @@ export const HealthSnapshot = () => {
             onClick={() => setNetworkSupportOpen((prev) => !prev)}
             className={`md:h-[44px] w-[115px] md:w-fit font-[Nunito] text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${networkSupportOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
           >
-            <Heartbeat />
+            <MaterialIcon iconName="ecg_heart" size={20} />
             Network Support
           </button>
           <button
             onClick={() => setTimelineOpen((prev) => !prev)}
             className={`md:h-[44px] w-[115px] md:w-fit font-[Nunito] text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${timelineOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center  items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
           >
-            <ClockAfternoon />
+            <MaterialIcon iconName="clock_loader_10" size={20} />
             {!timelineOpen ? "Open timeline" : "Close timeline"}
           </button>
         </div>
@@ -113,7 +108,10 @@ export const HealthSnapshot = () => {
                     </p>
                   </div>
                   <button>
-                    <ArrowRight color="#1C63DB" size={24} />
+                    <MaterialIcon
+                      iconName="arrow_right_alt"
+                      className="text-[#1C63DB]"
+                    />
                   </button>
                 </div>
               </div>
@@ -128,7 +126,10 @@ export const HealthSnapshot = () => {
                     </p>
                   </div>
                   <button>
-                    <ArrowRight color="#1C63DB" size={24} />
+                    <MaterialIcon
+                      iconName="arrow_right_alt"
+                      className="text-[#1C63DB]"
+                    />
                   </button>
                 </div>
               </div>
@@ -161,7 +162,7 @@ export const HealthSnapshot = () => {
                     Cycle tracking insights
                   </h3>
                   <span className="w-[20px] h-[20px]">
-                    <InfoIcon />
+                    <MaterialIcon iconName="help" fill={1} size={20} />
                   </span>
                 </div>
                 <h1 className="text-[#1C63DB] text-[24px] md:text-[32px]/[44px] font-bold font-[Nunito]">
@@ -259,7 +260,7 @@ export const HealthSnapshot = () => {
                     Cycle tracking insights
                   </h3>
                   <span className="w-[20px] h-[20px]">
-                    <InfoIcon />
+                    <MaterialIcon iconName="help" fill={1} size={20} />
                   </span>
                 </div>
                 <h1 className="text-[#1C63DB] text-[32px]/[44px] font-bold font-[Nunito]">
@@ -296,10 +297,10 @@ export const HealthSnapshot = () => {
                   </div>
                   <div className="flex items-center self-stretch gap-3">
                     <button>
-                      <Bookmark color="#1C63DB" size={24} />
+                      <MaterialIcon iconName="bookmark" />
                     </button>
                     <button>
-                      <Share />
+                      <MaterialIcon iconName="share_windows" />
                     </button>
                   </div>
                 </div>
@@ -308,7 +309,7 @@ export const HealthSnapshot = () => {
             <div className="flex bg-white rounded-b-[8px] border-t-[#DDEBF6] border-t p-6 items-center gap-2 self-stretch mb-[68px]">
               <Input placeholder="Your message" />
               <button className="rounded-full bg-[#1C63DB] flex h-[44px] justify-center items-center px-[10px] py-4 ">
-                <PaperPlane />
+                <MaterialIcon iconName="send" />
               </button>
             </div>
           </div>

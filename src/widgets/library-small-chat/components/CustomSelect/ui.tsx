@@ -1,5 +1,5 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface CustomSelectProps {
   value: string;
@@ -40,11 +40,9 @@ export const CustomSelect = ({
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {value || <span className="text-[#5F5F65]">{placeholder}</span>}
-        {isOpen ? (
-          <ChevronUp className="w-[20px] h-[20px]" />
-        ) : (
-          <ChevronDown className="w-[20px] h-[20px]" />
-        )}
+        <MaterialIcon
+          iconName={isOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+        />
       </button>
 
       {isOpen && (

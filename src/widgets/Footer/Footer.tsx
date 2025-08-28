@@ -1,4 +1,4 @@
-import Ai from "shared/assets/icons/ai";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
   Tooltip,
   TooltipContent,
@@ -31,9 +31,11 @@ export const Footer: React.FC<Props> = ({ position }) => {
                   : "p-[24px]"
               }`}
             >
-              <Ai
+              <MaterialIcon
+                iconName="stars_2"
+                fill={1}
                 size={
-                  position === "top-left" || position === "top-right" ? 15 : 28
+                  position === "top-left" || position === "top-right" ? 16 : 24
                 }
               />
             </button>

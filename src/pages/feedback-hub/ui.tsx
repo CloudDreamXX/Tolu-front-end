@@ -1,17 +1,7 @@
-import { ChatTextIcon } from "@phosphor-icons/react/dist/ssr";
 import { AdminService } from "entities/admin";
-import {
-  Search,
-  Eye,
-  AlertTriangle,
-  ArrowUpRightIcon,
-  Settings2,
-  Copy,
-  Table,
-} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Arrow from "shared/assets/icons/pages-arrow";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button, TooltipWrapper } from "shared/ui";
 import { FiltersPopup } from "widgets/filters-popup";
 
@@ -266,14 +256,14 @@ export const FeedbackHub = () => {
       </div>
       <div className="absolute md:top-[201px] xl:top-[81px] md:left-0 md:right-0 xl:left-[97px] 2xl:left-[300px] border-b border-[#97999A]" />
 
-      <div className="flex flex-row gap-4 justify-between md:items-baseline xl:items-center">
+      <div className="flex flex-row justify-between gap-4 md:items-baseline xl:items-center">
         <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
-          <ChatTextIcon />
+          <MaterialIcon iconName="chat" fill={1} />
           Feedback
         </h1>
 
         <div className="flex flex-col gap-[16px] items-end">
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <Button
               variant={"light-blue"}
               className="text-[#1C63DB] text-[16px] font-semibold py-[10px] px-[16px]"
@@ -282,11 +272,15 @@ export const FeedbackHub = () => {
                 setFiltersOpen(true);
               }}
             >
-              <Settings2 className="rotate-[90deg]" />
+              <MaterialIcon iconName="page_info" />
               Filter
             </Button>
             <div className="hidden xl:flex gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-[306px]">
-              <Search className="w-4 h-4 text-gray-600" />
+              <MaterialIcon
+                iconName="search"
+                size={16}
+                className="text-gray-600"
+              />
               <input
                 type="text"
                 placeholder="Search by keyword, email, or content ID"
@@ -295,15 +289,29 @@ export const FeedbackHub = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button className="hidden md:block px-[16px] py-[8px] rounded-[8px] border border-transparent hover:border-[#1C63DB] text-[#5F5F65] hover:text-[#1C63DB]">
-              <Table className="w-4 h-4" />
+            <button className="hidden md:flex items-center justify-center px-[16px] py-[8px] rounded-[8px] border border-transparent hover:border-[#1C63DB] text-[#5F5F65] hover:text-[#1C63DB]">
+              <MaterialIcon
+                iconName="table"
+                size={20}
+                fill={1}
+                className="text-[#1C63DB]"
+              />
             </button>
-            <button className="hidden md:block px-[16px] py-[8px] rounded-[8px] border border-transparent hover:border-[#1C63DB] text-[#5F5F65] hover:text-[#1C63DB]">
-              <Copy className="w-4 h-4" />
+            <button className="hidden md:flex items-center justify-center px-[16px] py-[8px] rounded-[8px] border border-transparent hover:border-[#1C63DB] text-[#5F5F65] hover:text-[#1C63DB]">
+              <MaterialIcon
+                iconName="stack"
+                fill={1}
+                size={20}
+                className="text-[#1C63DB]"
+              />
             </button>
           </div>
           <div className="hidden md:flex xl:hidden gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-[306px]">
-            <Search className="w-4 h-4 text-gray-600" />
+            <MaterialIcon
+              iconName="search"
+              size={16}
+              className="text-gray-600"
+            />
             <input
               type="text"
               placeholder="Search by keyword, email, or content ID"
@@ -315,7 +323,7 @@ export const FeedbackHub = () => {
         </div>
       </div>
       <div className="md:hidden flex gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-full">
-        <Search className="w-4 h-4 text-gray-600" />
+        <MaterialIcon iconName="search" size={16} className="text-gray-600" />
         <input
           type="text"
           placeholder="Search by keyword, email, or content ID"
@@ -339,13 +347,13 @@ export const FeedbackHub = () => {
 
           <div>
             {loading && (
-              <div className="p-6 text-center text-sm text-gray-500">
+              <div className="p-6 text-sm text-center text-gray-500">
                 Loading…
               </div>
             )}
 
             {!loading && filtered.length === 0 && (
-              <div className="p-6 text-center text-sm text-gray-500">
+              <div className="p-6 text-sm text-center text-gray-500">
                 No feedback found.
               </div>
             )}
@@ -381,7 +389,7 @@ export const FeedbackHub = () => {
                     {r.query || "—"}
                   </div>
 
-                  <div className="col-span-1 flex items-center justify-center gap-2">
+                  <div className="flex items-center justify-center col-span-1 gap-2">
                     {r.rating != null ? (
                       <span
                         className={`inline-flex items-center justify-center px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${
@@ -398,7 +406,11 @@ export const FeedbackHub = () => {
                       <span className="text-gray-400">—</span>
                     )}
                     {r.rating === 1 && (
-                      <AlertTriangle className="w-[24px] h-[24px] text-[#FF1F0F]" />
+                      <MaterialIcon
+                        iconName="warning"
+                        className="text-[#FF1F0F]"
+                        fill={1}
+                      />
                     )}
                   </div>
 
@@ -406,23 +418,27 @@ export const FeedbackHub = () => {
                     {fmtDate(r.date)}
                   </div>
 
-                  <div className="col-span-1 flex items-center justify-end gap-3">
+                  <div className="flex items-center justify-end col-span-1 gap-3">
                     <TooltipWrapper content="View Details">
                       <button
-                        className="p-2 rounded-md hover:bg-gray-100"
+                        className="flex items-center justify-center p-2 rounded-md hover:bg-gray-100"
                         onClick={() => {
                           navigate("/feedback/details", {
                             state: { document: r },
                           });
                         }}
                       >
-                        <Eye className="w-[32px] h-[32px] text-[#1C63DB]" />
+                        <MaterialIcon
+                          iconName="visibility"
+                          fill={1}
+                          className="text-[#1C63DB]"
+                        />
                       </button>
                     </TooltipWrapper>
 
                     <TooltipWrapper content=" Link to Original Content">
                       <button
-                        className={`p-2 rounded-md ${
+                        className={`flex items-center justify-center p-2 rounded-md ${
                           r.sourceId
                             ? "hover:bg-gray-100"
                             : "opacity-40 cursor-not-allowed"
@@ -432,7 +448,10 @@ export const FeedbackHub = () => {
                           // window.open(`/library/document/${r.content_id}`, "_blank");
                         }}
                       >
-                        <ArrowUpRightIcon className="w-[32px] h-[32px] text-[#1C63DB]" />
+                        <MaterialIcon
+                          iconName="north_east"
+                          className="text-[#1C63DB]"
+                        />
                       </button>
                     </TooltipWrapper>
                   </div>
@@ -449,9 +468,7 @@ export const FeedbackHub = () => {
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
             className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
           >
-            <span className="rotate-180">
-              <Arrow />
-            </span>
+            <MaterialIcon iconName="arrow_left_alt" />
           </button>
 
           {getVisiblePages(page, totalPages).map((pageNumber) => (
@@ -473,7 +490,7 @@ export const FeedbackHub = () => {
             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
             className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
           >
-            <Arrow />
+            <MaterialIcon iconName="arrow_right_alt" />
           </button>
         </div>
       )}

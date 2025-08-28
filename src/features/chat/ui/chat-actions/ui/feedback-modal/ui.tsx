@@ -1,12 +1,11 @@
-import { StarIcon } from "@phosphor-icons/react/dist/ssr";
-import { useState } from "react";
-import { Button, Input, RadioGroup, RadioGroupItem } from "shared/ui";
-import { X } from "lucide-react";
-import { cn } from "shared/lib/utils";
 import { ContentService, Feedback } from "entities/content";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { RootState } from "entities/store";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { cn } from "shared/lib/utils";
+import { Button, Input, RadioGroup, RadioGroupItem } from "shared/ui";
 
 interface FeedbackModalProps {
   initialRating: number;
@@ -84,9 +83,9 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
           <h2 className="text-2xl font-semibold">Was this helpful for you?</h2>
           <button
             onClick={() => onOpenChange(false)}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-900"
+            className="absolute text-gray-500 top-4 right-4 hover:text-gray-900"
           >
-            <X size={24} />
+            <MaterialIcon iconName="close" size={24} />
           </button>
         </div>
 
@@ -105,7 +104,10 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                   star <= rating ? "text-yellow-400" : "text-gray-300"
                 }`}
               >
-                <StarIcon weight="fill" className="cursor-pointer w-14 h-14" />
+                <MaterialIcon
+                  iconName="star"
+                  className="cursor-pointer w-14 h-14"
+                />
               </button>
             ))}
           </div>
@@ -159,7 +161,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         <Button
           variant={"brightblue"}
           onClick={handleSave}
-          className="w-fit min-w-32 ml-auto"
+          className="ml-auto w-fit min-w-32"
         >
           Save
         </Button>

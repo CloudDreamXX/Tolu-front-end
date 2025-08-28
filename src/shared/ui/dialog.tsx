@@ -1,9 +1,8 @@
-import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import * as React from "react";
 
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib/utils";
-import ArrowBack from "shared/assets/icons/arrowBack";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -44,7 +43,7 @@ const DialogContent = React.forwardRef<
           aria-label="Close modal"
           className="absolute z-[999] top-[80px] left-[16px] md:hidden"
         >
-          <ArrowBack />
+          <MaterialIcon iconName="keyboard_arrow_left" size={20} />
         </span>
       </DialogPrimitive.Close>
     )}
@@ -57,8 +56,8 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-t-[18px] md:rounded-[18px] opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <X className="w-6 h-6" />
+      <DialogPrimitive.Close className="absolute h-[24px] right-4 top-4 rounded-t-[18px] md:rounded-[18px] opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <MaterialIcon iconName="close" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
@@ -123,13 +122,13 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {
   Dialog,
-  DialogPortal,
-  DialogOverlay,
   DialogClose,
-  DialogTrigger,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
 };

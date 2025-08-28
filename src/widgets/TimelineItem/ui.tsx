@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  ArrowClockwiseIcon,
-  TrendUpIcon,
-  WarningCircleIcon,
-  UploadSimpleIcon,
-  PencilSimpleIcon,
-  ArrowCounterClockwiseIcon,
-} from "@phosphor-icons/react";
 
 import { cn } from "shared/lib";
+import { MaterialIcon } from "../../shared/assets/icons/MaterialIcon";
 
 interface TimelineItemProps {
   title: string;
@@ -27,27 +20,27 @@ const variantIconList = {
 
 const iconsElList = {
   arrowClockwise: {
-    el: ArrowClockwiseIcon,
+    el: <MaterialIcon iconName="replay" />,
     variant: "info",
   },
   trendUp: {
-    el: TrendUpIcon,
+    el: <MaterialIcon iconName="trending_up" />,
     variant: "success",
   },
   warningCircle: {
-    el: WarningCircleIcon,
+    el: <MaterialIcon iconName="warning" />,
     variant: "warning",
   },
   uploadSimple: {
-    el: UploadSimpleIcon,
+    el: <MaterialIcon iconName="upload" />,
     variant: "info",
   },
   pencilSimple: {
-    el: PencilSimpleIcon,
+    el: <MaterialIcon iconName="edit" />,
     variant: "info",
   },
   arrowCounterClockwise: {
-    el: ArrowCounterClockwiseIcon,
+    el: <MaterialIcon iconName="arrow_back" />,
     variant: "info",
   },
 } as const;
@@ -61,8 +54,8 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
   iconName,
 }) => {
   return (
-    <div className="flex flex-col gap-6 items-start self-stretch">
-      <div className="flex gap-4 items-center self-stretch">
+    <div className="flex flex-col items-start self-stretch gap-6">
+      <div className="flex items-center self-stretch gap-4">
         <div
           className={cn(
             "w-14 h-14 p-1 flex items-center justify-center rounded-[8px] bg-white border ",
@@ -70,13 +63,11 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
           )}
         >
           <button className="flex w-12 h-12 p-2 items-center justify-center shrink-0 rounded-[6px]">
-            {React.createElement(iconsElList[iconName].el, {
-              className: "w-6 h-6",
-            })}
+            {iconsElList[iconName].el}
           </button>
         </div>
-        <div className="flex flex-col gap-1 items-start w-full">
-          <div className="flex justify-between items-center self-stretch w-full">
+        <div className="flex flex-col items-start w-full gap-1">
+          <div className="flex items-center self-stretch justify-between w-full">
             <h3 className="text-[#1D1D1F] font-[Nunito] text-[16px]/[22px] font-semibold">
               {title}
             </h3>

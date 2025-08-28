@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import BlueStar from "shared/assets/icons/blue-star";
-import GreyStar from "shared/assets/icons/grey-star";
-import FilledStar from "shared/assets/icons/filled-star";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui";
 
 interface RatePopupProps {
@@ -41,11 +39,10 @@ export const RatePopup: React.FC<RatePopupProps> = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] flex items-center justify-center">
-          {!ratingsMap[contentId] ? (
-            <GreyStar className="text-blue-500" />
-          ) : (
-            <FilledStar className="text-blue-500" />
-          )}
+          <MaterialIcon
+            iconName={!ratingsMap[contentId] ? "star" : "star_half"}
+            className="text-blue-500"
+          />
         </button>
       </PopoverTrigger>
 
@@ -66,7 +63,14 @@ export const RatePopup: React.FC<RatePopupProps> = ({
                 onMouseLeave={() => setHoveredRating(0)}
                 className="text-[#5F5F65] w-[24px] h-[24px] focus:outline-none"
               >
-                {val <= (hoveredRating || rating) ? <BlueStar /> : <GreyStar />}
+                <MaterialIcon
+                  iconName="star"
+                  className={
+                    val <= (hoveredRating || rating)
+                      ? "text-blue-500"
+                      : "text-gray-400"
+                  }
+                />
               </button>
             ))}
           </div>

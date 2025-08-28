@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Close from "shared/assets/icons/close";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+
 import { Input } from "shared/ui";
 
 interface CreateFolderPopupProps {
@@ -66,7 +67,7 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
           aria-label="Close modal"
           disabled={isCreating}
         >
-          <Close />
+          <MaterialIcon iconName="close" />
         </button>
 
         <h3

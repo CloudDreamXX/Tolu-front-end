@@ -1,11 +1,8 @@
 import { FolderStatus, ReviewStatus } from "entities/folder";
-import { Clock, File } from "lucide-react";
-import DateIcon from "shared/assets/icons/date";
 import Expert from "shared/assets/icons/expert";
-import Flag from "shared/assets/icons/flag";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import NotReadyForNext from "shared/assets/icons/not-ready-for-next";
 import ReadyForNext from "shared/assets/icons/ready-for-next";
-import ToRead from "shared/assets/icons/to-read";
 import { cn, formatDateToSlash } from "shared/lib";
 
 export const renderReadyForReview = (readyForReview: boolean | undefined) => {
@@ -34,21 +31,21 @@ export const renderReviewStatus = (
     case "waiting":
       return (
         <div className={cn("flex items-center gap-2 text-base font-semibold")}>
-          <Clock className="w-[18px]" />
+          <MaterialIcon iconName="browse_gallery" className="w-[18px]" />
           Ready for review
         </div>
       );
     case "second-review":
       return (
         <div className={cn("flex items-center gap-2 text-base font-semibold")}>
-          <Flag />
+          <MaterialIcon iconName="flag" className="text-red-500" />
           Second review requested
         </div>
       );
     case "under-review":
       return (
         <div className={cn("flex items-center gap-2 text-base font-semibold")}>
-          <Clock className="min-w-5" />
+          <MaterialIcon iconName="browse_gallery" className="min-w-5" />
           Under review
         </div>
       );
@@ -107,7 +104,7 @@ export const renderFiles = (
       {withText ? (
         <span className="text-sm font-medium">Files</span>
       ) : (
-        <File width={20} height={20} className="min-w-5" />
+        <MaterialIcon iconName="docs" size={20} className="min-w-5" />
       )}
       {files.length ?? "0"} files
     </p>
@@ -126,7 +123,7 @@ export const renderDate = (date: string | undefined, withText?: boolean) => {
       {withText ? (
         <span className="text-sm font-medium">Date</span>
       ) : (
-        <DateIcon />
+        <MaterialIcon iconName="calendar_today" />
       )}
       {formatDateToSlash(dateObj)}{" "}
     </p>
@@ -175,7 +172,7 @@ export const renderStatus = (
         <Expert />
       )}
       <span className="flex gap-[4px] items-center text-[16px] font-[600] text-[#1C63DB]">
-        {status === "To read" && <ToRead />}
+        {status === "To read" && <MaterialIcon iconName="graph_6" size={16} />}
         {status}
       </span>
     </p>

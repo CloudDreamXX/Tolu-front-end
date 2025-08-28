@@ -1,7 +1,6 @@
 import { ReviewStatus } from "entities/folder";
-import { Clock } from "lucide-react";
 import Expert from "shared/assets/icons/expert";
-import Flag from "shared/assets/icons/flag";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import NotReadyForNext from "shared/assets/icons/not-ready-for-next";
 import ReadyForNext from "shared/assets/icons/ready-for-next";
 
@@ -22,21 +21,21 @@ export const renderReviewStatus = (reviewStatus: ReviewStatus | undefined) => {
     case "waiting":
       return (
         <div className="flex items-center gap-2 text-base font-semibold">
-          <Clock className="w-[18px]" />
+          <MaterialIcon iconName="browse_gallery" className="w-[18px]" />
           Ready for review
         </div>
       );
     case "second-review":
       return (
         <div className="flex items-center gap-2 text-base font-semibold">
-          <Flag />
+          <MaterialIcon iconName="flag" className="text-red-500" />
           Second review requested
         </div>
       );
     case "under-review":
       return (
         <div className="flex items-center gap-2 text-base font-semibold">
-          <Clock className="min-w-5" />
+          <MaterialIcon iconName="browse_gallery" className="min-w-5" />
           Under review
         </div>
       );

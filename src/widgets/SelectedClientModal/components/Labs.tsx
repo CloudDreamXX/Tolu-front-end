@@ -1,6 +1,6 @@
 import { LabsInfo } from "entities/coach";
 import React, { useMemo, useState } from "react";
-import Search from "shared/assets/icons/search";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Input } from "shared/ui";
 
 type LabReport = {
@@ -159,7 +159,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
       <div className="md:hidden w-full mb-[16px]">
         <Input
           placeholder="Search"
-          icon={<Search />}
+          icon={<MaterialIcon iconName="search" size={16} />}
           className="rounded-full"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -189,7 +189,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                 ].join(" ")}
               >
                 <div className="flex flex-col gap-[16px]">
-                  <div className="w-full md:w-1/3 flex items-center gap-3">
+                  <div className="flex items-center w-full gap-3 md:w-1/3">
                     <PdfIcon />
                     <span className="text-[14px] text-[#1D1D1F]">{r.name}</span>
                   </div>
@@ -198,7 +198,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                   </div>
                 </div>
 
-                <div className="w-fit md:w-2/3 flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 w-fit md:w-2/3">
                   <div className="hidden md:block text-[14px] text-[#1D1D1F] leading-[18px] italic max-w-[200px]">
                     {r.description}
                   </div>
@@ -232,7 +232,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
       {preview.open && preview.file && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/30">
           <div className="bg-white w-[720px] max-w-[92vw] max-height-[90vh] rounded-[16px] shadow-xl overflow-hidden flex flex-col">
-            <div className="px-5 py-4 flex items-center justify-between">
+            <div className="flex items-center justify-between px-5 py-4">
               <h2 className="text-[18px] font-bold">
                 Preview{" "}
                 <span className="text-[#1D1D1F]">“{preview.file.name}”</span>
@@ -263,7 +263,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                 ))}
               </div>
 
-              <div className="mt-4 flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-3 mt-4">
                 <button
                   onClick={prevPage}
                   disabled={preview.page <= 0}

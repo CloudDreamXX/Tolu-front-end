@@ -1,8 +1,7 @@
-import { ArrowRightIcon } from "@phosphor-icons/react";
 import { SearchHistoryItem, SearchService } from "entities/search";
 import { memo, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import History from "shared/assets/icons/history";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
 
 type Props = {
@@ -51,7 +50,7 @@ const HistoryPopupComponent: React.FC<Props> = ({ fromPath }) => {
         onClick={() => setIsOpen((prev) => !prev)}
         className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
       >
-        <History />
+        <MaterialIcon iconName="replay" className="text-[#1C63DB]" size={20} />
       </button>
       {isOpen && (
         <div
@@ -89,7 +88,10 @@ const HistoryPopupComponent: React.FC<Props> = ({ fromPath }) => {
                         );
                       }}
                     >
-                      <ArrowRightIcon className="text-[#1C63DB]" size={24} />
+                      <MaterialIcon
+                        iconName="keyboard_arrow_right"
+                        className="text-[#1C63DB]"
+                      />
                     </Button>
                   </li>
                 ))

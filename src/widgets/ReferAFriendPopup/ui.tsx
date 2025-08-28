@@ -1,8 +1,8 @@
-import Close from "shared/assets/icons/close";
 import { Input } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { useState } from "react";
 import { phoneMask, toast } from "shared/lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface Props {
   isOpen: boolean;
@@ -63,7 +63,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           aria-label="Close modal"
           onClick={onClose}
         >
-          <Close />
+          <MaterialIcon iconName="close" />
         </button>
 
         <h3

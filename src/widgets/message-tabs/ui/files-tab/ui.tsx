@@ -3,9 +3,9 @@ import {
   FetchChatDetailsResponse,
   FileMessage,
 } from "entities/chat";
-import { Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import NoFilesImage from "shared/assets/images/NoFiles.png";
 import { cn } from "shared/lib";
 import { FileMessageItem } from "widgets/file-message-item";
@@ -122,7 +122,10 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
         <h1 className="mb-6 text-2xl font-semibold">Files</h1>
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <Loader2Icon className="w-8 h-8 text-blue-500 animate-spin" />
+            <MaterialIcon
+              iconName="progress_activity"
+              className="text-blue-500  animate-spin"
+            />
           </div>
         ) : (
           <div className="flex flex-col flex-wrap min-h-full gap-4 lg:flex-row">

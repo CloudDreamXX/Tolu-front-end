@@ -1,7 +1,7 @@
 import React from "react";
-import Close from "shared/assets/icons/close";
-import Stars from "shared/assets/icons/stars";
+
 import { usePageWidth } from "../../../shared/lib/hooks/use-page-width";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface SymptomCheckModalProps {
   isOpen: boolean;
@@ -47,7 +47,11 @@ export const SymptomCheckModal: React.FC<SymptomCheckModalProps> = ({
         </p>
 
         <div className="bg-[#DDEBF6] py-[16px] px-[16px] rounded-[20px] flex items-center gap-[16px]">
-          <Stars className="w-[32px] shrink-0" />
+          <MaterialIcon
+            iconName="stars_2"
+            fill={1}
+            className="w-[32px] shrink-0"
+          />
           <p className="text-[16px] font-normal leading-[22px] text-[#1B2559] text-left">
             {variant === "completion"
               ? "Let’s explore it together."
@@ -75,7 +79,7 @@ export const SymptomCheckModal: React.FC<SymptomCheckModalProps> = ({
             onClick={onClose}
             className="absolute text-sm text-gray-500 top-4 right-4 hover:text-black"
           >
-            <Close />
+            <MaterialIcon iconName="close" />
           </button>
         )}
       </div>

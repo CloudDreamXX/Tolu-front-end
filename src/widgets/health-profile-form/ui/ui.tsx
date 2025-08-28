@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserCircleGearIcon } from "@phosphor-icons/react";
 import {
   HealthHistory,
   HealthHistoryPostData,
@@ -49,6 +48,7 @@ import { WomensHealthForm, womensHealthSchema } from "./womens-health";
 import { DrivesAndGoalsForm, drivesAndGoalsSchema } from "./drives-and-goals";
 import { usePageWidth } from "shared/lib";
 import { ConfirmCancelModal } from "widgets/ConfirmCancelModal";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const steps = [
   "Demographics",
@@ -366,7 +366,11 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           size={isMobile ? "sm" : "icon"}
           className="px-[10px] rounded-full md:h-14 md:w-14"
         >
-          {isMobile ? "Health profile" : <UserCircleGearIcon size={24} />}
+          {isMobile ? (
+            "Health profile"
+          ) : (
+            <MaterialIcon iconName="manage_accounts" />
+          )}
         </Button>
       </DialogTrigger>
 

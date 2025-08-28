@@ -1,5 +1,5 @@
-import { Check } from "lucide-react";
 import React from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface PriceCardProps {
   plan: "starting" | "professional";
@@ -35,25 +35,25 @@ export const PriceCard: React.FC<PriceCardProps> = ({
       </div>
       <ul className="flex flex-col justify-center items-start gap-[24px] self-stretch">
         <li className="flex gap-[16px] items-center">
-          <Check color="#1C63DB" size={20} />
+          <MaterialIcon iconName="check" className="text-[#1C63DB]" size={20} />
           <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
             Manage up to 3 active clients
           </span>
         </li>
         <li className="flex gap-[16px] items-center">
-          <Check color="#1C63DB" size={20} />
+          <MaterialIcon iconName="check" className="text-[#1C63DB]" size={20} />
           <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
             Host up to 10 sessions per month
           </span>
         </li>
         <li className="flex gap-[16px] items-center">
-          <Check color="#1C63DB" size={20} />
+          <MaterialIcon iconName="check" className="text-[#1C63DB]" size={20} />
           <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
             1 GB storage for client materials
           </span>
         </li>
         <li className="flex gap-[16px] items-center">
-          <Check color="#1C63DB" size={20} />
+          <MaterialIcon iconName="check" className="text-[#1C63DB]" size={20} />
           <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
             Access basic content library (templates, basics)
           </span>

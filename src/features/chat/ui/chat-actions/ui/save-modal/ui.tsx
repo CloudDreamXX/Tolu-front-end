@@ -1,7 +1,4 @@
-import { ArrowRightIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import BookMark from "shared/assets/icons/book-mark";
-import BookMarkFilled from "shared/assets/icons/book-mark-filled";
 import {
   Button,
   Dialog,
@@ -12,9 +9,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "shared/ui";
-import LightIcon from "shared/assets/icons/light";
 import { useParams } from "react-router-dom";
 import { DocumentsService } from "entities/document";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
   onStatusChange?: (status: string) => void;
@@ -75,11 +72,12 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
             : () => setIsOpen(true)
         }
       >
-        {(documentId && onStatusChange && status === "saved_for_later") ||
-        isBookmarked ? (
-          <BookMarkFilled width={16} height={16} />
-        ) : (
-          <BookMark width={16} height={16} />
+        {(documentId && onStatusChange && status === "saved_for_later") || (
+          <MaterialIcon
+            iconName="bookmark"
+            fill={isBookmarked ? 1 : 0}
+            className="text-blue-600"
+          />
         )}
       </button>
 
@@ -105,7 +103,11 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button onClick={handleBookmarkClick}>
-                      <BookMarkFilled width={32} height={32} />
+                      <MaterialIcon
+                        iconName="bookmark"
+                        fill={1}
+                        className="text-blue-600"
+                      />
                     </button>
                   </TooltipTrigger>
 
@@ -116,7 +118,10 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
                     <div className="flex flex-col items-center gap-2 max-w-[240px]">
                       <h3 className="flex gap-2 text-[#1B2559] text-sm leading-[1.4]">
                         <span className="w-5 h-5 shrink-0">
-                          <LightIcon className="text-[#1B2559] w-5 h-5" />
+                          <MaterialIcon
+                            iconName="lightbulb"
+                            className="text-[#1B2559] "
+                          />
                         </span>
                         Click to remove this topic from saved searches
                       </h3>
@@ -126,7 +131,7 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
               </TooltipProvider>
             ) : (
               <button onClick={handleBookmarkClick}>
-                <BookMark width={32} height={32} />
+                <MaterialIcon iconName="bookmark" className="text-blue-600" />
               </button>
             )}
 
@@ -142,7 +147,11 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
               className="ml-auto rounded-full bg-[#DDEBF6] hover:bg-[#CFE2F3] p-2"
               onClick={() => {}}
             >
-              <ArrowRightIcon className="text-[#1C63DB]" size={24} />
+              <MaterialIcon
+                iconName="arrow_right_alt"
+                className="text-[#1C63DB]"
+                size={24}
+              />
             </Button>
           </div>
 

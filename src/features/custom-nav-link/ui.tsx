@@ -1,6 +1,6 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { cloneElement, isValidElement, useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { SideBarItem } from "widgets/sidebars/ui/model";
 interface CustomNavLinkProps {
@@ -65,9 +65,9 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
           {!isNarrow && item.title}
           {!isNarrow &&
             (open ? (
-              <ChevronUp className="w-5 h-5 shrink-0" />
+              <MaterialIcon iconName="keyboard_arrow_up" />
             ) : (
-              <ChevronDown className="w-5 h-5 shrink-0" />
+              <MaterialIcon iconName="keyboard_arrow_down" />
             ))}
         </button>
         {open && (

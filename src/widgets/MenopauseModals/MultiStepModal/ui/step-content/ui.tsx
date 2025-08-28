@@ -1,7 +1,7 @@
 import React from "react";
 import { Step as StepType } from "../../mock";
 import { Input } from "shared/ui";
-import { Plus } from "lucide-react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface StepContentProps {
   step: StepType;
@@ -56,7 +56,7 @@ export const StepContent: React.FC<StepContentProps> = ({
               className="px-4"
             />
             <button onClick={addCustomSymptom}>
-              <Plus className="ml-2 w-[24px] h-[24px]" />
+              <MaterialIcon iconName="add" className="ml-2 w-[24px] h-[24px]" />
             </button>
           </div>
         </div>

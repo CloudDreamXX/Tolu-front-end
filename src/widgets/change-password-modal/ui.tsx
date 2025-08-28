@@ -1,5 +1,5 @@
-import { EyeClosed, EyeIcon } from "lucide-react";
 import { useMemo, useState } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import {
   Button,
@@ -110,7 +110,10 @@ export const ChangePasswordModal = ({
                 value={current}
                 onChange={(e) => setCurrent(e.target.value)}
                 iconRight={
-                  show.cur ? <EyeIcon size={16} /> : <EyeClosed size={16} />
+                  <MaterialIcon
+                    iconName={show.cur ? "visibility" : "visibility_off"}
+                    size={16}
+                  />
                 }
                 onIconClick={() => setShow((s) => ({ ...s, cur: !s.cur }))}
               />
@@ -131,7 +134,10 @@ export const ChangePasswordModal = ({
                   "border-destructive focus-visible:ring-destructive"
               )}
               iconRight={
-                show.next ? <EyeIcon size={16} /> : <EyeClosed size={16} />
+                <MaterialIcon
+                  iconName={show.next ? "visibility" : "visibility_off"}
+                  size={16}
+                />
               }
               onIconClick={() => setShow((s) => ({ ...s, next: !s.next }))}
             />
@@ -156,7 +162,10 @@ export const ChangePasswordModal = ({
                   "border-destructive focus-visible:ring-destructive"
               )}
               iconRight={
-                show.conf ? <EyeIcon size={16} /> : <EyeClosed size={16} />
+                <MaterialIcon
+                  iconName={show.conf ? "visibility" : "visibility_off"}
+                  size={16}
+                />
               }
               onIconClick={() => setShow((s) => ({ ...s, conf: !s.conf }))}
             />

@@ -1,12 +1,7 @@
 import { useState } from "react";
-import {
-  DotsThreeVerticalIcon,
-  MagnifyingGlassPlusIcon,
-} from "@phosphor-icons/react";
 import { ActionsPopup } from "./ui/actions-popup";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { RenamePopup } from "./ui/rename-popup";
-import Collapse from "shared/assets/icons/collapse";
 import { CoachService, NewChatTitle } from "entities/coach";
 import { useParams } from "react-router-dom";
 import { toast } from "shared/lib";
@@ -14,6 +9,7 @@ import {
   SWITCH_KEYS,
   SwitchValue,
 } from "widgets/library-small-chat/switch-config";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface ChatHeaderProps {
   displayChatTitle: string;
@@ -82,7 +78,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       <div className="flex items-center gap-3">
         <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px]">
           <button onClick={onClose} className="hidden xl:block">
-            <Collapse />
+            <MaterialIcon iconName="arrows_input" size={24} />
           </button>
           {(isCoach || isExistingChat) && <span>{displayChatTitle}</span>}
         </div>
@@ -112,14 +108,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           className="flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hoverable:hover:bg-blue-700 w-full xl:w-fit"
           onClick={onNewSearch}
         >
-          <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
+          <MaterialIcon iconName="search" size={24} />
+          New Search
         </button>
         {isExistingChat && (
           <button
             className="flex flex-row items-center gap-2 p-2 text-sm font-medium text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"
             onClick={() => setIsActionsPopupOpen(!isActionsPopupOpen)}
           >
-            <DotsThreeVerticalIcon width={24} height={24} color="#000" />
+            <MaterialIcon iconName="more_vert" size={24} />
           </button>
         )}
       </div>

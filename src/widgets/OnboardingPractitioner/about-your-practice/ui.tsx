@@ -1,16 +1,12 @@
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { useEffect, useRef, useState } from "react";
-import UploadCloud from "shared/assets/icons/upload-cloud";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Input } from "shared/ui";
-import LightIcon from "shared/assets/icons/light";
 import { SearchableSelect } from "../components/SearchableSelect";
-import CheckedIcon from "shared/assets/icons/checked";
-import UncheckedIcon from "shared/assets/icons/not-checked";
-import TrashIcon from "shared/assets/icons/trash-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const AboutYourPractice = () => {
   const dispatch = useDispatch();
@@ -281,7 +277,11 @@ export const AboutYourPractice = () => {
                         className="cursor-pointer px-[12px] py-[15px] hover:bg-[#F2F2F2] hover:text-[#1C63DB] flex items-center gap-[12px]"
                       >
                         <span className="w-[20px] h-[20px] flex items-center justify-center">
-                          {isSelected ? <CheckedIcon /> : <UncheckedIcon />}
+                          <MaterialIcon
+                            iconName={
+                              isSelected ? "check" : "check_box_outline_blank"
+                            }
+                          />
                         </span>
                         {option}
                       </div>
@@ -292,7 +292,7 @@ export const AboutYourPractice = () => {
             </div>
 
             {showOtherInput && (
-              <div className="mt-2 w-full">
+              <div className="w-full mt-2">
                 <input
                   type="text"
                   value={otherSchoolInput}
@@ -336,7 +336,7 @@ export const AboutYourPractice = () => {
                 className="hidden"
               />
               <div className="flex flex-col items-center gap-[8px]">
-                <UploadCloud />
+                <MaterialIcon iconName="upload" size={48} />
                 <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
                   Click to upload
                 </p>
@@ -359,14 +359,14 @@ export const AboutYourPractice = () => {
                       <img
                         src={isPDF ? "" : previewUrl}
                         alt={`preview-${index}`}
-                        className="w-full h-full object-cover rounded-md"
+                        className="object-cover w-full h-full rounded-md"
                       />
                       <button
                         type="button"
                         onClick={() => handleDeleteFile(index)}
                         className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center text-sm"
                       >
-                        <TrashIcon />
+                        <MaterialIcon iconName="delete" />
                       </button>
                     </div>
                   );
@@ -376,7 +376,7 @@ export const AboutYourPractice = () => {
           </div>
 
           <div className="flex w-full md:ml-[32px] text-[#1C63DB] gap-2 items-center">
-            <LightIcon />
+            <MaterialIcon iconName="lightbulb" />
             <p className="font-[Nunito] text-[16px] font-medium ">
               Data is securely saved with a HIPAA-compliant notice
             </p>

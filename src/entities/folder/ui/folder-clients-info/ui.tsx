@@ -1,7 +1,6 @@
-import { Pencil, Plus, Trash2 } from "lucide-react";
 import { possibleClientNames } from "pages/content-manager";
 import { useEffect, useState } from "react";
-import Person from "shared/assets/icons/person";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import {
   Button,
@@ -43,13 +42,13 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
             Clients: {clients?.length ?? "N/A"}
           </h4>
           <div className="mb-1 ml-1 text-xs font-semibold group-hover:text-[#008FF6]">
-            <Pencil width={16} height={16} />
+            <MaterialIcon iconName="edit" />
           </div>
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         <h4 className="flex flex-row gap-2 text-xl font-bold">
-          <Person />
+          <MaterialIcon iconName="emoji_people" />
           Clients
         </h4>
         <p className="text-sm text-[#5F5F65]">
@@ -81,7 +80,10 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
                             );
                           }}
                         >
-                          <Trash2 color="#FF1F0F" />
+                          <MaterialIcon
+                            iconName="delete"
+                            className="text-red-600"
+                          />
                         </button>
                       </div>
                     </div>
@@ -102,7 +104,7 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
                     className="bg-white text-[#008FF6]"
                     onClick={() => setIsOpenAddClient(true)}
                   >
-                    <Plus />
+                    <MaterialIcon iconName="add" />
                     Add clients{" "}
                   </Button>
                   <Button

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { FaCheck } from "react-icons/fa";
 import { getStepStyle } from "./uitls";
 import { usePageWidth } from "shared/lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface HeaderOnboardingProps {
   currentStep: number;
@@ -77,7 +77,7 @@ export const HeaderOnboarding = ({
                 style={style}
               >
                 {isCompleted ? (
-                  <FaCheck size={isMobile ? 10 : 14} />
+                  <MaterialIcon iconName="check" />
                 ) : isCurrent ? (
                   <div className="w-[12px] h-[12px] xl:w-[14px] xl:h-[14px] rounded-full border-[3px] border-[#1866E0] bg-white" />
                 ) : (

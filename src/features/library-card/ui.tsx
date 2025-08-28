@@ -1,6 +1,5 @@
 import { ContentStatus } from "entities/content";
-import BookMark from "shared/assets/icons/book-mark";
-import BookMarkFilled from "shared/assets/icons/book-mark-filled";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Card, CardContent, renderAuthor } from "shared/ui";
 
@@ -23,7 +22,7 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
 }) => {
   return (
     <button
-      className="relative group w-full h-fit"
+      className="relative w-full group h-fit"
       onClick={() => onDocumentClick(id)}
     >
       <div className="absolute inset-0 bg-[#D0EFFF] rounded-[18px] transition-transform duration-200 group-hover:translate-x-2 group-hover:translate-y-2" />
@@ -60,9 +59,13 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
             >
               {contentStatus?.content_id === id &&
               contentStatus.status === "saved_for_later" ? (
-                <BookMarkFilled />
+                <MaterialIcon
+                  iconName="bookmark"
+                  fill={1}
+                  className="text-[#1C63DB]"
+                />
               ) : (
-                <BookMark />
+                <MaterialIcon iconName="bookmark" className="text-[#1C63DB]" />
               )}
             </button>
           </div>

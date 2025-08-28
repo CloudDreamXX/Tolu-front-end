@@ -1,5 +1,5 @@
 import React from "react";
-import TrashIcon from "shared/assets/icons/trash-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type ClientSymptoms = {
   hormones_and_neurotransmitters_reported_symptoms: string[];
@@ -92,7 +92,7 @@ const Symptoms: React.FC<Props> = ({
                     aria-label="Remove"
                     title="Remove"
                   >
-                    <TrashIcon />
+                    <MaterialIcon iconName="delete" />
                   </button>
                 </div>
               ))}

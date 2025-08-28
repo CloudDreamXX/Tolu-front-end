@@ -1,18 +1,11 @@
 import { AIChatMessage, CoachService } from "entities/coach";
 import { RootState } from "entities/store";
-import { Archive, Plus, Send } from "lucide-react";
 import { title } from "process";
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import ArrowRight from "shared/assets/icons/arrow-right";
-import Dots from "shared/assets/icons/dots";
-import Dublicate from "shared/assets/icons/dublicate";
-import Edit from "shared/assets/icons/edit";
-import { Eye } from "shared/assets/icons/eye";
-import Save from "shared/assets/icons/save";
-import Search from "shared/assets/icons/search";
-import Trash from "shared/assets/icons/trash-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -145,7 +138,7 @@ export const ContentManagerFolder: React.FC = () => {
           className="bg-[#F3F6FB] rounded-full px-[4px] py-[3.5px]"
           onClick={() => setShowPopup((prev) => !prev)}
         >
-          <Dots />
+          <MaterialIcon iconName="more_vert" />
         </button>
       </div>
       <div className="flex flex-col gap-6">
@@ -153,13 +146,13 @@ export const ContentManagerFolder: React.FC = () => {
           {canChange && (
             <div className="flex flex-row gap-2">
               <Button variant={"blue2"}>
-                <Plus />
+                <MaterialIcon iconName="add" />
                 New subfolder
               </Button>
               <div className="w-[300px]">
                 <Input
                   placeholder="Search"
-                  icon={<Search />}
+                  icon={<MaterialIcon iconName="search" size={16} />}
                   className="rounded-full"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -188,7 +181,7 @@ export const ContentManagerFolder: React.FC = () => {
                 onClick={handleSendMessage}
                 disabled={isSending}
               >
-                <Send color="#fff" />
+                <MaterialIcon iconName="send" />
               </Button>
             </div>
           }
@@ -231,17 +224,27 @@ export const PopupMenu: React.FC<{ onMarkAs: () => void }> = ({ onMarkAs }) => {
       className="absolute z-50 top-[110px] right-[90px] w-[238px] p-[16px_14px] flex flex-col items-start gap-[16px]
                  bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
     >
-      <MenuItem icon={<Edit />} label="Edit" />
-      <MenuItem icon={<ArrowRight />} label="Move" />
-      <MenuItem icon={<Dublicate />} label="Duplicate" />
+      <MenuItem icon={<MaterialIcon iconName="edit" />} label="Edit" />
       <MenuItem
-        icon={<Eye width={24} height={24} />}
+        icon={<MaterialIcon iconName="keyboard_arrow_right" />}
+        label="Move"
+      />
+      <MenuItem
+        icon={<MaterialIcon iconName="tab_duplicate" />}
+        label="Duplicate"
+      />
+      <MenuItem
+        icon={<MaterialIcon iconName="visibility" />}
         label="Mark as"
         onClick={onMarkAs}
       />
-      <MenuItem icon={<Save />} label="Save as" />
-      <MenuItem icon={<Archive size={24} />} label="Archive" />
-      <MenuItem icon={<Trash />} label="Delete" className="text-[#FF1F0F]" />
+      <MenuItem icon={<MaterialIcon iconName="box" />} label="Save as" />
+      <MenuItem icon={<MaterialIcon iconName="book_2" />} label="Archive" />
+      <MenuItem
+        icon={<MaterialIcon iconName="delete" fill={1} />}
+        label="Delete"
+        className="text-[#FF1F0F] "
+      />
     </div>
   );
 };

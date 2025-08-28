@@ -1,6 +1,4 @@
-import { XIcon } from "@phosphor-icons/react";
 import { SymptomData, SymptomsTrackerService } from "entities/symptoms-tracker";
-import { Coffee, Mic, Paperclip, Salad, Utensils } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn, toast } from "shared/lib";
 import {
@@ -25,6 +23,7 @@ import {
   SUSPECTED_TRIGGERS,
   SYMPTOMS,
 } from ".";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface DayliJournalProps {
   isOpen: boolean;
@@ -334,13 +333,6 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     setSelectedDate(formattedDate);
   };
 
-  // const isButtonDisabled = !(
-  //   sleep.hours &&
-  //   sleep.minutes &&
-  //   sleep.wokeUpTimes &&
-  //   sleep.fellBack
-  // );
-
   const mapMoodToSleepQuality = (
     moodValue: number
   ): "Very Poor" | "Poor" | "Fair" | "Good" | "Very Good" => {
@@ -401,7 +393,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                 onChange={(e) => handleFileChange("photo", e)}
               />
               <label htmlFor="photoInput" className="cursor-pointer">
-                <Paperclip className="stroke-[1.5]" />
+                <MaterialIcon iconName="attach_file" />
               </label>
 
               {selectedPhoto && (
@@ -413,7 +405,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                     variant="ghost"
                     onClick={() => handleDeleteFile("photo")}
                   >
-                    <XIcon />
+                    <MaterialIcon iconName="close" />
                   </Button>
                 </div>
               )}
@@ -427,7 +419,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                 onChange={(e) => handleFileChange("voice", e)}
               />
               <label htmlFor="voiceInput" className="cursor-pointer">
-                <Mic className="stroke-[1.5]" />
+                <MaterialIcon iconName="settings_voice" />
               </label>
 
               {selectedVoice && (
@@ -439,7 +431,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                     variant="ghost"
                     onClick={() => handleDeleteFile("voice")}
                   >
-                    <XIcon />
+                    <MaterialIcon iconName="close" />
                   </Button>
                 </div>
               )}
@@ -755,7 +747,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           {!summaryView && (
             <div className="flex flex-col gap-4 text-[#1D1D1F]">
               <div className="flex items-center gap-2 font-medium">
-                <Coffee className="stroke-[1.5]" />
+                <MaterialIcon iconName="lightbulb" />
                 <span>Breakfast</span>
               </div>
               <div className="flex flex-wrap gap-6 md:flex-nowrap">
@@ -830,7 +822,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           {!summaryView && (
             <div className="flex flex-col gap-4 text-[#1D1D1F]">
               <div className="flex items-center gap-2 font-medium">
-                <Salad className="stroke-[1.5]" />
+                <MaterialIcon iconName="lightbulb" />
                 <span>Lunch</span>
               </div>
               <div className="flex flex-wrap gap-6 md:flex-nowrap">
@@ -901,7 +893,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           {!summaryView && (
             <div className="flex flex-col gap-4 text-[#1D1D1F]">
               <div className="flex items-center gap-2 font-medium">
-                <Utensils className="stroke-[1.5]" />
+                <MaterialIcon iconName="lightbulb" />
                 <span>Dinner</span>
               </div>
               <div className="flex flex-wrap gap-6 md:flex-nowrap">

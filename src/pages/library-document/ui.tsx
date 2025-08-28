@@ -20,14 +20,12 @@ import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import GlobeIcon from "shared/assets/icons/globe";
-import LoadingIcon from "shared/assets/icons/loading-icon";
-import TwoUsersIcon from "shared/assets/icons/two-users";
 import { toast, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { DocumentLoadingSkeleton } from "./lib";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -244,14 +242,18 @@ export const LibraryDocument = () => {
           size={isMobile ? "sm" : "icon"}
           className="px-[10px] rounded-full md:h-14 md:w-14"
         >
-          {isMobile ? "Providers" : <TwoUsersIcon />}
+          {isMobile ? "Providers" : <MaterialIcon iconName="groups" fill={1} />}
         </Button>
         <Button
           variant="blue2"
           size={isMobile ? "sm" : "icon"}
           className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
         >
-          {isMobile ? "Communities (soon)" : <GlobeIcon />}{" "}
+          {isMobile ? (
+            "Communities (soon)"
+          ) : (
+            <MaterialIcon iconName="language" />
+          )}
         </Button>
       </div>
       {!isLoadingDocument && selectedDocument && (
@@ -327,7 +329,10 @@ export const LibraryDocument = () => {
       )}
       {isLoadingDocument && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <LoadingIcon />
+          <MaterialIcon
+            iconName="progress_activity"
+            className="text-blue-600 animate-spin"
+          />
           Please wait, we are loading the information...
         </div>
       )}

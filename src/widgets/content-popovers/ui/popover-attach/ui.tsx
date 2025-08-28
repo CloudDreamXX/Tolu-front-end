@@ -1,6 +1,5 @@
-import { FileIcon, Trash2 } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import Attach from "shared/assets/icons/attach";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib";
 import {
   Badge,
@@ -157,7 +156,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             className="relative flex flex-col w-full gap-3 py-[8px] px-[16px] md:p-[16px] xl:px-[32px] xl:py-[16px] rounded-[18px] h-fit"
           >
             <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
-              <Attach />
+              <MaterialIcon iconName="attach_file" />
               Attach files to folder
             </h4>
             <p className="text-[12px] xl:text-[14px] text-[#5F5F65]">
@@ -176,7 +175,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       </PopoverTrigger>
       <PopoverContent className="w-[358px] md::w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
-          <Attach />
+          <MaterialIcon iconName="attach_file" />
           {attachedFiles.length > 0 ||
           (existingFiles && existingFiles?.length > 0)
             ? "Sources"
@@ -196,7 +195,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                   className="flex flex-row items-center justify-between w-full px-3 py-2 bg-white border border-green-300 rounded-lg"
                 >
                   <div className="flex flex-row items-center flex-1 gap-2">
-                    <FileIcon color="#008FF6" size={20} />
+                    <MaterialIcon iconName="docs" fill={1} />
                     <div className="flex flex-col flex-1">
                       <span className="text-sm font-medium text-gray-800 truncate">
                         {file.filename}
@@ -216,7 +215,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                 className="flex flex-row items-center justify-between w-full px-3 py-2 bg-white border rounded-lg"
               >
                 <div className="flex flex-row items-center flex-1 gap-2">
-                  <FileIcon color="#008FF6" size={20} />
+                  <MaterialIcon iconName="docs" fill={1} />
                   <div className="flex flex-col flex-1">
                     <span className="text-sm font-medium text-gray-800 truncate">
                       {file.name}
@@ -229,7 +228,12 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                     onClick={() => removeFile(index)}
                     className="p-1 rounded hover:bg-red-50"
                   >
-                    <Trash2 color="#FF1F0F" size={16} />
+                    <MaterialIcon
+                      iconName="delete"
+                      fill={1}
+                      size={16}
+                      className="text-red-500"
+                    />
                   </button>
                 )}
               </div>

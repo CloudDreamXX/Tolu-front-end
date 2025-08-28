@@ -1,4 +1,3 @@
-// NoteItem.tsx
 import { ChatNoteResponse, ChatService } from "entities/chat";
 import {
   clearDownloadProgress,
@@ -6,15 +5,9 @@ import {
 } from "entities/chat/downloadSlice";
 import { fileKeyFromUrl } from "entities/chat/helpers";
 import { RootState } from "entities/store";
-import {
-  Download,
-  Edit,
-  FileIcon,
-  Image as ImageIcon,
-  Trash,
-} from "lucide-react";
 import { memo, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
 import { toUserTZ } from "widgets/message-tabs/helpers";
 
@@ -44,7 +37,6 @@ const FileBadge = ({
   const [loading, setLoading] = useState(false);
 
   const isImage = fi.file_type?.startsWith("image/");
-  const Icon = isImage ? ImageIcon : FileIcon;
   const dlwPct = useSelector(
     (state: RootState) => state.downloads.byKey[`dw${normalized}`]
   );
@@ -76,7 +68,10 @@ const FileBadge = ({
       title={fi.file_name}
       onClick={onDownloadClick}
     >
-      <Icon className="w-4 h-4 text-black" />
+      <MaterialIcon
+        iconName={isImage ? "docs" : "folder"}
+        className="w-4 h-4 text-black"
+      />
       <span className="text-sm text-gray-800 truncate max-w-[220px]">
         {fi.file_name}
       </span>
@@ -84,7 +79,10 @@ const FileBadge = ({
       {loading && dlwPct ? (
         <span className="text-sm text-black">{dlwPct}%</span>
       ) : (
-        <Download className="w-4 h-4 text-black opacity-70 group-hover:opacity-100" />
+        <MaterialIcon
+          iconName="download"
+          className="w-4 h-4 text-black opacity-70 group-hover:opacity-100"
+        />
       )}
     </Button>
   );
@@ -131,14 +129,17 @@ export const NoteItem = memo(function NoteItem({
           aria-label="Edit"
           onClick={() => onEdit(note.id, note.content, note.title)}
         >
-          <Edit className="w-4 h-4 p-0 text-black" />
+          <MaterialIcon iconName="edit" className="w-4 h-4 p-0 text-black" />
         </Button>
         <Button
           value="ghost"
           aria-label="Delete"
           onClick={() => onDelete(note.id)}
         >
-          <Trash className="w-4 h-4 p-0 text-red-500" />
+          <MaterialIcon
+            iconName="delete"
+            className="w-4 h-4 p-0 text-red-500"
+          />
         </Button>
       </div>
     </div>

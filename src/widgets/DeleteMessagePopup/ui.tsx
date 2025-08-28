@@ -1,5 +1,4 @@
-import Close from "shared/assets/icons/close";
-import TrashIcon from "shared/assets/icons/trash-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
   contentId: string;
@@ -24,10 +23,10 @@ export const DeleteMessagePopup: React.FC<Props> = ({
           aria-label="Close modal"
           onClick={onCancel}
         >
-          <Close />
+          <MaterialIcon iconName="close" />
         </button>
         <h2 className="text-[20px] font-[700] text-[#FF1F0F] flex md:items-center gap-[10px] md:gap-[8px] mb-[12px]">
-          <TrashIcon fill="#FF1F0F" />
+          <MaterialIcon iconName="delete" />
           {title ? title : "Delete folder?"}
         </h2>
         <p className="text-[16px] text-[#5F5F65] font-[500] mb-[24px]">

@@ -8,8 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "shared/ui";
-import LightIcon from "shared/assets/icons/light";
-
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 export type FormValues = z.infer<typeof baseSchema>;
 
 interface SymptomsFormProps {
@@ -76,7 +75,10 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
               <div className="flex flex-col items-center gap-2">
                 <h3 className="flex gap-2 text-[#1B2559] text-[16px] leading-[1.4]">
                   <span className="w-6 h-6 shrink-0">
-                    <LightIcon className="text-[#1B2559]" />
+                    <MaterialIcon
+                      iconName="lightbulb"
+                      className="text-[#1B2559]"
+                    />
                   </span>
                   We collect this information because some of the religious
                   rituals and dietary habits can affect the way your experience

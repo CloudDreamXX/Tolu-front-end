@@ -6,7 +6,6 @@ import {
   useUpdateChatNoteMutation,
 } from "entities/chat/chatApi";
 import { RootState } from "entities/store";
-import { Loader2Icon, Plus, Send, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
@@ -16,6 +15,7 @@ import { NoteItem } from "widgets/notes-item/ui";
 import { useFilePicker } from "../messages-tab/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
 import NoRecommended from "shared/assets/images/NoRecommended.png";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface NotesTabProps {
   search?: string;
@@ -224,7 +224,10 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
             Footer: () =>
               isLoading || isSending || isUpdating ? (
                 <div className="flex justify-center py-2">
-                  <Loader2Icon className="w-5 h-5 animate-spin" />
+                  <MaterialIcon
+                    iconName="progress_activity"
+                    className="w-5 h-5 animate-spin"
+                  />
                 </div>
               ) : null,
           }}
@@ -267,7 +270,10 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                           className="text-sm text-red-500 hover:text-red-700"
                           title="Remove File"
                         >
-                          <TrashIcon className="w-5 h-5" />
+                          <MaterialIcon
+                            iconName="delete"
+                            className="w-5 h-5 "
+                          />
                         </button>
                       </div>
                     ))}
@@ -278,7 +284,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                 <div className="flex items-center gap-4">
                   <input {...getInputProps()} className="hidden" />
                   <Button value={"ghost"} className="p-0" onClick={open}>
-                    <Plus className="text-black" />
+                    <MaterialIcon iconName="add" />
                   </Button>
                 </div>
                 <Button
@@ -289,10 +295,13 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                      w-[42px] h-[42px] lg:w-[128px]"
                 >
                   {isSending || isUpdating ? (
-                    <Loader2Icon className="w-4 h-4 animate-spin" />
+                    <MaterialIcon
+                      iconName="progress_activity"
+                      className="w-4 h-4 animate-spin"
+                    />
                   ) : (
                     <>
-                      <Send className="w-4 h-4" />{" "}
+                      <MaterialIcon iconName="send" />
                       {editingId ? "Update" : "Add"}
                     </>
                   )}{" "}

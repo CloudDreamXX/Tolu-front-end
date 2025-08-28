@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MagnifyingGlassPlusIcon } from "@phosphor-icons/react";
 import { ClientService } from "entities/client";
 import {
   addMessageToChat,
@@ -17,7 +16,6 @@ import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
 import { ChatActions, ChatBreadcrumb, Message } from "features/chat";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
-import { Paperclip, Send, Settings } from "lucide-react";
 import { caseBaseSchema } from "pages/content-manager";
 import {
   CaseSearchForm,
@@ -39,6 +37,7 @@ import { MessageList } from "widgets/message-list";
 import { MessageLoadingSkeleton } from "./components/MessageLoadingSkeleton";
 import { extractVoiceText, generateCaseStory } from "./helpers";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -605,12 +604,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
               {selectedSwitch}
             </div>
-            <button
-              className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
-              onClick={handleNewChatOpen}
-            >
-              <MagnifyingGlassPlusIcon width={24} height={24} /> New Search
-            </button>
+            {chatState.length > 0 && (
+              <button
+                className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
+                onClick={handleNewChatOpen}
+              >
+                <MaterialIcon iconName="search" size={24} /> New Search
+              </button>
+            )}
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />
           <CardContent className="flex flex-1 w-full h-full px-6 pb-0 overflow-auto">
@@ -670,7 +671,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           variant="ghost"
                           className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                         >
-                          <Paperclip size={24} />
+                          <MaterialIcon
+                            iconName="attach_file"
+                            size={24}
+                            fill={1}
+                          />
                           {filesState.length > 0 && (
                             <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                               {filesState.length > 99
@@ -698,7 +703,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                           disabled={!folderState}
                         >
-                          <Settings />
+                          <MaterialIcon iconName="settings" size={24} />
                           {instruction?.length > 0 && (
                             <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                               1
@@ -715,9 +720,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       handleNewMessage(message);
                     }}
                     disabled={isSearching || !folderState || message === ""}
-                    className="w-6 h-6 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                    className="w-12 h-12 p-0 rounded-full bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
                   >
-                    <Send size={24} color="black" />
+                    <MaterialIcon iconName="send" size={24} />
                   </Button>
                 </div>
               }
@@ -741,13 +746,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 Get Expert-verified Guidance You Can Trust
               </p>
             )}
-            <button
-              className="md:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
-              onClick={handleNewChatOpen}
-            >
-              <MagnifyingGlassPlusIcon width={24} height={24} />
-              {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
-            </button>
+            {chatState.length > 0 && (
+              <button
+                className="md:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
+                onClick={handleNewChatOpen}
+              >
+                <MaterialIcon iconName="search" />
+                {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
+              </button>
+            )}
           </CardHeader>
           <CardContent
             className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}
@@ -837,7 +844,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             variant="ghost"
                             className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                           >
-                            <Paperclip size={24} />
+                            <MaterialIcon
+                              iconName="attach_file"
+                              size={24}
+                              fill={1}
+                            />
                             {filesState.length > 0 && (
                               <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                                 {filesState.length > 99
@@ -865,7 +876,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                             disabled={!folderState}
                           >
-                            <Settings />
+                            <MaterialIcon iconName="settings" size={24} />
                             {instruction?.length > 0 && (
                               <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                                 1
@@ -882,9 +893,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         handleNewMessage(message);
                       }}
                       disabled={isSearching || !folderState || message === ""}
-                      className="w-6 h-6 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                      className="w-12 h-12 p-0 rounded-full disabled:opacity-[0.5] bg-black disabled:cursor-not-allowed"
                     >
-                      <Send size={24} color="black" />
+                      <MaterialIcon iconName="send" size={24} />
                     </Button>
                   </div>
                 ) : isSwitch(SWITCH_KEYS.RESEARCH) ? (
@@ -900,7 +911,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             variant="ghost"
                             className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                           >
-                            <Paperclip size={24} />
+                            <MaterialIcon iconName="attach_file" size={24} />
                             {filesState.length > 0 && (
                               <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                                 {filesState.length > 99
@@ -921,9 +932,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         handleNewMessage(message);
                       }}
                       disabled={isSearching || message === ""}
-                      className="w-6 h-6 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                      className="w-12 h-12 p-0 rounded-full disabled:opacity-[0.5] bg-black disabled:cursor-not-allowed"
                     >
-                      <Send size={24} color="black" />
+                      <MaterialIcon iconName="send" size={24} />
                     </Button>
                   </div>
                 ) : undefined

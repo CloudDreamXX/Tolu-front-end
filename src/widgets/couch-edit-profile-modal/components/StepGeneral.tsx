@@ -1,6 +1,6 @@
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
-import { UploadCloud } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Input } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
@@ -142,7 +142,12 @@ export const StepGeneral = ({
             )}
             {...getDropzoneProps()}
           >
-            <UploadCloud color="#1C63DB" size={32} />
+            <MaterialIcon
+              iconName="upload"
+              fill={1}
+              className="text-[#1C63DB]"
+              size={24}
+            />
             <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
               Click to upload
             </p>

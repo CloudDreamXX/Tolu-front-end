@@ -1,8 +1,8 @@
 import { Step, StepConnector, StepLabel, Stepper } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Check } from "lucide-react";
 import React from "react";
 import { Step as StepType } from "../../mock";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface ModalStepperProps {
   steps: StepType[];
@@ -82,7 +82,7 @@ const CustomStepIcon = (props: any) => {
       className={className}
       isMobile={isMobile}
     >
-      {completed ? <Check fontSize="small" /> : icon}
+      {completed ? <MaterialIcon iconName="check" /> : icon}
     </StepIconRoot>
   );
 };

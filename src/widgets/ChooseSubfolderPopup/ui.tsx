@@ -1,8 +1,6 @@
-import Close from "shared/assets/icons/close";
 import React, { useState } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ChooseSubfolderPanel } from "widgets/ChooseSubfolderPanel";
-import ArrowRight from "shared/assets/icons/arrow-right";
-import Duplicate from "shared/assets/icons/duplicate";
 
 interface Props {
   title: string;
@@ -31,15 +29,15 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
         >
-          <Close />
+          <MaterialIcon iconName="close" />
         </button>
 
         <h3
           id="modal-title"
           className="text-[20px] font-semibold text-[#1D1D1F] flex items-center gap-[16px]"
         >
-          {title === "Move" && <ArrowRight />}
-          {title === "Duplicate" && <Duplicate />}
+          {title === "Move" && <MaterialIcon iconName="east" />}
+          {title === "Duplicate" && <MaterialIcon iconName="stack" fill={1} />}
           {title}
         </h3>
         {description && (

@@ -1,8 +1,7 @@
 import { RootState } from "entities/store";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import InfoIcon from "shared/assets/icons/info-icon";
-import Pencil from "shared/assets/icons/pencil";
+
 import Angry from "shared/assets/images/Angry.svg";
 import Happy from "shared/assets/images/Excellent.svg";
 import Neutral from "shared/assets/images/Neutrak.svg";
@@ -11,6 +10,7 @@ import Smile from "shared/assets/images/Smile.svg";
 import Smiley from "shared/assets/images/Smiley.svg";
 import { MoodModal } from "./MoodModal";
 import { MoodSelector } from "./MoodSelector";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const moodMap = {
   Angry: Angry,
@@ -46,7 +46,7 @@ export const MoodScore: React.FC = () => {
                 Mood score
               </h3>
               <span className="w-[20px] h-[20px]">
-                <InfoIcon />
+                <MaterialIcon iconName="help" fill={1} size={20} />
               </span>
             </div>
             <button
@@ -54,7 +54,7 @@ export const MoodScore: React.FC = () => {
               onClick={() => setShowMoodModal(true)}
               className="rounded-full bg-[#DDEBF6] p-2 hover:bg-[#B9D5F3] transition"
             >
-              <Pencil />
+              <MaterialIcon iconName="edit" fill={1} />
             </button>
           </div>
 
@@ -98,7 +98,7 @@ export const MoodScore: React.FC = () => {
               Mood score
             </h3>
             <span className="w-[20px] h-[20px]">
-              <InfoIcon />
+              <MaterialIcon iconName="help" fill={1} size={20} />
             </span>
           </div>
 
@@ -112,7 +112,7 @@ export const MoodScore: React.FC = () => {
                 {moodLabels[moodIndex]}
               </h2>
               <span className="w-[20px] h-[20px]">
-                <InfoIcon />
+                <MaterialIcon iconName="help" fill={1} size={20} />{" "}
               </span>
             </div>
           </div>

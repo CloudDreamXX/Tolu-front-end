@@ -5,8 +5,8 @@ import {
   DialogTitle,
 } from "@radix-ui/react-dialog";
 import React, { useEffect } from "react";
-import ArrowBack from "shared/assets/icons/arrowBack";
-import Close from "shared/assets/icons/close";
+
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { DialogHeader } from "shared/ui";
 
 interface ModalLayoutProps {
@@ -58,7 +58,7 @@ export const ModalLayout: React.FC<ModalLayoutProps> = ({
               onClick={onBack}
               className="absolute z-10 top-[16px] left-[16px] md:hidden"
             >
-              <ArrowBack />
+              <MaterialIcon iconName="keyboard_arrow_left" size={20} />
             </button>
           )}
 
@@ -67,7 +67,7 @@ export const ModalLayout: React.FC<ModalLayoutProps> = ({
               className="absolute top-[16px] right-[16px] hidden md:block"
               aria-label="Close modal"
             >
-              <Close />
+              <MaterialIcon iconName="close" />
             </button>
           </DialogClose>
 

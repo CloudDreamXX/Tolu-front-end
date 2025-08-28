@@ -1,17 +1,11 @@
-import { Edit, MoreVertical, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import ArrowLeft from "shared/assets/icons/arrowLeft";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 import { DetailsChatItemModel } from "entities/chat";
 import { useFetchChatDetailsByIdQuery } from "entities/chat/chatApi";
 import { Client, ClientProfile, CoachService } from "entities/coach";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
-import Person from "shared/assets/icons/person";
-import Plus from "shared/assets/icons/plus";
-import Search from "shared/assets/icons/search";
-import Smiley from "shared/assets/icons/smiley";
-import User from "shared/assets/icons/user";
 import { cn, toast, usePageWidth } from "shared/lib";
 import {
   Avatar,
@@ -161,7 +155,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     return (
       <main className="w-full p-8">
         <div className="flex gap-2">
-          <Person />
+          <MaterialIcon iconName="person" />
           <span className="text-xl font-bold">Add Client(s)</span>
         </div>
         <MultiSelectField
@@ -190,7 +184,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 className="p-1 mr-3"
                 onClick={goBackMobile}
               >
-                <ArrowLeft width={24} height={24} />
+                <MaterialIcon iconName="keyboard_arrow_left" />
               </Button>
             )}
             <div className="relative mr-3">
@@ -221,7 +215,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               <div className="hidden w-full lg:block">
                 <Input
                   placeholder="Search"
-                  icon={<Search />}
+                  icon={<MaterialIcon iconName="search" size={16} />}
                   className="rounded-lg"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -279,13 +273,14 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                   size="icon"
                   className="border-none rounded-full hover:bg-white w-[28px] h-[28px] md:w-[32px] md:h-[32px]"
                 >
-                  <MoreVertical />
+                  <MaterialIcon iconName="more_vert" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {isMobile && (
                   <DropdownMenuItem className="text-[#1D1D1F]">
-                    <User className="w-4 h-4 mr-2" /> Profile
+                    <MaterialIcon iconName="person" className="mr-2" />
+                    Profile
                   </DropdownMenuItem>
                 )}
                 {!isClient && chat.chat_type === "group" && (
@@ -296,11 +291,13 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                       onEditGroup?.(chat);
                     }}
                   >
-                    <Edit className="w-4 h-4 mr-2" /> Edit
+                    <MaterialIcon iconName="edit" className="w-4 h-4 mr-2" />
+                    Edit
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem className="text-red-600">
-                  <Trash2 className="w-4 h-4 mr-2" /> Delete
+                  <MaterialIcon iconName="delete" className="w-4 h-4 mr-2" />
+                  Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -310,7 +307,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <div className="hidden my-4 sm:block lg:hidden">
             <Input
               placeholder="Search"
-              icon={<Search />}
+              icon={<MaterialIcon iconName="search" size={16} />}
               className="rounded-full"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -390,7 +387,7 @@ const MessageTabsLoadingSkeleton = () => {
           <div className="bg-[#D6ECFD] p-[16px] rounded-full">
             <div className="w-16 h-[10px] rounded-[24px] bg-[#AAC6EC]" />
           </div>
-          <MoreVertical />
+          <MaterialIcon iconName="more_vert" />
         </div>
       </div>
 
@@ -446,8 +443,8 @@ const MessageTabsLoadingSkeleton = () => {
           <div className="w-[60%] h-[10px] rounded-[24px] skeleton-gradient" />
           <div className="flex items-end justify-between mt-[24px]">
             <div className="flex items-center gap-[16px]">
-              <Plus />
-              <Smiley />
+              <MaterialIcon iconName="add" />
+              <MaterialIcon iconName="sentiment_satisfied" />
             </div>
             <div className="bg-[#1C63DB] p-[16px] rounded-full">
               <div className="w-[92px] h-[10px] rounded-[24px] bg-[#AAC6EC]" />

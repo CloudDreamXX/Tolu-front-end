@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Sparkle from "shared/assets/icons/sparkle-2";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button } from "shared/ui";
 
@@ -60,7 +60,7 @@ export const SearchAiSmallInput = ({
         )}
         onClick={handleSearch}
       >
-        <Sparkle />
+        <MaterialIcon iconName="stars_2" fill={1} />
         {sidebarOpen && <span>Ask TOLU</span>}
       </Button>
     </div>

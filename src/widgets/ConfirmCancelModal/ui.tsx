@@ -1,4 +1,4 @@
-import Close from "shared/assets/icons/close";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
 
 export const ConfirmCancelModal = ({
@@ -24,7 +24,7 @@ export const ConfirmCancelModal = ({
         className="absolute top-[16px] right-[16px]"
         onClick={onClose ? onClose : onCancel}
       >
-        <Close />
+        <MaterialIcon iconName="close" />
       </button>
       <h2 className="text-[24px] font-semibold text-[#1D1D1F] mb-[12px]">
         {title}

@@ -1,12 +1,9 @@
-import { ArrowUpIcon, XIcon } from "@phosphor-icons/react";
-import { ArrowBendDownRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { setIsMobileDailyJournalOpen } from "entities/client/lib";
 import { RootState } from "entities/store";
-import { Paperclip, Send } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import Plus from "shared/assets/icons/plus";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
 import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
@@ -109,7 +106,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         <div className="flex gap-[16px] justify-between items-baseline mb-[8px] text-[14px]">
           <div className="flex gap-[8px] items-baseline">
             <div>
-              <ArrowBendDownRightIcon />
+              <MaterialIcon iconName="subdirectory_arrow_right" />
             </div>
             <div className="truncate-text">{selectedText}</div>
           </div>
@@ -117,7 +114,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             className="w-[20px] h-[20px] flex items-center justify-center"
             onClick={deleteSelectedText}
           >
-            <XIcon width={18} />
+            <MaterialIcon iconName="close" size={20} />
           </button>
         </div>
       )}
@@ -163,7 +160,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             disabled={isSendDisabled}
             className="md:hidden w-[32px] h-[32px] p-[8px] bg-blue-600 rounded-full hover:bg-blue-700 disabled:bg-[#D5DAE2] disabled:cursor-not-allowed"
           >
-            <ArrowUpIcon size={16} color="white" />
+            <MaterialIcon iconName="arrow_upward" />
           </Button>
         )}
       </div>
@@ -177,7 +174,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                 variant="ghost"
                 className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
               >
-                <Paperclip size={24} />
+                <MaterialIcon iconName="attach_file" />
               </Button>
               <input
                 type="file"
@@ -225,7 +222,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             disabled={isSendDisabled}
             className={`w-10 h-10 p-0 bg-blue-600 rounded-full hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed ${isContentManager ? "" : "hidden md:flex"}`}
           >
-            <Send size={20} color="white" />
+            <MaterialIcon iconName="send" />
           </Button>
         </div>
       )}
@@ -243,7 +240,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               variant="default"
               className="relative text-[#1D1D1F] rounded-full w-[24px] h-[24px]"
             >
-              <Plus width={24} />
+              <MaterialIcon iconName="add" />
             </Button>
             <input
               type="file"

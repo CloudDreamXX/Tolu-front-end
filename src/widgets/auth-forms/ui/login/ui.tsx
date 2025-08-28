@@ -4,9 +4,9 @@ import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { setCredentials, UserService } from "entities/user";
-import { EyeClosed, EyeIcon } from "lucide-react";
 import { Input } from "shared/ui";
 import { ClientService } from "entities/client";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const LoginForm = () => {
   const loginSchema = z.object({
@@ -202,11 +202,12 @@ export const LoginForm = () => {
                       className="absolute right-4"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? (
-                        <EyeClosed size={16} />
-                      ) : (
-                        <EyeIcon size={16} />
-                      )}
+                      <MaterialIcon
+                        iconName={
+                          showPassword ? "visibility_off" : "visibility"
+                        }
+                        size={16}
+                      />
                     </button>
                   )}
                 </div>

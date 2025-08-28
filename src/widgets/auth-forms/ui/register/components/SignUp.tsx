@@ -1,6 +1,6 @@
-import { EyeClosed, EyeIcon, Loader2 } from "lucide-react";
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Input } from "shared/ui";
 import { z } from "zod";
 
@@ -218,7 +218,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Create password
           </label>
-          <div className="flex flex-row-reverse items-center w-full relative">
+          <div className="relative flex flex-row-reverse items-center w-full">
             <Input
               type={showPassword ? "password" : "text"}
               placeholder="Enter Password"
@@ -241,7 +241,10 @@ export const SignUp: React.FC<SignUpProps> = ({
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? "Show password" : "Hide password"}
             >
-              {!showPassword ? <EyeIcon size={16} /> : <EyeClosed size={16} />}
+              <MaterialIcon
+                iconName={showPassword ? "visibility_off" : "visibility"}
+                size={16}
+              />
             </button>
           </div>
           {errors.password && (
@@ -254,7 +257,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
             Repeat password
           </label>
-          <div className="flex flex-row-reverse items-center w-full relative">
+          <div className="relative flex flex-row-reverse items-center w-full">
             <Input
               type={showNewPassword ? "password" : "text"}
               placeholder="Enter Password"
@@ -276,11 +279,10 @@ export const SignUp: React.FC<SignUpProps> = ({
               onClick={() => setShowNewPassword(!showNewPassword)}
               aria-label={showNewPassword ? "Show password" : "Hide password"}
             >
-              {!showNewPassword ? (
-                <EyeIcon size={16} />
-              ) : (
-                <EyeClosed size={16} />
-              )}
+              <MaterialIcon
+                iconName={showNewPassword ? "visibility_off" : "visibility"}
+                size={16}
+              />
             </button>
           </div>
           {errors.newPassword && (
@@ -301,7 +303,15 @@ export const SignUp: React.FC<SignUpProps> = ({
               : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
           }
         >
-          {loading ? <Loader2 size={18} className="animate-spin" /> : "Proceed"}
+          {loading ? (
+            <MaterialIcon
+              iconName="progress_activity"
+              size={20}
+              className="animate-spin"
+            />
+          ) : (
+            "Proceed"
+          )}
         </button>
         <p className="text-[14px] font-[Nunito] font-medium">
           Already have an account?{" "}

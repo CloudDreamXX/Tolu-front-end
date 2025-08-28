@@ -6,12 +6,13 @@ import {
 } from "entities/chat/downloadSlice";
 import { fileKeyFromUrl } from "entities/chat/helpers";
 import { RootState } from "entities/store";
-import { CloudDownload, File, Loader2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useInViewport } from "./useInViewport";
 import { cn } from "shared/lib";
 import { Button } from "shared/ui";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+
 interface FileItemProps {
   fileName: string | null;
   fileSize: number | null;
@@ -97,11 +98,12 @@ export const FileItem: React.FC<FileItemProps> = ({
                 return <span className="text-sm">{dlPct}%</span>;
               } else {
                 return (
-                  <Loader2Icon
-                    className="w-4 h-4 text-gray-400 animate-spin"
-                    style={{
-                      visibility: previewLoading ? "visible" : "hidden",
-                    }}
+                  <MaterialIcon
+                    iconName="progress_activity"
+                    className={cn("text-gray-400 animate-spin", {
+                      visible: previewLoading,
+                      hidden: !previewLoading,
+                    })}
                   />
                 );
               }
@@ -122,13 +124,16 @@ export const FileItem: React.FC<FileItemProps> = ({
               return <span className="text-sm">{dlwPct}%</span>;
             } else {
               return (
-                <Loader2Icon className="w-8 h-10 text-blue-500 animate-spin" />
+                <MaterialIcon
+                  iconName="progress_activity"
+                  className="text-blue-600 animate-spin"
+                />
               );
             }
           })()
         ) : (
           <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
-            <CloudDownload />
+            <MaterialIcon iconName="download" />
           </Button>
         )}
       </div>
@@ -143,7 +148,7 @@ export const FileItem: React.FC<FileItemProps> = ({
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <File width={32} height={32} color="#1C63DB" />
+        <MaterialIcon iconName="draft" fill={1} className="text-blue-600" />
         <div className="flex flex-col ">
           <span className="text-sm font-medium text-[#1D1D1F] max-w-[250px] truncate">
             {fileName}
@@ -159,13 +164,16 @@ export const FileItem: React.FC<FileItemProps> = ({
             return <span className="text-sm">{dlPct}%</span>;
           } else {
             return (
-              <Loader2Icon className="w-8 h-10 text-blue-500 animate-spin" />
+              <MaterialIcon
+                iconName="progress_activity"
+                className="text-blue-600 animate-spin"
+              />
             );
           }
         })()
       ) : (
         <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
-          <CloudDownload />
+          <MaterialIcon iconName="download" />
         </Button>
       )}
     </div>

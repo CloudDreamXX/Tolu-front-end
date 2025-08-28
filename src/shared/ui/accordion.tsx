@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronDown } from "lucide-react";
 
 import { cn } from "shared/lib/utils";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const Accordion = AccordionPrimitive.Root;
 
@@ -32,7 +32,10 @@ const AccordionTrigger = React.forwardRef<
       {...props}
     >
       {children}
-      <ChevronDown className="w-[24px] h-[24px] xl:w-6 xl:h-6 transition-transform duration-200 shrink-0" />
+      <MaterialIcon
+        iconName="keyboard_arrow_down"
+        className="w-[24px] h-[24px] xl:w-6 xl:h-6 transition-transform duration-200 shrink-0"
+      />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));

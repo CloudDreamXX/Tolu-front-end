@@ -5,6 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined", sans-serif !important;
+}
+
 :root {
   --primary: rgb(152, 153, 155);
   --text-color: #1d1d1f99;
@@ -82,11 +86,8 @@ li::marker {
 }
 
 .ql-editor {
-  white-space: pre-wrap;
-}
-
-.ql-editor {
   font-family: "Inter", sans-serif;
+  white-space: pre-wrap;
 }
 
 .ql-editor p {

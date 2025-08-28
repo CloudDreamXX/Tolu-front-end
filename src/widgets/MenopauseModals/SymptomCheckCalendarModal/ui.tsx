@@ -1,7 +1,5 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import Calendar from "shared/assets/icons/calendar";
-import Close from "shared/assets/icons/close";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface SymptomCheckModalProps {
   handleDateChange: (date: Date) => void;
@@ -127,7 +125,7 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-10 flex items-end md:items-center justify-center"
+      className="fixed inset-0 z-10 flex items-end justify-center md:items-center"
       style={{
         background: "rgba(0, 0, 0, 0.3)",
         backdropFilter: "blur(2px)",
@@ -140,7 +138,7 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
             Calendar
           </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-black">
-            <Close />
+            <MaterialIcon iconName="close" />
           </button>
         </div>
 
@@ -151,11 +149,12 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
               className="h-[44px] w-[44px] rounded-[8px] bg-[#DDEBF6] flex items-center justify-center"
               aria-label="Previous months"
             >
-              <ChevronLeft />
+              <MaterialIcon iconName="keyboard_arrow_left" />
             </button>
 
             <div className="flex items-center gap-2 border border-[#DFDFDF] rounded-[8px] px-4 py-2.5 h-[44px]">
-              <Calendar />
+              <MaterialIcon iconName="calendar_today" fill={1} />
+
               <select
                 className="appearance-none bg-transparent bg-none outline-none text-[16px] font-medium cursor-pointer"
                 value={viewYear}
@@ -178,7 +177,7 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
               className="h-[44px] w-[44px] rounded-[8px] bg-[#DDEBF6] flex items-center justify-center"
               aria-label="Next months"
             >
-              <ChevronRight />
+              <MaterialIcon iconName="keyboard_arrow_right" />
             </button>
           </div>
 
@@ -212,7 +211,7 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
                     {MONTHS[month]} {year}
                   </div>
 
-                  <div className="grid grid-cols-7 gap-y-1 px-2 pb-4">
+                  <div className="grid grid-cols-7 px-2 pb-4 gap-y-1">
                     {cells.map((c, i) => {
                       const isSelected = selected
                         ? c.date.toDateString() === selected.toDateString()

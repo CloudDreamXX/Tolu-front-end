@@ -1,4 +1,4 @@
-import { Pencil } from "lucide-react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { PopoverAttach } from "widgets/content-popovers";
 
 interface FilesInfoProps {
@@ -20,7 +20,7 @@ export const FilesInfo: React.FC<FilesInfoProps> = ({
             Sources: {files?.length ?? "N/A"}
           </h4>
           <div className="mb-1 ml-1 text-xs font-semibold group-hover:text-[#008FF6]">
-            <Pencil width={16} height={16} />
+            <MaterialIcon iconName="edit" size={16} />
           </div>
         </button>
       }

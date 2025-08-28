@@ -1,9 +1,7 @@
 import { setLastLogIn, setLastMood } from "entities/store/clientMoodSlice";
-import { X } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import ArrowBack from "shared/assets/icons/arrowBack";
-import InfoIcon from "shared/assets/icons/info-icon";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Input } from "shared/ui";
 import { Slider } from "shared/ui/slider";
 import { moodLabels, moodMap } from "../ui";
@@ -30,7 +28,7 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
         aria-label="Close modal"
         className="absolute z-10 top-[16px] left-[16px] md:hidden"
       >
-        <ArrowBack />
+        <MaterialIcon iconName="keyboard_arrow_left" />
       </span>
       <div className="bg-white absolute bottom-0 rounded-t-[16px] md:rounded-[16px] px-[16px] py-[24px] md:p-[24px] xl:p-8 w-full md:w-[742px] flex flex-col gap-8 md:relative shadow-lg">
         {/* Close button */}
@@ -39,7 +37,7 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
           className="absolute text-gray-400 top-6 right-6 hover:text-gray-600"
           aria-label="Close modal"
         >
-          <X size={24} />
+          <MaterialIcon iconName="close" />
         </button>
 
         <div className="flex flex-col items-center justify-center gap-6">
@@ -68,7 +66,7 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
                 {moodLabel}
               </h2>
               <span className="w-[20px] h-[20px]">
-                <InfoIcon />
+                <MaterialIcon iconName="help" fill={1} size={20} />
               </span>
             </div>
 

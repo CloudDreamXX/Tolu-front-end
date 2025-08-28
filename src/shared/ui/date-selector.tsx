@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { formatDateToSlash } from "shared/lib";
 import {
   DropdownMenu,
@@ -18,7 +18,8 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex flex-row gap-1.5 items-center justify-end md:justify-start text-sm">
-        {formatDateToSlash(choosedDate)} <ChevronDown size={16} />
+        {formatDateToSlash(choosedDate)}{" "}
+        <MaterialIcon iconName="keyboard_arrow_down" size={16} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[200px]">
         <div className="flex flex-col gap-2 p-4">

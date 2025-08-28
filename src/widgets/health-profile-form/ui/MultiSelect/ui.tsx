@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import CheckedIcon from "shared/assets/icons/checked";
-import Chevron from "shared/assets/icons/chevron";
-import UncheckedIcon from "shared/assets/icons/not-checked";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib/utils";
 
 type Group = { title: string; options: string[] };
@@ -65,15 +63,12 @@ export const MultiSelect = ({
         )}
         onClick={() => toggleOption(option)}
       >
-        {selected.includes(option) ? (
-          <span className="w-[16px] h-[16px]">
-            <CheckedIcon />
-          </span>
-        ) : (
-          <span className="w-[16px] h-[16px]">
-            <UncheckedIcon />
-          </span>
-        )}
+        <MaterialIcon
+          iconName={
+            selected.includes(option) ? "check" : "check_box_outline_blank"
+          }
+        />
+
         {option}
       </button>
     </li>
@@ -105,7 +100,10 @@ export const MultiSelect = ({
             ))
         )}
         <span className="pointer-events-none absolute right-[12px] top-1/2 -translate-y-1/2">
-          <Chevron />
+          <MaterialIcon
+            iconName="keyboard_arrow_left"
+            className="text-blue-600"
+          />
         </span>
       </button>
 

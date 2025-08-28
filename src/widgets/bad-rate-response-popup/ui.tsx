@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Close from "shared/assets/icons/close";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const reasons = [
   "Information was incorrect",
@@ -42,7 +42,7 @@ export const BadRateResponse: React.FC<Props> = ({
           aria-label="Close modal"
           onClick={onClose}
         >
-          <Close />
+          <MaterialIcon iconName="close" />
         </button>
 
         <h3

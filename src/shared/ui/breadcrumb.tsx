@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { cn } from "shared/lib/utils";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const Breadcrumb = React.forwardRef<
   HTMLElement,
@@ -88,7 +88,9 @@ const BreadcrumbSeparator = ({
     )}
     {...props}
   >
-    {children ?? <ChevronRight color="#1D1D1F" />}
+    {children ?? (
+      <MaterialIcon iconName="keyboard_arrow_right" className="text-black" />
+    )}
   </li>
 );
 BreadcrumbSeparator.displayName = "BreadcrumbSeparator";
@@ -102,7 +104,7 @@ const BreadcrumbEllipsis = ({
     className={cn("flex h-9 w-9 items-center justify-center", className)}
     {...props}
   >
-    <MoreHorizontal className="w-4 h-4" />
+    <MaterialIcon iconName="more_horiz" className="w-4 h-4" />
     <span className="sr-only">More</span>
   </span>
 );

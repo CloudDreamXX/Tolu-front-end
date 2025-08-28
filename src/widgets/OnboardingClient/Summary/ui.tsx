@@ -1,11 +1,11 @@
 import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import { PencilIcon } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Input } from "shared/ui";
 import { OnboardingClientLayout } from "../Layout";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const Summary = () => {
   const nav = useNavigate();
@@ -135,12 +135,12 @@ export const Summary = () => {
             Personal info
           </h2>
           {!isEditingPersonal ? (
-            <PencilIcon
+            <button
               className="cursor-pointer"
               onClick={() => setIsEditingPersonal(true)}
-              size={16}
-              color="#1C63DB"
-            />
+            >
+              <MaterialIcon iconName="edit" />
+            </button>
           ) : (
             <div className="flex gap-2">
               <button
@@ -171,12 +171,12 @@ export const Summary = () => {
             Your insights
           </h2>
           {!isEditingInsights ? (
-            <PencilIcon
+            <button
               className="cursor-pointer"
-              onClick={() => setIsEditingInsights(true)}
-              size={16}
-              color="#1C63DB"
-            />
+              onClick={() => setIsEditingPersonal(true)}
+            >
+              <MaterialIcon iconName="edit" />
+            </button>
           ) : (
             <div className="flex gap-2">
               <button

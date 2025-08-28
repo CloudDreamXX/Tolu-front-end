@@ -2,12 +2,12 @@ import { ISessionResult } from "entities/coach";
 import parse from "html-react-parser";
 import DOMPurify from "dompurify";
 import React from "react";
-import BlueChevron from "shared/assets/icons/blue-chevron";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
 import { Editor } from "primereact/editor";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -99,7 +99,10 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                 disabled={mobilePage === 1}
               >
                 <span>
-                  <BlueChevron />
+                  <MaterialIcon
+                    iconName="keyboard_arrow_left"
+                    className="text-blue-600"
+                  />
                 </span>
               </button>
 
@@ -107,7 +110,10 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
               <button onClick={() => setMobilePage(2)}>
                 <span className="block transform rotate-180">
-                  <BlueChevron />
+                  <MaterialIcon
+                    iconName="keyboard_arrow_left"
+                    className="text-blue-600"
+                  />
                 </span>
               </button>
             </div>
@@ -138,7 +144,10 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
             <div className="flex justify-center items-center gap-[8px] text-[#1C63DB]">
               <button onClick={() => setMobilePage(1)}>
                 <span>
-                  <BlueChevron />
+                  <MaterialIcon
+                    iconName="keyboard_arrow_left"
+                    className="text-blue-600"
+                  />
                 </span>
               </button>
 
@@ -149,7 +158,10 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                 disabled={mobilePage === 2}
               >
                 <span className="block transform rotate-180">
-                  <BlueChevron />
+                  <MaterialIcon
+                    iconName="keyboard_arrow_left"
+                    className="text-blue-600"
+                  />
                 </span>
               </button>
             </div>
@@ -286,7 +298,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
       {compareIndex === index && index > 0 && renderCompareView()}
 
-      <div className="flex flex-col md:flex-row-reverse gap-4 md:gap-2 md:gap-6 mr-auto">
+      <div className="flex flex-col gap-4 mr-auto md:flex-row-reverse md:gap-2 md:gap-6">
         {compareIndex !== index && (
           <>
             {isEditing && selectedDocumentId === pair.id

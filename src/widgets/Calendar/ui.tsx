@@ -7,15 +7,8 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import {
-  Calendar as CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  Trash2,
-  X,
-} from "lucide-react";
 import { useState } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
   Dialog,
   DialogContent,
@@ -163,10 +156,15 @@ export const CalendarPopup = () => {
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
             className="h-[44px] w-[44px] bg-[#DDEBF6] flex items-center justify-center rounded-[8px]"
           >
-            <ChevronLeft size={24} color="#1C63DB" />
+            <MaterialIcon iconName="keyboard_arrow_left" />
           </button>
           <div className="flex h-[44px] items-center gap-2 px-4 py-[11px] border border-[#DFDFDF] rounded-[8px] bg-white w-full max-w-[152px]">
-            <CalendarIcon size={16} color="#5F5F65" />
+            <MaterialIcon
+              iconName="calendar_today"
+              fill={1}
+              size={20}
+              className="#5F5F65"
+            />
             <span className="text-[16px] text-nowrap leading-[22px] font-medium text-[#1D1D1F] font-[Nunito]">
               {format(currentMonth, "MMMM yyyy")}
             </span>
@@ -175,7 +173,7 @@ export const CalendarPopup = () => {
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             className="h-[44px] w-[44px] bg-[#DDEBF6] flex items-center justify-center rounded-[8px]"
           >
-            <ChevronRight size={24} color="#1C63DB" />
+            <MaterialIcon iconName="keyboard_arrow_right" />
           </button>
         </div>
         <button
@@ -203,7 +201,7 @@ export const CalendarPopup = () => {
               {editIndex !== null ? "Edit event" : "New event"}
             </h3>
             <button onClick={resetModal}>
-              <X className="w-5 h-5 text-gray-500" />
+              <MaterialIcon iconName="close" size={20} />
             </button>
           </div>
           <div className="flex flex-col gap-2">
@@ -218,7 +216,11 @@ export const CalendarPopup = () => {
           <div className="flex flex-col gap-2">
             <label className="text-sm text-[#1D1D1F]">Time</label>
             <div className="flex items-center border border-[#E4E4E7] rounded px-3 py-2">
-              <Clock size={16} className="text-[#71717A] mr-2" />
+              <MaterialIcon
+                iconName="browse_gallery"
+                size={16}
+                className="text-[#71717A] mr-2"
+              />
               <input
                 value={newEventTime}
                 onChange={(e) => setNewEventTime(e.target.value)}
@@ -244,7 +246,8 @@ export const CalendarPopup = () => {
                 onClick={handleDeleteEvent}
                 className="flex items-center gap-2 text-sm font-semibold text-red-500"
               >
-                <Trash2 size={16} /> Delete event
+                <MaterialIcon iconName="delete" size={16} />
+                Delete event
               </button>
             ) : (
               <div />

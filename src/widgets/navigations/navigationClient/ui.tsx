@@ -1,17 +1,9 @@
 import { RootState } from "entities/store";
 import { logout } from "entities/user";
-import { User } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import CaretRight from "shared/assets/icons/caretRight";
-import ChatsCircle from "shared/assets/icons/chats-circle";
-import Close from "shared/assets/icons/close";
-import Library from "shared/assets/icons/library";
-import Menu from "shared/assets/icons/menu";
-import SignOutIcon from "shared/assets/icons/signout";
-import SignOutIconBlue from "shared/assets/icons/signoutBlue";
-import Sparkle from "shared/assets/icons/sparkle-2";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
@@ -101,7 +93,7 @@ export const NavigationClient: React.FC = () => {
               }`
             }
           >
-            <Library />
+            <MaterialIcon iconName="web_stories" fill={1} />
             Library
           </NavLink>
 
@@ -113,7 +105,7 @@ export const NavigationClient: React.FC = () => {
               }`
             }
           >
-            <ChatsCircle />
+            <MaterialIcon iconName="forum" fill={1} />
             Messages
           </NavLink>
         </div>
@@ -123,7 +115,11 @@ export const NavigationClient: React.FC = () => {
             // aria-label="Toggle menu"
             className="p-2 transition-colors duration-200"
           >
-            <Menu className={menuOpen ? "text-[#1C63DB]" : "text-black"} />
+            <MaterialIcon
+              iconName="menu"
+              size={40}
+              className={menuOpen ? "text-[#1C63DB]" : "text-black"}
+            />
           </button>
 
           {menuMobOpen && (
@@ -141,7 +137,7 @@ export const NavigationClient: React.FC = () => {
                 className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
               >
                 <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-                  <User size={24} />
+                  <MaterialIcon iconName="account_circle" />
                 </div>
                 Profile
               </button>
@@ -154,7 +150,7 @@ export const NavigationClient: React.FC = () => {
                 className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
               >
                 <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-                  <SignOutIcon />
+                  <MaterialIcon iconName="exit_to_app" />
                 </div>
                 Sign out
               </button>
@@ -178,7 +174,7 @@ export const NavigationClient: React.FC = () => {
             AI Assistant
           </button>
           <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
-            <Menu className="text-black w-[32px]" />
+            <MaterialIcon iconName="menu" size={40} className="w-[32px]" />
           </button>
         </div>
       </div>
@@ -200,7 +196,7 @@ export const NavigationClient: React.FC = () => {
                 aria-label="Close menu"
               >
                 <span className="text-2xl font-bold">
-                  <Close />
+                  <MaterialIcon iconName="close" />
                 </span>
               </button>
             </div>
@@ -217,7 +213,7 @@ export const NavigationClient: React.FC = () => {
                   });
                 }}
               >
-                <Sparkle />
+                <MaterialIcon iconName="stars_2" fill={1} />
                 Ask Tolu
               </Button>
               <Button
@@ -255,7 +251,7 @@ export const NavigationClient: React.FC = () => {
                 }
                 onClick={toggleLibrary}
               >
-                <Library />
+                <MaterialIcon iconName="web_stories" fill={1} />
                 Library
               </NavLink>
               {isLibraryOpen && (
@@ -273,7 +269,7 @@ export const NavigationClient: React.FC = () => {
                 }
                 onClick={() => setMenuMobOpen(false)}
               >
-                <ChatsCircle />
+                <MaterialIcon iconName="forum" fill={1} />
                 Messages
               </NavLink>
               <ClientChatList onPopupClose={() => setMenuMobOpen(false)} />
@@ -298,14 +294,14 @@ export const NavigationClient: React.FC = () => {
                   {user?.name}
                 </p>
                 <span className="ml-auto">
-                  <CaretRight />
+                  <MaterialIcon iconName="keyboard_arrow_right" />
                 </span>
               </button>
               <button
                 onClick={handleSignOut}
                 className="flex justify-center gap-[12px] py-[8px] px-[16px] text-[16px] text-[#1C63DB] font-semibold cursor-pointer select-none"
               >
-                <SignOutIconBlue />
+                <MaterialIcon iconName="exit_to_app" />
                 Sign out
               </button>
             </div>
@@ -328,7 +324,7 @@ export const NavigationClient: React.FC = () => {
             className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
           >
             <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-              <User size={24} />
+              <MaterialIcon iconName="account_circle" fill={1} />
             </div>
             Profile
           </button>
@@ -341,7 +337,7 @@ export const NavigationClient: React.FC = () => {
             className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
           >
             <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-              <SignOutIcon />
+              <MaterialIcon iconName="exit_to_app" />
             </div>
             Sign out
           </button>

@@ -1,6 +1,5 @@
 import { RootState } from "entities/store";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { UploadCloud } from "lucide-react";
 import { DragEvent, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { SearchableSelect } from "../components/SearchableSelect";
 import { timezoneOptions } from "./mock";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
@@ -211,7 +211,10 @@ export const ProfileSetup = () => {
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
               >
-                <UploadCloud color="#1C63DB" size={32} />
+                <MaterialIcon
+                  iconName="upload"
+                  className="w-8 h-8 text-blue-500"
+                />
                 <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
                   Click to upload
                 </p>

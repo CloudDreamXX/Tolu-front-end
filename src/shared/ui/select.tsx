@@ -1,10 +1,7 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import CheckedIcon from "shared/assets/icons/checked";
-import UncheckedIcon from "shared/assets/icons/not-checked";
-
 import { cn } from "shared/lib/utils";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const Select = SelectPrimitive.Root;
 
@@ -26,7 +23,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="w-4 h-4 opacity-50" />
+      <MaterialIcon iconName="keyboard_arrow_down" className="opacity-50" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -44,7 +41,7 @@ const SelectScrollUpButton = React.forwardRef<
     )}
     {...props}
   >
-    <ChevronUp className="w-4 h-4" />
+    <MaterialIcon iconName="keyboard_arrow_up" className="w-4 h-4" />
   </SelectPrimitive.ScrollUpButton>
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -61,7 +58,7 @@ const SelectScrollDownButton = React.forwardRef<
     )}
     {...props}
   >
-    <ChevronDown className="w-4 h-4" />
+    <MaterialIcon iconName="keyboard_arrow_down" className="w-4 h-4" />
   </SelectPrimitive.ScrollDownButton>
 ));
 SelectScrollDownButton.displayName =
@@ -126,9 +123,12 @@ const SelectItem = React.forwardRef<
     {...props}
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <UncheckedIcon />
+      <MaterialIcon iconName="check_box_outline_blank" />
       <SelectPrimitive.ItemIndicator>
-        <CheckedIcon />
+        <MaterialIcon
+          iconName="check"
+          className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+        />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

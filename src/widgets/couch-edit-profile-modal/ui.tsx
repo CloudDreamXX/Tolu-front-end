@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import ProfileCoach from "shared/assets/icons/profile-coach";
 import { cn } from "shared/lib";
 import {
   Button,
@@ -17,6 +16,7 @@ import { StepType } from "./components/StepType";
 import { steps } from "./helpers";
 import { UserOnboardingInfo, UserService } from "entities/user";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const DEFAULT_STATE: CoachOnboardingState = {
   first_name: "",
@@ -251,7 +251,7 @@ export const CouchEditProfileModal = ({
       >
         <DialogHeader className="flex flex-col gap-6 p-6">
           <DialogTitle className="flex items-center gap-2">
-            <ProfileCoach /> Edit profile
+            <MaterialIcon iconName="account_circle" /> Edit profile
           </DialogTitle>
           <div className="flex items-center max-w-[310px] no-scrollbar gap-4 p-2 overflow-x-auto bg-white border rounded-full md:max-w-full">
             {steps.map((s, i) => (

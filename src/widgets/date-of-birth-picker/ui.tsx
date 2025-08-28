@@ -1,4 +1,5 @@
 import { RefObject, useState } from "react";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
   Button,
   Calendar,
@@ -6,7 +7,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "shared/ui";
-import CalendarIcon from "shared/assets/icons/calendar";
 
 interface DateOfBirthPickerProps {
   date: Date | undefined;
@@ -31,7 +31,7 @@ export const DateOfBirthPicker = ({
             className="justify-between w-full font-normal border-gray-200"
           >
             {date ? date.toLocaleDateString("en-US") : "Select date"}
-            <CalendarIcon />
+            <MaterialIcon iconName="calendar_today" fill={1} />
           </Button>
         </PopoverTrigger>
         <PopoverContent
