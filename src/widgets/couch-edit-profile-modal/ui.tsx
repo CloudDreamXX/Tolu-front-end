@@ -13,7 +13,6 @@ import {
 import { StepFocus } from "./components/StepFocus";
 import { StepGeneral } from "./components/StepGeneral";
 import { StepPractice } from "./components/StepPractice";
-import { StepSafety } from "./components/StepSafety";
 import { StepType } from "./components/StepType";
 import { steps } from "./helpers";
 import { UserOnboardingInfo, UserService } from "entities/user";
@@ -28,7 +27,7 @@ const DEFAULT_STATE: CoachOnboardingState = {
   location: "",
   timezone: "",
   expertise_areas: [],
-  years_experience: "",
+  years_experience: 0,
   certifications: [],
   personal_story: "",
   content_specialties: [],
@@ -61,21 +60,6 @@ const DEFAULT_STATE: CoachOnboardingState = {
   bio: "",
 };
 
-const computeAge = (dob?: string | null) => {
-  if (!dob) return 0;
-  const [y, m, d] = dob.split("-").map(Number);
-  if (!y || !m || !d) return 0;
-  const birth = new Date(y, m - 1, d);
-  if (Number.isNaN(birth.getTime())) return 0;
-  const now = new Date();
-  let age = now.getFullYear() - birth.getFullYear();
-  const beforeBirthday =
-    now.getMonth() < birth.getMonth() ||
-    (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate());
-  if (beforeBirthday) age--;
-  return Math.max(0, age);
-};
-
 const yn = (b: boolean | null | undefined) =>
   b == null ? "" : b ? "Yes" : "No";
 
@@ -92,8 +76,10 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
 
     name: bi.name ?? "",
     alternate_name: bi.alternate_name ?? "",
+    phone: bi.phone,
+    email: bi.email,
 
-    age: computeAge(bi.dob),
+    age: bi.age,
     gender: (bi as any).gender ?? "",
     bio: bi.bio ?? "",
 
@@ -104,13 +90,12 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
 
     expertise_areas: u.profile.expertise ?? [],
     years_experience:
-      cred?.years_experience != null ? String(cred.years_experience) : "",
+      cred?.years_experience != null ? cred.years_experience : 0,
     certifications: cred?.certifications ?? [],
     personal_story: u.profile.story ?? "",
     content_specialties: u.profile.content_topics ?? [],
 
     practitioner_types: pr?.types ?? [],
-    primary_niches: pr?.niches ?? [],
     school: pr?.school ?? "",
     recent_client_count: pr?.recent_clients ?? "",
     target_client_count: pr?.target_clients ?? "",
@@ -162,8 +147,8 @@ function StepBody({
           setProfilePhoto={setProfilePhoto}
         />
       );
-    case "safety":
-      return <StepSafety data={data} setDataState={setDataState} />;
+    // case "safety":
+    //   return <StepSafety data={data} setDataState={setDataState} />;
     case "practice":
       return (
         <StepPractice
@@ -199,31 +184,59 @@ export const CouchEditProfileModal = ({
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [licenseFiles, setLicenseFiles] = useState<File[] | null>(null);
 
+  const STEP_FIELDS: Record<string, (keyof CoachOnboardingState)[]> = {
+    general: [
+      "name",
+      "alternate_name",
+      "gender",
+      "phone",
+      "email",
+      "timezone",
+      "profile_picture",
+      "age",
+    ],
+    type: ["practitioner_types"],
+    focus: ["expertise_areas", "uses_ai", "practice_management_software"],
+    practice: ["school", "certifications", "bio", "uses_labs_supplements"],
+    // safety: [
+    //   "two_factor_enabled",
+    //   "two_factor_method",
+    //   "security_questions",
+    //   "security_answers",
+    // ],
+  };
+
+  const pick = <T extends object, K extends keyof T>(obj: T, keys: K[]) =>
+    keys.reduce(
+      (acc, k) => {
+        if (k in obj) (acc as any)[k] = obj[k];
+        return acc;
+      },
+      {} as Pick<T, K>
+    );
+
   useEffect(() => {
     setDataState(user ? mapUserToCoachState(user) : DEFAULT_STATE);
   }, [user]);
 
-  const handleSave = async () => {
-    try {
-      await UserService.updateUser(
-        dataState,
-        profilePhoto ? profilePhoto : undefined,
-        licenseFiles ? licenseFiles : undefined
-      );
-      setOpen(false);
-      window.location.reload();
-    } catch (error) {
-      console.error("Error during onboarding:", error);
-    }
+  const saveCurrentStep = async (stepId: string) => {
+    const fields = STEP_FIELDS[stepId] ?? [];
+    const partial = pick(dataState, fields);
+
+    const photoArg =
+      stepId === "general" ? (profilePhoto ?? undefined) : undefined;
+    const licensesArg =
+      stepId === "practice" ? (licenseFiles ?? undefined) : undefined;
+
+    await UserService.updateUser(partial as any, photoArg, licensesArg);
   };
 
-  const next = () => {
-    if (step === steps.length - 1) {
-      handleSave();
-    } else {
-      setStep((s) => Math.min(s + 1, steps.length - 1));
-    }
+  const handleSave = async () => {
+    await saveCurrentStep(steps[step].id);
+    setOpen(false);
+    window.location.reload();
   };
+
   const close = () => setOpen(false);
 
   return (
@@ -284,7 +297,7 @@ export const CouchEditProfileModal = ({
             Cancel
           </Button>
 
-          <Button variant="brightblue" onClick={next} className="w-32">
+          <Button variant="brightblue" onClick={handleSave} className="w-32">
             Save
           </Button>
         </DialogFooter>

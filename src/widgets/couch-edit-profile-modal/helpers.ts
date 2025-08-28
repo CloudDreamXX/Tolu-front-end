@@ -1,6 +1,6 @@
 export const steps = [
   { id: "general", label: "General info" },
-  { id: "safety", label: "Safety" },
+  // { id: "safety", label: "Safety" },
   { id: "practice", label: "Practice" },
   { id: "type", label: "Type" },
   { id: "focus", label: "Focus" },

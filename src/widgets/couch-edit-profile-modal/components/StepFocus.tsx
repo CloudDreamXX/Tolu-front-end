@@ -129,7 +129,9 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
       </div>
 
       <div className="flex flex-col gap-4">
-        <label>Do you use AI in your day-to-day work? *</label>
+        <label>
+          Which practice management software do you currently use? *
+        </label>
         <Select value={softwere} onValueChange={(v) => setSoftwere(v)}>
           <SelectTrigger className="md:w-1/2">
             <SelectValue placeholder="Choose a softwere" />

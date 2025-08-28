@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { TooltipWrapper } from "shared/ui";
 import { titlesAndIcons } from "widgets/OnboardingPractitioner/select-type";
+import { QuestionIcon } from "@phosphor-icons/react/dist/ssr";
 
 type StepTypeProps = {
   data: CoachOnboardingState;
@@ -11,7 +12,9 @@ type StepTypeProps = {
 
 export function StepType({ data, setDataState }: StepTypeProps) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
-    data.primary_niches || []
+    data.practitioner_types && data.practitioner_types.length > 0
+      ? data.practitioner_types
+      : []
   );
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [otherText, setOtherText] = useState<string>("");
@@ -28,11 +31,15 @@ export function StepType({ data, setDataState }: StepTypeProps) {
   };
 
   useEffect(() => {
+    const filledTypes = selectedOptions.map((option) =>
+      option === "Other (please specify)" ? otherText : option
+    );
+
     setDataState((prevState) => ({
       ...prevState,
-      primary_niches: selectedOptions,
+      practitioner_types: filledTypes,
     }));
-  }, [selectedOptions]);
+  }, [selectedOptions, otherText, setDataState]);
 
   return (
     <div className="flex flex-col gap-8 mt-2">
@@ -43,11 +50,11 @@ export function StepType({ data, setDataState }: StepTypeProps) {
         >
           <div className="flex items-center self-stretch gap-[8px]">
             {item.icon}
-            <label className="text-[#1B2559]  text-[16px] md:text-[20px] font-semibold">
+            <label className="text-[#1B2559] text-[16px] md:text-[20px] font-semibold">
               {item.title}
             </label>
             <TooltipWrapper content={item.tooltipContent}>
-              <ChevronDown className="text-[#1B2559]" />
+              <QuestionIcon className="text-[#1B2559]" />
             </TooltipWrapper>
           </div>
 
@@ -62,6 +69,7 @@ export function StepType({ data, setDataState }: StepTypeProps) {
               </span>
               <ChevronDown className="text-[#9D9D9D]" />
             </button>
+
             {activeDropdown === index && (
               <div className="border border-[#9D9D9D] absolute z-10 flex flex-col w-full mt-[4px] bg-[#FAFAFA] rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto scrollbar-hide">
                 {item.options.map((option) => (
@@ -76,6 +84,7 @@ export function StepType({ data, setDataState }: StepTypeProps) {
                 ))}
               </div>
             )}
+
             {selectedOptions[index] === "Other (please specify)" && (
               <input
                 type="text"

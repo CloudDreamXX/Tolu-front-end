@@ -9,7 +9,7 @@ export interface CoachOnboardingState {
   location: string;
   timezone: string;
   expertise_areas: string[];
-  years_experience: string;
+  years_experience: number;
   certifications: string[];
   personal_story: string;
   content_specialties: string[];
@@ -56,7 +56,7 @@ const initialState: CoachOnboardingState = {
   location: "",
   timezone: "",
   expertise_areas: [],
-  years_experience: "",
+  years_experience: 0,
   certifications: [],
   personal_story: "",
   content_specialties: [],

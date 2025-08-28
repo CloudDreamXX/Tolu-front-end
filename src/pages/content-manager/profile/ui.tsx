@@ -20,7 +20,6 @@ import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
 
 export const ContentManagerProfile = () => {
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const [twoFA, setTwoFA] = useState(true);
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -210,7 +209,7 @@ export const ContentManagerProfile = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] md:gap-[24px]">
           {/* Safety */}
-          <Card title="Safety" icon={<img src={SafetyIcon} />}>
+          <Card title="Security" icon={<img src={SafetyIcon} />}>
             <div className="flex flex-col gap-[16px]">
               <div>
                 <h4 className="text-[#5F5F65] text-[18px] font-[500] mb-[16px]">
@@ -293,23 +292,6 @@ export const ContentManagerProfile = () => {
                 >
                   Change
                 </Button>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <h4 className="text-[#1D1D1F] font-semibold">
-                  Two-factor authentication
-                </h4>
-                <p className="text-[#5F5F65] text-[12px] md:text-[14px]">
-                  Two-factor authentication provides an additional layer of
-                  security to your account by requiring you to validate your
-                  identity using your mobile device when you log in.
-                </p>
-                <div className="flex items-center gap-3 mt-2">
-                  <Switch checked={twoFA} onChange={setTwoFA} />
-                  <span className="text-[12px] md:text-[14px] text-[#1D1D1F]">
-                    Two-factor authentication {twoFA ? "active" : "disabled"}
-                  </span>
-                </div>
               </div>
             </div>
           </Card>
@@ -470,29 +452,6 @@ const Card = ({
     </div>
     {children}
   </div>
-);
-
-const Switch = ({
-  checked,
-  onChange,
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) => (
-  <button
-    type="button"
-    onClick={() => onChange(!checked)}
-    className={`relative inline-flex h-[28px] w-[52px] items-center rounded-full transition-colors ${
-      checked ? "bg-[#2D6AE3]" : "bg-gray-300"
-    }`}
-    aria-pressed={checked}
-  >
-    <span
-      className={`inline-block h-[24px] w-[24px] transform rounded-full bg-white transition ${
-        checked ? "translate-x-[26px]" : "translate-x-[2px]"
-      }`}
-    />
-  </button>
 );
 
 const PractitionerItem = ({

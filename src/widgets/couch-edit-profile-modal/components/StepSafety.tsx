@@ -20,6 +20,7 @@ type StepSafetyProps = {
 
 export function StepSafety({ data, setDataState }: StepSafetyProps) {
   const [twoFA, setTwoFA] = useState(data.two_factor_enabled || false);
+  const [twoFAMethod, setTwoFAMethod] = useState(data.two_factor_method || "");
   const [question, setQuestion] = useState(data.security_questions || "");
   const [answer, setAnswer] = useState(data.security_answers || "");
 
@@ -27,6 +28,7 @@ export function StepSafety({ data, setDataState }: StepSafetyProps) {
     setDataState((prevState) => ({
       ...prevState,
       two_factor_enabled: twoFA,
+      two_factor_method: twoFAMethod,
       security_questions: question,
       security_answers: answer,
     }));
@@ -40,13 +42,18 @@ export function StepSafety({ data, setDataState }: StepSafetyProps) {
         </h4>
         <div className="flex items-center gap-3 mt-2">
           <Switch checked={twoFA} onCheckedChange={setTwoFA} />
-          Disable two-factor authentication
+          Enable two-factor authentication
         </div>
       </div>
 
       <div className="flex flex-col gap-2.5">
         <label>Choose method:</label>
-        <RadioGroup className="flex flex-wrap gap-10">
+        <RadioGroup
+          className="flex flex-wrap gap-10"
+          value={twoFAMethod}
+          onValueChange={(value) => setTwoFAMethod(value)}
+          disabled={!twoFA}
+        >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="sms" />
             <span>SMS</span>
@@ -55,7 +62,6 @@ export function StepSafety({ data, setDataState }: StepSafetyProps) {
             <RadioGroupItem value="authenticator" />
             <span>Authenticator App</span>
           </div>
-
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="email" />
             <span>Email</span>
