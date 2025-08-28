@@ -15,6 +15,7 @@ import FocusAreasIcon from "shared/assets/images/FocusAreas.png";
 import SafetyIcon from "shared/assets/images/Safety.png";
 import UsersIcon from "shared/assets/images/Users.png";
 import { phoneMask, toast } from "shared/lib";
+import { CoachService } from "entities/coach";
 import { Avatar, AvatarFallback, AvatarImage, Button, Input } from "shared/ui";
 import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
 
@@ -40,7 +41,7 @@ export const ContentManagerProfile = () => {
 
       const filename = path.split("/").pop() || path;
       try {
-        const blob = await UserService.downloadProfilePhoto(filename);
+        const blob = await CoachService.downloadLicenseFile(filename);
         const url = URL.createObjectURL(blob);
         revokeUrls.push(url);
         return url;
@@ -54,10 +55,14 @@ export const ContentManagerProfile = () => {
       const u = await UserService.getOnboardingUser();
       setUser(u);
 
-      const headshotUrl = await createUrlFromPath(
-        u?.profile?.basic_info?.headshot || null
+      const headshotFilename = u?.profile?.basic_info?.headshot
+        ? u.profile.basic_info.headshot.split("/").pop()
+        : u.profile.basic_info.headshot;
+      const headshotBlob = await UserService.downloadProfilePhoto(
+        headshotFilename || ""
       );
-      if (headshotUrl) setPhotoUrl(headshotUrl);
+      const headshot = URL.createObjectURL(headshotBlob);
+      setPhotoUrl(headshot);
 
       const licensePaths: string[] =
         u?.onboarding?.practitioner_info?.license_files ?? [];
@@ -399,11 +404,13 @@ export const ContentManagerProfile = () => {
                   </span>
                   {/* <div className="flex flex-wrap items-center gap-3">
                   {licensePhotos.map((item) => {
-                    return <img
-                      src={item}
-                      alt="Certificate"
-                      className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-cover"
-                    />
+                    return (
+                      <img
+                        src={item}
+                        alt="Certificate"
+                        className="w-[143px] h-[143px] xl:w-[155px] xl:h-[155px] rounded-[8px] object-cover"
+                      />
+                    );
                   })}
                 </div> */}
                 </div>

@@ -88,7 +88,7 @@ export const ClientEditProfileModal = ({
                 autoComplete="tel"
                 value={phoneMask(dataState.phone)}
                 onChange={(e) => {
-                  const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
                   setData({ phone: digits });
                 }}
               />

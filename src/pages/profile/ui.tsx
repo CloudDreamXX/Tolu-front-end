@@ -1,6 +1,6 @@
 import { RootState } from "entities/store";
 import { ChangePasswordRequest, UserService } from "entities/user";
-import { Bell, Plus, RefreshCcw, RotateCcw, Trash2 } from "lucide-react";
+import { Bell, Plus, RefreshCcw, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import SignOutIcon from "shared/assets/icons/signout";
@@ -372,7 +372,7 @@ export const ClientProfile = () => {
                   Change photo
                 </DropdownMenuItem>
 
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   onSelect={(e) => {
                     e.preventDefault();
                   }}
@@ -382,7 +382,7 @@ export const ClientProfile = () => {
                     <Trash2 className="w-4 h-4" />
                   </span>
                   Delete photo
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

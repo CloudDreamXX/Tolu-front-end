@@ -186,23 +186,8 @@ export class ClientService {
     photo: File | null = null
   ): Promise<any> {
     const endpoint = API_ROUTES.CLIENT.UPDATE_PROFILE;
-
-    const profile: Record<string, string> = {};
-    const add = (k: keyof UserProfileUpdate, v?: unknown) => {
-      if (v !== undefined && v !== null && v !== "")
-        profile[k as string] = String(v);
-    };
-
-    add("name", payload.name);
-    add("email", payload.email);
-    add("phone", payload.phone);
-    add("dob", payload.dob);
-    add("photo_url", payload.photo_url);
-    add("timezone", payload.timezone);
-    add("gender", payload.gender);
-
     const formData = new FormData();
-    formData.append("profile_data", JSON.stringify(profile));
+    formData.append("profile_data", JSON.stringify(payload));
     if (photo) formData.append("photo", photo);
 
     return ApiService.put<any>(endpoint, formData);

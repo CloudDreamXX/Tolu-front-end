@@ -88,7 +88,7 @@ export class UserService {
   ): Promise<any> {
     const formData = new FormData();
 
-    formData.append("onboarding_data", JSON.stringify({ data }));
+    formData.append("onboarding_data", JSON.stringify(data));
 
     if (photo) {
       formData.append("headshot", photo);
@@ -149,7 +149,7 @@ export class UserService {
   ): Promise<{ message: string }> {
     const formData = new FormData();
 
-    formData.append("onboarding_data", JSON.stringify({ data }));
+    formData.append("onboarding_data", JSON.stringify(data));
 
     const response = await ApiService.post<string>(
       API_ROUTES.USER.ONBOARD_CLIENT,
