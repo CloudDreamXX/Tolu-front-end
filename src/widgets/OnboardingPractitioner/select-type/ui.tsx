@@ -75,7 +75,6 @@ export const SelectType = () => {
                 className="flex flex-col gap-[16px] md:gap-[20px] w-full lg:w-[460px] items-start"
               >
                 <div className="flex items-center self-stretch gap-[8px]">
-                  {item.icon}
                   <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[16px] md:text-[20px] font-semibold">
                     {item.title}
                   </h2>

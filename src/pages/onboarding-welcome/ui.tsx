@@ -43,13 +43,14 @@ export const OnboardingWerlcome = () => {
           <div className="flex flex-col items-center justify-center gap-[32px] py-[56px] px-[100px] rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
             <div className="flex flex-col items-center gap-[24px]">
               <h3 className="w-[860px] text-black font-inter text-center text-[40px]/[59px] font-semibold">
-                Welcome to Tolu,
-                <br /> your AI-powered assistant for
-                <br /> functional and holistic practice.
+                Welcome to Tolu, your
+                <br /> your AI-powered assistant
+                <br /> designed to simplify and elevate your functional and
+                holistic practice.
               </h3>
               <p className="self-stretch text-center text-black font-[Nunito] text-[24px] font-medium ">
-                Let’s get to know your specialty so we can tailor your dashboard
-                and content
+                Let’s learn about your specialty so we can tailor your
+                dashboard, tools, and content to support your work.
               </p>
             </div>
             <button

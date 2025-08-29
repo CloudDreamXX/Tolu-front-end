@@ -5,7 +5,7 @@ export const AdminHeader: React.FC = () => (
         Tolu AI
       </p>
       <p className="text-[#1D1D1F] text-center text-[24px] md:text-[17px] font-semibold font-open leading-[normal]">
-        COACH ADMIN
+        Health Educator Admin
       </p>
     </div>
   </header>

@@ -12,7 +12,7 @@ interface HeaderOnboardingProps {
 export const HeaderOnboarding = ({
   currentStep,
   isClient,
-  steps = 6,
+  steps = 5,
 }: HeaderOnboardingProps) => {
   const navigate = useNavigate();
   const { isMobile } = usePageWidth();
@@ -35,7 +35,7 @@ export const HeaderOnboarding = ({
             </span>
           ) : (
             <span className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[17.733px] font-semibold font-open leading-[normal]">
-              COACH ADMIN
+              Health Educator Admin
             </span>
           )}
         </h4>

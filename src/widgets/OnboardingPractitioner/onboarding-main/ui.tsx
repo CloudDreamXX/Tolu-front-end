@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
 import {
   AuthPageWrapper,
-  Input,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -12,40 +11,18 @@ import {
 } from "shared/ui";
 import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 import { Footer } from "../../Footer";
-import { Button, HeaderOnboarding } from "./components";
+import { HeaderOnboarding } from "./components";
 import { buttons } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const OnboardingMain = () => {
   const nav = useNavigate();
   const { isMobile } = usePageWidth();
-  const [customButtons, setCustomButtons] = useState(buttons);
+  const [customButtons] = useState(buttons);
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
-  const [searchText, setSearchText] = useState("");
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-
-  const handleOther = () => {
-    if (!otherText.trim()) return;
-
-    setSelectedButtons((prevSelected) =>
-      prevSelected.filter((n) => n !== "Other").concat(otherText)
-    );
-
-    setCustomButtons((prev) => {
-      const copy = [...prev];
-      const lastRow = copy[copy.length - 1];
-
-      if (lastRow.length >= 3) {
-        return [...copy, [otherText]];
-      } else {
-        lastRow.push(otherText);
-        return copy;
-      }
-    });
-
-    setOtherText("");
-  };
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -79,11 +56,21 @@ export const OnboardingMain = () => {
     selectedButtons.length === 0 ||
     (selectedButtons.includes("Other") && otherText.trim() === "");
 
-  const shouldStickToBottom = isMobile && isOtherSelected();
+  const handleNext = () => {
+    let updatedButtons = [...selectedButtons];
 
-  const filteredButtons = customButtons.map((row) =>
-    row.filter((btn) => btn.toLowerCase().includes(searchText.toLowerCase()))
-  );
+    if (isOtherSelected() && otherText.trim()) {
+      updatedButtons = updatedButtons
+        .filter((btn) => btn !== "Other")
+        .concat(otherText);
+    }
+
+    dispatch(
+      updateCoachField({ key: "primary_niches", value: updatedButtons })
+    );
+
+    nav("/about-your-practice");
+  };
 
   return (
     <AuthPageWrapper>
@@ -91,108 +78,115 @@ export const OnboardingMain = () => {
       <HeaderOnboarding currentStep={1} />
       <main
         className={`flex flex-col items-center flex-1 justify-center gap-[32px] md:gap-[60px] self-stretch bg-white py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0
-    ${shouldStickToBottom ? "absolute bottom-0 left-0 w-full z-10" : "relative"} 
+    ${isMobile ? "absolute bottom-0 left-0 w-full z-10" : "relative"} 
     ${isMobile ? "shadow-md" : ""} md:bg-transparent`}
       >
         <h3 className="font-inter text-[24px] md:text-[32px] font-medium text-black text-center self-stretch">
           What are your primary focus areas?
         </h3>
-        <section className="w-full lg:w-[900px] items-center justify-center flex flex-col gap-[32px]">
-          <div className="flex w-full md:w-[500px] items-start gap-[12px] flex-col">
-            <Input
-              variant="none"
-              type="text"
-              icon={
-                <MaterialIcon iconName="search" size={16} className="ml-2" />
-              }
-              placeholder="Search"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              className="h-[44px] py-[8px] flex items-center gap-[8px] self-stretch rounded-full border-[1px] border-[#DBDEE1] bg-white flex-1 font-[Nunito] text-[14px] font-semibold text-[#5F5F65]"
-            />
-          </div>
-          {isMobile ? (
-            <div className="flex flex-wrap gap-[13px] justify-center self-stretch">
-              {(isOtherSelected() ? ["Other"] : filteredButtons.flat()).map(
-                (buttonText) => {
-                  const isSelected = selectedButtons.includes(buttonText);
-                  const isDisabled = !isSelected && selectedButtons.length >= 5;
 
-                  return (
-                    <Button
-                      key={buttonText}
-                      selected={isSelected}
-                      onClick={() => handleButtonClick(buttonText)}
-                      disabled={isDisabled}
+        <section className="w-full lg:w-[900px] items-center justify-center flex flex-col">
+          {/* Dropdown Multi-Select */}
+          <div className="relative">
+            <div
+              className="flex justify-between items-center w-full md:w-[620px] py-[11px] px-[16px] rounded-[8px] border bg-white cursor-pointer"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+            >
+              <div className="flex flex-wrap gap-[8px]">
+                {selectedButtons.length === 0 && (
+                  <span className="text-[#5F5F65]">
+                    Select one or more options
+                  </span>
+                )}
+                {selectedButtons.map((buttonText) => (
+                  <span
+                    key={buttonText}
+                    className="border border-[#CBCFD8] px-[16px] py-[6px] rounded-[6px] flex items-center gap-2"
+                  >
+                    {buttonText}
+                    <button
+                      type="button"
+                      className="ml-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const updated = selectedButtons.filter(
+                          (s) => s !== buttonText
+                        );
+                        setSelectedButtons(updated);
+                        dispatch(
+                          updateCoachField({
+                            key: "primary_niches",
+                            value: updated,
+                          })
+                        );
+                      }}
                     >
-                      {buttonText}
-                    </Button>
-                  );
-                }
-              )}
+                      &times;
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="17"
+                viewBox="0 0 16 17"
+                fill="none"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M11.7667 6.33422C11.4542 6.0218 10.9477 6.0218 10.6353 6.33422L8.00098 8.96853L5.36666 6.33422C5.05424 6.0218 4.54771 6.0218 4.23529 6.33422C3.92287 6.64664 3.92287 7.15317 4.23529 7.46559L7.43529 10.6656C7.74771 10.978 8.25424 10.978 8.56666 10.6656L11.7667 7.46559C12.0791 7.15317 12.0791 6.64664 11.7667 6.33422Z"
+                  fill="#1D1D1F"
+                />
+              </svg>
             </div>
-          ) : (
-            <div className="flex gap-[17px] items-center justify-center content-center py-[17px] px-[13px] flex-wrap self-stretch">
-              {filteredButtons
-                .filter((row) => row.length > 0)
-                .map((filteredRow) => (
-                  <div key={filteredRow.length} className="flex gap-[13px]">
-                    {filteredRow.map((buttonText) => {
+
+            {isDropdownOpen && (
+              <div className="absolute top-full mt-1 left-0 w-full max-h-[174px] overflow-y-auto bg-[#FAFAFA] rounded-md shadow-md flex flex-col gap-[8px]">
+                {customButtons.map((row, rowIdx) => (
+                  <div key={rowIdx} className="flex flex-col">
+                    {row.map((buttonText) => {
                       const isSelected = selectedButtons.includes(buttonText);
-                      const isDisabled =
-                        !isSelected && selectedButtons.length >= 5;
 
                       return (
-                        <Button
+                        <div
                           key={buttonText}
-                          selected={isSelected}
                           onClick={() => handleButtonClick(buttonText)}
-                          disabled={isDisabled}
+                          className="cursor-pointer px-[12px] py-[15px] hover:bg-[#F2F2F2] hover:text-[#1C63DB] flex items-center gap-[12px]"
                         >
+                          <span className="w-[20px] h-[20px] flex items-center justify-center">
+                            <MaterialIcon
+                              iconName={
+                                isSelected ? "check" : "check_box_outline_blank"
+                              }
+                            />
+                          </span>
                           {buttonText}
-                        </Button>
+                        </div>
                       );
                     })}
                   </div>
                 ))}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
 
-          {isOtherSelected() ? (
-            <div
-              className={`w-full ${otherText.length > 0 ? "md:w-[414px]" : "md:w-[300px]"} flex justify-center items-center gap-[8px] px-[16px]`}
-            >
-              <Input
-                onChange={(e) => {
-                  setOtherText(e.target.value);
-                  dispatch(
-                    updateCoachField({
-                      key: "primary_niches",
-                      value: [
-                        ...selectedButtons.filter((n) => n !== "Other"),
-                        e.target.value,
-                      ],
-                    })
-                  );
-                }}
+          {isOtherSelected() && (
+            <div className="w-full mt-2 flex justify-center">
+              <input
                 type="text"
+                value={otherText}
+                onChange={(e) => setOtherText(e.target.value)}
                 placeholder="Please specify your niche"
-                className="flex outline-none w-full max-w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white focus:border-[#1C63DB] focus:outline-none mx-auto"
+                className="peer w-full md:w-[620px] py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
               />
-              {otherText.length > 0 && (
-                <button
-                  onClick={handleOther}
-                  className="text-nowrap flex rounded-full bg-[#1C63DB] h-[44px] w-[120px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white "
-                >
-                  Add niche
-                </button>
-              )}
             </div>
-          ) : (
-            ""
           )}
         </section>
-        <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit ">
+
+        {/* Next Button */}
+        <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit">
           <button
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
@@ -204,8 +198,7 @@ export const OnboardingMain = () => {
           <TooltipProvider delayDuration={500}>
             <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
               <TooltipTrigger asChild>
-                <Link
-                  to={!isNextDisabled ? "/about-your-practice" : ""}
+                <button
                   className={
                     !isNextDisabled
                       ? "bg-[#1C63DB] flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
@@ -213,9 +206,10 @@ export const OnboardingMain = () => {
                   }
                   tabIndex={isNextDisabled ? -1 : 0}
                   aria-disabled={isNextDisabled}
+                  onClick={handleNext}
                 >
                   Next
-                </Link>
+                </button>
               </TooltipTrigger>
 
               <TooltipContent side="bottom">

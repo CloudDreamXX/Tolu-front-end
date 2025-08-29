@@ -78,7 +78,7 @@ export const InviteClients = () => {
   return (
     <AuthPageWrapper>
       <Footer position={isMobile ? "top-right" : undefined} />
-      <HeaderOnboarding currentStep={5} />
+      <HeaderOnboarding currentStep={4} />
       <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px]">
         {!isMobile && (
           <div className="flex flex-col items-center gap-4">

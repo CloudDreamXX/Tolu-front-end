@@ -10,6 +10,9 @@ import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { SearchableSelect } from "../components/SearchableSelect";
 import { timezoneOptions } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Calendar } from "shared/ui";
+import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
@@ -19,6 +22,14 @@ export const ProfileSetup = () => {
   const ref = useRef<HTMLInputElement>(null);
   const state = useSelector((state: RootState) => state.coachOnboarding);
   const { isMobile } = usePageWidth();
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [localDate, setLocalDate] = useState<Date | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
+  const [displayMonth, setDisplayMonth] = useState<Date>(
+    new Date(selectedYear, 0)
+  );
 
   const handleFile = (file: File) => {
     if (file) {
@@ -63,22 +74,88 @@ export const ProfileSetup = () => {
     }
   };
 
-  const ageOptions = Array.from({ length: 83 }, (_, i) => {
-    const age = (i + 18).toString();
-    return age;
-  });
-
   const isFormValid =
-    !!state.first_name?.trim() &&
-    !!state.last_name?.trim() &&
-    !!state.age &&
-    !!state.gender &&
-    !!state.timezone;
+    !!state.name?.trim() && !!state.gender && !!state.timezone && !!dateOfBirth;
+
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    setDisplayMonth((prev) => new Date(year, prev.getMonth()));
+    if (localDate) {
+      const d = new Date(localDate);
+      d.setFullYear(year);
+      setLocalDate(d);
+    }
+  };
+
+  const computeAge = (dobStr: string) => {
+    const dob = new Date(dobStr);
+    if (Number.isNaN(dob.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const beforeBirthday =
+      today.getMonth() < dob.getMonth() ||
+      (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate());
+    if (beforeBirthday) age--;
+    return age;
+  };
+
+  const computedAge = computeAge(dateOfBirth);
+
+  const calendarContent = (
+    <>
+      <div className="flex gap-[8px] items-center m-4 mb-1">
+        Choose a year:
+        <select
+          value={selectedYear}
+          onChange={(e) => handleYearChange(Number(e.target.value))}
+          className="px-2 py-1 border rounded-md outline-0"
+        >
+          {Array.from(
+            { length: 100 },
+            (_, index) => new Date().getFullYear() - index
+          ).map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <Calendar
+        mode="single"
+        selected={localDate ?? undefined}
+        onSelect={(selectedDate) => {
+          if (selectedDate) {
+            setLocalDate(selectedDate);
+            setDateOfBirth(format(selectedDate, "yyyy-MM-dd"));
+            const y = selectedDate.getFullYear();
+            if (y !== selectedYear) setSelectedYear(y);
+            setDisplayMonth(
+              new Date(selectedDate.getFullYear(), selectedDate.getMonth())
+            );
+            dispatch(
+              updateCoachField({
+                key: "age",
+                value: computedAge ? computedAge : 0,
+              })
+            );
+          }
+        }}
+        initialFocus
+        month={displayMonth}
+        onMonthChange={(m) => {
+          setDisplayMonth(m);
+          const y = m.getFullYear();
+          if (y !== selectedYear) setSelectedYear(y);
+        }}
+      />
+    </>
+  );
 
   return (
     <AuthPageWrapper>
       <Footer position={isMobile ? "top-right" : undefined} />
-      <HeaderOnboarding currentStep={4} />
+      <HeaderOnboarding currentStep={3} />
       <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px]">
         {!isMobile && (
           <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
@@ -94,14 +171,14 @@ export const ProfileSetup = () => {
           {/* First and Last Name */}
           <div className="flex flex-col flex-1 gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
-              First name
+              Full name
             </label>
             <Input
               type="text"
-              placeholder="Enter First Name"
+              placeholder="Enter Full Name"
               onChange={(e) =>
                 dispatch(
-                  updateCoachField({ key: "first_name", value: e.target.value })
+                  updateCoachField({ key: "name", value: e.target.value })
                 )
               }
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
@@ -139,26 +216,41 @@ export const ProfileSetup = () => {
             />
           </div>
 
-          {/* Age */}
+          {/* Birth date */}
           <div className="flex flex-col gap-[8px]">
-            <SearchableSelect
-              label="Age"
-              labelStyle="text-[#5F5F65]"
-              placeholder="Enter Age"
-              options={ageOptions}
-              value={state.age.toString()}
-              onChange={(value) =>
-                dispatch(updateCoachField({ key: "age", value: value }))
-              }
-            />
+            <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
+              Birth Date
+            </label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Input
+                  type="text"
+                  placeholder="Select Birth Date"
+                  readOnly
+                  value={
+                    dateOfBirth ? format(new Date(dateOfBirth), "PPP") : ""
+                  }
+                  className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+                />
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 pointer-events-auto">
+                {calendarContent}
+              </PopoverContent>
+            </Popover>
           </div>
+
           {/* Gender */}
           <div className="flex flex-col gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-[Nunito] font-medium">
               Gender
             </label>
-            <div className="flex gap-[40px]">
-              {["men", "women"].map((gender) => (
+            <div className="flex flex-col gap-[16px]">
+              {[
+                "woman",
+                "man",
+                "non-binary / genderqueer / gender expansive",
+                "prefer not to say",
+              ].map((gender) => (
                 <label
                   key={gender}
                   className="flex items-center gap-[8px] text-[16px] text-black font-[Nunito]"

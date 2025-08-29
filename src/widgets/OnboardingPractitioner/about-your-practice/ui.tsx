@@ -229,7 +229,7 @@ export const AboutYourPractice = () => {
               </div>
 
               {schoolDropdownOpen && (
-                <div className="absolute top-full mt-1 left-0 z-10 w-full max-h-[174px] overflow-y-auto scrollbar-hide bg-[#FAFAFA] rounded-md shadow-md flex flex-col gap-[8px]">
+                <div className="absolute top-full mt-1 left-0 z-10 w-full max-h-[174px] overflow-y-auto scrollbar-hide bg-[#FAFAFA] rounded-md shadow-md flex flex-col">
                   {schoolOptions.map((option) => {
                     const isSelected = selectedSchools.includes(option);
                     return (
@@ -448,7 +448,7 @@ export const AboutYourPractice = () => {
             Back
           </button>
           <Link
-            to={allFilled() ? "/subscription-plan" : ""}
+            to={allFilled() ? "/profile-setup" : ""}
             className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
               allFilled()
                 ? "bg-[#1C63DB] text-white"

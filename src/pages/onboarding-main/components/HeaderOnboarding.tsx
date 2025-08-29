@@ -6,7 +6,7 @@ export const HeaderOnboarding = () => {
           Tolu AI
         </h2>
         <h4 className="text-[#1D1D1F] capitalize text-center text-[20px] font-medium font-open h-[27px] leading-[normal]">
-          COACH ADMIN
+          Health Educator Admin
         </h4>
       </div>
       <div className="w-[750px] h-[95px] shrink-0 flex items-center justify-between"></div>
