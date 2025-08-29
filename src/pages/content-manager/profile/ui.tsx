@@ -109,12 +109,21 @@ export const ContentManagerProfile = () => {
     <>
       <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px]">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-[4.5px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
-            <MaterialIcon iconName="account_circle" /> My profile
+          <div className="flex items-center gap-[16px]">
+            <div className="flex items-center gap-[4.5px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold w-full lg:w-fit">
+              <MaterialIcon iconName="account_circle" /> My profile
+            </div>
+            <Button
+              variant={"brightblue"}
+              className="flex lg:hidden w-full w-full md:w-[300px] justify-center"
+              onClick={() => setEditModalOpen(true)}
+            >
+              <MaterialIcon iconName="edit" fill={1} size={20} /> Edit
+            </Button>
           </div>
           <Button
             variant={"brightblue"}
-            className="w-full md:w-[300px] justify-center"
+            className="hidden lg:flex w-full w-full md:w-[300px] justify-center"
             onClick={() => setEditModalOpen(true)}
           >
             <MaterialIcon iconName="edit" fill={1} size={20} /> Edit
@@ -128,7 +137,7 @@ export const ContentManagerProfile = () => {
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px] lg:hidden">
+          <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px] lg:hidden md:w-[422px] xl:w-full md:ml-auto">
             <Field
               label="Full name:"
               value={user?.profile.basic_info.name || ""}
@@ -212,17 +221,17 @@ export const ContentManagerProfile = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] md:gap-[24px]">
           {/* Safety */}
           <Card title="Security" icon={<img src={SafetyIcon} />}>
-            <div className="flex flex-col gap-[16px]">
-              <div>
+            <div className="flex flex-col gap-[16px] w-full">
+              <div className="w-full">
                 <h4 className="text-[#5F5F65] text-[18px] font-[500] mb-[16px]">
                   Change password:
                 </h4>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 w-full">
                   <div className="flex flex-col gap-[10px]">
                     <p className="text-[16px] font-semibold text-[#1D1D1F]">
                       Current password
                     </p>
-                    <div className="relative flex flex-row-reverse items-center w-[70%]">
+                    <div className="relative flex flex-row-reverse items-center w-full lg:w-[70%]">
                       <Input
                         type={showPassword ? "password" : "text"}
                         placeholder="Enter Password"
@@ -257,7 +266,7 @@ export const ContentManagerProfile = () => {
                     <p className="text-[16px] font-semibold text-[#1D1D1F]">
                       New password
                     </p>
-                    <div className="relative flex flex-row-reverse items-center w-[70%]">
+                    <div className="relative flex flex-row-reverse items-center w-full lg:w-[70%]">
                       <Input
                         type={showPassword ? "password" : "text"}
                         placeholder="Enter Password"
@@ -291,8 +300,9 @@ export const ContentManagerProfile = () => {
                 </div>
                 <Button
                   variant="brightblue"
-                  className="mt-3 w-full md:w-[250px]"
+                  className="mt-3 w-full md:w-[250px] disabled:opacity-[0.5]"
                   onClick={() => handleChangePassword(oldPassword, newPassword)}
+                  disabled={oldPassword === "" || newPassword === ""}
                 >
                   Change
                 </Button>
@@ -360,7 +370,7 @@ export const ContentManagerProfile = () => {
                 ))}
               </div>
 
-              <div className="grid md:grid-cols-2 gap-[24px]">
+              <div className="grid grid-cols-2 gap-[24px]">
                 <div className="flex flex-col gap-[8px]">
                   <span className="text-[#5F5F65] text-[18px] font-[500]">
                     Software:
@@ -433,11 +443,11 @@ export const ContentManagerProfile = () => {
 };
 
 const Field = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex flex-col gap-[4px]">
+  <div className="flex flex-col gap-[4px] max-w-full">
     <p className="text-[#5F5F65] text-[12px] md:text-[18px] font-[500]">
       {label}
     </p>
-    <p className="text-[#1D1D1F] text-[14px] md:text-[20px] font-[500]">
+    <p className="text-[#1D1D1F] text-[14px] md:text-[20px] font-[500] overflow-hidden truncate">
       {value}
     </p>
   </div>
@@ -476,7 +486,7 @@ const PractitionerItem = ({
     <div className="flex items-start gap-[8px]">
       <div className="text-[#1B2559] mt-[2px]">{icon}</div>
       <div>
-        <div className="flex items-center gap-[8px] text-[#1B2559] font-[600] text-[20px]">
+        <div className="flex items-center gap-[8px] text-[#1B2559] font-[600] text-[14px] lg:text-[20px]">
           {title}
           <MaterialIcon
             iconName="help"
@@ -487,7 +497,7 @@ const PractitionerItem = ({
         </div>
       </div>
     </div>
-    <div className="text-[#000] text-[16px]">{subtitle}</div>
+    <div className="text-[#000] text-[15px] lg:text-[16px]">{subtitle}</div>
   </li>
 );
 

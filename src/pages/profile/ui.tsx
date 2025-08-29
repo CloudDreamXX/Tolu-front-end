@@ -24,6 +24,7 @@ import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicke
 import { Card } from "./components/Card";
 import { Field } from "./components/Field";
 import { Switch } from "./components/Switch";
+import { useNavigate } from "react-router-dom";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -51,6 +52,7 @@ export const ClientProfile = () => {
   const [user, setUser] = useState<Client | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
+  const nav = useNavigate();
 
   const PROFILE_FIELDS = [
     "name",
@@ -265,6 +267,9 @@ export const ClientProfile = () => {
       await ClientService.updateUserProfile(data, photo);
       const res = await ClientService.getClientProfile();
       setUser(res);
+      toast({
+        title: "All changes have been saved.",
+      });
     } catch (err) {
       console.error("Failed to update information", err);
       toast({
@@ -650,6 +655,7 @@ export const ClientProfile = () => {
         open={changePasswordModalOpen}
         onOpenChange={setChangePasswordModalOpen}
         onSubmit={handleChangePassword}
+        onForgot={() => nav("/forgot-password")}
         mode="change" //we have mode for 'create' and 'change'
       />
     </div>

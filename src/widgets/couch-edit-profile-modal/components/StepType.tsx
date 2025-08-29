@@ -49,7 +49,7 @@ export function StepType({ data, setDataState }: StepTypeProps) {
         >
           <div className="flex items-center self-stretch gap-[8px]">
             {item.icon}
-            <label className="text-[#1B2559] text-[16px] md:text-[20px] font-semibold">
+            <label className="text-[#1B2559] text-[16px] font-semibold">
               {item.title}
             </label>
             <TooltipWrapper content={item.tooltipContent}>

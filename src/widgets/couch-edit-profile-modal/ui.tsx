@@ -246,14 +246,14 @@ export const CouchEditProfileModal = ({
       fixed inset-0 w-screen overflow-y-auto overscroll-contain
       md:bottom-auto md:top-1/2 md:left-1/2 md:right-auto 
       md:w-[min(800px,calc(100vw-64px))] 
-      md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl md:overflow-visible
+      md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl md:overflow-visible block md:grid
     "
       >
         <DialogHeader className="flex flex-col gap-6 p-6">
           <DialogTitle className="flex items-center gap-2">
             <MaterialIcon iconName="account_circle" /> Edit profile
           </DialogTitle>
-          <div className="flex items-center max-w-[310px] no-scrollbar gap-4 p-2 overflow-x-auto bg-white border rounded-full md:max-w-full">
+          <div className="flex items-center no-scrollbar gap-4 p-2 overflow-x-auto bg-white border rounded-full max-w-full">
             {steps.map((s, i) => (
               <button
                 key={s.id}

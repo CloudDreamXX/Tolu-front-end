@@ -64,7 +64,9 @@ export function StepPractice({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
-    setSelectedFiles(files);
+    if (files.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...files]);
+    }
   };
 
   const removeFile = (idx: number) => {
@@ -138,7 +140,7 @@ export function StepPractice({
         </label>
 
         {selectedFiles.length > 0 && (
-          <div className="flex gap-[16px] flex-wrap justify-start w-full">
+          <div className="flex gap-[16px] flex-wrap justify-start w-full w-[150px] h-[150px]">
             {selectedFiles.map((file, index) => {
               const preview = previews[index];
               return (
@@ -154,7 +156,7 @@ export function StepPractice({
                     <img
                       src={preview?.url || ""}
                       alt={`preview-${index}`}
-                      className="object-cover w-full h-full rounded-md"
+                      className="object-cover w-[150px] h-[150px] rounded-md"
                     />
                   )}
                   <button
