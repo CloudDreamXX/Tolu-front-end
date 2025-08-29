@@ -309,12 +309,20 @@ export class SearchService {
 
   static async prepareFilesForSearch(
     files: File[]
-  ): Promise<{ images: File[]; pdf?: File; errors: string[] }> {
+  ): Promise<{ files: File[]; pdf?: File; errors: string[] }> {
     const errors: string[] = [];
     const images: File[] = [];
     let pdf: File | undefined;
 
-    const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const fileTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+    ];
     const pdfTypes = ["application/pdf"];
     const maxSizeInMB = 30;
     const maxImages = 10;
@@ -324,9 +332,9 @@ export class SearchService {
         continue;
       }
 
-      if (imageTypes.includes(file.type)) {
+      if (fileTypes.includes(file.type)) {
         if (images.length >= maxImages) {
-          errors.push(`Only ${maxImages} image files are allowed`);
+          errors.push(`Only ${maxImages} files are allowed`);
         } else {
           images.push(file);
         }
@@ -341,6 +349,6 @@ export class SearchService {
       }
     }
 
-    return { images, pdf, errors };
+    return { files: images, pdf, errors };
   }
 }

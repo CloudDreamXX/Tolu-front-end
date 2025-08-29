@@ -250,7 +250,7 @@ export const AboutYourPractice = () => {
                                     ...updated.map((s) =>
                                       s === OTHER_OPTION ? otherSchoolInput : s
                                     ),
-                                  ],
+                                  ].join(", "),
                                 })
                               );
                             }
@@ -267,10 +267,11 @@ export const AboutYourPractice = () => {
                           const processed = updated.map((s) =>
                             s === OTHER_OPTION ? otherSchoolInput : s
                           );
+
                           dispatch(
                             updateCoachField({
                               key: "school",
-                              value: processed,
+                              value: processed.join(", "),
                             })
                           );
                         }}
@@ -300,9 +301,12 @@ export const AboutYourPractice = () => {
                     const value = e.target.value;
                     setOtherSchoolInput(value);
 
-                    const processed = selectedSchools.map((s) =>
+                    const updatedSchools = selectedSchools.map((s) =>
                       s === OTHER_OPTION ? value : s
                     );
+
+                    const processed = updatedSchools.join(", ");
+
                     dispatch(
                       updateCoachField({ key: "school", value: processed })
                     );

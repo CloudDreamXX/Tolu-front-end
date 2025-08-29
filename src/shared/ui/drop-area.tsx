@@ -31,7 +31,7 @@ export const DropArea = ({
           <span className="text-blue-500">Click to upload</span>
         </p>
         <p className="text-sm text-gray-500">
-          SVG, PNG, JPG, PDF or GIF (max. 800x400px)
+          SVG, PNG, JPEG, PDF, DOC, DOCX, TXT or GIF (max. 800x400px)
         </p>
         <p className="text-sm text-gray-500">
           The size of the file should be less than 30mb

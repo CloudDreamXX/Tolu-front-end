@@ -113,6 +113,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         ".jpg",
         ".jpeg",
         ".gif",
+        ".txt",
       ].includes(extension);
     });
 
@@ -257,7 +258,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             type="file"
             multiple
             className="hidden"
-            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif"
+            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif,.txt"
             onChange={handleFileChange}
           />
         )}

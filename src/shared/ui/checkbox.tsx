@@ -24,7 +24,7 @@ const Checkbox = React.forwardRef<
     >
       <MaterialIcon
         iconName="check"
-        className={cn("text-[#1C63DB] w-[14px]", checkClassName)}
+        className={cn("text-[#1C63DB]", checkClassName)}
       />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>

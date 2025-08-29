@@ -351,7 +351,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setError(null);
 
     const {
-      images,
+      files: images,
       pdf,
       errors: fileErrors,
     } = await SearchService.prepareFilesForSearch(filesState);

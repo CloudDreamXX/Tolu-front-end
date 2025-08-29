@@ -4,6 +4,8 @@ import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { CoachService } from "entities/coach";
+import { toast } from "shared/lib";
 
 export const InviteClients = () => {
   const nav = useNavigate();
@@ -16,6 +18,7 @@ export const InviteClients = () => {
   const [isTablet, setIsTablet] = useState<boolean>(
     window.innerWidth >= 768 && window.innerWidth < 1024
   );
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -37,6 +40,7 @@ export const InviteClients = () => {
 
   const handleFile = (file: File) => {
     if (file) {
+      setSelectedFile(file);
       setUploadedFileName(file.name);
       setUploadedFileSize(`${(file.size / 1024).toFixed(0)} KB`);
     }
@@ -55,7 +59,21 @@ export const InviteClients = () => {
     }
   };
 
-  const isAllClientsFilled = clientel.every((value) => value.trim() !== "");
+  const handleNextStep = async () => {
+    if (selectedFile) {
+      try {
+        await CoachService.inviteClient(null, selectedFile);
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Error",
+          description: "Failed to upload file",
+          variant: "destructive",
+        });
+      }
+    }
+    nav("/onboarding-finish");
+  };
 
   return (
     <AuthPageWrapper>
@@ -212,13 +230,8 @@ export const InviteClients = () => {
                   Back
                 </button>
                 <button
-                  onClick={() => nav("/onboarding-finish")}
-                  disabled={!isAllClientsFilled}
-                  className={`flex w-full p-[16px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
-                    isAllClientsFilled
-                      ? "bg-[#1C63DB] text-white"
-                      : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-                  }`}
+                  onClick={handleNextStep}
+                  className={`flex w-full p-[16px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold bg-[#1C63DB] text-white`}
                 >
                   Next
                 </button>
@@ -246,13 +259,8 @@ export const InviteClients = () => {
                 Back
               </button>
               <button
-                onClick={() => nav("/onboarding-finish")}
-                disabled={!isAllClientsFilled}
-                className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
-                  isAllClientsFilled
-                    ? "bg-[#1C63DB] text-white"
-                    : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-                }`}
+                onClick={handleNextStep}
+                className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold bg-[#1C63DB] text-white`}
               >
                 Next
               </button>

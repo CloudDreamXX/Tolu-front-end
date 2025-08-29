@@ -471,7 +471,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     setError(null);
 
     const {
-      images,
+      files: images,
       pdf,
       errors: fileErrors,
     } = await SearchService.prepareFilesForSearch(files);

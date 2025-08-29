@@ -7,18 +7,20 @@ import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper } from "shared/ui";
 import { useEffect, useState } from "react";
 import { AdminHeader } from "widgets/Header";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
+import { useSelector } from "react-redux";
 
 export const OnboardingFinish = () => {
-  // const coachOnboarding = useSelector(
-  //   (state: RootState) => state.coachOnboarding
-  // );
-  // const token = useSelector((state: RootState) => state.user.token);
+  const coachOnboarding = useSelector(
+    (state: RootState) => state.coachOnboarding
+  );
   const nav = useNavigate();
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
 
   const handleLastClick = async () => {
     try {
-      // const message = await UserService.onboardUser(coachOnboarding, token);
+      await UserService.onboardUser(coachOnboarding);
       nav("/content-manager/library");
       toast({
         title: "Onboarding successful",
