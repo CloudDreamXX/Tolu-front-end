@@ -52,6 +52,35 @@ export const ClientProfile = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
 
+  const PROFILE_FIELDS = [
+    "name",
+    "email",
+    "phone",
+    "dob",
+    "timezone",
+    "gender",
+  ] as const;
+  const OPTIONAL_FIELDS = ["photo_url"] as const;
+
+  const [percentage, setPercentage] = useState(0);
+
+  const isFilled = (v: unknown) =>
+    typeof v === "string" ? v.trim().length > 0 : !!v;
+
+  const calcProfileCompletion = (u: Client | null) => {
+    if (!u) return 0;
+    const fields = [...PROFILE_FIELDS, ...OPTIONAL_FIELDS];
+    const filled = fields.reduce(
+      (acc, key) => acc + (isFilled((u as any)[key]) ? 1 : 0),
+      0
+    );
+    return Math.round((filled / fields.length) * 100);
+  };
+
+  useEffect(() => {
+    setPercentage(calcProfileCompletion(user));
+  }, [user]);
+
   useEffect(() => {
     let objectUrl: string | null = null;
 
@@ -259,8 +288,21 @@ export const ClientProfile = () => {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 ">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-[4.5px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
+        <div className="flex items-center gap-[24px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
           Personal profile
+          <div
+            style={{
+              backgroundImage: `linear-gradient(to right, #1C63DB 0%, #1C63DB ${percentage}%, rgba(0,0,0,0) ${percentage}%, rgba(0,0,0,0) 100%)`,
+            }}
+            className="flex h-[32px] mt-[8px] md:w-[328px] text-nowrap items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-[6px] gap-8 px-[16px]"
+          >
+            <span
+              className={`text-[14px] font-semibold ${percentage > 40 ? "text-white" : ""}`}
+            >
+              Profile completed
+            </span>
+            <span className="text-[14px] font-semibold">{percentage}%</span>
+          </div>
         </div>
         <button onClick={togglePopup}>
           <MaterialIcon iconName="notifications" fill={1} />
@@ -387,9 +429,11 @@ export const ClientProfile = () => {
           </div>
           <div>
             <p className="mb-1 text-2xl font-semibold">{user?.name || ""}</p>
-            <p className="px-2 bg-blue-100 py-1.5 text-blue-600 font-semibold rounded-full inline-block text-nowrap">
-              Member since {formatDate(user?.created_at || "")}
-            </p>
+            {user?.created_at && (
+              <p className="px-2 bg-blue-100 py-1.5 text-blue-600 font-semibold rounded-full inline-block text-nowrap">
+                Member since {formatDate(user.created_at)}
+              </p>
+            )}
           </div>
         </div>
 

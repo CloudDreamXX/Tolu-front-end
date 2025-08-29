@@ -10,7 +10,6 @@ interface MessageListProps {
   isSearching: boolean;
   streamingText: string;
   error: string | null;
-  isCoach?: boolean;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
@@ -18,10 +17,9 @@ export const MessageList: React.FC<MessageListProps> = ({
   isSearching,
   streamingText,
   error,
-  isCoach,
 }) => (
   <div
-    className={`flex-1 w-full ${isCoach ? "px-[16px]" : ""} ${messages.length && "py-4"} overflow-y-auto bg-white rounded-b-xl h-full`}
+    className={`flex-1 w-full ${messages.length && "py-4"} overflow-y-auto bg-white rounded-b-xl h-full`}
   >
     <div className="max-h-full md:px-4 space-y-4 overflow-auto">
       {messages.map((message) => (

@@ -14,7 +14,6 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 interface ChatHeaderProps {
   displayChatTitle: string;
   isExistingChat: boolean;
-  isCoach: boolean;
   selectedSwitch: string;
   isSwitch: (value: SwitchValue) => boolean;
   onNewSearch: () => void;
@@ -24,7 +23,6 @@ interface ChatHeaderProps {
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   displayChatTitle,
   isExistingChat,
-  isCoach,
   selectedSwitch,
   isSwitch,
   onNewSearch,
@@ -73,14 +71,14 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   return (
     <div
-      className={`flex flex-col md:flex-row items-center justify-between w-full p-4 bg-white ${isCoach ? "border-b" : "md:border-b"} rounded-t-xl`}
+      className={`flex flex-col md:flex-row items-center justify-between w-full p-4 bg-white md:border-b rounded-t-xl`}
     >
       <div className="flex items-center gap-3">
         <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px]">
           <button onClick={onClose} className="hidden xl:block">
             <MaterialIcon iconName="arrows_input" size={24} />
           </button>
-          {(isCoach || isExistingChat) && <span>{displayChatTitle}</span>}
+          {isExistingChat && <span>{displayChatTitle}</span>}
         </div>
         {isExistingChat && (
           <div className="hidden px-2 py-1 text-xs text-green-700 bg-green-100 rounded xl:block">

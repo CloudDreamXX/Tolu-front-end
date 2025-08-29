@@ -2,7 +2,7 @@ import { logout } from "entities/user";
 import { CustomNavLink } from "features/custom-nav-link";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ScrollArea } from "shared/ui";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
@@ -19,6 +19,8 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   const dispatch = useDispatch();
   const [menuMobOpen, setMenuMobOpen] = useState(false);
   const menuMobRef = useRef<HTMLDivElement>(null);
+  const chatId = `new_chat_${Date.now()}`;
+  const location = useLocation();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -41,12 +43,17 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   };
 
   const handleOpenChat = () => {
-    nav("/content-manager/create");
+    setMenuMobOpen(false);
+    nav(`/content-manager/library/${chatId}`, {
+      state: {
+        from: location,
+      },
+    });
   };
 
   return (
     <div
-      className={`${pageLocation === "content-manager" ? "" : "bg-white"} xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] relative px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]`}
+      className={`${location.pathname.startsWith("/content-manager/library") ? "bg-white" : ""} xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] relative px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]`}
     >
       {/* Mobile Hamburger */}
       <div className="flex items-center justify-between w-full xl:hidden">
