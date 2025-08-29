@@ -5,7 +5,7 @@ import { cn } from "shared/lib";
 import { Input } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { timezoneOptions } from "widgets/OnboardingPractitioner/profile-setup";
-import { useFilePicker } from "widgets/message-tabs/ui/messages-tab/useFilePicker";
+import { useFilePicker } from "shared/hooks/useFilePicker";
 
 interface StepGeneralProps {
   data: CoachOnboardingState;
@@ -143,10 +143,9 @@ export const StepGeneral = ({
             {...getDropzoneProps()}
           >
             <MaterialIcon
-              iconName="upload"
+              iconName="cloud_upload"
               fill={1}
-              className="text-[#1C63DB]"
-              size={24}
+              className="text-[#1C63DB] p-2 border rounded-xl"
             />
             <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
               Click to upload

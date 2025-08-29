@@ -8,6 +8,7 @@ import {
   ContentManagerFolder,
   ContentManagerInReview,
   ContentManagerPublished,
+  FilesLibrary,
 } from "pages/content-manager";
 import { ContentManagerClients } from "pages/content-manager/clients";
 import { ContentManagerMessages } from "pages/content-manager/messages";
@@ -158,6 +159,7 @@ export const AppRoutes = () => {
           path="/content-manager"
           element={<Navigate to={"/content-manager/create"} />}
         />
+        <Route path="/content-manager/files" element={<FilesLibrary />} />
       </Route>
 
       <Route

@@ -91,7 +91,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             className="w-[40px] md:w-[44px] h-[40px] md:h-[44px] rounded-full bg-blue-500 flex items-center justify-center"
             onClick={() => onCreateGroup()}
           >
-            <MaterialIcon iconName="add" />
+            <MaterialIcon iconName="add" className="text-white" />
           </button>
         </div>
 

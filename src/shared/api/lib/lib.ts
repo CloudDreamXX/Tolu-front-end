@@ -44,10 +44,19 @@ export class ApiService {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
       const status = axiosError.response?.status ?? 500;
+      const data = axiosError.response?.data as any;
+
       const message =
-        (axiosError.response?.data as { message?: string })?.message ??
-        (axiosError.message || "Unknown error occurred");
-      const data = axiosError.response?.data;
+        typeof data === "string"
+          ? data
+          : (data?.detail ??
+            data?.message ??
+            data?.error ??
+            (Array.isArray(data?.errors) && data.errors[0]?.msg) ??
+            (typeof data?.errors === "object" &&
+              Object.values(data.errors)[0]) ??
+            (error.message || "Unknown error occurred"));
+
       throw new ApiError(status, message, data);
     }
 

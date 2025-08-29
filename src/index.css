@@ -292,6 +292,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: 0 -4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 
+.editor-wrap .ql-toolbar,
+.editor-wrap .p-editor-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.editor-wrap .ql-container,
+.editor-wrap .p-editor-content {
+  max-height: 60vh;
+  overflow: auto;
+}
+
 @media (min-width: 768px) {
   .box-shadow-input {
     box-shadow: none;

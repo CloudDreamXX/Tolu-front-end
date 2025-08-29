@@ -126,7 +126,11 @@ export function StepPractice({
             onChange={handleFileChange}
           />
           <div className="flex flex-col items-center gap-[8px]">
-            <MaterialIcon iconName="upload" size={48} />
+            <MaterialIcon
+              iconName="cloud_upload"
+              fill={1}
+              className="text-[#1C63DB] p-2 border rounded-xl"
+            />
             <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
               Click to upload
             </p>

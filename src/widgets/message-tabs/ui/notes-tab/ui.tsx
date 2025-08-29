@@ -12,7 +12,7 @@ import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
 import { NoteItem } from "widgets/notes-item/ui";
-import { useFilePicker } from "../messages-tab/useFilePicker";
+import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
 import NoRecommended from "shared/assets/images/NoRecommended.png";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -194,44 +194,50 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
     prevLenRef.current = curr;
   }, [dataForList.length, atBottom]);
 
-  if (!isLoading && dataForList.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center mt-20 text-center mb:mt-40">
-        <img src={NoRecommended} alt="No files" className="mb-6 md:mb-12" />
-        <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
-          No notes have been shared yet...
-        </h1>
-      </div>
-    );
-  }
+  const renderEmptyState = () => (
+    <div className="flex flex-col items-center justify-center h-full text-center">
+      <img src={NoRecommended} alt="No files" className="mb-6 md:mb-12" />
+      <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
+        No notes have been shared yet...
+      </h1>
+    </div>
+  );
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-col gap-2 pb-2" style={currentStyle}>
-        <Virtuoso
-          ref={virtuosoRef}
-          style={{ height: "100%" }}
-          data={dataForList}
-          itemContent={(_index, note) => (
-            <NoteItem note={note} onEdit={handleEdit} onDelete={handleDelete} />
-          )}
-          alignToBottom
-          followOutput="smooth"
-          atBottomStateChange={setAtBottom}
-          increaseViewportBy={{ top: 200, bottom: 400 }}
-          components={{
-            Scroller: ChatScroller,
-            Footer: () =>
-              isLoading || isSending || isUpdating ? (
-                <div className="flex justify-center py-2">
-                  <MaterialIcon
-                    iconName="progress_activity"
-                    className="w-5 h-5 animate-spin"
-                  />
-                </div>
-              ) : null,
-          }}
-        />
+        {dataForList.length === 0 && !isLoading ? (
+          renderEmptyState()
+        ) : (
+          <Virtuoso
+            ref={virtuosoRef}
+            style={{ height: "100%" }}
+            data={dataForList}
+            itemContent={(_index, note) => (
+              <NoteItem
+                note={note}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            )}
+            alignToBottom
+            followOutput="smooth"
+            atBottomStateChange={setAtBottom}
+            increaseViewportBy={{ top: 200, bottom: 400 }}
+            components={{
+              Scroller: ChatScroller,
+              Footer: () =>
+                isLoading && (
+                  <div className="flex justify-center py-2">
+                    <MaterialIcon
+                      iconName="progress_activity"
+                      className="animate-spin"
+                    />
+                  </div>
+                ),
+            }}
+          />
+        )}
       </div>
 
       <div className="p-3">
@@ -284,7 +290,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                 <div className="flex items-center gap-4">
                   <input {...getInputProps()} className="hidden" />
                   <Button value={"ghost"} className="p-0" onClick={open}>
-                    <MaterialIcon iconName="add" />
+                    <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
                   </Button>
                 </div>
                 <Button
@@ -297,7 +303,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                   {isSending || isUpdating ? (
                     <MaterialIcon
                       iconName="progress_activity"
-                      className="w-4 h-4 animate-spin"
+                      className="animate-spin"
                     />
                   ) : (
                     <>

@@ -304,8 +304,9 @@ export const ProfileSetup = () => {
                 onDrop={handleDrop}
               >
                 <MaterialIcon
-                  iconName="upload"
-                  className="w-8 h-8 text-blue-500"
+                  iconName="cloud_upload"
+                  fill={1}
+                  className="text-[#1C63DB] p-2 border rounded-xl"
                 />
                 <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
                   Click to upload

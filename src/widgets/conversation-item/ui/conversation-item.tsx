@@ -236,12 +236,15 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         placeholder="Title"
         className="text-xl font-bold w-full border border-[#008FF6] rounded-[16px] p-[16px] outline-none"
       />
-      <Editor
-        value={editedContent}
-        onTextChange={handleEditorChange}
-        style={{ height: "200px" }}
-        className="bg-white border border-[#008FF6] rounded-[16px] p-[16px] h-fit"
-      />
+
+      <div className="editor-wrap bg-white border rounded-[16px] p-0">
+        <Editor
+          value={editedContent}
+          onTextChange={handleEditorChange}
+          style={{ height: "200px" }}
+          className="bg-white border border-[#008FF6] rounded-[16px] p-[16px] h-fit"
+        />
+      </div>
 
       {isEditing && (
         <div className="flex flex-row self-end gap-[8px]">

@@ -46,7 +46,6 @@ export const LoginForm = () => {
 
     try {
       const response = await UserService.login(formData);
-
       if (!response) {
         throw new Error("No response from server");
       }
@@ -73,6 +72,7 @@ export const LoginForm = () => {
         throw new Error("Invalid server response format");
       }
     } catch (error: any) {
+      console.error(error);
       const message =
         error?.response?.data?.message ||
         error.message ||

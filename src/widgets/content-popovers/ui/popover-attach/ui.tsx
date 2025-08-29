@@ -1,6 +1,8 @@
+import { FileLibraryResponse } from "entities/files-library";
+import { useFetchAllFilesQuery } from "entities/files-library/filesLibraryApi";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { toast } from "shared/lib";
+import { cn, formatFileSize, toast } from "shared/lib";
 import {
   Badge,
   Button,
@@ -10,6 +12,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "shared/ui";
+
+const TABS = ["From Library", "Upload"] as const;
+type TabType = (typeof TABS)[number];
 
 interface AttachedFile {
   name: string;
@@ -43,6 +48,18 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [step, setStep] = useState<TabType>("Upload");
+  const [selectedFiles, setSelectedFiles] = useState<Set<FileLibraryResponse>>(
+    new Set()
+  );
+
+  const { data: filesLibrary } = useFetchAllFilesQuery(
+    {
+      page: 1,
+      per_page: 20,
+    },
+    { skip: step !== "From Library" }
+  );
 
   useEffect(() => {
     if (files && files.length > 0) {
@@ -56,14 +73,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       setAttachedFiles(newAttachedFiles);
     }
   }, []);
-
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -143,6 +152,127 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     setIsOpen(false);
   };
 
+  const handleSelectFileLibrary = (file: FileLibraryResponse) => {
+    const newSelectedFiles = new Set(selectedFiles);
+    if (newSelectedFiles.has(file)) {
+      newSelectedFiles.delete(file);
+    } else {
+      newSelectedFiles.add(file);
+    }
+    setSelectedFiles(newSelectedFiles);
+  };
+
+  const renderUpload = () => (
+    <>
+      {attachedFiles.length > 0 && (
+        <div className="flex flex-col gap-2 mb-4">
+          {attachedFiles.map((file, index) => (
+            <div
+              key={`${file.name}-${index}`}
+              className="flex flex-row items-center justify-between w-full px-3 py-2 bg-white border rounded-lg"
+            >
+              <div className="flex flex-row items-center flex-1 gap-2">
+                <MaterialIcon iconName="docs" fill={1} />
+                <div className="flex flex-col flex-1">
+                  <span className="text-sm font-medium text-gray-800 truncate">
+                    {file.name}
+                  </span>
+                  <span className="text-xs text-[#5F5F65]">{file.size}</span>
+                </div>
+              </div>
+              {!isDocumentPage && (
+                <button
+                  onClick={() => removeFile(index)}
+                  className="p-1 rounded hover:bg-red-50"
+                >
+                  <MaterialIcon
+                    iconName="delete"
+                    fill={1}
+                    size={16}
+                    className="text-red-500"
+                  />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <DropArea
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        dragActive={dragActive}
+        onBrowseClick={handleBrowseClick}
+      />
+
+      <Input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        className="hidden"
+        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif"
+        onChange={handleFileChange}
+      />
+
+      <div className="flex flex-row justify-between">
+        <Button
+          variant={"light-blue"}
+          className="w-[128px]"
+          onClick={handleSave}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant={"brightblue"}
+          className="w-[128px]"
+          onClick={handleSave}
+        >
+          Attach
+        </Button>
+      </div>
+    </>
+  );
+
+  const renderLibrary = () => (
+    <div className="overflow-y-auto max-h-52 custom-scroll">
+      {filesLibrary && filesLibrary.files.length > 0 ? (
+        <div className="grid grid-cols-2 gap-2 pr-2">
+          {filesLibrary?.files.map((file) => (
+            <button
+              key={file.id}
+              onClick={() => handleSelectFileLibrary(file)}
+              className={cn(
+                "flex flex-row items-center justify-between w-full px-3 py-2 bg-white border rounded-lg",
+                selectedFiles.has(file)
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-transparent hover:border-gray-300"
+              )}
+            >
+              <div className="flex flex-row items-center flex-1 gap-2">
+                <MaterialIcon
+                  iconName="draft"
+                  fill={1}
+                  className="text-blue-600"
+                />
+                <div className="flex flex-col items-start flex-1">
+                  <span className="font-medium text-gray-800 truncate ext-sm max-w-52">
+                    {file.original_filename}
+                  </span>
+                  <span className="text-xs text-[#5F5F65]">
+                    {formatFileSize(file.size)}
+                  </span>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-gray-500">No files in library.</p>
+      )}
+    </div>
+  );
+
   return (
     <Popover
       open={isOpen}
@@ -208,78 +338,28 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             </div>
           )}
 
-        {!isDocumentPage && attachedFiles.length > 0 && (
-          <div className="flex flex-col gap-2 mb-4">
-            {attachedFiles.map((file, index) => (
-              <div
-                key={`${file.name}-${index}`}
-                className="flex flex-row items-center justify-between w-full px-3 py-2 bg-white border rounded-lg"
-              >
-                <div className="flex flex-row items-center flex-1 gap-2">
-                  <MaterialIcon iconName="docs" fill={1} />
-                  <div className="flex flex-col flex-1">
-                    <span className="text-sm font-medium text-gray-800 truncate">
-                      {file.name}
-                    </span>
-                    <span className="text-xs text-[#5F5F65]">{file.size}</span>
-                  </div>
-                </div>
-                {!isDocumentPage && (
-                  <button
-                    onClick={() => removeFile(index)}
-                    className="p-1 rounded hover:bg-red-50"
-                  >
-                    <MaterialIcon
-                      iconName="delete"
-                      fill={1}
-                      size={16}
-                      className="text-red-500"
-                    />
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
         {!isDocumentPage && (
-          <DropArea
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            dragActive={dragActive}
-            onBrowseClick={handleBrowseClick}
-          />
-        )}
+          <>
+            <div className="flex items-center gap-4 p-2 overflow-x-auto bg-white border rounded-full max-w-fit no-scrollbar">
+              {TABS.map((s) => (
+                <button
+                  key={s}
+                  className={cn(
+                    "py-2.5 px-4 font-bold text-sm text-nowrap",
+                    s === step
+                      ? "bg-[#F2F4F6] border rounded-full glow-effect"
+                      : undefined
+                  )}
+                  onClick={() => setStep(s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
 
-        {!isDocumentPage && (
-          <Input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            className="hidden"
-            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif,.txt"
-            onChange={handleFileChange}
-          />
-        )}
-
-        {!isDocumentPage && (
-          <div className="flex flex-row justify-between">
-            <Button
-              variant={"light-blue"}
-              className="w-[128px]"
-              onClick={handleSave}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant={"brightblue"}
-              className="w-[128px]"
-              onClick={handleSave}
-            >
-              Attach
-            </Button>
-          </div>
+            {step === "From Library" && renderLibrary()}
+            {step === "Upload" && renderUpload()}
+          </>
         )}
       </PopoverContent>
     </Popover>

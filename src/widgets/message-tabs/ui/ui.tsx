@@ -291,12 +291,12 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                       onEditGroup?.(chat);
                     }}
                   >
-                    <MaterialIcon iconName="edit" className="w-4 h-4 mr-2" />
+                    <MaterialIcon iconName="edit" className="mr-2" />
                     Edit
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem className="text-red-600">
-                  <MaterialIcon iconName="delete" className="w-4 h-4 mr-2" />
+                  <MaterialIcon iconName="delete" className="mr-2" />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>

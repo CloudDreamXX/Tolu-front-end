@@ -1,8 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { chatApi } from "entities/chat/chatApi";
 import chatReducer from "entities/chat/chatsSlice";
+import downloadsReducer from "entities/chat/downloadSlice";
 import messagesReducer from "entities/chat/messagesSlice";
 import { clientReducer } from "entities/client/lib";
+import { filesLibraryApi } from "entities/files-library/filesLibraryApi";
 import { folderReducer } from "entities/folder";
 import { healthHistoryReducer } from "entities/health-history/lib";
 import { persistReducer, persistStore } from "redux-persist";
@@ -12,7 +14,6 @@ import { clientGlucoseReducer } from "./clientGlucoseSlice";
 import { clientMoodReducer } from "./clientMoodSlice";
 import { clientOnboardingReducer } from "./clientOnboardingSlice";
 import coachOnboardingReducer from "./coachOnboardingSlice";
-import downloadsReducer from "entities/chat/downloadSlice";
 
 const userPersistConfig = {
   key: "user",
@@ -36,6 +37,7 @@ const rootReducer = combineReducers({
   chats: chatReducer,
   messages: messagesReducer,
   [chatApi.reducerPath]: chatApi.reducer,
+  [filesLibraryApi.reducerPath]: filesLibraryApi.reducer,
   downloads: downloadsReducer,
 });
 
@@ -53,7 +55,9 @@ export const store = configureStore({
           "persist/REGISTER",
         ],
       },
-    }).concat(chatApi.middleware),
+    })
+      .concat(chatApi.middleware)
+      .concat(filesLibraryApi.middleware),
 });
 
 export const persistor = persistStore(store);

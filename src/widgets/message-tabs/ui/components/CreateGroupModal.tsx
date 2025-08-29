@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "shared/lib";
 import { Button, Dialog, DialogContent, DialogTitle, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
-import { useFilePicker } from "../messages-tab/useFilePicker";
+import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface CreateGroupModalProps {
@@ -185,9 +185,9 @@ export const CreateGroupModal = ({
             ) : (
               <>
                 <MaterialIcon
-                  iconName="upload"
+                  iconName="cloud_upload"
                   fill={1}
-                  className="text-[#1C63DB]"
+                  className="text-[#1C63DB] p-2 border rounded-xl"
                 />
                 <p className="text-[#1C63DB] font-semibold text-sm">
                   Click to upload

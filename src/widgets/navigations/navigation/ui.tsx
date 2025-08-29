@@ -183,7 +183,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
               className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
             >
               <div className="flex items-center p-2 rounded-[10px] bg-white shadow-lg">
-                <MaterialIcon iconName="exit_to_app" />
+                <MaterialIcon iconName="account_circle" />
               </div>
               Profile
             </button>

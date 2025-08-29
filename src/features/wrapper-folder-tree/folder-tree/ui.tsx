@@ -5,7 +5,7 @@ import {
   setFolders,
 } from "entities/folder";
 import { RootState } from "entities/store";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -13,7 +13,13 @@ import { cn, toast } from "shared/lib";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 import { MenuItem } from "widgets/EditDocumentPopup";
-import { getNumberOfContent, isSameRoot } from "../utils";
+import { findFilePath, getNumberOfContent, isSameRoot } from "../utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui";
 
 interface FolderTreeProps {
   folders: IFolder[];
@@ -56,6 +62,24 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   const [createPopup, setCreatePopup] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const expandedForDocRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!documentId) return;
+    if (expandedForDocRef.current === documentId) return;
+    if (!allFolders?.length) return;
+
+    const path = findFilePath(allFolders, documentId);
+    if (!path?.length) return;
+
+    for (const item of path) {
+      if (!openFolders.has(item.id)) {
+        const f = findFolder(item.id, allFolders);
+        if (f) toggleFolder(f);
+      }
+    }
+    expandedForDocRef.current = documentId;
+  }, [documentId, allFolders, toggleFolder, openFolders]);
 
   const findFolder = (
     folderId: string,
@@ -303,9 +327,20 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                     weight={300}
                     className="shrink-0 group-hover:stroke-blue-500"
                   />
-                  <span className="text-nowrap text-[14px] font-semibold group-hover:text-blue-500 truncate max-w-[80px] block">
-                    {content.aiTitle ?? content.title}
-                  </span>
+                  <TooltipProvider delayDuration={500}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="text-nowrap text-[14px] font-semibold group-hover:text-blue-500 truncate max-w-[80px] block">
+                          {content.aiTitle ?? content.title}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent className="z-50 p-[16px] max-w-[309px]">
+                        <div className="text-[#1B2559] text-sm leading-[1.4] font-medium">
+                          {content.aiTitle ?? content.title}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               ))}
 

@@ -172,6 +172,14 @@ export const API_ROUTES = {
     GET_NOTIFICATION_PREFERENCES: "/notifications/preferences",
     UPDATE_NOTIFICATION_PREFERENCES: "/notifications/preferences",
   },
+  FILES_LIBRARY: {
+    FETCH_ALL: "/files-library",
+    FETCH_ONE: "/files-library/{file_id}",
+    UPDATE: "files-library/{file_id}",
+    DELETE: "files-library/{file_id}",
+    DOWNLOAD: "files-library/{file_id}/download",
+    UPLOAD: "files-library/upload",
+  },
 };
 
 export const EXCLUDE_TOKEN_ENDPOINTS = [

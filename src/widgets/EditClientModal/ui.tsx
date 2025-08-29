@@ -246,6 +246,12 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
             <MaterialIcon iconName="account_circle" size={24} />
             <h2 className="text-[20px] font-[700]">{getTitle()}</h2>
           </div>
+          <span
+            className="absolute z-20 visible cursor-pointer md:hidden top-6 right-4"
+            onClick={onCancel}
+          >
+            <MaterialIcon iconName="close" />
+          </span>
         </div>
 
         {isNew ? (

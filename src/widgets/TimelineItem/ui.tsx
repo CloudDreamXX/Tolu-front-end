@@ -32,7 +32,13 @@ const iconsElList = {
     variant: "warning",
   },
   uploadSimple: {
-    el: <MaterialIcon iconName="upload" />,
+    el: (
+      <MaterialIcon
+        iconName="cloud_upload"
+        fill={1}
+        className="text-[#1C63DB] p-2 border rounded-xl"
+      />
+    ),
     variant: "info",
   },
   pencilSimple: {

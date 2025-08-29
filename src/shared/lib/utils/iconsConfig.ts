@@ -123,6 +123,7 @@ export const icons = [
   "female",
   "north_east",
   "content_copy",
+  "cloud_upload",
 ] as const;
 
 export type IconName = (typeof icons)[number];

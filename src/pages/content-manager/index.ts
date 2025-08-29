@@ -8,3 +8,4 @@ export * from "./published";
 export * from "./archived";
 export * from "./library";
 export * from "./messages";
+export * from "./files";

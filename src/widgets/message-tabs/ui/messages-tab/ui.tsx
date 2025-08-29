@@ -14,13 +14,14 @@ import { useSelector } from "react-redux";
 import EmptyChat from "shared/assets/images/EmptyChat.png";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
-import { useFilePicker } from "./useFilePicker";
+import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { useNavigate } from "react-router-dom";
 import { DaySeparator } from "../components/DaySeparator";
 import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { ChatScroller } from "../components/ChatScroller";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { EmptyCoachChat } from "../components/EmptyCoachChat";
 
 function getUniqueMessages(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
@@ -365,20 +366,30 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
     });
   };
 
+  const rendeerEmptyState = () => {
+    if (profile?.roleName === "Client") {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-center">
+          <img src={EmptyChat} alt="No files" className="mb-6 md:mb-12" />
+          <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
+            There are no messages yet...
+          </h1>
+          <p className="mt-2 text-base md:text-xl text-[#5F5F65]">
+            Start a conversation with your coach if you have a question or need
+            support.
+          </p>
+        </div>
+      );
+    }
+
+    return <EmptyCoachChat />;
+  };
+
   return (
     <>
       <div style={currentStyle} className="relative w-full pr-3">
         {listData.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <img src={EmptyChat} alt="No files" className="mb-6 md:mb-12" />
-            <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
-              There are no messages yet...
-            </h1>
-            <p className="mt-2 text-base md:text-xl text-[#5F5F65]">
-              Start a conversation with your coach if you have a question or
-              need support.
-            </p>
-          </div>
+          rendeerEmptyState()
         ) : (
           <Virtuoso
             key={chat.chat_id || "no-chat"}
@@ -454,12 +465,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
           {...getDropzoneProps()}
           onClick={() => ({})}
           footer={
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full text-[#1D1D1F]">
               {files.length > 0 && (
                 <div className="mt-1">
-                  <p className="text-sm font-medium text-[#1D1D1F]">
-                    Attached Files:
-                  </p>
+                  <p className="text-sm font-medium">Attached Files:</p>
                   <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
                     {items.map((file) => (
                       <div key={file.id} className="flex items-center gap-2">
@@ -483,11 +492,11 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                   </div>
                 </div>
               )}
-              <div className="flex items-center justify-between w-full">
+              <div className="flex items-center justify-between w-full ">
                 <div className="flex items-center gap-4">
                   <input {...getInputProps()} className="hidden" />
                   <Button value={"ghost"} className="p-0" onClick={open}>
-                    <MaterialIcon iconName="add" />
+                    <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
                   </Button>
                   <div className="relative">
                     <Button
@@ -498,7 +507,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                         e.stopPropagation();
                       }}
                     >
-                      <MaterialIcon iconName="sentiment_satisfied" />
+                      <MaterialIcon
+                        iconName="sentiment_satisfied"
+                        className="text-[#1D1D1F]"
+                      />
                     </Button>
                     {emojiModalOpen && (
                       <div className="absolute mb-2 bottom-full">
