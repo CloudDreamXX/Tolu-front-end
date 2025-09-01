@@ -144,7 +144,7 @@ export function StepPractice({
         </label>
 
         {selectedFiles.length > 0 && (
-          <div className="flex gap-[16px] flex-wrap justify-start w-full w-[150px] h-[150px]">
+          <div className="flex gap-[16px] flex-wrap justify-start w-full">
             {selectedFiles.map((file, index) => {
               const preview = previews[index];
               return (

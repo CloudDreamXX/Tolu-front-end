@@ -271,7 +271,7 @@ export const CouchEditProfileModal = ({
           </div>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[60vh] px-6 md:flex hidden">
+        <ScrollArea className="md:max-h-[60vh] px-6 flex">
           <StepBody
             id={steps[step].id}
             data={dataState}
@@ -280,16 +280,6 @@ export const CouchEditProfileModal = ({
             setLicenseFiles={setLicenseFiles}
           />
         </ScrollArea>
-
-        <div className="block px-6 md:hidden">
-          <StepBody
-            id={steps[step].id}
-            data={dataState}
-            setDataState={setDataState}
-            setProfilePhoto={setProfilePhoto}
-            setLicenseFiles={setLicenseFiles}
-          />
-        </div>
 
         <DialogFooter className="flex flex-row items-center justify-between gap-1 p-4 md:pt-8 md:p-6">
           <Button variant="blue2" onClick={close} className="w-32">
