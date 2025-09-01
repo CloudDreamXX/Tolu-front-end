@@ -65,18 +65,16 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
   return (
     <>
       <button
-        className="bg-[#DDEBF6] rounded-full p-[8px] flex items-center justify-center cursor-pointer"
+        className="bg-[#DDEBF6] rounded-full p-[4px] flex items-center justify-center cursor-pointer"
         onClick={
-          documentId && onStatusChange
-            ? onDocumentStatusChange
-            : () => setIsOpen(true)
+          documentId ? () => onDocumentStatusChange() : () => setIsOpen(true)
         }
       >
-        {(documentId && onStatusChange && status === "saved_for_later") || (
+        {documentId && (
           <MaterialIcon
             iconName="bookmark"
-            fill={isBookmarked ? 1 : 0}
-            className="text-blue-600"
+            fill={status === "saved_for_later" ? 1 : 0}
+            className="text-blue-600 "
           />
         )}
       </button>

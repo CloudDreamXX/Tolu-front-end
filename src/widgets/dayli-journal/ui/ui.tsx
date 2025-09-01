@@ -102,7 +102,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           await SymptomsTrackerService.getSymptomByDate(selectedDate);
         const data = response.data;
 
-        if (data === null) {
+        if (data === null || !data.length) {
           setUserNote("");
           setSelectedSymptoms([]);
           setDurationCategory("");
@@ -123,31 +123,31 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           setSelectedMealExamples([]);
           setSummaryView(false);
         } else {
-          setUserNote(data.user_notes || "");
-          setSelectedSymptoms(data.symptoms || []);
-          setDurationCategory(data.duration_category || "");
-          setSelectedTriggers(data.suspected_triggers || []);
-          setMoodValue(mapSleepQualityToMoodValue(data.sleep_quality || ""));
+          setUserNote(data[0].user_notes || "");
+          setSelectedSymptoms(data[0].symptoms || []);
+          setDurationCategory(data[0].duration_category || "");
+          setSelectedTriggers(data[0].suspected_triggers || []);
+          setMoodValue(mapSleepQualityToMoodValue(data[0].sleep_quality || ""));
           setSleep({
-            hours: data.sleep_hours || 0,
-            minutes: data.sleep_minutes || 0,
-            wokeUpTimes: data.times_woke_up || 0,
-            fellBack: data.how_fell_asleep || "Easy",
+            hours: data[0].sleep_hours || 0,
+            minutes: data[0].sleep_minutes || 0,
+            wokeUpTimes: data[0].times_woke_up || 0,
+            fellBack: data[0].how_fell_asleep || "Easy",
           });
           setMeal({
-            notes: data.meal_notes || "",
-            breakfast: data.meal_details?.find(
+            notes: data[0].meal_notes || "",
+            breakfast: data[0].meal_details?.find(
               (meal) => meal.meal_type === "breakfast"
             ) || { food_items: "", time: "" },
-            lunch: data.meal_details?.find(
+            lunch: data[0].meal_details?.find(
               (meal) => meal.meal_type === "lunch"
             ) || { food_items: "", time: "" },
-            dinner: data.meal_details?.find(
+            dinner: data[0].meal_details?.find(
               (meal) => meal.meal_type === "dinner"
             ) || { food_items: "", time: "" },
           });
           setSelectedMealExamples(
-            data.meal_notes ? data.meal_notes.split(",") : []
+            data[0].meal_notes ? data[0].meal_notes.split(",") : []
           );
           setSummaryView(true);
         }
@@ -357,7 +357,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto inset-0 flex lg:max-w-[800px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)]">
+    <div className="bg-white md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto inset-0 flex lg:max-w-[800px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)]">
       <CalendarBlock
         selectedDate={selectedDate}
         handleDateChange={handleDateChange}
@@ -983,7 +983,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         </BlockWrapper> */}
       </div>
 
-      <BlockWrapper className="flex flex-row items-center justify-between rounded-none md:rounded-t-none">
+      <BlockWrapper className="flex flex-row items-center justify-between rounded-none md:rounded-t-none mt-auto">
         <Button variant="blue2" onClick={onCancel} className="w-[128px]">
           {summaryView ? "Close" : "Cancel"}
         </Button>

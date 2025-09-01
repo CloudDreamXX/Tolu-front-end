@@ -115,7 +115,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
         <div className="mb-4">
           <label className="block mb-2 font-medium">
-            What did you like? <span className="text-gray-500">(Optional)</span>
+            Your comments <span className="text-gray-500">(Optional)</span>
           </label>
           <Input
             placeholder="Leave your short feedback"

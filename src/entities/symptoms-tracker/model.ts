@@ -2,7 +2,7 @@ import { FellBackOption } from "widgets/dayli-journal/ui";
 
 export interface SymptomResponse {
   success: boolean;
-  data: SymptomData;
+  data: SymptomData[];
 }
 
 export interface MealDetail {
