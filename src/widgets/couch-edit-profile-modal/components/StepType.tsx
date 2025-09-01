@@ -56,7 +56,8 @@ export function StepType({ data, setDataState }: StepTypeProps) {
               <MaterialIcon
                 iconName="help"
                 size={16}
-                className="text-[#1B2559] "
+                fill={1}
+                className="text-[#1C63DB]"
               />
             </TooltipWrapper>
           </div>

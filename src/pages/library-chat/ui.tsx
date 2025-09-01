@@ -1,5 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { setLastChatId } from "entities/client/lib";
+import {
+  addMessageToChat,
+  clearActiveChatHistory,
+  handleRegenerateAiLastMessage,
+  setActiveChat,
+  setLastChatId,
+  setMessagesToChat,
+} from "entities/client/lib";
 import { CoachService } from "entities/coach";
 import { HealthHistoryService } from "entities/health-history";
 import { setHealthHistory, setLoading } from "entities/health-history/lib";
@@ -45,7 +52,6 @@ export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const [messages, setMessages] = useState<Message[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [streamingText, setStreamingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +71,12 @@ export const LibraryChat = () => {
 
   const isExistingChat = chatId && !chatId.startsWith("new_chat_");
   const chat = useSelector((state: RootState) => state.client.chat);
+  const activeChatKey = useSelector(
+    (state: RootState) => state.client.activeChatKey
+  );
+  const chatState = useSelector(
+    (state: RootState) => state.client.chatHistory[activeChatKey] || []
+  );
 
   const userPersisted = localStorage.getItem("persist:user");
   let isCoach = false;
@@ -88,10 +100,22 @@ export const LibraryChat = () => {
       ? SWITCH_CONFIG.personalize
       : SWITCH_CONFIG.default;
   const [selectedSwitch, setSelectedSwitch] = useState<string>(
-    config.options[0] as string
+    config.defaultOption
   );
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (activeChatKey) {
+      setSelectedSwitch(activeChatKey);
+    } else {
+      const switchKey = documentId
+        ? SWITCH_CONFIG.personalize.options[0]
+        : SWITCH_CONFIG.default.options[0];
+      dispatch(setActiveChat(switchKey));
+      setSelectedSwitch(switchKey);
+    }
+  }, [activeChatKey, dispatch]);
 
   const caseForm = useForm<FormValues>({
     resolver: zodResolver(caseBaseSchema),
@@ -220,7 +244,6 @@ export const LibraryChat = () => {
   useEffect(() => {
     const initialize = async () => {
       if (initialMessage && location.state?.message) {
-        setMessages([]);
         setError(null);
         setChatTitle("");
         initialSearchDone.current = false;
@@ -233,7 +256,9 @@ export const LibraryChat = () => {
           timestamp: new Date(),
         };
 
-        setMessages([userMessage]);
+        dispatch(
+          addMessageToChat({ chatKey: activeChatKey, message: userMessage })
+        );
 
         if (isExistingChat && location.state?.isNewSearch) {
           const newChatId = `new_chat_${Date.now()}`;
@@ -320,7 +345,9 @@ export const LibraryChat = () => {
           (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
         );
 
-        setMessages(chatMessages);
+        dispatch(
+          setMessagesToChat({ chatKey: chatId, messages: chatMessages })
+        );
 
         if (sessionData.search_results[0]?.title) {
           setChatTitle(sessionData.search_results[0].title);
@@ -374,7 +401,9 @@ export const LibraryChat = () => {
             timestamp: new Date(),
           };
 
-          setMessages((prev) => [...prev, aiMessage]);
+          dispatch(
+            addMessageToChat({ chatKey: activeChatKey, message: aiMessage })
+          );
           setStreamingText("");
 
           if (finalData.chat_id && finalData.chat_id !== currentChatId) {
@@ -463,7 +492,10 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
       timestamp: new Date(),
       images: previewImages,
     };
-    setMessages((prev) => [...prev, userMessage]);
+
+    dispatch(
+      addMessageToChat({ chatKey: activeChatKey, message: userMessage })
+    );
 
     setIsSearching(true);
     setStreamingText("");
@@ -517,7 +549,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         document: str,
       };
 
-      setMessages((prev) => [...prev, aiMessage]);
+      dispatch(
+        addMessageToChat({ chatKey: activeChatKey, message: aiMessage })
+      );
       setStreamingText("");
 
       if (finalData.chat_id && finalData.chat_id !== currentChatId) {
@@ -586,20 +620,14 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
   };
 
   const handleRegenerateResponse = async () => {
-    if (messages.length < 2 || isSearching) return;
+    if (chatState.length < 2 || isSearching) return;
 
-    const lastUserMessage = [...messages]
+    const lastUserMessage = [...chatState]
       .reverse()
       .find((msg) => msg.type === "user");
     if (!lastUserMessage) return;
 
-    setMessages((prev) => {
-      const lastAiIndex = prev.map((msg) => msg.type).lastIndexOf("ai");
-      if (lastAiIndex !== -1) {
-        return prev.slice(0, lastAiIndex);
-      }
-      return prev;
-    });
+    dispatch(handleRegenerateAiLastMessage());
 
     setIsSearching(true);
     setStreamingText("");
@@ -635,7 +663,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             timestamp: new Date(),
           };
 
-          setMessages((prev) => [...prev, aiMessage]);
+          dispatch(
+            addMessageToChat({ chatKey: activeChatKey, message: aiMessage })
+          );
           setStreamingText("");
         },
         (error) => {
@@ -656,7 +686,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     (currentChatId ? `Chat ${currentChatId.slice(0, 8)}...` : "New Chat");
 
   const isEmpty =
-    messages.length === 0 &&
+    chatState.length === 0 &&
     !isSearching &&
     !streamingText &&
     !isLoadingSession;
@@ -706,7 +736,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     const newChatId = `new_chat_${Date.now()}`;
 
     setCurrentChatId(newChatId);
-    setMessages([]);
+    dispatch(clearActiveChatHistory());
     setStreamingText("");
     setChatTitle("");
     setError(null);
@@ -736,22 +766,21 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         <ChatBreadcrumb displayChatTitle={displayChatTitle} />
       </div>
       <div className="flex flex-row flex-1 w-full h-full gap-6 md:relative">
-        {messages.length > 0 && (
-          <div className="hidden xl:block">
-            <ChatActions
-              onRegenerate={handleRegenerateResponse}
-              isSearching={isSearching}
-              hasMessages={messages.length >= 2}
-              isHistoryPopup
-              fromPath={location.state?.from?.pathname ?? null}
-              initialRating={
-                chat.length ? (chat[0].liked ? 5 : undefined) : undefined
-              }
-              onReadAloud={handleReadAloud}
-              isReadingAloud={isReadingAloud}
-            />
-          </div>
-        )}
+        <div className="hidden xl:block">
+          <ChatActions
+            chatState={chatState}
+            onRegenerate={handleRegenerateResponse}
+            isSearching={isSearching}
+            hasMessages={chatState.length >= 2}
+            isHistoryPopup
+            fromPath={location.state?.from?.pathname ?? null}
+            initialRating={
+              chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+            }
+            onReadAloud={handleReadAloud}
+            isReadingAloud={isReadingAloud}
+          />
+        </div>
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
@@ -860,7 +889,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             isSwitch(SWITCH_KEYS.CASE) ? (
               <>
                 <MessageList
-                  messages={messages}
+                  messages={chatState}
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
@@ -896,28 +925,27 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 className={`overflow-y-auto h-full px-[16px] md:px-0 md:mb-[16px] xl:mb-0`}
               >
                 <MessageList
-                  messages={messages}
+                  messages={chatState}
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
                 />
               </div>
             )}
-            {messages.length > 0 && (
-              <div className={`xl:hidden block px-[16px] w-fit mx-auto`}>
-                <ChatActions
-                  onRegenerate={handleRegenerateResponse}
-                  isSearching={isSearching}
-                  hasMessages={messages.length >= 2}
-                  isHistoryPopup
-                  initialRating={
-                    chat.length ? (chat[0].liked ? 5 : undefined) : undefined
-                  }
-                  onReadAloud={handleReadAloud}
-                  isReadingAloud={isReadingAloud}
-                />
-              </div>
-            )}
+            <div className={`xl:hidden block px-[16px] w-fit mx-auto`}>
+              <ChatActions
+                chatState={chatState}
+                onRegenerate={handleRegenerateResponse}
+                isSearching={isSearching}
+                hasMessages={chatState.length >= 2}
+                isHistoryPopup
+                initialRating={
+                  chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+                }
+                onReadAloud={handleReadAloud}
+                isReadingAloud={isReadingAloud}
+              />
+            </div>
 
             <LibraryChatInput
               className={`mt-4 xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}

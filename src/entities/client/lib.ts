@@ -124,6 +124,19 @@ const clientSlice = createSlice({
       state.selectedChatFolder = null;
       state.lastChatId = "";
     },
+    handleRegenerateAiLastMessage: (state) => {
+      const key = state.activeChatKey;
+
+      if (!key) return;
+
+      const history = state.chatHistory[key];
+      if (!Array.isArray(history) || history.length === 0) return;
+
+      const lastAiIndex = history.map((m) => m.type).lastIndexOf("ai");
+      if (lastAiIndex === -1) return;
+
+      history.splice(lastAiIndex);
+    },
   },
 });
 
@@ -144,5 +157,6 @@ export const {
   clearChatHistoryExceptActive,
   clearAllChatHistory,
   clearActiveChatHistory,
+  handleRegenerateAiLastMessage,
 } = clientSlice.actions;
 export const clientReducer = clientSlice.reducer;

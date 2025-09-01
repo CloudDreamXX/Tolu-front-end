@@ -983,8 +983,18 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         </BlockWrapper> */}
       </div>
 
-      <BlockWrapper className="flex flex-row items-center justify-between rounded-none md:rounded-t-none mt-auto">
-        <Button variant="blue2" onClick={onCancel} className="w-[128px]">
+      <BlockWrapper className="flex flex-row items-center justify-between rounded-none md:rounded-t-none">
+        <Button
+          variant="blue2"
+          onClick={() => {
+            if (!summaryView) {
+              setSummaryView(true);
+            } else {
+              onCancel();
+            }
+          }}
+          className="w-[128px]"
+        >
           {summaryView ? "Close" : "Cancel"}
         </Button>
         {summaryView ? (

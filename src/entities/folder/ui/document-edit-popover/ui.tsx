@@ -51,7 +51,7 @@ export const DocumentEditPopover: React.FC<IPopoverDocumentEditProps> = ({
         variant={"ghost"}
         className="justify-start h-6 p-0 font-medium text-destructive"
       >
-        <MaterialIcon iconName="delete" /> Delete
+        <MaterialIcon iconName="delete" className="text-[#FF1F0F]" /> Delete
       </Button>
     </PopoverContent>
   </Popover>

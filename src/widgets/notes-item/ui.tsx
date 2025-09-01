@@ -138,6 +138,7 @@ export const NoteItem = memo(function NoteItem({
         >
           <MaterialIcon
             iconName="delete"
+            fill={1}
             className="w-4 h-4 p-0 text-red-500"
           />
         </Button>

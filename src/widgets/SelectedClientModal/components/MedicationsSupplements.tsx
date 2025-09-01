@@ -84,11 +84,11 @@ const RowView: React.FC<{ med: Medication; onEdit: () => void }> = ({
 
     <button
       onClick={onEdit}
-      className="absolute right-[16px] md:right-0 top-[16px] md:top-1 p-1 rounded hover:bg-black/5"
+      className="absolute right-[16px] md:right-0 top-1/2 -translate-y-1/2 md:-bottom-5 p-1 rounded hover:bg-black/5"
       title="Edit"
       aria-label="Edit row"
     >
-      <MaterialIcon iconName="edit" />
+      <MaterialIcon iconName="edit" fill={1} />
     </button>
   </div>
 );

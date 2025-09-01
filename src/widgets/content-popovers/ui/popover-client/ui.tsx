@@ -29,10 +29,13 @@ import { SelectedClientModal } from "widgets/SelectedClientModal";
 interface IPopoverClientProps {
   documentId?: string;
   documentName?: string;
-  setClientId?: (clientId: string | null) => void;
+  setClientId?: (clientIds: string | null) => void;
   customTrigger?: React.ReactNode;
   initialSelectedClientsId?: string[] | null;
   refreshSharedClients?: () => Promise<void>;
+  multiple?: boolean;
+  maxSelections?: number;
+  allowSingleDeselect?: boolean;
 }
 
 export const PopoverClient: React.FC<IPopoverClientProps> = ({
@@ -42,8 +45,13 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   customTrigger,
   refreshSharedClients,
   initialSelectedClientsId,
+  multiple = false,
+  maxSelections,
+  allowSingleDeselect = true,
 }) => {
-  const [selectedClient, setSelectedClient] = useState<string | null>("");
+  const [selectedClients, setSelectedClients] = useState<string[]>(
+    initialSelectedClientsId ?? []
+  );
   const [selectedFullClient, setSelectedFullClient] = useState<ClientProfile>({
     client_info: {
       id: "",
@@ -74,8 +82,8 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
     personal_insights: {},
     labs: {},
   });
-  const [tempSelectedClient, setTempSelectedClient] = useState<string | null>(
-    initialSelectedClientsId ? initialSelectedClientsId[0] : null
+  const [tempSelectedClients, setTempSelectedClients] = useState<Set<string>>(
+    new Set(initialSelectedClientsId ?? [])
   );
   const [search, setSearch] = useState<string>("");
   const [clients, setClients] = useState<Client[]>([]);
@@ -136,39 +144,103 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
     fetchClients();
   }, [token]);
 
+  useEffect(() => {
+    if (initialSelectedClientsId) {
+      setSelectedClients(initialSelectedClientsId);
+      setTempSelectedClients(new Set(initialSelectedClientsId));
+    }
+  }, [initialSelectedClientsId]);
+
+  useEffect(() => {
+    if (popoverOpen) {
+      setTempSelectedClients(new Set(selectedClients));
+    }
+  }, [popoverOpen, selectedClients]);
+
+  const areSetsEqual = (a: string[], b: Set<string>) => {
+    if (a.length !== b.size) return false;
+    return a.every((val) => b.has(val));
+  };
+
   const filteredClients = useMemo(() => {
     return clients.filter((client) =>
       client.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, clients]);
 
-  const handleSave = async () => {
-    setClientId?.(tempSelectedClient);
+  const toggleClient = (clientId: string) => {
+    setTempSelectedClients((prev) => {
+      const next = new Set(prev);
 
-    if (!documentId) return;
-
-    try {
-      if (selectedClient && selectedClient !== tempSelectedClient) {
-        const revokeData: ShareContentData = {
-          content_id: documentId,
-          client_id: selectedClient,
-        };
-        await CoachService.revokeContent(revokeData);
+      if (multiple) {
+        const alreadySelected = next.has(clientId);
+        if (alreadySelected) {
+          next.delete(clientId);
+        } else {
+          if (typeof maxSelections === "number" && next.size >= maxSelections) {
+            return prev;
+          }
+          next.add(clientId);
+        }
+      } else {
+        const isSame = next.has(clientId);
+        next.clear();
+        if (!(isSame && allowSingleDeselect)) {
+          next.add(clientId);
+        }
       }
 
-      if (tempSelectedClient && tempSelectedClient !== selectedClient) {
-        const data: ShareContentData = {
-          content_id: documentId,
-          client_id: tempSelectedClient,
-        };
-        await CoachService.shareContent(
-          data,
-          practitionerName || "Practitioner",
-          documentName || "document"
+      return next;
+    });
+  };
+
+  const handleSave = async () => {
+    const tempArray = Array.from(tempSelectedClients);
+
+    if (!multiple) {
+      setClientId?.(tempArray[0] ?? null);
+    }
+
+    if (!documentId) {
+      setSelectedClients(tempArray);
+      return;
+    }
+
+    try {
+      const prevSet = new Set(selectedClients);
+      const revokeIds = Array.from(prevSet).filter(
+        (id) => !tempSelectedClients.has(id)
+      );
+
+      if (revokeIds.length > 0) {
+        await Promise.all(
+          revokeIds.map((id) =>
+            CoachService.revokeContent({
+              content_id: documentId,
+              client_id: id,
+            })
+          )
         );
       }
 
-      setSelectedClient(tempSelectedClient);
+      const shareIds = tempArray.filter((id) => !prevSet.has(id));
+      if (shareIds.length > 0) {
+        await Promise.all(
+          shareIds.map((clientId) => {
+            const data: ShareContentData = {
+              content_id: documentId,
+              client_id: clientId,
+            };
+            return CoachService.shareContent(
+              data,
+              practitionerName || "Practitioner",
+              documentName || "document"
+            );
+          })
+        );
+      }
+
+      setSelectedClients(tempArray);
       await refreshSharedClients?.();
     } catch (err) {
       console.error("Error sharing/revoking content:", err);
@@ -338,8 +410,8 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
             onClick={() => setPopoverOpen(true)}
           >
             <MaterialIcon iconName="account_circle" size={24} fill={1} />
-            {selectedClient ||
-              (tempSelectedClient && (
+            {selectedClients ||
+              (tempSelectedClients && (
                 <Badge
                   variant="destructive"
                   className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
@@ -367,29 +439,29 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
         <ScrollArea className="h-[139px] w-full">
           <div className="flex flex-col gap-2 pr-3">
             {filteredClients.map((client) => (
-              <div className="flex items-center justify-between">
+              <div
+                key={client.client_id}
+                className="flex items-center justify-between"
+              >
                 <button
                   key={client.client_id}
                   className="flex items-center w-full py-2 px-[14px] gap-2 rounded-md cursor-pointer bg-white"
-                  onClick={() => {
-                    setTempSelectedClient((prev) =>
-                      prev === client.client_id ? null : client.client_id
-                    );
-                    if (setClientId) {
-                      setClientId(tempSelectedClient);
-                    }
-                  }}
+                  onClick={() => toggleClient(client.client_id)}
                 >
                   <Checkbox
                     id={`client-${client.client_id}`}
-                    checked={tempSelectedClient === client.client_id}
+                    checked={tempSelectedClients.has(client.client_id)}
                     value={client.client_id}
                     className={cn(
-                      "w-4 h-4 p-0.5 border-gray-300 rounded-full",
-                      tempSelectedClient === client.client_id &&
+                      !multiple && "w-4 h-4 border-gray-300 rounded-full",
+                      tempSelectedClients.has(client.client_id) &&
                         "border-gray-600"
                     )}
-                    checkClassName="min-w-2.5 w-2.5 h-2.5 border-gray-300 rounded-full bg-gray-600 text-gray-600"
+                    checkClassName={cn(
+                      !multiple &&
+                        "min-w-2.5 w-2.5 h-2.5 border-gray-300 rounded-full bg-gray-600 text-gray-600"
+                    )}
+                    customCheck={!multiple}
                   />
                   <label
                     htmlFor={`client-${client.client_id}`}
@@ -416,8 +488,8 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
             setPopoverOpen(false);
           }}
           disabled={
-            tempSelectedClient === selectedClient ||
-            (!tempSelectedClient && !selectedClient)
+            areSetsEqual(selectedClients, tempSelectedClients) ||
+            (!tempSelectedClients && !selectedClients)
           }
         >
           Save

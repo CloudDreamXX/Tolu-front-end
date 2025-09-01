@@ -108,7 +108,7 @@ export const RedirectContentToLibrary = () => {
     const fetchContent = async () => {
       if (!documentId) return;
 
-      if (userRole === "Coach" && token) {
+      if (userRole === "Practitioner" && token) {
         dispatch(logout());
         localStorage.setItem(
           "redirectAfterLogin",

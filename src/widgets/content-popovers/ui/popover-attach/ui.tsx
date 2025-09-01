@@ -345,7 +345,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                 <button
                   key={s}
                   className={cn(
-                    "py-2.5 px-4 font-bold text-sm text-nowrap",
+                    "py-2.5 px-4 font-bold text-sm text-nowrap flex items-center justify-center gap-2.5",
                     s === step
                       ? "bg-[#F2F4F6] border rounded-full glow-effect"
                       : undefined
@@ -353,6 +353,12 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                   onClick={() => setStep(s)}
                 >
                   {s}
+
+                  {s === "From Library" && selectedFiles.size > 0 && (
+                    <span className="w-5 h-5 rounded-full bg-[#1C63DB] flex justify-center items-center text-white text-[10px]">
+                      {selectedFiles.size}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

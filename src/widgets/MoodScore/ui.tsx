@@ -112,7 +112,7 @@ export const MoodScore: React.FC = () => {
                 {moodLabels[moodIndex]}
               </h2>
               <span className="w-[20px] h-[20px]">
-                <MaterialIcon iconName="help" fill={1} size={20} />{" "}
+                <MaterialIcon iconName="help" fill={1} size={20} />
               </span>
             </div>
           </div>

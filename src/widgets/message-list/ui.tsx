@@ -4,6 +4,7 @@ import {
   MessageBubble,
   StreamingResponse,
 } from "features/chat";
+import { useEffect, useRef } from "react";
 
 interface MessageListProps {
   messages: Message[];
@@ -17,18 +18,59 @@ export const MessageList: React.FC<MessageListProps> = ({
   isSearching,
   streamingText,
   error,
-}) => (
-  <div
-    className={`flex-1 w-full ${messages.length && "py-4"} overflow-y-auto bg-white rounded-b-xl h-full`}
-  >
-    <div className="max-h-full md:px-4 space-y-4 overflow-auto">
-      {messages.map((message) => (
-        <MessageBubble key={message.id} message={message} />
-      ))}
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
+  const prevSearchingRef = useRef(isSearching);
 
-      {isSearching && <StreamingResponse streamingText={streamingText} />}
+  const scrollToBottom = (behavior: ScrollBehavior = "auto") => {
+    endRef.current?.scrollIntoView({ block: "end", behavior });
+  };
 
-      {error && <ErrorDisplay error={error} />}
+  const isNearBottom = () => {
+    const el = containerRef.current;
+    if (!el) return true;
+    const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
+    return distance < 48;
+  };
+
+  useEffect(() => {
+    scrollToBottom("auto");
+  }, []);
+
+  useEffect(() => {
+    if (isSearching && isNearBottom()) {
+      scrollToBottom("auto");
+    }
+  }, [streamingText]);
+
+  useEffect(() => {
+    const wasSearching = prevSearchingRef.current;
+    prevSearchingRef.current = isSearching;
+
+    if (wasSearching && !isSearching) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => scrollToBottom("smooth"));
+      });
+    }
+  }, [isSearching, messages.length]);
+  return (
+    <div
+      ref={containerRef}
+      className={`flex-1 w-full ${messages.length ? "py-4" : ""} overflow-y-auto bg-white rounded-b-xl h-full`}
+    >
+      <div className="space-y-4 md:px-4">
+        {messages.map((message) => (
+          <MessageBubble key={message.id} message={message} />
+        ))}
+
+        {isSearching && <StreamingResponse streamingText={streamingText} />}
+
+        {error && <ErrorDisplay error={error} />}
+
+        {/* sentinel */}
+        <div ref={endRef} style={{ height: 1 }} />
+      </div>
     </div>
-  </div>
-);
+  );
+};

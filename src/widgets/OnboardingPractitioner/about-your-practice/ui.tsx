@@ -374,7 +374,11 @@ export const AboutYourPractice = () => {
                         onClick={() => handleDeleteFile(index)}
                         className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center text-sm"
                       >
-                        <MaterialIcon iconName="delete" />
+                        <MaterialIcon
+                          iconName="delete"
+                          fill={1}
+                          className="text-red-500"
+                        />
                       </button>
                     </div>
                   );
@@ -384,7 +388,7 @@ export const AboutYourPractice = () => {
           </div>
 
           <div className="flex w-full md:ml-[32px] text-[#1C63DB] gap-2 items-center">
-            <MaterialIcon iconName="lightbulb" />
+            <MaterialIcon iconName="lightbulb" fill={1} />
             <p className="font-[Nunito] text-[16px] font-medium ">
               Data is securely saved with a HIPAA-compliant notice
             </p>

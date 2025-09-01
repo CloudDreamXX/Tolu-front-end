@@ -126,7 +126,8 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
                   >
                     <MaterialIcon
                       iconName="delete"
-                      className="text-destructive"
+                      fill={1}
+                      className="text-[#FF1F0F]"
                     />
                     Delete
                   </Button>

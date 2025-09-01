@@ -83,11 +83,11 @@ const Biometrics: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => clearField(key)}
-                className="text-[#E86C4A] hover:opacity-80"
+                className="text-[#FF1F0F] hover:opacity-80"
                 aria-label={`Clear ${label}`}
                 title="Clear"
               >
-                <MaterialIcon iconName="delete" />
+                <MaterialIcon iconName="delete" fill={1} />
               </button>
             )}
           </div>

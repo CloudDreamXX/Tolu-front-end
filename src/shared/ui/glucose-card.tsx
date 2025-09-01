@@ -159,11 +159,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
                       !localDate && "text-muted-foreground"
                     )}
                   >
-                    <MaterialIcon
-                      iconName="calendar_today"
-                      fill={1}
-                      className="w-4 h-4 mr-2"
-                    />
+                    <MaterialIcon iconName="calendar_today" fill={1} />
                     {localDate ? format(localDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>

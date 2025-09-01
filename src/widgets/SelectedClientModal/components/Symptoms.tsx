@@ -92,7 +92,7 @@ const Symptoms: React.FC<Props> = ({
                     aria-label="Remove"
                     title="Remove"
                   >
-                    <MaterialIcon iconName="delete" />
+                    <MaterialIcon iconName="delete" fill={1} />
                   </button>
                 </div>
               ))}

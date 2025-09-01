@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
 import {
   AuthPageWrapper,
@@ -13,7 +14,6 @@ import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "./components";
 import { buttons } from "./mock";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const OnboardingMain = () => {
   const nav = useNavigate();
@@ -173,7 +173,7 @@ export const OnboardingMain = () => {
           </div>
 
           {isOtherSelected() && (
-            <div className="w-full mt-2 flex justify-center">
+            <div className="flex justify-center w-full mt-2">
               <input
                 type="text"
                 value={otherText}

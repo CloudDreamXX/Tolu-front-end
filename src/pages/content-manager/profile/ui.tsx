@@ -236,7 +236,7 @@ export const ContentManagerProfile = () => {
                 <h4 className="text-[#5F5F65] text-[18px] font-[500] mb-[16px]">
                   Change password:
                 </h4>
-                <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col w-full gap-4">
                   <div className="flex flex-col gap-[10px]">
                     <p className="text-[16px] font-semibold text-[#1D1D1F]">
                       Current password
@@ -327,6 +327,7 @@ export const ContentManagerProfile = () => {
                 icon={
                   <MaterialIcon
                     iconName="lightbulb"
+                    fill={1}
                     className="w-[24px] h-[24px] text-[#1B2559]"
                   />
                 }

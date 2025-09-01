@@ -10,7 +10,7 @@ export const SelectType = () => {
   const titlesAndIcosn = [
     {
       title: "Clinical & Licensed Healthcare Providers",
-      icon: <MaterialIcon iconName="lightbulb" size={20} />,
+      icon: <MaterialIcon iconName="lightbulb" fill={1} size={20} />,
     },
     {
       title: "Functional & Holistic Health Practitioners",
@@ -67,14 +67,19 @@ export const SelectType = () => {
         >
           {titlesAndIcosn.map((item, index) => (
             <div
-              key={index}
+              key={item.title}
               className="flex flex-col gap-[20px] w-[460px] items-start"
             >
               <div className="flex items-center self-stretch gap-[8px]">
                 <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[20px] font-semibold">
                   {item.title}
                 </h2>
-                <MaterialIcon iconName="help" size={20} />
+                <MaterialIcon
+                  iconName="help"
+                  size={16}
+                  fill={1}
+                  className="text-[#1C63DB]"
+                />
               </div>
               {/* Custom Dropdown */}
               <div className="relative w-full">

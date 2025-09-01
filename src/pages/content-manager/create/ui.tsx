@@ -1,4 +1,4 @@
-import EmptyArticle from "shared/assets/images/EmptyArticle.png";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import z from "zod";
 
@@ -27,7 +27,11 @@ export const ContentManagerCreatePage: React.FC = () => {
     >
       <div className="hidden w-full h-full xl:block">
         <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
-          <img src={EmptyArticle} alt="" className="mb-[32px] w-[163px]" />
+          <MaterialIcon
+            iconName="category_search"
+            size={150}
+            className="mb-2"
+          />
           <div className="text-center flex flex-col items-center justify-center gap-[8px]">
             <p className="text-[32px] font-[700] text-[#1D1D1F]">
               Select or Create a Topic

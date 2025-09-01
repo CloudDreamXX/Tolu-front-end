@@ -150,13 +150,11 @@ export const InviteClients = () => {
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
               >
-                <div className="flex p-2 items-center justify-center bg-white border rounded-[8px] border-[#F3F6FB]">
-                  <MaterialIcon
-                    iconName="cloud_upload"
-                    fill={1}
-                    className="text-[#1C63DB] p-2 border rounded-xl"
-                  />
-                </div>
+                <MaterialIcon
+                  iconName="cloud_upload"
+                  fill={1}
+                  className="text-[#1C63DB] p-2 border rounded-xl"
+                />
                 <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
                   Click {isMobile || isTablet ? "" : "or drag"} to upload
                 </div>
@@ -177,7 +175,7 @@ export const InviteClients = () => {
 
           {/* Template Link */}
           <div className="flex gap-2 items-center mt-[4px]">
-            <MaterialIcon iconName="download" />
+            <MaterialIcon iconName="upload" className="text-[#1C63DB]" />
             <a
               href="/template.pdf"
               className="text-[#1C63DB] font-[Nunito] text-base font-medium underline"

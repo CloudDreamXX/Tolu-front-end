@@ -73,10 +73,7 @@ export const WelcomeScreen = () => {
               <span className="text-center text-white text-2xl font-semibold font-[Nunito]">
                 Let’s Begin
               </span>
-              <MaterialIcon
-                iconName="keyboard_arrow_right"
-                className="w-5 h-5"
-              />
+              <MaterialIcon iconName="arrow_right_alt" className="text-white" />
             </button>
           </div>
         </div>

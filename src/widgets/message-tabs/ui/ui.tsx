@@ -296,7 +296,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem className="text-red-600">
-                  <MaterialIcon iconName="delete" className="mr-2" />
+                  <MaterialIcon iconName="delete" fill={1} className="mr-2" />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>

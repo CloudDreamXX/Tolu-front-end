@@ -64,7 +64,12 @@ export const titlesAndIcons = [
   {
     title: "Clinical & Licensed Healthcare Providers",
     icon: (
-      <MaterialIcon iconName="lightbulb" size={20} className="text-[#1B2559]" />
+      <MaterialIcon
+        iconName="lightbulb"
+        fill={1}
+        size={20}
+        className="text-[#1B2559]"
+      />
     ),
     options: ClinicalOptions,
     tooltipContent:

@@ -162,7 +162,12 @@ export const HealthSnapshot = () => {
                     Cycle tracking insights
                   </h3>
                   <span className="w-[20px] h-[20px]">
-                    <MaterialIcon iconName="help" fill={1} size={20} />
+                    <MaterialIcon
+                      iconName="help"
+                      size={16}
+                      fill={1}
+                      className="text-[#1C63DB]"
+                    />
                   </span>
                 </div>
                 <h1 className="text-[#1C63DB] text-[24px] md:text-[32px]/[44px] font-bold font-[Nunito]">

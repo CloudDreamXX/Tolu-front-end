@@ -177,7 +177,7 @@ export const CreateGroupModal = ({
                       setPreviewUrl(null);
                     }}
                   >
-                    <MaterialIcon iconName="delete" />
+                    <MaterialIcon iconName="delete" fill={1} />
                     Delete
                   </button>
                 </div>

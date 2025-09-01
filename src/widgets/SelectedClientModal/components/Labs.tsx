@@ -11,63 +11,6 @@ type LabReport = {
   url?: string;
 };
 
-const PdfIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path
-      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-      stroke="#1D1D1F"
-      strokeWidth="1.5"
-    />
-    <path d="M14 2v6h6" stroke="#1D1D1F" strokeWidth="1.5" />
-    <text x="7" y="18" fontSize="8" fontFamily="Arial" fill="#1D1D1F">
-      PDF
-    </text>
-  </svg>
-);
-const EyeIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path
-      d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"
-      stroke="#1D1D1F"
-      strokeWidth="1.6"
-    />
-    <circle cx="12" cy="12" r="3" stroke="#1D1D1F" strokeWidth="1.6" />
-  </svg>
-);
-const DownloadIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path
-      d="M12 3v12"
-      stroke="#1D1D1F"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-    <path
-      d="m7 11 5 5 5-5"
-      stroke="#1D1D1F"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M5 21h14"
-      stroke="#1D1D1F"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-const CloseX = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path
-      d="M18 6 6 18M6 6l12 12"
-      stroke="#1D1D1F"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
 type Props = {
   client: LabsInfo[];
   handleDownloadFile: (name: string) => Promise<void>;
@@ -190,7 +133,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
               >
                 <div className="flex flex-col gap-[16px]">
                   <div className="flex items-center w-full gap-3 md:w-1/3">
-                    <PdfIcon />
+                    <MaterialIcon iconName="picture_as_pdf" />
                     <span className="text-[14px] text-[#1D1D1F]">{r.name}</span>
                   </div>
                   <div className="md:hidden text-[14px] text-[#1D1D1F] leading-[18px] italic max-w-[200px]">
@@ -210,7 +153,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                       title="View"
                       aria-label="View"
                     >
-                      <EyeIcon />
+                      <MaterialIcon iconName="visibility" fill={1} />
                     </button>
                     <button
                       onClick={() => handleDownloadFile(r.name)}
@@ -218,7 +161,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                       title="Download"
                       aria-label="Download"
                     >
-                      <DownloadIcon />
+                      <MaterialIcon iconName="download" fill={1} />
                     </button>
                   </div>
                 </div>
@@ -241,7 +184,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                 className="p-1 rounded hover:bg-black/5"
                 onClick={closePreview}
               >
-                <CloseX />
+                <MaterialIcon iconName="close" fill={1} />
               </button>
             </div>
 

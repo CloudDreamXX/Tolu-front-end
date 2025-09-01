@@ -118,7 +118,7 @@ const LifestyleSkills: React.FC<Props> = ({
                     className="p-1 rounded hover:bg-black/5"
                     aria-label={editing ? "Save" : "Edit"}
                   >
-                    <MaterialIcon iconName="edit" />
+                    <MaterialIcon iconName="edit" fill={1} />
                   </button>
                 )}
               </div>
@@ -156,11 +156,11 @@ const LifestyleSkills: React.FC<Props> = ({
                       <button
                         type="button"
                         onClick={() => removeItem(title, i)}
-                        className="shrink-0 text-[#E86C4A] hover:opacity-80"
-                        aria-label="Remove"
+                        className="shrink-0 text-[#FF1F0F] m-0 first-line:hover:opacity-80 flex items-center justify-center"
                         title="Remove"
+                        aria-label="Remove"
                       >
-                        <MaterialIcon iconName="delete" />
+                        <MaterialIcon iconName="delete" fill={1} />
                       </button>
                     </div>
                   ))}

@@ -27,6 +27,7 @@ export const ClientsInfo: React.FC<ClientsInfoProps> = ({
           </div>
         </button>
       }
+      multiple
     />
   );
 };

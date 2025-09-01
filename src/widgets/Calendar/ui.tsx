@@ -246,7 +246,12 @@ export const CalendarPopup = () => {
                 onClick={handleDeleteEvent}
                 className="flex items-center gap-2 text-sm font-semibold text-red-500"
               >
-                <MaterialIcon iconName="delete" size={16} />
+                <MaterialIcon
+                  iconName="delete"
+                  fill={1}
+                  size={16}
+                  className="text-[#FF1F0F]"
+                />
                 Delete event
               </button>
             ) : (

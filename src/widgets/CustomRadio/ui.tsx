@@ -27,7 +27,7 @@ export const CustomRadio: React.FC<CustomRadioProps> = ({
           iconName={
             isChecked ? "radio_button_checked" : "radio_button_unchecked"
           }
-          className="text-blue-500"
+          className={isChecked ? "text-blue-500" : "text-gray-400"}
         />
       </div>
       <label htmlFor={`${name}-${value}`} className="cursor-pointer">

@@ -320,7 +320,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 className="placeholder-custom  w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
               />
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} />
+                <MaterialIcon iconName="info" size={16} fill={1} />
                 Used to send client invite and profile access
               </div>
             </div>
@@ -424,7 +424,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
               </Popover>
 
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} />
+                <MaterialIcon iconName="info" size={16} fill={1} />
                 Helps personalize age-appropriate guidance
               </div>
             </div>
@@ -442,7 +442,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
               />
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} />
+                <MaterialIcon iconName="info" size={16} fill={1} />
                 e.g., Fatigue, Gut issues, Hormonal imbalance
               </div>
             </div>
@@ -533,7 +533,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
               />
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} />
+                <MaterialIcon iconName="info" size={16} fill={1} />
                 e.g., personalized education
               </div>
             </div>
@@ -597,7 +597,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 />
               </div>
               <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} />
+                <MaterialIcon iconName="info" size={16} fill={1} />
                 You can always edit or review it later
               </div>
             </div>

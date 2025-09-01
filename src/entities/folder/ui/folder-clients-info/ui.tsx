@@ -82,7 +82,7 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
                         >
                           <MaterialIcon
                             iconName="delete"
-                            className="text-red-600"
+                            className="text-[#FF1F0F]"
                           />
                         </button>
                       </div>

@@ -79,7 +79,12 @@ export const SelectType = () => {
                     {item.title}
                   </h2>
                   <TooltipWrapper content={item.tooltipContent}>
-                    <MaterialIcon iconName="help" size={20} />
+                    <MaterialIcon
+                      iconName="help"
+                      size={16}
+                      fill={1}
+                      className="text-[#1C63DB]"
+                    />
                   </TooltipWrapper>
                 </div>
                 {/* Custom Dropdown */}

@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import ConfirmIcon from "shared/assets/icons/confirm";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import EmptyClients from "shared/assets/images/EmptyClients.png";
+import { usePageWidth } from "shared/lib";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Button } from "shared/ui";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
@@ -100,10 +101,7 @@ export const ContentManagerClients: React.FC = () => {
   const [clientsData, setClientsData] = useState<Client[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const token = useSelector((state: RootState) => state.user.token);
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-  const [isTablet, setIsTablet] = useState<boolean>(
-    window.innerWidth > 767 && window.innerWidth < 1024
-  );
+  const { isMobile, isTablet } = usePageWidth();
   const [popupClientId, setPopupClientId] = useState<string | null>(null);
   const [inviteSuccessPopup, setInviteSuccessPopup] = useState<boolean>(false);
   const [importClientsPopup, setImportClientsPopup] = useState<boolean>(false);
@@ -127,16 +125,6 @@ export const ContentManagerClients: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [importClientsPopup, handleClickOutside]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      setIsTablet(window.innerWidth > 767 && window.innerWidth < 1024);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -447,8 +435,8 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   return (
-    <div className="flex gap-[24px] p-8 h-[calc(100vh-78px)]">
-      <div className="flex flex-col gap-[16px] md:gap-[24px] overflow-y-auto h-full w-full">
+    <div className="flex gap-6 p-4 pr-0 md:p-8  h-[calc(100vh-78px)]">
+      <div className="flex flex-col gap-[16px] pr-4 md:p-0 md:gap-[24px] overflow-y-auto h-full w-full">
         {loading ? (
           <div className="lg:mt-4 md:rounded-[8px]">
             <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
@@ -495,18 +483,40 @@ export const ContentManagerClients: React.FC = () => {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            <Button
-              variant={"brightblue"}
-              className="h-[44px] w-fit ml-auto"
-              onClick={() => {
-                cleanState();
-                setActiveEditTab("editClientInfo");
-                setAddModal(true);
-              }}
-            >
-              Add new client
-              <MaterialIcon iconName="add" size={20} />
-            </Button>
+            <div className="flex flex-col md:flex-row flex-wrap gap-[16px] justify-between md:items-end">
+              <div className="flex flex-col gap-2">
+                <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
+                  <MaterialIcon iconName="person_search" fill={1} />
+                  Client List
+                </h1>
+                <p>
+                  Use the list below to filter, search, and take action on
+                  individual client records.
+                </p>
+              </div>
+              <div className="flex md:flex-row flex-col gap-2 md:gap-[50px] lg:gap-2 w-full">
+                <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[40px]">
+                  <MaterialIcon iconName="search" size={16} />
+                  <input
+                    placeholder="Search"
+                    className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000]"
+                  />
+                </div>
+                <Button
+                  variant={"brightblue"}
+                  className="h-[40px] md:w-fit md:ml-auto w-full"
+                  onClick={() => {
+                    cleanState();
+                    setActiveEditTab("editClientInfo");
+                    setAddModal(true);
+                  }}
+                >
+                  Add new client
+                  <MaterialIcon iconName="add" size={20} />
+                </Button>
+              </div>
+            </div>
+
             <div className="md:rounded-[8px]">
               <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]">
                 <div className="flex items-center justify-center">
@@ -562,27 +572,25 @@ export const ContentManagerClients: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    {!isMobile && !isTablet && (
-                      <button
-                        onClick={() => handleSelectClient(client.client_id)}
-                        className="flex items-center justify-center text-[#000]"
-                      >
-                        <MaterialIcon iconName="visibility" fill={1} />
-                      </button>
-                    )}
-                    {!isMobile && !isTablet && (
-                      <button
-                        className="flex items-center justify-center "
-                        onClick={() => {
-                          if (client.status !== "active") return;
-                          navigate(
-                            `/content-manager/messages/${client.client_id}`
-                          );
-                        }}
-                      >
-                        <MaterialIcon iconName="forum" fill={1} />
-                      </button>
-                    )}
+
+                    <button
+                      onClick={() => handleSelectClient(client.client_id)}
+                      className="flex items-center justify-center text-[#000]"
+                    >
+                      <MaterialIcon iconName="visibility" fill={1} />
+                    </button>
+                    <button
+                      className="flex items-center justify-center "
+                      onClick={() => {
+                        if (client.status !== "active") return;
+                        navigate(
+                          `/content-manager/messages/${client.client_id}`
+                        );
+                      }}
+                    >
+                      <MaterialIcon iconName="forum" fill={1} />
+                    </button>
+
                     {!isMobile && !isTablet && (
                       <div className="relative ml-auto">
                         <button
@@ -607,7 +615,11 @@ export const ContentManagerClients: React.FC = () => {
                                 setConfirmDelete(true);
                               }}
                             >
-                              <MaterialIcon iconName="delete" fill={1} />
+                              <MaterialIcon
+                                iconName="delete"
+                                fill={1}
+                                className="text-[#FF1F0F]"
+                              />
                               Delete
                             </button>
                           </div>
@@ -656,27 +668,6 @@ export const ContentManagerClients: React.FC = () => {
       "
                           >
                             <button
-                              className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
-                              onClick={() => {
-                                handleSelectClient(client.client_id);
-                                setPopupClientId(null);
-                              }}
-                            >
-                              <MaterialIcon iconName="visibility" fill={1} />
-                              View profile
-                            </button>
-
-                            <button
-                              className="flex items-center gap-[8px] text-[#1D1D1F] font-[500] text-[16px]"
-                              onClick={() => {
-                                setPopupClientId(null);
-                              }}
-                            >
-                              <MaterialIcon iconName="forum" fill={1} />
-                              Open Chat
-                            </button>
-
-                            <button
                               className="flex items-center gap-[8px] text-[#FF1F0F] font-[500] text-[16px]"
                               onClick={() => {
                                 handleSelectClient(client.client_id);
@@ -684,7 +675,11 @@ export const ContentManagerClients: React.FC = () => {
                                 setPopupClientId(null);
                               }}
                             >
-                              <MaterialIcon iconName="delete" fill={1} />
+                              <MaterialIcon
+                                iconName="delete"
+                                fill={1}
+                                className="text-[#FF1F0F]"
+                              />
                               Delete user
                             </button>
                           </div>
@@ -873,13 +868,11 @@ export const ContentManagerClients: React.FC = () => {
                   onDragLeave={() => setDragOver(false)}
                   onDrop={handleDrop}
                 >
-                  <div className="flex p-2 items-center justify-center bg-white border rounded-[8px] border-[#F3F6FB]">
-                    <MaterialIcon
-                      iconName="cloud_upload"
-                      fill={1}
-                      className="text-[#1C63DB] p-2 border rounded-xl"
-                    />
-                  </div>
+                  <MaterialIcon
+                    iconName="cloud_upload"
+                    fill={1}
+                    className="text-[#1C63DB] p-2 border rounded-xl"
+                  />
                   <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
                     Click {isMobile || isTablet ? "" : "or drag"} to upload
                   </div>

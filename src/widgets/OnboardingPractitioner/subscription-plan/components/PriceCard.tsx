@@ -85,7 +85,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             <MaterialIcon
               iconName="check"
               size={20}
-              className="min-w-[20px] min-h-[20px]"
+              className="min-w-[20px] min-h-[20px] text-[#1C63DB]"
             />
             <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium text-left">
               {plan === "starting" ? (

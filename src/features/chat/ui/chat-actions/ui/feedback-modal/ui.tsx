@@ -45,6 +45,8 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
       const res = await ContentService.addContentFeedback(feedbackRequest);
       setNewRating(res.feedback.satisfaction_score);
       setRating(res.feedback.satisfaction_score);
+    } else {
+      setNewRating(rating);
     }
 
     onOpenChange(false);

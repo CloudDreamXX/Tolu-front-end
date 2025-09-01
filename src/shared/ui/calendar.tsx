@@ -55,14 +55,14 @@ function Calendar({
         IconLeft: ({ className, ...props }) => (
           <MaterialIcon
             iconName="keyboard_arrow_left"
-            className={cn("h-4 w-4 mb-[8px] mr-[8px]", className)}
+            className={cn("text-blue-500", className)}
             {...props}
           />
         ),
         IconRight: ({ className, ...props }) => (
           <MaterialIcon
             iconName="keyboard_arrow_right"
-            className={cn("h-4 w-4 mb-[8px] mr-[8px]", className)}
+            className={cn("text-blue-500", className)}
             {...props}
           />
         ),

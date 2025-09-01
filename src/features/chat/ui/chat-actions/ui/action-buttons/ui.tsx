@@ -26,7 +26,6 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   chatState,
   isHistoryPopup,
   onStatusChange,
-  initialRating,
   initialStatus,
   onReadAloud,
   fromPath,
@@ -34,18 +33,22 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   currentChatId,
 }) => {
   const [thumbsUpModalOpen, setThumbsUpModalOpen] = useState(false);
-  const [rating, setRating] = useState<number | undefined>(initialRating);
+  const [thumbsDownModalOpen, setThumbsDownModalOpen] = useState(false);
   const [readStatus, setReadStatus] = useState<string>(initialStatus || "");
+  const [feedbackRating, setFeedbackRating] = useState<{
+    thumbsUp: boolean;
+    thumbsDown: boolean;
+  }>({
+    thumbsUp: false,
+    thumbsDown: false,
+  });
   const nav = useNavigate();
 
   useEffect(() => {
-    if (initialRating !== undefined) {
-      setRating(initialRating);
-    }
     if (initialStatus !== undefined) {
       setReadStatus(initialStatus);
     }
-  }, [initialRating, initialStatus]);
+  }, [initialStatus]);
 
   // const handleShare = async () => {
   //   const shareData = {
@@ -154,7 +157,18 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           >
             <MaterialIcon
               iconName="star"
-              fill={rating === 5 ? 1 : 0}
+              fill={feedbackRating.thumbsUp ? 1 : 0}
+              size={20}
+              className="text-blue-600"
+            />
+          </button>
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
+            onClick={() => setThumbsDownModalOpen(true)}
+          >
+            <MaterialIcon
+              iconName="thumb_down"
+              fill={feedbackRating.thumbsDown ? 1 : 0}
               size={16}
               className="text-blue-600"
             />
@@ -166,7 +180,20 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             onOpenChange={(open) => {
               setThumbsUpModalOpen(open);
             }}
-            setNewRating={setRating}
+            setNewRating={() => {
+              setFeedbackRating((prev) => ({ ...prev, thumbsUp: true }));
+            }}
+            currentChatId={currentChatId}
+          />
+          <FeedbackModal
+            initialRating={1}
+            isOpen={thumbsDownModalOpen}
+            onOpenChange={(open) => {
+              setThumbsDownModalOpen(open);
+            }}
+            setNewRating={() => {
+              setFeedbackRating((prev) => ({ ...prev, thumbsDown: true }));
+            }}
             currentChatId={currentChatId}
           />
           {/* <button

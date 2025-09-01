@@ -118,6 +118,7 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
                         <span className="w-5 h-5 shrink-0">
                           <MaterialIcon
                             iconName="lightbulb"
+                            fill={1}
                             className="text-[#1B2559] "
                           />
                         </span>

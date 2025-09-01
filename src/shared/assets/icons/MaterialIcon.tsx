@@ -3,7 +3,7 @@ import { IconName } from "shared/lib/utils/iconsConfig";
 
 interface MaterialIconProps {
   iconName: IconName;
-  size?: 16 | 20 | 24 | 40 | 48;
+  size?: number;
   className?: string;
   weight?: number;
   fill?: 1 | 0;

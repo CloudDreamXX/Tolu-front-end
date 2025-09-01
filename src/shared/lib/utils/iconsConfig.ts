@@ -124,6 +124,7 @@ export const icons = [
   "north_east",
   "content_copy",
   "cloud_upload",
+  "picture_as_pdf",
 ] as const;
 
 export type IconName = (typeof icons)[number];

@@ -485,7 +485,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                           className="text-sm text-red-500 hover:text-red-700"
                           title="Remove File"
                         >
-                          <MaterialIcon iconName="delete" className="w-5 h-5" />
+                          <MaterialIcon iconName="delete" fill={1} />
                         </button>
                       </div>
                     ))}

@@ -279,6 +279,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                           <MaterialIcon
                             iconName="delete"
                             className="w-5 h-5 "
+                            fill={1}
                           />
                         </button>
                       </div>

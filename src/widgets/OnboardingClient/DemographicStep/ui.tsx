@@ -106,7 +106,12 @@ export const DemographicStep = () => {
 
   const hintBlock = (
     <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6] w-full lg:w-fit">
-      <MaterialIcon iconName="info" size={20} className="text-[#1C63DB]" />
+      <MaterialIcon
+        iconName="info"
+        size={20}
+        className="text-[#1C63DB]"
+        fill={1}
+      />
       <p className="text-[#1B2559] font-[Nunito] text-base font-normal">
         Your information is kept private and secure. It helps us provide
         smarter, more relevant
@@ -204,12 +209,7 @@ export const DemographicStep = () => {
                 !localDate && "text-muted-foreground"
               )}
             >
-              <MaterialIcon
-                iconName="calendar_today"
-                fill={1}
-                size={20}
-                className="w-4 h-4"
-              />
+              <MaterialIcon iconName="calendar_today" fill={1} size={20} />
               {localDate ? format(localDate, "PPP") : "Pick a date"}
             </Button>
           </PopoverTrigger>
@@ -262,7 +262,12 @@ export const DemographicStep = () => {
               <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Still menstruating
               </p>
-              <MaterialIcon iconName="help" size={20} />
+              <MaterialIcon
+                iconName="help"
+                size={16}
+                fill={1}
+                className="text-[#1C63DB]"
+              />
             </div>
           </div>
           <div className="flex items-center flex-1 gap-4">
@@ -277,7 +282,12 @@ export const DemographicStep = () => {
               <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Irregular cycles
               </p>
-              <MaterialIcon iconName="help" size={20} />{" "}
+              <MaterialIcon
+                iconName="help"
+                size={16}
+                fill={1}
+                className="text-[#1C63DB]"
+              />
             </div>
           </div>
         </div>
@@ -294,7 +304,12 @@ export const DemographicStep = () => {
               <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 No periods for 12+ months
               </p>
-              <MaterialIcon iconName="help" size={20} />{" "}
+              <MaterialIcon
+                iconName="help"
+                size={16}
+                fill={1}
+                className="text-[#1C63DB]"
+              />
             </div>
           </div>
           <div className="flex items-center flex-1 gap-4">
@@ -309,7 +324,12 @@ export const DemographicStep = () => {
               <p className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
                 Postmenopausal
               </p>
-              <MaterialIcon iconName="help" size={20} />{" "}
+              <MaterialIcon
+                iconName="help"
+                size={16}
+                fill={1}
+                className="text-[#1C63DB]"
+              />
             </div>
           </div>
         </div>
@@ -329,7 +349,12 @@ export const DemographicStep = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span>
-                    <MaterialIcon iconName="help" size={20} />{" "}
+                    <MaterialIcon
+                      iconName="help"
+                      size={16}
+                      fill={1}
+                      className="text-[#1C63DB]"
+                    />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>

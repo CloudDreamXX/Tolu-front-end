@@ -29,7 +29,7 @@ export const ConfirmDeleteModal = ({
           title
         ) : (
           <span className="flex flex-col md:flex-row md:items-center gap-[10px] md:gap-[8px]">
-            <MaterialIcon iconName="delete" className="text-[#1D1D1F]" />
+            <MaterialIcon iconName="delete" className="text-[#FF1F0F]" />
             Are you sure you want to delete this user?
           </span>
         )}

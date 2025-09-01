@@ -113,11 +113,11 @@ export const ClientStory: React.FC<Props> = ({
             <button
               type="button"
               onClick={() => setNotes("")}
-              className="shrink-0 text-[#E86C4A] hover:opacity-80"
+              className="shrink-0 text-[#FF1F0F] m-0 first-line:hover:opacity-80 flex items-center justify-center"
               title="Remove"
               aria-label="Remove"
             >
-              <MaterialIcon iconName="delete" />
+              <MaterialIcon iconName="delete" fill={1} />
             </button>
           </div>
         )}
@@ -183,11 +183,11 @@ export const ClientStory: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => removePivot(i)}
-                    className="shrink-0 text-[#E86C4A] hover:opacity-80"
+                    className="shrink-0 text-[#FF1F0F] m-0 first-line:hover:opacity-80 flex items-center justify-center"
                     title="Remove"
                     aria-label="Remove"
                   >
-                    <MaterialIcon iconName="delete" />
+                    <MaterialIcon iconName="delete" fill={1} />
                   </button>
                 </div>
               );
@@ -244,11 +244,11 @@ export const ClientStory: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => removeSymptom(i)}
-                  className="shrink-0 text-[#E86C4A] hover:opacity-80"
+                  className="shrink-0 text-[#FF1F0F] m-0 first-line:hover:opacity-80 flex items-center justify-center"
                   title="Remove"
                   aria-label="Remove"
                 >
-                  <MaterialIcon iconName="delete" />
+                  <MaterialIcon iconName="delete" fill={1} />
                 </button>
               </div>
             ))}

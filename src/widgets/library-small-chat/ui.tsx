@@ -21,7 +21,7 @@ import {
   CaseSearchForm,
   FormValues,
 } from "pages/content-manager/create/case-search";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -112,6 +112,26 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [voiceContent, setVoiceContent] = useState<string>("");
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const prevSearchingRef = useRef(isSearching);
+
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+    scrollRef.current?.scrollIntoView({ block: "end", behavior });
+  };
+
+  useEffect(() => {
+    const wasSearching = prevSearchingRef.current;
+    prevSearchingRef.current = isSearching;
+
+    if (wasSearching && !isSearching) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          scrollToBottom("smooth");
+        });
+      });
+    }
+  }, [isSearching, chatState.length]);
 
   useEffect(() => {
     if (folderId) {
@@ -726,6 +746,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                     onClick={() => {
                       handleNewMessage(message);
                     }}
+                    variant="brightblue"
                     disabled={isSearching || !folderState || message === ""}
                     className="w-12 h-12 p-0 rounded-full bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
                   >
@@ -898,7 +919,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         handleNewMessage(message);
                       }}
                       disabled={isSearching || !folderState || message === ""}
-                      className="w-12 h-12 p-0 rounded-full disabled:opacity-[0.5] bg-black disabled:cursor-not-allowed"
+                      className="w-12 h-12 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
                     >
                       <MaterialIcon iconName="send" size={24} />
                     </Button>
@@ -936,8 +957,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       onClick={() => {
                         handleNewMessage(message);
                       }}
+                      variant="brightblue"
                       disabled={isSearching || message === ""}
-                      className="w-12 h-12 p-0 rounded-full disabled:opacity-[0.5] bg-black disabled:cursor-not-allowed"
+                      className="w-12 h-12 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
                     >
                       <MaterialIcon iconName="send" size={24} />
                     </Button>

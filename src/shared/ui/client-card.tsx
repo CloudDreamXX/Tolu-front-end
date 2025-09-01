@@ -149,7 +149,12 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           {title}
         </h3>
         <span className="w-[16px] h-[16px] md:w-[20px] md:h-[20px]">
-          <MaterialIcon iconName="help" size={20} />
+          <MaterialIcon
+            iconName="help"
+            size={16}
+            fill={1}
+            className="text-[#1C63DB]"
+          />
         </span>
       </div>
       <div className="flex items-center justify-between w-full gap-3 xl:justify-start">
