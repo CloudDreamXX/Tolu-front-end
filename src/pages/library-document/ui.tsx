@@ -303,20 +303,31 @@ export const LibraryDocument = () => {
                     <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
                       <AvatarImage src={creatorPhoto || undefined} />
                       <AvatarFallback className="text-3xl bg-slate-300 ">
-                        {creator.detailed_profile.personal_info.first_name !== "" &&
-                          creator.detailed_profile.personal_info.first_name !== null &&
-                          creator.detailed_profile.personal_info.last_name !== null &&
-                          creator.detailed_profile.personal_info.last_name !== ""
-                          ? <div className="flex items-center">
-                            <span>{creator.detailed_profile.personal_info.first_name.slice(
-                              0,
-                              1
-                            )}</span><span>{creator.detailed_profile.personal_info.last_name.slice(
-                              0,
-                              1
-                            )}</span>
+                        {creator.detailed_profile.personal_info.first_name !==
+                          "" &&
+                        creator.detailed_profile.personal_info.first_name !==
+                          null &&
+                        creator.detailed_profile.personal_info.last_name !==
+                          null &&
+                        creator.detailed_profile.personal_info.last_name !==
+                          "" ? (
+                          <div className="flex items-center">
+                            <span>
+                              {creator.detailed_profile.personal_info.first_name.slice(
+                                0,
+                                1
+                              )}
+                            </span>
+                            <span>
+                              {creator.detailed_profile.personal_info.last_name.slice(
+                                0,
+                                1
+                              )}
+                            </span>
                           </div>
-                          : creator.basic_info.name.slice(0, 1)}
+                        ) : (
+                          creator.basic_info.name.slice(0, 1)
+                        )}
                       </AvatarFallback>
                     </Avatar>
                   ))}
@@ -348,7 +359,7 @@ export const LibraryDocument = () => {
           <ChatActions
             initialStatus={selectedDocument?.readStatus}
             initialRating={selectedDocument?.userRating}
-            onRegenerate={() => { }}
+            onRegenerate={() => {}}
             isSearching={false}
             hasMessages={messages.length >= 2}
             onStatusChange={onStatusChange}
@@ -397,7 +408,7 @@ export const LibraryDocument = () => {
               <ChatActions
                 initialStatus={selectedDocument?.readStatus}
                 initialRating={selectedDocument?.rating}
-                onRegenerate={() => { }}
+                onRegenerate={() => {}}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}

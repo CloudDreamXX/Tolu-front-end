@@ -1,9 +1,15 @@
 import { AdminService } from "entities/admin";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { Button, TooltipWrapper } from "shared/ui";
+import {
+  Button,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui";
 import { FiltersPopup } from "widgets/filters-popup";
+import parse from "html-react-parser";
 
 type RowType = "Coach" | "Client";
 
@@ -30,14 +36,17 @@ const nameFromEmail = (email: string) => {
     .join(" ");
 };
 
-export const fmtDate = (iso?: string | null) =>
-  iso
-    ? new Date(iso).toLocaleDateString(undefined, {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : "—";
+export const fmtDate = (iso?: string | null) => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const yyyy = d.getUTCFullYear();
+
+  return `${dd}/${mm}/${yyyy}`;
+};
 
 export type SortBy = "newest" | "oldest";
 
@@ -87,7 +96,32 @@ export const FeedbackHub = () => {
   const [filters, setFilters] = useState<AppliedFilters>(defaultFilters);
   const [draftFilters, setDraftFilters] =
     useState<AppliedFilters>(defaultFilters);
-  const navigate = useNavigate();
+  const [isQueryOpen, setIsQueryOpen] = useState(false);
+  const [queryText, setQueryText] = useState<string>("");
+  const [answerText, setAnswerText] = useState<string>("");
+
+  const openQuery = (text?: string, answer?: string) => {
+    setQueryText(text || "—");
+    setAnswerText(answer || "");
+    setIsQueryOpen(true);
+  };
+  const closeQuery = () => setIsQueryOpen(false);
+
+  useEffect(() => {
+    if (!isQueryOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeQuery();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isQueryOpen]);
+
+  useEffect(() => {
+    if (!isQueryOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isQueryOpen]);
 
   useEffect(() => setPage(1), [typeFilter]);
 
@@ -109,7 +143,6 @@ export const FeedbackHub = () => {
             rating: c.rating ?? null,
             date: c.rated_at ?? null,
             htmlContent: c.content,
-            sourceId: c.content_id,
             comments: c.rating_comment,
           })
         );
@@ -126,7 +159,7 @@ export const FeedbackHub = () => {
                 : null,
             date: c.created_at ?? null,
             htmlContent: c.content,
-            sourceId: c.content_id,
+            sourceId: c.source_id,
             comments: c.rating_comment,
           })
         );
@@ -196,6 +229,13 @@ export const FeedbackHub = () => {
     setFilters(draftFilters);
     setPage(1);
     setFiltersOpen(false);
+  };
+
+  const htmlToText = (html?: string | null) => {
+    if (!html) return "";
+    const el = document.createElement("div");
+    el.innerHTML = html;
+    return (el.textContent || "").replace(/\s+/g, " ").trim();
   };
 
   return (
@@ -335,14 +375,13 @@ export const FeedbackHub = () => {
 
       <div className="w-full overflow-x-auto">
         <div className="bg-white rounded-xl border border-[#E6E8EB] p-[24px] min-w-[1400px]">
-          <div className="grid grid-cols-12 pb-[24px] border-b text-[18px] font-[500] text-[#5F5F65] mb-[24px]">
-            <div className="col-span-1">Type</div>
-            <div className="col-span-2">Name</div>
-            <div className="col-span-3">Email</div>
+          <div className="grid grid-cols-11 pb-[24px] border-b text-[18px] font-[500] text-[#5F5F65] mb-[24px]">
+            <div className="col-span-1">User type</div>
             <div className="col-span-3">Query</div>
             <div className="col-span-1">Rating</div>
+            <div className="col-span-2">Feedback</div>
+            <div className="col-span-3">Content preview</div>
             <div className="col-span-1">Date</div>
-            <div className="col-span-1">Actions</div>
           </div>
 
           <div>
@@ -362,7 +401,7 @@ export const FeedbackHub = () => {
               filtered.slice(0, PAGE_SIZE).map((r, idx) => (
                 <div
                   key={idx}
-                  className={`grid grid-cols-12 px-[12px] py-[8px] items-center ${
+                  className={`grid grid-cols-11 px-[12px] py-[8px] items-center ${
                     idx % 2 === 0 ? "bg-white" : "bg-[#F7F9FD] rounded-[8px]"
                   }`}
                 >
@@ -378,18 +417,58 @@ export const FeedbackHub = () => {
                     </span>
                   </div>
 
-                  <div className="col-span-2 text-[18px] font-[500] text-[#1D1D1F]">
-                    {r.name || "—"}
-                  </div>
-                  <div className="col-span-3 text-[18px] font-[500] text-[#5F5F65]">
-                    {r.email}
-                  </div>
-
-                  <div className="col-span-3 text-[18px] font-[500] text-[#5F5F65] truncate">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => openQuery(r.query, r.htmlContent)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && openQuery(r.query, r.htmlContent)
+                    }
+                    title={r.query || undefined}
+                    className="col-span-3 min-w-0 pr-[20px] underline cursor-pointer truncate
+             text-[18px] font-[500] text-[#5F5F65] hover:text-[#1C63DB]"
+                  >
                     {r.query || "—"}
                   </div>
 
-                  <div className="flex items-center justify-center col-span-1 gap-2">
+                  {isQueryOpen && (
+                    <div className="fixed inset-0 z-[10000] flex items-center justify-center">
+                      <div
+                        className="absolute inset-0 bg-black/5"
+                        onClick={closeQuery}
+                        aria-hidden
+                      />
+                      <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="query-modal-title"
+                        className="relative z-[10001] w-[min(90vw,800px)] max-h-[80vh]
+                 bg-white border rounded-2xl p-4 md:p-6 overflow-y-auto scrollbar-hide"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <h2
+                            id="query-modal-title"
+                            className="text-xl text-[#1D1D1F] font-semibold"
+                          >
+                            {queryText}
+                          </h2>
+                          <button
+                            onClick={closeQuery}
+                            className="rounded hover:bg-gray-100"
+                            aria-label="Close"
+                          >
+                            <MaterialIcon iconName="close" />
+                          </button>
+                        </div>
+
+                        <div className="mt-8 text-[16px] text-[#1D1D1F] whitespace-pre-wrap break-words">
+                          {parse(answerText)}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center col-span-1 gap-2">
                     {r.rating != null ? (
                       <span
                         className={`inline-flex items-center justify-center px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${
@@ -403,7 +482,7 @@ export const FeedbackHub = () => {
                         {r.rating}
                       </span>
                     ) : (
-                      <span className="text-gray-400">—</span>
+                      <span className="text-[#5F5F65] pl-[12px]">—</span>
                     )}
                     {r.rating === 1 && (
                       <MaterialIcon
@@ -414,46 +493,32 @@ export const FeedbackHub = () => {
                     )}
                   </div>
 
-                  <div className="col-span-1 text-[18px] font-[500] text-[#5F5F65]">
-                    {fmtDate(r.date)}
+                  <div className="col-span-2 text-[18px] font-[500] text-[#5F5F65]">
+                    {r.comments || "—"}
                   </div>
 
-                  <div className="flex items-center justify-end col-span-1 gap-3">
-                    <TooltipWrapper content="View Details">
-                      <button
-                        className="flex items-center justify-center p-2 rounded-md hover:bg-gray-100"
-                        onClick={() => {
-                          navigate("/feedback/details", {
-                            state: { document: r },
-                          });
-                        }}
-                      >
-                        <MaterialIcon
-                          iconName="visibility"
-                          fill={1}
-                          className="text-[#1C63DB]"
-                        />
-                      </button>
-                    </TooltipWrapper>
+                  <TooltipProvider delayDuration={500}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="cursor-pointer col-span-3 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-[18px] font-[500] text-[#5F5F65] pr-[20px]">
+                          {htmlToText(r.htmlContent)}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="z-50 p-[16px] md:w-[470px]">
+                        <div className="text-[#5F5F65] text-[18px] leading-[1.4] font-medium overflow-hidden text-ellipsis whitespace-nowrap">
+                          <span className="text-[#1D1D1F]">User:</span>{" "}
+                          {r.query}
+                        </div>
+                        <div className="text-[#5F5F65] text-[18px] leading-[1.4] font-medium overflow-hidden text-ellipsis whitespace-nowrap">
+                          <span className="text-[#1D1D1F]">Answer:</span>{" "}
+                          {htmlToText(r.htmlContent)}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
 
-                    <TooltipWrapper content=" Link to Original Content">
-                      <button
-                        className={`flex items-center justify-center p-2 rounded-md ${
-                          r.sourceId
-                            ? "hover:bg-gray-100"
-                            : "opacity-40 cursor-not-allowed"
-                        }`}
-                        onClick={() => {
-                          // if (!r.sourceId) return;
-                          // window.open(`/library/document/${r.content_id}`, "_blank");
-                        }}
-                      >
-                        <MaterialIcon
-                          iconName="north_east"
-                          className="text-[#1C63DB]"
-                        />
-                      </button>
-                    </TooltipWrapper>
+                  <div className="col-span-1 text-[18px] font-[500] text-[#5F5F65]">
+                    {fmtDate(r.date)}
                   </div>
                 </div>
               ))}
