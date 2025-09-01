@@ -13,7 +13,17 @@ import SafetyIcon from "shared/assets/images/Safety.png";
 import UsersIcon from "shared/assets/images/Users.png";
 import { phoneMask, toast } from "shared/lib";
 import { CoachService } from "entities/coach";
-import { Avatar, AvatarFallback, AvatarImage, Button, Input } from "shared/ui";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Input,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "shared/ui";
 import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
 
 export const ContentManagerProfile = () => {
@@ -322,6 +332,9 @@ export const ContentManagerProfile = () => {
                 }
                 title="Clinical & Licensed Healthcare Providers"
                 subtitle="Physician Assistant (PA)"
+                tooltipText={
+                  "For licensed professionals supporting health transformation through diagnostics and medical oversight."
+                }
               />
               <PractitionerItem
                 icon={
@@ -329,6 +342,9 @@ export const ContentManagerProfile = () => {
                 }
                 title="Other"
                 subtitle="Healthcare Professional (General/Other)"
+                tooltipText={
+                  "For professionals who support wellness but don’t fall into traditional categories."
+                }
               />
               <PractitionerItem
                 icon={
@@ -336,6 +352,9 @@ export const ContentManagerProfile = () => {
                 }
                 title="Functional & Holistic Health Practitioners"
                 subtitle="Functional Nutrition Counselor / Coach"
+                tooltipText={
+                  "For those trained in integrative frameworks and root-cause resolution."
+                }
               />
               <PractitionerItem
                 icon={
@@ -343,11 +362,17 @@ export const ContentManagerProfile = () => {
                 }
                 title="Lifestyle, Mind-Body, and Wellness Coaches"
                 subtitle="Mind-Body Therapist (e.g., somatic, breathwork)"
+                tooltipText={
+                  "Supporting behavioral change, stress reduction, and nervous system balance."
+                }
               />
               <PractitionerItem
                 icon={<MaterialIcon iconName="female" size={20} />}
                 title="Women's Health & Specialty Coaches"
                 subtitle="Menopause or Perimenopause Specialist"
+                tooltipText={
+                  "Serving women through transitions like perimenopause, menopause, and fertility journeys."
+                }
               />
             </ul>
           </Card>
@@ -477,10 +502,12 @@ const PractitionerItem = ({
   icon,
   title,
   subtitle,
+  tooltipText,
 }: {
   icon: React.ReactNode;
   title: string;
   subtitle: string;
+  tooltipText: string;
 }) => (
   <li>
     <div className="flex items-start gap-[8px]">
@@ -488,12 +515,28 @@ const PractitionerItem = ({
       <div>
         <div className="flex items-center gap-[8px] text-[#1B2559] font-[600] text-[14px] lg:text-[20px]">
           {title}
-          <MaterialIcon
-            iconName="help"
-            size={16}
-            fill={1}
-            className="text-[#1B2559]"
-          />
+          <TooltipProvider delayDuration={500} disableHoverableContent>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button>
+                  <MaterialIcon
+                    iconName="help"
+                    size={16}
+                    fill={1}
+                    className="text-[#1C63DB]"
+                  />
+                </button>
+              </TooltipTrigger>
+
+              <TooltipContent side="top" className="z-50 p-[16px] w-[309px]">
+                <div className="flex flex-col items-center gap-2 max-w-[240px]">
+                  <h3 className="flex gap-2 text-[#1B2559] text-[16px] font-semibold leading-[1.4]">
+                    {tooltipText}
+                  </h3>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
     </div>

@@ -51,7 +51,7 @@ export const FOCUS_OPTIONS = [
   "Postpartum / Pelvic Floor",
   "Cancer Support",
   "Other",
-] as const;
+];
 
 export const SOFTWARE_OPTIONS = [
   "Practice Management Software",

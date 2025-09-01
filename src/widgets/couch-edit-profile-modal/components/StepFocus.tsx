@@ -14,7 +14,7 @@ import { FOCUS_OPTIONS, SOFTWARE_OPTIONS, USE_AI_ANSWERS } from "../helpers";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
-type FocusOption = (typeof FOCUS_OPTIONS)[number];
+type FocusOption = string;
 
 type StepFocusProps = {
   data: CoachOnboardingState;
@@ -27,6 +27,9 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
   );
   const [query, setQuery] = useState("");
   const [otherText, setOtherText] = useState("");
+
+  const [options, setOptions] = useState<string[]>(FOCUS_OPTIONS);
+
   const [selected, setSelected] = useState<Set<FocusOption>>(new Set());
 
   useEffect(() => {
@@ -35,16 +38,13 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
       expertise_areas: Array.from(selected),
       practice_management_software: softwere,
     }));
-  }, [selected, softwere]);
+  }, [selected, softwere, setDataState]);
 
   const toggle = useCallback((item: FocusOption) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(item)) {
-        next.delete(item);
-      } else {
-        next.add(item);
-      }
+      if (next.has(item)) next.delete(item);
+      else next.add(item);
       return next;
     });
   }, []);
@@ -53,10 +53,10 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
 
   const filtered = useMemo(
     () =>
-      FOCUS_OPTIONS.filter((o) =>
+      options.filter((o) =>
         o.toLowerCase().includes(query.trim().toLowerCase())
       ),
-    [query]
+    [options, query]
   );
 
   const renderItem = (label: FocusOption) => {
@@ -66,16 +66,34 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
         key={label}
         onClick={() => toggle(label)}
         className={cn(
-          "h-[44px] rounded-full px-[16px]  font-[Nunito] text-[16px] font-semibold",
+          "h-[44px] rounded-full px-[16px] font-[Nunito] text-[16px] font-semibold",
           isActive
             ? "bg-[#008FF61A] text-[#1C63DB]"
-            : "border border-[B9B9B9] text-[#B9B9B9]"
+            : "border border-[#B9B9B9] text-[#B9B9B9]"
         )}
       >
         {label}
         {isActive && <span className="ml-2">x</span>}
       </button>
     );
+  };
+
+  const handleAddNiche = () => {
+    const value = otherText.trim();
+    if (!value) return;
+
+    const exists = options.some((o) => o.toLowerCase() === value.toLowerCase());
+    if (!exists) {
+      setOptions((prev) => [...prev, value]);
+    }
+
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.add(value);
+      return next;
+    });
+
+    setOtherText("");
   };
 
   return (
@@ -109,7 +127,10 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
             className="flex h-[44px] w-[220px] md:w-[300px] items-center justify-center self-stretch rounded-[8px] border-[1px] border-[#DFDFDF] bg-white px-[16px] py-[11px] font-[Nunito] text-[16px] font-medium text-[#5F5F65] outline-none"
           />
           {otherText.trim().length > 0 && (
-            <button className="flex h-[44px] items-center rounded-full bg-[#1C63DB] p-[16px] font-[Nunito] text-[14px] md:text-[16px] font-semibold text-white">
+            <button
+              onClick={handleAddNiche}
+              className="flex h-[44px] items-center rounded-full bg-[#1C63DB] p-[16px] font-[Nunito] text-[14px] md:text-[16px] font-semibold text-white"
+            >
               Add niche
             </button>
           )}
@@ -134,7 +155,7 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
         </label>
         <Select value={softwere} onValueChange={(v) => setSoftwere(v)}>
           <SelectTrigger className="md:w-1/2">
-            <SelectValue placeholder="Choose a softwere" />
+            <SelectValue placeholder="Choose a software" />
           </SelectTrigger>
           <SelectContent className="max-h-[200px] overflow-y-auto">
             {SOFTWARE_OPTIONS.map((q) => (

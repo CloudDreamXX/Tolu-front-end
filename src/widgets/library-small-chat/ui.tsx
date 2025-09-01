@@ -92,6 +92,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   );
 
   const lastId = location.state?.lastId;
+  const folderId = location.state?.folderId;
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
 
   const [isSearching, setIsSearching] = useState(false);
@@ -111,6 +112,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [voiceContent, setVoiceContent] = useState<string>("");
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
+
+  useEffect(() => {
+    if (folderId) {
+      setFolderToChat(folderId);
+    }
+  }, [folderId]);
 
   useEffect(() => {
     if (activeChatKey) {
@@ -457,6 +464,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 selectedSwitch: SWITCH_KEYS.CREATE,
                 lastId: res.chatId,
                 docId: res.documentId,
+                folderId: folderState,
               },
             });
           }
@@ -488,6 +496,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 selectedSwitch: SWITCH_KEYS.CASE,
                 lastId: res.chatId,
                 docId: res.documentId,
+                folderId: folderState,
               },
             }
           );
@@ -689,7 +698,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       documentName={chatTitle}
                     />
                     <PopoverFolder
-                      folderId={folderState || undefined}
+                      folderId={folderState || folderId || undefined}
                       setFolderId={handleSetFolder}
                       setExistingFiles={setExistingFiles}
                       setExistingInstruction={setExistingInstruction}
@@ -860,7 +869,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         documentName={chatTitle}
                       />
                       <PopoverFolder
-                        folderId={folderState || undefined}
+                        folderId={folderState || folderId || undefined}
                         setFolderId={handleSetFolder}
                         setExistingFiles={setExistingFiles}
                         setExistingInstruction={setExistingInstruction}

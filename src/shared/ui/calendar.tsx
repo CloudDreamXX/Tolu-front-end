@@ -16,7 +16,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
+      className={cn("p-3 flex items-center justify-center", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -55,14 +55,14 @@ function Calendar({
         IconLeft: ({ className, ...props }) => (
           <MaterialIcon
             iconName="keyboard_arrow_left"
-            className={cn("h-4 w-4", className)}
+            className={cn("h-4 w-4 mb-[8px] mr-[8px]", className)}
             {...props}
           />
         ),
         IconRight: ({ className, ...props }) => (
           <MaterialIcon
             iconName="keyboard_arrow_right"
-            className={cn("h-4 w-4", className)}
+            className={cn("h-4 w-4 mb-[8px] mr-[8px]", className)}
             {...props}
           />
         ),

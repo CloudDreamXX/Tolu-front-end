@@ -102,6 +102,8 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     if (!folderId) {
       setSelectedFolder(null);
       setSelectedFolderName("");
+    } else {
+      setSelectedFolder(folderId);
     }
   }, [folderId]);
 

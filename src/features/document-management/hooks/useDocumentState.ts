@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffectiveDocumentId } from "./useEffectiveDocumentId";
-import { setLastChatId } from "entities/client/lib";
+import { setFolderToChat, setLastChatId } from "entities/client/lib";
 
 export const useDocumentState = () => {
   const { tab, folderId, documentId } = useEffectiveDocumentId();
@@ -42,7 +42,10 @@ export const useDocumentState = () => {
         setDocument(response);
         setDocumentTitle(response.aiTitle);
         loadConversation(response.chatId);
-        dispatch(setLastChatId(response.chatId));
+        if (response.status === "Raw") {
+          dispatch(setLastChatId(response.chatId));
+          dispatch(setFolderToChat(response.originalFolderId));
+        }
       }
     } catch (error) {
       console.error("Error fetching document:", error);

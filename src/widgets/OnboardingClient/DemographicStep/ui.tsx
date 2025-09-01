@@ -200,7 +200,7 @@ export const DemographicStep = () => {
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal border-[#DFDFDF] hover:bg-white",
+                "w-full justify-start items-start text-left font-normal border-[#DFDFDF] hover:bg-white",
                 !localDate && "text-muted-foreground"
               )}
             >
@@ -208,7 +208,7 @@ export const DemographicStep = () => {
                 iconName="calendar_today"
                 fill={1}
                 size={20}
-                className="w-4 h-4 mr-2"
+                className="w-4 h-4"
               />
               {localDate ? format(localDate, "PPP") : "Pick a date"}
             </Button>
@@ -216,6 +216,9 @@ export const DemographicStep = () => {
           <PopoverContent
             className="w-auto p-0 pointer-events-auto"
             align="start"
+            avoidCollisions={false}
+            sticky="always"
+            side="bottom"
           >
             {calendarContent}
           </PopoverContent>
