@@ -44,6 +44,14 @@ export const PrivacyPolicy: React.FC<Props> = ({
                 ))}
               </ul>
             )}
+            <div className="flex flex-col items-center gap-[16px]">
+              <p className="text-[#5F5F65] text-[14px]">
+                Need support or have questions? Contact us anytime at{" "}
+                <a href="mailto:support@tolu.health" className="text-[#1C63DB]">
+                  support@tolu.health
+                </a>
+              </p>
+            </div>
             <Link
               to="https://tolu.health/privacy-policy"
               className="text-[#1C63DB] text-[16px] font-[500] underline"

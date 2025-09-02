@@ -49,6 +49,11 @@ export const OnboardingWerlcome = () => {
                 holistic practice.
               </h3>
               <p className="self-stretch text-center text-black font-[Nunito] text-[24px] font-medium ">
+                With Tolu, you can streamline intake, build personalized health
+                timelines, and deliver education that fits each client’s unique
+                journey.
+              </p>
+              <p className="self-stretch text-center text-black font-[Nunito] text-[24px] font-medium ">
                 Let’s learn about your specialty so we can tailor your
                 dashboard, tools, and content to support your work.
               </p>

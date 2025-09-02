@@ -79,7 +79,7 @@ export const ContentLicensing: React.FC<Props> = ({
       content: (
         <>
           <ul className="text-left list-disc text-[#5F5F65] text-[16px]">
-            <li>- We may format for clarity or accessibility.</li>
+            <li>- We may: Format for clarity or accessibility.</li>
             <li>- Suggest changes for platform standards.</li>
             <li>- Unpublish content if outdated or policy-violating.</li>
           </ul>
@@ -130,6 +130,8 @@ export const ContentLicensing: React.FC<Props> = ({
       title: "Legal Stuff",
       content: (
         <>
+          <p>You confirm:</p>
+          <br />
           <ul className="text-left list-disc text-[#5F5F65] text-[16px]">
             <li>
               - The content is original or appropriately licensed, credited, or
@@ -158,15 +160,21 @@ export const ContentLicensing: React.FC<Props> = ({
     {
       title: "Accept & Publish",
       content: (
-        <div className="flex items-center gap-[16px]">
-          <Checkbox
-            checked={isChecked}
-            onCheckedChange={() => setIsChecked(!isChecked)}
-          />
-          <p className="text-[#1D1D1F] text-[20px] font-[500]">
-            I have read and agree to this agreement
+        <>
+          <p className="text-[#5F5F65] text-[16px] mb-[24px]">
+            By clicking “I Agree,” you accept the terms of this Content
+            Licensing Agreement.
           </p>
-        </div>
+          <div className="flex items-center gap-[16px]">
+            <Checkbox
+              checked={isChecked}
+              onCheckedChange={() => setIsChecked(!isChecked)}
+            />
+            <p className="text-[#1D1D1F] text-[20px] font-[500]">
+              I Agree to the Content Licensing Terms
+            </p>
+          </div>
+        </>
       ),
     },
   ];
@@ -224,7 +232,7 @@ export const ContentLicensing: React.FC<Props> = ({
             className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] shrink-0 ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}
             disabled={!isChecked}
           >
-            Continue
+            Submit & Continue
           </button>
         )}
       </div>

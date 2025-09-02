@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { AdminService, User } from "entities/admin";
 import { toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { fmtDate } from "pages/feedback-hub";
 
 const PAGE_SIZE = 10;
 
@@ -117,7 +118,7 @@ export const UserManagement: React.FC = () => {
         <div>
           {/* Table View for Desktop */}
           <div className="hidden overflow-x-auto md:block">
-            <div className="min-w-[1400px]">
+            <div className="min-w-[1800px]">
               <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
                 <div className="px-[4px]">Name</div>
                 <div className="px-[4px]">Email</div>
@@ -135,7 +136,9 @@ export const UserManagement: React.FC = () => {
                     <div className="px-[4px]">{user.name}</div>
                     <div className="px-[4px]">{user.email}</div>
                     <div className="px-[4px]">{user.phone_number}</div>
-                    <div className="px-[4px]">{user.signup_date || "-"}</div>
+                    <div className="px-[4px]">
+                      {fmtDate(user.signup_date) || "-"}
+                    </div>
                     <div>
                       <span
                         className={`text-sm font-semibold px-2 py-1 rounded-full ${getRoleStyle(user.role)}`}
@@ -164,10 +167,10 @@ export const UserManagement: React.FC = () => {
 
                 <div className="flex flex-col">
                   <div className="flex text-[14px] leading-[20px] py-[8px] border-b border-[#F3F6FB]">
-                    <span className="w-full text-[#5F5F65] font-medium">
+                    <span className="shrink-0 w-[88px] text-[#5F5F65] font-medium">
                       Email
                     </span>
-                    <span className="w-full font-normal text-black">
+                    <span className="flex-1 min-w-0 font-normal text-black whitespace-normal [overflow-wrap:anywhere] break-words">
                       {user.email}
                     </span>
                   </div>
@@ -186,7 +189,7 @@ export const UserManagement: React.FC = () => {
                       Sign up date
                     </span>
                     <span className="w-full font-normal text-black">
-                      {user.signup_date || "-"}
+                      {fmtDate(user.signup_date) || "-"}
                     </span>
                   </div>
 

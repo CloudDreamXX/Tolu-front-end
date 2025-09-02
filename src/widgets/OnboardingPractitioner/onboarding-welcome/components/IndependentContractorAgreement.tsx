@@ -57,8 +57,8 @@ export const IndependentContractorAgreement: React.FC<Props> = ({
             <div className="flex flex-col gap-[8px]">
               <h3 className="text-[20px] font-bold text-black">Your Content</h3>
               <p className="text-[#5F5F65] text-[16px]">
-                - You own your original content. By publishing on Tolu, you
-                grant us permission to use and promote it.
+                - You own your original content. <br /> By publishing on Tolu,
+                you grant us permission to use and promote it.
               </p>
             </div>
 
@@ -105,8 +105,8 @@ export const IndependentContractorAgreement: React.FC<Props> = ({
             <div className="flex flex-col gap-[8px]">
               <h3 className="text-[20px] font-bold text-black">Legal Basics</h3>
               <p className="text-[#5F5F65] text-[16px]">
-                - This agreement follows Florida law. We may update terms and
-                will notify you when we do.
+                - This agreement follows Florida law. <br /> We may update terms
+                and will notify you when we do.
               </p>
             </div>
           </div>
@@ -117,9 +117,13 @@ export const IndependentContractorAgreement: React.FC<Props> = ({
               onCheckedChange={() => setIsChecked(!isChecked)}
             />
             <p className="text-[#1D1D1F] text-[20px] font-[500]">
-              I have read and agree to this agreement
+              Click "I agree" to accept and continue
             </p>
           </div>
+          <p className="text-[#5F5F65] text-[16px]">
+            By clicking, you confirm that you understand and agree to these
+            terms as an Educator on the Tolu platform
+          </p>
           <button
             onClick={handleNext}
             className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}

@@ -20,10 +20,12 @@ export const MediaTestimonial: React.FC<Props> = ({
   ];
 
   return (
-    <div className="flex flex-col xl:w-[900px] items-center justify-center gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
-      <div className="flex flex-col items-center shrink-0 w-full md:w-[548px] md:h-[269px] lg:h-auto gap-[24px]">
-        <Like />
-        <div className="flex flex-col gap-[38px] items-center justify-center">
+    <div className="flex flex-col xl:w-[900px] h-[80vh] overflow-y-auto items-center justify-center gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
+      <div className="flex flex-col items-center w-full h-full md:w-[548px] gap-[24px]">
+        <div>
+          <Like />
+        </div>
+        <div className="flex flex-col gap-[38px] pb-[40px] items-center justify-center">
           <div className="flex md:w-[460px] flex-col items-center gap-[16px]">
             <h2 className="text-center text-black font-[Nunito] text-[24px] md:text-[40px]/[56px] text-wrap font-bold">
               Media & Testimonial Consent
@@ -61,7 +63,10 @@ export const MediaTestimonial: React.FC<Props> = ({
                 - No payment is provided, unless agreed separately
               </li>
               <li className="text-[#5F5F65] text-[16px]">
-                - You can opt out anytime by emailing support@tolu.health
+                - You can opt out anytime by emailing{" "}
+                <a href="mailto:support@tolu.health" className="text-[#1C63DB]">
+                  support@tolu.health
+                </a>
               </li>
               <li className="text-[#5F5F65] text-[16px]">
                 - Already-published materials won’t be removed but may be
@@ -77,19 +82,28 @@ export const MediaTestimonial: React.FC<Props> = ({
                 onCheckedChange={() => setIsChecked(!isChecked)}
               />
               <p className="text-[#1D1D1F] text-[20px] font-[500]">
-                I have read and agree to this agreement
+                By clicking “I Agree”, you give Tolu permission to use your
+                submitted or shared content as outlined above.
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-[16px]">
+              <p className="text-[#5F5F65] text-[14px]">
+                Need support or have questions? Contact us anytime at{" "}
+                <a href="mailto:support@tolu.health" className="text-[#1C63DB]">
+                  support@tolu.health
+                </a>
               </p>
             </div>
           </div>
+          <button
+            onClick={handleNext}
+            className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] shrink-0 ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}
+            disabled={!isChecked}
+          >
+            Continue
+          </button>
         </div>
       </div>
-      <button
-        onClick={handleNext}
-        className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] shrink-0 ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}
-        disabled={!isChecked}
-      >
-        Continue
-      </button>
     </div>
   );
 };

@@ -374,7 +374,7 @@ export const FeedbackHub = () => {
       </div>
 
       <div className="w-full overflow-x-auto">
-        <div className="bg-white rounded-xl border border-[#E6E8EB] p-[24px] min-w-[1400px]">
+        <div className="bg-white rounded-xl border border-[#E6E8EB] p-[24px]">
           <div className="grid grid-cols-11 pb-[24px] border-b text-[18px] font-[500] text-[#5F5F65] mb-[24px]">
             <div className="col-span-1">User type</div>
             <div className="col-span-3">Query</div>
@@ -401,7 +401,7 @@ export const FeedbackHub = () => {
               filtered.slice(0, PAGE_SIZE).map((r, idx) => (
                 <div
                   key={idx}
-                  className={`grid grid-cols-11 px-[12px] py-[8px] items-center ${
+                  className={`grid grid-cols-11 px-[12px] py-[8px] items-center h-[56px] ${
                     idx % 2 === 0 ? "bg-white" : "bg-[#F7F9FD] rounded-[8px]"
                   }`}
                 >

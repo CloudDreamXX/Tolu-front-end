@@ -15,6 +15,9 @@ export const AffiliatePromoter: React.FC<Props> = ({
   const includes = [
     "You are a certified health coach, functional nutrition counselor, dietitian, nutritionist, or a licensed health professional with an active license or certificate in good standing.",
     "You agree to provide proof of your credentials before accessing the Tolu Platform.",
+  ];
+
+  const roles = [
     "You’ll share Tolu-approved products and tools through your Tolu Profile only.",
     "You agree to promote ethically, honestly, and in alignment with our brand values.",
   ];
@@ -58,6 +61,14 @@ export const AffiliatePromoter: React.FC<Props> = ({
                 </li>
               ))}
             </ul>
+            <h3 className="font-bold text-[#1D1D1F] text-[20px]">Your role:</h3>
+            <ul className="list-disc pl-5">
+              {roles.map((item, index) => (
+                <li key={index} className="text-[#5F5F65] text-[16px]">
+                  - {item}
+                </li>
+              ))}
+            </ul>
 
             <h3 className="font-bold text-[#1D1D1F] text-[20px]">
               What’s Not Allowed
@@ -80,14 +91,23 @@ export const AffiliatePromoter: React.FC<Props> = ({
                 </li>
               ))}
             </ul>
-
             <div className="flex gap-[16px] items-center">
               <Checkbox
                 checked={isChecked}
                 onCheckedChange={() => setIsChecked(!isChecked)}
               />
               <p className="text-[#1D1D1F] text-[20px] font-[500]">
-                I have read and agree to this agreement
+                By clicking “I Agree”, you accept all the terms of the full
+                Affiliate & Product Promoter Agreement and confirm that you meet
+                the eligibility requirements.
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-[16px]">
+              <p className="text-[#5F5F65] text-[14px]">
+                Need support or have questions? Contact us anytime at{" "}
+                <a href="mailto:support@tolu.health" className="text-[#1C63DB]">
+                  support@tolu.health
+                </a>
               </p>
             </div>
           </div>
