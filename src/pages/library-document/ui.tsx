@@ -59,9 +59,12 @@ export const LibraryDocument = () => {
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
-      if (message.notification.type === "content_share") {
+      if (
+        message.notification.type === "content_share" ||
+        message.notification.type === "message"
+      ) {
         toast({
-          title: "New Content Shared",
+          title: message.notification.title,
           description: message.notification.message,
         });
       }

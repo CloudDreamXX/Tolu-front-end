@@ -1,6 +1,4 @@
 import { CoachService, ShareContentData } from "entities/coach";
-import { RootState } from "entities/store";
-import { useSelector } from "react-redux";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -21,9 +19,6 @@ interface DocumentCreationParams {
 }
 
 export const useDocumentCreation = () => {
-  const practitionerName = useSelector(
-    (state: RootState) => state.user.user?.name
-  );
   const handleDocumentCreation = async (params: DocumentCreationParams) => {
     const {
       location,
@@ -79,11 +74,7 @@ export const useDocumentCreation = () => {
               content_id: realDocumentId,
               client_id: clientId,
             };
-            await CoachService.shareContent(
-              data,
-              practitionerName || "Practitioner",
-              params.documentName || "document"
-            );
+            await CoachService.shareContent(data);
           }
 
           await loadConversation(documentId);

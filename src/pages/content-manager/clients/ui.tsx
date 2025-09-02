@@ -1,3 +1,4 @@
+import { ChatSocketService } from "entities/chat";
 import {
   Client,
   ClientDetails,
@@ -115,6 +116,31 @@ export const ContentManagerClients: React.FC = () => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
       setImportClientsPopup(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const handleNewMessage = (message: any) => {
+      if (
+        message.notification.type === "invitation_requested" ||
+        message.notification.type === "client_joined" ||
+        message.notification.type === "message"
+      ) {
+        toast({
+          title: message.notification.title,
+          description: message.notification.message,
+        });
+      }
+    };
+
+    ChatSocketService.on("notification", (message: any) =>
+      handleNewMessage(message)
+    );
+
+    return () => {
+      ChatSocketService.off("notification", (message: any) =>
+        handleNewMessage(message)
+      );
+    };
   }, []);
 
   useEffect(() => {

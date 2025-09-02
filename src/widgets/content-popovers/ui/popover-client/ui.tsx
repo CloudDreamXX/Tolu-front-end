@@ -40,7 +40,6 @@ interface IPopoverClientProps {
 
 export const PopoverClient: React.FC<IPopoverClientProps> = ({
   documentId,
-  documentName,
   setClientId,
   customTrigger,
   refreshSharedClients,
@@ -125,9 +124,6 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
 
   const token = useSelector((state: RootState) => state.user.token);
-  const practitionerName = useSelector(
-    (state: RootState) => state.user.user?.name
-  );
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -231,11 +227,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
               content_id: documentId,
               client_id: clientId,
             };
-            return CoachService.shareContent(
-              data,
-              practitionerName || "Practitioner",
-              documentName || "document"
-            );
+            return CoachService.shareContent(data);
           })
         );
       }

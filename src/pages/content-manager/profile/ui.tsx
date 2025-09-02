@@ -25,6 +25,7 @@ import {
   TooltipTrigger,
 } from "shared/ui";
 import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
+import { ChatSocketService } from "entities/chat";
 
 export const ContentManagerProfile = () => {
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
@@ -34,6 +35,31 @@ export const ContentManagerProfile = () => {
   const [user, setUser] = useState<UserOnboardingInfo | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
   const [licensePhotos, setLicensePhotos] = useState<string[]>([]);
+
+  useEffect(() => {
+    const handleNewMessage = (message: any) => {
+      if (
+        message.notification.type === "invitation_requested" ||
+        message.notification.type === "client_joined" ||
+        message.notification.type === "message"
+      ) {
+        toast({
+          title: message.notification.title,
+          description: message.notification.message,
+        });
+      }
+    };
+
+    ChatSocketService.on("notification", (message: any) =>
+      handleNewMessage(message)
+    );
+
+    return () => {
+      ChatSocketService.off("notification", (message: any) =>
+        handleNewMessage(message)
+      );
+    };
+  }, []);
 
   useEffect(() => {
     const revokeUrls: string[] = [];

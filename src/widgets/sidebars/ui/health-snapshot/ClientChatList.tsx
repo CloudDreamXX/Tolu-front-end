@@ -1,9 +1,5 @@
-import { ChatSocketService } from "entities/chat";
 import { useFetchAllChatsQuery } from "entities/chat/chatApi";
 import { chatsSelectors } from "entities/chat/chatsSlice";
-import { RootState } from "entities/store";
-import { UserService } from "entities/user";
-import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -19,23 +15,6 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
   const nav = useNavigate();
   const { isLoading } = useFetchAllChatsQuery();
   const chatList = useSelector(chatsSelectors.selectAll);
-  const profile = useSelector((state: RootState) => state.user.user);
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const user = await UserService.getUserProfile();
-        ChatSocketService.connect(user.id);
-      } catch (error) {
-        console.error("Failed to init chat:", error);
-      }
-    };
-
-    init();
-    return () => {
-      ChatSocketService.disconnect();
-    };
-  }, [profile?.id]);
 
   if (isLoading) {
     return (

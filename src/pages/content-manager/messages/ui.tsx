@@ -1,8 +1,4 @@
-import {
-  ChatItemModel,
-  ChatSocketService,
-  DetailsChatItemModel,
-} from "entities/chat";
+import { ChatItemModel, DetailsChatItemModel } from "entities/chat";
 import {
   useCreateGroupChatMutation,
   useFetchAllChatsQuery,
@@ -10,8 +6,6 @@ import {
 } from "entities/chat/chatApi";
 import { chatsSelectors } from "entities/chat/chatsSlice";
 import { Client, CoachService } from "entities/coach";
-import { RootState } from "entities/store";
-import { UserService } from "entities/user";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -37,7 +31,6 @@ export const ContentManagerMessages: React.FC = () => {
   const { isMobileOrTablet } = usePageWidth();
 
   const chats = useSelector(chatsSelectors.selectAll);
-  const profile = useSelector((state: RootState) => state.user.user);
 
   const [selectedChat, setSelectedChat] = useState<ChatItemModel | null>(null);
   const [clientsData, setClientsData] = useState<Client[]>([]);
@@ -65,29 +58,6 @@ export const ContentManagerMessages: React.FC = () => {
       mounted = false;
     };
   }, []);
-
-  useEffect(() => {
-    const init = async () => {
-      if (!profile?.id) return;
-
-      try {
-        const user = await UserService.getUserProfile();
-        ChatSocketService.connect(user.id);
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to initialize chat.",
-        });
-        console.error("Failed to initialize chat:", error);
-      }
-    };
-
-    init();
-    return () => {
-      ChatSocketService.disconnect();
-    };
-  }, [profile?.id]);
 
   const routeMatch = useMemo(() => {
     if (!routeChatId || !chats.length) return null;
