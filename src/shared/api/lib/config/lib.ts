@@ -141,6 +141,7 @@ export const API_ROUTES = {
   },
   SYMPTOMS_TRACKER: {
     POST_SYMPTOMS: "/symptom-tracker/log-symptoms/",
+    PUT_SYMPTOMS: "/symptom-tracker/symptoms/{record_id}/",
     GET_SYMPTOMS: "/symptom-tracker/{target_date}",
     GET_SUGGESTIONS: "/symptom-tracker/ai-suggestions/",
     DELETE_SYMPTOM: "/symptom-tracker/symptoms/{symptom_id}/",

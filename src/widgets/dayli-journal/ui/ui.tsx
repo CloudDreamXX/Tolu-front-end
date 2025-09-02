@@ -67,6 +67,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [selectedVoice, setSelectedVoice] = useState<File | null>(null);
   const [summaryView, setSummaryView] = useState<boolean>(false);
+  const [addSymptomsMode, setAddSymptomsMode] = useState<boolean>(false);
+
+  const [records, setRecords] = useState<SymptomData[]>([]);
+  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
 
   const getFormattedDate = () => {
     const today = new Date();
@@ -95,73 +99,119 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     }
   };
 
-  useEffect(() => {
-    const fetchSymptoms = async () => {
-      try {
-        const response =
-          await SymptomsTrackerService.getSymptomByDate(selectedDate);
-        const data = response.data;
+  const mapMoodToSleepQuality = (
+    mood: number
+  ): "Very Poor" | "Poor" | "Fair" | "Good" | "Very Good" => {
+    switch (mood) {
+      case 0:
+        return "Very Poor";
+      case 10:
+        return "Poor";
+      case 20:
+      case 30:
+        return "Fair";
+      case 40:
+        return "Good";
+      case 50:
+        return "Very Good";
+      default:
+        return "Fair";
+    }
+  };
 
-        if (data === null || !data.length) {
-          setUserNote("");
-          setSelectedSymptoms([]);
-          setDurationCategory("");
-          setSelectedTriggers([]);
-          setMoodValue(30);
-          setSleep({
-            hours: 0,
-            minutes: 0,
-            wokeUpTimes: 0,
-            fellBack: "Easy",
-          });
-          setMeal({
-            notes: "",
-            breakfast: { food_items: "", time: "" },
-            lunch: { food_items: "", time: "" },
-            dinner: { food_items: "", time: "" },
-          });
-          setSelectedMealExamples([]);
-          setSummaryView(false);
-        } else {
-          setUserNote(data[0].user_notes || "");
-          setSelectedSymptoms(data[0].symptoms || []);
-          setDurationCategory(data[0].duration_category || "");
-          setSelectedTriggers(data[0].suspected_triggers || []);
-          setMoodValue(mapSleepQualityToMoodValue(data[0].sleep_quality || ""));
-          setSleep({
-            hours: data[0].sleep_hours || 0,
-            minutes: data[0].sleep_minutes || 0,
-            wokeUpTimes: data[0].times_woke_up || 0,
-            fellBack: data[0].how_fell_asleep || "Easy",
-          });
-          setMeal({
-            notes: data[0].meal_notes || "",
-            breakfast: data[0].meal_details?.find(
-              (meal) => meal.meal_type === "breakfast"
-            ) || { food_items: "", time: "" },
-            lunch: data[0].meal_details?.find(
-              (meal) => meal.meal_type === "lunch"
-            ) || { food_items: "", time: "" },
-            dinner: data[0].meal_details?.find(
-              (meal) => meal.meal_type === "dinner"
-            ) || { food_items: "", time: "" },
-          });
-          setSelectedMealExamples(
-            data[0].meal_notes ? data[0].meal_notes.split(",") : []
-          );
-          setSummaryView(true);
-        }
-      } catch (error) {
-        console.error("Error fetching symptoms:", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to load symptoms data",
-          description:
-            "Could not retrieve your symptoms data. Please try again later.",
+  const formatTimeHM = (iso?: string) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  const hydrateFromRecord = (rec: SymptomData) => {
+    setUserNote(rec.user_notes || "");
+    setSelectedSymptoms(rec.symptoms || []);
+    setDurationCategory(rec.duration_category || "");
+    setSelectedTriggers(rec.suspected_triggers || []);
+    setMoodValue(mapSleepQualityToMoodValue(rec.sleep_quality || ""));
+    setSleep({
+      hours: rec.sleep_hours || 0,
+      minutes: rec.sleep_minutes || 0,
+      wokeUpTimes: rec.times_woke_up || 0,
+      fellBack: rec.how_fell_asleep || "Easy",
+    });
+    setMeal({
+      notes: rec.meal_notes || "",
+      breakfast: rec.meal_details?.find((m) => m.meal_type === "breakfast") || {
+        food_items: "",
+        time: "",
+      },
+      lunch: rec.meal_details?.find((m) => m.meal_type === "lunch") || {
+        food_items: "",
+        time: "",
+      },
+      dinner: rec.meal_details?.find((m) => m.meal_type === "dinner") || {
+        food_items: "",
+        time: "",
+      },
+    });
+    setSelectedMealExamples(
+      rec.meal_notes
+        ? rec.meal_notes
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : []
+    );
+    setSummaryView(true);
+    setAddSymptomsMode(false);
+  };
+
+  const fetchSymptoms = async () => {
+    try {
+      const response =
+        await SymptomsTrackerService.getSymptomByDate(selectedDate);
+      const data: SymptomData[] = response?.data || [];
+
+      if (!data.length) {
+        setRecords([]);
+        setSelectedRecordId(null);
+        // Reset UI
+        setUserNote("");
+        setSelectedSymptoms([]);
+        setDurationCategory("");
+        setSelectedTriggers([]);
+        setMoodValue(30);
+        setSleep({ hours: 0, minutes: 0, wokeUpTimes: 0, fellBack: "Easy" });
+        setMeal({
+          notes: "",
+          breakfast: { food_items: "", time: "" },
+          lunch: { food_items: "", time: "" },
+          dinner: { food_items: "", time: "" },
         });
+        setSelectedMealExamples([]);
+        setSummaryView(false);
+        setAddSymptomsMode(false);
+      } else {
+        const sorted = [...data].sort(
+          (a, b) =>
+            new Date(b.created_at || "").getTime() -
+            new Date(a.created_at || "").getTime()
+        );
+        setRecords(sorted);
+        setSelectedRecordId(sorted[0].id || "");
+        hydrateFromRecord(sorted[0]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching symptoms:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to load symptoms data",
+        description:
+          "Could not retrieve your symptoms data. Please try again later.",
+      });
+    }
+  };
 
+  useEffect(() => {
     fetchSymptoms();
   }, [selectedDate]);
 
@@ -172,7 +222,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     const file = event.target.files?.[0] || null;
     if (type === "photo") {
       setSelectedPhoto(file);
-    } else if (type === "voice") {
+    } else {
       setSelectedVoice(file);
     }
   };
@@ -180,14 +230,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
   const handleDeleteFile = (type: "photo" | "voice") => {
     if (type === "photo") {
       setSelectedPhoto(null);
-      if (photoInputRef.current) {
-        photoInputRef.current.value = "";
-      }
-    } else if (type === "voice") {
+      if (photoInputRef.current) photoInputRef.current.value = "";
+    } else {
       setSelectedVoice(null);
-      if (voiceInputRef.current) {
-        voiceInputRef.current.value = "";
-      }
+      if (voiceInputRef.current) voiceInputRef.current.value = "";
     }
   };
 
@@ -195,30 +241,26 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     type: "symptom" | "trigger" | "mealExample",
     value: string
   ) => {
-    if (type === "symptom" && value) {
-      setSelectedSymptoms((prevSymptoms) => {
-        if (prevSymptoms.includes(value)) {
-          return prevSymptoms.filter((symptom) => symptom !== value);
-        } else {
-          return [...prevSymptoms, value];
-        }
-      });
-    } else if (type === "trigger" && value) {
-      setSelectedTriggers((prevTriggers) => {
-        if (prevTriggers.includes(value)) {
-          return prevTriggers.filter((trigger) => trigger !== value);
-        } else {
-          return [...prevTriggers, value];
-        }
-      });
-    } else if (type === "mealExample" && value) {
-      setSelectedMealExamples((prevMealExamples) => {
-        if (prevMealExamples.includes(value)) {
-          return prevMealExamples.filter((item) => item !== value);
-        } else {
-          return [...prevMealExamples, value];
-        }
-      });
+    if (!value) return;
+
+    if (type === "symptom") {
+      setSelectedSymptoms((prev) =>
+        prev.includes(value)
+          ? prev.filter((v) => v !== value)
+          : [...prev, value]
+      );
+    } else if (type === "trigger") {
+      setSelectedTriggers((prev) =>
+        prev.includes(value)
+          ? prev.filter((v) => v !== value)
+          : [...prev, value]
+      );
+    } else {
+      setSelectedMealExamples((prev) =>
+        prev.includes(value)
+          ? prev.filter((v) => v !== value)
+          : [...prev, value]
+      );
     }
   };
 
@@ -251,6 +293,69 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     }));
   };
 
+  const resetFormToBlank = () => {
+    setUserNote("");
+    setSymptomValue("");
+    setTriggerValue("");
+    setSelectedSymptoms([]);
+    setDurationCategory("");
+    setSelectedTriggers([]);
+    setMoodValue(30);
+    setSleep({ hours: 0, minutes: 0, wokeUpTimes: 0, fellBack: "Easy" });
+    setMeal({
+      notes: "",
+      breakfast: { food_items: "", time: "" },
+      lunch: { food_items: "", time: "" },
+      dinner: { food_items: "", time: "" },
+    });
+    setSelectedMealExamples([]);
+    setMealExampleValue("");
+    setSelectedPhoto(null);
+    setSelectedVoice(null);
+    if (photoInputRef.current) photoInputRef.current.value = "";
+    if (voiceInputRef.current) voiceInputRef.current.value = "";
+  };
+
+  const populateFormFromRecord = (rec: SymptomData) => {
+    setUserNote(rec.user_notes || "");
+    setSymptomValue("");
+    setTriggerValue("");
+    setSelectedSymptoms(rec.symptoms || []);
+    setDurationCategory(rec.duration_category || "");
+    setSelectedTriggers(rec.suspected_triggers || []);
+    setMoodValue(mapSleepQualityToMoodValue(rec.sleep_quality || ""));
+    setSleep({
+      hours: rec.sleep_hours || 0,
+      minutes: rec.sleep_minutes || 0,
+      wokeUpTimes: rec.times_woke_up || 0,
+      fellBack: rec.how_fell_asleep || "Easy",
+    });
+    setMeal({
+      notes: rec.meal_notes || "",
+      breakfast: rec.meal_details?.find((m) => m.meal_type === "breakfast") || {
+        food_items: "",
+        time: "",
+      },
+      lunch: rec.meal_details?.find((m) => m.meal_type === "lunch") || {
+        food_items: "",
+        time: "",
+      },
+      dinner: rec.meal_details?.find((m) => m.meal_type === "dinner") || {
+        food_items: "",
+        time: "",
+      },
+    });
+    setSelectedMealExamples(
+      rec.meal_notes
+        ? rec.meal_notes
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : []
+    );
+    setMealExampleValue("");
+  };
+
   const handleSubmit = async () => {
     const updatedSelectedSymptoms = [...selectedSymptoms];
     if (symptomValue && !updatedSelectedSymptoms.includes(symptomValue)) {
@@ -269,6 +374,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     ) {
       updatedSelectedMealExamples.push(mealExampleValue);
     }
+
     const sleepQuality = mapMoodToSleepQuality(moodValue);
 
     const data: SymptomData = {
@@ -310,16 +416,90 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
       await SymptomsTrackerService.addSymptoms(data, photo, voice);
       onClose();
       setSummaryView(true);
-      toast({
-        title: "Symptoms were added successfully",
-      });
+      toast({ title: "Symptoms were added successfully" });
+      setAddSymptomsMode(false);
+      fetchSymptoms();
     } catch (error) {
       console.error("Error submitting journal:", error);
       toast({
         variant: "destructive",
-        title: "Failed to add symptoms",
+        title: "Failed to add new record",
         description:
-          "Failed to add symptoms. Please check your answers and try again.",
+          "Failed to add new record. Please check your answers and try again.",
+      });
+    }
+  };
+
+  const handleEdit = async (recordId: string) => {
+    const updatedSelectedSymptoms = [...selectedSymptoms];
+    if (symptomValue && !updatedSelectedSymptoms.includes(symptomValue)) {
+      updatedSelectedSymptoms.push(symptomValue);
+    }
+
+    const updatedSelectedTriggers = [...selectedTriggers];
+    if (triggerValue && !updatedSelectedTriggers.includes(triggerValue)) {
+      updatedSelectedTriggers.push(triggerValue);
+    }
+
+    const updatedSelectedMealExamples = [...selectedMealExamples];
+    if (
+      mealExampleValue &&
+      !updatedSelectedMealExamples.includes(mealExampleValue)
+    ) {
+      updatedSelectedMealExamples.push(mealExampleValue);
+    }
+
+    const sleepQuality = mapMoodToSleepQuality(moodValue);
+
+    const data: SymptomData = {
+      tracking_date: selectedDate,
+      user_notes: userNote,
+      symptoms: updatedSelectedSymptoms,
+      symptom_intensities: [],
+      duration_category: durationCategory,
+      suspected_triggers: updatedSelectedTriggers,
+      sleep_quality: sleepQuality,
+      sleep_hours: sleep.hours,
+      sleep_minutes: sleep.minutes,
+      times_woke_up: sleep.wokeUpTimes,
+      how_fell_asleep: sleep.fellBack,
+      meal_notes: updatedSelectedMealExamples.join(", "),
+      meal_details: [
+        {
+          meal_type: "breakfast",
+          food_items: meal.breakfast.food_items,
+          time: meal.breakfast.time,
+        },
+        {
+          meal_type: "lunch",
+          food_items: meal.lunch.food_items,
+          time: meal.lunch.time,
+        },
+        {
+          meal_type: "dinner",
+          food_items: meal.dinner.food_items,
+          time: meal.dinner.time,
+        },
+      ],
+    };
+
+    const photo = photoInputRef.current?.files?.[0] || null;
+    const voice = voiceInputRef.current?.files?.[0] || null;
+
+    try {
+      await SymptomsTrackerService.editSymptoms(recordId, data, photo, voice);
+      onClose();
+      setSummaryView(true);
+      toast({ title: "Symptoms were edited successfully" });
+      setAddSymptomsMode(false);
+      fetchSymptoms();
+    } catch (error) {
+      console.error("Error editting symptoms:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to edit symptoms",
+        description:
+          "Failed to edit symptoms. Please check your answers and try again.",
       });
     }
   };
@@ -333,27 +513,6 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     setSelectedDate(formattedDate);
   };
 
-  const mapMoodToSleepQuality = (
-    moodValue: number
-  ): "Very Poor" | "Poor" | "Fair" | "Good" | "Very Good" => {
-    switch (moodValue) {
-      case 0:
-        return "Very Poor";
-      case 10:
-        return "Poor";
-      case 20:
-        return "Fair";
-      case 30:
-        return "Fair";
-      case 40:
-        return "Good";
-      case 50:
-        return "Very Good";
-      default:
-        return "Fair";
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -364,13 +523,64 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
       />
 
       <div
-        className={`flex flex-col ${summaryView ? "bg-white" : "bg-[#F2F4F6] gap-6"} px-4 md:px-6 py-8 overflow-y-auto lg:max-h-[calc(100vh-288px)] md:max-h-[calc(100vh-235px)]`}
+        className={`flex flex-col ${
+          summaryView ? "bg-white" : "bg-[#F2F4F6] gap-6"
+        } px-4 md:px-6 py-8 overflow-y-auto lg:max-h-[calc(100vh-288px)] md:max-h-[calc(100vh-235px)]`}
       >
-        <h1
-          className={`text-2xl font-semibold text-[#1D1D1F] ${summaryView ? "pb-[24px] border-b" : ""}`}
+        <div
+          className={`flex items-center justify-between ${
+            summaryView ? "pb-[24px] border-b" : ""
+          }`}
         >
-          {summaryView ? "Daily Journal Overview" : "Log your journal"}
-        </h1>
+          <h1 className="text-2xl font-semibold text-[#1D1D1F]">
+            {summaryView ? "Daily Journal Overview" : "Log your journal"}
+          </h1>
+
+          {summaryView ? (
+            <div className="flex items-center gap-3">
+              {records.length > 1 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-[#5F5F65]">
+                    {records.length} entries
+                  </span>
+                  <Select
+                    value={selectedRecordId ?? undefined}
+                    onValueChange={(id) => {
+                      setSelectedRecordId(id);
+                      const rec = records.find((r) => r.id === id);
+                      if (rec) hydrateFromRecord(rec);
+                    }}
+                  >
+                    <SelectTrigger className="w-[160px] h-10">
+                      <SelectValue placeholder="Select time" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[240px]">
+                      <SelectGroup>
+                        {records.map((r) => (
+                          <SelectItem key={r.id} value={r.id || ""}>
+                            {formatTimeHM(r.created_at)}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <Button
+                variant="brightblue"
+                onClick={() => {
+                  resetFormToBlank();
+                  setAddSymptomsMode(true);
+                  setSummaryView(false);
+                }}
+                className="w-[128px]"
+              >
+                Add new record
+              </Button>
+            </div>
+          ) : null}
+        </div>
 
         {!summaryView && (
           <BlockWrapper>
@@ -454,7 +664,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <div className="flex flex-wrap gap-2">
             {summaryView
               ? selectedSymptoms.map((item) => (
-                  <div className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base">
+                  <div
+                    key={item}
+                    className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                  >
                     {item}
                   </div>
                 ))
@@ -463,9 +676,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                     variant="ghost"
                     key={symptom}
                     onClick={() => handleSelect("symptom", symptom)}
-                    className={`flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base ${
-                      selectedSymptoms.includes(symptom) ? "bg-[#D1E8FF]" : ""
-                    }`}
+                    className={cn(
+                      "flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base",
+                      selectedSymptoms.includes(symptom) && "bg-[#D1E8FF]"
+                    )}
                   >
                     {symptom}
                   </Button>
@@ -498,9 +712,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                   variant="ghost"
                   key={range.text}
                   onClick={() => handleDurationCategoryChange(range.text)}
-                  className={`flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base ${
-                    durationCategory === range.text ? "bg-[#D1E8FF]" : ""
-                  }`}
+                  className={cn(
+                    "flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base",
+                    durationCategory === range.text && "bg-[#D1E8FF]"
+                  )}
                 >
                   {range.icon} {range.text}
                 </Button>
@@ -524,7 +739,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <div className="flex flex-wrap gap-2">
             {summaryView
               ? selectedTriggers.map((item) => (
-                  <div className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base">
+                  <div
+                    key={item}
+                    className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                  >
                     {item}
                   </div>
                 ))
@@ -533,9 +751,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                     variant="ghost"
                     key={trigger}
                     onClick={() => handleSelect("trigger", trigger)}
-                    className={`flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base ${
-                      selectedTriggers.includes(trigger) ? "bg-[#D1E8FF]" : ""
-                    }`}
+                    className={cn(
+                      "flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base",
+                      selectedTriggers.includes(trigger) && "bg-[#D1E8FF]"
+                    )}
                   >
                     {trigger}
                   </Button>
@@ -624,10 +843,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                       </SelectTrigger>
                       <SelectContent className="max-h-[200px]">
                         <SelectGroup>
-                          {Array.from(
-                            { length: 6 },
-                            (_, i) => (i + 1) * 10
-                          ).map((minute) => (
+                          {[0, 10, 20, 30, 40, 50].map((minute) => (
                             <SelectItem key={minute} value={String(minute)}>
                               {minute}
                             </SelectItem>
@@ -709,7 +925,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
             <div className="flex flex-wrap gap-2">
               {summaryView
                 ? selectedMealExamples.map((item) => (
-                    <div className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base">
+                    <div
+                      key={item}
+                      className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                    >
                       {item}
                     </div>
                   ))
@@ -718,11 +937,11 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                       variant="ghost"
                       key={mealExample}
                       onClick={() => handleSelect("mealExample", mealExample)}
-                      className={`flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base ${
-                        selectedMealExamples.includes(mealExample)
-                          ? "bg-[#D1E8FF]"
-                          : ""
-                      }`}
+                      className={cn(
+                        "flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base",
+                        selectedMealExamples.includes(mealExample) &&
+                          "bg-[#D1E8FF]"
+                      )}
                     >
                       {mealExample}
                     </Button>
@@ -961,29 +1180,9 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
             </div>
           )}
         </BlockWrapper>
-
-        {/* <BlockWrapper>
-          <h2 className="text-lg font-semibold text-[#1D1D1F]">
-            Wearable Data Summary
-          </h2>
-
-          <div className="grid grid-cols-2 gap-2">
-            {snapshots.map((snapshot, index) => (
-              <Snapshot
-                key={snapshot.title}
-                {...snapshot}
-                className={
-                  snapshots.length % 2 !== 0 && index === snapshots.length - 1
-                    ? "col-span-2"
-                    : ""
-                }
-              />
-            ))}
-          </div>
-        </BlockWrapper> */}
       </div>
 
-      <BlockWrapper className="flex flex-row items-center justify-between rounded-none md:rounded-t-none">
+      <BlockWrapper className="flex flex-row items-center justify-between rounded-none md:rounded-t-none mt-auto">
         <Button
           variant="blue2"
           onClick={() => {
@@ -997,10 +1196,17 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         >
           {summaryView ? "Close" : "Cancel"}
         </Button>
+
         {summaryView ? (
           <Button
             variant="brightblue"
-            onClick={() => setSummaryView(false)}
+            onClick={() => {
+              const rec =
+                records.find((r) => r.id === selectedRecordId) || records[0];
+              if (rec) populateFormFromRecord(rec);
+              setAddSymptomsMode(false);
+              setSummaryView(false);
+            }}
             className="w-[128px]"
           >
             Edit
@@ -1008,7 +1214,17 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         ) : (
           <Button
             variant="brightblue"
-            onClick={handleSubmit}
+            onClick={
+              addSymptomsMode
+                ? handleSubmit
+                : () => {
+                    if (!selectedRecordId) {
+                      handleSubmit();
+                      return;
+                    }
+                    handleEdit(selectedRecordId);
+                  }
+            }
             className="w-[128px]"
           >
             Done

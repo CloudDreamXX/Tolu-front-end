@@ -27,6 +27,7 @@ export interface SymptomData {
   how_fell_asleep?: FellBackOption;
   meal_notes?: string;
   meal_details?: MealDetail[];
+  created_at?: string;
 }
 
 export interface AiSuggestions {

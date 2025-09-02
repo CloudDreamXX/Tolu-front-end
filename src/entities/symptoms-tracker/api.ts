@@ -25,6 +25,32 @@ export class SymptomsTrackerService {
     );
   }
 
+  static async editSymptoms(
+    recordId: string,
+    data: SymptomData,
+    photo: File | null,
+    voice: File | null
+  ): Promise<any> {
+    const formData = new FormData();
+
+    formData.append("symptom_data", JSON.stringify(data));
+
+    if (photo) {
+      formData.append("photo", photo);
+    }
+
+    if (voice) {
+      formData.append("voice_note", voice);
+    }
+
+    const endpoint = API_ROUTES.SYMPTOMS_TRACKER.PUT_SYMPTOMS.replace(
+      "{record_id}",
+      recordId
+    );
+
+    return ApiService.put<any>(endpoint, formData);
+  }
+
   static async getSymptomByDate(date: string): Promise<SymptomResponse> {
     const endpoint = API_ROUTES.SYMPTOMS_TRACKER.GET_SYMPTOMS.replace(
       "{target_date}",
