@@ -528,7 +528,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         } px-4 md:px-6 py-8 overflow-y-auto lg:max-h-[calc(100vh-288px)] md:max-h-[calc(100vh-235px)]`}
       >
         <div
-          className={`flex items-center justify-between ${
+          className={`flex items-center flex-col gap-[16px] md:gap-0 md:flex-row justify-between ${
             summaryView ? "pb-[24px] border-b" : ""
           }`}
         >
@@ -537,10 +537,10 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           </h1>
 
           {summaryView ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between w-full md:w-fit md:gap-3 md:justify-end">
               {records.length > 1 && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-[#5F5F65]">
+                  <span className="text-nowrap text-sm text-[#5F5F65]">
                     {records.length} entries
                   </span>
                   <Select
@@ -551,7 +551,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                       if (rec) hydrateFromRecord(rec);
                     }}
                   >
-                    <SelectTrigger className="w-[160px] h-10">
+                    <SelectTrigger className="md:w-[160px] h-10">
                       <SelectValue placeholder="Select time" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[240px]">
