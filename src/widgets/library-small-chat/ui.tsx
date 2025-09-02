@@ -748,7 +748,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                     }}
                     variant="brightblue"
                     disabled={isSearching || !folderState || message === ""}
-                    className="w-12 h-12 p-0 rounded-full bg-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                    className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
                   >
                     <MaterialIcon iconName="send" size={24} />
                   </Button>
@@ -919,7 +919,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         handleNewMessage(message);
                       }}
                       disabled={isSearching || !folderState || message === ""}
-                      className="w-12 h-12 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                      className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
                     >
                       <MaterialIcon iconName="send" size={24} />
                     </Button>
@@ -959,7 +959,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       }}
                       variant="brightblue"
                       disabled={isSearching || message === ""}
-                      className="w-12 h-12 p-0 rounded-full disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                      className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
                     >
                       <MaterialIcon iconName="send" size={24} />
                     </Button>
