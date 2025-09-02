@@ -12,6 +12,7 @@ interface TextareaProps
   value?: string;
   onValueChange?: (value: string) => void;
   children?: React.ReactNode;
+  disabled?: boolean;
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -27,6 +28,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       value,
       onValueChange,
       children,
+      disabled,
       ...props
     },
     ref
@@ -52,8 +54,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           <textarea
             value={value}
             onChange={(e) => onValueChange?.(e.target.value)}
+            disabled={disabled}
             className={cn(
-              "flex min-h-[80px] w-full text-[14px] md:text-[18px] xl:text-[18px] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+              "flex min-h-[80px] w-full text-[14px] md:text-[18px] xl:text-[18px] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-10 md:text-sm",
               footer ? "rounded-b-none border-b-0" : "pb-4",
               className
             )}
@@ -65,6 +68,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           <div
             className={cn(
               "flex items-center justify-between text-sm text-gray-500 bg-white",
+              disabled && "opacity-10 cursor-not-allowed",
               footerClassName
             )}
           >

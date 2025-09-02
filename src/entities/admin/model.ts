@@ -59,3 +59,24 @@ export interface FeedbackSummary {
   total_client_feedback: number;
   combined_total: number;
 }
+
+export interface SendMessagePayload {
+  content: string;
+  message_type: string;
+  target_group: string;
+}
+
+export interface SendMessageResponse {
+  success: boolean;
+  message: string;
+  admin_chat_id: string;
+  recipients_count: number;
+}
+
+export interface AdminChatModel {
+  id: string;
+  name: string;
+  chat_type: string;
+  last_message_time: string;
+  unread_count: number;
+}

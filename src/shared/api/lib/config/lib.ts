@@ -138,6 +138,9 @@ export const API_ROUTES = {
   ADMIN: {
     GET_ALL_USERS: "/admin/users",
     GET_FEEDBACK: "/admin/feedback",
+    GET_ALL_CHATS: "admin/chats",
+    GET_MESSAGES: "admin/chats/{chat_id}/messages",
+    SEND_MESSAGE: "admin/chats/bulk-message",
   },
   SYMPTOMS_TRACKER: {
     POST_SYMPTOMS: "/symptom-tracker/log-symptoms/",

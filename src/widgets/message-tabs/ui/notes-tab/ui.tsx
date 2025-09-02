@@ -24,6 +24,7 @@ interface NotesTabProps {
 
 export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const profile = useSelector((state: RootState) => state.user.user);
+  const isToluAdmin = chat?.name?.toLowerCase() === "tolu admin";
 
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
   const {
@@ -240,84 +241,86 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
         )}
       </div>
 
-      <div className="p-3">
-        <Textarea
-          placeholder={`Write note...`}
-          className={cn("resize-none min-h-[80px]")}
-          containerClassName={cn(
-            "px-4 py-3",
-            dragOver ? "border-2 border-dashed border-blue-500" : undefined
-          )}
-          value={input}
-          onValueChange={setInput}
-          onKeyDown={handleKeyPress}
-          {...getDropzoneProps()}
-          onClick={() => ({})}
-          footer={
-            <div className="flex flex-col w-full">
-              {files.length > 0 && (
-                <div className="mе-1">
-                  <p className="text-sm font-medium text-[#1D1D1F]">
-                    Attached Files:
-                  </p>
-                  <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
-                    {items.map((file) => (
-                      <div key={file.id} className="flex items-center gap-2">
-                        <div className="flex flex-col items-start">
-                          <span className="text-sm text-[#4B5563] text-nowrap max-w-20 truncate">
-                            {file.file.name}
-                          </span>
-                          <span className="text-xs text-[#6B7280]">
-                            {(file.file.size / 1024).toFixed(1)} KB
-                          </span>
+      {!isToluAdmin && (
+        <div className="p-3">
+          <Textarea
+            placeholder={`Write note...`}
+            className={cn("resize-none min-h-[80px]")}
+            containerClassName={cn(
+              "px-4 py-3",
+              dragOver ? "border-2 border-dashed border-blue-500" : undefined
+            )}
+            value={input}
+            onValueChange={setInput}
+            onKeyDown={handleKeyPress}
+            {...getDropzoneProps()}
+            onClick={() => ({})}
+            footer={
+              <div className="flex flex-col w-full">
+                {files.length > 0 && (
+                  <div className="mt-1">
+                    <p className="text-sm font-medium text-[#1D1D1F]">
+                      Attached Files:
+                    </p>
+                    <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
+                      {items.map((file) => (
+                        <div key={file.id} className="flex items-center gap-2">
+                          <div className="flex flex-col items-start">
+                            <span className="text-sm text-[#4B5563] text-nowrap max-w-20 truncate">
+                              {file.file.name}
+                            </span>
+                            <span className="text-xs text-[#6B7280]">
+                              {(file.file.size / 1024).toFixed(1)} KB
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => remove(file.id)}
+                            className="text-sm text-red-500 hover:text-red-700"
+                            title="Remove File"
+                          >
+                            <MaterialIcon
+                              iconName="delete"
+                              className="w-5 h-5 "
+                              fill={1}
+                            />
+                          </button>
                         </div>
-                        <button
-                          onClick={() => remove(file.id)}
-                          className="text-sm text-red-500 hover:text-red-700"
-                          title="Remove File"
-                        >
-                          <MaterialIcon
-                            iconName="delete"
-                            className="w-5 h-5 "
-                            fill={1}
-                          />
-                        </button>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-4">
-                  <input {...getInputProps()} className="hidden" />
-                  <Button value={"ghost"} className="p-0" onClick={open}>
-                    <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
+                )}
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-4">
+                    <input {...getInputProps()} className="hidden" />
+                    <Button value={"ghost"} className="p-0" onClick={open}>
+                      <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
+                    </Button>
+                  </div>
+                  <Button
+                    onClick={handleSend}
+                    disabled={isSending || isUpdating}
+                    variant={isMobileOrTablet ? "brightblue" : "blue"}
+                    className="rounded-full flex justify-center items-center
+                     w-[42px] h-[42px] lg:w-[128px]"
+                  >
+                    {isSending || isUpdating ? (
+                      <MaterialIcon
+                        iconName="progress_activity"
+                        className="animate-spin"
+                      />
+                    ) : (
+                      <>
+                        <MaterialIcon iconName="send" />
+                        {editingId ? "Update" : "Add"}
+                      </>
+                    )}{" "}
                   </Button>
                 </div>
-                <Button
-                  onClick={handleSend}
-                  disabled={isSending || isUpdating}
-                  variant={isMobileOrTablet ? "brightblue" : "blue"}
-                  className="rounded-full flex justify-center items-center
-                     w-[42px] h-[42px] lg:w-[128px]"
-                >
-                  {isSending || isUpdating ? (
-                    <MaterialIcon
-                      iconName="progress_activity"
-                      className="animate-spin"
-                    />
-                  ) : (
-                    <>
-                      <MaterialIcon iconName="send" />
-                      {editingId ? "Update" : "Add"}
-                    </>
-                  )}{" "}
-                </Button>
               </div>
-            </div>
-          }
-        />
-      </div>
+            }
+          />
+        </div>
+      )}
     </div>
   );
 };

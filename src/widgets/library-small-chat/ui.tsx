@@ -62,6 +62,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const location = useLocation();
   const isCreatePage = location.pathname === "/content-manager/create";
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const [sourceId, setSourceId] = useState<string | null>(null);
 
   const loading = useSelector((state: RootState) => state.client.loading);
   const chat = useSelector((state: RootState) => state.client.chat);
@@ -425,6 +426,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           finalData?.chatId ||
           "";
 
+        setSourceId(finalData?.searched_result_id || null);
         dispatch(setLastChatId(chatId));
 
         const aiMessage: Message = {
@@ -654,9 +656,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                   }
                   onReadAloud={handleReadAloud}
                   isReadingAloud={isReadingAloud}
-                  currentChatId={
-                    (chat && chat[0]?.id) || currentChatId || undefined
-                  }
+                  currentChatId={sourceId || undefined}
                 />
               </div>
             )}
@@ -798,9 +798,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                   }
                   onReadAloud={handleReadAloud}
                   isReadingAloud={isReadingAloud}
-                  currentChatId={
-                    (chat && chat[0]?.id) || currentChatId || undefined
-                  }
+                  currentChatId={sourceId || undefined}
                 />
               </div>
             )}
@@ -830,9 +828,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 }
                 onReadAloud={handleReadAloud}
                 isReadingAloud={isReadingAloud}
-                currentChatId={
-                  (chat && chat[0]?.id) || currentChatId || undefined
-                }
+                currentChatId={sourceId || undefined}
               />
             </div>
           )}

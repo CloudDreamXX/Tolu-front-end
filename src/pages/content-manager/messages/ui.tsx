@@ -1,4 +1,10 @@
-import { ChatItemModel, DetailsChatItemModel } from "entities/chat";
+import {
+  ChatItemModel,
+  ChatMessageModel,
+  ChatService,
+  DetailsChatItemModel,
+  FetchChatMessagesResponse,
+} from "entities/chat";
 import {
   useCreateGroupChatMutation,
   useFetchAllChatsQuery,
@@ -152,6 +158,28 @@ export const ContentManagerMessages: React.FC = () => {
     }
   };
 
+  const sendMessage = async (
+    content: string
+  ): Promise<ChatMessageModel | undefined> => {
+    if (!selectedChat) return;
+
+    return await ChatService.sendMessage({
+      content: content,
+      message_type: "text",
+      reply_to_message_id: undefined,
+      chat_id: selectedChat.type === "new_chat" ? undefined : selectedChat.id,
+      target_user_id:
+        selectedChat.type === "new_chat" ? selectedChat.id : undefined,
+    });
+  };
+
+  const loadMessages = async (
+    page: number
+  ): Promise<FetchChatMessagesResponse | undefined> => {
+    if (!selectedChat) return;
+    return await ChatService.fetchChatMessages(selectedChat.id, { page });
+  };
+
   if (selectedChat && isMobileOrTablet) {
     return (
       <MessageTabs
@@ -159,6 +187,8 @@ export const ContentManagerMessages: React.FC = () => {
         goBackMobile={() => setSelectedChat(null)}
         onEditGroup={openEditGroup}
         onCreateGroup={openCreateGroup}
+        sendMessage={sendMessage}
+        loadMessages={loadMessages}
       />
     );
   }
@@ -166,6 +196,8 @@ export const ContentManagerMessages: React.FC = () => {
   if (!selectedChat && isMobileOrTablet) {
     return (
       <MessageSidebar
+        chats={chats}
+        isLoadingChats={isLoading}
         onChatClick={chatItemClick}
         selectedChat={selectedChat}
         onCreateGroup={openCreateGroup}
@@ -185,6 +217,8 @@ export const ContentManagerMessages: React.FC = () => {
         </div>
       )}
       <MessageSidebar
+        chats={chats}
+        isLoadingChats={isLoading}
         onChatClick={chatItemClick}
         selectedChat={selectedChat}
         onCreateGroup={openCreateGroup}
@@ -196,6 +230,8 @@ export const ContentManagerMessages: React.FC = () => {
         clientsData={clientsData}
         onEditGroup={openEditGroup}
         onCreateGroup={openCreateGroup}
+        sendMessage={sendMessage}
+        loadMessages={loadMessages}
       />
 
       <CreateGroupModal

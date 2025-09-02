@@ -12,4 +12,9 @@ export const sideBarContent: SideBarItem[] = [
     link: "/feedback",
     icon: <MaterialIcon iconName="chat" fill={1} />,
   },
+  {
+    title: "Messages",
+    link: "/admin-messages",
+    icon: <MaterialIcon iconName="forum" fill={1} />,
+  },
 ];

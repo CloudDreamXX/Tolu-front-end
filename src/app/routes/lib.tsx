@@ -47,6 +47,7 @@ import { SubscriptionPlan } from "widgets/OnboardingPractitioner/subscription-pl
 import { MainLayout, ProtectedRoute, RedirectContentToLibrary } from "./ui";
 import { FeedbackHub } from "pages/feedback-hub/ui";
 import { FeedbackDetails } from "pages/feedback-details";
+import { AdminMessages } from "pages/admin-messages";
 
 export const AppRoutes = () => {
   return (
@@ -191,6 +192,7 @@ export const AppRoutes = () => {
         <Route path="/user-management" element={<UserManagement />} />
         <Route path="/feedback" element={<FeedbackHub />} />
         <Route path="/feedback/details" element={<FeedbackDetails />} />
+        <Route path="/admin-messages/:chatId?" element={<AdminMessages />} />
       </Route>
 
       {/* 404 route */}

@@ -92,7 +92,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
         <div
           className={cn(
-            "flex flex-col-reverse md:flex-col md:gap-1.5 w-fit max-w-[70%]",
+            "flex flex-col-reverse md:flex-col md:gap-1.5 w-fit max-w-[70%] py-2",
             isOwn && isMobile ? "items-end" : undefined
           )}
         >

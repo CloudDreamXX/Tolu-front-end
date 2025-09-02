@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
-import { DetailsChatItemModel } from "entities/chat";
+import {
+  ChatMessageModel,
+  DetailsChatItemModel,
+  FetchChatMessagesResponse,
+} from "entities/chat";
 import { useFetchChatDetailsByIdQuery } from "entities/chat/chatApi";
 import { Client, ClientProfile, CoachService } from "entities/coach";
 import { RootState } from "entities/store";
@@ -36,6 +40,14 @@ interface MessageTabsProps {
   onCreateGroup?: (clients?: string[]) => void;
   chatId?: string;
   clientsData?: Client[];
+  sendMessage: (content: string) => Promise<ChatMessageModel | undefined>;
+  loadMessages: (
+    page: number,
+    pageSize?: number
+  ) => Promise<FetchChatMessagesResponse | undefined>;
+  showAddClient?: boolean;
+  hideFiles?: boolean;
+  hideNotes?: boolean;
 }
 
 export const MessageTabs: React.FC<MessageTabsProps> = ({
@@ -44,6 +56,11 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   clientsData = [],
   onCreateGroup,
   onEditGroup,
+  sendMessage,
+  loadMessages,
+  showAddClient = true,
+  hideFiles = false,
+  hideNotes = false,
 }) => {
   const { isMobile, isMobileOrTablet } = usePageWidth();
   const profile = useSelector((state: RootState) => state.user.user);
@@ -54,7 +71,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     isError,
   } = useFetchChatDetailsByIdQuery({ chatId: chatId! }, { skip: !chatId });
   const [chat, setChat] = useState<DetailsChatItemModel | null>(null);
-
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(
     null
   );
@@ -63,6 +79,16 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!chatId) {
+      setChat(null);
+      setSelectedClient(null);
+      setActiveTab("clientInfo");
+      setSearch("");
+      setSelectedOption([]);
+    }
+  }, [chatId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -151,7 +177,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   );
   const isClient = profile?.roleName === "Client";
 
-  if (!chatId)
+  if (!chatId && showAddClient)
     return (
       <main className="w-full p-8">
         <div className="flex gap-2">
@@ -321,10 +347,12 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <TabsTrigger value="messages" className="w-[120px]">
             {isClient ? "Chat" : "Messages"}
           </TabsTrigger>
-          <TabsTrigger value="files" className="w-[120px]">
-            Files
-          </TabsTrigger>
-          {!isClient && (
+          {!hideFiles && (
+            <TabsTrigger value="files" className="w-[120px]">
+              Files
+            </TabsTrigger>
+          )}
+          {!isClient && !hideNotes && (
             <TabsTrigger value="notes" className="w-[fit]">
               Notes
             </TabsTrigger>
@@ -336,7 +364,12 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           )}
         </TabsList>
         <TabsContent value="messages">
-          <MessagesTab chat={chat} search={search} />
+          <MessagesTab
+            chat={chat}
+            search={search}
+            sendMessage={sendMessage}
+            loadMessages={loadMessages}
+          />
         </TabsContent>
         <TabsContent value="files">
           <FilesTab chatId={chatId} />

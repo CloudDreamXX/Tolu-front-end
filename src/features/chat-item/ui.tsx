@@ -59,12 +59,9 @@ export const ChatItem: React.FC<ChatItemProps> = ({
             </Avatar>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
           </div>
-          <div className="flex flex-col">
+          <div className="flex">
             <span className="font-semibold text-[18px] text-[#1D1D1F]">
               {item.name || item.participants[0].name}
-            </span>
-            <span className="font-semibold text-muted-foreground text-[14px] text-nowrap max-w-[150px] truncate">
-              @{item.name || item.participants[0].email}
             </span>
           </div>
         </div>

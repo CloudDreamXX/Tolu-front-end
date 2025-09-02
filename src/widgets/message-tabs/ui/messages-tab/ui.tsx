@@ -7,20 +7,21 @@ import {
   ChatService,
   ChatSocketService,
   DetailsChatItemModel,
+  FetchChatMessagesResponse,
 } from "entities/chat";
 import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import EmptyChat from "shared/assets/images/EmptyChat.png";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
-import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
-import { useNavigate } from "react-router-dom";
-import { DaySeparator } from "../components/DaySeparator";
 import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
-import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
+import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { DaySeparator } from "../components/DaySeparator";
 import { EmptyCoachChat } from "../components/EmptyCoachChat";
 
 function getUniqueMessages(messages: ChatMessageModel[]): ChatMessageModel[] {
@@ -33,15 +34,25 @@ function getUniqueMessages(messages: ChatMessageModel[]): ChatMessageModel[] {
 }
 
 interface MessagesTabProps {
-  search?: string;
   chat: DetailsChatItemModel;
+  sendMessage: (content: string) => Promise<ChatMessageModel | undefined>;
+  loadMessages: (
+    page: number,
+    pageSize?: number
+  ) => Promise<FetchChatMessagesResponse | undefined>;
+  search?: string;
 }
 
 type ListItem =
   | { type: "separator"; key: string; label: string }
   | { type: "message"; key: string; msg: ChatMessageModel };
 
-export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
+export const MessagesTab: React.FC<MessagesTabProps> = ({
+  chat,
+  search,
+  sendMessage,
+  loadMessages,
+}) => {
   const nav = useNavigate();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
   const [messages, setMessages] = useState<ChatMessageModel[]>([]);
@@ -49,6 +60,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [sending, setSending] = useState(false);
   const [input, setInput] = useState("");
+  const isToluAdmin = chat?.name?.toLowerCase() === "tolu admin";
 
   const profile = useSelector((state: RootState) => state.user.user);
   const {
@@ -109,7 +121,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
     return out;
   }, [messages, search]);
 
-  const loadMessages = async (page: number) => {
+  const handleLoadMessages = async (page: number) => {
     if (!chat?.chat_id) return;
     if (loadingMore && page !== 1) return;
 
@@ -118,9 +130,9 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
       else setLoadingMore(true);
 
       const currentChatId = chat.chat_id;
-      const res = await ChatService.fetchChatMessages(currentChatId, { page });
+      const res = await loadMessages(page);
 
-      if (activeChatIdRef.current !== currentChatId) return;
+      if (activeChatIdRef.current !== currentChatId || !res) return;
 
       setMessages((prev) => {
         const merged = page === 1 ? res.messages : [...prev, ...res.messages];
@@ -154,7 +166,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
     setLoading(true);
 
     (async () => {
-      await loadMessages(1);
+      await handleLoadMessages(1);
       if (activeChatIdRef.current === chat.chat_id) {
         const api = virtuosoRef.current;
         if (api) {
@@ -177,16 +189,19 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
     })();
   }, [chat?.chat_id]);
 
-  useEffect(() => {
-    const onNew = (msg: ChatMessageModel) => {
-      if (msg.chat_id !== chat?.chat_id) return;
-      setMessages((prev) =>
-        prev.some((m) => m.id === msg.id) ? prev : [msg, ...prev]
-      );
-    };
+  const handleNewMessage = (msg: ChatMessageModel) => {
+    if (msg.chat_id !== chat?.chat_id) return;
+    setMessages((prev) => {
+      if (prev.some((m) => m.id === msg.id)) {
+        return prev;
+      }
+      return [msg, ...prev];
+    });
+  };
 
-    ChatSocketService.on("new_message", onNew);
-    return () => ChatSocketService.off("new_message", onNew);
+  useEffect(() => {
+    ChatSocketService.on("new_message", handleNewMessage);
+    return () => ChatSocketService.off("new_message", handleNewMessage);
   }, [chat?.chat_id]);
 
   const sendAll = async () => {
@@ -229,14 +244,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
       setMessages((prev) => [optimistic, ...prev]);
       setInput("");
 
-      const newMsg = await ChatService.sendMessage({
-        content: optimistic.content,
-        message_type: "text",
-        reply_to_message_id: undefined,
-        chat_id: chat.chat_type === "new_chat" ? undefined : chat.chat_id,
-        target_user_id:
-          chat.chat_type === "new_chat" ? chat.chat_id : undefined,
-      });
+      const newMsg = await sendMessage(optimistic.content);
+      if (!newMsg) throw new Error("Failed to send message");
 
       if (chat.chat_type === "new_chat") {
         nav(`/content-manager/messages/${newMsg.chat_id}`);
@@ -423,7 +432,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
 
               const next = page + 1;
               setPage(next);
-              await loadMessages(next);
+              await handleLoadMessages(next);
             }}
             increaseViewportBy={{ top: 200, bottom: 400 }}
             components={{
@@ -453,6 +462,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
 
       <div className="pt-2">
         <Textarea
+          disabled={isToluAdmin}
           placeholder={`Message ${receiver?.user.name}`}
           className={cn("resize-none min-h-[80px]")}
           containerClassName={cn(
@@ -495,7 +505,12 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
               <div className="flex items-center justify-between w-full ">
                 <div className="flex items-center gap-4">
                   <input {...getInputProps()} className="hidden" />
-                  <Button value={"ghost"} className="p-0" onClick={open}>
+                  <Button
+                    value={"ghost"}
+                    className="p-0"
+                    onClick={open}
+                    disabled={isToluAdmin}
+                  >
                     <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
                   </Button>
                   <div className="relative">
@@ -506,6 +521,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                         setEmojiModalOpen(true);
                         e.stopPropagation();
                       }}
+                      disabled={isToluAdmin}
                     >
                       <MaterialIcon
                         iconName="sentiment_satisfied"
@@ -530,7 +546,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ chat, search }) => {
                 </div>
                 <Button
                   onClick={sendAll}
-                  disabled={sending}
+                  disabled={sending || isToluAdmin}
                   variant={isMobileOrTablet ? "brightblue" : "blue"}
                   className="rounded-full flex justify-center items-center
              w-[42px] h-[42px] lg:w-[128px]"

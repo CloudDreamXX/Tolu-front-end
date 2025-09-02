@@ -1,3 +1,8 @@
+import {
+  ChatMessageModel,
+  ChatService,
+  FetchChatMessagesResponse,
+} from "entities/chat";
 import { chatsSelectors } from "entities/chat/chatsSlice";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -32,12 +37,34 @@ export const ClientMessages = () => {
     );
   }
 
+  const sendMessage = async (
+    content: string
+  ): Promise<ChatMessageModel | undefined> => {
+    if (!routeChatId) return undefined;
+
+    return await ChatService.sendMessage({
+      content: content,
+      message_type: "text",
+      reply_to_message_id: undefined,
+      chat_id: routeChatId,
+    });
+  };
+
+  const loadMessages = async (
+    page: number
+  ): Promise<FetchChatMessagesResponse | undefined> => {
+    if (!routeChatId) return undefined;
+    return await ChatService.fetchChatMessages(routeChatId, { page });
+  };
+
   return (
     <MessageTabs
       chatId={routeChatId}
       goBackMobile={() => {
         nav("library");
       }}
+      sendMessage={sendMessage}
+      loadMessages={loadMessages}
     />
   );
 };
