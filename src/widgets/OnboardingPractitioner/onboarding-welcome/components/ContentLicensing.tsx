@@ -78,8 +78,10 @@ export const ContentLicensing: React.FC<Props> = ({
       title: "Edits and Updates",
       content: (
         <>
+          <p>We may:</p>
+          <br />
           <ul className="text-left list-disc text-[#5F5F65] text-[16px]">
-            <li>- We may: Format for clarity or accessibility.</li>
+            <li>- Format for clarity or accessibility.</li>
             <li>- Suggest changes for platform standards.</li>
             <li>- Unpublish content if outdated or policy-violating.</li>
           </ul>
@@ -172,6 +174,14 @@ export const ContentLicensing: React.FC<Props> = ({
             />
             <p className="text-[#1D1D1F] text-[20px] font-[500]">
               I Agree to the Content Licensing Terms
+            </p>
+          </div>
+          <div className="flex flex-col items-center gap-[16px] mt-[24px]">
+            <p className="text-[#5F5F65] text-[14px]">
+              Need support or have questions? Contact us anytime at{" "}
+              <a href="mailto:support@tolu.health" className="text-[#1C63DB]">
+                support@tolu.health
+              </a>
             </p>
           </div>
         </>

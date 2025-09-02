@@ -256,9 +256,16 @@ export interface HealthSummary {
   menopause_cycle_status: string | null;
   working_on_now: string[];
   recent_labs: string | null;
-  learning_now: string[];
+  learning_now: {
+    content_id: string;
+    shared_at: string;
+    title: string;
+  }[];
   tracking: string[];
-  personal_insights: string[];
+  personal_insights: {
+    date: string;
+    note: string;
+  }[];
 }
 
 export interface ClientStoryInfo {

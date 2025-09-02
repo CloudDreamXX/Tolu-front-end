@@ -34,7 +34,9 @@ const HealthProfile: React.FC<Props> = ({ client }) => {
             <p className="md:hidden text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
               Client age
             </p>
-            <p className="text-[16px] text-[#1D1D1F]">{client.client_age}</p>
+            {client.client_age && (
+              <p className="text-[16px] text-[#1D1D1F]">{client.client_age}</p>
+            )}
           </div>
         </div>
         <div>
@@ -43,8 +45,8 @@ const HealthProfile: React.FC<Props> = ({ client }) => {
           </p>
           {client.learning_now.length > 0 && (
             <p className="text-[16px] text-[#1D1D1F]">
-              <span className="underline">{client.learning_now[0]}</span>
-              <span> and </span>
+              <span className="underline">{client.learning_now[0].title}</span>
+              {client.learning_now.length > 1 && <span> and </span>}
               <span className="text-[#1C63D8] underline cursor-pointer">
                 {client.learning_now.length > 1 &&
                   `${client.learning_now.length - 1} more`}
@@ -73,7 +75,9 @@ const HealthProfile: React.FC<Props> = ({ client }) => {
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
             Tracking
           </p>
-          <p className="text-[16px] text-[#1D1D1F]">{client.tracking}</p>
+          <p className="text-[16px] text-[#1D1D1F]">
+            {client.tracking.join(", ")}
+          </p>
         </div>
       </div>
 
@@ -82,7 +86,9 @@ const HealthProfile: React.FC<Props> = ({ client }) => {
           <p className="hidden md:block text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
             Client age
           </p>
-          <p className="text-[16px] text-[#1D1D1F]">{client.client_age}</p>
+          {client.client_age && (
+            <p className="text-[16px] text-[#1D1D1F]">{client.client_age}</p>
+          )}
         </div>
         <div>
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
@@ -95,7 +101,10 @@ const HealthProfile: React.FC<Props> = ({ client }) => {
             Personal insight
           </p>
           <p className="text-[16px] text-[#1D1D1F]">
-            {client.personal_insights}
+            {(client?.personal_insights ?? [])
+              .map((i) => i?.note)
+              .filter(Boolean)
+              .join(", ")}
           </p>
         </div>
       </div>
