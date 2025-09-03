@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ClientWelcomePicture from "shared/assets/images/Illustration.png";
 import { AuthPageWrapper } from "shared/ui";
 import { ClientHeader } from "widgets/Header";
@@ -10,6 +10,14 @@ export const WelcomeScreen = () => {
   const nav = useNavigate();
   const [isTallScreen, setIsTallScreen] = useState(false);
   const [IsCancelOpen, setIsCancelOpen] = useState<boolean>(false);
+  const location = useLocation();
+  const inviteSource = location.state?.inviteSource ?? "";
+
+  useEffect(() => {
+    if (inviteSource === "referral") {
+      nav("/library");
+    }
+  }, [inviteSource]);
 
   useEffect(() => {
     const checkHeight = () => {

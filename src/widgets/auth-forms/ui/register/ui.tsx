@@ -112,6 +112,7 @@ export const Register = () => {
       password: formData.password,
       dob: "2025-05-13",
       roleID: formData.accountType === "client" ? 3 : 2,
+      email_verification_skipped: inviteSource === "referral" ? true : false,
     };
 
     setRoleID(dataBE.roleID);
@@ -125,9 +126,11 @@ export const Register = () => {
         );
 
         if (res.user.roleID === 3) {
-          navigate(
-            inviteSource === "referral" ? "/library" : "/welcome/client"
-          );
+          navigate("/welcome/client", {
+            state: {
+              inviteSource: inviteSource,
+            },
+          });
         } else {
           navigate("/welcome/practitioner");
         }
