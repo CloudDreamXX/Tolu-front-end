@@ -139,16 +139,6 @@ export const HealthSnapshotSidebar: React.FC = () => {
               >
                 <MaterialIcon iconName="web_stories" fill={1} />
                 {!sidebarOpen ? "" : "Library"}
-                {sidebarOpen && (
-                  <MaterialIcon
-                    iconName={
-                      isLibraryOpen
-                        ? "keyboard_arrow_up"
-                        : "keyboard_arrow_down"
-                    }
-                    className="w-5 h-5 shrink-0"
-                  />
-                )}
               </NavLink>
               {isLibraryOpen && (
                 <WrapperLibraryFolderTree

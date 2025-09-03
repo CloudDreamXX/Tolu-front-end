@@ -41,6 +41,7 @@ export const useMessageState = () => {
         undefined,
         clientId,
         undefined,
+        undefined,
         (chunk) => {
           if (chunk.reply) {
             accumulatedReply += chunk.reply;

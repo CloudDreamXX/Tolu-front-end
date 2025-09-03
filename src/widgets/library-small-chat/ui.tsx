@@ -79,6 +79,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const filesState = useSelector(
     (state: RootState) => state.client.selectedChatFiles || []
   );
+  const filesFromLibrary = useSelector(
+    (state: RootState) => state.client.selectedFilesFromLibrary || []
+  );
+
   const { isMobileOrTablet } = usePageWidth();
 
   const { documentId } = useParams();
@@ -469,6 +473,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           images,
           pdf,
           clientId,
+          filesFromLibrary,
           newAbortController.signal,
           processChunk,
           processFinal
@@ -505,6 +510,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           images,
           pdf,
           clientId,
+          undefined,
           newAbortController.signal,
           processChunk,
           processFinal
@@ -548,6 +554,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               is_new: !currentChatId,
               chat_id: currentChatId,
               text_quote: selectedText,
+              library_files: filesFromLibrary,
             }),
             images,
             pdf,

@@ -59,6 +59,7 @@ export const useDocumentCreation = () => {
         undefined,
         stateClientId,
         undefined,
+        undefined,
         (chunk) => {
           if (chunk.reply) {
             accumulatedReply += chunk.reply;

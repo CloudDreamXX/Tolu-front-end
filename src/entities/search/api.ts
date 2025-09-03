@@ -272,7 +272,8 @@ export class SearchService {
     imageFiles?: File[],
     pdfFile?: File,
     clientId?: string,
-    contentId?: string
+    contentId?: string,
+    libraryFiles?: string[]
   ) {
     const formData = new FormData();
     formData.append("chat_message", message);
@@ -293,6 +294,10 @@ export class SearchService {
 
     if (contentId) {
       formData.append("content_id", contentId);
+    }
+
+    if (libraryFiles && libraryFiles.length) {
+      formData.append("library_files", JSON.stringify(libraryFiles));
     }
 
     return formData;

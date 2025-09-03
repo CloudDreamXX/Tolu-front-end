@@ -75,6 +75,7 @@ export const ContentManagerFolder: React.FC = () => {
         undefined,
         clientId,
         undefined,
+        undefined,
         (chunk) => {
           if (chunk.reply) {
             finalAccumulatedReply += chunk.reply;

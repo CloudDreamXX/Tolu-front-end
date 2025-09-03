@@ -2,6 +2,7 @@ import {
   ChatItemModel,
   ChatMessageModel,
   ChatService,
+  ChatSocketService,
   DetailsChatItemModel,
   FetchChatMessagesResponse,
 } from "entities/chat";
@@ -10,10 +11,10 @@ import {
   useFetchAllChatsQuery,
   useUpdateGroupChatMutation,
 } from "entities/chat/chatApi";
-import { chatsSelectors } from "entities/chat/chatsSlice";
+import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { Client, CoachService } from "entities/coach";
-import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
@@ -33,9 +34,10 @@ type GroupModalState =
 
 export const ContentManagerMessages: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const { chatId: routeChatId } = useParams();
   const { isMobileOrTablet } = usePageWidth();
-
   const chats = useSelector(chatsSelectors.selectAll);
 
   const [selectedChat, setSelectedChat] = useState<ChatItemModel | null>(null);
@@ -47,6 +49,8 @@ export const ContentManagerMessages: React.FC = () => {
   const { isLoading } = useFetchAllChatsQuery();
   const [createGroupChatMutation] = useCreateGroupChatMutation();
   const [updateGroupChatMutation] = useUpdateGroupChatMutation();
+
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
 
   useEffect(() => {
     let mounted = true;
@@ -79,6 +83,19 @@ export const ContentManagerMessages: React.FC = () => {
       setSelectedChat(routeMatch);
     }
   }, [routeMatch, setSelectedChat]);
+
+  useEffect(() => {
+    handlerRef.current = (msg: ChatMessageModel) => {
+      dispatch(applyIncomingMessage({ msg, activeChatId: selectedChat?.id }));
+    };
+  }, [dispatch, selectedChat?.id]);
+
+  useEffect(() => {
+    const stableListener = (m: ChatMessageModel) => handlerRef.current(m);
+
+    ChatSocketService.on("new_message", stableListener);
+    return () => ChatSocketService.off("new_message", stableListener);
+  }, []);
 
   const onSubmit = async ({
     mode,

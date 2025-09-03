@@ -7,6 +7,7 @@ export interface AiSearchRequest {
 export interface AIChatMessageResearch extends AiSearchRequest {
   contentId?: string;
   clientId?: string;
+  libraryFiles?: string[];
 }
 
 export interface UpdateChatTitleRequest {

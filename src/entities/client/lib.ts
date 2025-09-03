@@ -16,6 +16,7 @@ export interface IClientState {
     [chatKey: string]: Message[];
   };
   selectedChatFiles: File[];
+  selectedFilesFromLibrary: string[];
   selectedChatFolder: string | null;
 }
 
@@ -30,6 +31,7 @@ const initialState: IClientState = {
   activeChatKey: "",
   chatHistory: {},
   selectedChatFiles: [],
+  selectedFilesFromLibrary: [],
   selectedChatFolder: null,
 };
 
@@ -121,6 +123,7 @@ const clientSlice = createSlice({
     clearAllChatHistory: (state) => {
       state.chatHistory = {};
       state.selectedChatFiles = [];
+      state.selectedFilesFromLibrary = [];
       state.selectedChatFolder = null;
       state.lastChatId = "";
     },
@@ -136,6 +139,9 @@ const clientSlice = createSlice({
       if (lastAiIndex === -1) return;
 
       history.splice(lastAiIndex);
+    },
+    setFilesFromLibrary: (state, action: PayloadAction<string[]>) => {
+      state.selectedFilesFromLibrary = action.payload;
     },
   },
 });

@@ -120,6 +120,7 @@ export class CoachService {
     images: File[] = [],
     pdf?: File,
     client_id?: string | null,
+    libraryFiles?: string[],
     signal?: AbortSignal,
     onChunk?: (data: any) => void,
     onComplete?: (folderId: {
@@ -152,6 +153,10 @@ export class CoachService {
 
     if (client_id) {
       formData.append("client_id", client_id);
+    }
+
+    if (libraryFiles && libraryFiles.length) {
+      formData.append("library_files", JSON.stringify(libraryFiles));
     }
 
     try {

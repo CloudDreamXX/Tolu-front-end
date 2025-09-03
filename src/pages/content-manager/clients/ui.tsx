@@ -18,13 +18,13 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ConfirmIcon from "shared/assets/icons/confirm";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import EmptyClients from "shared/assets/images/EmptyClients.png";
 import { usePageWidth } from "shared/lib";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Button } from "shared/ui";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
 import { EditClientModal } from "widgets/EditClientModal";
+import { EmptyStateTolu } from "widgets/empty-state-tolu";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { SelectedClientModal } from "widgets/SelectedClientModal";
 
@@ -480,33 +480,31 @@ export const ContentManagerClients: React.FC = () => {
             </div>
           </div>
         ) : clientsData.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center mt-[200px]">
-            <img
-              src={EmptyClients}
-              alt=""
-              className="mb-[32px] w-[111px] md:w-[142px] xl:w-[163px]"
-            />
-            <div className="text-center flex flex-col items-center justify-center gap-[8px]">
-              <p className="text-[18px] md:text-[28px] xl:text-[32px] font-[700] text-[#1D1D1F]">
-                There are no clients ...
-              </p>
-              <p className="text-[16px] md:text-[20px] font-[500] text-[#5F5F65] max-w-[450px]">
-                Start adding clients to keep track of observations, updates, and
-                progress.
-              </p>
-              <Button
-                variant="brightblue"
-                className="mt-[8px]"
-                onClick={() => {
-                  cleanState();
-                  setActiveEditTab("editClientInfo");
-                  setAddModal(true);
-                }}
-              >
-                Invite your first client
-              </Button>
-            </div>
-          </div>
+          <EmptyStateTolu
+            text="Invite your clients to Tolu to deliver personalized education or insight unique to their personal health challenges."
+            footer={
+              <div className="flex gap-4">
+                <Button
+                  variant="brightblue"
+                  className="min-w-40"
+                  onClick={() => {
+                    cleanState();
+                    setActiveEditTab("editClientInfo");
+                    setAddModal(true);
+                  }}
+                >
+                  Invite a client
+                </Button>
+
+                <Button
+                  variant="blue2"
+                  className="text-black border border-blue-600 min-w-40"
+                >
+                  Invite a client
+                </Button>
+              </div>
+            }
+          />
         ) : (
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row flex-wrap gap-[16px] justify-between md:items-end">

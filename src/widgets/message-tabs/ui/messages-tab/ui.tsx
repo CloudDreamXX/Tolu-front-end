@@ -9,9 +9,10 @@ import {
   DetailsChatItemModel,
   FetchChatMessagesResponse,
 } from "entities/chat";
+import { applyIncomingMessage, updateChat } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -23,8 +24,9 @@ import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
 import { DaySeparator } from "../components/DaySeparator";
 import { EmptyCoachChat } from "../components/EmptyCoachChat";
+import { VirtuosoHeader } from "../components/VirtuosoHeader";
 
-function getUniqueMessages(messages: ChatMessageModel[]): ChatMessageModel[] {
+function uniqById(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
   return messages.filter((msg) => {
     if (seen.has(msg.id)) return false;
@@ -54,14 +56,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   loadMessages,
 }) => {
   const nav = useNavigate();
+  const dispatch = useDispatch();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
-  const [messages, setMessages] = useState<ChatMessageModel[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [input, setInput] = useState("");
-  const isToluAdmin = chat?.name?.toLowerCase() === "tolu admin";
-
   const profile = useSelector((state: RootState) => state.user.user);
   const {
     items,
@@ -77,16 +73,22 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     maxFileSize: 10 * 1024 * 1024,
   });
 
-  const activeChatIdRef = useRef<string | undefined>(undefined);
-  const virtuosoRef = useRef<VirtuosoHandle>(null);
-  const [atBottom, setAtBottom] = useState(true);
-  const prevLenRef = useRef(0);
-
-  const initializingRef = useRef(true);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<ChatMessageModel[]>([]);
 
   const [page, setPage] = useState<number>(1);
+  const [atBottom, setAtBottom] = useState(true);
   const [emojiModalOpen, setEmojiModalOpen] = useState(false);
-  const hasNext = useRef(false);
+
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
+  const [firstItemIndex, setFirstItemIndex] = useState<number>(0);
+  const [hasNext, setHasNext] = useState(true);
+
+  const isToluAdmin = chat?.name?.toLowerCase() === "tolu admin";
 
   const listData: ListItem[] = useMemo(() => {
     const sorted = [...messages]
@@ -118,75 +120,39 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       }
       out.push({ type: "message", key: msg.id, msg });
     }
+
     return out;
   }, [messages, search]);
 
-  const handleLoadMessages = async (page: number) => {
-    if (!chat?.chat_id) return;
-    if (loadingMore && page !== 1) return;
-
-    try {
-      if (page === 1) setLoading(true);
-      else setLoadingMore(true);
-
-      const currentChatId = chat.chat_id;
-      const res = await loadMessages(page);
-
-      if (activeChatIdRef.current !== currentChatId || !res) return;
-
-      setMessages((prev) => {
-        const merged = page === 1 ? res.messages : [...prev, ...res.messages];
-        return getUniqueMessages(merged);
-      });
-
-      hasNext.current = res.has_next;
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      toast({ title: "Failed to load messages", variant: "destructive" });
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  };
-
   useEffect(() => {
     if (!chat?.chat_id) return;
-    activeChatIdRef.current = chat.chat_id;
-
-    initializingRef.current = true;
 
     setMessages([]);
+    setFirstItemIndex(0);
     setPage(1);
-    hasNext.current = false;
+    setHasNext(true);
+    setLoadingInitial(true);
     setAtBottom(true);
-    prevLenRef.current = 0;
     setInput("");
     setEmojiModalOpen(false);
     clear();
-    setLoading(true);
 
-    (async () => {
-      await handleLoadMessages(1);
-      if (activeChatIdRef.current === chat.chat_id) {
-        const api = virtuosoRef.current;
-        if (api) {
-          api.scrollTo({ top: Number.MAX_SAFE_INTEGER });
-          requestAnimationFrame(() => {
-            api.scrollToIndex({
-              index: Math.max(0, listData.length - 1),
-              align: "end",
-            });
-            requestAnimationFrame(() => {
-              initializingRef.current = false;
-            });
-          });
-        } else {
-          initializingRef.current = false;
-        }
-      } else {
-        initializingRef.current = false;
+    const init = async () => {
+      try {
+        const res = await loadMessages(1);
+        if (!res) return;
+
+        setMessages(uniqById(res.messages));
+        setHasNext(res.has_next);
+      } catch (e) {
+        console.error(e);
+        toast({ title: "Failed to load messages", variant: "destructive" });
+      } finally {
+        setLoadingInitial(false);
       }
-    })();
+    };
+
+    init();
   }, [chat?.chat_id]);
 
   const handleNewMessage = (msg: ChatMessageModel) => {
@@ -195,7 +161,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       if (prev.some((m) => m.id === msg.id)) {
         return prev;
       }
-      return [msg, ...prev];
+      return [...prev, msg];
     });
   };
 
@@ -206,6 +172,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
   const sendAll = async () => {
     if (!input.trim() && files.length === 0) return;
+
     const optimistic: ChatMessageModel = {
       id: `tmp-${Date.now()}`,
       content: input,
@@ -227,7 +194,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     for (const it of items) {
       const file = it.file;
       try {
-        setMessages((prev) => [optimistic, ...prev]);
+        setMessages((prev) => [...prev, optimistic]);
         const response = await ChatService.uploadChatFile(chat.chat_id, file);
         setMessages((prev) =>
           prev.map((m) => (m.id === optimistic.id ? response.message : m))
@@ -241,12 +208,15 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     try {
       if (optimistic.content.trim() === "") return;
 
-      setMessages((prev) => [optimistic, ...prev]);
+      setMessages((prev) => [...prev, optimistic]);
       setInput("");
 
       const newMsg = await sendMessage(optimistic.content);
       if (!newMsg) throw new Error("Failed to send message");
 
+      dispatch(
+        applyIncomingMessage({ msg: newMsg, activeChatId: chat.chat_id })
+      );
       if (chat.chat_type === "new_chat") {
         nav(`/content-manager/messages/${newMsg.chat_id}`);
       }
@@ -255,15 +225,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         prev.map((m) => (m.id === optimistic.id ? newMsg : m))
       );
       chat.chat_id = newMsg.chat_id;
-    } catch (err) {
-      console.error("Error sending message:", err);
+    } catch {
       setMessages((prev) => prev.filter((m) => !m.id.startsWith("tmp-")));
     } finally {
       setSending(false);
-
-      if (atBottom) {
-        requestAnimationFrame(() => scrollToBottom("smooth"));
-      }
     }
   };
 
@@ -279,26 +244,39 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   useEffect(() => {
-    const prev = prevLenRef.current;
-    const curr = listData.length;
+    if (!chat.chat_id) return;
+    if (!atBottom) return;
+    dispatch(updateChat({ id: chat.chat_id, changes: { unreadCount: 0 } }));
+  }, [chat.chat_id, atBottom]);
 
-    if (prev === 0 && curr > 0) {
-      virtuosoRef.current?.scrollTo({ top: Number.MAX_SAFE_INTEGER });
-      requestAnimationFrame(() =>
-        virtuosoRef.current?.scrollToIndex({ index: curr - 1, align: "end" })
-      );
-    } else if (curr > prev && atBottom) {
-      virtuosoRef.current?.scrollToIndex({
-        index: curr - 1,
-        align: "end",
-        behavior: "smooth",
+  const loadOlder = useCallback(async () => {
+    if (loadingMore || !hasNext || !chat?.chat_id) return;
+
+    try {
+      setLoadingMore(true);
+      const nextPage = page + 1;
+      const res = await loadMessages(nextPage);
+      if (!res) return;
+
+      setMessages((prev) => {
+        const ids = new Set(prev.map((m) => m.id));
+        const toPrepend = res.messages.filter((m) => !ids.has(m.id));
+        if (toPrepend.length === 0) return prev;
+
+        setFirstItemIndex((idx) => idx - toPrepend.length);
+        return [...toPrepend, ...prev];
       });
+
+      setPage(nextPage);
+      setHasNext(res.has_next);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingMore(false);
     }
+  }, [loadingMore, hasNext, chat?.chat_id, page, loadMessages]);
 
-    prevLenRef.current = curr;
-  }, [listData.length, atBottom]);
-
-  if (loading) {
+  if (loadingInitial) {
     return (
       <div className="flex items-center justify-center h-full">
         <MaterialIcon
@@ -355,26 +333,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     );
   };
 
-  const showScrollBtn = !atBottom;
-  const scrollToBottom = (behavior: "auto" | "smooth" | undefined = "auto") => {
-    const api = virtuosoRef.current;
-    if (!api || listData.length === 0) return;
-
-    api.scrollTo({ top: Number.MAX_SAFE_INTEGER, behavior });
-
-    requestAnimationFrame(() => {
-      api.scrollToIndex({
-        index: listData.length - 1,
-        align: "end",
-        behavior,
-      });
-
-      requestAnimationFrame(() => {
-        api.scrollTo({ top: Number.MAX_SAFE_INTEGER, behavior });
-      });
-    });
-  };
-
   const rendeerEmptyState = () => {
     if (profile?.roleName === "Client") {
       return (
@@ -394,6 +352,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     return <EmptyCoachChat />;
   };
 
+  const VirtuosoHeaderComponent = () => (
+    <VirtuosoHeader loadingMore={loadingMore} hasMore={hasNext} />
+  );
+
   return (
     <>
       <div style={currentStyle} className="relative w-full pr-3">
@@ -401,11 +363,16 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           rendeerEmptyState()
         ) : (
           <Virtuoso
-            key={chat.chat_id || "no-chat"}
+            key={chat.chat_id}
             ref={virtuosoRef}
+            startReached={loadOlder}
             style={{ height: "100%" }}
             data={listData}
-            initialTopMostItemIndex={Math.max(0, listData.length - 1)}
+            initialTopMostItemIndex={firstItemIndex}
+            computeItemKey={(_, item) => item.key}
+            atBottomStateChange={setAtBottom}
+            alignToBottom
+            followOutput="smooth"
             itemContent={(_, item) =>
               item.type === "separator" ? (
                 <DaySeparator key={item.key} label={item.label} />
@@ -421,38 +388,21 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                 />
               )
             }
-            computeItemKey={(_, item) => item.key}
-            alignToBottom
-            followOutput="smooth"
-            atBottomStateChange={setAtBottom}
-            startReached={async () => {
-              if (initializingRef.current) return;
-              if (loadingMore) return;
-              if (!hasNext.current) return;
-
-              const next = page + 1;
-              setPage(next);
-              await handleLoadMessages(next);
-            }}
-            increaseViewportBy={{ top: 200, bottom: 400 }}
             components={{
               Scroller: ChatScroller,
-              Footer: () =>
-                loadingMore ? (
-                  <div className="flex justify-center py-2">
-                    <MaterialIcon
-                      iconName="progress_activity"
-                      className="w-5 h-5 animate-spin"
-                    />
-                  </div>
-                ) : null,
+              Header: VirtuosoHeaderComponent,
             }}
           />
         )}
 
-        {showScrollBtn && (
+        {!atBottom && (
           <button
-            onClick={() => scrollToBottom("auto")}
+            onClick={() =>
+              virtuosoRef.current?.scrollTo({
+                top: Number.MAX_SAFE_INTEGER,
+                behavior: "auto",
+              })
+            }
             className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-12 hover:bg-blue-600"
           >
             <MaterialIcon iconName="keyboard_arrow_down" />

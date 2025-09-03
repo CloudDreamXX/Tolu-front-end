@@ -15,6 +15,7 @@ import { UpdateFolderPopup } from "./components/UpdateFileFolderPopup";
 import { FileLibraryFolder } from "entities/files-library";
 import { useFilePicker } from "shared/hooks/useFilePicker";
 import { cn } from "shared/lib";
+import { EmptyStateTolu } from "widgets/empty-state-tolu";
 
 export const FilesLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,7 +26,7 @@ export const FilesLibrary = () => {
     useState<FileLibraryFolder | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
-  const { items, getDropzoneProps, getInputProps, dragOver, clear } =
+  const { items, getDropzoneProps, getInputProps, dragOver, clear, open } =
     useFilePicker({
       accept: [
         "application/pdf",
@@ -160,29 +161,47 @@ export const FilesLibrary = () => {
         </div>
 
         <div>
-          <div
-            className={cn(
-              "w-full border-[2px] border-dashed border-[#1C63DB] bg-white rounded-[12px] flex flex-col justify-center items-center text-center p-4 cursor-pointer transition-colors ",
-              { "bg-blue-50 border-blue-400": dragOver }
-            )}
-            {...getDropzoneProps()}
-          >
-            <MaterialIcon
-              iconName="cloud_upload"
-              fill={1}
-              className="text-[#1C63DB] p-2 border rounded-xl"
+          {files?.total_files === 0 ? (
+            <EmptyStateTolu
+              text="To deep research a knowledge source upload files to your File Library and ask Tolu to conduct a research or create an inspired content."
+              footer={
+                <div className="flex gap-4">
+                  <Button
+                    variant="brightblue"
+                    className="min-w-40"
+                    onClick={open}
+                  >
+                    Upload Files
+                  </Button>
+                </div>
+              }
             />
-            <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
-              Click to upload
-            </p>
-            <p className="text-[#5F5F65] text-[14px] font-[Nunito]">
-              or drag and drop
-            </p>
-            <p className="text-[#5F5F65] text-[14px] font-[Nunito]">
-              pdf, doc, docx, png, jpeg and txt files
-            </p>
-            <input className="hidden" {...getInputProps()} />
-          </div>
+          ) : (
+            <div
+              className={cn(
+                "w-full border-[2px] border-dashed border-[#1C63DB] bg-white rounded-[12px] flex flex-col justify-center items-center text-center p-4 cursor-pointer transition-colors ",
+                { "bg-blue-50 border-blue-400": dragOver }
+              )}
+              {...getDropzoneProps()}
+            >
+              <MaterialIcon
+                iconName="cloud_upload"
+                fill={1}
+                className="text-[#1C63DB] p-2 border rounded-xl"
+              />
+              <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
+                Click to upload
+              </p>
+              <p className="text-[#5F5F65] text-[14px] font-[Nunito]">
+                or drag and drop
+              </p>
+              <p className="text-[#5F5F65] text-[14px] font-[Nunito]">
+                pdf, doc, docx, png, jpeg and txt files
+              </p>
+            </div>
+          )}
+
+          <input className="hidden" {...getInputProps()} />
         </div>
         {items.length > 0 && (
           <Button
@@ -262,7 +281,7 @@ export const FilesLibrary = () => {
           ) : (
             <div className="flex flex-col items-center justify-center w-full gap-[24px]">
               <h2 className="text-2xl font-bold">{viewingFolder.name}</h2>
-              <div className="flex flex-wrap gap-2 w-full">
+              <div className="flex flex-wrap w-full gap-2">
                 {viewingFolder.subfolders?.map((subfolder) => (
                   <button
                     key={subfolder.id}

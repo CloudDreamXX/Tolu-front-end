@@ -112,6 +112,7 @@ export const ContentManagerSidebar: React.FC = () => {
                     item={link}
                     isNarrow={!sidebarOpen}
                     setOpenSidebar={setSidebarOpen}
+                    hideArrow
                   />
                 ))}
               </div>

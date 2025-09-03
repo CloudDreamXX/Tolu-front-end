@@ -8,6 +8,7 @@ interface CustomNavLinkProps {
   onClick?: () => void;
   isNarrow?: boolean;
   setOpenSidebar?: (open: boolean) => void;
+  hideArrow?: boolean;
 }
 
 export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
@@ -15,6 +16,7 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
   onClick,
   isNarrow,
   setOpenSidebar,
+  hideArrow,
 }) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -63,7 +65,8 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
         >
           {item.icon}
           {!isNarrow && item.title}
-          {!isNarrow &&
+          {!hideArrow &&
+            !isNarrow &&
             (open ? (
               <MaterialIcon iconName="keyboard_arrow_up" />
             ) : (
