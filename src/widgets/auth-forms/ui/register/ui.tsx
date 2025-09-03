@@ -50,6 +50,33 @@ export const Register = () => {
     fetchInviteDetails();
   }, [token]);
 
+  useEffect(() => {
+    const fetchInviteDetails = async () => {
+      if (!token) return;
+
+      try {
+        const data = await UserService.getReferralInvitation(token);
+        setFormData((prev) => ({
+          ...prev,
+          name: data.referral.friend_name || "",
+          email: data.referral.friend_email || "",
+          phone: data.referral.friend_phone || "",
+          accountType: "client",
+        }));
+      } catch (error) {
+        console.error("Failed to fetch invitation details", error);
+        toast({
+          title: "Invalid or expired invitation",
+          description:
+            "This link has expired. Please request a new login link.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchInviteDetails();
+  }, [token]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 

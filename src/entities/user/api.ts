@@ -5,6 +5,7 @@ import {
   IUser,
   MenopauseSubmissionRequest,
   RecommendationsResponse,
+  ReferFriendRequest,
   SymptomsResponse,
   UserOnboardingInfo,
 } from "./model";
@@ -234,5 +235,17 @@ export class UserService {
       headers: { Accept: "image/*" },
     });
     return (res as any).data ?? res;
+  }
+
+  static async referAFriend(data: ReferFriendRequest): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.USER.REFER_FRIEND, data);
+  }
+
+  static async getReferralInvitation(token: string): Promise<any> {
+    const endpoint = API_ROUTES.USER.GET_REFERRAL_INVITATION.replace(
+      "{token}",
+      token
+    );
+    return ApiService.get<any>(endpoint);
   }
 }

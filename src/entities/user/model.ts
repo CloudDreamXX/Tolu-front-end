@@ -142,3 +142,14 @@ export interface ProfileCredentials {
 export interface Testimonial {
   [key: string]: unknown;
 }
+
+export interface ReferFriendRequest {
+  name?: string;
+  age?: number;
+  gender?: string;
+  health_concern?: string;
+  diagnosed_condition?: string;
+  email: string;
+  goal?: string;
+  phone?: string;
+}

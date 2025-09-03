@@ -3,6 +3,7 @@ import { SearchableSelect } from "widgets/OnboardingPractitioner/components/Sear
 import { useState } from "react";
 import { phoneMask, toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { ReferFriendRequest, UserService } from "entities/user";
 
 interface Props {
   isOpen: boolean;
@@ -10,15 +11,8 @@ interface Props {
 }
 
 export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    age: "",
-    gender: "",
-    healthConcern: "",
-    diagnosedCondition: "",
+  const [formData, setFormData] = useState<ReferFriendRequest>({
     email: "",
-    goal: "",
-    phoneNumber: "",
   });
 
   const handleChange = (field: string, value: string) => {
@@ -33,20 +27,25 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
     return emailRegex.test(email);
   };
 
-  const handleSave = () => {
-    onClose();
-    toast({
-      title: "Refer completed",
-    });
+  const handleSave = async () => {
+    try {
+      await UserService.referAFriend(formData);
+      onClose();
+      toast({
+        title: "Refer completed",
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Refer failed",
+        description: "Failed to send invitation link. Please try again",
+      });
+    }
   };
 
   const isButtonDisabled =
-    formData.firstName === "" ||
-    formData.age === "" ||
-    formData.gender === "" ||
-    formData.email === "" ||
-    !isValidEmail(formData.email) ||
-    formData.goal === "";
+    formData.email === "" || !isValidEmail(formData.email);
 
   if (!isOpen) return null;
 
@@ -84,8 +83,8 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             <Input
               type="text"
               placeholder="Enter name"
-              value={formData.firstName}
-              onChange={(e) => handleChange("firstName", e.target.value)}
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
             />
           </div>
@@ -110,7 +109,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             <SearchableSelect
               options={["Female", "Male", "Other"]}
               inputStyles="border rounded-[8px] h-[44px] px-[12px] text-[14px]"
-              value={formData.gender}
+              value={formData.gender || ""}
               onChange={(value) => handleChange("gender", value)}
             />
           </div>
@@ -122,8 +121,8 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             <Input
               type="text"
               placeholder="Enter health concern"
-              value={formData.healthConcern}
-              onChange={(e) => handleChange("healthConcern", e.target.value)}
+              value={formData.health_concern}
+              onChange={(e) => handleChange("health_concern", e.target.value)}
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
             />
           </div>
@@ -136,9 +135,9 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             <Input
               type="text"
               placeholder="Enter diagnosed condition"
-              value={formData.diagnosedCondition}
+              value={formData.diagnosed_condition}
               onChange={(e) =>
-                handleChange("diagnosedCondition", e.target.value)
+                handleChange("diagnosed_condition", e.target.value)
               }
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
             />
@@ -184,8 +183,8 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             <Input
               type="text"
               placeholder="Enter phone number"
-              value={phoneMask(formData.phoneNumber)}
-              onChange={(e) => handleChange("phoneNumber", e.target.value)}
+              value={phoneMask(formData.phone || "")}
+              onChange={(e) => handleChange("phone", e.target.value)}
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
             />
           </div>

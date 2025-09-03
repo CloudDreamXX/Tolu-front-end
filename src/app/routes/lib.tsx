@@ -61,6 +61,7 @@ export const AppRoutes = () => {
       />
       <Route path="/register" element={<Register />} />
       <Route path="/accept-invite/:token" element={<Register />} />
+      <Route path="join-via-referral/:token" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/profile-setup" element={<ProfileSetup />} />
       <Route path="/about-your-practice" element={<AboutYourPractice />} />

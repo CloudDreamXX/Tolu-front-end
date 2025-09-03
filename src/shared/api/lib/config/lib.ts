@@ -15,6 +15,8 @@ export const API_ROUTES = {
     SIGNOUT: "/user/signout",
     CHANGE_PASSWORD: "/user/change-password",
     DOWNLOAD_PHOTO: "/profile/photo/{filename}",
+    REFER_FRIEND: "/user/refer-friend",
+    GET_REFERRAL_INVITATION: "/referral/invitation-details/{token}",
   },
   CLIENT: {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",
