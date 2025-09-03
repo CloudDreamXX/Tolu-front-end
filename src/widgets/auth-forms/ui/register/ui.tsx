@@ -17,64 +17,89 @@ export const Register = () => {
     password: "",
     newPassword: "",
   });
+
+  const [inviteSource, setInviteSource] = useState<
+    "client" | "referral" | null
+  >(null);
+
   const { token } = useParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchInviteDetails = async () => {
-      if (!token) return;
+    if (!token) return;
 
-      try {
-        const data = await ClientService.getInvitationDetails(token);
-        setFormData((prev) => ({
-          ...prev,
-          name: data.client.full_name || "",
-          email: data.client.email || "",
-          phone: data.client.phone_number || "",
-          accountType: "client",
-        }));
-      } catch (error) {
-        console.error("Failed to fetch invitation details", error);
-        toast({
-          title: "Invalid or expired invitation",
-          description:
-            "This link has expired. Please request a new login link.",
-          variant: "destructive",
-        });
-        navigate("/auth", {
-          state: { isInvitedClient: true },
-        });
-      }
+    let cancelled = false;
+
+    const isNotFound = (err: any) => {
+      const status = err?.response?.status ?? err?.status ?? err?.statusCode;
+      return Number(status) === 404;
     };
 
-    fetchInviteDetails();
-  }, [token]);
-
-  useEffect(() => {
     const fetchInviteDetails = async () => {
-      if (!token) return;
+      try {
+        const data = await ClientService.getInvitationDetails(token);
+        if (cancelled) return;
+        setFormData((prev) => ({
+          ...prev,
+          name: data?.client?.full_name ?? "",
+          email: data?.client?.email ?? "",
+          phone: data?.client?.phone_number ?? "",
+          accountType: "client",
+        }));
+        setInviteSource("client");
+        return;
+      } catch (err) {
+        if (!isNotFound(err)) {
+          if (!cancelled) {
+            console.error("Failed to fetch invitation details", err);
+            toast({
+              title: "Unable to load invitation",
+              description: "Please try again or request a new link.",
+              variant: "destructive",
+            });
+          }
+          return;
+        }
+      }
 
       try {
         const data = await UserService.getReferralInvitation(token);
+        if (cancelled) return;
         setFormData((prev) => ({
           ...prev,
-          name: data.referral.friend_name || "",
-          email: data.referral.friend_email || "",
-          phone: data.referral.friend_phone || "",
+          name: data?.referral?.friend_name ?? "",
+          email: data?.referral?.friend_email ?? "",
+          phone: data?.referral?.friend_phone ?? "",
           accountType: "client",
         }));
-      } catch (error) {
-        console.error("Failed to fetch invitation details", error);
-        toast({
-          title: "Invalid or expired invitation",
-          description:
-            "This link has expired. Please request a new login link.",
-          variant: "destructive",
-        });
+        setInviteSource("referral");
+        return;
+      } catch (err) {
+        if (cancelled) return;
+        console.error("Failed to fetch referral invitation", err);
+
+        if (isNotFound(err)) {
+          toast({
+            title: "Invalid or expired invitation",
+            description:
+              "This link has expired. Please request a new login link.",
+            variant: "destructive",
+          });
+          navigate("/auth", { state: { isInvitedClient: true } });
+        } else {
+          toast({
+            title: "Unable to load invitation",
+            description: "Please try again or request a new link.",
+            variant: "destructive",
+          });
+        }
       }
     };
 
     fetchInviteDetails();
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -96,14 +121,13 @@ export const Register = () => {
 
       if (res.user && res.accessToken) {
         dispatch(
-          setCredentials({
-            user: res.user,
-            accessToken: res.accessToken,
-          })
+          setCredentials({ user: res.user, accessToken: res.accessToken })
         );
 
         if (res.user.roleID === 3) {
-          navigate("/welcome/client");
+          navigate(
+            inviteSource === "referral" ? "/library" : "/welcome/client"
+          );
         } else {
           navigate("/welcome/practitioner");
         }
@@ -111,10 +135,7 @@ export const Register = () => {
       }
 
       if (!res.accessToken) {
-        toast({
-          title: "Register successful",
-          description: "Welcome!",
-        });
+        toast({ title: "Register successful", description: "Welcome!" });
         navigate("/verify-email");
       }
     } catch (error) {
@@ -130,6 +151,7 @@ export const Register = () => {
 
   const handleCardClick = (user: string) => {
     setFormData((prev) => ({ ...prev, accountType: user }));
+    setInviteSource(null);
   };
 
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
