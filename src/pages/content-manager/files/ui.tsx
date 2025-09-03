@@ -1,18 +1,29 @@
 import {
+  useCreateFolderMutation,
   useDeleteFileLibraryMutation,
+  useDeleteFolderMutation,
   useFetchAllFilesQuery,
+  useUpdateFolderMutation,
   useUploadFilesLibraryMutation,
 } from "entities/files-library/filesLibraryApi";
 import { useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { cn } from "shared/lib";
 import { Button } from "shared/ui";
-import { useFilePicker } from "shared/hooks/useFilePicker";
 import { FileLibrary } from "./components/FileLibrary";
+import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
+import { UpdateFolderPopup } from "./components/UpdateFileFolderPopup";
+import { FileLibraryFolder } from "entities/files-library";
+import { useFilePicker } from "shared/hooks/useFilePicker";
+import { cn } from "shared/lib";
 
 export const FilesLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page] = useState(1);
+  const [createPopup, setCreatePopup] = useState<boolean>(false);
+  const [updatePopup, setUpdatePopup] = useState<boolean>(false);
+  const [menuOpenFolder, setMenuOpenFolder] =
+    useState<FileLibraryFolder | null>(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
   const { items, getDropzoneProps, getInputProps, dragOver, clear } =
     useFilePicker({
@@ -43,6 +54,12 @@ export const FilesLibrary = () => {
     useUploadFilesLibraryMutation();
   const [deleteFile, { isLoading: isDeleting }] =
     useDeleteFileLibraryMutation();
+  const [createFolder] = useCreateFolderMutation();
+  const [deleteFolder] = useDeleteFolderMutation();
+  const [updateFolder] = useUpdateFolderMutation();
+  const [viewingFolder, setViewingFolder] = useState<FileLibraryFolder | null>(
+    null
+  );
 
   const handleUpload = async () => {
     await uploadFiles({
@@ -60,6 +77,49 @@ export const FilesLibrary = () => {
     await refetch();
   };
 
+  const createNewFolder = async (
+    name: string,
+    description: string,
+    parentId?: string
+  ) => {
+    const payload = { name, description, parent_folder_id: parentId };
+    await createFolder(payload).then(() => {
+      refetch();
+    });
+    setCreatePopup(false);
+  };
+
+  const handleDotsClick = (folder: FileLibraryFolder, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setMenuOpenFolder((prev) => (prev === folder ? null : folder));
+  };
+
+  const handleFolderDelete = async (folderId: string) => {
+    await deleteFolder(folderId);
+    refetch();
+  };
+
+  const handleFolderUpdate = async (name: string, description: string) => {
+    if (menuOpenFolder) {
+      await updateFolder({
+        folderId: menuOpenFolder.id,
+        payload: { name, description },
+      });
+      refetch();
+      setUpdatePopup(false);
+    }
+  };
+
+  const handleFolderClick = (folder: FileLibraryFolder) => {
+    setMenuOpenFolder(folder);
+    setViewingFolder(folder);
+  };
+
+  const handleReturnToAll = () => {
+    setMenuOpenFolder(null);
+    setViewingFolder(null);
+  };
+
   return (
     <>
       {(isDeleting || isLoading || isFetching) && (
@@ -72,7 +132,7 @@ export const FilesLibrary = () => {
           />
         </div>
       )}
-      <div className="flex flex-col gap-4 md:gap-[35px] p-3 md:p-8 overflow-y-auto h-full">
+      <div className="flex flex-col gap-4 md:gap-[35px] p-3 md:p-8 overflow-y-auto h-full min-h-[calc(100vh-78px)]">
         <div className="flex flex-col md:flex-row gap-[16px] justify-between md:items-end">
           <div className="flex flex-col gap-2">
             <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
@@ -81,7 +141,7 @@ export const FilesLibrary = () => {
             </h1>
             <p>All the files you were attaching through the Tolu platform</p>
           </div>
-          <div className="flex md:flex-row flex-row gap-2 md:gap-[20px] lg:gap-2">
+          <div className="flex items-center md:flex-row flex-row gap-2 md:gap-[20px] lg:gap-2">
             <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[32px]">
               <MaterialIcon iconName="search" size={16} />
               <input
@@ -93,6 +153,9 @@ export const FilesLibrary = () => {
                 }}
               />
             </div>
+            <Button variant="brightblue" onClick={() => setCreatePopup(true)}>
+              Create a folder
+            </Button>
           </div>
         </div>
 
@@ -139,16 +202,159 @@ export const FilesLibrary = () => {
           </Button>
         )}
 
+        {viewingFolder && (
+          <Button
+            variant="outline"
+            className="w-fit"
+            onClick={handleReturnToAll}
+          >
+            <MaterialIcon iconName="arrow_back" className="mr-2" />
+            Return to all folders and files
+          </Button>
+        )}
+
         <div className="flex flex-wrap gap-2">
-          {files?.files.map((file) => (
-            <FileLibrary
-              key={file.id}
-              fileLibrary={file}
-              onDelete={handleDelete}
-            />
-          ))}
+          {!viewingFolder ? (
+            <>
+              {files?.root_folders.map((folder) => (
+                <button
+                  key={folder.id}
+                  className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
+                  onClick={() => handleFolderClick(folder)}
+                >
+                  <h3>{folder.name}</h3>
+                  <span
+                    onClick={(e) => handleDotsClick(folder, e)}
+                    className="cursor-pointer"
+                  >
+                    <MaterialIcon iconName="more_vert" />
+                  </span>
+                  {menuOpenFolder && menuOpenFolder.id === folder.id && (
+                    <div className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px] bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-0 top-[45px]">
+                      <MenuItem
+                        icon={<MaterialIcon iconName="create_new_folder" />}
+                        label="Create subfolder"
+                        onClick={() => setCreatePopup(true)}
+                      />
+                      <MenuItem
+                        icon={
+                          <MaterialIcon
+                            iconName="delete"
+                            className="text-[#FF1F0F]"
+                          />
+                        }
+                        label="Delete"
+                        onClick={() => setIsDeleteOpen(true)}
+                      />
+                    </div>
+                  )}
+                </button>
+              ))}
+
+              {files?.root_files.map((file) => (
+                <FileLibrary
+                  key={file.id}
+                  fileLibrary={file}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center w-full gap-[24px]">
+              <h2 className="text-2xl font-bold">{viewingFolder.name}</h2>
+              <div className="flex flex-wrap gap-2 w-full">
+                {viewingFolder.subfolders?.map((subfolder) => (
+                  <button
+                    key={subfolder.id}
+                    className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
+                    onClick={() => handleFolderClick(subfolder)}
+                  >
+                    <h3>{subfolder.name}</h3>
+                    <span
+                      onClick={(e) => handleDotsClick(subfolder, e)}
+                      className="cursor-pointer"
+                    >
+                      <MaterialIcon iconName="more_vert" />
+                    </span>
+                    {menuOpenFolder && menuOpenFolder.id === subfolder.id && (
+                      <div className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px] bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-0 top-[45px]">
+                        <MenuItem
+                          icon={<MaterialIcon iconName="create_new_folder" />}
+                          label="Create subfolder"
+                          onClick={() => setCreatePopup(true)}
+                        />
+                        <MenuItem
+                          icon={
+                            <MaterialIcon
+                              iconName="delete"
+                              className="text-[#FF1F0F]"
+                            />
+                          }
+                          label="Delete"
+                          onClick={() => setIsDeleteOpen(true)}
+                        />
+                      </div>
+                    )}
+                  </button>
+                ))}
+                {viewingFolder.files?.map((file) => (
+                  <FileLibrary
+                    key={file.id}
+                    fileLibrary={file}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
+      {menuOpenFolder && isDeleteOpen && (
+        <DeleteMessagePopup
+          contentId={menuOpenFolder.id}
+          onCancel={() => setIsDeleteOpen(false)}
+          onDelete={handleFolderDelete}
+        />
+      )}
+      {!menuOpenFolder && createPopup && (
+        <UpdateFolderPopup
+          onClose={() => setCreatePopup(false)}
+          onComplete={createNewFolder}
+          mode="Create"
+        />
+      )}
+      {menuOpenFolder && createPopup && (
+        <UpdateFolderPopup
+          onClose={() => setCreatePopup(false)}
+          onComplete={(name, decription) =>
+            createNewFolder(name, decription, menuOpenFolder.id)
+          }
+          mode="Create"
+        />
+      )}
+      {menuOpenFolder && updatePopup && (
+        <UpdateFolderPopup
+          onClose={() => setUpdatePopup(false)}
+          onComplete={handleFolderUpdate}
+          folder={menuOpenFolder}
+          mode="Update"
+        />
+      )}
     </>
   );
 };
+
+const MenuItem: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  className?: string;
+  onClick?: () => void;
+}> = ({ icon, label, className = "", onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-2 w-full text-left text-[16px] font-[500] ${className}`}
+  >
+    <span className="w-[24px] h-[24px]">{icon}</span>
+    {label}
+  </button>
+);

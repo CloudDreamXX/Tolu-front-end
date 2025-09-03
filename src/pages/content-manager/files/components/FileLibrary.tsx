@@ -2,7 +2,7 @@ import {
   clearDownloadProgress,
   setDownloadProgress,
 } from "entities/chat/downloadSlice";
-import { FileLibraryResponse } from "entities/files-library";
+import { FileLibraryFile } from "entities/files-library";
 import { useDownloadFileLibraryMutation } from "entities/files-library/filesLibraryApi";
 import { RootState } from "entities/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +11,7 @@ import { cn, formatFileSize, toast } from "shared/lib";
 import { Button } from "shared/ui";
 
 interface FileLibraryProps {
-  fileLibrary: FileLibraryResponse;
+  fileLibrary: FileLibraryFile;
   onDelete?: (fileId: string) => void;
   className?: string;
 }
@@ -47,7 +47,7 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
 
         const a = document.createElement("a");
         a.href = objUrl;
-        a.download = fileLibrary.filename;
+        a.download = fileLibrary.name;
         a.click();
         URL.revokeObjectURL(objUrl);
       } else {
@@ -79,7 +79,7 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
         <MaterialIcon iconName="draft" fill={1} className="text-blue-600" />
         <div className="flex flex-col ">
           <span className="text-sm font-medium text-[#1D1D1F] max-w-[150px] md:max-w-[250px] truncate">
-            {fileLibrary.original_filename}
+            {fileLibrary.name}
           </span>
           <span className="text-xs font-medium text-[#5F5F65]">
             {formatFileSize(fileLibrary.size)}

@@ -179,12 +179,18 @@ export const API_ROUTES = {
     UPDATE_NOTIFICATION_PREFERENCES: "/notifications/preferences",
   },
   FILES_LIBRARY: {
-    FETCH_ALL: "/files-library",
+    FETCH_ALL: "/files-library/",
     FETCH_ONE: "/files-library/{file_id}",
-    UPDATE: "files-library/{file_id}",
-    DELETE: "files-library/{file_id}",
-    DOWNLOAD: "files-library/{file_id}/download",
-    UPLOAD: "files-library/upload",
+    UPDATE: "/files-library/{file_id}",
+    DELETE: "/files-library/{file_id}",
+    DOWNLOAD: "/files-library/{file_id}/download",
+    UPLOAD: "/files-library/upload",
+    CREATE_FOLDER: "/files-library/create-folder/",
+    GET_FOLDER: "/files-library/{folder_id}",
+    UPDATE_FOLDER: "/files-library/{folder_id}",
+    GET_FOLDER_CONTENTS: "/files-library/{folder_id}/contents",
+    DELETE_FOLDER: "/files-library/delete-folder/{folder_id}",
+    MOVE_FILES: "/files-library/move-files",
   },
 };
 

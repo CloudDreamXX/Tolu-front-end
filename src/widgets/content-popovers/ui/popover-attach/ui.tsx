@@ -1,4 +1,4 @@
-import { FileLibraryResponse } from "entities/files-library";
+import { FileLibraryFile } from "entities/files-library";
 import { useFetchAllFilesQuery } from "entities/files-library/filesLibraryApi";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -49,7 +49,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<TabType>("Upload");
-  const [selectedFiles, setSelectedFiles] = useState<Set<FileLibraryResponse>>(
+  const [selectedFiles, setSelectedFiles] = useState<Set<FileLibraryFile>>(
     new Set()
   );
 
@@ -152,7 +152,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     setIsOpen(false);
   };
 
-  const handleSelectFileLibrary = (file: FileLibraryResponse) => {
+  const handleSelectFileLibrary = (file: FileLibraryFile) => {
     const newSelectedFiles = new Set(selectedFiles);
     if (newSelectedFiles.has(file)) {
       newSelectedFiles.delete(file);
@@ -236,9 +236,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
 
   const renderLibrary = () => (
     <div className="overflow-y-auto max-h-52 custom-scroll">
-      {filesLibrary && filesLibrary.files.length > 0 ? (
+      {filesLibrary && filesLibrary.root_files.length > 0 ? (
         <div className="grid grid-cols-2 gap-2 pr-2">
-          {filesLibrary?.files.map((file) => (
+          {filesLibrary?.root_files.map((file) => (
             <button
               key={file.id}
               onClick={() => handleSelectFileLibrary(file)}
@@ -257,7 +257,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                 />
                 <div className="flex flex-col items-start flex-1">
                   <span className="font-medium text-gray-800 truncate ext-sm max-w-52">
-                    {file.original_filename}
+                    {file.name}
                   </span>
                   <span className="text-xs text-[#5F5F65]">
                     {formatFileSize(file.size)}

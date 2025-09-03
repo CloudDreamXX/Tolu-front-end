@@ -1,8 +1,13 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import {
+  CreateFolderPayload,
   FetchAllFilesLibraryPayload,
   FetchAllFilesLibraryResponse,
   FileLibraryResponse,
+  FolderContentsResponse,
+  FolderResponse,
+  MoveFilesPayload,
+  UpdateFolderPayload,
 } from "./model";
 import { onDownloadProgress } from "entities/chat/helpers";
 
@@ -61,5 +66,59 @@ export class FileLibraryService {
     return ApiService.delete(
       `${API_ROUTES.FILES_LIBRARY.DELETE.replace("{file_id}", fileId)}`
     );
+  }
+
+  static async createFolder(
+    payload: CreateFolderPayload
+  ): Promise<FolderResponse> {
+    return ApiService.post<FolderResponse>(
+      API_ROUTES.FILES_LIBRARY.CREATE_FOLDER,
+      payload
+    );
+  }
+
+  static async getFolder(folderId: string): Promise<FolderResponse> {
+    return ApiService.get<FolderResponse>(
+      API_ROUTES.FILES_LIBRARY.GET_FOLDER.replace("{folder_id}", folderId)
+    );
+  }
+
+  static async updateFolder(
+    folderId: string,
+    payload: UpdateFolderPayload
+  ): Promise<FolderResponse> {
+    return ApiService.put<FolderResponse>(
+      API_ROUTES.FILES_LIBRARY.UPDATE_FOLDER.replace("{folder_id}", folderId),
+      payload
+    );
+  }
+
+  static async getFolderContents(
+    folderId: string,
+    page: string,
+    per_page: string
+  ): Promise<FolderContentsResponse> {
+    return ApiService.get<FolderContentsResponse>(
+      API_ROUTES.FILES_LIBRARY.GET_FOLDER_CONTENTS.replace(
+        "{folder_id}",
+        folderId
+      ),
+      {
+        params: {
+          page: page,
+          per_page: per_page,
+        },
+      }
+    );
+  }
+
+  static async deleteFolder(folderId: string): Promise<any> {
+    return ApiService.delete<any>(
+      API_ROUTES.FILES_LIBRARY.DELETE_FOLDER.replace("{folder_id}", folderId)
+    );
+  }
+
+  static async moveFiles(payload: MoveFilesPayload): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.FILES_LIBRARY.MOVE_FILES, payload);
   }
 }
