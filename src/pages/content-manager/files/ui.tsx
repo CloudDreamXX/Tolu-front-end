@@ -3,6 +3,8 @@ import {
   useDeleteFileLibraryMutation,
   useDeleteFolderMutation,
   useFetchAllFilesQuery,
+  useGetFolderContentsQuery,
+  useMoveFilesMutation,
   useUpdateFolderMutation,
   useUploadFilesLibraryMutation,
 } from "entities/files-library/filesLibraryApi";
@@ -16,6 +18,7 @@ import { FileLibraryFolder } from "entities/files-library";
 import { useFilePicker } from "shared/hooks/useFilePicker";
 import { cn } from "shared/lib";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
+import { MoveFilesPopup } from "./components/MoveFilesPopup";
 
 export const FilesLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,7 +27,9 @@ export const FilesLibrary = () => {
   const [updatePopup, setUpdatePopup] = useState<boolean>(false);
   const [menuOpenFolder, setMenuOpenFolder] =
     useState<FileLibraryFolder | null>(null);
+  const [movePopup, setMovePopup] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
 
   const { items, getDropzoneProps, getInputProps, dragOver, clear, open } =
     useFilePicker({
@@ -61,6 +66,20 @@ export const FilesLibrary = () => {
   const [viewingFolder, setViewingFolder] = useState<FileLibraryFolder | null>(
     null
   );
+  const [moveFiles] = useMoveFilesMutation();
+  const [draggingFileId, setDraggingFileId] = useState<string | null>(null);
+  const { data: folderContents } = useGetFolderContentsQuery(
+    { folderId: viewingFolder?.id || "", page: "1", per_page: "10" },
+    { skip: !viewingFolder }
+  );
+
+  const handleFileSelect = (fileId: string) => {
+    if (!selectedFiles.includes(fileId)) {
+      setSelectedFiles((prev) => [...prev, fileId]);
+    } else {
+      setSelectedFiles((prev) => prev.filter((id) => id !== fileId));
+    }
+  };
 
   const handleUpload = async () => {
     await uploadFiles({
@@ -98,6 +117,7 @@ export const FilesLibrary = () => {
   const handleFolderDelete = async (folderId: string) => {
     await deleteFolder(folderId);
     refetch();
+    setIsDeleteOpen(false);
   };
 
   const handleFolderUpdate = async (name: string, description: string) => {
@@ -119,6 +139,42 @@ export const FilesLibrary = () => {
   const handleReturnToAll = () => {
     setMenuOpenFolder(null);
     setViewingFolder(null);
+  };
+
+  const handleMoveFiles = async (targetFolderId: string) => {
+    try {
+      await moveFiles({
+        file_ids: selectedFiles,
+        folder_id: targetFolderId,
+      }).unwrap();
+      refetch();
+    } catch (error) {
+      console.error("Error moving files:", error);
+    }
+  };
+
+  const handleDragStart = (e: React.DragEvent, fileId: string) => {
+    setDraggingFileId(fileId);
+  };
+
+  const handleDrop = async (e: React.DragEvent, folderId: string) => {
+    e.preventDefault();
+    if (draggingFileId) {
+      try {
+        await moveFiles({
+          file_ids: [draggingFileId],
+          folder_id: folderId,
+        }).unwrap();
+        setDraggingFileId(null);
+        refetch();
+      } catch (error) {
+        console.error("Error moving files:", error);
+      }
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
   };
 
   return (
@@ -232,6 +288,16 @@ export const FilesLibrary = () => {
           </Button>
         )}
 
+        {selectedFiles.length > 0 && (
+          <button
+            className="w-fit flex items-center gap-2"
+            onClick={() => setMovePopup(true)}
+          >
+            Move to another folder
+            <MaterialIcon iconName="drive_file_move" />
+          </button>
+        )}
+
         <div className="flex flex-wrap gap-2">
           {!viewingFolder ? (
             <>
@@ -240,8 +306,17 @@ export const FilesLibrary = () => {
                   key={folder.id}
                   className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
                   onClick={() => handleFolderClick(folder)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, folder.id)}
                 >
-                  <h3>{folder.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <MaterialIcon
+                      iconName="folder"
+                      fill={1}
+                      className="text-blue-600"
+                    />
+                    <h3>{folder.name}</h3>
+                  </div>
                   <span
                     onClick={(e) => handleDotsClick(folder, e)}
                     className="cursor-pointer"
@@ -254,6 +329,11 @@ export const FilesLibrary = () => {
                         icon={<MaterialIcon iconName="create_new_folder" />}
                         label="Create subfolder"
                         onClick={() => setCreatePopup(true)}
+                      />
+                      <MenuItem
+                        icon={<MaterialIcon iconName="edit" />}
+                        label="Update folder"
+                        onClick={() => setUpdatePopup(true)}
                       />
                       <MenuItem
                         icon={
@@ -275,20 +355,35 @@ export const FilesLibrary = () => {
                   key={file.id}
                   fileLibrary={file}
                   onDelete={handleDelete}
+                  onFileSelect={handleFileSelect}
+                  isSelected={selectedFiles.includes(file.id)}
+                  onDragStart={handleDragStart}
                 />
               ))}
             </>
           ) : (
             <div className="flex flex-col items-center justify-center w-full gap-[24px]">
-              <h2 className="text-2xl font-bold">{viewingFolder.name}</h2>
+              <h2 className="text-2xl font-bold">
+                {folderContents?.current_folder.name}
+              </h2>
+              <p>{folderContents?.current_folder.description}</p>
               <div className="flex flex-wrap w-full gap-2">
                 {viewingFolder.subfolders?.map((subfolder) => (
                   <button
                     key={subfolder.id}
                     className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
                     onClick={() => handleFolderClick(subfolder)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, subfolder.id)}
                   >
-                    <h3>{subfolder.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <MaterialIcon
+                        iconName="folder"
+                        fill={1}
+                        className="text-blue-600"
+                      />
+                      <h3>{subfolder.name}</h3>
+                    </div>
                     <span
                       onClick={(e) => handleDotsClick(subfolder, e)}
                       className="cursor-pointer"
@@ -301,6 +396,11 @@ export const FilesLibrary = () => {
                           icon={<MaterialIcon iconName="create_new_folder" />}
                           label="Create subfolder"
                           onClick={() => setCreatePopup(true)}
+                        />
+                        <MenuItem
+                          icon={<MaterialIcon iconName="edit" />}
+                          label="Update folder"
+                          onClick={() => setUpdatePopup(true)}
                         />
                         <MenuItem
                           icon={
@@ -321,6 +421,9 @@ export const FilesLibrary = () => {
                     key={file.id}
                     fileLibrary={file}
                     onDelete={handleDelete}
+                    onFileSelect={handleFileSelect}
+                    isSelected={selectedFiles.includes(file.id)}
+                    onDragStart={handleDragStart}
                   />
                 ))}
               </div>
@@ -359,6 +462,15 @@ export const FilesLibrary = () => {
           mode="Update"
         />
       )}
+      {movePopup && (
+        <MoveFilesPopup
+          folders={
+            viewingFolder ? viewingFolder.subfolders : files?.root_folders
+          }
+          onClose={() => setMovePopup(false)}
+          onMove={handleMoveFiles}
+        />
+      )}
     </>
   );
 };
@@ -367,10 +479,13 @@ const MenuItem: React.FC<{
   icon: React.ReactNode;
   label: string;
   className?: string;
-  onClick?: () => void;
+  onClick: () => void;
 }> = ({ icon, label, className = "", onClick }) => (
   <button
-    onClick={onClick}
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick();
+    }}
     className={`flex items-center gap-2 w-full text-left text-[16px] font-[500] ${className}`}
   >
     <span className="w-[24px] h-[24px]">{icon}</span>

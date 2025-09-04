@@ -14,12 +14,18 @@ interface FileLibraryProps {
   fileLibrary: FileLibraryFile;
   onDelete?: (fileId: string) => void;
   className?: string;
+  onFileSelect: (fileId: string) => void;
+  onDragStart: (e: React.DragEvent<Element>, fileId: string) => void;
+  isSelected?: boolean;
 }
 
 export const FileLibrary: React.FC<FileLibraryProps> = ({
   fileLibrary,
   onDelete,
   className,
+  onFileSelect,
+  isSelected = false,
+  onDragStart,
 }) => {
   const dispatch = useDispatch();
   const dlPct = useSelector(
@@ -71,9 +77,13 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
   return (
     <div
       className={cn(
-        "h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center",
-        className
+        "h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center cursor-pointer",
+        className,
+        { "border-2 border-blue-500": isSelected }
       )}
+      onClick={() => onFileSelect(fileLibrary.id)}
+      draggable={true}
+      onDragStart={(e) => onDragStart(e, fileLibrary.id)}
     >
       <div className="flex items-center justify-between gap-2">
         <MaterialIcon iconName="draft" fill={1} className="text-blue-600" />
