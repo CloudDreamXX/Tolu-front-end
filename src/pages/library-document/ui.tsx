@@ -26,6 +26,7 @@ import { HealthProfileForm } from "widgets/health-profile-form";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { DocumentLoadingSkeleton } from "./lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import SharePopup from "widgets/share-popup/ui";
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -56,6 +57,7 @@ export const LibraryDocument = () => {
   } = useTextSelectionTooltip();
   const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
   const { isMobile } = usePageWidth();
+  const [sharePopup, setSharePopup] = useState<boolean>(false);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -368,6 +370,7 @@ export const LibraryDocument = () => {
             onStatusChange={onStatusChange}
             onReadAloud={handleReadAloud}
             isReadingAloud={isReadingAloud}
+            setSharePopup={setSharePopup}
           />
         </div>
 
@@ -417,9 +420,18 @@ export const LibraryDocument = () => {
                 onStatusChange={onStatusChange}
                 onReadAloud={handleReadAloud}
                 isReadingAloud={isReadingAloud}
+                setSharePopup={setSharePopup}
               />
             </div>
           </div>
+        )}
+
+        {sharePopup && documentId && (
+          <SharePopup
+            contentId={documentId}
+            onClose={() => setSharePopup(false)}
+            coachId={creator?.creator_id || ""}
+          />
         )}
 
         <div className="hidden w-full xl:block">

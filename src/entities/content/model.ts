@@ -138,3 +138,15 @@ export interface ContentStatistics {
   total_reads: number;
   total_saves: number;
 }
+
+export interface ShareViaEmail {
+  content_id: string;
+  recipient_email: string;
+  personal_message: string;
+}
+
+export interface ShareWithCoach {
+  content_id: string;
+  coach_id: string;
+  message: string;
+}

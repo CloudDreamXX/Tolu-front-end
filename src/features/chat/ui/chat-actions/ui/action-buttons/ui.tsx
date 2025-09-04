@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FeedbackModal } from "../feedback-modal";
-// import Share from "shared/assets/icons/share";
+import { HistoryPopup } from "../history-popup";
+import SaveModal from "../save-modal/ui";
 import { Message } from "features/chat";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -19,6 +20,7 @@ interface ChatActionsProps {
   fromPath?: string | null;
   isReadingAloud?: boolean;
   currentChatId?: string;
+  setSharePopup?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ChatActions: React.FC<ChatActionsProps> = ({
@@ -29,6 +31,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   onReadAloud,
   isReadingAloud,
   currentChatId,
+  setSharePopup,
 }) => {
   const [thumbsUpModalOpen, setThumbsUpModalOpen] = useState(false);
   const [thumbsDownModalOpen, setThumbsDownModalOpen] = useState(false);
@@ -48,27 +51,6 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
     }
   }, [initialStatus]);
 
-  // const handleShare = async () => {
-  //   const shareData = {
-  //     url: window.location.href,
-  //   };
-
-  //   if (navigator.share) {
-  //     try {
-  //       await navigator.share(shareData);
-  //     } catch (error) {
-  //       console.error("Error sharing:", error);
-  //     }
-  //   } else {
-  //     try {
-  //       await navigator.clipboard.writeText(window.location.href);
-  //       alert("Link copied to clipboard!");
-  //     } catch (err) {
-  //       console.error("Error copying link:", err);
-  //     }
-  //   }
-  // };
-
   return (
     <div className="flex flex-row gap-2 xl:flex-col w-full h-[32px] xl:h-full">
       <div className="flex flex-row gap-2 xl:hidden">
@@ -81,6 +63,35 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           </button>
         )}
         {!chatState && <SaveModal onStatusChange={onStatusChange} />}
+        {onStatusChange && (
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
+            onClick={() => {
+              const newStatus =
+                readStatus === "read" ? "saved_for_later" : "read";
+              setReadStatus(newStatus);
+              onStatusChange(newStatus);
+            }}
+          >
+            <MaterialIcon
+              iconName="visibility"
+              fill={readStatus === "read" ? 1 : 0}
+              className="text-blue-600 "
+            />
+          </button>
+        )}
+        {!chatState && setSharePopup && (
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center"
+            onClick={() => setSharePopup(true)}
+          >
+            <MaterialIcon
+              iconName="share_windows"
+              size={16}
+              className="text-blue-600"
+            />
+          </button>
+        )}
       </div>
       <div className="flex-col self-start hidden gap-4 xl:flex">
         {!isHistoryPopup && (
@@ -109,6 +120,18 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             />
           </button>
         )}
+        {!chatState && setSharePopup && (
+          <button
+            className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center"
+            onClick={() => setSharePopup(true)}
+          >
+            <MaterialIcon
+              iconName="share_windows"
+              size={16}
+              className="text-blue-600"
+            />
+          </button>
+        )}
       </div>
 
       {chatState && chatState.length > 0 && (
@@ -130,12 +153,6 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               />
             </button>
           )}
-          {/* <button
-          className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center"
-          onClick={handleShare}
-        >
-          <Share />
-        </button> */}
           <button
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={onReadAloud}

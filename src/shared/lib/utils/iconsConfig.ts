@@ -92,6 +92,8 @@ export const icons = [
   "inbox",
   "last_page",
   "page_info",
+  "mail",
+  "inbox",
 
   //expended
   "check_box_outline_blank",

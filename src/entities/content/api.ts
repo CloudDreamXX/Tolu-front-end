@@ -7,6 +7,8 @@ import {
   CreatorProfile,
   Feedback,
   FeedbackResponse,
+  ShareViaEmail,
+  ShareWithCoach,
 } from "./model";
 
 export class ContentService {
@@ -92,5 +94,13 @@ export class ContentService {
       headers: { Accept: "image/*" },
     });
     return (res as any).data ?? res;
+  }
+
+  static async shareEmail(data: ShareViaEmail): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.CONTENT.SHARE_EMAIL, data);
+  }
+
+  static async shareCoach(data: ShareWithCoach): Promise<any> {
+    return ApiService.post<any>(API_ROUTES.CONTENT.SHARE_COACH, data);
   }
 }

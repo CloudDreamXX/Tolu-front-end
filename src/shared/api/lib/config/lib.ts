@@ -83,6 +83,8 @@ export const API_ROUTES = {
     GET_ALL_HASHTAGS: "/content/all-hashtags",
     GET_CREATOR_PROFILE: "/creator/{creator_id}/profile",
     DOWNLOAD_CREATOR_PHOTO: "/creator/{creator_id}/photo/{filename}",
+    SHARE_EMAIL: "/share/email",
+    SHARE_COACH: "/share/coach",
   },
   HEALTH_HISTORY: {
     GET: "/health-history",
