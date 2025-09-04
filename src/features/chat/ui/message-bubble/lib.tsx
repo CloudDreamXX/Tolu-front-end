@@ -41,6 +41,7 @@ export const smartRender = async (text: string) => {
         "span",
         "img",
         "style",
+        "font",
       ],
       allowedAttributes: {
         "*": ["class", "id", "style", "href", "title", "alt", "target", "rel"],
@@ -51,11 +52,95 @@ export const smartRender = async (text: string) => {
     const type = detectContentType(sanitizedText);
 
     if (type === "html") {
+      const customBulletText = sanitizedText.replace(
+        /●/g,
+        `<span><br/>●</span>`
+      );
+      const customLiText = customBulletText.replace(
+        /\*\*(.*?)\*\*/g,
+        `<strong>$1</strong>`
+      );
+
+      let isFirstFont = true;
+      const customTextWithFontBreaks = customLiText.replace(
+        /<font([^>]*)>(.*?)<\/font>/g,
+        (match, attrs, content) => {
+          const fontTagWithBreaks = isFirstFont
+            ? `<font${attrs}>${content}</font>`
+            : `<br/><br/><font${attrs}>${content}</font><br/>`;
+          isFirstFont = false;
+          return fontTagWithBreaks;
+        }
+      );
+
+      const markdownRegex = /```([\s\S]*?)```/g;
+      const parts: { isHtml: boolean; content: string }[] = [];
+      let match;
+      let lastIndex = 0;
+
+      while ((match = markdownRegex.exec(customTextWithFontBreaks)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push({
+            isHtml: true,
+            content: customTextWithFontBreaks.slice(lastIndex, match.index),
+          });
+        }
+
+        parts.push({
+          isHtml: false,
+          content: match[1],
+        });
+
+        lastIndex = markdownRegex.lastIndex;
+      }
+
+      if (lastIndex < customTextWithFontBreaks.length) {
+        parts.push({
+          isHtml: true,
+          content: customTextWithFontBreaks.slice(lastIndex),
+        });
+      }
+
       return (
-        <div
-          className="bg-[#ECEFF4]"
-          dangerouslySetInnerHTML={{ __html: text }}
-        />
+        <div className="bg-[#ECEFF4]">
+          {parts.map((part, index) =>
+            part.isHtml ? (
+              <div
+                key={index}
+                className="bg-[#ECEFF4]"
+                dangerouslySetInnerHTML={{ __html: part.content }}
+              />
+            ) : (
+              <ReactMarkdown
+                key={index}
+                remarkPlugins={[remarkGfm, remarkBreaks]}
+                skipHtml
+                components={{
+                  body: (props) => (
+                    <body className="font-inter bg-[#ECEFF4]" {...props} />
+                  ),
+                  h1: (props) => <h1 className="font-inter" {...props} />,
+                  h2: (props) => <h2 className="font-inter" {...props} />,
+                  h3: (props) => <h3 className="font-inter" {...props} />,
+                  h4: (props) => <h4 className="font-inter" {...props} />,
+                  p: (props) => <p className="font-inter" {...props} />,
+                  ul: (props) => <ul className="font-inter" {...props} />,
+                  li: (props) => <li className="font-inter" {...props} />,
+                  a: (props) => (
+                    <a
+                      {...props}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-inter text-wrap"
+                    />
+                  ),
+                }}
+              >
+                {part.content}
+              </ReactMarkdown>
+            )
+          )}
+        </div>
       );
     }
 
