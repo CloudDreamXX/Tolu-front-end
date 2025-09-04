@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { FeedbackModal } from "../feedback-modal";
-import { HistoryPopup } from "../history-popup";
-import SaveModal from "../save-modal/ui";
 import { Message } from "features/chat";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
