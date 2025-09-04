@@ -78,8 +78,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
       )}
       <div className="px-4 py-6 pb-0 md:p-6 md:pb-0 lg:p-8 lg:pb-0">
         <div className="flex items-center justify-between pb-4">
-          <div className="flex items-center justify-center text-[24px] md:text-[32px] font-bold text-[#1D1D1F] gap-2">
-            <MaterialIcon iconName="inbox" size={20} />
+          <div className="flex items-center justify-center text-[24px] font-inter md:text-[20px] font-bold text-[#1D1D1F] gap-2">
             {title}
             {unreadCount > 0 && (
               <span className="w-[24px] h-[24px] md:w-[26px] md:h-[26px] leading-[22px] bg-white border lg:border-2 flex items-center justify-center border-[#1C63DB] text-[15px] md:text-base text-[#1C63DB] rounded-sm">
@@ -118,7 +117,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
               Coaches
             </TabsTrigger>
           </TabsList>
-          <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-236px)]">
+          <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-238px)]">
             <TabsContent value="clients" className="mt-0">
               {chats.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">

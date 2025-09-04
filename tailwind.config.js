@@ -69,7 +69,7 @@ export default {
         "3xl": "1880px",
       },
       fontFamily: {
-        open: ['Open Sans"', "sans-serif"],
+        open: ["Inter", "sans-serif"],
       },
       fontSize: {
         h1: [

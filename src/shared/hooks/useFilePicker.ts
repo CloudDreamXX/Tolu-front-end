@@ -66,6 +66,10 @@ export function useFilePicker(opts: UseFilePickerOptions = {}) {
     return { id: uid(), file, isImage, isPdf, previewUrl };
   };
 
+  const makeItems = (files: File[]): PickItem[] => {
+    return files.map((file) => makeItem(file));
+  };
+
   const addFiles = useCallback(
     (files: FileList | File[]) => {
       const list = Array.from(files);
@@ -102,6 +106,10 @@ export function useFilePicker(opts: UseFilePickerOptions = {}) {
     },
     [dedupe, items, maxFiles, validate]
   );
+
+  const setFiles = useCallback((files: File[]) => {
+    return setItems(makeItems(files));
+  }, []);
 
   const open = useCallback(() => inputRef.current?.click(), []);
 
@@ -160,6 +168,7 @@ export function useFilePicker(opts: UseFilePickerOptions = {}) {
     error,
 
     addFiles,
+    setFiles,
     remove,
     clear,
     open,

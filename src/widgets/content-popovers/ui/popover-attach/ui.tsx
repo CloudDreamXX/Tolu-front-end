@@ -32,6 +32,8 @@ interface PopoverAttachProps {
   existingFiles?: any[];
   disabled?: boolean;
   isDocumentPage?: boolean;
+  fileExtensions?: string[];
+  maxFiles?: number;
 }
 
 export const PopoverAttach: React.FC<PopoverAttachProps> = ({
@@ -43,6 +45,17 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   existingFiles,
   disabled = false,
   isDocumentPage,
+  fileExtensions = [
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".txt",
+  ],
+  maxFiles = 10,
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
@@ -54,10 +67,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   );
 
   const { data: filesLibrary } = useFetchAllFilesQuery(
-    {
-      page: 1,
-      per_page: 20,
-    },
+    { page: 1, per_page: 20 },
     { skip: step !== "From Library" }
   );
 
@@ -67,12 +77,11 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         name: file.name,
         size: formatFileSize(file.size),
         type: file.type,
-        file: file,
+        file,
       }));
-
       setAttachedFiles(newAttachedFiles);
     }
-  }, []);
+  }, [files]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -102,10 +111,10 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
 
   const processFiles = (files: File[]) => {
     const totalFiles = attachedFiles.length + files.length;
-    if (totalFiles > 10) {
+    if (totalFiles > maxFiles) {
       toast({
         variant: "destructive",
-        title: "You cannot add more than 10 files.",
+        title: `You cannot add more than ${maxFiles} files.`,
       });
       return;
     }
@@ -114,23 +123,14 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       const extension = file.name
         .toLowerCase()
         .slice(file.name.lastIndexOf("."));
-      return [
-        ".pdf",
-        ".doc",
-        ".docx",
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".gif",
-        ".txt",
-      ].includes(extension);
+      return fileExtensions.includes(extension);
     });
 
     const newAttachedFiles: AttachedFile[] = validFiles.map((file) => ({
       name: file.name,
       size: formatFileSize(file.size),
       type: file.type,
-      file: file,
+      file,
     }));
 
     const updatedFiles = [...attachedFiles, ...newAttachedFiles];
@@ -148,9 +148,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     updateParentFiles(updatedFiles);
   };
 
-  const handleSave = () => {
-    setIsOpen(false);
-  };
+  const handleSave = () => setIsOpen(false);
 
   const handleSelectFileLibrary = (file: FileLibraryFile) => {
     const newSelectedFiles = new Set(selectedFiles);
@@ -183,7 +181,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
               {!isDocumentPage && (
                 <button
                   onClick={() => removeFile(index)}
-                  className="p-1 rounded hover:bg-red-50"
+                  className="flex items-center justify-center p-1 rounded hover:bg-red-50"
                 >
                   <MaterialIcon
                     iconName="delete"
@@ -211,23 +209,15 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         type="file"
         multiple
         className="hidden"
-        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif"
+        accept={fileExtensions.join(",")}
         onChange={handleFileChange}
       />
 
       <div className="flex flex-row justify-between">
-        <Button
-          variant={"light-blue"}
-          className="w-[128px]"
-          onClick={handleSave}
-        >
+        <Button variant="light-blue" className="w-[128px]" onClick={handleSave}>
           Cancel
         </Button>
-        <Button
-          variant={"brightblue"}
-          className="w-[128px]"
-          onClick={handleSave}
-        >
+        <Button variant="brightblue" className="w-[128px]" onClick={handleSave}>
           Attach
         </Button>
       </div>
@@ -274,16 +264,11 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   );
 
   return (
-    <Popover
-      open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open);
-      }}
-    >
+    <Popover open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <PopoverTrigger asChild disabled={disabled}>
         {customTrigger ?? (
           <Button
-            variant={"outline"}
+            variant="outline"
             className="relative flex flex-col w-full gap-3 py-[8px] px-[16px] md:p-[16px] xl:px-[32px] xl:py-[16px] rounded-[18px] h-fit"
           >
             <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
@@ -304,7 +289,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[358px] md::w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
+      <PopoverContent className="w-[358px] md:w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <MaterialIcon iconName="attach_file" />
           {attachedFiles.length > 0 ||
@@ -337,7 +322,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
               ))}
             </div>
           )}
-
         {!isDocumentPage && (
           <>
             <div className="flex items-center gap-4 p-2 overflow-x-auto bg-white border rounded-full max-w-fit no-scrollbar">
@@ -353,7 +337,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                   onClick={() => setStep(s)}
                 >
                   {s}
-
                   {s === "From Library" && selectedFiles.size > 0 && (
                     <span className="w-5 h-5 rounded-full bg-[#1C63DB] flex justify-center items-center text-white text-[10px]">
                       {selectedFiles.size}
@@ -362,7 +345,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                 </button>
               ))}
             </div>
-
             {step === "From Library" && renderLibrary()}
             {step === "Upload" && renderUpload()}
           </>

@@ -14,7 +14,12 @@ import { CoachService } from "entities/coach";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
-import { ChatActions, ChatBreadcrumb, Message } from "features/chat";
+import {
+  ChatActions,
+  ChatBreadcrumb,
+  HistoryPopup,
+  Message,
+} from "features/chat";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 import { caseBaseSchema } from "pages/content-manager";
 import {
@@ -35,7 +40,7 @@ import {
 } from "widgets/content-popovers";
 import { MessageList } from "widgets/message-list";
 import { MessageLoadingSkeleton } from "./components/MessageLoadingSkeleton";
-import { extractVoiceText, generateCaseStory } from "./helpers";
+import { extractVoiceText, generateCaseStory, subTitleSwitch } from "./helpers";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
@@ -637,7 +642,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       {isSwitch(SWITCH_KEYS.CASE) ? (
         <Card className="relative flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
-            <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
+            <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center ">
               {selectedSwitch}
             </div>
             {chatState.length > 0 && (
@@ -657,7 +662,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                   isSearching={isSearching}
                   hasMessages={chatState.length >= 2}
                   isHistoryPopup
-                  fromPath={location.state?.from?.pathname ?? null}
                   initialRating={
                     chat.length ? (chat[0].liked ? 5 : undefined) : undefined
                   }
@@ -768,8 +772,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       ) : (
         <Card className="relative flex flex-col w-full h-full border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-2">
-            <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open">
-              {selectedSwitch}
+            <div className="flex flex-col items-center gap-2">
+              <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center ">
+                {selectedSwitch}
+              </div>
+              {subTitleSwitch(selectedSwitch as SwitchValue) && (
+                <p className=" text-[#1D1D1F] ">
+                  {subTitleSwitch(selectedSwitch as SwitchValue)}
+                </p>
+              )}
             </div>
             {isSwitch(SWITCH_KEYS.DEF) && (
               <p className="text-[18px] text-[#1D1D1F] font-[600]">
@@ -782,12 +793,16 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               </p>
             )}
             <button
-              className="md:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
+              className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 h-8 w-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full"
               onClick={handleNewChatOpen}
             >
-              <MaterialIcon iconName="search" />
-              {isSwitch(SWITCH_KEYS.CREATE) ? "New content" : "New Search"}
+              <MaterialIcon iconName="add" />
             </button>
+            <HistoryPopup
+              fromPath={location.state?.from?.pathname ?? null}
+              className="absolute md:flex right-[24px] top-[64px]"
+              smallChat
+            />
           </CardHeader>
           <CardContent
             className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}
@@ -799,7 +814,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                   isSearching={isSearching}
                   hasMessages={chatState.length >= 2}
                   isHistoryPopup
-                  fromPath={location.state?.from?.pathname ?? null}
                   initialRating={
                     chat.length ? (chat[0].liked ? 5 : undefined) : undefined
                   }
@@ -829,7 +843,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 isSearching={isSearching}
                 hasMessages={chatState.length >= 2}
                 isHistoryPopup
-                fromPath={location.state?.from?.pathname ?? null}
                 initialRating={
                   chat.length ? (chat[0].liked ? 5 : undefined) : undefined
                 }

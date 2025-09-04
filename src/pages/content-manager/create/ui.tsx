@@ -1,3 +1,5 @@
+import { RootState } from "entities/store";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button } from "shared/ui";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
@@ -24,6 +26,9 @@ export const caseBaseSchema = z.object({
 
 export const ContentManagerCreatePage: React.FC = () => {
   const navigate = useNavigate();
+  const activeChatKey = useSelector(
+    (state: RootState) => state.client.activeChatKey
+  );
 
   return (
     <div
@@ -39,7 +44,9 @@ export const ContentManagerCreatePage: React.FC = () => {
                 className="min-w-40"
                 onClick={() => navigate("/content-manager/files")}
               >
-                Upload Files
+                {activeChatKey === "Research"
+                  ? "Upload Files"
+                  : "Create a folder"}
               </Button>
             </div>
           }

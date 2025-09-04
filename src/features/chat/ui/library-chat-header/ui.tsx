@@ -3,13 +3,14 @@ import { ActionsPopup } from "./ui/actions-popup";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { RenamePopup } from "./ui/rename-popup";
 import { CoachService, NewChatTitle } from "entities/coach";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { toast } from "shared/lib";
 import {
   SWITCH_KEYS,
   SwitchValue,
 } from "widgets/library-small-chat/switch-config";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { HistoryPopup } from "../chat-actions";
 
 interface ChatHeaderProps {
   displayChatTitle: string;
@@ -28,6 +29,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   onNewSearch,
   onClose,
 }) => {
+  const location = useLocation();
   const [isActionsPopupOpen, setIsActionsPopupOpen] = useState(false);
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
@@ -74,7 +76,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       className={`flex flex-col md:flex-row items-center justify-between w-full p-4 bg-white md:border-b rounded-t-xl`}
     >
       <div className="flex items-center gap-3">
-        <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px]">
+        <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px] min-w-[200px]">
           <button onClick={onClose} className="hidden xl:block">
             <MaterialIcon iconName="arrows_input" size={24} />
           </button>
@@ -86,8 +88,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           </div>
         )}
       </div>
-      <div className="hidden relative md:flex flex-col items-center justify-center gap-2 pl-[140px]">
-        <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center font-open w-fit">
+      <div className="relative flex-col items-center justify-center hidden gap-2 md:flex ">
+        <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center  w-fit">
           {selectedSwitch}
         </div>
         {isSwitch(SWITCH_KEYS.DEF) && (
@@ -101,9 +103,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           </p>
         )}
       </div>
-      <div className="flex flex-row gap-2 w-full md:w-fit mt-[8px] md:mt-0">
+      <div className="flex flex-row items-center gap-2 w-full md:w-fit mt-[8px] md:mt-0">
+        <HistoryPopup fromPath={location.state?.from?.pathname ?? null} />
         <button
-          className="flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hoverable:hover:bg-blue-700 w-full xl:w-fit"
+          className="flex flex-row items-center justify-center gap-2 px-4 h-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hoverable:hover:bg-blue-700 w-full xl:w-fit"
           onClick={onNewSearch}
         >
           <MaterialIcon iconName="search" size={24} />
@@ -111,10 +114,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </button>
         {isExistingChat && (
           <button
-            className="flex flex-row items-center gap-2 p-2 text-sm font-medium text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"
+            className="flex flex-row items-center shrink-0 w-8 h-8 text-sm font-medium justify-center text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"
             onClick={() => setIsActionsPopupOpen(!isActionsPopupOpen)}
           >
-            <MaterialIcon iconName="more_vert" size={24} />
+            <MaterialIcon iconName="more_vert" size={20} />
           </button>
         )}
       </div>

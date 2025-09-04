@@ -773,7 +773,6 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             isSearching={isSearching}
             hasMessages={chatState.length >= 2}
             isHistoryPopup
-            fromPath={location.state?.from?.pathname ?? null}
             initialRating={
               chat.length ? (chat[0].liked ? 5 : undefined) : undefined
             }

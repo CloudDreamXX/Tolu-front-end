@@ -1,4 +1,5 @@
 import { FormValues } from "pages/content-manager/create/case-search";
+import { SwitchValue } from "./switch-config";
 
 export const extractVoiceText = (input: string): string => {
   if (!input) return "";
@@ -55,4 +56,15 @@ export const generateCaseStory = (watchedCaseValues: Partial<FormValues>) => {
     The suspected root causes include ${suspectedRootCauses}.
     This case is being used to create a ${protocol} aimed at ${goal}.
   `;
+};
+
+export const subTitleSwitch = (key: SwitchValue) => {
+  switch (key) {
+    case "Research":
+      return "Deep research your case";
+    case "Create content":
+      return "Create highly personalized content";
+    default:
+      return null;
+  }
 };

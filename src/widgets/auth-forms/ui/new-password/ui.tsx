@@ -65,10 +65,10 @@ export const NewPassword = () => {
       {/* Left side */}
       <div className="w-full xl:max-w-[665px] h-[150px] xl:h-full bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
         <aside className="py-[10px] px-[95px] xl:p-[40px] flex items-center justify-center flex-col">
-          <h1 className="text-white font-open text-center text-[44.444px] xl:text-[96px] font-bold">
+          <h1 className="text-white  text-center text-[44.444px] xl:text-[96px] font-bold">
             Tolu AI
           </h1>
-          <h3 className="capitalize font-open text-white text-center text-[14px] md:text-[15px] xl:text-[32px] font-semibold xl:font-medium">
+          <h3 className="capitalize  text-white text-center text-[14px] md:text-[15px] xl:text-[32px] font-semibold xl:font-medium">
             Knowledge Before Care
           </h3>
         </aside>

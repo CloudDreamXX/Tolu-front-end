@@ -14,16 +14,13 @@ import { RootState } from "entities/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import EmptyChat from "shared/assets/images/EmptyChat.png";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
+import { PopoverAttach } from "widgets/content-popovers";
 import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
-import { ChatScroller } from "../components/ChatScroller";
-import { DaySeparator } from "../components/DaySeparator";
-import { EmptyCoachChat } from "../components/EmptyCoachChat";
+import { DaySeparator, NewMessagesSeparator } from "../components/Separator";
 import { VirtuosoHeader } from "../components/VirtuosoHeader";
 
 function uniqById(messages: ChatMessageModel[]): ChatMessageModel[] {
@@ -43,10 +40,12 @@ interface MessagesTabProps {
     pageSize?: number
   ) => Promise<FetchChatMessagesResponse | undefined>;
   search?: string;
+  refetch?: () => void;
 }
 
 type ListItem =
   | { type: "separator"; key: string; label: string }
+  | { type: "separator-new"; key: string; label: string }
   | { type: "message"; key: string; msg: ChatMessageModel };
 
 export const MessagesTab: React.FC<MessagesTabProps> = ({
@@ -54,6 +53,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   search,
   sendMessage,
   loadMessages,
+  refetch,
 }) => {
   const nav = useNavigate();
   const dispatch = useDispatch();
@@ -68,6 +68,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     getDropzoneProps,
     dragOver,
     clear,
+    setFiles,
   } = useFilePicker({
     accept: ["application/pdf", "image/jpeg", "image/png"],
     maxFileSize: 10 * 1024 * 1024,
@@ -75,6 +76,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessageModel[]>([]);
+  const [hasNewMessages, setHasNewMessages] = useState(false);
 
   const [page, setPage] = useState<number>(1);
   const [atBottom, setAtBottom] = useState(true);
@@ -84,9 +86,11 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [loadingMore, setLoadingMore] = useState(false);
   const [sending, setSending] = useState(false);
 
-  const virtuosoRef = useRef<VirtuosoHandle>(null);
-  const [firstItemIndex, setFirstItemIndex] = useState<number>(0);
   const [hasNext, setHasNext] = useState(true);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [previousScrollHeight, setPreviousScrollHeight] = useState(0);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const isToluAdmin = chat?.name?.toLowerCase() === "tolu admin";
 
@@ -121,14 +125,32 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       out.push({ type: "message", key: msg.id, msg });
     }
 
+    if (chat.unread_count > 0) {
+      const insertIndex = out.length - chat.unread_count;
+      out.splice(insertIndex, 0, {
+        type: "separator-new",
+        key: `sep-new-${chat.unread_count}`,
+        label: "New Messages",
+      });
+    }
+
     return out;
-  }, [messages, search]);
+  }, [messages, search, chat.unread_count]);
+
+  useEffect(() => {
+    if (chat.unread_count > 0) {
+      const timer = setTimeout(() => {
+        dispatch(updateChat({ id: chat.chat_id, changes: { unreadCount: 0 } }));
+        refetch?.();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [chat.unread_count]);
 
   useEffect(() => {
     if (!chat?.chat_id) return;
 
     setMessages([]);
-    setFirstItemIndex(0);
     setPage(1);
     setHasNext(true);
     setLoadingInitial(true);
@@ -262,13 +284,12 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         const ids = new Set(prev.map((m) => m.id));
         const toPrepend = res.messages.filter((m) => !ids.has(m.id));
         if (toPrepend.length === 0) return prev;
-
-        setFirstItemIndex((idx) => idx - toPrepend.length);
         return [...toPrepend, ...prev];
       });
 
       setPage(nextPage);
       setHasNext(res.has_next);
+      setHasNewMessages(false);
     } catch (e) {
       console.error(e);
     } finally {
@@ -276,40 +297,22 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     }
   }, [loadingMore, hasNext, chat?.chat_id, page, loadMessages]);
 
-  if (loadingInitial) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <MaterialIcon
-          iconName="progress_activity"
-          className="text-blue-500 animate-spin"
-        />
-      </div>
-    );
-  }
-
   const receiver = chat.participants?.find(
     (p) => p.user.email !== profile?.email
   );
 
   const isClient = profile?.roleName === "Client";
-  const filesDivHeight = files.length > 0 ? 64 : 0;
 
   const containerStyle = {
-    height: isClient
-      ? `calc(100vh - ${372.5 + filesDivHeight}px)`
-      : `calc(100vh - ${384.5 + filesDivHeight}px)`,
+    height: isClient ? `calc(100vh - 372.5px)` : `calc(100vh - 384.5px)`,
   };
 
   const containerStyleMd = {
-    height: isClient
-      ? `calc(100vh - ${489 + filesDivHeight}px)`
-      : `calc(100vh - ${409 + filesDivHeight}px)`,
+    height: isClient ? `calc(100vh - 489px)` : `calc(100vh - 409px)`,
   };
 
   const containerStyleLg = {
-    height: isClient
-      ? `calc(100vh - ${316 + filesDivHeight}px)`
-      : `calc(100vh - ${394 + filesDivHeight}px)`,
+    height: isClient ? `calc(100vh - 316px)` : `calc(100vh - 396px)`,
   };
 
   let currentStyle = containerStyleLg;
@@ -334,27 +337,91 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   const rendeerEmptyState = () => {
-    if (profile?.roleName === "Client") {
-      return (
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <img src={EmptyChat} alt="No files" className="mb-6 md:mb-12" />
-          <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
-            There are no messages yet...
-          </h1>
-          <p className="mt-2 text-base md:text-xl text-[#5F5F65]">
-            Start a conversation with your coach if you have a question or need
-            support.
-          </p>
-        </div>
-      );
-    }
-
-    return <EmptyCoachChat />;
+    return (
+      <div className="flex items-center justify-center h-full text-center">
+        <p className="text-[18px] md:text-[20px] font-[500] text-[#1D1D1F]">
+          There are no messages
+        </p>
+      </div>
+    );
   };
 
-  const VirtuosoHeaderComponent = () => (
-    <VirtuosoHeader loadingMore={loadingMore} hasMore={hasNext} />
-  );
+  const scrollToBottom = () => {
+    if (chatEndRef.current) {
+      setAtBottom(true);
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    setPreviousScrollHeight(0);
+  };
+
+  const handleScroll = () => {
+    const container = chatContainerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    if (scrollTop === 0) {
+      setPreviousScrollHeight(scrollHeight);
+      loadOlder();
+    }
+
+    setAtBottom(scrollTop + clientHeight === scrollHeight);
+
+    const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+    if (distanceFromBottom > 300) {
+      setShowScrollButton(true);
+    } else {
+      setShowScrollButton(false);
+    }
+  };
+
+  useEffect(() => {
+    if (atBottom) {
+      scrollToBottom();
+    } else if (chatContainerRef.current && previousScrollHeight > 0) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight - previousScrollHeight;
+      setPreviousScrollHeight(0);
+    }
+  }, [messages, atBottom]);
+
+  useEffect(() => {
+    if (hasNewMessages && atBottom) {
+      scrollToBottom();
+      setHasNewMessages(false);
+    }
+  }, [hasNewMessages, atBottom]);
+
+  const renderItems = (item: ListItem) => {
+    switch (item.type) {
+      case "separator":
+        return <DaySeparator key={item.key} label={item.label} />;
+      case "separator-new":
+        return <NewMessagesSeparator key={item.key} label={item.label} />;
+      case "message":
+      default:
+        return (
+          <MessageBubble
+            key={item.key}
+            message={item.msg}
+            avatar={chat.chat_type === "group" ? undefined : chat.avatar_url}
+            isOwn={item.msg.sender?.email === profile?.email}
+            author={item.msg.sender?.name || "Unknown User"}
+          />
+        );
+    }
+  };
+
+  if (loadingInitial) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <MaterialIcon
+          iconName="progress_activity"
+          className="text-blue-500 animate-spin"
+        />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -362,48 +429,29 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         {listData.length === 0 ? (
           rendeerEmptyState()
         ) : (
-          <Virtuoso
-            key={chat.chat_id}
-            ref={virtuosoRef}
-            startReached={loadOlder}
-            style={{ height: "100%" }}
-            data={listData}
-            initialTopMostItemIndex={firstItemIndex}
-            computeItemKey={(_, item) => item.key}
-            atBottomStateChange={setAtBottom}
-            alignToBottom
-            followOutput="smooth"
-            itemContent={(_, item) =>
-              item.type === "separator" ? (
-                <DaySeparator key={item.key} label={item.label} />
-              ) : (
-                <MessageBubble
-                  key={item.key}
-                  message={item.msg}
-                  avatar={
-                    chat.chat_type === "group" ? undefined : chat.avatar_url
-                  }
-                  isOwn={item.msg.sender?.email === profile?.email}
-                  author={item.msg.sender?.name || "Unknown User"}
-                />
-              )
-            }
-            components={{
-              Scroller: ChatScroller,
-              Header: VirtuosoHeaderComponent,
-            }}
-          />
+          <div
+            ref={chatContainerRef}
+            onScroll={handleScroll}
+            className="relative w-full h-full px-4 overflow-y-auto chat-scroller"
+          >
+            <div>
+              <VirtuosoHeader loadingMore={loadingMore} hasMore={hasNext} />
+              {listData.map(renderItems)}
+              <div ref={chatEndRef} />
+            </div>
+          </div>
         )}
 
-        {!atBottom && (
+        {hasNewMessages && !atBottom && (
+          <div className="absolute p-2 text-center text-white -translate-x-1/2 bg-blue-500 rounded-full left-1/2 bottom-4">
+            <p>New messages</p>
+          </div>
+        )}
+
+        {showScrollButton && (
           <button
-            onClick={() =>
-              virtuosoRef.current?.scrollTo({
-                top: Number.MAX_SAFE_INTEGER,
-                behavior: "auto",
-              })
-            }
-            className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-12 hover:bg-blue-600"
+            onClick={scrollToBottom}
+            className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-4 hover:bg-blue-600"
           >
             <MaterialIcon iconName="keyboard_arrow_down" />
           </button>
@@ -426,43 +474,52 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           onClick={() => ({})}
           footer={
             <div className="flex flex-col w-full text-[#1D1D1F]">
-              {files.length > 0 && (
-                <div className="mt-1">
-                  <p className="text-sm font-medium">Attached Files:</p>
-                  <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
-                    {items.map((file) => (
-                      <div key={file.id} className="flex items-center gap-2">
-                        <div className="flex flex-col items-start">
-                          <span className="text-sm text-[#4B5563] text-nowrap max-w-20 truncate">
-                            {file.file.name}
-                          </span>
-                          <span className="text-xs text-[#6B7280]">
-                            {(file.file.size / 1024).toFixed(1)} KB
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => remove(file.id)}
-                          className="text-sm text-red-500 hover:text-red-700"
-                          title="Remove File"
-                        >
-                          <MaterialIcon iconName="delete" fill={1} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
               <div className="flex items-center justify-between w-full ">
                 <div className="flex items-center gap-4">
                   <input {...getInputProps()} className="hidden" />
-                  <Button
-                    value={"ghost"}
-                    className="p-0"
-                    onClick={open}
-                    disabled={isToluAdmin}
-                  >
-                    <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
-                  </Button>
+                  {isClient ? (
+                    <label
+                      className={`relative items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800 hidden md:flex`}
+                    >
+                      <Button
+                        variant="ghost"
+                        className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                        onClick={open}
+                      >
+                        <MaterialIcon iconName="attach_file" />
+                      </Button>
+                      {files.length > 0 && (
+                        <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
+                          {files.length > 99 ? "99+" : files.length}
+                        </span>
+                      )}
+                    </label>
+                  ) : (
+                    <PopoverAttach
+                      files={files}
+                      setFiles={setFiles}
+                      disabled={isToluAdmin}
+                      title="Attach files"
+                      customTrigger={
+                        <Button
+                          variant="ghost"
+                          className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-10 h-10 hover:bg-secondary/80"
+                        >
+                          <MaterialIcon
+                            iconName="attach_file"
+                            size={24}
+                            fill={1}
+                          />
+                          {files.length > 0 && (
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              {files.length > 99 ? "99+" : files.length}
+                            </span>
+                          )}
+                        </Button>
+                      }
+                    />
+                  )}
+
                   <div className="relative">
                     <Button
                       value={"ghost"}
@@ -478,6 +535,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                         className="text-[#1D1D1F]"
                       />
                     </Button>
+
                     {emojiModalOpen && (
                       <div className="absolute mb-2 bottom-full">
                         <Picker

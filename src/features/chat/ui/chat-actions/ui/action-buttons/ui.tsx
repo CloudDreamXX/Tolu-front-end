@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { FeedbackModal } from "../feedback-modal";
-import { HistoryPopup } from "../history-popup";
 // import Share from "shared/assets/icons/share";
-import SaveModal from "../save-modal/ui";
 import { Message } from "features/chat";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import SaveModal from "../save-modal/ui";
 
 interface ChatActionsProps {
   chatState?: Message[];
@@ -28,7 +27,6 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   onStatusChange,
   initialStatus,
   onReadAloud,
-  fromPath,
   isReadingAloud,
   currentChatId,
 }) => {
@@ -82,7 +80,6 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             />
           </button>
         )}
-        {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
         {!chatState && <SaveModal onStatusChange={onStatusChange} />}
       </div>
       <div className="flex-col self-start hidden gap-4 xl:flex">
@@ -94,7 +91,6 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             />
           </button>
         )}
-        {isHistoryPopup && <HistoryPopup fromPath={fromPath} />}
         {!chatState && <SaveModal onStatusChange={onStatusChange} />}
         {onStatusChange && (
           <button

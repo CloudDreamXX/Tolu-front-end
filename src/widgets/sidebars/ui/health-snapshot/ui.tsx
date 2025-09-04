@@ -108,7 +108,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
               className="flex flex-col items-center text-center"
             >
               <h2
-                className={`${sidebarOpen ? "text-[46.667px] " : "text-[27px]"} font-bold font-open`}
+                className={`${sidebarOpen ? "text-[46.667px] " : "text-[27px]"} font-bold `}
               >
                 Tolu AI
               </h2>

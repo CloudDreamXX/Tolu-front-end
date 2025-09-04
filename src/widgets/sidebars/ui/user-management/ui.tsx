@@ -40,13 +40,11 @@ export const UserManagementSideBar: React.FC = () => {
     >
       <div className="flex flex-col items-center text-center">
         <h2
-          className={`${isNarrow ? "text-[27px]" : "text-[40px]"} font-bold font-open`}
+          className={`${isNarrow ? "text-[27px]" : "text-[40px]"} font-bold `}
         >
           Tolu AI
         </h2>
-        {!isNarrow && (
-          <h3 className="text-[24px] font-semibold font-open">Admin</h3>
-        )}
+        {!isNarrow && <h3 className="text-[24px] font-semibold ">Admin</h3>}
       </div>
       <div className="flex flex-col gap-[24px]">
         <div

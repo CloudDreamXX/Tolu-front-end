@@ -11,11 +11,8 @@ export const VirtuosoHeader: React.FC<VirtuosoHeaderProps> = ({
 }) => {
   if (loadingMore) {
     return (
-      <div className="flex justify-center py-2">
-        <MaterialIcon
-          iconName="progress_activity"
-          className="w-5 h-5 animate-spin"
-        />
+      <div className="flex justify-center py-2 text-blue-500">
+        <MaterialIcon iconName="progress_activity" className="animate-spin" />
       </div>
     );
   }

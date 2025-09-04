@@ -9,13 +9,12 @@ import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
 import { NoteItem } from "widgets/notes-item/ui";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
-import NoRecommended from "shared/assets/images/NoRecommended.png";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface NotesTabProps {
   search?: string;
@@ -120,7 +119,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const containerStyleLg = {
     height: isClient
       ? `calc(100vh - ${316 + filesDivHeight}px)`
-      : `calc(100vh - ${394 + filesDivHeight}px)`,
+      : `calc(100vh - ${396 + filesDivHeight}px)`,
   };
 
   let currentStyle = containerStyleLg;
@@ -196,17 +195,16 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   }, [dataForList.length, atBottom]);
 
   const renderEmptyState = () => (
-    <div className="flex flex-col items-center justify-center h-full text-center">
-      <img src={NoRecommended} alt="No files" className="mb-6 md:mb-12" />
-      <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
-        No notes have been shared yet...
-      </h1>
+    <div className="flex items-center justify-center h-full text-center">
+      <p className="text-[18px] md:text-[20px] font-[500] text-[#1D1D1F]">
+        There are no shared notes
+      </p>
     </div>
   );
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex flex-col gap-2 pb-2" style={currentStyle}>
+    <>
+      <div style={currentStyle} className="relative w-full pr-3">
         {dataForList.length === 0 && !isLoading ? (
           renderEmptyState()
         ) : (
@@ -242,7 +240,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
       </div>
 
       {!isToluAdmin && (
-        <div className="p-3">
+        <div className="pt-2">
           <Textarea
             placeholder={`Write note...`}
             className={cn("resize-none min-h-[80px]")}
@@ -313,7 +311,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                         <MaterialIcon iconName="send" />
                         {editingId ? "Update" : "Add"}
                       </>
-                    )}{" "}
+                    )}
                   </Button>
                 </div>
               </div>
@@ -321,6 +319,6 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
           />
         </div>
       )}
-    </div>
+    </>
   );
 };

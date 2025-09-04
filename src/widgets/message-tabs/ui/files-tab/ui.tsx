@@ -6,7 +6,6 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import NoFilesImage from "shared/assets/images/NoFiles.png";
 import { cn } from "shared/lib";
 import { FileMessageItem } from "widgets/file-message-item";
 import { RootState } from "../../../../entities/store/lib";
@@ -94,19 +93,26 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
 
   const isClient = profile?.roleName === "Client";
 
-  if (!loading && fileMessages.length === 0) {
+  if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center mt-20 text-center mb:mt-40">
-        <img src={NoFilesImage} alt="No files" className="mb-6 md:mb-12" />
-        <h1 className="text-lg md:text-3xl font-bold text-[#1D1D1F]">
-          No files have been shared yet...
-        </h1>
-        <p className="mt-2 text-base md:text-xl text-[#5F5F65]">
-          Files you and your coach exchange in chat will appear here.
-        </p>
+      <div className="flex items-center justify-center h-full">
+        <MaterialIcon
+          iconName="progress_activity"
+          className="text-blue-500 animate-spin"
+        />
       </div>
     );
   }
+
+  const rendeerEmptyState = () => {
+    return (
+      <div className="flex items-center justify-center h-full text-center">
+        <p className="text-[18px] md:text-[20px] font-[500] text-[#1D1D1F]">
+          There are no shared files
+        </p>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -115,19 +121,14 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
         "pr-3 overflow-auto custom-message-scroll",
         isClient
           ? "h-[calc(100vh-215.5px)] md:h-[calc(100vh-333px)] lg:h-[calc(100vh-160px)]"
-          : "h-[calc(100vh-229px)] md:h-[calc(100vh-253px)] lg:h-[calc(100vh-238px)]"
+          : "h-[calc(100vh-229px)] md:h-[calc(100vh-253px)] lg:h-[calc(100vh-240px)]"
       )}
     >
-      <div className="lg:p-6">
-        <h1 className="mb-6 text-2xl font-semibold">Files</h1>
-        {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <MaterialIcon
-              iconName="progress_activity"
-              className="text-blue-500  animate-spin"
-            />
-          </div>
-        ) : (
+      {fileMessages.length === 0 ? (
+        rendeerEmptyState()
+      ) : (
+        <div className="lg:p-6">
+          <h1 className="mb-6 text-2xl font-semibold">Files</h1>
           <div className="flex flex-col flex-wrap min-h-full gap-4 lg:flex-row">
             {fileMessages.toReversed().map((message) => (
               <FileMessageItem
@@ -138,8 +139,8 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
             ))}
             <div ref={firstScrollRef}></div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

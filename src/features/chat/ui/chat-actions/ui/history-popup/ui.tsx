@@ -3,9 +3,14 @@ import { memo, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { cn } from "shared/lib";
 import { Button } from "shared/ui";
 
-type Props = { fromPath?: string | null };
+type Props = {
+  fromPath?: string | null;
+  className?: string;
+  smallChat?: boolean;
+};
 
 // Tailwind md breakpoint is 768px by default
 function useIsMdUp() {
@@ -24,7 +29,11 @@ function useIsMdUp() {
   return isMdUp;
 }
 
-const HistoryPopupComponent: React.FC<Props> = ({ fromPath }) => {
+const HistoryPopupComponent: React.FC<Props> = ({
+  fromPath,
+  className,
+  smallChat,
+}) => {
   const nav = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [history, setHistory] = useState<SearchHistoryItem[]>();
@@ -57,15 +66,13 @@ const HistoryPopupComponent: React.FC<Props> = ({ fromPath }) => {
   // Shared panel markup (keeps your original md/xl classes)
   const Panel = (
     <div
-      className="
-        absolute z-[999999] flex flex-col
-        bottom-0 top-[300px] left-0
-        md:top-0 md:bottom-auto
-        w-full md:max-w-[350px] md:max-h-full md:h-full
-        overflow-y-auto p-4 bg-white border
-        rounded-t-[18px] md:rounded-xl shadow-lg
-        md:left-14
-      "
+      className={cn(
+        "absolute z-[999999] flex flex-col bottom-0 top-[300px] md:top-2 left-0 w-full md:max-w-[350px] md:max-h-full md:h-full",
+        smallChat
+          ? "lg:right-20 lg:left-auto md:left-32"
+          : "md:left-28 lg:right-64 lg:left-auto",
+        "overflow-y-auto p-4 bg-white border rounded-t-[18px] md:rounded-xl shadow-lg"
+      )}
       onClick={(e) => e.stopPropagation()}
       role="dialog"
       aria-modal
@@ -123,7 +130,7 @@ const HistoryPopupComponent: React.FC<Props> = ({ fromPath }) => {
 
   const DesktopLayer = (
     <div
-      className="absolute top-0 left-0 bottom-0 h-full w-full bg-[#0000004D] md:block md:bg-transparent"
+      className="absolute top-0 left-0 bottom-0 h-[80vh] w-full bg-[#0000004D] md:block md:bg-transparent"
       onClick={() => setIsOpen(false)}
     >
       {Panel /* unchanged md/xl styles & behavior */}
@@ -134,7 +141,10 @@ const HistoryPopupComponent: React.FC<Props> = ({ fromPath }) => {
     <div ref={triggerRef}>
       <button
         onClick={() => setIsOpen((p) => !p)}
-        className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
+        className={cn(
+          "bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center",
+          className
+        )}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
       >

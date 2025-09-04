@@ -74,16 +74,14 @@ export const ContentManagerSidebar: React.FC = () => {
             <div className="flex flex-col items-center text-center">
               <h2
                 className={cn(
-                  "font-bold font-open",
+                  "font-bold ",
                   sidebarOpen ? "text-[40px]" : "text-[27px]"
                 )}
               >
                 Tolu AI
               </h2>
               {sidebarOpen && (
-                <h3 className="text-[24px] font-semibold font-open">
-                  Creator Studio
-                </h3>
+                <h3 className="text-[24px] font-semibold ">Creator Studio</h3>
               )}
             </div>
             <div

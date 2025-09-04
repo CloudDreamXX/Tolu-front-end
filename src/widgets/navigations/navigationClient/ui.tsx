@@ -163,9 +163,7 @@ export const NavigationClient: React.FC = () => {
       <div
         className={`flex xl:hidden justify-between items-center p-[16px] md:p-6 ${location.pathname.startsWith(`${basePath}/library`) && location.pathname.split("/").length > 2 ? "bg-white md:bg-transparent" : ""}`}
       >
-        <h1 className="text-[27px] md:text-[46px] font-[700] font-open">
-          Tolu
-        </h1>
+        <h1 className="text-[27px] md:text-[46px] font-[700] ">Tolu</h1>
         <div className="flex items-center gap-[16px]">
           <button
             onClick={handleOpenChat}
@@ -188,9 +186,7 @@ export const NavigationClient: React.FC = () => {
             ref={menuMobRef}
           >
             <div className="flex items-center justify-between mb-6">
-              <h1 className="md:text-[36.5px] text-[27px] font-[700] font-open">
-                Tolu
-              </h1>
+              <h1 className="md:text-[36.5px] text-[27px] font-[700] ">Tolu</h1>
               <button
                 onClick={() => setMenuMobOpen(false)}
                 aria-label="Close menu"

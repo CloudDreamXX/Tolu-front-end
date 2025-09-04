@@ -23,18 +23,18 @@ export const HeaderOnboarding = ({
       <div className="flex flex-col w-fit">
         <h2
           onClick={() => navigate("/")}
-          className="cursor-pointer text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold font-open h-[38px] md:h-[61px]"
+          className="cursor-pointer text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold  h-[38px] md:h-[61px]"
         >
           Tolu AI
         </h2>
-        <h4 className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[11.429px] font-semibold font-open leading-[normal]">
+        <h4 className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[11.429px] font-semibold  leading-[normal]">
           {isClient ? (
-            <span className="text-[#1D1D1F] text-[7px] md:text-[11px] font-semibold font-open leading-[normal] text-center normal-case">
+            <span className="text-[#1D1D1F] text-[7px] md:text-[11px] font-semibold  leading-[normal] text-center normal-case">
               Your AI-powered assistant <br /> for your functional and <br />{" "}
               holistic practices
             </span>
           ) : (
-            <span className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[17.733px] font-semibold font-open leading-[normal]">
+            <span className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[17.733px] font-semibold  leading-[normal]">
               Health Educator Admin
             </span>
           )}

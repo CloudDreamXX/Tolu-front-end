@@ -7,20 +7,14 @@ import {
   InviteClientPayload,
 } from "entities/coach";
 import { RootState } from "entities/store";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ConfirmIcon from "shared/assets/icons/confirm";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
 import { toast } from "shared/lib/hooks/use-toast";
-import { Button } from "shared/ui";
+import { Button, Dialog, DialogContent, DialogTrigger } from "shared/ui";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
 import { EditClientModal } from "widgets/EditClientModal";
@@ -110,13 +104,6 @@ export const ContentManagerClients: React.FC = () => {
   const [dragOver, setDragOver] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  const handleClickOutside = useCallback((e: MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      setImportClientsPopup(false);
-    }
-  }, []);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -142,15 +129,6 @@ export const ContentManagerClients: React.FC = () => {
       );
     };
   }, []);
-
-  useEffect(() => {
-    if (importClientsPopup) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [importClientsPopup, handleClickOutside]);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -370,7 +348,7 @@ export const ContentManagerClients: React.FC = () => {
     if (file) await handleFile(file);
   };
 
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setDragOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -393,6 +371,7 @@ export const ContentManagerClients: React.FC = () => {
       });
       setInviteSuccessPopup(true);
       setImportClientsPopup(false);
+      setUploadedFileName(null);
     } catch (error) {
       console.error("Error importing clients", error);
       toast({
@@ -496,12 +475,93 @@ export const ContentManagerClients: React.FC = () => {
                   Invite a client
                 </Button>
 
-                <Button
-                  variant="blue2"
-                  className="text-black border border-blue-600 min-w-40"
+                <Dialog
+                  open={importClientsPopup}
+                  onOpenChange={setImportClientsPopup}
                 >
-                  Invite a client
-                </Button>
+                  <DialogTrigger>
+                    <Button
+                      variant="blue2"
+                      className="text-black border border-blue-600 min-w-40"
+                    >
+                      Upload client list
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
+                    {uploadedFileName ? (
+                      <div className="w-full max-w-[330px]">
+                        <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                          Import PDF
+                        </p>
+                        <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
+                          <MaterialIcon iconName="docs" fill={1} />
+                          <div className="flex flex-col leading-[1.2]">
+                            <p className="text-[14px] font-[Nunito] text-black font-semibold">
+                              {uploadedFileName}
+                            </p>
+                            <p className="text-[12px] font-[Nunito] text-[#5F5F65]">
+                              {uploadedFileSize}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setUploadedFileName(null);
+                              setUploadedFileSize(null);
+                            }}
+                            className="absolute top-[6px] right-[6px]"
+                          >
+                            <MaterialIcon iconName="close" size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      // Drop Zone
+                      <div className="w-full">
+                        <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                          Import СSV/XLSX
+                        </p>
+                        <button
+                          tabIndex={0}
+                          aria-label="Upload client list"
+                          className={`w-full border ${dragOver ? "border-[#0057C2]" : "border-dashed border-[#1C63DB]"} rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
+                          onClick={handleUploadClick}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              handleUploadClick();
+                            }
+                          }}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setDragOver(true);
+                          }}
+                          onDragLeave={() => setDragOver(false)}
+                          onDrop={handleDrop}
+                        >
+                          <MaterialIcon
+                            iconName="cloud_upload"
+                            fill={1}
+                            className="text-[#1C63DB] p-2 border rounded-xl"
+                          />
+                          <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                            Click {isMobile || isTablet ? "" : "or drag"} to
+                            upload
+                          </div>
+                          <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
+                            СSV/XLSX
+                          </p>
+                        </button>
+                      </div>
+                    )}
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             }
           />
@@ -817,7 +877,7 @@ export const ContentManagerClients: React.FC = () => {
         )}
 
         {inviteSuccessPopup && (
-          <div className="absolute inset-0 top-0 min-h-[calc(100vh-85px)] bottom-0 z-10 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex stretch items-center justify-center">
+          <div className="absolute inset-0 top-0 min-h-[calc(100vh-85px)] bottom-0 z-50 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex stretch items-center justify-center">
             <div className="bg-white rounded-[16px] shadow-xl p-[24px] w-full h-fit text-center relative mx-[16px] md:w-[550px]">
               <button
                 className="absolute top-[24px] right-[24px] cursor-pointer"
@@ -838,82 +898,6 @@ export const ContentManagerClients: React.FC = () => {
                 Go Back to Home
               </button>
             </div>
-          </div>
-        )}
-
-        {importClientsPopup && (
-          <div
-            ref={modalRef}
-            className="flex flex-col md:w-[410px] md:max-h-[700px] overflow-y-auto py-[24px] px-[16px] lg:py-[40px] lg:px-[40px] bg-white rounded-[20px] shadow-md gap-[24px] absolute top-[370px] left-[32px] right-[32px] md:left-auto md:top-[270px] lg:top-[230px] xl:top-[180px]"
-          >
-            {uploadedFileName ? (
-              <div className="w-full max-w-[330px]">
-                <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
-                  Import PDF
-                </p>
-                <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
-                  <MaterialIcon iconName="docs" fill={1} />
-                  <div className="flex flex-col leading-[1.2]">
-                    <p className="text-[14px] font-[Nunito] text-black font-semibold">
-                      {uploadedFileName}
-                    </p>
-                    <p className="text-[12px] font-[Nunito] text-[#5F5F65]">
-                      {uploadedFileSize}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setUploadedFileName(null);
-                      setUploadedFileSize(null);
-                    }}
-                    className="absolute top-[6px] right-[6px]"
-                  >
-                    <MaterialIcon iconName="close" size={16} />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              // Drop Zone
-              <div className="w-full">
-                <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
-                  Import СSV/XLSX
-                </p>
-                <div
-                  className={`w-full border ${
-                    dragOver
-                      ? "border-[#0057C2]"
-                      : "border-dashed border-[#1C63DB]"
-                  } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
-                  onClick={handleUploadClick}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setDragOver(true);
-                  }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={handleDrop}
-                >
-                  <MaterialIcon
-                    iconName="cloud_upload"
-                    fill={1}
-                    className="text-[#1C63DB] p-2 border rounded-xl"
-                  />
-                  <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
-                    Click {isMobile || isTablet ? "" : "or drag"} to upload
-                  </div>
-                  <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
-                    СSV/XLSX
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              className="hidden"
-              onChange={handleFileChange}
-            />
           </div>
         )}
       </div>

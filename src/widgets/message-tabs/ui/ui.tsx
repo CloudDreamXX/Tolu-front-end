@@ -66,10 +66,14 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const profile = useSelector((state: RootState) => state.user.user);
 
   const {
+    refetch,
     data: chatDetails,
     isLoading,
     isError,
-  } = useFetchChatDetailsByIdQuery({ chatId: chatId! }, { skip: !chatId });
+  } = useFetchChatDetailsByIdQuery(
+    { chatId: chatId! },
+    { skip: !chatId, refetchOnMountOrArgChange: true }
+  );
   const [chat, setChat] = useState<DetailsChatItemModel | null>(null);
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(
     null
@@ -91,12 +95,11 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   }, [chatId]);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
+    const initasync = async () => {
       if (!chatId) return;
 
       if (chatDetails) {
-        if (!cancelled) setChat(chatDetails);
+        setChat(chatDetails);
         return;
       }
 
@@ -104,7 +107,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         try {
           const clients = await CoachService.getManagedClients();
           const client = clients.clients.find((c) => c.client_id === chatId);
-          if (client && !cancelled) {
+          if (client) {
             setChat({
               chat_id: chatId,
               name: client.name,
@@ -136,10 +139,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           });
         }
       }
-    })();
-    return () => {
-      cancelled = true;
     };
+
+    initasync();
   }, [chatId, chatDetails, isError]);
 
   const handleSelectClient = async (clientId: string | undefined) => {
@@ -365,6 +367,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         </TabsList>
         <TabsContent value="messages">
           <MessagesTab
+            refetch={refetch}
             chat={chat}
             search={search}
             sendMessage={sendMessage}
