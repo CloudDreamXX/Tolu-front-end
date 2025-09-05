@@ -349,11 +349,11 @@ export const FilesLibrary = () => {
                         label="Create subfolder"
                         onClick={() => setCreatePopup(true)}
                       />
-                      {/* <MenuItem
+                      <MenuItem
                         icon={<MaterialIcon iconName="edit" />}
                         label="Update folder"
                         onClick={() => setUpdatePopup(true)}
-                      /> */}
+                      />
                       <MenuItem
                         icon={
                           <MaterialIcon
@@ -416,11 +416,11 @@ export const FilesLibrary = () => {
                           label="Create subfolder"
                           onClick={() => setCreatePopup(true)}
                         />
-                        {/* <MenuItem
+                        <MenuItem
                           icon={<MaterialIcon iconName="edit" />}
                           label="Update folder"
                           onClick={() => setUpdatePopup(true)}
-                        /> */}
+                        />
                         <MenuItem
                           icon={
                             <MaterialIcon

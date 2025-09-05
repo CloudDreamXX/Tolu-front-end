@@ -11,7 +11,16 @@ export const mapHealthHistoryToFormDefaults = (
 
   return {
     age: healthHistory.age?.toString() || "",
-    genderIdentity: healthHistory.gender || "female",
+    genderIdentity: healthHistory.gender_identity || "woman",
+    sexAssignedAtBirth: healthHistory.gender || "female",
+    race: healthHistory.ethnicity || "",
+    language: healthHistory.language || "",
+    country: healthHistory.location || "",
+    occupation: healthHistory.job || "",
+    ethnicity: healthHistory.ethnicity || "",
+    household: healthHistory.household || "",
+    education: healthHistory.education || "",
+    religion: healthHistory.religion || "",
 
     healthConcerns: healthHistory.current_health_concerns || "",
     medicalConditions: healthHistory.diagnosed_conditions || "None",

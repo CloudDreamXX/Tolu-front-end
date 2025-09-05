@@ -6,8 +6,15 @@ export interface HealthHistory {
 
   age: number;
   gender: string;
+  gender_identity: string;
   height: string;
   weight: string;
+  ethnicity: string;
+  language: string;
+  location: string;
+  household: string;
+  education: string;
+  religion: string;
 
   marital_status: string;
   job: string;
