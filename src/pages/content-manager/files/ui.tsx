@@ -294,17 +294,6 @@ export const FilesLibrary = () => {
           </Button>
         )}
 
-        {viewingFolder && (
-          <Button
-            variant="outline"
-            className="w-fit"
-            onClick={handleReturnToAll}
-          >
-            <MaterialIcon iconName="arrow_back" className="mr-2" />
-            Return to all folders and files
-          </Button>
-        )}
-
         {selectedFiles.length > 0 && (
           <button
             className="w-fit flex items-center gap-2"
@@ -379,72 +368,88 @@ export const FilesLibrary = () => {
               ))}
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center w-full gap-[24px]">
-              <h2 className="text-2xl font-bold">
-                {folderContents?.current_folder.name}
-              </h2>
-              <p>{folderContents?.current_folder.description}</p>
-              <div className="flex flex-wrap w-full gap-2">
-                {viewingFolder.subfolders?.map((subfolder) => (
-                  <button
-                    key={subfolder.id}
-                    className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
-                    onClick={() => handleFolderClick(subfolder)}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, subfolder.id)}
-                  >
-                    <div className="flex items-center gap-2">
-                      <MaterialIcon
-                        iconName="folder"
-                        fill={1}
-                        className="text-blue-600"
-                      />
-                      <h3>{subfolder.name}</h3>
-                    </div>
-                    <span
-                      onClick={(e) => handleDotsClick(subfolder, e)}
-                      className="cursor-pointer"
-                    >
-                      <MaterialIcon iconName="more_vert" />
-                    </span>
-                    {menuOpenFolder && menuOpenFolder.id === subfolder.id && (
-                      <div className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px] bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-0 top-[45px]">
-                        <MenuItem
-                          icon={<MaterialIcon iconName="create_new_folder" />}
-                          label="Create subfolder"
-                          onClick={() => setCreatePopup(true)}
-                        />
-                        <MenuItem
-                          icon={<MaterialIcon iconName="edit" />}
-                          label="Update folder"
-                          onClick={() => setUpdatePopup(true)}
-                        />
-                        <MenuItem
-                          icon={
-                            <MaterialIcon
-                              iconName="delete"
-                              className="text-[#FF1F0F]"
-                            />
-                          }
-                          label="Delete"
-                          onClick={() => setIsDeleteOpen(true)}
-                        />
-                      </div>
-                    )}
-                  </button>
-                ))}
-                {viewingFolder.files?.map((file) => (
-                  <FileLibrary
-                    key={file.id}
-                    fileLibrary={file}
-                    onDelete={handleDelete}
-                    onFileSelect={handleFileSelect}
-                    isSelected={selectedFiles.includes(file.id)}
-                    onDragStart={handleDragStart}
+            <>
+              <div className="flex gap-[8px] items-start">
+                <button
+                  className="flex items-center justify-center w-fit"
+                  onClick={handleReturnToAll}
+                >
+                  <MaterialIcon
+                    iconName="arrow_back"
+                    className="flex items-center justify-center w-[32px] h-[32px]"
                   />
-                ))}
+                </button>
+                <div className="flex flex-col gap-[8px] mb-[24px] justify-start">
+                  <h2 className="text-2xl font-bold">
+                    {folderContents?.current_folder.name}
+                  </h2>
+                  <p>{folderContents?.current_folder.description}</p>
+                </div>
               </div>
-            </div>
+
+              <div className="flex flex-col items-center justify-center w-full gap-[24px]">
+                <div className="flex flex-wrap w-full gap-2">
+                  {viewingFolder.subfolders?.map((subfolder) => (
+                    <button
+                      key={subfolder.id}
+                      className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
+                      onClick={() => handleFolderClick(subfolder)}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, subfolder.id)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <MaterialIcon
+                          iconName="folder"
+                          fill={1}
+                          className="text-blue-600"
+                        />
+                        <h3>{subfolder.name}</h3>
+                      </div>
+                      <span
+                        onClick={(e) => handleDotsClick(subfolder, e)}
+                        className="cursor-pointer"
+                      >
+                        <MaterialIcon iconName="more_vert" />
+                      </span>
+                      {menuOpenFolder && menuOpenFolder.id === subfolder.id && (
+                        <div className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px] bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-0 top-[45px]">
+                          <MenuItem
+                            icon={<MaterialIcon iconName="create_new_folder" />}
+                            label="Create subfolder"
+                            onClick={() => setCreatePopup(true)}
+                          />
+                          <MenuItem
+                            icon={<MaterialIcon iconName="edit" />}
+                            label="Update folder"
+                            onClick={() => setUpdatePopup(true)}
+                          />
+                          <MenuItem
+                            icon={
+                              <MaterialIcon
+                                iconName="delete"
+                                className="text-[#FF1F0F]"
+                              />
+                            }
+                            label="Delete"
+                            onClick={() => setIsDeleteOpen(true)}
+                          />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                  {viewingFolder.files?.map((file) => (
+                    <FileLibrary
+                      key={file.id}
+                      fileLibrary={file}
+                      onDelete={handleDelete}
+                      onFileSelect={handleFileSelect}
+                      isSelected={selectedFiles.includes(file.id)}
+                      onDragStart={handleDragStart}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
