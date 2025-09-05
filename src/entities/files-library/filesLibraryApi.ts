@@ -50,12 +50,13 @@ export const filesLibraryApi = createApi({
 
     uploadFilesLibrary: builder.mutation<
       string,
-      { files: File[]; descriptions?: string }
+      { files: File[]; descriptions?: string; folder_id: string | null }
     >({
-      queryFn: async ({ files, descriptions }) => {
+      queryFn: async ({ files, descriptions, folder_id }) => {
         try {
           const response = await FileLibraryService.uploadFilesLibrary(
             files,
+            folder_id,
             descriptions
           );
           return { data: response };

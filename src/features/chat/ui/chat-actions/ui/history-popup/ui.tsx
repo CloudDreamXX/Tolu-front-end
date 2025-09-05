@@ -1,6 +1,8 @@
+import { setLastChatId } from "entities/client/lib";
 import { SearchHistoryItem, SearchService } from "entities/search";
 import { memo, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
@@ -29,16 +31,12 @@ function useIsMdUp() {
   return isMdUp;
 }
 
-const HistoryPopupComponent: React.FC<Props> = ({
-  fromPath,
-  className,
-  smallChat,
-}) => {
-  const nav = useNavigate();
+const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [history, setHistory] = useState<SearchHistoryItem[]>();
   const triggerRef = useRef<HTMLDivElement>(null);
   const isMdUp = useIsMdUp();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -51,7 +49,7 @@ const HistoryPopupComponent: React.FC<Props> = ({
       }
     };
     fetchHistory();
-  }, []);
+  }, [isOpen]);
 
   // Close on Escape
   useEffect(() => {
@@ -94,10 +92,7 @@ const HistoryPopupComponent: React.FC<Props> = ({
               <Button
                 className="ml-auto rounded-full bg-[#DDEBF6] hover:bg-[#CFE2F3] p-2"
                 onClick={() => {
-                  nav(
-                    `${isContentManager ? "/content-manager/library" : "/library"}/${item.chatId}`,
-                    { state: { isExistingChat: true, from: fromPath } }
-                  );
+                  dispatch(setLastChatId(item.chatId));
                   setIsOpen(false);
                 }}
               >

@@ -76,7 +76,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     (state: RootState) => state.client.activeChatKey
   );
   const chatState = useSelector(
-    (state: RootState) => state.client.chatHistory[activeChatKey] || []
+    (state: RootState) => state.client.chatHistory[lastChatId] || []
   );
   const folderState = useSelector(
     (state: RootState) => state.client.selectedChatFolder || null
@@ -287,12 +287,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setError(null);
 
     try {
-      const sessionData = await CoachService.getSessionById(chatId);
+      const sessionData = await SearchService.getSession(chatId);
 
-      if (sessionData && sessionData.search_results.length > 0) {
+      if (sessionData && sessionData.length > 0) {
         const chatMessages: Message[] = [];
 
-        sessionData.search_results.forEach((item) => {
+        sessionData.forEach((item) => {
           if (item.query) {
             chatMessages.push({
               id: `user-${item.id}`,
@@ -302,14 +302,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             });
           }
 
-          if (item.content) {
-            let content = item.content;
-            let document = item.content;
+          if (item.answer) {
+            let content = item.answer;
+            let document = item.answer;
 
-            if (item.content.includes("Relevant Content")) {
-              const parts = item.content.split("Relevant Content");
+            if (item.answer.includes("Relevant Content")) {
+              const parts = item.answer.split("Relevant Content");
               content = parts[0].trim();
-              document = item.content;
+              document = item.answer;
             }
 
             chatMessages.push({
@@ -330,8 +330,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           setMessagesToChat({ chatKey: chatId, messages: chatMessages })
         );
 
-        if (sessionData.search_results[0]?.title) {
-          setChatTitle(sessionData.search_results[0].title);
+        if (sessionData[0]?.chat_title) {
+          setChatTitle(sessionData[0].chat_title);
         }
 
         setCurrentChatId(chatId);
