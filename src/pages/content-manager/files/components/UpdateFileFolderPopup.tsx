@@ -68,7 +68,7 @@ export const UpdateFolderPopup: React.FC<UpdateFolderPopupProps> = ({
               : "Update Folder"}
         </h3>
         <div className="flex flex-col gap-[10px] items-start w-full">
-          <label className="font-[Nunito] text-[#5F5F65] text-[12px] font-medium">
+          <label className=" text-[#5F5F65] text-[12px] font-medium">
             Folder name
           </label>
           <Input
@@ -84,7 +84,7 @@ export const UpdateFolderPopup: React.FC<UpdateFolderPopupProps> = ({
           />
         </div>
         <div className="flex flex-col gap-[10px] items-start w-full">
-          <label className="font-[Nunito] text-[#5F5F65] text-[12px] font-medium">
+          <label className=" text-[#5F5F65] text-[12px] font-medium">
             Folder description
           </label>
           <Input

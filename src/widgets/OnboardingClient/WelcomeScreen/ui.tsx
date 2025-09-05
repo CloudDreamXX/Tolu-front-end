@@ -55,35 +55,31 @@ export const WelcomeScreen = () => {
             className="w-[350px]"
           />
           <div className="flex flex-col items-center gap-6">
-            <h2 className="text-black text-center text-[24px] md:text-[32px] xl:text-[40px]/[54px] font-bold font-[Nunito]">
-              Welcome to A Healthy Menopause
-              <br /> Transformation
+            <h2 className="text-black text-center text-[24px] md:text-[32px] font-medium">
+              Welcome to A Healthy Menopause Transition
             </h2>
-            <p className="text-[#5F5F65] text-[16px] md:text-[18px] xl:text-[24px]/[32px] font-normal font-[Nunito] text-center">
-              Tolu supports you through your menopause journey with personalized
-              tools,
-              <br /> guidance, and insights based on who you are and how you
-              live your life.
+            <p className="text-[#5F5F65] max-w-[916px] text-[16px] md:text-[18px] xl:text-[20px] font-normal  text-center">
+              Tolu is here to help you navigate every step with clarity and
+              confidence. <br /> Get personalized tools, compassionate guidance,
+              and insights tailored to who you are and how you live — so you can
+              feel supported, understood, and empowered.
             </p>
           </div>
-          <div className="flex flex-col-reverse md:flex-row gap-[16px] justify-between items-center w-full">
-            <button
-              className={`flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]`}
-              onClick={() => setIsCancelOpen(true)}
-            >
-              Skip onboarding
-            </button>
-            <button
-              onClick={() => nav("/about-you")}
-              type="button"
-              className="py-4 px-6 flex gap-4 items-center w-full md:w-auto justify-center h-16 rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
-            >
-              <span className="text-center text-white text-2xl font-semibold font-[Nunito]">
-                Let’s Begin
-              </span>
-              <MaterialIcon iconName="arrow_right_alt" className="text-white" />
-            </button>
-          </div>
+
+          <button
+            onClick={() => nav("/about-you")}
+            type="button"
+            className="p-4 pl-6 flex gap-2 items-center w-full md:w-auto justify-center rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
+          >
+            <span className="text-[16px] font-medium text-center text-white">
+              Start here
+            </span>
+            <MaterialIcon
+              iconName="arrow_right_alt"
+              size={20}
+              className="text-white"
+            />
+          </button>
         </div>
       </main>
       {IsCancelOpen && (

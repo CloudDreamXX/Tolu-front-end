@@ -146,7 +146,7 @@ export const CalendarPopup = () => {
 
   return (
     <div className="absolute right-6 top-[164px] rounded-2xl bg-white shadow-md flex flex-col py-8 px-6 gap-6 w-[924px] h-[740px]">
-      <h2 className="text-[24px] leading-[32px] font-semibold text-[#1D1D1F] font-[Nunito]">
+      <h2 className="text-[24px] leading-[32px] font-semibold text-[#1D1D1F] ">
         Network Support
       </h2>
 
@@ -165,7 +165,7 @@ export const CalendarPopup = () => {
               size={20}
               className="#5F5F65"
             />
-            <span className="text-[16px] text-nowrap leading-[22px] font-medium text-[#1D1D1F] font-[Nunito]">
+            <span className="text-[16px] text-nowrap leading-[22px] font-medium text-[#1D1D1F] ">
               {format(currentMonth, "MMMM yyyy")}
             </span>
           </div>
@@ -178,7 +178,7 @@ export const CalendarPopup = () => {
         </div>
         <button
           onClick={() => setCurrentMonth(new Date())}
-          className="h-[44px] px-6 rounded-full bg-[#DDEBF6] text-[#1C63DB] font-[Nunito] text-[16px] font-semibold"
+          className="h-[44px] px-6 rounded-full bg-[#DDEBF6] text-[#1C63DB]  text-[16px] font-semibold"
         >
           Today
         </button>
@@ -197,7 +197,7 @@ export const CalendarPopup = () => {
       {showModal && (
         <div className="absolute top-1/2 left-1/2 w-[360px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl z-50 p-6 flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-[#1D1D1F] font-[Nunito]">
+            <h3 className="text-lg font-semibold text-[#1D1D1F] ">
               {editIndex !== null ? "Edit event" : "New event"}
             </h3>
             <button onClick={resetModal}>

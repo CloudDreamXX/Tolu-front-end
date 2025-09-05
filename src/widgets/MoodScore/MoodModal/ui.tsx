@@ -44,10 +44,10 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
           {/* Header */}
 
           <div className="flex flex-col gap-2 text-left">
-            <h2 className="font-[Nunito] text-[#1D1D1F] text-[22px] leading-[28px] font-semibold">
+            <h2 className=" text-[#1D1D1F] text-[22px] leading-[28px] font-semibold">
               How are you feeling today?
             </h2>
-            <p className="font-[Nunito] text-[#5F5F65] text-[14px] leading-[20px] font-normal max-w-[600px]">
+            <p className=" text-[#5F5F65] text-[14px] leading-[20px] font-normal max-w-[600px]">
               Take a moment to check in with yourself. Your daily mood helps us
               personalize your experience and track what’s working for your
               well-being.
@@ -62,7 +62,7 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
                 alt={moodLabel}
                 className="w-8 h-8"
               />
-              <h2 className="text-[#1C3C8D] font-[Nunito] text-[18px] font-semibold">
+              <h2 className="text-[#1C3C8D]  text-[18px] font-semibold">
                 {moodLabel}
               </h2>
               <span className="w-[20px] h-[20px]">
@@ -107,7 +107,7 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
           <div className="flex flex-col w-full max-w-[600px] gap-1">
             <label
               htmlFor="mood-feedback"
-              className="font-[Nunito] text-[#1D1D1F] font-semibold text-sm"
+              className=" text-[#1D1D1F] font-semibold text-sm"
             >
               Anything you'd like to add?{" "}
               <span className="font-normal text-gray-400">(Optional)</span>
@@ -115,7 +115,7 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
             <Input
               id="mood-feedback"
               placeholder="Leave your short feedback (e.g. energy level, stress, triggers)"
-              className="w-full p-3 rounded border border-gray-300 resize-none text-sm font-[Nunito] placeholder:text-gray-400"
+              className="w-full p-3 rounded border border-gray-300 resize-none text-sm  placeholder:text-gray-400"
             />
           </div>
 

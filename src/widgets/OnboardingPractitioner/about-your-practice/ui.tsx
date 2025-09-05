@@ -145,19 +145,19 @@ export const AboutYourPractice = () => {
       <HeaderOnboarding currentStep={2} />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch bg-white shadow-mdp-[40px] md:shadow-none md:bg-transparent py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0">
         {!isMobile && (
-          <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
+          <h1 className="flex text-center  text-[32px] font-medium text-black">
             About your practice
           </h1>
         )}
         <div className="w-full md:w-[700px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px]">
           {isMobile && (
-            <h1 className="flex text-center font-inter text-[24px] font-medium text-black">
+            <h1 className="flex text-center  text-[24px] font-medium text-black">
               About your practice
             </h1>
           )}
           {/* School */}
           <div className="flex flex-col items-start self-stretch md:mt-[40px] md:ml-[32px] w-full md:w-[620px] relative">
-            <label className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block">
+            <label className=" text-[16px] font-medium text-[#1D1D1F] mb-2 block">
               Which school did you graduate from? *
             </label>
 
@@ -320,7 +320,7 @@ export const AboutYourPractice = () => {
 
           {/* File Upload Section */}
           <div className="flex flex-col items-start w-full gap-2">
-            <p className="md:ml-[32px] font-[Nunito] text-[16px] font-medium text-black">
+            <p className="md:ml-[32px]  text-[16px] font-medium text-black">
               Upload a certificate or license *
             </p>
 
@@ -345,15 +345,11 @@ export const AboutYourPractice = () => {
                   fill={1}
                   className="text-[#1C63DB] p-2 border rounded-xl"
                 />
-                <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                <p className="text-[#1C63DB]  text-[14px] font-semibold">
                   Click to upload
                 </p>
-                <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
-                  or drag and drop
-                </p>
-                <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
-                  PDF, JPG or PNG
-                </p>
+                <p className="text-[#5F5F65]  text-[14px]">or drag and drop</p>
+                <p className="text-[#5F5F65]  text-[14px]">PDF, JPG or PNG</p>
               </div>
             </div>
 
@@ -389,7 +385,7 @@ export const AboutYourPractice = () => {
 
           <div className="flex w-full md:ml-[32px] text-[#1C63DB] gap-2 items-center">
             <MaterialIcon iconName="lightbulb" fill={1} />
-            <p className="font-[Nunito] text-[16px] font-medium ">
+            <p className=" text-[16px] font-medium ">
               Data is securely saved with a HIPAA-compliant notice
             </p>
           </div>
@@ -418,7 +414,7 @@ export const AboutYourPractice = () => {
 
           {/* Radio - uses labs/supplements */}
           <div className="flex flex-col md:ml-[32px] items-start self-stretch md:mb-[40px] gap-[16px]">
-            <p className="font-[Nunito] text-[16px] font-medium text-black">
+            <p className=" text-[16px] font-medium text-black">
               Do you currently use labs or supplementation in your practice? *
             </p>
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-[60px]">
@@ -435,7 +431,7 @@ export const AboutYourPractice = () => {
                     onChange={(e) => handleFieldChange("labs", e.target.value)}
                     className="w-[24px] h-[24px] md:w-[20px] md:h-[20px]"
                   />
-                  <span className="font-[Nunito] text-[16px] font-medium text-black">
+                  <span className=" text-[16px] font-medium text-black">
                     {option}
                   </span>
                 </label>
@@ -450,14 +446,14 @@ export const AboutYourPractice = () => {
         >
           <button
             onClick={() => nav(-1)}
-            className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
           </button>
           <Link
             to={allFilled() ? "/profile-setup" : ""}
-            className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold ${
+            className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold ${
               allFilled()
                 ? "bg-[#1C63DB] text-white"
                 : "bg-[#D5DAE2] text-[#5F5F65]"

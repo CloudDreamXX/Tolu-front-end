@@ -80,14 +80,14 @@ export const NewPassword = () => {
           onSubmit={handleSubmit}
           className="w-full md:w-[550px] flex flex-col mt-[40px] md:mt-[121px] xl:mt-0 py-[24px] px-[16px] md:p-0 xl:items-center gap-[40px] xl:gap-[60px]"
         >
-          <h3 className="text-black text-center font-inter font-semibold text-[28px] md:text-[40px]">
+          <h3 className="text-black text-center  font-semibold text-[28px] md:text-[40px]">
             Create new password
           </h3>
 
           <main className="flex flex-col gap-[24px] items-start self-stretch">
             {/* New password */}
             <div className="flex flex-col items-start gap-[4px] w-full">
-              <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+              <label className="text-[#5f5f65] text-[16px] font-semibold ">
                 New Password
               </label>
               <Input
@@ -101,7 +101,7 @@ export const NewPassword = () => {
 
             {/* Confirm new password */}
             <div className="flex flex-col items-start gap-[4px] w-full">
-              <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+              <label className="text-[#5f5f65] text-[16px] font-semibold ">
                 Confirm New Password
               </label>
               <Input
@@ -116,7 +116,7 @@ export const NewPassword = () => {
                 }`}
               />
               {passwordError && (
-                <p className="text-[#FF1F0F] font-[Nunito] text-[14px] font-medium px-[4px] pt-[4px]">
+                <p className="text-[#FF1F0F]  text-[14px] font-medium px-[4px] pt-[4px]">
                   {passwordError}
                 </p>
               )}
@@ -127,7 +127,7 @@ export const NewPassword = () => {
           <div className="flex flex-col items-center gap-[24px] w-full mt-auto md:mt-0">
             <button
               type="submit"
-              className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
+              className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
                 formData.newPassword.length >= 8 &&
                 formData.newPasswordRepeat.length >= 8 &&
                 !passwordError

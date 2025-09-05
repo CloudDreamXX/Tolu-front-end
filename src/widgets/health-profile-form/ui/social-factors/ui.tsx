@@ -109,7 +109,7 @@ export const SocialFactorsForm = ({ form }: SocialFactorsFormProps) => {
         name="ethnicity"
         render={({ field }) => (
           <FormItem className="flex w-full flex-col items-start gap-[10px]">
-            <FormLabel className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+            <FormLabel className="text-[#1D1D1F]  text-base font-medium">
               Ethnicity
             </FormLabel>
             <FormControl>
@@ -158,7 +158,7 @@ export const SocialFactorsForm = ({ form }: SocialFactorsFormProps) => {
         name="household"
         render={({ field }) => (
           <FormItem className="flex w-full flex-col items-start gap-[10px]">
-            <FormLabel className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+            <FormLabel className="text-[#1D1D1F]  text-base font-medium">
               Household Type
             </FormLabel>
             <FormControl>
@@ -209,7 +209,7 @@ export const SocialFactorsForm = ({ form }: SocialFactorsFormProps) => {
         name="occupation"
         render={({ field }) => (
           <FormItem className="flex w-full flex-col items-start gap-[10px]">
-            <FormLabel className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+            <FormLabel className="text-[#1D1D1F]  text-base font-medium">
               Occupation
             </FormLabel>
             <FormControl>
@@ -258,7 +258,7 @@ export const SocialFactorsForm = ({ form }: SocialFactorsFormProps) => {
         name="education"
         render={({ field }) => (
           <FormItem className="flex w-full flex-col items-start gap-[10px]">
-            <FormLabel className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+            <FormLabel className="text-[#1D1D1F]  text-base font-medium">
               Education Level
             </FormLabel>
             <FormControl>
@@ -287,7 +287,7 @@ export const SocialFactorsForm = ({ form }: SocialFactorsFormProps) => {
         name="religion"
         render={({ field }) => (
           <FormItem className="flex w-full flex-col items-start gap-[10px]">
-            <FormLabel className="text-[#1D1D1F] font-[Nunito] text-base font-medium">
+            <FormLabel className="text-[#1D1D1F]  text-base font-medium">
               Religion
             </FormLabel>
             <FormControl>

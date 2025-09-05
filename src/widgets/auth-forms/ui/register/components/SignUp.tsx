@@ -134,13 +134,13 @@ export const SignUp: React.FC<SignUpProps> = ({
       className="w-[550px] flex flex-col items-center gap-[40px] md:gap-[60px]"
       onSubmit={onSubmit}
     >
-      <h1 className="self-stretch text-black text-center font-inter text-[40px] font-semibold ">
+      <h1 className="self-stretch text-black text-center  text-[40px] font-semibold ">
         Sign Up
       </h1>
 
       <section className="w-full flex flex-col items-start gap-[24px] self-stretch">
         <div className="flex flex-col items-start gap-[10px] self-stretch">
-          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
             Full name
           </label>
           <Input
@@ -159,14 +159,14 @@ export const SignUp: React.FC<SignUpProps> = ({
             }
           />
           {errors.name && (
-            <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px]">
+            <p className="text-[#FF1F0F]  font-medium px-[16px]">
               {errors.name}
             </p>
           )}
         </div>
 
         <div className="flex flex-col items-start gap-[10px] self-stretch">
-          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
             Email
           </label>
           <Input
@@ -185,14 +185,14 @@ export const SignUp: React.FC<SignUpProps> = ({
             }
           />
           {errors.email && (
-            <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px]">
+            <p className="text-[#FF1F0F]  font-medium px-[16px]">
               {errors.email}
             </p>
           )}
         </div>
 
         <div className="flex flex-col items-start gap-[10px] self-stretch">
-          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
             Phone number
           </label>
           <Input
@@ -208,14 +208,14 @@ export const SignUp: React.FC<SignUpProps> = ({
             }
           />
           {errors.phone && (
-            <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px]">
+            <p className="text-[#FF1F0F]  font-medium px-[16px]">
               {errors.phone}
             </p>
           )}
         </div>
 
         <div className="flex flex-col items-start gap-[10px] self-stretch">
-          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
             Create password
           </label>
           <div className="relative flex flex-row-reverse items-center w-full">
@@ -248,13 +248,13 @@ export const SignUp: React.FC<SignUpProps> = ({
             </button>
           </div>
           {errors.password && (
-            <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px]">
+            <p className="text-[#FF1F0F]  font-medium px-[16px]">
               {errors.password}
             </p>
           )}
         </div>
         <div className="flex flex-col items-start gap-[10px] self-stretch">
-          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
             Repeat password
           </label>
           <div className="relative flex flex-row-reverse items-center w-full">
@@ -286,7 +286,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             </button>
           </div>
           {errors.newPassword && (
-            <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px]">
+            <p className="text-[#FF1F0F]  font-medium px-[16px]">
               {errors.newPassword}
             </p>
           )}
@@ -299,8 +299,8 @@ export const SignUp: React.FC<SignUpProps> = ({
           disabled={!isFormValid() || loading}
           className={
             !isFormValid() || loading
-              ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] font-[Nunito] text-[16px] font-semibold cursor-not-allowed"
-              : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
+              ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65]  text-[16px] font-semibold cursor-not-allowed"
+              : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white  text-[16px] font-semibold"
           }
         >
           {loading ? (
@@ -313,7 +313,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             "Proceed"
           )}
         </button>
-        <p className="text-[14px] font-[Nunito] font-medium">
+        <p className="text-[14px]  font-medium">
           Already have an account?{" "}
           <Link to="/auth" className="cursor-pointer text-[#1C63DB] underline">
             Log in

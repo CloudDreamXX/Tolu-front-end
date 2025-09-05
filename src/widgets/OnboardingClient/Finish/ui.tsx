@@ -65,10 +65,10 @@ export const FinishClientOnboarding = () => {
             />
           </div>
           <div className="flex flex-col items-center gap-6">
-            <h1 className="font-[Nunito] text-center font-bold text-[40px] text-[#1D1D1F]">
+            <h1 className=" text-center font-bold text-[40px] text-[#1D1D1F]">
               You’re all set!
             </h1>
-            <h3 className="font-[Nunito] text-center text-[#5F5F65] text-[24px] font-normal">
+            <h3 className=" text-center text-[#5F5F65] text-[24px] font-normal">
               Your personalized journey has begun. Your dashboard is ready with
               tailored tools and insights just for you. Let’s take the next step
               together!

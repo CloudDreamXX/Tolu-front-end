@@ -490,16 +490,16 @@ export const ContentManagerClients: React.FC = () => {
                   <DialogContent className="md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
                     {uploadedFileName ? (
                       <div className="w-full max-w-[330px]">
-                        <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                        <p className="text-left  text-black text-base font-medium mb-[8px]">
                           Import PDF
                         </p>
                         <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
                           <MaterialIcon iconName="docs" fill={1} />
                           <div className="flex flex-col leading-[1.2]">
-                            <p className="text-[14px] font-[Nunito] text-black font-semibold">
+                            <p className="text-[14px]  text-black font-semibold">
                               {uploadedFileName}
                             </p>
-                            <p className="text-[12px] font-[Nunito] text-[#5F5F65]">
+                            <p className="text-[12px]  text-[#5F5F65]">
                               {uploadedFileSize}
                             </p>
                           </div>
@@ -517,7 +517,7 @@ export const ContentManagerClients: React.FC = () => {
                     ) : (
                       // Drop Zone
                       <div className="w-full">
-                        <p className="text-left font-[Nunito] text-black text-base font-medium mb-[8px]">
+                        <p className="text-left  text-black text-base font-medium mb-[8px]">
                           Import СSV/XLSX
                         </p>
                         <button
@@ -542,11 +542,11 @@ export const ContentManagerClients: React.FC = () => {
                             fill={1}
                             className="text-[#1C63DB] p-2 border rounded-xl"
                           />
-                          <div className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+                          <div className="text-[#1C63DB]  text-[14px] font-semibold">
                             Click {isMobile || isTablet ? "" : "or drag"} to
                             upload
                           </div>
-                          <p className="text-[#5F5F65] font-[Nunito] text-[14px] mt-[4px]">
+                          <p className="text-[#5F5F65]  text-[14px] mt-[4px]">
                             СSV/XLSX
                           </p>
                         </button>

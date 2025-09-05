@@ -76,10 +76,10 @@ export const WhatBrringsYouHere = () => {
           {isMobileOrTablet && title}
 
           <div className="flex flex-col items-start gap-2">
-            <h1 className="text-h5 font-[Nunito] text-[18px] text-[#1D1D1F]">
+            <h1 className="text-h5  text-[18px] text-[#1D1D1F]">
               What’s your main goal during this transition?
             </h1>
-            <p className="text-[16px] font-medium font-[Nunito] text-[#5F5F65]">
+            <p className="text-[16px] font-medium  text-[#5F5F65]">
               Please give us just one goal that describes you.
             </p>
           </div>
@@ -100,12 +100,17 @@ export const WhatBrringsYouHere = () => {
                   htmlFor={`radio-${index}`}
                   className="flex flex-grow cursor-pointer"
                 >
-                  <span className="inline-flex items-start">
-                    <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F] leading-snug mr-1">
+                  <span className="inline-flex items-center ">
+                    <p className=" text-[16px] font-medium text-[#1D1D1F] leading-snug mr-1">
                       {item}
                     </p>
                     <div className="flex-shrink-0 mt-[3px]">
-                      <MaterialIcon iconName="help" size={16} />
+                      <MaterialIcon
+                        iconName="help"
+                        size={16}
+                        fill={1}
+                        className="text-[#1C63DB]"
+                      />
                     </div>
                   </span>
                 </label>
@@ -115,14 +120,14 @@ export const WhatBrringsYouHere = () => {
 
           {isOtherSelected && (
             <div className="flex flex-col gap-[10px] w-full items-start">
-              <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
+              <label className="text-[16px] font-medium  text-[#1D1D1F]">
                 What does a healthy menopause transition look like to you?
               </label>
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="My main goal"
-                className="w-full text-[16px] font-[Nunito] font-medium py-[11px] px-[16px]"
+                className="w-full text-[16px]  font-medium py-[11px] px-[16px]"
               />
             </div>
           )}

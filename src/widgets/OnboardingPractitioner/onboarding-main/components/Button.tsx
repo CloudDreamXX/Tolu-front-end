@@ -14,7 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
 }) => {
   const baseClasses =
-    "flex py-2 px-4 items-center justify-center gap-[6px] rounded-full border border-[#BFBFBF] font-[Nunito] text-[16px] leading-[20px] font-semibold";
+    "flex py-2 px-4 items-center justify-center gap-[6px] rounded-full border border-[#BFBFBF]  text-[16px] leading-[20px] font-semibold";
 
   const selectedClasses = selected
     ? "bg-[rgba(0,143,246,0.10)] text-[#1C63DB] border-[transparent]"

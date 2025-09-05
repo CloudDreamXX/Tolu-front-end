@@ -19,7 +19,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
           {headersToUse.map((header) => (
             <th
               key={header.id}
-              className="px-4 py-3 text-left text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words"
+              className="px-4 py-3 text-left text-[14px] leading-[20px] font-semibold  text-[#1D1D1F] whitespace-normal break-words"
             >
               {header.title}
             </th>
@@ -36,7 +36,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                   return (
                     <td
                       key={header.id}
-                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
+                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold  text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
                     >
                       {row.metric}
                     </td>
@@ -45,7 +45,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                   return (
                     <td
                       key={header.id}
-                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
+                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold  text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
                     >
                       {row.LatestResult}
                     </td>
@@ -54,7 +54,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                   return (
                     <td
                       key={header.id}
-                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
+                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold  text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
                     >
                       {row.Testdate}
                     </td>
@@ -64,7 +64,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                     <td
                       key={header.id}
                       style={{ color: getColorStatus(row.Status) }}
-                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] whitespace-normal break-words bg-white rounded-lg shadow-sm"
+                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold  whitespace-normal break-words bg-white rounded-lg shadow-sm"
                     >
                       <div className="flex text-nowrap gap-1 items-center">
                         <div
@@ -81,7 +81,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                   return (
                     <td
                       key={header.id}
-                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] whitespace-normal break-words bg-white rounded-lg shadow-sm"
+                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold  whitespace-normal break-words bg-white rounded-lg shadow-sm"
                     >
                       {row.lab}
                     </td>
@@ -90,7 +90,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                   return (
                     <td
                       key={header.id}
-                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
+                      className="px-4 py-4 text-[14px] leading-[20px] font-semibold  text-[#1D1D1F] whitespace-normal break-words bg-white rounded-lg shadow-sm"
                     >
                       {row.func}
                     </td>
@@ -99,7 +99,7 @@ export const HealthTable: React.FC<HealthTableProps> = ({ userType }) => {
                   return (
                     <td
                       key={header.id}
-                      className="italic whitespace-pre-line px-4 py-4 text-[14px] leading-[20px] font-semibold font-[Nunito] text-[#1D1D1F] break-words bg-white rounded-lg shadow-sm"
+                      className="italic whitespace-pre-line px-4 py-4 text-[14px] leading-[20px] font-semibold  text-[#1D1D1F] break-words bg-white rounded-lg shadow-sm"
                     >
                       {row.Comment}
                     </td>

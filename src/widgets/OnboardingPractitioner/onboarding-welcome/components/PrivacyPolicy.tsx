@@ -25,7 +25,7 @@ export const PrivacyPolicy: React.FC<Props> = ({
       <div className="flex flex-col items-center shrink-0 w-full md:w-[548px] md:h-[269px] lg:h-auto gap-[24px]">
         <div className="flex flex-col gap-[38px] items-center justify-center">
           <div className="flex md:w-[460px] flex-col items-center gap-[16px]">
-            <h2 className="text-center text-black font-[Nunito] text-[24px] md:text-[40px]/[56px] text-wrap font-bold">
+            <h2 className="text-center text-black  text-[24px] md:text-[40px]/[56px] text-wrap font-bold">
               Privacy policy
             </h2>
             <p className="text-center text-[16px] md:text-[24px] text-[#000000]">

@@ -139,13 +139,13 @@ export const LoginForm = () => {
           className="w-full md:w-[550px] flex flex-col mt-[44px] md:mt-[121px] xl:mt-0 py-[24px] px-[16px] md:p-0 xl:items-center gap-[40px] xl:gap-[60px]"
           onSubmit={handleSubmit}
         >
-          <h3 className="text-black text-center font-inter font-semibold text-[28px] md:text-[40px]">
+          <h3 className="text-black text-center  font-semibold text-[28px] md:text-[40px]">
             Log In
           </h3>
 
           <main className="flex flex-col gap-[24px] items-start self-stretch">
             <div className="flex flex-col items-start gap-[4px] w-full">
-              <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+              <label className="text-[#5f5f65] text-[16px] font-semibold ">
                 Email
               </label>
               <Input
@@ -160,7 +160,7 @@ export const LoginForm = () => {
                 }`}
               />
               {loginError && (
-                <p className="text-[#FF1F0F] font-[Nunito] text-[14px] font-medium px-[4px] pt-[4px]">
+                <p className="text-[#FF1F0F]  text-[14px] font-medium px-[4px] pt-[4px]">
                   {loginError.includes("not in our system") ? (
                     <>
                       The email address is not in our system, please{" "}
@@ -181,7 +181,7 @@ export const LoginForm = () => {
 
             {!isInvitedClient && (
               <div className="flex flex-col items-start gap-[4px] w-full">
-                <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+                <label className="text-[#5f5f65] text-[16px] font-semibold ">
                   Password
                 </label>
                 <div className="relative flex flex-row-reverse items-center w-full">
@@ -212,7 +212,7 @@ export const LoginForm = () => {
                   )}
                 </div>
                 {passwordError && (
-                  <p className="text-[#FF1F0F] font-[Nunito] text-[14px] font-medium px-[4px] pt-[4px]">
+                  <p className="text-[#FF1F0F]  text-[14px] font-medium px-[4px] pt-[4px]">
                     {passwordError}
                   </p>
                 )}
@@ -222,7 +222,7 @@ export const LoginForm = () => {
             {!isInvitedClient && (
               <Link
                 to="/forgot-password"
-                className="self-stretch text-[14px] text-[#5F5F65] underline font-[Nunito] hover:text-[#1C63DB]"
+                className="self-stretch text-[14px] text-[#5F5F65] underline  hover:text-[#1C63DB]"
               >
                 Forgot password
               </Link>
@@ -233,7 +233,7 @@ export const LoginForm = () => {
             <div className="flex flex-col gap-[8px]">
               {isInvitedClient && (
                 <button
-                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
+                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
                     formData.email && !loginError
                       ? "bg-[#1C63DB] text-white"
                       : "bg-[#D5DAE2] text-[#5F5F65]"
@@ -246,7 +246,7 @@ export const LoginForm = () => {
               {!isInvitedClient && (
                 <button
                   type="submit"
-                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center font-[Nunito] text-[16px] font-semibold ${
+                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
                     formData.email &&
                     formData.password &&
                     !passwordError &&
@@ -259,7 +259,7 @@ export const LoginForm = () => {
                 </button>
               )}
             </div>
-            <p className="text-black font-[Nunito] text-[14px] font-medium">
+            <p className="text-black  text-[14px] font-medium">
               Don&apos;t have an account yet?{" "}
               <Link to="/register" className="underline text-[#1C63DB]">
                 Sign up

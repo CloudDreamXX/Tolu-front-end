@@ -41,7 +41,7 @@ export const Support = () => {
 
   const mainContent = (
     <>
-      <h3 className="font-[Nunito] text-[18px] font-bold text-[#1D1D1F]">
+      <h3 className=" text-[18px] font-bold text-[#1D1D1F]">
         Who do you currently rely on for support (if anyone)?
       </h3>
 
@@ -62,7 +62,7 @@ export const Support = () => {
                   checked={selectedSupport.includes(item)}
                   className="w-6 h-6 rounded-lg"
                 />
-                <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
+                <p className=" text-[16px] font-medium text-[#1D1D1F]">
                   {item}
                 </p>
               </div>
@@ -71,11 +71,11 @@ export const Support = () => {
         ))}
 
       <div className="flex flex-col gap-[10px] w-full max-w-[700px] items-start">
-        <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
+        <label className="text-[16px] font-medium  text-[#1D1D1F]">
           Is there anything else we should know?
         </label>
         <Input
-          className="w-full text-[16px] font-[Nunito] font-medium py-[11px] px-[16px]"
+          className="w-full text-[16px]  font-medium py-[11px] px-[16px]"
           placeholder="Someone who supports you"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

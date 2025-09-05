@@ -12,14 +12,13 @@ export const AdminHeader: React.FC = () => (
 );
 
 export const ClientHeader: React.FC = () => (
-  <header className="flex md:pr-[40px]">
-    <div className="w-fit flex flex-col py-[21px] px-[13px] md:p-[40px] lg:py-[35px] lg:pl-[90px] lg:pr-[0px]">
-      <h2 className="text-[#1D1D1F] text-center h-[38px] text-[27px] md:text-[44.444px] font-bold  md:h-[61px]">
-        Tolu AI
+  <header className="flex items-center justify-center w-full">
+    <div className="w-fit flex flex-col py-[21px] px-[13px] md:p-[40px]">
+      <h2 className="text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold text-transform: uppercase">
+        tolu AI
       </h2>
-      <span className="text-[#1D1D1F] text-[7px] md:text-[11px] font-semibold  leading-[normal] text-center">
-        Your AI-powered assistant <br /> for your functional and <br /> holistic
-        practices
+      <span className="text-[#1D1D1F] text-[7px] md:text-[22px] font-normal  leading-[normal] text-center">
+        Knowledge Before Care
       </span>
     </div>
   </header>

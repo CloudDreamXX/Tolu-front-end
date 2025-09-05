@@ -57,9 +57,7 @@ export const PersonalityType = () => {
       <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold">
         Personality type
       </h1>
-      <p className="text-[#AAC6EC] text-[18px] font-bold font-[Nunito]">
-        (Optional)
-      </p>
+      <p className="text-[#AAC6EC] text-[18px] font-bold ">(Optional)</p>
     </div>
   );
 
@@ -83,7 +81,7 @@ export const PersonalityType = () => {
             type="radio"
             className="flex items-center w-6 h-6"
           />
-          <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
+          <p className=" text-[16px] font-medium text-[#1D1D1F]">
             Take a quick test
           </p>
         </div>
@@ -95,13 +93,13 @@ export const PersonalityType = () => {
             name="personality"
             className="flex items-center w-6 h-6"
           />
-          <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
+          <p className=" text-[16px] font-medium text-[#1D1D1F]">
             I already know my type
           </p>
         </div>
         {radioChosen === "know" && (
           <div className="flex w-[600px] flex-col gap-[10px] items-start">
-            <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
+            <p className=" text-[16px] font-medium text-[#1D1D1F]">
               Personality type
             </p>
             <Select value={personalityType} onValueChange={setPersonalityType}>
@@ -128,7 +126,7 @@ export const PersonalityType = () => {
             name="personality"
             className="flex items-center w-6 h-6"
           />
-          <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
+          <p className=" text-[16px] font-medium text-[#1D1D1F]">
             I'll do it later
           </p>
         </div>

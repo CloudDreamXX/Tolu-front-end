@@ -60,7 +60,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
     <div className={`${width} relative`} ref={containerRef}>
       {label && (
         <label
-          className={`peer-focus:text-[#1D1D1F] ${labelStyle} font-[Nunito] text-[16px] font-medium text-[#1D1D1F] mb-2 block`}
+          className={`peer-focus:text-[#1D1D1F] ${labelStyle}  text-[16px] font-medium text-[#1D1D1F] mb-2 block`}
         >
           {label}
         </label>

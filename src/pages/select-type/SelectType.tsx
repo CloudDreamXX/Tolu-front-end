@@ -58,7 +58,7 @@ export const SelectType = () => {
     >
       <HeaderOnboarding />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
-        <h1 className="flex text-center font-inter text-[32px] font-medium text-black">
+        <h1 className="flex text-center  text-[32px] font-medium text-black">
           What type of practitioner best describes your role?
         </h1>
         <form
@@ -71,7 +71,7 @@ export const SelectType = () => {
               className="flex flex-col gap-[20px] w-[460px] items-start"
             >
               <div className="flex items-center self-stretch gap-[8px]">
-                <h2 className="text-[#1B2559] font-[Nunito] text-nowrap text-[20px] font-semibold">
+                <h2 className="text-[#1B2559]  text-nowrap text-[20px] font-semibold">
                   {item.title}
                 </h2>
                 <MaterialIcon
@@ -88,7 +88,7 @@ export const SelectType = () => {
                   className="flex w-full items-center justify-between bg-[#FAFAFA] border-[#9D9D9D] border-[1px] rounded-[8px] h-[52px] px-[12px] cursor-pointer"
                   onClick={() => toggleDropdown(index)} // Toggle dropdown visibility based on index
                 >
-                  <span className="text-[#5F5F65] font-[Nunito] text-[16px]">
+                  <span className="text-[#5F5F65]  text-[16px]">
                     {selectedOptions[index] || "Select your type"}
                   </span>
                   <MaterialIcon

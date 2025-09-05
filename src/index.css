@@ -19,7 +19,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  /* font-family: var(--nunito-text) !important; */
+  font-family: "Inter", sans-serif !important;
 }
 
 .custom-small-scroll::-webkit-scrollbar {

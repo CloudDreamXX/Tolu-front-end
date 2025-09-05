@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
+import { TooltipWrapper } from "shared/ui";
 
 type CheckEmailProps = {
   from: "register" | "forgot-password";
@@ -90,15 +91,15 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       {token.length > 0 && email.length > 0 && !isInvitedClient ? (
         <div className="w-full xl:w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
           <div className="flex flex-col items-end self-stretch justify-end gap-[24px] md:gap-[16px] mt-auto md:mt-0">
-            <h1 className="text-center self-stretch text-black font-inter text-[28px] md:text-[40px] font-semibold">
+            <h1 className="text-center self-stretch text-black  text-[28px] md:text-[40px] font-semibold">
               Just a moment...
             </h1>
-            <h3 className="text-center self-stretch text-black font-[Nunito] text-[16px] md:text-[24px] font-normal">
+            <h3 className="text-center self-stretch text-black  text-[16px] md:text-[24px] font-normal">
               We&apos;re verifying your link. This will only take a few
               <br /> seconds.
             </h3>
           </div>
-          <p className="text-black font-[Nunito] text-[14px] font-normal mt-auto md:mt-0">
+          <p className="text-black  text-[14px] font-normal mt-auto md:mt-0">
             Need help?{" "}
             <span className="underline cursor-pointer text-[#1C63DB]">
               Support
@@ -108,20 +109,25 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       ) : (
         <div className="w-full flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
           <div className="flex flex-col items-end self-stretch justify-end gap-[16px] mt-auto md:mt-0">
-            <h1 className="text-center self-stretch text-black font-inter text-[28px] md:text-[40px] font-semibold">
+            <h1 className="text-center self-stretch text-black  text-[28px] md:text-[40px] font-semibold">
               Check your inbox
             </h1>
-            <h3 className="text-center self-stretch text-black font-[Nunito] text-[16px] md:text-[24px] font-normal">
+            <h3 className="text-center self-stretch text-black  text-[16px] md:text-[24px] font-normal">
               We&apos;ve sent you a link. Follow the instructions in
               <br /> your email to continue. Don&apos;t forget to check your
               <br /> spam or promotions folder.
             </h3>
           </div>
-          <p className="mt-auto md:mt-0 text-black font-[Nunito] text-[14px] font-normal">
+          <p className="mt-auto md:mt-0 text-black  text-[14px] font-normal">
             Need help?{" "}
-            <span className="underline cursor-pointer text-[#1C63DB]">
-              Support
-            </span>
+            <TooltipWrapper content="support@tolu.health">
+              <a
+                href="mailto:support@tolu.health"
+                className="underline cursor-pointer text-[#1C63DB] hover:no-underline focus:outline-none rounded"
+              >
+                Support
+              </a>
+            </TooltipWrapper>
           </p>
         </div>
       )}

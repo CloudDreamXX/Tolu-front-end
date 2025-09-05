@@ -115,22 +115,22 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
         <table className="min-w-full text-sm">
           <thead className="bg-white text-[#5F5F65] text-left mb-[10px] font-[500]">
             <tr>
-              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px]  font-[500]">
                 Type
               </th>
-              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px]  font-[500]">
                 Title
               </th>
-              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px]  font-[500]">
                 Files
               </th>
-              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px]  font-[500]">
                 Created
               </th>
-              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px]  font-[500]">
                 Status
               </th>
-              <th className="pb-[24px] text-[14px] xl:text-[18px] font-inter font-[500]">
+              <th className="pb-[24px] text-[14px] xl:text-[18px]  font-[500]">
                 {" "}
               </th>
             </tr>
@@ -303,12 +303,12 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
             {getIcon(row.type)}
           </div>
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black ">
           {row.title}
         </td>
         <td
           ref={fileCellRef}
-          className={`py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-inter font-[500] ${popupRow === row ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
+          className={`py-[12px] pr-[8px] text-[14px] xl:text-[18px]  font-[500] ${popupRow === row ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
           onClick={(e) => {
             e.stopPropagation();
             setPopupRow(row);
@@ -316,25 +316,25 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
         >
           {row.filesCount} Files
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
           {formatDateToSlash(new Date(row.createdAt))}
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
-          <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
+          <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
             {row.status === "Raw" && (
-              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
                 <MaterialIcon iconName="schedule" />
                 Pending review
               </span>
             )}
             {row.status === "Ready for Review" && (
-              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
                 <ReadyForReview />
                 Ready for Review
               </span>
             )}
             {row.status === "Second review" && (
-              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+              <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
                 <MaterialIcon iconName="flag" className="text-red-500" />
                 Second review
               </span>
@@ -384,7 +384,7 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
           }}
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[20px] font-[700] text-[#1D1D1F] font-inter">
+            <h2 className="text-[20px] font-[700] text-[#1D1D1F] ">
               Files in "{popupRow.title}"
             </h2>
             <button onClick={() => setPopupRow(null)}>
@@ -395,14 +395,14 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
           <div className="overflow-y-auto" style={{ height: "179px" }}>
             {popupRow.subfolders?.map((sf) => (
               <div key={sf.id} className="mb-4">
-                <h3 className="text-[13px] font-medium text-[#5F5F65] font-inter mb-[10px]">
+                <h3 className="text-[13px] font-medium text-[#5F5F65]  mb-[10px]">
                   /{sf.title}
                 </h3>
                 <ul className="space-y-[10px]">
                   {sf.fileNames?.map((item, index) => (
                     <li
                       key={index}
-                      className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
+                      className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] "
                       // onClick={() => {
                       //   nav(
                       //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
@@ -498,12 +498,12 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
           )}
           {getIcon(subfolder.type)}
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-black">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500]  text-black">
           {subfolder.title}
         </td>
         <td
           ref={fileCellRef}
-          className={`py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-inter font-[500] ${popupRow === subfolder ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
+          className={`py-[12px] pr-[8px] text-[14px] xl:text-[18px]  font-[500] ${popupRow === subfolder ? "text-[#1C63DB]" : "text-[#5F5F65]"} hover:text-[#1C63DB] hover:underline cursor-pointer`}
           onClick={(e) => {
             e.stopPropagation();
             setPopupRow(subfolder);
@@ -511,24 +511,24 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
         >
           {subfolder.filesCount} Files
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
           {formatDateToSlash(new Date(subfolder.createdAt))}
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
           {subfolder.status === "Raw" && (
-            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
               <MaterialIcon iconName="schedule" />
               Pending review
             </span>
           )}
           {subfolder.status === "Ready for Review" && (
-            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
               <ReadyForReview />
               Ready for Review
             </span>
           )}
           {subfolder.status === "Second review" && (
-            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
               <MaterialIcon iconName="flag" className="text-red-500" />
               Second review
             </span>
@@ -573,7 +573,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
           }}
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[20px] font-[700] text-[#1D1D1F] font-inter">
+            <h2 className="text-[20px] font-[700] text-[#1D1D1F] ">
               Files in "{popupRow.title}"
             </h2>
             <button onClick={() => setPopupRow(null)}>
@@ -587,7 +587,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
                 {popupRow.fileNames?.map((item, index) => (
                   <li
                     key={index}
-                    className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
+                    className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] "
                     // onClick={() => {
                     //   nav(
                     //     `/content-manager/library/folder/${popupRow.id}/document/${item.id}`
@@ -641,33 +641,33 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
         <td className={`pl-3 pr-[18px] ${paddingLeft}`}>
           {getIcon(content.type, "ml-auto")}
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black ">
           {content.title}
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] ">
           {(content.content &&
             content.content?.length > 0 &&
             content.content?.length) ||
             "-"}
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] ">
           {formatDateToSlash(new Date(content.createdAt))}
         </td>
-        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
+        <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] ">
           {content.status === "Raw" && (
-            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
               <MaterialIcon iconName="schedule" />
               Pending review
             </span>
           )}
           {content.status === "Ready for Review" && (
-            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
               <ReadyForReview />
               Ready for Review
             </span>
           )}
           {content.status === "Second review" && (
-            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+            <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
               <MaterialIcon iconName="flag" className="text-red-500" />
               Second review
             </span>
@@ -704,33 +704,33 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
             <td className={`pl-[68px]`}>
               <MaterialIcon iconName="docs" fill={1} className="ml-auto" />
             </td>
-            <td className="py-[12px] pl-[18px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black font-inter">
+            <td className="py-[12px] pl-[18px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-black ">
               {msg.title}
             </td>
-            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
+            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] ">
               {(msg.content &&
                 msg.content?.length > 0 &&
                 msg.content?.length) ||
                 "-"}
             </td>
-            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
+            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] ">
               {formatDateToSlash(new Date(msg.created_at || ""))}
             </td>
-            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] font-inter">
+            <td className="py-[12px] pr-[8px] text-[14px] xl:text-[18px] font-[500] text-[#5F5F65] ">
               {msg.status === "Raw" && (
-                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
                   <MaterialIcon iconName="schedule" />
                   Pending review
                 </span>
               )}
               {msg.status === "Ready for Review" && (
-                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
                   <ReadyForReview />
                   Ready for Review
                 </span>
               )}
               {msg.status === "Second review" && (
-                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500] font-inter text-[#5F5F65]">
+                <span className="flex items-center gap-[8px] text-[14px] xl:text-[18px] font-[500]  text-[#5F5F65]">
                   <MaterialIcon iconName="flag" className="text-red-500" />
                   Second review
                 </span>

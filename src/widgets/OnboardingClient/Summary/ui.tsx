@@ -44,13 +44,7 @@ export const Summary = () => {
   const personalFields: { label: string; key: keyof typeof client }[] = [
     { label: "Age", key: "age" },
     { label: "Menopause Status", key: "menopauseStatus" },
-    { label: "Country", key: "country" },
-    { label: "ZIP/Postal Code", key: "ZIP" },
     { label: "Language", key: "language" },
-    { label: "Race / Ethnicity", key: "race" },
-    { label: "Household Type", key: "household" },
-    { label: "Occupation", key: "occupation" },
-    { label: "Education Level", key: "education" },
   ];
 
   const insightsFields: { label: string; key: keyof typeof client }[] = [
@@ -58,7 +52,6 @@ export const Summary = () => {
     { label: "Most important values", key: "values" },
     { label: "What’s been getting in your way so far?", key: "barriers" },
     { label: "My support", key: "support" },
-    { label: "Personalization", key: "personalityType" },
     { label: "Readiness to life changes", key: "readiness" },
   ];
 
@@ -73,18 +66,16 @@ export const Summary = () => {
 
     return (
       <div key={key} className="flex flex-col flex-1 gap-1">
-        <p className="text-[#5F5F65] text-[12px] font-normal font-[Nunito]">
-          {label}
-        </p>
+        <p className="text-[#5F5F65] text-[12px] font-normal ">{label}</p>
         {editing ? (
           <Input
             name={key}
             value={Array.isArray(value) ? value.join(", ") : value}
             onChange={(e) => handleChange(e, section)}
-            className="text-[16px] font-[Nunito] font-semibold"
+            className="text-[16px]  font-semibold"
           />
         ) : (
-          <h3 className="text-[#1D1D1F] text-[16px] font-[Nunito] font-semibold">
+          <h3 className="text-[#1D1D1F] text-[16px]  font-semibold">
             {Array.isArray(value) ? value.join(", ") : value || "-"}
           </h3>
         )}
@@ -120,10 +111,10 @@ export const Summary = () => {
   const mainContent = (
     <>
       <div className="flex flex-col items-start gap-2">
-        <h3 className="font-[Nunito] text-[18px] font-bold text-[#1D1D1F]">
+        <h3 className=" text-[18px] font-bold text-[#1D1D1F]">
           Here’s a quick summary of what you shared.
         </h3>
-        <p className="text-[#5F5F65] font-[Nunito] text-[16px] font-medium">
+        <p className="text-[#5F5F65]  text-[16px] font-medium">
           We’ll use this to personalize your dashboard and recommendations.
         </p>
       </div>
@@ -131,7 +122,7 @@ export const Summary = () => {
       {/* Personal Info Section */}
       <div className="rounded-[16px] border border-[#DDEBF6] w-full flex flex-col gap-4 p-6">
         <div className="flex items-center justify-between w-full">
-          <h2 className="text-[#1D1D1F] font-[Nunito] text-[18px] font-bold">
+          <h2 className="text-[#1D1D1F]  text-[18px] font-bold">
             Personal info
           </h2>
           {!isEditingPersonal ? (
@@ -167,13 +158,13 @@ export const Summary = () => {
       {/* Insights Section */}
       <div className="rounded-[16px] border border-[#DDEBF6] w-full flex flex-col gap-4 p-6">
         <div className="flex items-center justify-between w-full">
-          <h2 className="text-[#1D1D1F] font-[Nunito] text-[18px] font-bold">
+          <h2 className="text-[#1D1D1F]  text-[18px] font-bold">
             Your insights
           </h2>
           {!isEditingInsights ? (
             <button
               className="cursor-pointer"
-              onClick={() => setIsEditingPersonal(true)}
+              onClick={() => setIsEditingInsights(true)}
             >
               <MaterialIcon iconName="edit" />
             </button>

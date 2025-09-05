@@ -66,7 +66,7 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
         key={label}
         onClick={() => toggle(label)}
         className={cn(
-          "h-[44px] rounded-full px-[16px] font-[Nunito] text-[16px] font-semibold",
+          "h-[44px] rounded-full px-[16px]  text-[16px] font-semibold",
           isActive
             ? "bg-[#008FF61A] text-[#1C63DB]"
             : "border border-[#B9B9B9] text-[#B9B9B9]"
@@ -124,12 +124,12 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
             onChange={(e) => setOtherText(e.target.value)}
             type="text"
             placeholder="Please specify your niche"
-            className="flex h-[44px] w-[220px] md:w-[300px] items-center justify-center self-stretch rounded-[8px] border-[1px] border-[#DFDFDF] bg-white px-[16px] py-[11px] font-[Nunito] text-[16px] font-medium text-[#5F5F65] outline-none"
+            className="flex h-[44px] w-[220px] md:w-[300px] items-center justify-center self-stretch rounded-[8px] border-[1px] border-[#DFDFDF] bg-white px-[16px] py-[11px]  text-[16px] font-medium text-[#5F5F65] outline-none"
           />
           {otherText.trim().length > 0 && (
             <button
               onClick={handleAddNiche}
-              className="flex h-[44px] items-center rounded-full bg-[#1C63DB] p-[16px] font-[Nunito] text-[14px] md:text-[16px] font-semibold text-white"
+              className="flex h-[44px] items-center rounded-full bg-[#1C63DB] p-[16px]  text-[14px] md:text-[16px] font-semibold text-white"
             >
               Add niche
             </button>

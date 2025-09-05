@@ -68,7 +68,7 @@ export function StepType({ data, setDataState }: StepTypeProps) {
               className="flex w-full items-center justify-between bg-[#FAFAFA] border-[#9D9D9D] border-[1px] rounded-[8px] h-[52px] px-[12px] cursor-pointer"
               onClick={() => toggleDropdown(index)}
             >
-              <span className="text-[#000] font-[Nunito] text-[16px]">
+              <span className="text-[#000]  text-[16px]">
                 {selectedOptions[index] || "Select your type"}
               </span>
               <MaterialIcon iconName="keyboard_arrow_down" />
@@ -95,7 +95,7 @@ export function StepType({ data, setDataState }: StepTypeProps) {
                 value={otherText}
                 onChange={(e) => setOtherText(e.target.value)}
                 placeholder="Other text"
-                className="mt-[4px] outline-none w-full h-[52px] px-[12px] border-[1px] border-[#9D9D9D] rounded-[8px] bg-[#FAFAFA] text-[16px] text-[#000] font-[Nunito]"
+                className="mt-[4px] outline-none w-full h-[52px] px-[12px] border-[1px] border-[#9D9D9D] rounded-[8px] bg-[#FAFAFA] text-[16px] text-[#000] "
               />
             )}
           </div>

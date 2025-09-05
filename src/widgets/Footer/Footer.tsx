@@ -34,6 +34,7 @@ export const Footer: React.FC<Props> = ({ position }) => {
               <MaterialIcon
                 iconName="stars_2"
                 fill={1}
+                className="text-white"
                 size={
                   position === "top-left" || position === "top-right" ? 16 : 24
                 }
@@ -41,7 +42,7 @@ export const Footer: React.FC<Props> = ({ position }) => {
             </button>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-[#1D1D1F] font-[Nunito] text-base font-normal">
+            <p className="text-[#1D1D1F]  text-base font-normal">
               This will help match your clients to you.
             </p>
           </TooltipContent>

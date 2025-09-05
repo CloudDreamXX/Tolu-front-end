@@ -2,7 +2,7 @@ import { setChat, setFolderId } from "entities/client/lib";
 import { SearchAiSmallInput } from "entities/search";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -12,16 +12,27 @@ import { Button } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import { ClientChatList } from "./ClientChatList";
 import WrapperLibraryFolderTree from "./FolderTree";
+import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
+import { ChatMessageModel, ChatSocketService } from "entities/chat";
+import { useFetchAllChatsQuery } from "entities/chat/chatApi";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
+  useFetchAllChatsQuery();
   const token = useSelector((state: RootState) => state.user.token);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [isNarrow, setIsNarrow] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const chatList = useSelector(chatsSelectors.selectAll);
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
+
+  const unreadMessagesCount = chatList.reduce((count, chat) => {
+    return count + (chat.unreadCount || 0);
+  }, 0);
 
   useEffect(() => {
     const checkWidth = () => {
@@ -52,6 +63,19 @@ export const HealthSnapshotSidebar: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    handlerRef.current = (msg: ChatMessageModel) => {
+      dispatch(applyIncomingMessage({ msg }));
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    const stableListener = (m: ChatMessageModel) => handlerRef.current(m);
+
+    ChatSocketService.on("new_message", stableListener);
+    return () => ChatSocketService.off("new_message", stableListener);
+  }, []);
+
   const toggleLibrary = () => {
     dispatch(setFolderId(""));
     setIsLibraryOpen(!isLibraryOpen);
@@ -65,6 +89,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
     setIsLibraryOpen(false);
+    setIsMessagesOpen(false);
   };
 
   return (
@@ -155,12 +180,12 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 end={false}
                 onClick={(e) => {
                   e.preventDefault();
+                  setIsMessagesOpen(!isMessagesOpen);
                   setSidebarOpen(true);
-                  nav("/messages");
                 }}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB]",
+                    "flex items-center gap-3 w-full px-[16px] py-[16px] text-lg font-semibold hover:text-[#1C63DB] relative",
                     isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]",
                     sidebarOpen ? "" : "justify-center "
                   )
@@ -168,8 +193,26 @@ export const HealthSnapshotSidebar: React.FC = () => {
               >
                 <MaterialIcon iconName="forum" fill={1} />
                 {sidebarOpen ? "Messages" : ""}
+                <span
+                  className={cn(
+                    "absolute top-0 right-0 text-xs font-medium text-white bg-blue-500 rounded-full px-2 py-0.5",
+                    sidebarOpen ? "top-2 left-36 right-auto" : "top-0 right-2 ",
+                    { hidden: !unreadMessagesCount }
+                  )}
+                >
+                  {unreadMessagesCount > 99 ? "99+" : unreadMessagesCount}
+                </span>
               </NavLink>
-              {sidebarOpen && <ClientChatList />}
+              {isMessagesOpen && (
+                <ClientChatList
+                  onCloseSideBar={() => {
+                    if (isNarrow) {
+                      setSidebarOpen(false);
+                    }
+                    setIsMessagesOpen(false);
+                  }}
+                />
+              )}
             </div>
           </div>
 
@@ -188,7 +231,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
               </AvatarFallback>
             </Avatar>
             {sidebarOpen && (
-              <p className="text-[#1D1D1F] hover:text-[#1C63DB] font-[Nunito] text-[16px]/[22px] font-semibold">
+              <p className="text-[#1D1D1F] hover:text-[#1C63DB]  text-[16px]/[22px] font-semibold">
                 {user?.name}
               </p>
             )}

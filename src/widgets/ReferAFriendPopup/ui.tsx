@@ -77,7 +77,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </p>
 
           <div className="flex flex-col flex-1 gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
               First name*
             </label>
             <Input
@@ -90,7 +90,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex flex-col flex-1 gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
               Age*
             </label>
             <Input
@@ -103,7 +103,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
               Gender*
             </label>
             <SearchableSelect
@@ -115,7 +115,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
               Health concern
             </label>
             <Input
@@ -128,7 +128,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
               Diagnosed condition{" "}
               <span className="text-[#B3BCC8]">(if any)</span>
             </label>
@@ -144,7 +144,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
               Email address*
             </label>
             <Input
@@ -157,14 +157,14 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             {formData.email !== "" &&
               formData.goal !== "" &&
               !isValidEmail(formData.email) && (
-                <p className="text-[#FF1F0F] font-[Nunito] font-medium px-[16px] text-[14px]">
+                <p className="text-[#FF1F0F]  font-medium px-[16px] text-[14px]">
                   Email format is incorrect
                 </p>
               )}
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
               Goal*
             </label>
             <Input
@@ -177,7 +177,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px] font-[Nunito] font-[500]">
+            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
               Phone number
             </label>
             <Input

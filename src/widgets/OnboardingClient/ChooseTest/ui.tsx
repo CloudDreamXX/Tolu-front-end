@@ -54,9 +54,7 @@ export const ChooseTest = () => {
           <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-h1">
             Choose test
           </h1>
-          <p className="text-[#AAC6EC] text-[18px] font-bold font-[Nunito]">
-            (Optional)
-          </p>
+          <p className="text-[#AAC6EC] text-[18px] font-bold ">(Optional)</p>
         </div>
         <div className="w-full max-w-[700px] p-[40px] rounded-2xl bg-white flex flex-col gap-6 items-start justify-center">
           <Card

@@ -81,7 +81,7 @@ export const OnboardingMain = () => {
     ${isMobile ? "absolute bottom-0 left-0 w-full z-10" : "relative"} 
     ${isMobile ? "shadow-md" : ""} md:bg-transparent`}
       >
-        <h3 className="font-inter text-[24px] md:text-[32px] font-medium text-black text-center self-stretch">
+        <h3 className=" text-[24px] md:text-[32px] font-medium text-black text-center self-stretch">
           What are your primary focus areas?
         </h3>
 
@@ -189,7 +189,7 @@ export const OnboardingMain = () => {
         <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit">
           <button
             onClick={() => nav(-1)}
-            className="flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            className="flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
@@ -201,8 +201,8 @@ export const OnboardingMain = () => {
                 <button
                   className={
                     !isNextDisabled
-                      ? "bg-[#1C63DB] flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
-                      : "flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65] cursor-not-allowed"
+                      ? "bg-[#1C63DB] flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-white"
+                      : "flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px]  font-semibold text-[#5F5F65] cursor-not-allowed"
                   }
                   tabIndex={isNextDisabled ? -1 : 0}
                   aria-disabled={isNextDisabled}
@@ -224,7 +224,7 @@ export const OnboardingMain = () => {
                     You can update your focus areas anytime from your dashboard.
                   </h3>
                   <button
-                    className="bg-[#1C63DB] inline-flex py-1 px-4 justify-center items-center gap-2 rounded-full font-[Nunito] font-semibold text-white self-center"
+                    className="bg-[#1C63DB] inline-flex py-1 px-4 justify-center items-center gap-2 rounded-full  font-semibold text-white self-center"
                     onClick={handleHintButtonClick}
                   >
                     Got It

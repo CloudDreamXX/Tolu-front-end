@@ -49,12 +49,12 @@ export const ForgotPassword = () => {
           className="w-full md:w-[550px] flex flex-col mt-[44px] md:mt-[121px] xl:mt-0 py-[24px] px-[16px] md:p-0 xl:items-center gap-[40px] xl:gap-[60px]"
           onSubmit={handleSubmit}
         >
-          <h3 className="text-black text-center font-inter font-semibold text-[28px] md:text-[40px]">
+          <h3 className="text-black text-center  font-semibold text-[28px] md:text-[40px]">
             Forgot Password
           </h3>
 
           <div className="flex flex-col items-start gap-[4px] w-full">
-            <label className="text-[#5f5f65] text-[16px] font-semibold font-[Nunito]">
+            <label className="text-[#5f5f65] text-[16px] font-semibold ">
               Email
             </label>
             <Input
@@ -66,7 +66,7 @@ export const ForgotPassword = () => {
               }
               className="px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white border border-[#DFDFDF] outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in w-full"
             />
-            <p className="flex px-[4px] pt-[4px] text-black text-[14px] font-normal font-[Nunito] w-full xl:justify-end">
+            <p className="flex px-[4px] pt-[4px] text-black text-[14px] font-normal  w-full xl:justify-end">
               Didn't get the code?{" "}
               <span className="cursor-pointer text-[#1C63DB] underline ml-1">
                 Resend
@@ -79,13 +79,13 @@ export const ForgotPassword = () => {
               <button
                 type="button"
                 onClick={() => nav(-1)}
-                className="bg-[#008FF61A] w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#1C63DB] gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold"
+                className="bg-[#008FF61A] w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#1C63DB] gap-[8px] rounded-full  text-[16px] font-semibold"
               >
                 Back
               </button>
               <button
                 type="submit"
-                className={`w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center gap-[8px] rounded-full font-[Nunito] text-[16px] font-semibold ${
+                className={`w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center gap-[8px] rounded-full  text-[16px] font-semibold ${
                   email
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
@@ -95,7 +95,7 @@ export const ForgotPassword = () => {
               </button>
             </div>
 
-            <p className="text-black font-[Nunito] text-[14px] font-medium">
+            <p className="text-black  text-[14px] font-medium">
               Remember your password?{" "}
               <Link to="/auth" className="underline text-[#1C63DB]">
                 Log in

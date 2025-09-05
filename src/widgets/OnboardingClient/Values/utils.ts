@@ -5,7 +5,7 @@ export const checkboxes = [
   "Energy",
   "Clarity",
   "Connection",
-  "Piece",
+  "Peace",
   "Longevity",
   "Other",
 ];

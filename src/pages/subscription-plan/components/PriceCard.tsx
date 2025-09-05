@@ -26,44 +26,44 @@ export const PriceCard: React.FC<PriceCardProps> = ({
       }
     >
       <div className="flex flex-col gap-[4px] items-center">
-        <h2 className=" text-[#5F5F65] font-inter text-[18px]/[25.2px] font-medium">
+        <h2 className=" text-[#5F5F65]  text-[18px]/[25.2px] font-medium">
           STARTING PLAN
         </h2>
-        <h1 className="text-[#1D1D1F] font-inter text-[32px]/[44.8px] font-semibold">
+        <h1 className="text-[#1D1D1F]  text-[32px]/[44.8px] font-semibold">
           {plan === "starting" ? "Starter" : "Pro"} Coach Tier
         </h1>
       </div>
       <ul className="flex flex-col justify-center items-start gap-[24px] self-stretch">
         <li className="flex gap-[16px] items-center">
           <MaterialIcon iconName="check" className="text-[#1C63DB]" size={20} />
-          <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
+          <span className="text-[#1d1d1f]  text-[20px] font-medium">
             Manage up to 3 active clients
           </span>
         </li>
         <li className="flex gap-[16px] items-center">
           <MaterialIcon iconName="check" className="text-[#1C63DB]" size={20} />
-          <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
+          <span className="text-[#1d1d1f]  text-[20px] font-medium">
             Host up to 10 sessions per month
           </span>
         </li>
         <li className="flex gap-[16px] items-center">
           <MaterialIcon iconName="check" className="text-[#1C63DB]" size={20} />
-          <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
+          <span className="text-[#1d1d1f]  text-[20px] font-medium">
             1 GB storage for client materials
           </span>
         </li>
         <li className="flex gap-[16px] items-center">
           <MaterialIcon iconName="check" className="text-[#1C63DB]" size={20} />
-          <span className="text-[#1d1d1f] font-inter text-[20px] font-medium">
+          <span className="text-[#1d1d1f]  text-[20px] font-medium">
             Access basic content library (templates, basics)
           </span>
         </li>
       </ul>
       <div className="flex flex-col items-center justify-center">
-        <h2 className="font-inter font-medium text-[40px]/[140%] text-[#1C63DB]">
+        <h2 className=" font-medium text-[40px]/[140%] text-[#1C63DB]">
           {price} USD
         </h2>
-        <h4 className="font-inter font-medium text-[16px]/[140%] text-[#AAA]">
+        <h4 className=" font-medium text-[16px]/[140%] text-[#AAA]">
           /per month
         </h4>
       </div>

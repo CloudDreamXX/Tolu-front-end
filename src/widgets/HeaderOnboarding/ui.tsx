@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { getStepStyle } from "./uitls";
-import { usePageWidth } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { usePageWidth } from "shared/lib";
+import { getStepStyle } from "./uitls";
 
 interface HeaderOnboardingProps {
   currentStep: number;
@@ -18,20 +18,19 @@ export const HeaderOnboarding = ({
   const { isMobile } = usePageWidth();
 
   return (
-    <header className="w-full bg-gradient-to-b from-[#F3ECFE] to-[#E8EFFE] px-4 pt-4 pb-2 xl:py-[35px] xl:px-[90px] md:h-fit flex flex-col md:gap-[16px] relative">
+    <header className="w-full bg-gradient-to-b from-[#F3ECFE] to-[#E8EFFE] px-4 pt-4 pb-2 md:gap-4 md:h-fit flex flex-col justify-center md:items-center relative">
       {/* Logo Section */}
-      <div className="flex flex-col w-fit">
+      <div className="flex flex-col mx-auto w-fit">
         <h2
           onClick={() => navigate("/")}
-          className="cursor-pointer text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold  h-[38px] md:h-[61px]"
+          className="cursor-pointer text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold text-transform: uppercase"
         >
-          Tolu AI
+          tolu AI
         </h2>
         <h4 className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[11.429px] font-semibold  leading-[normal]">
           {isClient ? (
-            <span className="text-[#1D1D1F] text-[7px] md:text-[11px] font-semibold  leading-[normal] text-center normal-case">
-              Your AI-powered assistant <br /> for your functional and <br />{" "}
-              holistic practices
+            <span className="text-[#1D1D1F] text-[16px] md:text-[22px] font-normal  leading-[normal] text-center">
+              Knowledge Before Care
             </span>
           ) : (
             <span className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[17.733px] font-semibold  leading-[normal]">
@@ -42,52 +41,42 @@ export const HeaderOnboarding = ({
       </div>
 
       {/* Progress Steps */}
-      <div className="mt-4 md:right-[80px] md:top-[50%] md:-translate-y-1/2 md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px] md:absolute xl:left-[50%] xl:top-[50%] xl:translate-x-[-50%] xl:translate-y-[-50%]">
-        <div className="absolute top-5 left-0 md:top-1/2 h-[5px] xl:h-[8px] w-full bg-[#E2E2E2] rounded-full relative md:absolute z-0" />
+      <div className=" mt-4 relative :top-1/2 md:-translate-y-1/2 md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px]">
+        <div className="relative w-full h-[32px] xl:h-[40px]">
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[5px] xl:h-[8px] bg-[#E2E2E2] rounded-full" />
 
-        <div
-          className="absolute left-[16px] top-[104px] md:left-0 md:top-1/2 h-[5px] xl:h-[8px] bg-[#1866E0] rounded-full z-10 transition-all duration-300"
-          style={{
-            width: `${(currentStep / (steps - 1)) * (isMobile ? 90 : 100)}%`,
-          }}
-        />
-
-        {/* <div className="mt-4 md:relative md:min-w-[489px] lg:w-[700px] xl:w-full max-w-[750px]">
-          
-          <div className="absolute top-5 md:top-1/2 left-0 h-[5px] xl:h-[8px] w-full bg-[#E2E2E2] rounded-full z-0" />
-
-          
           <div
-            className="absolute top-5 md:top-1/2 left-[16px] md:left-0 h-[5px] xl:h-[8px] bg-[#1866E0] rounded-full z-10 transition-all duration-300"
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-[5px] xl:h-[8px] bg-[#1866E0] rounded-full transition-all duration-300"
             style={{
-              width: `${(currentStep / (steps - 1)) * (isMobile ? 90 : 100)}%`,
+              width: `${Math.max(0, Math.min(1, currentStep / (steps - 1))) * 100}%`,
             }}
-          /> */}
+          />
 
-        <div className="relative z-20 flex justify-between items-center w-full mt-[-32px] md:mt-0 h-[95px] md:h-auto">
-          {Array.from({ length: steps }).map((_, index) => {
-            const isCompleted = index < currentStep;
-            const isCurrent = index === currentStep;
-            const style = getStepStyle({ isCompleted, isCurrent, isMobile });
+          <div className="absolute inset-0 z-10 flex items-center justify-between">
+            {Array.from({ length: steps }).map((_, index) => {
+              const isCompleted = index < currentStep;
+              const isCurrent = index === currentStep;
+              const style = getStepStyle({ isCompleted, isCurrent, isMobile });
 
-            return (
-              <div
-                key={index}
-                className="w-[18px] h-[18px] xl:w-[32px] xl:h-[32px] flex items-center justify-center rounded-full"
-                style={style}
-              >
-                {isCompleted ? (
-                  <MaterialIcon iconName="check" />
-                ) : isCurrent ? (
-                  <div className="w-[12px] h-[12px] xl:w-[14px] xl:h-[14px] rounded-full border-[3px] border-[#1866E0] bg-white" />
-                ) : (
-                  <div className="text-white font-[Roboto] font-bold">
-                    {index + 1}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={index}
+                  className="w-[18px] h-[18px] xl:w-[32px] xl:h-[32px] flex items-center justify-center rounded-full"
+                  style={style}
+                >
+                  {isCompleted ? (
+                    <MaterialIcon iconName="check" />
+                  ) : isCurrent ? (
+                    <div className="w-[12px] h-[12px] xl:w-[14px] xl:h-[14px] rounded-full border-[3px] border-[#1866E0] bg-white" />
+                  ) : (
+                    <div className="text-white font-[Roboto] font-bold">
+                      {index + 1}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </header>

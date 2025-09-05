@@ -204,7 +204,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                 {popupRow.fileNames?.map((item, index) => (
                   <li
                     key={index}
-                    className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] font-inter"
+                    className="flex items-center gap-[16px] text-[14px] text-[#1D1D1F] font-[500] "
                   >
                     <MaterialIcon iconName="docs" />
                     {item.filename}

@@ -27,7 +27,7 @@ export const MediaTestimonial: React.FC<Props> = ({
         </div>
         <div className="flex flex-col gap-[38px] pb-[40px] items-center justify-center">
           <div className="flex md:w-[460px] flex-col items-center gap-[16px]">
-            <h2 className="text-center text-black font-[Nunito] text-[24px] md:text-[40px]/[56px] text-wrap font-bold">
+            <h2 className="text-center text-black  text-[24px] md:text-[40px]/[56px] text-wrap font-bold">
               Media & Testimonial Consent
             </h2>
             <p className="text-center text-[16px] md:text-[24px] text-[#000000]">
@@ -52,7 +52,7 @@ export const MediaTestimonial: React.FC<Props> = ({
             </p>
           </div>
           <div className="flex flex-col gap-[16px]">
-            <h3 className="text-center text-black font-[Nunito] text-[20px] md:text-[28px] text-wrap font-semibold">
+            <h3 className="text-center text-black  text-[20px] md:text-[28px] text-wrap font-semibold">
               What You Need to Know:
             </h3>
             <ul className="list-disc pl-5">

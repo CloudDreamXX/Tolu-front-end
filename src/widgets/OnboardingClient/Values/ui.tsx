@@ -81,16 +81,16 @@ export const Values = () => {
           {isMobileOrTablet && title}
 
           <div className="flex flex-col gap-2 w-full max-w-[700px] items-start">
-            <h3 className="font-[Nunito] text-[18px] font-bold text-[#1D1D1F]">
+            <h3 className=" text-[18px] font-bold text-[#1D1D1F]">
               What values are most important to you right now?
             </h3>
             <div className="flex items-center justify-between w-full">
-              <p className="text-[#1D1D1F] font-[Nunito] text-[16px] font-medium">
+              <p className="text-[#1D1D1F]  text-[16px] font-medium">
                 Please choose up to 3.
               </p>
-              <p className="text-[#1D1D1F] font-[Nunito] text-[16px] font-bold">
+              <p className="text-[#1D1D1F]  text-[16px] font-bold">
                 {selectedValues.length}/
-                <span className="text-[12px] font-normal font-[Nunito] text-[#B3BCC8]">
+                <span className="text-[12px] font-normal  text-[#B3BCC8]">
                   3
                 </span>
               </p>
@@ -121,7 +121,7 @@ export const Values = () => {
                       }
                       className="w-6 h-6 rounded-lg"
                     />
-                    <p className="font-[Nunito] text-[16px] font-medium text-[#1D1D1F]">
+                    <p className=" text-[16px] font-medium text-[#1D1D1F]">
                       {item}
                     </p>
                   </div>
@@ -131,7 +131,7 @@ export const Values = () => {
 
           {selectedValues.includes("Other") && (
             <div className="flex flex-col gap-[10px] w-full max-w-[700px] items-start">
-              <label className="text-[16px] font-medium font-[Nunito] text-[#1D1D1F]">
+              <label className="text-[16px] font-medium  text-[#1D1D1F]">
                 Your variant(s)
               </label>
               <Input

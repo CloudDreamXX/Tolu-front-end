@@ -16,7 +16,7 @@ export const ChatBreadcrumb: React.FC<ChatBreadcrumbProps> = ({
   path,
   pathTitle,
 }) => (
-  <div className="">
+  <div>
     <Breadcrumb className="flex flex-row items-center gap-2 text-sm text-gray-600">
       <BreadcrumbLink href={path ? path : "/library"}>
         {pathTitle ? pathTitle : "Library"}

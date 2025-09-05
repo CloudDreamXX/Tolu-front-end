@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { cn } from "shared/lib";
 
 interface SelectType {
   formData: {
@@ -15,59 +16,57 @@ interface SelectType {
 export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
   const [cardActive, setCardActive] = useState("");
   return (
-    <main className="w-full md:w-[550px] flex flex-col items-center gap-[40px] md:gap-[80px]">
-      <h3 className="text-black text-center font-inter font-semibold text-[24px] md:text-[28px] md:text-[40px]">
-        Select Your Type of Account
+    <main className="w-full md:w-[550px] flex flex-col items-center gap-[55px] p-1">
+      <h3 className="text-black text-center font-semibold text-[24px]">
+        Select Your Account Type
       </h3>
-      <main className="flex flex-col md:flex-row items-start gap-[24px] md:gap-[40px] 2xl:gap-[80px]">
+      <div className="flex flex-col md:flex-row gap-[24px] md:gap-[40px] items-stretch">
         <button
           onClick={() => setCardActive("client")}
-          className={
-            cardActive === "client"
-              ? "border-[3px] border-[#1C63DB] bg-[#F2F7FC] rounded-[24px] flex flex-col px-[40px] py-[24px] md:py-[40px] md:px-[11px] 2xl:p-[40px] gap-[16px] md:gap-[32px] xl:gap-[56px] items-center justify-center"
-              : "border-[3px] border-[#AAC6EC] bg-white rounded-[24px] flex flex-col px-[40px] py-[24px] md:py-[40px] md:px-[11px] 2xl:p-[40px] gap-[16px] md:gap-[32px] xl:gap-[56px] items-center justify-center"
-          }
+          className={cn(
+            "rounded-[24px] px-[40px] py-[24px] md:py-[32px] lg:w-[370px]",
+            cardActive === "client" ? "bg-[#1C63DB]/10" : "bg-transparent"
+          )}
         >
-          <div className="flex flex-col items-start self-stretch gap-[16px]">
-            <h3 className="h-[31px] flex lfex-col justify-center self-center text-center font-[Nunito] text-[24px] md:text-[28px]/[20px] font-medium">
-              Client
+          <div className="flex flex-col items-start self-stretch gap-4">
+            <h3 className="text-[24px] text-center w-full font-medium">
+              Individual
             </h3>
-            <p className="md:w-[278px] md:h-[47px] flex flex-col justify-center text-[#5F5F65] font-[Nunito] font-medium text-[16px]/[20px] opacity-[0.7]">
-              Say goodbye to confusion. Get real answers for your symptoms—when
-              they happen, not weeks later.
+            <p className="flex flex-col justify-center font-normal text-[16px]">
+              Your everyday challenges matter. Let’s explore answers together.
             </p>
           </div>
         </button>
         <button
           onClick={() => setCardActive("practitioner")}
-          className={
-            cardActive === "practitioner"
-              ? "border-[3px] border-[#1C63DB] bg-[#F2F7FC] rounded-[24px] flex flex-col px-[40px] py-[24px] md:py-[40px] md:px-[11px] 2xl:p-[40px] gap-[16px] md:gap-[32px] xl:gap-[56px] items-center justify-center"
-              : "border-[3px] border-[#AAC6EC] bg-white rounded-[24px] flex flex-col px-[40px] py-[24px] md:py-[40px] md:px-[11px] 2xl:p-[40px] gap-[16px] md:gap-[32px] xl:gap-[56px] items-center justify-center"
-          }
+          className={cn(
+            "rounded-[24px] px-[40px] py-[24px] md:py-[32px] lg:w-[370px]",
+            cardActive === "practitioner" ? "bg-[#1C63DB]/10" : "bg-transparent"
+          )}
         >
-          <div className="flex flex-col items-start self-stretch gap-[16px]">
-            <h3 className="h-[31px] flex lfex-col justify-center self-center text-center font-[Nunito] text-[24px] md:text-[28px]/[20px] font-medium">
-              Practitioner
+          <div className="flex flex-col items-start self-stretch gap-4">
+            <h3 className="text-[24px] text-center w-full font-medium">
+              Health Educator
             </h3>
-            <p className="md:w-[278px] md:h-[47px] flex flex-col justify-center text-[#5F5F65] font-[Nunito] font-medium text-[16px]/[20px] opacity-[0.7]">
-              Tolu is your AI-powered partner, helping you deliver fast,
-              precise, evidence-based menopause care to every client.
+            <p className="flex flex-col justify-center font-normal text-[16px] line-clamp-2">
+              Turn your expertise into impact. Change the future of women’s
+              health.
             </p>
           </div>
         </button>
-      </main>
+      </div>
       <div className="flex flex-col w-full md:w-[250px] items-center gap-[24px] slef-stretch">
         <button
           type="button"
           onClick={() => handleCardClick(cardActive)}
-          className={
+          className={cn(
+            "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full text-[16px] font-semibold",
             cardActive.length >= 1
-              ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white font-[Nunito] text-[16px] font-semibold"
-              : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5F5F65] font-[Nunito] text-[16px] font-semibold"
-          }
+              ? "bg-[#1C63DB] text-white"
+              : "bg-[#D5DAE2] text-[#5F5F65]"
+          )}
         >
-          Proceed
+          Continue
         </button>
       </div>
     </main>

@@ -131,15 +131,11 @@ export function StepPractice({
               fill={1}
               className="text-[#1C63DB] p-2 border rounded-xl"
             />
-            <p className="text-[#1C63DB] font-[Nunito] text-[14px] font-semibold">
+            <p className="text-[#1C63DB]  text-[14px] font-semibold">
               Click to upload
             </p>
-            <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
-              or drag and drop
-            </p>
-            <p className="text-[#5F5F65] font-[Nunito] text-[14px]">
-              PDF, JPG or PNG
-            </p>
+            <p className="text-[#5F5F65]  text-[14px]">or drag and drop</p>
+            <p className="text-[#5F5F65]  text-[14px]">PDF, JPG or PNG</p>
           </div>
         </label>
 

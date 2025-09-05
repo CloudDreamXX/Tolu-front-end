@@ -264,13 +264,11 @@ export const FilesLibrary = () => {
                 fill={1}
                 className="text-[#1C63DB] p-2 border rounded-xl"
               />
-              <p className="text-[#1C63DB] text-[14px] font-[Nunito] font-semibold mt-[8px]">
+              <p className="text-[#1C63DB] text-[14px]  font-semibold mt-[8px]">
                 Click to upload
               </p>
-              <p className="text-[#5F5F65] text-[14px] font-[Nunito]">
-                or drag and drop
-              </p>
-              <p className="text-[#5F5F65] text-[14px] font-[Nunito]">
+              <p className="text-[#5F5F65] text-[14px] ">or drag and drop</p>
+              <p className="text-[#5F5F65] text-[14px] ">
                 pdf, doc, docx, png, jpeg and txt files
               </p>
             </div>

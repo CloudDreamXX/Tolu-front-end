@@ -29,7 +29,7 @@ export const OnboardingMain = () => {
     >
       <HeaderOnboarding />
       <main className="flex flex-col items-center flex-1 justify-center gap-[60px] self-stretch">
-        <h3 className="font-inter text-[32px] font-medium text-black text-center self-stretch">
+        <h3 className=" text-[32px] font-medium text-black text-center self-stretch">
           What are your primary focus areas?
         </h3>
         <section className="w-[900px] items-center justify-center flex flex-col gap-[32px]">
@@ -37,7 +37,7 @@ export const OnboardingMain = () => {
             <input
               type="text"
               placeholder="Search"
-              className="h-[44px] px-[12px] py-[8px] flex items-center gap-[8px] self-stretch rounded-full border-[1px] border-[#DBDEE1] bg-white flex-1 font-[Nunito] text-[14px] font-semibold text-[#5F5F65]"
+              className="h-[44px] px-[12px] py-[8px] flex items-center gap-[8px] self-stretch rounded-full border-[1px] border-[#DBDEE1] bg-white flex-1  text-[14px] font-semibold text-[#5F5F65]"
             />
           </div>
           <div className="flex gap-[17px] items-center justify-center content-center py-[17px] px-[13px] flex-wrap self-stretch">
@@ -203,7 +203,7 @@ export const OnboardingMain = () => {
                 className="flex outline-none w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white"
               />
               {otherText.length > 0 && (
-                <button className="flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center font-[Nunito] text-[16px] font-semibold text-white">
+                <button className="flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center  text-[16px] font-semibold text-white">
                   Add niche
                 </button>
               )}
@@ -214,7 +214,7 @@ export const OnboardingMain = () => {
         </section>
         <div className="flex items-center gap-[16px]">
           <button
-            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
@@ -222,8 +222,8 @@ export const OnboardingMain = () => {
           <button
             className={
               selectedButtons.length >= 1
-                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
-                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
+                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-white"
+                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px]  font-semibold text-[#5F5F65]"
             }
           >
             Next

@@ -46,7 +46,7 @@ export const Readiness = () => {
 
   const mainContent = (
     <div className="flex flex-col w-full gap-6 pt-8 pb-16">
-      <h3 className="font-[Nunito] text-[18px] font-bold text-[#1D1D1F]">
+      <h3 className=" text-[18px] font-bold text-[#1D1D1F]">
         How ready are you to make changes for your health?
       </h3>
 
@@ -55,7 +55,7 @@ export const Readiness = () => {
         <div className="w=[20px] h=[20px]">
           <Detective />
         </div>
-        <p className="flex flex-1 font-[Nunito] text-[14px]/[20px] font-medium text-[#1B2559]">
+        <p className="flex flex-1  text-[14px]/[20px] font-medium text-[#1B2559]">
           {readinessMessages[value[0] - 1]}
         </p>
       </div>
@@ -82,7 +82,7 @@ export const Readiness = () => {
             "#1C63DB",
           ]}
         />
-        <div className="flex justify-between mt-2 text-xs text-[#1D1D1F] font-[12px] font-[Nunito]">
+        <div className="flex justify-between mt-2 text-xs text-[#1D1D1F] font-[12px] ">
           {Array.from({ length: 10 }, (_, i) => (
             <span key={i}>{i + 1}</span>
           ))}

@@ -42,7 +42,7 @@ export const MoodScore: React.FC = () => {
         <div className="relative gap-4 p-[16px] md:p-6 flex flex-col items-start self-stretch bg-[#F3F7FD] rounded-2xl w-full 3xl:w-[492px]">
           <div className="flex items-center self-stretch justify-between">
             <div className="flex items-center gap-1">
-              <h3 className="font-[Nunito] text-[16px] md:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+              <h3 className=" text-[16px] md:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
                 Mood score
               </h3>
               <span className="w-[20px] h-[20px]">
@@ -94,7 +94,7 @@ export const MoodScore: React.FC = () => {
       ) : (
         <div className="gap-4 p-6 flex flex-col items-start self-stretch bg-[#F3F7FD] rounded-2xl w-[492px]">
           <div className="flex items-center self-stretch gap-1">
-            <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+            <h3 className=" text-[18px]/[24px] font-semibold text-[#1D1D1F]">
               Mood score
             </h3>
             <span className="w-[20px] h-[20px]">
@@ -108,7 +108,7 @@ export const MoodScore: React.FC = () => {
                 src={moodMap[moodLabels[moodIndex]]}
                 alt={moodLabels[moodIndex]}
               />
-              <h2 className="text-[#1B2559] font-[Nunito] text-[14px]/[20px] font-medium">
+              <h2 className="text-[#1B2559]  text-[14px]/[20px] font-medium">
                 {moodLabels[moodIndex]}
               </h2>
               <span className="w-[20px] h-[20px]">

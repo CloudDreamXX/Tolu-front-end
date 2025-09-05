@@ -46,16 +46,16 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           </DialogTrigger>
           <DialogContent className="sm:max-w-[742px] flex flex-col gap-6 p-6 items-start">
             <div className="flex flex-col items-start gap-2">
-              <h2 className="text-[24px]/[32px] font-semibold font-[Nunito] text-[#1D1D1F]">
+              <h2 className="text-[24px]/[32px] font-semibold  text-[#1D1D1F]">
                 Enter Your Glucose Level
               </h2>
-              <p className="font-[Nunito] text-[#5F5F65] text-[16px]/[22px] font-medium">
+              <p className=" text-[#5F5F65] text-[16px]/[22px] font-medium">
                 Don’t have a CGM device? No problem — you can manually enter
                 your blood glucose reading here.
               </p>
             </div>
             <div className="flex flex-col gap-[10px] items-start w-full">
-              <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Glucose value, mg/dL or mmol/L
               </label>
               <Input
@@ -64,7 +64,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
               />
             </div>
             <div className="flex flex-col gap-[10px] items-start w-full">
-              <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Measurement type
               </label>
               <Select>
@@ -87,7 +87,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
               </Select>
             </div>
             <div className="flex flex-col gap-[10px] items-start w-full">
-              <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Date & Time
               </label>
               <Popover>
@@ -114,7 +114,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
               </Popover>
             </div>
             <div className="flex flex-col gap-[10px] items-start w-full">
-              <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Notes{" "}
                 <span className="font-normal text-[#B3BCC8]">(Optional)</span>
               </label>
@@ -126,13 +126,13 @@ export const ClientCard: React.FC<ClientCardProps> = ({
             <div className="flex items-center justify-between w-full">
               <button
                 onClick={() => setOpen(false)}
-                className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold font-[Nunito] text-[#1C63DB] p-4 w-32 h-[44px]"
+                className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold  text-[#1C63DB] p-4 w-32 h-[44px]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="flex justify-center items-center rounded-full bg-[#1C63DB] text-[16px]/[22px] font-semibold font-[Nunito] text-white p-4 w-32 h-[44px]"
+                className="flex justify-center items-center rounded-full bg-[#1C63DB] text-[16px]/[22px] font-semibold  text-white p-4 w-32 h-[44px]"
                 onClick={() => {
                   setOpen(false);
                   if (onModify) onModify();
@@ -145,7 +145,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         </Dialog>
       )}
       <div className="flex items-center self-stretch justify-between gap-1 xl:justify-start">
-        <h3 className="font-[Nunito] text-[12px] md:text-[16px] xl:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+        <h3 className=" text-[12px] md:text-[16px] xl:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
           {title}
         </h3>
         <span className="w-[16px] h-[16px] md:w-[20px] md:h-[20px]">
@@ -158,7 +158,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         </span>
       </div>
       <div className="flex items-center justify-between w-full gap-3 xl:justify-start">
-        <h2 className="text-[18px] md:text-[24px] xl:text-[32px]/[44px] font-bold font-[Nunito] text-nowrap text-[#1C63DB]">
+        <h2 className="text-[18px] md:text-[24px] xl:text-[32px]/[44px] font-bold  text-nowrap text-[#1C63DB]">
           {indicator}
         </h2>
         <div

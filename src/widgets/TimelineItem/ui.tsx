@@ -74,14 +74,14 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
         </div>
         <div className="flex flex-col items-start w-full gap-1">
           <div className="flex items-center self-stretch justify-between w-full">
-            <h3 className="text-[#1D1D1F] font-[Nunito] text-[16px]/[22px] font-semibold">
+            <h3 className="text-[#1D1D1F]  text-[16px]/[22px] font-semibold">
               {title}
             </h3>
-            <p className="font-[Nunito] text-[#5F5F65] text-[12px]/[18px] font-normal">
+            <p className=" text-[#5F5F65] text-[12px]/[18px] font-normal">
               {date}
             </p>
           </div>
-          <p className="text-[14px]/[20px] font-normal text-[#1D1D1F] font-[Nunito]">
+          <p className="text-[14px]/[20px] font-normal text-[#1D1D1F] ">
             {description}
           </p>
         </div>

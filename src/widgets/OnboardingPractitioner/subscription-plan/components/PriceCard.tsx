@@ -21,7 +21,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
       className={`relative overflow-hidden rounded-[16px] border ${active ? "border-[#1C63DB]" : "border-[#AAC6EC]"}`}
     >
       {mostPopular && (
-        <div className="absolute top-[20px] xl:top-[45px] right-[-130px] xl:right-[-90px] bg-[#1C63DB] text-white px-[12px] py-[8px] text-[14px] xl:text-[18px] font-bold font-inter shadow-md w-[360px] text-center rotate-[35deg] pointer-events-none">
+        <div className="absolute top-[20px] xl:top-[45px] right-[-130px] xl:right-[-90px] bg-[#1C63DB] text-white px-[12px] py-[8px] text-[14px] xl:text-[18px] font-bold  shadow-md w-[360px] text-center rotate-[35deg] pointer-events-none">
           Most Popular
         </div>
       )}
@@ -32,10 +32,10 @@ export const PriceCard: React.FC<PriceCardProps> = ({
         } rounded-[16px] py-[40px] w-full max-w-[684px] px-[24px] flex flex-col md:justify-center items-center gap-[40px] xl:gap-[80px] glex-1 xl:h-[695px]`}
       >
         <div className="flex flex-col gap-[4px] items-center">
-          <h2 className="text-[#5F5F65] font-inter text-[16px] xl:text-[18px]/[25.2px] font-medium">
+          <h2 className="text-[#5F5F65]  text-[16px] xl:text-[18px]/[25.2px] font-medium">
             {plan === "starting" ? "STARTING" : "PROFESSIONAL"} PLAN
           </h2>
-          <h1 className="text-[#1D1D1F] font-inter text-[28px] xl:text-[32px]/[44.8px] font-semibold">
+          <h1 className="text-[#1D1D1F]  text-[28px] xl:text-[32px]/[44.8px] font-semibold">
             {plan === "starting" ? "Starter" : "Pro"} Coach Tier
           </h1>
         </div>
@@ -47,7 +47,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
               size={20}
               className="text-[#1C63DB]"
             />
-            <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium">
+            <span className="text-[#1d1d1f]  text-[16px] xl:text-[20px] font-medium">
               Manage up to{" "}
               <span className="!font-bold">
                 {plan === "starting" ? 3 : 50} active clients
@@ -60,7 +60,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
               size={20}
               className="text-[#1C63DB]"
             />{" "}
-            <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium">
+            <span className="text-[#1d1d1f]  text-[16px] xl:text-[20px] font-medium">
               Host up to{" "}
               <span className="!font-bold">
                 {plan === "starting" ? 10 : 50} sessions
@@ -74,7 +74,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
               size={20}
               className="text-[#1C63DB]"
             />
-            <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium">
+            <span className="text-[#1d1d1f]  text-[16px] xl:text-[20px] font-medium">
               <span className="!font-bold">
                 {plan === "starting" ? 1 : 15} GB storage
               </span>{" "}
@@ -87,7 +87,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
               size={20}
               className="min-w-[20px] min-h-[20px] text-[#1C63DB]"
             />
-            <span className="text-[#1d1d1f] font-inter text-[16px] xl:text-[20px] font-medium text-left">
+            <span className="text-[#1d1d1f]  text-[16px] xl:text-[20px] font-medium text-left">
               {plan === "starting" ? (
                 <>
                   <span className="!font-bold">Access basic content</span>{" "}
@@ -104,10 +104,10 @@ export const PriceCard: React.FC<PriceCardProps> = ({
         </ul>
 
         <div className="flex flex-col items-center justify-center">
-          <h2 className="font-inter font-medium text-[32px] xl:text-[40px]/[140%] text-[#1C63DB]">
+          <h2 className=" font-medium text-[32px] xl:text-[40px]/[140%] text-[#1C63DB]">
             {price} USD
           </h2>
-          <h4 className="font-inter font-medium text-[16px]/[140%] text-[#AAA]">
+          <h4 className=" font-medium text-[16px]/[140%] text-[#AAA]">
             /per month
           </h4>
         </div>

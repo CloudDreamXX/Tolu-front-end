@@ -16,7 +16,7 @@ export const SubscriptionPlan = () => {
     >
       <HeaderOnboarding />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch">
-        <h3 className="font-inter text-[32px] font-medium text-black text-center self-stretch">
+        <h3 className=" text-[32px] font-medium text-black text-center self-stretch">
           Choose subscription plan
         </h3>
         <section className="flex gap-[32px] w-[1200px] items-center">
@@ -52,7 +52,7 @@ export const SubscriptionPlan = () => {
         </section>
         <div className="flex items-center gap-[16px]">
           <button
-            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-[#1C63DB]"
+            className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
@@ -60,8 +60,8 @@ export const SubscriptionPlan = () => {
           <button
             className={
               activeCard !== ""
-                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-[Nunito] font-semibold text-white"
-                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px] font-[Nunito] font-semibold text-[#5F5F65]"
+                ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-white"
+                : "flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px]  font-semibold text-[#5F5F65]"
             }
           >
             Next

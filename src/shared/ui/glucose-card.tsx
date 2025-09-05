@@ -99,17 +99,17 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
           </DialogTrigger>
           <DialogContent className="max-w-[768px] md:max-w-[742px] flex flex-col gap-6 p-6 items-start">
             <div className="flex flex-col items-start gap-2">
-              <h2 className="text-[24px]/[32px] font-semibold font-[Nunito] text-[#1D1D1F]">
+              <h2 className="text-[24px]/[32px] font-semibold  text-[#1D1D1F]">
                 Enter Your Glucose Level
               </h2>
-              <p className="font-[Nunito] text-[#5F5F65] text-[16px]/[22px] font-medium">
+              <p className=" text-[#5F5F65] text-[16px]/[22px] font-medium">
                 Don’t have a CGM device? No problem — you can manually enter
                 your blood glucose reading here.
               </p>
             </div>
 
             <div className="flex flex-col gap-[10px] items-start w-full">
-              <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Glucose value, mg/dL or mmol/L
               </label>
               <Input
@@ -121,7 +121,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
             </div>
 
             <div className="flex flex-col gap-[10px] items-start w-full">
-              <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Measurement type
               </label>
               <Select
@@ -147,7 +147,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
             </div>
 
             <div className="flex flex-col gap-[10px] items-start w-full">
-              <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Date & Time
               </label>
               <Popover>
@@ -182,7 +182,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
             </div>
 
             <div className="flex flex-col gap-[10px] items-start w-full">
-              <label className="font-[Nunito] text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
                 Notes{" "}
                 <span className="font-normal text-[#B3BCC8]">(Optional)</span>
               </label>
@@ -197,14 +197,14 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
             <div className="flex items-center justify-between w-full">
               <button
                 onClick={() => setDialogOpen(false)}
-                className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold font-[Nunito] text-[#1C63DB] p-4 w-32 h-[44px]"
+                className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold  text-[#1C63DB] p-4 w-32 h-[44px]"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSave}
-                className="flex justify-center items-center rounded-full bg-[#1C63DB] text-[16px]/[22px] font-semibold font-[Nunito] text-white p-4 w-32 h-[44px]"
+                className="flex justify-center items-center rounded-full bg-[#1C63DB] text-[16px]/[22px] font-semibold  text-white p-4 w-32 h-[44px]"
               >
                 Save
               </button>
@@ -214,7 +214,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
       )}
 
       <div className="flex items-center self-stretch gap-1">
-        <h3 className="font-[Nunito] text-[12px] md:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+        <h3 className=" text-[12px] md:text-[18px]/[24px] font-semibold text-[#1D1D1F]">
           Glucose
         </h3>
         <span className="w-[20px] h-[20px]">
@@ -223,7 +223,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
       </div>
 
       <div className="flex items-center gap-3">
-        <h2 className="text-[32px]/[44px] font-bold font-[Nunito] whitespace-nowrap text-[#1C63DB]">
+        <h2 className="text-[32px]/[44px] font-bold  whitespace-nowrap text-[#1C63DB]">
           {isEmpty ? "" : indicator}
         </h2>
 
@@ -243,7 +243,7 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
       </div>
 
       {isEmpty && (
-        <p className="mt-auto flex items-start w-full text-center font-[Nunito] font-bold text-[18px] md:text-[20px] leading-[28px] text-red-600">
+        <p className="mt-auto flex items-start w-full text-center  font-bold text-[18px] md:text-[20px] leading-[28px] text-red-600">
           Need to enter
         </p>
       )}

@@ -44,27 +44,27 @@ export const HealthSnapshot = () => {
     <main className="flex flex-col items-start gap-[16px] md:gap-6 p-[16px] md:p-6 self-stretch overflow-y-auto bg-[#F1F3F5]">
       {showMoodModal && <MoodModal onClose={() => setShowMoodModal(false)} />}
       {isMobile && (
-        <h1 className="flex-1 text-[#1D1D1F] font-[Nunito] text-[24px] font-bold">
+        <h1 className="flex-1 text-[#1D1D1F]  text-[24px] font-bold">
           Health Snapshot
         </h1>
       )}
       <div className="flex items-center self-stretch xl:justify-center">
         {!isMobile && (
-          <h1 className="flex-1 text-[#1D1D1F] font-[Nunito] text-[32px]/[44px] font-bold">
+          <h1 className="flex-1 text-[#1D1D1F]  text-[32px]/[44px] font-bold">
             Health Snapshot
           </h1>
         )}
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNetworkSupportOpen((prev) => !prev)}
-            className={`md:h-[44px] w-[115px] md:w-fit font-[Nunito] text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${networkSupportOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
+            className={`md:h-[44px] w-[115px] md:w-fit  text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${networkSupportOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
           >
             <MaterialIcon iconName="ecg_heart" size={20} />
             Network Support
           </button>
           <button
             onClick={() => setTimelineOpen((prev) => !prev)}
-            className={`md:h-[44px] w-[115px] md:w-fit font-[Nunito] text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${timelineOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center  items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
+            className={`md:h-[44px] w-[115px] md:w-fit  text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${timelineOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center  items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
           >
             <MaterialIcon iconName="clock_loader_10" size={20} />
             {!timelineOpen ? "Open timeline" : "Close timeline"}
@@ -72,7 +72,7 @@ export const HealthSnapshot = () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full p-[16px] md:p-[24px] items-start rounded-2xl bg-white">
-        <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+        <h1 className="self-stretch  text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
           Weekly Trends Summary
         </h1>
         <div className="grid self-stretch grid-cols-2 grid-rows-2 gap-4 2xl:flex md:items-start md:gap-4">
@@ -93,17 +93,17 @@ export const HealthSnapshot = () => {
         {/* Left Side Start*/}
         <div className="flex flex-col gap-[16px] md:gap-6 self-stretch flex-1 items-start w-full xl:w-fit">
           <div className="flex flex-col items-start w-full gap-4 p-4 bg-white rounded-2xl">
-            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch  text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               What’s Working / What’s Not
             </h1>
             <div className="flex flex-col md:flex-row gap-[8px] md:gap-4 items-start self-stretch w-full">
               <div className="flex items-start flex-1 w-full h-full xl:w-fit">
                 <div className="relative flex gap-2 p-4 flex-1 items-center rounded-[10px] border border-[#BCE2C8] bg-[#F0FFF5] before:content-[''] before:absolute before:inset-y-0 before:left-0 before:w-2 before:rounded-l-[16px] before:bg-[#BCE2C8]">
                   <div className="flex flex-col items-start flex-1 w-full h-full gap-2 xl:w-fit">
-                    <h3 className="text-[16px] md:text-[18px]/[24px] font-medium font-[Nunito] text-[#1F1F1D]">
+                    <h3 className="text-[16px] md:text-[18px]/[24px] font-medium  text-[#1F1F1D]">
                       Success!
                     </h3>
-                    <p className="text-[12px] md:text-[14px]/[20px] font-semibold h-full xl:text-nowrap font-[Nunito] text-[#1F1F1D]">
+                    <p className="text-[12px] md:text-[14px]/[20px] font-semibold h-full xl:text-nowrap  text-[#1F1F1D]">
                       Low sugar meals correlated with reduced brain fog
                     </p>
                   </div>
@@ -118,10 +118,10 @@ export const HealthSnapshot = () => {
               <div className="flex items-start flex-1 w-full h-full xl:w-fit">
                 <div className="h-full relative flex gap-2 p-4 flex-1 items-center rounded-[10px] border border-[#FFB3AE] bg-[#FFF6F5] before:content-[''] before:absolute before:inset-y-0 before:left-0 before:w-2 before:rounded-l-[16px] before:bg-[#FFB3AE]">
                   <div className="flex flex-col items-start flex-1 w-full gap-2 xl:w-fit">
-                    <h3 className="text-[16px] md:text-[18px]/[24px] font-medium font-[Nunito] text-[#1F1F1D]">
+                    <h3 className="text-[16px] md:text-[18px]/[24px] font-medium  text-[#1F1F1D]">
                       Change needs
                     </h3>
-                    <p className="text-[12px] md:text-[14px]/[20px] font-semibold xl:text-nowrap font-[Nunito] text-[#1F1F1D]">
+                    <p className="text-[12px] md:text-[14px]/[20px] font-semibold xl:text-nowrap  text-[#1F1F1D]">
                       Skipping sleep routines increased cravings
                     </p>
                   </div>
@@ -136,7 +136,7 @@ export const HealthSnapshot = () => {
             </div>
           </div>
           <div className="flex flex-col items-start self-stretch w-full gap-6 p-6 bg-white xl:hidden shrink-0 rounded-2xl">
-            <h1 className="self-stretch font-[Nunito] text-[18px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch  text-[18px] font-semibold text-[#1D1D1F]">
               Biometric Insights
             </h1>
             <div className="flex flex-col items-start self-stretch flex-1">
@@ -158,7 +158,7 @@ export const HealthSnapshot = () => {
               </div>
               <div className="flex max-h-[120px] flex-col gap-[23px] p-[16px] md:p-6 items-start center flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">
                 <div className="flex items-center self-stretch gap-1">
-                  <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+                  <h3 className=" text-[18px]/[24px] font-semibold text-[#1D1D1F]">
                     Cycle tracking insights
                   </h3>
                   <span className="w-[20px] h-[20px]">
@@ -170,14 +170,14 @@ export const HealthSnapshot = () => {
                     />
                   </span>
                 </div>
-                <h1 className="text-[#1C63DB] text-[24px] md:text-[32px]/[44px] font-bold font-[Nunito]">
+                <h1 className="text-[#1C63DB] text-[24px] md:text-[32px]/[44px] font-bold ">
                   Luteal Phase
                 </h1>
               </div>
             </div>
           </div>
           <div className="flex flex-col items-start w-full gap-4 p-4 bg-white rounded-2xl">
-            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch  text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               Active Symptoms
             </h1>
             <div className="flex flex-col items-start self-stretch gap-4 md:flex-row">
@@ -217,7 +217,7 @@ export const HealthSnapshot = () => {
             </div>
           </div>
           <div className="flex flex-col items-start w-full gap-4 p-4 bg-white rounded-2xl">
-            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch  text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               Health Goals
             </h1>
             <div className="flex flex-col items-start self-stretch gap-4 md:flex-row">
@@ -227,7 +227,7 @@ export const HealthSnapshot = () => {
             </div>
           </div>
           <div className="flex flex-col items-start w-full gap-4 p-4 bg-white rounded-2xl">
-            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch  text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               Lab & Test
             </h1>
             <div className="w-full md:border border-[#DDEBF6] rounded-2xl overflow-hidden bg-white">
@@ -239,7 +239,7 @@ export const HealthSnapshot = () => {
         {/* Right Side Start*/}
         <div className="flex flex-col gap-6 items-start h-[1318px]">
           <div className="hidden xl:flex p-6 flex-col gap-6 self-stretch shrink-0 w-full max-w-[516px] h-full max-h-[515px] items-start rounded-2xl bg-white">
-            <h1 className="self-stretch font-[Nunito] text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
+            <h1 className="self-stretch  text-[18px] md:text-[24px]/[32px] font-semibold text-[#1D1D1F]">
               Biometric Insights
             </h1>
             <div className="flex flex-col items-start self-stretch flex-1">
@@ -261,14 +261,14 @@ export const HealthSnapshot = () => {
               </div>
               <div className="flex max-h-[120px] flex-col gap-[23px] p-6 items-start center flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">
                 <div className="flex items-center self-stretch gap-1">
-                  <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1D1D1F]">
+                  <h3 className=" text-[18px]/[24px] font-semibold text-[#1D1D1F]">
                     Cycle tracking insights
                   </h3>
                   <span className="w-[20px] h-[20px]">
                     <MaterialIcon iconName="help" fill={1} size={20} />
                   </span>
                 </div>
-                <h1 className="text-[#1C63DB] text-[32px]/[44px] font-bold font-[Nunito]">
+                <h1 className="text-[#1C63DB] text-[32px]/[44px] font-bold ">
                   Luteal Phase
                 </h1>
               </div>
@@ -281,17 +281,17 @@ export const HealthSnapshot = () => {
                   <AvatarImage src={avatar} alt="Avatar" />
                   <AvatarFallback>AI</AvatarFallback>
                 </Avatar>
-                <p className="font-[Nunito] text-[#1D1D1F] text-center text-[18px]/[24px] font-semibold">
+                <p className=" text-[#1D1D1F] text-center text-[18px]/[24px] font-semibold">
                   AI Assistant
                 </p>
               </div>
               <div className="flex items-start flex-1 gap-3">
                 <div className="flex flex-col items-start gap-[6px] flex-1">
                   <div className="flex items-center self-stretch justify-between gap-2">
-                    <h3 className="font-[Nunito] text-[18px]/[24px] font-semibold text-[#1F1F1D]">
+                    <h3 className=" text-[18px]/[24px] font-semibold text-[#1F1F1D]">
                       AI Assistant
                     </h3>
-                    <p className="text-[14px]/[20px] font-semibold font-[Nunito] text-[#5F5F65]">
+                    <p className="text-[14px]/[20px] font-semibold  text-[#5F5F65]">
                       Today 2:20pm
                     </p>
                   </div>
@@ -324,10 +324,10 @@ export const HealthSnapshot = () => {
       {timelineOpen && (
         <div className="py-8 px-6 gap-6 flex flex-col items-center absolute right-[24px] top-[164px] rounded-2xl bg-white w-[450px] h-[740px] shadow-md">
           <div className="flex items-center self-stretch justify-between">
-            <h2 className="font-[Nunito] text-[#1D1D1F] text-[24px]/[32px] font-semibold">
+            <h2 className=" text-[#1D1D1F] text-[24px]/[32px] font-semibold">
               Timeline
             </h2>
-            <button className="font-[Nunito] text-[#1C63DB] text-[14px]/[20px] font-semibold">
+            <button className=" text-[#1C63DB] text-[14px]/[20px] font-semibold">
               Mark all as read
             </button>
           </div>

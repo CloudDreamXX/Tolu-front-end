@@ -117,21 +117,21 @@ export const smartRender = async (text: string) => {
                 skipHtml
                 components={{
                   body: (props) => (
-                    <body className="font-inter bg-[#ECEFF4]" {...props} />
+                    <body className=" bg-[#ECEFF4]" {...props} />
                   ),
-                  h1: (props) => <h1 className="font-inter" {...props} />,
-                  h2: (props) => <h2 className="font-inter" {...props} />,
-                  h3: (props) => <h3 className="font-inter" {...props} />,
-                  h4: (props) => <h4 className="font-inter" {...props} />,
-                  p: (props) => <p className="font-inter" {...props} />,
-                  ul: (props) => <ul className="font-inter" {...props} />,
-                  li: (props) => <li className="font-inter" {...props} />,
+                  h1: (props) => <h1 {...props} />,
+                  h2: (props) => <h2 {...props} />,
+                  h3: (props) => <h3 {...props} />,
+                  h4: (props) => <h4 {...props} />,
+                  p: (props) => <p {...props} />,
+                  ul: (props) => <ul {...props} />,
+                  li: (props) => <li {...props} />,
                   a: (props) => (
                     <a
                       {...props}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-inter text-wrap"
+                      className=" text-wrap"
                     />
                   ),
                 }}
@@ -150,7 +150,7 @@ export const smartRender = async (text: string) => {
       const htmlParts = extractHtmlFromMarkdown(cleaned);
 
       return (
-        <div className="font-inter bg-[#ECEFF4]">
+        <div className=" bg-[#ECEFF4]">
           {htmlParts.map((part, index) =>
             part.isHtml ? (
               <div
@@ -165,21 +165,21 @@ export const smartRender = async (text: string) => {
                 skipHtml
                 components={{
                   body: (props) => (
-                    <body className="font-inter bg-[#ECEFF4]" {...props} />
+                    <body className=" bg-[#ECEFF4]" {...props} />
                   ),
-                  h1: (props) => <h1 className="font-inter" {...props} />,
-                  h2: (props) => <h2 className="font-inter" {...props} />,
-                  h3: (props) => <h3 className="font-inter" {...props} />,
-                  h4: (props) => <h4 className="font-inter" {...props} />,
-                  p: (props) => <p className="font-inter" {...props} />,
-                  ul: (props) => <ul className="font-inter" {...props} />,
-                  li: (props) => <li className="font-inter" {...props} />,
+                  h1: (props) => <h1 {...props} />,
+                  h2: (props) => <h2 {...props} />,
+                  h3: (props) => <h3 {...props} />,
+                  h4: (props) => <h4 {...props} />,
+                  p: (props) => <p {...props} />,
+                  ul: (props) => <ul {...props} />,
+                  li: (props) => <li {...props} />,
                   a: (props) => (
                     <a
                       {...props}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-inter text-wrap"
+                      className=" text-wrap"
                     />
                   ),
                 }}
@@ -194,7 +194,7 @@ export const smartRender = async (text: string) => {
 
     return (
       <div
-        className="font-inter bg-[#ECEFF4]"
+        className=" bg-[#ECEFF4]"
         style={{ fontFamily: "Inter, sans-serif" }}
       >
         {sanitizedText}
@@ -202,9 +202,7 @@ export const smartRender = async (text: string) => {
     );
   } catch (error) {
     console.error("Error rendering response:", error);
-    return (
-      <div className="font-inter bg-[#ECEFF4]">Error rendering content.</div>
-    );
+    return <div className=" bg-[#ECEFF4]">Error rendering content.</div>;
   }
 };
 
@@ -310,7 +308,7 @@ export const renderResultBlocks = (rawContent: string) => {
           <TooltipProvider delayDuration={500} disableHoverableContent>
             <Tooltip>
               <TooltipTrigger asChild>
-                <p className="font-bold font-inter text-base line-clamp-3 hover:underline mb-2">
+                <p className="font-bold  text-base line-clamp-3 hover:underline mb-2">
                   {heading}
                 </p>
               </TooltipTrigger>
@@ -325,8 +323,8 @@ export const renderResultBlocks = (rawContent: string) => {
             </Tooltip>
           </TooltipProvider>
 
-          <p className="mb-1 text-sm text-gray-500 font-inter">{folder}</p>
-          <div className="text-sm text-gray-400 font-inter">{created}</div>
+          <p className="mb-1 text-sm text-gray-500 ">{folder}</p>
+          <div className="text-sm text-gray-400 ">{created}</div>
         </div>
       </div>
     );

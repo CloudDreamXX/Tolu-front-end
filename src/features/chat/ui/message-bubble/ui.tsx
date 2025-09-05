@@ -47,12 +47,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           {message.type === "user" ? (
             <div className="flex flex-col justify-end w-full">
               <div className="flex flex-row justify-between w-full text-sm text-[#1D1D1F]">
-                <span className="font-semibold font-inter">You</span>
-                <span className="font-inter">
-                  {message.timestamp.toLocaleDateString()}
-                </span>
+                <span className="font-semibold ">You</span>
+                <span>{message.timestamp.toLocaleDateString()}</span>
               </div>
-              <div className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg font-inter">
+              <div className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg ">
                 {message.content}
                 {!!message.images?.length && (
                   <div
@@ -83,15 +81,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           ) : (
             <div className="flex flex-col justify-end w-full">
               <div className="flex flex-row justify-between w-full text-sm text-[#1D1D1F]">
-                <span className="font-semibold font-inter">AI Assistant</span>
-                <span className="font-inter">
-                  {message.timestamp.toLocaleDateString()}
-                </span>
+                <span className="font-semibold ">AI Assistant</span>
+                <span>{message.timestamp.toLocaleDateString()}</span>
               </div>
-              <div className="text-[#1D1D1F] font-inter bg-[#ECEFF4] px-[14px] py-[10px] rounded-md font-inter">
+              <div className="text-[#1D1D1F]  bg-[#ECEFF4] px-[14px] py-[10px] rounded-md ">
                 {renderedContent}
                 {message.document && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 font-inter pb-[10px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2  pb-[10px]">
                     {renderResultBlocks(message.document || "")}
                   </div>
                 )}

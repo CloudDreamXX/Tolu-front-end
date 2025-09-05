@@ -16,15 +16,15 @@ export const HealthGoalsCard: React.FC<HealthGoalsCardProps> = ({
   return (
     <div className="flex flex-col items-start gap-6 p-6 flex-1 self-stretch rounded-2xl bg-[#F3F7FD]">
       <div className="w-full flex justify-between items-center self-stretch">
-        <h2 className="text-[18px]/[24px] font-semibold text-[#1D1D1F] font-[Nunito]">
+        <h2 className="text-[18px]/[24px] font-semibold text-[#1D1D1F] ">
           {name}
         </h2>
-        <button className="py-[6px] px-[8px] flex justify-center items-center rounded-full bg-[#DDEBF6] self-stretch text-[14px]/[20px] font-semibold text-[#1C63DB] font-[Nunito]">
+        <button className="py-[6px] px-[8px] flex justify-center items-center rounded-full bg-[#DDEBF6] self-stretch text-[14px]/[20px] font-semibold text-[#1C63DB] ">
           Update
         </button>
       </div>
       <div className="flex flex-col items-start self-stretch gap-4">
-        <p className="text-[14px]/[20px] font-medium font-[Nunito] text-[#1D1D1F]">
+        <p className="text-[14px]/[20px] font-medium  text-[#1D1D1F]">
           {completed} of {outOf} gut health steps completed
         </p>
         <div

@@ -81,7 +81,7 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
         </p>
 
         <div className="flex flex-col gap-[10px] items-start w-full">
-          <label className="font-[Nunito] text-[#5F5F65] text-[12px] font-medium">
+          <label className=" text-[#5F5F65] text-[12px] font-medium">
             Subfolder name *
           </label>
           <Input
@@ -95,7 +95,7 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
           />
         </div>
         <div className="flex flex-col gap-[10px] items-start w-full">
-          <label className="font-[Nunito] text-[#5F5F65] text-[12px] font-medium">
+          <label className=" text-[#5F5F65] text-[12px] font-medium">
             Subfolder description
           </label>
           <Input
