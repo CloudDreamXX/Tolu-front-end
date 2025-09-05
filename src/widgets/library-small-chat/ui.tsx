@@ -75,8 +75,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const activeChatKey = useSelector(
     (state: RootState) => state.client.activeChatKey
   );
+  const [isSearching, setIsSearching] = useState(false);
   const chatState = useSelector(
-    (state: RootState) => state.client.chatHistory[lastChatId] || []
+    (state: RootState) =>
+      state.client.chatHistory[isSearching ? activeChatKey : lastChatId] || []
   );
   const folderState = useSelector(
     (state: RootState) => state.client.selectedChatFolder || null
@@ -105,7 +107,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const folderId = location.state?.folderId;
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
 
-  const [isSearching, setIsSearching] = useState(false);
   const [streamingText, setStreamingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [currentChatId, setCurrentChatId] = useState<string>("");
@@ -285,42 +286,77 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const loadExistingSession = async (chatId: string) => {
     setIsLoadingSession(true);
     setError(null);
+    const chatMessages: Message[] = [];
 
     try {
-      const sessionData = await SearchService.getSession(chatId);
+      if (activeChatKey === "Create content") {
+        const sessionData = await CoachService.getSessionById(chatId);
 
-      if (sessionData && sessionData.length > 0) {
-        const chatMessages: Message[] = [];
-
-        sessionData.forEach((item) => {
-          if (item.query) {
-            chatMessages.push({
-              id: `user-${item.id}`,
-              type: "user",
-              content: item.query,
-              timestamp: new Date(item.created_at),
-            });
-          }
-
-          if (item.answer) {
-            let content = item.answer;
-            let document = item.answer;
-
-            if (item.answer.includes("Relevant Content")) {
-              const parts = item.answer.split("Relevant Content");
-              content = parts[0].trim();
-              document = item.answer;
+        if (sessionData && sessionData.search_results.length > 0) {
+          sessionData.search_results.forEach((item) => {
+            if (item.query) {
+              chatMessages.push({
+                id: `user-${item.id}`,
+                type: "user",
+                content: item.query,
+                timestamp: new Date(item.created_at),
+              });
             }
 
-            chatMessages.push({
-              id: `ai-${item.id}`,
-              type: "ai",
-              content,
-              timestamp: new Date(item.created_at),
-              document,
-            });
-          }
-        });
+            if (item.content) {
+              let content = item.content;
+              let document = item.content;
+
+              if (item.content.includes("Relevant Content")) {
+                const parts = item.content.split("Relevant Content");
+                content = parts[0].trim();
+                document = item.content;
+              }
+
+              chatMessages.push({
+                id: `ai-${item.id}`,
+                type: "ai",
+                content,
+                timestamp: new Date(item.created_at),
+                document,
+              });
+            }
+          });
+        }
+      } else {
+        const sessionData = await SearchService.getSession(chatId);
+
+        if (sessionData && sessionData.length > 0) {
+          sessionData.forEach((item) => {
+            if (item.query) {
+              chatMessages.push({
+                id: `user-${item.id}`,
+                type: "user",
+                content: item.query,
+                timestamp: new Date(item.created_at),
+              });
+            }
+
+            if (item.answer) {
+              let content = item.answer;
+              let document = item.answer;
+
+              if (item.answer.includes("Relevant Content")) {
+                const parts = item.answer.split("Relevant Content");
+                content = parts[0].trim();
+                document = item.answer;
+              }
+
+              chatMessages.push({
+                id: `ai-${item.id}`,
+                type: "ai",
+                content,
+                timestamp: new Date(item.created_at),
+                document,
+              });
+            }
+          });
+        }
 
         chatMessages.sort(
           (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
@@ -798,11 +834,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             >
               <MaterialIcon iconName="add" />
             </button>
-            <HistoryPopup
-              fromPath={location.state?.from?.pathname ?? null}
-              className="absolute md:flex right-[24px] top-[64px]"
-              smallChat
-            />
+            {activeChatKey !== "Create content" && (
+              <HistoryPopup
+                fromPath={location.state?.from?.pathname ?? null}
+                className="absolute md:flex right-[24px] top-[64px]"
+                smallChat
+              />
+            )}
           </CardHeader>
           <CardContent
             className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}

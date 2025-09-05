@@ -3,7 +3,6 @@ import { SearchHistoryItem, SearchService } from "entities/search";
 import { memo, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button } from "shared/ui";
@@ -58,8 +57,6 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [isOpen]);
-
-  const isContentManager = window.location.pathname.includes("content-manager");
 
   // Shared panel markup (keeps your original md/xl classes)
   const Panel = (
