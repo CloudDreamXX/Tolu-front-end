@@ -1,4 +1,4 @@
-import { FileLibraryFolder } from "entities/files-library";
+import { FolderContentsResponse } from "entities/files-library";
 import { useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Input } from "shared/ui";
@@ -6,8 +6,8 @@ import { Input } from "shared/ui";
 interface UpdateFolderPopupProps {
   onClose: () => void;
   onComplete: (name: string, description: string) => void;
-  folder?: FileLibraryFolder;
-  mode?: "Create" | "Update";
+  folder?: FolderContentsResponse;
+  mode?: "Create" | "Update" | "CreateSubfolder";
 }
 
 export const UpdateFolderPopup: React.FC<UpdateFolderPopupProps> = ({
@@ -16,8 +16,12 @@ export const UpdateFolderPopup: React.FC<UpdateFolderPopupProps> = ({
   folder,
   mode,
 }) => {
-  const [folderName, setFolderName] = useState(folder?.name || "");
-  const [folderDescription, setFolderDescription] = useState("");
+  const [folderName, setFolderName] = useState(
+    folder?.current_folder.name || ""
+  );
+  const [folderDescription, setFolderDescription] = useState(
+    folder?.current_folder.description || ""
+  );
 
   const handleSubmit = () => {
     onComplete(folderName, folderDescription);
@@ -57,14 +61,22 @@ export const UpdateFolderPopup: React.FC<UpdateFolderPopupProps> = ({
           <MaterialIcon iconName="close" />
         </button>
         <h3 className="text-xl font-bold">
-          {mode === "Create" ? "Create Folder" : "Update Folder"}
+          {mode === "Create"
+            ? "Create Folder"
+            : mode === "CreateSubfolder"
+              ? "Create Subfolder"
+              : "Update Folder"}
         </h3>
         <div className="flex flex-col gap-[10px] items-start w-full">
           <label className="font-[Nunito] text-[#5F5F65] text-[12px] font-medium">
             Folder name
           </label>
           <Input
-            placeholder="Enter folder name"
+            placeholder={
+              mode === "CreateSubfolder"
+                ? "Enter subfolder name"
+                : "Enter folder name"
+            }
             className="w-full py-[11px] px-4"
             value={folderName}
             onChange={(e) => setFolderName(e.target.value)}
@@ -76,7 +88,11 @@ export const UpdateFolderPopup: React.FC<UpdateFolderPopupProps> = ({
             Folder description
           </label>
           <Input
-            placeholder="Enter folder description (optional)"
+            placeholder={
+              mode === "CreateSubfolder"
+                ? "Enter subfolder description (optional)"
+                : "Enter folder description (optional)"
+            }
             className="w-full py-[12px] px-4 text-[#5F5F65] text-[14px]"
             value={folderDescription || ""}
             onChange={(e) => setFolderDescription(e.target.value)}

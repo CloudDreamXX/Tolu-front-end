@@ -97,7 +97,14 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
         </div>
       </div>
       <div>
-        <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
+        <Button
+          variant={"ghost"}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDownloadClick();
+          }}
+          className="p-1"
+        >
           {downloading ? (
             (() => {
               if (dlPct) {
@@ -118,7 +125,10 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
 
         <Button
           variant={"ghost"}
-          onClick={() => onDelete?.(fileLibrary.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete?.(fileLibrary.id);
+          }}
           className="p-1"
         >
           <MaterialIcon iconName="delete" fill={1} className="text-red-500" />

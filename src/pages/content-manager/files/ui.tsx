@@ -8,7 +8,7 @@ import {
   useUpdateFolderMutation,
   useUploadFilesLibraryMutation,
 } from "entities/files-library/filesLibraryApi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
 import { FileLibrary } from "./components/FileLibrary";
@@ -19,6 +19,7 @@ import { useFilePicker } from "shared/hooks/useFilePicker";
 import { cn } from "shared/lib";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
 import { MoveFilesPopup } from "./components/MoveFilesPopup";
+import { findViewingFolderInFiles } from "./lib";
 
 export const FilesLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,9 +70,23 @@ export const FilesLibrary = () => {
   const [moveFiles] = useMoveFilesMutation();
   const [draggingFileId, setDraggingFileId] = useState<string | null>(null);
   const { data: folderContents } = useGetFolderContentsQuery(
-    { folderId: viewingFolder?.id || "", page: "1", per_page: "10" },
-    { skip: !viewingFolder }
+    {
+      folderId: menuOpenFolder?.id || viewingFolder?.id || "",
+      page: "1",
+      per_page: "10",
+    },
+    { skip: !viewingFolder && !menuOpenFolder }
   );
+
+  useEffect(() => {
+    if (viewingFolder?.id) {
+      const refreshedFolder = findViewingFolderInFiles(
+        viewingFolder?.id,
+        files
+      );
+      setViewingFolder(refreshedFolder);
+    }
+  }, [files]);
 
   const handleFileSelect = (fileId: string) => {
     if (!selectedFiles.includes(fileId)) {
@@ -87,6 +102,7 @@ export const FilesLibrary = () => {
       descriptions: JSON.stringify(
         items.map((item, index) => ({ [index]: item.file.name }))
       ),
+      folder_id: viewingFolder ? viewingFolder.id : null,
     });
     clear();
     refetch();
@@ -107,6 +123,7 @@ export const FilesLibrary = () => {
       refetch();
     });
     setCreatePopup(false);
+    setMenuOpenFolder(null);
   };
 
   const handleDotsClick = (folder: FileLibraryFolder, e: React.MouseEvent) => {
@@ -118,6 +135,7 @@ export const FilesLibrary = () => {
     await deleteFolder(folderId);
     refetch();
     setIsDeleteOpen(false);
+    setMenuOpenFolder(null);
   };
 
   const handleFolderUpdate = async (name: string, description: string) => {
@@ -128,6 +146,7 @@ export const FilesLibrary = () => {
       });
       refetch();
       setUpdatePopup(false);
+      setMenuOpenFolder(null);
     }
   };
 
@@ -330,11 +349,11 @@ export const FilesLibrary = () => {
                         label="Create subfolder"
                         onClick={() => setCreatePopup(true)}
                       />
-                      <MenuItem
+                      {/* <MenuItem
                         icon={<MaterialIcon iconName="edit" />}
                         label="Update folder"
                         onClick={() => setUpdatePopup(true)}
-                      />
+                      /> */}
                       <MenuItem
                         icon={
                           <MaterialIcon
@@ -397,11 +416,11 @@ export const FilesLibrary = () => {
                           label="Create subfolder"
                           onClick={() => setCreatePopup(true)}
                         />
-                        <MenuItem
+                        {/* <MenuItem
                           icon={<MaterialIcon iconName="edit" />}
                           label="Update folder"
                           onClick={() => setUpdatePopup(true)}
-                        />
+                        /> */}
                         <MenuItem
                           icon={
                             <MaterialIcon
@@ -451,14 +470,14 @@ export const FilesLibrary = () => {
           onComplete={(name, decription) =>
             createNewFolder(name, decription, menuOpenFolder.id)
           }
-          mode="Create"
+          mode="CreateSubfolder"
         />
       )}
       {menuOpenFolder && updatePopup && (
         <UpdateFolderPopup
           onClose={() => setUpdatePopup(false)}
           onComplete={handleFolderUpdate}
-          folder={menuOpenFolder}
+          folder={folderContents}
           mode="Update"
         />
       )}

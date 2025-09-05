@@ -29,6 +29,7 @@ export class FileLibraryService {
 
   static async uploadFilesLibrary(
     files: File[],
+    folder_id: string | null,
     descriptions?: string
   ): Promise<string> {
     const formData = new FormData();
@@ -38,6 +39,10 @@ export class FileLibraryService {
 
     if (descriptions) {
       formData.append("descriptions", descriptions);
+    }
+
+    if (folder_id) {
+      formData.append("folder_id", folder_id);
     }
 
     return ApiService.post<string>(API_ROUTES.FILES_LIBRARY.UPLOAD, formData, {
