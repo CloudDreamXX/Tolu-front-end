@@ -9,6 +9,7 @@ import {
   DetailsChatItemModel,
   FetchChatMessagesResponse,
 } from "entities/chat";
+import { useFetchAllChatsQuery } from "entities/chat/chatApi";
 import { applyIncomingMessage, updateChat } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -55,6 +56,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   loadMessages,
   refetch,
 }) => {
+  const { refetch: refetchChats } = useFetchAllChatsQuery();
   const nav = useNavigate();
   const dispatch = useDispatch();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
@@ -236,12 +238,14 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       const newMsg = await sendMessage(optimistic.content);
       if (!newMsg) throw new Error("Failed to send message");
 
+      if (chat.chat_type === "new_chat") {
+        nav(`/content-manager/messages/${newMsg.chat_id}`);
+        refetchChats();
+      }
+
       dispatch(
         applyIncomingMessage({ msg: newMsg, activeChatId: chat.chat_id })
       );
-      if (chat.chat_type === "new_chat") {
-        nav(`/content-manager/messages/${newMsg.chat_id}`);
-      }
 
       setMessages((prev) =>
         prev.map((m) => (m.id === optimistic.id ? newMsg : m))
@@ -312,7 +316,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   const containerStyleLg = {
-    height: isClient ? `calc(100vh - 316px)` : `calc(100vh - 396px)`,
+    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 396px)`,
   };
 
   let currentStyle = containerStyleLg;
@@ -485,6 +489,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                         variant="ghost"
                         className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                         onClick={open}
+                        disabled={isToluAdmin}
                       >
                         <MaterialIcon iconName="attach_file" />
                       </Button>

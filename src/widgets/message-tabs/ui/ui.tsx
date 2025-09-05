@@ -7,9 +7,10 @@ import {
   FetchChatMessagesResponse,
 } from "entities/chat";
 import { useFetchChatDetailsByIdQuery } from "entities/chat/chatApi";
+import { upsertChat } from "entities/chat/chatsSlice";
 import { Client, ClientProfile, CoachService } from "entities/coach";
 import { RootState } from "entities/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { cn, toast, usePageWidth } from "shared/lib";
 import {
   Avatar,
@@ -64,6 +65,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 }) => {
   const { isMobile, isMobileOrTablet } = usePageWidth();
   const profile = useSelector((state: RootState) => state.user.user);
+  const dispatch = useDispatch();
 
   const {
     refetch,
@@ -108,6 +110,24 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           const clients = await CoachService.getManagedClients();
           const client = clients.clients.find((c) => c.client_id === chatId);
           if (client) {
+            dispatch(
+              upsertChat({
+                id: client.client_id,
+                type: "new_chat",
+                lastMessageAt: "",
+                unreadCount: 0,
+                lastMessage: null,
+                name: client.name,
+                avatar_url: "",
+                participants: [
+                  {
+                    id: client.client_id,
+                    email: "",
+                    name: client.name,
+                  },
+                ],
+              })
+            );
             setChat({
               chat_id: chatId,
               name: client.name,
