@@ -202,20 +202,20 @@ export const ContentManagerProfile = () => {
               <Field
                 label="Practitioner Type:"
                 value={
-                  user?.onboarding.practitioner_info.types.join(", ") || ""
+                  user?.onboarding?.practitioner_info.types.join(", ") || ""
                 }
                 truncate={false}
               />
 
               <Field
                 label="Languages:"
-                value={user?.profile.basic_info.languages.join(", ") || ""}
+                value={user?.profile?.basic_info?.languages?.join(", ") || ""}
                 truncate={false}
               />
 
               <Field
                 label="Primary focus:"
-                value={user?.profile.expertise.join(", ") || ""}
+                value={user?.profile.expertise?.join(", ") || ""}
                 truncate={false}
               />
 

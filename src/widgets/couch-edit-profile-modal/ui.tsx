@@ -91,8 +91,8 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
     profile_picture: bi.headshot ?? "",
 
     expertise_areas: u.profile.expertise ?? [],
-    years_experience: cred.years_experience ?? 0,
-    certifications: cred.certifications ?? [],
+    years_experience: cred?.years_experience ?? 0,
+    certifications: cred?.certifications ?? [],
     personal_story: u.profile.story ?? "",
     content_specialties: u.profile.content_topics ?? [],
 
