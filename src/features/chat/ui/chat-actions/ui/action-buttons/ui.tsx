@@ -156,9 +156,9 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             onClick={onReadAloud}
           >
             <MaterialIcon
-              iconName="text_to_speech"
+              iconName="volume_up"
               fill={isReadingAloud ? 1 : 0}
-              size={16}
+              size={20}
               className="text-blue-600"
             />
           </button>

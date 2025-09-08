@@ -110,7 +110,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   const renderFooter = () => {
     if (isNew) {
       return (
-        <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[48px] w-full">
+        <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[24px] w-full">
           <button
             className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
             onClick={onCancel}
@@ -141,7 +141,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
     }
 
     return (
-      <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[48px]">
+      <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[24px]">
         <button
           className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
           onClick={onCancel}
@@ -224,8 +224,9 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
       className={`fixed ${isNew ? "top-[85px] md:top-0" : "top-0"} inset-0 z-[999] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto`}
     >
       <div
-        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] ${isNew && stepIndex ? "pt-[64px]" : ""} md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-y-auto flex flex-col`}
+        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] ${isNew && stepIndex ? "pt-[64px]" : ""} md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-hidden grid grid-rows-[auto,1fr,auto]`}
       >
+
         <span
           className="hidden md:block absolute top-[16px] right-[16px] cursor-pointer z-20"
           onClick={onCancel}
@@ -294,315 +295,317 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
           </div>
         )}
 
-        {activeEditTab === "editClientInfo" && (
-          <div className="flex flex-col gap-[16px] md:gap-[24px]">
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Full name
-              </label>
-              <input
-                type="text"
-                placeholder="Enter full name"
-                value={client?.full_name || ""}
-                onChange={(e) => updateClient("full_name", e.target.value)}
-                className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
-              />
-            </div>
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Email address
-              </label>
-              <input
-                type="email"
-                placeholder="Enter email address"
-                value={client?.email || ""}
-                onChange={(e) => updateClient("email", e.target.value)}
-                className="placeholder-custom  w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
-              />
-              <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} fill={1} />
-                Used to send client invite and profile access
-              </div>
-            </div>
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Phone number
-              </label>
-              <input
-                type="tel"
-                placeholder="Enter phone number"
-                value={client?.phone_number || ""}
-                onChange={(e) => updateClient("phone_number", e.target.value)}
-                className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${noPhoneNumber ? "bg-gray-100" : ""}`}
-                disabled={noPhoneNumber}
-                required={!noPhoneNumber}
-              />
-              <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
+        <main className="overflow-y-auto pr-[2px]">
+          {activeEditTab === "editClientInfo" && (
+            <div className="flex flex-col gap-[16px] md:gap-[24px]">
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Full name
+                </label>
                 <input
-                  type="checkbox"
-                  checked={noPhoneNumber}
-                  onChange={() => {
-                    setNoPhoneNumber(!noPhoneNumber);
-                    if (!noPhoneNumber) updateClient("phone_number", "");
-                  }}
-                  className="accent-[#1C63DB]"
+                  type="text"
+                  placeholder="Enter full name"
+                  value={client?.full_name || ""}
+                  onChange={(e) => updateClient("full_name", e.target.value)}
+                  className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
                 />
-                <label>I don’t have this client’s phone number</label>
               </div>
-            </div>
-
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Date of birth
-              </label>
-
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal border-[#DFDFDF] hover:bg-white rounded-[1000px] px-[12px] py-[12.5px]",
-                      !localDate && "text-muted-foreground"
-                    )}
-                  >
-                    <MaterialIcon iconName="calendar_today" fill={1} />
-                    {localDate ? format(localDate, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-
-                <PopoverContent
-                  className="w-auto p-0 pointer-events-auto"
-                  align="start"
-                >
-                  <div className="flex gap-[8px] items-center m-4 mb-1">
-                    Choose a year:
-                    <select
-                      value={selectedYear}
-                      onChange={(e) => handleYearChange(Number(e.target.value))}
-                      className="px-2 py-1 border rounded-md outline-0"
-                    >
-                      {Array.from(
-                        { length: 100 },
-                        (_, i) => new Date().getFullYear() - i
-                      ).map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <Calendar
-                    mode="single"
-                    selected={localDate ?? undefined}
-                    onSelect={(selectedDate) => {
-                      if (selectedDate) {
-                        setLocalDate(selectedDate);
-                        updateClient(
-                          "date_of_birth",
-                          format(selectedDate, "yyyy-MM-dd")
-                        );
-                        const y = selectedDate.getFullYear();
-                        if (y !== selectedYear) setSelectedYear(y);
-                        setDisplayMonth(
-                          new Date(
-                            selectedDate.getFullYear(),
-                            selectedDate.getMonth()
-                          )
-                        );
-                      }
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  placeholder="Enter email address"
+                  value={client?.email || ""}
+                  onChange={(e) => updateClient("email", e.target.value)}
+                  className="placeholder-custom  w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+                />
+                <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
+                  <MaterialIcon iconName="info" size={16} fill={1} />
+                  Used to send client invite and profile access
+                </div>
+              </div>
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Phone number
+                </label>
+                <input
+                  type="tel"
+                  placeholder="Enter phone number"
+                  value={client?.phone_number || ""}
+                  onChange={(e) => updateClient("phone_number", e.target.value)}
+                  className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${noPhoneNumber ? "bg-gray-100" : ""}`}
+                  disabled={noPhoneNumber}
+                  required={!noPhoneNumber}
+                />
+                <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
+                  <input
+                    type="checkbox"
+                    checked={noPhoneNumber}
+                    onChange={() => {
+                      setNoPhoneNumber(!noPhoneNumber);
+                      if (!noPhoneNumber) updateClient("phone_number", "");
                     }}
-                    initialFocus
-                    month={displayMonth}
-                    onMonthChange={(m) => {
-                      setDisplayMonth(m);
-                      const y = m.getFullYear();
-                      if (y !== selectedYear) setSelectedYear(y);
-                    }}
+                    className="accent-[#1C63DB]"
                   />
-                </PopoverContent>
-              </Popover>
+                  <label>I don’t have this client’s phone number</label>
+                </div>
+              </div>
 
-              <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} fill={1} />
-                Helps personalize age-appropriate guidance
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Date of birth
+                </label>
+
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal border-[#DFDFDF] hover:bg-white rounded-[1000px] px-[12px] py-[12.5px]",
+                        !localDate && "text-muted-foreground"
+                      )}
+                    >
+                      <MaterialIcon iconName="calendar_today" fill={1} />
+                      {localDate ? format(localDate, "PPP") : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+
+                  <PopoverContent
+                    className="w-auto p-0 pointer-events-auto"
+                    align="start"
+                  >
+                    <div className="flex gap-[8px] items-center m-4 mb-1">
+                      Choose a year:
+                      <select
+                        value={selectedYear}
+                        onChange={(e) => handleYearChange(Number(e.target.value))}
+                        className="px-2 py-1 border rounded-md outline-0"
+                      >
+                        {Array.from(
+                          { length: 100 },
+                          (_, i) => new Date().getFullYear() - i
+                        ).map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <Calendar
+                      mode="single"
+                      selected={localDate ?? undefined}
+                      onSelect={(selectedDate) => {
+                        if (selectedDate) {
+                          setLocalDate(selectedDate);
+                          updateClient(
+                            "date_of_birth",
+                            format(selectedDate, "yyyy-MM-dd")
+                          );
+                          const y = selectedDate.getFullYear();
+                          if (y !== selectedYear) setSelectedYear(y);
+                          setDisplayMonth(
+                            new Date(
+                              selectedDate.getFullYear(),
+                              selectedDate.getMonth()
+                            )
+                          );
+                        }
+                      }}
+                      initialFocus
+                      month={displayMonth}
+                      onMonthChange={(m) => {
+                        setDisplayMonth(m);
+                        const y = m.getFullYear();
+                        if (y !== selectedYear) setSelectedYear(y);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
+                  <MaterialIcon iconName="info" size={16} fill={1} />
+                  Helps personalize age-appropriate guidance
+                </div>
+              </div>
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Primary health challenge
+                </label>
+                <input
+                  type="text"
+                  placeholder="What's your client's chief concern?"
+                  value={client?.primary_health_challenge || ""}
+                  onChange={(e) =>
+                    updateClient("primary_health_challenge", e.target.value)
+                  }
+                  className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+                />
+                <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
+                  <MaterialIcon iconName="info" size={16} fill={1} />
+                  e.g., Fatigue, Gut issues, Hormonal imbalance
+                </div>
               </div>
             </div>
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Primary health challenge
-              </label>
-              <input
-                type="text"
-                placeholder="What's your client's chief concern?"
-                value={client?.primary_health_challenge || ""}
-                onChange={(e) =>
-                  updateClient("primary_health_challenge", e.target.value)
-                }
-                className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+          )}
+
+          {activeEditTab === "relationshipContext" && (
+            <div className="flex flex-col gap-[16px] md:gap-[24px]">
+              <SelectField
+                label="How did you first connect with this client?"
+                options={[
+                  { value: "Referral", label: "Referral" },
+                  { value: "Social Media", label: "Social Media" },
+                  { value: "Workshop or Event", label: "Workshop or Event" },
+                  { value: "Previous Program", label: "Previous Program" },
+                  { value: "Other", label: "Other" },
+                ]}
+                selected={client.connection_source || ""}
+                onChange={(value) => updateClient("connection_source", value)}
               />
-              <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} fill={1} />
-                e.g., Fatigue, Gut issues, Hormonal imbalance
-              </div>
-            </div>
-          </div>
-        )}
 
-        {activeEditTab === "relationshipContext" && (
-          <div className="flex flex-col gap-[16px] md:gap-[24px]">
-            <SelectField
-              label="How did you first connect with this client?"
-              options={[
-                { value: "Referral", label: "Referral" },
-                { value: "Social Media", label: "Social Media" },
-                { value: "Workshop or Event", label: "Workshop or Event" },
-                { value: "Previous Program", label: "Previous Program" },
-                { value: "Other", label: "Other" },
-              ]}
-              selected={client.connection_source || ""}
-              onChange={(value) => updateClient("connection_source", value)}
-            />
-
-            <SelectField
-              label="How long have you been working together?"
-              options={[
-                {
-                  value: "New (Less than 1 month)",
-                  label: "New (Less than 1 month)",
-                },
-                { value: "1–3 months", label: "1–3 months" },
-                { value: "3–6 months", label: "3–6 months" },
-                { value: "6–12 months", label: "6–12 months" },
-                { value: "Over a year", label: "Over a year" },
-              ]}
-              selected={client.working_duration || ""}
-              onChange={(value) => updateClient("working_duration", value)}
-            />
-
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Are you their primary health coach?
-              </label>
-              <div className="flex gap-[60px]">
-                <CustomRadio
-                  label="Yes"
-                  name="primaryCoach"
-                  value="yes"
-                  selected={client.is_primary_coach || ""}
-                  onChange={(value) => updateClient("is_primary_coach", value)}
-                />
-                <CustomRadio
-                  label="No – I’m part of a care team"
-                  name="primaryCoach"
-                  value="no"
-                  selected={client.is_primary_coach || ""}
-                  onChange={(value) => updateClient("is_primary_coach", value)}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeEditTab === "clientFitTOLU" && (
-          <div className="flex flex-col gap-[16px] md:gap-[24px]">
-            <MultiSelectField
-              label="What are your client’s current focus areas?"
-              options={[
-                { label: "Hormone Health" },
-                { label: "Gut Health" },
-                { label: "Autoimmunity or Inflammation" },
-                { label: "Metabolic or Weight Issues" },
-                { label: "Sleep & Stress" },
-                { label: "Emotional Well-being" },
-                { label: "Chronic Illness Management" },
-                { label: "General Wellness / Optimization" },
-              ]}
-              selected={client.focus_areas || ""}
-              onChange={(value) => updateClient("focus_areas", value)}
-            />
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                How do you believe your client can benefit from TOLU?
-              </label>
-              <input
-                placeholder="Type here"
-                type="text"
-                value={client?.tolu_benefit || ""}
-                onChange={(e) => updateClient("tolu_benefit", e.target.value)}
-                className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+              <SelectField
+                label="How long have you been working together?"
+                options={[
+                  {
+                    value: "New (Less than 1 month)",
+                    label: "New (Less than 1 month)",
+                  },
+                  { value: "1–3 months", label: "1–3 months" },
+                  { value: "3–6 months", label: "3–6 months" },
+                  { value: "6–12 months", label: "6–12 months" },
+                  { value: "Over a year", label: "Over a year" },
+                ]}
+                selected={client.working_duration || ""}
+                onChange={(value) => updateClient("working_duration", value)}
               />
-              <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} fill={1} />
-                e.g., personalized education
-              </div>
-            </div>
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Do you plan to use Tolu collaboratively during your sessions?
-              </label>
-              <div className="flex flex-col gap-2 mt-2">
-                <CustomRadio
-                  label="Yes – I’ll reference it often"
-                  name="toluUsage"
-                  value="often"
-                  selected={client.collaborative_usage || ""}
-                  onChange={(value) =>
-                    updateClient("collaborative_usage", value)
-                  }
-                />
-                <CustomRadio
-                  label="Occasionally – For certain tools"
-                  name="toluUsage"
-                  value="occasional"
-                  selected={client.collaborative_usage || ""}
-                  onChange={(value) =>
-                    updateClient("collaborative_usage", value)
-                  }
-                />
-                <CustomRadio
-                  label="The client will use it independently"
-                  name="toluUsage"
-                  value="independent"
-                  selected={client.collaborative_usage || ""}
-                  onChange={(value) =>
-                    updateClient("collaborative_usage", value)
-                  }
-                />
-              </div>
-            </div>
-          </div>
-        )}
 
-        {activeEditTab === "healthProfilePlan" && (
-          <div className="flex flex-col gap-[16px] md:gap-[24px]">
-            <div>
-              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                Who will complete the client’s Tolu health profile?
-              </label>
-              <div className="flex flex-col gap-2 mt-2">
-                <CustomRadio
-                  label="The client will complete it with my guidance"
-                  name="profileCompletion"
-                  value="with_help"
-                  selected={client.permission_type || ""}
-                  onChange={(value) => updateClient("permission_type", value)}
-                />
-                <CustomRadio
-                  label="The client will complete it independently"
-                  name="profileCompletion"
-                  value="independent"
-                  selected={client.permission_type || ""}
-                  onChange={(value) => updateClient("permission_type", value)}
-                />
-              </div>
-              <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                <MaterialIcon iconName="info" size={16} fill={1} />
-                You can always edit or review it later
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Are you their primary health coach?
+                </label>
+                <div className="flex gap-[60px]">
+                  <CustomRadio
+                    label="Yes"
+                    name="primaryCoach"
+                    value="yes"
+                    selected={client.is_primary_coach || ""}
+                    onChange={(value) => updateClient("is_primary_coach", value)}
+                  />
+                  <CustomRadio
+                    label="No – I’m part of a care team"
+                    name="primaryCoach"
+                    value="no"
+                    selected={client.is_primary_coach || ""}
+                    onChange={(value) => updateClient("is_primary_coach", value)}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {activeEditTab === "clientFitTOLU" && (
+            <div className="flex flex-col gap-[16px] md:gap-[24px]">
+              <MultiSelectField
+                label="What are your client’s current focus areas?"
+                options={[
+                  { label: "Hormone Health" },
+                  { label: "Gut Health" },
+                  { label: "Autoimmunity or Inflammation" },
+                  { label: "Metabolic or Weight Issues" },
+                  { label: "Sleep & Stress" },
+                  { label: "Emotional Well-being" },
+                  { label: "Chronic Illness Management" },
+                  { label: "General Wellness / Optimization" },
+                ]}
+                selected={client.focus_areas || ""}
+                onChange={(value) => updateClient("focus_areas", value)}
+              />
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  How do you believe your client can benefit from TOLU?
+                </label>
+                <input
+                  placeholder="Type here"
+                  type="text"
+                  value={client?.tolu_benefit || ""}
+                  onChange={(e) => updateClient("tolu_benefit", e.target.value)}
+                  className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+                />
+                <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
+                  <MaterialIcon iconName="info" size={16} fill={1} />
+                  e.g., personalized education
+                </div>
+              </div>
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Do you plan to use Tolu collaboratively during your sessions?
+                </label>
+                <div className="flex flex-col gap-2 mt-2">
+                  <CustomRadio
+                    label="Yes – I’ll reference it often"
+                    name="toluUsage"
+                    value="often"
+                    selected={client.collaborative_usage || ""}
+                    onChange={(value) =>
+                      updateClient("collaborative_usage", value)
+                    }
+                  />
+                  <CustomRadio
+                    label="Occasionally – For certain tools"
+                    name="toluUsage"
+                    value="occasional"
+                    selected={client.collaborative_usage || ""}
+                    onChange={(value) =>
+                      updateClient("collaborative_usage", value)
+                    }
+                  />
+                  <CustomRadio
+                    label="The client will use it independently"
+                    name="toluUsage"
+                    value="independent"
+                    selected={client.collaborative_usage || ""}
+                    onChange={(value) =>
+                      updateClient("collaborative_usage", value)
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeEditTab === "healthProfilePlan" && (
+            <div className="flex flex-col gap-[16px] md:gap-[24px]">
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Who will complete the client’s Tolu health profile?
+                </label>
+                <div className="flex flex-col gap-2 mt-2">
+                  <CustomRadio
+                    label="The client will complete it with my guidance"
+                    name="profileCompletion"
+                    value="with_help"
+                    selected={client.permission_type || ""}
+                    onChange={(value) => updateClient("permission_type", value)}
+                  />
+                  <CustomRadio
+                    label="The client will complete it independently"
+                    name="profileCompletion"
+                    value="independent"
+                    selected={client.permission_type || ""}
+                    onChange={(value) => updateClient("permission_type", value)}
+                  />
+                </div>
+                <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
+                  <MaterialIcon iconName="info" size={16} fill={1} />
+                  You can always edit or review it later
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
 
         <div className="mt-auto">{renderFooter()}</div>
       </div>
