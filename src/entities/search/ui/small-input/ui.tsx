@@ -61,7 +61,7 @@ export const SearchAiSmallInput = ({
         onClick={handleSearch}
       >
         <MaterialIcon iconName="stars_2" fill={1} />
-        {sidebarOpen && <span>Ask TOLU</span>}
+        {sidebarOpen && <span>Ask Tolu</span>}
       </Button>
     </div>
   );

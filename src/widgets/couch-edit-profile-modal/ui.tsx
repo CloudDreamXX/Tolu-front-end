@@ -58,6 +58,7 @@ const DEFAULT_STATE: CoachOnboardingState = {
   profile_picture: "",
   alternate_name: "",
   bio: "",
+  languages: [],
 };
 
 const yn = (b: boolean | null | undefined) =>
@@ -82,6 +83,7 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
     age: bi.age,
     gender: (bi as any).gender ?? "",
     bio: bi.bio ?? "",
+    languages: bi.languages ?? [],
 
     display_credentials: bi.credentials ?? "",
     location: bi.location ?? "",
@@ -89,7 +91,7 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
     profile_picture: bi.headshot ?? "",
 
     expertise_areas: u.profile.expertise ?? [],
-    years_experience: cred.years_experience != null ? cred.years_experience : 0,
+    years_experience: cred.years_experience ?? 0,
     certifications: cred.certifications ?? [],
     personal_story: u.profile.story ?? "",
     content_specialties: u.profile.content_topics ?? [],
@@ -189,6 +191,7 @@ export const CouchEditProfileModal = ({
       "alternate_name",
       "gender",
       "phone",
+      "languages",
       "email",
       "timezone",
       "profile_picture",
@@ -253,7 +256,7 @@ export const CouchEditProfileModal = ({
           <DialogTitle className="flex items-center gap-2">
             <MaterialIcon iconName="account_circle" /> Edit profile
           </DialogTitle>
-          <div className="flex items-center no-scrollbar gap-4 p-2 overflow-x-auto bg-white border rounded-full max-w-full">
+          <div className="flex items-center max-w-full gap-4 p-2 overflow-x-auto bg-white border rounded-full no-scrollbar">
             {steps.map((s, i) => (
               <button
                 key={s.id}

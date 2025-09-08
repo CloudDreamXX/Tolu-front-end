@@ -94,7 +94,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [previousScrollHeight, setPreviousScrollHeight] = useState(0);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  const isToluAdmin = chat?.name?.toLowerCase() === "tolu admin";
+  const isToluAdmin = chat?.participants.some((p) => p.role === "admin");
 
   const listData: ListItem[] = useMemo(() => {
     const sorted = [...messages]
@@ -505,6 +505,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                       setFiles={setFiles}
                       disabled={isToluAdmin}
                       title="Attach files"
+                      hideFromLibrary
                       customTrigger={
                         <Button
                           variant="ghost"

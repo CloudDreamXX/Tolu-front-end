@@ -30,7 +30,9 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
 
   const [options, setOptions] = useState<string[]>(FOCUS_OPTIONS);
 
-  const [selected, setSelected] = useState<Set<FocusOption>>(new Set());
+  const [selected, setSelected] = useState<Set<FocusOption>>(
+    new Set(data.expertise_areas || [])
+  );
 
   useEffect(() => {
     setDataState((prevState) => ({

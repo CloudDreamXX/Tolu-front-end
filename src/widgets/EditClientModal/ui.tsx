@@ -165,7 +165,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
       case "relationshipContext":
         return "Relationship Context";
       case "clientFitTOLU":
-        return "Client Fit for TOLU";
+        return "Client Fit for Tolu";
       case "healthProfilePlan":
         return "Health Profile Completion Plan";
       default:
@@ -224,7 +224,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
       className={`fixed ${isNew ? "top-[85px] md:top-0" : "top-0"} inset-0 z-[999] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto`}
     >
       <div
-        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] ${isNew && stepIndex ? "pt-[64px]" : ""} md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-hidden grid grid-rows-[auto,1fr,auto]`}
+        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] ${isNew && stepIndex ? "pt-[64px]" : ""} md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-hidden flex flex-col`}
       >
         <span
           className="hidden md:block absolute top-[16px] right-[16px] cursor-pointer z-20"
@@ -294,7 +294,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
           </div>
         )}
 
-        <main className="overflow-y-auto pr-[2px]">
+        <main className="overflow-y-auto pr-[2px] grow">
           {activeEditTab === "editClientInfo" && (
             <div className="flex flex-col gap-[16px] md:gap-[24px]">
               <div>

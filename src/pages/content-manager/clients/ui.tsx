@@ -784,9 +784,7 @@ export const ContentManagerClients: React.FC = () => {
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
             >
-              <span className="rotate-[180deg]">
-                <MaterialIcon iconName="arrow_right_alt" />
-              </span>
+              <MaterialIcon iconName="arrow_left_alt" />
             </button>
 
             {Array.from({ length: totalPages }).map((_, i) => {

@@ -11,6 +11,7 @@ import {
   setMessagesToChat,
 } from "entities/client/lib";
 import { CoachService } from "entities/coach";
+import { IFolder } from "entities/folder";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
@@ -30,6 +31,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
 import { Button, Card, CardContent, CardFooter, CardHeader } from "shared/ui";
 import {
@@ -42,7 +44,6 @@ import { MessageList } from "widgets/message-list";
 import { MessageLoadingSkeleton } from "./components/MessageLoadingSkeleton";
 import { extractVoiceText, generateCaseStory, subTitleSwitch } from "./helpers";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -126,6 +127,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevSearchingRef = useRef(isSearching);
+  const folders = useSelector((state: RootState) => state.folder.folders);
 
   const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     scrollRef.current?.scrollIntoView({ block: "end", behavior });
@@ -143,6 +145,33 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       });
     }
   }, [isSearching, chatState.length]);
+
+  useEffect(() => {
+    const findFolder = (
+      folderId: string,
+      folders: IFolder[]
+    ): IFolder | undefined => {
+      for (const folder of folders) {
+        if (folder.id === folderId) {
+          return folder;
+        }
+        if (folder.subfolders) {
+          const foundInSubfolders = findFolder(folderId, folder.subfolders);
+          if (foundInSubfolders) {
+            return foundInSubfolders;
+          }
+        }
+      }
+      return undefined;
+    };
+
+    if (folders && folderId) {
+      const folder = findFolder(folderId, folders);
+      if (folder) {
+        setExistingInstruction(folder.customInstructions || "");
+      }
+    }
+  }, [folders, folderId]);
 
   useEffect(() => {
     if (folderId) {

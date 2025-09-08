@@ -23,7 +23,7 @@ interface NotesTabProps {
 
 export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const profile = useSelector((state: RootState) => state.user.user);
-  const isToluAdmin = chat?.name?.toLowerCase() === "tolu admin";
+  const isToluAdmin = chat?.participants.some((p) => p.role === "admin");
 
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
   const {

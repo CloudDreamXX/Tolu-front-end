@@ -53,14 +53,6 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
                 </AvatarFallback>
               </Avatar>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
-            </div>
-            <div className="relative ml-3">
-              <h3 className="text-sm font-semibold text-left truncate hover:underline text-nowrap max-w-40">
-                {chat.name ?? reciver.name}
-              </h3>
-              <p className="text-xs text-left text-gray-500 truncate max-w-32">
-                @{chat.name || reciver.email}
-              </p>
               <span
                 className={cn(
                   "absolute -top-2 right-0 flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-blue-500 rounded-full",
@@ -69,6 +61,14 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
               >
                 {chat.unreadCount > 9 ? "9+" : chat.unreadCount}
               </span>
+            </div>
+            <div className="relative ml-3">
+              <h3 className="text-sm font-semibold text-left truncate hover:underline text-nowrap max-w-40">
+                {chat.name ?? reciver.name}
+              </h3>
+              <p className="text-xs text-left text-gray-500 truncate max-w-32">
+                @{chat.name || reciver.email}
+              </p>
             </div>
           </button>
         );

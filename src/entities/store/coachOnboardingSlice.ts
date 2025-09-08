@@ -45,6 +45,7 @@ export interface CoachOnboardingState {
   phone?: string;
   email?: string;
   bio: string;
+  languages: string[];
 }
 
 const initialState: CoachOnboardingState = {
@@ -86,6 +87,7 @@ const initialState: CoachOnboardingState = {
   security_answers: "",
   profile_picture: "",
   bio: "",
+  languages: [],
 };
 
 const coachOnboardingSlice = createSlice({

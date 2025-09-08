@@ -1,6 +1,10 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import {
+  checkPasswordStrength,
+  StrengthMeter,
+} from "shared/lib/utils/passwordChecker";
 import { Input } from "shared/ui";
 import { z } from "zod";
 
@@ -47,6 +51,10 @@ export const SignUp: React.FC<SignUpProps> = ({
   const [showNewPassword, setShowNewPassword] = useState(true);
   const [formattedPhone, setFormattedPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const result = React.useMemo(
+    () => checkPasswordStrength(formData.password),
+    [formData.password]
+  );
 
   const formatPhoneNumber = (val: string) => {
     const digits = val.replace(/\D/g, "");
@@ -252,6 +260,25 @@ export const SignUp: React.FC<SignUpProps> = ({
               {errors.password}
             </p>
           )}
+          <div className="w-full lg:w-[70%]">
+            {formData.password && (
+              <StrengthMeter
+                level={result.level as 0 | 1 | 2 | 3}
+                label={result.label}
+              />
+            )}
+
+            {formData.password && !result.isValid && (
+              <ul
+                id="password-help"
+                className="mt-2 list-disc pl-2 text-xs  text-[#6B7280]"
+              >
+                {result.feedback.map((f) => (
+                  <li key={f}>{f}</li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
         <div className="flex flex-col items-start gap-[10px] self-stretch">
           <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
@@ -296,7 +323,7 @@ export const SignUp: React.FC<SignUpProps> = ({
       <div className="flex flex-col w-full items-center gap-[24px] self-stretch">
         <button
           type="submit"
-          disabled={!isFormValid() || loading}
+          disabled={!isFormValid() || loading || result.level !== 3}
           className={
             !isFormValid() || loading
               ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65]  text-[16px] font-semibold cursor-not-allowed"

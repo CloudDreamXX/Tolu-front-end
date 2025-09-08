@@ -17,7 +17,7 @@ export const ClientHeader: React.FC = () => (
       <h2 className="text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold text-transform: uppercase">
         tolu AI
       </h2>
-      <span className="text-[#1D1D1F] text-[7px] md:text-[22px] font-normal  leading-[normal] text-center">
+      <span className="text-[#1D1D1F] text-base md:text-[22px] font-normal  leading-[normal] text-center">
         Knowledge Before Care
       </span>
     </div>

@@ -36,7 +36,11 @@ export const ContentManagerCreatePage: React.FC = () => {
     >
       <div className="hidden w-full h-full xl:block">
         <EmptyStateTolu
-          text="To deep research a knowledge source upload files to your File Library and ask Tolu to conduct a research or create an inspired content."
+          text={
+            activeChatKey === "Research"
+              ? "To deep research a knowledge source upload files to your File Library and ask Tolu to conduct a research or create an inspired content."
+              : "To get started with content creation, select or create a folder for giving instructions to your AI assistant."
+          }
           footer={
             <div className="flex gap-4">
               <Button

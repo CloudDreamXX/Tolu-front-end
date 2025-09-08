@@ -8,7 +8,6 @@ import { cn } from "shared/lib";
 import {
   Button,
   Calendar,
-  Checkbox,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -22,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "shared/ui/select";
+import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
 import { OnboardingClientLayout } from "../Layout";
 import { languages } from "./index";
 
@@ -73,12 +73,6 @@ export const DemographicStep = () => {
     dispatch(setFormField({ field: "ai_experience", value: aiExperience }));
 
     nav("/what-brings-you-here");
-  };
-
-  const handleLanguageChange = (value: string) => {
-    setSelectedLanguages((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    );
   };
 
   const title = (
@@ -351,54 +345,11 @@ export const DemographicStep = () => {
         <label className="text-[#1D1D1F]  text-base font-medium">
           Language
         </label>
-        <Popover>
-          <PopoverTrigger className="w-full">
-            <button className="flex min-h-10 w-full items-center   rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 gap-2 flex-wrap">
-              {selectedLanguages.length === 0 ? (
-                <span className="text-muted-foreground">Select languages</span>
-              ) : (
-                selectedLanguages.map((lang) => (
-                  <button
-                    key={lang}
-                    tabIndex={0}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLanguageChange(lang);
-                    }}
-                    className="bg-gray-100 text-black px-2 py-0.5 rounded-md"
-                  >
-                    {lang} ×
-                  </button>
-                ))
-              )}
-              <MaterialIcon
-                iconName="keyboard_arrow_down"
-                className="w-4 h-4 ml-auto opacity-60"
-              />
-            </button>
-          </PopoverTrigger>
-
-          <PopoverContent className="p-1 w-[var(--radix-popover-trigger-width)] max-h-[300px] overflow-y-auto custom-small-scroll">
-            {languages.map((lang) => (
-              <label
-                key={lang}
-                className={cn(
-                  "relative flex w-full items-center py-1.5 pl-8 pr-2 text-sm transition-colors rounded-md",
-                  "hover:!text-blue-500 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                  selectedLanguages.includes(lang) &&
-                    "bg-accent text-accent-foreground text-blue-500 "
-                )}
-              >
-                <Checkbox
-                  checked={selectedLanguages.includes(lang)}
-                  onCheckedChange={() => handleLanguageChange(lang)}
-                  className="absolute left-2 flex items-center justify-center w-4 h-4 -translate-y-1/2 rounded-sm top-1/2 hover:!border-blue-500 border-gray-200 border"
-                />
-                {lang}
-              </label>
-            ))}
-          </PopoverContent>
-        </Popover>
+        <LanguagesMultiSelect
+          options={languages}
+          value={selectedLanguages}
+          onChange={setSelectedLanguages}
+        />
       </div>
 
       <div className="flex flex-col items-start w-full gap-2">

@@ -132,6 +132,7 @@ export interface BasicInfo {
   age: number;
   gender: string;
   bio: string;
+  languages: string[];
 }
 
 export interface ProfileCredentials {

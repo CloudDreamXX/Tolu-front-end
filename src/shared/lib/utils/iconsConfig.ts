@@ -129,6 +129,7 @@ export const icons = [
   "picture_as_pdf",
   "category",
   "volume_up",
+  "edit_square",
 ] as const;
 
 export type IconName = (typeof icons)[number];

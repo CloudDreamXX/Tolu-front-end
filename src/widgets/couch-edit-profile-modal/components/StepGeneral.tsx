@@ -1,11 +1,13 @@
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { useFilePicker } from "shared/hooks/useFilePicker";
 import { cn } from "shared/lib";
 import { Input } from "shared/ui";
+import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
+import { languages } from "widgets/OnboardingClient/DemographicStep";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { timezoneOptions } from "widgets/OnboardingPractitioner/profile-setup";
-import { useFilePicker } from "shared/hooks/useFilePicker";
 
 interface StepGeneralProps {
   data: CoachOnboardingState;
@@ -47,6 +49,17 @@ export const StepGeneral = ({
           placeholder="Practice name"
           value={data.alternate_name || ""}
           onChange={(e) => handleInputChange("alternate_name", e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        <label>Language</label>
+        <LanguagesMultiSelect
+          options={languages}
+          value={data.languages || []}
+          onChange={(next) => handleInputChange("languages", next)}
+          name="languages"
+          placeholder="Select languages"
         />
       </div>
 
