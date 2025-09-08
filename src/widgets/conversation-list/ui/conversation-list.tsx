@@ -43,6 +43,7 @@ interface ConversationListProps {
   handleDeleteContent: (id: string) => void;
   onMarkAsFinalHandler: (contentId?: string | undefined) => Promise<void>;
   onRestoreOriginalFormat: () => void;
+  setStatusPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ConversationList: React.FC<ConversationListProps> = ({
@@ -81,6 +82,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   handleDeleteContent,
   onMarkAsFinalHandler,
   onRestoreOriginalFormat,
+  setStatusPopup,
 }) => {
   return (
     <div className="flex flex-col gap-[32px]">
@@ -133,6 +135,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           handleDeleteContent={handleDeleteContent}
           onMarkAsFinalHandler={onMarkAsFinalHandler}
           onRestoreOriginalFormat={onRestoreOriginalFormat}
+          setStatusPopup={setStatusPopup}
         />
       ))}
 

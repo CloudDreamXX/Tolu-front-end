@@ -7,6 +7,7 @@ import {
   CreatorProfile,
   Feedback,
   FeedbackResponse,
+  LibraryContentStatus,
   ShareViaEmail,
   ShareWithCoach,
 } from "./model";
@@ -102,5 +103,9 @@ export class ContentService {
 
   static async shareCoach(data: ShareWithCoach): Promise<any> {
     return ApiService.post<any>(API_ROUTES.CONTENT.SHARE_COACH, data);
+  }
+
+  static async updateContentStatus(data: LibraryContentStatus): Promise<any> {
+    return ApiService.put<any>(API_ROUTES.CONTENT.LIBRARY_STATUS, data);
   }
 }

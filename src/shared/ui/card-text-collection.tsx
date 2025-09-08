@@ -171,8 +171,9 @@ export const renderStatus = (
       ) : (
         <Expert />
       )}
-      <span className="flex gap-[4px] items-center text-[16px] font-[600] text-[#1C63DB]">
-        {status === "To read" && <MaterialIcon iconName="graph_6" size={16} />}
+      <span
+        className={`flex gap-[4px] items-center text-[16px] font-[600] ${status === "Live" ? "text-[#006622]" : status === "Rejected" ? "text-[#660000]" : status === "Waiting" ? "text-[#663C00]" : "text-[#1C63DB]"}`}
+      >
         {status}
       </span>
     </p>

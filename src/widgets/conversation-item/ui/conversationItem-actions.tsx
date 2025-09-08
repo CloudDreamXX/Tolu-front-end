@@ -25,6 +25,7 @@ interface ConversationItemActionsProps {
   handleMarkAsClick: () => void;
   handleDelete: (id: string) => void;
   onMarkAsFinalHandler: (contentId?: string | undefined) => Promise<void>;
+  setStatusPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ConversationItemActions: React.FC<
@@ -39,6 +40,7 @@ export const ConversationItemActions: React.FC<
   handleDublicateClick,
   setIsDeleteOpen,
   onMarkAsFinalHandler,
+  setStatusPopup,
 }) => {
   const { document } = useDocumentState();
   const [textContent, setTextContent] = useState("");
@@ -267,22 +269,43 @@ export const ConversationItemActions: React.FC<
             </TooltipContent>
           </Tooltip>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                onClick={() => onMarkAsFinalHandler(pair.id)}
+          {document?.status === "Raw" && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                  onClick={() => onMarkAsFinalHandler(pair.id)}
+                >
+                  <MaterialIcon iconName="check" size={20} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
               >
-                <MaterialIcon iconName="check" size={20} />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-            >
-              Mark as final
-            </TooltipContent>
-          </Tooltip>
+                Mark as final
+              </TooltipContent>
+            </Tooltip>
+          )}
+
+          {document?.status === "Rejected" && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                  onClick={() => setStatusPopup(true)}
+                >
+                  <MaterialIcon iconName="check_circle_unread" size={20} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+              >
+                Change status to "Waiting"
+              </TooltipContent>
+            </Tooltip>
+          )}
         </TooltipProvider>
       </div>
     </div>

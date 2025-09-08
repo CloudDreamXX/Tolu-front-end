@@ -80,7 +80,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(
     null
   );
-  const [activeTab, setActiveTab] = useState<string>("clientInfo");
+  const [activeTab, setActiveTab] = useState<string>("healthProfile");
   const [search, setSearch] = useState<string>("");
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

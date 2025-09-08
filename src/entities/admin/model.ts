@@ -1,3 +1,5 @@
+import { Folder } from "entities/client";
+
 export interface User {
   email: string;
   name: string;
@@ -79,4 +81,32 @@ export interface AdminChatModel {
   chat_type: string;
   last_message_time: string;
   unread_count: number;
+}
+
+export interface ManageContentData {
+  content_id: string;
+  action: "unpublish" | "approve" | "reject";
+  admin_comment?: string;
+  unpublish_reason?: string;
+}
+
+export interface AdminFoldersStructureResponse {
+  ai_generated?: Folder[];
+  in_review?: Folder[];
+  approved?: Folder[];
+  published?: Folder[];
+  archived?: Folder[];
+  flagged?: Folder[];
+  pagination?: {
+    current_page: number;
+    page_size: number;
+    total_content_items: number;
+    applied_to_specific_folder: boolean;
+    target_folder_id: string | null;
+    admin_view: boolean;
+    showing_all_users: boolean;
+  };
+  admin_access?: boolean;
+  filtered_by_user?: boolean;
+  target_user_id?: string | null;
 }

@@ -8,6 +8,11 @@ export const sideBarContent: SideBarItem[] = [
     icon: <MaterialIcon iconName="groups" fill={1} />,
   },
   {
+    title: "Content management",
+    link: "/content-management",
+    icon: <MaterialIcon iconName="folder" fill={1} />,
+  },
+  {
     title: "Feedback",
     link: "/feedback",
     icon: <MaterialIcon iconName="chat" fill={1} />,

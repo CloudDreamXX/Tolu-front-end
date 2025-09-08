@@ -145,6 +145,7 @@ export class FoldersService {
       const allFolders: IFolder[] = [];
 
       const categories = [
+        "flagged",
         "ai_generated",
         "in_review",
         "approved",

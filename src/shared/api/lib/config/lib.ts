@@ -85,6 +85,7 @@ export const API_ROUTES = {
     DOWNLOAD_CREATOR_PHOTO: "/creator/{creator_id}/photo/{filename}",
     SHARE_EMAIL: "/share/email",
     SHARE_COACH: "/share/coach",
+    LIBRARY_STATUS: "/library/status",
   },
   HEALTH_HISTORY: {
     GET: "/health-history",
@@ -145,6 +146,9 @@ export const API_ROUTES = {
     GET_ALL_CHATS: "admin/chats",
     GET_MESSAGES: "admin/chats/{chat_id}/messages",
     SEND_MESSAGE: "admin/chats/bulk-message",
+    GET_FOLDERS: "/admin/folders/structure",
+    GET_UNPUBLISHED_CONTENT: "/admin/content/unpublished",
+    MANAGE_CONTENT: "/admin/content/manage",
   },
   SYMPTOMS_TRACKER: {
     POST_SYMPTOMS: "/symptom-tracker/log-symptoms/",

@@ -1,15 +1,16 @@
 import { ContentStatus } from "entities/content";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
-import { Card, CardContent, renderAuthor } from "shared/ui";
+import { Card, CardContent, renderAuthor, renderStatus } from "shared/ui";
 
 interface LibraryCardProps {
   id: string;
   title: string;
   author: string;
-  onStatusChange: (id: string, status: "read" | "saved_for_later") => void;
+  onStatusChange?: (id: string, status: "read" | "saved_for_later") => void;
   onDocumentClick: (id: string) => void;
   contentStatus?: ContentStatus;
+  adminStatus?: ContentStatus;
 }
 
 export const LibraryCard: React.FC<LibraryCardProps> = ({
@@ -19,6 +20,7 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
   onStatusChange,
   onDocumentClick,
   contentStatus,
+  adminStatus,
 }) => {
   return (
     <button
@@ -47,28 +49,40 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
             <div className="flex items-center">
               <span>{renderAuthor(author, true)}</span>
             </div>
+            {((adminStatus && adminStatus.status === "Live") ||
+              (adminStatus && adminStatus.status === "Waiting") ||
+              (adminStatus && adminStatus.status === "Rejected")) && (
+              <div className="flex items-center">
+                <span>{renderStatus(adminStatus.status, true)}</span>
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-[12px]">
-            <button
-              className="bg-white"
-              onClick={(e) => {
-                e.stopPropagation();
-                const isSaved = contentStatus?.status === "saved_for_later";
-                onStatusChange(id, isSaved ? "read" : "saved_for_later");
-              }}
-            >
-              {contentStatus?.content_id === id &&
-              contentStatus.status === "saved_for_later" ? (
-                <MaterialIcon
-                  iconName="bookmark"
-                  fill={1}
-                  className="text-[#1C63DB]"
-                />
-              ) : (
-                <MaterialIcon iconName="bookmark" className="text-[#1C63DB]" />
-              )}
-            </button>
-          </div>
+          {onStatusChange && (
+            <div className="flex items-center gap-[12px]">
+              <button
+                className="bg-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const isSaved = contentStatus?.status === "saved_for_later";
+                  onStatusChange(id, isSaved ? "read" : "saved_for_later");
+                }}
+              >
+                {contentStatus?.content_id === id &&
+                contentStatus.status === "saved_for_later" ? (
+                  <MaterialIcon
+                    iconName="bookmark"
+                    fill={1}
+                    className="text-[#1C63DB]"
+                  />
+                ) : (
+                  <MaterialIcon
+                    iconName="bookmark"
+                    className="text-[#1C63DB]"
+                  />
+                )}
+              </button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </button>

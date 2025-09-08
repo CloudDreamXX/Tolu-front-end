@@ -25,6 +25,8 @@ import { useDispatch } from "react-redux";
 import { clearAllChatHistory } from "entities/client/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ChatSocketService } from "entities/chat";
+import { ChangeAdminStatusPopup } from "widgets/change-admin-status-popup";
+import { ContentService, LibraryContentStatus } from "entities/content";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -118,6 +120,8 @@ export const ContentManagerDocument: React.FC = () => {
     title: string;
     query: string;
   } | null>(null);
+
+  const [statusPopup, setStatusPopup] = useState<boolean>(false);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -235,6 +239,28 @@ export const ContentManagerDocument: React.FC = () => {
     }
   };
 
+  const onStatusChange = async (comment?: string) => {
+    try {
+      const payload: LibraryContentStatus = {
+        id: documentId || "",
+        status: "Waiting",
+        reviewer_comment: comment?.trim() || undefined,
+      };
+
+      await ContentService.updateContentStatus(payload);
+      toast({
+        title: "Status changed successfully",
+      });
+      setStatusPopup(false);
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Failed to change document status",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] pt-2 md:pt-6 h-[calc(100vh-78px)] w-full overflow-y-auto">
       {loadingConversation && (
@@ -325,6 +351,7 @@ export const ContentManagerDocument: React.FC = () => {
                     handleDeleteContent={handleDeleteClick}
                     onMarkAsFinalHandler={onMarkAsFinalHandler}
                     onRestoreOriginalFormat={onRestoreOriginalFormat}
+                    setStatusPopup={setStatusPopup}
                   />
                 </>
               )}
@@ -395,6 +422,14 @@ export const ContentManagerDocument: React.FC = () => {
               folder?.parentFolderId ||
               (findFolderPath(folders, folder?.id)?.[0]?.id ?? "")
             }
+          />
+        )}
+
+        {statusPopup && (
+          <ChangeAdminStatusPopup
+            action={"Waiting"}
+            onClose={() => setStatusPopup(false)}
+            onSave={onStatusChange}
           />
         )}
 

@@ -129,6 +129,7 @@ export const icons = [
   "picture_as_pdf",
   "category",
   "volume_up",
+  "check_circle_unread",
   "edit_square",
 ] as const;
 

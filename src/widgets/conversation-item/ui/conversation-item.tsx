@@ -42,6 +42,7 @@ interface ConversationItemProps {
   handleDeleteContent: (id: string) => void;
   onMarkAsFinalHandler: (contentId?: string | undefined) => Promise<void>;
   onRestoreOriginalFormat: () => void;
+  setStatusPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
@@ -73,6 +74,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   handleDeleteContent,
   onMarkAsFinalHandler,
   onRestoreOriginalFormat,
+  setStatusPopup,
 }) => {
   const isHTML = isHtmlContent(pair.content);
 
@@ -325,6 +327,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           handleDelete={handleDeleteContent}
           compareIndex={compareIndex}
           onMarkAsFinalHandler={onMarkAsFinalHandler}
+          setStatusPopup={setStatusPopup}
         />
       </div>
     </div>

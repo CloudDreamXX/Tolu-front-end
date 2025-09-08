@@ -150,3 +150,9 @@ export interface ShareWithCoach {
   coach_id: string;
   message: string;
 }
+
+export interface LibraryContentStatus {
+  id: string;
+  status: string;
+  reviewer_comment?: string;
+}

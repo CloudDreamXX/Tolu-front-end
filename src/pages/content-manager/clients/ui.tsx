@@ -89,7 +89,7 @@ export const ContentManagerClients: React.FC = () => {
   const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("clientInfo");
+  const [activeTab, setActiveTab] = useState<string>("healthProfile");
   const [editModal, setEditModal] = useState<boolean>(false);
   const [addModal, setAddModal] = useState<boolean>(false);
   const [activeEditTab, setActiveEditTab] = useState<string>("editClientInfo");

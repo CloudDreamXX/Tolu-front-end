@@ -371,7 +371,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         </div>
 
         <div className="flex gap-[16px] mb-[24px] border border-[#DBDEE1] bg-white rounded-[1000px] p-[8px] overflow-x-auto">
-          <button
+          {/* <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "clientInfo"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -380,7 +380,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("clientInfo")}
           >
             Personal information
-          </button>
+          </button> */}
           <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "healthProfile"

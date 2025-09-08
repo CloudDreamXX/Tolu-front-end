@@ -48,6 +48,8 @@ import { MainLayout, ProtectedRoute, RedirectContentToLibrary } from "./ui";
 import { FeedbackHub } from "pages/feedback-hub/ui";
 import { FeedbackDetails } from "pages/feedback-details";
 import { AdminMessages } from "pages/admin-messages";
+import { ContentManagement } from "pages/content-management";
+import { ContentManagementDocument } from "pages/content-management-document";
 
 export const AppRoutes = () => {
   return (
@@ -191,6 +193,11 @@ export const AppRoutes = () => {
         }
       >
         <Route path="/user-management" element={<UserManagement />} />
+        <Route path="/content-management" element={<ContentManagement />} />
+        <Route
+          path="/content-management/document/:documentId"
+          element={<ContentManagementDocument />}
+        />
         <Route path="/feedback" element={<FeedbackHub />} />
         <Route path="/feedback/details" element={<FeedbackDetails />} />
         <Route path="/admin-messages/:chatId?" element={<AdminMessages />} />

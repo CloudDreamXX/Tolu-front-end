@@ -119,7 +119,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   const [activeEditTab, setActiveEditTab] = useState<string>("editClientInfo");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [editModal, setEditModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("clientInfo");
+  const [activeTab, setActiveTab] = useState<string>("healthProfile");
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
 
