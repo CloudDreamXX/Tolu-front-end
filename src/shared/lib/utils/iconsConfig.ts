@@ -128,7 +128,7 @@ export const icons = [
   "cloud_upload",
   "picture_as_pdf",
   "category",
-  "volume_up"
+  "volume_up",
 ] as const;
 
 export type IconName = (typeof icons)[number];

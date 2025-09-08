@@ -226,7 +226,6 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
       <div
         className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] ${isNew && stepIndex ? "pt-[64px]" : ""} md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-hidden grid grid-rows-[auto,1fr,auto]`}
       >
-
         <span
           className="hidden md:block absolute top-[16px] right-[16px] cursor-pointer z-20"
           onClick={onCancel}
@@ -380,7 +379,9 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                       Choose a year:
                       <select
                         value={selectedYear}
-                        onChange={(e) => handleYearChange(Number(e.target.value))}
+                        onChange={(e) =>
+                          handleYearChange(Number(e.target.value))
+                        }
                         className="px-2 py-1 border rounded-md outline-0"
                       >
                         {Array.from(
@@ -492,14 +493,18 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                     name="primaryCoach"
                     value="yes"
                     selected={client.is_primary_coach || ""}
-                    onChange={(value) => updateClient("is_primary_coach", value)}
+                    onChange={(value) =>
+                      updateClient("is_primary_coach", value)
+                    }
                   />
                   <CustomRadio
                     label="No – I’m part of a care team"
                     name="primaryCoach"
                     value="no"
                     selected={client.is_primary_coach || ""}
-                    onChange={(value) => updateClient("is_primary_coach", value)}
+                    onChange={(value) =>
+                      updateClient("is_primary_coach", value)
+                    }
                   />
                 </div>
               </div>

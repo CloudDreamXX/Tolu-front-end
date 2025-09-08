@@ -35,6 +35,20 @@ export const Register = () => {
       return Number(status) === 404;
     };
 
+    const isAlreadyRegistered = (err: any) => {
+      const status = Number(
+        err?.response?.status ?? err?.status ?? err?.statusCode
+      );
+      const msg = String(
+        err?.response?.data?.detail ??
+          err?.response?.data?.message ??
+          err?.message ??
+          ""
+      ).toLowerCase();
+
+      return status === 409 || msg.includes("already exists");
+    };
+
     const fetchInviteDetails = async () => {
       try {
         const data = await ClientService.getInvitationDetails(token);
@@ -49,15 +63,23 @@ export const Register = () => {
         setInviteSource("client");
         return;
       } catch (err) {
+        if (cancelled) return;
+
+        if (isAlreadyRegistered(err)) {
+          toast({
+            title: "Invitation accepted",
+          });
+          navigate("/library");
+          return;
+        }
+
         if (!isNotFound(err)) {
-          if (!cancelled) {
-            console.error("Failed to fetch invitation details", err);
-            toast({
-              title: "Unable to load invitation",
-              description: "Please try again or request a new link.",
-              variant: "destructive",
-            });
-          }
+          console.error("Failed to fetch invitation details", err);
+          toast({
+            title: "Unable to load invitation",
+            description: "Please try again or request a new link.",
+            variant: "destructive",
+          });
           return;
         }
       }
@@ -76,6 +98,15 @@ export const Register = () => {
         return;
       } catch (err) {
         if (cancelled) return;
+
+        if (isAlreadyRegistered(err)) {
+          toast({
+            title: "Invitation accepted",
+          });
+          navigate("/library");
+          return;
+        }
+
         console.error("Failed to fetch referral invitation", err);
 
         if (isNotFound(err)) {
@@ -100,7 +131,7 @@ export const Register = () => {
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, [token, navigate, toast]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

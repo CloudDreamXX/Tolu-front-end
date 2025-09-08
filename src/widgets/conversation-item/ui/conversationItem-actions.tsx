@@ -40,251 +40,251 @@ export const ConversationItemActions: React.FC<
   setIsDeleteOpen,
   onMarkAsFinalHandler,
 }) => {
-    const { document } = useDocumentState();
-    const [textContent, setTextContent] = useState("");
-    const [selectedVoice, setSelectedVoice] =
-      useState<SpeechSynthesisVoice | null>(null);
-    const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
+  const { document } = useDocumentState();
+  const [textContent, setTextContent] = useState("");
+  const [selectedVoice, setSelectedVoice] =
+    useState<SpeechSynthesisVoice | null>(null);
+  const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
 
-    useEffect(() => {
-      const loadVoices = () => {
-        const availableVoices = speechSynthesis.getVoices();
+  useEffect(() => {
+    const loadVoices = () => {
+      const availableVoices = speechSynthesis.getVoices();
 
-        const storedVoice = localStorage.getItem("selectedVoice");
+      const storedVoice = localStorage.getItem("selectedVoice");
 
-        let voice: SpeechSynthesisVoice | null = null;
+      let voice: SpeechSynthesisVoice | null = null;
 
-        if (storedVoice) {
-          const storedVoiceSettings = JSON.parse(storedVoice);
-          voice =
-            availableVoices.find(
-              (v) =>
-                v.name === storedVoiceSettings.name &&
-                v.lang === storedVoiceSettings.lang
-            ) || null;
-        }
-
-        if (!voice) {
-          voice =
-            availableVoices.find(
-              (v) => v.name === "Google UK English Male" && v.lang === "en-GB"
-            ) || null;
-        }
-
-        setSelectedVoice(voice);
-
-        if (voice) {
-          const voiceSettings = { name: voice.name, lang: voice.lang };
-          localStorage.setItem("selectedVoice", JSON.stringify(voiceSettings));
-        }
-      };
-
-      if (speechSynthesis.getVoices().length === 0) {
-        speechSynthesis.onvoiceschanged = loadVoices;
-      } else {
-        loadVoices();
+      if (storedVoice) {
+        const storedVoiceSettings = JSON.parse(storedVoice);
+        voice =
+          availableVoices.find(
+            (v) =>
+              v.name === storedVoiceSettings.name &&
+              v.lang === storedVoiceSettings.lang
+          ) || null;
       }
 
-      return () => {
-        if (speechSynthesis.onvoiceschanged) {
-          speechSynthesis.onvoiceschanged = null;
-        }
-      };
-    }, []);
-
-    useEffect(() => {
-      if (document) {
-        const strippedText = document.content.replace(/<\/?[^>]+(>|$)/g, "");
-        setTextContent(strippedText);
+      if (!voice) {
+        voice =
+          availableVoices.find(
+            (v) => v.name === "Google UK English Male" && v.lang === "en-GB"
+          ) || null;
       }
-    }, [document]);
 
-    useEffect(() => {
-      return () => {
-        if (speechSynthesis.speaking) {
-          speechSynthesis.cancel();
-          setIsReadingAloud(false);
-        }
-      };
-    }, [document]);
+      setSelectedVoice(voice);
 
-    const handleReadAloud = () => {
-      if (speechSynthesis.speaking) {
-        speechSynthesis.cancel();
-        setIsReadingAloud(false);
-      } else {
-        const utterance = new SpeechSynthesisUtterance(textContent);
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        }
-
-        utterance.onend = () => {
-          setIsReadingAloud(false);
-        };
-
-        speechSynthesis.speak(utterance);
-        setIsReadingAloud(true);
+      if (voice) {
+        const voiceSettings = { name: voice.name, lang: voice.lang };
+        localStorage.setItem("selectedVoice", JSON.stringify(voiceSettings));
       }
     };
 
-    return (
-      <div className="flex items-start gap-2 md:flex-col">
-        <div className="flex items-center gap-2 md:flex-col">
-          <TooltipProvider delayDuration={500}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                  onClick={() => onEditToggle(pair, null)}
-                >
-                  <MaterialIcon iconName="edit" size={20} fill={1} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-              >
-                Edit
-              </TooltipContent>
-            </Tooltip>
+    if (speechSynthesis.getVoices().length === 0) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    } else {
+      loadVoices();
+    }
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                  onClick={() => {
-                    setSelectedDocumentId(pair.id);
-                    setIsMoveOpen(true);
-                  }}
-                >
-                  <MaterialIcon iconName="arrow_right_alt" size={20} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-              >
-                Move
-              </TooltipContent>
-            </Tooltip>
+    return () => {
+      if (speechSynthesis.onvoiceschanged) {
+        speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, []);
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                  onClick={() => handleDublicateClick(pair.id)}
-                >
-                  <MaterialIcon iconName="stack" size={20} fill={1} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-              >
-                Duplicate
-              </TooltipContent>
-            </Tooltip>
+  useEffect(() => {
+    if (document) {
+      const strippedText = document.content.replace(/<\/?[^>]+(>|$)/g, "");
+      setTextContent(strippedText);
+    }
+  }, [document]);
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                  onClick={handleReadAloud}
-                >
-                  <MaterialIcon
-                    iconName="volume_up"
-                    size={20}
-                    fill={isReadingAloud ? 1 : 0}
-                  />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-              >
-                Read aloud
-              </TooltipContent>
-            </Tooltip>
+  useEffect(() => {
+    return () => {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+        setIsReadingAloud(false);
+      }
+    };
+  }, [document]);
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                  onClick={() => {
-                    setSelectedDocumentId(pair.id);
-                    setIsBadResponseOpen(true);
-                  }}
-                >
-                  {document?.thumbsDown ? (
-                    <MaterialIcon iconName="thumb_up" size={20} fill={1} />
-                  ) : (
-                    <MaterialIcon iconName="thumb_down" size={20} fill={1} />
-                  )}
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-              >
-                Bad response
-              </TooltipContent>
-            </Tooltip>
+  const handleReadAloud = () => {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      setIsReadingAloud(false);
+    } else {
+      const utterance = new SpeechSynthesisUtterance(textContent);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => {
-                    setSelectedDocumentId(pair.id);
-                    setIsDeleteOpen(true);
-                  }}
-                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                >
-                  <MaterialIcon iconName="delete" size={20} fill={1} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-              >
-                Delete
-              </TooltipContent>
-            </Tooltip>
+      utterance.onend = () => {
+        setIsReadingAloud(false);
+      };
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => handleMarkAsClick()}
-                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                >
-                  <MaterialIcon iconName="compare_arrows" size={20} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-              >
-                Mark as
-              </TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                  onClick={() => onMarkAsFinalHandler(pair.id)}
-                >
-                  <MaterialIcon iconName="check" size={20} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-              >
-                Mark as final
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
-    );
+      speechSynthesis.speak(utterance);
+      setIsReadingAloud(true);
+    }
   };
+
+  return (
+    <div className="flex items-start gap-2 md:flex-col">
+      <div className="flex items-center gap-2 md:flex-col">
+        <TooltipProvider delayDuration={500}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => onEditToggle(pair, null)}
+              >
+                <MaterialIcon iconName="edit" size={20} fill={1} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Edit
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => {
+                  setSelectedDocumentId(pair.id);
+                  setIsMoveOpen(true);
+                }}
+              >
+                <MaterialIcon iconName="arrow_right_alt" size={20} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Move
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => handleDublicateClick(pair.id)}
+              >
+                <MaterialIcon iconName="stack" size={20} fill={1} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Duplicate
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={handleReadAloud}
+              >
+                <MaterialIcon
+                  iconName="volume_up"
+                  size={20}
+                  fill={isReadingAloud ? 1 : 0}
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Read aloud
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => {
+                  setSelectedDocumentId(pair.id);
+                  setIsBadResponseOpen(true);
+                }}
+              >
+                {document?.thumbsDown ? (
+                  <MaterialIcon iconName="thumb_up" size={20} fill={1} />
+                ) : (
+                  <MaterialIcon iconName="thumb_down" size={20} fill={1} />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Bad response
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => {
+                  setSelectedDocumentId(pair.id);
+                  setIsDeleteOpen(true);
+                }}
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+              >
+                <MaterialIcon iconName="delete" size={20} fill={1} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Delete
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => handleMarkAsClick()}
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+              >
+                <MaterialIcon iconName="compare_arrows" size={20} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Mark as
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                onClick={() => onMarkAsFinalHandler(pair.id)}
+              >
+                <MaterialIcon iconName="check" size={20} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
+            >
+              Mark as final
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    </div>
+  );
+};
