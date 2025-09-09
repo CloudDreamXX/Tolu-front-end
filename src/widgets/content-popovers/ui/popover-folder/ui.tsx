@@ -81,7 +81,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       try {
         const response = await FoldersService.getFolders();
         if (response.folders.length > 0) {
-          const firstFolder = response.folders[0];
+          const firstFolder = response.folders[1];
           dispatch(setFolders(response));
           if (firstFolder.subfolders) {
             setSubfolders(firstFolder.subfolders);

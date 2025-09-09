@@ -88,6 +88,7 @@ export const ContentManagementDocument = () => {
         title: "Status changed successfully",
       });
       setStatusPopup(null);
+      loadDocument(documentId);
     } catch (error) {
       console.error(error);
       toast({
