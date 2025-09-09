@@ -1,9 +1,11 @@
-import { logout } from "entities/user";
+import { RootState } from "entities/store";
+import { logout, UserService } from "entities/user";
 import { CustomNavLink } from "features/custom-nav-link";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { toast } from "shared/lib";
 import { ScrollArea } from "shared/ui";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 
@@ -13,6 +15,7 @@ type Props = {
 
 export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const token = useSelector((state: RootState) => state.user.token);
 
   const nav = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -37,9 +40,23 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
     };
   }, [menuOpen, menuMobOpen]);
 
-  const handleSignOut = () => {
-    dispatch(logout());
-    nav("/auth");
+  const handleSignOut = async () => {
+    try {
+      await UserService.signOut(token);
+      toast({
+        title: "Sign out successful",
+      });
+      dispatch(logout());
+      localStorage.clear();
+      window.location.href = "/auth";
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Sign out failed",
+        description: "Sign out failed. Please try again",
+      });
+    }
   };
 
   const handleOpenChat = () => {
