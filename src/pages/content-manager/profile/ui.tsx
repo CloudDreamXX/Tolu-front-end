@@ -5,7 +5,7 @@ import {
   UserOnboardingInfo,
   UserService,
 } from "entities/user";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, phoneMask, toast } from "shared/lib";
 import {
@@ -30,7 +30,7 @@ export const ContentManagerProfile = () => {
   const [user, setUser] = useState<UserOnboardingInfo | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
   const [licensePhotos, setLicensePhotos] = useState<string[]>([]);
-  const result = React.useMemo(
+  const result = useMemo(
     () => checkPasswordStrength(newPassword),
     [newPassword]
   );
@@ -373,7 +373,7 @@ export const ContentManagerProfile = () => {
                 className="mt-3 w-full md:w-[250px] disabled:opacity-[0.5] disabled:bg-slate-400 disabled:text-slate-900"
                 onClick={() => handleChangePassword(oldPassword, newPassword)}
                 disabled={
-                  oldPassword === "" || newPassword === "" || result.level !== 3
+                  oldPassword === "" || newPassword === "" || !result.isValid
                 }
               >
                 Change

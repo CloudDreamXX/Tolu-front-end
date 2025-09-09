@@ -2,6 +2,10 @@ import { useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import {
+  checkPasswordStrength,
+  StrengthMeter,
+} from "shared/lib/utils/passwordChecker";
+import {
   Button,
   Dialog,
   DialogContent,
@@ -32,6 +36,7 @@ export const ChangePasswordModal = ({
   const [touched, setTouched] = useState({ next: false, conf: false });
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
+  const result = useMemo(() => checkPasswordStrength(next), [next]);
   const [confirm, setConfirm] = useState("");
   const [show, setShow] = useState<{
     cur: boolean;
@@ -53,7 +58,10 @@ export const ChangePasswordModal = ({
   const match = next.length > 0 && next === confirm;
 
   const canSubmit =
-    (isCreate ? true : current.length > 0) && meetsPolicy && match;
+    (isCreate ? true : current.length > 0) &&
+    meetsPolicy &&
+    match &&
+    result.isValid;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -146,6 +154,25 @@ export const ChangePasswordModal = ({
                 New password and confirmation do not match.
               </p>
             )}
+            <div className="w-full lg:w-[70%]">
+              {next && (
+                <StrengthMeter
+                  level={result.level as 0 | 1 | 2 | 3}
+                  label={result.label}
+                />
+              )}
+
+              {next && !result.isValid && (
+                <ul
+                  id="password-help"
+                  className="mt-2 list-disc pl-2 text-xs  text-[#6B7280]"
+                >
+                  {result.feedback.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-2.5 w-full">

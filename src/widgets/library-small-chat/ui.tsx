@@ -11,7 +11,7 @@ import {
   setMessagesToChat,
 } from "entities/client/lib";
 import { CoachService } from "entities/coach";
-import { IFolder } from "entities/folder";
+import { IDocument } from "entities/document";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
 import { RootState } from "entities/store";
@@ -54,6 +54,7 @@ interface LibrarySmallChatProps {
   selectedText?: string;
   deleteSelectedText?: () => void;
   onDocumentRefresh?: (docId: string, chatId?: string) => void;
+  initialDocument?: IDocument | null;
 }
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
@@ -62,6 +63,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   selectedText,
   deleteSelectedText,
   onDocumentRefresh,
+  initialDocument,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -115,7 +117,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [message, setMessage] = useState<string>("");
   const [clientId, setClientId] = useState<string | null>(null);
   const [existingFiles, setExistingFiles] = useState<string[]>([]);
-  const [existingInstruction, setExistingInstruction] = useState<string>("");
+  const [existingInstruction, setExistingInstruction] = useState<string>(
+    initialDocument?.originalInstructions || ""
+  );
   const [instruction, setInstruction] = useState<string>("");
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [selectedVoice, setSelectedVoice] =
@@ -127,7 +131,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevSearchingRef = useRef(isSearching);
-  const folders = useSelector((state: RootState) => state.folder.folders);
 
   const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     scrollRef.current?.scrollIntoView({ block: "end", behavior });
@@ -145,33 +148,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       });
     }
   }, [isSearching, chatState.length]);
-
-  useEffect(() => {
-    const findFolder = (
-      folderId: string,
-      folders: IFolder[]
-    ): IFolder | undefined => {
-      for (const folder of folders) {
-        if (folder.id === folderId) {
-          return folder;
-        }
-        if (folder.subfolders) {
-          const foundInSubfolders = findFolder(folderId, folder.subfolders);
-          if (foundInSubfolders) {
-            return foundInSubfolders;
-          }
-        }
-      }
-      return undefined;
-    };
-
-    if (folders && folderId) {
-      const folder = findFolder(folderId, folders);
-      if (folder) {
-        setExistingInstruction(folder.customInstructions || "");
-      }
-    }
-  }, [folders, folderId]);
 
   useEffect(() => {
     if (folderId) {
@@ -807,7 +783,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           disabled={!folderState}
                         >
                           <MaterialIcon iconName="settings" size={24} />
-                          {instruction?.length > 0 && (
+                          {(instruction?.length > 0 ||
+                            existingInstruction?.length > 0) && (
                             <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                               1
                             </span>
@@ -986,7 +963,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             disabled={!folderState}
                           >
                             <MaterialIcon iconName="settings" size={24} />
-                            {instruction?.length > 0 && (
+                            {(instruction?.length > 0 ||
+                              existingInstruction?.length > 0) && (
                               <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                                 1
                               </span>

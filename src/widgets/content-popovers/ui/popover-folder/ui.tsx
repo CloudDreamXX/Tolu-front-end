@@ -1,7 +1,7 @@
 import { IFolder, ISubfolder, NewFolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
 import { RootState } from "entities/store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib/hooks/use-toast";
@@ -14,6 +14,7 @@ import {
 } from "shared/ui";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
+import { findPath, primeSelection } from "./helpers";
 
 interface PopoverFolderProps {
   folderId?: string;
@@ -30,9 +31,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   setExistingFiles,
   setExistingInstruction,
 }) => {
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(
-    folderId || null
-  );
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [selectedFolderName, setSelectedFolderName] = useState<string>("");
   const [subfolders, setSubfolders] = useState<ISubfolder[]>([]);
   const token = useSelector((state: RootState) => state.user.token);
@@ -83,12 +82,6 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
         if (response.folders.length > 0) {
           const firstFolder = response.folders[1];
           dispatch(setFolders(response));
-          if (firstFolder.subfolders) {
-            setSubfolders(firstFolder.subfolders);
-            setSelectedFolderName(firstFolder.name);
-            setParentFolderId(firstFolder.id);
-            setSubfolderPopup(true);
-          }
         }
       } catch (error) {
         console.error("Error fetching folders:", error);
@@ -98,14 +91,38 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     fetchFolders();
   }, [token, dispatch]);
 
+  const primedRef = useRef(false);
+
   useEffect(() => {
-    if (!folderId) {
-      setSelectedFolder(null);
-      setSelectedFolderName("");
-    } else {
-      setSelectedFolder(folderId);
+    if (!allFolders?.length || primedRef.current) return;
+
+    if (folderId) {
+      const pathExists = !!findPath(folderId, allFolders);
+      if (pathExists) {
+        primeSelection(folderId, allFolders, {
+          setSelectedFolder,
+          setParentFolderId,
+          setSelectedFolderName,
+          setSubfolders,
+          setSubfolderPopup,
+          setExistingFiles,
+          setExistingInstruction,
+          setPopoverOpen,
+          setFolderId,
+        });
+        primedRef.current = true;
+        return;
+      }
     }
-  }, [folderId]);
+
+    const first = allFolders[0];
+    setSelectedFolder(null);
+    setSelectedFolderName(first?.name ?? "");
+    setParentFolderId(first?.id ?? null);
+    setSubfolders(first?.subfolders ?? []);
+    setSubfolderPopup(false);
+    primedRef.current = true;
+  }, [folderId, allFolders]);
 
   const toggleFolderSelection = (folder: IFolder) => {
     if (subfolderPopup) {

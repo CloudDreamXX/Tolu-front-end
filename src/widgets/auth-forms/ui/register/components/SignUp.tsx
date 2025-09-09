@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Link } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
@@ -51,7 +57,7 @@ export const SignUp: React.FC<SignUpProps> = ({
   const [showNewPassword, setShowNewPassword] = useState(true);
   const [formattedPhone, setFormattedPhone] = useState("");
   const [loading, setLoading] = useState(false);
-  const result = React.useMemo(
+  const result = useMemo(
     () => checkPasswordStrength(formData.password),
     [formData.password]
   );
@@ -323,7 +329,7 @@ export const SignUp: React.FC<SignUpProps> = ({
       <div className="flex flex-col w-full items-center gap-[24px] self-stretch">
         <button
           type="submit"
-          disabled={!isFormValid() || loading || result.level !== 3}
+          disabled={!isFormValid() || loading || !result.isValid}
           className={
             !isFormValid() || loading
               ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65]  text-[16px] font-semibold cursor-not-allowed"
