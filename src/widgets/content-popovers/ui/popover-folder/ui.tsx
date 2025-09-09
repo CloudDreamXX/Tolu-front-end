@@ -14,7 +14,6 @@ import {
 } from "shared/ui";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
-import { findPath, primeSelection } from "./helpers";
 
 interface PopoverFolderProps {
   folderId?: string;
@@ -31,7 +30,9 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   setExistingFiles,
   setExistingInstruction,
 }) => {
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(
+    null
+  );
   const [selectedFolderName, setSelectedFolderName] = useState<string>("");
   const [subfolders, setSubfolders] = useState<ISubfolder[]>([]);
   const token = useSelector((state: RootState) => state.user.token);
@@ -80,7 +81,14 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       try {
         const response = await FoldersService.getFolders();
         if (response.folders.length > 0) {
+          const firstFolder = response.folders[1];
           dispatch(setFolders(response));
+          if (firstFolder.subfolders) {
+            setSubfolders(firstFolder.subfolders);
+            setSelectedFolderName(firstFolder.name);
+            setParentFolderId(firstFolder.id);
+            setSubfolderPopup(true);
+          }
         }
       } catch (error) {
         console.error("Error fetching folders:", error);
@@ -90,38 +98,14 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     fetchFolders();
   }, [token, dispatch]);
 
-  const primedRef = useRef(false);
-
   useEffect(() => {
-    if (!allFolders?.length || primedRef.current) return;
-
-    if (folderId) {
-      const pathExists = !!findPath(folderId, allFolders);
-      if (pathExists) {
-        primeSelection(folderId, allFolders, {
-          setSelectedFolder,
-          setParentFolderId,
-          setSelectedFolderName,
-          setSubfolders,
-          setSubfolderPopup,
-          setExistingFiles,
-          setExistingInstruction,
-          setPopoverOpen,
-          setFolderId,
-        });
-        primedRef.current = true;
-        return;
-      }
+    if (!folderId) {
+      setSelectedFolder(null);
+      setSelectedFolderName("");
+    } else {
+      setSelectedFolder(folderId);
     }
-
-    const first = allFolders[1];
-    setSelectedFolder(null);
-    setSelectedFolderName(first?.name ?? "");
-    setParentFolderId(first?.id ?? null);
-    setSubfolders(first?.subfolders ?? []);
-    setSubfolderPopup(false);
-    primedRef.current = true;
-  }, [folderId, allFolders]);
+  }, [folderId]);
 
   const toggleFolderSelection = (folder: IFolder) => {
     if (subfolderPopup) {
@@ -277,8 +261,8 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
               {subfolders.map((subfolder) => (
                 <button
                   className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${selectedFolder === subfolder.id
-                      ? "bg-blue-50 border border-blue-200"
-                      : "bg-white"
+                    ? "bg-blue-50 border border-blue-200"
+                    : "bg-white"
                     }`}
                   key={subfolder.id}
                   onClick={() => toggleFolderSelection(subfolder)}
