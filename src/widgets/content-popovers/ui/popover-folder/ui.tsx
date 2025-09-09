@@ -80,7 +80,6 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       try {
         const response = await FoldersService.getFolders();
         if (response.folders.length > 0) {
-          const firstFolder = response.folders[1];
           dispatch(setFolders(response));
         }
       } catch (error) {
@@ -115,7 +114,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       }
     }
 
-    const first = allFolders[0];
+    const first = allFolders[1];
     setSelectedFolder(null);
     setSelectedFolderName(first?.name ?? "");
     setParentFolderId(first?.id ?? null);
@@ -277,11 +276,10 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
             <div className="grid w-full md:grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
               {subfolders.map((subfolder) => (
                 <button
-                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
-                    selectedFolder === subfolder.id
+                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${selectedFolder === subfolder.id
                       ? "bg-blue-50 border border-blue-200"
                       : "bg-white"
-                  }`}
+                    }`}
                   key={subfolder.id}
                   onClick={() => toggleFolderSelection(subfolder)}
                 >
