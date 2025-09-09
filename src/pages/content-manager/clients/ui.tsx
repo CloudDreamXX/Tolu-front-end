@@ -104,6 +104,7 @@ export const ContentManagerClients: React.FC = () => {
   const [dragOver, setDragOver] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -151,12 +152,22 @@ export const ContentManagerClients: React.FC = () => {
     fetchClients();
   }, []);
 
+  const filteredClients = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return clientsData;
+    return clientsData.filter((c) => {
+      const name = (c.name ?? "").toLowerCase();
+      const status = (c.status ?? "").toLowerCase();
+      return name.includes(q) || status.includes(q);
+    });
+  }, [clientsData, searchQuery]);
+
   const paginatedClients = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return clientsData.slice(start, start + PAGE_SIZE);
-  }, [clientsData, currentPage]);
+    return filteredClients.slice(start, start + PAGE_SIZE);
+  }, [filteredClients, currentPage]);
 
-  const totalPages = Math.ceil(clientsData.length / PAGE_SIZE);
+  const totalPages = Math.ceil(filteredClients.length / PAGE_SIZE);
 
   const handleCancelEdit = () => {
     setConfirmDiscard(true);
@@ -583,6 +594,11 @@ export const ContentManagerClients: React.FC = () => {
                   <MaterialIcon iconName="search" size={16} />
                   <input
                     placeholder="Search"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1);
+                    }}
                     className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000]"
                   />
                 </div>

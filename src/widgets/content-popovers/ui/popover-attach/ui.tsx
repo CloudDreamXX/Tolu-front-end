@@ -74,6 +74,12 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   );
 
   useEffect(() => {
+    if (attachedFiles.length && setFiles) {
+      setFiles(attachedFiles.map((file) => file.file));
+    }
+  }, [attachedFiles]);
+
+  useEffect(() => {
     if (files && files.length > 0) {
       const newAttachedFiles = files.map((file) => ({
         name: file.name,
@@ -316,7 +322,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                     <MaterialIcon iconName="docs" fill={1} />
                     <div className="flex flex-col flex-1">
                       <span className="text-sm font-medium text-gray-800 truncate">
-                        {file.filename}
+                        {file.filename || file}
                       </span>
                     </div>
                   </div>

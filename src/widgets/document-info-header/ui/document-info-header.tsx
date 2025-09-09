@@ -1,8 +1,9 @@
-import { Share } from "entities/coach";
+import { CoachService, Share, UpdateFolderRequest } from "entities/coach";
 import { IDocument } from "entities/document";
 import { ClientsInfo, FilesInfo, InstructionInfo } from "entities/folder";
 import { HashtagsInfo } from "entities/folder/ui/hashtags-info/ui";
 import React from "react";
+import { toast } from "shared/lib";
 
 interface DocumentInfoHeaderProps {
   document: IDocument | null;
@@ -19,6 +20,27 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
   folderInstructions,
   refreshSharedClients,
 }) => {
+  const handleInstructionsSave = async (instruction: string) => {
+    try {
+      if (document) {
+        const payload: UpdateFolderRequest = {
+          folder_id: document?.originalFolderId,
+          instructions: instruction,
+        };
+        await CoachService.editFolder(payload);
+        toast({
+          title: "Folder's instruction saved successfully",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Failed to save folder's instruction",
+      });
+    }
+  };
+
   return (
     <div className="flex w-full flex-col md:flex-row md:flex-wrap gap-[2px] md:gap-x-4 md:gap-y-2 py-4 md:items-center sticky -top-[10px] z-30 xl:z-10 bg-[#F2F4F6]">
       {document ? (
@@ -30,6 +52,7 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
         <InstructionInfo
           instructions={document.originalInstructions}
           folderInstructions={folderInstructions}
+          setInstruction={handleInstructionsSave}
         />
       ) : (
         <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>

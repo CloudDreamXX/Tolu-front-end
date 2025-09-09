@@ -248,6 +248,7 @@ export const ContentManagerDocument: React.FC = () => {
       };
 
       await ContentService.updateContentStatus(payload);
+      await loadDocument(documentId);
       toast({
         title: "Status changed successfully",
       });
@@ -281,7 +282,11 @@ export const ContentManagerDocument: React.FC = () => {
             sharedClients={sharedClients}
             documentId={documentId}
             refreshSharedClients={refreshSharedClients}
-            folderInstructions={folder?.customInstructions || undefined}
+            folderInstructions={
+              folder?.customInstructions ||
+              folder?.subfolders[0].customInstructions ||
+              undefined
+            }
           />
 
           <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">
@@ -394,6 +399,8 @@ export const ContentManagerDocument: React.FC = () => {
 
         {isDeleteOpen && (
           <DeleteMessagePopup
+            title="Delete document?"
+            text="Are you sure you want to delete this document? This action cannot be undone"
             contentId={selectedDocumentId}
             onCancel={() => setIsDeleteOpen(false)}
             onDelete={handleDeleteClick}

@@ -78,7 +78,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
       onClick={() => onOpenChange(false)}
     >
       <div
-        className="relative bg-white rounded-[18px] w-full max-w-3xl p-[16px] xl:p-6 flex flex-col gap-6"
+        className="relative bg-white rounded-[18px] w-full max-w-3xl p-[16px] xl:p-6 flex flex-col gap-6 max-h-[95vh]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -90,74 +90,76 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
             <MaterialIcon iconName="close" size={24} />
           </button>
         </div>
-
-        <p className="text-gray-600">
-          Your input helps us improve our answers and better support your needs.
-        </p>
-
-        <div className="flex flex-col items-center gap-4 p-6 border rounded-lg">
-          <span className="ml-2 text-2xl">{getRatingText()}</span>
-          <div className="flex items-center justify-center gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onClick={() => setRating(star)}
-                className={`${
-                  star <= rating ? "text-yellow-400" : "text-gray-300"
-                }`}
-              >
-                <MaterialIcon
-                  iconName="star"
-                  className="cursor-pointer w-14 h-14"
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">
-            Your comments <span className="text-gray-500">(Optional)</span>
-          </label>
-          <Input
-            placeholder="Leave your short feedback"
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            className="text-base"
-          />
-        </div>
-
-        <div className="mb-6">
-          <p className="mb-3 font-medium">
-            Would you like to see more answers like this?
+        <div className="flex flex-col gap-6 overflow-y-auto">
+          <p className="text-gray-600">
+            Your input helps us improve our answers and better support your
+            needs.
           </p>
-          <RadioGroup
-            value={contentPreference}
-            onValueChange={setContentPreference}
-            className="space-y-2"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="yes" id="yes" />
-              <label htmlFor="yes" className="font-medium">
-                Yes
-              </label>
+
+          <div className="flex flex-col items-center gap-4 p-6 border rounded-lg">
+            <span className="ml-2 text-2xl">{getRatingText()}</span>
+            <div className="flex items-center justify-center gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className={`${
+                    star <= rating ? "text-yellow-400" : "text-gray-300"
+                  }`}
+                >
+                  <MaterialIcon
+                    iconName="star"
+                    className="cursor-pointer w-14 h-14"
+                  />
+                </button>
+              ))}
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id="no" />
-              <label htmlFor="no" className="font-medium">
-                No
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                value="show me something new"
-                id="show me something new"
-              />
-              <label htmlFor="show me something new" className="font-medium">
-                Show me something new
-              </label>
-            </div>
-          </RadioGroup>
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2 font-medium">
+              Your comments <span className="text-gray-500">(Optional)</span>
+            </label>
+            <Input
+              placeholder="Leave your short feedback"
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              className="text-base"
+            />
+          </div>
+
+          <div className="mb-6">
+            <p className="mb-3 font-medium">
+              Would you like to see more answers like this?
+            </p>
+            <RadioGroup
+              value={contentPreference}
+              onValueChange={setContentPreference}
+              className="space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="yes" />
+                <label htmlFor="yes" className="font-medium">
+                  Yes
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="no" />
+                <label htmlFor="no" className="font-medium">
+                  No
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="show me something new"
+                  id="show me something new"
+                />
+                <label htmlFor="show me something new" className="font-medium">
+                  Show me something new
+                </label>
+              </div>
+            </RadioGroup>
+          </div>
         </div>
 
         <Button

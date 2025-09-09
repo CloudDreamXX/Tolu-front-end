@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from ".";
+import { useState } from "react";
 
 interface TooltipWrapperProps {
   content: React.ReactNode;
@@ -25,15 +26,29 @@ export const TooltipWrapper: React.FC<TooltipWrapperProps> = ({
 }) => {
   const { isMobileOrTablet } = usePageWidth();
 
+  const [open, setOpen] = useState(false);
+
   if (isMobileOrTablet) {
     return (
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <button type="button" className={tooltipTriggerStyle}>
+          <button
+            type="button"
+            className={tooltipTriggerStyle}
+            onClick={() => setOpen((v) => !v)}
+            aria-haspopup="dialog"
+            aria-expanded={open}
+          >
             {children}
           </button>
         </PopoverTrigger>
-        <PopoverContent className={tooltipContentStyle}>
+        <PopoverContent
+          className={tooltipContentStyle}
+          side="top"
+          align="center"
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
           {content}
         </PopoverContent>
       </Popover>

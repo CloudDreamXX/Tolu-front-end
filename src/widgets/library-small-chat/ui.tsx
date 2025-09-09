@@ -112,7 +112,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
   const [streamingText, setStreamingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [currentChatId, setCurrentChatId] = useState<string>("");
+  const [currentChatId, setCurrentChatId] = useState<string>(lastChatId || "");
   const [chatTitle, setChatTitle] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [clientId, setClientId] = useState<string | null>(null);

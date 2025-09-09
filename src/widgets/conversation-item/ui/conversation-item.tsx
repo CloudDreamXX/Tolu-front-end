@@ -230,41 +230,43 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   };
 
   const renderEditView = () => (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full min-w-0">
       <input
         type="text"
         value={editedTitle}
         onChange={(e) => setEditedTitle(e.target.value)}
         placeholder="Title"
-        className="text-xl font-bold w-full border border-[#008FF6] rounded-[16px] p-[16px] outline-none"
+        className="text-xl font-bold w-full max-w-full min-w-0 box-border border border-[#008FF6] rounded-[16px] px-4 py-3 outline-none"
       />
 
-      <div className="editor-wrap bg-white border rounded-[16px] p-0">
+      <div className="editor-wrap w-full max-w-full min-w-0 bg-white border border-[#008FF6] rounded-[16px] overflow-hidden">
         <Editor
           value={editedContent}
           onTextChange={handleEditorChange}
-          style={{ height: "200px" }}
-          className="bg-white border border-[#008FF6] rounded-[16px] p-[16px] h-fit"
+          style={{ width: "100%" }}
+          className="w-full max-w-full min-w-0 bg-white p-3 h-fit"
         />
       </div>
 
       {isEditing && (
-        <div className="flex flex-row self-end gap-[8px]">
+        <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
           <button
-            className="text-[#1C63DB] text-[16px] px-4"
+            className="text-[#1C63DB] text-[16px] px-4 py-2"
             onClick={onCancelEdit}
           >
             Cancel
           </button>
-          <Button variant="light-blue" onClick={onRestoreOriginalFormat}>
+          <Button
+            className="px-4 py-2"
+            variant="light-blue"
+            onClick={onRestoreOriginalFormat}
+          >
             Restore original format
           </Button>
           <Button
             variant="brightblue"
-            className="text-[16px] px-8"
-            onClick={() => {
-              onSaveEdit(pair.id);
-            }}
+            className="text-[16px] px-4 py-2"
+            onClick={() => onSaveEdit(pair.id)}
           >
             Save changes
           </Button>

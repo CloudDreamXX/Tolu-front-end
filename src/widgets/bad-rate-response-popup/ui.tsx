@@ -36,7 +36,7 @@ export const BadRateResponse: React.FC<Props> = ({
       role="dialog"
       aria-labelledby="modal-title"
     >
-      <div className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px]">
+      <div className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[95vh]">
         <button
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
@@ -52,7 +52,7 @@ export const BadRateResponse: React.FC<Props> = ({
           What was wrong with this response?
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px] overflow-y-auto">
           {reasons.map((reason) => (
             <button
               key={reason}

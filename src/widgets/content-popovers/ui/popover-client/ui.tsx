@@ -402,15 +402,14 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
             onClick={() => setPopoverOpen(true)}
           >
             <MaterialIcon iconName="account_circle" size={24} fill={1} />
-            {selectedClients ||
-              (tempSelectedClients && (
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
-                >
-                  1
-                </Badge>
-              ))}
+            {(selectedClients || tempSelectedClients) && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
+              >
+                1
+              </Badge>
+            )}
           </Button>
         )}
       </PopoverTrigger>

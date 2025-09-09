@@ -5,6 +5,7 @@ interface InstructionInfoProps {
   folderInstructions?: string | null;
   title?: string;
   description?: string;
+  setInstruction?: (instruction: string) => void;
 }
 
 export const InstructionInfo: React.FC<InstructionInfoProps> = ({
@@ -12,6 +13,7 @@ export const InstructionInfo: React.FC<InstructionInfoProps> = ({
   description,
   folderInstructions,
   instructions,
+  setInstruction,
 }) => {
   return (
     <PopoverInstruction
@@ -26,6 +28,7 @@ export const InstructionInfo: React.FC<InstructionInfoProps> = ({
       description={description}
       existingInstruction={instructions || ""}
       folderInstruction={folderInstructions || ""}
+      setInstruction={setInstruction}
     />
   );
 };

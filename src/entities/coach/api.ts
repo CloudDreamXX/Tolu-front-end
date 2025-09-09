@@ -17,6 +17,7 @@ import {
   ShareContentData,
   SharedContent,
   Status,
+  UpdateFolderRequest,
   UpdateHealthHistoryRequest,
 } from "./model";
 
@@ -372,5 +373,29 @@ export class CoachService {
         "Content-Type": "application/json",
       },
     });
+  }
+
+  static async editFolder(
+    payload: UpdateFolderRequest,
+    files: File[] = []
+  ): Promise<{ success: boolean; message: string }> {
+    const endpoint =
+      (import.meta.env.VITE_API_URL ?? "") + API_ROUTES.COACH_ADMIN.EDIT_FOLDER;
+
+    const form = new FormData();
+    form.append("edit_data", JSON.stringify(payload));
+    files.forEach((f) => form.append("files", f));
+
+    const res = await fetch(endpoint, {
+      method: "PUT",
+      body: form,
+    });
+
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      throw new Error(`Failed to edit folder (${res.status}) ${detail}`);
+    }
+
+    return res.json();
   }
 }

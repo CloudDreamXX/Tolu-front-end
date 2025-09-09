@@ -335,3 +335,13 @@ export interface ClientComprehensiveProfile {
   biometrics: BiometricsInfo;
   labs: LabsInfo[];
 }
+export interface UpdateFolderRequest {
+  folder_id: string;
+  new_name?: string;
+  parent_folder_id?: string | null;
+  status?: string;
+  instructions?: string;
+  reviewer_ids?: string[];
+  reviewer_ids_to_delete?: string[];
+  files_to_delete?: number[];
+}
