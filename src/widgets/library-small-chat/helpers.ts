@@ -1,5 +1,6 @@
 import { FormValues } from "pages/content-manager/create/case-search";
 import { SwitchValue } from "./switch-config";
+import { IFolder, ISubfolder } from "entities/folder";
 
 export const extractVoiceText = (input: string): string => {
   if (!input) return "";
@@ -68,3 +69,31 @@ export const subTitleSwitch = (key: SwitchValue) => {
       return null;
   }
 };
+
+type FolderNode = IFolder | ISubfolder;
+
+export function findFolderById(
+  folders: ReadonlyArray<IFolder>,
+  id: string
+): FolderNode | undefined {
+  for (const folder of folders) {
+    if (folder.id === id) return folder;
+    const found = findInSubfolders(folder.subfolders, id);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+function findInSubfolders(
+  subfolders: ReadonlyArray<ISubfolder>,
+  id: string
+): ISubfolder | undefined {
+  for (const sub of subfolders) {
+    if (sub.id === id) return sub;
+    if (sub.subfolders?.length) {
+      const deeper = findInSubfolders(sub.subfolders, id);
+      if (deeper) return deeper;
+    }
+  }
+  return undefined;
+}

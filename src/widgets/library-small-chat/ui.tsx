@@ -791,7 +791,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           )}
                         </Button>
                       }
-                      existingInstruction={existingInstruction}
+                      folderInstruction={existingInstruction}
                       setInstruction={setInstruction}
                     />
                   </div>
@@ -971,8 +971,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             )}
                           </Button>
                         }
-                        existingInstruction={existingInstruction}
                         setInstruction={setInstruction}
+                        folderInstruction={existingInstruction}
                       />
                     </div>
                     <Button

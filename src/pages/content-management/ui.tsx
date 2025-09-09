@@ -50,7 +50,7 @@ const CATEGORY_KEYS: (keyof AdminFoldersStructureResponse)[] = [
 
 const PAGE_SIZE = 10;
 
-const findFolderById = (
+export const findFolderById = (
   folders: Folder[] = [],
   id: string
 ): Folder | undefined => {

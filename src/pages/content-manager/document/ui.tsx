@@ -281,6 +281,7 @@ export const ContentManagerDocument: React.FC = () => {
             sharedClients={sharedClients}
             documentId={documentId}
             refreshSharedClients={refreshSharedClients}
+            folderInstructions={folder?.customInstructions || undefined}
           />
 
           <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">

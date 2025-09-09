@@ -8,6 +8,7 @@ interface DocumentInfoHeaderProps {
   document: IDocument | null;
   sharedClients: Share[] | null;
   documentId?: string;
+  folderInstructions?: string | null;
   refreshSharedClients: () => Promise<void>;
 }
 
@@ -15,6 +16,7 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
   document,
   sharedClients,
   documentId,
+  folderInstructions,
   refreshSharedClients,
 }) => {
   return (
@@ -25,7 +27,10 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
         <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
       )}
       {document ? (
-        <InstructionInfo instructions={document.originalInstructions} />
+        <InstructionInfo
+          instructions={document.originalInstructions}
+          folderInstructions={folderInstructions}
+        />
       ) : (
         <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
       )}

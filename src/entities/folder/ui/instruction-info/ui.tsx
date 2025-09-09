@@ -2,6 +2,7 @@ import { PopoverInstruction } from "widgets/content-popovers";
 
 interface InstructionInfoProps {
   instructions?: string | null;
+  folderInstructions?: string | null;
   title?: string;
   description?: string;
 }
@@ -9,6 +10,7 @@ interface InstructionInfoProps {
 export const InstructionInfo: React.FC<InstructionInfoProps> = ({
   title,
   description,
+  folderInstructions,
   instructions,
 }) => {
   return (
@@ -23,6 +25,7 @@ export const InstructionInfo: React.FC<InstructionInfoProps> = ({
       title={title}
       description={description}
       existingInstruction={instructions || ""}
+      folderInstruction={folderInstructions || ""}
     />
   );
 };

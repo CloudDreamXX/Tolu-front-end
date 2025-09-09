@@ -15,6 +15,7 @@ interface PopoverInstructionProps {
   description?: string;
   setInstruction?: (instruction: string) => void;
   existingInstruction?: string;
+  folderInstruction?: string;
   disabled?: boolean;
 }
 
@@ -24,6 +25,7 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
   description = "Instruct how you want Tolu to respond",
   setInstruction,
   existingInstruction = "",
+  folderInstruction,
   disabled = false,
 }) => {
   const [instructionText, setInstructionText] = useState<string>("");
@@ -32,7 +34,6 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
 
   useEffect(() => {
     if (existingInstruction) {
-      setSavedInstruction(existingInstruction);
       setInstructionText(existingInstruction);
     }
   }, [existingInstruction]);
@@ -90,16 +91,29 @@ export const PopoverInstruction: React.FC<PopoverInstructionProps> = ({
         </h4>
         <p className="text-sm text-[#5F5F65]">{description}</p>
 
-        {existingInstruction && (
+        {folderInstruction && (
           <div className="p-3 border border-blue-200 rounded-lg bg-blue-50">
             <div className="mb-1 text-sm font-medium text-blue-800">
               Existing folder instruction:
             </div>
             <div className="text-sm text-blue-700 whitespace-pre-wrap">
-              {existingInstruction}
+              {folderInstruction}
             </div>
           </div>
         )}
+
+        {existingInstruction &&
+          savedInstruction === "" &&
+          existingInstruction !== folderInstruction && (
+            <div className="p-3 border border-green-200 rounded-lg bg-green-50">
+              <div className="mb-1 text-sm font-medium text-green-800">
+                Current instruction:
+              </div>
+              <div className="text-sm text-green-700 whitespace-pre-wrap">
+                {existingInstruction}
+              </div>
+            </div>
+          )}
 
         {savedInstruction && savedInstruction !== existingInstruction && (
           <div className="p-3 border border-green-200 rounded-lg bg-green-50">

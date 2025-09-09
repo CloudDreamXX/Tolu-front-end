@@ -1,7 +1,7 @@
 import { IFolder, ISubfolder, NewFolder, setFolders } from "entities/folder";
 import { FoldersService } from "entities/folder/api";
 import { RootState } from "entities/store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib/hooks/use-toast";
@@ -31,7 +31,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   setExistingInstruction,
 }) => {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(
-    null
+    folderId || null
   );
   const [selectedFolderName, setSelectedFolderName] = useState<string>("");
   const [subfolders, setSubfolders] = useState<ISubfolder[]>([]);
@@ -102,10 +102,27 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     if (!folderId) {
       setSelectedFolder(null);
       setSelectedFolderName("");
-    } else {
-      setSelectedFolder(folderId);
+      setExistingFiles?.([]);
+      setExistingInstruction?.("");
+      return;
     }
-  }, [folderId]);
+
+    setSelectedFolder(folderId);
+
+    const folder = findFolder(folderId, allFolders);
+
+    if (folder) {
+      setSelectedFolderName(folder.name ?? "");
+
+      setExistingFiles?.(folder.fileNames?.map((f) => f.filename) ?? []);
+      setExistingInstruction?.(folder.customInstructions ?? "");
+
+      setParentFolderId((folder as any).parent_folder_id ?? parentFolderId);
+    } else {
+      setExistingFiles?.([]);
+      setExistingInstruction?.("");
+    }
+  }, [folderId, allFolders]);
 
   const toggleFolderSelection = (folder: IFolder) => {
     if (subfolderPopup) {
@@ -260,10 +277,11 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
             <div className="grid w-full md:grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
               {subfolders.map((subfolder) => (
                 <button
-                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${selectedFolder === subfolder.id
-                    ? "bg-blue-50 border border-blue-200"
-                    : "bg-white"
-                    }`}
+                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
+                    selectedFolder === subfolder.id
+                      ? "bg-blue-50 border border-blue-200"
+                      : "bg-white"
+                  }`}
                   key={subfolder.id}
                   onClick={() => toggleFolderSelection(subfolder)}
                 >
