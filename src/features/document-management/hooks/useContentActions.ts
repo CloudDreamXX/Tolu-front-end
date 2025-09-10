@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "entities/store";
 import { IDocument } from "entities/document";
+import { toast } from "shared/lib";
 
 export const useContentActions = () => {
   const dispatch = useDispatch();
@@ -137,6 +138,9 @@ export const useContentActions = () => {
     }
 
     await FoldersService.deleteContent(currentContentId);
+    toast({
+      title: "Deleted successfully",
+    });
 
     const folderResponse = await FoldersService.getFolders();
     dispatch(setFolders(folderResponse));

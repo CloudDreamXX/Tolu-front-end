@@ -101,9 +101,6 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   useEffect(() => {
     if (!folderId) {
       setSelectedFolder(null);
-      setSelectedFolderName("");
-      setExistingFiles?.([]);
-      setExistingInstruction?.("");
       return;
     }
 
@@ -112,7 +109,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
     const folder = findFolder(folderId, allFolders);
 
     if (folder) {
-      setSelectedFolderName(folder.name ?? "");
+      // setSelectedFolderName(folder.name ?? "");
 
       setExistingFiles?.(folder.fileNames?.map((f) => f.filename) ?? []);
       setExistingInstruction?.(folder.customInstructions ?? "");

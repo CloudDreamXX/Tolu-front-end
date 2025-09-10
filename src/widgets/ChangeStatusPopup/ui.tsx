@@ -112,7 +112,7 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
 
         {subfoldersOpen ? (
           <ChooseSubfolderPanel
-            parentFolderId={"cc113783-26db-4bb7-a1e6-3cd3e0032c1f"}
+            parentFolderId={""}
             selectedFolderId={selectedSubfolderId}
             onSelect={(folderId) => setSelectedSubfolderId(folderId)}
           />

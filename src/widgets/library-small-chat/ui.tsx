@@ -6,6 +6,7 @@ import {
   clearAllChatHistory,
   setActiveChat,
   setFilesToChat,
+  setFolderId,
   setFolderToChat,
   setLastChatId,
   setMessagesToChat,
@@ -682,6 +683,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     dispatch(clearAllChatHistory());
     dispatch(clearActiveChatHistory());
     handleSetFolder(null);
+    setFolderToChat(null);
+    setFolderId("");
+    setInstruction("");
+    setExistingInstruction("");
     navigate("/content-manager/create");
   };
 

@@ -29,13 +29,13 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
         const folderResponse = await FoldersService.getFolders();
         dispatch(setFolders(folderResponse));
 
-        const parentFolder = folderResponse.folders.find(
-          (f) => f.id === parentFolderId
+        const selectedFolder = folderResponse.folders.find(
+          (f) => f.id === selectedFolderId
         );
 
-        if (parentFolder?.subfolders) {
-          setSubfolders(parentFolder.subfolders);
-          setSelectedFolderName(parentFolder.name);
+        if (selectedFolder?.subfolders) {
+          setSubfolders(selectedFolder.subfolders);
+          setSelectedFolderName(selectedFolder.name);
         }
       } catch (error) {
         console.error("Error fetching folders:", error);
