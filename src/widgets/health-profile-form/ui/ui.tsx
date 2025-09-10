@@ -386,7 +386,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
+      <DialogContent className="w-[calc(100%-32px)] md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 flex flex-col translate-x-[-50%] translate-y-[-50%]">
         <DialogTitle>Your Health Status Now</DialogTitle>
 
         <Steps
@@ -399,7 +399,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           onStepClick={goToStep}
         />
 
-        <div className="max-h-[70vh] overflow-y-auto">
+        <div className="max-h-[65vh] overflow-y-auto">
           <Form {...form}>
             {currentStep === 0 && <BasicInformationForm form={form} />}
             {currentStep === 1 && <SocialFactorsForm form={form} />}
@@ -413,10 +413,10 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           </Form>
         </div>
 
-        <div className="flex flex-row justify-between w-full">
+        <div className="flex flex-row gap-4 justify-between w-full">
           <Button
             variant="blue2"
-            className="w-32"
+            className="w-24 md:w-32"
             onClick={() => {
               setIsOpen(false);
               setConfirmOpen(true);
@@ -428,7 +428,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
             {currentStep > 0 && (
               <Button
                 variant="light-blue"
-                className="w-32 bg-white"
+                className="w-24 md:w-32 bg-white"
                 onClick={handlePreviousStep}
               >
                 Back
@@ -436,7 +436,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
             )}
             <Button
               variant="brightblue"
-              className="w-32"
+              className="w-24 md:w-32"
               onClick={handleNextStep}
             >
               {currentStep === steps.length - 1 ? "Submit" : "Next"}

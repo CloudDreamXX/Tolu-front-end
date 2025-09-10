@@ -209,11 +209,33 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     };
   }, []);
 
+  const htmlToText = (html: string) => {
+    if (!html) return "";
+    const withBreaks = html
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(p|div|li|h[1-6]|blockquote)>/gi, "\n");
+    const el = document.createElement("div");
+    el.innerHTML = withBreaks;
+    const text = el.textContent || el.innerText || "";
+    return text
+      .replace(/\u00A0/g, " ")
+      .replace(/[ \t]+\n/g, "\n")
+      .trim();
+  };
+
   useEffect(() => {
-    if (chat?.[0]?.answer) {
-      setVoiceContent(extractVoiceText(chat[0].answer));
+    if (!Array.isArray(chatState) || chatState.length === 0) {
+      setVoiceContent("");
+      return;
     }
-  }, [chat]);
+
+    const joined = chatState
+      .map((m) => htmlToText(String(m.content ?? "")))
+      .filter(Boolean)
+      .join("\n\n");
+
+    setVoiceContent(joined);
+  }, [chatState.length]);
 
   useEffect(() => {
     return () => {

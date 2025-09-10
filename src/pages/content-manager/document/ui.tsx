@@ -284,7 +284,7 @@ export const ContentManagerDocument: React.FC = () => {
             refreshSharedClients={refreshSharedClients}
             folderInstructions={
               folder?.customInstructions ||
-              folder?.subfolders[0].customInstructions ||
+              folder?.subfolders[0]?.customInstructions ||
               undefined
             }
           />

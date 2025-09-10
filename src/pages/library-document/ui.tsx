@@ -243,9 +243,10 @@ export const LibraryDocument = () => {
       <div className="flex items-center gap-2 mb-4 md:gap-4">
         <HealthProfileForm healthHistory={healthHistory} />
         <Button
-          variant="brightblue"
+          variant="blue2"
           size={isMobile ? "sm" : "icon"}
-          className="px-[10px] rounded-full md:h-14 md:w-14"
+          className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+          disabled
         >
           {isMobile ? "Providers" : <MaterialIcon iconName="groups" fill={1} />}
         </Button>
@@ -253,6 +254,7 @@ export const LibraryDocument = () => {
           variant="blue2"
           size={isMobile ? "sm" : "icon"}
           className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+          disabled
         >
           {isMobile ? (
             "Communities (soon)"
@@ -303,41 +305,40 @@ export const LibraryDocument = () => {
               aria-label="Coach details"
             >
               <div className="flex flex-col items-center justify-center gap-3">
-                {creatorPhoto ||
-                  (creator && (
-                    <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
-                      <AvatarImage src={creatorPhoto || undefined} />
-                      <AvatarFallback className="text-3xl bg-slate-300 ">
-                        {creator.detailed_profile.personal_info.first_name !==
-                          "" &&
-                        creator.detailed_profile.personal_info.first_name !==
-                          null &&
-                        creator.detailed_profile.personal_info.last_name !==
-                          null &&
-                        creator.detailed_profile.personal_info.last_name !==
-                          "" ? (
-                          <div className="flex items-center">
-                            <span>
-                              {creator.detailed_profile.personal_info.first_name.slice(
-                                0,
-                                1
-                              )}
-                            </span>
-                            <span>
-                              {creator.detailed_profile.personal_info.last_name.slice(
-                                0,
-                                1
-                              )}
-                            </span>
-                          </div>
-                        ) : (
-                          creator.basic_info.name.slice(0, 1)
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
-                  ))}
+                {creator && (
+                  <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
+                    <AvatarImage src={creatorPhoto || undefined} />
+                    <AvatarFallback className="text-3xl bg-slate-300 ">
+                      {creator.detailed_profile.personal_info.first_name !==
+                        "" &&
+                      creator.detailed_profile.personal_info.first_name !==
+                        null &&
+                      creator.detailed_profile.personal_info.last_name !==
+                        null &&
+                      creator.detailed_profile.personal_info.last_name !==
+                        "" ? (
+                        <div className="flex items-center">
+                          <span>
+                            {creator.detailed_profile.personal_info.first_name.slice(
+                              0,
+                              1
+                            )}
+                          </span>
+                          <span>
+                            {creator.detailed_profile.personal_info.last_name.slice(
+                              0,
+                              1
+                            )}
+                          </span>
+                        </div>
+                      ) : (
+                        creator.basic_info.name.slice(0, 1)
+                      )}
+                    </AvatarFallback>
+                  </Avatar>
+                )}
 
-                <div className="text-[18px] text-[#111827] font-semibold">
+                <div className="text-[18px] text-[#111827] text-center font-semibold">
                   {creator?.basic_info.name}
                 </div>
               </div>
@@ -351,11 +352,13 @@ export const LibraryDocument = () => {
         </div>
       )}
       {isLoadingDocument && (
-        <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <MaterialIcon
-            iconName="progress_activity"
-            className="text-blue-600 animate-spin"
-          />
+        <div className="flex items-center gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
+          <span className="inline-flex h-5 w-5 items-center justify-center">
+            <MaterialIcon
+              iconName="progress_activity"
+              className="text-blue-600 animate-spin"
+            />
+          </span>
           Please wait, we are loading the information...
         </div>
       )}

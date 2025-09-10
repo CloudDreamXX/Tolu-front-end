@@ -273,7 +273,10 @@ export const NavigationClient: React.FC = () => {
 
             <div className="flex flex-col gap-[16px] mt-6">
               <button
-                onClick={() => setMenuMobOpen(false)}
+                onClick={() => {
+                  nav("/profile");
+                  setMenuMobOpen(false);
+                }}
                 className="flex gap-4 items-center pl-4 bg-[#F3F6FB] w-full py-[8px] px-[16px] rounded-[8px] justify-between"
               >
                 <Avatar>

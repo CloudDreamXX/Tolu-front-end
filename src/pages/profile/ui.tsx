@@ -368,7 +368,7 @@ export const ClientProfile = () => {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6">
+      <div className="flex flex-wrap items-center md:justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6">
         <div className="flex items-center gap-6 ">
           <div className="relative w-[100px] h-[100px]">
             <Avatar className="object-cover w-full h-full rounded-full">

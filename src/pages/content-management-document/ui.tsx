@@ -142,43 +142,42 @@ export const ContentManagementDocument = () => {
               aria-label="Coach details"
             >
               <div className="flex flex-col items-center justify-center gap-3">
-                {creatorPhoto ||
-                  (creator &&
-                    creator.detailed_profile &&
-                    creator.detailed_profile.personal_info && (
-                      <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
-                        <AvatarImage src={creatorPhoto || undefined} />
-                        <AvatarFallback className="text-3xl bg-slate-300 ">
-                          {creator.detailed_profile.personal_info.first_name !==
-                            "" &&
-                          creator.detailed_profile.personal_info.first_name !==
-                            null &&
-                          creator.detailed_profile.personal_info.last_name !==
-                            null &&
-                          creator.detailed_profile.personal_info.last_name !==
-                            "" ? (
-                            <div className="flex items-center">
-                              <span>
-                                {creator.detailed_profile.personal_info.first_name.slice(
-                                  0,
-                                  1
-                                )}
-                              </span>
-                              <span>
-                                {creator.detailed_profile.personal_info.last_name.slice(
-                                  0,
-                                  1
-                                )}
-                              </span>
-                            </div>
-                          ) : (
-                            creator.basic_info.name.slice(0, 1)
-                          )}
-                        </AvatarFallback>
-                      </Avatar>
-                    ))}
+                {creator &&
+                  creator.detailed_profile &&
+                  creator.detailed_profile.personal_info && (
+                    <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
+                      <AvatarImage src={creatorPhoto || undefined} />
+                      <AvatarFallback className="text-3xl bg-slate-300 ">
+                        {creator.detailed_profile.personal_info.first_name !==
+                          "" &&
+                        creator.detailed_profile.personal_info.first_name !==
+                          null &&
+                        creator.detailed_profile.personal_info.last_name !==
+                          null &&
+                        creator.detailed_profile.personal_info.last_name !==
+                          "" ? (
+                          <div className="flex items-center">
+                            <span>
+                              {creator.detailed_profile.personal_info.first_name.slice(
+                                0,
+                                1
+                              )}
+                            </span>
+                            <span>
+                              {creator.detailed_profile.personal_info.last_name.slice(
+                                0,
+                                1
+                              )}
+                            </span>
+                          </div>
+                        ) : (
+                          creator.basic_info.name.slice(0, 1)
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
 
-                <div className="text-[18px] text-[#111827] font-semibold">
+                <div className="text-[18px] text-[#111827] text-center font-semibold">
                   {creator?.basic_info.name}
                 </div>
               </div>

@@ -468,9 +468,10 @@ export const LibraryClientContent = ({
       <div className="flex items-center gap-2 mb-4 md:gap-4">
         <HealthProfileForm healthHistory={healthHistory} />
         <Button
-          variant="brightblue"
+          variant="blue2"
           size={isMobile ? "sm" : "icon"}
-          className="px-[10px] rounded-full md:h-14 md:w-14"
+          className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+          disabled
         >
           {isMobile ? "Providers" : <MaterialIcon iconName="groups" fill={1} />}
         </Button>
@@ -478,6 +479,7 @@ export const LibraryClientContent = ({
           variant="blue2"
           size={isMobile ? "sm" : "icon"}
           className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+          disabled
         >
           {isMobile ? (
             "Communities (soon)"

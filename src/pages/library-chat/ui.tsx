@@ -40,14 +40,6 @@ import {
 } from "widgets/library-small-chat/switch-config";
 import { MessageList } from "widgets/message-list";
 
-// const steps = [
-//   "Demographic",
-//   "Menopause Status",
-//   "Health history",
-//   "Your Lifestyle",
-//   "Your Goals",
-// ];
-
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
   const location = useLocation();
@@ -74,8 +66,12 @@ export const LibraryChat = () => {
   const activeChatKey = useSelector(
     (state: RootState) => state.client.activeChatKey
   );
+  const lastChatId = useSelector((state: RootState) => state.client.lastChatId);
+
+  const resolvedChatKey =
+    (isSearching ? activeChatKey : lastChatId) || activeChatKey;
   const chatState = useSelector(
-    (state: RootState) => state.client.chatHistory[activeChatKey] || []
+    (state: RootState) => state.client.chatHistory[resolvedChatKey] || []
   );
 
   const userPersisted = localStorage.getItem("persist:user");
@@ -201,12 +197,33 @@ export const LibraryChat = () => {
     };
   }, [chatId]);
 
+  const htmlToText = (html: string) => {
+    if (!html) return "";
+    const withBreaks = html
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(p|div|li|h[1-6]|blockquote)>/gi, "\n");
+    const el = document.createElement("div");
+    el.innerHTML = withBreaks;
+    const text = el.textContent || el.innerText || "";
+    return text
+      .replace(/\u00A0/g, " ")
+      .replace(/[ \t]+\n/g, "\n")
+      .trim();
+  };
+
   useEffect(() => {
-    if (chat) {
-      const strippedText = chat[0]?.answer.replace(/<\/?[^>]+(>|$)/g, "");
-      setVoiceContent(strippedText);
+    if (!Array.isArray(chatState) || chatState.length === 0) {
+      setVoiceContent("");
+      return;
     }
-  }, [chat]);
+
+    const joined = chatState
+      .map((m) => htmlToText(String(m.content ?? "")))
+      .filter(Boolean)
+      .join("\n\n");
+
+    setVoiceContent(joined);
+  }, [chatState.length]);
 
   const handleReadAloud = () => {
     setIsReadingAloud((prev) => !prev);
@@ -263,6 +280,7 @@ export const LibraryChat = () => {
         if (isExistingChat && location.state?.isNewSearch) {
           const newChatId = `new_chat_${Date.now()}`;
           setCurrentChatId(newChatId);
+          dispatch(setLastChatId(newChatId));
           if (isCoach) {
             navigate(`/content-manager/library/${newChatId}`, {
               replace: true,
@@ -289,71 +307,109 @@ export const LibraryChat = () => {
         }
       } else if (isExistingChat) {
         sessionLoadDone.current = true;
-        await loadExistingSession();
+        await loadExistingSession(chatId!);
       }
     };
 
     initialize();
   }, [chatId, initialMessage, location.state]);
 
-  const loadExistingSession = async () => {
-    if (!chatId) return;
+  useEffect(() => {
+    const fetchChat = async () => {
+      if (lastChatId) {
+        await loadExistingSession(lastChatId);
+      }
+    };
+    fetchChat();
+  }, [lastChatId]);
 
+  const loadExistingSession = async (id: string) => {
     setIsLoadingSession(true);
     setError(null);
+    const chatMessages: Message[] = [];
 
     try {
-      const sessionData = await CoachService.getSessionById(chatId);
-      dispatch(setLastChatId(chatId));
-      // const newChat = sessionData.search_results.filter((item) => item.chat_id === chatId);
-      // dispatch(setChat(newChat));
+      if (activeChatKey === "Create content") {
+        const sessionData = await CoachService.getSessionById(id);
 
-      if (sessionData && sessionData.search_results.length > 0) {
-        const chatMessages: Message[] = [];
-
-        sessionData.search_results.forEach((item) => {
-          if (item.query) {
-            chatMessages.push({
-              id: `user-${item.id}`,
-              type: "user",
-              content: item.query,
-              timestamp: new Date(item.created_at),
-            });
-          }
-
-          if (item.content) {
-            let content = item.content;
-            let document = item.content;
-
-            if (item.content.includes("Relevant Content")) {
-              const parts = item.content.split("Relevant Content");
-              content = parts[0].trim();
-              document = item.content;
+        if (sessionData && sessionData.search_results.length > 0) {
+          sessionData.search_results.forEach((item: any) => {
+            if (item.query) {
+              chatMessages.push({
+                id: `user-${item.id}`,
+                type: "user",
+                content: item.query,
+                timestamp: new Date(item.created_at),
+              });
             }
 
-            chatMessages.push({
-              id: `ai-${item.id}`,
-              type: "ai",
-              content,
-              timestamp: new Date(item.created_at),
-              document,
-            });
-          }
-        });
+            if (item.content) {
+              let content = item.content;
+              let document = item.content;
+
+              if (item.content.includes("Relevant Content")) {
+                const parts = item.content.split("Relevant Content");
+                content = parts[0].trim();
+                document = item.content;
+              }
+
+              chatMessages.push({
+                id: `ai-${item.id}`,
+                type: "ai",
+                content,
+                timestamp: new Date(item.created_at),
+                document,
+              });
+            }
+          });
+        }
+      } else {
+        const sessionData = await SearchService.getSession(id);
+
+        if (sessionData && sessionData.length > 0) {
+          sessionData.forEach((item: any) => {
+            if (item.query) {
+              chatMessages.push({
+                id: `user-${item.id}`,
+                type: "user",
+                content: item.query,
+                timestamp: new Date(item.created_at),
+              });
+            }
+
+            if (item.answer) {
+              let content = item.answer;
+              let document = item.answer;
+
+              if (item.answer.includes("Relevant Content")) {
+                const parts = item.answer.split("Relevant Content");
+                content = parts[0].trim();
+                document = item.answer;
+              }
+
+              chatMessages.push({
+                id: `ai-${item.id}`,
+                type: "ai",
+                content,
+                timestamp: new Date(item.created_at),
+                document,
+              });
+            }
+          });
+        }
 
         chatMessages.sort(
           (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
         );
 
-        dispatch(
-          setMessagesToChat({ chatKey: chatId, messages: chatMessages })
-        );
+        dispatch(setMessagesToChat({ chatKey: id, messages: chatMessages }));
 
-        if (sessionData.search_results[0]?.title) {
-          setChatTitle(sessionData.search_results[0].title);
+        if (sessionData?.[0]?.chat_title) {
+          setChatTitle(sessionData[0].chat_title);
         }
 
-        setCurrentChatId(chatId);
+        setCurrentChatId(id);
+        dispatch(setLastChatId(id));
       }
     } catch (error) {
       console.error("Error loading chat session:", error);
@@ -377,7 +433,7 @@ export const LibraryChat = () => {
         {
           chat_message: JSON.stringify({
             user_prompt: message,
-            is_new: true,
+            is_new: currentChatId.startsWith("new_chat_"),
             chat_id: currentChatId.startsWith("new_chat_")
               ? undefined
               : currentChatId,
@@ -406,7 +462,8 @@ export const LibraryChat = () => {
           );
           setStreamingText("");
 
-          if (finalData.chat_id && finalData.chat_id !== currentChatId) {
+          if (finalData.chat_id) {
+            dispatch(setLastChatId(finalData.chat_id));
             setCurrentChatId(finalData.chat_id);
 
             if (currentChatId.startsWith("new_chat_")) {
@@ -466,19 +523,6 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     files: File[]
   ): Promise<string | undefined> => {
     if ((!message.trim() && files.length === 0) || isSearching) return;
-
-    // if (isSwitch(SWITCH_KEYS.PERSONALIZE)) {
-    //   try {
-    //     const formValues = form.getValues();
-    //     const postData = mapFormToPostData(formValues);
-
-    //     await HealthHistoryService.createHealthHistory(postData);
-    //   } catch (error) {
-    //     console.error("Failed to save health history:", error);
-    //     setError("Failed to save health history before starting the chat.");
-    //     return;
-    //   }
-    // }
 
     const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     const previewImages = files
@@ -559,6 +603,10 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         returnedChatId = finalData.chat_id;
       }
 
+      if (finalData.chat_id) {
+        dispatch(setLastChatId(finalData.chat_id));
+      }
+
       if (finalData.chat_title) {
         setChatTitle(finalData.chat_title);
       }
@@ -570,7 +618,10 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           {
             chat_message: JSON.stringify({
               user_prompt: message,
-              is_new: false,
+              is_new: currentChatId.startsWith("new_chat_"),
+              chat_id: currentChatId.startsWith("new_chat_")
+                ? undefined
+                : currentChatId,
             }),
             images: images,
             pdf,
@@ -640,7 +691,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         {
           chat_message: JSON.stringify({
             user_prompt: lastUserMessage.content,
-            is_new: false,
+            is_new: currentChatId.startsWith("new_chat_"),
             chat_id: currentChatId.startsWith("new_chat_")
               ? undefined
               : currentChatId,
@@ -667,6 +718,10 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             addMessageToChat({ chatKey: activeChatKey, message: aiMessage })
           );
           setStreamingText("");
+
+          if (finalData.chat_id) {
+            dispatch(setLastChatId(finalData.chat_id));
+          }
         },
         (error) => {
           setIsSearching(false);
@@ -691,62 +746,19 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     !streamingText &&
     !isLoadingSession;
 
-  //   const goToStep = async (nextStep: number) => {
-  //     if (nextStep >= steps.length) {
-  //       const values = form.getValues();
-  //       const message = `Hi Tolu, I'm a ${values.age}-year-old and I'm ${values.maritalStatus}.
-  // I work as a ${values.job} and I have ${values.children} children.
-  // I live in ${values.location} and I'm a ${values.religion}.
-  // I consider my financial ability ${values.financialStatus}.
-  // I was born a ${values.genderAssignedAtBirth} and I identify as a ${values.genderIdentity}.
-
-  // I am in ${values.menopauseStatus} and my common symptoms are ${values.mainSymptoms}.
-  // I ${values.symptomTracking} my symptoms often using ${values.trackingDevice}.
-  // My biggest challenge is ${values.biggestChallenge}.
-  // Currently I ${values.successManaging} successful managing my symptoms.
-
-  // I have a history of ${values.diagnosedConditions}.
-  // My genetic test indicates I have ${values.geneticTraits}.
-  // In my family there's history of ${values.maternalSide}.
-  // I take ${values.medications} to support my condition.
-
-  // Right now I have a ${values.lifestyleInfo} lifestyle.
-  // I eat about ${values.takeout}% takeout food and ${values.homeCooked}% home-cooked food.
-  // My diet is ${values.dietType} and I exercise ${values.exercise} days during a week.
-  // My sex life is ${values.sexLife} and my emotional support network is usually ${values.supportSystem}.
-
-  // My goal is to ${values.goals}.`;
-
-  //       setSelectedSwitch(config.defaultOption);
-  //       await handleNewMessage(message, []);
-  //       form.reset();
-  //       setCurrentStep(0);
-  //     } else {
-  //       setCurrentStep(nextStep);
-  //     }
-  //   };
-
-  // const handleNextStep = () => goToStep(currentStep + 1);
-
-  // const handleStepClick = async (stepIndex: number) => {
-  //   await goToStep(stepIndex);
-  // };
-
   const handleNewChatOpen = () => {
-    const newChatId = `new_chat_${Date.now()}`;
-
-    setCurrentChatId(newChatId);
+    const newId = `new_chat_${Date.now()}`;
+    setCurrentChatId(newId);
     dispatch(clearActiveChatHistory());
     setStreamingText("");
     setChatTitle("");
     setError(null);
+    dispatch(setLastChatId(newId));
     initialSearchDone.current = false;
     sessionLoadDone.current = false;
 
     navigate(
-      isCoach
-        ? `/content-manager/library/${newChatId}`
-        : `/library/${newChatId}`,
+      isCoach ? `/content-manager/library/${newId}` : `/library/${newId}`,
       {
         replace: true,
         state: {
@@ -820,9 +832,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 </button>
               </div>
             )}
-            {isEmpty &&
-            // !isSwitch(SWITCH_KEYS.PERSONALIZE) &&
-            !isSwitch(SWITCH_KEYS.CASE) ? (
+            {isEmpty && !isSwitch(SWITCH_KEYS.CASE) ? (
               <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px] overflow-y-auto md:mb-[16px] xl:mb-0">
                 <div className="flex flex-col items-center justify-center flex-1 md:hidden">
                   <div className="max-w-[300px] sm:max-w-[360px] mx-auto">
@@ -839,53 +849,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   </div>
                 </div>
               </div>
-            ) : // isSwitch(SWITCH_KEYS.PERSONALIZE) && healthHistory ? (
-            //   <>
-            //     <MessageList
-            //       messages={messages}
-            //       isSearching={isSearching}
-            //       streamingText={streamingText}
-            //       error={error}
-            //       isCoach={isCoach}
-            //     />
-            //     <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
-            //       <div className="w-full mb-[24px]" />
-            //       <CardContent
-            //         className={`w-full px-6 mt-auto rounded-0`}
-            //       >
-            //         <div className="p-[24px] border border-[#008FF6] rounded-[20px] overflow-y-auto">
-            //           <p className="text-[24px] text-[#1D1D1F] font-[500]">
-            //             Personal story
-            //           </p>
-            //           <Steps
-            //             steps={steps}
-            //             stepWidth={"w-full"}
-            //             currentStep={currentStep}
-            //             ordered
-            //             onStepClick={handleStepClick}
-            //           />
-            //           <form onSubmit={(e) => e.preventDefault()}>
-            //             {currentStep === 0 && <SymptomsForm form={form} />}
-            //             {currentStep === 1 && <MenopauseForm form={form} />}
-            //             {currentStep === 2 && <HealthHistoryForm form={form} />}
-            //             {currentStep === 3 && <LifestyleForm form={form} />}
-            //             {currentStep === 4 && <GoalsForm form={form} />}
-            //           </form>
-            //           <div className="flex justify-end gap-2 mt-6">
-            //             <button
-            //               type="button"
-            //               className={`py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white`}
-            //               onClick={handleNextStep}
-            //             >
-            //               Continue
-            //             </button>
-            //           </div>
-            //         </div>
-            //       </CardContent>
-            //     </Card>
-            //   </>
-            // ) :
-            isSwitch(SWITCH_KEYS.CASE) ? (
+            ) : isSwitch(SWITCH_KEYS.CASE) ? (
               <>
                 <MessageList
                   messages={chatState}

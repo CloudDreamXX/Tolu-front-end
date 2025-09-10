@@ -88,7 +88,7 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
       <div className="flex items-center justify-between gap-2">
         <MaterialIcon iconName="draft" fill={1} className="text-blue-600" />
         <div className="flex flex-col ">
-          <span className="text-sm font-medium text-[#1D1D1F] max-w-[150px] md:max-w-[250px] truncate">
+          <span className="text-sm font-medium text-[#1D1D1F] max-w-[150px] md:max-w-[200px] xl:max-w-[250px] truncate">
             {fileLibrary.name}
           </span>
           <span className="text-xs font-medium text-[#5F5F65]">
