@@ -13,7 +13,9 @@ import {
   SelectGroup,
 } from "shared/ui";
 import { countries, languages } from "widgets/OnboardingClient/DemographicStep";
+import { MultiSelect } from "../MultiSelect";
 import { z } from "zod";
+import { useState } from "react";
 
 export const basicInformationSchema = z
   .object({
@@ -41,6 +43,12 @@ export const basicInformationSchema = z
 export const BasicInformationForm = ({ form }: { form: any }) => {
   const identity = form.watch("genderIdentity");
   const age = form.watch("age");
+
+  const [languagesSel, setLanguagesSel] = useState<string[]>([]);
+  const onLanguagesChange = (vals: string[]) => {
+    setLanguagesSel(vals);
+    form.setValue("language", vals.join(" , "));
+  };
 
   return (
     <div className="space-y-6">
@@ -172,24 +180,18 @@ export const BasicInformationForm = ({ form }: { form: any }) => {
       <FormField
         control={form.control}
         name="language"
-        render={({ field }) => (
+        render={() => (
           <FormItem>
-            <FormLabel>Language</FormLabel>
+            <FormLabel>Language(s)</FormLabel>
             <FormControl>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {languages.map((lang) => (
-                      <SelectItem key={lang} value={lang}>
-                        {lang}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                placeholder="Select languages..."
+                options={languages}
+                selected={languagesSel}
+                onChange={onLanguagesChange}
+                defaultValue={form.getValues("language")}
+                className="text-[14px]"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

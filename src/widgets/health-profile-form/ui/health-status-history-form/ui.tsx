@@ -121,9 +121,13 @@ const familyHistoryOptions = [
 ];
 
 const joinVals = (vals: string[], extra?: string) => {
-  const filtered = vals.filter((v) => v !== "Other");
-  return [...filtered, ...(extra ? [extra] : [])].join(" , ");
+  const filtered = vals.filter((v) => v !== "Other" && v !== "None");
+  const extraTrim = extra?.trim() ?? "";
+  return [...filtered, ...(extraTrim ? [extraTrim] : [])].join(" , ");
 };
+
+const sanitizeNone = (vals: string[]) =>
+  vals.length > 1 ? vals.filter((v) => v !== "None") : vals;
 
 export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   const [healthConcernsSel, setHealthConcernsSel] = useState<string[]>([]);
@@ -143,29 +147,47 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   const [familyHistoryOther, setFamilyHistoryOther] = useState("");
 
   const onHealthConcernsChange = (val: string[]) => {
-    setHealthConcernsSel(val);
-    form.setValue("healthConcerns", joinVals(val, healthConcernsOther));
+    const cleaned = sanitizeNone(val);
+    setHealthConcernsSel(cleaned);
+    form.setValue("healthConcerns", joinVals(cleaned, healthConcernsOther));
   };
+
   const onMedicalConditionsChange = (val: string[]) => {
-    setMedicalConditionsSel(val);
-    form.setValue("medicalConditions", joinVals(val, medicalConditionsOther));
+    const cleaned = sanitizeNone(val);
+    setMedicalConditionsSel(cleaned);
+    form.setValue(
+      "medicalConditions",
+      joinVals(cleaned, medicalConditionsOther)
+    );
   };
+
   const onMedicationsChange = (val: string[]) => {
-    setMedicationsSel(val);
-    form.setValue("medications", joinVals(val, medicationsOther));
-    form.setValue("otherMedications", medicationsOther || undefined);
+    const cleaned = sanitizeNone(val);
+    setMedicationsSel(cleaned);
+    form.setValue("medications", joinVals(cleaned, medicationsOther));
+    if (cleaned.length === 1 && cleaned[0] === "None") {
+      form.setValue("otherMedications", undefined);
+    } else {
+      form.setValue("otherMedications", medicationsOther || undefined);
+    }
   };
+
   const onSupplementsChange = (val: string[]) => {
-    setSupplementsSel(val);
-    form.setValue("supplements", joinVals(val, supplementsOther));
+    const cleaned = sanitizeNone(val);
+    setSupplementsSel(cleaned);
+    form.setValue("supplements", joinVals(cleaned, supplementsOther));
   };
+
   const onAllergiesChange = (val: string[]) => {
-    setAllergiesSel(val);
-    form.setValue("allergies", joinVals(val, allergiesOther));
+    const cleaned = sanitizeNone(val);
+    setAllergiesSel(cleaned);
+    form.setValue("allergies", joinVals(cleaned, allergiesOther));
   };
+
   const onFamilyHistoryChange = (val: string[]) => {
-    setFamilyHistorySel(val);
-    form.setValue("familyHistory", joinVals(val, familyHistoryOther));
+    const cleaned = sanitizeNone(val);
+    setFamilyHistorySel(cleaned);
+    form.setValue("familyHistory", joinVals(cleaned, familyHistoryOther));
   };
 
   const onOtherChange =

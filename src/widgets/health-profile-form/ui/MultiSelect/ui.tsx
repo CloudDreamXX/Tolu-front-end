@@ -79,7 +79,7 @@ export const MultiSelect = ({
       <button
         type="button"
         className={
-          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center outline-0"
+          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 h-[38px] text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center outline-0"
         }
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
@@ -93,7 +93,7 @@ export const MultiSelect = ({
             .map((option, index) => (
               <span
                 key={`${option}-${index}`}
-                className="flex items-center gap-[8px] text-[16px] font-[500] text-[#1D1D1F]"
+                className="flex items-center gap-[8px] text-[14px] font-[500] text-[#1D1D1F]"
               >
                 {index !== 0 && ", "} {option}
               </span>
@@ -101,8 +101,8 @@ export const MultiSelect = ({
         )}
         <span className="pointer-events-none absolute right-[12px] top-1/2 -translate-y-1/2">
           <MaterialIcon
-            iconName="keyboard_arrow_left"
-            className="text-blue-600"
+            iconName="keyboard_arrow_down"
+            className="text-[#1D1D1F] opacity-50"
           />
         </span>
       </button>
