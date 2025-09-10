@@ -73,3 +73,29 @@ export const mapHealthHistoryToFormDefaults = (
     phoneNumber: "",
   };
 };
+
+export const prune = (obj: Record<string, any>): Record<string, any> => {
+  const out: Record<string, any> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === null || v === undefined) continue;
+    if (typeof v === "string") {
+      const s = v.trim();
+      if (s === "") continue;
+      out[k] = s;
+      continue;
+    }
+    if (Array.isArray(v)) {
+      if (v.length === 0) continue;
+      out[k] = v;
+      continue;
+    }
+    if (typeof v === "object") {
+      const nested = prune(v);
+      if (Object.keys(nested).length === 0) continue;
+      out[k] = nested;
+      continue;
+    }
+    out[k] = v;
+  }
+  return out;
+};

@@ -31,7 +31,7 @@ import {
   HealthStatusHistoryForm,
   healthStatusHistorySchema,
 } from "./health-status-history-form";
-import { mapHealthHistoryToFormDefaults } from "./lib";
+import { mapHealthHistoryToFormDefaults, prune } from "./lib";
 import {
   LifestyleHabitsForm,
   lifestyleHabitsSchema,
@@ -139,6 +139,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
 
   const form = useForm<BaseValues>({
     resolver: zodResolver(formSchema),
+    shouldUnregister: false,
     defaultValues: {
       ...DEFAULT_NEW_FIELDS,
       ...mapHealthHistoryToFormDefaults(healthHistory),
@@ -154,112 +155,6 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       form.reset(defaults as any);
     }
   }, [healthHistory]);
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const genderForApi =
-      values.genderIdentity === "self_describe" &&
-      values.genderSelfDescribe?.trim()
-        ? values.genderSelfDescribe.trim()
-        : values.genderIdentity;
-
-    const resolvedEthnicity =
-      values.ethnicity === "Other (please specify)"
-        ? (values.otherEthnicity?.trim() ?? "")
-        : values.ethnicity;
-
-    const resolvedHousehold =
-      values.household === "Other (please specify)"
-        ? (values.otherHousehold?.trim() ?? "")
-        : values.household;
-
-    const resolvedOccupation =
-      values.occupation === "Other (please specify)"
-        ? (values.otherOccupation?.trim() ?? "")
-        : values.occupation;
-
-    const resolvedEducation = values.education;
-
-    const transformed: HealthHistoryPostData = {
-      age: Number(values.age),
-      gender: values.sexAssignedAtBirth,
-      gender_identity: genderForApi,
-      location: values.country,
-      language: values.language,
-      ethnicity: resolvedEthnicity,
-      household: resolvedHousehold,
-      job: resolvedOccupation,
-      education: resolvedEducation,
-      religion: values.religion,
-
-      current_health_concerns: values.healthConcerns,
-      diagnosed_conditions: values.medicalConditions,
-      medications:
-        values.medications === "other"
-          ? values.otherMedications
-          : values.medications,
-      supplements: values.supplements,
-      allergies_intolerances: values.allergies,
-      family_health_history: values.familyHistory,
-
-      specific_diet: values.dietDetails,
-      exercise_habits:
-        values.exerciseHabits === "other"
-          ? values.otherExerciseHabits
-          : values.exerciseHabits,
-      eat_decision: values.decisionMaker,
-      cook_at_home: values.cookFrequency,
-      takeout_food: values.takeoutFrequency,
-      kind_of_food: values.commonFoods,
-      diet_pattern: values.dietType,
-
-      sleep_quality: String(values.sleepQuality),
-      stress_levels: String(values.stressLevels),
-      energy_levels: String(values.energyLevels),
-
-      menstrual_cycle_status: values.menstrualCycleStatus,
-      hormone_replacement_therapy: values.hormoneTherapy,
-      fertility_concerns: values.fertilityConcerns,
-      birth_control_use: values.birthControlUse,
-
-      blood_sugar_concerns: values.bloodSugarConcern,
-      digestive_issues: values.digestiveIssues,
-      recent_lab_tests: values.recentLabTests === "Yes",
-
-      health_goals: values.goals,
-      why_these_goals: values.goalReason,
-      desired_results_timeline: values.urgency,
-      health_approach_preference: values.healthApproach,
-
-      privacy_consent: values.agreeToPrivacy,
-      follow_up_recommendation: values.followUpMethod,
-      recommendation_destination: `${values.countryCode}${values.phoneNumber}`,
-
-      height: "",
-      weight: "",
-      marital_status: "",
-      no_children: "",
-      menopause_status: "",
-      other_challenges: "",
-      tried_strategies: "",
-      maternal_health_history: "",
-      paternal_health_history: "",
-      lifestyle_information: "",
-      lifestyle_limitations: "",
-      sex_life: "",
-      support_system: "",
-    };
-
-    const labFile = values.labTestFile || undefined;
-
-    try {
-      await HealthHistoryService.createHealthHistory(transformed, labFile);
-      form.reset();
-      setCurrentStep(0);
-      setIsOpen(false);
-    } catch (error) {
-      console.error("Failed to submit form:", error);
-    }
-  };
 
   const stepFields: Array<(keyof BaseValues)[]> = [
     [
@@ -329,20 +224,137 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     ["agreeToPrivacy", "followUpMethod", "countryCode", "phoneNumber"],
   ];
 
+  const mapToApi = (values: BaseValues): HealthHistoryPostData => {
+    const genderForApi =
+      values.genderIdentity === "self_describe" &&
+      values.genderSelfDescribe?.trim()
+        ? values.genderSelfDescribe.trim()
+        : values.genderIdentity;
+
+    const resolvedEthnicity =
+      values.ethnicity === "Other (please specify)"
+        ? (values.otherEthnicity?.trim() ?? "")
+        : values.ethnicity;
+
+    const resolvedHousehold =
+      values.household === "Other (please specify)"
+        ? (values.otherHousehold?.trim() ?? "")
+        : values.household;
+
+    const resolvedOccupation =
+      values.occupation === "Other (please specify)"
+        ? (values.otherOccupation?.trim() ?? "")
+        : values.occupation;
+
+    return {
+      age: Number(values.age),
+      gender: values.sexAssignedAtBirth,
+      gender_identity: genderForApi,
+      location: values.country,
+      language: values.language,
+      ethnicity: resolvedEthnicity,
+      household: resolvedHousehold,
+      job: resolvedOccupation,
+      education: values.education,
+      religion: values.religion,
+
+      current_health_concerns: values.healthConcerns,
+      diagnosed_conditions: values.medicalConditions,
+      medications:
+        values.medications === "other"
+          ? values.otherMedications
+          : values.medications,
+      supplements: values.supplements,
+      allergies_intolerances: values.allergies,
+      family_health_history: values.familyHistory,
+
+      specific_diet: values.dietDetails,
+      exercise_habits:
+        values.exerciseHabits === "other"
+          ? values.otherExerciseHabits
+          : values.exerciseHabits,
+      eat_decision: values.decisionMaker,
+      cook_at_home: values.cookFrequency,
+      takeout_food: values.takeoutFrequency,
+      kind_of_food: values.commonFoods,
+      diet_pattern: values.dietType,
+
+      sleep_quality: String(values.sleepQuality),
+      stress_levels: String(values.stressLevels),
+      energy_levels: String(values.energyLevels),
+
+      menstrual_cycle_status: values.menstrualCycleStatus,
+      hormone_replacement_therapy: values.hormoneTherapy,
+      fertility_concerns: values.fertilityConcerns,
+      birth_control_use: values.birthControlUse,
+
+      blood_sugar_concerns: values.bloodSugarConcern,
+      digestive_issues: values.digestiveIssues,
+      recent_lab_tests: values.recentLabTests === "Yes",
+
+      health_goals: values.goals,
+      why_these_goals: values.goalReason,
+      desired_results_timeline: values.urgency,
+      health_approach_preference: values.healthApproach,
+
+      privacy_consent: values.agreeToPrivacy,
+      follow_up_recommendation: values.followUpMethod,
+      recommendation_destination: `${values.countryCode}${values.phoneNumber}`,
+
+      height: "",
+      weight: "",
+      marital_status: "",
+      no_children: "",
+      menopause_status: "",
+      other_challenges: "",
+      tried_strategies: "",
+      maternal_health_history: "",
+      paternal_health_history: "",
+      lifestyle_information: "",
+      lifestyle_limitations: "",
+      sex_life: "",
+      support_system: "",
+    };
+  };
+
+  const submitHealthHistory = async (
+    values: BaseValues,
+    { partial = false }: { partial?: boolean } = {}
+  ) => {
+    const payload = prune(mapToApi(values)) as Partial<HealthHistoryPostData>;
+    const labFile = values.labTestFile || undefined;
+
+    await HealthHistoryService.createHealthHistory(payload as any, labFile);
+
+    if (!partial) {
+      setCurrentStep(0);
+      setIsOpen(false);
+    }
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await submitHealthHistory(values, { partial: false });
+    } catch (error) {
+      console.error("Failed to submit form:", error);
+    }
+  };
+
   const goToStep = async (nextStep: number) => {
     if (nextStep === currentStep) return;
 
+    const ok = await form.trigger(stepFields[currentStep] as any);
+    if (!ok) return;
+
+    await submitHealthHistory(form.getValues() as BaseValues, {
+      partial: true,
+    });
+
     const isLastStep = currentStep === steps.length - 1;
-    const currentFields = stepFields[currentStep];
-
-    const isValid = await form.trigger(currentFields as any);
-    if (!isValid) return;
-
-    if (isLastStep) {
+    if (isLastStep && nextStep > currentStep) {
       const allValid = await form.trigger();
       if (!allValid) return;
-      onSubmit(form.getValues());
-      return;
+      return onSubmit(form.getValues());
     }
 
     setCurrentStep(nextStep);
