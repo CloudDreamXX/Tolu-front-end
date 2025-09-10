@@ -19,7 +19,7 @@ export const DocumentBreadcrumbs: React.FC<DocumentBreadcrumbsProps> = ({
 
   return (
     <Breadcrumb className="flex flex-row flex-wrap items-center gap-2 text-sm text-muted-foreground ">
-      {folder && path.length && (
+      {folder && path.length > 0 && (
         <>
           <BreadcrumbItem className="capitalize text-nowrap">
             {tab}

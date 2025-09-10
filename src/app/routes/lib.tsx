@@ -53,7 +53,7 @@ import { ContentManagementDocument } from "pages/content-management-document";
 import { usePageWidth } from "shared/lib";
 
 export const AppRoutes = () => {
-  const { isMobileOrTablet } = usePageWidth()
+  const { isMobileOrTablet } = usePageWidth();
   return (
     <Routes>
       <Route element={<ProtectedRoute allowedRoles={["guest"]} />}></Route>
@@ -160,10 +160,29 @@ export const AppRoutes = () => {
           path="/content-manager/published"
           element={<div>Published</div>}
         />
-        <Route path="*" element={<Navigate to={isMobileOrTablet ? `/content-manager/library/new_chat_${Date.now()}` : "/content-manager/create"} />} />
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={
+                isMobileOrTablet
+                  ? `/content-manager/library/new_chat_${Date.now()}`
+                  : "/content-manager/create"
+              }
+            />
+          }
+        />
         <Route
           path="/content-manager"
-          element={<Navigate to={isMobileOrTablet ? `/content-manager/library/new_chat_${Date.now()}` : "/content-manager/create"} />}
+          element={
+            <Navigate
+              to={
+                isMobileOrTablet
+                  ? `/content-manager/library/new_chat_${Date.now()}`
+                  : "/content-manager/create"
+              }
+            />
+          }
         />
         <Route path="/content-manager/files" element={<FilesLibrary />} />
       </Route>

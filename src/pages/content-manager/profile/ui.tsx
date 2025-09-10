@@ -12,14 +12,7 @@ import {
   checkPasswordStrength,
   StrengthMeter,
 } from "shared/lib/utils/passwordChecker";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Input,
-  Switch,
-} from "shared/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button, Input } from "shared/ui";
 import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
 
 export const ContentManagerProfile = () => {
@@ -378,20 +371,6 @@ export const ContentManagerProfile = () => {
               >
                 Change
               </Button>
-              <div className="flex flex-col gap-4 mt-4">
-                <h3 className="text-[#5F5F65] text-[18px] font-medium">
-                  Two-factor authentication
-                </h3>
-                <p className="text-[#1D1D1F] text-[14px] font-medium">
-                  Two-factor authentication provides ann additional layer of
-                  security to your account by requiring you to validate your
-                  identity using your mobile device when you login.
-                </p>
-                <div className="flex items-center gap-3 mt-2">
-                  <Switch checked={true} onCheckedChange={() => {}} />
-                  Two-factor authentication active
-                </div>
-              </div>
             </div>
           </Card>
         </div>

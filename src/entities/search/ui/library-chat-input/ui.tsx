@@ -1,4 +1,7 @@
-import { setIsMobileDailyJournalOpen } from "entities/client/lib";
+import {
+  setFolderToChat,
+  setIsMobileDailyJournalOpen,
+} from "entities/client/lib";
 import { RootState } from "entities/store";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +9,7 @@ import { useLocation } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
+import { PopoverFolder, PopoverInstruction } from "widgets/content-popovers";
 import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
 import { DailyJournal } from "widgets/dayli-journal";
 import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
@@ -32,6 +36,12 @@ interface LibraryChatInputProps {
   setClientId?: (clientId: string | null) => void;
   selectedText?: string;
   deleteSelectedText?: () => void;
+  existingFiles?: string[];
+  existingInstruction?: string;
+  setExistingFiles?: React.Dispatch<React.SetStateAction<string[]>>;
+  setExistingInstruction?: React.Dispatch<React.SetStateAction<string>>;
+  setInstruction?: React.Dispatch<React.SetStateAction<string>>;
+  instruction?: string;
 }
 
 export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
@@ -51,6 +61,11 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   setClientId,
   selectedText,
   deleteSelectedText,
+  setExistingInstruction,
+  setExistingFiles,
+  existingInstruction,
+  instruction,
+  setInstruction,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [referAFriendOpen, setReferAFriendOpen] = useState<boolean>(false);
@@ -58,6 +73,9 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const location = useLocation();
   const isContentManager = location.pathname.includes("content-manager");
   const dispatch = useDispatch();
+  const folderState = useSelector(
+    (state: RootState) => state.client.selectedChatFolder || null
+  );
 
   const handleSend = () => {
     if ((!message.trim() && files.length === 0) || disabled) return;
@@ -94,6 +112,10 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   };
 
   const isSendDisabled = !message.trim() || disabled;
+
+  const handleSetFolder = (folder: string | null) => {
+    dispatch(setFolderToChat(folder));
+  };
 
   return (
     <div
@@ -187,9 +209,41 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               )}
             </label>
             {isContentManager ? (
-              <div className="flex items-center gap-[10px]">
-                <PopoverClient setClientId={setClientId} />
-              </div>
+              selectedSwitch === "RESEARCH" ? (
+                <div className="flex items-center gap-[10px]">
+                  <PopoverClient setClientId={setClientId} />
+                </div>
+              ) : (
+                <div className="flex items-center gap-[10px]">
+                  <PopoverClient setClientId={setClientId} />
+                  <PopoverFolder
+                    folderId={folderState || undefined}
+                    setFolderId={handleSetFolder}
+                    setExistingFiles={setExistingFiles}
+                    setExistingInstruction={setExistingInstruction}
+                  />
+                  <PopoverInstruction
+                    customTrigger={
+                      <Button
+                        variant="ghost"
+                        className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                        disabled={!folderState}
+                      >
+                        <MaterialIcon iconName="settings" size={24} />
+                        {((instruction && instruction?.length > 0) ||
+                          (existingInstruction &&
+                            existingInstruction?.length > 0)) && (
+                          <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                            1
+                          </span>
+                        )}
+                      </Button>
+                    }
+                    folderInstruction={existingInstruction}
+                    setInstruction={setInstruction}
+                  />
+                </div>
+              )
             ) : (
               <div className="flex gap-[8px] items-center">
                 <Button

@@ -69,10 +69,12 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
     <aside className="lg:w-[360px] lg:min-w-[360px] border border-[#DBDEE1] border-l-0 flex flex-col w-full ">
       {isLoadingChats && (
         <div className="xl:hidden flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <MaterialIcon
-            iconName="progress_activity"
-            className="text-blue-600 animate-spin"
-          />
+          <span className="inline-flex h-5 w-5 items-center justify-center">
+            <MaterialIcon
+              iconName="progress_activity"
+              className="text-blue-600 animate-spin"
+            />
+          </span>
           Please wait, we are loading the information...
         </div>
       )}

@@ -42,8 +42,10 @@ import { MessageList } from "widgets/message-list";
 
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
+  const { documentId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+
   const [isSearching, setIsSearching] = useState(false);
   const [streamingText, setStreamingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +55,9 @@ export const LibraryChat = () => {
   const [clientId, setClientId] = useState<string | null>(null);
   const { isMobile } = usePageWidth();
   const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [existingFiles, setExistingFiles] = useState<string[]>([]);
+  const [existingInstruction, setExistingInstruction] = useState<string>("");
+  const [instruction, setInstruction] = useState<string>("");
 
   const initialSearchDone = useRef(false);
   const sessionLoadDone = useRef(false);
@@ -67,6 +72,13 @@ export const LibraryChat = () => {
     (state: RootState) => state.client.activeChatKey
   );
   const lastChatId = useSelector((state: RootState) => state.client.lastChatId);
+
+  const folderState = useSelector(
+    (state: RootState) => state.client.selectedChatFolder || null
+  );
+  const filesFromLibrary = useSelector(
+    (state: RootState) => state.client.selectedFilesFromLibrary || []
+  );
 
   const resolvedChatKey =
     (isSearching ? activeChatKey : lastChatId) || activeChatKey;
@@ -88,13 +100,12 @@ export const LibraryChat = () => {
     }
   }
 
-  const { documentId } = useParams();
-
   const config = isCoach
     ? SWITCH_CONFIG.coach
     : documentId
       ? SWITCH_CONFIG.personalize
       : SWITCH_CONFIG.default;
+
   const [selectedSwitch, setSelectedSwitch] = useState<string>(
     config.defaultOption
   );
@@ -111,7 +122,7 @@ export const LibraryChat = () => {
       dispatch(setActiveChat(switchKey));
       setSelectedSwitch(switchKey);
     }
-  }, [activeChatKey, dispatch]);
+  }, [activeChatKey, dispatch, documentId]);
 
   const caseForm = useForm<FormValues>({
     resolver: zodResolver(caseBaseSchema),
@@ -234,11 +245,9 @@ export const LibraryChat = () => {
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
-
       utterance.onend = () => {
         speechSynthesis.cancel();
       };
-
       speechSynthesis.speak(utterance);
     }
   };
@@ -312,7 +321,17 @@ export const LibraryChat = () => {
     };
 
     initialize();
-  }, [chatId, initialMessage, location.state]);
+  }, [
+    chatId,
+    initialMessage,
+    location.state,
+    isExistingChat,
+    activeChatKey,
+    dispatch,
+    navigate,
+    searchType,
+    isCoach,
+  ]);
 
   useEffect(() => {
     const fetchChat = async () => {
@@ -563,17 +582,20 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     let str = "";
     const replyChunks: string[] = [];
 
+    const isLearn = isSwitch(SWITCH_KEYS.LEARN);
+
     const processChunk = (chunk: StreamChunk) => {
       if (!chunk.reply) return;
 
-      if (isSwitch(SWITCH_KEYS.LEARN)) {
-        if (chunk.reply.includes("Relevant Content")) {
-          str = chunk.reply;
-        } else {
-          replyChunks.push(chunk.reply);
-          const joined = joinReplyChunksSafely(replyChunks);
-          setStreamingText(joined);
-        }
+      if (isLearn && chunk.reply.includes("Relevant Content")) {
+        str = chunk.reply;
+        return;
+      }
+
+      if (isLearn) {
+        replyChunks.push(chunk.reply);
+        const joined = joinReplyChunksSafely(replyChunks);
+        setStreamingText(joined);
       } else {
         accumulatedText += chunk.reply;
         setStreamingText(accumulatedText);
@@ -584,11 +606,13 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
       setIsSearching(false);
 
       const aiMessage: Message = {
-        id: finalData.chat_id || Date.now().toString(),
+        id:
+          finalData?.chat_id ||
+          finalData?.searched_result_id ||
+          finalData?.chatId ||
+          Date.now().toString(),
         type: "ai",
-        content: isSwitch(SWITCH_KEYS.LEARN)
-          ? joinReplyChunksSafely(replyChunks)
-          : accumulatedText,
+        content: isLearn ? joinReplyChunksSafely(replyChunks) : accumulatedText,
         timestamp: new Date(),
         document: str,
       };
@@ -598,32 +622,75 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
       );
       setStreamingText("");
 
-      if (finalData.chat_id && finalData.chat_id !== currentChatId) {
-        setCurrentChatId(finalData.chat_id);
-        returnedChatId = finalData.chat_id;
+      const newId =
+        finalData?.chat_id ||
+        finalData?.searched_result_id ||
+        finalData?.chatId;
+
+      if (newId && newId !== currentChatId) {
+        setCurrentChatId(newId);
+        returnedChatId = newId;
+        dispatch(setLastChatId(newId));
       }
 
-      if (finalData.chat_id) {
-        dispatch(setLastChatId(finalData.chat_id));
-      }
-
-      if (finalData.chat_title) {
+      if (finalData?.chat_title) {
         setChatTitle(finalData.chat_title);
       }
     };
 
     try {
-      if (isCoach) {
+      if (isSwitch(SWITCH_KEYS.CREATE)) {
+        if (!folderState) {
+          setIsSearching(false);
+          setError("Please select a target folder before using Create.");
+          return;
+        }
+
+        const res = await CoachService.aiLearningSearch(
+          {
+            user_prompt: message,
+            is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
+            chat_id: currentChatId.startsWith("new_chat_")
+              ? undefined
+              : currentChatId,
+            regenerate_id: null,
+            chat_title: "",
+            instructions: instruction,
+          },
+          folderState,
+          images,
+          pdf,
+          clientId ?? undefined,
+          filesFromLibrary,
+          undefined,
+          processChunk,
+          processFinalData
+        );
+
+        if (res.chatId && res.documentId) {
+          const targetPath = `/content-manager/library/folder/${folderState}/chat/${res.chatId}`;
+          navigate(targetPath, {
+            state: {
+              selectedSwitch: SWITCH_KEYS.CREATE,
+              lastId: res.chatId,
+              docId: res.documentId,
+              folderId: folderState,
+            },
+          });
+        }
+      } else if (isSwitch(SWITCH_KEYS.RESEARCH)) {
         await SearchService.aiCoachResearchStream(
           {
             chat_message: JSON.stringify({
               user_prompt: message,
-              is_new: currentChatId.startsWith("new_chat_"),
+              is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
               chat_id: currentChatId.startsWith("new_chat_")
                 ? undefined
                 : currentChatId,
+              text_quote: undefined,
+              library_files: filesFromLibrary,
             }),
-            images: images,
+            images,
             pdf,
             contentId: documentId,
             clientId: clientId ?? undefined,
@@ -648,7 +715,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               regenerate_id: null,
               personalize: false,
             }),
-            ...(images && { images: images }),
+            ...(images && { images }),
             ...(pdf && { pdf }),
           },
           processChunk,
@@ -658,7 +725,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             setError(error.message);
             console.error("Search error:", error);
           },
-          isSwitch(SWITCH_KEYS.LEARN)
+          isLearn
         );
       }
     } catch (error) {
@@ -919,6 +986,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               setSelectedSwitch={(value) => {
                 handleNewChatOpen();
                 setSelectedSwitch(value);
+                dispatch(setActiveChat(value));
               }}
               message={textContent}
               setNewMessage={setTextContent}
@@ -928,6 +996,12 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               }
               files={newFiles}
               setFiles={setNewFiles}
+              setExistingFiles={setExistingFiles}
+              existingFiles={existingFiles}
+              existingInstruction={existingInstruction}
+              setExistingInstruction={setExistingInstruction}
+              setInstruction={setInstruction}
+              instruction={instruction}
             />
           </div>
         )}
