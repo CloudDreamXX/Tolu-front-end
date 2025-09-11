@@ -89,7 +89,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       }));
       setAttachedFiles(newAttachedFiles);
     }
-  }, [files]);
+  }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();

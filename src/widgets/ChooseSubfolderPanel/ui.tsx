@@ -30,7 +30,7 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
         dispatch(setFolders(folderResponse));
 
         const selectedFolder = folderResponse.folders.find(
-          (f) => f.id === selectedFolderId
+          (f) => f.id === parentFolderId
         );
 
         if (selectedFolder?.subfolders) {

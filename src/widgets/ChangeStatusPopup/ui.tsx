@@ -16,13 +16,13 @@ interface ChangeStatusPopupProps {
       | "Archived"
   ) => Promise<void>;
   currentStatus:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
   handleMoveClick?: (id: string, subfolderId: string) => Promise<void>;
   contentId?: string;
 }
@@ -112,7 +112,7 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
 
         {subfoldersOpen ? (
           <ChooseSubfolderPanel
-            parentFolderId={""}
+            parentFolderId={"82c50ae1-80c3-4e09-866d-b17c65794d49"}
             selectedFolderId={selectedSubfolderId}
             onSelect={(folderId) => setSelectedSubfolderId(folderId)}
           />

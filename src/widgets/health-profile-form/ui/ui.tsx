@@ -439,7 +439,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
               className="w-24 md:w-32"
               onClick={handleNextStep}
             >
-              {currentStep === steps.length - 1 ? "Submit" : "Next"}
+              {currentStep === steps.length - 1 ? "Save" : "Save & Continue"}
             </Button>
           </div>
         </div>
