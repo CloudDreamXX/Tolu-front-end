@@ -464,7 +464,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
       <div className="pt-2">
         <Textarea
-          disabled={isToluAdmin}
           placeholder={`Message ${receiver?.user.name}`}
           className={cn("resize-none min-h-[80px]")}
           containerClassName={cn(
