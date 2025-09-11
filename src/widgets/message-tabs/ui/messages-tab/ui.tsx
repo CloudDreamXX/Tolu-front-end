@@ -539,7 +539,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                     </Button>
 
                     {emojiModalOpen && (
-                      <div className="absolute mb-2 bottom-full">
+                      <div className="absolute mb-2 bottom-full -left-[80px]">
                         <Picker
                           data={data}
                           onEmojiSelect={(emoji: { native: string }) => {
