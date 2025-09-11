@@ -54,6 +54,7 @@ export const MessageList: React.FC<MessageListProps> = ({
       });
     }
   }, [isSearching, messages.length]);
+
   return (
     <div
       ref={containerRef}

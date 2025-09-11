@@ -28,12 +28,13 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
             cardActive === "client" ? "bg-[#1C63DB]/10" : "bg-transparent"
           )}
         >
-          <div className="flex flex-col items-start self-stretch gap-4">
+          <div className="flex flex-col items-center self-stretch gap-4">
             <h3 className="text-[24px] text-center w-full font-medium">
               Individual
             </h3>
             <p className="flex flex-col justify-center font-normal text-[16px]">
-              Your everyday challenges matter. Let’s explore answers together.
+              Your everyday challenges matter. <br /> Let’s explore answers
+              together.
             </p>
           </div>
         </button>
@@ -44,13 +45,13 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
             cardActive === "practitioner" ? "bg-[#1C63DB]/10" : "bg-transparent"
           )}
         >
-          <div className="flex flex-col items-start self-stretch gap-4">
+          <div className="flex flex-col items-center self-stretch gap-4">
             <h3 className="text-[24px] text-center w-full font-medium">
               Health Educator
             </h3>
             <p className="flex flex-col justify-center font-normal text-[16px] line-clamp-2">
-              Turn your expertise into impact. Change the future of women’s
-              health.
+              Turn your expertise into impact. <br /> Change the future of
+              women’s health.
             </p>
           </div>
         </button>
