@@ -16,13 +16,13 @@ interface ChangeStatusPopupProps {
       | "Archived"
   ) => Promise<void>;
   currentStatus:
-  | "Raw"
-  | "Ready for Review"
-  | "Waiting"
-  | "Second Review Requested"
-  | "Ready to Publish"
-  | "Live"
-  | "Archived";
+    | "Raw"
+    | "Ready for Review"
+    | "Waiting"
+    | "Second Review Requested"
+    | "Ready to Publish"
+    | "Live"
+    | "Archived";
   handleMoveClick?: (id: string, subfolderId: string) => Promise<void>;
   contentId?: string;
 }

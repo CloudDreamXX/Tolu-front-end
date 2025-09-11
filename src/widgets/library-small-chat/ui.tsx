@@ -409,14 +409,32 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const handleSwitchChange = (value: string) => {
     setIsSwitchLoading(true);
 
-    if (abortController) {
-      abortController.abort();
-    }
+    if (abortController) abortController.abort();
 
-    setIsSwitchLoading(false);
+    const preservedFiles = filesState;
+
+    setCurrentChatId("");
+    setStreamingText("");
+    setChatTitle("");
+    setError(null);
+    setClientId(null);
+
+    dispatch(clearActiveChatHistory());
+
+    handleSetFolder(null);
+    dispatch(setFolderToChat(null));
+    dispatch(setFolderId(""));
+    setInstruction("");
+    setExistingInstruction("");
+
     setIsSearching(false);
     setSelectedSwitch(value);
     dispatch(setActiveChat(value));
+    setIsSwitchLoading(false);
+
+    if (!filesState?.length && preservedFiles?.length) {
+      dispatch(setFilesToChat(preservedFiles));
+    }
   };
 
   const handleNewMessage = async (
@@ -689,6 +707,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     dispatch(setFolderId(""));
     setInstruction("");
     setExistingInstruction("");
+    dispatch(setFilesToChat([]));
     navigate("/content-manager/create");
   };
 
@@ -763,7 +782,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {
                 handleSwitchChange(value);
-                handleNewChatOpen();
               }}
               deleteSelectedText={deleteSelectedText}
               message={message}
@@ -815,10 +833,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -944,7 +962,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedSwitch={selectedSwitch}
               setSelectedSwitch={(value) => {
                 handleSwitchChange(value);
-                handleNewChatOpen();
               }}
               setNewMessage={setMessage}
               footer={
@@ -996,10 +1013,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  1
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                           </Button>
                         }
                         setInstruction={setInstruction}

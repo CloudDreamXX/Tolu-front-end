@@ -30,15 +30,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     message.file_size !== null &&
     message.file_url !== null;
 
-  const formatTextWithBreaks = (text: string) => {
-    return text.split("\n").map((line) => (
-      <React.Fragment key={line}>
-        {line}
-        <br />
-      </React.Fragment>
-    ));
-  };
-
   const renderFileMessage = () => (
     <div
       className={cn(

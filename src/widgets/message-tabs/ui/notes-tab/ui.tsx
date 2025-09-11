@@ -151,8 +151,8 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
     );
     return search
       ? arr.filter((n) =>
-        (n.content || "").toLowerCase().includes(search.toLowerCase())
-      )
+          (n.content || "").toLowerCase().includes(search.toLowerCase())
+        )
       : arr;
   }, [notes?.notes, search]);
 

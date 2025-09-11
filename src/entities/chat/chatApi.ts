@@ -453,6 +453,16 @@ export const chatApi = createApi({
         }
       },
     }),
+
+    deleteChat: builder.mutation<string, { chatId: string }>({
+      async queryFn({ chatId }) {
+        try {
+          return { data: await ChatService.deleteChat(chatId) };
+        } catch (e: any) {
+          return { error: e };
+        }
+      },
+    }),
   }),
 });
 
@@ -474,4 +484,5 @@ export const {
   useGetAllChatNotesQuery,
   useUpdateChatNoteMutation,
   useDeleteChatNoteMutation,
+  useDeleteChatMutation,
 } = chatApi;

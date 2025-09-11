@@ -94,8 +94,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [previousScrollHeight, setPreviousScrollHeight] = useState(0);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  const isToluAdmin = chat?.participants.some((p) => p.role === "admin");
-
   const listData: ListItem[] = useMemo(() => {
     const sorted = [...messages]
       .sort(
