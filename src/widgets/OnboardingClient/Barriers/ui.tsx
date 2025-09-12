@@ -34,7 +34,7 @@ export const Barriers = () => {
   const mainContent = (
     <>
       <h1 className="text-h5  text-[18px] text-[#1D1D1F]">
-        What’s been getting in your way so far?
+        What blockers or struggles have been getting in your way so far?
       </h1>
       <div className="flex flex-col gap-4">
         {radioContent.map((item, index) => (
@@ -60,7 +60,7 @@ export const Barriers = () => {
       {isOtherSelected && (
         <div className="flex flex-col gap-[10px] w-full items-start">
           <label className="text-[16px] font-medium  text-[#1D1D1F]">
-            Your variant
+            What's stopping you from achieving your goals?
           </label>
           <Input
             value={input}

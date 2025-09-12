@@ -65,7 +65,7 @@ export const PersonalityType = () => {
     <>
       <div className="flex flex-col items-start gap-2">
         <h3 className="font-[Nunto] text-[18px] font-bold text-[#1D1D1F]">
-          Want Deeper Personalization?
+          Do you want deeper personalization?
         </h3>
         <p className="text-[#5F5F65] font-[Nunto] text-[16px] font-medium">
           Understanding your personality can help Tolu tailor support to how you

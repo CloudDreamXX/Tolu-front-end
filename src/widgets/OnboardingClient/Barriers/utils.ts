@@ -1,5 +1,4 @@
 export const radioContent = [
-  "Struggles and Blockers",
   "I’m not sure what’s happening in my body",
   "I’ve been trying random supplements without knowing what works",
   "I don’t feel supported by my doctor",
