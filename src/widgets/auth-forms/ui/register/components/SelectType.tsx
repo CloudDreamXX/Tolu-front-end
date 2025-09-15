@@ -24,8 +24,10 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
         <button
           onClick={() => setCardActive("client")}
           className={cn(
-            "rounded-[24px] px-[40px] py-[24px] md:py-[32px] lg:w-[370px]",
-            cardActive === "client" ? "bg-[#1C63DB]/10" : "bg-transparent"
+            "rounded-[24px] px-[40px] py-[24px] md:py-[32px] lg:w-[370px] border border-blue-500",
+            cardActive === "client"
+              ? "bg-[#1C63DB]/10 border-0"
+              : "bg-transparent  "
           )}
         >
           <div className="flex flex-col items-center self-stretch gap-4">
@@ -41,8 +43,10 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
         <button
           onClick={() => setCardActive("practitioner")}
           className={cn(
-            "rounded-[24px] px-[40px] py-[24px] md:py-[32px] lg:w-[370px]",
-            cardActive === "practitioner" ? "bg-[#1C63DB]/10" : "bg-transparent"
+            "rounded-[24px] px-[40px] py-[24px] md:py-[32px] lg:w-[370px] border border-blue-500",
+            cardActive === "practitioner"
+              ? "bg-[#1C63DB]/10 border-0"
+              : "bg-transparent"
           )}
         >
           <div className="flex flex-col items-center self-stretch gap-4">

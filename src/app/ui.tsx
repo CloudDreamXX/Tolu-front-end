@@ -13,22 +13,6 @@ export const App: React.FC = () => {
   const isLoading = useSelector((state: RootState) => state.user.isLoading);
 
   useEffect(() => {
-    const init = async () => {
-      try {
-        const user = await UserService.getUserProfile();
-        ChatSocketService.connect(user.id);
-      } catch (error) {
-        console.error("Failed to init chat:", error);
-      }
-    };
-
-    init();
-    return () => {
-      ChatSocketService.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
     const timeout = setTimeout(() => {
       dispatch(setLoading(false));
     }, 1_000);

@@ -62,9 +62,18 @@ export const LoginForm = () => {
           description: "Welcome back!",
         });
 
-        if (redirectPath) {
+        if (
+          "onboarding_filled" in response.user &&
+          !response.user.onboarding_filled
+        ) {
+          const to =
+            response.user.roleName === "Client" ? "/about-you" : "/select-type";
+          navigate(to);
+          return;
+        } else if (redirectPath) {
           localStorage.removeItem("redirectAfterLogin");
           navigate(redirectPath, { replace: true });
+          return;
         } else {
           navigate("/", { replace: true });
         }
