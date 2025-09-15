@@ -197,61 +197,70 @@ export const ContentManagerMessages: React.FC = () => {
     return await ChatService.fetchChatMessages(selectedChat.id, { page });
   };
 
-  if (selectedChat && isMobileOrTablet) {
-    return (
-      <MessageTabs
-        chatId={selectedChat?.id}
-        goBackMobile={() => setSelectedChat(null)}
-        onEditGroup={openEditGroup}
-        onCreateGroup={openCreateGroup}
-        sendMessage={sendMessage}
-        loadMessages={loadMessages}
-      />
-    );
-  }
+  const content = (() => {
+    if (isMobileOrTablet) {
+      if (selectedChat) {
+        return (
+          <MessageTabs
+            chatId={selectedChat.id}
+            goBackMobile={() => setSelectedChat(null)}
+            clientsData={clientsData}
+            onEditGroup={openEditGroup}
+            onCreateGroup={openCreateGroup}
+            sendMessage={sendMessage}
+            loadMessages={loadMessages}
+          />
+        );
+      }
+      return (
+        <MessageSidebar
+          chats={chats}
+          isLoadingChats={isLoading}
+          onChatClick={chatItemClick}
+          selectedChat={selectedChat}
+          onCreateGroup={openCreateGroup}
+        />
+      );
+    }
 
-  if (!selectedChat && isMobileOrTablet) {
     return (
-      <MessageSidebar
-        chats={chats}
-        isLoadingChats={isLoading}
-        onChatClick={chatItemClick}
-        selectedChat={selectedChat}
-        onCreateGroup={openCreateGroup}
-      />
+      <>
+        {isLoading && (
+          <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-1/2 -translate-x-1/2 xl:-translate-x-1/4">
+            <span className="inline-flex h-5 w-5 items-center justify-center">
+              <MaterialIcon
+                iconName="progress_activity"
+                className="text-blue-600 animate-spin"
+              />
+            </span>
+            Please wait, we are loading the information...
+          </div>
+        )}
+
+        <MessageSidebar
+          chats={chats}
+          isLoadingChats={isLoading}
+          onChatClick={chatItemClick}
+          selectedChat={selectedChat}
+          onCreateGroup={openCreateGroup}
+        />
+
+        <MessageTabs
+          chatId={selectedChat?.id || routeChatId || undefined}
+          goBackMobile={() => setSelectedChat(null)}
+          clientsData={clientsData}
+          onEditGroup={openEditGroup}
+          onCreateGroup={openCreateGroup}
+          sendMessage={sendMessage}
+          loadMessages={loadMessages}
+        />
+      </>
     );
-  }
+  })();
 
   return (
-    <div className="flex h-full bg-slate-[#DBDEE1] border">
-      {isLoading && (
-        <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <span className="inline-flex h-5 w-5 items-center justify-center">
-            <MaterialIcon
-              iconName="progress_activity"
-              className="text-blue-600 animate-spin"
-            />
-          </span>
-          Please wait, we are loading the information...
-        </div>
-      )}
-      <MessageSidebar
-        chats={chats}
-        isLoadingChats={isLoading}
-        onChatClick={chatItemClick}
-        selectedChat={selectedChat}
-        onCreateGroup={openCreateGroup}
-      />
-
-      <MessageTabs
-        chatId={selectedChat?.id || routeChatId || undefined}
-        goBackMobile={() => setSelectedChat(null)}
-        clientsData={clientsData}
-        onEditGroup={openEditGroup}
-        onCreateGroup={openCreateGroup}
-        sendMessage={sendMessage}
-        loadMessages={loadMessages}
-      />
+    <div className="relative flex h-full border">
+      {content}
 
       <CreateGroupModal
         key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${

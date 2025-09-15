@@ -299,7 +299,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                     disabled={isSending || isUpdating}
                     variant={isMobileOrTablet ? "brightblue" : "blue"}
                     className="rounded-full flex justify-center items-center
-                     w-[42px] h-[42px] lg:w-[128px]"
+                      lg:w-[128px]"
                   >
                     {isSending || isUpdating ? (
                       <MaterialIcon

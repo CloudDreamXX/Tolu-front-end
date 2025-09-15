@@ -57,7 +57,9 @@ export class ApiService {
               Object.values(data.errors)[0]) ??
             (error.message || "Unknown error occurred"));
 
-      throw new ApiError(status, message, data);
+      const apiError = new ApiError(status, message, data);
+      window.dispatchEvent(new CustomEvent("api-error", { detail: apiError }));
+      throw apiError;
     }
 
     if (error instanceof Error) {

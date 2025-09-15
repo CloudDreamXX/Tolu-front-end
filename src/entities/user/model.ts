@@ -12,6 +12,7 @@ export interface IUser {
   priority: string[];
   roleName: string;
   photo?: string;
+  onboarding_filled?: string;
 }
 
 export interface IRegisterUser {

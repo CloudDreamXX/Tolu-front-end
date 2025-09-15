@@ -568,7 +568,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           >
             Cancel
           </button>
-          <button className="w-full md:hidden p-[16px] py-[10px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center">
+          <button
+            className="w-full md:hidden p-[16px] py-[10px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center"
+            onClick={() => nav(`/content-manager/messages/${clientId}`)}
+          >
             <MaterialIcon iconName="forum" fill={1} />
             Chat
           </button>

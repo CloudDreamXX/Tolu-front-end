@@ -34,7 +34,7 @@ export const Footer: React.FC<Props> = ({ position }) => {
               <MaterialIcon
                 iconName="stars_2"
                 fill={1}
-                className="text-white"
+                className="text-[#1C63DB]"
                 size={
                   position === "top-left" || position === "top-right" ? 16 : 24
                 }

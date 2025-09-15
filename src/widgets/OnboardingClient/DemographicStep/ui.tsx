@@ -11,6 +11,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  RadioGroup,
+  RadioGroupItem,
   TooltipWrapper,
 } from "shared/ui";
 import {
@@ -23,7 +25,7 @@ import {
 } from "shared/ui/select";
 import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
 import { OnboardingClientLayout } from "../Layout";
-import { languages } from "./index";
+import { CYCLE_HELTH, languages, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
 
 export const DemographicStep = () => {
   const dispatch = useDispatch();
@@ -227,118 +229,32 @@ export const DemographicStep = () => {
         <label className="text-[#1D1D1F]  text-base font-medium">
           Cycle health
         </label>
-        <div className="flex flex-col w-full gap-[10px] md:flex-row md:items-center md:gap-6">
-          <div className="flex items-center flex-1 gap-4">
-            <input
-              value="still menstruating"
-              onChange={(e) => setMenopauseStatus(e.target.value)}
-              name="menopause"
-              type="radio"
-              className="w-4 h-4 p-1"
-            />
-            <div className="flex items-center gap-2">
-              <p className="text-[#1D1D1F]  text-base font-medium">
-                Still menstruating
-              </p>
-              <TooltipWrapper content="You’re having regular monthly periods without major changes in timing or flow.">
-                <MaterialIcon
-                  iconName="help"
-                  size={16}
-                  fill={1}
-                  className="text-[#1C63DB]"
-                />
-              </TooltipWrapper>
-            </div>
-          </div>
-          <div className="flex items-center flex-1 gap-4">
-            <input
-              value="irregular cycles"
-              onChange={(e) => setMenopauseStatus(e.target.value)}
-              name="menopause"
-              type="radio"
-              className="w-4 h-4 p-1"
-            />
-            <div className="flex items-center gap-2">
-              <p className="text-[#1D1D1F]  text-base font-medium">
-                Irregular cycles
-              </p>
-              <TooltipWrapper content="Your periods are becoming unpredictable — shorter, longer, lighter, or heavier than before. This often signals the transition toward menopause (perimenopause).">
-                <MaterialIcon
-                  iconName="help"
-                  size={16}
-                  fill={1}
-                  className="text-[#1C63DB]"
-                />
-              </TooltipWrapper>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col w-full gap-[10px] md:flex-row md:items-center md:gap-6">
-          <div className="flex items-center flex-1 gap-4">
-            <input
-              value="no periods for 12+ months"
-              onChange={(e) => setMenopauseStatus(e.target.value)}
-              name="menopause"
-              type="radio"
-              className="w-4 h-4 p-1"
-            />
-            <div className="flex items-center gap-2">
-              <p className="text-[#1D1D1F]  text-base font-medium">
-                No periods for 12+ months
-              </p>
-              <TooltipWrapper content="You haven’t had a menstrual period for at least a year. This usually marks the natural start of menopause.">
-                <MaterialIcon
-                  iconName="help"
-                  size={16}
-                  fill={1}
-                  className="text-[#1C63DB]"
-                />
-              </TooltipWrapper>
-            </div>
-          </div>
-          <div className="flex items-center flex-1 gap-4">
-            <input
-              value="postmenopausal"
-              onChange={(e) => setMenopauseStatus(e.target.value)}
-              name="menopause"
-              type="radio"
-              className="w-4 h-4 p-1"
-            />
-            <div className="flex items-center gap-2">
-              <p className="text-[#1D1D1F]  text-base font-medium">
-                Postmenopausal
-              </p>
-              <TooltipWrapper content="You reached menopause more than a year ago. Your cycle has stopped, and this is the stage after menopause.">
-                <MaterialIcon
-                  iconName="help"
-                  size={16}
-                  fill={1}
-                  className="text-[#1C63DB]"
-                />
-              </TooltipWrapper>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <input
-            value="not sure"
-            name="menopause"
-            type="radio"
-            onChange={(e) => setMenopauseStatus(e.target.value)}
-            className="w-4 h-4 p-1"
-          />
-          <div className="flex items-center gap-2">
-            <p className="text-[#1D1D1F]  text-base font-medium">Not sure</p>
-            <TooltipWrapper content="You’re uncertain where you are in the transition — and that’s completely normal. Tolu will help you track and understand your stage.">
-              <MaterialIcon
-                iconName="help"
-                size={16}
-                fill={1}
-                className="text-[#1C63DB]"
+        <RadioGroup
+          className="grid w-full grid-cols-1 md:grid-cols-2"
+          value={menopauseStatus}
+          onValueChange={setMenopauseStatus}
+        >
+          {CYCLE_HELTH.map((option) => (
+            <div key={option} className="flex items-center space-x-2">
+              <RadioGroupItem
+                value={option}
+                className="w-4 h-4"
+                iconSize={14}
               />
-            </TooltipWrapper>
-          </div>
-        </div>
+              <span>{option}</span>
+              {option in MAP_CYCLE_HEALTH_TO_TOOLTIP && (
+                <TooltipWrapper content={MAP_CYCLE_HEALTH_TO_TOOLTIP[option]}>
+                  <MaterialIcon
+                    iconName="help"
+                    size={16}
+                    fill={1}
+                    className="text-[#1C63DB]"
+                  />
+                </TooltipWrapper>
+              )}
+            </div>
+          ))}
+        </RadioGroup>
       </div>
 
       <div className="flex w-full flex-col items-start gap-[10px]">

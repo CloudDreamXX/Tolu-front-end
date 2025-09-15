@@ -94,8 +94,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [previousScrollHeight, setPreviousScrollHeight] = useState(0);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  const isToluAdmin = chat?.participants.some((p) => p.role === "admin");
-
   const listData: ListItem[] = useMemo(() => {
     const sorted = [...messages]
       .sort(
@@ -488,7 +486,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                         variant="ghost"
                         className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                         onClick={open}
-                        disabled={isToluAdmin}
                       >
                         <MaterialIcon iconName="attach_file" />
                       </Button>
@@ -502,7 +499,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                     <PopoverAttach
                       files={files}
                       setFiles={setFiles}
-                      disabled={isToluAdmin}
                       title="Attach files"
                       hideFromLibrary
                       customTrigger={
@@ -533,7 +529,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                         setEmojiModalOpen(true);
                         e.stopPropagation();
                       }}
-                      disabled={isToluAdmin}
                     >
                       <MaterialIcon
                         iconName="sentiment_satisfied"
@@ -542,7 +537,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                     </Button>
 
                     {emojiModalOpen && (
-                      <div className="absolute mb-2 bottom-full">
+                      <div className="absolute mb-2 bottom-full -left-[80px]">
                         <Picker
                           data={data}
                           onEmojiSelect={(emoji: { native: string }) => {
@@ -559,7 +554,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                 </div>
                 <Button
                   onClick={sendAll}
-                  disabled={sending || isToluAdmin}
+                  disabled={sending}
                   variant={isMobileOrTablet ? "brightblue" : "blue"}
                   className="rounded-full flex justify-center items-center
              w-[42px] h-[42px] lg:w-[128px]"

@@ -73,16 +73,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
   const [sourceId, setSourceId] = useState<string | null>(null);
 
-  const loading = useSelector((state: RootState) => state.client.loading);
-  const chat = useSelector((state: RootState) => state.client.chat);
-  const lastChatId = useSelector((state: RootState) => state.client.lastChatId);
-  const activeChatKey = useSelector(
-    (state: RootState) => state.client.activeChatKey
-  );
   const [isSearching, setIsSearching] = useState(false);
+  const { loading, chat, lastChatId, activeChatKey } = useSelector(
+    (state: RootState) => state.client
+  );
+  const [currentChatId, setCurrentChatId] = useState<string>(lastChatId || "");
+  const currentKey = (currentChatId || lastChatId || activeChatKey) as string;
+
   const chatState = useSelector(
-    (state: RootState) =>
-      state.client.chatHistory[isSearching ? activeChatKey : lastChatId] || []
+    (state: RootState) => state.client.chatHistory[currentKey] || []
   );
   const folderState = useSelector(
     (state: RootState) => state.client.selectedChatFolder || null
@@ -113,7 +112,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
   const [streamingText, setStreamingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [currentChatId, setCurrentChatId] = useState<string>(lastChatId || "");
   const [chatTitle, setChatTitle] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [clientId, setClientId] = useState<string | null>(null);
@@ -411,14 +409,32 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const handleSwitchChange = (value: string) => {
     setIsSwitchLoading(true);
 
-    if (abortController) {
-      abortController.abort();
-    }
+    if (abortController) abortController.abort();
 
-    setIsSwitchLoading(false);
+    const preservedFiles = filesState;
+
+    setCurrentChatId("");
+    setStreamingText("");
+    setChatTitle("");
+    setError(null);
+    setClientId(null);
+
+    dispatch(clearActiveChatHistory());
+
+    handleSetFolder(null);
+    dispatch(setFolderToChat(null));
+    dispatch(setFolderId(""));
+    setInstruction("");
+    setExistingInstruction("");
+
     setIsSearching(false);
     setSelectedSwitch(value);
     dispatch(setActiveChat(value));
+    setIsSwitchLoading(false);
+
+    if (!filesState?.length && preservedFiles?.length) {
+      dispatch(setFilesToChat(preservedFiles));
+    }
   };
 
   const handleNewMessage = async (
@@ -442,8 +458,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       images: previewImages,
     };
 
+    const writeKeyForUser = currentChatId || lastChatId || activeChatKey;
+
     dispatch(
-      addMessageToChat({ chatKey: activeChatKey, message: userMessage })
+      addMessageToChat({ chatKey: writeKeyForUser, message: userMessage })
     );
 
     setMessage("");
@@ -512,9 +530,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           document: str,
         };
 
-        dispatch(
-          addMessageToChat({ chatKey: activeChatKey, message: aiMessage })
-        );
+        if (!currentChatId && chatId) {
+          dispatch(addMessageToChat({ chatKey: chatId, message: userMessage }));
+        }
+
+        dispatch(addMessageToChat({ chatKey: chatId, message: aiMessage }));
         setVoiceContent(extractVoiceText(aiMessage.content));
         setStreamingText("");
 
@@ -683,10 +703,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     dispatch(clearAllChatHistory());
     dispatch(clearActiveChatHistory());
     handleSetFolder(null);
-    setFolderToChat(null);
-    setFolderId("");
+    dispatch(setFolderToChat(null));
+    dispatch(setFolderId(""));
     setInstruction("");
     setExistingInstruction("");
+    dispatch(setFilesToChat([]));
     navigate("/content-manager/create");
   };
 
