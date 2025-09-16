@@ -19,7 +19,7 @@ export const metabolicDigestiveHealthSchema = z.object({
   digestiveIssues: z.string().optional(),
   digestiveOther: z.string().optional(),
 
-  recentLabTests: z.string().min(1, "This field is required"),
+  recentLabTests: z.string().optional(),
   labTestFile: z.instanceof(File).optional(),
 });
 

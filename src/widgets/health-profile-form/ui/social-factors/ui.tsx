@@ -47,18 +47,18 @@ const religionOptions = [
 
 export const socialFactorsSchema = z
   .object({
-    ethnicity: z.string().min(1, "This field is required"),
+    ethnicity: z.string().optional(),
     otherEthnicity: z.string().optional(),
 
-    household: z.string().min(1, "This field is required"),
+    household: z.string().optional(),
     otherHousehold: z.string().optional(),
 
-    occupation: z.string().min(1, "This field is required"),
+    occupation: z.string().optional(),
     otherOccupation: z.string().optional(),
 
-    education: z.string().min(1, "This field is required"),
+    education: z.string().optional(),
 
-    religion: z.string().min(1, "This field is required"),
+    religion: z.string().optional(),
   })
   .superRefine((val, ctx) => {
     if (

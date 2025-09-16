@@ -300,20 +300,6 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       privacy_consent: values.agreeToPrivacy,
       follow_up_recommendation: values.followUpMethod,
       recommendation_destination: `${values.countryCode}${values.phoneNumber}`,
-
-      height: "",
-      weight: "",
-      marital_status: "",
-      no_children: "",
-      menopause_status: "",
-      other_challenges: "",
-      tried_strategies: "",
-      maternal_health_history: "",
-      paternal_health_history: "",
-      lifestyle_information: "",
-      lifestyle_limitations: "",
-      sex_life: "",
-      support_system: "",
     };
   };
 

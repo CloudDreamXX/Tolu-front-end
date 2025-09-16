@@ -19,13 +19,13 @@ import { useState } from "react";
 
 export const basicInformationSchema = z
   .object({
-    age: z.string().min(1, { message: "Age is required." }),
-    genderIdentity: z.string(),
+    age: z.string().optional(),
+    genderIdentity: z.string().optional(),
     genderSelfDescribe: z.string().optional(),
-    sexAssignedAtBirth: z.string(),
-    race: z.string(),
-    language: z.string(),
-    country: z.string(),
+    sexAssignedAtBirth: z.string().optional(),
+    race: z.string().optional(),
+    language: z.string().optional(),
+    country: z.string().optional(),
   })
   .superRefine((val, ctx) => {
     if (

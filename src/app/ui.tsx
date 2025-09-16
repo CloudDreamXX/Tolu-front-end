@@ -4,9 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "entities/store/lib";
 import { AppRoutes } from "./routes";
 import { LoadingScreen } from "pages/loading";
-import { setLoading, UserService } from "entities/user";
+import { setLoading } from "entities/user";
 import { Toaster } from "shared/ui/toaster";
-import { ChatSocketService } from "entities/chat";
 
 export const App: React.FC = () => {
   const dispatch = useDispatch();

@@ -4,13 +4,13 @@ import { z } from "zod";
 import { MultiSelect } from "../MultiSelect";
 
 export const healthStatusHistorySchema = z.object({
-  healthConcerns: z.string().min(1, { message: "This field is required." }),
-  medicalConditions: z.string().min(1, { message: "This field is required." }),
-  medications: z.string().min(1, { message: "This field is required." }),
+  healthConcerns: z.string().optional(),
+  medicalConditions: z.string().optional(),
+  medications: z.string().optional(),
   otherMedications: z.string().optional(),
-  supplements: z.string().min(1, { message: "This field is required." }),
-  allergies: z.string().min(1, { message: "This field is required." }),
-  familyHistory: z.string().min(1, { message: "This field is required." }),
+  supplements: z.string().optional(),
+  allergies: z.string().optional(),
+  familyHistory: z.string().optional(),
 });
 
 const healthConcernsOptions = [
