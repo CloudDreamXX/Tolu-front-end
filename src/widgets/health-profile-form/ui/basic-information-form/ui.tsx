@@ -15,7 +15,13 @@ import {
 import { countries, languages } from "widgets/OnboardingClient/DemographicStep";
 import { MultiSelect } from "../MultiSelect";
 import { z } from "zod";
-import { useState } from "react";
+import { useMemo } from "react";
+
+const split = (s?: string) =>
+  (s ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
 
 export const basicInformationSchema = z
   .object({
@@ -43,9 +49,9 @@ export const basicInformationSchema = z
 export const BasicInformationForm = ({ form }: { form: any }) => {
   const identity = form.watch("genderIdentity");
 
-  const [languagesSel, setLanguagesSel] = useState<string[]>([]);
+  const languagesStr = form.watch("language") as string | undefined;
+  const languagesSel = useMemo(() => split(languagesStr), [languagesStr]);
   const onLanguagesChange = (vals: string[]) => {
-    setLanguagesSel(vals);
     form.setValue("language", vals.join(" , "));
   };
 
@@ -167,7 +173,6 @@ export const BasicInformationForm = ({ form }: { form: any }) => {
                 options={languages}
                 selected={languagesSel}
                 onChange={onLanguagesChange}
-                defaultValue={form.getValues("language")}
                 className="text-sm"
               />
             </FormControl>

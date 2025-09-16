@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FormField, FormItem, FormLabel, FormMessage, Input } from "shared/ui";
 import { z } from "zod";
 import { MultiSelect } from "../MultiSelect";
@@ -194,15 +194,21 @@ const normalizeNone = (next: string[], prev: string[]) => {
     : next;
 };
 
+const split = (s?: string) =>
+  (s ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+
 export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
-  const [healthConcernsSel, setHealthConcernsSel] = useState<string[]>([]);
-  const [medicalConditionsSel, setMedicalConditionsSel] = useState<string[]>(
-    []
-  );
-  const [medicationsSel, setMedicationsSel] = useState<string[]>([]);
-  const [supplementsSel, setSupplementsSel] = useState<string[]>([]);
-  const [allergiesSel, setAllergiesSel] = useState<string[]>([]);
-  const [familyHistorySel, setFamilyHistorySel] = useState<string[]>([]);
+  // const [healthConcernsSel, setHealthConcernsSel] = useState<string[]>([]);
+  // const [medicalConditionsSel, setMedicalConditionsSel] = useState<string[]>(
+  //   []
+  // );
+  // const [medicationsSel, setMedicationsSel] = useState<string[]>([]);
+  // const [supplementsSel, setSupplementsSel] = useState<string[]>([]);
+  // const [allergiesSel, setAllergiesSel] = useState<string[]>([]);
+  // const [familyHistorySel, setFamilyHistorySel] = useState<string[]>([]);
 
   const [healthConcernsOther, setHealthConcernsOther] = useState("");
   const [medicalConditionsOther, setMedicalConditionsOther] = useState("");
@@ -211,15 +217,38 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   const [allergiesOther, setAllergiesOther] = useState("");
   const [familyHistoryOther, setFamilyHistoryOther] = useState("");
 
+  const healthConcernsStr = form.watch("healthConcerns") as string | undefined;
+  const medicalConditionsStr = form.watch("medicalConditions") as
+    | string
+    | undefined;
+  const medicationsStr = form.watch("medications") as string | undefined;
+  const supplementsStr = form.watch("supplements") as string | undefined;
+  const allergiesStr = form.watch("allergies") as string | undefined;
+  const familyHistoryStr = form.watch("familyHistory") as string | undefined;
+
+  const healthConcernsSel = useMemo(
+    () => split(healthConcernsStr),
+    [healthConcernsStr]
+  );
+  const medicalConditionsSel = useMemo(
+    () => split(medicalConditionsStr),
+    [medicalConditionsStr]
+  );
+  const medicationsSel = useMemo(() => split(medicationsStr), [medicationsStr]);
+  const supplementsSel = useMemo(() => split(supplementsStr), [supplementsStr]);
+  const allergiesSel = useMemo(() => split(allergiesStr), [allergiesStr]);
+  const familyHistorySel = useMemo(
+    () => split(familyHistoryStr),
+    [familyHistoryStr]
+  );
+
   const onHealthConcernsChange = (val: string[]) => {
     const cleaned = normalizeNone(val, healthConcernsSel);
-    setHealthConcernsSel(cleaned);
     form.setValue("healthConcerns", joinVals(cleaned, healthConcernsOther));
   };
 
   const onMedicalConditionsChange = (val: string[]) => {
     const cleaned = normalizeNone(val, medicalConditionsSel);
-    setMedicalConditionsSel(cleaned);
     form.setValue(
       "medicalConditions",
       joinVals(cleaned, medicalConditionsOther)
@@ -228,30 +257,27 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
 
   const onMedicationsChange = (val: string[]) => {
     const cleaned = normalizeNone(val, medicationsSel);
-    setMedicationsSel(cleaned);
     form.setValue("medications", joinVals(cleaned, medicationsOther));
-    if (cleaned.length === 1 && cleaned[0] === "None") {
-      form.setValue("otherMedications", undefined);
-    } else {
-      form.setValue("otherMedications", medicationsOther || undefined);
-    }
+    form.setValue(
+      "otherMedications",
+      cleaned.length === 1 && cleaned[0] === "None"
+        ? undefined
+        : medicationsOther || undefined
+    );
   };
 
   const onSupplementsChange = (val: string[]) => {
     const cleaned = normalizeNone(val, supplementsSel);
-    setSupplementsSel(cleaned);
     form.setValue("supplements", joinVals(cleaned, supplementsOther));
   };
 
   const onAllergiesChange = (val: string[]) => {
     const cleaned = normalizeNone(val, allergiesSel);
-    setAllergiesSel(cleaned);
     form.setValue("allergies", joinVals(cleaned, allergiesOther));
   };
 
   const onFamilyHistoryChange = (val: string[]) => {
     const cleaned = normalizeNone(val, familyHistorySel);
-    setFamilyHistorySel(cleaned);
     form.setValue("familyHistory", joinVals(cleaned, familyHistoryOther));
   };
 
@@ -282,7 +308,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={healthConcernsOptions}
               selected={healthConcernsSel}
               onChange={onHealthConcernsChange}
-              defaultValue={form.getValues("healthConcerns")}
             />
             {healthConcernsSel.includes("Other") && (
               <div className="pt-2">
@@ -315,7 +340,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={medicalConditionsOptions}
               selected={medicalConditionsSel}
               onChange={onMedicalConditionsChange}
-              defaultValue={form.getValues("medicalConditions")}
             />
             {medicalConditionsSel.includes("Other") && (
               <div className="pt-2">
@@ -348,7 +372,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={medicationOptions}
               selected={medicationsSel}
               onChange={onMedicationsChange}
-              defaultValue={form.getValues("medications")}
             />
             {medicationsSel.includes("Other") && (
               <div className="pt-2 space-y-2">
@@ -379,7 +402,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={supplementsOptions}
               selected={supplementsSel}
               onChange={onSupplementsChange}
-              defaultValue={form.getValues("supplements")}
             />
             {supplementsSel.includes("Other") && (
               <div className="pt-2">
@@ -409,7 +431,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={allergiesOptions}
               selected={allergiesSel}
               onChange={onAllergiesChange}
-              defaultValue={form.getValues("allergies")}
             />
             {allergiesSel.includes("Other") && (
               <div className="pt-2">
@@ -439,7 +460,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={familyHistoryOptions}
               selected={familyHistorySel}
               onChange={onFamilyHistoryChange}
-              defaultValue={form.getValues("familyHistory")}
             />
             {familyHistorySel.includes("Other") && (
               <div className="pt-2">

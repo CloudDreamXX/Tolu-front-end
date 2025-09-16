@@ -6,7 +6,7 @@ import { ChangePasswordRequest, UserService } from "entities/user";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { cn, phoneMask, toast } from "shared/lib";
+import { phoneMask, toast } from "shared/lib";
 import {
   Avatar,
   AvatarFallback,
