@@ -13,10 +13,10 @@ import z from "zod";
 import { MultiSelect } from "../MultiSelect";
 
 export const drivesAndGoalsSchema = z.object({
-  goals: z.string().min(1, "This field is required"),
-  goalReason: z.string().min(1, "This field is required"),
-  urgency: z.string().min(1, "This field is required"),
-  healthApproach: z.string().min(1, "This field is required"),
+  goals: z.string().optional(),
+  goalReason: z.string().optional(),
+  urgency: z.string().optional(),
+  healthApproach: z.string().optional(),
 });
 
 const goalOptions = [

@@ -13,16 +13,16 @@ import z from "zod";
 import { MultiSelect } from "../MultiSelect";
 
 export const womensHealthSchema = z.object({
-  menstrualCycleStatus: z.string().min(1, "This field is required"),
+  menstrualCycleStatus: z.string().optional(),
   menstrualOther: z.string().optional(),
 
-  hormoneTherapy: z.string().min(1, "This field is required"),
+  hormoneTherapy: z.string().optional(),
   hormoneDetails: z.string().optional(),
   hormoneDuration: z.string().optional(),
   hormoneProvider: z.string().optional(),
 
-  fertilityConcerns: z.string().min(1, "This field is required"),
-  birthControlUse: z.string().min(1, "This field is required"),
+  fertilityConcerns: z.string().optional(),
+  birthControlUse: z.string().optional(),
   birthControlDetails: z.string().optional(),
 });
 

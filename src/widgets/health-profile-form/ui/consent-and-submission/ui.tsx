@@ -12,8 +12,8 @@ import { Link } from "react-router-dom";
 import z from "zod";
 
 export const consentSubmissionSchema = z.object({
-  agreeToPrivacy: z.boolean(),
-  followUpMethod: z.string().min(1, "This field is required"),
+  agreeToPrivacy: z.boolean().optional(),
+  followUpMethod: z.string().optional(),
   phoneNumber: z.string().optional(),
   countryCode: z.string().optional(),
 });

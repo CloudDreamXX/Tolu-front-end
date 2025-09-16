@@ -9,7 +9,11 @@ import { useLocation } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
-import { PopoverFolder, PopoverInstruction } from "widgets/content-popovers";
+import {
+  PopoverAttach,
+  PopoverFolder,
+  PopoverInstruction,
+} from "widgets/content-popovers";
 import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
 import { DailyJournal } from "widgets/dayli-journal";
 import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
@@ -185,29 +189,27 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
       {footer ?? (
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <label
-              className={`relative items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800 hidden md:flex`}
-            >
-              <Button
-                variant="ghost"
-                className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
-              >
-                <MaterialIcon iconName="attach_file" />
-              </Button>
-              <input
-                type="file"
-                multiple
-                accept="image/*,.pdf"
-                onChange={handleFileChange}
-                className="absolute w-[50px] z-[9999] cursor-pointer opacity-0"
-                disabled={false}
-              />
-              {files.length > 0 && (
-                <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
-                  {files.length > 99 ? "99+" : files.length}
-                </span>
-              )}
-            </label>
+            <PopoverAttach
+              files={files}
+              setFiles={setFiles}
+              hideFromLibrary
+              fileExtensions={[".pdf", ".png", ".jpg", ".jpeg", ".gif"]}
+              title="Attach files"
+              description="Add credible references to support information integrity"
+              customTrigger={
+                <Button
+                  variant="ghost"
+                  className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                >
+                  <MaterialIcon iconName="attach_file" />
+                  {files.length > 0 && (
+                    <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
+                      {files.length > 99 ? "99+" : files.length}
+                    </span>
+                  )}
+                </Button>
+              }
+            />
             {isContentManager ? (
               selectedSwitch === "RESEARCH" ? (
                 <div className="flex items-center gap-[10px]">
@@ -233,10 +235,10 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                         {((instruction && instruction?.length > 0) ||
                           (existingInstruction &&
                             existingInstruction?.length > 0)) && (
-                          <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                            1
-                          </span>
-                        )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
                       </Button>
                     }
                     folderInstruction={existingInstruction}

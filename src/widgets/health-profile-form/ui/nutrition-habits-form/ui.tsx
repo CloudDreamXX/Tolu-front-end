@@ -18,11 +18,11 @@ import z from "zod";
 import { MultiSelect } from "../MultiSelect";
 
 export const nutritionHabitsSchema = z.object({
-  decisionMaker: z.string().min(1, "This field is required"),
-  cookFrequency: z.string().min(1, "This field is required"),
-  takeoutFrequency: z.string().min(1, "This field is required"),
-  commonFoods: z.string().min(1, "This field is required"),
-  dietType: z.string().min(1, "This field is required"),
+  decisionMaker: z.string().optional(),
+  cookFrequency: z.string().optional(),
+  takeoutFrequency: z.string().optional(),
+  commonFoods: z.string().optional(),
+  dietType: z.string().optional(),
   dietDetails: z.string().optional(),
 });
 

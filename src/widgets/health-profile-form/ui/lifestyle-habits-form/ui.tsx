@@ -15,14 +15,12 @@ import { MultiSelect } from "../MultiSelect";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const lifestyleHabitsSchema = z.object({
-  dietDetails: z.string().min(1, "This field is required"),
-  exerciseHabits: z
-    .string()
-    .min(1, { message: "Please select your activity level." }),
+  dietDetails: z.string().optional(),
+  exerciseHabits: z.string().optional(),
   otherExerciseHabits: z.string().optional(),
-  sleepQuality: z.number().min(0).max(3),
-  stressLevels: z.number().min(0).max(3),
-  energyLevels: z.number().min(0).max(3),
+  sleepQuality: z.number().optional(),
+  stressLevels: z.number().optional(),
+  energyLevels: z.number().optional(),
 });
 
 const dietDetailsOptions = [
