@@ -28,8 +28,8 @@ import { useNavigate } from "react-router-dom";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
-  const [emailNotif, setEmailNotif] = useState(false);
-  const [pushNotif, setPushNotif] = useState(true);
+  // const [emailNotif, setEmailNotif] = useState(false);
+  // const [pushNotif, setPushNotif] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -704,23 +704,23 @@ export const ClientProfile = () => {
 
         <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-2">
           <Card title="Preferences">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2.5">
-                <Switch checked={emailNotif} onChange={setEmailNotif} />
-                <span
-                  className={cn(emailNotif ? "text-blue-600" : "text-gray-600")}
-                >
-                  Email notifications
-                </span>
+            <div className="flex flex-col gap-4 opacity-[0.5]">
+              <div className="flex items-center gap-2.5 pointer-events-none">
+                <Switch
+                  checked={true}
+                  onChange={() => {}}
+                  // onChange={() => setEmailNotif(!emailNotif)}
+                />
+                <span className={"text-blue-600"}>Email notifications</span>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <Switch checked={pushNotif} onChange={setPushNotif} />
-                <span
-                  className={cn(pushNotif ? "text-blue-600" : "text-gray-600")}
-                >
-                  Push notifications
-                </span>
+              <div className="flex items-center gap-2.5 pointer-events-none">
+                <Switch
+                  checked={true}
+                  onChange={() => {}}
+                  // onChange={() => setPushNotif(!pushNotif)}
+                />
+                <span className={"text-blue-600"}>Push notifications</span>
               </div>
             </div>
           </Card>

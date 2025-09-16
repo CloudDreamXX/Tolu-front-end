@@ -287,16 +287,7 @@ export const WomensHealthForm = ({ form }: { form: any }) => {
                 </FormControl>
                 <FormLabel htmlFor={"Yes"}>Yes</FormLabel>
               </FormItem>
-              <FormItem
-                key={"No"}
-                className="flex items-center space-x-2 space-y-0"
-              >
-                <FormControl>
-                  <RadioGroupItem value={"No"} id={"No"} />
-                </FormControl>
-                <FormLabel htmlFor={"No"}>No</FormLabel>
-              </FormItem>
-              {form.watch("birthControlUse") === "No" && (
+              {form.watch("birthControlUse") === "Yes" && (
                 <FormField
                   control={form.control}
                   name="birthControlDetails"
@@ -312,6 +303,15 @@ export const WomensHealthForm = ({ form }: { form: any }) => {
                   )}
                 />
               )}
+              <FormItem
+                key={"No"}
+                className="flex items-center space-x-2 space-y-0"
+              >
+                <FormControl>
+                  <RadioGroupItem value={"No"} id={"No"} />
+                </FormControl>
+                <FormLabel htmlFor={"No"}>No</FormLabel>
+              </FormItem>
               <FormItem
                 key={"Not applicable"}
                 className="flex items-center space-x-2 space-y-0"

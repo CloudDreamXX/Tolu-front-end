@@ -71,19 +71,74 @@ const medicationOptions = [
 ];
 
 const supplementsOptions = [
-  "Multivitamin",
-  "Vitamin D",
-  "Vitamin B complex",
-  "Magnesium",
-  "Omega-3 (fish oil, algae oil)",
-  "Probiotics",
-  "Zinc",
-  "Iron",
+  "Alpha-Lipoic Acid",
+  "Ashwagandha",
+  "Beta-Alanine",
+  "Branched-Chain Amino Acids (BCAAs)",
   "Calcium",
+  "Casein Protein",
+  "Chasteberry (Vitex)",
+  "Chondroitin",
+  "Chromium",
+  "Coenzyme Q10 (CoQ10)",
   "Collagen",
-  "Adaptogens (ashwagandha, rhodiola, maca, etc.)",
-  "Herbal supplements (turmeric, ginger, milk thistle, etc.)",
-  "Protein powder",
+  "Copper",
+  "Creatine",
+  "DHEA",
+  "Digestive Enzymes",
+  "Echinacea",
+  "Electrolytes",
+  "Evening Primrose Oil",
+  "Fenugreek",
+  "Fish Oil (Omega-3)",
+  "Flaxseed Oil",
+  "Ginger",
+  "Ginkgo Biloba",
+  "Ginseng",
+  "Glucosamine",
+  "Glutamine",
+  "Green Tea Extract",
+  "HMB (β-Hydroxy β-Methylbutyrate)",
+  "Hyaluronic Acid",
+  "Iodine",
+  "Iron",
+  "Krill Oil",
+  "L-Carnitine",
+  "MCT Oil",
+  "MSM (Methylsulfonylmethane)",
+  "Maca",
+  "Magnesium",
+  "Manganese",
+  "Melatonin",
+  "Milk Thistle",
+  "Molybdenum",
+  "N-Acetyl Cysteine (NAC)",
+  "Prebiotics (Inulin, FOS)",
+  "Probiotics",
+  "Quercetin",
+  "Resveratrol",
+  "Rhodiola",
+  "Saw Palmetto",
+  "Selenium",
+  "Soy Protein",
+  "Tribulus Terrestris",
+  "Turmeric (Curcumin)",
+  "Valerian Root",
+  "Vitamin A",
+  "Vitamin B1 (Thiamine)",
+  "Vitamin B12",
+  "Vitamin B2 (Riboflavin)",
+  "Vitamin B3 (Niacin)",
+  "Vitamin B5 (Pantothenic Acid)",
+  "Vitamin B6",
+  "Vitamin B7 (Biotin)",
+  "Vitamin B9 (Folate)",
+  "Vitamin C",
+  "Vitamin D",
+  "Vitamin E",
+  "Vitamin K",
+  "Whey Protein",
+  "Zinc",
   "None",
   "Other",
 ];
@@ -126,8 +181,18 @@ const joinVals = (vals: string[], extra?: string) => {
   return [...filtered, ...(extraTrim ? [extraTrim] : [])].join(" , ");
 };
 
-const sanitizeNone = (vals: string[]) =>
-  vals.length > 1 ? vals.filter((v) => v !== "None") : vals;
+const normalizeNone = (next: string[], prev: string[]) => {
+  const prevSet = new Set(prev);
+  const added = next.filter((v) => !prevSet.has(v));
+
+  if (added.includes("None")) return ["None"];
+  if (prevSet.has("None") && added.length > 0) {
+    return next.filter((v) => v !== "None");
+  }
+  return next.includes("None") && next.length > 1
+    ? next.filter((v) => v !== "None")
+    : next;
+};
 
 export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   const [healthConcernsSel, setHealthConcernsSel] = useState<string[]>([]);
@@ -147,13 +212,13 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   const [familyHistoryOther, setFamilyHistoryOther] = useState("");
 
   const onHealthConcernsChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
+    const cleaned = normalizeNone(val, healthConcernsSel);
     setHealthConcernsSel(cleaned);
     form.setValue("healthConcerns", joinVals(cleaned, healthConcernsOther));
   };
 
   const onMedicalConditionsChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
+    const cleaned = normalizeNone(val, medicalConditionsSel);
     setMedicalConditionsSel(cleaned);
     form.setValue(
       "medicalConditions",
@@ -162,7 +227,7 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   };
 
   const onMedicationsChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
+    const cleaned = normalizeNone(val, medicationsSel);
     setMedicationsSel(cleaned);
     form.setValue("medications", joinVals(cleaned, medicationsOther));
     if (cleaned.length === 1 && cleaned[0] === "None") {
@@ -173,19 +238,19 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   };
 
   const onSupplementsChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
+    const cleaned = normalizeNone(val, supplementsSel);
     setSupplementsSel(cleaned);
     form.setValue("supplements", joinVals(cleaned, supplementsOther));
   };
 
   const onAllergiesChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
+    const cleaned = normalizeNone(val, allergiesSel);
     setAllergiesSel(cleaned);
     form.setValue("allergies", joinVals(cleaned, allergiesOther));
   };
 
   const onFamilyHistoryChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
+    const cleaned = normalizeNone(val, familyHistorySel);
     setFamilyHistorySel(cleaned);
     form.setValue("familyHistory", joinVals(cleaned, familyHistoryOther));
   };
@@ -277,10 +342,7 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
         name="medications"
         render={() => (
           <FormItem>
-            <FormLabel>
-              Medications{" "}
-              <span className="text-gray-500">(Current or recent)</span>
-            </FormLabel>
+            <FormLabel>Medications</FormLabel>
             <MultiSelect
               placeholder="Select..."
               options={medicationOptions}
