@@ -9,6 +9,10 @@ import { useDispatch } from "react-redux";
 import {
   clearActiveChatHistory,
   clearAllChatHistory,
+  setFilesToChat,
+  setFolderId,
+  setFolderToChat,
+  setLastChatId,
 } from "entities/client/lib";
 
 export const ContentManagerSidebar: React.FC = () => {
@@ -36,7 +40,11 @@ export const ContentManagerSidebar: React.FC = () => {
   const handleCreateWithTolu = () => {
     dispatch(clearAllChatHistory());
     dispatch(clearActiveChatHistory());
-    nav("/content-manager/create");
+    dispatch(setFolderToChat(null));
+    dispatch(setFolderId(""));
+    dispatch(setFilesToChat([]));
+    dispatch(setLastChatId(""));
+    nav("/content-manager/create", { state: { isNew: true } });
   };
 
   return (

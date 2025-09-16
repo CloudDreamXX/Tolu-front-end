@@ -1,5 +1,13 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  clearAllChatHistory,
+  clearActiveChatHistory,
+  setFolderToChat,
+  setFolderId,
+  setFilesToChat,
+  setLastChatId,
+} from "entities/client/lib";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button } from "shared/ui";
@@ -9,45 +17,17 @@ export const SearchAiSmallInput = ({
 }: {
   sidebarOpen: boolean;
 }) => {
+  const dispatch = useDispatch();
   const nav = useNavigate();
-  const { chatId } = useParams();
-  const [search, setSearch] = useState<string>("");
 
   const handleSearch = () => {
-    nav(`/library`, {
-      state: {
-        message: search,
-        searchType: "Search",
-      },
-      replace: true,
-    });
-
-    if (!search?.trim()) return;
-
-    const isInExistingChat = chatId && !chatId.startsWith("new_chat_");
-
-    if (isInExistingChat) {
-      const newChatId = `new_chat_${Date.now()}`;
-      nav(`/library/${newChatId}`, {
-        state: {
-          message: search,
-          searchType: "Search",
-          isNewSearch: true,
-        },
-        replace: true,
-      });
-    } else {
-      const newChatId = `new_chat_${Date.now()}`;
-      nav(`/library/${newChatId}`, {
-        state: {
-          message: search,
-          searchType: "Search",
-        },
-        replace: true,
-      });
-    }
-
-    setSearch("");
+    dispatch(clearAllChatHistory());
+    dispatch(clearActiveChatHistory());
+    dispatch(setFolderToChat(null));
+    dispatch(setFolderId(""));
+    dispatch(setFilesToChat([]));
+    dispatch(setLastChatId(""));
+    nav("/library", { state: { isNew: true } });
   };
 
   return (
