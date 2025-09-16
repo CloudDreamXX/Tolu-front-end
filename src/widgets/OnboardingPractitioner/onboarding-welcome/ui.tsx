@@ -47,9 +47,9 @@ export const OnboardingWelcome = () => {
     <AuthPageWrapper>
       <Footer position={isMobile ? "top-left" : undefined} />
       <AdminHeader />
-      <main className="absolute bottom-0 w-full xl:max-w-[1200px] flex flex-col items-center md:px-[40px] xl:px-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:right-auto md:w-full max-h-[65dvh] md:max-h-auto">
+      <main className="absolute bottom-0 mt-[40px] xl:mt-0 w-full xl:max-w-[1200px] flex flex-col items-center md:px-[40px] xl:px-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:right-auto md:w-full max-h-[65dvh] md:max-h-auto">
         {curentWindow === 0 && (
-          <div className="flex flex-col items-center justify-center w-full xl:w-[1200px] gap-[40px] shadow-wrapper md:gap-[32px] py-[24px] px-[24px] md:py-[40px] md:px-[40px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white md:mt-[100px] xl:mt-0">
+          <div className="flex flex-col items-center justify-center w-full xl:w-[1200px] gap-[40px] shadow-wrapper md:gap-[32px] py-[24px] px-[24px] md:py-[40px] md:px-[40px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
             <div className="flex flex-col items-center gap-[24px] w-full">
               <h3 className="xl:w-[860px] text-black  text-center text-[24px] md:text-[32px] xl:text-[40px]/[59px] font-semibold">
                 Welcome to Tolu, your

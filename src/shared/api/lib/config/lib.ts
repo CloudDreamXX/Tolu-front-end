@@ -37,7 +37,6 @@ export const API_ROUTES = {
     PERSONALIZED_SEARCH: "/ai-personalized-search/",
     UPDATE_CHAT_TITLE: "/update-chat-title",
     UPDATE_FOLDER_CONTENT: "/update-folder-content",
-    DELETE_CHAT: "/chat/{chat_id}",
   },
   SEARCH: {
     HISTORY: "/searched-result/history",
@@ -175,6 +174,7 @@ export const API_ROUTES = {
     UPDATE_CHAT_NOTE: "/chat-notes/{note_id}",
     DELETE_CHAT_NOTE: "/chat-notes/{note_id}",
     UPLOADED_FILE_CHAT_NOTE: "/chat-notes/uploads/{file_uuid}",
+    DELETE_CHAT: "/chat/{chat_id}",
   },
   NOTIFICATIONS: {
     GET_NOTIFICATIONS: "/notifications",

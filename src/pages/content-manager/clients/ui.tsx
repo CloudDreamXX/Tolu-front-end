@@ -736,7 +736,15 @@ export const ContentManagerClients: React.FC = () => {
                           <MaterialIcon iconName="visibility" fill={1} />
                           View profile
                         </button>
-                        <button className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]">
+                        <button
+                          className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]"
+                          onClick={() => {
+                            if (client.status !== "active") return;
+                            navigate(
+                              `/content-manager/messages/${client.client_id}`
+                            );
+                          }}
+                        >
                           <MaterialIcon iconName="forum" fill={1} />
                           Chat
                         </button>

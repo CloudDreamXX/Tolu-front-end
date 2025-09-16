@@ -311,44 +311,49 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               </>
             )}
 
-            <DropdownMenu
-              open={isDropdownOpen}
-              onOpenChange={setIsDropdownOpen}
-            >
-              <DropdownMenuTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="border-none rounded-full hover:bg-white w-[28px] h-[28px] md:w-[32px] md:h-[32px]"
-                >
-                  <MaterialIcon iconName="more_vert" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {isMobile && (
-                  <DropdownMenuItem className="text-[#1D1D1F]">
-                    <MaterialIcon iconName="person" className="mr-2" />
-                    Profile
-                  </DropdownMenuItem>
-                )}
-                {!isClient && chat.chat_type === "group" && (
-                  <DropdownMenuItem
-                    className="text-[#1D1D1F]"
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      onEditGroup?.(chat);
-                    }}
+            {(isMobile || (!isClient && chat.chat_type === "group")) && (
+              <DropdownMenu
+                open={isDropdownOpen}
+                onOpenChange={setIsDropdownOpen}
+              >
+                <DropdownMenuTrigger>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="border-none rounded-full hover:bg-white w-[28px] h-[28px] md:w-[32px] md:h-[32px]"
                   >
-                    <MaterialIcon iconName="edit" className="mr-2" />
-                    Edit
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem className="text-red-600">
+                    <MaterialIcon iconName="more_vert" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {isMobile && (
+                    <DropdownMenuItem
+                      className="text-[#1D1D1F]"
+                      onClick={() => handleSelectClient(receiver?.user.id)}
+                    >
+                      <MaterialIcon iconName="person" className="mr-2" />
+                      Profile
+                    </DropdownMenuItem>
+                  )}
+                  {!isClient && chat.chat_type === "group" && (
+                    <DropdownMenuItem
+                      className="text-[#1D1D1F]"
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        onEditGroup?.(chat);
+                      }}
+                    >
+                      <MaterialIcon iconName="edit" className="mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                  )}
+                  {/* <DropdownMenuItem className="text-red-600">
                   <MaterialIcon iconName="delete" fill={1} className="mr-2" />
                   Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuItem> */}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
         {isClient && (

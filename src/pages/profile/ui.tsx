@@ -295,14 +295,14 @@ export const ClientProfile = () => {
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 ">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="flex gap-3 items-center justify-between">
         <div className="flex items-center gap-[24px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
           Personal profile
           <div
             style={{
               backgroundImage: `linear-gradient(to right, #1C63DB 0%, #1C63DB ${percentage}%, rgba(0,0,0,0) ${percentage}%, rgba(0,0,0,0) 100%)`,
             }}
-            className="flex h-[32px] mt-[8px] md:w-[328px] text-nowrap items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-[6px] gap-8 px-[16px]"
+            className="hidden md:flex h-[32px] mt-[8px] md:w-[328px] text-nowrap items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-[6px] gap-8 px-[16px]"
           >
             <span
               className={`text-[14px] font-semibold ${percentage > 40 ? "text-white" : ""}`}
@@ -323,7 +323,7 @@ export const ClientProfile = () => {
       </div>
 
       {isPopupOpen && (
-        <div className="absolute p-4 overflow-y-auto bg-white shadow-md top-16 right-4 rounded-xl w-96 max-h-96">
+        <div className="absolute p-4 overflow-y-auto bg-white shadow-md top-16 right-4 rounded-xl w-96 max-h-96 z-[999]">
           <div className="flex justify-between mb-2">
             <h4 className="text-lg font-semibold">Notifications</h4>
             <button onClick={togglePopup} className="text-gray-600">
@@ -368,7 +368,7 @@ export const ClientProfile = () => {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center md:justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6">
+      <div className="hidden md:flex flex-wrap items-center md:justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6">
         <div className="flex items-center gap-6 ">
           <div className="relative w-[100px] h-[100px]">
             <Avatar className="object-cover w-full h-full rounded-full">
@@ -436,9 +436,11 @@ export const ClientProfile = () => {
             </DropdownMenu>
           </div>
           <div>
-            <p className="mb-1 text-2xl font-semibold">{user?.name || ""}</p>
+            <p className="mb-1 text-[18px] md:text-2xl font-semibold">
+              {user?.name || ""}
+            </p>
             {user?.created_at && (
-              <p className="px-2 bg-blue-100 py-1.5 text-blue-600 font-semibold rounded-full inline-block text-nowrap">
+              <p className="px-2 bg-blue-100 py-1.5 text-[14px] text-blue-600 font-semibold rounded-full inline-block text-nowrap">
                 Member since {formatDate(user.created_at)}
               </p>
             )}
@@ -469,7 +471,84 @@ export const ClientProfile = () => {
               </Button>
             }
           >
-            <div className="grid grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px]">
+            <div className="md:hidden flex items-center gap-6 mb-[24px]">
+              <div className="relative w-[100px] h-[100px]">
+                <Avatar className="object-cover w-full h-full rounded-full">
+                  <AvatarImage src={previewUrl || photoUrl || undefined} />
+                  <AvatarFallback className="text-3xl bg-slate-300 ">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <input
+                  className="hidden"
+                  {...getInputProps()}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onPickPhoto(f);
+                  }}
+                />
+
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="brightblue"
+                      className="absolute bottom-0 right-0 inline-flex items-center justify-center
+                   w-8 h-8 rounded-full bg-[#1C63DB] text-white
+                   hover:opacity-90 focus:outline-none"
+                    >
+                      <MaterialIcon iconName="add" />
+                    </Button>
+                  </DropdownMenuTrigger>
+
+                  <DropdownMenuContent
+                    side="bottom"
+                    align="start"
+                    sideOffset={8}
+                    className="
+        z-50 min-w-[180px] rounded-xl border border-[#E6ECF7]
+        bg-[#F3F7FD] p-2 shadow-lg
+      "
+                    onCloseAutoFocus={(e) => e.preventDefault()}
+                  >
+                    <DropdownMenuItem
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        open();
+                      }}
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg cursor-pointer focus:bg-white focus:text-inherit"
+                    >
+                      <span className="inline-flex items-center justify-center w-8 h-8 bg-white border rounded-lg">
+                        <MaterialIcon iconName="cached" />
+                      </span>
+                      Change photo
+                    </DropdownMenuItem>
+
+                    {/* <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg cursor-pointer focus:bg-white focus:text-inherit"
+                >
+                  <span className="inline-flex items-center justify-center w-8 h-8 bg-white border rounded-lg">
+                    <MaterialIcon iconName="delete" />
+                  </span>
+                  Delete photo
+                </DropdownMenuItem> */}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div>
+                <p className="mb-1 text-[18px] md:text-2xl font-semibold">
+                  {user?.name || ""}
+                </p>
+                {user?.created_at && (
+                  <p className="px-2 bg-blue-100 py-1.5 text-[14px] text-blue-600 font-semibold rounded-full inline-block text-nowrap">
+                    Member since {formatDate(user.created_at)}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px]">
               <Field label="Name" value={user?.name || ""} />
               <Field
                 label="Phone number"
@@ -501,7 +580,7 @@ export const ClientProfile = () => {
             action={
               <Button
                 variant={"blue2"}
-                className="px-8 text-base font-semibold text-blue-700"
+                className="hidden md:flex px-8 text-base font-semibold text-blue-700"
               >
                 <MaterialIcon iconName="replay" className="text-blue-700" />
                 Update
@@ -511,7 +590,7 @@ export const ClientProfile = () => {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1 border-b border-[#D5DAE2] pb-6">
                 <p className="text-sm text-[#5F5F65]">Date of last check: </p>
-                <p className="text-lg font-semibold text-[#1D1D1F]">
+                <p className="text-[14px] md:text-lg font-semibold text-[#1D1D1F]">
                   May 14, 2025 4:00 pm
                 </p>
               </div>
@@ -609,7 +688,14 @@ export const ClientProfile = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-between md:justify-end">
+                <Button
+                  variant={"blue2"}
+                  className="md:hidden flex px-[8px] text-[14px] font-semibold text-blue-700"
+                >
+                  <MaterialIcon iconName="replay" className="text-blue-700" />
+                  Update results
+                </Button>
                 <Button variant="brightblue">See full Daily Journal</Button>
               </div>
             </div>
@@ -640,6 +726,14 @@ export const ClientProfile = () => {
           </Card>
         </div>
       </div>
+      <Button
+        variant={"blue2"}
+        className="md:hidden w-fit ml-auto px-8 text-base font-semibold text-blue-700"
+        onClick={() => handleSignOut()}
+      >
+        <MaterialIcon iconName="exit_to_app" />
+        Log out
+      </Button>
 
       <ClientEditProfileModal
         initial={{

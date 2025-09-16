@@ -30,15 +30,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     message.file_size !== null &&
     message.file_url !== null;
 
-  const formatTextWithBreaks = (text: string) => {
-    return text.split("\n").map((line) => (
-      <React.Fragment key={line}>
-        {line}
-        <br />
-      </React.Fragment>
-    ));
-  };
-
   const renderFileMessage = () => (
     <div
       className={cn(
@@ -61,17 +52,17 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   );
 
   const renderTextMessage = () => (
-    <span
+    <div
       className={cn(
-        "rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F] w-fit",
+        "inline-block rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F] max-w-full overflow-hidden break-words [overflow-wrap:anywhere] whitespace-pre-wrap [&_a]:break-all",
         isOwn
           ? "bg-[#AAC6EC] rounded-tr-none self-end"
           : "bg-white border border-[#DBDEE1] rounded-tl-none",
         className
       )}
     >
-      {formatTextWithBreaks(message.content)}
-    </span>
+      {message.content}
+    </div>
   );
 
   return (
@@ -92,7 +83,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
         <div
           className={cn(
-            "flex flex-col-reverse md:flex-col md:gap-1.5 w-fit max-w-[70%] py-2",
+            "flex flex-col-reverse md:flex-col md:gap-1.5 max-w-[70%] min-w-0 py-2",
             isOwn && isMobile ? "items-end" : undefined
           )}
         >

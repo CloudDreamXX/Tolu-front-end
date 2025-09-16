@@ -201,4 +201,10 @@ export class ChatService {
       }
     );
   }
+
+  static async deleteChat(id: string): Promise<string> {
+    return ApiService.delete<string>(
+      API_ROUTES.CHAT.DELETE_CHAT.replace("{chat_id}", id)
+    );
+  }
 }

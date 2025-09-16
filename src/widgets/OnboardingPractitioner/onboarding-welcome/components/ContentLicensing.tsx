@@ -204,8 +204,8 @@ export const ContentLicensing: React.FC<Props> = ({
   };
 
   return (
-    <div className="flex flex-col xl:w-[900px] items-center justify-center gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
-      <div className="flex flex-col items-center shrink-0 w-full md:w-[548px] md:h-[269px] lg:h-auto gap-[24px]">
+    <div className="flex flex-col xl:w-[900px] overflow-y-auto gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
+      <div className="flex flex-col items-center w-full h-full md:w-[548px] gap-[24px]">
         <Medkit />
         <div className="flex flex-col gap-[38px] items-center justify-center">
           <div className="flex md:w-[460px] flex-col items-center gap-[16px]">
@@ -216,35 +216,35 @@ export const ContentLicensing: React.FC<Props> = ({
               {currentContent.subtitle || currentContent.content}
             </p>
           </div>
+
+          <div className="flex w-full flex-col-reverse md:flex-row justify-between gap-[16px]">
+            {currentPage > 0 && (
+              <button
+                onClick={() => handlePageNavigation("back")}
+                className="flex justify-center items-center rounded-full border-[1px] border-[#1C63DB] text-[#1C63DB] w-full md:w-[250px] h-[56px] p-[16px] shrink-0"
+              >
+                Back
+              </button>
+            )}
+
+            {currentPage < contentPages.length - 1 ? (
+              <button
+                onClick={() => handlePageNavigation("next")}
+                className={`ml-auto flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] shrink-0 cursor-pointer`}
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] shrink-0 ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}
+                disabled={!isChecked}
+              >
+                Submit & Continue
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-
-      <div className="flex w-full justify-between gap-[16px]">
-        {currentPage > 0 && (
-          <button
-            onClick={() => handlePageNavigation("back")}
-            className="flex justify-center items-center rounded-full border-[1px] border-[#1C63DB] text-[#1C63DB] w-full md:w-[250px] h-[56px] p-[16px] shrink-0"
-          >
-            Back
-          </button>
-        )}
-
-        {currentPage < contentPages.length - 1 ? (
-          <button
-            onClick={() => handlePageNavigation("next")}
-            className={`ml-auto flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] shrink-0 cursor-pointer`}
-          >
-            Next
-          </button>
-        ) : (
-          <button
-            onClick={handleNext}
-            className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] shrink-0 ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}
-            disabled={!isChecked}
-          >
-            Submit & Continue
-          </button>
-        )}
       </div>
     </div>
   );
