@@ -1,11 +1,11 @@
-import { BrowserRouter } from "react-router-dom";
-import { Suspense, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "entities/store/lib";
-import { AppRoutes } from "./routes";
-import { LoadingScreen } from "pages/loading";
 import { setLoading } from "entities/user";
+import { LoadingScreen } from "pages/loading";
+import { Suspense, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "shared/ui/toaster";
+import { AppRoutes } from "./routes";
 
 export const App: React.FC = () => {
   const dispatch = useDispatch();

@@ -59,10 +59,9 @@ export const WelcomeScreen = () => {
               Welcome to A Healthy Menopause Transition
             </h2>
             <p className="text-[#5F5F65] max-w-[916px] text-[16px] md:text-[18px] xl:text-[20px] font-normal  text-center">
-              Tolu is here to help you navigate every step with clarity and
-              confidence. <br /> Get personalized tools, compassionate guidance,
-              and insights tailored to who you are and how you live — so you can
-              feel supported, understood, and empowered.
+              Symptom management during perimenopause requires specific but
+              straightforward skills. Do you know what they are? Let's get into
+              it.
             </p>
           </div>
 

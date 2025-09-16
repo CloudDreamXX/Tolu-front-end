@@ -155,3 +155,28 @@ export interface ReferFriendRequest {
   goal?: string;
   phone?: string;
 }
+
+export interface OnboardClient {
+  profile: {
+    basic_info: {
+      age: number;
+      country: string;
+      language: string[];
+      gender: string;
+      date_of_birth: string;
+      ai_experience: string;
+    };
+    background: {
+      occupation: string;
+    };
+    goals_values: {
+      important_values: string[];
+      support_network: string[];
+    };
+    preferences: Record<string, unknown>;
+    metadata: {
+      created_at: string;
+      updated_at: string;
+    };
+  };
+}

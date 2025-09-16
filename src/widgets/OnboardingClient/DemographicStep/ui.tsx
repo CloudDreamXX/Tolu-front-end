@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
@@ -26,21 +26,31 @@ import {
 import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
 import { OnboardingClientLayout } from "../Layout";
 import { CYCLE_HELTH, languages, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
 
 export const DemographicStep = () => {
+  const nav = useNavigate();
   const dispatch = useDispatch();
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [localDate, setLocalDate] = useState<Date | null>(null);
-  const [menopauseStatus, setMenopauseStatus] = useState("");
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-  const [aiExperience, setAiExperience] = useState("");
+  const token = useSelector((state: RootState) => state.user.token);
+  const clientOnboarding = useSelector(
+    (state: RootState) => state.clientOnboarding
+  );
+
+  const dateOfBirth = clientOnboarding.date_of_birth;
+  const menopauseStatus = clientOnboarding.menopauseStatus;
+  const selectedLanguages = clientOnboarding.language || [];
+  const aiExperience = clientOnboarding.ai_experience;
+
+  const [localDate, setLocalDate] = useState<Date | null>(
+    dateOfBirth ? new Date(dateOfBirth) : null
+  );
   const [selectedYear, setSelectedYear] = useState<number>(
     new Date().getFullYear()
   );
   const [displayMonth, setDisplayMonth] = useState<Date>(
     new Date(selectedYear, 0)
   );
-  const nav = useNavigate();
 
   const computeAge = (dobStr: string) => {
     const dob = new Date(dobStr);
@@ -65,15 +75,17 @@ export const DemographicStep = () => {
     selectedLanguages.length &&
     aiExperience.trim();
 
-  const handleNext = () => {
-    dispatch(setFormField({ field: "date_of_birth", value: dateOfBirth }));
-    dispatch(setFormField({ field: "age", value: Number(computedAge) }));
-    dispatch(
-      setFormField({ field: "menopauseStatus", value: menopauseStatus })
-    );
-    dispatch(setFormField({ field: "language", value: selectedLanguages }));
-    dispatch(setFormField({ field: "ai_experience", value: aiExperience }));
+  const handleNext = async () => {
+    const updated = {
+      ...clientOnboarding,
+      date_of_birth: dateOfBirth,
+      age: Number(computedAge),
+      menopauseStatus,
+      language: selectedLanguages,
+      ai_experience: aiExperience,
+    };
 
+    await UserService.onboardClient(updated, token);
     nav("/what-brings-you-here");
   };
 
@@ -85,8 +97,7 @@ export const DemographicStep = () => {
         </h1>
         <p className="text-center text-[#5F5F65] text-base ">
           This helps us tailor your journey and ensure the right support —
-          nothing is ever shared without
-          <br /> your permission.
+          nothing is ever shared without your permission.
         </p>
       </div>
     </div>
@@ -175,7 +186,18 @@ export const DemographicStep = () => {
         onSelect={(selectedDate) => {
           if (selectedDate) {
             setLocalDate(selectedDate);
-            setDateOfBirth(format(selectedDate, "yyyy-MM-dd"));
+            dispatch(
+              setFormField({
+                field: "date_of_birth",
+                value: format(selectedDate, "yyyy-MM-dd"),
+              })
+            );
+            dispatch(
+              setFormField({
+                field: "age",
+                value: computeAge(format(selectedDate, "yyyy-MM-dd")) ?? 0,
+              })
+            );
             const y = selectedDate.getFullYear();
             if (y !== selectedYear) setSelectedYear(y);
             setDisplayMonth(
@@ -232,7 +254,9 @@ export const DemographicStep = () => {
         <RadioGroup
           className="grid w-full grid-cols-1 md:grid-cols-2"
           value={menopauseStatus}
-          onValueChange={setMenopauseStatus}
+          onValueChange={(val) =>
+            dispatch(setFormField({ field: "menopauseStatus", value: val }))
+          }
         >
           {CYCLE_HELTH.map((option) => (
             <div key={option} className="flex items-center space-x-2">
@@ -264,7 +288,9 @@ export const DemographicStep = () => {
         <LanguagesMultiSelect
           options={languages}
           value={selectedLanguages}
-          onChange={setSelectedLanguages}
+          onChange={(langs) =>
+            dispatch(setFormField({ field: "language", value: langs }))
+          }
         />
       </div>
 
@@ -272,7 +298,12 @@ export const DemographicStep = () => {
         <label className="text-[#1D1D1F]  text-base font-medium">
           Do you use AI in your daily life?
         </label>
-        <Select value={aiExperience} onValueChange={setAiExperience}>
+        <Select
+          value={aiExperience}
+          onValueChange={(val) =>
+            dispatch(setFormField({ field: "ai_experience", value: val }))
+          }
+        >
           <SelectTrigger>
             <SelectValue placeholder="Select an option" />
           </SelectTrigger>

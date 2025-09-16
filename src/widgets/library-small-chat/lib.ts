@@ -78,7 +78,7 @@ export const mapHealthHistoryToFormDefaults = (
     bloodSugarConcerns: healthHistory?.blood_sugar_concerns ?? "",
     digestiveIssues: healthHistory?.digestive_issues ?? "",
     recentLabTests: healthHistory?.recent_lab_tests ?? false,
-    labResultsFile: healthHistory?.lab_results_file ?? null,
+    labResultsFile: healthHistory?.lab_results_file ?? [],
     whyGoals: healthHistory?.why_these_goals ?? "",
     resultTimeline: healthHistory?.desired_results_timeline ?? "",
     healthApproach: healthHistory?.health_approach_preference ?? "",

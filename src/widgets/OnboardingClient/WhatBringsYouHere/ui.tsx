@@ -1,32 +1,49 @@
+import { RootState } from "entities/store";
+import { setFormField } from "entities/store/clientOnboardingSlice";
+import { UserService } from "entities/user";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { cn, usePageWidth } from "shared/lib";
 import { AuthPageWrapper, Input } from "shared/ui";
+import { RadioGroup, RadioGroupItem } from "shared/ui/radio-group";
 import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import { radioContent } from "./utils";
-import { useNavigate } from "react-router";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setFormField } from "entities/store/clientOnboardingSlice";
-import { RadioGroup, RadioGroupItem } from "shared/ui/radio-group"; // <-- import shadcn RadioGroup
-import { cn, usePageWidth } from "shared/lib";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const WhatBrringsYouHere = () => {
-  const [radioValue, setRadioValue] = useState("");
-  const [input, setInput] = useState("");
   const nav = useNavigate();
   const dispatch = useDispatch();
+  const token = useSelector((state: RootState) => state.user.token);
+  const clientOnboarding = useSelector(
+    (state: RootState) => state.clientOnboarding
+  );
 
-  const isOtherSelected = radioValue === "Other";
+  const currentValue = clientOnboarding.whatBringsYouHere || "";
+  const isOtherSelected = currentValue === "Other";
   const { isMobileOrTablet } = usePageWidth();
 
-  const handleNext = () => {
-    const finalValue = isOtherSelected ? input.trim() : radioValue;
+  const handleNext = async () => {
+    const finalValue =
+      isOtherSelected && clientOnboarding.whatBringsYouHere
+        ? clientOnboarding.whatBringsYouHere.trim()
+        : currentValue;
+
+    const updated = {
+      ...clientOnboarding,
+      whatBringsYouHere: finalValue,
+    };
+
     dispatch(setFormField({ field: "whatBringsYouHere", value: finalValue }));
+    await UserService.onboardClient(updated, token);
+
     nav("/values");
   };
 
   const isFilled = () => {
-    return isOtherSelected ? input.trim() !== "" : radioValue !== "";
+    return isOtherSelected
+      ? clientOnboarding.whatBringsYouHere?.trim() !== ""
+      : currentValue !== "";
   };
 
   const title = (
@@ -85,8 +102,10 @@ export const WhatBrringsYouHere = () => {
           </div>
 
           <RadioGroup
-            value={radioValue}
-            onValueChange={(val) => setRadioValue(val)}
+            value={currentValue}
+            onValueChange={(val) =>
+              dispatch(setFormField({ field: "whatBringsYouHere", value: val }))
+            }
             className="flex flex-col w-full gap-4"
           >
             {radioContent.map((item, index) => (
@@ -124,8 +143,15 @@ export const WhatBrringsYouHere = () => {
                 What does a healthy menopause transition look like to you?
               </label>
               <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={clientOnboarding.whatBringsYouHere ?? ""}
+                onChange={(e) =>
+                  dispatch(
+                    setFormField({
+                      field: "whatBringsYouHere",
+                      value: e.target.value,
+                    })
+                  )
+                }
                 placeholder="My main goal"
                 className="w-full text-[16px]  font-medium py-[11px] px-[16px]"
               />

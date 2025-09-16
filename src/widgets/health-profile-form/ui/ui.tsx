@@ -218,7 +218,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       "digestiveIssues",
       "digestiveOther",
       "recentLabTests",
-      "labTestFile",
+      "labTestFiles",
     ],
     ["goals", "goalReason", "urgency", "healthApproach"],
     ["agreeToPrivacy", "followUpMethod", "countryCode", "phoneNumber"],
@@ -308,9 +308,9 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     { partial = false }: { partial?: boolean } = {}
   ) => {
     const payload = prune(mapToApi(values)) as Partial<HealthHistoryPostData>;
-    const labFile = values.labTestFile || undefined;
+    const labFiles = values.labTestFiles || [];
 
-    await HealthHistoryService.createHealthHistory(payload as any, labFile);
+    await HealthHistoryService.createHealthHistory(payload as any, labFiles);
 
     if (!partial) {
       setCurrentStep(0);
@@ -399,7 +399,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           </Form>
         </div>
 
-        <div className="flex flex-row gap-4 justify-between w-full">
+        <div className="flex flex-row justify-between w-full gap-4">
           <Button
             variant="blue2"
             className="w-24 md:w-32"
@@ -414,7 +414,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
             {currentStep > 0 && (
               <Button
                 variant="light-blue"
-                className="w-24 md:w-32 bg-white"
+                className="w-24 bg-white md:w-32"
                 onClick={handlePreviousStep}
               >
                 Back

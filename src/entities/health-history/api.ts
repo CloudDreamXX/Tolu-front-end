@@ -14,14 +14,16 @@ export class HealthHistoryService {
 
   static async createHealthHistory(
     healthData: HealthHistoryPostData,
-    labFile?: File,
+    labFiles?: File[],
     clientId?: string | null
   ): Promise<any> {
     const formData = new FormData();
     formData.append("health_data", JSON.stringify(healthData));
 
-    if (labFile) {
-      formData.append("lab_file", labFile);
+    if (labFiles && labFiles.length > 0) {
+      labFiles.forEach((file) => {
+        formData.append("lab_file", file);
+      });
     }
 
     if (clientId !== undefined) {

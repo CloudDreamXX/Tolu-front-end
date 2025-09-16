@@ -79,7 +79,7 @@ export const MultiSelect = ({
       <button
         type="button"
         className={
-          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 h-[38px] text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center outline-0"
+          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 min-h-[38px] h-auto text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center outline-0"
         }
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
