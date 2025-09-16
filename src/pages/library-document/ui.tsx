@@ -246,7 +246,6 @@ export const LibraryDocument = () => {
           variant="blue2"
           size={isMobile ? "sm" : "icon"}
           className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
-          disabled
         >
           {isMobile ? "Providers" : <MaterialIcon iconName="groups" fill={1} />}
         </Button>
