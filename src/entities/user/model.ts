@@ -158,25 +158,44 @@ export interface ReferFriendRequest {
 
 export interface OnboardClient {
   profile: {
-    basic_info: {
-      age: number;
-      country: string;
-      language: string[];
-      gender: string;
-      date_of_birth: string;
-      ai_experience: string;
-    };
-    background: {
-      occupation: string;
-    };
-    goals_values: {
-      important_values: string[];
-      support_network: string[];
-    };
-    preferences: Record<string, unknown>;
-    metadata: {
-      created_at: string;
-      updated_at: string;
-    };
+    basic_info: ProfileBasicInfo;
+    background: ProfileBackground;
+    goals_values: ProfileGoalsValues;
+    preferences: ProfilePreferences;
+    metadata: ProfileMetadata;
   };
+}
+
+export interface ProfileBasicInfo {
+  age: number;
+  language: string[];
+  date_of_birth: string;
+  ai_experience: "yes" | "no" | "not_sure";
+
+  country?: string;
+  gender?: string;
+  menopause_status?: string;
+}
+
+export interface ProfileBackground {
+  occupation?: string;
+}
+
+export interface ProfileGoalsValues {
+  important_values: string[];
+  support_network: string[];
+
+  main_goal?: string;
+  obstacles?: string;
+}
+
+export interface ProfilePreferences {
+  personality_type?: string;
+  readiness_for_change?: string;
+  [key: string]: unknown;
+}
+
+export interface ProfileMetadata {
+  created_at: string;
+  updated_at: string;
 }

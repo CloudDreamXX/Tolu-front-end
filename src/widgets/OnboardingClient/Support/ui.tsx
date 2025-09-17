@@ -18,18 +18,21 @@ export const Support = () => {
     (state: RootState) => state.clientOnboarding
   );
 
-  const selectedSupport = clientOnboarding.support || [];
+  const selectedSupport = clientOnboarding.support_network || [];
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (value: string, checked: boolean) => {
     if (checked) {
       dispatch(
-        setFormField({ field: "support", value: [...selectedSupport, value] })
+        setFormField({
+          field: "support_network",
+          value: [...selectedSupport, value],
+        })
       );
     } else {
       dispatch(
         setFormField({
-          field: "support",
+          field: "support_network",
           value: selectedSupport.filter((v) => v !== value),
         })
       );
@@ -46,10 +49,10 @@ export const Support = () => {
 
     const updated = {
       ...clientOnboarding,
-      support: finalSupport,
+      support_network: finalSupport,
     };
 
-    dispatch(setFormField({ field: "support", value: finalSupport }));
+    dispatch(setFormField({ field: "support_network", value: finalSupport }));
 
     await UserService.onboardClient(updated, token);
     nav("/personality-type");
@@ -70,7 +73,7 @@ export const Support = () => {
       </h3>
 
       {checkboxes
-        .reduce((rows, item, index) => {
+        .reduce((rows, _, index) => {
           if (index % 2 === 0) rows.push(checkboxes.slice(index, index + 2));
           return rows;
         }, [] as string[][])

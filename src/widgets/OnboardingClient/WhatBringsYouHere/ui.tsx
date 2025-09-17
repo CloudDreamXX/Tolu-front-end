@@ -19,22 +19,24 @@ export const WhatBrringsYouHere = () => {
     (state: RootState) => state.clientOnboarding
   );
 
-  const currentValue = clientOnboarding.whatBringsYouHere || "";
+  const currentValue = clientOnboarding.main_transition_goal || "";
   const isOtherSelected = currentValue === "Other";
   const { isMobileOrTablet } = usePageWidth();
 
   const handleNext = async () => {
     const finalValue =
-      isOtherSelected && clientOnboarding.whatBringsYouHere
-        ? clientOnboarding.whatBringsYouHere.trim()
+      isOtherSelected && clientOnboarding.main_transition_goal
+        ? clientOnboarding.main_transition_goal.trim()
         : currentValue;
 
     const updated = {
       ...clientOnboarding,
-      whatBringsYouHere: finalValue,
+      main_transition_goal: finalValue,
     };
 
-    dispatch(setFormField({ field: "whatBringsYouHere", value: finalValue }));
+    dispatch(
+      setFormField({ field: "main_transition_goal", value: finalValue })
+    );
     await UserService.onboardClient(updated, token);
 
     nav("/values");
@@ -42,7 +44,7 @@ export const WhatBrringsYouHere = () => {
 
   const isFilled = () => {
     return isOtherSelected
-      ? clientOnboarding.whatBringsYouHere?.trim() !== ""
+      ? clientOnboarding.main_transition_goal?.trim() !== ""
       : currentValue !== "";
   };
 
@@ -104,7 +106,9 @@ export const WhatBrringsYouHere = () => {
           <RadioGroup
             value={currentValue}
             onValueChange={(val) =>
-              dispatch(setFormField({ field: "whatBringsYouHere", value: val }))
+              dispatch(
+                setFormField({ field: "main_transition_goal", value: val })
+              )
             }
             className="flex flex-col w-full gap-4"
           >
@@ -143,11 +147,11 @@ export const WhatBrringsYouHere = () => {
                 What does a healthy menopause transition look like to you?
               </label>
               <Input
-                value={clientOnboarding.whatBringsYouHere ?? ""}
+                value={clientOnboarding.main_transition_goal ?? ""}
                 onChange={(e) =>
                   dispatch(
                     setFormField({
-                      field: "whatBringsYouHere",
+                      field: "main_transition_goal",
                       value: e.target.value,
                     })
                   )

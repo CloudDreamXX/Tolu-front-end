@@ -38,7 +38,7 @@ export const DemographicStep = () => {
   );
 
   const dateOfBirth = clientOnboarding.date_of_birth;
-  const menopauseStatus = clientOnboarding.menopauseStatus;
+  const menopauseStatus = clientOnboarding.menopause_status;
   const selectedLanguages = clientOnboarding.language || [];
   const aiExperience = clientOnboarding.ai_experience;
 
@@ -64,23 +64,16 @@ export const DemographicStep = () => {
     return age;
   };
 
-  const computedAge = computeAge(dateOfBirth);
-  const isValidAge =
-    computedAge !== null && computedAge >= 0 && computedAge <= 120;
-
-  const isFormComplete = () =>
-    !!dateOfBirth &&
-    isValidAge &&
-    menopauseStatus.trim() &&
-    selectedLanguages.length &&
-    aiExperience.trim();
+  const computedAge = dateOfBirth
+    ? computeAge(dateOfBirth?.toLocaleString())
+    : undefined;
 
   const handleNext = async () => {
     const updated = {
       ...clientOnboarding,
       date_of_birth: dateOfBirth,
       age: Number(computedAge),
-      menopauseStatus,
+      menopause_status: menopauseStatus,
       language: selectedLanguages,
       ai_experience: aiExperience,
     };
@@ -137,12 +130,7 @@ export const DemographicStep = () => {
         Skip this for now
       </button>
       <button
-        className={`flex p-4 rounded-full h-[44px] items-center justify-center w-32 text-center ${
-          isFormComplete()
-            ? "bg-[#1C63DB] text-white cursor-pointer"
-            : "bg-[#D5DAE2] text-[#5F5F65] cursor-not-allowed"
-        }`}
-        disabled={!isFormComplete()}
+        className={`flex p-4 rounded-full h-[44px] items-center justify-center w-32 text-center bg-[#1C63DB] text-white cursor-pointer`}
         onClick={handleNext}
       >
         Continue
@@ -255,7 +243,7 @@ export const DemographicStep = () => {
           className="grid w-full grid-cols-1 md:grid-cols-2"
           value={menopauseStatus}
           onValueChange={(val) =>
-            dispatch(setFormField({ field: "menopauseStatus", value: val }))
+            dispatch(setFormField({ field: "menopause_status", value: val }))
           }
         >
           {CYCLE_HELTH.map((option) => (
@@ -299,7 +287,7 @@ export const DemographicStep = () => {
           Do you use AI in your daily life?
         </label>
         <Select
-          value={aiExperience}
+          value={aiExperience ? aiExperience : undefined}
           onValueChange={(val) =>
             dispatch(setFormField({ field: "ai_experience", value: val }))
           }

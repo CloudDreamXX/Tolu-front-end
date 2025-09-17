@@ -31,8 +31,8 @@ export const Readiness = () => {
     (state: RootState) => state.clientOnboarding
   );
 
-  const initialIndex = clientOnboarding.readiness
-    ? readinessMessages.indexOf(clientOnboarding.readiness) + 1
+  const initialIndex = clientOnboarding.readiness_for_change
+    ? readinessMessages.indexOf(clientOnboarding.readiness_for_change) + 1
     : 2;
 
   const [value, setValue] = useState([initialIndex]);
@@ -41,7 +41,7 @@ export const Readiness = () => {
     setValue(val);
     dispatch(
       setFormField({
-        field: "readiness",
+        field: "readiness_for_change",
         value: readinessMessages[val[0] - 1],
       })
     );
@@ -50,13 +50,13 @@ export const Readiness = () => {
   const handleNext = async () => {
     const updated = {
       ...clientOnboarding,
-      readiness: readinessMessages[value[0] - 1],
+      readiness_for_change: readinessMessages[value[0] - 1],
     };
 
     dispatch(
       setFormField({
-        field: "readiness",
-        value: updated.readiness,
+        field: "readiness_for_change",
+        value: updated.readiness_for_change,
       })
     );
 
@@ -116,7 +116,6 @@ export const Readiness = () => {
         <BottomButtons
           handleNext={handleNext}
           skipButton={() => nav("/summary")}
-          isButtonActive={() => true}
         />
       }
     />

@@ -4,29 +4,30 @@ import { OnboardClient } from "entities/user";
 export const mapOnboardClientToFormState = (
   response: OnboardClient
 ): FormState => {
-  const { basic_info, background, goals_values } = response.profile;
+  const { basic_info, goals_values, background, preferences } =
+    response.profile;
 
   return {
-    date_of_birth: basic_info.date_of_birth ?? "",
-    gender: basic_info.gender ?? "",
-    age: basic_info.age ?? 0,
-    ai_experience: basic_info.ai_experience ?? "",
-    country: basic_info.country ?? "",
-    language: basic_info.language ?? [],
+    age: basic_info?.age ?? undefined,
+    menopause_status: basic_info?.menopause_status ?? undefined,
+    country: basic_info?.country ?? undefined,
+    zip_code: undefined,
+    language: basic_info?.language ?? [],
+    race_ethnicity: undefined,
+    gender: basic_info?.gender ?? undefined,
+    date_of_birth: basic_info?.date_of_birth ?? undefined,
+    ai_experience: basic_info?.ai_experience ?? undefined,
 
-    occupation: background.occupation ?? "",
+    household_type: undefined,
+    occupation: background?.occupation ?? undefined,
+    education_level: undefined,
 
-    values: goals_values.important_values ?? [],
-    support: goals_values.support_network ?? [],
+    main_transition_goal: goals_values?.main_goal ?? undefined,
+    important_values: goals_values?.important_values ?? [],
+    obstacles: goals_values?.obstacles ?? undefined,
+    support_network: goals_values?.support_network ?? [],
 
-    menopauseStatus: "",
-    ZIP: "",
-    race: "",
-    household: "",
-    education: "",
-    whatBringsYouHere: "",
-    barriers: "",
-    personalityType: "",
-    readiness: "",
+    personality_type: preferences?.personality_type ?? undefined,
+    readiness_for_change: preferences?.readiness_for_change ?? undefined,
   };
 };

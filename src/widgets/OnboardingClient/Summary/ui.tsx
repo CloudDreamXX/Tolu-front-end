@@ -6,11 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "shared/ui";
 import { OnboardingClientLayout } from "../Layout";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { UserService } from "entities/user";
 
 export const Summary = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const client = useSelector((state: RootState) => state.clientOnboarding);
+  const token = useSelector((state: RootState) => state.user.token);
 
   // Edit mode tracking
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
@@ -20,11 +22,73 @@ export const Summary = () => {
   const [personalState, setPersonalState] = useState({ ...client });
   const [insightsState, setInsightsState] = useState({ ...client });
 
-  const handleSave = (type: "personal" | "insights") => {
+  type FormState = RootState["clientOnboarding"];
+  type FieldKey = keyof FormState;
+  type AllowedValue = string | number | Date | string[] | undefined;
+
+  const LIST_FIELDS: ReadonlyArray<FieldKey> = [
+    "important_values",
+    "language",
+    "support_network",
+  ] as const;
+  const LIST_FIELD_SET = new Set<FieldKey>(LIST_FIELDS as FieldKey[]);
+
+  const normalizeValue = (
+    key: FieldKey,
+    value: unknown,
+    original: unknown
+  ): AllowedValue => {
+    if (Array.isArray(original) || LIST_FIELD_SET.has(key)) {
+      if (Array.isArray(value)) {
+        return value.map((v) => String(v).trim()).filter(Boolean);
+      }
+      if (typeof value === "string") {
+        return value
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      return [];
+    }
+
+    if (typeof original === "number") {
+      if (typeof value === "number") return value;
+      if (typeof value === "string") {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : undefined;
+      }
+      return undefined;
+    }
+
+    if (original instanceof Date) {
+      if (value instanceof Date) return value;
+      if (typeof value === "string") {
+        const t = Date.parse(value);
+        return Number.isFinite(t) ? new Date(t) : original;
+      }
+      return original;
+    }
+
+    if (typeof value === "string") return value;
+    if (value == null) return undefined;
+
+    return String(value);
+  };
+
+  const handleSave = async (type: "personal" | "insights") => {
     const stateToSave = type === "personal" ? personalState : insightsState;
-    Object.entries(stateToSave).forEach(([key, value]) => {
-      dispatch(setFormField({ field: key as keyof typeof client, value }));
-    });
+
+    (Object.entries(stateToSave) as [FieldKey, unknown][]).forEach(
+      ([key, value]) => {
+        const prepared: AllowedValue = normalizeValue(
+          key,
+          value,
+          (client as FormState)[key]
+        );
+        dispatch(setFormField({ field: key, value: prepared }));
+      }
+    );
+
     if (type === "personal") setIsEditingPersonal(false);
     if (type === "insights") setIsEditingInsights(false);
   };
@@ -43,17 +107,33 @@ export const Summary = () => {
 
   const personalFields: { label: string; key: keyof typeof client }[] = [
     { label: "Age", key: "age" },
-    { label: "Menopause Status", key: "menopauseStatus" },
+    { label: "Menopause Status", key: "menopause_status" },
     { label: "Language", key: "language" },
   ];
 
   const insightsFields: { label: string; key: keyof typeof client }[] = [
-    { label: "My main goal", key: "whatBringsYouHere" },
-    { label: "Most important values", key: "values" },
-    { label: "What’s been getting in your way so far?", key: "barriers" },
-    { label: "My support", key: "support" },
-    { label: "Readiness to life changes", key: "readiness" },
+    { label: "My main goal", key: "main_transition_goal" },
+    { label: "Most important values", key: "important_values" },
+    { label: "What’s been getting in your way so far?", key: "obstacles" },
+    { label: "My support", key: "support_network" },
+    { label: "Readiness to life changes", key: "readiness_for_change" },
   ];
+
+  const toInputString = (v: unknown): string => {
+    if (v === null || v === undefined) return "";
+    if (Array.isArray(v)) return v.join(", ");
+    if (v instanceof Date) return v.toISOString().slice(0, 10);
+    return String(v);
+  };
+
+  const handleCreate = async () => {
+    try {
+      await UserService.onboardClient(client, token);
+      nav("/finish");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const renderField = (
     label: string,
@@ -70,13 +150,17 @@ export const Summary = () => {
         {editing ? (
           <Input
             name={key}
-            value={Array.isArray(value) ? value.join(", ") : value}
+            value={
+              Array.isArray(value) ? value.join(", ") : toInputString(value)
+            }
             onChange={(e) => handleChange(e, section)}
             className="text-[16px]  font-semibold"
           />
         ) : (
           <h3 className="text-[#1D1D1F] text-[16px]  font-semibold">
-            {Array.isArray(value) ? value.join(", ") : value || "-"}
+            {Array.isArray(value)
+              ? value.join(", ")
+              : toInputString(value) || "-"}
           </h3>
         )}
       </div>
@@ -207,7 +291,7 @@ export const Summary = () => {
       </button>
 
       <button
-        onClick={() => nav("/finish")}
+        onClick={handleCreate}
         className="p-4 w-full md:w-fit h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
       >
         Create My Personalized Dashboard

@@ -26,27 +26,21 @@ export const PersonalityType = () => {
   );
 
   const [radioChosen, setRadioChosen] = useState("");
-  const personalityType = clientOnboarding.personalityType || "";
+  const personalityType = clientOnboarding.personality_type || "";
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const radioId = e.target.id;
     setRadioChosen(radioId);
   };
 
-  const isButtonActive = () => {
-    if (radioChosen === "know" && personalityType.length > 0) {
-      return true;
-    } else if (radioChosen !== "know" && radioChosen.length > 0) {
-      return true;
-    }
-    return false;
-  };
-
   const handleNext = async () => {
     if (radioChosen === "know" && personalityType.length > 0) {
-      const updated = { ...clientOnboarding, personalityType };
+      const updated = {
+        ...clientOnboarding,
+        personality_type: personalityType,
+      };
       dispatch(
-        setFormField({ field: "personalityType", value: personalityType })
+        setFormField({ field: "personality_type", value: personalityType })
       );
       await UserService.onboardClient(updated, token);
       nav("/readiness");
@@ -54,6 +48,8 @@ export const PersonalityType = () => {
       nav("/readiness");
     } else if (radioChosen === "test") {
       nav("/choose-test");
+    } else {
+      nav("/readiness");
     }
   };
 
@@ -112,7 +108,9 @@ export const PersonalityType = () => {
             <Select
               value={personalityType}
               onValueChange={(val) =>
-                dispatch(setFormField({ field: "personalityType", value: val }))
+                dispatch(
+                  setFormField({ field: "personality_type", value: val })
+                )
               }
             >
               <SelectTrigger>
@@ -157,7 +155,6 @@ export const PersonalityType = () => {
         <BottomButtons
           handleNext={handleNext}
           skipButton={() => nav("/readiness")}
-          isButtonActive={isButtonActive}
         />
       }
     />

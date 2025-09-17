@@ -18,7 +18,7 @@ export const Barriers = () => {
     (state: RootState) => state.clientOnboarding
   );
 
-  const selectedBarrier = clientOnboarding.barriers || "";
+  const selectedBarrier = clientOnboarding.obstacles || "";
   const [input, setInput] = useState("");
 
   const isOtherSelected = selectedBarrier === "Other";
@@ -29,10 +29,10 @@ export const Barriers = () => {
 
     const updated = {
       ...clientOnboarding,
-      barriers: valueToSave,
+      obstacles: valueToSave,
     };
 
-    dispatch(setFormField({ field: "barriers", value: valueToSave }));
+    dispatch(setFormField({ field: "obstacles", value: valueToSave }));
 
     await UserService.onboardClient(updated, token);
     nav("/support");
@@ -65,7 +65,7 @@ export const Barriers = () => {
               checked={selectedBarrier === item}
               onChange={(e) =>
                 dispatch(
-                  setFormField({ field: "barriers", value: e.target.value })
+                  setFormField({ field: "obstacles", value: e.target.value })
                 )
               }
             />

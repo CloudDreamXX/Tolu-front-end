@@ -20,7 +20,7 @@ export const Values = () => {
     (state: RootState) => state.clientOnboarding
   );
 
-  const selectedValues = clientOnboarding.values || [];
+  const selectedValues = clientOnboarding.important_values || [];
   const [inputValue, setInputValue] = useState("");
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
@@ -30,7 +30,7 @@ export const Values = () => {
     } else if (!checked) {
       updated = updated.filter((v) => v !== value);
     }
-    dispatch(setFormField({ field: "values", value: updated }));
+    dispatch(setFormField({ field: "important_values", value: updated }));
   };
 
   const handleNext = async () => {
@@ -43,9 +43,9 @@ export const Values = () => {
 
     const updated = {
       ...clientOnboarding,
-      values: finalValues,
+      important_values: finalValues,
     };
-    dispatch(setFormField({ field: "values", value: finalValues }));
+    dispatch(setFormField({ field: "important_values", value: finalValues }));
 
     await UserService.onboardClient(updated, token);
     nav("/barriers");

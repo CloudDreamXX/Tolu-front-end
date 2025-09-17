@@ -4,9 +4,9 @@ import { Notification, NotificationsService } from "entities/notifications";
 import { RootState } from "entities/store";
 import { ChangePasswordRequest, UserService } from "entities/user";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { phoneMask, toast } from "shared/lib";
+import { cn, phoneMask, toast } from "shared/lib";
 import {
   Avatar,
   AvatarFallback,
@@ -25,6 +25,9 @@ import { Card } from "./components/Card";
 import { Field } from "./components/Field";
 import { Switch } from "./components/Switch";
 import { useNavigate } from "react-router-dom";
+import { OnboardingInfo } from "./components/OnboardingInfo";
+import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
+import { DailyJournalOverview } from "./components/DailyJournalOverview/ui";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -53,35 +56,22 @@ export const ClientProfile = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
   const nav = useNavigate();
-
-  const PROFILE_FIELDS = [
-    "name",
-    "email",
-    "phone",
-    "dob",
-    "timezone",
-    "gender",
+  const tabs = [
+    { id: "journal", label: "Daily Journal" },
+    { id: "intake", label: "Intake form" },
   ] as const;
-  const OPTIONAL_FIELDS = ["photo_url"] as const;
 
-  const [percentage, setPercentage] = useState(0);
+  const [tab, setTab] = useState(0);
 
-  const isFilled = (v: unknown) =>
-    typeof v === "string" ? v.trim().length > 0 : !!v;
-
-  const calcProfileCompletion = (u: Client | null) => {
-    if (!u) return 0;
-    const fields = [...PROFILE_FIELDS, ...OPTIONAL_FIELDS];
-    const filled = fields.reduce(
-      (acc, key) => acc + (isFilled((u as any)[key]) ? 1 : 0),
-      0
-    );
-    return Math.round((filled / fields.length) * 100);
-  };
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setPercentage(calcProfileCompletion(user));
-  }, [user]);
+    const loadUser = async () => {
+      const userInfo = await UserService.getOnboardClient();
+      dispatch(setFromUserInfo(userInfo));
+    };
+    loadUser();
+  }, []);
 
   useEffect(() => {
     let objectUrl: string | null = null;
@@ -298,19 +288,6 @@ export const ClientProfile = () => {
       <div className="flex gap-3 items-center justify-between">
         <div className="flex items-center gap-[24px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
           Personal profile
-          <div
-            style={{
-              backgroundImage: `linear-gradient(to right, #1C63DB 0%, #1C63DB ${percentage}%, rgba(0,0,0,0) ${percentage}%, rgba(0,0,0,0) 100%)`,
-            }}
-            className="hidden md:flex h-[32px] mt-[8px] md:w-[328px] text-nowrap items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-[6px] gap-8 px-[16px]"
-          >
-            <span
-              className={`text-[14px] font-semibold ${percentage > 40 ? "text-white" : ""}`}
-            >
-              Profile completed
-            </span>
-            <span className="text-[14px] font-semibold">{percentage}%</span>
-          </div>
         </div>
         <button onClick={togglePopup}>
           <MaterialIcon iconName="notifications" fill={1} />
@@ -576,129 +553,31 @@ export const ClientProfile = () => {
 
         <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-3">
           <Card
-            title="Daily Journal Overview"
+            title={tabs[tab].label}
             action={
-              <Button
-                variant={"blue2"}
-                className="hidden md:flex px-8 text-base font-semibold text-blue-700"
-              >
-                <MaterialIcon iconName="replay" className="text-blue-700" />
-                Update
-              </Button>
+              <div className="flex items-center max-w-full gap-4 p-2 overflow-x-auto bg-white border rounded-full no-scrollbar">
+                {tabs.map((s, i) => (
+                  <button
+                    key={s.id}
+                    className={cn(
+                      "py-2.5 px-4 font-bold text-sm text-nowrap",
+                      s.id === tabs[tab].id
+                        ? "bg-[#F2F4F6] border rounded-full"
+                        : undefined
+                    )}
+                    onClick={() => setTab(i)}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
             }
           >
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-1 border-b border-[#D5DAE2] pb-6">
-                <p className="text-sm text-[#5F5F65]">Date of last check: </p>
-                <p className="text-[14px] md:text-lg font-semibold text-[#1D1D1F]">
-                  May 14, 2025 4:00 pm
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <p className="text-sm text-[#5F5F65]">
-                  Most Noticeable Symptom Today
-                </p>
-
-                <div className="flex items-center gap-[8px] flex-wrap">
-                  {[
-                    "Fatigue",
-                    "Brain fog",
-                    "Hot flashes",
-                    "Headache",
-                    "Insomnia",
-                  ].map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <p className="text-sm text-[#5F5F65]">Duration</p>
-
-                <div className="flex items-center gap-[8px]">
-                  {["1–3 hours"].map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <p className="text-sm text-[#5F5F65]">Suspected Triggers</p>
-
-                <div className="flex items-center gap-[8px]">
-                  {["Skipping breakfast", "Poor sleep", "Gluten"].map(
-                    (item) => (
-                      <div
-                        key={item}
-                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
-                      >
-                        {item}
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <p className="text-sm text-[#5F5F65]">
-                  Sleep Quality (Auto-sync from Apple Watch)
-                </p>
-
-                <div className="flex items-center gap-[8px]">
-                  {[
-                    "Total sleep: 7h 40min",
-                    "Woke up: 3 times",
-                    "Fell back sleep: easy",
-                  ].map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <p className="text-sm text-[#5F5F65]">Meals & Timing</p>
-
-                <div className="flex items-center gap-[8px]">
-                  {["Ate within 1 hour of waking", "Tried new food"].map(
-                    (item) => (
-                      <div
-                        key={item}
-                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
-                      >
-                        {item}
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-
-              <div className="flex justify-between md:justify-end">
-                <Button
-                  variant={"blue2"}
-                  className="md:hidden flex px-[8px] text-[14px] font-semibold text-blue-700"
-                >
-                  <MaterialIcon iconName="replay" className="text-blue-700" />
-                  Update results
-                </Button>
-                <Button variant="brightblue">See full Daily Journal</Button>
-              </div>
-            </div>
+            {tabs[tab].id === "journal" ? (
+              <DailyJournalOverview />
+            ) : (
+              <OnboardingInfo embedded />
+            )}
           </Card>
         </div>
 

@@ -5,7 +5,7 @@ import {
   HealthHistoryService,
 } from "entities/health-history";
 import { Steps } from "features/steps/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Button,
@@ -131,10 +131,40 @@ const DEFAULT_NEW_FIELDS = {
   education: "",
 } as const;
 
+const GI_LABELS: Record<string, string> = {
+  woman: "Woman",
+  man: "Man",
+  nonbinary_genderqueer_expansive:
+    "Non-binary / genderqueer / gender expansive",
+  self_describe: "Prefer to self-describe",
+  prefer_not_to_say: "Prefer not to say",
+};
+const SAB_LABELS: Record<string, string> = {
+  female: "Female",
+  male: "Male",
+  intersex: "Intersex",
+  prefer_not_to_say: "Prefer not to say",
+};
+
+const split = (s?: string) =>
+  (s ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+
+const fmtBool = (v: any) => (typeof v === "boolean" ? (v ? "Yes" : "No") : v);
+const isFilled = (v: any) => {
+  if (v === null || v === undefined) return false;
+  if (typeof v === "string") return v.trim().length > 0;
+  if (Array.isArray(v)) return v.length > 0;
+  return typeof v === "number" || typeof v === "boolean";
+};
+
 export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState(false);
   const { isMobile } = usePageWidth();
 
   const form = useForm<BaseValues>({
@@ -224,103 +254,201 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     ["agreeToPrivacy", "followUpMethod", "countryCode", "phoneNumber"],
   ];
 
-  const mapToApi = (values: BaseValues): HealthHistoryPostData => {
+  const values = form.watch() as BaseValues;
+
+  const allKeys = useMemo(() => stepFields.flat() as (keyof BaseValues)[], []);
+  const hasAnyValue = useMemo(
+    () => allKeys.some((k) => isFilled((values as any)[k])),
+    [values, allKeys]
+  );
+
+  // NEW: completion percentage across all fields
+  const percentage = useMemo(() => {
+    const filled = allKeys.reduce(
+      (acc, k) => acc + (isFilled((values as any)[k]) ? 1 : 0),
+      0
+    );
+    return allKeys.length ? Math.round((filled / allKeys.length) * 100) : 0;
+  }, [values, allKeys]);
+
+  const showSummary = !isEditing && hasAnyValue;
+
+  const SummaryLabel = ({ children }: { children: React.ReactNode }) => (
+    <div className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-base">
+      {children}
+    </div>
+  );
+
+  const SummaryRow = ({ label, value }: { label: string; value?: string }) => (
+    <div className="space-y-1">
+      <SummaryLabel>{label}</SummaryLabel>
+      <p className="text-sm text-gray-900">
+        {value && String(value).trim() ? String(value) : "-"}
+      </p>
+    </div>
+  );
+
+  const normalize = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[’']/g, "'")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const titleToStepIndex = (title: string, all: string[]) =>
+    all.findIndex((t) => normalize(t) === normalize(title));
+
+  const Section = ({
+    title,
+    children,
+  }: {
+    title: string;
+    children: React.ReactNode;
+  }) => {
+    const onEdit = () => {
+      const idx = titleToStepIndex(title, steps);
+      const next = idx < 0 ? 0 : idx;
+
+      setIsEditing(true);
+      setCurrentStep(next);
+    };
+
+    return (
+      <div className="space-y-4 border-b border-[#EAEAEA] pb-4">
+        <div className="text-[20px] font-medium flex items-center justify-between mr-[24px]">
+          {title}
+          <button className="cursor-pointer" onClick={onEdit}>
+            <MaterialIcon iconName="edit" />
+          </button>
+        </div>
+        <div className="space-y-2">{children}</div>
+      </div>
+    );
+  };
+
+  const resolvedGenderIdentity = values.genderIdentity
+    ? (GI_LABELS[values.genderIdentity] ?? values.genderIdentity)
+    : "";
+  const resolvedSexAtBirth = values.sexAssignedAtBirth
+    ? (SAB_LABELS[values.sexAssignedAtBirth] ?? values.sexAssignedAtBirth)
+    : "";
+
+  const languagesSel = split(values.language).join(", ");
+  const resolvedMedications =
+    values.medications === "other" && values.otherMedications?.trim()
+      ? `Other: ${values.otherMedications}`
+      : (values.medications ?? "");
+  const resolvedExercise =
+    values.exerciseHabits === "other" && values.otherExerciseHabits?.trim()
+      ? `Other: ${values.otherExerciseHabits}`
+      : (values.exerciseHabits ?? "");
+
+  const resolvedEthnicity =
+    values.ethnicity === "Other (please specify)"
+      ? (values.otherEthnicity ?? "")
+      : (values.ethnicity ?? "");
+  const resolvedHousehold =
+    values.household === "Other (please specify)"
+      ? (values.otherHousehold ?? "")
+      : (values.household ?? "");
+  const resolvedOccupation =
+    values.occupation === "Other (please specify)"
+      ? (values.otherOccupation ?? "")
+      : (values.occupation ?? "");
+
+  const mapToApi = (v: BaseValues): HealthHistoryPostData => {
     const genderForApi =
-      values.genderIdentity === "self_describe" &&
-      values.genderSelfDescribe?.trim()
-        ? values.genderSelfDescribe.trim()
-        : values.genderIdentity;
+      v.genderIdentity === "self_describe" && v.genderSelfDescribe?.trim()
+        ? v.genderSelfDescribe.trim()
+        : v.genderIdentity;
 
-    const resolvedEthnicity =
-      values.ethnicity === "Other (please specify)"
-        ? (values.otherEthnicity?.trim() ?? "")
-        : values.ethnicity;
+    const resEthnicity =
+      v.ethnicity === "Other (please specify)"
+        ? (v.otherEthnicity?.trim() ?? "")
+        : v.ethnicity;
 
-    const resolvedHousehold =
-      values.household === "Other (please specify)"
-        ? (values.otherHousehold?.trim() ?? "")
-        : values.household;
+    const resHousehold =
+      v.household === "Other (please specify)"
+        ? (v.otherHousehold?.trim() ?? "")
+        : v.household;
 
-    const resolvedOccupation =
-      values.occupation === "Other (please specify)"
-        ? (values.otherOccupation?.trim() ?? "")
-        : values.occupation;
+    const resOccupation =
+      v.occupation === "Other (please specify)"
+        ? (v.otherOccupation?.trim() ?? "")
+        : v.occupation;
 
     return {
-      age: Number(values.age),
-      gender: values.sexAssignedAtBirth,
+      age: Number(v.age),
+      gender: v.sexAssignedAtBirth,
       gender_identity: genderForApi,
-      location: values.country,
-      language: values.language,
-      ethnicity: resolvedEthnicity,
-      household: resolvedHousehold,
-      job: resolvedOccupation,
-      education: values.education,
-      religion: values.religion,
+      location: v.country,
+      language: v.language,
+      ethnicity: resEthnicity,
+      household: resHousehold,
+      job: resOccupation,
+      education: v.education,
+      religion: v.religion,
 
-      current_health_concerns: values.healthConcerns,
-      diagnosed_conditions: values.medicalConditions,
+      current_health_concerns: v.healthConcerns,
+      diagnosed_conditions: v.medicalConditions,
       medications:
-        values.medications === "other"
-          ? values.otherMedications
-          : values.medications,
-      supplements: values.supplements,
-      allergies_intolerances: values.allergies,
-      family_health_history: values.familyHistory,
+        v.medications === "other" ? v.otherMedications : v.medications,
+      supplements: v.supplements,
+      allergies_intolerances: v.allergies,
+      family_health_history: v.familyHistory,
 
-      specific_diet: values.dietDetails,
+      specific_diet: v.dietDetails,
       exercise_habits:
-        values.exerciseHabits === "other"
-          ? values.otherExerciseHabits
-          : values.exerciseHabits,
-      eat_decision: values.decisionMaker,
-      cook_at_home: values.cookFrequency,
-      takeout_food: values.takeoutFrequency,
-      kind_of_food: values.commonFoods,
-      diet_pattern: values.dietType,
+        v.exerciseHabits === "other" ? v.otherExerciseHabits : v.exerciseHabits,
+      eat_decision: v.decisionMaker,
+      cook_at_home: v.cookFrequency,
+      takeout_food: v.takeoutFrequency,
+      kind_of_food: v.commonFoods,
+      diet_pattern: v.dietType,
 
-      sleep_quality: String(values.sleepQuality),
-      stress_levels: String(values.stressLevels),
-      energy_levels: String(values.energyLevels),
+      sleep_quality: String(v.sleepQuality),
+      stress_levels: String(v.stressLevels),
+      energy_levels: String(v.energyLevels),
 
-      menstrual_cycle_status: values.menstrualCycleStatus,
-      hormone_replacement_therapy: values.hormoneTherapy,
-      fertility_concerns: values.fertilityConcerns,
-      birth_control_use: values.birthControlUse,
+      menstrual_cycle_status: v.menstrualCycleStatus,
+      hormone_replacement_therapy: v.hormoneTherapy,
+      fertility_concerns: v.fertilityConcerns,
+      birth_control_use: v.birthControlUse,
 
-      blood_sugar_concerns: values.bloodSugarConcern,
-      digestive_issues: values.digestiveIssues,
-      recent_lab_tests: values.recentLabTests === "Yes",
+      blood_sugar_concerns: v.bloodSugarConcern,
+      digestive_issues: v.digestiveIssues,
+      recent_lab_tests: v.recentLabTests === "Yes",
 
-      health_goals: values.goals,
-      why_these_goals: values.goalReason,
-      desired_results_timeline: values.urgency,
-      health_approach_preference: values.healthApproach,
+      health_goals: v.goals,
+      why_these_goals: v.goalReason,
+      desired_results_timeline: v.urgency,
+      health_approach_preference: v.healthApproach,
 
-      privacy_consent: values.agreeToPrivacy,
-      follow_up_recommendation: values.followUpMethod,
-      recommendation_destination: `${values.countryCode}${values.phoneNumber}`,
+      privacy_consent: v.agreeToPrivacy,
+      follow_up_recommendation: v.followUpMethod,
+      recommendation_destination: `${v.countryCode ?? ""}${v.phoneNumber ?? ""}`,
     };
   };
 
   const submitHealthHistory = async (
-    values: BaseValues,
+    vals: BaseValues,
     { partial = false }: { partial?: boolean } = {}
   ) => {
-    const payload = prune(mapToApi(values)) as Partial<HealthHistoryPostData>;
-    const labFiles = values.labTestFiles || [];
+    const payload = prune(mapToApi(vals)) as Partial<HealthHistoryPostData>;
+    const labFiles = vals.labTestFiles || [];
 
     await HealthHistoryService.createHealthHistory(payload as any, labFiles);
 
     if (!partial) {
       setCurrentStep(0);
-      setIsOpen(false);
+      // setIsOpen(false);
     }
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (vals: z.infer<typeof formSchema>) => {
     try {
-      await submitHealthHistory(values, { partial: false });
+      await submitHealthHistory(vals, { partial: false });
     } catch (error) {
       console.error("Failed to submit form:", error);
     }
@@ -346,7 +474,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     setCurrentStep(nextStep);
   };
 
-  const handleNextStep = () => goToStep(currentStep + 1);
+  // const handleNextStep = () => goToStep(currentStep + 1);
   const handlePreviousStep = () => goToStep(currentStep - 1);
 
   const onDiscard = () => {
@@ -357,7 +485,13 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(o) => {
+        setIsOpen(o);
+        if (!o) setIsEditing(false);
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           variant="brightblue"
@@ -373,62 +507,254 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       </DialogTrigger>
 
       <DialogContent className="w-[calc(100%-32px)] md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 flex flex-col translate-x-[-50%] translate-y-[-50%]">
-        <DialogTitle>Your Health Status Now</DialogTitle>
-
-        <Steps
-          steps={steps}
-          stepWidth={
-            "text-[12px] w-[114px] md:text-[14px] md:w-[416px] lg:w-[389px]"
-          }
-          currentStep={currentStep}
-          ordered
-          onStepClick={goToStep}
-        />
-
-        <div className="max-h-[65vh] overflow-y-auto">
-          <Form {...form}>
-            {currentStep === 0 && <BasicInformationForm form={form} />}
-            {currentStep === 1 && <SocialFactorsForm form={form} />}
-            {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
-            {currentStep === 3 && <LifestyleHabitsForm form={form} />}
-            {currentStep === 4 && <NutritionHabitsForm form={form} />}
-            {currentStep === 5 && <WomensHealthForm form={form} />}
-            {currentStep === 6 && <MetabolicDigestiveHealthForm form={form} />}
-            {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
-            {currentStep === 8 && <ConsentSubmissionForm form={form} />}
-          </Form>
-        </div>
-
-        <div className="flex flex-row justify-between w-full gap-4">
-          <Button
-            variant="blue2"
-            className="w-24 md:w-32"
-            onClick={() => {
-              setIsOpen(false);
-              setConfirmOpen(true);
-            }}
-          >
-            Cancel
-          </Button>
-          <div className="flex flex-row gap-4">
-            {currentStep > 0 && (
-              <Button
-                variant="light-blue"
-                className="w-24 bg-white md:w-32"
-                onClick={handlePreviousStep}
-              >
-                Back
-              </Button>
-            )}
-            <Button
-              variant="brightblue"
-              className="w-24 md:w-32"
-              onClick={handleNextStep}
+        <div>
+          <DialogTitle>Your Health Status Now</DialogTitle>
+          {!isEditing && (
+            <div
+              aria-label="Health profile completion"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={percentage}
+              style={{
+                backgroundImage: `linear-gradient(to right, #1C63DB 0%, #1C63DB ${percentage}%, rgba(0,0,0,0) ${percentage}%, rgba(0,0,0,0) 100%)`,
+              }}
+              className="hidden md:flex h-[32px] mt-[8px] md:w-[328px] text-nowrap items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-[6px] gap-8 px-[16px]"
             >
-              {currentStep === steps.length - 1 ? "Save" : "Save & Continue"}
-            </Button>
-          </div>
+              <span
+                className={`text-[14px] font-semibold ${percentage > 40 ? "text-white" : ""}`}
+              >
+                Health profile completed
+              </span>
+              <span className="text-[14px] font-semibold">{percentage}%</span>
+            </div>
+          )}
         </div>
+
+        {showSummary ? (
+          <>
+            <div className="space-y-6 max-h-[80vh] overflow-y-auto">
+              <Section title="Demographics">
+                <SummaryRow label="Age" value={values.age ?? ""} />
+                <SummaryRow label="Gender" value={resolvedGenderIdentity} />
+                {values.genderIdentity === "self_describe" && (
+                  <SummaryRow
+                    label="Self-description"
+                    value={values.genderSelfDescribe ?? ""}
+                  />
+                )}
+                <SummaryRow
+                  label="Sex assigned at birth"
+                  value={resolvedSexAtBirth}
+                />
+                <SummaryRow label="Language" value={languagesSel} />
+                <SummaryRow
+                  label="Country of Residence"
+                  value={values.country ?? ""}
+                />
+              </Section>
+
+              <Section title="Social Factors">
+                <SummaryRow label="Ethnicity" value={resolvedEthnicity} />
+                <SummaryRow label="Household Type" value={resolvedHousehold} />
+                <SummaryRow label="Occupation" value={resolvedOccupation} />
+                <SummaryRow
+                  label="Education level"
+                  value={values.education ?? ""}
+                />
+                <SummaryRow label="Religion" value={values.religion ?? ""} />
+              </Section>
+
+              <Section title="Health Status & History">
+                <SummaryRow
+                  label="Current health concerns"
+                  value={values.healthConcerns ?? ""}
+                />
+                <SummaryRow
+                  label="Diagnosed medical conditions"
+                  value={values.medicalConditions ?? ""}
+                />
+                <SummaryRow label="Medications" value={resolvedMedications} />
+                <SummaryRow
+                  label="Supplements"
+                  value={values.supplements ?? ""}
+                />
+                <SummaryRow
+                  label="Known allergies or intolerances"
+                  value={values.allergies ?? ""}
+                />
+                <SummaryRow
+                  label="Family health history"
+                  value={values.familyHistory ?? ""}
+                />
+              </Section>
+
+              <Section title="Lifestyle & Habits">
+                <SummaryRow
+                  label="Specific diet"
+                  value={values.dietDetails ?? ""}
+                />
+                <SummaryRow label="Exercise habits" value={resolvedExercise} />
+                <SummaryRow
+                  label="Sleep quality"
+                  value={String(values.sleepQuality ?? "")}
+                />
+                <SummaryRow
+                  label="Stress levels"
+                  value={String(values.stressLevels ?? "")}
+                />
+                <SummaryRow
+                  label="Energy levels"
+                  value={String(values.energyLevels ?? "")}
+                />
+              </Section>
+
+              <Section title="Nutrition Habits">
+                <SummaryRow
+                  label="Decision maker"
+                  value={values.decisionMaker ?? ""}
+                />
+                <SummaryRow
+                  label="Cook at home frequency"
+                  value={values.cookFrequency ?? ""}
+                />
+                <SummaryRow
+                  label="Takeout frequency"
+                  value={values.takeoutFrequency ?? ""}
+                />
+                <SummaryRow
+                  label="Common foods"
+                  value={values.commonFoods ?? ""}
+                />
+                <SummaryRow label="Diet type" value={values.dietType ?? ""} />
+              </Section>
+
+              <Section title="Women’s Health">
+                <SummaryRow
+                  label="Menstrual cycle status"
+                  value={values.menstrualCycleStatus ?? ""}
+                />
+                <SummaryRow
+                  label="Hormone Replacement Therapy"
+                  value={fmtBool(values.hormoneTherapy) as string}
+                />
+                <SummaryRow
+                  label="Fertility concerns"
+                  value={values.fertilityConcerns ?? ""}
+                />
+                <SummaryRow
+                  label="Birth control use"
+                  value={values.birthControlUse ?? ""}
+                />
+              </Section>
+
+              <Section title="Metabolic & Digestive Health">
+                <SummaryRow
+                  label="Blood sugar concerns"
+                  value={values.bloodSugarConcern ?? ""}
+                />
+                <SummaryRow
+                  label="Digestive issues"
+                  value={values.digestiveIssues ?? ""}
+                />
+                <SummaryRow
+                  label="Recent lab tests"
+                  value={values.recentLabTests ?? ""}
+                />
+              </Section>
+
+              <Section title="Drives & Goals">
+                <SummaryRow label="Goals" value={values.goals ?? ""} />
+                <SummaryRow
+                  label="Why these goals"
+                  value={values.goalReason ?? ""}
+                />
+                <SummaryRow label="Urgency" value={values.urgency ?? ""} />
+                <SummaryRow
+                  label="Health approach"
+                  value={values.healthApproach ?? ""}
+                />
+              </Section>
+
+              <Section title="Consent & Submission">
+                <SummaryRow
+                  label="Agree to privacy"
+                  value={fmtBool(values.agreeToPrivacy) as string}
+                />
+                <SummaryRow
+                  label="Follow-up method"
+                  value={values.followUpMethod ?? ""}
+                />
+              </Section>
+            </div>
+          </>
+        ) : (
+          <>
+            <Steps
+              steps={steps}
+              stepWidth={
+                "text-[12px] w-[114px] md:text-[14px] md:w-[416px] lg:w-[389px]"
+              }
+              currentStep={currentStep}
+              ordered
+              onStepClick={goToStep}
+            />
+
+            <div className="max-h-[65vh] overflow-y-auto">
+              <Form {...form}>
+                {currentStep === 0 && <BasicInformationForm form={form} />}
+                {currentStep === 1 && <SocialFactorsForm form={form} />}
+                {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
+                {currentStep === 3 && <LifestyleHabitsForm form={form} />}
+                {currentStep === 4 && <NutritionHabitsForm form={form} />}
+                {currentStep === 5 && <WomensHealthForm form={form} />}
+                {currentStep === 6 && (
+                  <MetabolicDigestiveHealthForm form={form} />
+                )}
+                {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
+                {currentStep === 8 && <ConsentSubmissionForm form={form} />}
+              </Form>
+            </div>
+
+            <div className="flex flex-row justify-between w-full gap-4">
+              <Button
+                variant="blue2"
+                className="w-24 md:w-32"
+                onClick={
+                  isEditing
+                    ? () => setIsEditing(false)
+                    : () => {
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
+                }
+              >
+                Cancel
+              </Button>
+              <div className="flex flex-row gap-4">
+                {currentStep > 0 && (
+                  <Button
+                    variant="light-blue"
+                    className="w-24 bg-white md:w-32"
+                    onClick={handlePreviousStep}
+                  >
+                    Back
+                  </Button>
+                )}
+                <Button
+                  variant="brightblue"
+                  className="w-24 md:w-32"
+                  onClick={() => {
+                    onSubmit(form.getValues());
+                    setIsEditing(false);
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
       </DialogContent>
 
       {confirmOpen && (
