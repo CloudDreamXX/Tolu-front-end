@@ -1,15 +1,13 @@
 import { toast } from "shared/lib/hooks/use-toast";
 import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
-// import { useSelector } from "react-redux";
-// import { RootState } from "entities/store";
-// import { UserService } from "entities/user";
 import { AuthPageWrapper } from "shared/ui";
 import { useEffect, useState } from "react";
 import { AdminHeader } from "widgets/Header";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
 import { useSelector } from "react-redux";
+import { findFirstIncompleteStep } from "./helpers";
 
 export const OnboardingFinish = () => {
   const coachOnboarding = useSelector(
@@ -20,11 +18,29 @@ export const OnboardingFinish = () => {
 
   const handleLastClick = async () => {
     try {
+      const res = await UserService.getOnboardingStatus();
+
+      if (res.onboarding_filled === true) {
+        await UserService.onboardUser(coachOnboarding);
+        nav("/content-manager/library");
+        toast({ title: "Onboarding successful" });
+        return;
+      }
+
+      const issue = findFirstIncompleteStep(coachOnboarding);
+      if (issue) {
+        nav(issue.route);
+        toast({
+          variant: "destructive",
+          title: "Please complete your onboarding",
+          description: `Missing: ${issue.missing.join(", ")}`,
+        });
+        return;
+      }
+
       await UserService.onboardUser(coachOnboarding);
       nav("/content-manager/library");
-      toast({
-        title: "Onboarding successful",
-      });
+      toast({ title: "Onboarding successful" });
     } catch (error) {
       console.error("Error during onboarding:", error);
       toast({

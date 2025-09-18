@@ -49,22 +49,23 @@ export const OnboardingWelcome = () => {
       <AdminHeader />
       <main className="absolute bottom-0 mt-[40px] xl:mt-0 w-full xl:max-w-[1200px] flex flex-col items-center md:px-[40px] xl:px-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:right-auto md:w-full max-h-[65dvh] md:max-h-auto">
         {curentWindow === 0 && (
-          <div className="flex flex-col items-center justify-center w-full xl:w-[1200px] gap-[40px] shadow-wrapper md:gap-[32px] py-[24px] px-[24px] md:py-[40px] md:px-[40px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
-            <div className="flex flex-col items-center gap-[24px] w-full">
-              <h3 className="xl:w-[860px] text-black  text-center text-[24px] md:text-[32px] xl:text-[40px]/[59px] font-semibold">
-                Welcome to Tolu, your
-                <br /> your AI-powered assistant
-                <br /> designed to simplify and elevate your functional and
-                holistic practice.
+          <div className="flex flex-col items-center justify-center w-full xl:w-[1200px] gap-[40px] shadow-wrapper md:gap-[70px] py-[24px] px-[24px] md:py-[40px] md:px-[40px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
+            <div className="flex flex-col items-center gap-[39px] w-full">
+              <h3 className="xl:w-[860px] text-black  text-center text-[24px] md:text-[32px] xl:text-[32px]/[59px] font-semibold">
+                Welcome! With Tolu AI, simply elevate and grow your functional
+                and holistic practice.
               </h3>
-              <p className="self-stretch text-center text-black  text-[20px] md:text-[24px] font-medium ">
-                With Tolu, you can streamline intake, build personalized health
-                timelines, and deliver education that fits each client’s unique
-                journey.
-              </p>
-              <p className="self-stretch text-center text-black  text-[20px] md:text-[24px] font-medium ">
-                Let’s learn about your specialty so we can tailor your
-                dashboard, tools, and content to support your work.
+              <ul className="flex flex-col items-center justify-center text-black text-center text-[20px] md:text-[28px]">
+                <li>• Streamline personalized intaking</li>
+                <li>• Build health timelines and matrixes quickly</li>
+                <li>
+                  • Deliver personalized education that fits each client’s
+                  unique journey
+                </li>
+              </ul>
+              <p className="text-black  text-center text-[18px] md:text-[24px] italic font-[300]">
+                Let’s get to know your specialty so we can tailor your dashboard
+                and content
               </p>
             </div>
             <button

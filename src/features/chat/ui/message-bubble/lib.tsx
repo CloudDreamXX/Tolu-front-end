@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import rehypeRaw from "rehype-raw";
 import {
   Tooltip,
   TooltipContent,
@@ -44,8 +45,20 @@ export const smartRender = async (text: string) => {
         "font",
       ],
       allowedAttributes: {
-        "*": ["class", "id", "style", "href", "title", "alt", "target", "rel"],
+        "*": ["class", "id", "style", "title"],
+        a: ["href", "target", "rel"],
+        img: [
+          "src",
+          "alt",
+          "title",
+          "width",
+          "height",
+          "loading",
+          "srcset",
+          "sizes",
+        ],
       },
+      allowedSchemes: ["http", "https", "data"],
       allowVulnerableTags: true,
     });
 
@@ -114,7 +127,7 @@ export const smartRender = async (text: string) => {
               <ReactMarkdown
                 key={index}
                 remarkPlugins={[remarkGfm, remarkBreaks]}
-                skipHtml
+                rehypePlugins={[rehypeRaw]}
                 components={{
                   body: (props) => (
                     <body className=" bg-[#ECEFF4]" {...props} />
@@ -261,21 +274,13 @@ const cleanMarkdown = (raw: string): string => {
 
 const detectContentType = (text: string): "html" | "markdown" | "plain" => {
   const trimmed = text.trim();
-
   if (!trimmed) return "plain";
 
   const htmlPattern = /<\/?[a-z][\s\S]*?>/i;
-  const markdownPattern =
-    /(^|\n)(#{1,6}|[*_~`]|>\s|\d+\.\s|\*\s|-\s|\[.*?\]\(.*?\))/;
+  const mdPattern = /(^|\n)(#{1,6}|[*_~`]|>\s|\d+\.\s|\*\s|-\s|\[.*?\]\(.*?\))/;
 
-  if (htmlPattern.test(trimmed) && !markdownPattern.test(trimmed)) {
-    return "html";
-  }
-
-  if (markdownPattern.test(trimmed)) {
-    return "markdown";
-  }
-
+  if (htmlPattern.test(trimmed)) return "html";
+  if (mdPattern.test(trimmed)) return "markdown";
   return "plain";
 };
 

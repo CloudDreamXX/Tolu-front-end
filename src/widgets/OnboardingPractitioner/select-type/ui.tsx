@@ -1,6 +1,6 @@
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper, TooltipWrapper } from "shared/ui";
@@ -8,6 +8,8 @@ import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { titlesAndIcons } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { UserService } from "entities/user";
+import { RootState } from "entities/store";
 
 export const SelectType = () => {
   const dispatch = useDispatch();
@@ -16,13 +18,48 @@ export const SelectType = () => {
   const [otherText, setOtherText] = useState<string>("");
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
-    new Array(5).fill("")
+    Array(titlesAndIcons.length).fill("")
   );
+  const state = useSelector((state: RootState) => state.coachOnboarding);
+
+  const practitionerTypes = state?.practitioner_types as string[] | undefined;
+
+  useEffect(() => {
+    const initial = Array(titlesAndIcons.length).fill("");
+
+    let firstOtherValue: string | null = null;
+
+    titlesAndIcons.forEach((item, i) => {
+      const saved = practitionerTypes?.[i];
+      if (!saved) return;
+
+      if (item.options.includes(saved)) {
+        initial[i] = saved;
+      } else {
+        initial[i] = "Other (please specify)";
+        if (firstOtherValue === null) firstOtherValue = saved;
+      }
+    });
+
+    setSelectedOptions(initial);
+    if (firstOtherValue !== null) setOtherText(firstOtherValue);
+  }, [practitionerTypes]);
 
   const handleSelection = (index: number, value: string) => {
-    const updatedOptions = [...selectedOptions];
-    updatedOptions[index] = value;
-    setSelectedOptions(updatedOptions);
+    setSelectedOptions((prev) => {
+      const next = [...prev];
+      next[index] = value;
+
+      const filledTypes = next.map((opt) =>
+        opt === "Other (please specify)" ? otherText.trim() : opt
+      );
+
+      dispatch(
+        updateCoachField({ key: "practitioner_types", value: filledTypes })
+      );
+      return next;
+    });
+
     setActiveDropdown(null);
   };
 
@@ -34,19 +71,17 @@ export const SelectType = () => {
     return selectedOptions.find((option) => option !== "");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isSelected()) return;
 
-    const filledTypes = selectedOptions.map((option) =>
-      option === "Other (please specify)" ? otherText : option
-    );
-
-    dispatch(
-      updateCoachField({ key: "practitioner_types", value: filledTypes })
-    );
-    nav("/onboarding-welcome");
+    try {
+      await UserService.onboardUser(state);
+      nav("/onboarding-welcome");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

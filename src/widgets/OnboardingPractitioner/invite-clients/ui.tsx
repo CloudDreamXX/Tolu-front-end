@@ -6,6 +6,9 @@ import { AuthPageWrapper, Input } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { CoachService } from "entities/coach";
 import { toast } from "shared/lib";
+import { RootState } from "entities/store";
+import { useSelector } from "react-redux";
+import { UserService } from "entities/user";
 
 export const InviteClients = () => {
   const nav = useNavigate();
@@ -19,6 +22,7 @@ export const InviteClients = () => {
     window.innerWidth >= 768 && window.innerWidth < 1024
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const state = useSelector((state: RootState) => state.coachOnboarding);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -63,6 +67,7 @@ export const InviteClients = () => {
     if (selectedFile) {
       try {
         await CoachService.inviteClient(null, selectedFile);
+        await UserService.onboardUser(state);
       } catch (error) {
         console.error(error);
         toast({

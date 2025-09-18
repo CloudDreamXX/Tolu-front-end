@@ -13,6 +13,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Calendar } from "shared/ui";
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
+import { UserService } from "entities/user";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
@@ -152,6 +153,11 @@ export const ProfileSetup = () => {
     </>
   );
 
+  const handleNext = async () => {
+    await UserService.onboardUser(state);
+    nav("/invite-clients");
+  };
+
   return (
     <AuthPageWrapper>
       <Footer position={isMobile ? "top-right" : undefined} />
@@ -176,6 +182,7 @@ export const ProfileSetup = () => {
             <Input
               type="text"
               placeholder="Enter Full Name"
+              value={state.name}
               onChange={(e) =>
                 dispatch(
                   updateCoachField({ key: "name", value: e.target.value })
@@ -191,9 +198,13 @@ export const ProfileSetup = () => {
             <Input
               type="text"
               placeholder="Enter Alternative Name"
+              value={state.alternate_name}
               onChange={(e) =>
                 dispatch(
-                  updateCoachField({ key: "last_name", value: e.target.value })
+                  updateCoachField({
+                    key: "alternate_name",
+                    value: e.target.value,
+                  })
                 )
               }
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
@@ -206,6 +217,7 @@ export const ProfileSetup = () => {
             </label>
             <Textarea
               placeholder="Enter Bio"
+              value={state.bio}
               onChange={(e) =>
                 dispatch(
                   updateCoachField({ key: "bio", value: e.target.value })
@@ -258,6 +270,7 @@ export const ProfileSetup = () => {
                   <input
                     type="radio"
                     name="gender"
+                    value={state.gender?.toUpperCase()}
                     onChange={() =>
                       dispatch(
                         updateCoachField({ key: "gender", value: gender })
@@ -276,7 +289,7 @@ export const ProfileSetup = () => {
               labelStyle="text-[#5F5F65]"
               placeholder="Search for Time Zone"
               options={timezoneOptions}
-              value={state.timezone}
+              value={state.timezone || ""}
               onChange={(value) =>
                 dispatch(updateCoachField({ key: "timezone", value: value }))
               }
@@ -361,7 +374,7 @@ export const ProfileSetup = () => {
               Back
             </button>
             <button
-              onClick={() => nav("/invite-clients")}
+              onClick={handleNext}
               disabled={!isFormValid}
               className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold ${
                 isFormValid

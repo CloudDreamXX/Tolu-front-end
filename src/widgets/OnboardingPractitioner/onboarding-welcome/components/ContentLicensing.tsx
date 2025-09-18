@@ -204,12 +204,12 @@ export const ContentLicensing: React.FC<Props> = ({
   };
 
   return (
-    <div className="flex flex-col xl:w-[900px] overflow-y-auto gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
+    <div className="flex flex-col items-center xl:w-[900px] overflow-y-auto gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
       <div className="flex flex-col items-center w-full h-full md:w-[548px] gap-[24px]">
         <Medkit />
         <div className="flex flex-col gap-[38px] items-center justify-center">
           <div className="flex md:w-[460px] flex-col items-center gap-[16px]">
-            <h2 className="text-center text-black  text-[24px] md:text-[40px]/[56px] text-wrap font-bold">
+            <h2 className="text-center text-black  text-[24px] md:text-[32px]/[56px] text-wrap font-bold">
               {currentContent.title}
             </h2>
             <p className="text-center text-[16px] md:text-[24px] text-[#000000]">

@@ -1,6 +1,6 @@
 export const AdminHeader: React.FC = () => (
-  <header className="w-full flex justify-center items-center md:justify-between md:items-end self-stretch md:pr-[40px]">
-    <div className="flex flex-col items-center px-[13px] md:p-[40px] lg:py-[25px] lg:pl-[90px] lg:pr-[0px]  justify-center">
+  <header className="w-full flex justify-center items-center">
+    <div className="flex flex-col items-center px-[13px] md:p-[40px] lg:py-[25px]  justify-center">
       <p className="text-[#1D1D1F] text-center text-[64px] h-[88px] md:h-[64px] md:text-[46px] font-bold ">
         Tolu AI
       </p>

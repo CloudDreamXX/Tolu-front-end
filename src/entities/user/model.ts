@@ -98,7 +98,7 @@ export interface PractitionerInfo {
 }
 export interface BusinessSetup {
   challenges: string[];
-  uses_ai: boolean | null;
+  uses_ai: string | null;
   practice_software: string | null;
   supplement_method: string | null;
 }
@@ -198,4 +198,8 @@ export interface ProfilePreferences {
 export interface ProfileMetadata {
   created_at: string;
   updated_at: string;
+}
+
+export interface OnboardingStatus {
+  onboarding_filled: boolean;
 }

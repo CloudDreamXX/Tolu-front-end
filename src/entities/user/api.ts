@@ -5,6 +5,7 @@ import {
   IUser,
   MenopauseSubmissionRequest,
   OnboardClient,
+  OnboardingStatus,
   RecommendationsResponse,
   ReferFriendRequest,
   SymptomsResponse,
@@ -256,5 +257,11 @@ export class UserService {
       token
     );
     return ApiService.get<any>(endpoint);
+  }
+
+  static async getOnboardingStatus(): Promise<OnboardingStatus> {
+    return ApiService.get<OnboardingStatus>(
+      API_ROUTES.USER.GET_ONBOARDING_STATUS
+    );
   }
 }

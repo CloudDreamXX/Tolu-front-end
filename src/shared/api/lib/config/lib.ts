@@ -17,6 +17,7 @@ export const API_ROUTES = {
     DOWNLOAD_PHOTO: "/profile/photo/{filename}",
     REFER_FRIEND: "/user/refer-friend",
     GET_REFERRAL_INVITATION: "/referral/invitation-details/{token}",
+    GET_ONBOARDING_STATUS: "/user/onboarding-status",
   },
   CLIENT: {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",
