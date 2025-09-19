@@ -1,7 +1,7 @@
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Button, Input } from "shared/ui";
