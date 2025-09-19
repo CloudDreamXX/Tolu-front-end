@@ -11,7 +11,7 @@ import { SearchableSelect } from "../components/SearchableSelect";
 import { timezoneOptions } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Calendar } from "shared/ui";
-import { format } from "date-fns";
+import { differenceInYears, format, isAfter } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
 import { UserService } from "entities/user";
 
@@ -25,11 +25,10 @@ export const ProfileSetup = () => {
   const { isMobile } = usePageWidth();
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [localDate, setLocalDate] = useState<Date | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number>(
-    new Date().getFullYear()
-  );
+  const defaultYear = new Date().getFullYear() - 30;
+  const [selectedYear, setSelectedYear] = useState<number>(defaultYear);
   const [displayMonth, setDisplayMonth] = useState<Date>(
-    new Date(selectedYear, 0)
+    new Date(defaultYear, 0)
   );
 
   const handleFile = (file: File) => {
@@ -88,19 +87,17 @@ export const ProfileSetup = () => {
     }
   };
 
-  const computeAge = (dobStr: string) => {
-    const dob = new Date(dobStr);
-    if (Number.isNaN(dob.getTime())) return null;
+  const computeAge = (
+    dob: Date | string | null | undefined
+  ): number | undefined => {
+    if (!dob) return undefined;
+    const d = typeof dob === "string" ? new Date(dob) : dob;
+    if (Number.isNaN(d.getTime())) return undefined;
     const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const beforeBirthday =
-      today.getMonth() < dob.getMonth() ||
-      (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate());
-    if (beforeBirthday) age--;
-    return age;
+    if (isAfter(d, today)) return undefined;
+    const age = differenceInYears(today, d);
+    return age >= 0 && age <= 120 ? age : undefined;
   };
-
-  const computedAge = computeAge(dateOfBirth);
 
   const calendarContent = (
     <>
@@ -128,17 +125,15 @@ export const ProfileSetup = () => {
         onSelect={(selectedDate) => {
           if (selectedDate) {
             setLocalDate(selectedDate);
-            setDateOfBirth(format(selectedDate, "yyyy-MM-dd"));
+            const isoDob = format(selectedDate, "yyyy-MM-dd");
+            setDateOfBirth(isoDob);
+
             const y = selectedDate.getFullYear();
             if (y !== selectedYear) setSelectedYear(y);
-            setDisplayMonth(
-              new Date(selectedDate.getFullYear(), selectedDate.getMonth())
-            );
+            setDisplayMonth(new Date(y, selectedDate.getMonth()));
+
             dispatch(
-              updateCoachField({
-                key: "age",
-                value: computedAge ? computedAge : 0,
-              })
+              updateCoachField({ key: "age", value: computeAge(selectedDate) })
             );
           }
         }}
@@ -265,12 +260,13 @@ export const ProfileSetup = () => {
               ].map((gender) => (
                 <label
                   key={gender}
-                  className="flex items-center gap-[8px] text-[16px] text-black "
+                  className="flex items-center gap-[8px] text-[16px] text-black"
                 >
                   <input
                     type="radio"
                     name="gender"
-                    value={state.gender?.toUpperCase()}
+                    value={gender}
+                    checked={state.gender === gender}
                     onChange={() =>
                       dispatch(
                         updateCoachField({ key: "gender", value: gender })
