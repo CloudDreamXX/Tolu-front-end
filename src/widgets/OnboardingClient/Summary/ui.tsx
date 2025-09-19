@@ -24,7 +24,7 @@ export const Summary = () => {
 
   type FormState = RootState["clientOnboarding"];
   type FieldKey = keyof FormState;
-  type AllowedValue = string | number | Date | string[] | undefined;
+  type AllowedValue = string | number | string[] | undefined;
 
   const LIST_FIELDS: ReadonlyArray<FieldKey> = [
     "important_values",
@@ -58,15 +58,6 @@ export const Summary = () => {
         return Number.isFinite(n) ? n : undefined;
       }
       return undefined;
-    }
-
-    if (original instanceof Date) {
-      if (value instanceof Date) return value;
-      if (typeof value === "string") {
-        const t = Date.parse(value);
-        return Number.isFinite(t) ? new Date(t) : original;
-      }
-      return original;
     }
 
     if (typeof value === "string") return value;

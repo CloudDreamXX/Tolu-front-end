@@ -20,37 +20,49 @@ export const PersonalityType = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
 
-  const token = useSelector((state: RootState) => state.user.token);
-  const clientOnboarding = useSelector(
-    (state: RootState) => state.clientOnboarding
-  );
+  const token = useSelector((s: RootState) => s.user.token);
+  const clientOnboarding = useSelector((s: RootState) => s.clientOnboarding);
 
-  const [radioChosen, setRadioChosen] = useState("");
-  const personalityType = clientOnboarding.personality_type || "";
+  const initialSavedType = clientOnboarding.personality_type ?? "";
+  const [radioChosen, setRadioChosen] = useState<
+    "test" | "know" | "later" | ""
+  >(initialSavedType ? "know" : "");
+
+  const [selectedPersonality, setSelectedPersonality] =
+    useState<string>(initialSavedType);
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const radioId = e.target.id;
-    setRadioChosen(radioId);
+    const id = e.target.id as "test" | "know" | "later";
+    setRadioChosen(id);
   };
 
   const handleNext = async () => {
-    if (radioChosen === "know" && personalityType.length > 0) {
+    const hasType =
+      typeof selectedPersonality === "string" &&
+      selectedPersonality.trim().length > 0;
+
+    if (radioChosen === "know" && hasType) {
       const updated = {
         ...clientOnboarding,
-        personality_type: personalityType,
+        personality_type: selectedPersonality.trim(),
       };
       dispatch(
-        setFormField({ field: "personality_type", value: personalityType })
+        setFormField({
+          field: "personality_type",
+          value: updated.personality_type,
+        })
       );
       await UserService.onboardClient(updated, token);
       nav("/readiness");
-    } else if (radioChosen === "later") {
-      nav("/readiness");
-    } else if (radioChosen === "test") {
-      nav("/choose-test");
-    } else {
-      nav("/readiness");
+      return;
     }
+
+    if (radioChosen === "test") {
+      nav("/choose-test");
+      return;
+    }
+
+    nav("/readiness");
   };
 
   const title = (
@@ -106,21 +118,22 @@ export const PersonalityType = () => {
               Personality type
             </p>
             <Select
-              value={personalityType}
-              onValueChange={(val) =>
+              value={selectedPersonality}
+              onValueChange={(val) => {
+                setSelectedPersonality(val);
                 dispatch(
                   setFormField({ field: "personality_type", value: val })
-                )
-              }
+                );
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {personalities.map((personality) => (
-                    <SelectItem key={personality} value={personality}>
-                      {personality}
+                  {personalities.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
                     </SelectItem>
                   ))}
                 </SelectGroup>

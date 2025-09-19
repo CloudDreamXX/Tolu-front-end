@@ -1,6 +1,9 @@
 import { differenceInYears, format, isAfter, parseISO } from "date-fns";
-import { setFormField } from "entities/store/clientOnboardingSlice";
-import { useState } from "react";
+import {
+  setFormField,
+  setFromUserInfo,
+} from "entities/store/clientOnboardingSlice";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -28,6 +31,8 @@ import { OnboardingClientLayout } from "../Layout";
 import { CYCLE_HELTH, languages, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
+import { mapOnboardClientToFormState } from "entities/store/helpers";
+import { findFirstIncompleteClientStep } from "./helpers";
 
 export const DemographicStep = () => {
   const nav = useNavigate();
@@ -42,15 +47,76 @@ export const DemographicStep = () => {
   const selectedLanguages = clientOnboarding.language || [];
   const aiExperience = clientOnboarding.ai_experience;
 
-  const [localDate, setLocalDate] = useState<Date | null>(
-    dateOfBirth ? new Date(dateOfBirth) : null
-  );
+  const initialDOB = dateOfBirth ? parseISO(dateOfBirth) : null;
+
+  const [localDate, setLocalDate] = useState<Date | null>(initialDOB);
   const [selectedYear, setSelectedYear] = useState<number>(
-    new Date().getFullYear()
+    initialDOB ? initialDOB.getFullYear() : new Date().getFullYear()
   );
   const [displayMonth, setDisplayMonth] = useState<Date>(
-    new Date(selectedYear, 0)
+    initialDOB
+      ? new Date(initialDOB.getFullYear(), initialDOB.getMonth())
+      : new Date(selectedYear, 0)
   );
+
+  useEffect(() => {
+    if (!dateOfBirth) return;
+    const d = parseISO(dateOfBirth);
+    if (Number.isNaN(d.getTime())) return;
+
+    setLocalDate(d);
+    setSelectedYear(d.getFullYear());
+    setDisplayMonth(new Date(d.getFullYear(), d.getMonth()));
+
+    dispatch(setFormField({ field: "age", value: computeAge(d) }));
+  }, [dateOfBirth, dispatch]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    let cancelled = false;
+
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    const getOnboardingStatusWithRetry = async (attempt = 1) => {
+      try {
+        return await UserService.getOnboardingStatus();
+      } catch (err: any) {
+        const status = err?.response?.status ?? err?.status;
+        if (!cancelled && status === 403 && attempt < 2) {
+          await sleep(300);
+          return getOnboardingStatusWithRetry(attempt + 1);
+        }
+        throw err;
+      }
+    };
+
+    const loadUser = async () => {
+      try {
+        const onboardingComplete = await getOnboardingStatusWithRetry();
+        if (onboardingComplete.onboarding_filled) {
+          if (!cancelled) nav("/library");
+          return;
+        }
+
+        const userInfo = await UserService.getOnboardClient();
+        const clientData = mapOnboardClientToFormState(userInfo);
+        if (!cancelled) {
+          dispatch(setFromUserInfo(userInfo));
+          const issue = findFirstIncompleteClientStep(clientData);
+          if (issue) nav(issue.route);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    loadUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, dispatch, nav]);
 
   const computeAge = (
     dob: string | Date | null | undefined

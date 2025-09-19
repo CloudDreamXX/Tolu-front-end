@@ -1,4 +1,7 @@
-import { updateCoachField } from "entities/store/coachOnboardingSlice";
+import {
+  setCoachOnboardingData,
+  updateCoachField,
+} from "entities/store/coachOnboardingSlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +13,8 @@ import { titlesAndIcons } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { UserService } from "entities/user";
 import { RootState } from "entities/store";
+import { findFirstIncompleteStep } from "../onboarding-finish/helpers";
+import { mapUserToCoachOnboarding } from "./helpers";
 
 export const SelectType = () => {
   const dispatch = useDispatch();
@@ -23,6 +28,59 @@ export const SelectType = () => {
   const state = useSelector((state: RootState) => state.coachOnboarding);
 
   const practitionerTypes = state?.practitioner_types as string[] | undefined;
+
+  const token = useSelector((state: RootState) => state.user.token);
+
+  useEffect(() => {
+    if (!token) return;
+
+    let cancelled = false;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    const getOnboardingStatusWithRetry = async (attempt = 1) => {
+      try {
+        return await UserService.getOnboardingStatus();
+      } catch (err: any) {
+        const status = err?.response?.status ?? err?.status;
+        if (!cancelled && status === 403 && attempt < 2) {
+          await sleep(300);
+          return getOnboardingStatusWithRetry(attempt + 1);
+        }
+        throw err;
+      }
+    };
+
+    const loadUser = async () => {
+      try {
+        const onboardingComplete = await getOnboardingStatusWithRetry();
+        if (onboardingComplete.onboarding_filled) {
+          if (!cancelled) nav("/content-manager/create");
+          return;
+        }
+
+        const coach = await UserService.getOnboardingUser();
+        const coachData = mapUserToCoachOnboarding(coach);
+
+        if (cancelled) return;
+
+        dispatch(setCoachOnboardingData(coachData));
+
+        const issue = findFirstIncompleteStep(coachData);
+        if (issue) {
+          nav(issue.route);
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    loadUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, dispatch, nav]);
 
   useEffect(() => {
     const initial = Array(titlesAndIcons.length).fill("");

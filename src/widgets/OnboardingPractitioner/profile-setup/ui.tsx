@@ -23,8 +23,10 @@ export const ProfileSetup = () => {
   const ref = useRef<HTMLInputElement>(null);
   const state = useSelector((state: RootState) => state.coachOnboarding);
   const { isMobile } = usePageWidth();
+
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [localDate, setLocalDate] = useState<Date | null>(null);
+
   const defaultYear = new Date().getFullYear() - 30;
   const [selectedYear, setSelectedYear] = useState<number>(defaultYear);
   const [displayMonth, setDisplayMonth] = useState<Date>(
@@ -159,19 +161,21 @@ export const ProfileSetup = () => {
       <HeaderOnboarding currentStep={3} />
       <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px]">
         {!isMobile && (
-          <h1 className="flex text-center  text-[32px] font-medium text-black">
+          <h1 className="flex text-center text-[32px] font-medium text-black">
             Profile Setup
           </h1>
         )}
+
         <form className="flex flex-col w-full lg:w-[700px] overflow-y-auto py-[24px] px-[16px] md:py-[40px] md:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px]">
           {isMobile && (
-            <h1 className="flex text-center items-center justify-center  text-[24px] font-medium text-black">
+            <h1 className="flex text-center items-center justify-center text-[24px] font-medium text-black">
               Profile Setup
             </h1>
           )}
+
           {/* First and Last Name */}
           <div className="flex flex-col flex-1 gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px]  font-medium">
+            <label className="text-[#5F5F65] text-[16px] font-medium">
               Full name
             </label>
             <Input
@@ -186,8 +190,9 @@ export const ProfileSetup = () => {
               className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
             />
           </div>
+
           <div className="flex flex-col flex-1 gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px]  font-medium">
+            <label className="text-[#5F5F65] text-[16px] font-medium">
               Alternative name for your practice profile
             </label>
             <Input
@@ -207,7 +212,7 @@ export const ProfileSetup = () => {
           </div>
 
           <div className="flex flex-col flex-1 gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px]  font-medium">
+            <label className="text-[#5F5F65] text-[16px] font-medium">
               Bio
             </label>
             <Textarea
@@ -225,7 +230,7 @@ export const ProfileSetup = () => {
 
           {/* Birth date */}
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px]  font-medium">
+            <label className="text-[#5F5F65] text-[16px] font-medium">
               Birth Date
             </label>
             <Popover>
@@ -248,7 +253,7 @@ export const ProfileSetup = () => {
 
           {/* Gender */}
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px]  font-medium">
+            <label className="text-[#5F5F65] text-[16px] font-medium">
               Gender
             </label>
             <div className="flex flex-col gap-[16px]">
@@ -279,6 +284,7 @@ export const ProfileSetup = () => {
               ))}
             </div>
           </div>
+
           <div className="flex flex-col gap-[8px]">
             <SearchableSelect
               label="Time zone"
@@ -287,14 +293,14 @@ export const ProfileSetup = () => {
               options={timezoneOptions}
               value={state.timezone || ""}
               onChange={(value) =>
-                dispatch(updateCoachField({ key: "timezone", value: value }))
+                dispatch(updateCoachField({ key: "timezone", value }))
               }
             />
           </div>
 
           {/* Upload Profile Picture */}
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px]  font-medium">
+            <label className="text-[#5F5F65] text-[16px] font-medium">
               Change Profile Picture
             </label>
             {filePreview ? (
@@ -317,7 +323,7 @@ export const ProfileSetup = () => {
                   fill={1}
                   className="text-[#1C63DB] p-2 border rounded-xl"
                 />
-                <p className="text-[#1C63DB] text-[14px]  font-semibold mt-[8px]">
+                <p className="text-[#1C63DB] text-[14px] font-semibold mt-[8px]">
                   Click to upload
                 </p>
                 <p className="text-[#5F5F65] text-[14px] ">or drag and drop</p>
@@ -338,7 +344,7 @@ export const ProfileSetup = () => {
               <button
                 type="button"
                 onClick={() => nav(-1)}
-                className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
+                className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold text-[#1C63DB]"
                 style={{ background: "rgba(0, 143, 246, 0.10)" }}
               >
                 Back
@@ -347,7 +353,7 @@ export const ProfileSetup = () => {
                 type="button"
                 onClick={() => nav("/invite-clients")}
                 disabled={!isFormValid}
-                className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold ${
+                className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
                   isFormValid
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
@@ -364,7 +370,7 @@ export const ProfileSetup = () => {
           <div className="flex items-center gap-[16px] pb-10 md:pb-[100px] w-full md:w-fit">
             <button
               onClick={() => nav(-1)}
-              className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
+              className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold text-[#1C63DB]"
               style={{ background: "rgba(0, 143, 246, 0.10)" }}
             >
               Back
@@ -372,7 +378,7 @@ export const ProfileSetup = () => {
             <button
               onClick={handleNext}
               disabled={!isFormValid}
-              className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold ${
+              className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
                 isFormValid
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"

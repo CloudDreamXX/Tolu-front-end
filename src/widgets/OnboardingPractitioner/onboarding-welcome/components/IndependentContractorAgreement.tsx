@@ -26,8 +26,8 @@ export const IndependentContractorAgreement: React.FC<Props> = ({
               </h3>
               <p className="text-[#000] text-[24px] pl-5">
                 • You are joining Tolu as an independent contractor, not an
-                employee. You set your own schedule and are responsible for your
-                own taxes.
+                employee. <br /> You set your own schedule and are responsible
+                for your own taxes.
               </p>
             </div>
 

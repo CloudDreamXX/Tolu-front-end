@@ -10,7 +10,7 @@ export interface FormState {
   language?: string[];
   race_ethnicity?: string;
   gender?: string;
-  date_of_birth?: string | Date;
+  date_of_birth?: string;
   ai_experience?: string;
 
   household_type?: string;

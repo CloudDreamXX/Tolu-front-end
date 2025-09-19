@@ -72,7 +72,7 @@ export const OnboardingWelcome = () => {
               onClick={addStep}
               className="flex justify-center items-center h-[56px] w-full md:w-[250px] p-[16px] rounded-full bg-[#1C63DB] text-white"
             >
-              Get started
+              Get Started
             </button>
           </div>
         )}

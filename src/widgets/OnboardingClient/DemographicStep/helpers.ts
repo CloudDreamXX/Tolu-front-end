@@ -1,4 +1,3 @@
-import type { OnboardClient } from "entities/user";
 import type { FormState } from "entities/store/clientOnboardingSlice";
 
 const isBlank = (v: unknown) =>
@@ -6,22 +5,6 @@ const isBlank = (v: unknown) =>
   (typeof v === "string" && v.trim() === "") ||
   (Array.isArray(v) &&
     v.filter((x) => x != null && String(x).trim() !== "").length === 0);
-
-const computeAge = (
-  dob?: string | Date,
-  fallback?: number
-): number | undefined => {
-  if (!dob && typeof fallback === "number") return fallback;
-  if (!dob) return undefined;
-  const d = new Date(dob);
-  if (Number.isNaN(d.getTime()))
-    return typeof fallback === "number" ? fallback : undefined;
-  const today = new Date();
-  let age = today.getFullYear() - d.getFullYear();
-  const m = today.getMonth() - d.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
-  return age;
-};
 
 const LABEL_CLIENT: Record<keyof FormState, string> = {
   age: "Age",

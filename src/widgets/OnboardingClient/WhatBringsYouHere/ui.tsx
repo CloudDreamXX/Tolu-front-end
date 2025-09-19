@@ -123,18 +123,18 @@ export const WhatBrringsYouHere = () => {
                   htmlFor={`radio-${index}`}
                   className="flex flex-grow cursor-pointer"
                 >
-                  <span className="inline-flex items-center ">
-                    <p className=" text-[16px] font-medium text-[#1D1D1F] leading-snug mr-1">
+                  <span className="inline-flex">
+                    <p className="text-[16px] font-medium text-[#1D1D1F] leading-snug mr-1">
                       {item}
+                      <span className="whitespace-nowrap inline-flex items-center align-center ml-1">
+                        <MaterialIcon
+                          iconName="help"
+                          size={16}
+                          fill={1}
+                          className="text-[#1C63DB]"
+                        />
+                      </span>
                     </p>
-                    <div className="flex-shrink-0 mt-[3px]">
-                      <MaterialIcon
-                        iconName="help"
-                        size={16}
-                        fill={1}
-                        className="text-[#1C63DB]"
-                      />
-                    </div>
                   </span>
                 </label>
               </div>
