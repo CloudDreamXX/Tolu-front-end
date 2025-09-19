@@ -1,6 +1,5 @@
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import {
   Select,
@@ -13,43 +12,57 @@ import {
 import { BottomButtons } from "widgets/BottomButtons";
 import { OnboardingClientLayout } from "../Layout";
 import { personalities } from "./mock";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
+import { useState } from "react";
 
 export const PersonalityType = () => {
-  const dispatch = useDispatch();
-  const [radioChosen, setRadioChosen] = useState("");
   const nav = useNavigate();
-  const [personalityType, setPersonalityType] = useState("");
+  const dispatch = useDispatch();
+
+  const token = useSelector((s: RootState) => s.user.token);
+  const clientOnboarding = useSelector((s: RootState) => s.clientOnboarding);
+
+  const initialSavedType = clientOnboarding.personality_type ?? "";
+  const [radioChosen, setRadioChosen] = useState<
+    "test" | "know" | "later" | ""
+  >(initialSavedType ? "know" : "");
+
+  const [selectedPersonality, setSelectedPersonality] =
+    useState<string>(initialSavedType);
+
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = e.target.value;
-    const radioId = e.target.id;
-    if (isChecked) {
-      setRadioChosen(radioId);
-    }
+    const id = e.target.id as "test" | "know" | "later";
+    setRadioChosen(id);
   };
 
-  const isButtonActive = () => {
-    if (radioChosen === "know" && personalityType.length > 0) {
-      return true;
-    } else if (radioChosen !== "know" && radioChosen.length > 0) {
-      return true;
-    }
-    return false;
-  };
+  const handleNext = async () => {
+    const hasType =
+      typeof selectedPersonality === "string" &&
+      selectedPersonality.trim().length > 0;
 
-  const handleNext = () => {
-    if (
-      (radioChosen === "know" && personalityType.length > 0) ||
-      radioChosen === "later"
-    ) {
+    if (radioChosen === "know" && hasType) {
+      const updated = {
+        ...clientOnboarding,
+        personality_type: selectedPersonality.trim(),
+      };
       dispatch(
-        setFormField({ field: "personalityType", value: personalityType })
+        setFormField({
+          field: "personality_type",
+          value: updated.personality_type,
+        })
       );
+      await UserService.onboardClient(updated, token);
       nav("/readiness");
-    } else if (radioChosen === "test") {
-      nav("/choose-test");
-    } else {
       return;
     }
+
+    if (radioChosen === "test") {
+      nav("/choose-test");
+      return;
+    }
+
+    nav("/readiness");
   };
 
   const title = (
@@ -80,6 +93,7 @@ export const PersonalityType = () => {
             name="personality"
             type="radio"
             className="flex items-center w-6 h-6"
+            checked={radioChosen === "test"}
           />
           <p className=" text-[16px] font-medium text-[#1D1D1F]">
             Take a quick test
@@ -92,6 +106,7 @@ export const PersonalityType = () => {
             id="know"
             name="personality"
             className="flex items-center w-6 h-6"
+            checked={radioChosen === "know"}
           />
           <p className=" text-[16px] font-medium text-[#1D1D1F]">
             I already know my type
@@ -102,15 +117,23 @@ export const PersonalityType = () => {
             <p className=" text-[16px] font-medium text-[#1D1D1F]">
               Personality type
             </p>
-            <Select value={personalityType} onValueChange={setPersonalityType}>
+            <Select
+              value={selectedPersonality}
+              onValueChange={(val) => {
+                setSelectedPersonality(val);
+                dispatch(
+                  setFormField({ field: "personality_type", value: val })
+                );
+              }}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Select country" />
+                <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {personalities.map((personality) => (
-                    <SelectItem key={personality} value={personality}>
-                      {personality}
+                  {personalities.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -125,6 +148,7 @@ export const PersonalityType = () => {
             id="later"
             name="personality"
             className="flex items-center w-6 h-6"
+            checked={radioChosen === "later"}
           />
           <p className=" text-[16px] font-medium text-[#1D1D1F]">
             I'll do it later
@@ -144,7 +168,6 @@ export const PersonalityType = () => {
         <BottomButtons
           handleNext={handleNext}
           skipButton={() => nav("/readiness")}
-          isButtonActive={isButtonActive}
         />
       }
     />

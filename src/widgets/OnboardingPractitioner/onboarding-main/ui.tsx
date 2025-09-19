@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
@@ -14,6 +14,8 @@ import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "./components";
 import { buttons } from "./mock";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
 
 export const OnboardingMain = () => {
   const nav = useNavigate();
@@ -23,8 +25,37 @@ export const OnboardingMain = () => {
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const state = useSelector((state: RootState) => state.coachOnboarding);
 
   const dispatch = useDispatch();
+
+  const allOptions = useMemo(() => customButtons.flat(), [customButtons]);
+
+  useEffect(() => {
+    const saved = (state?.primary_niches ?? []) as string[];
+
+    if (!saved.length) {
+      setSelectedButtons([]);
+      setOtherText("");
+      return;
+    }
+
+    const nextSelected: string[] = [];
+    let firstCustom: string | null = null;
+
+    for (const val of saved) {
+      if (nextSelected.length >= 5) break;
+      if (allOptions.includes(val)) {
+        if (!nextSelected.includes(val)) nextSelected.push(val);
+      } else if (!firstCustom) {
+        nextSelected.push("Other");
+        firstCustom = val;
+      }
+    }
+
+    setSelectedButtons(nextSelected);
+    setOtherText(firstCustom ?? "");
+  }, [state?.primary_niches, allOptions]);
 
   const handleButtonClick = (buttonText: string) => {
     setSelectedButtons((prevSelected) => {
@@ -56,7 +87,7 @@ export const OnboardingMain = () => {
     selectedButtons.length === 0 ||
     (selectedButtons.includes("Other") && otherText.trim() === "");
 
-  const handleNext = () => {
+  const handleNext = async () => {
     let updatedButtons = [...selectedButtons];
 
     if (isOtherSelected() && otherText.trim()) {
@@ -69,7 +100,12 @@ export const OnboardingMain = () => {
       updateCoachField({ key: "primary_niches", value: updatedButtons })
     );
 
-    nav("/about-your-practice");
+    try {
+      await UserService.onboardUser(state);
+      nav("/about-your-practice");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

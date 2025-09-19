@@ -103,7 +103,7 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
     uses_labs_supplements: yn(pr?.uses_labs_supplements),
 
     business_challenges: bs?.challenges ?? [],
-    uses_ai: yn(bs?.uses_ai),
+    uses_ai: bs?.uses_ai ?? "",
     practice_management_software: bs?.practice_software ?? "",
     supplement_dispensing_method: bs?.supplement_method ?? "",
 

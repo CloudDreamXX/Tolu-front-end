@@ -5,7 +5,7 @@ import { cn } from "shared/lib";
 interface BottomButtonsProps {
   handleNext: () => void;
   skipButton: () => void;
-  isButtonActive: () => boolean;
+  isButtonActive?: () => boolean;
 }
 
 export const BottomButtons: React.FC<BottomButtonsProps> = ({
@@ -32,12 +32,14 @@ export const BottomButtons: React.FC<BottomButtonsProps> = ({
         </button>
         <button
           onClick={handleNext}
-          disabled={!isButtonActive()}
+          disabled={isButtonActive ? !isButtonActive() : false}
           className={cn(
             "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold",
-            isButtonActive()
-              ? "bg-[#1C63DB] text-white"
-              : "bg-[#DDEBF6] text-white cursor-not-allowed"
+            isButtonActive
+              ? isButtonActive()
+                ? "bg-[#1C63DB] text-white"
+                : "bg-[#DDEBF6] text-white cursor-not-allowed"
+              : "bg-[#1C63DB] text-white"
           )}
         >
           Continue

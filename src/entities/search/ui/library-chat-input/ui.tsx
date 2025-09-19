@@ -121,6 +121,10 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
     dispatch(setFolderToChat(folder));
   };
 
+  const attachKey = files
+    .map((f) => `${f.name}-${f.size}-${f.lastModified}`)
+    .join("|");
+
   return (
     <div
       className={cn(
@@ -190,6 +194,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <PopoverAttach
+              key={attachKey}
               files={files}
               setFiles={setFiles}
               hideFromLibrary

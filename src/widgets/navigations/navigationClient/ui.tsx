@@ -1,3 +1,11 @@
+import {
+  clearAllChatHistory,
+  clearActiveChatHistory,
+  setFolderToChat,
+  setFolderId,
+  setFilesToChat,
+  setLastChatId,
+} from "entities/client/lib";
 import { RootState } from "entities/store";
 import { logout } from "entities/user";
 import React, { useEffect, useRef, useState } from "react";
@@ -201,12 +209,13 @@ export const NavigationClient: React.FC = () => {
                 variant={"brightblue"}
                 className="w-full h-[44px] text-base font-semibold"
                 onClick={() => {
-                  setMenuMobOpen(false);
-                  nav(`${basePath}/library/${chatId}`, {
-                    state: {
-                      from: location,
-                    },
-                  });
+                  dispatch(clearAllChatHistory());
+                  dispatch(clearActiveChatHistory());
+                  dispatch(setFolderToChat(null));
+                  dispatch(setFolderId(""));
+                  dispatch(setFilesToChat([]));
+                  dispatch(setLastChatId(""));
+                  nav("/library", { state: { isNew: true } });
                 }}
               >
                 <MaterialIcon iconName="stars_2" fill={1} />

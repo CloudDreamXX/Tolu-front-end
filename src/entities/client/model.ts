@@ -106,3 +106,15 @@ export interface SharedCoachContentByContentIdResponse {
     shared_at: string;
   };
 }
+
+export interface CoachListItem {
+  relationship_id: string;
+  coach_id: string;
+  basic_info?: { name?: string };
+  profile?: { bio?: string; headshot_url?: string };
+}
+
+export interface GetCoachesResponse {
+  coaches: CoachListItem[];
+  total_coaches: number;
+}

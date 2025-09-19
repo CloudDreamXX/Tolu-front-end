@@ -107,6 +107,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   );
 
   const lastId = location.state?.lastId;
+  const isNew = location.state?.isNew;
   const folderId = location.state?.folderId;
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
 
@@ -153,6 +154,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       setFolderToChat(folderId);
     }
   }, [folderId]);
+
+  useEffect(() => {
+    if (isNew) {
+      setCurrentChatId("");
+    }
+  }, [isNew]);
 
   useEffect(() => {
     if (activeChatKey) {
@@ -384,13 +391,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           });
         }
 
-        chatMessages.sort(
-          (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
-        );
-
-        dispatch(
-          setMessagesToChat({ chatKey: chatId, messages: chatMessages })
-        );
+        if (chatMessages.length > 0) {
+          chatMessages.sort(
+            (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+          );
+          dispatch(
+            setMessagesToChat({ chatKey: chatId, messages: chatMessages })
+          );
+        }
 
         if (sessionData[0]?.chat_title) {
           setChatTitle(sessionData[0].chat_title);

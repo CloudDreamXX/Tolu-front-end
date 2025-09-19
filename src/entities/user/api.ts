@@ -4,6 +4,8 @@ import {
   IRegisterUser,
   IUser,
   MenopauseSubmissionRequest,
+  OnboardClient,
+  OnboardingStatus,
   RecommendationsResponse,
   ReferFriendRequest,
   SymptomsResponse,
@@ -166,6 +168,14 @@ export class UserService {
     return { message: response };
   }
 
+  static async getOnboardClient(): Promise<OnboardClient> {
+    const response = await ApiService.get<OnboardClient>(
+      API_ROUTES.USER.ONBOARD_CLIENT
+    );
+
+    return response;
+  }
+
   static async checkUserExistence(
     email: string
   ): Promise<UserExistenceResponse> {
@@ -247,5 +257,11 @@ export class UserService {
       token
     );
     return ApiService.get<any>(endpoint);
+  }
+
+  static async getOnboardingStatus(): Promise<OnboardingStatus> {
+    return ApiService.get<OnboardingStatus>(
+      API_ROUTES.USER.GET_ONBOARDING_STATUS
+    );
   }
 }

@@ -1,37 +1,64 @@
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { Checkbox, Input } from "shared/ui";
 import { BottomButtons } from "widgets/BottomButtons";
 import { OnboardingClientLayout } from "../Layout";
 import { checkboxes } from "./utils";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
+import { useState } from "react";
 
 export const Support = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
 
-  const [selectedSupport, setSelectedSupport] = useState<string[]>([]);
+  const token = useSelector((state: RootState) => state.user.token);
+  const clientOnboarding = useSelector(
+    (state: RootState) => state.clientOnboarding
+  );
+
+  const selectedSupport = clientOnboarding.support_network || [];
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (value: string, checked: boolean) => {
     if (checked) {
-      setSelectedSupport((prev) => [...prev, value]);
+      dispatch(
+        setFormField({
+          field: "support_network",
+          value: [...selectedSupport, value],
+        })
+      );
     } else {
-      setSelectedSupport((prev) => prev.filter((v) => v !== value));
+      dispatch(
+        setFormField({
+          field: "support_network",
+          value: selectedSupport.filter((v) => v !== value),
+        })
+      );
     }
   };
 
-  const handleNext = () => {
-    const finalSupport = [...selectedSupport];
-
-    if (selectedSupport.includes("Other") && inputValue.trim()) {
-      finalSupport.splice(finalSupport.indexOf("Other"), 1, inputValue.trim());
+  const handleNext = async () => {
+    let finalSupport = [...selectedSupport];
+    if (finalSupport.includes("Other") && inputValue.trim()) {
+      finalSupport = finalSupport.map((v) =>
+        v === "Other" ? inputValue.trim() : v
+      );
     }
 
-    dispatch(setFormField({ field: "support", value: finalSupport }));
+    const updated = {
+      ...clientOnboarding,
+      support_network: finalSupport,
+    };
+
+    dispatch(setFormField({ field: "support_network", value: finalSupport }));
+
+    await UserService.onboardClient(updated, token);
     nav("/personality-type");
   };
+
+  const isFilled = () => selectedSupport.length > 0 || inputValue.trim() !== "";
 
   const title = (
     <h1 className="flex w-full items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold">
@@ -46,7 +73,7 @@ export const Support = () => {
       </h3>
 
       {checkboxes
-        .reduce((rows, item, index) => {
+        .reduce((rows, _, index) => {
           if (index % 2 === 0) rows.push(checkboxes.slice(index, index + 2));
           return rows;
         }, [] as string[][])
@@ -94,7 +121,7 @@ export const Support = () => {
         <BottomButtons
           handleNext={handleNext}
           skipButton={() => nav("/personality-type")}
-          isButtonActive={() => selectedSupport.length > 0}
+          isButtonActive={isFilled}
         />
       }
     />

@@ -66,12 +66,19 @@ export interface HealthHistory {
   digestive_issues: string;
 
   recent_lab_tests: boolean;
-  lab_results_file: string | null;
+  lab_results_file: UploadedFile[];
 
   privacy_consent: boolean;
   follow_up_recommendation: string | null;
   recommendation_destination: string;
 }
+
+export type UploadedFile = {
+  filename: string;
+  content_type: string;
+  upload_timestamp: string;
+  original_filename: string;
+};
 
 export interface HealthHistoryResponse {
   health_history: HealthHistory;

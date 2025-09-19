@@ -1,12 +1,14 @@
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { Footer } from "../../Footer";
-import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { AuthPageWrapper, Input } from "shared/ui";
+import { AuthPageWrapper, Button, Input } from "shared/ui";
 import { SearchableSelect } from "../components/SearchableSelect";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
 
 export const AboutYourPractice = () => {
   const dispatch = useDispatch();
@@ -27,11 +29,74 @@ export const AboutYourPractice = () => {
   const [schoolDropdownOpen, setSchoolDropdownOpen] = useState(false);
   const [otherSchoolInput, setOtherSchoolInput] = useState("");
   const [showOtherInput, setShowOtherInput] = useState(false);
+  const state = useSelector((state: RootState) => state.coachOnboarding);
+
+  const schoolOptions = [
+    "Functional Medicine Coaching Academy (FMCA)",
+    "Institute for Integrative Nutrition (IIN)",
+    "National Institute for Integrative Nutrition (NIIN)",
+    "School of Applied Functional Medicine (SAFM)",
+    "Functional Nutrition Alliance / FBS (FXNA)",
+    "Nutritional Therapy Association (NTA)",
+    "Chris Kresser Institute (ADAPT Health Coach Training)",
+    "Duke Integrative Medicine",
+    "Maryland University of Integrative Health (MUIH)",
+    "Saybrook University",
+    "Wellcoaches School of Coaching",
+    "The Integrative Women’s Health Institute (IWHI)",
+    "Primal Health Coach Institute",
+    "Mind Body Food Institute",
+    "Transformation Academy",
+    "National Board for Health & Wellness Coaching (NBHWC)",
+    "Other (please specify)",
+  ];
+
+  const OTHER_OPTION = "Other (please specify)";
+
+  const allSchoolOptions = useMemo(() => schoolOptions, [schoolOptions]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const savedSchool = state?.school as string | string[] | undefined;
+
+    const savedList: string[] = Array.isArray(savedSchool)
+      ? savedSchool
+      : (savedSchool ?? "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+    const nextSelected: string[] = [];
+    let firstCustom: string | null = null;
+
+    for (const val of savedList) {
+      if (val === OTHER_OPTION) {
+        continue;
+      }
+      if (allSchoolOptions.includes(val)) {
+        if (!nextSelected.includes(val)) nextSelected.push(val);
+      } else if (!firstCustom) {
+        nextSelected.push(OTHER_OPTION);
+        firstCustom = val;
+      }
+    }
+
+    setSelectedSchools(nextSelected);
+    setOtherSchoolInput(firstCustom ?? "");
+    setShowOtherInput(Boolean(firstCustom));
+
+    const savedRecent = state?.recent_client_count as string | undefined;
+    const savedTarget = state?.target_client_count as string | undefined;
+    if (savedRecent) setRecentClients(savedRecent);
+    if (savedTarget) setTargetClients(savedTarget);
+
+    const savedLabs = state?.uses_labs_supplements as string | undefined;
+    if (savedLabs) setLabsUsed(savedLabs);
   }, []);
 
   const allFilled = () => {
@@ -117,27 +182,10 @@ export const AboutYourPractice = () => {
     }
   };
 
-  const schoolOptions = [
-    "Functional Medicine Coaching Academy (FMCA)",
-    "Institute for Integrative Nutrition (IIN)",
-    "National Institute for Integrative Nutrition (NIIN)",
-    "School of Applied Functional Medicine (SAFM)",
-    "Functional Nutrition Alliance / FBS (FXNA)",
-    "Nutritional Therapy Association (NTA)",
-    "Chris Kresser Institute (ADAPT Health Coach Training)",
-    "Duke Integrative Medicine",
-    "Maryland University of Integrative Health (MUIH)",
-    "Saybrook University",
-    "Wellcoaches School of Coaching",
-    "The Integrative Women’s Health Institute (IWHI)",
-    "Primal Health Coach Institute",
-    "Mind Body Food Institute",
-    "Transformation Academy",
-    "National Board for Health & Wellness Coaching (NBHWC)",
-    "Other (please specify)",
-  ];
-
-  const OTHER_OPTION = "Other (please specify)";
+  const handleNext = async () => {
+    await UserService.onboardUser(state);
+    if (allFilled()) nav("/profile-setup");
+  };
 
   return (
     <AuthPageWrapper>
@@ -451,8 +499,8 @@ export const AboutYourPractice = () => {
           >
             Back
           </button>
-          <Link
-            to={allFilled() ? "/profile-setup" : ""}
+          <Button
+            onClick={handleNext}
             className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold ${
               allFilled()
                 ? "bg-[#1C63DB] text-white"
@@ -460,7 +508,7 @@ export const AboutYourPractice = () => {
             }`}
           >
             Next
-          </Link>
+          </Button>
         </div>
       </main>
     </AuthPageWrapper>

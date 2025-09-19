@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import {
   FormControl,
   FormField,
@@ -19,6 +20,7 @@ import {
   raceEthnicity,
 } from "widgets/OnboardingClient/DemographicStep";
 import { z } from "zod";
+import { MultiSelect } from "../MultiSelect";
 
 /** NEW: religion options */
 const religionOptions = [
@@ -61,8 +63,13 @@ export const socialFactorsSchema = z
     religion: z.string().optional(),
   })
   .superRefine((val, ctx) => {
+    const ethList = (val.ethnicity ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     if (
-      val.ethnicity === "Other (please specify)" &&
+      ethList.includes("Other (please specify)") &&
       (!val.otherEthnicity || !val.otherEthnicity.trim())
     ) {
       ctx.addIssue({
@@ -100,37 +107,47 @@ type SocialFactorsFormProps = {
 export const SocialFactorsForm = ({ form }: SocialFactorsFormProps) => {
   const household = form.watch("household");
   const occupation = form.watch("occupation");
-  const ethnicity = form.watch("ethnicity");
+  const ethnicityStr = form.watch("ethnicity") as string | undefined;
+  const [ethSel, setEthSel] = useState<string[]>([]);
+
+  const onEthnicityChange = (vals: string[]) => {
+    setEthSel(vals);
+    form.setValue("ethnicity", vals.join(" , "));
+  };
+
+  const ethList = useMemo(
+    () =>
+      (ethnicityStr ?? "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+    [ethnicityStr]
+  );
+  const showOtherEthnicity = ethList.includes("Other (please specify)");
 
   return (
     <div className="space-y-6">
       <FormField
         control={form.control}
         name="ethnicity"
-        render={({ field }) => (
+        render={() => (
           <FormItem className="flex w-full flex-col items-start gap-[10px]">
-            <FormLabel className="text-[#1D1D1F]  text-base font-medium">
+            <FormLabel className="text-[#1D1D1F] text-base font-medium">
               Ethnicity
             </FormLabel>
             <FormControl>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {raceEthnicity.map((eth) => (
-                      <SelectItem key={eth} value={eth}>
-                        {eth}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                placeholder="Select ethnicities..."
+                options={raceEthnicity}
+                selected={ethSel}
+                onChange={onEthnicityChange}
+                defaultValue={form.getValues("ethnicity")}
+                className="text-sm w-full"
+              />
             </FormControl>
             <FormMessage />
 
-            {ethnicity === "Other (please specify)" && (
+            {showOtherEthnicity && (
               <FormField
                 control={form.control}
                 name="otherEthnicity"

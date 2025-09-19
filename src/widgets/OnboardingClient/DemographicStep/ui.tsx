@@ -1,7 +1,10 @@
-import { format } from "date-fns";
-import { setFormField } from "entities/store/clientOnboardingSlice";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { differenceInYears, format, isAfter, parseISO } from "date-fns";
+import {
+  setFormField,
+  setFromUserInfo,
+} from "entities/store/clientOnboardingSlice";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
@@ -26,54 +29,122 @@ import {
 import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
 import { OnboardingClientLayout } from "../Layout";
 import { CYCLE_HELTH, languages, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
+import { RootState } from "entities/store";
+import { UserService } from "entities/user";
+import { mapOnboardClientToFormState } from "entities/store/helpers";
+import { findFirstIncompleteClientStep } from "./helpers";
 
 export const DemographicStep = () => {
+  const nav = useNavigate();
   const dispatch = useDispatch();
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [localDate, setLocalDate] = useState<Date | null>(null);
-  const [menopauseStatus, setMenopauseStatus] = useState("");
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-  const [aiExperience, setAiExperience] = useState("");
+  const token = useSelector((state: RootState) => state.user.token);
+  const clientOnboarding = useSelector(
+    (state: RootState) => state.clientOnboarding
+  );
+
+  const dateOfBirth = clientOnboarding.date_of_birth;
+  const menopauseStatus = clientOnboarding.menopause_status;
+  const selectedLanguages = clientOnboarding.language || [];
+  const aiExperience = clientOnboarding.ai_experience;
+
+  const initialDOB = dateOfBirth ? parseISO(dateOfBirth) : null;
+
+  const [localDate, setLocalDate] = useState<Date | null>(initialDOB);
   const [selectedYear, setSelectedYear] = useState<number>(
-    new Date().getFullYear()
+    initialDOB ? initialDOB.getFullYear() : new Date().getFullYear()
   );
   const [displayMonth, setDisplayMonth] = useState<Date>(
-    new Date(selectedYear, 0)
+    initialDOB
+      ? new Date(initialDOB.getFullYear(), initialDOB.getMonth())
+      : new Date(selectedYear, 0)
   );
-  const nav = useNavigate();
 
-  const computeAge = (dobStr: string) => {
-    const dob = new Date(dobStr);
-    if (Number.isNaN(dob.getTime())) return null;
+  useEffect(() => {
+    if (!dateOfBirth) return;
+    const d = parseISO(dateOfBirth);
+    if (Number.isNaN(d.getTime())) return;
+
+    setLocalDate(d);
+    setSelectedYear(d.getFullYear());
+    setDisplayMonth(new Date(d.getFullYear(), d.getMonth()));
+
+    dispatch(setFormField({ field: "age", value: computeAge(d) }));
+  }, [dateOfBirth, dispatch]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    let cancelled = false;
+
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    const getOnboardingStatusWithRetry = async (attempt = 1) => {
+      try {
+        return await UserService.getOnboardingStatus();
+      } catch (err: any) {
+        const status = err?.response?.status ?? err?.status;
+        if (!cancelled && status === 403 && attempt < 2) {
+          await sleep(300);
+          return getOnboardingStatusWithRetry(attempt + 1);
+        }
+        throw err;
+      }
+    };
+
+    const loadUser = async () => {
+      try {
+        const onboardingComplete = await getOnboardingStatusWithRetry();
+        if (onboardingComplete.onboarding_filled) {
+          if (!cancelled) nav("/library");
+          return;
+        }
+
+        const userInfo = await UserService.getOnboardClient();
+        const clientData = mapOnboardClientToFormState(userInfo);
+        if (!cancelled) {
+          dispatch(setFromUserInfo(userInfo));
+          const issue = findFirstIncompleteClientStep(clientData);
+          if (issue) nav(issue.route);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    loadUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, dispatch, nav]);
+
+  const computeAge = (
+    dob: string | Date | null | undefined
+  ): number | undefined => {
+    if (!dob) return undefined;
+    const d = typeof dob === "string" ? parseISO(dob) : dob;
+    if (Number.isNaN(d.getTime())) return undefined;
+
     const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const beforeBirthday =
-      today.getMonth() < dob.getMonth() ||
-      (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate());
-    if (beforeBirthday) age--;
-    return age;
+    if (isAfter(d, today)) return undefined;
+
+    const age = differenceInYears(today, d);
+    return age >= 0 && age <= 120 ? age : undefined;
   };
 
   const computedAge = computeAge(dateOfBirth);
-  const isValidAge =
-    computedAge !== null && computedAge >= 0 && computedAge <= 120;
 
-  const isFormComplete = () =>
-    !!dateOfBirth &&
-    isValidAge &&
-    menopauseStatus.trim() &&
-    selectedLanguages.length &&
-    aiExperience.trim();
+  const handleNext = async () => {
+    const updated = {
+      ...clientOnboarding,
+      date_of_birth: dateOfBirth,
+      age: computedAge,
+      menopause_status: menopauseStatus,
+      language: selectedLanguages,
+      ai_experience: aiExperience,
+    };
 
-  const handleNext = () => {
-    dispatch(setFormField({ field: "date_of_birth", value: dateOfBirth }));
-    dispatch(setFormField({ field: "age", value: Number(computedAge) }));
-    dispatch(
-      setFormField({ field: "menopauseStatus", value: menopauseStatus })
-    );
-    dispatch(setFormField({ field: "language", value: selectedLanguages }));
-    dispatch(setFormField({ field: "ai_experience", value: aiExperience }));
-
+    await UserService.onboardClient(updated, token);
     nav("/what-brings-you-here");
   };
 
@@ -85,8 +156,7 @@ export const DemographicStep = () => {
         </h1>
         <p className="text-center text-[#5F5F65] text-base ">
           This helps us tailor your journey and ensure the right support —
-          nothing is ever shared without
-          <br /> your permission.
+          nothing is ever shared without your permission.
         </p>
       </div>
     </div>
@@ -126,12 +196,7 @@ export const DemographicStep = () => {
         Skip this for now
       </button>
       <button
-        className={`flex p-4 rounded-full h-[44px] items-center justify-center w-32 text-center ${
-          isFormComplete()
-            ? "bg-[#1C63DB] text-white cursor-pointer"
-            : "bg-[#D5DAE2] text-[#5F5F65] cursor-not-allowed"
-        }`}
-        disabled={!isFormComplete()}
+        className={`flex p-4 rounded-full h-[44px] items-center justify-center w-32 text-center bg-[#1C63DB] text-white cursor-pointer`}
         onClick={handleNext}
       >
         Continue
@@ -175,7 +240,19 @@ export const DemographicStep = () => {
         onSelect={(selectedDate) => {
           if (selectedDate) {
             setLocalDate(selectedDate);
-            setDateOfBirth(format(selectedDate, "yyyy-MM-dd"));
+            dispatch(
+              setFormField({
+                field: "date_of_birth",
+                value: format(selectedDate, "yyyy-MM-dd"),
+              })
+            );
+
+            dispatch(
+              setFormField({
+                field: "age",
+                value: computeAge(selectedDate),
+              })
+            );
             const y = selectedDate.getFullYear();
             if (y !== selectedYear) setSelectedYear(y);
             setDisplayMonth(
@@ -232,7 +309,9 @@ export const DemographicStep = () => {
         <RadioGroup
           className="grid w-full grid-cols-1 md:grid-cols-2"
           value={menopauseStatus}
-          onValueChange={setMenopauseStatus}
+          onValueChange={(val) =>
+            dispatch(setFormField({ field: "menopause_status", value: val }))
+          }
         >
           {CYCLE_HELTH.map((option) => (
             <div key={option} className="flex items-center space-x-2">
@@ -264,7 +343,9 @@ export const DemographicStep = () => {
         <LanguagesMultiSelect
           options={languages}
           value={selectedLanguages}
-          onChange={setSelectedLanguages}
+          onChange={(langs) =>
+            dispatch(setFormField({ field: "language", value: langs }))
+          }
         />
       </div>
 
@@ -272,7 +353,12 @@ export const DemographicStep = () => {
         <label className="text-[#1D1D1F]  text-base font-medium">
           Do you use AI in your daily life?
         </label>
-        <Select value={aiExperience} onValueChange={setAiExperience}>
+        <Select
+          value={aiExperience ? aiExperience : undefined}
+          onValueChange={(val) =>
+            dispatch(setFormField({ field: "ai_experience", value: val }))
+          }
+        >
           <SelectTrigger>
             <SelectValue placeholder="Select an option" />
           </SelectTrigger>

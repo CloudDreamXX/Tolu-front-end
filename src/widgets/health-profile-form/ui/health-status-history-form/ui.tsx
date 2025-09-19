@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FormField, FormItem, FormLabel, FormMessage, Input } from "shared/ui";
 import { z } from "zod";
 import { MultiSelect } from "../MultiSelect";
@@ -46,9 +46,9 @@ const medicalConditionsOptions = [
   "Cardiovascular disease",
   "High cholesterol",
   "Hypertension",
-  "Autoimmune disorder (e.g., lupus, rheumatoid arthritis)",
+  "Autoimmune disorder (e.g. lupus / rheumatoid arthritis)",
   "Asthma",
-  "IBS / IBD (Crohn’s, Ulcerative Colitis)",
+  "IBS / IBD (Crohn’s / Ulcerative Colitis)",
   "Depression / Anxiety disorder",
   "None",
   "Other",
@@ -71,19 +71,74 @@ const medicationOptions = [
 ];
 
 const supplementsOptions = [
-  "Multivitamin",
-  "Vitamin D",
-  "Vitamin B complex",
-  "Magnesium",
-  "Omega-3 (fish oil, algae oil)",
-  "Probiotics",
-  "Zinc",
-  "Iron",
+  "Alpha-Lipoic Acid",
+  "Ashwagandha",
+  "Beta-Alanine",
+  "Branched-Chain Amino Acids (BCAAs)",
   "Calcium",
+  "Casein Protein",
+  "Chasteberry (Vitex)",
+  "Chondroitin",
+  "Chromium",
+  "Coenzyme Q10 (CoQ10)",
   "Collagen",
-  "Adaptogens (ashwagandha, rhodiola, maca, etc.)",
-  "Herbal supplements (turmeric, ginger, milk thistle, etc.)",
-  "Protein powder",
+  "Copper",
+  "Creatine",
+  "DHEA",
+  "Digestive Enzymes",
+  "Echinacea",
+  "Electrolytes",
+  "Evening Primrose Oil",
+  "Fenugreek",
+  "Fish Oil (Omega-3)",
+  "Flaxseed Oil",
+  "Ginger",
+  "Ginkgo Biloba",
+  "Ginseng",
+  "Glucosamine",
+  "Glutamine",
+  "Green Tea Extract",
+  "HMB (β-Hydroxy β-Methylbutyrate)",
+  "Hyaluronic Acid",
+  "Iodine",
+  "Iron",
+  "Krill Oil",
+  "L-Carnitine",
+  "MCT Oil",
+  "MSM (Methylsulfonylmethane)",
+  "Maca",
+  "Magnesium",
+  "Manganese",
+  "Melatonin",
+  "Milk Thistle",
+  "Molybdenum",
+  "N-Acetyl Cysteine (NAC)",
+  "Prebiotics (Inulin, FOS)",
+  "Probiotics",
+  "Quercetin",
+  "Resveratrol",
+  "Rhodiola",
+  "Saw Palmetto",
+  "Selenium",
+  "Soy Protein",
+  "Tribulus Terrestris",
+  "Turmeric (Curcumin)",
+  "Valerian Root",
+  "Vitamin A",
+  "Vitamin B1 (Thiamine)",
+  "Vitamin B12",
+  "Vitamin B2 (Riboflavin)",
+  "Vitamin B3 (Niacin)",
+  "Vitamin B5 (Pantothenic Acid)",
+  "Vitamin B6",
+  "Vitamin B7 (Biotin)",
+  "Vitamin B9 (Folate)",
+  "Vitamin C",
+  "Vitamin D",
+  "Vitamin E",
+  "Vitamin K",
+  "Whey Protein",
+  "Zinc",
   "None",
   "Other",
 ];
@@ -121,23 +176,54 @@ const familyHistoryOptions = [
 ];
 
 const joinVals = (vals: string[], extra?: string) => {
-  const filtered = vals.filter((v) => v !== "Other" && v !== "None");
   const extraTrim = extra?.trim() ?? "";
-  return [...filtered, ...(extraTrim ? [extraTrim] : [])].join(" , ");
+  const hasExtra = extraTrim.length > 0;
+  const base = hasExtra ? vals.filter((v) => v !== "Other") : vals;
+  return [...base, ...(hasExtra ? [extraTrim] : [])].join(", ");
 };
 
-const sanitizeNone = (vals: string[]) =>
-  vals.length > 1 ? vals.filter((v) => v !== "None") : vals;
+const commitOther = (fieldName: string, otherValue: string) => (form: any) => {
+  const sel = split(form.getValues(fieldName));
+  form.setValue(fieldName, joinVals(sel, otherValue));
+};
+
+const handleEnterCommit =
+  (onCommit: () => void) => (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      onCommit();
+      (e.target as HTMLInputElement).blur();
+    }
+  };
+
+const normalizeNone = (next: string[], prev: string[]) => {
+  const prevSet = new Set(prev);
+  const added = next.filter((v) => !prevSet.has(v));
+
+  if (added.includes("None")) return ["None"];
+  if (prevSet.has("None") && added.length > 0) {
+    return next.filter((v) => v !== "None");
+  }
+  return next.includes("None") && next.length > 1
+    ? next.filter((v) => v !== "None")
+    : next;
+};
+
+const split = (s?: string) =>
+  (s ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
 
 export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
-  const [healthConcernsSel, setHealthConcernsSel] = useState<string[]>([]);
-  const [medicalConditionsSel, setMedicalConditionsSel] = useState<string[]>(
-    []
-  );
-  const [medicationsSel, setMedicationsSel] = useState<string[]>([]);
-  const [supplementsSel, setSupplementsSel] = useState<string[]>([]);
-  const [allergiesSel, setAllergiesSel] = useState<string[]>([]);
-  const [familyHistorySel, setFamilyHistorySel] = useState<string[]>([]);
+  // const [healthConcernsSel, setHealthConcernsSel] = useState<string[]>([]);
+  // const [medicalConditionsSel, setMedicalConditionsSel] = useState<string[]>(
+  //   []
+  // );
+  // const [medicationsSel, setMedicationsSel] = useState<string[]>([]);
+  // const [supplementsSel, setSupplementsSel] = useState<string[]>([]);
+  // const [allergiesSel, setAllergiesSel] = useState<string[]>([]);
+  // const [familyHistorySel, setFamilyHistorySel] = useState<string[]>([]);
 
   const [healthConcernsOther, setHealthConcernsOther] = useState("");
   const [medicalConditionsOther, setMedicalConditionsOther] = useState("");
@@ -146,57 +232,64 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   const [allergiesOther, setAllergiesOther] = useState("");
   const [familyHistoryOther, setFamilyHistoryOther] = useState("");
 
+  const healthConcernsStr = form.watch("healthConcerns") as string | undefined;
+  const medicalConditionsStr = form.watch("medicalConditions") as
+    | string
+    | undefined;
+  const medicationsStr = form.watch("medications") as string | undefined;
+  const supplementsStr = form.watch("supplements") as string | undefined;
+  const allergiesStr = form.watch("allergies") as string | undefined;
+  const familyHistoryStr = form.watch("familyHistory") as string | undefined;
+
+  const healthConcernsSel = useMemo(
+    () => split(healthConcernsStr),
+    [healthConcernsStr]
+  );
+  const medicalConditionsSel = useMemo(
+    () => split(medicalConditionsStr),
+    [medicalConditionsStr]
+  );
+  const medicationsSel = useMemo(() => split(medicationsStr), [medicationsStr]);
+  const supplementsSel = useMemo(() => split(supplementsStr), [supplementsStr]);
+  const allergiesSel = useMemo(() => split(allergiesStr), [allergiesStr]);
+  const familyHistorySel = useMemo(
+    () => split(familyHistoryStr),
+    [familyHistoryStr]
+  );
+
   const onHealthConcernsChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
-    setHealthConcernsSel(cleaned);
-    form.setValue("healthConcerns", joinVals(cleaned, healthConcernsOther));
+    const cleaned = normalizeNone(val, healthConcernsSel);
+    form.setValue("healthConcerns", cleaned.join(", "));
   };
 
   const onMedicalConditionsChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
-    setMedicalConditionsSel(cleaned);
-    form.setValue(
-      "medicalConditions",
-      joinVals(cleaned, medicalConditionsOther)
-    );
+    const cleaned = normalizeNone(val, medicalConditionsSel);
+    form.setValue("medicalConditions", cleaned.join(", "));
   };
 
   const onMedicationsChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
-    setMedicationsSel(cleaned);
-    form.setValue("medications", joinVals(cleaned, medicationsOther));
+    const cleaned = normalizeNone(val, medicationsSel);
+    form.setValue("medications", cleaned.join(", "));
+
     if (cleaned.length === 1 && cleaned[0] === "None") {
       form.setValue("otherMedications", undefined);
-    } else {
-      form.setValue("otherMedications", medicationsOther || undefined);
     }
   };
 
   const onSupplementsChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
-    setSupplementsSel(cleaned);
-    form.setValue("supplements", joinVals(cleaned, supplementsOther));
+    const cleaned = normalizeNone(val, supplementsSel);
+    form.setValue("supplements", cleaned.join(", "));
   };
 
   const onAllergiesChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
-    setAllergiesSel(cleaned);
-    form.setValue("allergies", joinVals(cleaned, allergiesOther));
+    const cleaned = normalizeNone(val, allergiesSel);
+    form.setValue("allergies", cleaned.join(", "));
   };
 
   const onFamilyHistoryChange = (val: string[]) => {
-    const cleaned = sanitizeNone(val);
-    setFamilyHistorySel(cleaned);
-    form.setValue("familyHistory", joinVals(cleaned, familyHistoryOther));
+    const cleaned = normalizeNone(val, familyHistorySel);
+    form.setValue("familyHistory", cleaned.join(", "));
   };
-
-  const onOtherChange =
-    (setter: (s: string) => void, write: (v: string) => void) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const v = e.target.value;
-      setter(v);
-      write(v);
-    };
 
   return (
     <div className="space-y-6">
@@ -217,18 +310,18 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={healthConcernsOptions}
               selected={healthConcernsSel}
               onChange={onHealthConcernsChange}
-              defaultValue={form.getValues("healthConcerns")}
             />
             {healthConcernsSel.includes("Other") && (
               <div className="pt-2">
                 <Input
                   placeholder="Other concerns"
                   value={healthConcernsOther}
-                  onChange={onOtherChange(setHealthConcernsOther, (v) =>
-                    form.setValue(
-                      "healthConcerns",
-                      joinVals(healthConcernsSel, v)
-                    )
+                  onChange={(e) => setHealthConcernsOther(e.target.value)}
+                  onBlur={() =>
+                    commitOther("healthConcerns", healthConcernsOther)(form)
+                  }
+                  onKeyDown={handleEnterCommit(() =>
+                    commitOther("healthConcerns", healthConcernsOther)(form)
                   )}
                 />
               </div>
@@ -250,18 +343,24 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={medicalConditionsOptions}
               selected={medicalConditionsSel}
               onChange={onMedicalConditionsChange}
-              defaultValue={form.getValues("medicalConditions")}
             />
             {medicalConditionsSel.includes("Other") && (
               <div className="pt-2">
                 <Input
                   placeholder="Other conditions"
                   value={medicalConditionsOther}
-                  onChange={onOtherChange(setMedicalConditionsOther, (v) =>
-                    form.setValue(
+                  onChange={(e) => setMedicalConditionsOther(e.target.value)}
+                  onBlur={() =>
+                    commitOther(
                       "medicalConditions",
-                      joinVals(medicalConditionsSel, v)
-                    )
+                      medicalConditionsOther
+                    )(form)
+                  }
+                  onKeyDown={handleEnterCommit(() =>
+                    commitOther(
+                      "medicalConditions",
+                      medicalConditionsOther
+                    )(form)
                   )}
                 />
               </div>
@@ -277,25 +376,32 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
         name="medications"
         render={() => (
           <FormItem>
-            <FormLabel>
-              Medications{" "}
-              <span className="text-gray-500">(Current or recent)</span>
-            </FormLabel>
+            <FormLabel>Medications</FormLabel>
             <MultiSelect
               placeholder="Select..."
               options={medicationOptions}
               selected={medicationsSel}
               onChange={onMedicationsChange}
-              defaultValue={form.getValues("medications")}
             />
             {medicationsSel.includes("Other") && (
               <div className="pt-2 space-y-2">
                 <Input
                   placeholder="Other medications"
                   value={medicationsOther}
-                  onChange={onOtherChange(setMedicationsOther, (v) => {
-                    form.setValue("otherMedications", v || undefined);
-                    form.setValue("medications", joinVals(medicationsSel, v));
+                  onChange={(e) => setMedicationsOther(e.target.value)}
+                  onBlur={() => {
+                    commitOther("medications", medicationsOther)(form);
+                    form.setValue(
+                      "otherMedications",
+                      medicationsOther?.trim() || undefined
+                    );
+                  }}
+                  onKeyDown={handleEnterCommit(() => {
+                    commitOther("medications", medicationsOther)(form);
+                    form.setValue(
+                      "otherMedications",
+                      medicationsOther?.trim() || undefined
+                    );
                   })}
                 />
               </div>
@@ -317,15 +423,18 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={supplementsOptions}
               selected={supplementsSel}
               onChange={onSupplementsChange}
-              defaultValue={form.getValues("supplements")}
             />
             {supplementsSel.includes("Other") && (
               <div className="pt-2">
                 <Input
                   placeholder="Other supplements"
                   value={supplementsOther}
-                  onChange={onOtherChange(setSupplementsOther, (v) =>
-                    form.setValue("supplements", joinVals(supplementsSel, v))
+                  onChange={(e) => setSupplementsOther(e.target.value)}
+                  onBlur={() =>
+                    commitOther("supplements", supplementsOther)(form)
+                  }
+                  onKeyDown={handleEnterCommit(() =>
+                    commitOther("supplements", supplementsOther)(form)
                   )}
                 />
               </div>
@@ -347,15 +456,16 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={allergiesOptions}
               selected={allergiesSel}
               onChange={onAllergiesChange}
-              defaultValue={form.getValues("allergies")}
             />
             {allergiesSel.includes("Other") && (
               <div className="pt-2">
                 <Input
                   placeholder="Other allergies or intolerances"
                   value={allergiesOther}
-                  onChange={onOtherChange(setAllergiesOther, (v) =>
-                    form.setValue("allergies", joinVals(allergiesSel, v))
+                  onChange={(e) => setAllergiesOther(e.target.value)}
+                  onBlur={() => commitOther("allergies", allergiesOther)(form)}
+                  onKeyDown={handleEnterCommit(() =>
+                    commitOther("allergies", allergiesOther)(form)
                   )}
                 />
               </div>
@@ -377,18 +487,18 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
               options={familyHistoryOptions}
               selected={familyHistorySel}
               onChange={onFamilyHistoryChange}
-              defaultValue={form.getValues("familyHistory")}
             />
             {familyHistorySel.includes("Other") && (
               <div className="pt-2">
                 <Input
                   placeholder="Other family history"
                   value={familyHistoryOther}
-                  onChange={onOtherChange(setFamilyHistoryOther, (v) =>
-                    form.setValue(
-                      "familyHistory",
-                      joinVals(familyHistorySel, v)
-                    )
+                  onChange={(e) => setFamilyHistoryOther(e.target.value)}
+                  onBlur={() =>
+                    commitOther("familyHistory", familyHistoryOther)(form)
+                  }
+                  onKeyDown={handleEnterCommit(() =>
+                    commitOther("familyHistory", familyHistoryOther)(form)
                   )}
                 />
               </div>

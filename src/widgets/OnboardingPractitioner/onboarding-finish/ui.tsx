@@ -1,9 +1,6 @@
 import { toast } from "shared/lib/hooks/use-toast";
 import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
-// import { useSelector } from "react-redux";
-// import { RootState } from "entities/store";
-// import { UserService } from "entities/user";
 import { AuthPageWrapper } from "shared/ui";
 import { useEffect, useState } from "react";
 import { AdminHeader } from "widgets/Header";
@@ -22,9 +19,7 @@ export const OnboardingFinish = () => {
     try {
       await UserService.onboardUser(coachOnboarding);
       nav("/content-manager/library");
-      toast({
-        title: "Onboarding successful",
-      });
+      toast({ title: "Onboarding successful" });
     } catch (error) {
       console.error("Error during onboarding:", error);
       toast({

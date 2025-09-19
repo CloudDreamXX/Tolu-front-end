@@ -20,12 +20,12 @@ export const metabolicDigestiveHealthSchema = z.object({
   digestiveOther: z.string().optional(),
 
   recentLabTests: z.string().optional(),
-  labTestFile: z.instanceof(File).optional(),
+  labTestFiles: z.array(z.instanceof(File)).optional(),
 });
 
 export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const fileName = form.watch("labTestFile")?.name || "No files chosen";
+  const files: File[] = form.watch("labTestFiles") || [];
 
   return (
     <div className="space-y-6">
@@ -161,25 +161,40 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
               {form.watch("recentLabTests") === "Yes" && (
                 <FormField
                   control={form.control}
-                  name="labTestFile"
+                  name="labTestFiles"
                   render={({ field }) => (
                     <FormItem>
                       <div className="flex items-center gap-4">
-                        <span className="text-[14px] text-[#5F5F65] truncate max-w-[200px]">
-                          {fileName}
-                        </span>
+                        <ul className="text-[14px] text-[#5F5F65] space-y-1">
+                          {files.length > 0 ? (
+                            files.map((f, idx) => (
+                              <li key={idx} className="truncate max-w-[240px]">
+                                {f.name}
+                              </li>
+                            ))
+                          ) : (
+                            <li>No files chosen</li>
+                          )}
+                        </ul>
+
                         <button
                           type="button"
                           className="flex items-center gap-[8px] px-[16.5px] py-[6px] text-[14px] font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hover:bg-[#D6ECFD]/80 transition"
                           onClick={() => fileInputRef.current?.click()}
                         >
                           <MaterialIcon iconName="group" />
-                          Upload file
+                          Upload files
                         </button>
+
                         <input
                           ref={fileInputRef}
                           type="file"
-                          onChange={(e) => field.onChange(e.target.files?.[0])}
+                          multiple
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.files ? Array.from(e.target.files) : []
+                            )
+                          }
                           className="hidden"
                         />
                       </div>

@@ -24,10 +24,8 @@ export function LanguagesMultiSelect({
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
   const normalizedQuery = query.trim().toLowerCase();
-  const filtered = options.filter(
-    (opt) =>
-      !value.includes(opt) &&
-      (normalizedQuery ? opt.toLowerCase().includes(normalizedQuery) : true)
+  const filtered = options.filter((opt) =>
+    normalizedQuery ? opt.toLowerCase().includes(normalizedQuery) : true
   );
 
   React.useEffect(() => {
@@ -180,23 +178,24 @@ export function LanguagesMultiSelect({
           )}
           {filtered.map((opt, idx) => {
             const active = idx === highlight;
+            const checked = value.includes(opt);
             return (
               <li
                 key={opt}
                 role="option"
-                aria-selected={false}
+                aria-selected={checked}
                 className={[
                   "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
                   active ? "bg-gray-100" : "hover:bg-gray-50",
                 ].join(" ")}
                 onMouseEnter={() => setHighlight(idx)}
-                onMouseDown={(e) => e.preventDefault()} // keep focus on input
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => toggle(opt)}
               >
                 <input
                   type="checkbox"
                   readOnly
-                  checked={false}
+                  checked={checked}
                   className="w-4 h-4 border-gray-300 rounded"
                 />
                 {opt}

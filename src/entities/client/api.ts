@@ -8,6 +8,7 @@ import {
   UserProfileUpdate,
   Client,
   SharedCoachContentByContentIdResponse,
+  GetCoachesResponse,
 } from "./model";
 
 export class ClientService {
@@ -197,5 +198,34 @@ export class ClientService {
         contentId
       )
     );
+  }
+
+  static async getCoaches(): Promise<GetCoachesResponse> {
+    return ApiService.get<GetCoachesResponse>(API_ROUTES.CLIENT.GET_COACHES);
+  }
+
+  static async getCoachProfile(coachId: string): Promise<any> {
+    const endpoint = API_ROUTES.CLIENT.GET_COACH_PROFILE.replace(
+      "{coach_id}",
+      coachId
+    );
+    return ApiService.get<any>(endpoint);
+  }
+
+  static async downloadCoachPhoto(
+    coachId: string,
+    filename: string
+  ): Promise<Blob> {
+    const endpoint = API_ROUTES.CLIENT.DOWNLOAD_COACH_PHOTO.replace(
+      "{coach_id}",
+      coachId
+    ).replace("{filename}", encodeURIComponent(filename));
+
+    return ApiService.get<Blob>(endpoint, {
+      responseType: "blob",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 }

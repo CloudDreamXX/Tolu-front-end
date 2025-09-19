@@ -1,37 +1,53 @@
-import React, { useState } from "react";
+import { RootState } from "entities/store";
+import { setFormField } from "entities/store/clientOnboardingSlice";
+import { UserService } from "entities/user";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper, Checkbox, Input } from "shared/ui";
 import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import { checkboxes } from "./utils";
-import { useDispatch } from "react-redux";
-import { setFormField } from "entities/store/clientOnboardingSlice";
-import { usePageWidth } from "shared/lib";
 
 export const Values = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
   const { isMobileOrTablet } = usePageWidth();
 
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const token = useSelector((state: RootState) => state.user.token);
+  const clientOnboarding = useSelector(
+    (state: RootState) => state.clientOnboarding
+  );
+
+  const selectedValues = clientOnboarding.important_values || [];
   const [inputValue, setInputValue] = useState("");
 
-  const handleInputChange = (value: string, checked: boolean) => {
-    if (checked && selectedValues.length < 3) {
-      setSelectedValues((prev) => [...prev, value]);
+  const handleCheckboxChange = (value: string, checked: boolean) => {
+    let updated = [...selectedValues];
+    if (checked && updated.length < 3) {
+      updated.push(value);
     } else if (!checked) {
-      setSelectedValues((prev) => prev.filter((v) => v !== value));
+      updated = updated.filter((v) => v !== value);
     }
+    dispatch(setFormField({ field: "important_values", value: updated }));
   };
 
-  const handleNext = () => {
-    const finalValues = [...selectedValues];
-
-    if (selectedValues.includes("Other") && inputValue.trim()) {
-      finalValues.splice(finalValues.indexOf("Other"), 1, inputValue.trim());
+  const handleNext = async () => {
+    let finalValues = [...selectedValues];
+    if (finalValues.includes("Other") && inputValue.trim()) {
+      finalValues = finalValues.map((v) =>
+        v === "Other" ? inputValue.trim() : v
+      );
     }
 
-    dispatch(setFormField({ field: "values", value: finalValues }));
+    const updated = {
+      ...clientOnboarding,
+      important_values: finalValues,
+    };
+    dispatch(setFormField({ field: "important_values", value: finalValues }));
+
+    await UserService.onboardClient(updated, token);
     nav("/barriers");
   };
 
@@ -113,7 +129,7 @@ export const Values = () => {
                     <Checkbox
                       checked={selectedValues.includes(item)}
                       onCheckedChange={(checked) =>
-                        handleInputChange(item, checked === true)
+                        handleCheckboxChange(item, checked === true)
                       }
                       disabled={
                         !selectedValues.includes(item) &&

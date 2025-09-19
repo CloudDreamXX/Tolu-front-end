@@ -1,12 +1,12 @@
+import { App } from "app";
+import { persistor, store } from "entities/store";
+import { LoadingScreen } from "pages/loading";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "app";
-import "./index.css";
-import { persistor, store } from "entities/store";
-import { PersistGate } from "redux-persist/integration/react";
-import { Provider } from "react-redux";
-import { LoadingScreen } from "pages/loading";
 import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import "./index.css";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");

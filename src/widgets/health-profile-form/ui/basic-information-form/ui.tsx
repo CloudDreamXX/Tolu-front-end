@@ -15,7 +15,13 @@ import {
 import { countries, languages } from "widgets/OnboardingClient/DemographicStep";
 import { MultiSelect } from "../MultiSelect";
 import { z } from "zod";
-import { useState } from "react";
+import { useMemo } from "react";
+
+const split = (s?: string) =>
+  (s ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
 
 export const basicInformationSchema = z
   .object({
@@ -42,11 +48,10 @@ export const basicInformationSchema = z
 
 export const BasicInformationForm = ({ form }: { form: any }) => {
   const identity = form.watch("genderIdentity");
-  const age = form.watch("age");
 
-  const [languagesSel, setLanguagesSel] = useState<string[]>([]);
+  const languagesStr = form.watch("language") as string | undefined;
+  const languagesSel = useMemo(() => split(languagesStr), [languagesStr]);
   const onLanguagesChange = (vals: string[]) => {
-    setLanguagesSel(vals);
     form.setValue("language", vals.join(" , "));
   };
 
@@ -62,10 +67,7 @@ export const BasicInformationForm = ({ form }: { form: any }) => {
         name="age"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>
-              So we know how old you are ({age}), but how old do you really
-              feel?
-            </FormLabel>
+            <FormLabel>Age</FormLabel>
             <FormControl>
               <Input placeholder="34" {...field} />
             </FormControl>
@@ -75,9 +77,7 @@ export const BasicInformationForm = ({ form }: { form: any }) => {
       />
 
       <div className="space-y-2">
-        <FormLabel className="text-base">
-          What is your gender identity?
-        </FormLabel>
+        <FormLabel className="text-base">Gender</FormLabel>
         <FormField
           control={form.control}
           name="genderIdentity"
@@ -131,9 +131,7 @@ export const BasicInformationForm = ({ form }: { form: any }) => {
       </div>
 
       <div className="space-y-2">
-        <FormLabel className="text-base">
-          What sex were you assigned at birth?
-        </FormLabel>
+        <FormLabel className="text-base">Sex assigned at birth</FormLabel>
         <FormField
           control={form.control}
           name="sexAssignedAtBirth"
@@ -165,32 +163,17 @@ export const BasicInformationForm = ({ form }: { form: any }) => {
 
       <FormField
         control={form.control}
-        name="race"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Race</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
         name="language"
         render={() => (
           <FormItem>
-            <FormLabel>Language(s)</FormLabel>
+            <FormLabel>Language</FormLabel>
             <FormControl>
               <MultiSelect
                 placeholder="Select languages..."
                 options={languages}
                 selected={languagesSel}
                 onChange={onLanguagesChange}
-                defaultValue={form.getValues("language")}
-                className="text-[14px]"
+                className="text-sm"
               />
             </FormControl>
             <FormMessage />
