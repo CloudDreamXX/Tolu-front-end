@@ -1,9 +1,11 @@
 import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
 import { setCoachOnboardingData } from "entities/store/coachOnboardingSlice";
+import { mapOnboardClientToFormState } from "entities/store/helpers";
 import { UserOnboardingInfo, UserService } from "entities/user";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { findFirstIncompleteClientStep } from "widgets/OnboardingClient/DemographicStep/helpers";
 import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboarding-finish/helpers";
 
 export const mapUserToCoachOnboarding = (coach: UserOnboardingInfo) => {
@@ -97,21 +99,32 @@ export const AuthPageWrapper = ({
   useEffect(() => {
     const loadUser = async () => {
       if (!isUserLoaded) return;
+      const onboardingComplete = UserService.getOnboardingStatus();
 
-      if (isCoach) {
-        const coach = await UserService.getOnboardingUser();
-        const coachData = mapUserToCoachOnboarding(coach);
-        dispatch(setCoachOnboardingData(coachData));
-
-        const issue = findFirstIncompleteStep(coachData);
-
-        if (issue) {
-          nav(issue.route);
-          return;
-        }
+      if ((await onboardingComplete).onboarding_filled) {
+        isCoach ? nav("/content-manager/create") : nav("/library");
       } else {
-        const userInfo = await UserService.getOnboardClient();
-        dispatch(setFromUserInfo(userInfo));
+        if (isCoach) {
+          const coach = await UserService.getOnboardingUser();
+          const coachData = mapUserToCoachOnboarding(coach);
+          dispatch(setCoachOnboardingData(coachData));
+
+          const issue = findFirstIncompleteStep(coachData);
+          if (issue) {
+            nav(issue.route);
+            return;
+          }
+        } else {
+          const userInfo = await UserService.getOnboardClient();
+          const clientData = mapOnboardClientToFormState(userInfo);
+          dispatch(setFromUserInfo(userInfo));
+
+          const issue = findFirstIncompleteClientStep(clientData);
+          if (issue) {
+            nav(issue.route);
+            return;
+          }
+        }
       }
     };
     loadUser();

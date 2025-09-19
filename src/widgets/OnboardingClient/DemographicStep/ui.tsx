@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { differenceInYears, format, isAfter, parseISO } from "date-fns";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -52,27 +52,27 @@ export const DemographicStep = () => {
     new Date(selectedYear, 0)
   );
 
-  const computeAge = (dobStr: string) => {
-    const dob = new Date(dobStr);
-    if (Number.isNaN(dob.getTime())) return null;
+  const computeAge = (
+    dob: string | Date | null | undefined
+  ): number | undefined => {
+    if (!dob) return undefined;
+    const d = typeof dob === "string" ? parseISO(dob) : dob;
+    if (Number.isNaN(d.getTime())) return undefined;
+
     const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const beforeBirthday =
-      today.getMonth() < dob.getMonth() ||
-      (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate());
-    if (beforeBirthday) age--;
-    return age;
+    if (isAfter(d, today)) return undefined;
+
+    const age = differenceInYears(today, d);
+    return age >= 0 && age <= 120 ? age : undefined;
   };
 
-  const computedAge = dateOfBirth
-    ? computeAge(dateOfBirth?.toLocaleString())
-    : undefined;
+  const computedAge = computeAge(dateOfBirth);
 
   const handleNext = async () => {
     const updated = {
       ...clientOnboarding,
       date_of_birth: dateOfBirth,
-      age: Number(computedAge),
+      age: computedAge,
       menopause_status: menopauseStatus,
       language: selectedLanguages,
       ai_experience: aiExperience,
@@ -180,10 +180,11 @@ export const DemographicStep = () => {
                 value: format(selectedDate, "yyyy-MM-dd"),
               })
             );
+
             dispatch(
               setFormField({
                 field: "age",
-                value: computeAge(format(selectedDate, "yyyy-MM-dd")) ?? 0,
+                value: computeAge(selectedDate),
               })
             );
             const y = selectedDate.getFullYear();
