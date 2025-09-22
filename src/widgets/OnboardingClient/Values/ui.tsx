@@ -148,7 +148,7 @@ export const Values = () => {
           {selectedValues.includes("Other") && (
             <div className="flex flex-col gap-[10px] w-full max-w-[700px] items-start">
               <label className="text-[16px] font-medium  text-[#1D1D1F]">
-                Your variant(s)
+                Say it in your own words
               </label>
               <Input
                 className="w-full"

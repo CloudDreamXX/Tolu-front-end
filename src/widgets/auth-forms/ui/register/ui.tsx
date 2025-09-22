@@ -1,10 +1,29 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { SelectType, SignUp } from "./components";
-import { UserService, setCredentials, setRoleID } from "entities/user";
+import { UserService, logout, setCredentials, setRoleID } from "entities/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
 import { ClientService } from "entities/client";
 import { useDispatch } from "react-redux";
+
+const isAuthRevoked = (err: any) => {
+  const status = Number(
+    err?.response?.status ?? err?.status ?? err?.statusCode
+  );
+  const msg = String(
+    err?.response?.data?.detail ??
+      err?.response?.data?.message ??
+      err?.message ??
+      ""
+  ).toLowerCase();
+  return (
+    status === 403 ||
+    status === 401 ||
+    msg.includes("session_revoked") ||
+    msg.includes("invalid token") ||
+    msg.includes("expired token")
+  );
+};
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -63,6 +82,11 @@ export const Register = () => {
         setInviteSource("client");
         return;
       } catch (err) {
+        if (isAuthRevoked(err)) {
+          dispatch(logout());
+          navigate("/auth", { replace: true });
+          return;
+        }
         if (cancelled) return;
 
         if (isAlreadyRegistered(err)) {
@@ -97,6 +121,11 @@ export const Register = () => {
         setInviteSource("referral");
         return;
       } catch (err) {
+        if (isAuthRevoked(err)) {
+          dispatch(logout());
+          navigate("/auth", { replace: true });
+          return;
+        }
         if (cancelled) return;
 
         if (isAlreadyRegistered(err)) {
@@ -146,7 +175,7 @@ export const Register = () => {
       email_verification_skipped: inviteSource === "referral" ? true : false,
     };
 
-    setRoleID(dataBE.roleID);
+    dispatch(setRoleID({ roleID: dataBE.roleID }));
 
     try {
       const res = await UserService.registerUser(dataBE);
@@ -173,6 +202,11 @@ export const Register = () => {
         navigate("/verify-email");
       }
     } catch (error) {
+      if (isAuthRevoked(error)) {
+        dispatch(logout());
+        navigate("/auth", { replace: true });
+        return;
+      }
       console.error("Error registering user:", error);
       toast({
         title: "Email already exists",

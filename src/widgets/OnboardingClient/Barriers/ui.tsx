@@ -79,7 +79,7 @@ export const Barriers = () => {
       {isOtherSelected && (
         <div className="flex flex-col gap-[10px] w-full items-start">
           <label className="text-[16px] font-medium text-[#1D1D1F]">
-            Your variant
+            Say it in your own words
           </label>
           <Input
             value={input}

@@ -23,7 +23,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
   const mainClass = `
     flex flex-col items-center justify-end lg:justify-center
     w-full gap-[16px] md:gap-[32px]
-    h-[calc(100vh-132px)] md:h-[calc(100vh-180px)] xl:h-full xl:pb-[120px]
+     md:h-[calc(100vh-180px)] xl:h-full xl:pb-[120px]
   `;
 
   return (

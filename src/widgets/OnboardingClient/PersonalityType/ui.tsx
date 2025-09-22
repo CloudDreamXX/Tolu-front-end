@@ -70,7 +70,6 @@ export const PersonalityType = () => {
       <h1 className="flex items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold">
         Personality type
       </h1>
-      <p className="text-[#AAC6EC] text-[18px] font-bold ">(Optional)</p>
     </div>
   );
 

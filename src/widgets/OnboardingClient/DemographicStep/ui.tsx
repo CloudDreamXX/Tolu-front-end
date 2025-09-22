@@ -18,17 +18,8 @@ import {
   RadioGroupItem,
   TooltipWrapper,
 } from "shared/ui";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "shared/ui/select";
-import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
 import { OnboardingClientLayout } from "../Layout";
-import { CYCLE_HELTH, languages, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
+import { CYCLE_HELTH, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
 import { mapOnboardClientToFormState } from "entities/store/helpers";
@@ -44,8 +35,6 @@ export const DemographicStep = () => {
 
   const dateOfBirth = clientOnboarding.date_of_birth;
   const menopauseStatus = clientOnboarding.menopause_status;
-  const selectedLanguages = clientOnboarding.language || [];
-  const aiExperience = clientOnboarding.ai_experience;
 
   const initialDOB = dateOfBirth ? parseISO(dateOfBirth) : null;
 
@@ -140,8 +129,6 @@ export const DemographicStep = () => {
       date_of_birth: dateOfBirth,
       age: computedAge,
       menopause_status: menopauseStatus,
-      language: selectedLanguages,
-      ai_experience: aiExperience,
     };
 
     await UserService.onboardClient(updated, token);
@@ -172,9 +159,7 @@ export const DemographicStep = () => {
       />
       <p className="text-[#1B2559]  text-base font-normal">
         Your information is kept private and secure. It helps me provide
-        smarter, more relevant
-        <br /> support.
-        <br /> Visit our website for the complete{" "}
+        smarter, more relevant support. Visit our website for the complete{" "}
         <a
           className="text-[#1C63DB] underline"
           target="_blank"
@@ -334,42 +319,6 @@ export const DemographicStep = () => {
             </div>
           ))}
         </RadioGroup>
-      </div>
-
-      <div className="flex w-full flex-col items-start gap-[10px]">
-        <label className="text-[#1D1D1F]  text-base font-medium">
-          Language
-        </label>
-        <LanguagesMultiSelect
-          options={languages}
-          value={selectedLanguages}
-          onChange={(langs) =>
-            dispatch(setFormField({ field: "language", value: langs }))
-          }
-        />
-      </div>
-
-      <div className="flex flex-col items-start w-full gap-2">
-        <label className="text-[#1D1D1F]  text-base font-medium">
-          Do you use AI in your daily life?
-        </label>
-        <Select
-          value={aiExperience ? aiExperience : undefined}
-          onValueChange={(val) =>
-            dispatch(setFormField({ field: "ai_experience", value: val }))
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select an option" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="yes">Yes</SelectItem>
-              <SelectItem value="no">No</SelectItem>
-              <SelectItem value="not_sure">Not sure</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
       </div>
     </>
   );

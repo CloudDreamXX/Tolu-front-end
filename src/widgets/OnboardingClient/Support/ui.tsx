@@ -1,13 +1,12 @@
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { Checkbox, Input } from "shared/ui";
+import { Checkbox } from "shared/ui";
 import { BottomButtons } from "widgets/BottomButtons";
 import { OnboardingClientLayout } from "../Layout";
 import { checkboxes } from "./utils";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
-import { useState } from "react";
 
 export const Support = () => {
   const nav = useNavigate();
@@ -19,7 +18,6 @@ export const Support = () => {
   );
 
   const selectedSupport = clientOnboarding.support_network || [];
-  const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (value: string, checked: boolean) => {
     if (checked) {
@@ -40,12 +38,7 @@ export const Support = () => {
   };
 
   const handleNext = async () => {
-    let finalSupport = [...selectedSupport];
-    if (finalSupport.includes("Other") && inputValue.trim()) {
-      finalSupport = finalSupport.map((v) =>
-        v === "Other" ? inputValue.trim() : v
-      );
-    }
+    const finalSupport = [...selectedSupport];
 
     const updated = {
       ...clientOnboarding,
@@ -58,7 +51,7 @@ export const Support = () => {
     nav("/personality-type");
   };
 
-  const isFilled = () => selectedSupport.length > 0 || inputValue.trim() !== "";
+  const isFilled = () => selectedSupport.length > 0;
 
   const title = (
     <h1 className="flex w-full items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold">
@@ -96,18 +89,6 @@ export const Support = () => {
             ))}
           </div>
         ))}
-
-      <div className="flex flex-col gap-[10px] w-full max-w-[700px] items-start">
-        <label className="text-[16px] font-medium  text-[#1D1D1F]">
-          Is there anything else we should know?
-        </label>
-        <Input
-          className="w-full text-[16px]  font-medium py-[11px] px-[16px]"
-          placeholder="Someone who supports you"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-      </div>
     </>
   );
 

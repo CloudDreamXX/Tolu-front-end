@@ -56,7 +56,7 @@ export const WelcomeScreen = () => {
           />
           <div className="flex flex-col items-center gap-6">
             <h2 className="text-black text-center text-[24px] md:text-[32px] font-medium">
-              Welcome to A Healthy Menopause Transition
+              Welcome to Tolu, your health companion!
             </h2>
             <p className="text-[#5F5F65] max-w-[916px] text-[16px] md:text-[18px] xl:text-[20px] font-normal  text-center">
               Managing your symptoms while going through a chronic condition,

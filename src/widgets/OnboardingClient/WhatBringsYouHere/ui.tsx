@@ -1,84 +1,112 @@
-import { RootState } from "entities/store";
-import { setFormField } from "entities/store/clientOnboardingSlice";
-import { UserService } from "entities/user";
-import { useDispatch, useSelector } from "react-redux";
+// import { useDispatch, useSelector } from "react-redux";
+// import { RootState } from "entities/store";
+// import { setFormField } from "entities/store/clientOnboardingSlice";
+// import { UserService } from "entities/user";
 import { useNavigate } from "react-router";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { cn, usePageWidth } from "shared/lib";
-import { AuthPageWrapper, Input } from "shared/ui";
-import { RadioGroup, RadioGroupItem } from "shared/ui/radio-group";
+import { usePageWidth } from "shared/lib";
+import { AuthPageWrapper, Slider } from "shared/ui";
 import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
-import { radioContent } from "./utils";
+import { MultiSelect } from "widgets/health-profile-form/ui/MultiSelect";
 
-export const WhatBrringsYouHere = () => {
+const AREA_OPTIONS = [
+  "Perimenopause",
+  "Menopause / Post Menopause",
+  "Hormone Health",
+  "Gut Health",
+  "Autoimmunity / Inflammation",
+  "Metabolic / Weight Issues",
+  "Sleep and Stress",
+  "Emotional Well-being",
+  "Chronic Illness Management",
+  "General Wellness / Full Body Systems Optimization",
+  "I’m not sure",
+] as const;
+
+const EXPERIENCE_OPTIONS = [
+  "No, this is all new to me",
+  "I’ve read or heard about it but not deeply",
+  "I’ve tried working on it with a coach, practitioner, or on my own",
+] as const;
+
+export const WhatBringsYouHere = () => {
   const nav = useNavigate();
-  const dispatch = useDispatch();
-  const token = useSelector((state: RootState) => state.user.token);
-  const clientOnboarding = useSelector(
-    (state: RootState) => state.clientOnboarding
-  );
-
-  const currentValue = clientOnboarding.main_transition_goal || "";
-  const isOtherSelected = currentValue === "Other";
+  // const dispatch = useDispatch();
+  // const token = useSelector((s: RootState) => s.user.token);
+  // const onboarding = useSelector((s: RootState) => s.clientOnboarding);
   const { isMobileOrTablet } = usePageWidth();
 
+  // const selectedAreas: string[] = onboarding?.areas_selected ?? [];
+  // const confidence: number = onboarding?.areas_confidence ?? 5;
+  // const priorExperience: string = onboarding?.areas_prior_experience ?? "";
+
+  // const onAreasChange = (vals: string[]) => {
+  //   dispatch(setFormField({ field: "areas_selected", value: vals }));
+  // };
+
+  // const setConfidence = (val: number) => {
+  //   const v = Math.min(5, Math.max(1, Number(val)));
+  //   dispatch(setFormField({ field: "areas_confidence", value: v }));
+  // }
+
+  // const handleExperienceRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const val = e.target.value;
+  //   dispatch(setFormField({ field: "areas_prior_experience", value: val }));
+  // };
+
+  // const isFilled = () => {
+  //   const hasAreas = selectedAreas.length > 0;
+  //   const hasConfidence = typeof confidence === "number" && confidence >= 1 && confidence <= 5;
+  //   const hasExperience = !!priorExperience;
+  //   return hasAreas && hasConfidence && hasExperience;
+  // };
+
   const handleNext = async () => {
-    const finalValue =
-      isOtherSelected && clientOnboarding.main_transition_goal
-        ? clientOnboarding.main_transition_goal.trim()
-        : currentValue;
+    // const payload = {
+    //   ...onboarding,
+    //   areas_selected: selectedAreas,
+    //   areas_confidence: confidence,
+    //   areas_prior_experience: priorExperience,
+    // };
 
-    const updated = {
-      ...clientOnboarding,
-      main_transition_goal: finalValue,
-    };
-
-    dispatch(
-      setFormField({ field: "main_transition_goal", value: finalValue })
-    );
-    await UserService.onboardClient(updated, token);
-
-    nav("/values");
-  };
-
-  const isFilled = () => {
-    return isOtherSelected
-      ? clientOnboarding.main_transition_goal?.trim() !== ""
-      : currentValue !== "";
+    try {
+      // await UserService.onboardClient(payload, token);
+      nav("/values");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const title = (
     <h1 className="flex w-full items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold">
-      What Brings You Here?
+      Client-Educator Alignment
     </h1>
   );
 
   const buttonsBlock = (
     <div className="flex justify-between items-center w-full max-w-[700px] flex-col-reverse gap-6 md:flex-row">
       <button
-        onClick={handleNext}
+        onClick={() => nav("/barriers")}
         className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
       >
         Skip this for now
       </button>
-
       <div className="flex w-full gap-4 md:w-auto">
         <button
           onClick={() => nav(-1)}
-          className="p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
+          className="p-4  w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
         >
           Back
         </button>
         <button
           onClick={handleNext}
-          disabled={!isFilled()}
-          className={cn(
-            "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold",
-            isFilled()
-              ? "bg-[#1C63DB] text-white"
-              : "bg-[#DDEBF6] text-white cursor-not-allowed"
-          )}
+          // disabled={!isFilled()}
+          // className={`p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold
+          //   ${isFilled()
+          //     ? "bg-[#1C63DB] text-white"
+          //     : "bg-[#DDEBF6] text-white cursor-not-allowed"}
+          //   `}
+          className={`p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white`}
         >
           Continue
         </button>
@@ -91,81 +119,97 @@ export const WhatBrringsYouHere = () => {
       <HeaderOnboarding isClient currentStep={1} steps={8} />
       <main className="flex flex-col items-center self-stretch justify-center gap-8">
         {!isMobileOrTablet && title}
+
         <div className="w-full max-w-[700px] flex gap-6 flex-col items-start justify-center rounded-t-3xl bg-white py-[24px] px-[16px] md:p-10 md:rounded-3xl">
           {isMobileOrTablet && title}
 
-          <div className="flex flex-col items-start gap-2">
-            <h1 className="text-h5  text-[18px] text-[#1D1D1F]">
-              What’s your main goal during this transition?
-            </h1>
-            <p className="text-[16px] font-medium  text-[#5F5F65]">
-              Please give us just one goal that describes you.
+          <section className="flex flex-col gap-3 w-full">
+            <h2 className="text-[18px] text-[#1D1D1F] font-bold">
+              Do you have an idea which area your current symptoms are most
+              related to?
+            </h2>
+            <p className="text-[16px] font-medium text-[#5F5F65]">
+              Select all that apply.
             </p>
-          </div>
 
-          <RadioGroup
-            value={currentValue}
-            onValueChange={(val) =>
-              dispatch(
-                setFormField({ field: "main_transition_goal", value: val })
-              )
-            }
-            className="flex flex-col w-full gap-4"
-          >
-            {radioContent.map((item, index) => (
-              <div key={item} className="flex items-center w-full gap-4">
-                <RadioGroupItem
-                  value={item}
-                  id={`radio-${index}`}
-                  className="mt-[5px] w-6 h-6"
-                />
-                <label
-                  htmlFor={`radio-${index}`}
-                  className="flex flex-grow cursor-pointer"
-                >
-                  <span className="inline-flex">
-                    <p className="text-[16px] font-medium text-[#1D1D1F] leading-snug mr-1">
-                      {item}
-                      <span className="whitespace-nowrap inline-flex items-center align-center ml-1">
-                        <MaterialIcon
-                          iconName="help"
-                          size={16}
-                          fill={1}
-                          className="text-[#1C63DB]"
-                        />
-                      </span>
-                    </p>
-                  </span>
-                </label>
-              </div>
-            ))}
-          </RadioGroup>
+            <MultiSelect
+              placeholder="Select"
+              options={AREA_OPTIONS as unknown as string[]}
+              selected={[]}
+              onChange={function (val: string[]): void {
+                throw new Error("Function not implemented.");
+              }}
+              // selected={selectedAreas}
+              // onChange={onAreasChange}
+            />
+          </section>
 
-          {isOtherSelected && (
-            <div className="flex flex-col gap-[10px] w-full items-start">
-              <label className="text-[16px] font-medium  text-[#1D1D1F]">
-                What does a healthy menopause transition look like to you?
-              </label>
-              <Input
-                value={clientOnboarding.main_transition_goal ?? ""}
-                onChange={(e) =>
-                  dispatch(
-                    setFormField({
-                      field: "main_transition_goal",
-                      value: e.target.value,
-                    })
-                  )
-                }
-                placeholder="My main goal"
-                className="w-full text-[16px]  font-medium py-[11px] px-[16px]"
-              />
+          <section className="flex flex-col gap-3 w-full">
+            <h2 className="text-[18px] text-[#1D1D1F] font-bold">
+              How confident are you in your selection(s)?
+            </h2>
+
+            <div className="flex items-center justify-between text-[14px] text-[#5F5F65] font-medium">
+              <span>Just guessing</span>
+              <span>Somewhat confident</span>
+              <span>Very confident</span>
             </div>
-          )}
+
+            <div className="w-full">
+              <Slider
+                min={1}
+                max={5}
+                step={1}
+                // value={[confidence]}
+                // onValueChange={([e]) => setConfidence(e)}
+                className="w-full"
+                colors={Array(5).fill("#1C63DB")}
+              />
+              <div className="flex justify-between mt-2 text-xs text-[#1D1D1F] font-[12px]">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <span key={n}>{n}</span>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="flex flex-col gap-3 w-full">
+            <h2 className="text-[18px] text-[#1D1D1F] font-bold">
+              Have you ever learned about or worked on these areas before?
+            </h2>
+
+            <div className="flex flex-col gap-4">
+              {EXPERIENCE_OPTIONS.map((opt, idx) => {
+                const id = `exp-${idx}`;
+                return (
+                  <div key={opt} className="flex items-center h-6 gap-4">
+                    <input
+                      id={id}
+                      name="areas_experience"
+                      type="radio"
+                      className="flex items-center w-6 h-6"
+                      value={opt}
+                      // checked={priorExperience === opt}
+                      // onChange={handleExperienceRadio}
+                    />
+                    <label
+                      htmlFor={id}
+                      className="text-[16px] font-medium text-[#1D1D1F] cursor-pointer"
+                    >
+                      {opt}
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
 
           {isMobileOrTablet && buttonsBlock}
         </div>
+
         {!isMobileOrTablet && buttonsBlock}
       </main>
+
       <Footer position={isMobileOrTablet ? "top-right" : "bottom-right"} />
     </AuthPageWrapper>
   );

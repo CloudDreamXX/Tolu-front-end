@@ -1,8 +1,7 @@
-import { ChatSocketService } from "entities/chat";
 import { ClientService } from "entities/client";
 import { setIsMobileDailyJournalOpen } from "entities/client/lib";
 import { RootState } from "entities/store";
-import { logout, UserService } from "entities/user";
+import { logout } from "entities/user";
 import { LoadingScreen } from "pages/loading";
 import { ReactElement, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -83,24 +82,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     token: state.user?.token,
     userRole: state.user?.user?.roleName,
   }));
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        if (token) {
-          const user = await UserService.getUserProfile();
-          ChatSocketService.connect(user.id);
-        }
-      } catch (error) {
-        console.error("Failed to init chat:", error);
-      }
-    };
-
-    init();
-    return () => {
-      ChatSocketService.disconnect();
-    };
-  }, [token]);
 
   if (!token || !userRole) {
     return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
