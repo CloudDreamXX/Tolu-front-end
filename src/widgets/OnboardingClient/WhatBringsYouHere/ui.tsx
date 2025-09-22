@@ -2,6 +2,7 @@
 // import { RootState } from "entities/store";
 // import { setFormField } from "entities/store/clientOnboardingSlice";
 // import { UserService } from "entities/user";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper, Slider } from "shared/ui";
@@ -35,6 +36,8 @@ export const WhatBringsYouHere = () => {
   // const token = useSelector((s: RootState) => s.user.token);
   // const onboarding = useSelector((s: RootState) => s.clientOnboarding);
   const { isMobileOrTablet } = usePageWidth();
+  const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
+  const [confidence, setConfidence] = useState<number>(0);
 
   // const selectedAreas: string[] = onboarding?.areas_selected ?? [];
   // const confidence: number = onboarding?.areas_confidence ?? 5;
@@ -135,10 +138,8 @@ export const WhatBringsYouHere = () => {
             <MultiSelect
               placeholder="Select"
               options={AREA_OPTIONS as unknown as string[]}
-              selected={[]}
-              onChange={function (val: string[]): void {
-                throw new Error("Function not implemented.");
-              }}
+              selected={selectedAreas}
+              onChange={(e) => setSelectedAreas(e)}
               // selected={selectedAreas}
               // onChange={onAreasChange}
             />
@@ -160,8 +161,8 @@ export const WhatBringsYouHere = () => {
                 min={1}
                 max={5}
                 step={1}
-                // value={[confidence]}
-                // onValueChange={([e]) => setConfidence(e)}
+                value={[confidence]}
+                onValueChange={([e]) => setConfidence(e)}
                 className="w-full"
                 colors={Array(5).fill("#1C63DB")}
               />
