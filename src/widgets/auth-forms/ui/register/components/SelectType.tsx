@@ -17,9 +17,12 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
   const [cardActive, setCardActive] = useState("");
   return (
     <main className="w-full md:w-[550px] flex flex-col items-center gap-[55px] p-1">
-      <h3 className="text-black text-center font-semibold text-[24px]">
-        Select Your Account Type
-      </h3>
+      <div className="flex flex-col items-center gap-[14px]">
+        <img src="/logo.png" className="w-[60px] h-[60px]" />
+        <h3 className="text-black text-center font-semibold text-[24px]">
+          Select Your Account Type
+        </h3>
+      </div>
       <div className="flex flex-col md:flex-row gap-[24px] md:gap-[40px] items-stretch">
         <button
           onClick={() => setCardActive("client")}

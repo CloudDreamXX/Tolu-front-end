@@ -91,9 +91,12 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       {token.length > 0 && email.length > 0 && !isInvitedClient ? (
         <div className="w-full xl:w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
           <div className="flex flex-col items-end self-stretch justify-end gap-[24px] md:gap-[16px] mt-auto md:mt-0">
-            <h1 className="text-center self-stretch text-black  text-[28px] md:text-[40px] font-semibold">
-              Just a moment...
-            </h1>
+            <div className="flex flex-col items-center gap-[14px]">
+              <img src="/logo.png" className="w-[60px] h-[60px]" />
+              <h1 className="text-center self-stretch text-black  text-[28px] md:text-[40px] font-semibold">
+                Just a moment...
+              </h1>
+            </div>
             <h3 className="text-center self-stretch text-black  text-[16px] md:text-[24px] font-normal">
               We&apos;re verifying your link. This will only take a few
               <br /> seconds.
@@ -109,9 +112,12 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       ) : (
         <div className="w-full flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
           <div className="flex flex-col items-end self-stretch justify-end gap-[16px] mt-auto md:mt-0">
-            <h1 className="text-center self-stretch text-black  text-[28px] md:text-[40px] font-semibold">
-              Check your inbox
-            </h1>
+            <div className="flex flex-col items-center gap-[14px]">
+              <img src="/logo.png" className="w-[60px] h-[60px]" />
+              <h1 className="text-center self-stretch text-black  text-[28px] md:text-[40px] font-semibold">
+                Check your inbox
+              </h1>
+            </div>
             <h3 className="text-center self-stretch text-black  text-[16px] md:text-[24px] font-normal">
               We&apos;ve sent you a link. Follow the instructions in
               <br /> your email to continue. Don&apos;t forget to check your

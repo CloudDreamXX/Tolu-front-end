@@ -148,9 +148,12 @@ export const SignUp: React.FC<SignUpProps> = ({
       className="w-[550px] flex flex-col items-center gap-[40px] md:gap-[60px]"
       onSubmit={onSubmit}
     >
-      <h1 className="self-stretch text-black text-center  text-[40px] font-semibold ">
-        Sign Up
-      </h1>
+      <div className="flex flex-col items-center">
+        <img src="/logo.png" className="w-[60px] h-[60px]" />
+        <h1 className="self-stretch text-black text-center  text-[40px] font-semibold ">
+          Sign Up
+        </h1>
+      </div>
 
       <section className="w-full flex flex-col items-start gap-[24px] self-stretch">
         <div className="flex flex-col items-start gap-[10px] self-stretch">

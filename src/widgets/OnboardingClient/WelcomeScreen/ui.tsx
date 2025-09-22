@@ -36,7 +36,7 @@ export const WelcomeScreen = () => {
       <main
         className="
         flex flex-col items-center justify-end lg:justify-center
-        w-full gap-[16px] md:gap-[8px]
+        w-full
         lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full
         mt-[100px] lg:mt-0
         absolute bottom-0
@@ -80,6 +80,11 @@ export const WelcomeScreen = () => {
               className="text-white"
             />
           </button>
+        </div>
+        <div className="bg-white md:bg-transparent lg:mt-[37px] w-full flex items-center justify-center gap-[24px] text-[18px] text-[#000] p-[16px] lg:py-0">
+          All information you share is secure and confidential
+          <img src={"/hipaa.png"} className="h-[50px]" />
+          <img src={"/ssl.png"} className="h-[50px]" />
         </div>
       </main>
       {IsCancelOpen && (
