@@ -165,10 +165,11 @@ export const LoginForm = () => {
                 placeholder="Enter Email"
                 name="email"
                 onChange={formDataChangeHandler}
-                className={`px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in w-full ${loginError
-                  ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
-                  : "border border-[#DFDFDF] focus:border-[#1C63DB]"
-                  }`}
+                className={`px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in w-full ${
+                  loginError
+                    ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
+                    : "border border-[#DFDFDF] focus:border-[#1C63DB]"
+                }`}
               />
               {loginError && (
                 <p className="text-[#FF1F0F]  text-[14px] font-medium px-[4px] pt-[4px]">
@@ -201,10 +202,11 @@ export const LoginForm = () => {
                     placeholder="Enter Password"
                     name="password"
                     onChange={formDataChangeHandler}
-                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in ${passwordError
-                      ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
-                      : "border border-[#DFDFDF] focus:border-[#1C63DB]"
-                      }`}
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in ${
+                      passwordError
+                        ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
+                        : "border border-[#DFDFDF] focus:border-[#1C63DB]"
+                    }`}
                   />
                   {formData.password.length > 0 && (
                     <button
@@ -243,10 +245,11 @@ export const LoginForm = () => {
             <div className="flex flex-col gap-[8px]">
               {isInvitedClient && (
                 <button
-                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${formData.email && !loginError
-                    ? "bg-[#1C63DB] text-white"
-                    : "bg-[#D5DAE2] text-[#5F5F65]"
-                    }`}
+                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
+                    formData.email && !loginError
+                      ? "bg-[#1C63DB] text-white"
+                      : "bg-[#D5DAE2] text-[#5F5F65]"
+                  }`}
                   onClick={handleRequestInvite}
                 >
                   Request invite
@@ -255,13 +258,14 @@ export const LoginForm = () => {
               {!isInvitedClient && (
                 <button
                   type="submit"
-                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${formData.email &&
+                  className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
+                    formData.email &&
                     formData.password &&
                     !passwordError &&
                     !loginError
-                    ? "bg-[#1C63DB] text-white"
-                    : "bg-[#D5DAE2] text-[#5F5F65]"
-                    }`}
+                      ? "bg-[#1C63DB] text-white"
+                      : "bg-[#D5DAE2] text-[#5F5F65]"
+                  }`}
                 >
                   Log In
                 </button>

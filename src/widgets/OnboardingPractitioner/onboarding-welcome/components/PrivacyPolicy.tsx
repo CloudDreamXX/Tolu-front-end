@@ -12,7 +12,6 @@ export const PrivacyPolicy: React.FC<Props> = ({
   setIsChecked,
   handleNext,
 }) => {
-
   const includes = [
     "Your account is secure: We use encryption, 2FA, and role-based access to protect your data.",
     "HIPAA-compliant: We safeguard any client health information you access or manage on the platform. You are required to do the same. Report any data breach within 24 hours.",
@@ -33,7 +32,9 @@ export const PrivacyPolicy: React.FC<Props> = ({
           >
             Privacy Policy
           </Link>
-          <p className="text-[#000] text-[24px] italic">This is the highlight of the Tolu’s Privacy Policy terms.</p>
+          <p className="text-[#000] text-[24px] italic">
+            This is the highlight of the Tolu’s Privacy Policy terms.
+          </p>
         </div>
         <div className="flex flex-col gap-[16px]">
           {includes && (
@@ -44,14 +45,13 @@ export const PrivacyPolicy: React.FC<Props> = ({
                 const after = colon >= 0 ? item.slice(colon + 1).trim() : "";
 
                 return (
-                  <li
-                    key={index}
-                    className="text-[#000] text-[18px]"
-                  >
+                  <li key={index} className="text-[#000] text-[18px]">
                     <div className="flex items-center gap-3">
                       <p>
                         <span className="italic">{before}</span>
-                        <span className="font-medium">{after ? `: ${after}` : ""}</span>
+                        <span className="font-medium">
+                          {after ? `: ${after}` : ""}
+                        </span>
                       </p>
                     </div>
                   </li>
@@ -65,7 +65,7 @@ export const PrivacyPolicy: React.FC<Props> = ({
             checked={isChecked}
             onCheckedChange={() => setIsChecked(!isChecked)}
           />
-          <p className="text-center text-[#1D1D1F] text-[24px] italic">
+          <p className="text-center text-[#1D1D1F] text-[20px] italic">
             I have read and agree to this agreement
           </p>
         </div>

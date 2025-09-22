@@ -22,10 +22,8 @@ export const AuthErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
       const status = event.detail?.status;
       const msg = (event.detail?.message ?? "").toLowerCase();
       if (
-        status === 403 ||
-        status === 401 ||
-        msg.includes("invalid token") ||
-        msg.includes("expired token")
+        (status === 403 || status === 401) &&
+        (msg.includes("invalid token") || msg.includes("expired token"))
       ) {
         dispatch(logout());
         localStorage.clear();

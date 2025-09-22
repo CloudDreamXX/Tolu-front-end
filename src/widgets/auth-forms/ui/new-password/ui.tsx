@@ -112,10 +112,11 @@ export const NewPassword = () => {
                 placeholder="Repeat Password"
                 name="newPasswordRepeat"
                 onChange={formDataChangeHandler}
-                className={`px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in w-full ${passwordError
-                  ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
-                  : "border border-[#DFDFDF] focus:border-[#1C63DB]"
-                  }`}
+                className={`px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none focus:duration-300 focus:ease-in w-full ${
+                  passwordError
+                    ? "border border-[#FF1F0F] focus:border-[#FF1F0F]"
+                    : "border border-[#DFDFDF] focus:border-[#1C63DB]"
+                }`}
               />
               {passwordError && (
                 <p className="text-[#FF1F0F]  text-[14px] font-medium px-[4px] pt-[4px]">
@@ -129,12 +130,13 @@ export const NewPassword = () => {
           <div className="flex flex-col items-center gap-[24px] w-full mt-auto md:mt-0">
             <button
               type="submit"
-              className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${formData.newPassword.length >= 8 &&
+              className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
+                formData.newPassword.length >= 8 &&
                 formData.newPasswordRepeat.length >= 8 &&
                 !passwordError
-                ? "bg-[#1C63DB] text-white"
-                : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  ? "bg-[#1C63DB] text-white"
+                  : "bg-[#D5DAE2] text-[#5F5F65]"
+              }`}
             >
               Create
             </button>

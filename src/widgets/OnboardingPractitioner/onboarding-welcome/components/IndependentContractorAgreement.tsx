@@ -19,7 +19,10 @@ export const IndependentContractorAgreement: React.FC<Props> = ({
             <h2 className="text-center text-[#1C63DB] text-[24px] italic underline text-wrap">
               Independent Contractor Agreement
             </h2>
-            <p className="text-[#000] text-[24px] italic">This is the highlight of the Tolu’s Independent Contractor Agreement.</p>
+            <p className="text-[#000] text-[24px] italic">
+              This is the highlight of the Tolu’s Independent Contractor
+              Agreement.
+            </p>
           </div>
 
           <div className="flex flex-col gap-[16px] w-full">
@@ -29,37 +32,67 @@ export const IndependentContractorAgreement: React.FC<Props> = ({
                 Independent Role
               </h3>
               <p className="text-[#000] text-[18px] pl-5">
-                <li>• You are joining Tolu as an independent contractor, not an employee.</li>
-                <li>• You have a verified certification or medical license by an accredited program or institute and willing to share that information with Tolu for compliance.</li>
-                <li>• You set your own schedule and are responsible for your own taxes.</li>
+                <li>
+                  • You are joining Tolu as an independent contractor, not an
+                  employee.
+                </li>
+                <li>
+                  • You have a verified certification or medical license by an
+                  accredited program or institute and willing to share that
+                  information with Tolu for compliance.
+                </li>
+                <li>
+                  • You set your own schedule and are responsible for your own
+                  taxes.
+                </li>
               </p>
             </div>
 
-            <p className="text-[#000] text-[18px] italic w-full">What you do on Tolu Health</p>
+            <p className="text-[#000] text-[18px] italic w-full">
+              What you do on Tolu Health
+            </p>
             <div className="flex flex-col gap-[8px]">
               <h3 className="text-[18px] font-bold text-black">
                 Maximizing Your Benefits
               </h3>
               <p className="text-[#000] text-[18px] pl-5">
-                <li>• You play a key role in growing Tolu’s client base. The quality and accuracy of your content can make or break the deal.</li>
-                <li>• Use Tolu’s enhanced AI assistant to shine like a start with your biggest asset; your wealth of knowledge.</li>
-                <li>• Create content that people need by filling the knowledge gaps you witness everyday around you.</li>
+                <li>
+                  • You play a key role in growing Tolu’s client base. The
+                  quality and accuracy of your content can make or break the
+                  deal.
+                </li>
+                <li>
+                  • Use Tolu’s enhanced AI assistant to shine like a start with
+                  your biggest asset; your wealth of knowledge.
+                </li>
+                <li>
+                  • Create content that people need by filling the knowledge
+                  gaps you witness everyday around you.
+                </li>
               </p>
             </div>
 
-            <p className="text-[#000] text-[18px] italic w-full">How You Earn</p>
+            <p className="text-[#000] text-[18px] italic w-full">
+              How You Earn
+            </p>
             <div className="flex flex-col gap-[8px]">
               <h3 className="text-[18px] font-bold text-black">
                 You can earn income through:
               </h3>
               <p className="text-[#000] text-[18px] pl-5">
-                <li>• The sales of your educational content that are verified for quality, accuracy of information and medical integrity by you or by Tolu’s  health professionals.</li>
+                <li>
+                  • The sales of your educational content that are verified for
+                  quality, accuracy of information and medical integrity by you
+                  or by Tolu’s health professionals.
+                </li>
                 <li>• Product/service referrals.</li>
                 <li>• More to come.</li>
               </p>
             </div>
 
-            <p className="text-[#000] text-[18px] italic w-full">Communication Rules</p>
+            <p className="text-[#000] text-[18px] italic w-full">
+              Communication Rules
+            </p>
             <div className="flex flex-col gap-[8px]">
               <p className="text-[18px] font-semibold text-black">
                 To keep users safe:
@@ -68,24 +101,37 @@ export const IndependentContractorAgreement: React.FC<Props> = ({
                 <li>• All communication must stay on the Tolu platform.</li>
                 <li>• Do not share personal contact info.</li>
                 <li>• Off-platform services require written approval.</li>
-                <li>• Violating this may lead to immediate removal and loss of
-                  earnings.</li>
+                <li>
+                  • Violating this may lead to immediate removal and loss of
+                  earnings.
+                </li>
               </ul>
             </div>
 
-            <p className="text-[#000] text-[18px] italic w-full">Community Standards</p>
+            <p className="text-[#000] text-[18px] italic w-full">
+              Community Standards
+            </p>
             <div className="flex flex-col gap-[8px]">
               <p className="text-[18px] font-semibold text-black">
                 You agree to:
                 <ul className="list-disc pl-5 text-[#000] text-[18px] font-[400]">
-                  <li>• Share only evidence-based, ethical content. If your content is flagged for lack of safety or integrity we will remove the content immediately and your account will be flagged for misuse. Get flagged three times and your content creation privileges will be removed and your account will be suspended.</li>
+                  <li>
+                    • Share only evidence-based, ethical content. If your
+                    content is flagged for lack of safety or integrity we will
+                    remove the content immediately and your account will be
+                    flagged for misuse. Get flagged three times and your content
+                    creation privileges will be removed and your account will be
+                    suspended.
+                  </li>
                   <li>• Be respectful in all interactions.</li>
                   <li>• Don’t offer competing services without permission.</li>
                 </ul>
               </p>
             </div>
 
-            <p className="text-[#000] text-[18px] italic w-full">Legal Basics</p>
+            <p className="text-[#000] text-[18px] italic w-full">
+              Legal Basics
+            </p>
             <div className="flex flex-col gap-[8px]">
               <p className="text-[#000] text-[18px] pl-5">
                 • This agreement follows Florida law. We may update terms and

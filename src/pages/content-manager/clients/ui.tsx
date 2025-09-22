@@ -15,6 +15,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Button, Dialog, DialogContent, DialogTrigger } from "shared/ui";
+import { AddClientModal } from "widgets/AddClientModal/ui";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
 import { EditClientModal } from "widgets/EditClientModal";
@@ -319,35 +320,11 @@ export const ContentManagerClients: React.FC = () => {
     }
   };
 
-  const handleNextAddStep = () => {
-    const tabs = [
-      "editClientInfo",
-      "relationshipContext",
-      "clientFitTOLU",
-      "healthProfilePlan",
-    ];
-    const nextIndex = tabs.indexOf(activeEditTab) + 1;
-    if (nextIndex < tabs.length) {
-      setActiveEditTab(tabs[nextIndex]);
-    } else {
-      handleInviteClient(newClient);
-      cleanState();
-      setAddModal(false);
-      setInviteSuccessPopup(true);
-    }
-  };
-
-  const handleBackAddStep = () => {
-    const tabs = [
-      "editClientInfo",
-      "relationshipContext",
-      "clientFitTOLU",
-      "healthProfilePlan",
-    ];
-    const prevIndex = tabs.indexOf(activeEditTab) - 1;
-    if (prevIndex >= 0) {
-      setActiveEditTab(tabs[prevIndex]);
-    }
+  const handleNewClientSave = () => {
+    handleInviteClient(newClient);
+    cleanState();
+    setAddModal(false);
+    setInviteSuccessPopup(true);
   };
 
   const handleUploadClick = () => {
@@ -870,21 +847,16 @@ export const ContentManagerClients: React.FC = () => {
             setActiveEditTab={setActiveEditTab}
             onCancel={handleCancelEdit}
             onSave={handleEditSuccess}
-            isNew={false}
             updateClient={updateClient}
           />
         )}
 
         {addModal && (
-          <EditClientModal
+          <AddClientModal
             client={newClient}
-            activeEditTab={activeEditTab}
-            setActiveEditTab={setActiveEditTab}
-            onCancel={handleCancelEdit}
-            onNext={handleNextAddStep}
-            onBack={handleBackAddStep}
-            isNew={true}
             updateClient={updateClient}
+            onCancel={handleCancelEdit}
+            onSave={handleNewClientSave}
           />
         )}
 

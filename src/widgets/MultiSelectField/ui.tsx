@@ -1,5 +1,5 @@
 import { Avatar } from "@radix-ui/react-avatar";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { AvatarFallback, AvatarImage, Button } from "shared/ui";
@@ -25,7 +25,7 @@ export const MultiSelectField = ({
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
-  const [positionTop, setPositionTop] = useState(false);
+  // const [positionTop, setPositionTop] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -41,13 +41,13 @@ export const MultiSelectField = ({
     onChange(selected.filter((item) => item !== option));
   };
 
-  useEffect(() => {
-    if (buttonRef.current && dropdownRef.current) {
-      const { bottom } = buttonRef.current.getBoundingClientRect();
-      const dropdownHeight = dropdownRef.current.offsetHeight;
-      setPositionTop(bottom + dropdownHeight > window.innerHeight);
-    }
-  }, [open]);
+  // useEffect(() => {
+  //   if (buttonRef.current && dropdownRef.current) {
+  //     const { bottom } = buttonRef.current.getBoundingClientRect();
+  //     const dropdownHeight = dropdownRef.current.offsetHeight;
+  //     setPositionTop(bottom + dropdownHeight > window.innerHeight);
+  //   }
+  // }, [open]);
 
   return (
     <div className="relative w-full">
@@ -94,8 +94,8 @@ export const MultiSelectField = ({
         <div
           ref={dropdownRef}
           className={cn(
-            "absolute z-10 mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8",
-            positionTop ? "bottom-full mb-2" : "top-full mt-2"
+            "absolute z-10 mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8 top-full mt-2"
+            // positionTop ? "bottom-full mb-2" : "top-full mt-2"
           )}
         >
           <ul className="max-h-[500px] overflow-y-auto">

@@ -1,10 +1,9 @@
-import { ClientDetails, InviteClientPayload } from "entities/coach";
+import { ClientDetails } from "entities/coach";
 import React, { useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { SelectField } from "widgets/CRMSelectField";
 import { CustomRadio } from "widgets/CustomRadio";
 import { MultiSelectField } from "widgets/MultiSelectField";
-import { StepperWithLabels } from "widgets/StepperWithLabels";
 import {
   Button,
   Calendar,
@@ -16,15 +15,12 @@ import { cn } from "shared/lib";
 import { format } from "date-fns";
 
 interface EditClientModalProps {
-  client: InviteClientPayload | ClientDetails;
+  client: ClientDetails;
   activeEditTab: string;
   updateClient: (field: string, value: any) => void;
   setActiveEditTab: (tab: string) => void;
   onCancel: () => void;
   onSave?: () => void;
-  isNew?: boolean;
-  onNext?: () => void;
-  onBack?: () => void;
 }
 
 const tabs = [
@@ -41,12 +37,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   setActiveEditTab,
   onCancel,
   onSave,
-  isNew = false,
-  onNext,
-  onBack,
 }) => {
-  const getTitle = () => (isNew ? "Add new client" : "Edit client");
-  const stepIndex = tabs.indexOf(activeEditTab);
   const [noPhoneNumber, setNoPhoneNumber] = useState(false);
 
   const tabsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -108,38 +99,6 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   };
 
   const renderFooter = () => {
-    if (isNew) {
-      return (
-        <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[24px] w-full">
-          <button
-            className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
-            onClick={onCancel}
-          >
-            Cancel
-          </button>
-          <div className="flex w-full gap-2 md:w-fit">
-            {activeEditTab !== tabs[0] && (
-              <button
-                className="hidden md:block px-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] text-[#008FF6] text-[16px] font-semibold"
-                onClick={onBack}
-              >
-                Back
-              </button>
-            )}
-            <button
-              className="px-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] text-white bg-[#1C63DB] text-[16px] cursor-pointer font-semibold disabled:bg-[#DBDEE1] disbled:cursor-default"
-              onClick={onNext}
-              disabled={!isStepValid()}
-            >
-              {activeEditTab === tabs[tabs.length - 1]
-                ? "Invite client"
-                : "Next"}
-            </button>
-          </div>
-        </div>
-      );
-    }
-
     return (
       <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[24px]">
         <button
@@ -173,58 +132,12 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
     }
   };
 
-  const validateEditClientInfo = () => {
-    return (
-      client.full_name?.trim() &&
-      client.email?.trim() &&
-      (noPhoneNumber || client.phone_number?.trim()) &&
-      client.date_of_birth?.trim() &&
-      client.primary_health_challenge?.trim()
-    );
-  };
-
-  const validateRelationshipContext = () => {
-    return (
-      client.connection_source?.trim() &&
-      client.working_duration?.trim() &&
-      client.is_primary_coach?.trim()
-    );
-  };
-
-  const validateClientFitTOLU = () => {
-    return (
-      Array.isArray(client.focus_areas) &&
-      client.focus_areas.length > 0 &&
-      client.tolu_benefit?.trim() &&
-      client.collaborative_usage?.trim()
-    );
-  };
-
-  const validateHealthProfilePlan = () => {
-    return client.permission_type?.trim();
-  };
-
-  const isStepValid = () => {
-    switch (activeEditTab) {
-      case "editClientInfo":
-        return validateEditClientInfo();
-      case "relationshipContext":
-        return validateRelationshipContext();
-      case "clientFitTOLU":
-        return validateClientFitTOLU();
-      case "healthProfilePlan":
-        return validateHealthProfilePlan();
-      default:
-        return false;
-    }
-  };
-
   return (
     <div
-      className={`fixed ${isNew ? "top-[85px] md:top-0" : "top-0"} inset-0 z-[999] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto`}
+      className={`fixed top-0 inset-0 z-[999] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto`}
     >
       <div
-        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] ${isNew && stepIndex ? "pt-[64px]" : ""} md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-hidden flex flex-col`}
+        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] md:p-[24px] top-0 bottom-0 h-full min-h-[calc(100vh-85px)] md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-hidden flex flex-col`}
       >
         <span
           className="hidden md:block absolute top-[16px] right-[16px] cursor-pointer z-20"
@@ -232,19 +145,11 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
         >
           <MaterialIcon iconName="close" />
         </span>
-        {isNew && stepIndex > 0 && (
-          <button
-            className="absolute md:hidden top-[24px] flex justify-center items-center text-[#1D1D1F]"
-            onClick={onBack}
-          >
-            <MaterialIcon iconName="keyboard_arrow_left" />
-          </button>
-        )}
 
         <div className="flex gap-[24px] items-center mb-[16px] md:mb-[24px]">
           <div className="flex items-center gap-[8px]">
             <MaterialIcon iconName="account_circle" size={24} />
-            <h2 className="text-[20px] font-[700]">{getTitle()}</h2>
+            <h2 className="text-[20px] font-[700]">Edit client</h2>
           </div>
           <span
             className="absolute z-20 visible cursor-pointer md:hidden top-6 right-4"
@@ -254,45 +159,35 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
           </span>
         </div>
 
-        {isNew ? (
-          <div className="mb-[16px] md:mb-[24px]">
-            <StepperWithLabels
-              steps={tabs}
-              activeStep={stepIndex}
-              getLabel={getLabel}
+        <div>
+          <div
+            className="hidden md:flex gap-[16px] mb-[16px] md:mb-[24px] border border-[#DBDEE1] bg-white rounded-[1000px] p-[8px] overflow-x-auto scrollbar-hide"
+            ref={tabsContainerRef}
+          >
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                className={`w-full px-[24px] py-[10px] rounded-full text-nowrap font-semibold text-[14px] ${activeEditTab === tab ? "bg-[#F2F4F6] text-[#000000] border border-[#DBDEE1]" : "text-[#000000]"}`}
+                onClick={() => setActiveEditTab(tab)}
+              >
+                {getLabel(tab)}
+              </button>
+            ))}
+          </div>
+          <div className="w-full mb-[16px] md:hidden">
+            <SelectField
+              label=""
+              options={tabs.map((tab) => ({
+                value: tab,
+                label: getLabel(tab),
+              }))}
+              selected={getLabel(activeEditTab) || ""}
+              onChange={(value) => {
+                setActiveEditTab(value);
+              }}
             />
           </div>
-        ) : (
-          <div>
-            <div
-              className="hidden md:flex gap-[16px] mb-[16px] md:mb-[24px] border border-[#DBDEE1] bg-white rounded-[1000px] p-[8px] overflow-x-auto scrollbar-hide"
-              ref={tabsContainerRef}
-            >
-              {tabs.map((tab) => (
-                <button
-                  key={tab}
-                  className={`w-full px-[24px] py-[10px] rounded-full text-nowrap font-semibold text-[14px] ${activeEditTab === tab ? "bg-[#F2F4F6] text-[#000000] border border-[#DBDEE1]" : "text-[#000000]"}`}
-                  onClick={() => setActiveEditTab(tab)}
-                >
-                  {getLabel(tab)}
-                </button>
-              ))}
-            </div>
-            <div className="w-full mb-[16px] md:hidden">
-              <SelectField
-                label=""
-                options={tabs.map((tab) => ({
-                  value: tab,
-                  label: getLabel(tab),
-                }))}
-                selected={getLabel(activeEditTab) || ""}
-                onChange={(value) => {
-                  setActiveEditTab(value);
-                }}
-              />
-            </div>
-          </div>
-        )}
+        </div>
 
         <main className="overflow-y-auto pr-[2px] grow">
           {activeEditTab === "editClientInfo" && (

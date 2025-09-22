@@ -1,10 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Handshake from "shared/assets/icons/handshake";
-import Like from "shared/assets/icons/like";
-import Lock from "shared/assets/icons/lock";
-import Medkit from "shared/assets/icons/medkit";
-import PapersLock from "shared/assets/icons/papers-lock";
 import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
 import { AdminHeader } from "widgets/Header";
@@ -18,19 +13,9 @@ import { DataProtection } from "./components/DataProtection";
 import { MediaTestimonial } from "./components/MediaTestimonial";
 
 export const OnboardingWelcome = () => {
-  const icons = [
-    <Lock key={1} />,
-    <Medkit key={2} />,
-    <PapersLock key={3} />,
-    <Handshake key={4} />,
-    <Like key={5} />,
-  ];
   const nav = useNavigate();
   const { isMobile } = usePageWidth();
   const [curentWindow, setCurentWindow] = useState(0);
-  contents.forEach((content, index) => {
-    content.icon = icons[index];
-  });
   const [checkedStates, setCheckedStates] = useState<boolean[]>(
     new Array(contents.length).fill(false)
   );
@@ -55,7 +40,11 @@ export const OnboardingWelcome = () => {
                 <h3 className="xl:w-[860px] text-black  text-center text-[24px] md:text-[32px] xl:text-[32px]/[59px] font-semibold">
                   Welcome to Tolu!
                 </h3>
-                <p className="text-black italic text-[24px] max-w-[788px] text-center">Here you can begin, elevate, and grow your holistic practice by relying on your knowledge and professional network expansion.</p>
+                <p className="text-black italic text-[24px] max-w-[788px] text-center">
+                  Here you can begin, elevate, and grow your holistic practice
+                  by relying on your knowledge and professional network
+                  expansion.
+                </p>
               </div>
               <ul className="flex flex-col text-black text-[18px]">
                 <li>• Streamline personalized intaking</li>
@@ -64,7 +53,9 @@ export const OnboardingWelcome = () => {
                   • Deliver personalized education that fits each client’s
                   unique journey
                 </li>
-                <li>• Connect with peers and client to share and gain knowledge</li>
+                <li>
+                  • Connect with peers and client to share and gain knowledge
+                </li>
               </ul>
               <p className="text-black  text-center text-[20px] italic font-[300]">
                 Let’s get to know your specialty so we can tailor your dashboard
