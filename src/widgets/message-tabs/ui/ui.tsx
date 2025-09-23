@@ -218,6 +218,16 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
       </main>
     );
 
+  const initials = receiver?.user.name
+    ? receiver?.user.name.split(" ").length > 1
+      ? receiver?.user.name
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
+      : receiver?.user.name.slice(0, 2).toUpperCase()
+    : "UN";
+
   if (isLoading) return <MessageTabsLoadingSkeleton />;
   if (!chat) return null;
 
@@ -239,7 +249,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               <Avatar className="w-10 h-10 ">
                 <AvatarImage src={chat.avatar_url} />
                 <AvatarFallback className="bg-slate-300">
-                  {receiver?.user.name.slice(0, 2).toUpperCase() || "UN"}
+                  {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />

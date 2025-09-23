@@ -40,6 +40,16 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   onClick,
   classname,
 }) => {
+  const initials = item.participants[0]?.name
+    ? item.participants[0]?.name.split(" ").length > 1
+      ? item.participants[0]?.name
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
+      : item.participants[0]?.name.slice(0, 2).toUpperCase()
+    : "UN";
+
   return (
     <button
       className={cn(
@@ -54,7 +64,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
             <Avatar className="w-10 h-10 ">
               <AvatarImage src={item.avatar_url} />
               <AvatarFallback className="bg-slate-300">
-                {item.participants[0]?.name.slice(0, 2).toUpperCase() || "UN"}
+                {initials}
               </AvatarFallback>
             </Avatar>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />

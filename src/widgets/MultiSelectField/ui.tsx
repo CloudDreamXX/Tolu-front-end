@@ -1,5 +1,6 @@
 import { Avatar } from "@radix-ui/react-avatar";
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { AvatarFallback, AvatarImage, Button } from "shared/ui";
@@ -90,65 +91,70 @@ export const MultiSelectField = ({
           <MaterialIcon iconName="keyboard_arrow_down" />
         </span>
       </button>
-      {open && (
-        <div
-          ref={dropdownRef}
-          className={cn(
-            "absolute z-10 mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8 top-full mt-2"
-            // positionTop ? "bottom-full mb-2" : "top-full mt-2"
-          )}
-        >
-          <ul className="max-h-[500px] overflow-y-auto">
-            {options.map((option) => (
-              <li
-                key={option.label}
-                className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${selected.includes(option.label) ? "border-[#1D1D1F]" : "border-white hover:border-[#1D1D1F]"}`}
-                onClick={() => toggleOption(option.label)}
-              >
-                <MaterialIcon
-                  iconName={
-                    selected.includes(option.label)
-                      ? "check_box"
-                      : "check_box_outline_blank"
-                  }
-                  fill={selected.includes(option.label) ? 1 : 0}
-                  size={20}
-                />
-                {option.avatar && (
-                  <Avatar className="w-10 h-10 ">
-                    <AvatarImage src={option.avatar} />
-                    <AvatarFallback className="bg-slate-300">
-                      {option.label?.slice(0, 2).toLocaleUpperCase() || "UN"}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-                {option.label}
-              </li>
-            ))}
-          </ul>
-          {onSave && (
-            <div className="flex justify-between w-full ">
-              <Button
-                variant="blue2"
-                onClick={() => onChange([])}
-                className="w-[170px]"
-              >
-                Clear All
-              </Button>
-              <Button
-                variant="blue"
-                onClick={() => {
-                  setOpen(false);
-                  onSave();
-                }}
-                className="w-[170px]"
-              >
-                Save
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
+      {open &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            className="absolute z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8"
+            style={{
+              position: "absolute",
+              top: buttonRef.current?.getBoundingClientRect().bottom ?? 0,
+              left: buttonRef.current?.getBoundingClientRect().left ?? 0,
+              width: buttonRef.current?.offsetWidth,
+            }}
+          >
+            <ul>
+              {options.map((option) => (
+                <li
+                  key={option.label}
+                  className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${selected.includes(option.label) ? "border-[#1D1D1F]" : "border-white hover:border-[#1D1D1F]"}`}
+                  onClick={() => toggleOption(option.label)}
+                >
+                  <MaterialIcon
+                    iconName={
+                      selected.includes(option.label)
+                        ? "check_box"
+                        : "check_box_outline_blank"
+                    }
+                    fill={selected.includes(option.label) ? 1 : 0}
+                    size={20}
+                  />
+                  {option.avatar && (
+                    <Avatar className="w-10 h-10 ">
+                      <AvatarImage src={option.avatar} />
+                      <AvatarFallback className="bg-slate-300">
+                        {option.label?.slice(0, 2).toLocaleUpperCase() || "UN"}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  {option.label}
+                </li>
+              ))}
+            </ul>
+            {onSave && (
+              <div className="flex justify-between w-full ">
+                <Button
+                  variant="blue2"
+                  onClick={() => onChange([])}
+                  className="w-[170px]"
+                >
+                  Clear All
+                </Button>
+                <Button
+                  variant="blue"
+                  onClick={() => {
+                    setOpen(false);
+                    onSave();
+                  }}
+                  className="w-[170px]"
+                >
+                  Save
+                </Button>
+              </div>
+            )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 };

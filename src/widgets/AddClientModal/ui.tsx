@@ -26,6 +26,28 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
     };
   }, []);
 
+  const confidenceOptions = [
+    {
+      value: "not_confident",
+      label: "Not confident at all — They’ll need full guidance from me.",
+    },
+    {
+      value: "somewhat_confident",
+      label:
+        "Somewhat confident — They can answer some questions but may need support.",
+    },
+    {
+      value: "confident",
+      label:
+        "Confident — They can complete most of it on their own with occasional help.",
+    },
+    {
+      value: "very_confident",
+      label:
+        "Very confident — They’ll fill it out independently and come prepared.",
+    },
+  ];
+
   const renderFooter = () => {
     return (
       <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[24px]">
@@ -144,31 +166,13 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
 
           <SelectField
             label="How confident is your client in completing their own health profile?"
-            options={[
-              {
-                value: "not_confident",
-                label:
-                  "Not confident at all — They’ll need full guidance from me.",
-              },
-              {
-                value: "somewhat_confident",
-                label:
-                  "Somewhat confident — They can answer some questions but may need support.",
-              },
-              {
-                value: "confident",
-                label:
-                  "Confident — They can complete most of it on their own with occasional help.",
-              },
-              {
-                value: "very_confident",
-                label:
-                  "Very confident — They’ll fill it out independently and come prepared.",
-              },
-            ]}
-            // selected={client.confidence_level || ""}
-            selected=""
-            onChange={(value) => updateClient("confidence_level", value)}
+            options={confidenceOptions}
+            selected={
+              confidenceOptions.find(
+                (opt) => opt.value === client.permission_type
+              )?.label || ""
+            }
+            onChange={(value) => updateClient("permission_type", value)}
           />
         </main>
         <div className="mt-auto">{renderFooter()}</div>

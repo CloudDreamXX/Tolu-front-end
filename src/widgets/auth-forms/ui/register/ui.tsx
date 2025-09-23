@@ -90,9 +90,7 @@ export const Register = () => {
         if (cancelled) return;
 
         if (isAlreadyRegistered(err)) {
-          toast({
-            title: "Invitation accepted",
-          });
+          await ClientService.acceptCoachInvite({ token });
           navigate("/library");
           return;
         }

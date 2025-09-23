@@ -90,10 +90,10 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       </div>
       {token.length > 0 && email.length > 0 && !isInvitedClient ? (
         <div className="w-full xl:w-[550px] flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
-          <div className="flex flex-col items-end self-stretch justify-end gap-[24px] md:gap-[16px] mt-auto md:mt-0">
-            <div className="flex flex-col items-center gap-[14px]">
+          <div className="flex flex-col self-stretch gap-[24px] md:gap-[16px] mt-auto md:mt-0">
+            <div className="flex flex-col items-center justify-center gap-[14px]">
               <img src="/logo.png" className="w-[60px] h-[60px]" />
-              <h1 className="text-center self-stretch text-black  text-[28px] md:text-[40px] font-semibold">
+              <h1 className="text-center self-stretch text-black text-center text-[28px] md:text-[40px] font-semibold">
                 Just a moment...
               </h1>
             </div>
@@ -111,8 +111,8 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
         </div>
       ) : (
         <div className="w-full flex-1 h-full flex justify-center items-center flex-col gap-[60px] px-[16px] py-[24px] md:p-0">
-          <div className="flex flex-col items-end self-stretch justify-end gap-[16px] mt-auto md:mt-0">
-            <div className="flex flex-col items-center gap-[14px]">
+          <div className="flex flex-col self-stretch gap-[16px] mt-auto md:mt-0">
+            <div className="flex flex-col items-center justify-center gap-[14px]">
               <img src="/logo.png" className="w-[60px] h-[60px]" />
               <h1 className="text-center self-stretch text-black  text-[28px] md:text-[40px] font-semibold">
                 Check your inbox

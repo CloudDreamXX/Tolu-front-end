@@ -26,7 +26,15 @@ export const ParticipantsModal: React.FC<{
                 <Avatar className="ring-1 ring-black/5 border-white rounded-full shadow-sm w-8 h-8 border-[1.5px]">
                   <AvatarImage src={undefined} alt={p.user.name} />
                   <AvatarFallback className="text-[11px] font-medium">
-                    {p.user.name.slice(0, 2).toUpperCase()}
+                    {p.user.name
+                      ? p.user.name.split(" ").length > 1
+                        ? p.user.name
+                            .split(" ")
+                            .map((word) => word[0].toUpperCase())
+                            .slice(0, 2)
+                            .join("")
+                        : p.user.name.slice(0, 2).toUpperCase()
+                      : "UN"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
