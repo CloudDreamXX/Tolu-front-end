@@ -13,11 +13,7 @@ export const AuthErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
     const handleError = (
       event: CustomEvent<{ status?: number; message?: string }>
     ) => {
-      if (
-        location.pathname === "/about-you" ||
-        location.pathname === "/select-type"
-      )
-        return;
+      if (location.pathname === "/auth") return;
 
       const status = event.detail?.status;
       const msg = (event.detail?.message ?? "").toLowerCase();

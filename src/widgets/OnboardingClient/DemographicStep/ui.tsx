@@ -1,8 +1,5 @@
 import { differenceInYears, format, isAfter, parseISO } from "date-fns";
-import {
-  setFormField,
-  setFromUserInfo,
-} from "entities/store/clientOnboardingSlice";
+import { setFormField } from "entities/store/clientOnboardingSlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -22,8 +19,6 @@ import { OnboardingClientLayout } from "../Layout";
 import { CYCLE_HELTH, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
-import { mapOnboardClientToFormState } from "entities/store/helpers";
-import { findFirstIncompleteClientStep } from "./helpers";
 
 export const DemographicStep = () => {
   const nav = useNavigate();
@@ -59,53 +54,6 @@ export const DemographicStep = () => {
 
     dispatch(setFormField({ field: "age", value: computeAge(d) }));
   }, [dateOfBirth, dispatch]);
-
-  useEffect(() => {
-    if (!token) return;
-
-    let cancelled = false;
-
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-    const getOnboardingStatusWithRetry = async (attempt = 1) => {
-      try {
-        return await UserService.getOnboardingStatus();
-      } catch (err: any) {
-        const status = err?.response?.status ?? err?.status;
-        if (!cancelled && status === 403 && attempt < 2) {
-          await sleep(300);
-          return getOnboardingStatusWithRetry(attempt + 1);
-        }
-        throw err;
-      }
-    };
-
-    const loadUser = async () => {
-      try {
-        const onboardingComplete = await getOnboardingStatusWithRetry();
-        if (onboardingComplete.onboarding_filled) {
-          if (!cancelled) nav("/library");
-          return;
-        }
-
-        const userInfo = await UserService.getOnboardClient();
-        const clientData = mapOnboardClientToFormState(userInfo);
-        if (!cancelled) {
-          dispatch(setFromUserInfo(userInfo));
-          const issue = findFirstIncompleteClientStep(clientData);
-          if (issue) nav(issue.route);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    loadUser();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [token, dispatch, nav]);
 
   const computeAge = (
     dob: string | Date | null | undefined

@@ -1,7 +1,7 @@
 import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { UserService } from "entities/user";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { usePageWidth } from "shared/lib";
@@ -22,6 +22,27 @@ export const Values = () => {
 
   const selectedValues = clientOnboarding.important_values || [];
   const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    const values = clientOnboarding.important_values || [];
+
+    const custom = values.find((v) => !checkboxes.includes(v));
+
+    if (custom) {
+      setInputValue(custom);
+
+      const updatedValues = values.map((v) =>
+        !checkboxes.includes(v) ? "Other" : v
+      );
+
+      dispatch(
+        setFormField({
+          field: "important_values",
+          value: updatedValues,
+        })
+      );
+    }
+  }, []);
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
     let updated = [...selectedValues];

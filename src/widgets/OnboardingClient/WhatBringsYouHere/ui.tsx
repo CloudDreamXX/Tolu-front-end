@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "shared/ui/radio-group";
 import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import { radioContent } from "./utils";
+import { useState, useEffect } from "react";
 
 export const WhatBringsYouHere = () => {
   const nav = useNavigate();
@@ -21,13 +22,21 @@ export const WhatBringsYouHere = () => {
 
   const currentValue = clientOnboarding.main_transition_goal || "";
   const isOtherSelected = currentValue === "Other";
+  const [input, setInput] = useState("");
   const { isMobileOrTablet } = usePageWidth();
+  const trimmedInput = input.trim();
+
+  useEffect(() => {
+    const saved = clientOnboarding.main_transition_goal;
+
+    if (saved && !radioContent.includes(saved)) {
+      setInput(saved);
+      dispatch(setFormField({ field: "main_transition_goal", value: "Other" }));
+    }
+  }, []);
 
   const handleNext = async () => {
-    const finalValue =
-      isOtherSelected && clientOnboarding.main_transition_goal
-        ? clientOnboarding.main_transition_goal.trim()
-        : currentValue;
+    const finalValue = isOtherSelected ? trimmedInput : currentValue;
 
     const updated = {
       ...clientOnboarding,
@@ -42,11 +51,8 @@ export const WhatBringsYouHere = () => {
     nav("/values");
   };
 
-  const isFilled = () => {
-    return isOtherSelected
-      ? clientOnboarding.main_transition_goal?.trim() !== ""
-      : currentValue !== "";
-  };
+  const isFilled = () =>
+    isOtherSelected ? trimmedInput !== "" : currentValue !== "";
 
   const title = (
     <h1 className="flex w-full items-center justify-center text-[#1D1D1F] text-center text-[24px] md:text-[32px] font-bold">
@@ -147,15 +153,8 @@ export const WhatBringsYouHere = () => {
                 What does a healthy menopause transition look like to you?
               </label>
               <Input
-                value={clientOnboarding.main_transition_goal ?? ""}
-                onChange={(e) =>
-                  dispatch(
-                    setFormField({
-                      field: "main_transition_goal",
-                      value: e.target.value,
-                    })
-                  )
-                }
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
                 placeholder="My main goal"
                 className="w-full text-[16px]  font-medium py-[11px] px-[16px]"
               />

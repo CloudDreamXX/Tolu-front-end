@@ -1,7 +1,7 @@
 import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { UserService } from "entities/user";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { Input } from "shared/ui";
@@ -23,6 +23,15 @@ export const Barriers = () => {
 
   const isOtherSelected = selectedBarrier === "Other";
   const trimmedInput = input.trim();
+
+  useEffect(() => {
+    const saved = clientOnboarding.obstacles;
+
+    if (saved && !radioContent.includes(saved)) {
+      setInput(saved);
+      dispatch(setFormField({ field: "obstacles", value: "Other" }));
+    }
+  }, []);
 
   const handleNext = async () => {
     const valueToSave = isOtherSelected ? trimmedInput : selectedBarrier;
