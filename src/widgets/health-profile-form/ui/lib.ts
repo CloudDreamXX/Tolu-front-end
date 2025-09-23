@@ -60,7 +60,7 @@ export const mapHealthHistoryToFormDefaults = (
     digestiveOther: "",
 
     recentLabTests: healthHistory.recent_lab_tests ? "Yes" : "No",
-    labTestFiles: [],
+    labTestFiles: healthHistory.lab_results_file,
 
     goals: healthHistory.health_goals || "",
     goalReason: healthHistory.why_these_goals || "",

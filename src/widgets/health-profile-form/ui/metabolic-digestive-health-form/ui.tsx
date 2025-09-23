@@ -11,6 +11,7 @@ import {
 import { useRef } from "react";
 import z from "zod";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { UploadedFile } from "entities/health-history";
 
 export const metabolicDigestiveHealthSchema = z.object({
   bloodSugarConcern: z.string().optional(),
@@ -20,12 +21,12 @@ export const metabolicDigestiveHealthSchema = z.object({
   digestiveOther: z.string().optional(),
 
   recentLabTests: z.string().optional(),
-  labTestFiles: z.array(z.instanceof(File)).optional(),
+  labTestFiles: z.array(z.any()).optional(),
 });
 
 export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const files: File[] = form.watch("labTestFiles") || [];
+  const files: UploadedFile[] | File[] = form.watch("labTestFiles") || [];
 
   return (
     <div className="space-y-6">
@@ -167,9 +168,9 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                       <div className="flex items-center gap-4">
                         <ul className="text-[14px] text-[#5F5F65] space-y-1">
                           {files.length > 0 ? (
-                            files.map((f, idx) => (
+                            files.map((f: any, idx) => (
                               <li key={idx} className="truncate max-w-[240px]">
-                                {f.name}
+                                {f.original_filename || f.name}
                               </li>
                             ))
                           ) : (

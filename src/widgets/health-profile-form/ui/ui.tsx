@@ -3,6 +3,7 @@ import {
   HealthHistory,
   HealthHistoryPostData,
   HealthHistoryService,
+  UploadedFile,
 } from "entities/health-history";
 import { Steps } from "features/steps/ui";
 import { useEffect, useMemo, useState } from "react";
@@ -49,6 +50,9 @@ import { DrivesAndGoalsForm, drivesAndGoalsSchema } from "./drives-and-goals";
 import { usePageWidth } from "shared/lib";
 import { ConfirmCancelModal } from "widgets/ConfirmCancelModal";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { LabFilePreview } from "./metabolic-digestive-health-form/LabFilePreview";
+import { setHealthHistory } from "entities/health-history/lib";
+import { useDispatch } from "react-redux";
 
 const steps = [
   "Demographics",
@@ -166,6 +170,14 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState(false);
   const { isMobile } = usePageWidth();
+  const [preview, setPreview] = useState<{
+    open: boolean;
+    file?: UploadedFile;
+  }>({
+    open: false,
+    file: undefined,
+  });
+  const dispatch = useDispatch();
 
   const form = useForm<BaseValues>({
     resolver: zodResolver(formSchema),
@@ -262,7 +274,6 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     [values, allKeys]
   );
 
-  // NEW: completion percentage across all fields
   const percentage = useMemo(() => {
     const filled = allKeys.reduce(
       (acc, k) => acc + (isFilled((values as any)[k]) ? 1 : 0),
@@ -439,6 +450,8 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     const labFiles = vals.labTestFiles || [];
 
     await HealthHistoryService.createHealthHistory(payload as any, labFiles);
+    const history = await HealthHistoryService.getUserHealthHistory();
+    dispatch(setHealthHistory(history));
 
     if (!partial) {
       setCurrentStep(0);
@@ -483,6 +496,9 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     setCurrentStep(0);
     setIsOpen(false);
   };
+
+  const openPreview = (file: UploadedFile) => setPreview({ open: true, file });
+  const closePreview = () => setPreview({ open: false, file: undefined });
 
   return (
     <Dialog
@@ -661,6 +677,30 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                   label="Recent lab tests"
                   value={values.recentLabTests ?? ""}
                 />
+                {values.labTestFiles?.map((file) => (
+                  <div
+                    key={file.id}
+                    className={
+                      "px-3 py-1 flex items-center justify-between border border-[#DBDEE1] rounded-[8px]"
+                    }
+                  >
+                    <div className="flex items-center w-full gap-3 md:w-1/3">
+                      <MaterialIcon iconName="picture_as_pdf" />
+                      <span className="text-[14px] text-[#1D1D1F]">
+                        {file.original_filename}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => openPreview(file)}
+                      className="flex items-center justify-center p-2 rounded hover:bg-black/5"
+                      title="View"
+                      aria-label="View"
+                    >
+                      <MaterialIcon iconName="visibility" fill={1} />
+                    </button>
+                  </div>
+                ))}
               </Section>
 
               <Section title="Drives & Goals">
@@ -754,6 +794,37 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
               </div>
             </div>
           </>
+        )}
+
+        {/* Preview modal */}
+        {preview.open && preview.file && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center">
+            <div className="bg-white w-full h-full rounded-[16px] shadow-xl overflow-hidden flex flex-col">
+              <div className="flex items-center justify-between px-5 py-4">
+                <h2 className="text-[18px] font-bold">
+                  Preview{" "}
+                  <span className="text-[#1D1D1F]">
+                    “{preview.file.original_filename}”
+                  </span>
+                </h2>
+                <button
+                  className="p-1 rounded hover:bg-black/5"
+                  onClick={closePreview}
+                >
+                  <MaterialIcon iconName="close" fill={1} />
+                </button>
+              </div>
+
+              <div className="relative flex-1 bg-[#F7F7F8] rounded-[8px] mx-[5px] md:mx-[40px] mb-[24px] px-[5px] md:px-6 py-6 overflow-auto">
+                <div className="mx-auto w-full bg-white rounded-[12px] shadow p-6 space-y-5">
+                  <LabFilePreview
+                    filename={preview.file.filename}
+                    className="min-h-[600px]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </DialogContent>
 

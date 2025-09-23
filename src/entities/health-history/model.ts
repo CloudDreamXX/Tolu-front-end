@@ -139,3 +139,8 @@ export interface HealthHistoryPostData {
   follow_up_recommendation?: string;
   recommendation_destination?: string;
 }
+
+export interface GetLabReportRequest {
+  filename: string;
+  client_id?: string | null;
+}
