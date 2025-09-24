@@ -13,7 +13,7 @@ export const ContentLicensing: React.FC<Props> = ({
 }) => {
   return (
     <div className="flex flex-col xl:w-[1138px] items-center justify-center gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[56px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
-      <div className="flex flex-col items-center w-full h-full md:w-[838px] gap-[24px]">
+      <div className="flex flex-col items-center w-full h-full lg:w-[838px] gap-[24px]">
         <div className="flex flex-col gap-[38px] pb-[40px] items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-[25px]">
             <h2 className="text-center text-[#1C63DB] text-[24px] italic underline text-wrap">

@@ -23,7 +23,7 @@ export const PrivacyPolicy: React.FC<Props> = ({
   return (
     <div className="flex flex-col xl:w-[1138px] gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[36px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
       <div className="flex flex-col gap-[39px] items-center justify-center">
-        <div className="flex md:w-[838px] flex-col items-center gap-[25px]">
+        <div className="flex lg:w-[838px] flex-col items-center gap-[25px]">
           <Link
             to="https://tolu.health/privacy-policy"
             className="text-[#1C63DB] text-[24px] italic underline"
