@@ -98,7 +98,7 @@ export const DemographicStep = () => {
   );
 
   const hintBlock = (
-    <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6] w-full lg:w-fit">
+    <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6] w-full lg:max-w-[718px]">
       <MaterialIcon
         iconName="info"
         size={32}

@@ -1,10 +1,5 @@
 import { Link } from "react-router-dom";
-import Like from "shared/assets/icons/like";
-import PapersLock from "shared/assets/icons/papers-lock";
 import { Checkbox } from "shared/ui";
-import Lock from "shared/assets/icons/lock";
-import Handshake from "shared/assets/icons/handshake";
-import Medkit from "shared/assets/icons/medkit";
 
 type Props = {
   isChecked: boolean;

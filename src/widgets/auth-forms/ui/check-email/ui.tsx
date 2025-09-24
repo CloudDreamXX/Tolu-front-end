@@ -1,5 +1,5 @@
 import { setCredentials, UserService } from "entities/user";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
@@ -19,40 +19,29 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
   const location = useLocation();
   const isInvitedClient = location.state?.isInvitedClient === true || null;
 
+  const didRun = useRef(false);
+
   useEffect(() => {
-    if (from === "register" && token && email) {
-      const verifyEmail = async () => {
-        try {
+    if (didRun.current) return;
+    didRun.current = true;
+
+    const verify = async () => {
+      try {
+        if (from === "register" && token && email) {
           const msg = await UserService.verifyEmail({ email, token });
           if (msg.user && msg.accessToken) {
             dispatch(
-              setCredentials({
-                user: msg.user,
-                accessToken: msg.accessToken,
-              })
+              setCredentials({ user: msg.user, accessToken: msg.accessToken })
             );
-            if (msg.user.roleID === 3) {
-              nav("/welcome/client");
-            } else {
-              nav("/welcome/practitioner");
-            }
+            nav(
+              msg.user.roleID === 3
+                ? "/welcome/client"
+                : "/welcome/practitioner"
+            );
           }
-        } catch (error) {
-          console.error("Error verifying email:", error);
-          toast({
-            variant: "destructive",
-            title: "Verification failed",
-            description:
-              "We couldn't verify your email. Please try again or request a new link.",
-          });
         }
-      };
-      verifyEmail();
-    }
 
-    if (from === "forgot-password" && token && email) {
-      const verifyEmail = async () => {
-        try {
+        if (from === "forgot-password" && token && email) {
           await UserService.verifyEmailPass({ email, token });
           dispatch(
             setCredentials({
@@ -62,19 +51,20 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
             })
           );
           nav("/new-password");
-        } catch (error) {
-          console.error("Error verifying password reset:", error);
-          toast({
-            variant: "destructive",
-            title: "Verification failed",
-            description:
-              "We couldn't verify your reset link. Please try again or request a new one.",
-          });
         }
-      };
-      verifyEmail();
-    }
-  }, [token, email, from]);
+      } catch (error) {
+        console.error(error);
+        toast({
+          variant: "destructive",
+          title: "Verification failed",
+          description:
+            "We couldn't verify your link. Please try again or request a new one.",
+        });
+      }
+    };
+
+    verify();
+  }, [token, email, from, dispatch, nav]);
 
   return (
     <div className="flex flex-col w-full h-screen xl:flex-row">
