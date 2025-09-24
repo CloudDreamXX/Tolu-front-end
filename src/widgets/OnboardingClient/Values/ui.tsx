@@ -96,10 +96,11 @@ export const Values = () => {
         <button
           onClick={handleNext}
           disabled={selectedValues.length === 0 && !inputValue.trim()}
-          className={`p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold ${selectedValues.length > 0 || inputValue.trim()
+          className={`p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold ${
+            selectedValues.length > 0 || inputValue.trim()
               ? "bg-[#1C63DB] text-white"
               : "bg-[#DDEBF6] text-white cursor-not-allowed"
-            }`}
+          }`}
         >
           Continue
         </button>
