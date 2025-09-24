@@ -164,5 +164,6 @@ export const {
   clearAllChatHistory,
   clearActiveChatHistory,
   handleRegenerateAiLastMessage,
+  setFilesFromLibrary,
 } = clientSlice.actions;
 export const clientReducer = clientSlice.reducer;

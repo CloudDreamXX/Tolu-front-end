@@ -680,6 +680,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             }),
             ...(images && { images }),
             ...(pdf && { pdf }),
+            contentId: documentId,
           },
           processChunk,
           processFinal,

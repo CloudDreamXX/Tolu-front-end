@@ -1,6 +1,7 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import { onDownloadProgress } from "./helpers";
 import {
+  ChatFileUploadResponse,
   ChatNoteResponse,
   CreateChatGroupResponse,
   CreateChatPayload,
@@ -15,7 +16,6 @@ import {
   UpdateChatNotePayload,
   UpdateGroupChatPayload,
   UpdateGroupChatResponse,
-  UploadChatFileResponse,
 } from "./model";
 
 export class ChatService {
@@ -89,12 +89,19 @@ export class ChatService {
 
   static async uploadChatFile(
     chatId: string,
-    file: File
-  ): Promise<UploadChatFileResponse> {
+    file?: File,
+    libraryFiles?: string[]
+  ): Promise<ChatFileUploadResponse> {
     const formData = new FormData();
-    formData.append("file", file);
+    if (file) {
+      formData.append("file", file);
+    }
 
-    return ApiService.post<UploadChatFileResponse>(
+    if (libraryFiles) {
+      formData.append("library_files", JSON.stringify(libraryFiles));
+    }
+
+    return ApiService.post<ChatFileUploadResponse>(
       API_ROUTES.CHAT.UPLOAD_FILE.replace("{chat_id}", chatId),
       formData,
       {

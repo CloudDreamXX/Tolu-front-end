@@ -91,6 +91,29 @@ export interface UploadChatFileResponse {
   message: ChatMessageModel;
 }
 
+export interface ChatFileUploadResponse {
+  success: boolean;
+  type: string;
+  files_count: number;
+  messages: ChatMessageModel[];
+  uploaded_to_library: any[];
+}
+export interface ChatMessageModel {
+  id: string;
+  content: string;
+  message_type?: "text" | "image" | "file" | string;
+  chat_id: string;
+  file_url: string | null;
+  file_name: string | null;
+  file_size: number | null;
+  file_type: string | null;
+  library_file_id?: string;
+  sender?: MessageUser;
+  created_at: string;
+  is_deleted?: boolean;
+  reactions?: any[];
+}
+
 export interface UpdateGroupChatPayload {
   request: {
     name: string;

@@ -8,6 +8,7 @@ import { clearDownloadProgress, setDownloadProgress } from "./downloadSlice";
 import { fileKeyFromUrl, toChatItem } from "./helpers";
 import { replaceTempId, upsertMessage, upsertMessages } from "./messagesSlice";
 import type {
+  ChatFileUploadResponse,
   ChatItemModel,
   ChatMessageModel,
   ChatNoteResponse,
@@ -24,7 +25,6 @@ import type {
   UpdateChatNotePayload,
   UpdateGroupChatPayload,
   UpdateGroupChatResponse,
-  UploadChatFileResponse,
 } from "./model";
 
 const avatarCache = new Map<string, string | null>();
@@ -157,6 +157,9 @@ export const chatApi = createApi({
             name: payload.profile.name,
           },
           created_at: new Date().toISOString(),
+          message_type: "",
+          is_deleted: false,
+          reactions: [],
         };
 
         dispatch(upsertMessage(optimistic));
@@ -222,12 +225,13 @@ export const chatApi = createApi({
     }),
 
     uploadChatFile: builder.mutation<
-      UploadChatFileResponse,
+      ChatFileUploadResponse,
       { chatId: string; file: File; profile: MessageUser; tempId: string }
     >({
       async queryFn({ chatId, file }) {
         try {
-          return { data: await ChatService.uploadChatFile(chatId, file) };
+          const res = await ChatService.uploadChatFile(chatId, file);
+          return { data: res };
         } catch (e: any) {
           return { error: e };
         }
@@ -253,6 +257,9 @@ export const chatApi = createApi({
             name: profile.name,
           },
           created_at: new Date().toISOString(),
+          message_type: "",
+          is_deleted: false,
+          reactions: [],
         };
 
         dispatch(upsertMessage(optimistic));

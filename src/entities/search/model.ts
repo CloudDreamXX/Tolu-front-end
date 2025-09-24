@@ -2,10 +2,10 @@ export interface AiSearchRequest {
   chat_message: string;
   images?: File[];
   pdf?: File;
+  contentId?: string;
 }
 
 export interface AIChatMessageResearch extends AiSearchRequest {
-  contentId?: string;
   clientId?: string;
   libraryFiles?: string[];
 }

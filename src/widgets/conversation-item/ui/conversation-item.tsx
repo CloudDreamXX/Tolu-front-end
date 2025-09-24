@@ -76,8 +76,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   onRestoreOriginalFormat,
   setStatusPopup,
 }) => {
-  const isHTML = isHtmlContent(pair.content);
-
   const renderCompareView = () => (
     <div className="flex-row block gap-4 md:flex">
       {/* Mobile paginated view */}

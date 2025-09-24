@@ -93,6 +93,9 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [previousScrollHeight, setPreviousScrollHeight] = useState(0);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const filesFromLibrary = useSelector(
+    (state: RootState) => state.client.selectedFilesFromLibrary || []
+  );
 
   const listData: ListItem[] = useMemo(() => {
     const sorted = [...messages]
@@ -112,7 +115,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
     for (let i = 0; i < sorted.length; i++) {
       const msg = sorted[i];
-      const d = new Date(msg.created_at || 0);
+      const d = msg.created_at ? new Date(msg.created_at) : new Date();
       const k = dayKey(d);
       if (k !== lastKey) {
         out.push({
@@ -209,6 +212,9 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         name: profile?.name || "You",
         email: profile?.email || "",
       },
+      message_type: "",
+      is_deleted: false,
+      reactions: [],
     };
 
     setSending(true);
@@ -218,12 +224,34 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       try {
         setMessages((prev) => [...prev, optimistic]);
         const response = await ChatService.uploadChatFile(chat.chat_id, file);
-        setMessages((prev) =>
-          prev.map((m) => (m.id === optimistic.id ? response.message : m))
-        );
+        if (response?.messages?.length) {
+          const serverMsg = response.messages[0];
+          setMessages((prev) =>
+            prev.map((m) => (m.id === optimistic.id ? serverMsg : m))
+          );
+        }
         remove(it.id);
       } catch (e) {
         console.error("file upload failed", e);
+      }
+    }
+
+    if (filesFromLibrary.length > 0) {
+      try {
+        setMessages((prev) => [...prev, optimistic]);
+        const response = await ChatService.uploadChatFile(
+          chat.chat_id,
+          undefined,
+          filesFromLibrary
+        );
+        if (response?.messages?.length) {
+          const serverMsg = response.messages[0];
+          setMessages((prev) =>
+            prev.map((m) => (m.id === optimistic.id ? serverMsg : m))
+          );
+        }
+      } catch (e) {
+        console.error("library file upload failed", e);
       }
     }
 
@@ -500,7 +528,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                       files={files}
                       setFiles={setFiles}
                       title="Attach files"
-                      hideFromLibrary
                       customTrigger={
                         <Button
                           variant="ghost"

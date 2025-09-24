@@ -33,17 +33,14 @@ export class SearchService {
     }) => void,
     onError: (error: Error) => void,
     contentMode?: boolean,
-    signal?: AbortSignal,
-    documentId?: string,
-    clientId?: string
+    signal?: AbortSignal
   ): Promise<void> {
     try {
       const formData = this.createSearchRequest(
         searchData.chat_message,
         searchData.images,
         searchData.pdf,
-        clientId,
-        documentId
+        searchData.contentId
       );
 
       const user = localStorage.getItem("persist:user");
@@ -141,7 +138,6 @@ export class SearchService {
         searchData.chat_message,
         searchData.images,
         searchData.pdf,
-        searchData.clientId,
         searchData.contentId
       );
 
@@ -271,7 +267,6 @@ export class SearchService {
     message: string,
     imageFiles?: File[],
     pdfFile?: File,
-    clientId?: string,
     contentId?: string,
     libraryFiles?: string[]
   ) {
@@ -286,10 +281,6 @@ export class SearchService {
 
     if (pdfFile) {
       formData.append("files", pdfFile, pdfFile.name);
-    }
-
-    if (clientId) {
-      formData.append("client_id", clientId);
     }
 
     if (contentId) {

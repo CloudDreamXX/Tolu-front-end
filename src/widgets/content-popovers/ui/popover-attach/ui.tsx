@@ -1,9 +1,11 @@
+import { setFilesFromLibrary } from "entities/client/lib";
 import { FileLibraryFile, FileLibraryFolder } from "entities/files-library";
 import {
   useFetchAllFilesQuery,
   useGetFolderContentsQuery,
 } from "entities/files-library/filesLibraryApi";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, formatFileSize, toast } from "shared/lib";
 import {
@@ -74,6 +76,8 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   const [viewingFolder, setViewingFolder] = useState<FileLibraryFolder | null>(
     null
   );
+
+  const dispatch = useDispatch();
 
   const { data: filesLibrary } = useFetchAllFilesQuery(
     { page: 1, per_page: 20 },
@@ -169,6 +173,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       newSelectedFiles.add(file);
     }
     setSelectedFiles(newSelectedFiles);
+    dispatch(
+      setFilesFromLibrary(Array.from(newSelectedFiles).map((f) => f.id))
+    );
   };
 
   const handleFolderClick = (folder: FileLibraryFolder) => {
