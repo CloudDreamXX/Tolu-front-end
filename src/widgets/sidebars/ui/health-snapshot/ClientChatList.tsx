@@ -49,7 +49,11 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
               <Avatar className="w-10 h-10 ">
                 <AvatarImage src={chat.avatar_url} />
                 <AvatarFallback className="bg-slate-300">
-                  {reciver.name.slice(0, 2).toUpperCase()}
+                  {reciver.name
+                    ?.split(" ")
+                    .map((part) => part[0])
+                    .join("")
+                    .toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />

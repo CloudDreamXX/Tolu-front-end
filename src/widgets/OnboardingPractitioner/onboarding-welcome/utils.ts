@@ -48,32 +48,4 @@ export const contents: Contents = [
       "Handling of takedowns or disputes",
     ],
   },
-  {
-    title: "Affiliate/Promoter Terms (if selling products/labs/supplements)",
-    description:
-      "If they promote 3rd-party products via affiliate links, this agreement ensures compliance and defines their earnings.",
-    includes: [
-      "Commission structure",
-      "Permitted promotional practices (no false claims)",
-      "Disclosure obligations (FTC compliance)",
-      "Relationship with vendors or manufacturers",
-      "Payment timelines and thresholds",
-    ],
-  },
-  {
-    title: "Confidentiality and Data Protection Addendum",
-    description:
-      "Reinforces HIPAA obligations and limits data use outside Tolu’s platform.",
-    includes: [
-      "PHI access restrictions",
-      "Agreement not to store or transmit PHI outside secure channels",
-      "Mandatory breach reporting within [24–72] hours",
-      "Consequences for violations (termination, liability)",
-    ],
-  },
-  {
-    title: "Media & Testimonial Release Form",
-    description:
-      "If Educator Admins will appear in marketing, give testimonials, or submit success stories, get their permission in writing.",
-  },
 ];

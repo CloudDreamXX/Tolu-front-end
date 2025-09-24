@@ -65,6 +65,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     </div>
   );
 
+  const initials = author
+    ? author.split(" ").length > 1
+      ? author
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
+      : author.slice(0, 2).toUpperCase()
+    : "UN";
+
   return (
     <div className={cn("flex flex-col w-full ", isOwn ? "" : "items-start")}>
       <div className={cn("flex", isOwn && "justify-end")}>
@@ -73,7 +83,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             <Avatar className="w-10 h-10 ">
               <AvatarImage src={avatar} />
               <AvatarFallback className="bg-slate-300">
-                {author?.slice(0, 2).toLocaleUpperCase() || "UN"}
+                {initials}
               </AvatarFallback>
             </Avatar>
             {isOnlaine && (

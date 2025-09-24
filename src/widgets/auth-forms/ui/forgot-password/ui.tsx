@@ -49,9 +49,12 @@ export const ForgotPassword = () => {
           className="w-full md:w-[550px] flex flex-col mt-[44px] md:mt-[121px] xl:mt-0 py-[24px] px-[16px] md:p-0 xl:items-center gap-[40px] xl:gap-[60px]"
           onSubmit={handleSubmit}
         >
-          <h3 className="text-black text-center  font-semibold text-[28px] md:text-[40px]">
-            Forgot Password
-          </h3>
+          <div className="flex flex-col items-center gap-[14px]">
+            <img src="/logo.png" className="w-[60px] h-[60px]" />
+            <h3 className="text-black text-center  font-semibold text-[28px] md:text-[40px]">
+              Forgot Password
+            </h3>
+          </div>
 
           <div className="flex flex-col items-start gap-[4px] w-full">
             <label className="text-[#5f5f65] text-[16px] font-semibold ">

@@ -50,6 +50,16 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
     }
   };
 
+  const initials = message.sender.name
+    ? message.sender.name.split(" ").length > 1
+      ? message.sender.name
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
+      : message.sender.name.slice(0, 2).toUpperCase()
+    : "UN";
+
   return (
     <div className="flex flex-col gap-2 bg-[#F3F6FB] py-2 lg:px-3 rounded-lg w-full lg:w-[373px]">
       <div className="flex items-center justify-between gap-4">
@@ -90,7 +100,7 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
             <Avatar className="w-5 h-5 ">
               <AvatarImage src={avatar} />
               <AvatarFallback className="text-xs bg-slate-300">
-                {message.sender.name.slice(0, 2).toLowerCase() || "un"}
+                {initials}
               </AvatarFallback>
             </Avatar>
           )}

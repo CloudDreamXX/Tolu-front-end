@@ -51,12 +51,12 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      className="fixed inset-0 z-[21] flex items-center justify-center bg-black/30 backdrop-blur-sm"
       aria-modal="true"
       role="dialog"
       aria-labelledby="modal-title"
     >
-      <div className="bg-white z-[9999] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[90%] overflow-y-auto">
+      <div className="bg-white z-[22] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[90%] overflow-y-auto">
         <button
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"

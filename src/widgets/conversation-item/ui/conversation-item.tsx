@@ -1,6 +1,11 @@
 import { ISessionResult } from "entities/coach";
-import parse from "html-react-parser";
 import DOMPurify from "dompurify";
+import parse, {
+  domToReact,
+  Element,
+  HTMLReactParserOptions,
+  DOMNode,
+} from "html-react-parser";
 import React from "react";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
@@ -275,17 +280,42 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     </div>
   );
 
-  const HtmlContent = (htmlContent: string) => {
-    const sanitizedHtml = DOMPurify.sanitize(htmlContent);
-    const content = parse(sanitizedHtml);
+  const HtmlContent = (html: string) => {
+    const sanitizedHtml = DOMPurify.sanitize(html, {
+      ADD_ATTR: ["style", "contenteditable", "data-list"],
+    });
 
-    return <div className="html-content">{content}</div>;
+    const options: HTMLReactParserOptions = {
+      replace: (domNode: DOMNode) => {
+        if ("attribs" in domNode && (domNode as Element).attribs) {
+          const el = domNode as Element;
+          const { name, attribs, children } = el;
+
+          const dataAttrs: Record<string, string> = {};
+          for (const [key, value] of Object.entries(attribs)) {
+            if (key.startsWith("data-")) {
+              dataAttrs[key] = value;
+            }
+          }
+
+          if (name === "li") {
+            return (
+              <li {...dataAttrs}>
+                {domToReact(children as DOMNode[], options)}
+              </li>
+            );
+          }
+        }
+      },
+    };
+
+    return <div className="html-content">{parse(sanitizedHtml, options)}</div>;
   };
 
   const renderContent = () => {
     if (isHTML) {
       return (
-        <div className="prose-sm prose max-w-none">
+        <div className="html-content max-w-none">
           {HtmlContent(pair.content)}
         </div>
       );

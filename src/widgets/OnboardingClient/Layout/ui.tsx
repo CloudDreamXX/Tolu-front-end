@@ -22,8 +22,8 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
   const { isMobileOrTablet } = usePageWidth();
   const mainClass = `
     flex flex-col items-center justify-end lg:justify-center
-    w-full gap-[16px] md:gap-[32px]
-    h-[calc(100vh-132px)] md:h-[calc(100vh-180px)] xl:h-full xl:pb-[120px]
+    w-full lg:gap-[32px]
+     h-full 
   `;
 
   return (
@@ -49,6 +49,11 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
         </div>
 
         {buttons != null && !isMobileOrTablet && buttons}
+        <div className="bg-white lg:bg-transparent w-full flex items-center justify-center gap-[24px] text-[14px] text-center md:text-[18px] text-[#000] p-[16px] lg:py-[20px]">
+          All information you share is secure and confidential
+          <img src={"/hipaa.png"} className="h-[40px] md:h-[50px]" />
+          <img src={"/ssl.png"} className="h-[40px] md:h-[50px]" />
+        </div>
       </main>
 
       {/* <Footer position={isMobileOrTablet ? "top-right" : "bottom-right"} /> */}

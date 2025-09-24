@@ -1,5 +1,6 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import {
+  GetLabReportRequest,
   HealthHistory,
   HealthHistoryPostData,
   HealthHistoryResponse,
@@ -34,6 +35,13 @@ export class HealthHistoryService {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+    });
+  }
+
+  static async getLabReport({ filename, client_id }: GetLabReportRequest) {
+    return ApiService.get<Blob>(`/health-history/lab-report/${filename}`, {
+      params: { client_id },
+      responseType: "blob",
     });
   }
 }

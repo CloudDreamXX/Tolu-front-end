@@ -28,7 +28,6 @@ export const Summary = () => {
 
   const LIST_FIELDS: ReadonlyArray<FieldKey> = [
     "important_values",
-    "language",
     "support_network",
   ] as const;
   const LIST_FIELD_SET = new Set<FieldKey>(LIST_FIELDS as FieldKey[]);
@@ -99,7 +98,6 @@ export const Summary = () => {
   const personalFields: { label: string; key: keyof typeof client }[] = [
     { label: "Age", key: "age" },
     { label: "Menopause Status", key: "menopause_status" },
-    { label: "Language", key: "language" },
   ];
 
   const insightsFields: { label: string; key: keyof typeof client }[] = [
@@ -234,7 +232,7 @@ export const Summary = () => {
       <div className="rounded-[16px] border border-[#DDEBF6] w-full flex flex-col gap-4 p-6">
         <div className="flex items-center justify-between w-full">
           <h2 className="text-[#1D1D1F]  text-[18px] font-bold">
-            Your insights
+            Your Health Drivers
           </h2>
           {!isEditingInsights ? (
             <button

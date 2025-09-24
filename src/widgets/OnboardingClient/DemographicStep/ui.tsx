@@ -1,8 +1,5 @@
 import { differenceInYears, format, isAfter, parseISO } from "date-fns";
-import {
-  setFormField,
-  setFromUserInfo,
-} from "entities/store/clientOnboardingSlice";
+import { setFormField } from "entities/store/clientOnboardingSlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -18,21 +15,10 @@ import {
   RadioGroupItem,
   TooltipWrapper,
 } from "shared/ui";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "shared/ui/select";
-import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
 import { OnboardingClientLayout } from "../Layout";
-import { CYCLE_HELTH, languages, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
+import { CYCLE_HELTH, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
-import { mapOnboardClientToFormState } from "entities/store/helpers";
-import { findFirstIncompleteClientStep } from "./helpers";
 
 export const DemographicStep = () => {
   const nav = useNavigate();
@@ -44,8 +30,6 @@ export const DemographicStep = () => {
 
   const dateOfBirth = clientOnboarding.date_of_birth;
   const menopauseStatus = clientOnboarding.menopause_status;
-  const selectedLanguages = clientOnboarding.language || [];
-  const aiExperience = clientOnboarding.ai_experience;
 
   const initialDOB = dateOfBirth ? parseISO(dateOfBirth) : null;
 
@@ -71,53 +55,6 @@ export const DemographicStep = () => {
     dispatch(setFormField({ field: "age", value: computeAge(d) }));
   }, [dateOfBirth, dispatch]);
 
-  useEffect(() => {
-    if (!token) return;
-
-    let cancelled = false;
-
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-    const getOnboardingStatusWithRetry = async (attempt = 1) => {
-      try {
-        return await UserService.getOnboardingStatus();
-      } catch (err: any) {
-        const status = err?.response?.status ?? err?.status;
-        if (!cancelled && status === 403 && attempt < 2) {
-          await sleep(300);
-          return getOnboardingStatusWithRetry(attempt + 1);
-        }
-        throw err;
-      }
-    };
-
-    const loadUser = async () => {
-      try {
-        const onboardingComplete = await getOnboardingStatusWithRetry();
-        if (onboardingComplete.onboarding_filled) {
-          if (!cancelled) nav("/library");
-          return;
-        }
-
-        const userInfo = await UserService.getOnboardClient();
-        const clientData = mapOnboardClientToFormState(userInfo);
-        if (!cancelled) {
-          dispatch(setFromUserInfo(userInfo));
-          const issue = findFirstIncompleteClientStep(clientData);
-          if (issue) nav(issue.route);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    loadUser();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [token, dispatch, nav]);
-
   const computeAge = (
     dob: string | Date | null | undefined
   ): number | undefined => {
@@ -140,8 +77,6 @@ export const DemographicStep = () => {
       date_of_birth: dateOfBirth,
       age: computedAge,
       menopause_status: menopauseStatus,
-      language: selectedLanguages,
-      ai_experience: aiExperience,
     };
 
     await UserService.onboardClient(updated, token);
@@ -163,7 +98,7 @@ export const DemographicStep = () => {
   );
 
   const hintBlock = (
-    <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6] w-full lg:w-fit">
+    <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6] w-full lg:max-w-[718px]">
       <MaterialIcon
         iconName="info"
         size={32}
@@ -172,9 +107,7 @@ export const DemographicStep = () => {
       />
       <p className="text-[#1B2559]  text-base font-normal">
         Your information is kept private and secure. It helps me provide
-        smarter, more relevant
-        <br /> support.
-        <br /> Visit our website for the complete{" "}
+        smarter, more relevant support. Visit our website for the complete{" "}
         <a
           className="text-[#1C63DB] underline"
           target="_blank"
@@ -334,42 +267,6 @@ export const DemographicStep = () => {
             </div>
           ))}
         </RadioGroup>
-      </div>
-
-      <div className="flex w-full flex-col items-start gap-[10px]">
-        <label className="text-[#1D1D1F]  text-base font-medium">
-          Language
-        </label>
-        <LanguagesMultiSelect
-          options={languages}
-          value={selectedLanguages}
-          onChange={(langs) =>
-            dispatch(setFormField({ field: "language", value: langs }))
-          }
-        />
-      </div>
-
-      <div className="flex flex-col items-start w-full gap-2">
-        <label className="text-[#1D1D1F]  text-base font-medium">
-          Do you use AI in your daily life?
-        </label>
-        <Select
-          value={aiExperience ? aiExperience : undefined}
-          onValueChange={(val) =>
-            dispatch(setFormField({ field: "ai_experience", value: val }))
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select an option" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="yes">Yes</SelectItem>
-              <SelectItem value="no">No</SelectItem>
-              <SelectItem value="not_sure">Not sure</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
       </div>
     </>
   );

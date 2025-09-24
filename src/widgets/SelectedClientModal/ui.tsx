@@ -41,7 +41,6 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
   activeTab,
   setActiveTab,
   onClose,
-  onEdit,
 }) => {
   const nav = useNavigate();
   const [client, setClient] = useState<ClientComprehensiveProfile>({
@@ -352,7 +351,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
               {client?.personal_info.name}
             </h2>
           </div>
-          <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
+          {/* <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
             <button
               className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]"
               onClick={() => nav(`/content-manager/messages/${clientId}`)}
@@ -367,7 +366,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
               <MaterialIcon iconName="folder_supervised" fill={1} />
               Client's Intake
             </button>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex gap-[16px] mb-[24px] border border-[#DBDEE1] bg-white rounded-[1000px] p-[8px] overflow-x-auto">

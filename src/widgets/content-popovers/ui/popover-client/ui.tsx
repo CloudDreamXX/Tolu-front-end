@@ -21,6 +21,7 @@ import {
   PopoverTrigger,
 } from "shared/ui";
 import { ScrollArea } from "shared/ui/scroll-area";
+import { AddClientModal } from "widgets/AddClientModal/ui";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
 import { EditClientModal } from "widgets/EditClientModal";
@@ -254,34 +255,6 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
     }
   };
 
-  const handleNextAddStep = () => {
-    const tabs = [
-      "editClientInfo",
-      "relationshipContext",
-      "clientFitTOLU",
-      "healthProfilePlan",
-    ];
-    const nextIndex = tabs.indexOf(activeEditTab) + 1;
-    if (nextIndex < tabs.length) {
-      setActiveEditTab(tabs[nextIndex]);
-    } else {
-      handleClientModalSave();
-    }
-  };
-
-  const handleBackAddStep = () => {
-    const tabs = [
-      "editClientInfo",
-      "relationshipContext",
-      "clientFitTOLU",
-      "healthProfilePlan",
-    ];
-    const prevIndex = tabs.indexOf(activeEditTab) - 1;
-    if (prevIndex >= 0) {
-      setActiveEditTab(tabs[prevIndex]);
-    }
-  };
-
   const cleanState = () => {
     setSelectedFullClient({
       client_info: {
@@ -491,18 +464,13 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
       </PopoverContent>
 
       {showAddClientModal && (
-        <EditClientModal
+        <AddClientModal
           client={newClient}
-          activeEditTab={activeEditTab}
-          setActiveEditTab={setActiveEditTab}
-          onCancel={() => setShowAddClientModal(false)}
-          onSave={handleClientModalSave}
-          isNew={true}
           updateClient={(field, value) => {
             setNewClient((prev) => ({ ...prev, [field]: value }));
           }}
-          onNext={handleNextAddStep}
-          onBack={handleBackAddStep}
+          onCancel={() => setShowAddClientModal(false)}
+          onSave={handleClientModalSave}
         />
       )}
 

@@ -1,5 +1,8 @@
-import { FileLibraryFile } from "entities/files-library";
-import { useFetchAllFilesQuery } from "entities/files-library/filesLibraryApi";
+import { FileLibraryFile, FileLibraryFolder } from "entities/files-library";
+import {
+  useFetchAllFilesQuery,
+  useGetFolderContentsQuery,
+} from "entities/files-library/filesLibraryApi";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, formatFileSize, toast } from "shared/lib";
@@ -68,9 +71,22 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     new Set()
   );
 
+  const [viewingFolder, setViewingFolder] = useState<FileLibraryFolder | null>(
+    null
+  );
+
   const { data: filesLibrary } = useFetchAllFilesQuery(
     { page: 1, per_page: 20 },
     { skip: step !== "From Library" }
+  );
+
+  const { data: folderContents } = useGetFolderContentsQuery(
+    {
+      folderId: viewingFolder?.id || "",
+      page: "1",
+      per_page: "20",
+    },
+    { skip: !viewingFolder || step !== "From Library" }
   );
 
   useEffect(() => {
@@ -95,20 +111,14 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     e.preventDefault();
     setDragActive(true);
   };
-
   const handleDragLeave = () => setDragActive(false);
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragActive(false);
     const files = Array.from(e.dataTransfer.files);
     processFiles(files);
   };
-
-  const handleBrowseClick = () => {
-    fileInputRef.current?.click();
-  };
-
+  const handleBrowseClick = () => fileInputRef.current?.click();
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles) return;
@@ -116,7 +126,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     processFiles(filesArray);
     e.target.value = "";
   };
-
   const processFiles = (files: File[]) => {
     const totalFiles = attachedFiles.length + files.length;
     if (totalFiles > maxFiles) {
@@ -126,36 +135,30 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       });
       return;
     }
-
     const validFiles = files.filter((file) => {
       const extension = file.name
         .toLowerCase()
         .slice(file.name.lastIndexOf("."));
       return fileExtensions.includes(extension);
     });
-
     const newAttachedFiles: AttachedFile[] = validFiles.map((file) => ({
       name: file.name,
       size: formatFileSize(file.size),
       type: file.type,
       file,
     }));
-
     const updatedFiles = [...attachedFiles, ...newAttachedFiles];
     setAttachedFiles(updatedFiles);
     updateParentFiles(updatedFiles);
   };
-
   const updateParentFiles = (files: AttachedFile[]) => {
     setFiles?.(files.map((file) => file.file));
   };
-
   const removeFile = (index: number) => {
     const updatedFiles = attachedFiles.filter((_, i) => i !== index);
     setAttachedFiles(updatedFiles);
     updateParentFiles(updatedFiles);
   };
-
   const handleSave = () => setIsOpen(false);
 
   const handleSelectFileLibrary = (file: FileLibraryFile) => {
@@ -166,6 +169,14 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
       newSelectedFiles.add(file);
     }
     setSelectedFiles(newSelectedFiles);
+  };
+
+  const handleFolderClick = (folder: FileLibraryFolder) => {
+    setViewingFolder(folder);
+  };
+
+  const handleReturnToRoot = () => {
+    setViewingFolder(null);
   };
 
   const renderUpload = () => (
@@ -232,11 +243,48 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     </>
   );
 
-  const renderLibrary = () => (
-    <div className="overflow-y-auto max-h-52 custom-scroll">
-      {filesLibrary && filesLibrary.root_files.length > 0 ? (
-        <div className="grid grid-cols-2 gap-2 pr-2">
-          {filesLibrary?.root_files.map((file) => (
+  const renderLibrary = () => {
+    const currentFolders = viewingFolder
+      ? (folderContents?.subfolders ?? [])
+      : (filesLibrary?.root_folders ?? []);
+    const currentFiles = viewingFolder
+      ? (folderContents?.files ?? [])
+      : (filesLibrary?.root_files ?? []);
+
+    return (
+      <div className="flex flex-col gap-2">
+        {viewingFolder && (
+          <div className="flex items-center gap-2 mb-2">
+            <button
+              onClick={handleReturnToRoot}
+              className="flex items-center text-sm text-blue-600 hover:underline"
+            >
+              <MaterialIcon iconName="arrow_back" />
+            </button>
+            <span className="font-bold text-gray-800">
+              {viewingFolder.name}
+            </span>
+          </div>
+        )}
+        <div className="grid grid-cols-2 gap-2">
+          {currentFolders.map((folder: any) => (
+            <button
+              key={folder.id}
+              className="h-[55px] w-full bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center border hover:border-gray-300"
+              onClick={() => handleFolderClick(folder)}
+            >
+              <div className="flex items-center gap-2">
+                <MaterialIcon
+                  iconName="folder"
+                  fill={1}
+                  className="text-blue-600"
+                />
+                <h3>{folder.name}</h3>
+              </div>
+            </button>
+          ))}
+
+          {currentFiles.map((file: any) => (
             <button
               key={file.id}
               onClick={() => handleSelectFileLibrary(file)}
@@ -254,8 +302,8 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                   className="text-blue-600"
                 />
                 <div className="flex flex-col items-start flex-1">
-                  <span className="font-medium text-gray-800 truncate ext-sm max-w-52">
-                    {file.name}
+                  <span className="font-medium text-gray-800 truncate text-sm max-w-52">
+                    {file.original_filename || file.name}
                   </span>
                   <span className="text-xs text-[#5F5F65]">
                     {formatFileSize(file.size)}
@@ -265,11 +313,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             </button>
           ))}
         </div>
-      ) : (
-        <p className="text-sm text-gray-500">No files in library.</p>
-      )}
-    </div>
-  );
+      </div>
+    );
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
@@ -309,6 +355,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           {description ??
             "Add credible references to support information integrity"}
         </p>
+
         {existingFiles &&
           Array.isArray(existingFiles) &&
           existingFiles.length > 0 && (
@@ -330,10 +377,11 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
               ))}
             </div>
           )}
+
         {!isDocumentPage && (
           <>
             {!hideFromLibrary && (
-              <div className="flex items-center gap-4 p-2 bg-white border rounded-full max-w-fit no-scrollbar">
+              <div className="flex items-center gap-4 p-2 bg-white border rounded-full max-w-fit">
                 {TABS.map((s) => (
                   <button
                     key={s}

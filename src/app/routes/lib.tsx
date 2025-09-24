@@ -35,7 +35,7 @@ import { Summary } from "widgets/OnboardingClient/Summary";
 import { Support } from "widgets/OnboardingClient/Support";
 import { Values } from "widgets/OnboardingClient/Values";
 import { WelcomeScreen } from "widgets/OnboardingClient/WelcomeScreen";
-import { WhatBrringsYouHere } from "widgets/OnboardingClient/WhatBringsYouHere";
+import { WhatBringsYouHere } from "widgets/OnboardingClient/WhatBringsYouHere";
 import { AboutYourPractice } from "widgets/OnboardingPractitioner/about-your-practice";
 import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
 import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
@@ -83,7 +83,7 @@ export const AppRoutes = () => {
         element={<OnboardingHealthProfile />}
       /> */}
       <Route path="/about-you" element={<DemographicStep />} />
-      <Route path="/what-brings-you-here" element={<WhatBrringsYouHere />} />
+      <Route path="/what-brings-you-here" element={<WhatBringsYouHere />} />
       <Route path="/values" element={<Values />} />
       <Route path="/barriers" element={<Barriers />} />
       <Route path="/support" element={<Support />} />

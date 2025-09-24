@@ -229,7 +229,7 @@ export const OnboardingInfo = ({
 
       <div className="flex items-center justify-between mb-3">
         <h5 className="text-[16px] md:text-[18px] font-bold text-[#1D1D1F]">
-          Your insights
+          Your Health Drivers
         </h5>
       </div>
       <div className="grid grid-cols-1 gap-y-4 md:gap-y-6">

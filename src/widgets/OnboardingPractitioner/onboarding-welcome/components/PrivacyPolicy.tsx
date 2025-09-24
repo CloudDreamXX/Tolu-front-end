@@ -1,10 +1,5 @@
 import { Link } from "react-router-dom";
-import Like from "shared/assets/icons/like";
-import PapersLock from "shared/assets/icons/papers-lock";
 import { Checkbox } from "shared/ui";
-import Lock from "shared/assets/icons/lock";
-import Handshake from "shared/assets/icons/handshake";
-import Medkit from "shared/assets/icons/medkit";
 
 type Props = {
   isChecked: boolean;
@@ -17,28 +12,29 @@ export const PrivacyPolicy: React.FC<Props> = ({
   setIsChecked,
   handleNext,
 }) => {
-  const icons = [<Lock />, <Medkit />, <PapersLock />, <Handshake />, <Like />];
-
   const includes = [
-    "Your account is secure: We use encryption and role-based access to protect your data.",
-    "HIPAA-compliant: We safeguard any client health information you access or manage on the platform.",
+    "Your account is secure: We use encryption, 2FA, and role-based access to protect your data.",
+    "HIPAA-compliant: We safeguard any client health information you access or manage on the platform. You are required to do the same. Report any data breach within 24 hours.",
     "Your content is yours: You control what you publish and share. Your storefront activity and commissions are private.",
     "No third-party sharing without consent: We never sell or share your data unless required by law.",
     "You’re in control: You can update or delete your information and request support anytime.",
   ];
 
   return (
-    <div className="flex flex-col xl:w-[1138px] overflow-y-auto gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[36px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
+    <div className="flex flex-col xl:w-[1138px] gap-[88px] md:gap-[58px] xl:gap-[40px] md:mx-[40px] xl:mx-0 py-[24px] px-[16px] md:py-[40px] md:px-[70px] xl:py-[36px] xl:px-[100px] rounded-t-[20px] md:rounded-[20px] border-[2px] border-[#F3F6FB] bg-white shadow-wrapper">
       <div className="flex flex-col gap-[39px] items-center justify-center">
-        <div className="flex md:w-[838px] flex-col items-center gap-[16px]">
+        <div className="flex lg:w-[838px] flex-col items-center gap-[25px]">
           <Link
             to="https://tolu.health/privacy-policy"
-            className="text-[#1C63DB] text-[24px] lg:text-[32px] font-[600] underline"
+            className="text-[#1C63DB] text-[24px] italic underline"
             target="_blank"
             rel="noopener noreferrer"
           >
             Privacy Policy
           </Link>
+          <p className="text-[#000] text-[24px] italic">
+            This is the highlight of the Tolu’s Privacy Policy terms.
+          </p>
         </div>
         <div className="flex flex-col gap-[16px]">
           {includes && (
@@ -48,20 +44,14 @@ export const PrivacyPolicy: React.FC<Props> = ({
                 const before = colon >= 0 ? item.slice(0, colon) : item;
                 const after = colon >= 0 ? item.slice(colon + 1).trim() : "";
 
-                const icon = icons[index];
-
                 return (
-                  <li
-                    key={index}
-                    className="text-[#000] text-[20px] md:text-[24px]"
-                  >
+                  <li key={index} className="text-[#000] text-[18px]">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-[30px] h-[30px]">
-                        {icon}
-                      </div>
                       <p>
-                        <span className="font-[700]">{before}</span>
-                        {after ? `: ${after}` : ""}
+                        <span className="italic">{before}</span>
+                        <span className="font-medium">
+                          {after ? `: ${after}` : ""}
+                        </span>
                       </p>
                     </div>
                   </li>
@@ -75,7 +65,7 @@ export const PrivacyPolicy: React.FC<Props> = ({
             checked={isChecked}
             onCheckedChange={() => setIsChecked(!isChecked)}
           />
-          <p className="text-center text-[#1D1D1F] text-[20px] font-[500]">
+          <p className="text-center text-[#1D1D1F] text-[20px] italic">
             I have read and agree to this agreement
           </p>
         </div>

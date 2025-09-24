@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "shared/ui/toaster";
 import { AppRoutes } from "./routes";
+import { AuthErrorBoundary } from "widgets/auth-error-boundary/ui";
 
 export const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -21,10 +22,12 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       {isLoading && <LoadingScreen />}
-      <Suspense fallback={<LoadingScreen />}>
-        <AppRoutes />
-        <Toaster />
-      </Suspense>
+      <AuthErrorBoundary>
+        <Suspense fallback={<LoadingScreen />}>
+          <AppRoutes />
+          <Toaster />
+        </Suspense>
+      </AuthErrorBoundary>
     </BrowserRouter>
   );
 };

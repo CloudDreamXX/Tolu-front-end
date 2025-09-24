@@ -6,21 +6,17 @@ export const AuthPageWrapper = ({
   children: React.ReactNode;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isCoach = location.pathname.startsWith("/welcome/practitioner");
 
   return (
     <div
       ref={containerRef}
-      className="w-full min-h-[100dvh] relative overflow-y-auto overflow-x-hidden"
+      className={`w-full min-h-[100dvh] ${isCoach ? "" : "flex flex-col justify-between"} lg:block relative overflow-y-auto overflow-x-hidden`}
       style={{
         background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
       }}
     >
       {children}
-      <div className="absolute bottom-0 w-full flex items-center justify-center gap-[24px] bg-white text-[16px] text-[#5F5F65] p-[16px]">
-        <img src={"/hipaa.png"} className="h-[50px]" />
-        <img src={"/ssl.png"} className="h-[50px]" />
-        All information you share is secure and confidential
-      </div>
     </div>
   );
 };

@@ -13,7 +13,7 @@ export interface ClientDetailsForInvite {
 }
 
 export interface InvitationMetadata {
-  permission_type: "independent" | "with_help";
+  permission_type: string;
   expires_at: string;
   practitioner_name: string;
 }

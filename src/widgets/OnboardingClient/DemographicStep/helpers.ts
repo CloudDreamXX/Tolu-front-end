@@ -31,12 +31,7 @@ const LABEL_CLIENT: Record<keyof FormState, string> = {
 };
 
 const REQUIRED_BY_ROUTE_CLIENT: Record<string, (keyof FormState)[]> = {
-  "/about-you": [
-    "date_of_birth",
-    "menopause_status",
-    "language",
-    "ai_experience",
-  ],
+  "/about-you": ["date_of_birth", "menopause_status"],
   "/what-brings-you-here": ["main_transition_goal"],
   "/values": ["important_values"],
   "/barriers": ["obstacles"],
