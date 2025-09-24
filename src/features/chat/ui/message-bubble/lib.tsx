@@ -45,7 +45,7 @@ export const smartRender = async (text: string) => {
         "font",
       ],
       allowedAttributes: {
-        "*": ["class", "id", "style", "title"],
+        "*": ["class", "id", "style", "title", "data-list"],
         a: ["href", "target", "rel"],
         img: [
           "src",
@@ -115,12 +115,11 @@ export const smartRender = async (text: string) => {
       }
 
       return (
-        <div className="bg-[#ECEFF4]">
+        <div>
           {parts.map((part, index) =>
             part.isHtml ? (
               <div
                 key={index}
-                className="bg-[#ECEFF4]"
                 dangerouslySetInnerHTML={{ __html: part.content }}
               />
             ) : (
@@ -129,9 +128,7 @@ export const smartRender = async (text: string) => {
                 remarkPlugins={[remarkGfm, remarkBreaks]}
                 rehypePlugins={[rehypeRaw]}
                 components={{
-                  body: (props) => (
-                    <body className=" bg-[#ECEFF4]" {...props} />
-                  ),
+                  body: (props) => <body className="bg-[#ECEFF4]" {...props} />,
                   h1: (props) => <h1 {...props} />,
                   h2: (props) => <h2 {...props} />,
                   h3: (props) => <h3 {...props} />,

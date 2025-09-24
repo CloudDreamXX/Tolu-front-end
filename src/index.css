@@ -268,16 +268,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   height: fit-content !important;
 }
 
-.richtext ul {
-  list-style: disc !important;
-  list-style-position: outside;
-  padding-left: 1.25rem;
+.richtext ul,
+.richtext ul li {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 1.5rem;
 }
 
-.richtext ol {
-  list-style: decimal !important;
-  list-style-position: outside;
-  padding-left: 1.25rem;
+.richtext ol,
+.richtext ol li {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  margin-left: 1.5rem;
+}
+
+.richtext li[data-list="bullet"] {
+  list-style-type: disc !important;
+}
+
+.richtext li[data-list="ordered"] {
+  list-style-type: decimal !important;
 }
 
 .richtext li {
