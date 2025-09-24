@@ -179,7 +179,7 @@ export const OnboardingMain = () => {
             </div>
 
             {isDropdownOpen && (
-              <div className="absolute top-full mt-1 left-0 w-full max-h-[174px] overflow-y-auto bg-[#FAFAFA] rounded-md shadow-md flex flex-col gap-[8px]">
+              <div className="md:absolute top-full mt-1 left-0 w-full max-h-[174px] overflow-y-auto bg-[#FAFAFA] rounded-md shadow-md flex flex-col gap-[8px]">
                 {customButtons.map((row, rowIdx) => (
                   <div key={rowIdx} className="flex flex-col">
                     {row.map((buttonText) => {
