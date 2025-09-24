@@ -327,8 +327,8 @@ export class SearchService {
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "text/plain",
+      "application/pdf",
     ];
-    const pdfTypes = ["application/pdf"];
     const maxSizeInMB = 30;
     const maxImages = 10;
 
@@ -342,12 +342,6 @@ export class SearchService {
           errors.push(`Only ${maxImages} files are allowed`);
         } else {
           images.push(file);
-        }
-      } else if (pdfTypes.includes(file.type)) {
-        if (pdf) {
-          errors.push("Only one PDF file is allowed");
-        } else {
-          pdf = file;
         }
       } else {
         errors.push(`File type ${file.type} is not supported`);

@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
+import Like from "shared/assets/icons/like";
+import PapersLock from "shared/assets/icons/papers-lock";
 import { Checkbox } from "shared/ui";
+import Lock from "shared/assets/icons/lock";
+import Handshake from "shared/assets/icons/handshake";
+import Medkit from "shared/assets/icons/medkit";
 
 type Props = {
   isChecked: boolean;
@@ -12,6 +17,8 @@ export const PrivacyPolicy: React.FC<Props> = ({
   setIsChecked,
   handleNext,
 }) => {
+  const icons = [<Lock />, <Medkit />, <PapersLock />, <Handshake />, <Like />];
+
   const includes = [
     "Your account is secure: We use encryption, 2FA, and role-based access to protect your data.",
     "HIPAA-compliant: We safeguard any client health information you access or manage on the platform. You are required to do the same. Report any data breach within 24 hours.",

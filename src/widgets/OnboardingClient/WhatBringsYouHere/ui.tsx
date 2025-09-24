@@ -153,8 +153,15 @@ export const WhatBringsYouHere = () => {
                 What does a healthy menopause transition look like to you?
               </label>
               <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={clientOnboarding.main_transition_goal ?? ""}
+                onChange={(e) =>
+                  dispatch(
+                    setFormField({
+                      field: "main_transition_goal",
+                      value: e.target.value,
+                    })
+                  )
+                }
                 placeholder="My main goal"
                 className="w-full text-[16px]  font-medium py-[11px] px-[16px]"
               />

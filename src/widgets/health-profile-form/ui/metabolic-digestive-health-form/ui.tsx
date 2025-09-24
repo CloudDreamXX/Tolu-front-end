@@ -163,6 +163,7 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                 <FormField
                   control={form.control}
                   name="labTestFiles"
+                  name="labTestFiles"
                   render={({ field }) => (
                     <FormItem>
                       <div className="flex items-center gap-4">
@@ -185,11 +186,19 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                         >
                           <MaterialIcon iconName="group" />
                           Upload files
+                          Upload files
                         </button>
+
 
                         <input
                           ref={fileInputRef}
                           type="file"
+                          multiple
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.files ? Array.from(e.target.files) : []
+                            )
+                          }
                           multiple
                           onChange={(e) =>
                             field.onChange(

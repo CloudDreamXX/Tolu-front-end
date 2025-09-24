@@ -16,6 +16,11 @@ export const AuthPageWrapper = ({
       }}
     >
       {children}
+      <div className="absolute bottom-0 w-full flex items-center justify-center gap-[24px] bg-white text-[16px] text-[#5F5F65] p-[16px]">
+        <img src={"/hipaa.png"} className="h-[50px]" />
+        <img src={"/ssl.png"} className="h-[50px]" />
+        All information you share is secure and confidential
+      </div>
     </div>
   );
 };

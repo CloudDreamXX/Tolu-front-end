@@ -166,11 +166,10 @@ export const SelectType = () => {
               onClick={handleSubmit}
               type="submit"
               disabled={!isSelected()}
-              className={`flex items-center justify-center w-full md:h-[44px] p-[16px] rounded-full ${
-                isSelected()
+              className={`flex items-center justify-center w-full md:h-[44px] p-[16px] rounded-full ${isSelected()
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5F5F65]"
-              }`}
+                }`}
             >
               Next
             </button>
@@ -182,11 +181,10 @@ export const SelectType = () => {
               onClick={handleSubmit}
               type="submit"
               disabled={!isSelected()}
-              className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
-                isSelected()
+              className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${isSelected()
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5F5F65]"
-              }`}
+                }`}
             >
               Next
             </button>
