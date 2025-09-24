@@ -37,15 +37,15 @@ export const WelcomeScreen = () => {
         className="
         flex flex-col items-center justify-end lg:justify-center
         w-full
-        lg:fixed lg:top-[50%] lg:left-[50%] lg:translate-x-[-50%] lg:translate-y-[-50%] h-full
+         h-full
         mt-[100px] lg:mt-0
-        absolute bottom-0
+       
       "
       >
         <div
           className={`
             flex flex-col items-center justify-center gap-8 rounded-t-3xl bg-white 
-            py-[24px] px-[16px] md:px-[40px] xl:p-8 md:rounded-3xl w-full xl:w-fit xl:mt-[20px]
+            py-[24px] px-[16px] md:px-[40px] xl:p-8 lg:rounded-3xl w-full xl:w-fit xl:mt-[20px]
             ${isTallScreen ? "md:py-[121px]" : ""}
           `}
         >
@@ -81,10 +81,10 @@ export const WelcomeScreen = () => {
             />
           </button>
         </div>
-        <div className="bg-white md:bg-transparent lg:mt-[37px] w-full flex items-center justify-center gap-[24px] text-[18px] text-[#000] p-[16px] lg:py-0">
+        <div className="bg-white lg:bg-transparent  w-full flex items-center justify-center gap-[24px] text-[14px] text-center md:text-[18px] text-[#000] p-[16px] lg:py-[20px]">
           All information you share is secure and confidential
-          <img src={"/hipaa.png"} className="h-[50px]" />
-          <img src={"/ssl.png"} className="h-[50px]" />
+          <img src={"/hipaa.png"} className="h-[40px] md:h-[50px]" />
+          <img src={"/ssl.png"} className="h-[40px] md:h-[50px]" />
         </div>
       </main>
       {IsCancelOpen && (
