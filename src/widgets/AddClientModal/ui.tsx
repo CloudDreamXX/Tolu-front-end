@@ -173,6 +173,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               )?.label || ""
             }
             onChange={(value) => updateClient("permission_type", value)}
+            className="h-[160px]"
           />
         </main>
         <div className="mt-auto">{renderFooter()}</div>
