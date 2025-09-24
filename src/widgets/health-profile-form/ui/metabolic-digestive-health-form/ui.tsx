@@ -184,7 +184,7 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                           onClick={() => fileInputRef.current?.click()}
                         >
                           <MaterialIcon iconName="group" />
-                          Upload files Upload files
+                          Upload files
                         </button>
 
                         <input
