@@ -90,8 +90,25 @@ export const Register = () => {
         if (cancelled) return;
 
         if (isAlreadyRegistered(err)) {
-          await ClientService.acceptCoachInvite({ token });
-          navigate("/library");
+          try {
+            await ClientService.acceptCoachInvite({ token });
+            navigate("/library");
+          } catch (acceptErr) {
+            if (isAuthRevoked(acceptErr)) {
+              dispatch(logout());
+              navigate("/auth", {
+                replace: true,
+                state: { coachInviteToken: token },
+              });
+              return;
+            }
+            console.error("Failed to accept coach invite", acceptErr);
+            toast({
+              title: "Unable to accept invite",
+              description: "Please try again or request a new link.",
+              variant: "destructive",
+            });
+          }
           return;
         }
 

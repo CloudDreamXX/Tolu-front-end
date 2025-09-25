@@ -28,6 +28,7 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isInvitedClient = location.state?.isInvitedClient === true || null;
+  const coachInviteToken = location.state?.coachInviteToken;
   const redirectPath = localStorage.getItem("redirectAfterLogin");
 
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +55,9 @@ export const LoginForm = () => {
   const redirectClient = async () => {
     const onboardingComplete = await getOnboardingStatusWithRetry();
     if (onboardingComplete.onboarding_filled) {
+      if (coachInviteToken) {
+        await ClientService.acceptCoachInvite({ token: coachInviteToken });
+      }
       navigate("/library");
       return;
     }
@@ -62,8 +66,14 @@ export const LoginForm = () => {
     dispatch(setFromUserInfo(userInfo));
     const issue = findFirstIncompleteClientStep(clientData);
     if (issue) {
+      if (coachInviteToken) {
+        await ClientService.acceptCoachInvite({ token: coachInviteToken });
+      }
       navigate(issue.route);
     } else {
+      if (coachInviteToken) {
+        await ClientService.acceptCoachInvite({ token: coachInviteToken });
+      }
       navigate("/library");
     }
   };
