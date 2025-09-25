@@ -210,12 +210,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                   className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                 >
                   <MaterialIcon iconName="attach_file" />
-                  {files.length > 0 && (
-                    <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
-                      {files.length > 99 ? "99+" : files.length}
-                    </span>
-                  )}
-                  {(files.length > 0 || filesFromLibrary.length) && (
+                  {(files.length > 0 || filesFromLibrary.length > 0) && (
                     <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                       {files.length + filesFromLibrary.length}
                     </span>

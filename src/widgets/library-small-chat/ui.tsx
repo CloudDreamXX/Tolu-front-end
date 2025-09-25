@@ -497,7 +497,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     let accumulatedText = "";
     const replyChunks: string[] = [];
-    let returnedChatId = currentChatId;
+    const returnedChatId = currentChatId;
     let str = "";
 
     try {
@@ -507,11 +507,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         if (!chunk.reply) return;
 
         if (isLearn && chunk.reply.includes("Relevant Content")) {
-          str = chunk.reply;
-          return;
-        }
-
-        if (chunk.reply.includes("References")) {
           str = chunk.reply;
           return;
         }
@@ -539,14 +534,21 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         setSourceId(finalData?.searched_result_id || null);
         dispatch(setLastChatId(chatId));
 
+        const fullAnswer =
+          finalData?.answer || finalData?.content || accumulatedText;
+
+        let content = fullAnswer;
+        const cutIndex = fullAnswer.search(/<h3[^>]*>References<\/h3>/i);
+        if (cutIndex !== -1) {
+          content = fullAnswer.substring(0, cutIndex).trim();
+        }
+
         const aiMessage: Message = {
           id: chatId || Date.now().toString(),
           type: "ai",
-          content: isLearn
-            ? joinReplyChunksSafely(replyChunks)
-            : accumulatedText,
+          content: isLearn ? joinReplyChunksSafely(replyChunks) : content,
           timestamp: new Date(),
-          document: str,
+          document: isLearn ? str : fullAnswer,
         };
 
         if (!currentChatId && chatId) {
@@ -559,7 +561,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
         if (!lastId && chatId && chatId !== currentChatId) {
           setCurrentChatId(chatId);
-          returnedChatId = chatId;
         }
 
         if (finalData?.chat_title) {
@@ -824,7 +825,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             fill={1}
                           />
                           {(filesState.length > 0 ||
-                            filesFromLibrary.length) && (
+                            filesFromLibrary.length > 0) && (
                             <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                               {filesState.length + filesFromLibrary.length}
                             </span>
@@ -1003,7 +1004,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                               fill={1}
                             />
                             {(filesState.length > 0 ||
-                              filesFromLibrary.length) && (
+                              filesFromLibrary.length > 0) && (
                               <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                                 {filesState.length + filesFromLibrary.length}
                               </span>
@@ -1066,7 +1067,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           >
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
-                              filesFromLibrary.length) && (
+                              filesFromLibrary.length > 0) && (
                               <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                                 {filesState.length + filesFromLibrary.length}
                               </span>

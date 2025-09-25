@@ -80,10 +80,8 @@ export const LibraryChat = () => {
     (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
 
-  const resolvedChatKey =
-    (isSearching ? activeChatKey : lastChatId) || activeChatKey;
   const chatState = useSelector(
-    (state: RootState) => state.client.chatHistory[resolvedChatKey] || []
+    (state: RootState) => state.client.chatHistory[currentChatId] || []
   );
 
   const userPersisted = localStorage.getItem("persist:user");
@@ -563,7 +561,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     };
 
     dispatch(
-      addMessageToChat({ chatKey: activeChatKey, message: userMessage })
+      addMessageToChat({ chatKey: currentChatId, message: userMessage })
     );
 
     setIsSearching(true);
@@ -598,11 +596,6 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         return;
       }
 
-      if (chunk.reply.includes("References")) {
-        str = chunk.reply;
-        return;
-      }
-
       if (isLearn) {
         replyChunks.push(chunk.reply);
         const joined = joinReplyChunksSafely(replyChunks);
@@ -615,28 +608,32 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
 
     const processFinalData = async (finalData: any) => {
       setIsSearching(false);
-
-      const aiMessage: Message = {
-        id:
-          finalData?.chat_id ||
-          finalData?.searched_result_id ||
-          finalData?.chatId ||
-          Date.now().toString(),
-        type: "ai",
-        content: isLearn ? joinReplyChunksSafely(replyChunks) : accumulatedText,
-        timestamp: new Date(),
-        document: str,
-      };
-
-      dispatch(
-        addMessageToChat({ chatKey: activeChatKey, message: aiMessage })
-      );
-      setStreamingText("");
-
+      const fullAnswer =
+        finalData?.answer || finalData?.content || accumulatedText;
       const newId =
         finalData?.chat_id ||
         finalData?.searched_result_id ||
-        finalData?.chatId;
+        finalData?.chatId ||
+        "";
+
+      let content = fullAnswer;
+      const cutIndex = fullAnswer.search(/<h3[^>]*>References<\/h3>/i);
+      if (cutIndex !== -1) {
+        content = fullAnswer.substring(0, cutIndex).trim();
+      }
+
+      const aiMessage: Message = {
+        id: chatId || Date.now().toString(),
+        type: "ai",
+        content: isLearn ? joinReplyChunksSafely(replyChunks) : content,
+        timestamp: new Date(),
+        document: isLearn ? str : fullAnswer,
+      };
+
+      dispatch(
+        addMessageToChat({ chatKey: currentChatId, message: aiMessage })
+      );
+      setStreamingText("");
 
       if (newId && newId !== currentChatId) {
         setCurrentChatId(newId);
