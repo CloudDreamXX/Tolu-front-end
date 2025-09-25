@@ -333,6 +333,49 @@ export const renderResultBlocks = (rawContent: string) => {
   });
 };
 
+export const renderLinkBlocks = (rawContent: string) => {
+  const nav = useNavigate();
+
+  const linkRegex = /<a[^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/gi;
+  const matches: { href: string; text: string }[] = [];
+  let match;
+  const blocks = rawContent
+    .split(/\n\n+/)
+    .filter((b) => b.includes("/content/retrieve/"));
+
+  if (blocks.length) {
+    return;
+  }
+
+  while ((match = linkRegex.exec(rawContent)) !== null) {
+    matches.push({ href: match[1], text: match[2] });
+  }
+
+  return matches.map((m, index) => {
+    const idMatch = m.href.match(/\/content\/retrieve\/([a-f0-9-]{36})/i);
+    const id = idMatch?.[1];
+
+    return (
+      <div style={{ fontFamily: "'Inter', sans-serif" }} key={index}>
+        <div
+          className="p-4 my-3 bg-white border rounded-md shadow-sm min-h-[120px] flex flex-col justify-between cursor-pointer h-full"
+          onClick={() => {
+            if (id) {
+              nav(`/library/document/${id}`);
+            } else {
+              window.open(m.href, "_blank", "noopener,noreferrer");
+            }
+          }}
+        >
+          <p className="font-bold text-base line-clamp-3 hover:underline mb-2">
+            {m.text || "Untitled"}
+          </p>
+        </div>
+      </div>
+    );
+  });
+};
+
 const extractTitleFromBlock = (block: string) => {
   const m = block.match(/<a[^>]*target="_self"[^>]*>([^<]+)<\/a>/i);
   if (m?.[1]) return m[1].trim();

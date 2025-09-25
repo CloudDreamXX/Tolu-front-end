@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { renderResultBlocks, smartRender } from "./lib";
+import { renderLinkBlocks, renderResultBlocks, smartRender } from "./lib";
 
 export interface Message {
   id: string;
@@ -89,6 +89,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                 {message.document && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2  pb-[10px]">
                     {renderResultBlocks(message.document || "")}
+                    {renderLinkBlocks(message.document || "")}
                   </div>
                 )}
               </div>

@@ -406,6 +406,12 @@ export const LibraryChat = () => {
                 document = item.answer;
               }
 
+              if (item.answer.includes("References")) {
+                const parts = item.answer.split(/<h3[^>]*>References<\/h3>/i);
+                content = parts[0].trim();
+                document = item.answer;
+              }
+
               chatMessages.push({
                 id: `ai-${item.id}`,
                 type: "ai",
@@ -588,6 +594,11 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
       if (!chunk.reply) return;
 
       if (isLearn && chunk.reply.includes("Relevant Content")) {
+        str = chunk.reply;
+        return;
+      }
+
+      if (chunk.reply.includes("References")) {
         str = chunk.reply;
         return;
       }
