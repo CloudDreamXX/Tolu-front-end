@@ -281,7 +281,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     }, [pair.content]);
 
     return (
-      <div className="richtext max-w-none whitespace-pre-wrap">{rendered}</div>
+      <div className="richtext max-w-none">{rendered}</div>
     );
   };
 
