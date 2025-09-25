@@ -4,8 +4,9 @@ import {
   useFetchAllFilesQuery,
   useGetFolderContentsQuery,
 } from "entities/files-library/filesLibraryApi";
+import { RootState } from "entities/store";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, formatFileSize, toast } from "shared/lib";
 import {
@@ -75,6 +76,10 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
 
   const [viewingFolder, setViewingFolder] = useState<FileLibraryFolder | null>(
     null
+  );
+
+  const filesFromLibrary = useSelector(
+    (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
 
   const dispatch = useDispatch();
@@ -339,12 +344,12 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             <p className="text-[12px] xl:text-[14px] text-[#5F5F65]">
               Add credible references to support information integrity
             </p>
-            {attachedFiles.length > 0 && (
+            {(attachedFiles.length > 0 || filesFromLibrary.length > 0) && (
               <Badge
                 variant="destructive"
                 className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
               >
-                {attachedFiles.length}
+                {attachedFiles.length + filesFromLibrary.length}
               </Badge>
             )}
           </Button>

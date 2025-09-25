@@ -823,11 +823,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             size={24}
                             fill={1}
                           />
-                          {filesState.length > 0 && (
+                          {(filesState.length > 0 ||
+                            filesFromLibrary.length) && (
                             <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {filesState.length > 99
-                                ? "99+"
-                                : filesState.length}
+                              {filesState.length + filesFromLibrary.length}
                             </span>
                           )}
                         </Button>
@@ -1003,11 +1002,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                               size={24}
                               fill={1}
                             />
-                            {filesState.length > 0 && (
+                            {(filesState.length > 0 ||
+                              filesFromLibrary.length) && (
                               <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length > 99
-                                  ? "99+"
-                                  : filesState.length}
+                                {filesState.length + filesFromLibrary.length}
                               </span>
                             )}
                           </Button>
@@ -1067,11 +1065,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
                           >
                             <MaterialIcon iconName="attach_file" size={24} />
-                            {filesState.length > 0 && (
+                            {(filesState.length > 0 ||
+                              filesFromLibrary.length) && (
                               <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length > 99
-                                  ? "99+"
-                                  : filesState.length}
+                                {filesState.length + filesFromLibrary.length}
                               </span>
                             )}
                           </Button>

@@ -94,10 +94,16 @@ export interface UploadChatFileResponse {
 export interface ChatFileUploadResponse {
   success: boolean;
   type: string;
-  files_count: number;
-  messages: ChatMessageModel[];
+  files_count?: number;
+  messages?: ChatMessageModel[];
   uploaded_to_library: any[];
+  file_url?: string;
+  file_name?: string;
+  file_size?: number;
+  file_type?: string;
+  message_id?: string;
 }
+
 export interface ChatMessageModel {
   id: string;
   content: string;

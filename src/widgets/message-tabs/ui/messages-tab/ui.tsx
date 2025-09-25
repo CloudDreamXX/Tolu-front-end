@@ -222,14 +222,49 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     for (const it of items) {
       const file = it.file;
       try {
+        const optimistic: ChatMessageModel = {
+          id: `tmp-${Date.now()}-${it.id}`,
+          content: "",
+          chat_id: chat.chat_id,
+          created_at: new Date().toISOString(),
+          file_url: null,
+          file_name: file.name,
+          file_size: file.size,
+          file_type: file.type,
+          sender: {
+            id: profile?.id || "",
+            name: profile?.name || "You",
+            email: profile?.email || "",
+          },
+          message_type: "file",
+          is_deleted: false,
+          reactions: [],
+        };
+
         setMessages((prev) => [...prev, optimistic]);
+
         const response = await ChatService.uploadChatFile(chat.chat_id, file);
-        if (response?.messages?.length) {
-          const serverMsg = response.messages[0];
+        if (response?.type === "file_upload") {
+          const newMsg: ChatMessageModel = {
+            id: response.message_id || "",
+            content: response.file_name || "",
+            chat_id: chat.chat_id,
+            created_at: new Date().toISOString(),
+            file_url: response.file_url || "",
+            file_name: response.file_name || "",
+            file_size: response.file_size || 0,
+            file_type: "file_upload",
+            sender: profile!,
+            message_type: "file",
+            is_deleted: false,
+            reactions: [],
+          };
+
           setMessages((prev) =>
-            prev.map((m) => (m.id === optimistic.id ? serverMsg : m))
+            prev.map((m) => (m.id === optimistic.id ? newMsg : m))
           );
         }
+
         remove(it.id);
       } catch (e) {
         console.error("file upload failed", e);
@@ -238,17 +273,44 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
     if (filesFromLibrary.length > 0) {
       try {
-        setMessages((prev) => [...prev, optimistic]);
+        const optimistics: ChatMessageModel[] = filesFromLibrary.map(
+          (id, idx) => ({
+            id: `tmp-${Date.now()}-lib-${idx}`,
+            content: "",
+            chat_id: chat.chat_id,
+            created_at: new Date().toISOString(),
+            file_url: null,
+            file_name: id,
+            file_size: null,
+            file_type: "library",
+            sender: {
+              id: profile?.id || "",
+              name: profile?.name || "You",
+              email: profile?.email || "",
+            },
+            message_type: "file",
+            is_deleted: false,
+            reactions: [],
+          })
+        );
+
+        setMessages((prev) => [...prev, ...optimistics]);
+
         const response = await ChatService.uploadChatFile(
           chat.chat_id,
           undefined,
           filesFromLibrary
         );
-        if (response?.messages?.length) {
-          const serverMsg = response.messages[0];
-          setMessages((prev) =>
-            prev.map((m) => (m.id === optimistic.id ? serverMsg : m))
-          );
+
+        if (
+          response?.type === "library_files" &&
+          response.messages &&
+          response.messages?.length
+        ) {
+          setMessages((prev) => {
+            const filtered = prev.filter((m) => !m.id.startsWith("tmp-lib"));
+            return [...filtered, ...(response.messages || [])];
+          });
         }
       } catch (e) {
         console.error("library file upload failed", e);
@@ -538,9 +600,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                             size={24}
                             fill={1}
                           />
-                          {files.length > 0 && (
+                          {(files.length > 0 ||
+                            filesFromLibrary.length > 0) && (
                             <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {files.length > 99 ? "99+" : files.length}
+                              {files.length + filesFromLibrary.length}
                             </span>
                           )}
                         </Button>

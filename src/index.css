@@ -330,3 +330,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     text-size-adjust: 100%;
   }
 }
+
+.docx-wrapper {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.docx-wrapper > section.docx {
+  margin-bottom: 0 !important;
+}
