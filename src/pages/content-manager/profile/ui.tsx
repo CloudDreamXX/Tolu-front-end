@@ -27,6 +27,7 @@ export const ContentManagerProfile = () => {
     () => checkPasswordStrength(newPassword),
     [newPassword]
   );
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -96,6 +97,7 @@ export const ContentManagerProfile = () => {
         licensePaths.map((p) => createUrlFromPath(p))
       );
       setLicensePhotos(urls.filter((x): x is string => Boolean(x)));
+      setLoading(false);
     })();
 
     return () => {
@@ -126,12 +128,202 @@ export const ContentManagerProfile = () => {
   const initials = user?.profile.basic_info.name
     ? user.profile.basic_info.name.split(" ").length > 1
       ? user.profile.basic_info.name
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
+        .split(" ")
+        .map((word) => word[0].toUpperCase())
+        .slice(0, 2)
+        .join("")
       : user.profile.basic_info.name.slice(0, 2).toUpperCase()
     : "UN";
+
+  const ProfileLoadingSkeleton = () => {
+    const getRandomWidth = (min: number, max: number) =>
+      `${Math.floor(Math.random() * (max - min + 1)) + min}px`;
+
+    return (
+      <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px]">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between animate-pulse">
+          {/* Text and Title Block */}
+          <div className="flex flex-col md:flex-row items-start gap-[16px]">
+            <div className="flex flex-col gap-3 text-[24px] w-full lg:w-fit">
+              <div
+                className="h-[24px] skeleton-gradient rounded-[24px] w-[150px]"
+                style={{ width: getRandomWidth(100, 200) }}
+              />
+              <div
+                className="h-[20px] skeleton-gradient rounded-[24px] w-[200px]"
+                style={{ width: getRandomWidth(200, 300) }}
+              />
+            </div>
+
+            {/* Edit Button (mobile) */}
+            <div className="lg:hidden flex flex-col w-full lg:w-fit">
+              <div
+                className="h-[44px] skeleton-gradient rounded-full w-full"
+                style={{ width: getRandomWidth(250, 350) }}
+              />
+            </div>
+          </div>
+
+          {/* Edit Button (desktop) */}
+          <div className="hidden lg:flex w-full md:w-[166px] justify-center">
+            <div
+              className="h-[44px] skeleton-gradient rounded-full w-full"
+              style={{ width: getRandomWidth(150, 200) }}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px] md:gap-[24px] animate-pulse">
+          {/* Avatar and Personal Information Block */}
+          <div className="flex flex-col gap-10 md:flex-row rounded-[16px] bg-white p-[24px] lg:h-[324px]">
+            <div className="w-[200px] h-[185px] md:w-[200px] md:h-[185px] rounded-[12px] bg-gray-300"></div>
+
+            <div className="flex flex-col gap-2.5">
+              <div
+                className="h-[24px] skeleton-gradient rounded-[24px] w-[100px]"
+                style={{ width: getRandomWidth(100, 200) }}
+              />
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] w-[200px]"
+                style={{ width: getRandomWidth(200, 300) }}
+              />
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+            </div>
+          </div>
+
+          {/* Practitioner Type Block */}
+          <div className="flex flex-col gap-[14px] justify-between w-full rounded-[16px] bg-white p-[16px] md:p-[24px]">
+            <div className="flex flex-col gap-[4px]">
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+            </div>
+            <div className="flex flex-col gap-[4px]">
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+            </div>
+            <div className="flex flex-col gap-[4px]">
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+            </div>
+            <div className="flex flex-col gap-[4px]">
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 500) }}
+              />
+            </div>
+          </div>
+
+          {/* Professional Background Block */}
+          <div className="flex flex-col gap-[24px] rounded-[16px] bg-white p-[16px] md:p-[24px]">
+            <div
+              className="h-[20px] skeleton-gradient rounded-[24px] mb-4 md:mb-6 max-w-[300px] md:max-w-full"
+              style={{ width: getRandomWidth(200, 500) }}
+            />
+            <div className="flex flex-col gap-[32px]">
+              <div className="flex flex-col gap-2">
+                <div
+                  className="h-[18px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                  style={{ width: getRandomWidth(200, 500) }}
+                />
+                <div
+                  className="h-[18px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                  style={{ width: getRandomWidth(200, 500) }}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <div
+                  className="h-[18px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                  style={{ width: getRandomWidth(200, 500) }}
+                />
+                <div className="w-[155px] h-[155px] rounded-[12px] bg-gray-300"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Information & Account Security Block */}
+          <div className="flex flex-col gap-[14px] w-full rounded-[16px] bg-white p-[16px] md:p-[24px]">
+            <div
+              className="h-[20px] skeleton-gradient rounded-[24px] mb-4 md:mb-6 max-w-[300px] md:max-w-full"
+              style={{ width: getRandomWidth(200, 500) }}
+            />
+            <div className="flex flex-col gap-[14px] w-full">
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 400) }}
+              />
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 400) }}
+              />
+              <div
+                className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                style={{ width: getRandomWidth(200, 400) }}
+              />
+              <div className="flex flex-col gap-[10px]">
+                <div
+                  className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                  style={{ width: getRandomWidth(200, 400) }}
+                />
+                <div className="relative flex flex-row-reverse items-center w-full lg:w-[70%]">
+                  <div className="w-full h-[44px] skeleton-gradient rounded-[8px]" />
+                </div>
+              </div>
+              <div className="flex flex-col gap-[10px]">
+                <div
+                  className="h-[16px] skeleton-gradient rounded-[24px] max-w-[300px] md:max-w-full"
+                  style={{ width: getRandomWidth(200, 400) }}
+                />
+                <div className="relative flex flex-row-reverse items-center w-full lg:w-[70%]">
+                  <div className="w-full h-[44px] skeleton-gradient rounded-[8px]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+
+  if (loading) {
+    return <>
+      <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
+        <span className="inline-flex h-5 w-5 items-center justify-center">
+          <MaterialIcon
+            iconName="progress_activity"
+            className="text-blue-600 animate-spin"
+          />
+        </span>
+        Please wait, we are loading the information...
+      </div>
+      <ProfileLoadingSkeleton />;
+    </>
+  }
 
   return (
     <>

@@ -276,12 +276,272 @@ export const ClientProfile = () => {
   const initials = user?.name
     ? user.name.split(" ").length > 1
       ? user.name
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
+        .split(" ")
+        .map((word) => word[0].toUpperCase())
+        .slice(0, 2)
+        .join("")
       : user.name.slice(0, 2).toUpperCase()
     : "UN";
+
+  const ClientProfileLoadingSkeleton = () => {
+    const getRandomWidth = (min: number, max: number) =>
+      `${Math.floor(Math.random() * (max - min + 1)) + min}px`;
+
+    return (
+      <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6">
+        <div className="flex gap-3 items-center justify-between animate-pulse">
+          <div
+            className="h-[24px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+            style={{ width: getRandomWidth(200, 400) }}
+          />
+        </div>
+
+        <div className="hidden md:flex flex-wrap items-center md:justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6 ">
+          <div className="flex items-center gap-6 animate-pulse">
+            <div className="w-[100px] h-[100px] bg-gray-300 rounded-full"></div>
+            <div>
+              <p className="mb-1">
+                <div
+                  className="h-[18px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                  style={{ width: getRandomWidth(100, 190) }}
+                />
+              </p>
+            </div>
+          </div>
+
+          <div className="w-[153px] h-[40px] bg-gray-300 rounded-full animate-pulse"></div>
+        </div>
+
+        <div className="flex flex-col gap-[16px] md:gap-[24px] lg:grid lg:grid-cols-2 lg:gap-[24px] lg:gap-y-[24px]">
+          <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
+            <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] border border-[#EAECF0]">
+              <div className="flex justify-between items-center mb-[24px] animate-pulse">
+                <div
+                  className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[164px] md:max-w-full"
+                />
+                <div
+                  className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[93px] md:max-w-full"
+                />
+              </div>
+              <div className="md:hidden flex items-center gap-6 mb-[24px]">
+                <div className="flex items-center gap-6 ">
+                  <div className="w-[100px] h-[100px] bg-gray-300 rounded-full"></div>
+                  <div>
+                    <p className="mb-1">
+                      <div
+                        className="h-[18px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                        style={{ width: getRandomWidth(100, 190) }}
+                      />
+                    </p>
+                  </div>
+                </div>
+                <div className="w-[153px] h-[40px] bg-gray-300 rounded-full"></div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px] animate-pulse">
+                <div className="flex flex-col gap-[4px]">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                  <div
+                    className="h-[20px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                </div>
+                <div className="flex flex-col gap-[4px]">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                  <div
+                    className="h-[20px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                </div>
+                <div className="flex flex-col gap-[4px]">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                  <div
+                    className="h-[20px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                </div>
+                <div className="flex flex-col gap-[4px]">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                  <div
+                    className="h-[20px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                </div>
+                <div className="flex flex-col gap-[4px]">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                  <div
+                    className="h-[20px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                </div>
+                <div className="flex flex-col gap-[4px]">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                  <div
+                    className="h-[20px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
+                    style={{ width: getRandomWidth(100, 190) }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end border-t border-[#EAECF0] mt-6 pt-6 animate-pulse">
+                <div className="w-[153px] h-[40px] bg-gray-300 rounded-full"></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-3">
+            <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] border border-[#EAECF0]">
+              <div className="flex flex-col gap-6 animate-pulse">
+                <div className="flex justify-between">
+                  <div className="flex flex-col gap-1 border-b border-[#D5DAE2] pb-6">
+                    <div
+                      className="h-[18px] bg-gray-300 rounded-[24px] max-w-[200px]"
+                      style={{ width: getRandomWidth(100, 180) }}
+                    />
+                    <div
+                      className="h-[24px] bg-gray-300 rounded-[24px] max-w-[150px]"
+                      style={{ width: getRandomWidth(100, 200) }}
+                    />
+                  </div>
+                  <div className="hidden md:flex w-[120px] h-[40px] bg-gray-300 rounded-full" />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[200px]"
+                    style={{ width: getRandomWidth(100, 180) }}
+                  />
+                  <div className="flex items-center gap-[8px] flex-wrap">
+                    {["", "", "", "", ""].map((_, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[200px]"
+                    style={{ width: getRandomWidth(100, 180) }}
+                  />
+                  <div className="flex items-center gap-[8px]">
+                    {[""].map((_, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[200px]"
+                    style={{ width: getRandomWidth(100, 180) }}
+                  />
+                  <div className="flex items-center gap-[8px]">
+                    {[""].map((_, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[200px]"
+                    style={{ width: getRandomWidth(100, 180) }}
+                  />
+                  <div className="flex items-center gap-[8px]">
+                    {[""].map((_, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <div
+                    className="h-[18px] bg-gray-300 rounded-[24px] max-w-[200px]"
+                    style={{ width: getRandomWidth(100, 180) }}
+                  />
+                  <div className="flex items-center gap-[8px]">
+                    {[""].map((_, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex justify-between md:justify-end">
+                  <div className="md:hidden w-[120px] h-[40px] bg-gray-300 rounded-full" />
+                  <div className="w-[170px] h-[40px] bg-gray-300 rounded-full" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-2">
+            <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] border border-[#EAECF0]">
+              <div
+                className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[164px] md:max-w-full mb-[24px] animate-pulse"
+              />
+              <div className="flex flex-col gap-4 animate-pulse">
+                <div
+                  className="h-[28px] bg-gray-300 rounded-[24px] w-[200px]"
+                />
+
+                <div
+                  className="h-[28px] bg-gray-300 rounded-[24px] w-[200px]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+
+  if (!user) {
+    return <>
+      <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
+        <span className="inline-flex h-5 w-5 items-center justify-center">
+          <MaterialIcon
+            iconName="progress_activity"
+            className="text-blue-600 animate-spin"
+          />
+        </span>
+        Please wait, we are loading the information...
+      </div>
+      <ClientProfileLoadingSkeleton />
+    </>
+  }
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 ">
@@ -587,8 +847,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => {}}
-                  // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => { }}
+                // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -596,8 +856,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => {}}
-                  // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => { }}
+                // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>
