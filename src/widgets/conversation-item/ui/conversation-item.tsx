@@ -280,9 +280,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
       smartRender(pair.content).then(setRendered);
     }, [pair.content]);
 
-    return (
-      <div className="richtext max-w-none">{rendered}</div>
-    );
+    return <div className="richtext max-w-none">{rendered}</div>;
   };
 
   return (

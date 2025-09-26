@@ -584,7 +584,7 @@ export const LibraryClientContent = ({
             <Button
               variant="blue2"
               size={isMobile ? "sm" : "icon"}
-              className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+              className="text-[12px] px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
             >
               {isMobile ? (
                 "Providers"
@@ -595,7 +595,7 @@ export const LibraryClientContent = ({
           </PopoverTrigger>
 
           <PopoverContent
-            className="w-[360px] p-0 rounded-[18px] border border-[#1C63DB] shadow-[0px_4px_12px_rgba(0,0,0,0.12)] bg-white"
+            className="w-fit md:w-[360px] p-0 rounded-[18px] border border-[#1C63DB] shadow-[0px_4px_12px_rgba(0,0,0,0.12)] bg-white"
             align="start"
           >
             <div className="p-3 border-b border-[#EAEAEA]">
@@ -735,7 +735,7 @@ export const LibraryClientContent = ({
         <Button
           variant="blue2"
           size={isMobile ? "sm" : "icon"}
-          className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+          className="text-[12px] px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
           disabled
         >
           {isMobile ? (

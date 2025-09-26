@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "shared/lib/hooks/use-toast";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -38,6 +38,12 @@ export const LoginForm = () => {
   };
 
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  useEffect(() => {
+    localStorage.clear();
+    localStorage.removeItem("persist:user");
+    localStorage.removeItem("persist:clientMood");
+  }, [loginSchema]);
 
   const getOnboardingStatusWithRetry = async (attempt = 1) => {
     try {
