@@ -332,19 +332,21 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     return (
       <div className="flex flex-col gap-2">
         {renderUploadFromLibrary()}
-        {viewingFolder && (
-          <div className="flex items-center gap-2 mb-2">
-            <button
-              onClick={handleReturnToRoot}
-              className="flex items-center text-sm text-blue-600 hover:underline"
-            >
-              <MaterialIcon iconName="arrow_back" />
-            </button>
-            <span className="font-bold text-gray-800">
-              {viewingFolder.name}
-            </span>
-          </div>
-        )}
+        {
+          viewingFolder && (
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                onClick={handleReturnToRoot}
+                className="flex items-center text-sm text-blue-600 hover:underline"
+              >
+                <MaterialIcon iconName="arrow_back" />
+              </button>
+              <span className="font-bold text-gray-800">
+                {viewingFolder.name}
+              </span>
+            </div>
+          )
+        }
         <div className="grid grid-cols-2 gap-2">
           {currentFolders.map((folder: any) => (
             <button
@@ -392,7 +394,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             </button>
           ))}
         </div>
-      </div>
+      </div >
     );
   };
 
@@ -426,7 +428,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <MaterialIcon iconName="attach_file" />
           {attachedFiles.length > 0 ||
-          (existingFiles && existingFiles?.length > 0)
+            (existingFiles && existingFiles?.length > 0)
             ? "Sources"
             : (title ?? "Attach files to folder")}
         </h4>

@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { SelectType, SignUp } from "./components";
 import { UserService, logout, setCredentials, setRoleID } from "entities/user";
+import { UserService, logout, setCredentials, setRoleID } from "entities/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
 import { ClientService } from "entities/client";
@@ -12,9 +13,9 @@ const isAuthRevoked = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   return (
     status === 403 ||
@@ -60,9 +61,9 @@ export const Register = () => {
       );
       const msg = String(
         err?.response?.data?.detail ??
-          err?.response?.data?.message ??
-          err?.message ??
-          ""
+        err?.response?.data?.message ??
+        err?.message ??
+        ""
       ).toLowerCase();
 
       return status === 409 || msg.includes("already exists");
@@ -82,6 +83,11 @@ export const Register = () => {
         setInviteSource("client");
         return;
       } catch (err) {
+        if (isAuthRevoked(err)) {
+          dispatch(logout());
+          navigate("/auth", { replace: true });
+          return;
+        }
         if (isAuthRevoked(err)) {
           dispatch(logout());
           navigate("/auth", { replace: true });
@@ -141,6 +147,11 @@ export const Register = () => {
           navigate("/auth", { replace: true });
           return;
         }
+        if (isAuthRevoked(err)) {
+          dispatch(logout());
+          navigate("/auth", { replace: true });
+          return;
+        }
         if (cancelled) return;
 
         if (isAlreadyRegistered(err)) {
@@ -191,6 +202,7 @@ export const Register = () => {
     };
 
     dispatch(setRoleID({ roleID: dataBE.roleID }));
+    dispatch(setRoleID({ roleID: dataBE.roleID }));
 
     try {
       const res = await UserService.registerUser(dataBE);
@@ -217,6 +229,11 @@ export const Register = () => {
         navigate("/verify-email");
       }
     } catch (error) {
+      if (isAuthRevoked(error)) {
+        dispatch(logout());
+        navigate("/auth", { replace: true });
+        return;
+      }
       if (isAuthRevoked(error)) {
         dispatch(logout());
         navigate("/auth", { replace: true });
