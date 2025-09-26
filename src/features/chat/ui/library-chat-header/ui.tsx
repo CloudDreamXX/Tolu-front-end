@@ -11,11 +11,14 @@ import {
 } from "widgets/library-small-chat/switch-config";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { HistoryPopup } from "../chat-actions";
+import SwitchDropdown from "widgets/library-small-chat/components/switch-dropdown/ui";
 
 interface ChatHeaderProps {
   displayChatTitle: string;
   isExistingChat: boolean;
   selectedSwitch: string;
+  switchOptions: SwitchValue[];
+  handleSwitchChange: (value: string) => void;
   isSwitch: (value: SwitchValue) => boolean;
   onNewSearch: () => void;
   onClose: () => void;
@@ -25,6 +28,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   displayChatTitle,
   isExistingChat,
   selectedSwitch,
+  switchOptions,
+  handleSwitchChange,
   isSwitch,
   onNewSearch,
   onClose,
@@ -89,9 +94,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         )}
       </div>
       <div className="relative flex-col items-center justify-center hidden gap-2 md:flex ">
-        <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center  w-fit">
-          {selectedSwitch}
-        </div>
+        <SwitchDropdown
+          options={switchOptions}
+          handleSwitchChange={handleSwitchChange}
+          selectedSwitch={selectedSwitch}
+        />
         {isSwitch(SWITCH_KEYS.DEF) && (
           <p className="text-[18px] text-[#1D1D1F] font-[600]">
             Get Personalized Answers

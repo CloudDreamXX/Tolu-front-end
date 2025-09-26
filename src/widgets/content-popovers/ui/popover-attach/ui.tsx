@@ -255,6 +255,72 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     </>
   );
 
+  const renderUploadFromLibrary = () => {
+    const allFiles = [
+      ...(filesLibrary?.root_files || []),
+      ...(filesLibrary?.root_folders?.flatMap((folder) => folder.files) || []),
+      ...(filesLibrary?.root_folders?.flatMap(
+        (folder) =>
+          folder.subfolders?.flatMap((subfolder) => subfolder.files) || []
+      ) || []),
+    ];
+
+    const filesToRender = allFiles.filter((file) =>
+      filesFromLibrary.includes(file.id)
+    );
+
+    const handleRemoveFileLibrary = (file: FileLibraryFile) => {
+      const newSelectedFiles = new Set(selectedFiles);
+
+      newSelectedFiles.delete(file);
+      setSelectedFiles(newSelectedFiles);
+
+      dispatch(
+        setFilesFromLibrary(Array.from(newSelectedFiles).map((f) => f.id))
+      );
+    };
+
+    return (
+      <>
+        {filesToRender.length > 0 && (
+          <div className="flex flex-col gap-2 mb-4">
+            {filesToRender.map((file, index) => (
+              <div
+                key={`${file.name}-${index}`}
+                className="flex flex-row items-center justify-between w-full px-3 py-2 bg-white border rounded-lg"
+              >
+                <div className="flex flex-row items-center flex-1 gap-2">
+                  <MaterialIcon iconName="docs" fill={1} />
+                  <div className="flex flex-col flex-1">
+                    <span className="text-sm font-medium text-gray-800 truncate">
+                      {file.name}
+                    </span>
+                    <span className="text-xs text-[#5F5F65]">
+                      {formatFileSize(file.size)}
+                    </span>
+                  </div>
+                </div>
+                {!isDocumentPage && (
+                  <button
+                    onClick={() => handleRemoveFileLibrary(file)}
+                    className="flex items-center justify-center p-1 rounded hover:bg-red-50"
+                  >
+                    <MaterialIcon
+                      iconName="delete"
+                      fill={1}
+                      size={16}
+                      className="text-red-500"
+                    />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </>
+    );
+  };
+
   const renderLibrary = () => {
     const currentFolders = viewingFolder
       ? (folderContents?.subfolders ?? [])
@@ -265,6 +331,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
 
     return (
       <div className="flex flex-col gap-2">
+        {renderUploadFromLibrary()}
         {viewingFolder && (
           <div className="flex items-center gap-2 mb-2">
             <button

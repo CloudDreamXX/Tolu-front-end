@@ -11,9 +11,37 @@ import {
 } from "shared/ui";
 import sanitizeHtml from "sanitize-html";
 
+const CustomLinkWrapper = (props: any) => (
+  <a
+    href={props.href}
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      color: "#1C63DB",
+      textDecoration: "none",
+      display: "inline-block",
+      maxWidth: "300px",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "wrap",
+    }}
+  >
+    {props.children}
+  </a>
+);
+
 export const smartRender = async (text: string) => {
   try {
-    const cutIndex = text.indexOf("Relevant content");
+    const relevantContentIndex = text.indexOf("Relevant content");
+    const referencesIndex = text.indexOf("### References");
+    const secondReferencesIndex = text.indexOf("References");
+
+    const cutIndex = Math.min(
+      relevantContentIndex !== -1 ? relevantContentIndex : text.length,
+      referencesIndex !== -1 ? referencesIndex : text.length,
+      secondReferencesIndex !== -1 ? secondReferencesIndex : text.length
+    );
+
     const trimmedText = cutIndex !== -1 ? text.slice(0, cutIndex) : text;
 
     const sanitizedText = sanitizeHtml(trimmedText, {
@@ -62,10 +90,17 @@ export const smartRender = async (text: string) => {
       allowVulnerableTags: true,
     });
 
-    const type = detectContentType(sanitizedText);
+    const urlRegex = /\((https?:\/\/[^\s]+)\)/g;
+
+    const formattedText = sanitizedText.replace(urlRegex, (_, url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #1C63DB; text-decoration: none; display: inline-block;
+  max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${url}</a>`;
+    });
+
+    const type = detectContentType(formattedText);
 
     if (type === "html") {
-      const customBulletText = sanitizedText.replace(
+      const customBulletText = formattedText.replace(
         /●/g,
         `<span><br/>●</span>`
       );
@@ -136,14 +171,7 @@ export const smartRender = async (text: string) => {
                   p: (props) => <p {...props} />,
                   ul: (props) => <ul {...props} />,
                   li: (props) => <li {...props} />,
-                  a: (props) => (
-                    <a
-                      {...props}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className=" text-wrap"
-                    />
-                  ),
+                  a: CustomLinkWrapper, // Use CustomLinkWrapper for all <a> tags
                 }}
               >
                 {part.content}
@@ -155,7 +183,7 @@ export const smartRender = async (text: string) => {
     }
 
     if (type === "markdown") {
-      const cleaned = cleanMarkdown(sanitizedText);
+      const cleaned = cleanMarkdown(formattedText);
 
       const htmlParts = extractHtmlFromMarkdown(cleaned);
 
@@ -184,14 +212,7 @@ export const smartRender = async (text: string) => {
                   p: (props) => <p {...props} />,
                   ul: (props) => <ul {...props} />,
                   li: (props) => <li {...props} />,
-                  a: (props) => (
-                    <a
-                      {...props}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className=" text-wrap"
-                    />
-                  ),
+                  a: CustomLinkWrapper, // Use CustomLinkWrapper for all <a> tags
                 }}
               >
                 {part.content}
@@ -207,7 +228,7 @@ export const smartRender = async (text: string) => {
         className=" bg-[#ECEFF4]"
         style={{ fontFamily: "Inter, sans-serif" }}
       >
-        {sanitizedText}
+        {formattedText}
       </div>
     );
   } catch (error) {

@@ -17,13 +17,10 @@ import {
 import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
 import { DailyJournal } from "widgets/dayli-journal";
 import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
-import { SwitchGroup } from "widgets/switch-group";
 
 interface LibraryChatInputProps {
-  switchOptions: string[];
   selectedSwitch: string;
   files: File[];
-  setSelectedSwitch: (option: string) => void;
   setFiles: (files: File[]) => void;
   placeholder?: string;
   onSend?: (
@@ -55,12 +52,9 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   onSend,
   disabled = false,
   className,
-  switchOptions,
   selectedSwitch,
-  setSelectedSwitch,
   setNewMessage,
   footer,
-  isLoading,
   message,
   setClientId,
   selectedText,
@@ -73,7 +67,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [referAFriendOpen, setReferAFriendOpen] = useState<boolean>(false);
-  const loading = useSelector((state: RootState) => state.client.loading);
   const location = useLocation();
   const isContentManager = location.pathname.includes("content-manager");
   const dispatch = useDispatch();
@@ -87,11 +80,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const handleSend = () => {
     if ((!message.trim() && files.length === 0) || disabled) return;
     onSend?.(message, files, null);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = Array.from(e.target.files || []);
-    setFiles(newFiles);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -149,22 +137,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           >
             <MaterialIcon iconName="close" size={20} />
           </button>
-        </div>
-      )}
-      {loading || isLoading ? (
-        <div className="flex items-center gap-[16px] mb-[27px]">
-          <div className="h-[22px] skeleton-gradient w-[110px] rounded-[24px]" />
-          <div className="h-[22px] skeleton-gradient w-[110px] rounded-[24px]" />
-          <div className="h-[22px] skeleton-gradient w-[110px] rounded-[24px]" />
-        </div>
-      ) : (
-        <div className="hidden md:block">
-          <SwitchGroup
-            options={switchOptions}
-            activeOption={selectedSwitch}
-            onChange={setSelectedSwitch}
-            classname="mb-4"
-          />
         </div>
       )}
       <div className={`relative mb-4 flex gap-[32px] md:block`}>
@@ -287,36 +259,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           </Button>
         </div>
       )}
-
-      <div className="md:hidden flex justify-between mt-[16px]">
-        <SwitchGroup
-          options={switchOptions}
-          activeOption={selectedSwitch}
-          onChange={setSelectedSwitch}
-          classname="mb-4"
-        />
-        <label className="relative flex items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800 w-[24px] h-[24px]">
-          <Button
-            variant="default"
-            className="relative text-[#1D1D1F] rounded-full w-[24px] h-[24px]"
-          >
-            <MaterialIcon iconName="add" />
-          </Button>
-          <input
-            type="file"
-            multiple
-            accept="image/*,.pdf"
-            onChange={handleFileChange}
-            className="absolute w-[24px] h-[24px] z-[9999] cursor-pointer opacity-0"
-            disabled={false}
-          />
-          {files.length > 0 && (
-            <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-2 -left-2 z-[10]">
-              {files.length > 99 ? "99+" : files.length}
-            </span>
-          )}
-        </label>
-      </div>
 
       {!isContentManager && (
         <div className="hidden mt-4 md:block">

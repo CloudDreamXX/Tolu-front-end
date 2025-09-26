@@ -45,6 +45,7 @@ import { MessageList } from "widgets/message-list";
 import { MessageLoadingSkeleton } from "./components/MessageLoadingSkeleton";
 import { extractVoiceText, generateCaseStory, subTitleSwitch } from "./helpers";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
+import SwitchDropdown from "./components/switch-dropdown/ui";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -752,9 +753,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       {isSwitch(SWITCH_KEYS.CASE) ? (
         <Card className="relative flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-4">
-            <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center ">
-              {selectedSwitch}
-            </div>
+            <SwitchDropdown
+              options={config.options}
+              handleSwitchChange={handleSwitchChange}
+              selectedSwitch={selectedSwitch}
+            />
             {chatState.length > 0 && (
               <button
                 className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
@@ -799,11 +802,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               className="w-full p-6 border-none rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={isSearching}
-              switchOptions={config.options}
               selectedSwitch={selectedSwitch}
-              setSelectedSwitch={(value) => {
-                handleSwitchChange(value);
-              }}
               deleteSelectedText={deleteSelectedText}
               message={message}
               footer={
@@ -883,9 +882,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         <Card className="relative flex flex-col w-full h-full border-none rounded-2xl">
           <CardHeader className="relative flex flex-col items-center gap-2">
             <div className="flex flex-col items-center gap-2">
-              <div className="p-1.5 bg-[#1C63DB] rounded-lg text-white font-[500] text-[18px] flex items-center justify-center ">
-                {selectedSwitch}
-              </div>
+              <SwitchDropdown
+                options={config.options}
+                handleSwitchChange={handleSwitchChange}
+                selectedSwitch={selectedSwitch}
+              />
               {subTitleSwitch(selectedSwitch as SwitchValue) && (
                 <p className=" text-[#1D1D1F] ">
                   {subTitleSwitch(selectedSwitch as SwitchValue)}
@@ -978,11 +979,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedText={selectedText}
               message={message}
               deleteSelectedText={deleteSelectedText}
-              switchOptions={config.options}
               selectedSwitch={selectedSwitch}
-              setSelectedSwitch={(value) => {
-                handleSwitchChange(value);
-              }}
               setNewMessage={setMessage}
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) ? (

@@ -276,10 +276,10 @@ export const ClientProfile = () => {
   const initials = user?.name
     ? user.name.split(" ").length > 1
       ? user.name
-        .split(" ")
-        .map((word) => word[0].toUpperCase())
-        .slice(0, 2)
-        .join("")
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
       : user.name.slice(0, 2).toUpperCase()
     : "UN";
 
@@ -316,12 +316,8 @@ export const ClientProfile = () => {
           <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
             <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] border border-[#EAECF0]">
               <div className="flex justify-between items-center mb-[24px] animate-pulse">
-                <div
-                  className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[164px] md:max-w-full"
-                />
-                <div
-                  className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[93px] md:max-w-full"
-                />
+                <div className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[164px] md:max-w-full" />
+                <div className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[93px] md:max-w-full" />
               </div>
               <div className="md:hidden flex items-center gap-6 mb-[24px]">
                 <div className="flex items-center gap-6 ">
@@ -508,17 +504,11 @@ export const ClientProfile = () => {
 
           <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-2">
             <div className="bg-white rounded-[16px] p-[16px] md:p-[24px] border border-[#EAECF0]">
-              <div
-                className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[164px] md:max-w-full mb-[24px] animate-pulse"
-              />
+              <div className="h-[20px] md:h-[24px] h:text-[28px] bg-gray-300 rounded-[24px] w-[164px] md:max-w-full mb-[24px] animate-pulse" />
               <div className="flex flex-col gap-4 animate-pulse">
-                <div
-                  className="h-[28px] bg-gray-300 rounded-[24px] w-[200px]"
-                />
+                <div className="h-[28px] bg-gray-300 rounded-[24px] w-[200px]" />
 
-                <div
-                  className="h-[28px] bg-gray-300 rounded-[24px] w-[200px]"
-                />
+                <div className="h-[28px] bg-gray-300 rounded-[24px] w-[200px]" />
               </div>
             </div>
           </div>
@@ -527,20 +517,21 @@ export const ClientProfile = () => {
     );
   };
 
-
   if (!user) {
-    return <>
-      <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-        <span className="inline-flex h-5 w-5 items-center justify-center">
-          <MaterialIcon
-            iconName="progress_activity"
-            className="text-blue-600 animate-spin"
-          />
-        </span>
-        Please wait, we are loading the information...
-      </div>
-      <ClientProfileLoadingSkeleton />
-    </>
+    return (
+      <>
+        <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
+          <span className="inline-flex h-5 w-5 items-center justify-center">
+            <MaterialIcon
+              iconName="progress_activity"
+              className="text-blue-600 animate-spin"
+            />
+          </span>
+          Please wait, we are loading the information...
+        </div>
+        <ClientProfileLoadingSkeleton />
+      </>
+    );
   }
 
   return (
@@ -847,8 +838,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -856,8 +847,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>

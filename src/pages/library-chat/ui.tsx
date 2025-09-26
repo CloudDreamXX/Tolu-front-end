@@ -33,6 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
 import { Card, CardContent } from "shared/ui";
+import SwitchDropdown from "widgets/library-small-chat/components/switch-dropdown/ui";
 import {
   SWITCH_CONFIG,
   SWITCH_KEYS,
@@ -871,7 +872,24 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           <ChatLoading />
         ) : (
           <div className="flex flex-col flex-1 w-full min-h-0 overflow-clip">
+            <div className="md:hidden">
+              <SwitchDropdown
+                options={config.options}
+                handleSwitchChange={(value) => {
+                  handleNewChatOpen();
+                  setSelectedSwitch(value);
+                  dispatch(setActiveChat(value));
+                }}
+                selectedSwitch={selectedSwitch}
+              />
+            </div>
             <ChatHeader
+              switchOptions={config.options}
+              handleSwitchChange={(value) => {
+                handleNewChatOpen();
+                setSelectedSwitch(value);
+                dispatch(setActiveChat(value));
+              }}
               displayChatTitle={displayChatTitle}
               isExistingChat={!!isExistingChat}
               isSwitch={isSwitch}
@@ -989,13 +1007,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               className={`mt-4 xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
               onSend={handleNewMessage}
               disabled={isSearching}
-              switchOptions={config.options}
               selectedSwitch={selectedSwitch}
-              setSelectedSwitch={(value) => {
-                handleNewChatOpen();
-                setSelectedSwitch(value);
-                dispatch(setActiveChat(value));
-              }}
               message={textContent}
               setNewMessage={setTextContent}
               setClientId={setClientId}
