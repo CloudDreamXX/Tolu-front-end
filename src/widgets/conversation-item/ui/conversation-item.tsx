@@ -1,11 +1,5 @@
 import { ISessionResult } from "entities/coach";
-import DOMPurify from "dompurify";
-import parse, {
-  domToReact,
-  Element,
-  HTMLReactParserOptions,
-  DOMNode,
-} from "html-react-parser";
+import parse from "html-react-parser";
 import React, { useEffect, useState } from "react";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
