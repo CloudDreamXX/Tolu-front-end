@@ -238,7 +238,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
             {sidebarOpen && (
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="p-2 transition-colors duration-200"
+                className="w-[40px] h-[40px] p-2 transition-colors duration-200"
               >
                 <MaterialIcon
                   iconName="more_vert"

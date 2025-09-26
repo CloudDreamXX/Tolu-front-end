@@ -512,7 +512,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
         <Button
           variant="brightblue"
           size={isMobile ? "sm" : "icon"}
-          className="px-[10px] rounded-full md:h-14 md:w-14"
+          className="text-[12px] px-[10px] rounded-full md:h-14 md:w-14"
         >
           {isMobile ? (
             "Health profile"

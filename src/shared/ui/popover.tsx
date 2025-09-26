@@ -19,7 +19,7 @@ const PopoverContent = React.forwardRef<
     {
       className,
       align = "center",
-      side = "top", // default side: popover appears above trigger
+      side = "top",
       sideOffset = 4,
       children,
       container,

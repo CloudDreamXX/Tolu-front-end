@@ -6,13 +6,14 @@ import parse, {
   HTMLReactParserOptions,
   DOMNode,
 } from "html-react-parser";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
 import { Editor } from "primereact/editor";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { smartRender } from "features/chat/ui/message-bubble/lib";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -280,47 +281,14 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     </div>
   );
 
-  const HtmlContent = (html: string) => {
-    const sanitizedHtml = DOMPurify.sanitize(html, {
-      ADD_ATTR: ["style", "contenteditable", "data-list"],
-    });
-
-    const options: HTMLReactParserOptions = {
-      replace: (domNode: DOMNode) => {
-        if ("attribs" in domNode && (domNode as Element).attribs) {
-          const el = domNode as Element;
-          const { name, attribs, children } = el;
-
-          const dataAttrs: Record<string, string> = {};
-          for (const [key, value] of Object.entries(attribs)) {
-            if (key.startsWith("data-")) {
-              dataAttrs[key] = value;
-            }
-          }
-
-          if (name === "li") {
-            return (
-              <li {...dataAttrs}>
-                {domToReact(children as DOMNode[], options)}
-              </li>
-            );
-          }
-        }
-      },
-    };
-
-    return <div className="html-content">{parse(sanitizedHtml, options)}</div>;
-  };
-
   const renderContent = () => {
-    if (isHTML) {
-      return (
-        <div className="html-content max-w-none">
-          {HtmlContent(pair.content)}
-        </div>
-      );
-    }
-    return <div className="whitespace-pre-wrap">{pair.content}</div>;
+    const [rendered, setRendered] = useState<JSX.Element | null>(null);
+
+    useEffect(() => {
+      smartRender(pair.content).then(setRendered);
+    }, [pair.content]);
+
+    return <div className="richtext max-w-none">{rendered}</div>;
   };
 
   return (

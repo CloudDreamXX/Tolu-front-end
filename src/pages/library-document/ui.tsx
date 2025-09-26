@@ -1,5 +1,5 @@
 import { ChatSocketService } from "entities/chat";
-import { ClientService } from "entities/client";
+import { ClientService, CoachListItem } from "entities/client";
 import { clearAllChatHistory, setFolders } from "entities/client/lib";
 import {
   ContentService,
@@ -17,16 +17,35 @@ import { RootState } from "entities/store";
 import { ChatActions, ChatLoading } from "features/chat";
 import parse from "html-react-parser";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { toast, usePageWidth } from "shared/lib";
-import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
+import { phoneMask, toast, usePageWidth } from "shared/lib";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Dialog,
+  DialogContent,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  ScrollArea,
+} from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { DocumentLoadingSkeleton } from "./lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import SharePopup from "widgets/share-popup/ui";
+
+const getHeadshotFilename = (url?: string | null): string | null => {
+  if (!url) return null;
+  const clean = url.trim().split(/[?#]/)[0];
+  const parts = clean.split("/").filter(Boolean);
+  const last = parts[parts.length - 1] || "";
+  return last ? decodeURIComponent(last) : null;
+};
 
 export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -58,6 +77,20 @@ export const LibraryDocument = () => {
   const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
   const { isMobile } = usePageWidth();
   const [sharePopup, setSharePopup] = useState<boolean>(false);
+  const [providersOpen, setProvidersOpen] = useState(false);
+  const [coaches, setCoaches] = useState<CoachListItem[]>([]);
+  const [coachesLoading, setCoachesLoading] = useState(false);
+
+  const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
+  const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  const [coachProfiles, setCoachProfiles] = useState<Record<string, any>>({});
+
+  const [coachDialogOpen, setCoachDialogOpen] = useState(false);
+
+  const selectedCoach = useMemo(
+    () => coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
+    [coaches, selectedCoachId]
+  );
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -216,6 +249,90 @@ export const LibraryDocument = () => {
     };
   }, []);
 
+  const fetchCoaches = useCallback(async () => {
+    if (coaches.length) return;
+    setCoachesLoading(true);
+    try {
+      const data = await ClientService.getCoaches();
+      setCoaches(data.coaches);
+    } catch (e) {
+      console.error("Failed to load coaches:", e);
+    } finally {
+      setCoachesLoading(false);
+    }
+  }, [coaches.length]);
+
+  const fetchPhotoUrl = useCallback(
+    async (coachId: string, filename?: string | null) => {
+      if (!filename) return null;
+      if (photoUrls[coachId]) return photoUrls[coachId];
+      try {
+        const blob = await ClientService.downloadCoachPhoto(coachId, filename);
+        const url = URL.createObjectURL(blob);
+        setPhotoUrls((prev) => ({ ...prev, [coachId]: url }));
+        return url;
+      } catch (e) {
+        console.warn("Photo download failed:", e);
+        return null;
+      }
+    },
+    [photoUrls]
+  );
+
+  const handleOpenCoach = useCallback(
+    async (coach: CoachListItem) => {
+      setSelectedCoachId(coach.coach_id);
+      setCoachDialogOpen(true);
+
+      try {
+        if (!coachProfiles[coach.coach_id]) {
+          const profile = await ClientService.getCoachProfile(coach.coach_id);
+          setCoachProfiles((p) => ({ ...p, [coach.coach_id]: profile }));
+          const fn = getHeadshotFilename(
+            profile?.detailed_profile?.headshot_url ??
+              coach.profile?.headshot_url
+          );
+          if (fn) void fetchPhotoUrl(coach.coach_id, fn);
+        } else {
+          const fn = getHeadshotFilename(
+            coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
+              coach.profile?.headshot_url
+          );
+          if (fn) void fetchPhotoUrl(coach.coach_id, fn);
+        }
+      } catch (e) {
+        console.error("Failed to load coach profile:", e);
+      }
+    },
+    [coachProfiles, fetchPhotoUrl]
+  );
+
+  const onProvidersOpenChange = useCallback(
+    (open: boolean) => {
+      setProvidersOpen(open);
+      if (open) void fetchCoaches();
+    },
+    [fetchCoaches]
+  );
+
+  useEffect(() => {
+    return () => {
+      Object.values(photoUrls).forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [photoUrls]);
+
+  useEffect(() => {
+    if (!providersOpen || !coaches.length) return;
+    coaches.forEach((c) => {
+      if (c.profile?.headshot_url && !photoUrls[c.coach_id]) {
+        void fetchPhotoUrl(
+          c.coach_id,
+          getHeadshotFilename(c.profile?.headshot_url)
+        );
+      }
+    });
+  }, [providersOpen, coaches, photoUrls, fetchPhotoUrl]);
+
   const onStatusChange = async (status: string) => {
     if (documentId) {
       const newStatus: ContentStatus = {
@@ -242,17 +359,163 @@ export const LibraryDocument = () => {
     <div className={`flex flex-col w-full h-full gap-6 p-6`}>
       <div className="flex items-center gap-2 mb-4 md:gap-4">
         <HealthProfileForm healthHistory={healthHistory} />
+        <Popover open={providersOpen} onOpenChange={onProvidersOpenChange}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="blue2"
+              size={isMobile ? "sm" : "icon"}
+              className="text-[12px] px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+            >
+              {isMobile ? (
+                "Providers"
+              ) : (
+                <MaterialIcon iconName="groups" fill={1} />
+              )}
+            </Button>
+          </PopoverTrigger>
+
+          <PopoverContent
+            className="w-fit md:w-[360px] p-0 rounded-[18px] border border-[#1C63DB] shadow-[0px_4px_12px_rgba(0,0,0,0.12)] bg-white"
+            align="start"
+          >
+            <div className="p-3 border-b border-[#EAEAEA]">
+              <div className="text-[14px] font-semibold text-[#1D1D1F]">
+                Your Providers
+              </div>
+              <div className="text-[12px] text-muted-foreground">
+                Coaches linked to your account
+              </div>
+            </div>
+
+            <ScrollArea className="max-h-[360px]">
+              {coachesLoading ? (
+                <div className="p-4 text-sm text-muted-foreground">
+                  Loading…
+                </div>
+              ) : coaches.length ? (
+                <ul className="p-2">
+                  {coaches.map((c) => {
+                    const name = c.basic_info?.name;
+                    const photo = photoUrls[c.coach_id];
+
+                    return (
+                      <li
+                        key={c.coach_id}
+                        className="p-2 rounded-[12px] hover:bg-[#F5F5F5] transition-colors"
+                      >
+                        <button
+                          onClick={() => handleOpenCoach(c)}
+                          className="w-full text-left flex items-center gap-3"
+                        >
+                          <div className="h-10 w-10 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
+                            {photo ? (
+                              <img
+                                src={photo}
+                                alt={name}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              name?.slice(0, 2).toUpperCase()
+                            )}
+                          </div>
+
+                          <div className="truncate font-medium text-[14px]">
+                            {name}
+                          </div>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="p-4 text-sm text-muted-foreground">
+                  No providers yet.
+                </div>
+              )}
+            </ScrollArea>
+          </PopoverContent>
+        </Popover>
+
+        <Dialog open={coachDialogOpen} onOpenChange={setCoachDialogOpen}>
+          <DialogContent className="max-w-[560px] p-0 rounded-xl overflow-hidden">
+            <div className="p-4 flex items-center gap-3 border-b">
+              <div className="h-12 w-12 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
+                {selectedCoachId && photoUrls[selectedCoachId] ? (
+                  <img
+                    src={photoUrls[selectedCoachId]}
+                    alt={selectedCoach?.basic_info?.name || "Coach"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  (selectedCoach?.basic_info?.name || "C")
+                    .slice(0, 2)
+                    .toUpperCase()
+                )}
+              </div>
+
+              <div className="min-w-0">
+                <div className="text-base font-semibold truncate">
+                  {coachProfiles[selectedCoachId!]?.basic_info?.name ||
+                    selectedCoach?.basic_info?.name ||
+                    "Coach"}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {coachProfiles[selectedCoachId!]?.basic_info?.role_name ||
+                    "Practitioner"}
+                  {coachProfiles[selectedCoachId!]?.relationship_details
+                    ?.is_primary_coach === "yes"
+                    ? " • Primary coach"
+                    : ""}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 space-y-3 text-sm">
+              <p className="leading-relaxed">
+                {coachProfiles[selectedCoachId!]?.detailed_profile?.bio ||
+                  selectedCoach?.profile?.bio ||
+                  "No bio provided."}
+              </p>
+
+              <div className="grid grid-cols-2 gap-y-1 gap-x-3">
+                <span className="text-muted-foreground">Email:</span>
+                {coachProfiles[selectedCoachId!]?.basic_info?.email || "—"}
+
+                <span className="text-muted-foreground">Phone:</span>
+                {(coachProfiles[selectedCoachId!]?.basic_info?.phone &&
+                  phoneMask(
+                    coachProfiles[selectedCoachId!]?.basic_info?.phone
+                  )) ||
+                  "—"}
+
+                <span className="text-muted-foreground">Timezone:</span>
+                {coachProfiles[selectedCoachId!]?.detailed_profile?.timezone ||
+                  "—"}
+
+                <span className="text-muted-foreground">Languages:</span>
+                {(
+                  coachProfiles[selectedCoachId!]?.detailed_profile
+                    ?.languages || []
+                ).join(", ") || "—"}
+
+                <span className="text-muted-foreground">Experience:</span>
+                {coachProfiles[selectedCoachId!]?.detailed_profile
+                  ?.years_experience ?? "—"}
+
+                <span className="text-muted-foreground">Working duration:</span>
+                {coachProfiles[selectedCoachId!]?.relationship_details
+                  ?.working_duration || "—"}
+              </div>
+            </div>
+
+            <Button onClick={() => setCoachDialogOpen(false)}>Close</Button>
+          </DialogContent>
+        </Dialog>
+
         <Button
           variant="blue2"
           size={isMobile ? "sm" : "icon"}
-          className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
-        >
-          {isMobile ? "Providers" : <MaterialIcon iconName="groups" fill={1} />}
-        </Button>
-        <Button
-          variant="blue2"
-          size={isMobile ? "sm" : "icon"}
-          className="px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+          className="text-[12px] px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
           disabled
         >
           {isMobile ? (
