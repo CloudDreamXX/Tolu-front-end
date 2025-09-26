@@ -1,7 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { SelectType, SignUp } from "./components";
 import { UserService, logout, setCredentials, setRoleID } from "entities/user";
-import { UserService, logout, setCredentials, setRoleID } from "entities/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
 import { ClientService } from "entities/client";
