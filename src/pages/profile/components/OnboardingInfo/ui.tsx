@@ -2,12 +2,11 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
 import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import { Input, Button } from "shared/ui";
+import { Input, Button, Slider } from "shared/ui";
 import { UserService } from "entities/user";
 
 type FormState = RootState["clientOnboarding"];
 type FieldKey = keyof FormState;
-type AllowedValue = string | number | string[] | undefined;
 
 export const OnboardingInfo = ({
   embedded = false,
@@ -18,42 +17,50 @@ export const OnboardingInfo = ({
   const client = useSelector((s: RootState) => s.clientOnboarding);
   const token = useSelector((s: RootState) => s.user.token);
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
+  const [isEditingSymptoms, setIsEditingSymptoms] = useState(false);
+
   const [formState, setFormState] = useState<FormState>({ ...client });
-
-  useEffect(() => {
-    if (!isEditing) setFormState({ ...client });
-  }, [client, isEditing]);
-
-  const LIST_FIELDS: ReadonlyArray<FieldKey> = [
-    "important_values",
-    "support_network",
-    "language",
-  ] as const;
-  const LIST_FIELD_SET = new Set<FieldKey>(LIST_FIELDS as FieldKey[]);
-
-  const personalFields: { label: string; key: FieldKey }[] = [
-    { label: "Age", key: "age" },
-    { label: "Menopause Status", key: "menopause_status" },
-    { label: "Language", key: "language" },
-  ];
-
-  const insightsFields: { label: string; key: FieldKey }[] = [
-    { label: "My main goal", key: "main_transition_goal" },
-    { label: "Most important values", key: "important_values" },
-    { label: "What’s been getting in your way so far?", key: "obstacles" },
-    { label: "My support", key: "support_network" },
-    { label: "Readiness to life changes", key: "readiness_for_change" },
-  ];
-
-  const allKeys = useMemo(
-    () =>
-      [...personalFields, ...insightsFields].map((f) => f.key) as FieldKey[],
-    []
+  const [symptomsState, setSymptomsState] = useState<Record<string, number>>(
+    client.symptoms_severity || {}
   );
 
+  useEffect(() => {
+    if (!isEditingPersonal) setFormState({ ...client });
+  }, [client]);
+
+  useEffect(() => {
+    if (!isEditingSymptoms) setSymptomsState(client.symptoms_severity || {});
+  }, [client]);
+
+  const personalFields: { label: string; key: FieldKey }[] = [
+    { label: "Birth Date", key: "date_of_birth" },
+    { label: "Cycle phase in Menopause Transition", key: "menopause_status" },
+    { label: "Other conditions", key: "health_conditions" },
+    { label: "Daily stress levels", key: "stress_levels" },
+    { label: "Weekly to-go meal choice", key: "weekly_meal_choice" },
+    { label: "Trusted person to rely on", key: "support_network" },
+    { label: "Physical activity during the week", key: "physical_activity" },
+    { label: "Sleep quality", key: "sleep_quality" },
+    { label: "Daily hydration efforts", key: "hydration_levels" },
+    { label: "Hoping to achieve with Tolu AI", key: "main_transition_goal" },
+  ];
+
+  const symptoms = client.symptoms_severity || {};
+  const severityLabels: Record<number, string> = {
+    1: "Not at all",
+    2: "Mild",
+    3: "Moderate",
+    4: "Extreme",
+  };
+
+  const allKeys = useMemo(() => {
+    const symptomKeys = Object.keys(symptoms) as FieldKey[];
+    return [...personalFields.map((f) => f.key), ...symptomKeys];
+  }, [personalFields, symptoms]);
+
   const percentage = useMemo(() => {
-    const src = isEditing ? formState : client;
+    const src = isEditingPersonal ? formState : client;
 
     const isFilled = (v: unknown): boolean => {
       if (Array.isArray(v)) return v.filter((x) => String(x).trim()).length > 0;
@@ -63,12 +70,25 @@ export const OnboardingInfo = ({
       return v != null && String(v).trim().length > 0;
     };
 
-    const filled = allKeys.reduce(
-      (acc, key) => acc + (isFilled(src[key]) ? 1 : 0),
-      0
-    );
+    const filled = allKeys.reduce((acc, key) => {
+      const value =
+        key in (client.symptoms_severity || {})
+          ? isEditingSymptoms
+            ? symptomsState[key as string]
+            : client.symptoms_severity?.[key as string]
+          : src[key];
+      return acc + (isFilled(value) ? 1 : 0);
+    }, 0);
+
     return allKeys.length ? Math.round((filled / allKeys.length) * 100) : 0;
-  }, [isEditing, formState, client, allKeys]);
+  }, [
+    isEditingPersonal,
+    isEditingSymptoms,
+    formState,
+    client,
+    symptomsState,
+    allKeys,
+  ]);
 
   const toInputString = (v: unknown): string => {
     if (v == null) return "";
@@ -78,56 +98,71 @@ export const OnboardingInfo = ({
   };
 
   const normalizeValue = (
-    key: FieldKey,
     value: unknown,
     original: unknown
-  ): AllowedValue => {
-    if (Array.isArray(original) || LIST_FIELD_SET.has(key)) {
-      if (Array.isArray(value))
-        return value
-          .map(String)
-          .map((s) => s.trim())
-          .filter(Boolean);
-      if (typeof value === "string")
+  ): string | string[] | Record<string, number> | undefined => {
+    if (Array.isArray(original)) {
+      if (Array.isArray(value)) {
+        return value.map((v) => String(v).trim()).filter(Boolean);
+      }
+      if (typeof value === "string") {
         return value
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean);
+      }
       return [];
     }
+
     if (typeof original === "number") {
-      if (typeof value === "number") return value;
-      if (typeof value === "string") {
-        const n = Number(value);
-        return Number.isFinite(n) ? n : undefined;
-      }
+      if (typeof value === "number") return String(value);
+      if (typeof value === "string") return value;
       return undefined;
     }
+
     if (typeof value === "string") return value;
     if (value == null) return undefined;
+
     return String(value);
   };
 
   const handleSave = async () => {
-    const entries = Object.entries(formState) as [FieldKey, unknown][];
     const nextClient: FormState = { ...client };
 
     batch(() => {
-      for (const [key, value] of entries) {
-        const prepared: AllowedValue = normalizeValue(key, value, client[key]);
-        nextClient[key] = prepared as any;
-        dispatch(setFormField({ field: key, value: prepared }));
+      // Save personal fields
+      for (const [key, value] of Object.entries(formState)) {
+        nextClient[key as FieldKey] = normalizeValue(
+          value,
+          client[key as FieldKey]
+        ) as any;
+        dispatch(
+          setFormField({
+            field: key as FieldKey,
+            value: nextClient[key as FieldKey],
+          })
+        );
       }
+
+      // Save symptoms
+      nextClient.symptoms_severity = { ...symptomsState };
+      dispatch(
+        setFormField({ field: "symptoms_severity", value: symptomsState })
+      );
     });
 
     await UserService.onboardClient(nextClient, token);
-    setIsEditing(false);
+
+    setIsEditingPersonal(false);
+    setIsEditingSymptoms(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const key = name as FieldKey;
-    setFormState((prev) => ({ ...prev, [key]: value as any }));
+    setFormState((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const FieldView = ({
@@ -137,24 +172,20 @@ export const OnboardingInfo = ({
     label: string;
     fieldKey: FieldKey;
   }) => {
-    const source = isEditing ? formState : client;
-    const value = source[fieldKey];
+    const value = isEditingPersonal ? formState[fieldKey] : client[fieldKey];
+
     return (
       <div className="flex flex-col gap-1">
-        <p className="text-[#5F5F65] text-[12px] md:text-[18px] font-[500]">
-          {label}
-        </p>
-        {isEditing ? (
+        <p className="text-[#5F5F65] text-[14px] font-[500]">{label}</p>
+        {isEditingPersonal ? (
           <Input
             name={String(fieldKey)}
-            value={
-              Array.isArray(value) ? value.join(", ") : toInputString(value)
-            }
+            value={toInputString(value)}
             onChange={handleChange}
             className="text-[16px] font-semibold"
           />
         ) : (
-          <h3 className="text-[#1D1D1F] text-[14px] md:text-[20px] font-[500]">
+          <h3 className="text-[#1D1D1F] text-[16px] font-[500]">
             {Array.isArray(value)
               ? value.join(", ")
               : toInputString(value) || "-"}
@@ -166,6 +197,7 @@ export const OnboardingInfo = ({
 
   const Body = (
     <>
+      {/* Progress bar */}
       <div
         aria-label="Intake completion"
         role="progressbar"
@@ -189,16 +221,17 @@ export const OnboardingInfo = ({
         </span>
       </div>
 
+      {/* Lifestyle skillset */}
       <div className="flex items-center justify-between mb-3 mt-2">
         <h5 className="text-[16px] md:text-[18px] font-bold text-[#1D1D1F]">
-          Personal info
+          Lifestyle skillset
         </h5>
         {embedded &&
-          (!isEditing ? (
+          (!isEditingPersonal ? (
             <Button
               variant="blue2"
               className="px-6 text-blue-700"
-              onClick={() => setIsEditing(true)}
+              onClick={() => setIsEditingPersonal(true)}
             >
               Edit
             </Button>
@@ -212,7 +245,7 @@ export const OnboardingInfo = ({
                 className="px-6 text-blue-700"
                 onClick={() => {
                   setFormState({ ...client });
-                  setIsEditing(false);
+                  setIsEditingPersonal(false);
                 }}
               >
                 Cancel
@@ -227,20 +260,65 @@ export const OnboardingInfo = ({
         ))}
       </div>
 
+      {/* Symptoms */}
       <div className="flex items-center justify-between mb-3">
         <h5 className="text-[16px] md:text-[18px] font-bold text-[#1D1D1F]">
-          Your Health Drivers
+          Symptoms
         </h5>
+        {embedded &&
+          (!isEditingSymptoms ? (
+            <Button
+              variant="blue2"
+              className="px-6 text-blue-700"
+              onClick={() => setIsEditingSymptoms(true)}
+            >
+              Edit
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button variant="brightblue" onClick={handleSave}>
+                Save
+              </Button>
+              <Button
+                variant="blue2"
+                className="px-6 text-blue-700"
+                onClick={() => {
+                  setSymptomsState(client.symptoms_severity || {});
+                  setIsEditingSymptoms(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          ))}
       </div>
-      <div className="grid grid-cols-1 gap-y-4 md:gap-y-6">
-        {insightsFields.map(({ label, key }) => (
-          <FieldView key={String(key)} label={label} fieldKey={key} />
+
+      <div className="grid grid-cols-2 gap-x-4 gap-y-4 md:gap-x-6 md:gap-y-6">
+        {Object.entries(symptomsState).map(([name, value]) => (
+          <div key={name} className="flex flex-col gap-1">
+            <p className="text-[#5F5F65] text-[14px] font-[500]">{name}</p>
+            {isEditingSymptoms ? (
+              <Slider
+                min={1}
+                max={4}
+                step={1}
+                value={[value || 1]}
+                onValueChange={(val) =>
+                  setSymptomsState((prev) => ({ ...prev, [name]: val[0] }))
+                }
+                colors={["#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB"]}
+              />
+            ) : (
+              <h3 className="text-[#1D1D1F] text-[16px] font-[500]">
+                {severityLabels[value as number] || "-"}
+              </h3>
+            )}
+          </div>
         ))}
       </div>
     </>
   );
 
   if (embedded) return Body;
-
   return <div className="bg-white rounded-[16px] p-4">{Body}</div>;
 };

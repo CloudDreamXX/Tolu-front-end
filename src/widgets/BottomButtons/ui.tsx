@@ -6,12 +6,14 @@ interface BottomButtonsProps {
   handleNext: () => void;
   skipButton: () => void;
   isButtonActive?: () => boolean;
+  handleBack?: () => void;
 }
 
 export const BottomButtons: React.FC<BottomButtonsProps> = ({
   handleNext,
   skipButton,
   isButtonActive,
+  handleBack,
 }) => {
   const nav = useNavigate();
   return (
@@ -25,7 +27,7 @@ export const BottomButtons: React.FC<BottomButtonsProps> = ({
 
       <div className="flex w-full gap-4 md:w-auto">
         <button
-          onClick={() => nav(-1)}
+          onClick={handleBack ? handleBack : () => nav(-1)}
           className="p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#DDEBF6] text-[#1C63DB]"
         >
           Back

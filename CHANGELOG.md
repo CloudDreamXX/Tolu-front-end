@@ -1,5 +1,7 @@
 ## [1.0.1] - 2025-09-29
+
 ### Fixes & Minor Changes
+
 - Fix multiselect scroll down to see all options.
 - Change bot selectors to dropdown on the top.
 - Fix create group chat to include participants.
@@ -14,4 +16,3 @@
 - Fix research to correctly show links as blocks.
 - Change meta description.
 - Fix created document view.
-

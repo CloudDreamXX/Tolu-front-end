@@ -86,9 +86,8 @@ export const ContentManagerProfile = () => {
         : u.profile.basic_info.headshot;
 
       if (headshotFilename) {
-        const headshotBlob = await UserService.downloadProfilePhoto(
-          headshotFilename
-        );
+        const headshotBlob =
+          await UserService.downloadProfilePhoto(headshotFilename);
         const headshot = URL.createObjectURL(headshotBlob);
         setPhotoUrl(headshot);
       }
@@ -131,10 +130,10 @@ export const ContentManagerProfile = () => {
   const initials = user?.profile.basic_info.name
     ? user.profile.basic_info.name.split(" ").length > 1
       ? user.profile.basic_info.name
-        .split(" ")
-        .map((word) => word[0].toUpperCase())
-        .slice(0, 2)
-        .join("")
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
       : user.profile.basic_info.name.slice(0, 2).toUpperCase()
     : "UN";
 

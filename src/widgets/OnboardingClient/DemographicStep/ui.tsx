@@ -1,24 +1,21 @@
-import { differenceInYears, format, isAfter, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { cn } from "shared/lib";
-import {
-  Button,
-  Calendar,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  RadioGroup,
-  RadioGroupItem,
-  TooltipWrapper,
-} from "shared/ui";
-import { OnboardingClientLayout } from "../Layout";
-import { CYCLE_HELTH, MAP_CYCLE_HEALTH_TO_TOOLTIP } from "./index";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
+import { SelectField } from "widgets/CRMSelectField";
+import { OnboardingClientLayout } from "../Layout";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { cn } from "shared/lib";
+import { Button, Calendar } from "shared/ui";
+import { MultiSelectField } from "widgets/MultiSelectField";
 
 export const DemographicStep = () => {
   const nav = useNavigate();
@@ -30,10 +27,12 @@ export const DemographicStep = () => {
 
   const dateOfBirth = clientOnboarding.date_of_birth;
   const menopauseStatus = clientOnboarding.menopause_status;
+  const healthConditions = clientOnboarding.health_conditions || [];
+  const supportNetwork = clientOnboarding.support_network || [];
 
   const initialDOB = dateOfBirth ? parseISO(dateOfBirth) : null;
-
   const [localDate, setLocalDate] = useState<Date | null>(initialDOB);
+
   const [selectedYear, setSelectedYear] = useState<number>(
     initialDOB ? initialDOB.getFullYear() : new Date().getFullYear()
   );
@@ -51,51 +50,25 @@ export const DemographicStep = () => {
     setLocalDate(d);
     setSelectedYear(d.getFullYear());
     setDisplayMonth(new Date(d.getFullYear(), d.getMonth()));
-
-    dispatch(setFormField({ field: "age", value: computeAge(d) }));
   }, [dateOfBirth, dispatch]);
 
-  const computeAge = (
-    dob: string | Date | null | undefined
-  ): number | undefined => {
-    if (!dob) return undefined;
-    const d = typeof dob === "string" ? parseISO(dob) : dob;
-    if (Number.isNaN(d.getTime())) return undefined;
-
-    const today = new Date();
-    if (isAfter(d, today)) return undefined;
-
-    const age = differenceInYears(today, d);
-    return age >= 0 && age <= 120 ? age : undefined;
-  };
-
-  const computedAge = computeAge(dateOfBirth);
+  useEffect(() => {
+    if (!dateOfBirth) return;
+    const d = parseISO(dateOfBirth);
+    if (Number.isNaN(d.getTime())) return;
+    setLocalDate(d);
+    dispatch(
+      setFormField({
+        field: "date_of_birth",
+        value: format(d, "yyyy-MM-dd"),
+      })
+    );
+  }, [dateOfBirth, dispatch]);
 
   const handleNext = async () => {
-    const updated = {
-      ...clientOnboarding,
-      date_of_birth: dateOfBirth,
-      age: computedAge,
-      menopause_status: menopauseStatus,
-    };
-
-    await UserService.onboardClient(updated, token);
-    nav("/what-brings-you-here");
+    await UserService.onboardClient(clientOnboarding, token);
+    nav("/symptoms-severity");
   };
-
-  const title = (
-    <div className="flex flex-col gap-8 w-full max-w-[700px] items-start ">
-      <div className="flex flex-col items-center self-stretch gap-4">
-        <h1 className="text-[#1D1D1F] text-[24px] md:text-[32px] font-bold text-center ">
-          Tell us a bit about you
-        </h1>
-        <p className="text-center text-[#5F5F65] text-base ">
-          This helps us tailor your journey and ensure the right support —
-          nothing is ever shared without your permission.
-        </p>
-      </div>
-    </div>
-  );
 
   const hintBlock = (
     <div className="flex gap-4 p-4 items-center rounded-2xl bg-[#DDEBF6] w-full lg:max-w-[718px]">
@@ -117,23 +90,6 @@ export const DemographicStep = () => {
           Data Privacy Policy
         </a>
       </p>
-    </div>
-  );
-
-  const buttonsBlock = (
-    <div className="flex justify-between w-full lg:max-w-[700px] items-center">
-      <button
-        className="flex p-4 h-[44px] items-center justify-center text-base font-semibold text-[#1C63DB]"
-        onClick={() => handleNext()}
-      >
-        Skip this for now
-      </button>
-      <button
-        className={`flex p-4 rounded-full h-[44px] items-center justify-center w-32 text-center bg-[#1C63DB] text-white cursor-pointer`}
-        onClick={handleNext}
-      >
-        Continue
-      </button>
     </div>
   );
 
@@ -180,12 +136,6 @@ export const DemographicStep = () => {
               })
             );
 
-            dispatch(
-              setFormField({
-                field: "age",
-                value: computeAge(selectedDate),
-              })
-            );
             const y = selectedDate.getFullYear();
             if (y !== selectedYear) setSelectedYear(y);
             setDisplayMonth(
@@ -204,83 +154,273 @@ export const DemographicStep = () => {
     </>
   );
 
-  const mainContent = (
-    <>
-      <div className="flex flex-col gap-[10px] items-start w-full">
-        <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
-          Birth Date
-        </label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start items-start text-left font-normal border-[#DFDFDF] hover:bg-white",
-                !localDate && "text-muted-foreground"
-              )}
-            >
-              <MaterialIcon iconName="calendar_today" fill={1} size={20} />
-              {localDate ? format(localDate, "PPP") : "Pick a date"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            className="w-auto p-0 pointer-events-auto"
-            align="start"
-            avoidCollisions={false}
-            sticky="always"
-            side="bottom"
-          >
-            {calendarContent}
-          </PopoverContent>
-        </Popover>
-      </div>
+  const mealChoices = [
+    "Fresh home-made food",
+    "Gourmet take-out food",
+    "Fast food",
+  ];
 
-      <div className="flex w-full flex-col items-start gap-[10px]">
-        <label className="text-[#1D1D1F]  text-base font-medium">
-          Cycle health
-        </label>
-        <RadioGroup
-          className="grid w-full grid-cols-1 md:grid-cols-2"
-          value={menopauseStatus}
-          onValueChange={(val) =>
-            dispatch(setFormField({ field: "menopause_status", value: val }))
-          }
-        >
-          {CYCLE_HELTH.map((option) => (
-            <div key={option} className="flex items-center space-x-2">
-              <RadioGroupItem
-                value={option}
-                className="w-4 h-4"
-                iconSize={14}
-              />
-              <span>{option}</span>
-              {option in MAP_CYCLE_HEALTH_TO_TOOLTIP && (
-                <TooltipWrapper content={MAP_CYCLE_HEALTH_TO_TOOLTIP[option]}>
-                  <MaterialIcon
-                    iconName="help"
-                    size={16}
-                    fill={1}
-                    className="text-[#1C63DB]"
-                  />
-                </TooltipWrapper>
-              )}
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
-    </>
-  );
+  const activityLevels = [
+    "Sedentary — Mostly sitting, little to no structured exercise",
+    "Lightly Active — Some walking or light movement (1–2 days a week)",
+    "Moderately Active — Exercise or active movement 3–4 days a week",
+    "Very Active — Exercise or physical training 5–6 days a week",
+    "Extremely Active — Daily intense exercise or physically demanding job",
+  ];
+
+  const sleepOptions = [
+    "I hardly ever sleep well",
+    "I have to use sleeping aids to fall asleep",
+    "My sleep is hit or miss",
+    "Most nights are fine",
+    "I sleep well almost every night",
+    "I sleep like a baby",
+  ];
+
+  const hydrationOptions = [
+    "Poor — I rarely drink enough water, often feel thirsty",
+    "Fair — I drink some water, but not consistently throughout the day",
+    "Good — I usually meet my hydration needs, with occasional slips",
+    "Very Good — I drink water regularly and stay hydrated most of the time",
+    "Excellent — I’m fully hydrated every day without effort",
+  ];
+
+  const goalsOptions = [
+    "I want a quick fix",
+    "I want long-lasting solutions",
+    "I want to manage my symptoms on my own",
+    "I want to know my body better",
+  ];
+
+  const menopauseStages = [
+    "Premenopause",
+    "Perimenopause",
+    "Menopause",
+    "Postmenopause",
+  ];
+
+  const conditions = [
+    "Cancer",
+    "Diabetes",
+    "Heart disease",
+    "Stroke",
+    "Hypertension",
+    "Thyroid disorders",
+    "Autoimmune disease",
+    "Osteoporosis",
+    "Alzheimer’s / Dementia",
+    "Depression / Mental health conditions",
+    "None",
+  ];
+
+  const supportPeople = [
+    "Partner",
+    "Doctor",
+    "Therapist",
+    "Coach",
+    "Friends / Community",
+    "Online groups",
+    "No one right now",
+  ];
+
+  const stressLevels = ["Low", "Moderate", "High", "Very High"];
+
+  const isFormValid =
+    !!dateOfBirth &&
+    !!menopauseStatus &&
+    !!clientOnboarding.stress_levels &&
+    !!clientOnboarding.weekly_meal_choice &&
+    !!clientOnboarding.physical_activity &&
+    !!clientOnboarding.sleep_quality &&
+    !!clientOnboarding.hydration_levels &&
+    !!clientOnboarding.main_transition_goal &&
+    healthConditions.length > 0 &&
+    supportNetwork.length > 0;
 
   return (
     <OnboardingClientLayout
       currentStep={0}
-      numberOfSteps={8}
-      children={mainContent}
-      title={title}
+      numberOfSteps={0}
+      headerText=" "
+      title={
+        <div className="flex flex-col gap-4 xl:mt-[80px]">
+          <h1 className="text-[#1D1D1F] text-[24px] md:text-[32px] text-center">
+            A few questions to rate your lifestyle skillset & tailor your
+            support.
+          </h1>
+        </div>
+      }
+      children={
+        <div className="flex flex-col gap-6 w-full">
+          {/* Birth Date */}
+          <div className="flex flex-col gap-[10px] items-start w-full">
+            <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">
+              Birth Date
+            </label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start items-start text-left font-normal border-[#DFDFDF] hover:bg-white py-[12.5px] text-[16px] h-[51px]",
+                    !localDate && "text-muted-foreground"
+                  )}
+                >
+                  <MaterialIcon iconName="calendar_today" fill={1} size={20} />
+                  {localDate ? format(localDate, "PPP") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-auto p-0 pointer-events-auto z-[2147483647] bg-white shadow-lg rounded-md"
+                align="start"
+                avoidCollisions={false}
+                sticky="always"
+                side="bottom"
+              >
+                {calendarContent}
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* Menopause Stage */}
+          <SelectField
+            label="Stage in Menopause Transition"
+            selected={menopauseStatus || ""}
+            onChange={(val) =>
+              dispatch(setFormField({ field: "menopause_status", value: val }))
+            }
+            options={menopauseStages.map((m) => ({ label: m, value: m }))}
+            containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
+          />
+
+          {/* Conditions (multi-choice simplified) */}
+          <MultiSelectField
+            label="Do you have or had any of these conditions? Select more than one if applicable."
+            options={conditions.map((c) => ({ label: c }))}
+            selected={healthConditions}
+            onChange={(vals) =>
+              dispatch(
+                setFormField({
+                  field: "health_conditions",
+                  value: vals,
+                })
+              )
+            }
+            className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+          />
+
+          {/* Stress Levels */}
+          <SelectField
+            label="Stress Levels"
+            selected={clientOnboarding.stress_levels || ""}
+            onChange={(val) =>
+              dispatch(setFormField({ field: "stress_levels", value: val }))
+            }
+            options={stressLevels.map((s) => ({ label: s, value: s }))}
+            containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
+          />
+
+          {/* Meal Choice */}
+          <SelectField
+            label="What is your weekly to-go meal choice?"
+            selected={clientOnboarding.weekly_meal_choice || ""}
+            onChange={(val) =>
+              dispatch(
+                setFormField({ field: "weekly_meal_choice", value: val })
+              )
+            }
+            options={mealChoices.map((c) => ({ label: c, value: c }))}
+            containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
+          />
+
+          {/* Support Network */}
+          <MultiSelectField
+            label="Who's your trusted person to rely on (if anyone)?"
+            options={supportPeople.map((p) => ({ label: p }))}
+            selected={supportNetwork}
+            onChange={(vals) =>
+              dispatch(
+                setFormField({
+                  field: "support_network",
+                  value: vals,
+                })
+              )
+            }
+            className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+          />
+
+          {/* Physical Activity */}
+          <SelectField
+            label="How do you rate your physical activity during the week?"
+            selected={clientOnboarding.physical_activity || ""}
+            onChange={(val) =>
+              dispatch(setFormField({ field: "physical_activity", value: val }))
+            }
+            options={activityLevels.map((lvl) => ({ label: lvl, value: lvl }))}
+            containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
+          />
+
+          {/* Sleep Quality */}
+          <SelectField
+            label="How do you rate your sleep quality?"
+            selected={clientOnboarding.sleep_quality || ""}
+            onChange={(val) =>
+              dispatch(setFormField({ field: "sleep_quality", value: val }))
+            }
+            options={sleepOptions.map((opt) => ({ label: opt, value: opt }))}
+            containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
+          />
+
+          {/* Hydration */}
+          <SelectField
+            label="How do you rate your daily hydration efforts?"
+            selected={clientOnboarding.hydration_levels || ""}
+            onChange={(val) =>
+              dispatch(setFormField({ field: "hydration_levels", value: val }))
+            }
+            options={hydrationOptions.map((opt) => ({
+              label: opt,
+              value: opt,
+            }))}
+            containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
+          />
+
+          {/* Goals */}
+          <SelectField
+            label="What are you hoping to achieve with Tolu AI?"
+            selected={clientOnboarding.main_transition_goal || ""}
+            onChange={(val) =>
+              dispatch(
+                setFormField({ field: "main_transition_goal", value: val })
+              )
+            }
+            options={goalsOptions.map((opt) => ({ label: opt, value: opt }))}
+            containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
+          />
+        </div>
+      }
       buttons={
         <>
           {hintBlock}
-          {buttonsBlock}
+          <button
+            onClick={handleNext}
+            disabled={!isFormValid}
+            className={cn(
+              "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold",
+              isFormValid
+                ? "bg-[#1C63DB] text-white"
+                : "bg-[#D5DAE2] text-[#5F5F65] cursor-not-allowed"
+            )}
+          >
+            Continue
+          </button>
         </>
       }
     />

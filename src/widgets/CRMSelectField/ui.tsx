@@ -45,15 +45,13 @@ export const SelectField = ({
   return (
     <div className={`relative w-full`}>
       <label
-        className={`block mb-[12px] text-[16px] text-[#000] font-semibold ${
-          labelClassName || ""
-        }`}
+        className={`block mb-[12px] text-[#000] ${labelClassName || "text-[16px] font-semibold"}`}
       >
         {label}
       </label>
       <button
         ref={buttonRef}
-        className={`w-full text-left border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] pr-[40px] text-[14px] text-[#1D1D1F] font-semibold bg-white relative ${containerClassName || ""}`}
+        className={`w-full text-left border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] pr-[40px] text-[#1D1D1F] bg-white relative ${containerClassName || "text-[14px] font-semibold"}`}
         onClick={() => setOpen(!open)}
         type="button"
       >

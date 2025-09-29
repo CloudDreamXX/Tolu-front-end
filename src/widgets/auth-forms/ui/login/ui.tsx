@@ -8,9 +8,9 @@ import { Input } from "shared/ui";
 import { ClientService } from "entities/client";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
-import { mapOnboardClientToFormState } from "entities/store/helpers";
+// import { mapOnboardClientToFormState } from "entities/store/helpers";
 import { setCoachOnboardingData } from "entities/store/coachOnboardingSlice";
-import { findFirstIncompleteClientStep } from "widgets/OnboardingClient/DemographicStep/helpers";
+// import { findFirstIncompleteClientStep } from "widgets/OnboardingClient/DemographicStep/helpers";
 import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-type/helpers";
 import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboarding-finish/helpers";
 
@@ -68,20 +68,20 @@ export const LoginForm = () => {
       return;
     }
     const userInfo = await UserService.getOnboardClient();
-    const clientData = mapOnboardClientToFormState(userInfo);
+    // const clientData = mapOnboardClientToFormState(userInfo);
     dispatch(setFromUserInfo(userInfo));
-    const issue = findFirstIncompleteClientStep(clientData);
-    if (issue) {
-      if (coachInviteToken) {
-        await ClientService.acceptCoachInvite({ token: coachInviteToken });
-      }
-      navigate(issue.route);
-    } else {
-      if (coachInviteToken) {
-        await ClientService.acceptCoachInvite({ token: coachInviteToken });
-      }
-      navigate("/library");
+    // const issue = findFirstIncompleteClientStep(clientData);
+    // if (issue) {
+    //   if (coachInviteToken) {
+    //     await ClientService.acceptCoachInvite({ token: coachInviteToken });
+    //   }
+    //   navigate(issue.route);
+    // } else {
+    if (coachInviteToken) {
+      await ClientService.acceptCoachInvite({ token: coachInviteToken });
     }
+    navigate("/library");
+    // }
   };
 
   const redirectCoach = async () => {

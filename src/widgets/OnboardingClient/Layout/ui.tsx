@@ -8,6 +8,7 @@ interface OnboardingClientLayoutProps {
   currentStep?: number;
   numberOfSteps?: number;
   title?: ReactNode;
+  headerText?: string;
   buttons?: ReactNode;
   children: ReactNode;
 }
@@ -16,6 +17,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
   currentStep,
   numberOfSteps,
   title,
+  headerText,
   buttons,
   children,
 }) => {
@@ -33,6 +35,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
           isClient
           currentStep={currentStep}
           steps={numberOfSteps}
+          text={headerText}
         />
       )}
 

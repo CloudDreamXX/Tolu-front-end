@@ -204,3 +204,29 @@ export interface ProfileMetadata {
 export interface OnboardingStatus {
   onboarding_filled: boolean;
 }
+
+export interface ClientOnboarding {
+  basic_info: {
+    menopause_status: string;
+    date_of_birth: string;
+  };
+  health_lifestyle: {
+    health_conditions: string[];
+    stress_levels: string;
+    weekly_meal_choice: string;
+    support_network: string[];
+    physical_activity: string;
+    sleep_quality: string;
+    hydration_levels: string;
+  };
+  goals_values: {
+    main_goal: string;
+    symptoms_severity: {
+      [symptom: string]: number;
+    };
+  };
+}
+
+export interface ClientOnboardingResponse {
+  profile: ClientOnboarding;
+}

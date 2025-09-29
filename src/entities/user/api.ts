@@ -1,10 +1,10 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import {
   ChangePasswordRequest,
+  ClientOnboardingResponse,
   IRegisterUser,
   IUser,
   MenopauseSubmissionRequest,
-  OnboardClient,
   OnboardingStatus,
   RecommendationsResponse,
   ReferFriendRequest,
@@ -164,8 +164,8 @@ export class UserService {
     return { message: response };
   }
 
-  static async getOnboardClient(): Promise<OnboardClient> {
-    const response = await ApiService.get<OnboardClient>(
+  static async getOnboardClient(): Promise<ClientOnboardingResponse> {
+    const response = await ApiService.get<ClientOnboardingResponse>(
       API_ROUTES.USER.ONBOARD_CLIENT
     );
 

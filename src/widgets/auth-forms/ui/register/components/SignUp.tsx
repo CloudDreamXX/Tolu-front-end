@@ -352,7 +352,7 @@ export const SignUp: React.FC<SignUpProps> = ({
                 ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
                 : "px-[16px] font-[400] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
             }
-            className="h-[180px]"
+            className="h-[160px]"
           />
           {errors.country && (
             <p className="text-[#FF1F0F] font-medium px-[16px]">
