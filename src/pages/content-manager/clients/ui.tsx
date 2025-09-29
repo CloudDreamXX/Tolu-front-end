@@ -374,20 +374,20 @@ export const ContentManagerClients: React.FC = () => {
     return (
       <div
         className="
-      md:grid md:grid-cols-6 md:items-center md:py-[12px]
+      md:grid md:grid-cols-5 md:items-center md:py-[12px]
       flex flex-col gap-2 p-[12px] border border-[#AAC6EC] rounded-[8px] bg-white 
       md:rounded-none md:border-x-0 md:border-t-0 md:border-b md:border-[#DBDEE1] animate-pulse
     "
       >
-        {Array(6)
+        {Array(5)
           .fill(0)
           .map((_, i) =>
-            i === 5 ? (
+            i === 4 ? (
               <div
                 key={i}
                 className="hidden md:flex items-center justify-end gap-[24px]"
               >
-                {[...Array(3)].map((_, j) => (
+                {[...Array(1)].map((_, j) => (
                   <div
                     key={j}
                     className="h-[24px] w-[39px] skeleton-gradient rounded-[1000px]"
@@ -397,7 +397,7 @@ export const ContentManagerClients: React.FC = () => {
             ) : (
               <div
                 key={i}
-                className="h-[10px] w-full md:w-[80px] lg:w-[126px] skeleton-gradient rounded-[24px]"
+                className="h-[10px] w-full md:w-[80px] lg:w-[100px] skeleton-gradient rounded-[24px]"
               />
             )
           )}
@@ -432,12 +432,11 @@ export const ContentManagerClients: React.FC = () => {
       <div className="flex flex-col gap-[16px] pr-4 md:p-0 md:gap-[24px] overflow-y-auto h-full w-full">
         {loading ? (
           <div className="lg:mt-4 md:rounded-[8px]">
-            <div className="hidden md:grid grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
-              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
-              <div className="h-[10px] w-[60px] xl:w-[106px] skeleton-gradient rounded-[24px]" />
+            <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
+              <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
+              <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
+              <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
+              <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="pr-4 text-right"></div>
             </div>
             <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">

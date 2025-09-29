@@ -8,12 +8,16 @@ export const SelectField = ({
   selected,
   onChange,
   className,
+  labelClassName,
+  containerClassName,
 }: {
   label: string;
   options: { value: string; label: string }[];
   selected: string;
   onChange: (val: string) => void;
   className?: string;
+  labelClassName?: string;
+  containerClassName?: string;
 }) => {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -40,12 +44,16 @@ export const SelectField = ({
 
   return (
     <div className={`relative w-full`}>
-      <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+      <label
+        className={`block mb-[12px] text-[16px] text-[#000] font-semibold ${
+          labelClassName || ""
+        }`}
+      >
         {label}
       </label>
       <button
         ref={buttonRef}
-        className={`w-full text-left border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] pr-[40px] text-[14px] text-[#1D1D1F] font-semibold bg-white relative`}
+        className={`w-full text-left border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] pr-[40px] text-[14px] text-[#1D1D1F] font-semibold bg-white relative ${containerClassName || ""}`}
         onClick={() => setOpen(!open)}
         type="button"
       >
@@ -57,7 +65,9 @@ export const SelectField = ({
       {open &&
         createPortal(
           <ul
-            className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2 ${className}`}
+            className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2 ${
+              className || ""
+            }`}
             style={{
               top: coords.top,
               left: coords.left,

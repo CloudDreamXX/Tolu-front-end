@@ -35,6 +35,8 @@ export const Register = () => {
     phone: "",
     password: "",
     newPassword: "",
+    country: "",
+    state: undefined,
   });
 
   const [inviteSource, setInviteSource] = useState<
@@ -195,8 +197,9 @@ export const Register = () => {
       email: formData.email,
       phone_number: formData.phone,
       password: formData.password,
-      dob: "2025-05-13",
       roleID: formData.accountType === "client" ? 3 : 2,
+      country: formData.country,
+      state: formData.state,
       email_verification_skipped: inviteSource === "referral" ? true : false,
     };
 
@@ -258,8 +261,8 @@ export const Register = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-screen xl:flex-row">
-      <div className="w-full xl:max-w-[550px] 2xl:max-w-[665px] h-[150px] xl:h-full bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
+    <div className="flex flex-col w-full min-h-screen xl:flex-row">
+      <div className="w-full xl:max-w-[550px] 2xl:max-w-[665px] h-[150px] xl:h-auto bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
         <aside className="py-[10px] px-[95px] xl:p-[40px] flex items-center justify-center flex-col">
           <h1 className="text-white  text-center text-[44.444px] xl:text-[96px] font-bold">
             Tolu AI
@@ -269,7 +272,7 @@ export const Register = () => {
           </h3>
         </aside>
       </div>
-      <div className="w-full px-[16px] py-[24px] mt-[40px] md:p-0 md:mt-[63px] flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
+      <div className="w-full px-[16px] py-[24px] mt-[40px] md:p-0 md:pb-[24px] md:pt-[63px] md:mt-0 flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
         {formData.accountType.length > 1 ? (
           <SignUp
             formData={formData}

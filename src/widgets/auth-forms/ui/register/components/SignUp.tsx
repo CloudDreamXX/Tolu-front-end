@@ -12,6 +12,8 @@ import {
   StrengthMeter,
 } from "shared/lib/utils/passwordChecker";
 import { Input } from "shared/ui";
+import { SelectField } from "widgets/CRMSelectField";
+import { countries } from "widgets/OnboardingClient/DemographicStep";
 import { z } from "zod";
 
 interface SignUpProps {
@@ -22,6 +24,8 @@ interface SignUpProps {
     phone: string;
     password: string;
     newPassword: string;
+    country: string;
+    state?: string;
   };
   handleSubmit: (e: React.FormEvent) => void;
   formDataChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -39,6 +43,8 @@ const signUpSchema = z
       .regex(/^\d+$/, "Phone number must contain digits only"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    country: z.string().min(1, "Country of residence is required"),
+    state: z.string().optional(),
   })
   .refine((data) => data.password === data.newPassword, {
     message: "Passwords do not match",
@@ -327,6 +333,56 @@ export const SignUp: React.FC<SignUpProps> = ({
             </p>
           )}
         </div>
+
+        <div className="flex flex-col items-start gap-[10px] self-stretch">
+          <SelectField
+            label="Country of Residence"
+            labelClassName="self-stretch text-[#5f5f65] text-[16px] font-semibold"
+            selected={formData.country}
+            onChange={(value: string) => {
+              const syntheticEvent = {
+                target: { name: "country", value },
+              } as React.ChangeEvent<HTMLInputElement>;
+              formDataChangeHandler(syntheticEvent);
+              clearError("country");
+            }}
+            options={countries.map((c) => ({ label: c, value: c }))}
+            containerClassName={
+              errors.country
+                ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
+                : "px-[16px] font-[400] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+            }
+            className="h-[180px]"
+          />
+          {errors.country && (
+            <p className="text-[#FF1F0F] font-medium px-[16px]">
+              {errors.country}
+            </p>
+          )}
+        </div>
+
+        {formData.country === "United States" && (
+          <div className="flex flex-col items-start gap-[10px] self-stretch">
+            <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
+              State
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter State"
+              name="state"
+              value={formData.state}
+              onChange={(e) => {
+                formDataChangeHandler(e);
+                clearError("state");
+              }}
+              className={
+                errors.state
+                  ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
+                  : "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+              }
+            />
+          </div>
+        )}
       </section>
 
       <div className="flex flex-col w-full items-center gap-[24px] self-stretch">

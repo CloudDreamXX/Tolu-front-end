@@ -34,10 +34,6 @@ interface UserExistenceResponse {
 }
 
 export class UserService {
-  static async signUp(userData: IUser): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.SIGNUP, userData);
-  }
-
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     return ApiService.post<AuthResponse>(API_ROUTES.USER.LOGIN, credentials);
   }

@@ -196,6 +196,54 @@ export const FilesLibrary = () => {
     e.preventDefault();
   };
 
+  const LibraryLoadingSkeleton = () => {
+    const getRandomWidth = (min: number, max: number) =>
+      `${Math.floor(Math.random() * (max - min + 1)) + min}px`;
+
+    return (
+      <div className="flex flex-col gap-4 md:gap-[35px] p-[32px] animate-pulse">
+        <div className="flex flex-col gap-2">
+          <div
+            className="h-[32px] skeleton-gradient rounded-[8px] w-[200px]"
+            style={{ width: getRandomWidth(150, 250) }}
+          />
+          <div
+            className="h-[20px] skeleton-gradient rounded-[8px] w-[300px]"
+            style={{ width: getRandomWidth(200, 400) }}
+          />
+        </div>
+        <div className="w-full bg-white rounded-[12px] flex flex-col justify-center items-center text-center p-4 cursor-pointer transition-colors h-[149px] skeleton-gradient" />
+        <div className="grid grid-cols-2 gap-3 mt-6">
+          {[...Array(10)].map((_, i) => (
+            <div
+              key={i}
+              className="h-[55px] w-full rounded-md bg-gray-200 skeleton-gradient"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const loading = isLoading || isFetching || isDeleting || isUploading;
+
+  if (loading) {
+    return (
+      <>
+        <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
+          <span className="inline-flex h-5 w-5 items-center justify-center">
+            <MaterialIcon
+              iconName="progress_activity"
+              className="text-blue-600 animate-spin"
+            />
+          </span>
+          Please wait, we are loading the files...
+        </div>
+        <LibraryLoadingSkeleton />
+      </>
+    );
+  }
+
   return (
     <>
       {(isDeleting || isLoading || isFetching) && (
