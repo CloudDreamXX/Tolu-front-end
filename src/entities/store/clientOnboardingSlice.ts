@@ -3,34 +3,36 @@ import { OnboardClient } from "entities/user";
 import { mapOnboardClientToFormState } from "./helpers";
 
 export interface FormState {
-  age?: number;
-  menopause_status?: string;
-  country?: string;
-  zip_code?: string;
-  language?: string[];
-  race_ethnicity?: string;
-  gender?: string;
   date_of_birth?: string;
-  ai_experience?: string;
-
-  household_type?: string;
-  occupation?: string;
-  education_level?: string;
-
-  main_transition_goal?: string;
-  important_values?: string[];
-  obstacles?: string;
+  menopause_status?: string;
+  health_conditions?: string[];
+  stress_levels?: string;
+  weekly_meal_choice?: string;
   support_network?: string[];
-
-  personality_type?: string;
-  readiness_for_change?: string;
+  physical_activity?: string;
+  sleep_quality?: string;
+  hydration_levels?: string;
+  main_transition_goal?: string;
+  symptoms_severity?: Record<string, number>;
 }
 
-const initialState: FormState = {};
+const initialState: FormState = {
+  date_of_birth: undefined,
+  menopause_status: undefined,
+  health_conditions: [],
+  stress_levels: undefined,
+  weekly_meal_choice: undefined,
+  support_network: [],
+  physical_activity: undefined,
+  sleep_quality: undefined,
+  hydration_levels: undefined,
+  main_transition_goal: undefined,
+  symptoms_severity: {},
+};
 
 const clientOnboardingSlice = createSlice({
-  initialState,
   name: "clientOnboarding",
+  initialState,
   reducers: {
     setFormField: <K extends keyof FormState>(
       state: FormState,

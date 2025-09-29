@@ -7,35 +7,42 @@ export const mapOnboardClientToFormState = (
   const profile = response?.profile ?? {};
   const basic_info = profile.basic_info ?? {};
   const goals_values = profile.goals_values ?? {};
-  const background = profile.background ?? {};
-  const preferences = profile.preferences ?? {};
+  const lifestyle = profile.lifestyle ?? {};
+  const health = profile.health ?? {};
 
   const toArray = (v: unknown) =>
     Array.isArray(v) ? (v as string[]) : v == null ? [] : [String(v)];
 
+  const toRecord = (v: unknown) => {
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      return v as Record<string, number>;
+    }
+    return {};
+  };
+
   return {
-    age: basic_info.age ?? undefined,
-    menopause_status: basic_info.menopause_status ?? undefined,
-    country: basic_info.country ?? undefined,
-    zip_code: undefined,
-    language: toArray(basic_info.language),
-    race_ethnicity: undefined,
-    gender: basic_info.gender ?? undefined,
     date_of_birth: basic_info.date_of_birth
       ? String(basic_info.date_of_birth).slice(0, 10)
       : undefined,
-    ai_experience: basic_info.ai_experience ?? undefined,
 
-    household_type: undefined,
-    occupation: background.occupation ?? undefined,
-    education_level: undefined,
+    menopause_status: basic_info.menopause_status ?? undefined,
 
-    main_transition_goal: goals_values.main_goal ?? undefined,
-    important_values: toArray(goals_values.important_values),
-    obstacles: goals_values.obstacles ?? undefined,
+    health_conditions: toArray(health.conditions),
+
+    stress_levels: lifestyle.stress_levels ?? undefined,
+
+    weekly_meal_choice: lifestyle.weekly_meal_choice ?? undefined,
+
     support_network: toArray(goals_values.support_network),
 
-    personality_type: preferences.personality_type ?? undefined,
-    readiness_for_change: preferences.readiness_for_change ?? undefined,
+    physical_activity: lifestyle.physical_activity ?? undefined,
+
+    sleep_quality: lifestyle.sleep_quality ?? undefined,
+
+    hydration_levels: lifestyle.hydration_levels ?? undefined,
+
+    main_transition_goal: goals_values.main_goal ?? undefined,
+
+    symptoms_severity: toRecord(health.symptoms_severity),
   };
 };
