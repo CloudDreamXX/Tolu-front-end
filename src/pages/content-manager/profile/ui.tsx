@@ -84,11 +84,14 @@ export const ContentManagerProfile = () => {
       const headshotFilename = u?.profile?.basic_info?.headshot
         ? u.profile.basic_info.headshot.split("/").pop()
         : u.profile.basic_info.headshot;
-      const headshotBlob = await UserService.downloadProfilePhoto(
-        headshotFilename || ""
-      );
-      const headshot = URL.createObjectURL(headshotBlob);
-      setPhotoUrl(headshot);
+
+      if (headshotFilename) {
+        const headshotBlob = await UserService.downloadProfilePhoto(
+          headshotFilename
+        );
+        const headshot = URL.createObjectURL(headshotBlob);
+        setPhotoUrl(headshot);
+      }
 
       const licensePaths: string[] =
         u?.onboarding?.practitioner_info?.license_files ?? [];
