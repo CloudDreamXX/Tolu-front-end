@@ -651,13 +651,18 @@ export const ContentManagerClients: React.FC = () => {
                     </div>
 
                     <button
-                      onClick={() => handleSelectClient(client.client_id)}
-                      className="hidden md:flex items-center justify-center text-[#000]"
+                      onClick={() => {
+                        if (client.status !== "active") return;
+                        handleSelectClient(client.client_id);
+                      }}
+                      disabled={client.status !== "active"}
+                      className={`hidden md:flex items-center justify-center text-[#000] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                     >
                       <MaterialIcon iconName="visibility" fill={1} />
                     </button>
                     <button
-                      className="items-center justify-center hidden md:flex "
+                      className={`items-center justify-center hidden md:flex ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
+                      disabled={client.status !== "active"}
                       onClick={() => {
                         if (client.status !== "active") return;
                         navigate(

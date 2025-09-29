@@ -2,7 +2,7 @@ import { DetailsChatItemModel } from "entities/chat";
 import { Client } from "entities/coach";
 import { useEffect, useState } from "react";
 import { cn } from "shared/lib";
-import { Button, Dialog, DialogContent, DialogTitle, Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -32,7 +32,6 @@ interface CreateGroupModalProps {
 }
 
 export const CreateGroupModal = ({
-  open,
   mode,
   chat,
   initialSelectedClients,
@@ -118,9 +117,12 @@ export const CreateGroupModal = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl gap-6">
-        <DialogTitle className="hidden">Title </DialogTitle>
+    <div
+      className={`fixed top-[85px] md:top-0 inset-0 z-[999] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto`}
+    >
+      <div
+        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] md:p-[24px] top-0 bottom-0 h-full md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-hidden flex flex-col gap-[24px]`}
+      >
         <div>
           <div className="flex gap-2">
             <MaterialIcon iconName="forum" fill={1} />
@@ -202,7 +204,7 @@ export const CreateGroupModal = ({
           </button>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-[24px]">
           <div>
             <p className="text-sm font-semibold text-gray-700">Chat name</p>
             <Input
@@ -228,9 +230,11 @@ export const CreateGroupModal = ({
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-gray-700">Chat name</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  Participants{" "}
+                </p>
                 <MultiSelectField
-                  className="mt-4 md:rounded-sm"
+                  className="mt-[4px] md:rounded-sm"
                   options={
                     clientsData?.map((c) => ({
                       label: c.name,
@@ -238,6 +242,7 @@ export const CreateGroupModal = ({
                   }
                   selected={selectedOption}
                   onChange={setSelectedOption}
+                  height="h-[180px]"
                 />
               </div>
             </>
@@ -257,7 +262,7 @@ export const CreateGroupModal = ({
             Save
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };

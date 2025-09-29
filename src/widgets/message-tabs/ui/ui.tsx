@@ -207,7 +207,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <span className="text-xl font-bold">Add Client(s)</span>
         </div>
         <MultiSelectField
-          className="mt-4 md:rounded-sm"
+          className="mt-[4px] md:rounded-sm"
           options={clientsData.map((c) => ({
             label: c.name,
           }))}

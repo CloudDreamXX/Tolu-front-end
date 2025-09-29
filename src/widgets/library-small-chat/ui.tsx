@@ -1057,6 +1057,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         setFiles={handleSetFiles}
                         existingFiles={existingFiles}
                         disabled={false}
+                        hideFromLibrary={isCoach ? false : true}
                         customTrigger={
                           <Button
                             variant="ghost"

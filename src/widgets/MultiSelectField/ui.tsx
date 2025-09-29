@@ -17,6 +17,7 @@ export const MultiSelectField = ({
   onChange,
   className,
   onSave,
+  height,
 }: {
   label?: string;
   options: MultiSelectOption[];
@@ -24,6 +25,7 @@ export const MultiSelectField = ({
   onChange: (val: string[]) => void;
   onSave?: () => void;
   className?: string;
+  height?: string;
 }) => {
   const [open, setOpen] = useState(false);
   // const [positionTop, setPositionTop] = useState(false);
@@ -95,9 +97,10 @@ export const MultiSelectField = ({
         createPortal(
           <div
             ref={dropdownRef}
-            className="absolute z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8"
+            onClick={(e) => e.stopPropagation()}
+            className={`z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8 ${height}`}
             style={{
-              position: "absolute",
+              position: "fixed",
               top: buttonRef.current?.getBoundingClientRect().bottom ?? 0,
               left: buttonRef.current?.getBoundingClientRect().left ?? 0,
               width: buttonRef.current?.offsetWidth,

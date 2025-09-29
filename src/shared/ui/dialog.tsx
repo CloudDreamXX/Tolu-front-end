@@ -41,7 +41,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Close>
         <span
           aria-label="Close modal"
-          className="absolute z-[999] top-[80px] left-[16px] md:hidden"
+          className="absolute z-[99] top-[80px] left-[16px] md:hidden"
         >
           <MaterialIcon iconName="keyboard_arrow_left" size={20} />
         </span>

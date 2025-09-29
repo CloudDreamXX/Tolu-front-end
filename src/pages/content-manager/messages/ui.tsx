@@ -262,28 +262,30 @@ export const ContentManagerMessages: React.FC = () => {
     <div className="relative flex h-full border">
       {content}
 
-      <CreateGroupModal
-        key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
-          groupModalOpen.open && groupModalOpen.mode === "edit"
-            ? (groupModalOpen.chat?.chat_id ?? "new")
-            : "new"
-        }`}
-        open={groupModalOpen.open}
-        mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
-        chat={
-          groupModalOpen.open && groupModalOpen.mode === "edit"
-            ? (groupModalOpen.chat ?? null)
-            : null
-        }
-        initialSelectedClients={
-          groupModalOpen.open && groupModalOpen.mode === "create"
-            ? (groupModalOpen.preselectedClients ?? [])
-            : []
-        }
-        onSubmit={onSubmit}
-        onClose={closeGroup}
-        clientsData={clientsData}
-      />
+      {groupModalOpen.open && (
+        <CreateGroupModal
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
+            groupModalOpen.open && groupModalOpen.mode === "edit"
+              ? (groupModalOpen.chat?.chat_id ?? "new")
+              : "new"
+          }`}
+          open={groupModalOpen.open}
+          mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
+          chat={
+            groupModalOpen.open && groupModalOpen.mode === "edit"
+              ? (groupModalOpen.chat ?? null)
+              : null
+          }
+          initialSelectedClients={
+            groupModalOpen.open && groupModalOpen.mode === "create"
+              ? (groupModalOpen.preselectedClients ?? [])
+              : []
+          }
+          onSubmit={onSubmit}
+          onClose={closeGroup}
+          clientsData={clientsData}
+        />
+      )}
     </div>
   );
 };

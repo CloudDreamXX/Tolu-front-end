@@ -162,6 +162,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
             ]}
             selected={client.focus_areas || ""}
             onChange={(value) => updateClient("focus_areas", value)}
+            height="h-[200px]"
           />
 
           <SelectField

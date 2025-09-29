@@ -4,7 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "shared/ui";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
 import { LibrarySmallChat } from "widgets/library-small-chat";
+import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 import z from "zod";
+import { useEffect, useState } from "react";
+import { FoldersService } from "entities/folder/api";
+import { toast } from "shared/lib/hooks/use-toast";
+import { useDispatch } from "react-redux";
+import { setFolders } from "entities/folder";
 
 export const caseBaseSchema = z.object({
   age: z
@@ -26,9 +32,55 @@ export const caseBaseSchema = z.object({
 
 export const ContentManagerCreatePage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const activeChatKey = useSelector(
     (state: RootState) => state.client.activeChatKey
   );
+
+  const [parentFolderId, setParentFolderId] = useState<string | null>(null);
+  const [createPopup, setCreatePopup] = useState(false);
+
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await FoldersService.getFolders();
+        if (response.folders.length > 0) {
+          const firstFolder = response.folders[1];
+          dispatch(setFolders(response));
+          if (firstFolder.subfolders) {
+            setParentFolderId(firstFolder.id);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching folders:", error);
+      }
+    };
+
+    fetchFolders();
+  }, []);
+
+  const createFolder = async (name: string, description: string) => {
+    try {
+      await FoldersService.createFolder({
+        name,
+        description,
+        parent_folder_id: parentFolderId as string,
+      });
+
+      toast({ title: "Created successfully" });
+      setCreatePopup(false);
+
+      const folderResponse = await FoldersService.getFolders();
+      dispatch(setFolders(folderResponse));
+    } catch (error) {
+      console.error("Error creating a folder:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to create a folder",
+        description: "Please try again.",
+      });
+    }
+  };
 
   return (
     <div
@@ -43,15 +95,23 @@ export const ContentManagerCreatePage: React.FC = () => {
           }
           footer={
             <div className="flex gap-4">
-              <Button
-                variant="brightblue"
-                className="min-w-40"
-                onClick={() => navigate("/content-manager/files")}
-              >
-                {activeChatKey === "Research"
-                  ? "Upload Files"
-                  : "Create a folder"}
-              </Button>
+              {activeChatKey === "Research" ? (
+                <Button
+                  variant="brightblue"
+                  className="min-w-40"
+                  onClick={() => navigate("/content-manager/files")}
+                >
+                  Upload Files
+                </Button>
+              ) : (
+                <Button
+                  variant="brightblue"
+                  className="min-w-40"
+                  onClick={() => setCreatePopup(true)}
+                >
+                  Create a folder
+                </Button>
+              )}
             </div>
           }
         />
@@ -59,6 +119,13 @@ export const ContentManagerCreatePage: React.FC = () => {
       <div className="w-full h-full">
         <LibrarySmallChat isCoach isDraft />
       </div>
+
+      {createPopup && (
+        <CreateSubfolderPopup
+          onClose={() => setCreatePopup(false)}
+          onComplete={createFolder}
+        />
+      )}
     </div>
   );
 };
