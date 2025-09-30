@@ -78,7 +78,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   return (
     <div
-      className={`flex flex-col md:flex-row items-center justify-between w-full p-4 bg-white md:border-b rounded-t-xl`}
+      className={`flex flex-col xl:flex-row items-center justify-between w-full p-4 bg-white md:border-b rounded-t-xl`}
     >
       <div className="flex items-center gap-3">
         <div className="text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px] min-w-[200px]">
@@ -110,7 +110,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           </p>
         )}
       </div>
-      <div className="flex flex-row items-center gap-2 w-full md:w-fit mt-[8px] md:mt-0">
+      <div className="flex flex-row items-center gap-2 w-full md:w-fit mt-[8px] xl:mt-0">
         <HistoryPopup fromPath={location.state?.from?.pathname ?? null} />
         <button
           className="flex flex-row items-center justify-center gap-2 px-4 h-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hoverable:hover:bg-blue-700 w-full xl:w-fit"

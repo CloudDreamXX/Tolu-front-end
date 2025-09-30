@@ -202,8 +202,7 @@ const extractHtmlFromMarkdown = (markdown: string) => {
 
 export const joinReplyChunksSafely = (chunks: string[]): string => {
   return chunks.reduce((acc, curr) => {
-    if (!acc) return curr.trim();
-
+    if (!acc) return curr;
     const prevLastChar = acc.slice(-1);
     const currFirstChar = curr.slice(0, 1);
 
@@ -211,9 +210,11 @@ export const joinReplyChunksSafely = (chunks: string[]): string => {
       (/\w/.test(prevLastChar) && /\w/.test(currFirstChar)) ||
       (/[.,!?;:)]/.test(prevLastChar) && /[A-Za-z]/.test(currFirstChar));
 
-    const glue = " ";
+    if (needsSpace) {
+      return acc + " " + curr;
+    }
 
-    return acc + glue + "\n\n" + curr.trim();
+    return acc + curr;
   }, "");
 };
 

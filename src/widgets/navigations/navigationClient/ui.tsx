@@ -61,6 +61,12 @@ export const NavigationClient: React.FC = () => {
   };
 
   const handleOpenChat = () => {
+    dispatch(clearAllChatHistory());
+    dispatch(clearActiveChatHistory());
+    dispatch(setFolderToChat(null));
+    dispatch(setFolderId(""));
+    dispatch(setFilesToChat([]));
+    dispatch(setLastChatId(""));
     if (
       location.pathname.startsWith(`${basePath}/library`) &&
       location.pathname.split("/").length > 2
@@ -208,15 +214,7 @@ export const NavigationClient: React.FC = () => {
               <Button
                 variant={"brightblue"}
                 className="w-full h-[44px] text-base font-semibold"
-                onClick={() => {
-                  dispatch(clearAllChatHistory());
-                  dispatch(clearActiveChatHistory());
-                  dispatch(setFolderToChat(null));
-                  dispatch(setFolderId(""));
-                  dispatch(setFilesToChat([]));
-                  dispatch(setLastChatId(""));
-                  nav("/library", { state: { isNew: true } });
-                }}
+                onClick={handleOpenChat}
               >
                 <MaterialIcon iconName="stars_2" fill={1} />
                 Ask Tolu

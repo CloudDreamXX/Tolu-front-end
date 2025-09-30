@@ -1,6 +1,7 @@
 import { InviteClientPayload } from "entities/coach";
 import React, { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { phoneMask } from "shared/lib";
 import { SelectField } from "widgets/CRMSelectField";
 import { MultiSelectField } from "widgets/MultiSelectField";
 
@@ -48,6 +49,13 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
     },
   ];
 
+  const isSaveDisabled =
+    !client?.full_name?.trim() ||
+    !client?.email?.trim() ||
+    !client?.permission_type ||
+    !client?.focus_areas?.length ||
+    (!noPhoneNumber && !client?.phone_number?.trim());
+
   const renderFooter = () => {
     return (
       <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[24px]">
@@ -58,8 +66,13 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
           Cancel
         </button>
         <button
-          className="w-full md:w-[144px] h-[40px] rounded-[1000px] text-white bg-[#1C63DB] text-[16px] font-semibold"
+          className={`w-full md:w-[144px] h-[40px] rounded-[1000px] text-[16px] font-semibold ${
+            isSaveDisabled
+              ? "bg-[#D5DAE2] text-[#5F5F65]"
+              : "bg-[#1C63DB] text-white"
+          }`}
           onClick={onSave}
+          disabled={isSaveDisabled}
         >
           Save
         </button>
@@ -127,7 +140,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
             <input
               type="tel"
               placeholder="Enter phone number"
-              value={client?.phone_number || ""}
+              value={phoneMask(client?.phone_number) || ""}
               onChange={(e) => updateClient("phone_number", e.target.value)}
               className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${noPhoneNumber ? "bg-gray-100" : ""}`}
               disabled={noPhoneNumber}

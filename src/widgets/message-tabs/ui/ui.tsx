@@ -259,7 +259,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 {chat.name || receiver?.user.name || "Unknown name"}
               </span>
               <span className="font-semibold text-muted-foreground text-[14px]">
-                @{chat.description || receiver?.user.email || "Unknown email"}
+                {chat.description || receiver?.user.email || "Unknown email"}
               </span>
             </div>
           </div>

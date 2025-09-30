@@ -711,20 +711,22 @@ export const ContentManagerClients: React.FC = () => {
                     {isMobile ? (
                       <div className="w-full flex flex-col gap-[8px] mt-[24px]">
                         <button
-                          className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]"
+                          className={`w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                           onClick={() => handleSelectClient(client.client_id)}
+                          disabled={client.status !== "active"}
                         >
                           <MaterialIcon iconName="visibility" fill={1} />
                           View profile
                         </button>
                         <button
-                          className="w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]"
+                          className={`w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                           onClick={() => {
                             if (client.status !== "active") return;
                             navigate(
                               `/content-manager/messages/${client.client_id}`
                             );
                           }}
+                          disabled={client.status !== "active"}
                         >
                           <MaterialIcon iconName="forum" fill={1} />
                           Chat

@@ -172,11 +172,15 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
 
   const handleSelectFileLibrary = (file: FileLibraryFile) => {
     const newSelectedFiles = new Set(selectedFiles);
-    if (newSelectedFiles.has(file)) {
-      newSelectedFiles.delete(file);
+
+    if (Array.from(newSelectedFiles).some((f) => f.id === file.id)) {
+      newSelectedFiles.forEach((f) => {
+        if (f.id === file.id) newSelectedFiles.delete(f);
+      });
     } else {
       newSelectedFiles.add(file);
     }
+
     setSelectedFiles(newSelectedFiles);
     dispatch(
       setFilesFromLibrary(Array.from(newSelectedFiles).map((f) => f.id))
@@ -270,9 +274,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     );
 
     const handleRemoveFileLibrary = (file: FileLibraryFile) => {
-      const newSelectedFiles = new Set(selectedFiles);
-
-      newSelectedFiles.delete(file);
+      const newSelectedFiles = new Set(
+        Array.from(selectedFiles).filter((f) => f.id !== file.id)
+      );
       setSelectedFiles(newSelectedFiles);
 
       dispatch(

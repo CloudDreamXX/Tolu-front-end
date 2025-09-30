@@ -63,22 +63,22 @@ export class SearchService {
       }
 
       const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-      let accumulatedText = "";
-
       if (!reader) {
         throw new Error("No response body reader available");
       }
 
+      const decoder = new TextDecoder();
+      let buffer = "";
+
       while (true) {
         const { done, value } = await reader.read();
-
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        accumulatedText += chunk;
+        buffer += decoder.decode(value, { stream: true });
 
-        const lines = accumulatedText.split("\n");
+        // split on newlines
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || ""; // keep incomplete line for next iteration
 
         for (const line of lines) {
           if (line.trim() === "") continue;
@@ -86,7 +86,7 @@ export class SearchService {
           const jsonLine = line.replace(/^data:\s*/, "").trim();
 
           if (jsonLine === "[DONE]") {
-            break;
+            continue;
           }
 
           try {
@@ -100,13 +100,6 @@ export class SearchService {
                   chat_title: parsed.chat_title ?? null,
                 });
               }
-              if (parsed.done) {
-                onComplete({
-                  searched_result_id: new Date().toISOString(),
-                  chat_id: new Date().toISOString(),
-                  chat_title: null,
-                });
-              }
             } else {
               onChunk(parsed);
             }
@@ -114,8 +107,25 @@ export class SearchService {
             console.warn("Failed to parse JSON chunk:", jsonLine, parseError);
           }
         }
+      }
 
-        accumulatedText = "";
+      if (buffer.trim() !== "" && buffer.trim() !== "[DONE]") {
+        try {
+          const parsed: StreamChunk = JSON.parse(buffer);
+          if (parsed.message === "Stream completed" || parsed.done) {
+            if (parsed.searched_result_id && parsed.chat_id) {
+              onComplete({
+                searched_result_id: parsed.searched_result_id,
+                chat_id: parsed.chat_id,
+                chat_title: parsed.chat_title ?? null,
+              });
+            }
+          } else {
+            onChunk(parsed);
+          }
+        } catch (parseError) {
+          console.warn("Failed to parse leftover buffer:", buffer, parseError);
+        }
       }
     } catch (error) {
       onError(error instanceof Error ? error : new Error(String(error)));
