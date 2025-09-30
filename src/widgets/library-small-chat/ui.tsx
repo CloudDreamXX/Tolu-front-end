@@ -106,7 +106,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [selectedSwitch, setSelectedSwitch] = useState<string>(
     config.defaultOption
   );
-
   const lastId = location.state?.lastId;
   const isNew = location.state?.isNew;
   const folderId = location.state?.folderId;
@@ -381,12 +380,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 document = item.answer;
               }
 
-              if (item.answer.includes("References")) {
-                const parts = item.answer.split(/<h3[^>]*>References<\/h3>/i);
-                content = parts[0].trim();
-                document = item.answer;
-              }
-
               chatMessages.push({
                 id: `ai-${item.id}`,
                 type: "ai",
@@ -538,16 +531,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         const fullAnswer =
           finalData?.answer || finalData?.content || accumulatedText;
 
-        let content = fullAnswer;
-        const cutIndex = fullAnswer.search(/<h3[^>]*>References<\/h3>/i);
-        if (cutIndex !== -1) {
-          content = fullAnswer.substring(0, cutIndex).trim();
-        }
-
         const aiMessage: Message = {
           id: chatId || Date.now().toString(),
           type: "ai",
-          content: isLearn ? joinReplyChunksSafely(replyChunks) : content,
+          content: isLearn ? joinReplyChunksSafely(replyChunks) : fullAnswer,
           timestamp: new Date(),
           document: isLearn ? str : fullAnswer,
         };

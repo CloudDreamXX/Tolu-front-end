@@ -2,11 +2,11 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
 import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import { Input, Button, Slider } from "shared/ui";
+import { Button, Slider } from "shared/ui";
 import { UserService } from "entities/user";
 
-type FormState = RootState["clientOnboarding"];
-type FieldKey = keyof FormState;
+type FormState = Record<string, string>;
+type FieldKey = keyof RootState["clientOnboarding"];
 
 export const OnboardingInfo = ({
   embedded = false,
@@ -20,18 +20,25 @@ export const OnboardingInfo = ({
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [isEditingSymptoms, setIsEditingSymptoms] = useState(false);
 
-  const [formState, setFormState] = useState<FormState>({ ...client });
+  const [formState, setFormState] = useState<FormState>({});
   const [symptomsState, setSymptomsState] = useState<Record<string, number>>(
     client.symptoms_severity || {}
   );
 
   useEffect(() => {
-    if (!isEditingPersonal) setFormState({ ...client });
-  }, [client]);
+    if (!isEditingPersonal) {
+      const next: FormState = {};
+      for (const [key, val] of Object.entries(client)) {
+        if (key === "symptoms_severity") continue;
+        next[key] = toInputString(val);
+      }
+      setFormState(next);
+    }
+  }, [client, isEditingPersonal]);
 
   useEffect(() => {
     if (!isEditingSymptoms) setSymptomsState(client.symptoms_severity || {});
-  }, [client]);
+  }, [client, isEditingSymptoms]);
 
   const personalFields: { label: string; key: FieldKey }[] = [
     { label: "Birth Date", key: "date_of_birth" },
@@ -98,53 +105,43 @@ export const OnboardingInfo = ({
   };
 
   const normalizeValue = (
-    value: unknown,
+    value: string,
     original: unknown
-  ): string | string[] | Record<string, number> | undefined => {
+  ): string | string[] | number | undefined => {
     if (Array.isArray(original)) {
-      if (Array.isArray(value)) {
-        return value.map((v) => String(v).trim()).filter(Boolean);
-      }
-      if (typeof value === "string") {
-        return value
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean);
-      }
-      return [];
+      return value
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
     }
 
     if (typeof original === "number") {
-      if (typeof value === "number") return String(value);
-      if (typeof value === "string") return value;
-      return undefined;
+      const num = Number(value);
+      return Number.isFinite(num) ? num : undefined;
     }
 
-    if (typeof value === "string") return value;
-    if (value == null) return undefined;
+    if (typeof original === "string") {
+      return value.trim() || undefined;
+    }
 
-    return String(value);
+    return value.trim() || undefined;
   };
 
   const handleSave = async () => {
-    const nextClient: FormState = { ...client };
+    const nextClient = { ...client };
 
     batch(() => {
-      // Save personal fields
-      for (const [key, value] of Object.entries(formState)) {
-        nextClient[key as FieldKey] = normalizeValue(
-          value,
-          client[key as FieldKey]
-        ) as any;
+      for (const { key } of personalFields) {
+        const value = formState[key as string];
+        nextClient[key] = normalizeValue(value, client[key]) as any;
         dispatch(
           setFormField({
-            field: key as FieldKey,
-            value: nextClient[key as FieldKey],
+            field: key,
+            value: nextClient[key],
           })
         );
       }
 
-      // Save symptoms
       nextClient.symptoms_severity = { ...symptomsState };
       dispatch(
         setFormField({ field: "symptoms_severity", value: symptomsState })
@@ -155,44 +152,6 @@ export const OnboardingInfo = ({
 
     setIsEditingPersonal(false);
     setIsEditingSymptoms(false);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormState((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const FieldView = ({
-    label,
-    fieldKey,
-  }: {
-    label: string;
-    fieldKey: FieldKey;
-  }) => {
-    const value = isEditingPersonal ? formState[fieldKey] : client[fieldKey];
-
-    return (
-      <div className="flex flex-col gap-1">
-        <p className="text-[#5F5F65] text-[14px] font-[500]">{label}</p>
-        {isEditingPersonal ? (
-          <Input
-            name={String(fieldKey)}
-            value={toInputString(value)}
-            onChange={handleChange}
-            className="text-[16px] font-semibold"
-          />
-        ) : (
-          <h3 className="text-[#1D1D1F] text-[16px] font-[500]">
-            {Array.isArray(value)
-              ? value.join(", ")
-              : toInputString(value) || "-"}
-          </h3>
-        )}
-      </div>
-    );
   };
 
   const Body = (
@@ -210,12 +169,16 @@ export const OnboardingInfo = ({
         className="hidden md:flex h-[32px] mt-[8px] md:w-[328px] text-nowrap items-center justify-between self-stretch bg-white rounded-[8px] border-[1px] border-[#1C63DB] py-[6px] gap-8 px-[16px]"
       >
         <span
-          className={`text-[14px] font-semibold ${percentage > 40 ? "text-white" : ""}`}
+          className={`text-[14px] font-semibold ${
+            percentage > 40 ? "text-white" : ""
+          }`}
         >
           Intake completed
         </span>
         <span
-          className={`text-[14px] font-semibold ${percentage > 97 ? "text-white" : ""}`}
+          className={`text-[14px] font-semibold ${
+            percentage > 97 ? "text-white" : ""
+          }`}
         >
           {percentage}%
         </span>
@@ -244,7 +207,11 @@ export const OnboardingInfo = ({
                 variant="blue2"
                 className="px-6 text-blue-700"
                 onClick={() => {
-                  setFormState({ ...client });
+                  const next: FormState = {};
+                  for (const { key } of personalFields) {
+                    next[key] = toInputString(client[key]);
+                  }
+                  setFormState(next);
                   setIsEditingPersonal(false);
                 }}
               >
@@ -255,9 +222,37 @@ export const OnboardingInfo = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4 md:gap-x-6 md:gap-y-6 mb-6">
-        {personalFields.map(({ label, key }) => (
-          <FieldView key={String(key)} label={label} fieldKey={key} />
-        ))}
+        {personalFields.map(({ label, key }) => {
+          const value = isEditingPersonal
+            ? (formState[key] ?? "")
+            : toInputString(client[key]);
+
+          return (
+            <label key={String(key)} className="flex flex-col gap-1">
+              <span className="text-[#5F5F65] text-[14px] font-[500]">
+                {label}
+              </span>
+
+              {isEditingPersonal ? (
+                <input
+                  id={`field-${String(key)}`}
+                  value={value}
+                  onChange={(e) =>
+                    setFormState((prev) => ({
+                      ...prev,
+                      [key]: e.target.value,
+                    }))
+                  }
+                  className="text-[16px] font-semibold border rounded px-2 py-1"
+                />
+              ) : (
+                <span className="text-[#1D1D1F] text-[16px] font-[500]">
+                  {value || "-"}
+                </span>
+              )}
+            </label>
+          );
+        })}
       </div>
 
       {/* Symptoms */}

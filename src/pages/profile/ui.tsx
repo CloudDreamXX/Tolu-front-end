@@ -67,11 +67,13 @@ export const ClientProfile = () => {
 
   useEffect(() => {
     const loadUser = async () => {
-      const userInfo = await UserService.getOnboardClient();
-      dispatch(setFromUserInfo(userInfo));
+      if (!user) {
+        const userInfo = await UserService.getOnboardClient();
+        dispatch(setFromUserInfo(userInfo));
+      }
     };
     loadUser();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     let objectUrl: string | null = null;

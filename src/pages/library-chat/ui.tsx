@@ -405,12 +405,6 @@ export const LibraryChat = () => {
                 document = item.answer;
               }
 
-              if (item.answer.includes("References")) {
-                const parts = item.answer.split(/<h3[^>]*>References<\/h3>/i);
-                content = parts[0].trim();
-                document = item.answer;
-              }
-
               chatMessages.push({
                 id: `ai-${item.id}`,
                 type: "ai",
@@ -617,16 +611,10 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         finalData?.chatId ||
         "";
 
-      let content = fullAnswer;
-      const cutIndex = fullAnswer.search(/<h3[^>]*>References<\/h3>/i);
-      if (cutIndex !== -1) {
-        content = fullAnswer.substring(0, cutIndex).trim();
-      }
-
       const aiMessage: Message = {
         id: chatId || Date.now().toString(),
         type: "ai",
-        content: isLearn ? joinReplyChunksSafely(replyChunks) : content,
+        content: isLearn ? joinReplyChunksSafely(replyChunks) : fullAnswer,
         timestamp: new Date(),
         document: isLearn ? str : fullAnswer,
       };

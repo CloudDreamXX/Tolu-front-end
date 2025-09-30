@@ -2,7 +2,6 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
-import rehypeRaw from "rehype-raw";
 import {
   Tooltip,
   TooltipContent,
@@ -18,33 +17,50 @@ const CustomLinkWrapper = (props: any) => (
     rel="noopener noreferrer"
     style={{
       color: "#1C63DB",
-      textDecoration: "none",
-      display: "inline-block",
-      maxWidth: "300px",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "wrap",
+      textDecoration: "underline",
+      display: "block",
+      marginBottom: "8px",
+      whiteSpace: "normal",
+      wordBreak: "break-word",
     }}
   >
     {props.children}
   </a>
 );
 
+const normalizeLinks = (html: string): string => {
+  return html.replace(
+    /<a\s+([^>]*href="[^"]+"[^>]*)>(.*?)<\/a>/gi,
+    `<a $1 style="color:#1C63DB;text-decoration:underline;display:block;margin-bottom:8px;white-space:normal;word-break:break-word;">$2</a>`
+  );
+};
+
+const detectContentType = (text: string): "html" | "markdown" | "plain" => {
+  const trimmed = text.trim();
+  if (!trimmed) return "plain";
+
+  const htmlPattern = /<\/?[a-z][\s\S]*?>/i;
+  const mdPattern = /(^|\n)(#{1,6}|[*_~`]|>\s|\d+\.\s|\*\s|-\s|\[.*?\]\(.*?\))/;
+
+  if (htmlPattern.test(trimmed)) return "html";
+  if (mdPattern.test(trimmed)) return "markdown";
+  return "plain";
+};
+
 export const smartRender = async (text: string) => {
   try {
     const relevantContentIndex = text.indexOf("Relevant content");
-    const referencesIndex = text.indexOf("### References");
-    const secondReferencesIndex = text.indexOf("References");
-
     const cutIndex = Math.min(
-      relevantContentIndex !== -1 ? relevantContentIndex : text.length,
-      referencesIndex !== -1 ? referencesIndex : text.length,
-      secondReferencesIndex !== -1 ? secondReferencesIndex : text.length
+      relevantContentIndex !== -1 ? relevantContentIndex : text.length
     );
 
     const trimmedText = cutIndex !== -1 ? text.slice(0, cutIndex) : text;
 
-    const sanitizedText = sanitizeHtml(trimmedText, {
+    const preprocessedText = trimmedText
+      .replace(/^##\s?/gm, "")
+      .replace(/\ud83d\udcda/g, "");
+
+    const sanitizedText = sanitizeHtml(preprocessedText, {
       allowedTags: [
         "p",
         "a",
@@ -91,95 +107,16 @@ export const smartRender = async (text: string) => {
     });
 
     const urlRegex = /\((https?:\/\/[^\s]+)\)/g;
-
-    const formattedText = sanitizedText.replace(urlRegex, (_, url) => {
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #1C63DB; text-decoration: none; display: inline-block;
-  max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${url}</a>`;
+    const withAnchors = sanitizedText.replace(urlRegex, (_, url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     });
+
+    const formattedText = normalizeLinks(withAnchors);
 
     const type = detectContentType(formattedText);
 
     if (type === "html") {
-      const customBulletText = formattedText.replace(
-        /●/g,
-        `<span><br/>●</span>`
-      );
-      const customLiText = customBulletText.replace(
-        /\*\*(.*?)\*\*/g,
-        `<strong>$1</strong>`
-      );
-
-      let isFirstFont = true;
-      const customTextWithFontBreaks = customLiText.replace(
-        /<font([^>]*)>(.*?)<\/font>/g,
-        (match, attrs, content) => {
-          const fontTagWithBreaks = isFirstFont
-            ? `<font${attrs}>${content}</font>`
-            : `<br/><br/><font${attrs}>${content}</font><br/>`;
-          isFirstFont = false;
-          return fontTagWithBreaks;
-        }
-      );
-
-      const markdownRegex = /```([\s\S]*?)```/g;
-      const parts: { isHtml: boolean; content: string }[] = [];
-      let match;
-      let lastIndex = 0;
-
-      while ((match = markdownRegex.exec(customTextWithFontBreaks)) !== null) {
-        if (match.index > lastIndex) {
-          parts.push({
-            isHtml: true,
-            content: customTextWithFontBreaks.slice(lastIndex, match.index),
-          });
-        }
-
-        parts.push({
-          isHtml: false,
-          content: match[1],
-        });
-
-        lastIndex = markdownRegex.lastIndex;
-      }
-
-      if (lastIndex < customTextWithFontBreaks.length) {
-        parts.push({
-          isHtml: true,
-          content: customTextWithFontBreaks.slice(lastIndex),
-        });
-      }
-
-      return (
-        <div>
-          {parts.map((part, index) =>
-            part.isHtml ? (
-              <div
-                key={index}
-                dangerouslySetInnerHTML={{ __html: part.content }}
-              />
-            ) : (
-              <ReactMarkdown
-                key={index}
-                remarkPlugins={[remarkGfm, remarkBreaks]}
-                rehypePlugins={[rehypeRaw]}
-                components={{
-                  body: (props) => <body className="bg-[#ECEFF4]" {...props} />,
-                  h1: (props) => <h1 {...props} />,
-                  h2: (props) => <h2 {...props} />,
-                  h3: (props) => <h3 {...props} />,
-                  h4: (props) => <h4 {...props} />,
-                  p: (props) => <p {...props} />,
-                  ul: (props) => <ul {...props} />,
-                  li: (props) => <li {...props} />,
-                  a: CustomLinkWrapper, // Use CustomLinkWrapper for all <a> tags
-                }}
-              >
-                {part.content}
-              </ReactMarkdown>
-            )
-          )}
-        </div>
-      );
+      return <div dangerouslySetInnerHTML={{ __html: formattedText }} />;
     }
 
     if (type === "markdown") {
@@ -188,7 +125,7 @@ export const smartRender = async (text: string) => {
       const htmlParts = extractHtmlFromMarkdown(cleaned);
 
       return (
-        <div className=" bg-[#ECEFF4]">
+        <div>
           {htmlParts.map((part, index) =>
             part.isHtml ? (
               <div
@@ -212,7 +149,7 @@ export const smartRender = async (text: string) => {
                   p: (props) => <p {...props} />,
                   ul: (props) => <ul {...props} />,
                   li: (props) => <li {...props} />,
-                  a: CustomLinkWrapper, // Use CustomLinkWrapper for all <a> tags
+                  a: CustomLinkWrapper,
                 }}
               >
                 {part.content}
@@ -225,15 +162,14 @@ export const smartRender = async (text: string) => {
 
     return (
       <div
-        className=" bg-[#ECEFF4]"
+        className="bg-[#ECEFF4]"
         style={{ fontFamily: "Inter, sans-serif" }}
-      >
-        {formattedText}
-      </div>
+        dangerouslySetInnerHTML={{ __html: formattedText }}
+      />
     );
   } catch (error) {
     console.error("Error rendering response:", error);
-    return <div className=" bg-[#ECEFF4]">Error rendering content.</div>;
+    return <div className="bg-[#ECEFF4]">Error rendering content.</div>;
   }
 };
 
@@ -266,7 +202,7 @@ const extractHtmlFromMarkdown = (markdown: string) => {
 
 export const joinReplyChunksSafely = (chunks: string[]): string => {
   return chunks.reduce((acc, curr) => {
-    if (!acc) return curr;
+    if (!acc) return curr.trim();
 
     const prevLastChar = acc.slice(-1);
     const currFirstChar = curr.slice(0, 1);
@@ -275,11 +211,9 @@ export const joinReplyChunksSafely = (chunks: string[]): string => {
       (/\w/.test(prevLastChar) && /\w/.test(currFirstChar)) ||
       (/[.,!?;:)]/.test(prevLastChar) && /[A-Za-z]/.test(currFirstChar));
 
-    if (needsSpace) {
-      return acc + " " + curr;
-    }
+    const glue = " ";
 
-    return acc + curr;
+    return acc + glue + "\n\n" + curr.trim();
   }, "");
 };
 
@@ -288,18 +222,6 @@ const cleanMarkdown = (raw: string): string => {
     .replace(/<\/?html.*?>/gi, "")
     .replace(/<\/?body.*?>/gi, "")
     .trim();
-};
-
-const detectContentType = (text: string): "html" | "markdown" | "plain" => {
-  const trimmed = text.trim();
-  if (!trimmed) return "plain";
-
-  const htmlPattern = /<\/?[a-z][\s\S]*?>/i;
-  const mdPattern = /(^|\n)(#{1,6}|[*_~`]|>\s|\d+\.\s|\*\s|-\s|\[.*?\]\(.*?\))/;
-
-  if (htmlPattern.test(trimmed)) return "html";
-  if (mdPattern.test(trimmed)) return "markdown";
-  return "plain";
 };
 
 export const renderResultBlocks = (rawContent: string) => {
