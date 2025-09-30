@@ -53,7 +53,7 @@ export const FilesLibrary = () => {
   } = useFetchAllFilesQuery({
     page,
     per_page: 20,
-    search: searchTerm || null,
+    search: null,
     file_type: null,
   });
 
@@ -227,6 +227,14 @@ export const FilesLibrary = () => {
 
   const loading = isLoading || isFetching || isDeleting || isUploading;
 
+  const filterBySearch = <T extends { name: string }>(items: T[] | undefined) => {
+    if (!items) return [];
+    if (!searchTerm.trim()) return items;
+    return items.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
   if (loading) {
     return (
       <>
@@ -355,7 +363,7 @@ export const FilesLibrary = () => {
         <div className="flex flex-wrap gap-2">
           {!viewingFolder ? (
             <>
-              {files?.root_folders.map((folder) => (
+              {filterBySearch(files?.root_folders).map((folder) => (
                 <button
                   key={folder.id}
                   className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
@@ -404,7 +412,7 @@ export const FilesLibrary = () => {
                 </button>
               ))}
 
-              {files?.root_files.map((file) => (
+              {filterBySearch(files?.root_files).map((file) => (
                 <FileLibrary
                   key={file.id}
                   fileLibrary={file}
@@ -437,7 +445,7 @@ export const FilesLibrary = () => {
 
               <div className="flex flex-col items-center justify-center w-full gap-[24px]">
                 <div className="flex flex-wrap w-full gap-2">
-                  {viewingFolder.subfolders?.map((subfolder) => (
+                  {filterBySearch(viewingFolder.subfolders).map((subfolder) => (
                     <button
                       key={subfolder.id}
                       className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
@@ -485,7 +493,7 @@ export const FilesLibrary = () => {
                       )}
                     </button>
                   ))}
-                  {viewingFolder.files?.map((file) => (
+                  {filterBySearch(viewingFolder.files).map((file) => (
                     <FileLibrary
                       key={file.id}
                       fileLibrary={file}

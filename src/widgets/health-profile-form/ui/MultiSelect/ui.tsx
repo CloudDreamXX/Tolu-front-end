@@ -110,7 +110,10 @@ export const MultiSelect = ({
       {open && (
         <ul
           role="listbox"
-          className="absolute z-10 mt-[4px] w-full bg-white border border-[#DBDEE1] rounded-md shadow-sm max-h-[260px] overflow-y-auto"
+          className="fixed z-50 mt-[4px] bg-white border border-[#DBDEE1] rounded-md shadow-sm max-h-[200px] overflow-y-auto"
+          style={{
+            width: dropdownRef.current?.getBoundingClientRect().width ?? "auto",
+          }}
         >
           {options.map((item, idx) =>
             isGroup(item) ? (

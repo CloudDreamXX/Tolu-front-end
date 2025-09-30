@@ -165,7 +165,7 @@ export const BasicInformationForm = ({ form }: { form: any }) => {
         control={form.control}
         name="language"
         render={() => (
-          <FormItem>
+          <FormItem className="relative">
             <FormLabel>Language</FormLabel>
             <FormControl>
               <MultiSelect

@@ -447,7 +447,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     { partial = false }: { partial?: boolean } = {}
   ) => {
     const payload = prune(mapToApi(vals)) as Partial<HealthHistoryPostData>;
-    const labFiles = vals.labTestFiles || [];
+    const labFiles = vals.labTestFiles || undefined;
 
     await HealthHistoryService.createHealthHistory(payload as any, labFiles);
     const history = await HealthHistoryService.getUserHealthHistory();
@@ -764,9 +764,9 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                        setIsOpen(false);
-                        setConfirmOpen(true);
-                      }
+                      setIsOpen(false);
+                      setConfirmOpen(true);
+                    }
                 }
               >
                 Cancel
