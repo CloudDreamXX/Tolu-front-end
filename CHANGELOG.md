@@ -1,3 +1,14 @@
+## [1.0.2] - 2025-09-30
+
+### Fixes & Minor Changes
+
+- Update client onboarding.
+- Update links in chat bots ai answers.
+- Fix coach profile loading.
+- Update intake form in coach profile.
+- Add loading skeleton for files library page.
+- Fix slider.
+
 ## [1.0.1] - 2025-09-29
 
 ### Fixes & Minor Changes
