@@ -1,7 +1,11 @@
 import { Button } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { useState } from "react";
+import { DailyJournal } from "widgets/dayli-journal";
 
 export const DailyJournalOverview = () => {
+  const [isFullOpen, setIsFullOpen] = useState<boolean>(false)
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between">
@@ -106,8 +110,9 @@ export const DailyJournalOverview = () => {
           <MaterialIcon iconName="replay" className="text-blue-700" />
           Update results
         </Button>
-        <Button variant="brightblue">See full Daily Journal</Button>
+        <Button variant="brightblue" onClick={() => setIsFullOpen(true)}>See full Daily Journal</Button>
       </div>
+      <DailyJournal isOpen={isFullOpen} onCancel={() => setIsFullOpen(false)} onClose={() => setIsFullOpen(false)} />
     </div>
   );
 };

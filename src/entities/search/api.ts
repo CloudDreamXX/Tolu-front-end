@@ -38,6 +38,7 @@ export class SearchService {
     try {
       const formData = this.createSearchRequest(
         searchData.chat_message,
+        undefined,
         searchData.images,
         searchData.pdf,
         searchData.contentId
@@ -146,6 +147,7 @@ export class SearchService {
     try {
       const formData = this.createSearchRequest(
         searchData.chat_message,
+        searchData.clientId,
         searchData.images,
         searchData.pdf,
         searchData.contentId
@@ -275,6 +277,7 @@ export class SearchService {
 
   static createSearchRequest(
     message: string,
+    clientId?: string,
     imageFiles?: File[],
     pdfFile?: File,
     contentId?: string,
@@ -282,6 +285,10 @@ export class SearchService {
   ) {
     const formData = new FormData();
     formData.append("chat_message", message);
+
+    if (clientId) {
+      formData.append("client_id", clientId);
+    }
 
     if (imageFiles && imageFiles.length) {
       imageFiles.forEach((file) => {
