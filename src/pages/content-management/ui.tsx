@@ -14,7 +14,11 @@ import { usePageWidth } from "shared/lib";
 import { Folder } from "entities/client";
 import { LibraryCard } from "features/library-card";
 import { ContentStatus } from "entities/content";
-import { AdminFoldersStructureResponse, AdminService } from "entities/admin";
+import {
+  AdminFoldersStructureResponse,
+  useGetFoldersStructureQuery,
+  useLazyGetFoldersStructureQuery,
+} from "entities/admin";
 
 type ContentItem = NonNullable<Folder["content"]>[number];
 
@@ -66,7 +70,6 @@ export const findFolderById = (
 
 export const ContentManagement = () => {
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState<boolean>(false);
   const [groups, setGroups] = useState<
     { key: string; label: string; folders: Folder[] }[]
   >([]);
@@ -90,45 +93,37 @@ export const ContentManagement = () => {
   const nav = useNavigate();
   const { isMobile } = usePageWidth();
 
+  const { data: resp, isLoading } = useGetFoldersStructureQuery({
+    page: 1,
+    page_size: PAGE_SIZE,
+  });
+
+  const [triggerGetFolders] = useLazyGetFoldersStructureQuery();
+
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const resp: AdminFoldersStructureResponse =
-          await AdminService.getFoldersStructure({
-            page: 1,
-            page_size: PAGE_SIZE,
-          });
+    if (!resp) return;
+    const built =
+      CATEGORY_KEYS.map((k) => ({
+        key: String(k),
+        label: CATEGORY_LABEL[k],
+        folders: (resp[k] as Folder[]) || [],
+      })) || [];
+    setGroups(built);
+    setFilteredGroups(built);
 
-        const built =
-          CATEGORY_KEYS.map((k) => ({
-            key: String(k),
-            label: CATEGORY_LABEL[k],
-            folders: (resp[k] as Folder[]) || [],
-          })) || [];
-
-        setGroups(built);
-        setFilteredGroups(built);
-
-        const status: Record<string, ContentStatus> = {};
-        const collect = (fs: Folder[]) => {
-          fs.forEach((f) => {
-            f.content?.forEach((c) => {
-              const st = (c as any).status;
-              if (st) status[c.id] = { content_id: c.id, status: st };
-            });
-            if (f.subfolders?.length) collect(f.subfolders);
-          });
-        };
-        built.forEach((g) => collect(g.folders));
-        setStatusMap(status);
-      } catch (e) {
-        console.error("Failed to fetch admin folders structure:", e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+    const status: Record<string, ContentStatus> = {};
+    const collect = (fs: Folder[]) => {
+      fs.forEach((f) => {
+        f.content?.forEach((c) => {
+          const st = (c as any).status;
+          if (st) status[c.id] = { content_id: c.id, status: st };
+        });
+        if (f.subfolders?.length) collect(f.subfolders);
+      });
+    };
+    built.forEach((g) => collect(g.folders));
+    setStatusMap(status);
+  }, [resp]);
 
   useEffect(() => {
     const ql = search.trim().toLowerCase();
@@ -136,7 +131,6 @@ export const ContentManagement = () => {
       setFilteredGroups(groups);
       return;
     }
-
     const filterTree = (folder: Folder): Folder | null => {
       const folderMatches = folder.name?.toLowerCase().includes(ql);
       const filteredContent = (folder.content || []).filter((it) =>
@@ -195,34 +189,27 @@ export const ContentManagement = () => {
         };
       });
 
-      try {
-        const currentFeed = folderContentMapRef.current[folderId];
-        const nextPage = reset ? 1 : (currentFeed?.page || 0) + 1;
+      const currentFeed = folderContentMapRef.current[folderId];
+      const nextPage = reset ? 1 : (currentFeed?.page || 0) + 1;
 
-        const resp: AdminFoldersStructureResponse =
-          await AdminService.getFoldersStructure({
-            page: nextPage,
-            page_size: PAGE_SIZE,
-            folder_id: folderId,
-          });
+      try {
+        const res = await triggerGetFolders({
+          page: nextPage,
+          page_size: PAGE_SIZE,
+          folder_id: folderId,
+        }).unwrap();
 
         const allRoots = CATEGORY_KEYS.flatMap(
-          (k) => (resp[k] as Folder[]) || []
+          (k) => (res[k] as Folder[]) || []
         );
         let returned = findFolderById(allRoots, folderId);
-        if (!returned && allRoots.length === 1 && allRoots[0].id === folderId)
+        if (!returned && allRoots.length === 1 && allRoots[0].id === folderId) {
           returned = allRoots[0];
-
+        }
         if (!returned) {
           setFolderContentMap((prev) => ({
             ...prev,
-            [folderId]: {
-              ...(prev[folderId] || { items: [], page: 0 }),
-              loading: false,
-              hasMore: false,
-              page: nextPage,
-              totalPages: prev[folderId]?.totalPages,
-            },
+            [folderId]: { ...prev[folderId], loading: false, hasMore: false },
           }));
           return;
         }
@@ -260,59 +247,16 @@ export const ContentManagement = () => {
           });
           if (Object.keys(updates).length)
             setStatusMap((prev) => ({ ...prev, ...updates }));
-        } else if (!hasMoreFromApi) {
-          setFolderContentMap((prev) => ({
-            ...prev,
-            [folderId]: {
-              ...(prev[folderId] || {
-                items: [] as ContentItem[],
-                page: pageFromApi,
-              }),
-              loading: false,
-              hasMore: false,
-            },
-          }));
         }
       } catch (e) {
         console.error("Failed to load folder page:", e);
-        setFolderContentMap((prev) => {
-          const base = prev[folderId] || {
-            items: [],
-            page: 0,
-            hasMore: true,
-            loading: false,
-          };
-          return {
-            ...prev,
-            [folderId]: { ...base, loading: false, hasMore: false },
-          };
-        });
+        setFolderContentMap((prev) => ({
+          ...prev,
+          [folderId]: { ...prev[folderId], loading: false, hasMore: false },
+        }));
       }
     },
-    []
-  );
-
-  const handleOpenTop = useCallback(
-    (groupKey: string, value: string, folder: Folder) => {
-      setOpenTop((prev) => ({ ...prev, [groupKey]: value }));
-      if (value) {
-        const feed = folderContentMapRef.current[folder.id];
-        if (!feed || feed.items.length === 0)
-          void loadFolderPage(folder.id, true);
-      }
-    },
-    [loadFolderPage]
-  );
-
-  const handleOpenSub = useCallback(
-    (parentId: string, value: string, sub: Folder) => {
-      setOpenSub((prev) => ({ ...prev, [parentId]: value }));
-      if (value) {
-        const feed = folderContentMapRef.current[sub.id];
-        if (!feed || feed.items.length === 0) void loadFolderPage(sub.id, true);
-      }
-    },
-    [loadFolderPage]
+    [triggerGetFolders]
   );
 
   useEffect(() => {
@@ -324,8 +268,9 @@ export const ContentManagement = () => {
             const folderId = (entry.target as HTMLElement).dataset.folderId;
             if (!folderId) return;
             const feed = folderContentMapRef.current[folderId];
-            if (feed && !feed.loading && feed.hasMore)
+            if (feed && !feed.loading && feed.hasMore) {
               void loadFolderPage(folderId);
+            }
           });
         },
         { root: null, rootMargin: "200px", threshold: 0.01 }
@@ -352,6 +297,72 @@ export const ContentManagement = () => {
       if (observer && el) observer.observe(el);
     },
     []
+  );
+
+  useEffect(() => {
+    const ql = search.trim().toLowerCase();
+    if (!ql) {
+      setFilteredGroups(groups);
+      return;
+    }
+
+    const filterTree = (folder: Folder): Folder | null => {
+      const folderMatches = folder.name?.toLowerCase().includes(ql);
+      const filteredContent = (folder.content || []).filter((it) =>
+        it.title?.toLowerCase().includes(ql)
+      );
+      const filteredSubfolders = (folder.subfolders || [])
+        .map(filterTree)
+        .filter(Boolean) as Folder[];
+      const subfolderNameMatch = (folder.subfolders || []).some((sf) =>
+        sf.name?.toLowerCase().includes(ql)
+      );
+      if (
+        folderMatches ||
+        filteredContent.length ||
+        filteredSubfolders.length ||
+        subfolderNameMatch
+      ) {
+        return {
+          ...folder,
+          content: filteredContent,
+          subfolders: filteredSubfolders,
+        };
+      }
+      return null;
+    };
+
+    const next = groups
+      .map((g) => ({
+        ...g,
+        folders: (g.folders || []).map(filterTree).filter(Boolean) as Folder[],
+      }))
+      .filter((g) => g.folders.length > 0);
+
+    setFilteredGroups(next);
+  }, [search, groups]);
+
+  const handleOpenTop = useCallback(
+    (groupKey: string, value: string, folder: Folder) => {
+      setOpenTop((prev) => ({ ...prev, [groupKey]: value }));
+      if (value) {
+        const feed = folderContentMapRef.current[folder.id];
+        if (!feed || feed.items.length === 0)
+          void loadFolderPage(folder.id, true);
+      }
+    },
+    [loadFolderPage]
+  );
+
+  const handleOpenSub = useCallback(
+    (parentId: string, value: string, sub: Folder) => {
+      setOpenSub((prev) => ({ ...prev, [parentId]: value }));
+      if (value) {
+        const feed = folderContentMapRef.current[sub.id];
+        if (!feed || feed.items.length === 0) void loadFolderPage(sub.id, true);
+      }
+    },
+    [loadFolderPage]
   );
 
   const LibraryCardSkeleton = useMemo(() => {
@@ -410,7 +421,7 @@ export const ContentManagement = () => {
   const renderFeed = (folderId: string) => {
     const feed = folderContentMap[folderId];
     const items = feed?.items || [];
-    const isLoading = !!feed?.loading;
+    const isLoadingFeed = !!feed?.loading;
 
     if (!items.length && isLoading) {
       return (
@@ -446,7 +457,7 @@ export const ContentManagement = () => {
           data-folder-id={folderId}
           className="w-full"
         />
-        {isLoading && (
+        {isLoadingFeed && (
           <div className="py-2 text-xs text-muted-foreground">Loading…</div>
         )}
       </>
@@ -502,7 +513,7 @@ export const ContentManagement = () => {
       />
 
       <ScrollArea className="flex-1 min-h-0 pr-2">
-        {loading ? (
+        {isLoading ? (
           <div className="flex flex-col w-full gap-4 px-2">
             {[...Array(4)].map((_, idx) => (
               <Accordion

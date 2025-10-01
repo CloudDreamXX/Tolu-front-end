@@ -95,6 +95,7 @@ export interface Client {
   roleName: string;
   created_at: string;
   updated_at: string;
+  last_symptoms_date: string | null;
 }
 
 export interface SharedCoachContentByContentIdResponse {

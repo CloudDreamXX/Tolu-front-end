@@ -827,7 +827,7 @@ export const ClientProfile = () => {
             }
           >
             {tabs[tab].id === "journal" ? (
-              <DailyJournalOverview />
+              <DailyJournalOverview date={user.last_symptoms_date} />
             ) : (
               <OnboardingInfo embedded />
             )}

@@ -227,7 +227,9 @@ export const FilesLibrary = () => {
 
   const loading = isLoading || isFetching || isDeleting || isUploading;
 
-  const filterBySearch = <T extends { name: string }>(items: T[] | undefined) => {
+  const filterBySearch = <T extends { name: string }>(
+    items: T[] | undefined
+  ) => {
     if (!items) return [];
     if (!searchTerm.trim()) return items;
     return items.filter((item) =>

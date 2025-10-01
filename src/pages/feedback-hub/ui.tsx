@@ -1,4 +1,4 @@
-import { AdminService } from "entities/admin";
+import { useGetFeedbackQuery } from "entities/admin";
 import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
@@ -75,8 +75,63 @@ export const FeedbackHub = () => {
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<Row[]>([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("All");
+  const [isFiltersOpen, setFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState<AppliedFilters>(defaultFilters);
+  const [draftFilters, setDraftFilters] =
+    useState<AppliedFilters>(defaultFilters);
+  const [isQueryOpen, setIsQueryOpen] = useState(false);
+  const [queryText, setQueryText] = useState<string>("");
+  const [answerText, setAnswerText] = useState<string>("");
+
+  const { data, isLoading } = useGetFeedbackQuery({
+    limit: PAGE_SIZE,
+    offset: (page - 1) * PAGE_SIZE,
+  });
+
+  useEffect(() => {
+    if (!data) return;
+
+    const coach: Row[] = (data?.coach_feedback?.data ?? []).map((c: any) => ({
+      type: "Coach",
+      name: nameFromEmail(c.coach_email),
+      email: c.coach_email,
+      query: c.query ?? "",
+      rating: c.rating ?? null,
+      date: c.rated_at ?? null,
+      htmlContent: c.content,
+      comments: c.rating_comment,
+    }));
+
+    const client: Row[] = (data?.client_feedback?.data ?? []).map((c: any) => ({
+      type: "Client",
+      name: nameFromEmail(c.client_email),
+      email: c.client_email,
+      query: c.query ?? "",
+      rating:
+        typeof c.satisfaction_score === "number" ? c.satisfaction_score : null,
+      date: c.created_at ?? null,
+      htmlContent: c.content,
+      sourceId: c.source_id,
+      comments: c.rating_comment,
+    }));
+
+    const merged = [...coach, ...client].sort((a, b) => {
+      const da = a.date ? new Date(a.date).getTime() : -Infinity;
+      const db = b.date ? new Date(b.date).getTime() : -Infinity;
+      return db - da;
+    });
+
+    setRows(merged);
+
+    const combinedTotal =
+      data?.summary?.combined_total ??
+      Math.max(
+        data?.coach_feedback?.total ?? 0,
+        data?.client_feedback?.total ?? 0
+      );
+    setTotalPages(Math.max(1, Math.ceil(combinedTotal / PAGE_SIZE)));
+  }, [data]);
 
   const within = (iso: string | null | undefined, range: DateRange) => {
     if (!range.start && !range.end) return true;
@@ -91,100 +146,6 @@ export const FeedbackHub = () => {
       : Infinity;
     return t >= s && t <= e;
   };
-
-  const [isFiltersOpen, setFiltersOpen] = useState(false);
-  const [filters, setFilters] = useState<AppliedFilters>(defaultFilters);
-  const [draftFilters, setDraftFilters] =
-    useState<AppliedFilters>(defaultFilters);
-  const [isQueryOpen, setIsQueryOpen] = useState(false);
-  const [queryText, setQueryText] = useState<string>("");
-  const [answerText, setAnswerText] = useState<string>("");
-
-  const openQuery = (text?: string, answer?: string) => {
-    setQueryText(text || "—");
-    setAnswerText(answer || "");
-    setIsQueryOpen(true);
-  };
-  const closeQuery = () => setIsQueryOpen(false);
-
-  useEffect(() => {
-    if (!isQueryOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeQuery();
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [isQueryOpen]);
-
-  useEffect(() => {
-    if (!isQueryOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [isQueryOpen]);
-
-  useEffect(() => setPage(1), [typeFilter]);
-
-  useEffect(() => {
-    const fetchPage = async () => {
-      try {
-        setLoading(true);
-        const res = await AdminService.getFeedback(
-          PAGE_SIZE,
-          (page - 1) * PAGE_SIZE
-        );
-
-        const coach = (res?.coach_feedback?.data ?? []).map(
-          (c: any): Row => ({
-            type: "Coach",
-            name: nameFromEmail(c.coach_email),
-            email: c.coach_email,
-            query: c.query ?? "",
-            rating: c.rating ?? null,
-            date: c.rated_at ?? null,
-            htmlContent: c.content,
-            comments: c.rating_comment,
-          })
-        );
-
-        const client: Row[] = (res?.client_feedback?.data ?? []).map(
-          (c: any): Row => ({
-            type: "Client",
-            name: nameFromEmail(c.client_email),
-            email: c.client_email,
-            query: c.query ?? "",
-            rating:
-              typeof c.satisfaction_score === "number"
-                ? c.satisfaction_score
-                : null,
-            date: c.created_at ?? null,
-            htmlContent: c.content,
-            sourceId: c.source_id,
-            comments: c.rating_comment,
-          })
-        );
-
-        const merged = [...coach, ...client].sort((a, b) => {
-          const da = a.date ? new Date(a.date).getTime() : -Infinity;
-          const db = b.date ? new Date(b.date).getTime() : -Infinity;
-          return db - da;
-        });
-
-        setRows(merged);
-        const combinedTotal =
-          res?.summary?.combined_total ??
-          Math.max(
-            res?.coach_feedback?.total ?? 0,
-            res?.client_feedback?.total ?? 0
-          );
-        setTotalPages(Math.max(1, Math.ceil(combinedTotal / PAGE_SIZE)));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPage();
-  }, [page]);
 
   const filtered = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -214,6 +175,31 @@ export const FeedbackHub = () => {
       );
     });
   }, [rows, searchTerm, typeFilter, filters]);
+
+  const openQuery = (text?: string, answer?: string) => {
+    setQueryText(text || "—");
+    setAnswerText(answer || "");
+    setIsQueryOpen(true);
+  };
+  const closeQuery = () => setIsQueryOpen(false);
+
+  useEffect(() => {
+    if (!isQueryOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeQuery();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isQueryOpen]);
+
+  useEffect(() => {
+    if (!isQueryOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isQueryOpen]);
+
+  useEffect(() => setPage(1), [typeFilter]);
 
   const getVisiblePages = (current: number, total: number, maxVisible = 4) => {
     let start = Math.max(1, current - Math.floor(maxVisible / 2));
@@ -385,19 +371,19 @@ export const FeedbackHub = () => {
           </div>
 
           <div>
-            {loading && (
+            {isLoading && (
               <div className="p-6 text-sm text-center text-gray-500">
                 Loading…
               </div>
             )}
 
-            {!loading && filtered.length === 0 && (
+            {!isLoading && filtered.length === 0 && (
               <div className="p-6 text-sm text-center text-gray-500">
                 No feedback found.
               </div>
             )}
 
-            {!loading &&
+            {!isLoading &&
               filtered.slice(0, PAGE_SIZE).map((r, idx) => (
                 <div
                   key={idx}

@@ -3,7 +3,7 @@ import {
   HealthHistory,
   HealthHistoryPostData,
   HealthHistoryService,
-  UploadedFile,
+  LabResultFile,
 } from "entities/health-history";
 import { Steps } from "features/steps/ui";
 import { useEffect, useMemo, useState } from "react";
@@ -172,7 +172,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const { isMobile } = usePageWidth();
   const [preview, setPreview] = useState<{
     open: boolean;
-    file?: UploadedFile;
+    file?: LabResultFile;
   }>({
     open: false,
     file: undefined,
@@ -442,14 +442,45 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     };
   };
 
+  const base64ToFile = (
+    base64: string,
+    filename: string,
+    contentType: string
+  ): File => {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: contentType });
+    return new File([blob], filename, { type: contentType });
+  };
+
   const submitHealthHistory = async (
     vals: BaseValues,
     { partial = false }: { partial?: boolean } = {}
   ) => {
     const payload = prune(mapToApi(vals)) as Partial<HealthHistoryPostData>;
-    const labFiles = vals.labTestFiles || undefined;
+
+    let labFiles: File[] | undefined;
+
+    if (Array.isArray(vals.labTestFiles)) {
+      if (
+        vals.labTestFiles.length > 0 &&
+        vals.labTestFiles[0].content &&
+        vals.labTestFiles[0].filename
+      ) {
+        labFiles = vals.labTestFiles.map((labFile) =>
+          base64ToFile(labFile.content, labFile.filename, labFile.content_type)
+        );
+      } else if (vals.labTestFiles[0] instanceof File) {
+        labFiles = vals.labTestFiles as File[];
+      }
+    }
 
     await HealthHistoryService.createHealthHistory(payload as any, labFiles);
+
     const history = await HealthHistoryService.getUserHealthHistory();
     dispatch(setHealthHistory(history));
 
@@ -497,7 +528,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
     setIsOpen(false);
   };
 
-  const openPreview = (file: UploadedFile) => setPreview({ open: true, file });
+  const openPreview = (file: LabResultFile) => setPreview({ open: true, file });
   const closePreview = () => setPreview({ open: false, file: undefined });
 
   return (
@@ -679,7 +710,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                 />
                 {values.labTestFiles?.map((file) => (
                   <div
-                    key={file.id}
+                    key={file.filename}
                     className={
                       "px-3 py-1 flex items-center justify-between border border-[#DBDEE1] rounded-[8px]"
                     }
@@ -687,7 +718,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                     <div className="flex items-center w-full gap-3 md:w-1/3">
                       <MaterialIcon iconName="picture_as_pdf" />
                       <span className="text-[14px] text-[#1D1D1F]">
-                        {file.original_filename}
+                        {file.filename}
                       </span>
                     </div>
 
@@ -764,9 +795,9 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                      setIsOpen(false);
-                      setConfirmOpen(true);
-                    }
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
                 }
               >
                 Cancel
@@ -804,7 +835,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                 <h2 className="text-[18px] font-bold">
                   Preview{" "}
                   <span className="text-[#1D1D1F]">
-                    “{preview.file.original_filename}”
+                    “{preview.file.filename}”
                   </span>
                 </h2>
                 <button

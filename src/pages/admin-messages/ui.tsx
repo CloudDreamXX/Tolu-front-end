@@ -1,4 +1,8 @@
-import { AdminService } from "entities/admin";
+import {
+  useGetAllChatsQuery,
+  useSendMessageMutation,
+  useLazyGetMessagesByChatIdQuery,
+} from "entities/admin";
 import {
   ChatItemModel,
   ChatMessageModel,
@@ -15,38 +19,30 @@ import { RootState } from "../../entities/store/lib";
 export const AdminMessages: React.FC = () => {
   const navigate = useNavigate();
   const { chatId: routeChatId } = useParams();
-  const [isLoading, setIsLoading] = useState(false);
   const [chats, setChats] = useState<ChatItemModel[]>([]);
   const [selectedChat, setSelectedChat] = useState<ChatItemModel | null>(null);
 
   const profile = useSelector((state: RootState) => state.user.user);
 
+  const { data: chatsData, isLoading: isLoadingChats } = useGetAllChatsQuery();
+  const [sendMessageApi] = useSendMessageMutation();
+
   useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const response = await AdminService.getAllChats();
-        const mappedChats = response.map((item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            lastMessageAt: item.last_message_time,
-            unreadCount: item.unread_count,
-            avatar_url: "",
-            createdAt: "",
-            type: item.chat_type,
-            participants: [],
-            lastMessage: null,
-          };
-        });
-        setChats(mappedChats);
-      } catch (e) {
-        console.error("Failed to fetch clients:", e);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+    if (chatsData) {
+      const mappedChats: ChatItemModel[] = chatsData.map((item) => ({
+        id: item.id,
+        name: item.name,
+        lastMessageAt: item.last_message_time,
+        unreadCount: item.unread_count,
+        avatar_url: "",
+        createdAt: "",
+        type: item.chat_type,
+        participants: [],
+        lastMessage: null,
+      }));
+      setChats(mappedChats);
+    }
+  }, [chatsData]);
 
   const routeMatch = useMemo(() => {
     if (!routeChatId || !chats.length) return null;
@@ -77,16 +73,16 @@ export const AdminMessages: React.FC = () => {
     content: string
   ): Promise<ChatMessageModel | undefined> => {
     if (!selectedChat) return;
-    const response = await AdminService.sendMessage({
+    const response = await sendMessageApi({
       content,
       message_type: "text",
       target_group: selectedChat?.type,
-    });
+    }).unwrap();
 
     return {
       id: response.admin_chat_id,
       chat_id: selectedChat.id,
-      content: content,
+      content,
       created_at: new Date().toISOString(),
       file_url: null,
       file_name: null,
@@ -100,30 +96,33 @@ export const AdminMessages: React.FC = () => {
     };
   };
 
+  const [triggerGetMessages] = useLazyGetMessagesByChatIdQuery();
+
   const loadMessages = async (
     page: number,
     pageSize?: number
   ): Promise<FetchChatMessagesResponse | undefined> => {
     if (!selectedChat) return;
-    const res = await AdminService.getMessagesByChatId({
-      chat_id: selectedChat?.id,
-      page: page,
+
+    const data = await triggerGetMessages({
+      chat_id: selectedChat.id,
+      page,
       page_size: pageSize,
-    });
+    }).unwrap();
 
     return {
-      messages: res,
-      total: res.length,
-      page: page,
-      limit: pageSize ?? res.length,
-      has_next: res.length === (pageSize ?? res.length),
+      messages: data,
+      total: data.length,
+      page,
+      limit: pageSize ?? data.length,
+      has_next: data.length === (pageSize ?? data.length),
       has_prev: page > 1,
     };
   };
 
   return (
     <div className="flex h-full bg-slate-[#DBDEE1] border">
-      {isLoading && (
+      {isLoadingChats && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <span className="inline-flex h-5 w-5 items-center justify-center">
             <MaterialIcon
@@ -136,7 +135,7 @@ export const AdminMessages: React.FC = () => {
       )}
       <MessageSidebar
         chats={chats}
-        isLoadingChats={isLoading}
+        isLoadingChats={isLoadingChats}
         onChatClick={chatItemClick}
         selectedChat={selectedChat}
         title="Messages"

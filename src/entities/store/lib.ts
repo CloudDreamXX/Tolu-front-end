@@ -14,6 +14,7 @@ import { clientGlucoseReducer } from "./clientGlucoseSlice";
 import { clientMoodReducer } from "./clientMoodSlice";
 import { clientOnboardingReducer } from "./clientOnboardingSlice";
 import coachOnboardingReducer from "./coachOnboardingSlice";
+import { adminApi } from "entities/admin";
 
 const userPersistConfig = {
   key: "user",
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   [chatApi.reducerPath]: chatApi.reducer,
   [filesLibraryApi.reducerPath]: filesLibraryApi.reducer,
   downloads: downloadsReducer,
+  [adminApi.reducerPath]: adminApi.reducer,
 });
 
 export const store = configureStore({
@@ -56,6 +58,7 @@ export const store = configureStore({
         ],
       },
     })
+      .concat(adminApi.middleware)
       .concat(chatApi.middleware)
       .concat(filesLibraryApi.middleware),
 });

@@ -12,7 +12,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 import { ChatActionsAdmin } from "features/chat/ui/chat-actions-admin/ui";
 import { ChangeAdminStatusPopup } from "widgets/change-admin-status-popup";
-import { AdminService, ManageContentData } from "entities/admin";
+import { ManageContentData, useManageContentMutation } from "entities/admin";
 
 export const ContentManagementDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -27,6 +27,8 @@ export const ContentManagementDocument = () => {
   const [statusPopup, setStatusPopup] = useState<
     "approve" | "reject" | "unpublish" | null
   >(null);
+
+  const [manageContent] = useManageContentMutation();
 
   const dispatch = useDispatch();
   const { tooltipPosition, showTooltip, handleTooltipClick } =
@@ -83,7 +85,7 @@ export const ContentManagementDocument = () => {
           statusPopup === "unpublish" ? reason?.trim() : undefined,
       };
 
-      await AdminService.manageContent(payload);
+      await manageContent(payload);
       toast({
         title: "Status changed successfully",
       });

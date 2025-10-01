@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useEffect } from "react";
-import { AdminService, User } from "entities/admin";
+import { useGetAllUsersQuery, User } from "entities/admin";
 import { toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { fmtDate } from "pages/feedback-hub";
@@ -17,9 +17,10 @@ const ROLE_MAP: Record<number, string> = {
 
 export const UserManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [usersData, setUsersData] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
+  const { data, isLoading, error } = useGetAllUsersQuery();
+  const usersData: User[] = data?.users ?? [];
+
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) return usersData;
@@ -40,25 +41,14 @@ export const UserManagement: React.FC = () => {
   const totalPages = Math.ceil(filteredUsers.length / PAGE_SIZE) || 1;
 
   useEffect(() => {
-    const fetchClients = async () => {
-      setLoading(true);
-      try {
-        const response = await AdminService.getAllUsers();
-        setUsersData(response.users);
-      } catch (error) {
-        console.error("Error fetching users", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to fetch users",
-          description: "Failed to fetch users. Please try again.",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClients();
-  }, []);
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to fetch users",
+        description: "Please try again.",
+      });
+    }
+  }, [error]);
 
   const getVisiblePages = (current: number, total: number, maxVisible = 4) => {
     let start = Math.max(1, current - Math.floor(maxVisible / 2));
@@ -112,7 +102,7 @@ export const UserManagement: React.FC = () => {
         </div>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="py-8 text-center">Loading users...</div>
       ) : (
         <div>
