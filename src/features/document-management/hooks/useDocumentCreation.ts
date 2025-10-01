@@ -15,7 +15,6 @@ interface DocumentCreationParams {
   loadConversation: (chatId: string | undefined) => Promise<void>;
   setSharedClients: (clients: any) => void;
   navigate: any;
-  loadDocument: (docId: string) => Promise<void>;
 }
 
 export const useDocumentCreation = () => {
@@ -32,7 +31,6 @@ export const useDocumentCreation = () => {
       loadConversation,
       setSharedClients,
       navigate,
-      loadDocument,
     } = params;
     if (!location.state) return;
 
@@ -79,6 +77,7 @@ export const useDocumentCreation = () => {
           }
 
           await loadConversation(documentId);
+
           const response = await CoachService.getContentShares(realDocumentId);
           setSharedClients(response.shares);
           setIsCreatingDocument(false);
@@ -86,7 +85,6 @@ export const useDocumentCreation = () => {
             `/content-manager/library/folder/${folderId}/document/${realDocumentId}`,
             { replace: true }
           );
-          loadDocument(realDocumentId);
         }
       );
 

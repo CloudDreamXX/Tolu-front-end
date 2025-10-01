@@ -1,6 +1,6 @@
 import { ClientService, CoachListItem, Folder } from "entities/client";
 import { setFolders, setLoading } from "entities/client/lib";
-import { ContentService, ContentStatus } from "entities/content";
+import { useUpdateStatusMutation, ContentStatus } from "entities/content";
 import { HealthHistory } from "entities/health-history";
 import { RootState } from "entities/store";
 import { LibraryCard } from "features/library-card";
@@ -103,6 +103,8 @@ export const LibraryClientContent = ({
     () => coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
     [coaches, selectedCoachId]
   );
+
+  const [updateStatus] = useUpdateStatusMutation();
 
   useEffect(() => {
     (async () => {
@@ -434,7 +436,7 @@ export const LibraryClientContent = ({
     status: "read" | "saved_for_later"
   ) => {
     const newStatus: ContentStatus = { content_id: id, status };
-    const response = await ContentService.updateStatus(newStatus);
+    const response = await updateStatus(newStatus);
     if (response) setStatusMap((prev) => ({ ...prev, [id]: newStatus }));
 
     const refreshed = await ClientService.getLibraryContent(1, PAGE_SIZE, null);

@@ -1,111 +1,145 @@
-import { API_ROUTES, ApiService } from "shared/api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
-  ContentHashtags,
   ContentItemResponse,
-  ContentStatus,
   ContentToEdit,
-  CreatorProfile,
+  ContentStatus,
   Feedback,
   FeedbackResponse,
-  LibraryContentStatus,
+  ContentHashtags,
+  CreatorProfile,
   ShareViaEmail,
   ShareWithCoach,
+  LibraryContentStatus,
 } from "./model";
+import { API_ROUTES } from "shared/api";
+import { RootState } from "entities/store";
 
-export class ContentService {
-  static async getContentEndpoint(id: string): Promise<ContentItemResponse> {
-    return ApiService.get<ContentItemResponse>(
-      `${API_ROUTES.CONTENT.RETRIEVE}/${id}`
-    );
-  }
+export const contentApi = createApi({
+  reducerPath: "contentApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
 
-  static async duplicateContentById(contentId: string): Promise<any> {
-    return ApiService.post<any>(
-      `${API_ROUTES.CONTENT.DUPLICATE_CONTENT}/${contentId}`
-    );
-  }
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
 
-  static async editContent(content: ContentToEdit): Promise<any> {
-    return ApiService.put<any>(API_ROUTES.CONTENT.EDIT_CONTENT, content);
-  }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    getContent: builder.query<ContentItemResponse, string>({
+      query: (id) => `${API_ROUTES.CONTENT.RETRIEVE}/${id}`,
+    }),
+    duplicateContentById: builder.mutation<any, string>({
+      query: (contentId) => ({
+        url: `${API_ROUTES.CONTENT.DUPLICATE_CONTENT}/${contentId}`,
+        method: "POST",
+      }),
+    }),
+    editContent: builder.mutation<any, ContentToEdit>({
+      query: (content) => ({
+        url: API_ROUTES.CONTENT.EDIT_CONTENT,
+        method: "PUT",
+        body: content,
+      }),
+    }),
+    updateStatus: builder.mutation<any, ContentStatus>({
+      query: (status) => ({
+        url: `${API_ROUTES.CONTENT.UPDATE_CONTENT_STATUS.replace("{content_id}", status.content_id)}`,
+        method: "POST",
+        body: { status: status.status },
+      }),
+    }),
+    addContentFeedback: builder.mutation<FeedbackResponse, Feedback>({
+      query: (feedback) => ({
+        url: API_ROUTES.CONTENT.FEEDBACK,
+        method: "POST",
+        body: feedback,
+      }),
+    }),
+    addHashtags: builder.mutation<any, ContentHashtags>({
+      query: (data) => ({
+        url: API_ROUTES.CONTENT.ADD_HASHTAGS,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    deleteHashtags: builder.mutation<any, ContentHashtags>({
+      query: (data) => ({
+        url: API_ROUTES.CONTENT.DELETE_HASHTAGS,
+        method: "DELETE",
+        body: data,
+      }),
+    }),
+    getContentHashtags: builder.query<any, string>({
+      query: (id) =>
+        `${API_ROUTES.CONTENT.GET_CONTENT_HASHTAGS.replace("{content_id}", id)}`,
+    }),
+    getContentWithSimilarTags: builder.mutation<any, string>({
+      query: (id) => ({
+        url: API_ROUTES.CONTENT.GET_CONTENTS_WITH_SIMILAR_TAGS,
+        method: "POST",
+        body: { content_id: id },
+      }),
+    }),
+    getAllHashtags: builder.query<any, void>({
+      query: () => API_ROUTES.CONTENT.GET_ALL_HASHTAGS,
+    }),
+    getCreatorProfile: builder.query<CreatorProfile, string>({
+      query: (id) =>
+        `${API_ROUTES.CONTENT.GET_CREATOR_PROFILE.replace("{creator_id}", id)}`,
+    }),
+    getCreatorPhoto: builder.query<Blob, { id: string; filename: string }>({
+      query: ({ id, filename }) => ({
+        url: API_ROUTES.CONTENT.DOWNLOAD_CREATOR_PHOTO.replace(
+          "{creator_id}",
+          encodeURIComponent(id)
+        ).replace("{filename}", encodeURIComponent(filename)),
+        method: "GET",
+        responseType: "blob",
+        headers: { Accept: "image/*" },
+      }),
+    }),
+    shareEmail: builder.mutation<any, ShareViaEmail>({
+      query: (data) => ({
+        url: API_ROUTES.CONTENT.SHARE_EMAIL,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    shareCoach: builder.mutation<any, ShareWithCoach>({
+      query: (data) => ({
+        url: API_ROUTES.CONTENT.SHARE_COACH,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updateContentStatus: builder.mutation<any, LibraryContentStatus>({
+      query: (data) => ({
+        url: API_ROUTES.CONTENT.LIBRARY_STATUS,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+  }),
+});
 
-  static async updateStatus(status: ContentStatus): Promise<any> {
-    const endpoint = API_ROUTES.CONTENT.UPDATE_CONTENT_STATUS.replace(
-      "{content_id}",
-      status.content_id
-    );
-    return ApiService.post<any>(endpoint, { status: status.status });
-  }
-
-  static async addContentFeedback(
-    feedback: Feedback
-  ): Promise<FeedbackResponse> {
-    return ApiService.post<FeedbackResponse>(
-      API_ROUTES.CONTENT.FEEDBACK,
-      feedback
-    );
-  }
-
-  static async addHashtags(data: ContentHashtags): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.CONTENT.ADD_HASHTAGS, data);
-  }
-
-  static async deleteHashtags(data: ContentHashtags): Promise<any> {
-    return ApiService.delete<any>(API_ROUTES.CONTENT.DELETE_HASHTAGS, data);
-  }
-
-  static async getContentHashtags(id: string): Promise<any> {
-    const endpoint = API_ROUTES.CONTENT.GET_CONTENT_HASHTAGS.replace(
-      "{content_id}",
-      id
-    );
-    return ApiService.get<any>(endpoint);
-  }
-
-  static async getContentWithSimilarTags(id: string): Promise<any> {
-    const data = {
-      content_id: id,
-    };
-    return ApiService.post<any>(
-      API_ROUTES.CONTENT.GET_CONTENTS_WITH_SIMILAR_TAGS,
-      data
-    );
-  }
-
-  static async getAllHashtags(): Promise<any> {
-    return ApiService.get<any>(API_ROUTES.CONTENT.GET_ALL_HASHTAGS);
-  }
-
-  static async getCreatorProfile(id: string): Promise<CreatorProfile> {
-    const endpoint = API_ROUTES.CONTENT.GET_CREATOR_PROFILE.replace(
-      "{creator_id}",
-      id
-    );
-    return ApiService.get<CreatorProfile>(endpoint);
-  }
-
-  static async getCreatorPhoto(id: string, filename: string): Promise<Blob> {
-    const endpoint = API_ROUTES.CONTENT.DOWNLOAD_CREATOR_PHOTO.replace(
-      "{creator_id}",
-      encodeURIComponent(id)
-    ).replace("{filename}", encodeURIComponent(filename));
-
-    const res = await ApiService.get<Blob>(endpoint, {
-      responseType: "blob" as const,
-      headers: { Accept: "image/*" },
-    });
-    return (res as any).data ?? res;
-  }
-
-  static async shareEmail(data: ShareViaEmail): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.CONTENT.SHARE_EMAIL, data);
-  }
-
-  static async shareCoach(data: ShareWithCoach): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.CONTENT.SHARE_COACH, data);
-  }
-
-  static async updateContentStatus(data: LibraryContentStatus): Promise<any> {
-    return ApiService.put<any>(API_ROUTES.CONTENT.LIBRARY_STATUS, data);
-  }
-}
+export const {
+  useGetContentQuery,
+  useDuplicateContentByIdMutation,
+  useEditContentMutation,
+  useUpdateStatusMutation,
+  useAddContentFeedbackMutation,
+  useAddHashtagsMutation,
+  useDeleteHashtagsMutation,
+  useGetContentHashtagsQuery,
+  useGetContentWithSimilarTagsMutation,
+  useGetAllHashtagsQuery,
+  useGetCreatorProfileQuery,
+  useGetCreatorPhotoQuery,
+  useShareEmailMutation,
+  useShareCoachMutation,
+  useUpdateContentStatusMutation,
+} = contentApi;

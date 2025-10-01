@@ -169,7 +169,7 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                           {files.length > 0 ? (
                             files.map((f: any, idx) => (
                               <li key={idx} className="truncate max-w-[240px]">
-                                {f.filename || f.name}
+                                {f.original_filename || f.name}
                               </li>
                             ))
                           ) : (

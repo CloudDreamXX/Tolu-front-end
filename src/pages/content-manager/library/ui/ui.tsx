@@ -1,5 +1,5 @@
 import { CoachService, Content } from "entities/coach";
-import { ContentService } from "entities/content";
+import { useDuplicateContentByIdMutation } from "entities/content";
 import {
   ContentToMove,
   FoldersService,
@@ -44,6 +44,7 @@ export const ContentManagerLibrary: React.FC = () => {
   );
   const [allContent, setAllContent] = useState<Content[]>([]);
   const [contentCardsView, setContentCardsView] = useState<boolean>(false);
+  const [duplicateContentById] = useDuplicateContentByIdMutation();
 
   useEffect(() => {
     const fetchAllContent = async () => {
@@ -158,8 +159,12 @@ export const ContentManagerLibrary: React.FC = () => {
 
   const handleDublicateClick = async (id: string) => {
     setIsDublicateOpen(true);
-    const response = await ContentService.duplicateContentById(id);
-    setIdToDuplicate(response.duplicated_content.id);
+    try {
+      const response = await duplicateContentById(id).unwrap();
+      setIdToDuplicate(response.duplicated_content.id);
+    } catch (error) {
+      console.error("Error duplicating content:", error);
+    }
   };
 
   const handleDublicateAndMoveClick = async (

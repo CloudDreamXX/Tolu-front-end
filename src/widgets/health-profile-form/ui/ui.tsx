@@ -718,7 +718,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                     <div className="flex items-center w-full gap-3 md:w-1/3">
                       <MaterialIcon iconName="picture_as_pdf" />
                       <span className="text-[14px] text-[#1D1D1F]">
-                        {file.filename}
+                        {file.original_filename}
                       </span>
                     </div>
 

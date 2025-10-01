@@ -26,7 +26,11 @@ import { clearAllChatHistory } from "entities/client/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ChatSocketService } from "entities/chat";
 import { ChangeAdminStatusPopup } from "widgets/change-admin-status-popup";
-import { ContentService, LibraryContentStatus } from "entities/content";
+import {
+  useUpdateContentStatusMutation,
+  LibraryContentStatus,
+} from "entities/content";
+import { useGetDocumentByIdQuery } from "entities/document";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -48,7 +52,6 @@ export const ContentManagerDocument: React.FC = () => {
     setStreamingContent,
     setStreamingIsHtml,
     setSharedClients,
-    loadDocument,
     loadConversation,
     refreshSharedClients,
     navigate,
@@ -123,6 +126,9 @@ export const ContentManagerDocument: React.FC = () => {
 
   const [statusPopup, setStatusPopup] = useState<boolean>(false);
 
+  const [updateContentStatus] = useUpdateContentStatusMutation();
+  const { refetch } = useGetDocumentByIdQuery(documentId!);
+
   useEffect(() => {
     const handleNewMessage = (message: any) => {
       if (
@@ -164,7 +170,6 @@ export const ContentManagerDocument: React.FC = () => {
           loadConversation,
           setSharedClients,
           navigate,
-          loadDocument,
         });
       }
     };
@@ -204,7 +209,7 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   const onSaveEdit = async (contentId: string) => {
-    await handleSaveEdit(contentId, documentId, loadDocument);
+    await handleSaveEdit(contentId, documentId);
     setOriginalEdit(null);
   };
 
@@ -214,7 +219,7 @@ export const ContentManagerDocument: React.FC = () => {
   };
 
   const onMarkAsClick = () => {
-    handleMarkAsClick(selectedDocument);
+    handleMarkAsClick(selectedDocument ? selectedDocument : null);
   };
 
   const onStatusCompleteHandler = async (status: any, contentId?: string) => {
@@ -247,8 +252,8 @@ export const ContentManagerDocument: React.FC = () => {
         reviewer_comment: comment?.trim() || undefined,
       };
 
-      await ContentService.updateContentStatus(payload);
-      await loadDocument(documentId);
+      await updateContentStatus(payload).unwrap();
+      refetch();
       toast({
         title: "Status changed successfully",
       });
@@ -280,7 +285,7 @@ export const ContentManagerDocument: React.FC = () => {
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
 
           <DocumentInfoHeader
-            document={selectedDocument}
+            document={selectedDocument ? selectedDocument : null}
             sharedClients={sharedClients}
             documentId={documentId}
             refreshSharedClients={refreshSharedClients}
@@ -368,7 +373,7 @@ export const ContentManagerDocument: React.FC = () => {
         </div>
 
         <UserEngagementSidebar
-          document={selectedDocument}
+          document={selectedDocument ? selectedDocument : null}
           folderName={folder?.name ?? ""}
         />
 
@@ -450,7 +455,6 @@ export const ContentManagerDocument: React.FC = () => {
             isLoading={loadingConversation}
             selectedText={textForInput}
             deleteSelectedText={handleDeleteSelectedText}
-            onDocumentRefresh={(docId) => loadDocument(docId)}
             initialDocument={selectedDocument}
           />
         </div>

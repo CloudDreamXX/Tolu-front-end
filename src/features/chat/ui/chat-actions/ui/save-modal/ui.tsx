@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from "shared/ui";
 import { useParams } from "react-router-dom";
-import { DocumentsService } from "entities/document";
+import { useGetDocumentByIdQuery } from "entities/document";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
@@ -23,13 +23,12 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
   const { documentId } = useParams();
   const [status, setStatus] = useState<string>("saved_for_later");
 
+  const { data: document } = useGetDocumentByIdQuery(documentId!);
+
   useEffect(() => {
     const fetchContent = async () => {
-      if (documentId) {
-        const response = await DocumentsService.getDocumentById(documentId);
-        if (response) {
-          setStatus(response.readStatus);
-        }
+      if (document) {
+        setStatus(document.readStatus);
       }
     };
 
@@ -52,13 +51,6 @@ const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
 
     if (onStatusChange) {
       onStatusChange(newStatus);
-    }
-
-    if (documentId) {
-      const response = await DocumentsService.getDocumentById(documentId);
-      if (response) {
-        setStatus(response.readStatus);
-      }
     }
   };
 

@@ -15,6 +15,8 @@ import { clientMoodReducer } from "./clientMoodSlice";
 import { clientOnboardingReducer } from "./clientOnboardingSlice";
 import coachOnboardingReducer from "./coachOnboardingSlice";
 import { adminApi } from "entities/admin";
+import { contentApi } from "entities/content";
+import { documentsApi } from "entities/document";
 
 const userPersistConfig = {
   key: "user",
@@ -41,6 +43,8 @@ const rootReducer = combineReducers({
   [filesLibraryApi.reducerPath]: filesLibraryApi.reducer,
   downloads: downloadsReducer,
   [adminApi.reducerPath]: adminApi.reducer,
+  [contentApi.reducerPath]: contentApi.reducer,
+  [documentsApi.reducerPath]: documentsApi.reducer,
 });
 
 export const store = configureStore({
@@ -59,6 +63,8 @@ export const store = configureStore({
       },
     })
       .concat(adminApi.middleware)
+      .concat(contentApi.middleware)
+      .concat(documentsApi.middleware)
       .concat(chatApi.middleware)
       .concat(filesLibraryApi.middleware),
 });

@@ -1,5 +1,5 @@
 import { CoachService, ISessionResult, Share } from "entities/coach";
-import { DocumentsService, IDocument } from "entities/document";
+import { useGetDocumentByIdQuery } from "entities/document";
 import { FoldersService, IFolder } from "entities/folder";
 import { RootState } from "entities/store";
 import { findFilePath, PathEntry } from "features/wrapper-folder-tree";
@@ -16,7 +16,6 @@ export const useDocumentState = () => {
   const { folders } = useSelector((state: RootState) => state.folder);
   const token = useSelector((state: RootState) => state.user.token);
 
-  const [document, setDocument] = useState<IDocument | null>(null);
   const [folder, setFolder] = useState<IFolder | null>(null);
   const [conversation, setConversation] = useState<ISessionResult[]>([]);
   const [sharedClients, setSharedClients] = useState<Share[] | null>(null);
@@ -33,25 +32,7 @@ export const useDocumentState = () => {
   const [loadingConversation, setLoadingConversation] = useState(false);
   const dispatch = useDispatch();
 
-  const loadDocument = async (docId: string | undefined) => {
-    if (!docId) return;
-
-    try {
-      const response = await DocumentsService.getDocumentById(docId);
-      if (response) {
-        setDocument(response);
-        setDocumentTitle(response.aiTitle);
-        loadConversation(response.chatId);
-        if (response.status === "Raw") {
-          dispatch(setLastChatId(response.chatId));
-          dispatch(setFolderToChat(response.originalFolderId));
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching document:", error);
-      setDocument(null);
-    }
-  };
+  const { data: document } = useGetDocumentByIdQuery(documentId!);
 
   const loadConversation = async (chatId: string | undefined) => {
     if (!chatId) return;
@@ -68,6 +49,14 @@ export const useDocumentState = () => {
       setLoadingConversation(false);
     }
   };
+
+  useEffect(() => {
+    loadConversation(document?.chatId);
+    if (document?.status === "Raw") {
+      dispatch(setLastChatId(document.chatId));
+      dispatch(setFolderToChat(document.originalFolderId));
+    }
+  }, [document]);
 
   const refreshSharedClients = async () => {
     if (!documentId) return;
@@ -101,7 +90,6 @@ export const useDocumentState = () => {
       };
 
       fetchShared();
-      loadDocument(documentId);
     }
   }, [documentId, isNewDocument, isTemporaryDocument]);
 
@@ -127,7 +115,6 @@ export const useDocumentState = () => {
     folderId,
 
     // Actions
-    setDocument,
     setFolder,
     setConversation,
     setSharedClients,
@@ -135,7 +122,6 @@ export const useDocumentState = () => {
     setIsCreatingDocument,
     setStreamingContent,
     setStreamingIsHtml,
-    loadDocument,
     loadConversation,
     refreshSharedClients,
     navigate,

@@ -1,4 +1,9 @@
-import { ContentService } from "entities/content";
+import {
+  useGetAllHashtagsQuery,
+  useGetContentHashtagsQuery,
+  useAddHashtagsMutation,
+  useDeleteHashtagsMutation,
+} from "entities/content";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Popover, PopoverTrigger, PopoverContent, Button } from "shared/ui";
 
@@ -19,74 +24,70 @@ const HashtagPopover: React.FC<HashtagPopoverProps> = ({
   onChange,
 }) => {
   const [open, setOpen] = useState(false);
-  const [all, setAll] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const { data: allHashtagsData } = useGetAllHashtagsQuery();
+  const { data: contentHashtagsData } = useGetContentHashtagsQuery(contentId);
+
+  const [addHashtags] = useAddHashtagsMutation();
+  const [deleteHashtags] = useDeleteHashtagsMutation();
+
   useEffect(() => {
     if (!open) return;
-    let mounted = true;
     setLoading(true);
-    Promise.all([
-      ContentService.getAllHashtags(),
-      ContentService.getContentHashtags(contentId),
-    ])
-      .then(([allRes, mineRes]) => {
-        if (!mounted) return;
-        setAll((allRes?.hashtags ?? []).map(normalize));
-        const mine = (mineRes?.hashtags ?? []).map(normalize);
-        setSelected(mine);
-        onChange?.(mine);
-      })
-      .finally(() => mounted && setLoading(false));
+    if (contentHashtagsData?.hashtags) {
+      setSelected(contentHashtagsData?.hashtags.map(normalize));
+      onChange?.(contentHashtagsData?.hashtags.map(normalize));
+    }
+    setLoading(false);
 
     setTimeout(() => inputRef.current?.focus(), 0);
+  }, [open, contentId, contentHashtagsData, onChange]);
 
-    return () => {
-      mounted = false;
-    };
-  }, [open, contentId, onChange]);
+  const allHashtags = useMemo(() => {
+    return allHashtagsData?.hashtags?.map(normalize) || [];
+  }, [allHashtagsData]);
 
   const filtered = useMemo(() => {
     const normalizedQuery = normalize(query).toLowerCase();
-    const base = all.filter((item) => !selected.includes(item));
+    const base = allHashtags.filter((item: string) => !selected.includes(item));
     if (!normalizedQuery) return base;
-    return base.filter((item) => item.toLowerCase().includes(normalizedQuery));
-  }, [query, all, selected]);
+    return base.filter((item: string) =>
+      item.toLowerCase().includes(normalizedQuery)
+    );
+  }, [query, allHashtags, selected]);
 
   const existsExact = useMemo(() => {
     const normalizedQuery = normalize(query);
     return (
       !!normalizedQuery &&
-      all.some((t) => t.toLowerCase() === normalizedQuery.toLowerCase())
+      allHashtags.some(
+        (t: string) => t.toLowerCase() === normalizedQuery.toLowerCase()
+      )
     );
-  }, [query, all]);
+  }, [query, allHashtags]);
 
   const add = async (tag: string) => {
     const normalizedTag = normalize(tag);
     if (!normalizedTag || selected.includes(normalizedTag)) return;
-    await ContentService.addHashtags({
+    await addHashtags({
       content_id: contentId,
       hashtags: [normalizedTag],
-    });
-    setSelected((item) => {
-      const next = [...item, normalizedTag];
+    }).unwrap();
+    setSelected((prev) => {
+      const next = [...prev, normalizedTag];
       onChange?.(next);
       return next;
     });
-    if (!all.includes(normalizedTag))
-      setAll((item) => [...item, normalizedTag]);
     setQuery("");
     inputRef.current?.focus();
   };
 
   const remove = async (tag: string) => {
-    await ContentService.deleteHashtags({
-      content_id: contentId,
-      hashtags: [tag],
-    });
+    await deleteHashtags({ content_id: contentId, hashtags: [tag] }).unwrap();
     setSelected((item) => {
       const next = item.filter((item) => item !== tag);
       onChange?.(next);
@@ -175,7 +176,7 @@ const HashtagPopover: React.FC<HashtagPopoverProps> = ({
                 </Button>
               )}
               {filtered.length > 0
-                ? filtered.map((item) => (
+                ? filtered.map((item: string) => (
                     <Button variant="brightblue" onClick={() => add(item)}>
                       #{item}
                     </Button>

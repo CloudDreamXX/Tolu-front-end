@@ -7,7 +7,11 @@ import {
   ISubfolder,
   setFolders,
 } from "entities/folder";
-import { ContentService, ContentToEdit } from "entities/content";
+import {
+  useEditContentMutation,
+  useDuplicateContentByIdMutation,
+} from "entities/content";
+import { ContentToEdit } from "entities/content";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "entities/store";
@@ -44,6 +48,9 @@ export const useContentActions = () => {
   >(undefined);
 
   const { folders } = useSelector((state: RootState) => state.folder);
+
+  const [editContent] = useEditContentMutation();
+  const [duplicateContentById] = useDuplicateContentByIdMutation();
 
   const nav = useNavigate();
 
@@ -157,7 +164,7 @@ export const useContentActions = () => {
 
   const handleDublicateClick = async (id: string) => {
     setIsDublicateOpen(true);
-    const response = await ContentService.duplicateContentById(id);
+    const response = await duplicateContentById(id).unwrap();
     setSelectedDocumentId(response.duplicated_content.id);
   };
 
@@ -212,7 +219,7 @@ export const useContentActions = () => {
         new_query: editedQuery,
         new_content: editedContent,
       };
-      await ContentService.editContent(payload);
+      await editContent(payload).unwrap();
       if (documentId && onDocumentUpdate) {
         await onDocumentUpdate(documentId);
       }

@@ -2,11 +2,12 @@ import { ChatSocketService } from "entities/chat";
 import { ClientService, CoachListItem } from "entities/client";
 import { clearAllChatHistory, setFolders } from "entities/client/lib";
 import {
-  ContentService,
-  ContentStatus,
-  CreatorProfile,
+  useGetCreatorProfileQuery,
+  useGetCreatorPhotoQuery,
+  useUpdateStatusMutation,
 } from "entities/content";
-import { DocumentsService, IDocument } from "entities/document";
+import { ContentStatus } from "entities/content";
+import { useGetDocumentByIdQuery } from "entities/document";
 import { HealthHistoryService } from "entities/health-history";
 import {
   setError,
@@ -51,12 +52,6 @@ export const LibraryDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
   const [messages] = useState([]);
   const [isLoadingSession] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<IDocument | null>(
-    null
-  );
-  const [isLoadingDocument, setIsLoadingDocument] = useState(true);
-  const [creator, setCreator] = useState<CreatorProfile | null>(null);
-  const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
   const [isCreatorCardOpen, setIsCreatorCardOpen] = useState(false);
 
   const healthHistory = useSelector(
@@ -80,6 +75,7 @@ export const LibraryDocument = () => {
   const [providersOpen, setProvidersOpen] = useState(false);
   const [coaches, setCoaches] = useState<CoachListItem[]>([]);
   const [coachesLoading, setCoachesLoading] = useState(false);
+  const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
 
   const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
@@ -87,10 +83,31 @@ export const LibraryDocument = () => {
 
   const [coachDialogOpen, setCoachDialogOpen] = useState(false);
 
+  const { data: selectedDocument, isLoading: isLoadingDocument } =
+    useGetDocumentByIdQuery(documentId!);
+  const { data: creatorProfileData } = useGetCreatorProfileQuery(
+    selectedDocument?.creator_id || ""
+  );
+  const { data: creatorPhotoData } = useGetCreatorPhotoQuery({
+    id: creatorProfileData?.creator_id || "",
+    filename:
+      creatorProfileData?.detailed_profile?.personal_info?.headshot_url
+        .split("/")
+        .pop() || "",
+  });
+  const [updateStatus] = useUpdateStatusMutation();
+
   const selectedCoach = useMemo(
     () => coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
     [coaches, selectedCoachId]
   );
+
+  useEffect(() => {
+    if (creatorPhotoData) {
+      const objectUrl = URL.createObjectURL(creatorPhotoData);
+      setCreatorPhoto(objectUrl);
+    }
+  }, [creatorPhotoData]);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -207,42 +224,6 @@ export const LibraryDocument = () => {
     }
   }, [dispatch, healthHistory]);
 
-  const loadDocument = async (docId: string | undefined) => {
-    if (!docId) return;
-    setIsLoadingDocument(true);
-    try {
-      const response = await DocumentsService.getDocumentById(docId);
-      if (response) {
-        setSelectedDocument(response);
-        const creatorData = await ContentService.getCreatorProfile(
-          response.creator_id
-        );
-        setCreator(creatorData);
-        if (creatorData.detailed_profile.personal_info.headshot_url) {
-          const filename =
-            creatorData.detailed_profile.personal_info.headshot_url
-              ?.split("/")
-              .pop() || "";
-          const blob = await ContentService.getCreatorPhoto(
-            creatorData.creator_id,
-            filename
-          );
-          const objectUrl = URL.createObjectURL(blob);
-          setCreatorPhoto(objectUrl);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching document:", error);
-      setSelectedDocument(null);
-    } finally {
-      setIsLoadingDocument(false);
-    }
-  };
-
-  useEffect(() => {
-    loadDocument(documentId);
-  }, [documentId, dispatch]);
-
   useEffect(() => {
     return () => {
       dispatch(clearAllChatHistory());
@@ -339,7 +320,7 @@ export const LibraryDocument = () => {
         content_id: documentId,
         status: status,
       };
-      await ContentService.updateStatus(newStatus);
+      await updateStatus(newStatus);
     }
 
     const folders = await ClientService.getLibraryContent();
@@ -567,46 +548,46 @@ export const LibraryDocument = () => {
               aria-label="Coach details"
             >
               <div className="flex flex-col items-center justify-center gap-3">
-                {creator && (
+                {creatorProfileData && (
                   <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
                     <AvatarImage src={creatorPhoto || undefined} />
                     <AvatarFallback className="text-3xl bg-slate-300 ">
-                      {creator.detailed_profile.personal_info.first_name !==
-                        "" &&
-                      creator.detailed_profile.personal_info.first_name !==
-                        null &&
-                      creator.detailed_profile.personal_info.last_name !==
-                        null &&
-                      creator.detailed_profile.personal_info.last_name !==
-                        "" ? (
+                      {creatorProfileData.detailed_profile.personal_info
+                        .first_name !== "" &&
+                      creatorProfileData.detailed_profile.personal_info
+                        .first_name !== null &&
+                      creatorProfileData.detailed_profile.personal_info
+                        .last_name !== null &&
+                      creatorProfileData.detailed_profile.personal_info
+                        .last_name !== "" ? (
                         <div className="flex items-center">
                           <span>
-                            {creator.detailed_profile.personal_info.first_name.slice(
+                            {creatorProfileData.detailed_profile.personal_info.first_name.slice(
                               0,
                               1
                             )}
                           </span>
                           <span>
-                            {creator.detailed_profile.personal_info.last_name.slice(
+                            {creatorProfileData.detailed_profile.personal_info.last_name.slice(
                               0,
                               1
                             )}
                           </span>
                         </div>
                       ) : (
-                        creator.basic_info.name.slice(0, 1)
+                        creatorProfileData.basic_info.name.slice(0, 1)
                       )}
                     </AvatarFallback>
                   </Avatar>
                 )}
 
                 <div className="text-[18px] text-[#111827] text-center font-semibold">
-                  {creator?.basic_info.name}
+                  {creatorProfileData?.basic_info.name}
                 </div>
               </div>
               <div className="text-[16px] text-[#5F5F65] whitespace-pre-line w-full">
                 Bio: <br />{" "}
-                {creator?.detailed_profile.personal_info.bio ||
+                {creatorProfileData?.detailed_profile.personal_info.bio ||
                   "No bio provided."}
               </div>
             </div>
@@ -695,7 +676,7 @@ export const LibraryDocument = () => {
           <SharePopup
             contentId={documentId}
             onClose={() => setSharePopup(false)}
-            coachId={creator?.creator_id || ""}
+            coachId={creatorProfileData?.creator_id || ""}
           />
         )}
 

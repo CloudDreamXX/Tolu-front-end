@@ -1,4 +1,4 @@
-import { ContentService } from "entities/content";
+import { useShareEmailMutation, useShareCoachMutation } from "entities/content";
 import React, { useState } from "react";
 import Facebook from "shared/assets/icons/facebook";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -19,14 +19,17 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
   const [personalMessage, setPersonalMessage] = useState("");
   const [coachMessage, setCoachMessage] = useState("");
 
-  const shareEmail = async () => {
+  const [shareEmail] = useShareEmailMutation();
+  const [shareCoach] = useShareCoachMutation();
+
+  const shareEmailHandler = async () => {
     const data = {
       content_id: contentId,
       recipient_email: email,
       personal_message: personalMessage,
     };
     try {
-      await ContentService.shareEmail(data);
+      await shareEmail(data).unwrap();
       onClose();
       toast({
         title: "Email sent successfully!",
@@ -35,19 +38,19 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
       console.error(error);
       toast({
         variant: "destructive",
-        title: "Failed to sending email",
+        title: "Failed to send email",
       });
     }
   };
 
-  const shareCoach = async () => {
+  const shareCoachHandler = async () => {
     const data = {
       content_id: contentId,
       coach_id: coachId,
       message: coachMessage,
     };
     try {
-      await ContentService.shareCoach(data);
+      await shareCoach(data).unwrap();
       onClose();
       toast({
         title: "Message sent to coach!",
@@ -187,7 +190,7 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
               <Button
                 variant="brightblue"
                 className="w-fit"
-                onClick={shareEmail}
+                onClick={shareEmailHandler}
               >
                 Send Email
               </Button>
@@ -208,7 +211,7 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
               <Button
                 variant="brightblue"
                 className="w-fit"
-                onClick={shareCoach}
+                onClick={shareCoachHandler}
               >
                 Send to Coach
               </Button>

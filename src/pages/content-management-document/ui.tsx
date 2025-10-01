@@ -1,10 +1,8 @@
-import { ContentService, CreatorProfile } from "entities/content";
-import { DocumentsService, IDocument } from "entities/document";
+import { useGetDocumentByIdQuery } from "entities/document";
 import { ChatLoading } from "features/chat";
 import parse from "html-react-parser";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
@@ -13,67 +11,48 @@ import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 import { ChatActionsAdmin } from "features/chat/ui/chat-actions-admin/ui";
 import { ChangeAdminStatusPopup } from "widgets/change-admin-status-popup";
 import { ManageContentData, useManageContentMutation } from "entities/admin";
+import {
+  useGetCreatorProfileQuery,
+  useGetCreatorPhotoQuery,
+} from "entities/content";
 
 export const ContentManagementDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
   const [isLoadingSession] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<IDocument | null>(
-    null
-  );
-  const [isLoadingDocument, setIsLoadingDocument] = useState(true);
-  const [creator, setCreator] = useState<CreatorProfile | null>(null);
   const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
   const [isCreatorCardOpen, setIsCreatorCardOpen] = useState(false);
   const [statusPopup, setStatusPopup] = useState<
     "approve" | "reject" | "unpublish" | null
   >(null);
 
+  const { data: selectedDocument, isLoading: isLoadingDocument } =
+    useGetDocumentByIdQuery(documentId!);
+  const { data: creator } = useGetCreatorProfileQuery(
+    selectedDocument?.creator_id || ""
+  );
+  const { data: creatorPhotoBlob } = useGetCreatorPhotoQuery(
+    {
+      id: creator?.creator_id || "",
+      filename:
+        creator?.detailed_profile?.personal_info?.headshot_url
+          ?.split("/")
+          .pop() || "",
+    },
+    { skip: !creator?.creator_id }
+  );
+
+  useEffect(() => {
+    if (creatorPhotoBlob) {
+      const objectUrl = URL.createObjectURL(creatorPhotoBlob);
+      setCreatorPhoto(objectUrl);
+    }
+  }, [creatorPhotoBlob]);
+
   const [manageContent] = useManageContentMutation();
 
-  const dispatch = useDispatch();
   const { tooltipPosition, showTooltip, handleTooltipClick } =
     useTextSelectionTooltip();
   const { isMobile } = usePageWidth();
-
-  const loadDocument = async (docId: string | undefined) => {
-    if (!docId) return;
-    setIsLoadingDocument(true);
-    try {
-      const response = await DocumentsService.getDocumentById(docId);
-      if (response) {
-        setSelectedDocument(response);
-        const creatorData = await ContentService.getCreatorProfile(
-          response.creator_id
-        );
-        setCreator(creatorData);
-        if (
-          creatorData.detailed_profile &&
-          creatorData.detailed_profile.personal_info &&
-          creatorData.detailed_profile.personal_info.headshot_url
-        ) {
-          const filename =
-            creatorData.detailed_profile.personal_info.headshot_url
-              ?.split("/")
-              .pop() || "";
-          const blob = await ContentService.getCreatorPhoto(
-            creatorData.creator_id,
-            filename
-          );
-          const objectUrl = URL.createObjectURL(blob);
-          setCreatorPhoto(objectUrl);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching document:", error);
-      setSelectedDocument(null);
-    } finally {
-      setIsLoadingDocument(false);
-    }
-  };
-
-  useEffect(() => {
-    loadDocument(documentId);
-  }, [documentId, dispatch]);
 
   const onStatusChange = async (comment?: string, reason?: string) => {
     try {
@@ -90,7 +69,6 @@ export const ContentManagementDocument = () => {
         title: "Status changed successfully",
       });
       setStatusPopup(null);
-      loadDocument(documentId);
     } catch (error) {
       console.error(error);
       toast({

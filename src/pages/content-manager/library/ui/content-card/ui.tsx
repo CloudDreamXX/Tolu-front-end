@@ -1,4 +1,4 @@
-import { DocumentsService } from "entities/document";
+import { useGetDocumentByIdQuery } from "entities/document";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -55,12 +55,12 @@ export const ContentCard: React.FC<Props> = ({
   searchQuery,
 }) => {
   const nav = useNavigate();
+  const { data: document } = useGetDocumentByIdQuery(id!);
 
   const onCardClick = async () => {
     try {
-      const data = await DocumentsService.getDocumentById(id);
       nav(
-        `/content-manager/library/folder/${data?.originalFolderId}/document/${id}`
+        `/content-manager/library/folder/${document?.originalFolderId}/document/${id}`
       );
     } catch (error) {
       console.error("Error fetching document:", error);

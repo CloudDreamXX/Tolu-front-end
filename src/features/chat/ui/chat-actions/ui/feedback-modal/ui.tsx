@@ -1,4 +1,4 @@
-import { ContentService, Feedback } from "entities/content";
+import { useAddContentFeedbackMutation, Feedback } from "entities/content";
 import { RootState } from "entities/store";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -28,6 +28,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   const { documentId } = useParams();
   const chat = useSelector((state: RootState) => state.client.chat);
   const chatId = chat.length > 0 ? chat[0].id : null;
+  const [addContentFeedback] = useAddContentFeedbackMutation();
 
   const handleSave = async () => {
     if (currentChatId || documentId || chatId) {
@@ -42,7 +43,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         severity: "",
         device: "",
       };
-      const res = await ContentService.addContentFeedback(feedbackRequest);
+      const res = await addContentFeedback(feedbackRequest).unwrap();
       setNewRating(res.feedback.satisfaction_score);
       setRating(res.feedback.satisfaction_score);
     } else {
