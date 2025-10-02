@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { LibraryClientContent } from "widgets/library-client-content";
 import { LibrarySmallChat } from "widgets/library-small-chat";
-import { HealthHistoryService } from "entities/health-history";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setError,
@@ -13,14 +12,18 @@ import { ChatSocketService } from "entities/chat";
 import { toast } from "shared/lib";
 import { clearChatHistoryExceptActive } from "entities/client/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { useGetUserHealthHistoryQuery } from "entities/health-history";
 
 export const Library = () => {
   const dispatch = useDispatch();
-  const healthHistory = useSelector(
-    (state: RootState) => state.healthHistory.data
-  );
 
   const loading = useSelector((state: RootState) => state.client.loading);
+
+  const {
+    data: healthHistory,
+    error,
+    isLoading,
+  } = useGetUserHealthHistoryQuery();
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -47,19 +50,27 @@ export const Library = () => {
   }, []);
 
   useEffect(() => {
-    const fetchHealthHistory = async () => {
-      try {
-        dispatch(setLoading(true));
-        const data = await HealthHistoryService.getUserHealthHistory();
-        dispatch(setHealthHistory(data));
-      } catch (error: any) {
-        dispatch(setError("Failed to load user health history"));
-        console.error("Health history fetch error:", error);
-      }
-    };
+    if (healthHistory) {
+      dispatch(setHealthHistory(healthHistory));
+    }
+  }, [dispatch]);
 
-    fetchHealthHistory();
+  useEffect(() => {
+    if (error) {
+      dispatch(setError("Failed to load user health history"));
+      console.error("Health history fetch error:", error);
+    }
+  }, [error, dispatch]);
 
+  useEffect(() => {
+    if (isLoading) {
+      dispatch(setLoading(true));
+    } else {
+      dispatch(setLoading(false));
+    }
+  }, [isLoading, dispatch]);
+
+  useEffect(() => {
     return () => {
       dispatch(clearChatHistoryExceptActive());
     };

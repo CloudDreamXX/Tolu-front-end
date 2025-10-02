@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { HealthHistoryService } from "entities/health-history";
+import { useGetLabReportQuery } from "entities/health-history";
 import { cn } from "shared/lib";
 import { renderAsync } from "docx-preview";
 
@@ -30,31 +30,28 @@ export const LabFilePreview = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileBlob, setFileBlob] = useState<File | null>(null);
 
+  const { data: blob, error } = useGetLabReportQuery(
+    { filename, client_id: clientId },
+    { skip: !filename }
+  );
+
   useEffect(() => {
-    let url: string;
+    if (blob) {
+      const url = URL.createObjectURL(blob);
+      setPreviewUrl(url);
 
-    const fetchPreview = async () => {
-      try {
-        const blob = await HealthHistoryService.getLabReport({
-          filename,
-          client_id: clientId,
-        });
-        url = URL.createObjectURL(blob);
-        setPreviewUrl(url);
-
-        const file = new File([blob], filename, { type: blob.type });
-        setFileBlob(file);
-      } catch (err) {
-        console.error("Preview error:", err);
-      }
-    };
-
-    fetchPreview();
+      const file = new File([blob], filename, { type: blob.type });
+      setFileBlob(file);
+    }
 
     return () => {
-      if (url) URL.revokeObjectURL(url);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
-  }, [filename, clientId]);
+  }, [blob]);
+
+  if (error) {
+    console.error("Error fetching blob:", error);
+  }
 
   if (!previewUrl) {
     return <p className="text-sm text-gray-500">Loading preview...</p>;

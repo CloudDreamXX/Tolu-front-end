@@ -8,12 +8,8 @@ import {
 } from "entities/content";
 import { ContentStatus } from "entities/content";
 import { useGetDocumentByIdQuery } from "entities/document";
-import { HealthHistoryService } from "entities/health-history";
-import {
-  setError,
-  setHealthHistory,
-  setLoading,
-} from "entities/health-history/lib";
+import { useGetUserHealthHistoryQuery } from "entities/health-history";
+import { setError, setHealthHistory } from "entities/health-history/lib";
 import { RootState } from "entities/store";
 import { ChatActions, ChatLoading } from "features/chat";
 import parse from "html-react-parser";
@@ -96,6 +92,8 @@ export const LibraryDocument = () => {
         .pop() || "",
   });
   const [updateStatus] = useUpdateStatusMutation();
+  const { data: healthHistoryData, error: healthHistoryError } =
+    useGetUserHealthHistoryQuery();
 
   const selectedCoach = useMemo(
     () => coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
@@ -208,21 +206,17 @@ export const LibraryDocument = () => {
   };
 
   useEffect(() => {
-    const fetchHealthHistory = async () => {
-      try {
-        dispatch(setLoading(true));
-        const data = await HealthHistoryService.getUserHealthHistory();
-        dispatch(setHealthHistory(data));
-      } catch (error: any) {
-        dispatch(setError("Failed to load user health history"));
-        console.error("Health history fetch error:", error);
-      }
-    };
-
-    if (healthHistory === undefined) {
-      fetchHealthHistory();
+    if (healthHistoryData) {
+      dispatch(setHealthHistory(healthHistoryData));
     }
-  }, [dispatch, healthHistory]);
+  }, [dispatch, healthHistoryData]);
+
+  useEffect(() => {
+    if (healthHistoryError) {
+      dispatch(setError("Failed to load user health history"));
+      console.error("Health history fetch error:", healthHistoryError);
+    }
+  }, [healthHistoryError, dispatch]);
 
   useEffect(() => {
     return () => {

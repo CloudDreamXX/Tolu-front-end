@@ -25,8 +25,11 @@ export const ContentManagementDocument = () => {
     "approve" | "reject" | "unpublish" | null
   >(null);
 
-  const { data: selectedDocument, isLoading: isLoadingDocument } =
-    useGetDocumentByIdQuery(documentId!);
+  const {
+    data: selectedDocument,
+    isLoading: isLoadingDocument,
+    refetch,
+  } = useGetDocumentByIdQuery(documentId!);
   const { data: creator } = useGetCreatorProfileQuery(
     selectedDocument?.creator_id || ""
   );
@@ -65,6 +68,7 @@ export const ContentManagementDocument = () => {
       };
 
       await manageContent(payload);
+      refetch();
       toast({
         title: "Status changed successfully",
       });

@@ -17,6 +17,9 @@ import coachOnboardingReducer from "./coachOnboardingSlice";
 import { adminApi } from "entities/admin";
 import { contentApi } from "entities/content";
 import { documentsApi } from "entities/document";
+import { symptomsTrackerApi } from "entities/symptoms-tracker";
+import { healthHistoryApi } from "entities/health-history";
+import { notificationsApi } from "entities/notifications";
 
 const userPersistConfig = {
   key: "user",
@@ -45,6 +48,9 @@ const rootReducer = combineReducers({
   [adminApi.reducerPath]: adminApi.reducer,
   [contentApi.reducerPath]: contentApi.reducer,
   [documentsApi.reducerPath]: documentsApi.reducer,
+  [symptomsTrackerApi.reducerPath]: symptomsTrackerApi.reducer,
+  [healthHistoryApi.reducerPath]: healthHistoryApi.reducer,
+  [notificationsApi.reducerPath]: notificationsApi.reducer,
 });
 
 export const store = configureStore({
@@ -66,7 +72,10 @@ export const store = configureStore({
       .concat(contentApi.middleware)
       .concat(documentsApi.middleware)
       .concat(chatApi.middleware)
-      .concat(filesLibraryApi.middleware),
+      .concat(filesLibraryApi.middleware)
+      .concat(symptomsTrackerApi.middleware)
+      .concat(healthHistoryApi.middleware)
+      .concat(notificationsApi.middleware),
 });
 
 export const persistor = persistStore(store);

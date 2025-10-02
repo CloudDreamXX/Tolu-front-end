@@ -196,7 +196,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   }, [chat?.chat_id]);
 
   const sendAll = async () => {
-    if (!input.trim() && files.length === 0) return;
+    if (!input.trim() && files.length === 0 && filesFromLibrary.length === 0)
+      return;
 
     const optimistic: ChatMessageModel = {
       id: `tmp-${Date.now()}`,
@@ -273,29 +274,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
     if (filesFromLibrary.length > 0) {
       try {
-        const optimistics: ChatMessageModel[] = filesFromLibrary.map(
-          (id, idx) => ({
-            id: `tmp-${Date.now()}-lib-${idx}`,
-            content: "",
-            chat_id: chat.chat_id,
-            created_at: new Date().toISOString(),
-            file_url: null,
-            file_name: id,
-            file_size: null,
-            file_type: "library",
-            sender: {
-              id: profile?.id || "",
-              name: profile?.name || "You",
-              email: profile?.email || "",
-            },
-            message_type: "file",
-            is_deleted: false,
-            reactions: [],
-          })
-        );
-
-        setMessages((prev) => [...prev, ...optimistics]);
-
         const response = await ChatService.uploadChatFile(
           chat.chat_id,
           undefined,
