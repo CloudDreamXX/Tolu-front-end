@@ -110,6 +110,7 @@ export const API_ROUTES = {
     GET_CLIENT_INFO: "/coach/managed-client/get-info/{client_id}",
     PUT_CLIENT_INFO: "/coach/managed-client/edit-info/{client_id}",
     AI_LEARNING_SEARCH: "/ai-learning-search",
+    AI_LEARNING_CARD_SEARCH: "/ai-learning-card-search",
     GET_SESSION: "/coach-session/{chat_id}",
     SHARE_CONTENT: "/coach/content-share",
     GET_SHARED_ACCESS: "/coach/{content_id}/shared-access",
