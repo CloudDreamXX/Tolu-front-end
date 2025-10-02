@@ -1,55 +1,87 @@
-import { API_ROUTES, ApiService } from "shared/api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_ROUTES } from "shared/api";
 import { NotificationPreferences, Notifications, Notification } from "./model";
+import { RootState } from "entities/store";
 
-export class NotificationsService {
-  static async getNotifications(
-    page: number = 1,
-    limit: number = 20,
-    unread_only: boolean = false,
-    type_filter: string | null = null
-  ): Promise<Notification[]> {
-    const params = {
-      page,
-      limit,
-      unread_only,
-      type_filter,
-    };
-    return ApiService.get<Notification[]>(
-      API_ROUTES.NOTIFICATIONS.GET_NOTIFICATIONS,
-      {
-        params,
+export const notificationsApi = createApi({
+  reducerPath: "notificationsApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
       }
-    );
-  }
 
-  static async getUnreadCount(): Promise<any> {
-    return ApiService.get<any>(API_ROUTES.NOTIFICATIONS.GET_UNREAD);
-  }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    getNotifications: builder.query<
+      Notification[],
+      {
+        page: number;
+        limit: number;
+        unread_only: boolean;
+        type_filter: string | null;
+      }
+    >({
+      query: ({
+        page = 1,
+        limit = 20,
+        unread_only = false,
+        type_filter = null,
+      }) => ({
+        url: API_ROUTES.NOTIFICATIONS.GET_NOTIFICATIONS,
+        params: { page, limit, unread_only, type_filter },
+      }),
+    }),
 
-  static async markNotificationAsRead(data: Notifications): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.NOTIFICATIONS.MARK_AS_READ, data);
-  }
+    getUnreadCount: builder.query<any, void>({
+      query: () => API_ROUTES.NOTIFICATIONS.GET_UNREAD,
+    }),
 
-  static async dismissNotifications(notificationId: string): Promise<any> {
-    const endpoint = API_ROUTES.NOTIFICATIONS.DISMISS_NOTIFICATION.replace(
-      "{notification_id}",
-      notificationId
-    );
-    return ApiService.post<any>(endpoint);
-  }
+    markNotificationAsRead: builder.mutation<any, Notifications>({
+      query: (data) => ({
+        url: API_ROUTES.NOTIFICATIONS.MARK_AS_READ,
+        method: "POST",
+        body: data,
+      }),
+    }),
 
-  static async getNotificationPreferences(): Promise<any> {
-    return ApiService.get<any>(
-      API_ROUTES.NOTIFICATIONS.GET_NOTIFICATION_PREFERENCES
-    );
-  }
+    dismissNotifications: builder.mutation<any, string>({
+      query: (notificationId) => ({
+        url: API_ROUTES.NOTIFICATIONS.DISMISS_NOTIFICATION.replace(
+          "{notification_id}",
+          notificationId
+        ),
+        method: "POST",
+      }),
+    }),
 
-  static async updateNotificationPreferences(
-    data: NotificationPreferences
-  ): Promise<any> {
-    return ApiService.put<any>(
-      API_ROUTES.NOTIFICATIONS.UPDATE_NOTIFICATION_PREFERENCES,
-      data
-    );
-  }
-}
+    getNotificationPreferences: builder.query<any, void>({
+      query: () => API_ROUTES.NOTIFICATIONS.GET_NOTIFICATION_PREFERENCES,
+    }),
+
+    updateNotificationPreferences: builder.mutation<
+      any,
+      NotificationPreferences
+    >({
+      query: (data) => ({
+        url: API_ROUTES.NOTIFICATIONS.UPDATE_NOTIFICATION_PREFERENCES,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+  }),
+});
+
+export const {
+  useGetNotificationsQuery,
+  useGetUnreadCountQuery,
+  useMarkNotificationAsReadMutation,
+  useDismissNotificationsMutation,
+  useGetNotificationPreferencesQuery,
+  useUpdateNotificationPreferencesMutation,
+} = notificationsApi;

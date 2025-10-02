@@ -2,8 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   HealthHistory,
   HealthHistoryPostData,
-  HealthHistoryService,
   LabResultFile,
+  useCreateHealthHistoryMutation,
+  useGetUserHealthHistoryQuery,
 } from "entities/health-history";
 import { Steps } from "features/steps/ui";
 import { useEffect, useMemo, useState } from "react";
@@ -187,6 +188,10 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       ...mapHealthHistoryToFormDefaults(healthHistory),
     } as Partial<BaseValues>,
   });
+
+  const { data: healthHistoryData, refetch } = useGetUserHealthHistoryQuery();
+
+  const [createHealthHistory] = useCreateHealthHistoryMutation();
 
   useEffect(() => {
     if (healthHistory) {
@@ -479,10 +484,15 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
       }
     }
 
-    await HealthHistoryService.createHealthHistory(payload as any, labFiles);
+    await createHealthHistory({
+      healthData: payload,
+      labFiles,
+    }).unwrap();
 
-    const history = await HealthHistoryService.getUserHealthHistory();
-    dispatch(setHealthHistory(history));
+    refetch();
+    if (healthHistoryData) {
+      dispatch(setHealthHistory(healthHistoryData));
+    }
 
     if (!partial) {
       setCurrentStep(0);

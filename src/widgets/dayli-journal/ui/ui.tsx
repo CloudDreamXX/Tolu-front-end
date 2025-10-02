@@ -1,4 +1,4 @@
-import { SymptomData, SymptomsTrackerService } from "entities/symptoms-tracker";
+import { SymptomData, symptomsTrackerApi } from "entities/symptoms-tracker";
 import { useEffect, useRef, useState } from "react";
 import { cn, toast } from "shared/lib";
 import {
@@ -71,7 +71,6 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
 
   const [records, setRecords] = useState<SymptomData[]>([]);
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
-
   const getFormattedDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -79,8 +78,13 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     const day = ("0" + today.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
   };
-
   const [selectedDate, setSelectedDate] = useState<string>(getFormattedDate());
+
+  const { data, refetch } =
+    symptomsTrackerApi.endpoints.getSymptomByDate.useQuery(selectedDate);
+  const [addSymptoms] = symptomsTrackerApi.endpoints.addSymptoms.useMutation();
+  const [editSymptoms] =
+    symptomsTrackerApi.endpoints.editSymptoms.useMutation();
 
   const mapSleepQualityToMoodValue = (sleepQuality: string) => {
     switch (sleepQuality) {
@@ -165,33 +169,16 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     setAddSymptomsMode(false);
   };
 
-  const fetchSymptoms = async () => {
-    try {
-      const response =
-        await SymptomsTrackerService.getSymptomByDate(selectedDate);
-      const data: SymptomData[] = response?.data || [];
+  useEffect(() => {
+    if (data) {
+      const symptomData: SymptomData[] = data?.data || [];
 
-      if (!data.length) {
+      if (!symptomData.length) {
         setRecords([]);
         setSelectedRecordId(null);
-        // Reset UI
-        setUserNote("");
-        setSelectedSymptoms([]);
-        setDurationCategory("");
-        setSelectedTriggers([]);
-        setMoodValue(30);
-        setSleep({ hours: 0, minutes: 0, wokeUpTimes: 0, fellBack: "Easy" });
-        setMeal({
-          notes: "",
-          breakfast: { food_items: "", time: "" },
-          lunch: { food_items: "", time: "" },
-          dinner: { food_items: "", time: "" },
-        });
-        setSelectedMealExamples([]);
-        setSummaryView(false);
-        setAddSymptomsMode(false);
+        resetFormToBlank();
       } else {
-        const sorted = [...data].sort(
+        const sorted = [...symptomData].sort(
           (a, b) =>
             new Date(b.created_at || "").getTime() -
             new Date(a.created_at || "").getTime()
@@ -200,20 +187,8 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
         setSelectedRecordId(sorted[0].id || "");
         hydrateFromRecord(sorted[0]);
       }
-    } catch (error) {
-      console.error("Error fetching symptoms:", error);
-      toast({
-        variant: "destructive",
-        title: "Failed to load symptoms data",
-        description:
-          "Could not retrieve your symptoms data. Please try again later.",
-      });
     }
-  };
-
-  useEffect(() => {
-    fetchSymptoms();
-  }, [selectedDate]);
+  }, [data]);
 
   const handleFileChange = (
     type: "photo" | "voice",
@@ -413,12 +388,12 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     const voice = voiceInputRef.current?.files?.[0] || null;
 
     try {
-      await SymptomsTrackerService.addSymptoms(data, photo, voice);
+      await addSymptoms({ data, photo, voice });
       onClose();
       setSummaryView(true);
       toast({ title: "Symptoms were added successfully" });
       setAddSymptomsMode(false);
-      fetchSymptoms();
+      refetch();
     } catch (error) {
       console.error("Error submitting journal:", error);
       toast({
@@ -487,12 +462,12 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     const voice = voiceInputRef.current?.files?.[0] || null;
 
     try {
-      await SymptomsTrackerService.editSymptoms(recordId, data, photo, voice);
+      await editSymptoms({ recordId, data, photo, voice });
       onClose();
       setSummaryView(true);
       toast({ title: "Symptoms were edited successfully" });
       setAddSymptomsMode(false);
-      fetchSymptoms();
+      refetch();
     } catch (error) {
       console.error("Error editting symptoms:", error);
       toast({

@@ -97,9 +97,7 @@ export const contentApi = createApi({
           "{creator_id}",
           encodeURIComponent(id)
         ).replace("{filename}", encodeURIComponent(filename)),
-        method: "GET",
-        responseType: "blob",
-        headers: { Accept: "image/*" },
+        responseHandler: (res) => res.blob(),
       }),
     }),
     shareEmail: builder.mutation<any, ShareViaEmail>({

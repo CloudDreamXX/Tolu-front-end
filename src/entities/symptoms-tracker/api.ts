@@ -1,75 +1,88 @@
-import { API_ROUTES, ApiService } from "shared/api";
-import { AiSuggestions, SymptomData, SymptomResponse } from "./model";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { SymptomData, SymptomResponse, AiSuggestions } from "./model";
+import { API_ROUTES } from "shared/api";
+import { RootState } from "entities/store";
 
-export class SymptomsTrackerService {
-  static async addSymptoms(
-    data: SymptomData,
-    photo: File | null,
-    voice: File | null
-  ): Promise<any> {
-    const formData = new FormData();
+export const symptomsTrackerApi = createApi({
+  reducerPath: "symptomsTrackerApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
 
-    formData.append("symptom_data", JSON.stringify(data));
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
 
-    if (photo) {
-      formData.append("photo", photo);
-    }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    addSymptoms: builder.mutation<
+      any,
+      { data: SymptomData; photo: File | null; voice: File | null }
+    >({
+      query: ({ data, photo, voice }) => {
+        const formData = new FormData();
+        formData.append("symptom_data", JSON.stringify(data));
+        if (photo) formData.append("photo", photo);
+        if (voice) formData.append("voice_note", voice);
 
-    if (voice) {
-      formData.append("voice_note", voice);
-    }
+        return {
+          url: API_ROUTES.SYMPTOMS_TRACKER.POST_SYMPTOMS,
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
+    editSymptoms: builder.mutation<
+      any,
+      {
+        recordId: string;
+        data: SymptomData;
+        photo: File | null;
+        voice: File | null;
+      }
+    >({
+      query: ({ recordId, data, photo, voice }) => {
+        const formData = new FormData();
+        formData.append("symptom_data", JSON.stringify(data));
+        if (photo) formData.append("photo", photo);
+        if (voice) formData.append("voice_note", voice);
 
-    return ApiService.post<any>(
-      API_ROUTES.SYMPTOMS_TRACKER.POST_SYMPTOMS,
-      formData
-    );
-  }
+        return {
+          url: API_ROUTES.SYMPTOMS_TRACKER.PUT_SYMPTOMS.replace(
+            "{record_id}",
+            recordId
+          ),
+          method: "PUT",
+          body: formData,
+        };
+      },
+    }),
+    getSymptomByDate: builder.query<SymptomResponse, string>({
+      query: (date) =>
+        API_ROUTES.SYMPTOMS_TRACKER.GET_SYMPTOMS.replace("{target_date}", date),
+    }),
+    getAiSuggestions: builder.query<AiSuggestions, void>({
+      query: () => API_ROUTES.SYMPTOMS_TRACKER.GET_SUGGESTIONS,
+    }),
+    deleteSymptom: builder.mutation<any, string>({
+      query: (id) => ({
+        url: API_ROUTES.SYMPTOMS_TRACKER.DELETE_SYMPTOM.replace(
+          "{symptom_id}",
+          id
+        ),
+        method: "DELETE",
+      }),
+    }),
+  }),
+});
 
-  static async editSymptoms(
-    recordId: string,
-    data: SymptomData,
-    photo: File | null,
-    voice: File | null
-  ): Promise<any> {
-    const formData = new FormData();
-
-    formData.append("symptom_data", JSON.stringify(data));
-
-    if (photo) {
-      formData.append("photo", photo);
-    }
-
-    if (voice) {
-      formData.append("voice_note", voice);
-    }
-
-    const endpoint = API_ROUTES.SYMPTOMS_TRACKER.PUT_SYMPTOMS.replace(
-      "{record_id}",
-      recordId
-    );
-
-    return ApiService.put<any>(endpoint, formData);
-  }
-
-  static async getSymptomByDate(date: string): Promise<SymptomResponse> {
-    const endpoint = API_ROUTES.SYMPTOMS_TRACKER.GET_SYMPTOMS.replace(
-      "{target_date}",
-      date
-    );
-    return ApiService.get<SymptomResponse>(endpoint);
-  }
-
-  static async getAiSuggestions(): Promise<AiSuggestions> {
-    return ApiService.get<AiSuggestions>(
-      API_ROUTES.SYMPTOMS_TRACKER.GET_SUGGESTIONS
-    );
-  }
-
-  static async deleteSymptom(id: string): Promise<any> {
-    const endpoint = API_ROUTES.SYMPTOMS_TRACKER.DELETE_SYMPTOM.replace(
-      "{symptom_id}",
-      id
-    );
-    return ApiService.get<any>(endpoint);
-  }
-}
+export const {
+  useAddSymptomsMutation,
+  useEditSymptomsMutation,
+  useGetSymptomByDateQuery,
+  useGetAiSuggestionsQuery,
+  useDeleteSymptomMutation,
+} = symptomsTrackerApi;

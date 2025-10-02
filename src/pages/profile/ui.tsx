@@ -1,6 +1,12 @@
 import { ChatSocketService } from "entities/chat";
 import { Client, ClientService } from "entities/client";
-import { Notification, NotificationsService } from "entities/notifications";
+import {
+  useGetNotificationsQuery,
+  useGetUnreadCountQuery,
+  useMarkNotificationAsReadMutation,
+  useDismissNotificationsMutation,
+  useGetNotificationPreferencesQuery,
+} from "entities/notifications";
 import { RootState } from "entities/store";
 import { ChangePasswordRequest, UserService } from "entities/user";
 import { useEffect, useState } from "react";
@@ -33,9 +39,7 @@ export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
   // const [emailNotif, setEmailNotif] = useState(false);
   // const [pushNotif, setPushNotif] = useState(true);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
   const { open, getInputProps } = useFilePicker({
@@ -64,6 +68,20 @@ export const ClientProfile = () => {
   const [tab, setTab] = useState(0);
 
   const dispatch = useDispatch();
+
+  const { data: notifications, refetch: refetchNotifications } =
+    useGetNotificationsQuery({
+      page: 1,
+      limit: 20,
+      unread_only: false,
+      type_filter: null,
+    });
+  const { data: unreadCount, refetch: refetchUnreadCount } =
+    useGetUnreadCountQuery();
+  const { refetch: refetchNotificationPreferences } =
+    useGetNotificationPreferencesQuery();
+  const [markNotificationAsRead] = useMarkNotificationAsReadMutation();
+  const [dismissNotification] = useDismissNotificationsMutation();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -106,7 +124,7 @@ export const ClientProfile = () => {
           description: message.notification.message,
         });
 
-        fetchNotifications();
+        refetchNotifications();
       }
     };
 
@@ -121,56 +139,25 @@ export const ClientProfile = () => {
     };
   }, []);
 
-  const fetchNotifications = async () => {
+  const handleNotificationAction = async (
+    notificationId: string,
+    action: "read" | "dismiss"
+  ) => {
     try {
-      const response = await NotificationsService.getNotifications();
-      setNotifications(response);
+      if (action === "read") {
+        await markNotificationAsRead({ notification_ids: [notificationId] });
+      } else {
+        await dismissNotification(notificationId);
+      }
     } catch (error) {
-      console.error("Failed to fetch notifications", error);
-    }
-  };
-
-  const fetchUnreadCount = async () => {
-    try {
-      const response = await NotificationsService.getUnreadCount();
-      setUnreadCount(response.data.count);
-    } catch (error) {
-      console.error("Failed to fetch unread notifications count", error);
+      console.error("Failed to update notification", error);
     }
   };
 
   const togglePopup = () => {
     setIsPopupOpen((prev) => !prev);
     if (!isPopupOpen) {
-      fetchNotifications();
-    }
-  };
-
-  const markAsRead = async (notificationId: string) => {
-    try {
-      await NotificationsService.markNotificationAsRead({
-        notification_ids: [notificationId],
-      });
-      fetchNotifications();
-    } catch (error) {
-      console.error("Failed to mark notification as read", error);
-    }
-  };
-
-  const dismissNotification = async (notificationId: string) => {
-    try {
-      await NotificationsService.dismissNotifications(notificationId);
-      fetchNotifications();
-    } catch (error) {
-      console.error("Failed to dismiss notification", error);
-    }
-  };
-
-  const fetchNotificationPreferences = async () => {
-    try {
-      await NotificationsService.getNotificationPreferences();
-    } catch (error) {
-      console.error("Failed to fetch notification preferences", error);
+      refetchNotifications();
     }
   };
 
@@ -185,8 +172,8 @@ export const ClientProfile = () => {
   // };
 
   useEffect(() => {
-    fetchUnreadCount();
-    fetchNotificationPreferences();
+    refetchUnreadCount();
+    refetchNotificationPreferences();
   }, []);
 
   const handleSignOut = async () => {
@@ -577,13 +564,17 @@ export const ClientProfile = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => markAsRead(notification.id)}
+                      onClick={() =>
+                        handleNotificationAction(notification.id, "read")
+                      }
                       className="text-xs text-white bg-[#1C63DB] p-[8px] rounded-[8px]"
                     >
                       Mark as read
                     </button>
                     <button
-                      onClick={() => dismissNotification(notification.id)}
+                      onClick={() =>
+                        handleNotificationAction(notification.id, "dismiss")
+                      }
                       className="text-xs text-black bg-[#D5DAE2] p-[8px] rounded-[8px]"
                     >
                       Dismiss
