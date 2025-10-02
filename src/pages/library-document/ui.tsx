@@ -36,6 +36,20 @@ import { DocumentLoadingSkeleton } from "./lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import SharePopup from "widgets/share-popup/ui";
 
+const extractScripts = (content: string) => {
+  const scriptRegex = /<script[\s\S]*?>([\s\S]*?)<\/script>/g;
+  const scripts: string[] = [];
+  let match;
+
+  while ((match = scriptRegex.exec(content)) !== null) {
+    scripts.push(match[1]);
+  }
+
+  const contentWithoutScripts = content.replace(scriptRegex, "");
+
+  return { contentWithoutScripts, scripts };
+};
+
 const getHeadshotFilename = (url?: string | null): string | null => {
   if (!url) return null;
   const clean = url.trim().split(/[?#]/)[0];
@@ -78,6 +92,11 @@ export const LibraryDocument = () => {
   const [coachProfiles, setCoachProfiles] = useState<Record<string, any>>({});
 
   const [coachDialogOpen, setCoachDialogOpen] = useState(false);
+
+  const [renderedContent, setRenderedContent] = useState<JSX.Element | null>(
+    null
+  );
+  const [scripts, setScripts] = useState<string[]>([]);
 
   const { data: selectedDocument, isLoading: isLoadingDocument } =
     useGetDocumentByIdQuery(documentId!);
@@ -176,6 +195,30 @@ export const LibraryDocument = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (selectedDocument) {
+      const { contentWithoutScripts, scripts } = extractScripts(
+        selectedDocument.content
+      );
+      setRenderedContent(
+        <div dangerouslySetInnerHTML={{ __html: contentWithoutScripts }} />
+      );
+      setScripts(scripts);
+    }
+  }, [selectedDocument]);
+
+  useEffect(() => {
+    scripts.forEach((scriptContent) => {
+      const script = document.createElement("script");
+      script.innerHTML = scriptContent;
+      document.body.appendChild(script);
+
+      return () => {
+        document.body.removeChild(script);
+      };
+    });
+  }, [scripts]);
 
   useEffect(() => {
     if (selectedDocument) {
@@ -641,7 +684,7 @@ export const LibraryDocument = () => {
                       </button>
                     </div>
                   )}
-                  {parse(selectedDocument.content)}
+                  {renderedContent}
                 </div>
               </div>
             ) : (

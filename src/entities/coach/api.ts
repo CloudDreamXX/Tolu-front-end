@@ -237,6 +237,125 @@ export class CoachService {
     }
   }
 
+  static async aiLearningCardSearch(
+    chatMessage: AIChatMessage,
+    folder_id: string,
+    images: File[] = [],
+    pdf?: File,
+    client_id?: string | null,
+    libraryFiles?: string[],
+    signal?: AbortSignal,
+    onChunk?: (data: any) => void,
+    onComplete?: (folderId: {
+      folderId: string;
+      documentId: string;
+      chatId: string;
+    }) => void
+  ): Promise<{ folderId: string; documentId: string; chatId: string }> {
+    const endpoint =
+      import.meta.env.VITE_API_URL +
+      API_ROUTES.COACH_ADMIN.AI_LEARNING_CARD_SEARCH;
+
+    const formData = new FormData();
+    formData.append("chat_message", JSON.stringify(chatMessage));
+
+    formData.append("folder_id", folder_id);
+
+    if (images?.length) {
+      images.forEach((file) => {
+        formData.append("files", file);
+      });
+    }
+
+    if (pdf) {
+      formData.append("files", pdf);
+    }
+
+    if (client_id) {
+      formData.append("client_id", client_id);
+    }
+
+    if (libraryFiles && libraryFiles.length) {
+      formData.append("library_files", JSON.stringify(libraryFiles));
+    }
+
+    try {
+      const user = localStorage.getItem("persist:user");
+      const parsedUser = user ? JSON.parse(user) : null;
+      const token = parsedUser?.token.replace(/"/g, "") ?? null;
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          withCredentials: "true",
+        },
+        body: formData,
+        signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error. Status: ${response.status}`);
+      }
+
+      if (
+        !response.headers.get("content-type")?.includes("text/event-stream")
+      ) {
+        const data = await response.json();
+        if (onComplete) onComplete(data);
+        return data;
+      }
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let folderId = "";
+      let documentId = "";
+      let chatId = "";
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (line.startsWith("data:")) {
+            try {
+              const jsonData = JSON.parse(line.substring(5).trim());
+
+              folderId = jsonData.folder_id;
+              documentId = jsonData.content_id;
+              chatId = jsonData.chat_id;
+
+              if (onChunk) onChunk(jsonData);
+            } catch (e) {
+              console.error("Error parsing SSE data:", e);
+            }
+          }
+        }
+      }
+
+      if (onComplete)
+        onComplete({
+          folderId,
+          documentId,
+          chatId,
+        });
+      return {
+        folderId,
+        documentId,
+        chatId,
+      };
+    } catch (error) {
+      console.error("Error processing stream:", error);
+      throw error;
+    }
+  }
+
   static async changeStatus(status: Status): Promise<any> {
     return ApiService.put<any>(API_ROUTES.COACH_ADMIN.CHANGE_STATUS, status);
   }

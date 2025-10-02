@@ -15,7 +15,7 @@ import { ContentToEdit } from "entities/content";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "entities/store";
-import { IDocument } from "entities/document";
+import { IDocument, useGetDocumentByIdQuery } from "entities/document";
 import { toast } from "shared/lib";
 
 export const useContentActions = () => {
@@ -207,11 +207,9 @@ export const useContentActions = () => {
     setIsMoveOpen(false);
   };
 
-  const handleSaveEdit = async (
-    contentId: string,
-    documentId?: string,
-    onDocumentUpdate?: (docId: string) => Promise<void>
-  ) => {
+  const { refetch } = useGetDocumentByIdQuery(selectedDocumentId);
+
+  const handleSaveEdit = async (contentId: string, documentId?: string) => {
     try {
       const payload: ContentToEdit = {
         content_id: contentId,
@@ -220,8 +218,8 @@ export const useContentActions = () => {
         new_content: editedContent,
       };
       await editContent(payload).unwrap();
-      if (documentId && onDocumentUpdate) {
-        await onDocumentUpdate(documentId);
+      if (documentId) {
+        refetch();
       }
       setIsEditing(false);
     } catch (err) {

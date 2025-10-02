@@ -6,6 +6,7 @@ export const SWITCH_KEYS = {
   CASE: "Case Search",
   CREATE: "Create content",
   DEF: "Smart Search",
+  CARD: "Learning card",
 } as const;
 
 export type SwitchKey = keyof typeof SWITCH_KEYS;
@@ -24,7 +25,7 @@ export const SWITCH_CONFIG: Record<
   },
   coach: {
     //add SWITCH_KEYS.CASE when we will be needed
-    options: [SWITCH_KEYS.RESEARCH, SWITCH_KEYS.CREATE],
+    options: [SWITCH_KEYS.RESEARCH, SWITCH_KEYS.CREATE, SWITCH_KEYS.CARD],
     defaultOption: SWITCH_KEYS.RESEARCH,
   },
   personalize: {

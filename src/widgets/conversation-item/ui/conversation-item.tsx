@@ -11,6 +11,20 @@ import { smartRender } from "features/chat/ui/message-bubble/lib";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
+const extractScripts = (content: string) => {
+  const scriptRegex = /<script[\s\S]*?>([\s\S]*?)<\/script>/g;
+  const scripts: string[] = [];
+  let match;
+
+  while ((match = scriptRegex.exec(content)) !== null) {
+    scripts.push(match[1]);
+  }
+
+  const contentWithoutScripts = content.replace(scriptRegex, "");
+
+  return { contentWithoutScripts, scripts };
+};
+
 interface ConversationItemProps {
   pair: ISessionResult;
   index: number;
@@ -53,7 +67,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   isEditing,
   selectedDocumentId,
   editedTitle,
-  editedContent,
+  // editedContent,
   ratingsMap,
   conversation,
   onStatusComplete,
@@ -76,9 +90,41 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   onRestoreOriginalFormat,
   setStatusPopup,
 }) => {
+  const [renderedContent, setRenderedContent] = useState<JSX.Element | null>(
+    null
+  );
+  const [sanitizedContent, setSanitizedContent] = useState<string>("");
+
+  useEffect(() => {
+    if (isEditing) {
+      const { contentWithoutScripts } = extractScripts(pair.content);
+      setSanitizedContent(contentWithoutScripts);
+    }
+  }, [isEditing, pair.content]);
+
+  useEffect(() => {
+    smartRender(pair.content).then((content) => {
+      const { contentWithoutScripts, scripts } = extractScripts(
+        content.props.dangerouslySetInnerHTML.__html
+      );
+      setRenderedContent(
+        <div dangerouslySetInnerHTML={{ __html: contentWithoutScripts }} />
+      );
+
+      scripts.forEach((scriptContent) => {
+        const script = document.createElement("script");
+        script.innerHTML = scriptContent;
+        document.body.appendChild(script);
+
+        return () => {
+          document.body.removeChild(script);
+        };
+      });
+    });
+  }, [pair.content]);
+
   const renderCompareView = () => (
     <div className="flex-row block gap-4 md:flex">
-      {/* Mobile paginated view */}
       <div className="block md:hidden">
         {mobilePage === 1 && (
           <div className="p-6 flex flex-col gap-[16px]">
@@ -92,7 +138,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               )}
             </div>
 
-            {/* Pagination Controls */}
             <div className="flex justify-center items-center gap-[8px] text-[#1C63DB]">
               <button
                 onClick={() => setMobilePage(1)}
@@ -140,7 +185,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               )}
             </div>
 
-            {/* Pagination Controls */}
             <div className="flex justify-center items-center gap-[8px] text-[#1C63DB]">
               <button onClick={() => setMobilePage(1)}>
                 <span>
@@ -177,9 +221,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         )}
       </div>
 
-      {/* Desktop layout */}
       <div className="flex-row w-full gap-4">
-        {/* previous version */}
         <div className="flex-1 p-6 flex flex-col gap-[64px]">
           {isHtmlContent(conversation[index - 1].content) ? (
             <div className="prose-sm prose max-w-none">
@@ -201,7 +243,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           </Button>
         </div>
 
-        {/* current version */}
         <div className="flex-1 p-6 flex flex-col gap-[64px]">
           {isHtmlContent(pair.content) ? (
             <div className="prose-sm prose max-w-none">
@@ -239,10 +280,21 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
       <div className="editor-wrap w-full max-w-full min-w-0 bg-white border border-[#008FF6] rounded-[16px] overflow-hidden">
         <Editor
-          value={editedContent}
+          value={sanitizedContent}
           onTextChange={handleEditorChange}
           style={{ width: "100%" }}
           className="w-full max-w-full min-w-0 bg-white p-3 h-fit"
+          modules={{
+            toolbar: [
+              [{ header: "1" }, { header: "2" }, { font: [] }],
+              [{ list: "ordered" }, { list: "bullet" }],
+              [{ align: [] }],
+              ["bold", "italic", "underline", "strike"],
+              ["link"],
+              ["blockquote"],
+              ["image"],
+            ],
+          }}
         />
       </div>
 
@@ -273,16 +325,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     </div>
   );
 
-  const renderContent = () => {
-    const [rendered, setRendered] = useState<JSX.Element | null>(null);
-
-    useEffect(() => {
-      smartRender(pair.content).then(setRendered);
-    }, [pair.content]);
-
-    return <div className="richtext max-w-none">{rendered}</div>;
-  };
-
   return (
     <div key={pair.id} className="flex flex-col gap-[24px]">
       {pair.query && (
@@ -300,7 +342,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           <>
             {isEditing && selectedDocumentId === pair.id
               ? renderEditView()
-              : renderContent()}
+              : renderedContent}
           </>
         )}
         <ConversationItemActions
