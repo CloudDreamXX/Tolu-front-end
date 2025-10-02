@@ -1,3 +1,16 @@
+## [1.0.3] - 2025-10-02
+
+### Fixes & Minor Changes
+
+- Fix search input for files library.
+- Fix create and update health history.
+- Update daily journal on the profile page to show data from the BE and add actions to the buttons.
+- Fix learn bot answers.
+- Fix multiselect field.
+- Fix delete files library.
+- Fix open new chat on mobile.
+- Add client id for research.
+
 ## [1.0.2] - 2025-09-30
 
 ### Fixes & Minor Changes
