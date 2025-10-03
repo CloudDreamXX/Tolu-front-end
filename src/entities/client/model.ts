@@ -38,6 +38,7 @@ export interface ContentItem {
   document_type: string;
   relevance_score: number;
   status: string;
+  content_type: string;
 }
 
 export interface Folder {

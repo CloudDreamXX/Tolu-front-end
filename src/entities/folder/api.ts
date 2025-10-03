@@ -39,6 +39,7 @@ export class FoldersService {
       status: item.status,
       messages: item.messages,
       aiTitle: item.ai_title,
+      contentType: item.content_type
     };
   }
 
