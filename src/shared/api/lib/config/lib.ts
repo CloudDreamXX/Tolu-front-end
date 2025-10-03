@@ -18,6 +18,7 @@ export const API_ROUTES = {
     REFER_FRIEND: "/user/refer-friend",
     GET_REFERRAL_INVITATION: "/referral/invitation-details/{token}",
     GET_ONBOARDING_STATUS: "/user/onboarding-status",
+    CHECK_PENDING_INVITE: "/client/check-pending-invite",
   },
   CLIENT: {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",

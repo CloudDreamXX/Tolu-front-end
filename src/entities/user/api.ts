@@ -1,6 +1,7 @@
 import { API_ROUTES, ApiService } from "shared/api";
 import {
   ChangePasswordRequest,
+  CheckInviteResponse,
   ClientOnboardingResponse,
   IRegisterUser,
   IUser,
@@ -259,5 +260,12 @@ export class UserService {
     return ApiService.get<OnboardingStatus>(
       API_ROUTES.USER.GET_ONBOARDING_STATUS
     );
+  }
+
+  static async checkPendingInvite(email: string): Promise<CheckInviteResponse> {
+    const response = await ApiService.get<CheckInviteResponse>(
+      `${API_ROUTES.USER.CHECK_PENDING_INVITE}?email=${encodeURIComponent(email)}`
+    );
+    return response;
   }
 }

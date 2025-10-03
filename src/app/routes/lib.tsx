@@ -52,6 +52,7 @@ import { ContentManagement } from "pages/content-management";
 import { ContentManagementDocument } from "pages/content-management-document";
 import { usePageWidth } from "shared/lib";
 import { SymptomsSeverity } from "widgets/OnboardingClient/SymptomsSeverity";
+import { CheckInvite } from "widgets/auth-forms/ui/check-invite";
 
 export const AppRoutes = () => {
   const { isMobileOrTablet } = usePageWidth();
@@ -65,6 +66,7 @@ export const AppRoutes = () => {
         element={<CheckEmail from="forgot-password" />}
       />
       <Route path="/register" element={<Register />} />
+      <Route path="/check-invite" element={<CheckInvite />} />
       <Route path="/accept-invite/:token" element={<Register />} />
       <Route path="join-via-referral/:token" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

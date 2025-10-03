@@ -230,3 +230,10 @@ export interface ClientOnboarding {
 export interface ClientOnboardingResponse {
   profile: ClientOnboarding;
 }
+
+export interface CheckInviteResponse {
+  has_pending_invite: boolean;
+  email: string;
+  user_exists: boolean;
+  token: string | null;
+}
