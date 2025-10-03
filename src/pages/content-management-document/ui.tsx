@@ -1,6 +1,5 @@
 import { useGetDocumentByIdQuery } from "entities/document";
 import { ChatLoading } from "features/chat";
-import parse from "html-react-parser";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -15,6 +14,20 @@ import {
   useGetCreatorProfileQuery,
   useGetCreatorPhotoQuery,
 } from "entities/content";
+
+const extractScripts = (content: string) => {
+  const scriptRegex = /<script[\s\S]*?>([\s\S]*?)<\/script>/g;
+  const scripts: string[] = [];
+  let match;
+
+  while ((match = scriptRegex.exec(content)) !== null) {
+    scripts.push(match[1]);
+  }
+
+  const contentWithoutScripts = content.replace(scriptRegex, "");
+
+  return { contentWithoutScripts, scripts };
+};
 
 export const ContentManagementDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
@@ -43,6 +56,34 @@ export const ContentManagementDocument = () => {
     },
     { skip: !creator?.creator_id }
   );
+  const [renderedContent, setRenderedContent] = useState<JSX.Element | null>(
+    null
+  );
+  const [scripts, setScripts] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (selectedDocument) {
+      const { contentWithoutScripts, scripts } = extractScripts(
+        selectedDocument.content
+      );
+      setRenderedContent(
+        <div dangerouslySetInnerHTML={{ __html: contentWithoutScripts }} />
+      );
+      setScripts(scripts);
+    }
+  }, [selectedDocument]);
+
+  useEffect(() => {
+    scripts.forEach((scriptContent) => {
+      const script = document.createElement("script");
+      script.innerHTML = scriptContent;
+      document.body.appendChild(script);
+
+      return () => {
+        document.body.removeChild(script);
+      };
+    });
+  }, [scripts]);
 
   useEffect(() => {
     if (creatorPhotoBlob) {
@@ -222,7 +263,7 @@ export const ContentManagementDocument = () => {
                       </button>
                     </div>
                   )}
-                  {parse(selectedDocument.content)}
+                  {renderedContent}
                 </div>
               </div>
             ) : (

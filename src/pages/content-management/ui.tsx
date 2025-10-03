@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
   Input,
-  ScrollArea,
 } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
@@ -93,12 +92,14 @@ export const ContentManagement = () => {
   const nav = useNavigate();
   const { isMobile } = usePageWidth();
 
-  const { data: resp, isLoading } = useGetFoldersStructureQuery({
+  const { data: resp } = useGetFoldersStructureQuery({
     page: 1,
     page_size: PAGE_SIZE,
   });
 
   const [triggerGetFolders] = useLazyGetFoldersStructureQuery();
+
+  const [isCardsTab, setIsCardsTab] = useState(false);
 
   useEffect(() => {
     if (!resp) return;
@@ -418,12 +419,23 @@ export const ContentManagement = () => {
   const onDocumentClick = (id: string) =>
     nav(`/content-management/document/${id}`);
 
-  const renderFeed = (folderId: string) => {
+  const renderFeed = (folderId: string, cards?: boolean) => {
     const feed = folderContentMap[folderId];
     const items = feed?.items || [];
     const isLoadingFeed = !!feed?.loading;
 
-    if (!items.length && isLoading) {
+    const filteredItemsWithoutCards = items.filter(
+      (item) => item.content_type !== "Card"
+    );
+    const filteredItemsWithCards = items.filter(
+      (item) => item.content_type === "Card"
+    );
+
+    const itemsToRender = cards
+      ? filteredItemsWithCards
+      : filteredItemsWithoutCards;
+
+    if (!itemsToRender.length && isLoadingFeed) {
       return (
         <div className="flex flex-col w-full gap-4 px-2">
           {[...Array(3)].map((_, i) => (
@@ -435,8 +447,8 @@ export const ContentManagement = () => {
 
     return (
       <>
-        {items.length ? (
-          items.map((it) => (
+        {itemsToRender.length ? (
+          itemsToRender.map((it) => (
             <LibraryCard
               id={it.id}
               key={it.id}
@@ -467,11 +479,13 @@ export const ContentManagement = () => {
   const renderSubTree = (
     parentId: string,
     subfolders: Folder[],
-    keyPrefix: string
+    keyPrefix: string,
+    cards: boolean
   ) => {
     return subfolders.map((sub, idx) => {
       const subKey = `${keyPrefix}-${idx}`;
       const isOpen = (openSub[parentId] || "") === subKey;
+
       return (
         <Accordion
           key={sub.id}
@@ -487,12 +501,12 @@ export const ContentManagement = () => {
             <AccordionContent className="flex flex-col gap-4 pb-2">
               {Array.isArray(sub.subfolders) && sub.subfolders.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  {renderSubTree(sub.id, sub.subfolders, subKey)}
+                  {renderSubTree(sub.id, sub.subfolders, subKey, cards)}
                 </div>
               )}
 
               <div className="flex flex-row flex-wrap w-full gap-4">
-                {renderFeed(sub.id)}
+                {renderFeed(sub.id, cards)}
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -503,6 +517,21 @@ export const ContentManagement = () => {
 
   return (
     <div className="flex flex-col gap-[16px] p-8 overflow-y-auto h-[100%]">
+      <div className="flex gap-[16px] items-center">
+        <button
+          className={`w-[200px] text-[18px] xl:text-xl font-medium px-[16px] py-[8px] rounded-[8px] ${!isCardsTab ? "bg-[#1C63DB] text-white" : ""}`}
+          onClick={() => setIsCardsTab(false)}
+        >
+          Articles
+        </button>
+        <button
+          className={`w-[200px] text-[18px] xl:text-xl font-medium px-[16px] py-[8px] rounded-[8px] ${isCardsTab ? "bg-[#1C63DB] text-white" : ""}`}
+          onClick={() => setIsCardsTab(true)}
+        >
+          Cards
+        </button>
+      </div>
+
       <Input
         placeholder="Search by name or content"
         value={search}
@@ -512,92 +541,143 @@ export const ContentManagement = () => {
         autoFocus={!isMobile}
       />
 
-      <ScrollArea className="flex-1 min-h-0 pr-2">
-        {isLoading ? (
-          <div className="flex flex-col w-full gap-4 px-2">
-            {[...Array(4)].map((_, idx) => (
-              <Accordion
-                key={idx}
-                type="single"
-                collapsible
-                className="w-full mb-4"
-                value=""
-              >
-                <AccordionItem value={`skeleton-${idx}`}>
-                  <AccordionTrigger className="pt-0">
-                    <div className="h-[16px] w-[177px] skeleton-gradient rounded-[24px]" />
-                  </AccordionTrigger>
-                  <AccordionContent className="flex flex-row flex-wrap gap-4 pb-2">
-                    {[...Array(3)].map((_, i) => (
-                      <LibraryCardSkeleton key={i} />
-                    ))}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            ))}
-          </div>
-        ) : filteredGroups.length > 0 ? (
-          filteredGroups.map((group, gIdx) => {
-            const groupKey = group.key;
+      <div className="tabs-content">
+        {isCardsTab ? (
+          <div className="flex flex-col gap-4">
+            {filteredGroups.length > 0 ? (
+              filteredGroups.map((group, gIdx) => {
+                const groupKey = group.key;
+                return (
+                  <div key={groupKey} className="mb-2">
+                    {group.folders.length ? (
+                      group.folders.map((folder, index) => {
+                        const valueKey = `g${gIdx}-f${index}`;
+                        const isOpen = (openTop[groupKey] || "") === valueKey;
 
-            return (
-              <div key={groupKey} className="mb-6">
-                {group.folders.length ? (
-                  group.folders.map((folder, index) => {
-                    const valueKey = `g${gIdx}-f${index}`;
-                    const isOpen = (openTop[groupKey] || "") === valueKey;
+                        return (
+                          <Accordion
+                            key={folder.id}
+                            type="single"
+                            collapsible
+                            className="w-full"
+                            value={isOpen ? valueKey : ""}
+                            onValueChange={(v) =>
+                              handleOpenTop(groupKey, v, folder)
+                            }
+                          >
+                            <AccordionItem
+                              value={valueKey}
+                              className="border border-[#008FF6] rounded-[18px] transition-shadow duration-200 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+                            >
+                              <AccordionTrigger className="pt-0">
+                                {folder.name}
+                              </AccordionTrigger>
 
-                    return (
-                      <Accordion
-                        key={folder.id}
-                        type="single"
-                        collapsible
-                        className="w-full mb-4"
-                        value={isOpen ? valueKey : ""}
-                        onValueChange={(v) =>
-                          handleOpenTop(groupKey, v, folder)
-                        }
-                      >
-                        <AccordionItem value={valueKey}>
-                          <AccordionTrigger className="pt-0">
-                            {folder.name}
-                          </AccordionTrigger>
-
-                          <AccordionContent className="flex flex-col gap-4 pb-2">
-                            {Array.isArray(folder.subfolders) &&
-                              folder.subfolders.length > 0 && (
-                                <div className="flex flex-col gap-2">
-                                  {renderSubTree(
-                                    folder.id,
-                                    folder.subfolders,
-                                    valueKey
+                              <AccordionContent className="flex flex-col gap-4 pb-2">
+                                {Array.isArray(folder.subfolders) &&
+                                  folder.subfolders.length > 0 && (
+                                    <div className="flex flex-col gap-2">
+                                      {renderSubTree(
+                                        folder.id,
+                                        folder.subfolders,
+                                        valueKey,
+                                        true
+                                      )}
+                                    </div>
                                   )}
-                                </div>
-                              )}
 
-                            <div className="flex flex-row flex-wrap w-full gap-4">
-                              {renderFeed(folder.id)}
-                            </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-                    );
-                  })
-                ) : (
-                  <div className="w-full text-sm text-muted-foreground">
-                    No folders.
+                                <div className="flex flex-row flex-wrap w-full gap-4">
+                                  {renderFeed(folder.id, true)}
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        );
+                      })
+                    ) : (
+                      <div className="w-full text-sm text-muted-foreground">
+                        No folders.
+                      </div>
+                    )}
                   </div>
-                )}
+                );
+              })
+            ) : (
+              <div className="w-full text-center text-gray-500">
+                We couldn’t find anything matching your search. Try adjusting
+                the filters or search terms.
               </div>
-            );
-          })
+            )}
+          </div>
         ) : (
-          <div className="w-full text-center text-gray-500">
-            We couldn’t find anything matching your search. Try adjusting the
-            filters or search terms.
+          <div className="flex flex-col gap-4">
+            {filteredGroups.length > 0 ? (
+              filteredGroups.map((group, gIdx) => {
+                const groupKey = group.key;
+                return (
+                  <div key={groupKey} className="mb-2">
+                    {group.folders.length ? (
+                      group.folders.map((folder, index) => {
+                        const valueKey = `g${gIdx}-f${index}`;
+                        const isOpen = (openTop[groupKey] || "") === valueKey;
+
+                        return (
+                          <Accordion
+                            key={folder.id}
+                            type="single"
+                            collapsible
+                            className="w-full"
+                            value={isOpen ? valueKey : ""}
+                            onValueChange={(v) =>
+                              handleOpenTop(groupKey, v, folder)
+                            }
+                          >
+                            <AccordionItem
+                              value={valueKey}
+                              className="border border-[#008FF6] rounded-[18px] transition-shadow duration-200 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+                            >
+                              <AccordionTrigger className="pt-0">
+                                {folder.name}
+                              </AccordionTrigger>
+
+                              <AccordionContent className="flex flex-col gap-4 pb-2">
+                                {Array.isArray(folder.subfolders) &&
+                                  folder.subfolders.length > 0 && (
+                                    <div className="flex flex-col gap-2">
+                                      {renderSubTree(
+                                        folder.id,
+                                        folder.subfolders,
+                                        valueKey,
+                                        false
+                                      )}
+                                    </div>
+                                  )}
+
+                                <div className="flex flex-row flex-wrap w-full gap-4">
+                                  {renderFeed(folder.id, false)}
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        );
+                      })
+                    ) : (
+                      <div className="w-full text-sm text-muted-foreground">
+                        No folders.
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="w-full text-center text-gray-500">
+                We couldn’t find anything matching your search. Try adjusting
+                the filters or search terms.
+              </div>
+            )}
           </div>
         )}
-      </ScrollArea>
+      </div>
     </div>
   );
 };

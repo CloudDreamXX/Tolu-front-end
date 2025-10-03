@@ -1007,7 +1007,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedSwitch={selectedSwitch}
               setNewMessage={setMessage}
               footer={
-                isSwitch(SWITCH_KEYS.CREATE) ? (
+                isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
                       <PopoverAttach

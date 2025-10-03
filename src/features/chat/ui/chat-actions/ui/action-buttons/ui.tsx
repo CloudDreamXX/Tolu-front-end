@@ -19,6 +19,7 @@ interface ChatActionsProps {
   isReadingAloud?: boolean;
   currentChatId?: string;
   setSharePopup?: React.Dispatch<React.SetStateAction<boolean>>;
+  changeStatusDisabled?: boolean;
 }
 
 export const ChatActions: React.FC<ChatActionsProps> = ({
@@ -30,6 +31,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
   isReadingAloud,
   currentChatId,
   setSharePopup,
+  changeStatusDisabled,
 }) => {
   const [thumbsUpModalOpen, setThumbsUpModalOpen] = useState(false);
   const [thumbsDownModalOpen, setThumbsDownModalOpen] = useState(false);
@@ -60,14 +62,21 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             />
           </button>
         )}
-        {!chatState && <SaveModal onStatusChange={onStatusChange} />}
+        {!chatState && (
+          <SaveModal
+            onStatusChange={onStatusChange}
+            initialStatus={initialStatus || ""}
+          />
+        )}
         {onStatusChange && (
           <button
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => {
               const newStatus =
                 readStatus === "read" ? "saved_for_later" : "read";
-              setReadStatus(newStatus);
+              if (!changeStatusDisabled) {
+                setReadStatus(newStatus);
+              }
               onStatusChange(newStatus);
             }}
           >
@@ -100,14 +109,21 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             />
           </button>
         )}
-        {!chatState && <SaveModal onStatusChange={onStatusChange} />}
+        {!chatState && (
+          <SaveModal
+            onStatusChange={onStatusChange}
+            initialStatus={initialStatus || ""}
+          />
+        )}
         {onStatusChange && (
           <button
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => {
               const newStatus =
                 readStatus === "read" ? "saved_for_later" : "read";
-              setReadStatus(newStatus);
+              if (!changeStatusDisabled) {
+                setReadStatus(newStatus);
+              }
               onStatusChange(newStatus);
             }}
           >
@@ -140,7 +156,9 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               onClick={() => {
                 const newStatus =
                   readStatus === "read" ? "saved_for_later" : "read";
-                setReadStatus(newStatus);
+                if (!changeStatusDisabled) {
+                  setReadStatus(newStatus);
+                }
                 onStatusChange(newStatus);
               }}
             >

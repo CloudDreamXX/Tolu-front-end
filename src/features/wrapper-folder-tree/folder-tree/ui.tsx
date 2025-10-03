@@ -210,8 +210,8 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                 "flex items-center gap-3 cursor-pointer transition-colors",
                 folderId === folder.id ? "text-blue-500" : "",
                 isSameRoot(allFolders, dragOverFolderId, rootFolderId) &&
-                dragOverFolderId === folder.id &&
-                "bg-blue-50"
+                  dragOverFolderId === folder.id &&
+                  "bg-blue-50"
               )}
               onClick={() => toggleFolder(folder)}
             >
@@ -321,13 +321,17 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                     size={20}
                     className="shrink-0 group-hover:stroke-blue-500"
                   />
-                  {content.contentType === "Card" ? <MaterialIcon
-                    iconName="playing_cards"
-                    className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
-                  /> : <MaterialIcon
-                    iconName="docs"
-                    className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
-                  />}
+                  {content.contentType === "Card" ? (
+                    <MaterialIcon
+                      iconName="playing_cards"
+                      className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
+                    />
+                  ) : (
+                    <MaterialIcon
+                      iconName="docs"
+                      className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
+                    />
+                  )}
                   <TooltipProvider delayDuration={500}>
                     <Tooltip>
                       <TooltipTrigger asChild>

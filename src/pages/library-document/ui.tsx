@@ -12,7 +12,6 @@ import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { setError, setHealthHistory } from "entities/health-history/lib";
 import { RootState } from "entities/store";
 import { ChatActions, ChatLoading } from "features/chat";
-import parse from "html-react-parser";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -98,8 +97,11 @@ export const LibraryDocument = () => {
   );
   const [scripts, setScripts] = useState<string[]>([]);
 
-  const { data: selectedDocument, isLoading: isLoadingDocument } =
-    useGetDocumentByIdQuery(documentId!);
+  const {
+    data: selectedDocument,
+    isLoading: isLoadingDocument,
+    refetch,
+  } = useGetDocumentByIdQuery(documentId!);
   const { data: creatorProfileData } = useGetCreatorProfileQuery(
     selectedDocument?.creator_id || ""
   );
@@ -118,6 +120,48 @@ export const LibraryDocument = () => {
     () => coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
     [coaches, selectedCoachId]
   );
+
+  const [quizStatus, setQuizStatus] = useState({
+    totalQuizzes: 0,
+    completedQuizzes: 0,
+  });
+
+  const countQuizzesAndResults = () => {
+    const quizzes = document.querySelectorAll('form[id^="quiz"]');
+    const totalQuizzes = quizzes.length;
+
+    let completedQuizzes = 0;
+
+    quizzes.forEach((quiz) => {
+      const selectedOption = quiz.querySelector('input[type="radio"]:checked');
+
+      if (selectedOption) {
+        completedQuizzes += 1;
+      }
+    });
+
+    setQuizStatus({ totalQuizzes, completedQuizzes });
+  };
+
+  useEffect(() => {
+    countQuizzesAndResults();
+
+    const quizSubmitButtons = document.querySelectorAll(
+      'button[type="button"][onclick^="checkQuiz"]'
+    );
+
+    quizSubmitButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        countQuizzesAndResults();
+      });
+    });
+
+    return () => {
+      quizSubmitButtons.forEach((button) => {
+        button.removeEventListener("click", () => countQuizzesAndResults());
+      });
+    };
+  }, [selectedDocument, renderedContent]);
 
   useEffect(() => {
     if (creatorPhotoData) {
@@ -352,12 +396,26 @@ export const LibraryDocument = () => {
   }, [providersOpen, coaches, photoUrls, fetchPhotoUrl]);
 
   const onStatusChange = async (status: string) => {
+    if (
+      status === "read" &&
+      quizStatus.completedQuizzes !== quizStatus.totalQuizzes
+    ) {
+      toast({
+        title: "Incomplete quizzes",
+        description:
+          "Please answer all the quizzes before marking this document as read.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (documentId) {
       const newStatus: ContentStatus = {
         content_id: documentId,
         status: status,
       };
       await updateStatus(newStatus);
+      refetch();
     }
 
     const folders = await ClientService.getLibraryContent();
@@ -654,6 +712,9 @@ export const LibraryDocument = () => {
             onReadAloud={handleReadAloud}
             isReadingAloud={isReadingAloud}
             setSharePopup={setSharePopup}
+            changeStatusDisabled={
+              quizStatus.completedQuizzes !== quizStatus.totalQuizzes
+            }
           />
         </div>
 
