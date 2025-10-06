@@ -122,7 +122,10 @@ export const LibraryClientContent = ({
           fs.forEach((f) => {
             f.content?.forEach((c) => {
               if (c.status)
-                status[c.id] = { content_id: c.id, status: (c as any).status };
+                status[c.id] = {
+                  content_id: c.id,
+                  status_data: { status: (c as any).status },
+                };
             });
             if (f.subfolders?.length) collect(f.subfolders);
           });
@@ -263,7 +266,7 @@ export const LibraryClientContent = ({
             if ((it as any).status)
               statusUpdates[it.id] = {
                 content_id: it.id,
-                status: (it as any).status,
+                status_data: { status: (it as any).status },
               };
           });
           if (Object.keys(statusUpdates).length)
@@ -435,7 +438,10 @@ export const LibraryClientContent = ({
     id: string,
     status: "read" | "saved_for_later"
   ) => {
-    const newStatus: ContentStatus = { content_id: id, status };
+    const newStatus: ContentStatus = {
+      content_id: id,
+      status_data: { status: status },
+    };
     const response = await updateStatus(newStatus);
     if (response) setStatusMap((prev) => ({ ...prev, [id]: newStatus }));
 

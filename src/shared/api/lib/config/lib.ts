@@ -86,6 +86,7 @@ export const API_ROUTES = {
     SHARE_EMAIL: "/share/email",
     SHARE_COACH: "/share/coach",
     LIBRARY_STATUS: "/library/status",
+    QUIZ_SCORE: "/content/{content_id}/quiz-score",
   },
   HEALTH_HISTORY: {
     GET: "/health-history",

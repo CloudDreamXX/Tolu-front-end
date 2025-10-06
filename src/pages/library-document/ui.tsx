@@ -5,6 +5,7 @@ import {
   useGetCreatorProfileQuery,
   useGetCreatorPhotoQuery,
   useUpdateStatusMutation,
+  useGetQuizScoreQuery,
 } from "entities/content";
 import { ContentStatus } from "entities/content";
 import { useGetDocumentByIdQuery } from "entities/document";
@@ -115,6 +116,114 @@ export const LibraryDocument = () => {
   const [updateStatus] = useUpdateStatusMutation();
   const { data: healthHistoryData, error: healthHistoryError } =
     useGetUserHealthHistoryQuery();
+
+  const { data: quizScore } = useGetQuizScoreQuery(documentId!);
+
+  useEffect(() => {
+    if (!documentId) return;
+    if (!quizScore?.data?.questions?.length) return;
+
+    const norm = (s?: string) =>
+      (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const allForms = Array.from(
+      document.querySelectorAll("form[id]")
+    ) as HTMLFormElement[];
+
+    const cssEscape = (v: string) =>
+      (window as any).CSS?.escape
+        ? (window as any).CSS.escape(v)
+        : v.replace(/["\\]/g, "\\$&");
+
+    const extractStepNumber = (s: string) => {
+      const m = s.match(/(\d+)$/);
+      return m?.[1] || "";
+    };
+
+    const findRootSection = (el: Element | null) =>
+      (el?.closest('[id^="quiz"]') ||
+        el?.closest('[id^="card"]') ||
+        el) as HTMLElement | null;
+
+    const getCheckFnForForm = (form: HTMLFormElement) => {
+      const root = findRootSection(form);
+      const btn = root?.querySelector<HTMLButtonElement>(
+        'button[type="button"][onclick^="checkQuiz"]'
+      );
+      if (btn) {
+        const onclick = btn.getAttribute("onclick") || "";
+        const fnNameMatch = onclick.match(/^\s*([a-zA-Z0-9_]+)\s*\(/);
+        const fnName = fnNameMatch?.[1];
+        const maybe = (window as any)[fnName as string];
+        if (typeof maybe === "function") return maybe;
+      }
+
+      const n = extractStepNumber(form.id);
+      const numbered = (window as any)[`checkQuiz${n}`];
+      if (typeof numbered === "function") return numbered;
+
+      const generic = (window as any).checkQuiz;
+      if (typeof generic === "function") return generic;
+
+      return undefined;
+    };
+
+    const applyChecksAndShowResults = () => {
+      quizScore.data.questions.forEach((q) => {
+        const want = norm(q.question_id);
+
+        let form =
+          (document.getElementById(q.question_id) as HTMLFormElement | null) ||
+          null;
+
+        if (!form) {
+          form = allForms.find((f) => norm(f.id) === want) || null;
+        }
+        if (!form) {
+          form =
+            allForms.find((f) => {
+              const fid = norm(f.id);
+              return fid.includes(want) || want.includes(fid);
+            }) || null;
+        }
+        if (!form) return;
+
+        const answer = String(q.answer);
+        const candidate = form.querySelector<HTMLInputElement>(
+          `input[type="radio"][value="${cssEscape(answer)}"]`
+        );
+        if (!candidate) return;
+
+        if (!candidate.checked) {
+          candidate.checked = true;
+          candidate.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        const checkFn = getCheckFnForForm(form);
+        try {
+          if (checkFn) checkFn();
+          else {
+            const root = findRootSection(form);
+            const resultEl =
+              (root?.querySelector('[id$="Result"]') as HTMLElement | null) ||
+              (document.querySelector(
+                `#${form.id.replace("Form", "")}Result`
+              ) as HTMLElement | null);
+            if (resultEl) {
+              resultEl.textContent = q.is_correct ? "Correct!" : "Incorrect.";
+              resultEl.style.color = q.is_correct ? "#27ae60" : "#c0392b";
+            }
+          }
+        } catch (e) {
+          console.warn("checkQuiz invocation failed:", e);
+        }
+      });
+
+      countQuizzesAndResults();
+    };
+
+    const raf = requestAnimationFrame(applyChecksAndShowResults);
+    return () => cancelAnimationFrame(raf);
+  }, [documentId, quizScore, renderedContent, scripts]);
 
   const selectedCoach = useMemo(
     () => coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
@@ -311,6 +420,97 @@ export const LibraryDocument = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!documentId) return;
+
+    const extractStepNumber = (el?: Element | null) => {
+      if (!el) return "";
+      const id = (el as HTMLElement).id || "";
+      const m = id.match(/^(card|quiz)-?(\d+)$/i) || id.match(/(\d+)$/);
+      return m?.[2] || m?.[1] || "";
+    };
+
+    const findRootSection = (btn: Element) =>
+      (btn.closest('[id^="card"]') ||
+        btn.closest('[id^="quiz"]') ||
+        btn.closest(
+          '[id$="1"],[id$="2"],[id$="3"],[id$="4"],[id$="5"],[id$="6"],[id$="7"],[id$="8"],[id$="9"]'
+        )) as HTMLElement | null;
+
+    const handleSubmitClick = async (ev: Event) => {
+      const btn = ev.currentTarget as HTMLButtonElement;
+
+      const onclick = btn.getAttribute("onclick") || "";
+      const fnNameMatch = onclick.match(/^\s*([a-zA-Z0-9_]+)\s*\(/);
+      const fnName = fnNameMatch?.[1];
+      const maybeFn = (window as any)[fnName as string];
+      if (typeof maybeFn === "function") {
+        try {
+          maybeFn();
+        } catch (e) {
+          console.warn(`${fnName}() failed:`, e);
+        }
+      }
+
+      const root = findRootSection(btn);
+      const current_card_number = extractStepNumber(root);
+
+      const form =
+        (root?.querySelector("form[id^='quiz']") as HTMLFormElement | null) ||
+        (btn.closest("form") as HTMLFormElement | null);
+
+      if (!form) return;
+
+      const question_id = form.id || "quiz-form";
+      const checked = form.querySelector<HTMLInputElement>(
+        'input[type="radio"]:checked'
+      );
+      if (!checked) return;
+
+      const answer = checked.value;
+
+      const resultEl =
+        (root?.querySelector('[id$="Result"]') as HTMLElement | null) ||
+        (document.querySelector(
+          `#${question_id.replace("Form", "")}Result`
+        ) as HTMLElement | null);
+      let is_correct = false;
+      if (resultEl) {
+        const txt = (resultEl.textContent || "").trim().toLowerCase();
+        is_correct = txt.startsWith("correct!");
+      }
+
+      const payload: ContentStatus = {
+        content_id: documentId,
+        status_data: {
+          status: "read",
+          is_archived: false,
+          current_card_number,
+          quiz_attempt: {
+            question_id,
+            answer,
+            is_correct,
+          },
+        },
+      };
+
+      try {
+        await updateStatus(payload);
+      } catch (e) {
+        console.error("updateStatus failed:", e);
+      }
+    };
+
+    const buttons = Array.from(
+      document.querySelectorAll('button[type="button"][onclick^="checkQuiz"]')
+    );
+    buttons.forEach((b) => b.addEventListener("click", handleSubmitClick));
+
+    return () => {
+      buttons.forEach((b) => b.removeEventListener("click", handleSubmitClick));
+    };
+  }, [documentId, renderedContent, updateStatus]);
+
   const fetchCoaches = useCallback(async () => {
     if (coaches.length) return;
     setCoachesLoading(true);
@@ -395,7 +595,9 @@ export const LibraryDocument = () => {
     });
   }, [providersOpen, coaches, photoUrls, fetchPhotoUrl]);
 
-  const onStatusChange = async (status: string) => {
+  const onStatusChange = async (
+    status: "read" | "saved_for_later" | "currently_reading"
+  ) => {
     if (
       status === "read" &&
       quizStatus.completedQuizzes !== quizStatus.totalQuizzes
@@ -412,7 +614,7 @@ export const LibraryDocument = () => {
     if (documentId) {
       const newStatus: ContentStatus = {
         content_id: documentId,
-        status: status,
+        status_data: { status: status },
       };
       await updateStatus(newStatus);
       refetch();

@@ -1,4 +1,4 @@
-import { ContentStatus } from "entities/content";
+import { AdminStatus, ContentStatus } from "entities/content";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Card, CardContent, renderAuthor, renderStatus } from "shared/ui";
@@ -10,7 +10,7 @@ interface LibraryCardProps {
   onStatusChange?: (id: string, status: "read" | "saved_for_later") => void;
   onDocumentClick: (id: string) => void;
   contentStatus?: ContentStatus;
-  adminStatus?: ContentStatus;
+  adminStatus?: AdminStatus;
 }
 
 export const LibraryCard: React.FC<LibraryCardProps> = ({
@@ -63,12 +63,13 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
                 className="bg-white"
                 onClick={(e) => {
                   e.stopPropagation();
-                  const isSaved = contentStatus?.status === "saved_for_later";
+                  const isSaved =
+                    contentStatus?.status_data.status === "saved_for_later";
                   onStatusChange(id, isSaved ? "read" : "saved_for_later");
                 }}
               >
                 {contentStatus?.content_id === id &&
-                contentStatus.status === "saved_for_later" ? (
+                contentStatus.status_data.status === "saved_for_later" ? (
                   <MaterialIcon
                     iconName="bookmark"
                     fill={1}

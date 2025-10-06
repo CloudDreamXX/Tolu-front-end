@@ -11,7 +11,9 @@ interface ChatActionsProps {
   isSearching: boolean;
   hasMessages: boolean;
   isHistoryPopup?: boolean;
-  onStatusChange?: (status: string) => void;
+  onStatusChange?: (
+    status: "read" | "saved_for_later" | "currently_reading"
+  ) => void;
   onReadAloud: () => void;
   initialRating?: number;
   initialStatus?: string;

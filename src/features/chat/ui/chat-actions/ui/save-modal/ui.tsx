@@ -15,7 +15,9 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
   initialStatus: string;
-  onStatusChange?: (status: string) => void;
+  onStatusChange?: (
+    status: "read" | "saved_for_later" | "currently_reading"
+  ) => void;
 };
 
 const SaveModal: React.FC<Props> = ({ initialStatus, onStatusChange }) => {

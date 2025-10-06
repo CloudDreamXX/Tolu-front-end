@@ -69,7 +69,12 @@ export const useDocumentState = () => {
       try {
         if (!folderId) return;
 
-        const documentPath = findFilePath(folders, documentId ?? "");
+        const folderResponse = await FoldersService.getFolders();
+
+        const documentPath = findFilePath(
+          folderResponse.folders,
+          documentId ?? ""
+        );
         if (documentPath) setDocumentPath(documentPath);
 
         const response = await FoldersService.getFolder(folderId);

@@ -12,7 +12,7 @@ import { usePageWidth } from "shared/lib";
 
 import { Folder } from "entities/client";
 import { LibraryCard } from "features/library-card";
-import { ContentStatus } from "entities/content";
+import { AdminStatus } from "entities/content";
 import {
   AdminFoldersStructureResponse,
   useGetFoldersStructureQuery,
@@ -74,7 +74,7 @@ export const ContentManagement = () => {
   >([]);
   const [filteredGroups, setFilteredGroups] = useState<typeof groups>([]);
 
-  const [statusMap, setStatusMap] = useState<Record<string, ContentStatus>>({});
+  const [statusMap, setStatusMap] = useState<Record<string, AdminStatus>>({});
   const [openTop, setOpenTop] = useState<Record<string, string>>({});
   const [openSub, setOpenSub] = useState<Record<string, string>>({});
 
@@ -112,7 +112,7 @@ export const ContentManagement = () => {
     setGroups(built);
     setFilteredGroups(built);
 
-    const status: Record<string, ContentStatus> = {};
+    const status: Record<string, AdminStatus> = {};
     const collect = (fs: Folder[]) => {
       fs.forEach((f) => {
         f.content?.forEach((c) => {
@@ -241,7 +241,7 @@ export const ContentManagement = () => {
         });
 
         if (newItems.length) {
-          const updates: Record<string, ContentStatus> = {};
+          const updates: Record<string, AdminStatus> = {};
           newItems.forEach((it) => {
             const st = (it as any).status;
             if (st) updates[it.id] = { content_id: it.id, status: st };

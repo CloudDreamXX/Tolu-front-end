@@ -103,24 +103,36 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   }, [isEditing, pair.content]);
 
   useEffect(() => {
-    smartRender(pair.content).then((content) => {
-      const { contentWithoutScripts, scripts } = extractScripts(
-        content.props.dangerouslySetInnerHTML.__html
-      );
+    let appended: HTMLScriptElement[] = [];
+    let cancelled = false;
+
+    smartRender(pair.content).then((node) => {
+      if (cancelled) return;
+
+      const element = React.isValidElement(node) ? node : <div>{node}</div>;
+
+      const html = element.props?.dangerouslySetInnerHTML?.__html ?? "";
+      const { contentWithoutScripts, scripts } = extractScripts(html);
+
       setRenderedContent(
-        <div dangerouslySetInnerHTML={{ __html: contentWithoutScripts }} />
+        <div
+          className="prose-sm prose max-w-none richtext"
+          dangerouslySetInnerHTML={{ __html: contentWithoutScripts }}
+        />
       );
 
-      scripts.forEach((scriptContent) => {
-        const script = document.createElement("script");
-        script.innerHTML = scriptContent;
-        document.body.appendChild(script);
-
-        return () => {
-          document.body.removeChild(script);
-        };
+      appended = scripts.map((code) => {
+        const s = document.createElement("script");
+        s.textContent = code;
+        document.body.appendChild(s);
+        return s;
       });
     });
+
+    return () => {
+      cancelled = true;
+      appended.forEach((s) => s.remove());
+    };
   }, [pair.content]);
 
   const renderCompareView = () => (
@@ -295,6 +307,24 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               ["image"],
             ],
           }}
+          formats={[
+            "header",
+            "font",
+            "size",
+            "bold",
+            "italic",
+            "underline",
+            "strike",
+            "list",
+            "bullet",
+            "indent",
+            "link",
+            "image",
+            "align",
+            "color",
+            "background",
+            "button",
+          ]}
         />
       </div>
 

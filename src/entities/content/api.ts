@@ -10,6 +10,7 @@ import {
   ShareViaEmail,
   ShareWithCoach,
   LibraryContentStatus,
+  QuizResultResponse,
 } from "./model";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store";
@@ -46,10 +47,19 @@ export const contentApi = createApi({
       }),
     }),
     updateStatus: builder.mutation<any, ContentStatus>({
-      query: (status) => ({
-        url: `${API_ROUTES.CONTENT.UPDATE_CONTENT_STATUS.replace("{content_id}", status.content_id)}`,
+      query: ({ content_id, status_data }) => ({
+        url: API_ROUTES.CONTENT.UPDATE_CONTENT_STATUS.replace(
+          "{content_id}",
+          content_id
+        ),
         method: "POST",
-        body: { status: status.status },
+        body: status_data,
+      }),
+    }),
+    getQuizScore: builder.query<QuizResultResponse, string>({
+      query: (content_id) => ({
+        url: API_ROUTES.CONTENT.QUIZ_SCORE.replace("{content_id}", content_id),
+        method: "GET",
       }),
     }),
     addContentFeedback: builder.mutation<FeedbackResponse, Feedback>({
@@ -129,6 +139,7 @@ export const {
   useDuplicateContentByIdMutation,
   useEditContentMutation,
   useUpdateStatusMutation,
+  useGetQuizScoreQuery,
   useAddContentFeedbackMutation,
   useAddHashtagsMutation,
   useDeleteHashtagsMutation,

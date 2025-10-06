@@ -30,11 +30,28 @@ export interface ContentToEdit {
   new_query: string;
 }
 
-export interface ContentStatus {
+type QuizAttempt = {
+  question_id: string;
+  answer: string;
+  is_correct: boolean;
+};
+
+type StatusData = {
+  status: "read" | "saved_for_later" | "currently_reading";
+  is_archived?: boolean;
+  current_card_number?: string;
+  quiz_attempt?: QuizAttempt;
+};
+
+export type AdminStatus = {
   content_id: string;
   status: string;
-}
+};
 
+export type ContentStatus = {
+  content_id: string;
+  status_data: StatusData;
+};
 export interface Feedback {
   source_id: string;
   satisfaction_score: string;
@@ -155,4 +172,25 @@ export interface LibraryContentStatus {
   id: string;
   status: string;
   reviewer_comment?: string;
+}
+
+export interface QuizQuestion {
+  question_id: string;
+  answer: string;
+  is_correct: boolean;
+  attempted_at: string;
+}
+
+export interface QuizResult {
+  content_id: string;
+  total_questions: number;
+  correct_questions: number;
+  score_percent: number;
+  questions: QuizQuestion[];
+}
+
+export interface QuizResultResponse {
+  status: string;
+  message: string;
+  data: QuizResult;
 }
