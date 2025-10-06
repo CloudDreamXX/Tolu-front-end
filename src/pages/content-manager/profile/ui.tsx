@@ -142,7 +142,7 @@ export const ContentManagerProfile = () => {
       `${Math.floor(Math.random() * (max - min + 1)) + min}px`;
 
     return (
-      <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px]">
+      <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px] overflow-y-auto">
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between animate-pulse">
           {/* Text and Title Block */}
           <div className="flex flex-col md:flex-row items-start gap-[16px]">
@@ -330,7 +330,7 @@ export const ContentManagerProfile = () => {
 
   return (
     <>
-      <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px]">
+      <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px] overflow-y-auto">
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col md:flex-row items-start gap-[16px]">
             <div className="flex flex-col gap-3 text-[24px] w-full lg:w-fit">

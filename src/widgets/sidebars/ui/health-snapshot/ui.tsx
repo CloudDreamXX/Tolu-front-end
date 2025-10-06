@@ -144,7 +144,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
             </div>
 
             <div
-              className={`flex flex-col w-full ${sidebarOpen ? "items-start" : "items-center"}`}
+              className={`flex flex-col w-full max-h-[50vh] overflow-y-auto ${sidebarOpen ? "items-start" : "items-center"}`}
             >
               <NavLink
                 to={"/library"}

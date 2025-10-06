@@ -524,7 +524,7 @@ export const ClientProfile = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 ">
+    <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 overflow-y-auto">
       <div className="flex gap-3 items-center justify-between">
         <div className="flex items-center gap-[24px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
           Personal profile

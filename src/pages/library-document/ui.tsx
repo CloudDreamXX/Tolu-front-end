@@ -902,7 +902,7 @@ export const LibraryDocument = () => {
           Please wait, we are loading the information...
         </div>
       )}
-      <div className="flex flex-row w-full h-full gap-6 xl:h-[calc(100vh-48px)] relative">
+      <div className="flex flex-row w-full xl:h-[80vh] gap-6 relative">
         <div className="hidden xl:block">
           <ChatActions
             initialStatus={selectedDocument?.readStatus}
@@ -927,7 +927,7 @@ export const LibraryDocument = () => {
             {isLoadingDocument ? (
               <DocumentLoadingSkeleton />
             ) : selectedDocument ? (
-              <div className="p-[24px] rounded-[16px] bg-white xl:h-[calc(100vh-48px)] xl:overflow-y-auto">
+              <div className="p-[24px] rounded-[16px] bg-white xl:overflow-y-auto">
                 <div className="prose-sm prose max-w-none">
                   {showTooltip && tooltipPosition && (
                     <div

@@ -49,13 +49,13 @@ export const MainLayout: React.FC<{
   );
 
   return (
-    <div className="flex flex-row w-full min-h-screen">
+    <div className="flex flex-row w-full h-full xl:h-screen">
       <div
-        className={`hidden xl:block relative ${mainLocation === "content-manager" ? "h-screen" : "min-h-screen"} px-[16px] pr-0 py-8`}
+        className={`hidden xl:block relative h-full xl:h-screen px-[16px] pr-0 py-8`}
       >
         {getSideBar(mainLocation)}
       </div>
-      <div className="flex flex-col w-full h-full bg-[#F2F4F6] min-h-screen xl:overflow-hidden">
+      <div className="flex flex-col w-full h-full bg-[#F2F4F6] xl:h-screen xl:overflow-hidden">
         {getNavigation(mainLocation)}
         {children}
         {isMobileDailyJournalOpen && (

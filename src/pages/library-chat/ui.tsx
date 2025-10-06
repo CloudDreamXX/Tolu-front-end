@@ -910,7 +910,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
-          <div className="flex flex-col flex-1 w-full min-h-0 overflow-clip">
+          <div
+            className={`flex flex-col flex-1 w-full ${isCoach ? "min-h-[calc(100vh-95px)]" : "min-h-[calc(100vh-78px)]"} overflow-clip h-full`}
+          >
             <div className="md:hidden">
               <SwitchDropdown
                 options={config.options}

@@ -209,13 +209,17 @@ export const useContentActions = () => {
 
   const { refetch } = useGetDocumentByIdQuery(selectedDocumentId);
 
-  const handleSaveEdit = async (contentId: string, documentId?: string) => {
+  const handleSaveEdit = async (
+    contentId: string,
+    documentId?: string,
+    content?: string
+  ) => {
     try {
       const payload: ContentToEdit = {
         content_id: contentId,
         new_title: editedTitle,
         new_query: editedQuery,
-        new_content: editedContent,
+        new_content: content ? content : editedContent,
       };
       await editContent(payload).unwrap();
       if (documentId) {
