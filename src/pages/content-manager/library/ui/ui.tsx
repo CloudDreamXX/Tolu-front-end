@@ -1,4 +1,7 @@
-import { CoachService, Content } from "entities/coach";
+import {
+  useChangeStatusMutation,
+  useGetAllUserContentQuery,
+} from "entities/coach";
 import { useDuplicateContentByIdMutation } from "entities/content";
 import {
   ContentToMove,
@@ -42,18 +45,12 @@ export const ContentManagerLibrary: React.FC = () => {
     folders.folders,
     debouncedSearch
   );
-  const [allContent, setAllContent] = useState<Content[]>([]);
   const [contentCardsView, setContentCardsView] = useState<boolean>(false);
   const [duplicateContentById] = useDuplicateContentByIdMutation();
+  const [changeStatus] = useChangeStatusMutation();
+  const { data: allContentResponse } = useGetAllUserContentQuery();
 
-  useEffect(() => {
-    const fetchAllContent = async () => {
-      const data = await CoachService.getAllUserContent();
-      setAllContent(data.content);
-    };
-
-    fetchAllContent();
-  }, []);
+  const allContent = allContentResponse?.content ?? [];
 
   // Debounce search input
   useEffect(() => {
@@ -98,7 +95,7 @@ export const ContentManagerLibrary: React.FC = () => {
       id: selectedRow?.id ?? "",
       status: status,
     };
-    await CoachService.changeStatus(newStatus);
+    await changeStatus(newStatus).unwrap();
     await fetchFolders();
     setIsMarkAsOpen(false);
     setIsMenuOpen(false);
@@ -197,7 +194,7 @@ export const ContentManagerLibrary: React.FC = () => {
     if (debouncedSearch === "") return allContent;
 
     const searchLower = debouncedSearch.toLowerCase();
-    return allContent.filter(
+    return allContent?.filter(
       (content) =>
         content.title.toLowerCase().includes(searchLower) ||
         content.query.toLowerCase().includes(searchLower) ||
@@ -246,7 +243,7 @@ export const ContentManagerLibrary: React.FC = () => {
           </div>
           {contentCardsView && (
             <p className="text-[14px] text-[#5F5F65] font-[500]">
-              Found {filteredContent.length} files
+              Found {filteredContent?.length} files
             </p>
           )}
         </div>
@@ -257,11 +254,11 @@ export const ContentManagerLibrary: React.FC = () => {
           toggleFolder={toggleFolder}
           onDotsClick={handleDotsClick}
         />
-        {filteredContent.length ? (
+        {filteredContent?.length ? (
           <>
             {contentCardsView ? (
               <div className="grid grid-cols-2 gap-4">
-                {filteredContent.map((content) => (
+                {filteredContent?.map((content) => (
                   <ContentCard
                     key={content.id}
                     title={content.title}

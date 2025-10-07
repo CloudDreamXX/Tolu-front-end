@@ -1,4 +1,4 @@
-import { API_ROUTES, ApiService } from "shared/api";
+import { API_ROUTES } from "shared/api";
 import {
   AIChatMessage,
   ClientComprehensiveProfile,
@@ -20,101 +20,281 @@ import {
   UpdateFolderRequest,
   UpdateHealthHistoryRequest,
 } from "./model";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { RootState } from "entities/store";
+
+export const coachApi = createApi({
+  reducerPath: "coachApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
+      if (token) headers.set("Authorization", `Bearer ${token}`);
+      return headers;
+    },
+  }),
+
+  endpoints: (builder) => ({
+    // === CLIENT MANAGEMENT ===
+    getManagedClients: builder.query<ClientsResponse, void>({
+      query: () => API_ROUTES.COACH_ADMIN.GET_CLIENTS,
+    }),
+
+    inviteClient: builder.mutation<
+      { success: boolean; message: string },
+      { payload: InviteClientPayload | null; file?: File }
+    >({
+      query: ({ payload, file }) => {
+        const formData = new FormData();
+        if (file) formData.append("file", file);
+        if (payload) formData.append("invite_data", JSON.stringify(payload));
+
+        return {
+          url: API_ROUTES.COACH_ADMIN.POST_CLIENT,
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
+
+    getClientProfile: builder.query<ClientProfile, string>({
+      query: (clientId) =>
+        API_ROUTES.COACH_ADMIN.GET_CLIENT_PROFILE.replace(
+          "{client_id}",
+          clientId
+        ),
+    }),
+
+    deleteClient: builder.mutation<any, string>({
+      query: (clientId) => ({
+        url: API_ROUTES.COACH_ADMIN.DELETE_CLIENT.replace(
+          "{client_id}",
+          clientId
+        ),
+        method: "DELETE",
+      }),
+    }),
+
+    getClientInfo: builder.query<GetClientInfoResponse, string>({
+      query: (clientId) =>
+        API_ROUTES.COACH_ADMIN.GET_CLIENT_INFO.replace("{client_id}", clientId),
+    }),
+
+    editClient: builder.mutation<
+      any,
+      { clientId: string; payload: ClientDetails }
+    >({
+      query: ({ clientId, payload }) => ({
+        url: API_ROUTES.COACH_ADMIN.GET_CLIENT_INFO.replace(
+          "{client_id}",
+          clientId
+        ),
+        method: "PUT",
+        body: payload,
+      }),
+    }),
+
+    changeStatus: builder.mutation<any, Status>({
+      query: (status) => ({
+        url: API_ROUTES.COACH_ADMIN.CHANGE_STATUS,
+        method: "PUT",
+        body: status,
+      }),
+    }),
+
+    // === SESSION ===
+    getSessionById: builder.query<ISessionResponse, string>({
+      query: (chatId) =>
+        API_ROUTES.COACH_ADMIN.GET_SESSION.replace("{chat_id}", chatId),
+    }),
+
+    // === CONTENT SHARING & RATING ===
+    rateContent: builder.mutation<
+      { content_id: boolean; message: string },
+      RateContent
+    >({
+      query: (payload) => ({
+        url: API_ROUTES.COACH_ADMIN.RATE_CONTENT,
+        method: "POST",
+        body: payload,
+      }),
+    }),
+
+    shareContent: builder.mutation<any, ShareContentData>({
+      query: (payload) => ({
+        url: API_ROUTES.COACH_ADMIN.SHARE_CONTENT,
+        method: "POST",
+        body: payload,
+      }),
+    }),
+
+    getContentShares: builder.query<SharedContent, string>({
+      query: (contentId) =>
+        API_ROUTES.COACH_ADMIN.GET_SHARED_ACCESS.replace(
+          "{content_id}",
+          contentId
+        ),
+    }),
+
+    revokeContent: builder.mutation<any, ShareContentData>({
+      query: (payload) => ({
+        url: API_ROUTES.COACH_ADMIN.REVOKE_CONTENT_ACCESS,
+        method: "POST",
+        body: payload,
+      }),
+    }),
+
+    getAllUserContent: builder.query<ContentResponse, void>({
+      query: () => API_ROUTES.COACH_ADMIN.SEARCH_CONTENT,
+    }),
+
+    // === CHAT MANAGEMENT ===
+    updateChatTitle: builder.mutation<any, NewChatTitle>({
+      query: (data) => ({
+        url: API_ROUTES.AI.UPDATE_CHAT_TITLE,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
+    // === TRACKERS ===
+    shareTracker: builder.mutation<any, FmpShareRequest>({
+      query: (data) => ({
+        url: API_ROUTES.COACH_ADMIN.SHARE_FMP,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    submitTracker: builder.mutation<any, FmpTracker>({
+      query: (data) => ({
+        url: API_ROUTES.COACH_ADMIN.POST_FMP,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    deleteTracker: builder.mutation<any, string>({
+      query: (id) => ({
+        url: API_ROUTES.COACH_ADMIN.DELETE_FMP.replace("{tracker_id}", id),
+        method: "DELETE",
+      }),
+    }),
+
+    // === COMPREHENSIVE CLIENT PROFILE ===
+    getComprehensiveClient: builder.query<ClientComprehensiveProfile, string>({
+      query: (id) =>
+        API_ROUTES.COACH_ADMIN.GET_COMPREHENSIVE_CLIENT.replace(
+          "{client_id}",
+          id
+        ),
+    }),
+
+    updateComprehensiveClient: builder.mutation<
+      any,
+      { id: string; data: ComprehensiveProfile }
+    >({
+      query: ({ id, data }) => ({
+        url: API_ROUTES.COACH_ADMIN.UPDATE_COMPREHENSIVE_CLIENT.replace(
+          "{client_id}",
+          id
+        ),
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
+    // === LAB FILES ===
+    getLabFile: builder.query<any, { client_id: string; file_name: string }>({
+      query: ({ client_id, file_name }) =>
+        API_ROUTES.COACH_ADMIN.GET_LAB_FILE.replace(
+          "{client_id}",
+          client_id
+        ).replace("{file_name}", file_name),
+    }),
+
+    // === HEALTH HISTORY ===
+    updateHealthHistory: builder.mutation<any, UpdateHealthHistoryRequest>({
+      query: (data) => ({
+        url: API_ROUTES.COACH_ADMIN.UPDATE_HEALTH_HISTORY,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    // === LICENSE FILES ===
+    downloadLicenseFile: builder.query<Blob, string>({
+      query: (filename) => ({
+        url: API_ROUTES.COACH_ADMIN.DOWNLOAD_LICENSE.replace(
+          "{filename}",
+          filename
+        ),
+        responseHandler: (response) => response.blob(),
+      }),
+    }),
+
+    deleteLicenseFile: builder.mutation<any, string>({
+      query: (filename) => ({
+        url: API_ROUTES.COACH_ADMIN.DELETE_LICENSE.replace(
+          "{filename}",
+          filename
+        ),
+        method: "DELETE",
+      }),
+    }),
+
+    // === FOLDERS ===
+    editFolder: builder.mutation<
+      { success: boolean; message: string },
+      { payload: UpdateFolderRequest; files?: File[] }
+    >({
+      query: ({ payload, files = [] }) => {
+        const form = new FormData();
+        form.append("edit_data", JSON.stringify(payload));
+        files.forEach((f) => form.append("files", f));
+
+        return {
+          url: API_ROUTES.COACH_ADMIN.EDIT_FOLDER,
+          method: "PUT",
+          body: form,
+        };
+      },
+    }),
+  }),
+});
+
+export const {
+  useGetManagedClientsQuery,
+  useLazyGetManagedClientsQuery,
+  useInviteClientMutation,
+  useDeleteClientMutation,
+  useEditClientMutation,
+  useLazyGetClientInfoQuery,
+  useLazyGetClientProfileQuery,
+  useChangeStatusMutation,
+  useGetSessionByIdQuery,
+  useLazyGetSessionByIdQuery,
+  useRateContentMutation,
+  useShareContentMutation,
+  useGetContentSharesQuery,
+  useLazyGetContentSharesQuery,
+  useRevokeContentMutation,
+  useGetAllUserContentQuery,
+  useUpdateChatTitleMutation,
+  useShareTrackerMutation,
+  useSubmitTrackerMutation,
+  useDeleteTrackerMutation,
+  useGetComprehensiveClientQuery,
+  useGetLabFileQuery,
+  useUpdateComprehensiveClientMutation,
+  useUpdateHealthHistoryMutation,
+  useDownloadLicenseFileQuery,
+  useLazyDownloadLicenseFileQuery,
+  useDeleteLicenseFileMutation,
+  useEditFolderMutation,
+} = coachApi;
 
 export class CoachService {
-  static async getManagedClients(): Promise<ClientsResponse> {
-    return ApiService.get<ClientsResponse>(API_ROUTES.COACH_ADMIN.GET_CLIENTS);
-  }
-
-  static async inviteClient(
-    payload: InviteClientPayload | null,
-    file?: File
-  ): Promise<{ success: boolean; message: string }> {
-    const formData = new FormData();
-
-    if (file) {
-      formData.append("file", file);
-    }
-
-    if (payload) {
-      formData.append("invite_data", JSON.stringify(payload));
-    }
-
-    return ApiService.postFormData<{ success: boolean; message: string }>(
-      API_ROUTES.COACH_ADMIN.POST_CLIENT,
-      formData
-    );
-  }
-
-  static async getClientProfile(
-    clientId: string,
-    token?: string | null
-  ): Promise<ClientProfile> {
-    const endpoint = API_ROUTES.COACH_ADMIN.GET_CLIENT_PROFILE.replace(
-      "{client_id}",
-      clientId
-    );
-    return ApiService.get<ClientProfile>(endpoint, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "application/json",
-      },
-    });
-  }
-
-  static async deleteClient(
-    clientId: string,
-    token: string | null
-  ): Promise<{ success: boolean; message: string }> {
-    const endpoint = API_ROUTES.COACH_ADMIN.DELETE_CLIENT.replace(
-      "{client_id}",
-      clientId
-    );
-    return ApiService.delete<{ success: boolean; message: string }>(endpoint, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "multipart/form-data",
-      },
-    });
-  }
-
-  static async getClientInfo(
-    clientId: string,
-    token: string | null
-  ): Promise<GetClientInfoResponse> {
-    const endpoint = API_ROUTES.COACH_ADMIN.GET_CLIENT_INFO.replace(
-      "{client_id}",
-      clientId
-    );
-    return ApiService.get<GetClientInfoResponse>(endpoint, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "Content-Type": "application/json",
-      },
-    });
-  }
-
-  static async editClient(
-    clientId: string,
-    payload: ClientDetails,
-    token: string | null
-  ): Promise<{ success: boolean; message: string }> {
-    const endpoint = API_ROUTES.COACH_ADMIN.PUT_CLIENT_INFO.replace(
-      "{client_id}",
-      clientId
-    );
-    return ApiService.put<{ success: boolean; message: string }>(
-      endpoint,
-      payload,
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  }
-
   static async aiLearningSearch(
     chatMessage: AIChatMessage,
     folder_id: string,
@@ -354,167 +534,5 @@ export class CoachService {
       console.error("Error processing stream:", error);
       throw error;
     }
-  }
-
-  static async changeStatus(status: Status): Promise<any> {
-    return ApiService.put<any>(API_ROUTES.COACH_ADMIN.CHANGE_STATUS, status);
-  }
-
-  static async getSessionById(chatId: string): Promise<ISessionResponse> {
-    const endpoint = API_ROUTES.COACH_ADMIN.GET_SESSION.replace(
-      "{chat_id}",
-      chatId
-    );
-    return ApiService.get<ISessionResponse>(endpoint);
-  }
-
-  static async rateContent(
-    payload: RateContent
-  ): Promise<{ content_id: boolean; message: string }> {
-    return ApiService.post<{ content_id: boolean; message: string }>(
-      API_ROUTES.COACH_ADMIN.RATE_CONTENT,
-      payload
-    );
-  }
-
-  static async shareContent(payload: ShareContentData): Promise<any> {
-    try {
-      return await ApiService.post<any>(
-        API_ROUTES.COACH_ADMIN.SHARE_CONTENT,
-        payload
-      );
-    } catch (error) {
-      console.error("Error sharing content:", error);
-      throw error;
-    }
-  }
-
-  static async getContentShares(contentId: string): Promise<SharedContent> {
-    const endpoint = API_ROUTES.COACH_ADMIN.GET_SHARED_ACCESS.replace(
-      "{content_id}",
-      contentId
-    );
-    return ApiService.get<SharedContent>(endpoint);
-  }
-
-  static async revokeContent(payload: ShareContentData): Promise<any> {
-    return ApiService.post<any>(
-      API_ROUTES.COACH_ADMIN.REVOKE_CONTENT_ACCESS,
-      payload
-    );
-  }
-
-  static async getAllUserContent(): Promise<ContentResponse> {
-    return ApiService.get<ContentResponse>(
-      API_ROUTES.COACH_ADMIN.SEARCH_CONTENT
-    );
-  }
-
-  static async updateChatTitle(data: NewChatTitle): Promise<any> {
-    return ApiService.put<any>(API_ROUTES.AI.UPDATE_CHAT_TITLE, data);
-  }
-
-  static async shareTracker(data: FmpShareRequest): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.COACH_ADMIN.SHARE_FMP, data);
-  }
-
-  static async submitTracker(data: FmpTracker): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.COACH_ADMIN.POST_FMP, data);
-  }
-
-  static async deleteTracker(id: string): Promise<any> {
-    const endpoint = API_ROUTES.COACH_ADMIN.DELETE_FMP.replace(
-      "{tracker_id}",
-      id
-    );
-    return ApiService.delete<any>(endpoint);
-  }
-
-  static async getComprehensiveClient(
-    id: string
-  ): Promise<ClientComprehensiveProfile> {
-    const endpoint = API_ROUTES.COACH_ADMIN.GET_COMPREHENSIVE_CLIENT.replace(
-      "{client_id}",
-      id
-    );
-    return ApiService.get<ClientComprehensiveProfile>(endpoint);
-  }
-
-  static async getLabFile(client_id: string, file_name: string): Promise<any> {
-    let endpoint = API_ROUTES.COACH_ADMIN.GET_LAB_FILE.replace(
-      "{client_id}",
-      client_id
-    );
-    endpoint = endpoint.replace("{file_name}", file_name);
-    return ApiService.get<any>(endpoint);
-  }
-
-  static async updateComprehensiveClient(
-    id: string,
-    data: ComprehensiveProfile
-  ): Promise<any> {
-    const endpoint = API_ROUTES.COACH_ADMIN.UPDATE_COMPREHENSIVE_CLIENT.replace(
-      "{client_id}",
-      id
-    );
-    return ApiService.put<any>(endpoint, data);
-  }
-
-  static async updateHealthHistory(
-    data: UpdateHealthHistoryRequest
-  ): Promise<any> {
-    return ApiService.post<any>(
-      API_ROUTES.COACH_ADMIN.UPDATE_HEALTH_HISTORY,
-      data
-    );
-  }
-
-  static async downloadLicenseFile(filename: string): Promise<any> {
-    const endpoint = API_ROUTES.COACH_ADMIN.DOWNLOAD_LICENSE.replace(
-      "{filename}",
-      filename
-    );
-    return ApiService.get<any>(endpoint, {
-      responseType: "blob",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
-
-  static async deleteLicenseFile(filename: string): Promise<any> {
-    const endpoint = API_ROUTES.COACH_ADMIN.DELETE_LICENSE.replace(
-      "{filename}",
-      filename
-    );
-    return ApiService.delete<any>(endpoint, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
-
-  static async editFolder(
-    payload: UpdateFolderRequest,
-    files: File[] = []
-  ): Promise<{ success: boolean; message: string }> {
-    const endpoint =
-      (import.meta.env.VITE_API_URL ?? "") + API_ROUTES.COACH_ADMIN.EDIT_FOLDER;
-
-    const form = new FormData();
-    form.append("edit_data", JSON.stringify(payload));
-    files.forEach((f) => form.append("files", f));
-
-    const res = await fetch(endpoint, {
-      method: "PUT",
-      body: form,
-    });
-
-    if (!res.ok) {
-      const detail = await res.text().catch(() => "");
-      throw new Error(`Failed to edit folder (${res.status}) ${detail}`);
-    }
-
-    return res.json();
   }
 }

@@ -7,7 +7,7 @@ import {
   setLastChatId,
   setMessagesToChat,
 } from "entities/client/lib";
-import { CoachService } from "entities/coach";
+import { CoachService, useLazyGetSessionByIdQuery } from "entities/coach";
 import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { setHealthHistory, setLoading } from "entities/health-history/lib";
 import { LibraryChatInput } from "entities/search";
@@ -110,6 +110,8 @@ export const LibraryChat = () => {
   );
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
   const dispatch = useDispatch();
+
+  const [getSessionById] = useLazyGetSessionByIdQuery();
 
   useEffect(() => {
     if (activeChatKey) {
@@ -360,10 +362,14 @@ export const LibraryChat = () => {
 
     try {
       if (activeChatKey === "Create content") {
-        const sessionData = await CoachService.getSessionById(id);
+        const sessionData = await getSessionById(id);
 
-        if (sessionData && sessionData.search_results.length > 0) {
-          sessionData.search_results.forEach((item: any) => {
+        if (
+          sessionData &&
+          sessionData?.data?.search_results &&
+          sessionData?.data?.search_results.length > 0
+        ) {
+          sessionData?.data?.search_results.forEach((item: any) => {
             if (item.query) {
               chatMessages.push({
                 id: `user-${item.id}`,

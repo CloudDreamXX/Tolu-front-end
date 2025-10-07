@@ -1,5 +1,5 @@
 import { ChatSocketService } from "entities/chat";
-import { CoachService } from "entities/coach";
+import { useLazyDownloadLicenseFileQuery } from "entities/coach";
 import {
   ChangePasswordRequest,
   UserOnboardingInfo,
@@ -28,6 +28,7 @@ export const ContentManagerProfile = () => {
     [newPassword]
   );
   const [loading, setLoading] = useState<boolean>(true);
+  const [downloadLicenseFile] = useLazyDownloadLicenseFileQuery();
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -67,7 +68,7 @@ export const ContentManagerProfile = () => {
 
       const filename = path.split("/").pop() || path;
       try {
-        const blob = await CoachService.downloadLicenseFile(filename);
+        const blob = await downloadLicenseFile(filename).unwrap();
         const url = URL.createObjectURL(blob);
         revokeUrls.push(url);
         return url;

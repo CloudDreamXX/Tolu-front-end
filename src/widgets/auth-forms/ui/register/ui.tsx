@@ -1,10 +1,13 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { SelectType, SignUp } from "./components";
+import {
+  useAcceptCoachInviteMutation,
+  useGetInvitationDetailsQuery,
+} from "entities/client";
 import { UserService, logout, setCredentials, setRoleID } from "entities/user";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
-import { ClientService } from "entities/client";
-import { useDispatch } from "react-redux";
+import { SelectType, SignUp } from "./components";
 
 const isAuthRevoked = (err: any) => {
   const status = Number(
@@ -45,6 +48,8 @@ export const Register = () => {
 
   const { token } = useParams();
   const dispatch = useDispatch();
+  const { data } = useGetInvitationDetailsQuery(token ?? "", { skip: !token });
+  const [acceptCoachInvite] = useAcceptCoachInviteMutation();
 
   useEffect(() => {
     if (!token) return;
@@ -72,7 +77,6 @@ export const Register = () => {
 
     const fetchInviteDetails = async () => {
       try {
-        const data = await ClientService.getInvitationDetails(token);
         if (cancelled) return;
         setFormData((prev) => ({
           ...prev,
@@ -98,7 +102,7 @@ export const Register = () => {
 
         if (isAlreadyRegistered(err)) {
           try {
-            await ClientService.acceptCoachInvite({ token });
+            await acceptCoachInvite({ token }).unwrap();
             navigate("/library");
           } catch (acceptErr) {
             if (isAuthRevoked(acceptErr)) {

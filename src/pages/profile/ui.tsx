@@ -1,17 +1,24 @@
 import { ChatSocketService } from "entities/chat";
-import { Client, ClientService } from "entities/client";
 import {
+  Client,
+  useGetClientProfileQuery,
+  useUpdateUserProfileMutation,
+} from "entities/client";
+import {
+  useDismissNotificationsMutation,
+  useGetNotificationPreferencesQuery,
   useGetNotificationsQuery,
   useGetUnreadCountQuery,
   useMarkNotificationAsReadMutation,
-  useDismissNotificationsMutation,
-  useGetNotificationPreferencesQuery,
 } from "entities/notifications";
 import { RootState } from "entities/store";
+import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
 import { ChangePasswordRequest, UserService } from "entities/user";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { useFilePicker } from "shared/hooks/useFilePicker";
 import { cn, phoneMask, toast } from "shared/lib";
 import {
   Avatar,
@@ -26,14 +33,11 @@ import {
 import { ChangePasswordModal } from "widgets/change-password-modal";
 import { ClientEditProfileModal } from "widgets/client-edit-profile-modal";
 import { ClientProfileData } from "widgets/client-edit-profile-modal/types";
-import { useFilePicker } from "shared/hooks/useFilePicker";
 import { Card } from "./components/Card";
-import { Field } from "./components/Field";
-import { Switch } from "./components/Switch";
-import { useNavigate } from "react-router-dom";
-import { OnboardingInfo } from "./components/OnboardingInfo";
-import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
 import { DailyJournalOverview } from "./components/DailyJournalOverview/ui";
+import { Field } from "./components/Field";
+import { OnboardingInfo } from "./components/OnboardingInfo";
+import { Switch } from "./components/Switch";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -82,6 +86,8 @@ export const ClientProfile = () => {
     useGetNotificationPreferencesQuery();
   const [markNotificationAsRead] = useMarkNotificationAsReadMutation();
   const [dismissNotification] = useDismissNotificationsMutation();
+  const [updateUserProfile] = useUpdateUserProfileMutation();
+  const { data: u, refetch: refetchUserProfile } = useGetClientProfileQuery();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -94,24 +100,26 @@ export const ClientProfile = () => {
   }, [user]);
 
   useEffect(() => {
-    let objectUrl: string | null = null;
-
-    (async () => {
-      const u = await ClientService.getClientProfile();
+    if (u) {
       setUser(u);
+      let objectUrl: string | null = null;
 
-      const filename = u.photo_url?.split("/").pop() || "";
+      const filename = u?.photo_url?.split("/").pop() || "";
       if (!filename) return;
 
-      const blob = await UserService.downloadProfilePhoto(filename);
-      objectUrl = URL.createObjectURL(blob);
-      setPhotoUrl(objectUrl);
-    })();
+      const loadProfilePhoto = async () => {
+        const blob = await UserService.downloadProfilePhoto(filename);
+        objectUrl = URL.createObjectURL(blob);
+        setPhotoUrl(objectUrl);
+      };
 
-    return () => {
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, []);
+      loadProfilePhoto();
+
+      return () => {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+      };
+    }
+  }, [u]);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -228,11 +236,9 @@ export const ClientProfile = () => {
         gender: user.gender ?? "",
       };
 
-      await ClientService.updateUserProfile(payload, file);
+      await updateUserProfile({ payload, photo: file }).unwrap();
+      refetchUserProfile();
       toast({ title: "Photo updated" });
-
-      const res = await ClientService.getClientProfile();
-      setUser(res);
     } catch (err) {
       console.error("Failed to update photo", err);
       toast({
@@ -246,9 +252,8 @@ export const ClientProfile = () => {
 
   const handleEditProfile = async (data: ClientProfileData, photo?: File) => {
     try {
-      await ClientService.updateUserProfile(data, photo);
-      const res = await ClientService.getClientProfile();
-      setUser(res);
+      await updateUserProfile({ payload: data, photo: photo ?? null }).unwrap();
+      refetchUserProfile();
       toast({
         title: "All changes have been saved.",
       });
@@ -278,14 +283,14 @@ export const ClientProfile = () => {
 
     return (
       <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6">
-        <div className="flex gap-3 items-center justify-between animate-pulse">
+        <div className="flex items-center justify-between gap-3 animate-pulse">
           <div
             className="h-[24px] bg-gray-300 rounded-[24px] max-w-[300px] md:max-w-full"
             style={{ width: getRandomWidth(200, 400) }}
           />
         </div>
 
-        <div className="hidden md:flex flex-wrap items-center md:justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6 ">
+        <div className="flex-wrap items-center hidden gap-4 p-4 bg-white md:flex md:justify-end md:justify-between rounded-2xl md:p-6 ">
           <div className="flex items-center gap-6 animate-pulse">
             <div className="w-[100px] h-[100px] bg-gray-300 rounded-full"></div>
             <div>
@@ -510,7 +515,7 @@ export const ClientProfile = () => {
     return (
       <>
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <span className="inline-flex h-5 w-5 items-center justify-center">
+          <span className="inline-flex items-center justify-center w-5 h-5">
             <MaterialIcon
               iconName="progress_activity"
               className="text-blue-600 animate-spin"
@@ -589,7 +594,7 @@ export const ClientProfile = () => {
         </div>
       )}
 
-      <div className="hidden md:flex flex-wrap items-center md:justify-end gap-4 p-4 bg-white md:justify-between rounded-2xl md:p-6">
+      <div className="flex-wrap items-center hidden gap-4 p-4 bg-white md:flex md:justify-end md:justify-between rounded-2xl md:p-6">
         <div className="flex items-center gap-6 ">
           <div className="relative w-[100px] h-[100px]">
             <Avatar className="object-cover w-full h-full rounded-full">
@@ -851,7 +856,7 @@ export const ClientProfile = () => {
       </div>
       <Button
         variant={"blue2"}
-        className="md:hidden w-fit ml-auto px-8 text-base font-semibold text-blue-700"
+        className="px-8 ml-auto text-base font-semibold text-blue-700 md:hidden w-fit"
         onClick={() => handleSignOut()}
       >
         <MaterialIcon iconName="exit_to_app" />

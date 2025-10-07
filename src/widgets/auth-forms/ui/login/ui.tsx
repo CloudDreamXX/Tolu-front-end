@@ -1,20 +1,26 @@
+import {
+  useAcceptCoachInviteMutation,
+  useRequestNewInviteMutation,
+} from "entities/client";
+import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
+import { setCredentials, UserService } from "entities/user";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { toast } from "shared/lib/hooks/use-toast";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { setCredentials, UserService } from "entities/user";
-import { Input } from "shared/ui";
-import { ClientService } from "entities/client";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
+import { toast } from "shared/lib/hooks/use-toast";
+import { Input } from "shared/ui";
+import { z } from "zod";
 // import { mapOnboardClientToFormState } from "entities/store/helpers";
 import { setCoachOnboardingData } from "entities/store/coachOnboardingSlice";
 // import { findFirstIncompleteClientStep } from "widgets/OnboardingClient/DemographicStep/helpers";
-import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-type/helpers";
 import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboarding-finish/helpers";
+import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-type/helpers";
 
 export const LoginForm = () => {
+  const [acceptCoachInvite] = useAcceptCoachInviteMutation();
+  const [requestNewInvite] = useRequestNewInviteMutation();
+
   const loginSchema = z.object({
     email: z.string().email("The email format is incorrect."),
     password: z.string().min(8, "Password must be at least 8 characters long"),
@@ -62,7 +68,7 @@ export const LoginForm = () => {
     const onboardingComplete = await getOnboardingStatusWithRetry();
     if (onboardingComplete.onboarding_filled) {
       if (coachInviteToken) {
-        await ClientService.acceptCoachInvite({ token: coachInviteToken });
+        await acceptCoachInvite({ token: coachInviteToken }).unwrap();
       }
       navigate("/library");
       return;
@@ -78,7 +84,7 @@ export const LoginForm = () => {
     //   navigate(issue.route);
     // } else {
     if (coachInviteToken) {
-      await ClientService.acceptCoachInvite({ token: coachInviteToken });
+      await acceptCoachInvite({ token: coachInviteToken }).unwrap();
     }
     navigate("/library");
     // }
@@ -175,8 +181,7 @@ export const LoginForm = () => {
         return;
       }
 
-      await ClientService.requestNewInvite({ email: formData.email });
-      await ClientService.requestNewInvite({ email: formData.email });
+      await requestNewInvite({ email: formData.email }).unwrap();
 
       toast({
         title: "Invite Requested",

@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { CoachService, RateContent } from "entities/coach";
+import { RateContent } from "entities/coach";
+import {
+  useChangeStatusMutation,
+  useRateContentMutation,
+} from "entities/coach";
 import {
   FoldersService,
   ContentToMove,
@@ -51,6 +55,8 @@ export const useContentActions = () => {
 
   const [editContent] = useEditContentMutation();
   const [duplicateContentById] = useDuplicateContentByIdMutation();
+  const [changeStatus] = useChangeStatusMutation();
+  const [rateContent] = useRateContentMutation();
 
   const nav = useNavigate();
 
@@ -71,7 +77,7 @@ export const useContentActions = () => {
     };
 
     try {
-      const res = await CoachService.changeStatus(newStatus);
+      const res = await changeStatus(newStatus).unwrap();
       setIsMarkAsOpen(false);
       nav(
         `/content-manager/library/folder/${res.content.folder_id}/document/${selectedDocumentId}`
@@ -105,7 +111,7 @@ export const useContentActions = () => {
       thumbs_down: down,
       comment: comment,
     };
-    await CoachService.rateContent(payload);
+    await rateContent(payload).unwrap();
     setIsRateOpen(false);
     setIsBadResponseOpen(false);
   };

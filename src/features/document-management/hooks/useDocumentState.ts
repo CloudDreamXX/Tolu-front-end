@@ -1,5 +1,10 @@
-import { CoachService, ISessionResult, Share } from "entities/coach";
 import { useGetDocumentByIdQuery } from "entities/document";
+import {
+  useLazyGetSessionByIdQuery,
+  useLazyGetContentSharesQuery,
+  ISessionResult,
+  Share,
+} from "entities/coach";
 import { FoldersService, IFolder } from "entities/folder";
 import { RootState } from "entities/store";
 import { findFilePath, PathEntry } from "features/wrapper-folder-tree";
@@ -32,6 +37,8 @@ export const useDocumentState = () => {
   const [loadingConversation, setLoadingConversation] = useState(false);
   const dispatch = useDispatch();
 
+  const [getSessionById] = useLazyGetSessionByIdQuery();
+  const [getContentShares] = useLazyGetContentSharesQuery();
   const { data: document } = useGetDocumentByIdQuery(documentId!);
 
   const loadConversation = async (chatId: string | undefined) => {
@@ -39,7 +46,7 @@ export const useDocumentState = () => {
 
     setLoadingConversation(true);
     try {
-      const response = await CoachService.getSessionById(chatId);
+      const response = await getSessionById(chatId).unwrap();
       if (response?.search_results) {
         setConversation(response.search_results);
       }
@@ -60,7 +67,7 @@ export const useDocumentState = () => {
 
   const refreshSharedClients = async () => {
     if (!documentId) return;
-    const response = await CoachService.getContentShares(documentId);
+    const response = await getContentShares(documentId).unwrap();
     setSharedClients(response.shares);
   };
 
@@ -90,7 +97,7 @@ export const useDocumentState = () => {
   useEffect(() => {
     if (!isNewDocument && !isTemporaryDocument && documentId) {
       const fetchShared = async () => {
-        const response = await CoachService.getContentShares(documentId);
+        const response = await getContentShares(documentId).unwrap();
         setSharedClients(response.shares);
       };
 

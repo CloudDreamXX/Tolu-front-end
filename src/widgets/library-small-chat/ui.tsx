@@ -11,7 +11,7 @@ import {
   setLastChatId,
   setMessagesToChat,
 } from "entities/client/lib";
-import { CoachService } from "entities/coach";
+import { CoachService, useLazyGetSessionByIdQuery } from "entities/coach";
 import { IDocument } from "entities/document";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
@@ -316,6 +316,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     }
   }, [isValid]);
 
+  const [getSessionById] = useLazyGetSessionByIdQuery();
+
   const loadExistingSession = async (chatId: string) => {
     setIsLoadingSession(true);
     setError(null);
@@ -323,10 +325,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     try {
       if (activeChatKey === "Create content") {
-        const sessionData = await CoachService.getSessionById(chatId);
+        const sessionData = await getSessionById(chatId);
 
-        if (sessionData && sessionData.search_results.length > 0) {
-          sessionData.search_results.forEach((item) => {
+        if (
+          sessionData &&
+          sessionData.data?.search_results &&
+          sessionData.data?.search_results.length > 0
+        ) {
+          sessionData.data?.search_results.forEach((item) => {
             if (item.query) {
               chatMessages.push({
                 id: `user-${item.id}`,

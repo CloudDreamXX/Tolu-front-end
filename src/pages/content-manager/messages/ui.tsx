@@ -12,7 +12,7 @@ import {
   useUpdateGroupChatMutation,
 } from "entities/chat/chatApi";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
-import { Client, CoachService } from "entities/coach";
+import { Client, useGetManagedClientsQuery } from "entities/coach";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -49,25 +49,18 @@ export const ContentManagerMessages: React.FC = () => {
   const { isLoading } = useFetchAllChatsQuery();
   const [createGroupChatMutation] = useCreateGroupChatMutation();
   const [updateGroupChatMutation] = useUpdateGroupChatMutation();
+  const { data } = useGetManagedClientsQuery();
 
   const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const clients = await CoachService.getManagedClients();
-        const filtered = clients.clients.filter((c) => c.status === "active");
-        if (mounted) setClientsData(filtered);
-      } catch (e) {
-        console.error("Failed to fetch clients:", e);
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    if (data) {
+      const activeClients = data.clients.filter(
+        (client) => client.status === "active"
+      );
+      setClientsData(activeClients);
+    }
+  }, [data, setClientsData]);
 
   const routeMatch = useMemo(() => {
     if (!routeChatId || !chats.length) return null;
@@ -227,7 +220,7 @@ export const ContentManagerMessages: React.FC = () => {
       <>
         {isLoading && (
           <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-1/2 -translate-x-1/2 xl:-translate-x-1/4">
-            <span className="inline-flex h-5 w-5 items-center justify-center">
+            <span className="inline-flex items-center justify-center w-5 h-5">
               <MaterialIcon
                 iconName="progress_activity"
                 className="text-blue-600 animate-spin"

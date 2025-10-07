@@ -1,71 +1,150 @@
-import { API_ROUTES, ApiService } from "shared/api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { RootState } from "entities/store";
+import { API_ROUTES } from "shared/api";
 import {
-  ClientInvitationInfo,
   AcceptInvitePayload,
   AcceptInviteResponse,
-  FoldersResponse,
-  RequestInvitePayload,
-  UserProfileUpdate,
   Client,
-  SharedCoachContentByContentIdResponse,
+  ClientInvitationInfo,
+  FoldersResponse,
   GetCoachesResponse,
+  RequestInvitePayload,
+  SharedCoachContentByContentIdResponse,
+  UserProfileUpdate,
 } from "./model";
 
-export class ClientService {
-  static async getInvitationDetails(
-    token: string
-  ): Promise<ClientInvitationInfo> {
-    const endpoint = API_ROUTES.CLIENT.GET_INVITATION_DETAILS.replace(
-      "{token}",
-      token
-    );
-    return ApiService.get<ClientInvitationInfo>(endpoint, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
+export const clientApi = createApi({
+  reducerPath: "clientApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
 
-  static async acceptCoachInvite(
-    payload: AcceptInvitePayload
-  ): Promise<AcceptInviteResponse> {
-    return ApiService.post<AcceptInviteResponse>(
-      API_ROUTES.CLIENT.ACCEPT_COACH_INVITE,
-      payload
-    );
-  }
-
-  static async getSharedContentById(contentId: string): Promise<any> {
-    const endpoint = API_ROUTES.CLIENT.GET_SHARED_CONTENT_BY_ID.replace(
-      "{content_id}",
-      contentId
-    );
-    return ApiService.get<any>(endpoint, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
-
-  static async getLibraryContent(
-    page: number = 1,
-    page_size: number = 10,
-    folder_id: string | null = null
-  ): Promise<FoldersResponse> {
-    const params = {
-      page,
-      page_size,
-      folder_id,
-    };
-
-    return ApiService.get<FoldersResponse>(
-      API_ROUTES.CLIENT.GET_LIBRARY_CONTENT,
-      {
-        params,
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
       }
-    );
-  }
 
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    getInvitationDetails: builder.query<ClientInvitationInfo, string>({
+      query: (token) =>
+        API_ROUTES.CLIENT.GET_INVITATION_DETAILS.replace("{token}", token),
+    }),
+    acceptCoachInvite: builder.mutation<
+      AcceptInviteResponse,
+      AcceptInvitePayload
+    >({
+      query: (payload) => ({
+        url: `${API_ROUTES.CLIENT.ACCEPT_COACH_INVITE}`,
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    getSharedContentById: builder.query<any, string>({
+      query: (contentId) => ({
+        url: API_ROUTES.CLIENT.GET_SHARED_CONTENT_BY_ID.replace(
+          "{content_id}",
+          contentId
+        ),
+      }),
+    }),
+    getLibraryContent: builder.query<
+      FoldersResponse,
+      { page: number; page_size: number; folder_id: string | null }
+    >({
+      query: ({ page = 1, page_size = 10, folder_id = null }) => ({
+        url: API_ROUTES.CLIENT.GET_LIBRARY_CONTENT,
+        params: {
+          page,
+          page_size,
+          folder_id,
+        },
+      }),
+    }),
+    updateUserProfile: builder.mutation<
+      any,
+      { payload: UserProfileUpdate; photo: File | null }
+    >({
+      query: ({ payload, photo = null }) => {
+        const formData = new FormData();
+        formData.append("profile_data", JSON.stringify(payload));
+        if (photo) formData.append("photo", photo);
+
+        return {
+          url: API_ROUTES.CLIENT.UPDATE_PROFILE,
+          method: "PUT",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        };
+      },
+    }),
+
+    fetchSharedCoachContentByContentId: builder.query<
+      SharedCoachContentByContentIdResponse,
+      string
+    >({
+      query: (contentId) =>
+        API_ROUTES.CLIENT.GET_SHARED_COACH_CONTENT.replace(
+          "{content_id}",
+          contentId
+        ),
+    }),
+    requestNewInvite: builder.mutation<any, RequestInvitePayload>({
+      query: (payload) => ({
+        url: API_ROUTES.CLIENT.REQUEST_INVITE,
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    getClientProfile: builder.query<Client, void>({
+      query: () => API_ROUTES.CLIENT.GET_PROFILE,
+    }),
+    getCoaches: builder.query<GetCoachesResponse, void>({
+      query: () => API_ROUTES.CLIENT.GET_COACHES,
+    }),
+    getCoachProfile: builder.query<any, string>({
+      query: (coachId) =>
+        API_ROUTES.CLIENT.GET_COACH_PROFILE.replace("{coach_id}", coachId),
+    }),
+    downloadCoachPhoto: builder.query<
+      Blob,
+      { coachId: string; filename: string }
+    >({
+      query: ({ coachId, filename }) => {
+        const endpoint = API_ROUTES.CLIENT.DOWNLOAD_COACH_PHOTO.replace(
+          "{coach_id}",
+          coachId
+        ).replace("{filename}", encodeURIComponent(filename));
+
+        return {
+          url: endpoint,
+          method: "GET",
+          responseType: "blob",
+        };
+      },
+    }),
+  }),
+});
+
+export const {
+  useGetInvitationDetailsQuery,
+  useAcceptCoachInviteMutation,
+  useGetLibraryContentQuery,
+  useLazyGetLibraryContentQuery,
+  useUpdateUserProfileMutation,
+  useLazyFetchSharedCoachContentByContentIdQuery,
+  useRequestNewInviteMutation,
+  useGetClientProfileQuery,
+  useGetCoachesQuery,
+  useLazyGetCoachProfileQuery,
+  useLazyDownloadCoachPhotoQuery,
+} = clientApi;
+
+export class ClientService {
   static async aiPersonalizedSearch(
     chatMessage: string,
     referenceContentId: string,
@@ -167,65 +246,5 @@ export class ClientService {
       console.error("Error processing stream:", error);
       throw error;
     }
-  }
-
-  static async requestNewInvite(payload: RequestInvitePayload): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.CLIENT.REQUEST_INVITE, payload);
-  }
-
-  static async getClientProfile(): Promise<Client> {
-    return ApiService.get<Client>(API_ROUTES.CLIENT.GET_PROFILE);
-  }
-
-  static async updateUserProfile(
-    payload: UserProfileUpdate,
-    photo: File | null = null
-  ): Promise<any> {
-    const endpoint = API_ROUTES.CLIENT.UPDATE_PROFILE;
-    const formData = new FormData();
-    formData.append("profile_data", JSON.stringify(payload));
-    if (photo) formData.append("photo", photo);
-
-    return ApiService.put<any>(endpoint, formData);
-  }
-
-  static async fetchSharedCoachContentByContentId(
-    contentId: string
-  ): Promise<SharedCoachContentByContentIdResponse> {
-    return ApiService.get<SharedCoachContentByContentIdResponse>(
-      API_ROUTES.CLIENT.GET_SHARED_COACH_CONTENT.replace(
-        "{content_id}",
-        contentId
-      )
-    );
-  }
-
-  static async getCoaches(): Promise<GetCoachesResponse> {
-    return ApiService.get<GetCoachesResponse>(API_ROUTES.CLIENT.GET_COACHES);
-  }
-
-  static async getCoachProfile(coachId: string): Promise<any> {
-    const endpoint = API_ROUTES.CLIENT.GET_COACH_PROFILE.replace(
-      "{coach_id}",
-      coachId
-    );
-    return ApiService.get<any>(endpoint);
-  }
-
-  static async downloadCoachPhoto(
-    coachId: string,
-    filename: string
-  ): Promise<Blob> {
-    const endpoint = API_ROUTES.CLIENT.DOWNLOAD_COACH_PHOTO.replace(
-      "{coach_id}",
-      coachId
-    ).replace("{filename}", encodeURIComponent(filename));
-
-    return ApiService.get<Blob>(endpoint, {
-      responseType: "blob",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
   }
 }

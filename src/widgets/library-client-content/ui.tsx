@@ -1,6 +1,13 @@
-import { ClientService, CoachListItem, Folder } from "entities/client";
-import { setFolders, setLoading } from "entities/client/lib";
-import { useUpdateStatusMutation, ContentStatus } from "entities/content";
+import {
+  CoachListItem,
+  Folder,
+  useLazyDownloadCoachPhotoQuery,
+  useGetCoachesQuery,
+  useGetLibraryContentQuery,
+  useLazyGetCoachProfileQuery,
+  useLazyGetLibraryContentQuery,
+} from "entities/client";
+import { ContentStatus, useUpdateStatusMutation } from "entities/content";
 import { HealthHistory } from "entities/health-history";
 import { RootState } from "entities/store";
 import { LibraryCard } from "features/library-card";
@@ -90,8 +97,6 @@ export const LibraryClientContent = ({
   const sentinelElems = useRef<Record<string, Element | null>>({});
 
   const [providersOpen, setProvidersOpen] = useState(false);
-  const [coaches, setCoaches] = useState<CoachListItem[]>([]);
-  const [coachesLoading, setCoachesLoading] = useState(false);
 
   const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
   const [coachProfiles, setCoachProfiles] = useState<Record<string, any>>({});
@@ -99,24 +104,31 @@ export const LibraryClientContent = ({
 
   const [coachDialogOpen, setCoachDialogOpen] = useState(false);
 
+  const [updateStatus] = useUpdateStatusMutation();
+  const { data: response, refetch: refetchLibraryContent } =
+    useGetLibraryContentQuery({
+      page: 1,
+      page_size: PAGE_SIZE,
+      folder_id: null,
+    });
+  const [getCoachProfile, { data: coachProfileData }] =
+    useLazyGetCoachProfileQuery();
+  const [getLibraryContent] = useLazyGetLibraryContentQuery();
+  const {
+    data: coaches,
+    refetch: refetchCoaches,
+    isLoading: isLoadingCoaches,
+  } = useGetCoachesQuery();
+  const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
+
   const selectedCoach = useMemo(
-    () => coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
+    () => coaches?.coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
     [coaches, selectedCoachId]
   );
-
-  const [updateStatus] = useUpdateStatusMutation();
 
   useEffect(() => {
     (async () => {
       try {
-        dispatch(setLoading(true));
-        const response = await ClientService.getLibraryContent(
-          1,
-          PAGE_SIZE,
-          null
-        );
-        dispatch(setFolders(response.folders || []));
-
         const status: Record<string, ContentStatus> = {};
         const collect = (fs: Folder[]) => {
           fs.forEach((f) => {
@@ -130,12 +142,10 @@ export const LibraryClientContent = ({
             if (f.subfolders?.length) collect(f.subfolders);
           });
         };
-        collect(response.folders || []);
+        collect(response?.folders || []);
         setStatusMap(status);
       } catch (err) {
         console.error("Failed to fetch library content:", err);
-      } finally {
-        dispatch(setLoading(false));
       }
     })();
   }, [dispatch]);
@@ -193,9 +203,7 @@ export const LibraryClientContent = ({
           ...prev,
           [folderId]: {
             ...current,
-            ...(reset
-              ? { items: [], page: 0, hasMore: true, totalPages: undefined }
-              : {}),
+            ...(reset ? { items: [], page: 0, hasMore: true } : {}),
             loading: true,
           },
         };
@@ -205,20 +213,21 @@ export const LibraryClientContent = ({
         const currentFeed = folderContentMapRef.current[folderId];
         const nextPage = reset ? 1 : (currentFeed?.page || 0) + 1;
 
-        const resp = await ClientService.getLibraryContent(
-          nextPage,
-          PAGE_SIZE,
-          folderId
-        );
+        const response = await getLibraryContent({
+          page: nextPage,
+          page_size: PAGE_SIZE,
+          folder_id: folderId,
+        }).unwrap();
 
-        let returned = findFolderById(resp.folders ?? [], folderId);
+        let returned = findFolderById(response?.folders ?? [], folderId);
 
         if (
           !returned &&
-          resp.folders?.length === 1 &&
-          resp.folders[0].id === folderId
+          response &&
+          response.folders?.length === 1 &&
+          response.folders[0].id === folderId
         ) {
-          returned = resp.folders[0];
+          returned = response.folders[0];
         }
 
         if (!returned) {
@@ -271,18 +280,6 @@ export const LibraryClientContent = ({
           });
           if (Object.keys(statusUpdates).length)
             setStatusMap((prev) => ({ ...prev, ...statusUpdates }));
-        } else if (!hasMoreFromApi) {
-          setFolderContentMap((prev) => ({
-            ...prev,
-            [folderId]: {
-              ...(prev[folderId] || {
-                items: [] as ContentItem[],
-                page: pageFromApi,
-              }),
-              loading: false,
-              hasMore: false,
-            },
-          }));
         }
       } catch (e) {
         console.error("Failed to load folder page:", e);
@@ -300,7 +297,7 @@ export const LibraryClientContent = ({
         });
       }
     },
-    []
+    [getLibraryContent]
   );
 
   const handleOpenTop = useCallback(
@@ -444,9 +441,7 @@ export const LibraryClientContent = ({
     };
     const response = await updateStatus(newStatus);
     if (response) setStatusMap((prev) => ({ ...prev, [id]: newStatus }));
-
-    const refreshed = await ClientService.getLibraryContent(1, PAGE_SIZE, null);
-    dispatch(setFolders(refreshed.folders));
+    refetchLibraryContent();
   };
 
   const onDocumentClick = (id: string) => nav(`/library/document/${id}`);
@@ -499,25 +494,16 @@ export const LibraryClientContent = ({
     );
   };
 
-  const fetchCoaches = useCallback(async () => {
-    if (coaches.length) return;
-    setCoachesLoading(true);
-    try {
-      const data = await ClientService.getCoaches();
-      setCoaches(data.coaches);
-    } catch (e) {
-      console.error("Failed to load coaches:", e);
-    } finally {
-      setCoachesLoading(false);
-    }
-  }, [coaches.length]);
-
   const fetchPhotoUrl = useCallback(
     async (coachId: string, filename?: string | null) => {
       if (!filename) return null;
       if (photoUrls[coachId]) return photoUrls[coachId];
       try {
-        const blob = await ClientService.downloadCoachPhoto(coachId, filename);
+        const { data: blob } = await downloadCoachPhoto({
+          coachId,
+          filename,
+        });
+        if (!blob) return null;
         const url = URL.createObjectURL(blob);
         setPhotoUrls((prev) => ({ ...prev, [coachId]: url }));
         return url;
@@ -536,10 +522,13 @@ export const LibraryClientContent = ({
 
       try {
         if (!coachProfiles[coach.coach_id]) {
-          const profile = await ClientService.getCoachProfile(coach.coach_id);
-          setCoachProfiles((p) => ({ ...p, [coach.coach_id]: profile }));
+          await getCoachProfile(coach.coach_id);
+          setCoachProfiles((p) => ({
+            ...p,
+            [coach.coach_id]: coachProfileData,
+          }));
           const fn = getHeadshotFilename(
-            profile?.detailed_profile?.headshot_url ??
+            coachProfileData?.detailed_profile?.headshot_url ??
               coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
@@ -560,11 +549,10 @@ export const LibraryClientContent = ({
   const onProvidersOpenChange = useCallback(
     (open: boolean) => {
       setProvidersOpen(open);
-      if (open) void fetchCoaches();
+      if (open) refetchCoaches();
     },
-    [fetchCoaches]
+    [setProvidersOpen, refetchCoaches]
   );
-
   useEffect(() => {
     return () => {
       Object.values(photoUrls).forEach((u) => URL.revokeObjectURL(u));
@@ -572,8 +560,8 @@ export const LibraryClientContent = ({
   }, [photoUrls]);
 
   useEffect(() => {
-    if (!providersOpen || !coaches.length) return;
-    coaches.forEach((c) => {
+    if (!providersOpen || !coaches?.coaches.length) return;
+    coaches?.coaches.forEach((c) => {
       if (c.profile?.headshot_url && !photoUrls[c.coach_id]) {
         void fetchPhotoUrl(
           c.coach_id,
@@ -616,13 +604,13 @@ export const LibraryClientContent = ({
             </div>
 
             <ScrollArea className="max-h-[360px]">
-              {coachesLoading ? (
+              {isLoadingCoaches ? (
                 <div className="p-4 text-sm text-muted-foreground">
                   Loading…
                 </div>
-              ) : coaches.length ? (
+              ) : coaches?.coaches.length ? (
                 <ul className="p-2">
-                  {coaches.map((c) => {
+                  {coaches?.coaches.map((c) => {
                     const name = c.basic_info?.name;
                     const photo = photoUrls[c.coach_id];
 
@@ -633,14 +621,14 @@ export const LibraryClientContent = ({
                       >
                         <button
                           onClick={() => handleOpenCoach(c)}
-                          className="w-full text-left flex items-center gap-3"
+                          className="flex items-center w-full gap-3 text-left"
                         >
                           <div className="h-10 w-10 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
                             {photo ? (
                               <img
                                 src={photo}
                                 alt={name}
-                                className="h-full w-full object-cover"
+                                className="object-cover w-full h-full"
                               />
                             ) : (
                               name?.slice(0, 2).toUpperCase()
@@ -666,13 +654,13 @@ export const LibraryClientContent = ({
 
         <Dialog open={coachDialogOpen} onOpenChange={setCoachDialogOpen}>
           <DialogContent className="max-w-[560px] p-0 rounded-xl overflow-hidden">
-            <div className="p-4 flex items-center gap-3 border-b">
+            <div className="flex items-center gap-3 p-4 border-b">
               <div className="h-12 w-12 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
                 {selectedCoachId && photoUrls[selectedCoachId] ? (
                   <img
                     src={photoUrls[selectedCoachId]}
                     alt={selectedCoach?.basic_info?.name || "Coach"}
-                    className="h-full w-full object-cover"
+                    className="object-cover w-full h-full"
                   />
                 ) : (
                   (selectedCoach?.basic_info?.name || "C")

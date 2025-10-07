@@ -2,7 +2,8 @@ import { useState } from "react";
 import { ActionsPopup } from "./ui/actions-popup";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { RenamePopup } from "./ui/rename-popup";
-import { CoachService, NewChatTitle } from "entities/coach";
+import { NewChatTitle } from "entities/coach";
+import { useUpdateChatTitleMutation } from "entities/coach";
 import { useLocation, useParams } from "react-router-dom";
 import { toast } from "shared/lib";
 import {
@@ -39,6 +40,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const { chatId } = useParams();
+  const [updateChatTitle] = useUpdateChatTitleMutation();
 
   const handleEdit = () => {
     setIsEditPopupOpen(true);
@@ -62,7 +64,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           chat_id: chatId,
           new_title: title,
         };
-        await CoachService.updateChatTitle(data);
+        await updateChatTitle(data).unwrap();
         handleClosePopup();
         window.location.reload();
       }

@@ -1,4 +1,4 @@
-import { ClientService } from "entities/client";
+import { useLazyFetchSharedCoachContentByContentIdQuery } from "entities/client";
 import { setIsMobileDailyJournalOpen } from "entities/client/lib";
 import { RootState } from "entities/store";
 import { logout } from "entities/user";
@@ -104,6 +104,9 @@ export const RedirectContentToLibrary = () => {
     userRole: state.user?.user?.roleName,
   }));
 
+  const [fetchSharedCoachContentByContentId] =
+    useLazyFetchSharedCoachContentByContentIdQuery();
+
   useEffect(() => {
     const fetchContent = async () => {
       if (!documentId) return;
@@ -120,7 +123,7 @@ export const RedirectContentToLibrary = () => {
       }
 
       try {
-        await ClientService.fetchSharedCoachContentByContentId(documentId);
+        fetchSharedCoachContentByContentId(documentId);
         navigate(`/library/document/${documentId}`, { replace: true });
       } catch {
         if (userRole !== "Client") {

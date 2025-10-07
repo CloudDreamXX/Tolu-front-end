@@ -4,7 +4,7 @@ import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { CoachService } from "entities/coach";
+import { useInviteClientMutation } from "entities/coach";
 import { toast } from "shared/lib";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
@@ -23,6 +23,7 @@ export const InviteClients = () => {
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const state = useSelector((state: RootState) => state.coachOnboarding);
+  const [inviteClient] = useInviteClientMutation();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -66,7 +67,7 @@ export const InviteClients = () => {
   const handleNextStep = async () => {
     if (selectedFile) {
       try {
-        await CoachService.inviteClient(null, selectedFile);
+        await inviteClient({ payload: null, file: selectedFile });
         await UserService.onboardUser(state);
       } catch (error) {
         console.error(error);
@@ -199,7 +200,7 @@ export const InviteClients = () => {
 
           {/* Manual Invite */}
           <div className="flex flex-col w-full gap-2">
-            <p className="text-left  text-black text-base font-medium">
+            <p className="text-base font-medium text-left text-black">
               Manual Invite
             </p>
             {clientel.map((value, index) => (

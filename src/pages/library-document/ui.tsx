@@ -1,13 +1,19 @@
 import { ChatSocketService } from "entities/chat";
-import { ClientService, CoachListItem } from "entities/client";
-import { clearAllChatHistory, setFolders } from "entities/client/lib";
 import {
-  useGetCreatorProfileQuery,
+  CoachListItem,
+  useLazyDownloadCoachPhotoQuery,
+  useGetCoachesQuery,
+  useGetLibraryContentQuery,
+  useLazyGetCoachProfileQuery,
+} from "entities/client";
+import { clearAllChatHistory } from "entities/client/lib";
+import {
+  ContentStatus,
   useGetCreatorPhotoQuery,
+  useGetCreatorProfileQuery,
   useUpdateStatusMutation,
   useGetQuizScoreQuery,
 } from "entities/content";
-import { ContentStatus } from "entities/content";
 import { useGetDocumentByIdQuery } from "entities/document";
 import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { setError, setHealthHistory } from "entities/health-history/lib";
@@ -17,6 +23,7 @@ import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { phoneMask, toast, usePageWidth } from "shared/lib";
 import {
   Avatar,
@@ -32,9 +39,8 @@ import {
 } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
 import { LibrarySmallChat } from "widgets/library-small-chat";
-import { DocumentLoadingSkeleton } from "./lib";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import SharePopup from "widgets/share-popup/ui";
+import { DocumentLoadingSkeleton } from "./lib";
 
 const extractScripts = (content: string) => {
   const scriptRegex = /<script[\s\S]*?>([\s\S]*?)<\/script>/g;
@@ -84,7 +90,6 @@ export const LibraryDocument = () => {
   const [sharePopup, setSharePopup] = useState<boolean>(false);
   const [providersOpen, setProvidersOpen] = useState(false);
   const [coaches, setCoaches] = useState<CoachListItem[]>([]);
-  const [coachesLoading, setCoachesLoading] = useState(false);
   const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
 
   const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
@@ -116,6 +121,19 @@ export const LibraryDocument = () => {
   const [updateStatus] = useUpdateStatusMutation();
   const { data: healthHistoryData, error: healthHistoryError } =
     useGetUserHealthHistoryQuery();
+  const { refetch: refetchFolders } = useGetLibraryContentQuery({
+    page: 1,
+    page_size: 10,
+    folder_id: null,
+  });
+  const {
+    data: coachesData,
+    refetch: refetchCoaches,
+    isLoading: isLoadingCoaches,
+  } = useGetCoachesQuery();
+  const [getCoachProfile, { data: coachProfileData }] =
+    useLazyGetCoachProfileQuery();
+  const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
 
   const { data: quizScore } = useGetQuizScoreQuery(documentId!);
 
@@ -408,6 +426,12 @@ export const LibraryDocument = () => {
   }, [dispatch, healthHistoryData]);
 
   useEffect(() => {
+    if (coachesData) {
+      setCoaches(coachesData.coaches);
+    }
+  }, [dispatch, coachesData]);
+
+  useEffect(() => {
     if (healthHistoryError) {
       dispatch(setError("Failed to load user health history"));
       console.error("Health history fetch error:", healthHistoryError);
@@ -511,25 +535,13 @@ export const LibraryDocument = () => {
     };
   }, [documentId, renderedContent, updateStatus]);
 
-  const fetchCoaches = useCallback(async () => {
-    if (coaches.length) return;
-    setCoachesLoading(true);
-    try {
-      const data = await ClientService.getCoaches();
-      setCoaches(data.coaches);
-    } catch (e) {
-      console.error("Failed to load coaches:", e);
-    } finally {
-      setCoachesLoading(false);
-    }
-  }, [coaches.length]);
-
   const fetchPhotoUrl = useCallback(
     async (coachId: string, filename?: string | null) => {
       if (!filename) return null;
       if (photoUrls[coachId]) return photoUrls[coachId];
       try {
-        const blob = await ClientService.downloadCoachPhoto(coachId, filename);
+        const { data: blob } = await downloadCoachPhoto({ coachId, filename });
+        if (!blob) return null;
         const url = URL.createObjectURL(blob);
         setPhotoUrls((prev) => ({ ...prev, [coachId]: url }));
         return url;
@@ -548,10 +560,13 @@ export const LibraryDocument = () => {
 
       try {
         if (!coachProfiles[coach.coach_id]) {
-          const profile = await ClientService.getCoachProfile(coach.coach_id);
-          setCoachProfiles((p) => ({ ...p, [coach.coach_id]: profile }));
+          getCoachProfile(coach.coach_id);
+          setCoachProfiles((p) => ({
+            ...p,
+            [coach.coach_id]: coachProfileData,
+          }));
           const fn = getHeadshotFilename(
-            profile?.detailed_profile?.headshot_url ??
+            coachProfileData?.detailed_profile?.headshot_url ??
               coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
@@ -572,9 +587,9 @@ export const LibraryDocument = () => {
   const onProvidersOpenChange = useCallback(
     (open: boolean) => {
       setProvidersOpen(open);
-      if (open) void fetchCoaches();
+      if (open) refetchCoaches();
     },
-    [fetchCoaches]
+    [setProvidersOpen, refetchCoaches]
   );
 
   useEffect(() => {
@@ -619,9 +634,7 @@ export const LibraryDocument = () => {
       await updateStatus(newStatus);
       refetch();
     }
-
-    const folders = await ClientService.getLibraryContent();
-    dispatch(setFolders(folders.folders));
+    refetchFolders();
   };
 
   useEffect(() => {
@@ -666,7 +679,7 @@ export const LibraryDocument = () => {
             </div>
 
             <ScrollArea className="max-h-[360px]">
-              {coachesLoading ? (
+              {isLoadingCoaches ? (
                 <div className="p-4 text-sm text-muted-foreground">
                   Loading…
                 </div>
@@ -683,14 +696,14 @@ export const LibraryDocument = () => {
                       >
                         <button
                           onClick={() => handleOpenCoach(c)}
-                          className="w-full text-left flex items-center gap-3"
+                          className="flex items-center w-full gap-3 text-left"
                         >
                           <div className="h-10 w-10 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
                             {photo ? (
                               <img
                                 src={photo}
                                 alt={name}
-                                className="h-full w-full object-cover"
+                                className="object-cover w-full h-full"
                               />
                             ) : (
                               name?.slice(0, 2).toUpperCase()
@@ -716,13 +729,13 @@ export const LibraryDocument = () => {
 
         <Dialog open={coachDialogOpen} onOpenChange={setCoachDialogOpen}>
           <DialogContent className="max-w-[560px] p-0 rounded-xl overflow-hidden">
-            <div className="p-4 flex items-center gap-3 border-b">
+            <div className="flex items-center gap-3 p-4 border-b">
               <div className="h-12 w-12 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
                 {selectedCoachId && photoUrls[selectedCoachId] ? (
                   <img
                     src={photoUrls[selectedCoachId]}
                     alt={selectedCoach?.basic_info?.name || "Coach"}
-                    className="h-full w-full object-cover"
+                    className="object-cover w-full h-full"
                   />
                 ) : (
                   (selectedCoach?.basic_info?.name || "C")
@@ -893,7 +906,7 @@ export const LibraryDocument = () => {
       )}
       {isLoadingDocument && (
         <div className="flex items-center gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <span className="inline-flex h-5 w-5 items-center justify-center">
+          <span className="inline-flex items-center justify-center w-5 h-5">
             <MaterialIcon
               iconName="progress_activity"
               className="text-blue-600 animate-spin"
