@@ -8,62 +8,15 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { smartRender } from "features/chat/ui/message-bubble/lib";
-
-const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
-
-const extractScripts = (content: string) => {
-  const scriptRegex = /<script[\s\S]*?>([\s\S]*?)<\/script>/gi;
-  const scripts: string[] = [];
-  let match: RegExpExecArray | null;
-
-  while ((match = scriptRegex.exec(content)) !== null) {
-    scripts.push(match[1]); // store code
-  }
-  const contentWithoutScripts = content.replace(scriptRegex, "");
-  return { contentWithoutScripts, scripts };
-};
-
-const hasInlineHandlers = (html: string) =>
-  /\son(click|submit|change|input|keyup|keydown|load|mouseover|mouseout|touchstart|touchend)\s*=/i.test(
-    html
-  );
-
-const isInteractiveContent = (html: string) => {
-  const { contentWithoutScripts, scripts } = extractScripts(html);
-  return (
-    scripts.length > 0 ||
-    hasInlineHandlers(html) ||
-    /\b(id|data-card)\s*=\s*["']card-\d+["']/i.test(html) ||
-    /<(form|input|select|button|video|audio|canvas)\b/i.test(
-      contentWithoutScripts
-    )
-  );
-};
-
-type CardChunk = { id: string; outerHTML: string };
-
-const parseCardsFromHTML = (html: string): CardChunk[] => {
-  const container = document.createElement("div");
-  container.innerHTML = html;
-  const cards = Array.from(
-    container.querySelectorAll<HTMLElement>('[id^="card-"]')
-  );
-  if (cards.length === 0) {
-    return [{ id: "card-0", outerHTML: container.innerHTML }];
-  }
-  return cards.map((el) => ({
-    id: el.id || "card-unknown",
-    outerHTML: el.outerHTML,
-  }));
-};
-
-const reconstructHTML = (cards: CardChunk[], scripts: string[]): string => {
-  const combined = cards.map((c) => c.outerHTML).join("\n");
-  const scriptsBlock = scripts
-    .map((code) => `<script>${code}</script>`)
-    .join("\n");
-  return `${combined}\n${scriptsBlock}`;
-};
+import {
+  CardChunk,
+  isInteractiveContent,
+  extractScripts,
+  parseCardsFromHTML,
+  isHtmlContent,
+  reconstructHTML,
+} from "../helpers";
+import { OnlyTextEditor } from "./cards-text-editor";
 
 interface ConversationItemProps {
   pair: ISessionResult;
@@ -138,13 +91,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   const [isInteractive, setIsInteractive] = useState(false);
   const [cardEdits, setCardEdits] = useState<CardChunk[]>([]);
   const [savedScripts, setSavedScripts] = useState<string[]>([]);
-
-  // useEffect(() => {
-  //   if (isEditing) {
-  //     const { contentWithoutScripts } = extractScripts(pair.content);
-  //     setSanitizedContent(contentWithoutScripts);
-  //   }
-  // }, [isEditing, pair.content]);
+  const [activeCard, setActiveCard] = useState(0);
 
   useEffect(() => {
     if (isEditing) {
@@ -167,12 +114,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     }
   }, [isEditing, pair.content]);
 
-  const updateCardHtml = (id: string, nextHtml: string) => {
-    setCardEdits((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, outerHTML: nextHtml } : c))
-    );
-  };
-
   useEffect(() => {
     let appended: HTMLScriptElement[] = [];
     let cancelled = false;
@@ -187,7 +128,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
       setRenderedContent(
         <div
-          className="prose-sm prose max-w-none richtext"
+          className={`prose-sm prose max-w-none ${isInteractiveContent(contentWithoutScripts) ? "" : "richtext"}`}
           dangerouslySetInnerHTML={{ __html: contentWithoutScripts }}
         />
       );
@@ -351,35 +292,34 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     setEditedContent(formattedContent);
   };
 
+  const updateCardHtmlAt = (idx: number, nextHtml: string) => {
+    setCardEdits((prev) =>
+      prev.map((c, i) => (i === idx ? { ...c, outerHTML: nextHtml } : c))
+    );
+  };
+
+  const cleanHiddenStyles = (html: string) =>
+    html.replace(/style\s*=\s*["'][^"']*(display\s*:\s*none)[^"']*["']/gi, "");
+
   const renderEditView = () => {
     if (isInteractive) {
       return (
         <div className="flex flex-col gap-4 w-full min-w-0">
-          <input
-            type="text"
-            value={editedTitle}
-            onChange={(e) => setEditedTitle(e.target.value)}
-            placeholder="Title"
-            className="text-xl font-bold w-full max-w-full min-w-0 box-border border border-[#008FF6] rounded-[16px] px-4 py-3 outline-none"
-          />
-
-          <div className="flex flex-col gap-3">
-            {cardEdits.map((card) => (
-              <div
-                key={card.id}
-                className="border border-[#008FF6] rounded-[16px] overflow-hidden"
+          <div className="flex gap-2">
+            {cardEdits.map((card, i) => (
+              <Button
+                variant="brightblue"
+                key={i}
+                onClick={() => setActiveCard(i)}
               >
-                <div className="p-3">
-                  <textarea
-                    value={card.outerHTML}
-                    onChange={(e) => updateCardHtml(card.id, e.target.value)}
-                    className="w-full h-[260px] font-mono text-sm leading-5 rounded-lg p-3 outline-none"
-                    spellCheck={false}
-                  />
-                </div>
-              </div>
+                {card.id}
+              </Button>
             ))}
           </div>
+          <OnlyTextEditor
+            html={cleanHiddenStyles(cardEdits[activeCard].outerHTML)}
+            onChange={(nextHtml) => updateCardHtmlAt(activeCard, nextHtml)}
+          />
 
           {isEditing && (
             <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
@@ -402,7 +342,20 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                 variant="brightblue"
                 className="text-[16px] px-4 py-2"
                 onClick={() => {
-                  const finalHtml = reconstructHTML(cardEdits, savedScripts);
+                  const visibleCards = cardEdits.map((c, i) => {
+                    if (i > 0 && !/display\s*:\s*none/i.test(c.outerHTML)) {
+                      const temp = document.createElement("div");
+                      temp.innerHTML = c.outerHTML;
+                      const el = temp.firstElementChild as HTMLElement | null;
+                      if (el) {
+                        el.style.display = "none";
+                        return { ...c, outerHTML: el.outerHTML };
+                      }
+                    }
+                    return c;
+                  });
+
+                  const finalHtml = reconstructHTML(visibleCards, savedScripts);
                   setEditedContent(finalHtml);
                   onSaveEdit(pair.id, finalHtml);
                 }}
@@ -490,81 +443,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
       </div>
     );
   };
-
-  // const renderEditView = () => (
-  //   <div className="flex flex-col gap-2 w-full min-w-0">
-  //     <input
-  //       type="text"
-  //       value={editedTitle}
-  //       onChange={(e) => setEditedTitle(e.target.value)}
-  //       placeholder="Title"
-  //       className="text-xl font-bold w-full max-w-full min-w-0 box-border border border-[#008FF6] rounded-[16px] px-4 py-3 outline-none"
-  //     />
-
-  //     <div className="editor-wrap w-full max-w-full min-w-0 bg-white border border-[#008FF6] rounded-[16px] overflow-hidden">
-  //       <Editor
-  //         value={sanitizedContent}
-  //         onTextChange={handleEditorChange}
-  //         style={{ width: "100%" }}
-  //         className="w-full max-w-full min-w-0 bg-white p-3 h-fit"
-  //         modules={{
-  //           toolbar: [
-  //             [{ header: "1" }, { header: "2" }, { font: [] }],
-  //             [{ list: "ordered" }, { list: "bullet" }],
-  //             [{ align: [] }],
-  //             ["bold", "italic", "underline", "strike"],
-  //             ["link"],
-  //             ["blockquote"],
-  //             ["image"],
-  //           ],
-  //         }}
-  //         formats={[
-  //           "header",
-  //           "font",
-  //           "size",
-  //           "bold",
-  //           "italic",
-  //           "underline",
-  //           "strike",
-  //           "list",
-  //           "bullet",
-  //           "indent",
-  //           "link",
-  //           "image",
-  //           "align",
-  //           "color",
-  //           "background",
-  //           "button",
-  //         ]}
-  //       />
-  //     </div>
-
-  //     {isEditing && (
-  //       <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
-  //         <button
-  //           className="text-[#1C63DB] text-[16px] px-4 py-2"
-  //           onClick={onCancelEdit}
-  //         >
-  //           Cancel
-  //         </button>
-  //         <Button
-  //           className="px-4 py-2"
-  //           variant="light-blue"
-  //           onClick={onRestoreOriginalFormat}
-  //         >
-  //           Restore original format
-  //         </Button>
-  //         <Button
-  //           variant="brightblue"
-  //           className="text-[16px] px-4 py-2"
-  //           onClick={() => onSaveEdit(pair.id)}
-  //         >
-  //           Save changes
-  //         </Button>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
 
   return (
     <div key={pair.id} className="flex flex-col gap-[24px]">
