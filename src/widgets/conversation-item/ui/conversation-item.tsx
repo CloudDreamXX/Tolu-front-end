@@ -89,7 +89,7 @@ export const getDocumentFromHtml = (html: string) => {
   );
 };
 
-export const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "IFRAME"]);
+export const SKIP_TAGS = new Set(["SCRIPT", "NOSCRIPT", "IFRAME"]);
 export const NO_INLINE_EDIT_TAGS = new Set([
   "CODE",
   "PRE",
@@ -427,27 +427,216 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   };
 
   const cleanHiddenStyles = (html: string) =>
-    html.replace(/style\s*=\s*["'][^"']*(display\s*:\s*none)[^"']*["']/gi, "");
+    html.replace(/display\s*:\s*none\s*;?/gi, "");
+
+  const [isAddingCard, setIsAddingCard] = useState(false);
 
   const renderEditView = () => {
     if (isInteractive) {
       return (
         <div className="flex flex-col gap-4 w-full min-w-0">
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto items-center">
             {cardEdits.map((card, i) => (
               <Button
-                variant="brightblue"
                 key={i}
-                onClick={() => setActiveCard(i)}
+                variant={i === activeCard ? "brightblue" : "light-blue"}
+                onClick={() => {
+                  setActiveCard(i);
+                  setIsAddingCard(false);
+                }}
               >
                 {card.id}
               </Button>
             ))}
+
+            <Button
+              variant="light-blue"
+              onClick={() => {
+                setCardEdits((prev) => {
+                  let prefix = "card";
+                  let separator = "";
+                  let maxNumber = 0;
+
+                  for (const c of prev) {
+                    const match = c.id.match(/^(card)([-_]?)(\d+)/i);
+                    if (match) {
+                      prefix = match[1];
+                      separator = match[2];
+                      const num = parseInt(match[3], 10);
+                      if (!isNaN(num) && num > maxNumber) maxNumber = num;
+                    }
+                  }
+
+                  const nextNumber = maxNumber;
+                  const nextId = `${prefix}${separator}${nextNumber}`;
+
+                  const newCardHtml = `<div id="${nextId}" class="card" style="display:none;"><p><br/></p></div>`;
+
+                  const updated = [
+                    ...prev,
+                    { id: nextId, outerHTML: newCardHtml },
+                  ];
+
+                  setActiveCard(updated.length - 1);
+                  setIsAddingCard(true);
+
+                  return updated;
+                });
+              }}
+            >
+              + Add Card
+            </Button>
           </div>
-          <OnlyTextEditor
-            html={cleanHiddenStyles(cardEdits[activeCard].outerHTML)}
-            onChange={(nextHtml) => updateCardHtmlAt(activeCard, nextHtml)}
-          />
+
+          {isAddingCard ? (
+            <div className="editor-wrap w-full max-w-full min-w-0 bg-white border border-[#008FF6] rounded-[16px] overflow-hidden">
+              <Editor
+                value={cleanHiddenStyles(
+                  cardEdits[activeCard]?.outerHTML || ""
+                )}
+                onTextChange={(e) => {
+                  const htmlValue = e.htmlValue || "";
+                  updateCardHtmlAt(activeCard, htmlValue);
+                }}
+                style={{ width: "100%" }}
+                className="w-full max-w-full min-w-0 bg-white p-3 h-fit"
+                modules={{
+                  toolbar: [
+                    [{ header: "1" }, { header: "2" }, { font: [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    [{ align: [] }],
+                    ["bold", "italic", "underline", "strike"],
+                    ["link"],
+                    ["blockquote"],
+                    ["image"],
+                  ],
+                }}
+                formats={[
+                  "header",
+                  "font",
+                  "size",
+                  "bold",
+                  "italic",
+                  "underline",
+                  "strike",
+                  "list",
+                  "bullet",
+                  "indent",
+                  "link",
+                  "image",
+                  "align",
+                  "color",
+                  "background",
+                ]}
+              />
+
+              <div className="flex justify-end gap-2 mt-2 p-[12px]">
+                <Button
+                  variant="light-blue"
+                  onClick={() => {
+                    setCardEdits((prev) => prev.slice(0, -1));
+                    setIsAddingCard(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="brightblue"
+                  onClick={() => {
+                    setCardEdits((prev) => {
+                      if (prev.length === 0) return prev;
+
+                      const updated = [...prev];
+                      const prevIndex = updated.length - 2;
+                      const newIndex = updated.length - 1;
+                      const prevCard = updated[prevIndex];
+                      const newCard = updated[newIndex];
+
+                      let prefix = "card";
+                      let separator = "";
+                      let maxNumber = 0;
+
+                      for (const c of updated) {
+                        const match = c.id.match(/^(card)([-_]?)(\d+)/i);
+                        if (match) {
+                          prefix = match[1];
+                          separator = match[2];
+                          const num = parseInt(match[3], 10);
+                          if (!isNaN(num) && num > maxNumber) maxNumber = num;
+                        }
+                      }
+
+                      const nextNumber = maxNumber + 1;
+                      const nextId = `${prefix}${separator}${nextNumber}`;
+
+                      if (prevCard) {
+                        const tempPrev = document.createElement("div");
+                        tempPrev.innerHTML = prevCard.outerHTML;
+                        const elPrev =
+                          tempPrev.firstElementChild as HTMLElement | null;
+
+                        if (elPrev) {
+                          elPrev.querySelector(".next-btn")?.remove();
+
+                          const nextBtn = document.createElement("button");
+                          nextBtn.textContent = "Next";
+                          nextBtn.setAttribute("class", "next-btn");
+                          nextBtn.setAttribute(
+                            "onclick",
+                            `showCard(${nextNumber})`
+                          );
+                          elPrev.appendChild(nextBtn);
+
+                          updated[prevIndex] = {
+                            ...prevCard,
+                            outerHTML: elPrev.outerHTML,
+                          };
+                        }
+                      }
+
+                      const tempNew = document.createElement("div");
+                      tempNew.innerHTML = newCard.outerHTML;
+                      const elNew =
+                        tempNew.firstElementChild as HTMLElement | null;
+
+                      const divWrapper = document.createElement("div");
+                      divWrapper.innerHTML = elNew?.innerHTML || "<p><br/></p>";
+                      const normalizedHTML = `<div id="${nextId}" class="card" style="display:none">${divWrapper.innerHTML}</div>`;
+
+                      updated[newIndex] = {
+                        ...newCard,
+                        id: nextId,
+                        outerHTML: normalizedHTML,
+                      };
+
+                      return updated;
+                    });
+
+                    setIsAddingCard(false);
+
+                    requestAnimationFrame(() => {
+                      const scrollContainer = document.querySelector(
+                        ".overflow-x-auto"
+                      ) as HTMLElement;
+                      if (scrollContainer) {
+                        scrollContainer.scrollTo({
+                          left: scrollContainer.scrollWidth,
+                          behavior: "smooth",
+                        });
+                      }
+                    });
+                  }}
+                >
+                  Done
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <OnlyTextEditor
+              html={cleanHiddenStyles(cardEdits[activeCard]?.outerHTML || "")}
+              onChange={(nextHtml) => updateCardHtmlAt(activeCard, nextHtml)}
+            />
+          )}
 
           {isEditing && (
             <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
@@ -471,16 +660,14 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                 className="text-[16px] px-4 py-2"
                 onClick={() => {
                   const visibleCards = cardEdits.map((c, i) => {
-                    if (i > 0 && !/display\s*:\s*none/i.test(c.outerHTML)) {
-                      const temp = document.createElement("div");
-                      temp.innerHTML = c.outerHTML;
-                      const el = temp.firstElementChild as HTMLElement | null;
-                      if (el) {
-                        el.style.display = "none";
-                        return { ...c, outerHTML: el.outerHTML };
-                      }
-                    }
-                    return c;
+                    const temp = document.createElement("div");
+                    temp.innerHTML = c.outerHTML;
+                    const el = temp.firstElementChild as HTMLElement | null;
+
+                    if (!el) return c;
+
+                    el.style.display = i === 0 ? "block" : "none";
+                    return { ...c, outerHTML: el.outerHTML };
                   });
 
                   const finalHtml = reconstructHTML(visibleCards, savedScripts);
