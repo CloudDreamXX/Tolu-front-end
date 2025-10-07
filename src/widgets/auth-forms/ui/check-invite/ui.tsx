@@ -3,6 +3,7 @@ import { toast } from "shared/lib/hooks/use-toast";
 import { z } from "zod";
 import { Input } from "shared/ui";
 import { UserService } from "entities/user";
+import { useNavigate } from "react-router-dom";
 
 export const CheckInvite = () => {
   const [email, setEmail] = useState("");
@@ -16,6 +17,7 @@ export const CheckInvite = () => {
   const emailSchema = z.object({
     email: z.string().email("The email format is incorrect."),
   });
+  const nav = useNavigate();
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmailError("");
@@ -41,10 +43,9 @@ export const CheckInvite = () => {
       const response = await UserService.checkPendingInvite(email);
 
       if (response.has_pending_invite) {
-        setHasPendingInvite(true);
-        setResponseMessage(
-          "Great! You have an invite pending to this email. Please check your inbox and follow instructions in the email."
-        );
+        if (response.token) {
+          nav(`/accept-invite/${response.token}`);
+        }
       } else {
         setHasPendingInvite(false);
         setResponseMessage(
@@ -122,6 +123,16 @@ export const CheckInvite = () => {
             <h3 className="text-center self-stretch text-black  text-[16px] md:text-[24px] font-normal">
               {responseMessage}
             </h3>
+          )}
+
+          {hasPendingInvite !== null && !hasPendingInvite && (
+            <button
+              type="button"
+              className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold bg-[#1C63DB] text-white`}
+              onClick={() => nav("/register")}
+            >
+              Sign up
+            </button>
           )}
 
           {hasPendingInvite === null && (
