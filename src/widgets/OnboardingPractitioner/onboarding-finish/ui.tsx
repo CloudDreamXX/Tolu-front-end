@@ -51,7 +51,7 @@ export const OnboardingFinish = () => {
             </h3>
             <p className="self-stretch text-center text-black  text-[16px] md:text-[24px] font-medium leading-[35px]">
               Start creating personalized research and content for all types of
-              clients. Create and grow! Nothing can stop you now
+              clients. Create and grow! Nothing can stop you now.
             </p>
           </div>
           <button
