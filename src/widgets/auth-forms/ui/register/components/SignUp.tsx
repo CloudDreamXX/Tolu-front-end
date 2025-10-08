@@ -67,6 +67,7 @@ export const SignUp: React.FC<SignUpProps> = ({
     () => checkPasswordStrength(formData.password),
     [formData.password]
   );
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
   const formatPhoneNumber = (val: string) => {
     const digits = val.replace(/\D/g, "");
@@ -386,13 +387,31 @@ export const SignUp: React.FC<SignUpProps> = ({
       </section>
 
       <div className="flex flex-col w-full items-center gap-[24px] self-stretch">
+        <div className="flex items-center justify-center gap-2 self-stretch">
+          <input
+            type="checkbox"
+            id="agreeTerms"
+            checked={agreeTerms}
+            onChange={(e) => setAgreeTerms(e.target.checked)}
+            className="mt-[2px] w-[16px] h-[16px] border border-[#DFDFDF] rounded-[4px] cursor-pointer"
+          />
+          <label htmlFor="agreeTerms" className="text-[14px] text-[#5f5f65]">
+            I agree to the Terms and Conditions and{" "}
+            <Link
+              to="https://tolu.health/privacy-policy"
+              className="text-[#1C63DB] underline"
+            >
+              Privacy Policy
+            </Link>
+          </label>
+        </div>
         <button
           type="submit"
-          disabled={!isFormValid() || loading || !result.isValid}
+          disabled={!isFormValid() || loading || !result.isValid || !agreeTerms}
           className={
-            !isFormValid() || loading
-              ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65]  text-[16px] font-semibold cursor-not-allowed"
-              : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white  text-[16px] font-semibold"
+            !isFormValid() || loading || !result.isValid || !agreeTerms
+              ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] text-[16px] font-semibold cursor-not-allowed"
+              : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white text-[16px] font-semibold"
           }
         >
           {loading ? (
