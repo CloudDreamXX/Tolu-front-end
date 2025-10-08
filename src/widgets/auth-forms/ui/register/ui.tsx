@@ -225,7 +225,7 @@ export const Register = () => {
             },
           });
         } else {
-          navigate("/welcome/practitioner");
+          navigate("/select-type");
         }
         return;
       }

@@ -1,32 +1,32 @@
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper, TooltipWrapper } from "shared/ui";
-import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { titlesAndIcons } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { UserService } from "entities/user";
 import { RootState } from "entities/store";
+import { SelectField } from "widgets/CRMSelectField";
 
 export const SelectType = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
   const { isMobile } = usePageWidth();
+
   const [otherText, setOtherText] = useState<string>("");
-  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
     Array(titlesAndIcons.length).fill("")
   );
-  const state = useSelector((state: RootState) => state.coachOnboarding);
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const state = useSelector((state: RootState) => state.coachOnboarding);
   const practitionerTypes = state?.practitioner_types as string[] | undefined;
 
   useEffect(() => {
     const initial = Array(titlesAndIcons.length).fill("");
-
     let firstOtherValue: string | null = null;
 
     titlesAndIcons.forEach((item, i) => {
@@ -45,35 +45,48 @@ export const SelectType = () => {
     if (firstOtherValue !== null) setOtherText(firstOtherValue);
   }, [practitionerTypes]);
 
+  useEffect(() => {
+    if (
+      selectedOptions.includes("Other (please specify)") &&
+      inputRef.current
+    ) {
+      inputRef.current.focus();
+    }
+  }, [selectedOptions]);
+
   const handleSelection = (index: number, value: string) => {
     setSelectedOptions((prev) => {
       const next = [...prev];
       next[index] = value;
 
-      const filledTypes = next.map((opt) =>
-        opt === "Other (please specify)" ? otherText.trim() : opt
-      );
+      const filledTypes = [...next];
+      if (value === "Other (please specify)" && otherText.trim()) {
+        filledTypes[index] = otherText.trim();
+      }
 
       dispatch(
         updateCoachField({ key: "practitioner_types", value: filledTypes })
       );
       return next;
     });
-
-    setActiveDropdown(null);
   };
 
-  const toggleDropdown = (index: number) => {
-    setActiveDropdown((prev) => (prev === index ? null : index));
+  const handleOtherChange = (text: string) => {
+    setOtherText(text);
+
+    const filledTypes = selectedOptions.map((opt) =>
+      opt === "Other (please specify)" && text.trim() ? text.trim() : opt
+    );
+
+    dispatch(
+      updateCoachField({ key: "practitioner_types", value: filledTypes })
+    );
   };
 
-  const isSelected = () => {
-    return selectedOptions.find((option) => option !== "");
-  };
+  const isSelected = () => selectedOptions.some((option) => option !== "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!isSelected()) return;
 
     try {
@@ -86,23 +99,25 @@ export const SelectType = () => {
 
   return (
     <AuthPageWrapper>
-      <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={0} />
+
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch md:px-[24px]">
         {!isMobile && (
-          <h1 className="flex text-center  text-[32px] font-medium text-black">
+          <h1 className="flex text-center text-[32px] font-medium text-black">
             What type of practitioner best describes your role?
           </h1>
         )}
+
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-[25px] py-[24px] px-[16px] md:p-[40px] items-center w-full lg:w-fit rounded-t-[20px] md:rounded-[20px] bg-white border-[1px] border-[#1C63DB] shadow-md"
         >
           {isMobile && (
-            <h1 className="flex text-center  text-[24px] font-medium text-black">
+            <h1 className="flex text-center text-[24px] font-medium text-black">
               What type of practitioner best describes your role?
             </h1>
           )}
+
           <div className="mt-[24px] mb-[24px] md:m-0 flex flex-col gap-[16px] w-full">
             {titlesAndIcons.map((item, index) => (
               <div
@@ -110,7 +125,7 @@ export const SelectType = () => {
                 className="flex flex-col gap-[16px] md:gap-[20px] w-full lg:w-[460px] items-start"
               >
                 <div className="flex items-center self-stretch gap-[8px]">
-                  <h2 className="text-[#1B2559]  text-nowrap text-[16px] md:text-[20px] font-semibold">
+                  <h2 className="text-[#1B2559] text-nowrap text-[16px] md:text-[20px] font-semibold">
                     {item.title}
                   </h2>
                   <TooltipWrapper content={item.tooltipContent}>
@@ -122,45 +137,33 @@ export const SelectType = () => {
                     />
                   </TooltipWrapper>
                 </div>
-                {/* Custom Dropdown */}
-                <div className="relative w-full">
-                  <button
-                    type="button"
-                    className="flex w-full items-center justify-between bg-[#FAFAFA] border-[#9D9D9D] border-[1px] rounded-[8px] h-[52px] px-[12px] cursor-pointer"
-                    onClick={() => toggleDropdown(index)}
-                  >
-                    <span className="text-[#000]  text-[16px]">
-                      {selectedOptions[index] || "Select your type"}
-                    </span>
-                    <MaterialIcon iconName="keyboard_arrow_down" />
-                  </button>
-                  {activeDropdown === index && (
-                    <div className="absolute z-10 flex flex-col w-full mt-[4px] bg-[#FAFAFA] border-none rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto scrollbar-hide">
-                      {item.options.map((option) => (
-                        <button
-                          type="button"
-                          key={option}
-                          className="py-[15px] px-[12px] text-left text-[#1D1D1F] text-[16px] font-medium cursor-pointer hover:bg-[#F2F2F2] hover:text-[#1C63DB]"
-                          onClick={() => handleSelection(index, option)}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {selectedOptions[index] === "Other (please specify)" && (
-                    <input
-                      type="text"
-                      value={otherText}
-                      onChange={(e) => setOtherText(e.target.value)}
-                      placeholder="Other text"
-                      className="mt-[4px] outline-none w-full h-[52px] px-[12px] border-[1px] border-[#9D9D9D] rounded-[8px] bg-[#FAFAFA] text-[16px] text-[#000] "
-                    />
-                  )}
-                </div>
+
+                <SelectField
+                  label=""
+                  selected={selectedOptions[index]}
+                  onChange={(val) => handleSelection(index, val)}
+                  options={[
+                    ...item.options.map((opt) => ({ value: opt, label: opt })),
+                  ]}
+                  containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+                  labelClassName="text-[16px] font-medium"
+                  className="h-[250px]"
+                />
+
+                {selectedOptions[index] === "Other (please specify)" && (
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={otherText}
+                    onChange={(e) => handleOtherChange(e.target.value)}
+                    placeholder="Other text"
+                    className="mt-[4px] outline-none w-full h-[52px] px-[12px] border-[1px] border-[#DBDEE1] rounded-[8px] text-[16px] text-[#000]"
+                  />
+                )}
               </div>
             ))}
           </div>
+
           {isMobile && (
             <button
               onClick={handleSubmit}
@@ -176,6 +179,7 @@ export const SelectType = () => {
             </button>
           )}
         </form>
+
         {!isMobile && (
           <div className="pb-10 md:pb-[140px]">
             <button

@@ -198,6 +198,7 @@ export const DemographicStep = () => {
     "Perimenopause",
     "Menopause",
     "Postmenopause",
+    "Not sure",
   ];
 
   const conditions = [
@@ -244,9 +245,9 @@ export const DemographicStep = () => {
       numberOfSteps={0}
       headerText=" "
       title={
-        <div className="flex flex-col gap-4 xl:mt-[80px]">
-          <h1 className="text-[#1D1D1F] text-[24px] md:text-[32px] text-center">
-            A few questions to rate your lifestyle skillset & tailor your
+        <div className="flex flex-col gap-4">
+          <h1 className="text-[#1D1D1F] text-[24px] text-center">
+            A few questions to rate your lifestyle skillset & tailor your <br />
             support.
           </h1>
         </div>

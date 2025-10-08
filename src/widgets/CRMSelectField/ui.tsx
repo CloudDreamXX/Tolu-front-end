@@ -28,6 +28,7 @@ export const SelectField = ({
 }) => {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLUListElement>(null);
   const [coords, setCoords] = useState<{
     top: number;
     left: number;
@@ -47,6 +48,22 @@ export const SelectField = ({
         width: rect.width,
       });
     }
+  }, [open]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        open &&
+        !buttonRef.current?.contains(target) &&
+        !dropdownRef.current?.contains(target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
   return (
@@ -72,6 +89,7 @@ export const SelectField = ({
       {open &&
         createPortal(
           <ul
+            ref={dropdownRef}
             className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2 ${
               className || ""
             }`}

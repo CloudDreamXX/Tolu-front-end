@@ -20,14 +20,15 @@ export const HeaderOnboarding = ({
   const { isMobile } = usePageWidth();
 
   return (
-    <header className="w-full bg-gradient-to-b from-[#F3ECFE] to-[#E8EFFE] px-4 pt-4 pb-2 md:gap-4 md:h-fit flex flex-col justify-center md:items-center relative">
+    <header className="w-full px-4 pt-[48px] pb-[16px] md:gap-4 md:h-fit flex flex-col justify-center md:items-center relative">
       {/* Logo Section */}
+      <img src="/logo.png" className="w-[50px] h-[46px]" />
       <div className="flex flex-col mx-auto w-fit">
         <h2
           onClick={() => navigate("/")}
-          className="cursor-pointer text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold text-transform: uppercase"
+          className="cursor-pointer text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold"
         >
-          tolu AI
+          Tolu AI
         </h2>
         <h4 className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[11.429px] font-semibold  leading-[normal]">
           {isClient ? (

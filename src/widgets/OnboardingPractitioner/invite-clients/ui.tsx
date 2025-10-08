@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
-import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper, Input } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -83,7 +82,6 @@ export const InviteClients = () => {
 
   return (
     <AuthPageWrapper>
-      <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={4} />
       <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px]">
         {!isMobile && (

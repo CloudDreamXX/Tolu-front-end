@@ -246,7 +246,8 @@ export interface PersonalInfo {
   email: string;
   phone: string | null;
   date_of_birth: string | null;
-  location: string | null;
+  location?: string | null;
+  country?: string | null;
 }
 
 export interface HealthSummary {

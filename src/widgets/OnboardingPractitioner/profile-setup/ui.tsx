@@ -5,15 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper, Input, Textarea } from "shared/ui";
-import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
-import { SearchableSelect } from "../components/SearchableSelect";
 import { timezoneOptions } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Calendar } from "shared/ui";
 import { differenceInYears, format, isAfter } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
 import { UserService } from "entities/user";
+import { SelectField } from "widgets/CRMSelectField";
 
 export const ProfileSetup = () => {
   const dispatch = useDispatch();
@@ -157,7 +156,6 @@ export const ProfileSetup = () => {
 
   return (
     <AuthPageWrapper>
-      <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={3} />
       <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px]">
         {!isMobile && (
@@ -223,7 +221,7 @@ export const ProfileSetup = () => {
                   updateCoachField({ key: "bio", value: e.target.value })
                 )
               }
-              className="text-[16px] md:text-[16px] xl:text-[16px]"
+              className="text-[16px] md:text-sm xl:text-sm"
               containerClassName="border rounded-[8px] h-[44px] px-[12px]"
             />
           </div>
@@ -258,8 +256,8 @@ export const ProfileSetup = () => {
             </label>
             <div className="flex flex-col gap-[16px]">
               {[
-                "woman",
-                "man",
+                "female",
+                "male",
                 "non-binary / genderqueer / gender expansive",
                 "prefer not to say",
               ].map((gender) => (
@@ -286,15 +284,15 @@ export const ProfileSetup = () => {
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <SearchableSelect
-              label="Time zone"
-              labelStyle="text-[#5F5F65]"
-              placeholder="Search for Time Zone"
-              options={timezoneOptions}
-              value={state.timezone || ""}
-              onChange={(value) =>
-                dispatch(updateCoachField({ key: "timezone", value }))
+            <SelectField
+              label="Time Zone"
+              selected={state.timezone || ""}
+              onChange={(val) =>
+                dispatch(updateCoachField({ key: "timezone", value: val }))
               }
+              options={timezoneOptions.map((tz) => ({ value: tz, label: tz }))}
+              containerClassName="py-[11px] px-[16px] rounded-[8px] text-sm font-medium"
+              labelClassName="text-[16px] font-medium text-[#5F5F65]"
             />
           </div>
 
