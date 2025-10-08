@@ -74,7 +74,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
           onClick={onSave}
           disabled={isSaveDisabled}
         >
-          Save
+          Invite Client
         </button>
       </div>
     );

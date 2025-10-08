@@ -428,3 +428,14 @@ export const MAP_CYCLE_HEALTH_TO_TOOLTIP: Record<string, string> = {
   "Not sure":
     "You’re uncertain where you are in the transition — and that’s completely normal. Tolu will help you track and understand your stage.",
 };
+
+export const MAP_MENOPAUSE_STAGE_TO_TOOLTIP: Record<string, string> = {
+  Premenopause:
+    "You still have regular menstrual cycles and typical hormone levels. This is before the menopause transition begins.",
+  Perimenopause:
+    "Your hormones are starting to fluctuate and periods may become irregular. This stage leads up to menopause.",
+  Menopause:
+    "You’ve gone 12 consecutive months without a period. This marks the natural end of your reproductive years.",
+  Postmenopause:
+    "It’s been over a year since your last period. Hormone levels have stabilized, and symptoms may gradually ease.",
+};

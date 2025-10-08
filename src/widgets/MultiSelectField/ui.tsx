@@ -18,6 +18,7 @@ export const MultiSelectField = ({
   className,
   onSave,
   height,
+  labelClassName,
 }: {
   label?: string;
   options: MultiSelectOption[];
@@ -26,6 +27,7 @@ export const MultiSelectField = ({
   onSave?: () => void;
   className?: string;
   height?: string;
+  labelClassName?: string;
 }) => {
   const [open, setOpen] = useState(false);
   // const [positionTop, setPositionTop] = useState(false);
@@ -55,7 +57,9 @@ export const MultiSelectField = ({
   return (
     <div className="relative w-full">
       {label && (
-        <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+        <label
+          className={`block mb-[12px] text-[#000] ${labelClassName || "text-[16px] font-semibold"}`}
+        >
           {label}
         </label>
       )}

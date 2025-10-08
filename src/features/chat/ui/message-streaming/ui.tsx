@@ -16,7 +16,7 @@ export const StreamingResponse: React.FC<StreamingResponseProps> = ({
         </div>
 
         {streamingText ? (
-          <div className="text-sm text-[#1D1D1F] bg-[#ECEFF4] px-[14px] py-[10px] rounded-md">
+          <div className="text-sm text-[#1D1D1F] bg-white px-[14px] py-[10px] rounded-md">
             {parse(streamingText)}
             <span className="inline-block w-2 h-4 ml-1 bg-blue-500 animate-pulse"></span>
           </div>

@@ -45,7 +45,7 @@ export const fmtDate = (iso?: string | null) => {
   const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
   const yyyy = d.getUTCFullYear();
 
-  return `${dd}/${mm}/${yyyy}`;
+  return `${mm}/${dd}/${yyyy}`;
 };
 
 export type SortBy = "newest" | "oldest";
@@ -548,6 +548,7 @@ export const FeedbackHub = () => {
 
       {isFiltersOpen && (
         <FiltersPopup
+          mode="feedback"
           draftFilters={draftFilters}
           setDraftFilters={setDraftFilters}
           onSave={onApplyFilters}

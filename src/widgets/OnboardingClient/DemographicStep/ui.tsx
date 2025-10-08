@@ -16,6 +16,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button, Calendar } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
+import { MAP_MENOPAUSE_STAGE_TO_TOOLTIP } from "./mock";
 
 export const DemographicStep = () => {
   const nav = useNavigate();
@@ -289,7 +290,11 @@ export const DemographicStep = () => {
             onChange={(val) =>
               dispatch(setFormField({ field: "menopause_status", value: val }))
             }
-            options={menopauseStages.map((m) => ({ label: m, value: m }))}
+            options={menopauseStages.map((m) => ({
+              label: m,
+              value: m,
+              tooltip: MAP_MENOPAUSE_STAGE_TO_TOOLTIP[m],
+            }))}
             containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
           />
@@ -308,6 +313,7 @@ export const DemographicStep = () => {
               )
             }
             className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
           />
 
           {/* Stress Levels */}
@@ -350,6 +356,7 @@ export const DemographicStep = () => {
               )
             }
             className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
           />
 
           {/* Physical Activity */}
