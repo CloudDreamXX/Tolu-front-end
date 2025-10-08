@@ -75,6 +75,103 @@ export const reconstructHTML = (
   return `${combined}\n${scriptsBlock}`;
 };
 
+// export const reconstructHTML = (cards: CardChunk[], scripts: string[]): string => {
+//   const combined = cards.map((c) => c.outerHTML).join("\n");
+
+//   const stripShowCardFromCode = (code: string) => {
+//     let prev = "";
+//     while (prev !== code) {
+//       prev = code;
+//       code = code
+//         .replace(/function\s+showCard\s*\([^)]*\)\s*\{[\s\S]*?\}\s*/gi, "")
+//         .replace(/(?:var|let|const)?\s*showCard\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]*?\}\s*;?/gi, "")
+//         .replace(/(?:window\.)?showCard\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]*?\}\s*;?/gi, "")
+//         .replace(/(?:window\.)?showCard\s*=\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\}\s*;?/gi, "");
+//     }
+//     return code;
+//   };
+
+//   const cleanedScripts = scripts.map(stripShowCardFromCode);
+
+//   const userScripts = cleanedScripts
+//     .filter((code) => code.trim().length > 0)
+//     .map((code) => `<script>${code}</script>`)
+//     .join("\n");
+
+//   const showCardScript = `
+// <script>
+//   (function () {
+//     var currentCard = 1;
+
+//     function toVariants(idOrNum) {
+//       if (typeof idOrNum === 'number') {
+//         return [
+//           'card' + idOrNum, 'card-' + idOrNum, 'card_' + idOrNum,
+//           'quiz' + idOrNum, 'quiz-' + idOrNum, 'quiz_' + idOrNum
+//         ];
+//       }
+//       if (typeof idOrNum === 'string') {
+//         var exact = [idOrNum];
+//         var n = parseInt(idOrNum.replace(/\\D/g, ''), 10);
+//         if (!isNaN(n)) {
+//           return exact.concat([
+//             'card' + n, 'card-' + n, 'card_' + n,
+//             'quiz' + n, 'quiz-' + n, 'quiz_' + n
+//           ]);
+//         }
+//         return exact;
+//       }
+//       return [];
+//     }
+
+//     function showCard(cardIdOrNum) {
+//       // Hide all cards and quizzes
+//       var panels = Array.from(document.querySelectorAll('[id^="card"],[id^="quiz"]'));
+//       panels.forEach(function (el) { if (el) el.style.display = 'none'; });
+
+//       // Find the target
+//       var variants = toVariants(cardIdOrNum);
+//       var found = false;
+//       for (var i = 0; i < variants.length; i++) {
+//         var el = document.getElementById(variants[i]);
+//         if (el) {
+//           el.style.display = 'block';
+//           found = true;
+//           // Smooth scroll into view (optional)
+//           if (typeof el.scrollIntoView === 'function') {
+//             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+//           }
+//           break;
+//         }
+//       }
+
+//       // Update nav visibility
+//       var n = (typeof cardIdOrNum === 'number')
+//         ? cardIdOrNum
+//         : parseInt((cardIdOrNum + '').replace(/\\D/g, ''), 10);
+//       if (!isNaN(n)) {
+//         currentCard = n;
+//         var totalCards = Array.from(document.querySelectorAll('[id^="card"]')).length;
+//         var prevBtn = document.getElementById('prevBtn');
+//         var nextBtn = document.getElementById('nextBtn');
+//         if (prevBtn) prevBtn.style.display = (n <= 1) ? 'none' : 'inline-block';
+//         if (nextBtn) nextBtn.style.display = (n >= totalCards) ? 'none' : 'inline-block';
+//       }
+
+//       if (!found) {
+//         console.warn('showCard: No element found for', cardIdOrNum, 'variants:', variants);
+//       }
+//     }
+
+//     window.showCard = showCard;
+//     window.currentCard = currentCard;
+//   })();
+// </script>
+//   `.trim();
+
+//   return `${combined}\n${userScripts}\n${showCardScript}`;
+// };
+
 export type TextNodePath = number[];
 export type TextEntry = { path: TextNodePath; text: string };
 
@@ -251,21 +348,39 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
       const element = React.isValidElement(node) ? node : <div>{node}</div>;
 
-      const html = element.props?.dangerouslySetInnerHTML?.__html ?? "";
-      const { contentWithoutScripts, scripts } = extractScripts(html);
+      const html =
+        element.props?.dangerouslySetInnerHTML?.__html ??
+        (typeof element.props?.children === "string"
+          ? element.props.children
+          : "");
 
       setRenderedContent(
         <div
           className="prose-sm prose max-w-none richtext"
-          dangerouslySetInnerHTML={{ __html: contentWithoutScripts }}
+          dangerouslySetInnerHTML={{ __html: html }}
         />
       );
 
-      appended = scripts.map((code) => {
-        const s = document.createElement("script");
-        s.textContent = code;
-        document.body.appendChild(s);
-        return s;
+      const container = document.createElement("div");
+      container.innerHTML = html;
+      const scripts = container.querySelectorAll("script");
+
+      scripts.forEach((oldScript) => {
+        if (oldScript.textContent) {
+          try {
+            (0, eval)(oldScript.textContent);
+          } catch (err) {
+            console.error("Error evaluating inline script:", err);
+          }
+        }
+
+        if (oldScript.src) {
+          const newScript = document.createElement("script");
+          newScript.src = oldScript.src;
+          newScript.async = false;
+          document.body.appendChild(newScript);
+          appended.push(newScript);
+        }
       });
     });
 
@@ -431,11 +546,13 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
   const [isAddingCard, setIsAddingCard] = useState(false);
 
+  console.log(renderedContent?.props.dangerouslySetInnerHTML.__html)
+
   const renderEditView = () => {
     if (isInteractive) {
       return (
         <div className="flex flex-col gap-4 w-full min-w-0">
-          <div className="flex gap-2 overflow-x-auto items-center">
+          <div className="flex gap-2 overflow-x-auto w-full items-center flex-wrap">
             {cardEdits.map((card, i) => (
               <Button
                 key={i}
@@ -448,7 +565,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                 {card.id}
               </Button>
             ))}
-
             <Button
               variant="light-blue"
               onClick={() => {
@@ -492,7 +608,16 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
             <div className="editor-wrap w-full max-w-full min-w-0 bg-white border border-[#008FF6] rounded-[16px] overflow-hidden">
               <Editor
                 value={cleanHiddenStyles(
-                  cardEdits[activeCard]?.outerHTML || ""
+                  (() => {
+                    const temp = document.createElement("div");
+                    temp.innerHTML = cardEdits[activeCard]?.outerHTML || "";
+                    const clone = temp.firstElementChild?.cloneNode(true) as HTMLElement | null;
+
+                    const nav = clone?.querySelector(".card-nav") as HTMLElement | null;
+                    if (nav) nav.style.display = "block";
+
+                    return clone?.innerHTML || "<p><br/></p>";
+                  })()
                 )}
                 onTextChange={(e) => {
                   const htmlValue = e.htmlValue || "";
@@ -572,8 +697,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                       if (prevCard) {
                         const tempPrev = document.createElement("div");
                         tempPrev.innerHTML = prevCard.outerHTML;
-                        const elPrev =
-                          tempPrev.firstElementChild as HTMLElement | null;
+                        const elPrev = tempPrev.firstElementChild as HTMLElement | null;
 
                         if (elPrev) {
                           elPrev.querySelector(".next-btn")?.remove();
@@ -581,11 +705,26 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                           const nextBtn = document.createElement("button");
                           nextBtn.textContent = "Next";
                           nextBtn.setAttribute("class", "next-btn");
-                          nextBtn.setAttribute(
-                            "onclick",
-                            `showCard(${nextNumber})`
-                          );
-                          elPrev.appendChild(nextBtn);
+                          nextBtn.setAttribute("onclick", `showCard(${nextNumber})`);
+                          Object.assign(nextBtn.style, {
+                            padding: "8px 18px",
+                            background: "#007acc",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                          });
+
+                          const navContainer = elPrev.querySelector(".card-nav") as HTMLElement | null;
+
+                          if (navContainer) {
+                            navContainer.appendChild(nextBtn);
+                          } else {
+                            nextBtn.style.marginLeft = "20px";
+                            nextBtn.style.marginTop = "20px";
+                            elPrev.appendChild(nextBtn);
+                          }
 
                           updated[prevIndex] = {
                             ...prevCard,
@@ -596,35 +735,51 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
                       const tempNew = document.createElement("div");
                       tempNew.innerHTML = newCard.outerHTML;
-                      const elNew =
-                        tempNew.firstElementChild as HTMLElement | null;
+                      const elNew = tempNew.firstElementChild as HTMLElement | null;
 
-                      const divWrapper = document.createElement("div");
-                      divWrapper.innerHTML = elNew?.innerHTML || "<p><br/></p>";
-                      const normalizedHTML = `<div id="${nextId}" class="card" style="display:none">${divWrapper.innerHTML}</div>`;
+                      if (elNew) {
+                        const divWrapper = document.createElement("div");
+                        divWrapper.innerHTML = elNew?.innerHTML || "<p><br/></p>";
 
-                      updated[newIndex] = {
-                        ...newCard,
-                        id: nextId,
-                        outerHTML: normalizedHTML,
-                      };
+                        const navContainer = document.createElement("div");
+                        navContainer.classList.add("card-nav");
+                        Object.assign(navContainer.style, {
+                          display: "flex",
+                          gap: "16px",
+                          marginTop: "20px",
+                        });
+
+                        const prevBtn = document.createElement("button");
+                        prevBtn.textContent = "Previous";
+                        prevBtn.setAttribute("class", "prev-btn");
+                        prevBtn.setAttribute("onclick", `showCard(${nextNumber - 1})`);
+                        Object.assign(prevBtn.style, {
+                          background: "#aaa",
+                          color: "#fff",
+                          border: "none",
+                          padding: "8px 18px",
+                          borderRadius: "4px",
+                          fontSize: "16px",
+                          cursor: "pointer",
+                        });
+
+                        navContainer.appendChild(prevBtn);
+
+                        divWrapper.appendChild(navContainer);
+
+                        const normalizedHTML = `<div id="${nextId}" class="card" style="display:none">${divWrapper.innerHTML}</div>`;
+
+                        updated[newIndex] = {
+                          ...newCard,
+                          id: nextId,
+                          outerHTML: normalizedHTML,
+                        };
+                      }
 
                       return updated;
                     });
 
                     setIsAddingCard(false);
-
-                    requestAnimationFrame(() => {
-                      const scrollContainer = document.querySelector(
-                        ".overflow-x-auto"
-                      ) as HTMLElement;
-                      if (scrollContainer) {
-                        scrollContainer.scrollTo({
-                          left: scrollContainer.scrollWidth,
-                          behavior: "smooth",
-                        });
-                      }
-                    });
                   }}
                 >
                   Done
@@ -636,50 +791,53 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               html={cleanHiddenStyles(cardEdits[activeCard]?.outerHTML || "")}
               onChange={(nextHtml) => updateCardHtmlAt(activeCard, nextHtml)}
             />
-          )}
+          )
+          }
 
-          {isEditing && (
-            <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
-              <button
-                className="text-[#1C63DB] text-[16px] px-4 py-2"
-                onClick={onCancelEdit}
-              >
-                Cancel
-              </button>
+          {
+            isEditing && (
+              <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
+                <button
+                  className="text-[#1C63DB] text-[16px] px-4 py-2"
+                  onClick={onCancelEdit}
+                >
+                  Cancel
+                </button>
 
-              <Button
-                className="px-4 py-2"
-                variant="light-blue"
-                onClick={onRestoreOriginalFormat}
-              >
-                Restore original format
-              </Button>
+                <Button
+                  className="px-4 py-2"
+                  variant="light-blue"
+                  onClick={onRestoreOriginalFormat}
+                >
+                  Restore original format
+                </Button>
 
-              <Button
-                variant="brightblue"
-                className="text-[16px] px-4 py-2"
-                onClick={() => {
-                  const visibleCards = cardEdits.map((c, i) => {
-                    const temp = document.createElement("div");
-                    temp.innerHTML = c.outerHTML;
-                    const el = temp.firstElementChild as HTMLElement | null;
+                <Button
+                  variant="brightblue"
+                  className="text-[16px] px-4 py-2"
+                  onClick={() => {
+                    const visibleCards = cardEdits.map((c, i) => {
+                      const temp = document.createElement("div");
+                      temp.innerHTML = c.outerHTML;
+                      const el = temp.firstElementChild as HTMLElement | null;
 
-                    if (!el) return c;
+                      if (!el) return c;
 
-                    el.style.display = i === 0 ? "block" : "none";
-                    return { ...c, outerHTML: el.outerHTML };
-                  });
+                      el.style.display = i === 0 ? "block" : "none";
+                      return { ...c, outerHTML: el.outerHTML };
+                    });
 
-                  const finalHtml = reconstructHTML(visibleCards, savedScripts);
-                  setEditedContent(finalHtml);
-                  onSaveEdit(pair.id, finalHtml);
-                }}
-              >
-                Save changes
-              </Button>
-            </div>
-          )}
-        </div>
+                    const finalHtml = reconstructHTML(visibleCards, savedScripts);
+                    setEditedContent(finalHtml);
+                    onSaveEdit(pair.id, finalHtml);
+                  }}
+                >
+                  Save changes
+                </Button>
+              </div>
+            )
+          }
+        </div >
       );
     }
 
