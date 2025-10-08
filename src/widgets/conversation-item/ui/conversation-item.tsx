@@ -187,14 +187,7 @@ export const getDocumentFromHtml = (html: string) => {
 };
 
 export const SKIP_TAGS = new Set(["SCRIPT", "NOSCRIPT", "IFRAME"]);
-export const NO_INLINE_EDIT_TAGS = new Set([
-  "CODE",
-  "PRE",
-  "INPUT",
-  "BUTTON",
-  "SELECT",
-  "TEXTAREA",
-]);
+export const NO_INLINE_EDIT_TAGS = new Set(["CODE", "PRE"]);
 
 export const walkCollectTextNodes = (
   node: Node,
@@ -340,7 +333,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   }, [isEditing, pair.content]);
 
   useEffect(() => {
-    let appended: HTMLScriptElement[] = [];
+    const appended: HTMLScriptElement[] = [];
     let cancelled = false;
 
     smartRender(pair.content).then((node) => {
@@ -546,8 +539,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
   const [isAddingCard, setIsAddingCard] = useState(false);
 
-  console.log(renderedContent?.props.dangerouslySetInnerHTML.__html)
-
   const renderEditView = () => {
     if (isInteractive) {
       return (
@@ -611,9 +602,13 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                   (() => {
                     const temp = document.createElement("div");
                     temp.innerHTML = cardEdits[activeCard]?.outerHTML || "";
-                    const clone = temp.firstElementChild?.cloneNode(true) as HTMLElement | null;
+                    const clone = temp.firstElementChild?.cloneNode(
+                      true
+                    ) as HTMLElement | null;
 
-                    const nav = clone?.querySelector(".card-nav") as HTMLElement | null;
+                    const nav = clone?.querySelector(
+                      ".card-nav"
+                    ) as HTMLElement | null;
                     if (nav) nav.style.display = "block";
 
                     return clone?.innerHTML || "<p><br/></p>";
@@ -697,7 +692,8 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                       if (prevCard) {
                         const tempPrev = document.createElement("div");
                         tempPrev.innerHTML = prevCard.outerHTML;
-                        const elPrev = tempPrev.firstElementChild as HTMLElement | null;
+                        const elPrev =
+                          tempPrev.firstElementChild as HTMLElement | null;
 
                         if (elPrev) {
                           elPrev.querySelector(".next-btn")?.remove();
@@ -705,7 +701,10 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                           const nextBtn = document.createElement("button");
                           nextBtn.textContent = "Next";
                           nextBtn.setAttribute("class", "next-btn");
-                          nextBtn.setAttribute("onclick", `showCard(${nextNumber})`);
+                          nextBtn.setAttribute(
+                            "onclick",
+                            `showCard(${nextNumber})`
+                          );
                           Object.assign(nextBtn.style, {
                             padding: "8px 18px",
                             background: "#007acc",
@@ -716,7 +715,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                             cursor: "pointer",
                           });
 
-                          const navContainer = elPrev.querySelector(".card-nav") as HTMLElement | null;
+                          const navContainer = elPrev.querySelector(
+                            ".card-nav"
+                          ) as HTMLElement | null;
 
                           if (navContainer) {
                             navContainer.appendChild(nextBtn);
@@ -735,11 +736,13 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
                       const tempNew = document.createElement("div");
                       tempNew.innerHTML = newCard.outerHTML;
-                      const elNew = tempNew.firstElementChild as HTMLElement | null;
+                      const elNew =
+                        tempNew.firstElementChild as HTMLElement | null;
 
                       if (elNew) {
                         const divWrapper = document.createElement("div");
-                        divWrapper.innerHTML = elNew?.innerHTML || "<p><br/></p>";
+                        divWrapper.innerHTML =
+                          elNew?.innerHTML || "<p><br/></p>";
 
                         const navContainer = document.createElement("div");
                         navContainer.classList.add("card-nav");
@@ -752,7 +755,10 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                         const prevBtn = document.createElement("button");
                         prevBtn.textContent = "Previous";
                         prevBtn.setAttribute("class", "prev-btn");
-                        prevBtn.setAttribute("onclick", `showCard(${nextNumber - 1})`);
+                        prevBtn.setAttribute(
+                          "onclick",
+                          `showCard(${nextNumber - 1})`
+                        );
                         Object.assign(prevBtn.style, {
                           background: "#aaa",
                           color: "#fff",
@@ -791,53 +797,50 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               html={cleanHiddenStyles(cardEdits[activeCard]?.outerHTML || "")}
               onChange={(nextHtml) => updateCardHtmlAt(activeCard, nextHtml)}
             />
-          )
-          }
+          )}
 
-          {
-            isEditing && (
-              <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
-                <button
-                  className="text-[#1C63DB] text-[16px] px-4 py-2"
-                  onClick={onCancelEdit}
-                >
-                  Cancel
-                </button>
+          {isEditing && (
+            <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
+              <button
+                className="text-[#1C63DB] text-[16px] px-4 py-2"
+                onClick={onCancelEdit}
+              >
+                Cancel
+              </button>
 
-                <Button
-                  className="px-4 py-2"
-                  variant="light-blue"
-                  onClick={onRestoreOriginalFormat}
-                >
-                  Restore original format
-                </Button>
+              <Button
+                className="px-4 py-2"
+                variant="light-blue"
+                onClick={onRestoreOriginalFormat}
+              >
+                Restore original format
+              </Button>
 
-                <Button
-                  variant="brightblue"
-                  className="text-[16px] px-4 py-2"
-                  onClick={() => {
-                    const visibleCards = cardEdits.map((c, i) => {
-                      const temp = document.createElement("div");
-                      temp.innerHTML = c.outerHTML;
-                      const el = temp.firstElementChild as HTMLElement | null;
+              <Button
+                variant="brightblue"
+                className="text-[16px] px-4 py-2"
+                onClick={() => {
+                  const visibleCards = cardEdits.map((c, i) => {
+                    const temp = document.createElement("div");
+                    temp.innerHTML = c.outerHTML;
+                    const el = temp.firstElementChild as HTMLElement | null;
 
-                      if (!el) return c;
+                    if (!el) return c;
 
-                      el.style.display = i === 0 ? "block" : "none";
-                      return { ...c, outerHTML: el.outerHTML };
-                    });
+                    el.style.display = i === 0 ? "block" : "none";
+                    return { ...c, outerHTML: el.outerHTML };
+                  });
 
-                    const finalHtml = reconstructHTML(visibleCards, savedScripts);
-                    setEditedContent(finalHtml);
-                    onSaveEdit(pair.id, finalHtml);
-                  }}
-                >
-                  Save changes
-                </Button>
-              </div>
-            )
-          }
-        </div >
+                  const finalHtml = reconstructHTML(visibleCards, savedScripts);
+                  setEditedContent(finalHtml);
+                  onSaveEdit(pair.id, finalHtml);
+                }}
+              >
+                Save changes
+              </Button>
+            </div>
+          )}
+        </div>
       );
     }
 
