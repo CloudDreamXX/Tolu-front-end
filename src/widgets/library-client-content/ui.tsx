@@ -522,7 +522,7 @@ export const LibraryClientContent = ({
 
       try {
         if (!coachProfiles[coach.coach_id]) {
-          await getCoachProfile(coach.coach_id);
+          await getCoachProfile(coach.coach_id).unwrap();
           setCoachProfiles((p) => ({
             ...p,
             [coach.coach_id]: coachProfileData,

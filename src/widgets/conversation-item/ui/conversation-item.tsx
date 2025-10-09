@@ -75,103 +75,6 @@ export const reconstructHTML = (
   return `${combined}\n${scriptsBlock}`;
 };
 
-// export const reconstructHTML = (cards: CardChunk[], scripts: string[]): string => {
-//   const combined = cards.map((c) => c.outerHTML).join("\n");
-
-//   const stripShowCardFromCode = (code: string) => {
-//     let prev = "";
-//     while (prev !== code) {
-//       prev = code;
-//       code = code
-//         .replace(/function\s+showCard\s*\([^)]*\)\s*\{[\s\S]*?\}\s*/gi, "")
-//         .replace(/(?:var|let|const)?\s*showCard\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]*?\}\s*;?/gi, "")
-//         .replace(/(?:window\.)?showCard\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]*?\}\s*;?/gi, "")
-//         .replace(/(?:window\.)?showCard\s*=\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\}\s*;?/gi, "");
-//     }
-//     return code;
-//   };
-
-//   const cleanedScripts = scripts.map(stripShowCardFromCode);
-
-//   const userScripts = cleanedScripts
-//     .filter((code) => code.trim().length > 0)
-//     .map((code) => `<script>${code}</script>`)
-//     .join("\n");
-
-//   const showCardScript = `
-// <script>
-//   (function () {
-//     var currentCard = 1;
-
-//     function toVariants(idOrNum) {
-//       if (typeof idOrNum === 'number') {
-//         return [
-//           'card' + idOrNum, 'card-' + idOrNum, 'card_' + idOrNum,
-//           'quiz' + idOrNum, 'quiz-' + idOrNum, 'quiz_' + idOrNum
-//         ];
-//       }
-//       if (typeof idOrNum === 'string') {
-//         var exact = [idOrNum];
-//         var n = parseInt(idOrNum.replace(/\\D/g, ''), 10);
-//         if (!isNaN(n)) {
-//           return exact.concat([
-//             'card' + n, 'card-' + n, 'card_' + n,
-//             'quiz' + n, 'quiz-' + n, 'quiz_' + n
-//           ]);
-//         }
-//         return exact;
-//       }
-//       return [];
-//     }
-
-//     function showCard(cardIdOrNum) {
-//       // Hide all cards and quizzes
-//       var panels = Array.from(document.querySelectorAll('[id^="card"],[id^="quiz"]'));
-//       panels.forEach(function (el) { if (el) el.style.display = 'none'; });
-
-//       // Find the target
-//       var variants = toVariants(cardIdOrNum);
-//       var found = false;
-//       for (var i = 0; i < variants.length; i++) {
-//         var el = document.getElementById(variants[i]);
-//         if (el) {
-//           el.style.display = 'block';
-//           found = true;
-//           // Smooth scroll into view (optional)
-//           if (typeof el.scrollIntoView === 'function') {
-//             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-//           }
-//           break;
-//         }
-//       }
-
-//       // Update nav visibility
-//       var n = (typeof cardIdOrNum === 'number')
-//         ? cardIdOrNum
-//         : parseInt((cardIdOrNum + '').replace(/\\D/g, ''), 10);
-//       if (!isNaN(n)) {
-//         currentCard = n;
-//         var totalCards = Array.from(document.querySelectorAll('[id^="card"]')).length;
-//         var prevBtn = document.getElementById('prevBtn');
-//         var nextBtn = document.getElementById('nextBtn');
-//         if (prevBtn) prevBtn.style.display = (n <= 1) ? 'none' : 'inline-block';
-//         if (nextBtn) nextBtn.style.display = (n >= totalCards) ? 'none' : 'inline-block';
-//       }
-
-//       if (!found) {
-//         console.warn('showCard: No element found for', cardIdOrNum, 'variants:', variants);
-//       }
-//     }
-
-//     window.showCard = showCard;
-//     window.currentCard = currentCard;
-//   })();
-// </script>
-//   `.trim();
-
-//   return `${combined}\n${userScripts}\n${showCardScript}`;
-// };
-
 export type TextNodePath = number[];
 export type TextEntry = { path: TextNodePath; text: string };
 
@@ -619,7 +522,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                   updateCardHtmlAt(activeCard, htmlValue);
                 }}
                 style={{ width: "100%" }}
-                className="w-full max-w-full min-w-0 bg-white p-3 h-fit"
+                className="w-full max-w-full min-w-0 bg-white p-3 min-h-[400px] h-fit"
                 modules={{
                   toolbar: [
                     [{ header: "1" }, { header: "2" }, { font: [] }],
@@ -627,9 +530,11 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                     [{ align: [] }],
                     ["bold", "italic", "underline", "strike"],
                     ["link"],
-                    ["blockquote"],
-                    ["image"],
+                    [{ color: [] }, { background: [] }],
                   ],
+                  clipboard: {
+                    matchVisual: false,
+                  },
                 }}
                 formats={[
                   "header",
@@ -640,13 +545,13 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                   "underline",
                   "strike",
                   "list",
-                  "bullet",
                   "indent",
                   "link",
                   "image",
                   "align",
                   "color",
                   "background",
+                  "br",
                 ]}
               />
 
@@ -715,11 +620,26 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                             cursor: "pointer",
                           });
 
-                          const navContainer = elPrev.querySelector(
-                            ".card-nav"
-                          ) as HTMLElement | null;
+                          const navContainer =
+                            (elPrev.querySelector(
+                              ".card-nav"
+                            ) as HTMLElement | null) ||
+                            (elPrev.querySelector(
+                              'div[style*="text-align:left"][style*="margin-top:24px"]'
+                            ) as HTMLElement | null) ||
+                            (elPrev.querySelector(
+                              'div[style*="display:flex"][style*="justify-content:space-between"][style*="margin-top:24px"]'
+                            ) as HTMLElement | null) ||
+                            (elPrev.querySelector(
+                              'div[style*="display:flex"][style*="justify-content:flex-start"][style*="margin-top:24px"]'
+                            ) as HTMLElement | null);
 
                           if (navContainer) {
+                            Object.assign(navContainer.style, {
+                              display: "flex",
+                              justifyContent: "space-between",
+                              marginTop: "24px",
+                            });
                             navContainer.appendChild(nextBtn);
                           } else {
                             nextBtn.style.marginLeft = "20px";
@@ -740,16 +660,19 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                         tempNew.firstElementChild as HTMLElement | null;
 
                       if (elNew) {
+                        const fullHtml = newCard.outerHTML
+                          .replace(/<p><br><\/p>/g, "<p><br/></p>")
+                          .replace(/<\/p>\s*<p>/g, "</p><p>");
+
                         const divWrapper = document.createElement("div");
-                        divWrapper.innerHTML =
-                          elNew?.innerHTML || "<p><br/></p>";
+                        divWrapper.innerHTML = fullHtml;
 
                         const navContainer = document.createElement("div");
                         navContainer.classList.add("card-nav");
                         Object.assign(navContainer.style, {
                           display: "flex",
-                          gap: "16px",
-                          marginTop: "20px",
+                          justifyContent: "space-between",
+                          marginTop: "24px",
                         });
 
                         const prevBtn = document.createElement("button");
@@ -760,20 +683,19 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                           `showCard(${nextNumber - 1})`
                         );
                         Object.assign(prevBtn.style, {
-                          background: "#aaa",
-                          color: "#fff",
-                          border: "none",
                           padding: "8px 18px",
+                          background: "#007acc",
+                          color: "white",
+                          border: "none",
                           borderRadius: "4px",
                           fontSize: "16px",
                           cursor: "pointer",
                         });
 
                         navContainer.appendChild(prevBtn);
-
                         divWrapper.appendChild(navContainer);
 
-                        const normalizedHTML = `<div id="${nextId}" class="card" style="display:none">${divWrapper.innerHTML}</div>`;
+                        const normalizedHTML = `<div id="${nextId}" class="card" style="display:none;">${divWrapper.innerHTML}</div>`;
 
                         updated[newIndex] = {
                           ...newCard,
@@ -828,7 +750,12 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                     if (!el) return c;
 
                     el.style.display = i === 0 ? "block" : "none";
-                    return { ...c, outerHTML: el.outerHTML };
+
+                    const htmlWithSpaces = el.outerHTML
+                      .replace(/<p><\/p>/g, "<p><br/></p>")
+                      .replace(/<p><br><\/p>/g, "<p><br/></p>");
+
+                    return { ...c, outerHTML: htmlWithSpaces };
                   });
 
                   const finalHtml = reconstructHTML(visibleCards, savedScripts);
@@ -867,8 +794,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                 [{ align: [] }],
                 ["bold", "italic", "underline", "strike"],
                 ["link"],
-                ["blockquote"],
-                ["image"],
+                [{ color: [] }, { background: [] }],
               ],
             }}
             formats={[
@@ -880,7 +806,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               "underline",
               "strike",
               "list",
-              "bullet",
               "indent",
               "link",
               "image",

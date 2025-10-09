@@ -76,9 +76,6 @@ export const clientApi = createApi({
           url: API_ROUTES.CLIENT.UPDATE_PROFILE,
           method: "PUT",
           body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
         };
       },
     }),
