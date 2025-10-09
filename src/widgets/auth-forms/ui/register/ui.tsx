@@ -15,9 +15,9 @@ const isAuthRevoked = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-    err?.response?.data?.message ??
-    err?.message ??
-    ""
+      err?.response?.data?.message ??
+      err?.message ??
+      ""
   ).toLowerCase();
   return (
     status === 403 ||
@@ -67,9 +67,9 @@ export const Register = () => {
       );
       const msg = String(
         err?.response?.data?.detail ??
-        err?.response?.data?.message ??
-        err?.message ??
-        ""
+          err?.response?.data?.message ??
+          err?.message ??
+          ""
       ).toLowerCase();
 
       return status === 409 || msg.includes("already exists");

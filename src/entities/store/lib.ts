@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { chatApi } from "entities/chat/chatApi";
+import { chatApi } from "entities/chat/api";
 import chatReducer from "entities/chat/chatsSlice";
 import downloadsReducer from "entities/chat/downloadSlice";
 import messagesReducer from "entities/chat/messagesSlice";

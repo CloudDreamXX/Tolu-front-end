@@ -1,7 +1,6 @@
 import {
   ChatItemModel,
   ChatMessageModel,
-  ChatService,
   ChatSocketService,
   DetailsChatItemModel,
   FetchChatMessagesResponse,
@@ -9,8 +8,10 @@ import {
 import {
   useCreateGroupChatMutation,
   useFetchAllChatsQuery,
+  useSendMessageMutation,
   useUpdateGroupChatMutation,
-} from "entities/chat/chatApi";
+  useLazyFetchChatMessagesQuery,
+} from "entities/chat/api";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { Client, useGetManagedClientsQuery } from "entities/coach";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -49,6 +50,8 @@ export const ContentManagerMessages: React.FC = () => {
   const { isLoading } = useFetchAllChatsQuery();
   const [createGroupChatMutation] = useCreateGroupChatMutation();
   const [updateGroupChatMutation] = useUpdateGroupChatMutation();
+  const [sendMessageMutation] = useSendMessageMutation();
+  const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
   const { data } = useGetManagedClientsQuery();
 
   const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
@@ -173,21 +176,45 @@ export const ContentManagerMessages: React.FC = () => {
   ): Promise<ChatMessageModel | undefined> => {
     if (!selectedChat) return;
 
-    return await ChatService.sendMessage({
-      content: content,
-      message_type: "text",
-      reply_to_message_id: undefined,
-      chat_id: selectedChat.type === "new_chat" ? undefined : selectedChat.id,
-      target_user_id:
-        selectedChat.type === "new_chat" ? selectedChat.id : undefined,
-    });
+    try {
+      const resp = await sendMessageMutation({
+        content,
+        message_type: "text",
+        reply_to_message_id: undefined,
+        chat_id: selectedChat.type === "new_chat" ? undefined : selectedChat.id,
+        target_user_id:
+          selectedChat.type === "new_chat" ? selectedChat.id : undefined,
+      }).unwrap();
+
+      return resp as ChatMessageModel;
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Failed to send message",
+        description: "Please try again.",
+      });
+      return undefined;
+    }
   };
 
   const loadMessages = async (
     page: number
   ): Promise<FetchChatMessagesResponse | undefined> => {
     if (!selectedChat) return;
-    return await ChatService.fetchChatMessages(selectedChat.id, { page });
+    try {
+      const data = await fetchChatMessagesTrigger({
+        chatId: selectedChat.id,
+        page,
+      }).unwrap();
+      return data;
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Failed to load messages",
+      });
+      return undefined;
+    }
   };
 
   const content = (() => {

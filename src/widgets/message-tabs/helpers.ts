@@ -1,14 +1,26 @@
-import { ChatService } from "entities/chat";
+import { API_ROUTES } from "shared/api";
 
-export const getAvatarUrl = async (fileUrl: string | null) => {
+export const getAvatarUrl = async (fileUrl: string | null): Promise<string> => {
   if (!fileUrl) return "";
 
-  const response = await ChatService.getUploadedChatAvatar(fileUrl);
-  const arrayBuffer = await response.arrayBuffer();
-  const byteArray = new Uint8Array(arrayBuffer);
-  const blob = new Blob([byteArray]);
+  try {
+    const response = await fetch(
+      API_ROUTES.CHAT.UPLOADED_AVATAR.replace("{filename}", fileUrl)
+    );
 
-  return URL.createObjectURL(blob);
+    if (!response.ok) {
+      console.error(
+        `Failed to fetch avatar: ${response.status} ${response.statusText}`
+      );
+      return "";
+    }
+
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    console.error("Error fetching avatar:", error);
+    return "";
+  }
 };
 
 export const getYMD = (d: Date) => ({

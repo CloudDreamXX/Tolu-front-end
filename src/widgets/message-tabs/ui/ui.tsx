@@ -6,7 +6,7 @@ import {
   DetailsChatItemModel,
   FetchChatMessagesResponse,
 } from "entities/chat";
-import { useFetchChatDetailsByIdQuery } from "entities/chat/chatApi";
+import { useFetchChatDetailsByIdQuery } from "entities/chat/api";
 import { upsertChat } from "entities/chat/chatsSlice";
 import {
   Client,
@@ -77,10 +77,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     data: chatDetails,
     isLoading,
     isError,
-  } = useFetchChatDetailsByIdQuery(
-    { chatId: chatId! },
-    { skip: !chatId, refetchOnMountOrArgChange: true }
-  );
+  } = useFetchChatDetailsByIdQuery(chatId!, {
+    skip: !chatId,
+    refetchOnMountOrArgChange: true,
+  });
 
   const { data: clients } = useGetManagedClientsQuery();
   const [getClientProfile] = useLazyGetClientProfileQuery();

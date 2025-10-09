@@ -1,4 +1,5 @@
-import { ChatService, FileMessage } from "entities/chat";
+import { FileMessage } from "entities/chat";
+import { useGetUploadedChatFileUrlQuery } from "entities/chat/api";
 import {
   clearDownloadProgress,
   setDownloadProgress,
@@ -30,21 +31,26 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
 
   const [loading, setLoading] = useState(false);
 
-  const onDownloadClick = async () => {
-    if (!normalized || !message.file_name || !message.file_type) return;
+  const { data: fileObjectUrl } = useGetUploadedChatFileUrlQuery(
+    { fileUrl: normalized },
+    { skip: !normalized }
+  );
 
+  const onDownloadClick = async () => {
+    if (!normalized || !message.file_name || !fileObjectUrl) return;
     setLoading(true);
+
     try {
-      const blob = await ChatService.getUploadedChatFiles(normalized, (pct) => {
-        dispatch(setDownloadProgress({ key: normalized, pct }));
-      });
-      const objUrl = URL.createObjectURL(blob);
+      dispatch(setDownloadProgress({ key: normalized, pct: 100 }));
+
       const a = document.createElement("a");
-      a.href = objUrl;
+      a.href = fileObjectUrl;
       a.download = message.file_name;
       a.click();
-      URL.revokeObjectURL(objUrl);
-      dispatch(clearDownloadProgress(normalized));
+
+      setTimeout(() => {
+        dispatch(clearDownloadProgress(normalized));
+      }, 400);
     } finally {
       setLoading(false);
     }

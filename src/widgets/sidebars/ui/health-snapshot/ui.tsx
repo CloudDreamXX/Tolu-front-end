@@ -14,7 +14,7 @@ import { ClientChatList } from "./ClientChatList";
 import WrapperLibraryFolderTree from "./FolderTree";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { ChatMessageModel, ChatSocketService } from "entities/chat";
-import { useFetchAllChatsQuery } from "entities/chat/chatApi";
+import { useFetchAllChatsQuery } from "entities/chat/api";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();

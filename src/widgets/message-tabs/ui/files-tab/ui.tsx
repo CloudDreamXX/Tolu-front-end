@@ -1,8 +1,8 @@
+import { FileMessage } from "entities/chat";
 import {
-  ChatService,
-  FetchChatDetailsResponse,
-  FileMessage,
-} from "entities/chat";
+  useLazyFetchAllFilesByChatIdQuery,
+  useFetchChatDetailsByIdQuery,
+} from "entities/chat/api";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -22,13 +22,17 @@ const getUniqueMessages = (messages: FileMessage[]): FileMessage[] => {
 
 export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
   const [fileMessages, setFileMessages] = useState<FileMessage[]>([]);
-  const [chatDetails, setChatDetails] =
-    useState<FetchChatDetailsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const firstScrollRef = useRef<HTMLDivElement>(null);
   const profile = useSelector((state: RootState) => state.user.user);
+
+  const [triggerFetchFiles] = useLazyFetchAllFilesByChatIdQuery();
+
+  const { data: chatDetails } = useFetchChatDetailsByIdQuery(chatId ?? "", {
+    skip: !chatId,
+  });
 
   const [page, setPage] = useState<number>(1);
 
@@ -39,9 +43,7 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
 
     try {
       setLoading(true);
-      const res = await ChatService.fetchAllFilesByChatId(chatId, { page });
-      const chat = await ChatService.fetchChatDetailsById(chatId);
-      setChatDetails(chat);
+      const res = await triggerFetchFiles({ chatId, page }).unwrap();
       setFileMessages((prev) => {
         const updatedMessages = [...prev, ...res.files];
         return getUniqueMessages(updatedMessages);
