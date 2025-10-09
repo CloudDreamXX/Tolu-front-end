@@ -3,7 +3,7 @@ import { FileLibraryFile, FileLibraryFolder } from "entities/files-library";
 import {
   useFetchAllFilesQuery,
   useGetFolderContentsQuery,
-} from "entities/files-library/filesLibraryApi";
+} from "entities/files-library/api";
 import { RootState } from "entities/store";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

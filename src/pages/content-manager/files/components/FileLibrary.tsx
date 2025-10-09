@@ -3,7 +3,7 @@ import {
   setDownloadProgress,
 } from "entities/chat/downloadSlice";
 import { FileLibraryFile } from "entities/files-library";
-import { useDownloadFileLibraryMutation } from "entities/files-library/filesLibraryApi";
+import { useLazyDownloadFileLibraryQuery } from "entities/files-library/api";
 import { RootState } from "entities/store";
 import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -32,23 +32,18 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
     (state: RootState) => state.downloads.byKey[fileLibrary.id]
   );
 
-  const [downloadFile, { isLoading: downloading }] =
-    useDownloadFileLibraryMutation();
+  const [triggerDownload, { isFetching: downloading }] =
+    useLazyDownloadFileLibraryQuery();
 
-  const handleProgress = (percent: number) => {
-    dispatch(setDownloadProgress({ key: fileLibrary.id, pct: percent }));
-  };
   const onDownloadClick = async () => {
     if (downloading) return;
     dispatch(clearDownloadProgress(fileLibrary.id));
 
     try {
-      const { data: blob } = await downloadFile({
-        fileId: fileLibrary.id,
-        onProgress: handleProgress,
-      });
+      const result = await triggerDownload({ fileId: fileLibrary.id });
 
-      if (blob) {
+      if ("data" in result && result.data) {
+        const blob = result.data;
         const objUrl = URL.createObjectURL(blob);
 
         const a = document.createElement("a");

@@ -1,4 +1,5 @@
-import { API_ROUTES, ApiService } from "shared/api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_ROUTES } from "shared/api";
 import {
   CreateFolderPayload,
   FetchAllFilesLibraryPayload,
@@ -9,121 +10,158 @@ import {
   MoveFilesPayload,
   UpdateFolderPayload,
 } from "./model";
-import { onDownloadProgress } from "entities/chat/helpers";
+import { RootState } from "entities/store";
 
-export class FileLibraryService {
-  static async fetchAllFiles(
-    payload: FetchAllFilesLibraryPayload
-  ): Promise<FetchAllFilesLibraryResponse> {
-    return ApiService.get<FetchAllFilesLibraryResponse>(
-      API_ROUTES.FILES_LIBRARY.FETCH_ALL,
-      { params: payload }
-    );
-  }
+export const filesLibraryApi = createApi({
+  reducerPath: "filesLibraryApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
 
-  static async fetchFileLibrary(file_id: string): Promise<FileLibraryResponse> {
-    return ApiService.get<FileLibraryResponse>(
-      API_ROUTES.FILES_LIBRARY.FETCH_ONE.replace("file_id", file_id)
-    );
-  }
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
 
-  static async uploadFilesLibrary(
-    files: File[],
-    folder_id: string | null,
-    descriptions?: string
-  ): Promise<string> {
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append("files", file);
-    });
+      return headers;
+    },
+  }),
+  tagTypes: ["Files", "Folders"],
 
-    if (descriptions) {
-      formData.append("descriptions", descriptions);
-    }
+  endpoints: (builder) => ({
+    fetchAllFiles: builder.query<
+      FetchAllFilesLibraryResponse,
+      FetchAllFilesLibraryPayload
+    >({
+      query: (params) => ({
+        url: API_ROUTES.FILES_LIBRARY.FETCH_ALL,
+        params,
+      }),
+      providesTags: ["Files"],
+    }),
 
-    if (folder_id) {
-      formData.append("folder_id", folder_id);
-    }
+    fetchFileLibrary: builder.query<FileLibraryResponse, string>({
+      query: (fileId) => ({
+        url: API_ROUTES.FILES_LIBRARY.FETCH_ONE.replace("file_id", fileId),
+      }),
+      providesTags: ["Files"],
+    }),
 
-    return ApiService.post<string>(API_ROUTES.FILES_LIBRARY.UPLOAD, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+    uploadFilesLibrary: builder.mutation<
+      string,
+      { files: File[]; descriptions?: string; folder_id: string | null }
+    >({
+      query: ({ files, descriptions, folder_id }) => {
+        const formData = new FormData();
+        files.forEach((file) => formData.append("files", file));
+        if (descriptions) formData.append("descriptions", descriptions);
+        if (folder_id) formData.append("folder_id", folder_id);
+
+        return {
+          url: API_ROUTES.FILES_LIBRARY.UPLOAD,
+          method: "POST",
+          body: formData,
+        };
       },
-    });
-  }
+      invalidatesTags: ["Files"],
+    }),
 
-  static async downloadFileLibrary(
-    fileId: string,
-    onProgress?: (percent: number) => void,
-    opts?: { signal?: AbortSignal }
-  ): Promise<Blob> {
-    return ApiService.get<Blob>(
-      API_ROUTES.FILES_LIBRARY.DOWNLOAD.replace("{file_id}", fileId),
-      {
-        responseType: "blob",
-        signal: opts?.signal,
-        onDownloadProgress: (e) => onDownloadProgress(e, onProgress),
-      }
-    );
-  }
+    downloadFileLibrary: builder.query<Blob, { fileId: string }>({
+      query: ({ fileId }) => ({
+        url: API_ROUTES.FILES_LIBRARY.DOWNLOAD.replace("{file_id}", fileId),
+        responseHandler: async (response) => await response.blob(),
+      }),
+    }),
 
-  static async deleteFileLibrary(fileId: string): Promise<void> {
-    return ApiService.delete(
-      `${API_ROUTES.FILES_LIBRARY.DELETE.replace("{file_id}", fileId)}`
-    );
-  }
+    deleteFileLibrary: builder.mutation<void, string>({
+      query: (fileId) => ({
+        url: API_ROUTES.FILES_LIBRARY.DELETE.replace("{file_id}", fileId),
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Files"],
+    }),
 
-  static async createFolder(
-    payload: CreateFolderPayload
-  ): Promise<FolderResponse> {
-    return ApiService.post<FolderResponse>(
-      API_ROUTES.FILES_LIBRARY.CREATE_FOLDER,
-      payload
-    );
-  }
+    createFolder: builder.mutation<FolderResponse, CreateFolderPayload>({
+      query: (body) => ({
+        url: API_ROUTES.FILES_LIBRARY.CREATE_FOLDER,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Folders"],
+    }),
 
-  static async getFolder(folderId: string): Promise<FolderResponse> {
-    return ApiService.get<FolderResponse>(
-      API_ROUTES.FILES_LIBRARY.GET_FOLDER.replace("{folder_id}", folderId)
-    );
-  }
+    getFolder: builder.query<FolderResponse, string>({
+      query: (folderId) => ({
+        url: API_ROUTES.FILES_LIBRARY.GET_FOLDER.replace(
+          "{folder_id}",
+          folderId
+        ),
+      }),
+      providesTags: ["Folders"],
+    }),
 
-  static async updateFolder(
-    folderId: string,
-    payload: UpdateFolderPayload
-  ): Promise<FolderResponse> {
-    return ApiService.put<FolderResponse>(
-      API_ROUTES.FILES_LIBRARY.UPDATE_FOLDER.replace("{folder_id}", folderId),
-      payload
-    );
-  }
+    updateFolder: builder.mutation<
+      FolderResponse,
+      { folderId: string; payload: UpdateFolderPayload }
+    >({
+      query: ({ folderId, payload }) => ({
+        url: API_ROUTES.FILES_LIBRARY.UPDATE_FOLDER.replace(
+          "{folder_id}",
+          folderId
+        ),
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: ["Folders"],
+    }),
 
-  static async getFolderContents(
-    folderId: string,
-    page: string,
-    per_page: string
-  ): Promise<FolderContentsResponse> {
-    return ApiService.get<FolderContentsResponse>(
-      API_ROUTES.FILES_LIBRARY.GET_FOLDER_CONTENTS.replace(
-        "{folder_id}",
-        folderId
-      ),
-      {
-        params: {
-          page: page,
-          per_page: per_page,
-        },
-      }
-    );
-  }
+    getFolderContents: builder.query<
+      FolderContentsResponse,
+      { folderId: string; page: string; per_page: string }
+    >({
+      query: ({ folderId, page, per_page }) => ({
+        url: API_ROUTES.FILES_LIBRARY.GET_FOLDER_CONTENTS.replace(
+          "{folder_id}",
+          folderId
+        ),
+        params: { page, per_page },
+      }),
+      providesTags: ["Files"],
+    }),
 
-  static async deleteFolder(folderId: string): Promise<any> {
-    return ApiService.delete<any>(
-      API_ROUTES.FILES_LIBRARY.DELETE_FOLDER.replace("{folder_id}", folderId)
-    );
-  }
+    deleteFolder: builder.mutation<void, string>({
+      query: (folderId) => ({
+        url: API_ROUTES.FILES_LIBRARY.DELETE_FOLDER.replace(
+          "{folder_id}",
+          folderId
+        ),
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Folders"],
+    }),
 
-  static async moveFiles(payload: MoveFilesPayload): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.FILES_LIBRARY.MOVE_FILES, payload);
-  }
-}
+    moveFiles: builder.mutation<void, MoveFilesPayload>({
+      query: (body) => ({
+        url: API_ROUTES.FILES_LIBRARY.MOVE_FILES,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Files", "Folders"],
+    }),
+  }),
+});
+
+export const {
+  useFetchAllFilesQuery,
+  useFetchFileLibraryQuery,
+  useUploadFilesLibraryMutation,
+  useDownloadFileLibraryQuery,
+  useLazyDownloadFileLibraryQuery,
+  useDeleteFileLibraryMutation,
+  useCreateFolderMutation,
+  useGetFolderQuery,
+  useUpdateFolderMutation,
+  useGetFolderContentsQuery,
+  useDeleteFolderMutation,
+  useMoveFilesMutation,
+} = filesLibraryApi;

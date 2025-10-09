@@ -4,7 +4,7 @@ import chatReducer from "entities/chat/chatsSlice";
 import downloadsReducer from "entities/chat/downloadSlice";
 import messagesReducer from "entities/chat/messagesSlice";
 import { clientReducer } from "entities/client/lib";
-import { filesLibraryApi } from "entities/files-library/filesLibraryApi";
+import { filesLibraryApi } from "entities/files-library/api";
 import { folderReducer } from "entities/folder";
 import { healthHistoryReducer } from "entities/health-history/lib";
 import { persistReducer, persistStore } from "redux-persist";
