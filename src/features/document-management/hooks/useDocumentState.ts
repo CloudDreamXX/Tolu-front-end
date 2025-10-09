@@ -5,7 +5,8 @@ import {
   ISessionResult,
   Share,
 } from "entities/coach";
-import { FoldersService, IFolder } from "entities/folder";
+import { useGetFoldersQuery, useGetFolderQuery } from "entities/folder/api";
+import { IFolder } from "entities/folder";
 import { RootState } from "entities/store";
 import { findFilePath, PathEntry } from "features/wrapper-folder-tree";
 import { useEffect, useState } from "react";
@@ -30,20 +31,33 @@ export const useDocumentState = () => {
   const [isCreatingDocument, setIsCreatingDocument] = useState(false);
   const [streamingContent, setStreamingContent] = useState<string>("");
   const [streamingIsHtml, setStreamingIsHtml] = useState(false);
+  const [loadingConversation, setLoadingConversation] = useState(false);
 
   const isNewDocument = location.state?.isNewDocument;
   const isTemporaryDocument = documentId?.startsWith("temp_");
 
-  const [loadingConversation, setLoadingConversation] = useState(false);
   const dispatch = useDispatch();
 
   const [getSessionById] = useLazyGetSessionByIdQuery();
   const [getContentShares] = useLazyGetContentSharesQuery();
-  const { data: document } = useGetDocumentByIdQuery(documentId!);
+  const { data: document } = useGetDocumentByIdQuery(documentId!, {
+    skip: !documentId,
+  });
+
+  const { data: foldersResponse, refetch: refetchFolders } = useGetFoldersQuery(
+    undefined,
+    { refetchOnMountOrArgChange: true }
+  );
+
+  const { data: folderResponse, refetch: refetchFolder } = useGetFolderQuery(
+    folderId!,
+    {
+      skip: !folderId,
+    }
+  );
 
   const loadConversation = async (chatId: string | undefined) => {
     if (!chatId) return;
-
     setLoadingConversation(true);
     try {
       const response = await getSessionById(chatId).unwrap();
@@ -67,32 +81,25 @@ export const useDocumentState = () => {
 
   const refreshSharedClients = async () => {
     if (!documentId) return;
-    const response = await getContentShares(documentId).unwrap();
-    setSharedClients(response.shares);
+    try {
+      const response = await getContentShares(documentId).unwrap();
+      setSharedClients(response.shares);
+    } catch (err) {
+      console.error("Error fetching shared clients:", err);
+    }
   };
 
   useEffect(() => {
-    const fetchFolder = async () => {
-      try {
-        if (!folderId) return;
+    if (!foldersResponse || !folderId) return;
 
-        const folderResponse = await FoldersService.getFolders();
+    const allFolders = foldersResponse.folders;
+    const path = findFilePath(allFolders, documentId ?? "");
+    if (path) setDocumentPath(path);
 
-        const documentPath = findFilePath(
-          folderResponse.folders,
-          documentId ?? ""
-        );
-        if (documentPath) setDocumentPath(documentPath);
-
-        const response = await FoldersService.getFolder(folderId);
-        if (response) setFolder(response);
-      } catch (error) {
-        console.error("Error fetching folder:", error);
-      }
-    };
-
-    fetchFolder();
-  }, [documentId, folderId, folders]);
+    if (folderResponse) {
+      setFolder(folderResponse);
+    }
+  }, [foldersResponse, folderResponse, folderId, documentId]);
 
   useEffect(() => {
     if (!isNewDocument && !isTemporaryDocument && documentId) {
@@ -100,13 +107,11 @@ export const useDocumentState = () => {
         const response = await getContentShares(documentId).unwrap();
         setSharedClients(response.shares);
       };
-
       fetchShared();
     }
   }, [documentId, isNewDocument, isTemporaryDocument]);
 
   return {
-    // State
     folders,
     document,
     folder,
@@ -118,7 +123,6 @@ export const useDocumentState = () => {
     streamingIsHtml,
     documentPath,
 
-    // Computed
     isNewDocument,
     isTemporaryDocument,
     token,
@@ -126,7 +130,6 @@ export const useDocumentState = () => {
     documentId,
     folderId,
 
-    // Actions
     setFolder,
     setConversation,
     setSharedClients,
@@ -139,5 +142,8 @@ export const useDocumentState = () => {
     navigate,
     location,
     loadingConversation,
+
+    refetchFolders,
+    refetchFolder,
   };
 };

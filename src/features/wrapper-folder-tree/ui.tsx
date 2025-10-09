@@ -1,4 +1,8 @@
-import { FoldersService, IFolder, setFolders } from "entities/folder";
+import { IFolder, setFolders } from "entities/folder";
+import {
+  useGetFoldersQuery,
+  useMoveFolderContentMutation,
+} from "entities/folder/api";
 import { RootState } from "entities/store";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,77 +21,57 @@ export const WrapperFolderTree = ({
   const [openFolders, setOpenFolders] = useState<Set<string>>(new Set());
   const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
   const [isMoving, setIsMoving] = useState(false);
-  const [loading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const [targetFolder, setTargetFolder] = useState<IFolder | undefined>(
     undefined
   );
   const [hasMore, setHasMore] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const {
+    data: folderResponse,
+    isLoading,
+    refetch,
+  } = useGetFoldersQuery(
+    {
+      page,
+      page_size: limit,
+      folder_id: targetFolder?.id,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  const [moveFolderContent] = useMoveFolderContentMutation();
+
+  useEffect(() => {
+    if (folderResponse) {
+      const { folders: newFolders, foldersMap } = folderResponse;
+      dispatch(setFolders({ folders: newFolders, foldersMap }));
+
+      const target = targetFolder;
+      const hasNext =
+        !!target?.pagination?.total_pages &&
+        target.pagination.total_pages > page;
+      setHasMore(hasNext);
+    }
+  }, [folderResponse, dispatch, page, targetFolder]);
 
   const findFolderInSubfolders = (
     folderId: string,
     folders: IFolder[]
   ): IFolder | null => {
     for (const folder of folders) {
-      if (folder.id === folderId) {
-        return folder;
-      }
+      if (folder.id === folderId) return folder;
       if (folder.subfolders) {
-        const foundInSubfolder = findFolderInSubfolders(
-          folderId,
-          folder.subfolders
-        );
-        if (foundInSubfolder) {
-          return foundInSubfolder;
-        }
+        const found = findFolderInSubfolders(folderId, folder.subfolders);
+        if (found) return found;
       }
     }
     return null;
   };
-
-  useEffect(() => {
-    const fetchFolders = async () => {
-      try {
-        const { folders: newFolders, foldersMap } =
-          await FoldersService.getFolders(page, limit, targetFolder?.id);
-
-        if (targetFolder && page !== 1) {
-          const updatedFolder = findFolderInSubfolders(
-            targetFolder.id,
-            newFolders
-          );
-
-          if (updatedFolder) {
-            updatedFolder.content = [
-              ...(targetFolder.content || []),
-              ...(updatedFolder.content || []),
-            ];
-
-            const updatedFolders = newFolders.map((folder) =>
-              folder.id === updatedFolder.id ? updatedFolder : folder
-            );
-
-            dispatch(setFolders({ folders: updatedFolders, foldersMap }));
-          } else {
-            dispatch(setFolders({ folders: newFolders, foldersMap }));
-          }
-        } else {
-          dispatch(setFolders({ folders: newFolders, foldersMap }));
-        }
-
-        setIsLoading(false);
-        setHasMore(
-          (targetFolder && targetFolder.pagination.total_pages > page) || false
-        );
-      } catch (error) {
-        console.error("Error fetching folders:", error);
-      }
-    };
-
-    fetchFolders();
-  }, [dispatch, page, limit, targetFolder?.id]);
 
   const handleScroll = () => {
     if (
@@ -96,7 +80,7 @@ export const WrapperFolderTree = ({
         containerRef.current.scrollHeight &&
       hasMore
     ) {
-      setPage(page + 1);
+      setPage((prev) => prev + 1);
     }
   };
 
@@ -111,7 +95,6 @@ export const WrapperFolderTree = ({
       <>
         {[...Array(3)].map((_, index) => {
           const randomWidth = getRandomWidth();
-
           return (
             <div
               key={index}
@@ -155,17 +138,12 @@ export const WrapperFolderTree = ({
 
     setIsMoving(true);
     try {
-      await FoldersService.moveFolderContent({
+      await moveFolderContent({
         target_folder_id: targetFolderId,
         content_id: sourceContentId,
-      });
+      }).unwrap();
 
-      const { folders, foldersMap } = await FoldersService.getFolders(
-        page,
-        limit,
-        targetFolder?.id
-      );
-      dispatch(setFolders({ folders, foldersMap }));
+      await refetch();
     } catch (error) {
       console.error("Error moving file:", error);
     } finally {
@@ -179,7 +157,7 @@ export const WrapperFolderTree = ({
       onScroll={handleScroll}
       style={{ maxHeight: "400px", overflowY: "auto" }}
     >
-      {loading ? (
+      {isLoading ? (
         <FolderSkeletonRow />
       ) : (
         <FolderTree

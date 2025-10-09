@@ -1,7 +1,4 @@
-import {
-  clearDownloadProgress,
-  setDownloadProgress,
-} from "entities/chat/downloadSlice";
+import { clearDownloadProgress } from "entities/chat/downloadSlice";
 import { FileLibraryFile } from "entities/files-library";
 import { useLazyDownloadFileLibraryQuery } from "entities/files-library/api";
 import { RootState } from "entities/store";

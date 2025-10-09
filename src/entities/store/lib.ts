@@ -22,6 +22,7 @@ import { healthHistoryApi } from "entities/health-history";
 import { notificationsApi } from "entities/notifications";
 import { clientApi } from "entities/client";
 import { coachApi } from "entities/coach";
+import { foldersApi } from "entities/folder";
 
 const userPersistConfig = {
   key: "user",
@@ -55,6 +56,7 @@ const rootReducer = combineReducers({
   [notificationsApi.reducerPath]: notificationsApi.reducer,
   [clientApi.reducerPath]: clientApi.reducer,
   [coachApi.reducerPath]: coachApi.reducer,
+  [foldersApi.reducerPath]: foldersApi.reducer,
 });
 
 export const store = configureStore({
@@ -81,7 +83,8 @@ export const store = configureStore({
       .concat(healthHistoryApi.middleware)
       .concat(notificationsApi.middleware)
       .concat(clientApi.middleware)
-      .concat(coachApi.middleware),
+      .concat(coachApi.middleware)
+      .concat(foldersApi.middleware),
 });
 
 export const persistor = persistStore(store);

@@ -1,5 +1,5 @@
 import { RootState } from "entities/store";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button } from "shared/ui";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
@@ -7,9 +7,11 @@ import { LibrarySmallChat } from "widgets/library-small-chat";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
 import z from "zod";
 import { useEffect, useState } from "react";
-import { FoldersService } from "entities/folder/api";
+import {
+  useGetFoldersQuery,
+  useCreateFolderMutation,
+} from "entities/folder/api";
 import { toast } from "shared/lib/hooks/use-toast";
-import { useDispatch } from "react-redux";
 import { setFolders } from "entities/folder";
 
 export const caseBaseSchema = z.object({
@@ -40,43 +42,39 @@ export const ContentManagerCreatePage: React.FC = () => {
   const [parentFolderId, setParentFolderId] = useState<string | null>(null);
   const [createPopup, setCreatePopup] = useState(false);
 
-  useEffect(() => {
-    const fetchFolders = async () => {
-      try {
-        const response = await FoldersService.getFolders();
-        if (response.folders.length > 0) {
-          const firstFolder = response.folders[1];
-          dispatch(setFolders(response));
-          if (firstFolder.subfolders) {
-            setParentFolderId(firstFolder.id);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching folders:", error);
-      }
-    };
+  const { data: folderResponse, refetch } = useGetFoldersQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const [createFolderMutation] = useCreateFolderMutation();
 
-    fetchFolders();
-  }, []);
+  useEffect(() => {
+    if (folderResponse && folderResponse.folders.length > 0) {
+      const firstFolder =
+        folderResponse.folders[1] ?? folderResponse.folders[0];
+      dispatch(setFolders(folderResponse));
+      if (firstFolder.subfolders) {
+        setParentFolderId(firstFolder.id);
+      }
+    }
+  }, [folderResponse, dispatch]);
 
   const createFolder = async (name: string, description: string) => {
+    if (!parentFolderId) return;
     try {
-      await FoldersService.createFolder({
+      await createFolderMutation({
         name,
         description,
-        parent_folder_id: parentFolderId as string,
-      });
+        parent_folder_id: parentFolderId,
+      }).unwrap();
 
       toast({ title: "Created successfully" });
       setCreatePopup(false);
-
-      const folderResponse = await FoldersService.getFolders();
-      dispatch(setFolders(folderResponse));
+      await refetch();
     } catch (error) {
-      console.error("Error creating a folder:", error);
+      console.error("Error creating folder:", error);
       toast({
         variant: "destructive",
-        title: "Failed to create a folder",
+        title: "Failed to create folder",
         description: "Please try again.",
       });
     }
@@ -116,6 +114,7 @@ export const ContentManagerCreatePage: React.FC = () => {
           }
         />
       </div>
+
       <div className="w-full h-full">
         <LibrarySmallChat isCoach isDraft />
       </div>
