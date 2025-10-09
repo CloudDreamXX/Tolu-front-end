@@ -129,6 +129,7 @@ export const clientApi = createApi({
 
 export const {
   useGetInvitationDetailsQuery,
+  useLazyGetInvitationDetailsQuery,
   useAcceptCoachInviteMutation,
   useGetLibraryContentQuery,
   useLazyGetLibraryContentQuery,

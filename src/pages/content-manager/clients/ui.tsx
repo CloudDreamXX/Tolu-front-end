@@ -606,7 +606,7 @@ export const ContentManagerClients: React.FC = () => {
                       <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
                         Name
                       </div>
-                      <div className="flex items-center justify-center w-full text-[16px] font-semibold">
+                      <div className="flex items-center justify-center w-full text-[16px] font-semibold text-center">
                         {client.name}
                       </div>
                     </div>
@@ -787,11 +787,10 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
                       ? "border-[#1C63DB] text-[#1C63DB]"
                       : "border-[#DBDEE1]"
-                  }`}
+                    }`}
                 >
                   {page}
                 </button>
