@@ -1051,9 +1051,13 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             </div>
 
             <LibraryChatInput
-              className={`mt-4 xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
+              className={`mt-auto xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
               onSend={handleNewMessage}
-              disabled={isSearching}
+              disabled={isSearching ||
+                (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
+                (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
+                textContent === ""
+              }
               selectedSwitch={selectedSwitch}
               message={textContent}
               setNewMessage={setTextContent}
