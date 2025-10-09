@@ -119,49 +119,63 @@ export const SelectType = () => {
           )}
 
           <div className="mt-[24px] mb-[24px] md:m-0 flex flex-col gap-[16px] w-full">
-            {titlesAndIcons.map((item, index) => (
-              <div
-                key={index}
-                className="flex flex-col gap-[16px] md:gap-[20px] w-full lg:w-[460px] items-start"
-              >
-                <div className="flex items-center self-stretch gap-[8px]">
-                  <h2 className="text-[#1B2559] text-nowrap text-[16px] md:text-[20px] font-semibold">
-                    {item.title}
-                  </h2>
-                  <TooltipWrapper content={item.tooltipContent}>
-                    <MaterialIcon
-                      iconName="help"
-                      size={16}
-                      fill={1}
-                      className="text-[#1C63DB]"
-                    />
-                  </TooltipWrapper>
-                </div>
+            {titlesAndIcons.map((item, index) => {
+              const isLast = index >= titlesAndIcons.length - 1;
+              const isSecondLast = index === titlesAndIcons.length - 2;
 
-                <SelectField
-                  label=""
-                  selected={selectedOptions[index]}
-                  onChange={(val) => handleSelection(index, val)}
-                  options={[
-                    ...item.options.map((opt) => ({ value: opt, label: opt })),
-                  ]}
-                  containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
-                  labelClassName="text-[16px] font-medium"
-                  className="h-[250px]"
-                />
+              return (
+                <div
+                  key={index}
+                  className="flex flex-col gap-[16px] md:gap-[20px] w-full lg:w-[460px] items-start"
+                >
+                  <div className="flex items-center self-stretch gap-[8px]">
+                    <h2 className="text-[#1B2559] text-nowrap text-[16px] md:text-[20px] font-semibold">
+                      {item.title}
+                    </h2>
+                    <TooltipWrapper content={item.tooltipContent}>
+                      <MaterialIcon
+                        iconName="help"
+                        size={16}
+                        fill={1}
+                        className="text-[#1C63DB]"
+                      />
+                    </TooltipWrapper>
+                  </div>
 
-                {selectedOptions[index] === "Other (please specify)" && (
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={otherText}
-                    onChange={(e) => handleOtherChange(e.target.value)}
-                    placeholder="Other text"
-                    className="mt-[4px] outline-none w-full h-[52px] px-[12px] border-[1px] border-[#DBDEE1] rounded-[8px] text-[16px] text-[#000]"
+                  <SelectField
+                    label=""
+                    selected={selectedOptions[index]}
+                    onChange={(val) => handleSelection(index, val)}
+                    options={[
+                      ...item.options.map((opt) => ({
+                        value: opt,
+                        label: opt,
+                      })),
+                    ]}
+                    containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+                    labelClassName="text-[16px] font-medium"
+                    className={
+                      isLast
+                        ? "h-[110px] md:h-[250px]"
+                        : isSecondLast
+                          ? "h-[200px] md:h-[250px]"
+                          : "h-[250px]"
+                    }
                   />
-                )}
-              </div>
-            ))}
+
+                  {selectedOptions[index] === "Other (please specify)" && (
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={otherText}
+                      onChange={(e) => handleOtherChange(e.target.value)}
+                      placeholder="Other text"
+                      className="mt-[4px] outline-none w-full h-[52px] px-[12px] border-[1px] border-[#DBDEE1] rounded-[8px] text-[16px] text-[#000]"
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {isMobile && (

@@ -293,6 +293,7 @@ export const ProfileSetup = () => {
               options={timezoneOptions.map((tz) => ({ value: tz, label: tz }))}
               containerClassName="py-[11px] px-[16px] rounded-[8px] text-sm font-medium"
               labelClassName="text-[16px] font-medium text-[#5F5F65]"
+              className="h-[250px] md:h-[400px]"
             />
           </div>
 

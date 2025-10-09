@@ -126,14 +126,17 @@ export const OnboardingMain = () => {
         </h3>
 
         <section className="w-full lg:w-[900px] items-center justify-center flex flex-col">
-          <MultiSelectField
-            label=""
-            options={[...customButtons.flat().map((b) => ({ label: b }))]}
-            selected={selectedButtons}
-            onChange={handleSelectionChange}
-            className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
-            labelClassName="text-[16px] font-medium"
-          />
+          <div className="md:px-[24px] xl:px-0 w-full">
+            <MultiSelectField
+              label=""
+              options={[...customButtons.flat().map((b) => ({ label: b }))]}
+              selected={selectedButtons}
+              onChange={handleSelectionChange}
+              className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+              labelClassName="text-[16px] font-medium"
+              height="h-[100px] md:h-[200px] xl:h-[400px]"
+            />
+          </div>
 
           {isOtherSelected() && (
             <div className="flex justify-center w-full mt-2">

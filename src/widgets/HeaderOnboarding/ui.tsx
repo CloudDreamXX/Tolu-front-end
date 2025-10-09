@@ -22,7 +22,7 @@ export const HeaderOnboarding = ({
   return (
     <header className="w-full px-4 pt-[48px] pb-[16px] md:gap-4 md:h-fit flex flex-col justify-center md:items-center relative">
       {/* Logo Section */}
-      <img src="/logo.png" className="w-[50px] h-[46px]" />
+      <img src="/logo.png" className="w-[50px] h-[46px] mx-auto" />
       <div className="flex flex-col mx-auto w-fit">
         <h2
           onClick={() => navigate("/")}

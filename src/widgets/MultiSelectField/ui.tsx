@@ -151,7 +151,7 @@ export const MultiSelectField = ({
           <div
             ref={dropdownRef}
             onClick={(e) => e.stopPropagation()}
-            className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8 ${height || ""}`}
+            className={`absolute z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8 ${height || ""}`}
             style={{
               top: coords.top,
               left: coords.left,
