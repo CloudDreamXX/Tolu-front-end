@@ -1,13 +1,15 @@
+import { ChatMessageModel, FetchChatMessagesResponse } from "entities/chat";
 import {
-  ChatMessageModel,
-  ChatService,
-  FetchChatMessagesResponse,
-} from "entities/chat";
+  useFetchAllChatsQuery,
+  useLazyFetchChatMessagesQuery,
+  useSendMessageMutation,
+} from "entities/chat/api";
 import { chatsSelectors } from "entities/chat/chatsSlice";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import EmptyChat from "shared/assets/images/EmptyChat.png";
+import { toast } from "shared/lib";
 import { MessageTabs } from "widgets/message-tabs/ui";
 
 export const ClientMessages = () => {
@@ -15,6 +17,10 @@ export const ClientMessages = () => {
   const nav = useNavigate();
   const chats = useSelector(chatsSelectors.selectAll);
   const firstChatId = chats[0]?.id;
+
+  useFetchAllChatsQuery();
+  const [sendMessageMutation] = useSendMessageMutation();
+  const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
 
   useEffect(() => {
     if (!routeChatId && firstChatId) {
@@ -40,21 +46,45 @@ export const ClientMessages = () => {
   const sendMessage = async (
     content: string
   ): Promise<ChatMessageModel | undefined> => {
-    if (!routeChatId) return undefined;
+    if (!routeChatId) return;
 
-    return await ChatService.sendMessage({
-      content: content,
-      message_type: "text",
-      reply_to_message_id: undefined,
-      chat_id: routeChatId,
-    });
+    try {
+      const resp = await sendMessageMutation({
+        content,
+        message_type: "text",
+        reply_to_message_id: undefined,
+        chat_id: routeChatId,
+      }).unwrap();
+
+      return resp as ChatMessageModel;
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Failed to send message",
+        description: "Please try again.",
+      });
+      return undefined;
+    }
   };
 
   const loadMessages = async (
     page: number
   ): Promise<FetchChatMessagesResponse | undefined> => {
-    if (!routeChatId) return undefined;
-    return await ChatService.fetchChatMessages(routeChatId, { page });
+    if (!routeChatId) return;
+    try {
+      const data = await fetchChatMessagesTrigger({
+        chatId: routeChatId,
+        page,
+      }).unwrap();
+      return data;
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Failed to load messages",
+      });
+      return undefined;
+    }
   };
 
   return (

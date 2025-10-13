@@ -1,12 +1,12 @@
 import {
-  FoldersService,
-  IFolder,
-  NewFolder,
-  setFolders,
-} from "entities/folder";
+  useCreateFolderMutation,
+  useDeleteFolderMutation,
+  useGetFoldersQuery,
+} from "entities/folder/api";
+import { IFolder, NewFolder } from "entities/folder";
 import { RootState } from "entities/store";
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast } from "shared/lib";
@@ -59,10 +59,13 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
     (state: RootState) => state.folder
   );
   const [menuOpenFolderId, setMenuOpenFolderId] = useState<string | null>(null);
-  const [createPopup, setCreatePopup] = useState<boolean>(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
-  const dispatch = useDispatch();
+  const [createPopup, setCreatePopup] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const expandedForDocRef = useRef<string | null>(null);
+
+  const [createFolderMutation] = useCreateFolderMutation();
+  const [deleteFolderMutation] = useDeleteFolderMutation();
+  const { refetch: refetchFolders } = useGetFoldersQuery();
 
   useEffect(() => {
     if (!documentId) return;
@@ -86,21 +89,16 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
     folders: IFolder[]
   ): IFolder | undefined => {
     for (const folder of folders) {
-      if (folder.id === folderId) {
-        return folder;
-      }
+      if (folder.id === folderId) return folder;
       if (folder.subfolders) {
-        const foundInSubfolders = findFolder(folderId, folder.subfolders);
-        if (foundInSubfolders) {
-          return foundInSubfolders;
-        }
+        const found = findFolder(folderId, folder.subfolders);
+        if (found) return found;
       }
     }
     return undefined;
   };
 
   const folderToDelete = findFolder(menuOpenFolderId as string, allFolders);
-
   const hasContentInside =
     (folderToDelete && folderToDelete?.content?.length > 0) || false;
 
@@ -138,59 +136,54 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
     e.dataTransfer.setData("sourceRootFolderId", rootId);
   };
 
-  const onContentDragEnd = () => {
-    setDragOverFolderId(null);
-  };
+  const onContentDragEnd = () => setDragOverFolderId(null);
 
   const handleDotsClick = (folderId: string) => {
     setMenuOpenFolderId((prevId) => (prevId === folderId ? null : folderId));
   };
 
   const handleDeleteFolder = async () => {
+    if (!menuOpenFolderId) return;
     try {
-      await FoldersService.deleteFolder({
-        folder_id: menuOpenFolderId as string,
+      await deleteFolderMutation({
+        folder_id: menuOpenFolderId,
         force_delete: hasContentInside,
-      });
+      }).unwrap();
 
       toast({ title: "Deleted successfully" });
       setMenuOpenFolderId(null);
       setIsDeleteOpen(false);
-
-      const folderResponse = await FoldersService.getFolders();
-      dispatch(setFolders(folderResponse));
+      await refetchFolders();
     } catch (error) {
-      console.error("Error deleting a folder:", error);
+      console.error("Error deleting folder:", error);
       toast({
         variant: "destructive",
-        title: "Failed to delete a folder",
-        description: "Failed to delete a folder. Please try again.",
+        title: "Failed to delete folder",
+        description: "Please try again later.",
       });
     }
   };
 
   const createFolder = async (name: string, description: string) => {
+    if (!menuOpenFolderId) return;
     try {
       const newFolder: NewFolder = {
-        name: name,
-        description: description,
-        parent_folder_id: menuOpenFolderId as string,
+        name,
+        description,
+        parent_folder_id: menuOpenFolderId,
       };
+      await createFolderMutation(newFolder).unwrap();
 
-      await FoldersService.createFolder(newFolder);
-
-      toast({ title: "Created successfully" });
+      toast({ title: "Folder created successfully" });
       setMenuOpenFolderId(null);
       setCreatePopup(false);
-
-      const folderResponse = await FoldersService.getFolders();
-      dispatch(setFolders(folderResponse));
+      await refetchFolders();
     } catch (error) {
-      console.error("Error creating a folder:", error);
+      console.error("Error creating folder:", error);
       toast({
         variant: "destructive",
-        title: "Failed to create a folder",
-        description: "Failed to create a folder. Please try again.",
+        title: "Failed to create folder",
+        description: "Please try again later.",
       });
     }
   };
@@ -229,9 +222,11 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
               )}
               <span>{folder.name}</span>
             </div>
+
             <span className="rounded-full bg-[#F3F6FB] text-[10px] text-[#1C63DB] mx-1 p-2 max-w-5 max-h-5 flex items-center justify-center">
               {getNumberOfContent(folder)}
             </span>
+
             <span
               className="ml-auto px-[8px] cursor-pointer"
               onClick={() => handleDotsClick(folder.id)}
@@ -239,6 +234,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
               <MaterialIcon iconName="more_vert" />
             </span>
           </div>
+
           {menuOpenFolderId === folder.id && (
             <div
               className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px]
@@ -246,7 +242,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
             >
               <MenuItem
                 icon={<MaterialIcon iconName="add" />}
-                label={"Create folders"}
+                label={"Create folder"}
                 onClick={() => setCreatePopup(true)}
               />
               {!allFolders.find((item) => item.id === menuOpenFolderId) && (
@@ -263,6 +259,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
               )}
             </div>
           )}
+
           {folder.subfolders && openFolders.has(folder.id) && (
             <FolderTree
               folders={folder.subfolders}
@@ -321,12 +318,17 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                     size={20}
                     className="shrink-0 group-hover:stroke-blue-500"
                   />
+                  {/* {content.contentType === "Card" ? (
+                    <MaterialIcon
+                      iconName="playing_cards"
+                      className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
+                    />
+                  ) : ( */}
                   <MaterialIcon
                     iconName="docs"
-                    size={20}
-                    weight={300}
-                    className="shrink-0 group-hover:stroke-blue-500"
+                    className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
                   />
+                  {/* )} */}
                   <TooltipProvider delayDuration={500}>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -353,15 +355,18 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
           )}
         </div>
       ))}
+
       {isMoving && (
         <div className="fixed inset-0 z-50 cursor-wait bg-white/10 backdrop-blur-sm" />
       )}
+
       {createPopup && (
         <CreateSubfolderPopup
           onClose={() => setCreatePopup(false)}
           onComplete={createFolder}
         />
       )}
+
       {isDeleteOpen && (
         <DeleteMessagePopup
           contentId={menuOpenFolderId ?? ""}

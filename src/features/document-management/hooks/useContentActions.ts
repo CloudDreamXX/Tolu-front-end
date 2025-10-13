@@ -1,48 +1,46 @@
 import { useState } from "react";
-import { CoachService, RateContent } from "entities/coach";
+import { RateContent } from "entities/coach";
 import {
-  FoldersService,
-  ContentToMove,
-  IFolder,
-  ISubfolder,
-  setFolders,
-} from "entities/folder";
+  useChangeStatusMutation,
+  useRateContentMutation,
+} from "entities/coach";
+import {
+  useDeleteContentMutation,
+  useMoveFolderContentMutation,
+  useGetFoldersQuery,
+} from "entities/folder/api";
+import { ContentToMove, IFolder, ISubfolder } from "entities/folder";
 import {
   useEditContentMutation,
   useDuplicateContentByIdMutation,
 } from "entities/content";
 import { ContentToEdit } from "entities/content";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "entities/store";
-import { IDocument } from "entities/document";
+import { IDocument, useGetDocumentByIdQuery } from "entities/document";
 import { toast } from "shared/lib";
 
 export const useContentActions = () => {
-  const dispatch = useDispatch();
-
   const [compareIndex, setCompareIndex] = useState<number | null>(null);
   const [mobilePage, setMobilePage] = useState<1 | 2>(1);
   const [ratingsMap, setRatingsMap] = useState<
     Record<string, { rating: number; comment: string }>
   >({});
 
-  // Modal states
-  const [isMarkAsOpen, setIsMarkAsOpen] = useState<boolean>(false);
-  const [isRateOpen, setIsRateOpen] = useState<boolean>(false);
-  const [isBadResponseOpen, setIsBadResponseOpen] = useState<boolean>(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
-  const [isDublicateOpen, setIsDublicateOpen] = useState<boolean>(false);
-  const [isMoveOpen, setIsMoveOpen] = useState<boolean>(false);
+  const [isMarkAsOpen, setIsMarkAsOpen] = useState(false);
+  const [isRateOpen, setIsRateOpen] = useState(false);
+  const [isBadResponseOpen, setIsBadResponseOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDublicateOpen, setIsDublicateOpen] = useState(false);
+  const [isMoveOpen, setIsMoveOpen] = useState(false);
 
-  // Edit states
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [editedContent, setEditedContent] = useState<string>("");
-  const [editedTitle, setEditedTitle] = useState<string>("");
-  const [editedQuery, setEditedQuery] = useState<string>("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState("");
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedQuery, setEditedQuery] = useState("");
 
-  // Selected states
-  const [selectedDocumentId, setSelectedDocumentId] = useState<string>("");
+  const [selectedDocumentId, setSelectedDocumentId] = useState("");
   const [selectedDocumentStatus, setSelectedDocumentStatus] = useState<
     string | undefined
   >(undefined);
@@ -51,8 +49,15 @@ export const useContentActions = () => {
 
   const [editContent] = useEditContentMutation();
   const [duplicateContentById] = useDuplicateContentByIdMutation();
+  const [changeStatus] = useChangeStatusMutation();
+  const [rateContent] = useRateContentMutation();
+  const [deleteContent] = useDeleteContentMutation();
+  const [moveFolderContent] = useMoveFolderContentMutation();
+  const { refetch: refetchFolders } = useGetFoldersQuery();
 
   const nav = useNavigate();
+  const { refetch: refetchDocument } =
+    useGetDocumentByIdQuery(selectedDocumentId);
 
   const onStatusComplete = async (
     status:
@@ -67,11 +72,11 @@ export const useContentActions = () => {
   ) => {
     const newStatus = {
       id: contentId ?? selectedDocumentId,
-      status: status,
+      status,
     };
 
     try {
-      const res = await CoachService.changeStatus(newStatus);
+      const res = await changeStatus(newStatus).unwrap();
       setIsMarkAsOpen(false);
       nav(
         `/content-manager/library/folder/${res.content.folder_id}/document/${selectedDocumentId}`
@@ -82,7 +87,7 @@ export const useContentActions = () => {
     }
   };
 
-  const handleMarkAsClick = async (document: IDocument | null) => {
+  const handleMarkAsClick = (document: IDocument | null) => {
     if (!document) return;
     setSelectedDocumentId(document.id);
     setSelectedDocumentStatus(document.status);
@@ -101,11 +106,11 @@ export const useContentActions = () => {
     }));
     const payload: RateContent = {
       content_id: id,
-      rating: rating,
+      rating,
       thumbs_down: down,
-      comment: comment,
+      comment,
     };
-    await CoachService.rateContent(payload);
+    await rateContent(payload).unwrap();
     setIsRateOpen(false);
     setIsBadResponseOpen(false);
   };
@@ -144,28 +149,33 @@ export const useContentActions = () => {
       if (found) break;
     }
 
-    await FoldersService.deleteContent(currentContentId);
-    toast({
-      title: "Deleted successfully",
-    });
+    try {
+      await deleteContent(currentContentId).unwrap();
+      toast({ title: "Deleted successfully" });
 
-    const folderResponse = await FoldersService.getFolders();
-    dispatch(setFolders(folderResponse));
-    setIsDeleteOpen(false);
+      await refetchFolders();
+      setIsDeleteOpen(false);
 
-    if (nextContentId && parentFolderId) {
-      nav(
-        `/content-manager/library/folder/${parentFolderId}/document/${nextContentId}`
-      );
-    } else {
-      nav("/content-manager/create");
+      if (nextContentId && parentFolderId) {
+        nav(
+          `/content-manager/library/folder/${parentFolderId}/document/${nextContentId}`
+        );
+      } else {
+        nav("/content-manager/create");
+      }
+    } catch (error) {
+      console.error("Error deleting content:", error);
     }
   };
 
   const handleDublicateClick = async (id: string) => {
     setIsDublicateOpen(true);
-    const response = await duplicateContentById(id).unwrap();
-    setSelectedDocumentId(response.duplicated_content.id);
+    try {
+      const response = await duplicateContentById(id).unwrap();
+      setSelectedDocumentId(response.duplicated_content.id);
+    } catch (err) {
+      console.error("Error duplicating content:", err);
+    }
   };
 
   const handleDublicateAndMoveClick = async (
@@ -178,14 +188,12 @@ export const useContentActions = () => {
     };
 
     try {
-      const response = await FoldersService.moveFolderContent(payload);
+      const response = await moveFolderContent(payload).unwrap();
 
       const movedContentId = response.content.id;
       const movedFolderId = response.content.folder_id;
 
-      const folderResponse = await FoldersService.getFolders();
-      dispatch(setFolders(folderResponse));
-
+      await refetchFolders();
       setIsDublicateOpen(false);
 
       nav(
@@ -201,27 +209,30 @@ export const useContentActions = () => {
       content_id: id,
       target_folder_id: subfolderId,
     };
-    await FoldersService.moveFolderContent(payload);
-    const folderResponse = await FoldersService.getFolders();
-    dispatch(setFolders(folderResponse));
-    setIsMoveOpen(false);
+    try {
+      await moveFolderContent(payload).unwrap();
+      await refetchFolders();
+      setIsMoveOpen(false);
+    } catch (error) {
+      console.error("Error moving content:", error);
+    }
   };
 
   const handleSaveEdit = async (
     contentId: string,
     documentId?: string,
-    onDocumentUpdate?: (docId: string) => Promise<void>
+    content?: string
   ) => {
     try {
       const payload: ContentToEdit = {
         content_id: contentId,
         new_title: editedTitle,
         new_query: editedQuery,
-        new_content: editedContent,
+        new_content: content ?? editedContent,
       };
       await editContent(payload).unwrap();
-      if (documentId && onDocumentUpdate) {
-        await onDocumentUpdate(documentId);
+      if (documentId) {
+        refetchDocument();
       }
       setIsEditing(false);
     } catch (err) {

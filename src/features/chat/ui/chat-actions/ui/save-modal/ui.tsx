@@ -14,16 +14,25 @@ import { useGetDocumentByIdQuery } from "entities/document";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {
-  onStatusChange?: (status: string) => void;
+  initialStatus: string;
+  onStatusChange?: (
+    status: "read" | "saved_for_later" | "currently_reading"
+  ) => void;
 };
 
-const SaveModal: React.FC<Props> = ({ onStatusChange }) => {
+const SaveModal: React.FC<Props> = ({ initialStatus, onStatusChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const { documentId } = useParams();
-  const [status, setStatus] = useState<string>("saved_for_later");
+  const [status, setStatus] = useState<string>(initialStatus);
 
   const { data: document } = useGetDocumentByIdQuery(documentId!);
+
+  useEffect(() => {
+    if (initialStatus !== undefined) {
+      setStatus(initialStatus);
+    }
+  }, [initialStatus]);
 
   useEffect(() => {
     const fetchContent = async () => {

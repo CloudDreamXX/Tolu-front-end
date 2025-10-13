@@ -1,7 +1,6 @@
 import {
   ChatItemModel,
   ChatMessageModel,
-  ChatService,
   ChatSocketService,
   DetailsChatItemModel,
   FetchChatMessagesResponse,
@@ -9,10 +8,12 @@ import {
 import {
   useCreateGroupChatMutation,
   useFetchAllChatsQuery,
+  useSendMessageMutation,
   useUpdateGroupChatMutation,
-} from "entities/chat/chatApi";
+  useLazyFetchChatMessagesQuery,
+} from "entities/chat/api";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
-import { Client, CoachService } from "entities/coach";
+import { Client, useGetManagedClientsQuery } from "entities/coach";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -49,25 +50,20 @@ export const ContentManagerMessages: React.FC = () => {
   const { isLoading } = useFetchAllChatsQuery();
   const [createGroupChatMutation] = useCreateGroupChatMutation();
   const [updateGroupChatMutation] = useUpdateGroupChatMutation();
+  const [sendMessageMutation] = useSendMessageMutation();
+  const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
+  const { data } = useGetManagedClientsQuery();
 
   const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const clients = await CoachService.getManagedClients();
-        const filtered = clients.clients.filter((c) => c.status === "active");
-        if (mounted) setClientsData(filtered);
-      } catch (e) {
-        console.error("Failed to fetch clients:", e);
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    if (data) {
+      const activeClients = data.clients.filter(
+        (client) => client.status === "active"
+      );
+      setClientsData(activeClients);
+    }
+  }, [data, setClientsData]);
 
   const routeMatch = useMemo(() => {
     if (!routeChatId || !chats.length) return null;
@@ -180,21 +176,45 @@ export const ContentManagerMessages: React.FC = () => {
   ): Promise<ChatMessageModel | undefined> => {
     if (!selectedChat) return;
 
-    return await ChatService.sendMessage({
-      content: content,
-      message_type: "text",
-      reply_to_message_id: undefined,
-      chat_id: selectedChat.type === "new_chat" ? undefined : selectedChat.id,
-      target_user_id:
-        selectedChat.type === "new_chat" ? selectedChat.id : undefined,
-    });
+    try {
+      const resp = await sendMessageMutation({
+        content,
+        message_type: "text",
+        reply_to_message_id: undefined,
+        chat_id: selectedChat.type === "new_chat" ? undefined : selectedChat.id,
+        target_user_id:
+          selectedChat.type === "new_chat" ? selectedChat.id : undefined,
+      }).unwrap();
+
+      return resp as ChatMessageModel;
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Failed to send message",
+        description: "Please try again.",
+      });
+      return undefined;
+    }
   };
 
   const loadMessages = async (
     page: number
   ): Promise<FetchChatMessagesResponse | undefined> => {
     if (!selectedChat) return;
-    return await ChatService.fetchChatMessages(selectedChat.id, { page });
+    try {
+      const data = await fetchChatMessagesTrigger({
+        chatId: selectedChat.id,
+        page,
+      }).unwrap();
+      return data;
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Failed to load messages",
+      });
+      return undefined;
+    }
   };
 
   const content = (() => {
@@ -227,7 +247,7 @@ export const ContentManagerMessages: React.FC = () => {
       <>
         {isLoading && (
           <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-1/2 -translate-x-1/2 xl:-translate-x-1/4">
-            <span className="inline-flex h-5 w-5 items-center justify-center">
+            <span className="inline-flex items-center justify-center w-5 h-5">
               <MaterialIcon
                 iconName="progress_activity"
                 className="text-blue-600 animate-spin"

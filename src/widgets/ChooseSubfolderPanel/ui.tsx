@@ -1,12 +1,14 @@
 import { ISubfolder, setFolders } from "entities/folder";
-import { FoldersService } from "entities/folder/api";
-import React, { useEffect, useState } from "react";
+import {
+  useGetFoldersQuery,
+  useCreateFolderMutation,
+} from "entities/folder/api";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Button, Popover, PopoverContent, PopoverTrigger } from "shared/ui";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
-
 interface ChooseSubfolderPanelProps {
   parentFolderId: string;
   selectedFolderId: string | null;
@@ -23,62 +25,69 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
   const [createPopup, setCreatePopup] = useState(false);
   const dispatch = useDispatch();
 
+  const {
+    data: folderResponse,
+    refetch: refetchFolders,
+    isFetching,
+  } = useGetFoldersQuery(undefined, { refetchOnMountOrArgChange: true });
+
+  const [createFolder] = useCreateFolderMutation();
+
   useEffect(() => {
-    const fetchSubfolders = async () => {
-      try {
-        const folderResponse = await FoldersService.getFolders();
-        dispatch(setFolders(folderResponse));
+    if (!folderResponse) return;
 
-        const selectedFolder = folderResponse.folders.find(
-          (f) => f.id === parentFolderId
-        );
+    dispatch(setFolders(folderResponse));
 
-        if (selectedFolder?.subfolders) {
-          setSubfolders(selectedFolder.subfolders);
-          setSelectedFolderName(selectedFolder.name);
-        }
-      } catch (error) {
-        console.error("Error fetching folders:", error);
-      }
-    };
+    const selectedFolder = folderResponse.folders.find(
+      (f) => f.id === parentFolderId
+    );
 
-    fetchSubfolders();
-  }, [parentFolderId, dispatch]);
+    if (selectedFolder?.subfolders) {
+      setSubfolders(selectedFolder.subfolders);
+      setSelectedFolderName(selectedFolder.name);
+    }
+  }, [folderResponse, parentFolderId, dispatch]);
 
   const handleCreateSubfolder = async (
     name: string,
     description: string
   ): Promise<void> => {
     try {
-      const response = await FoldersService.createFolder({
+      await createFolder({
         name,
         description,
         parent_folder_id: parentFolderId,
-      });
+      }).unwrap();
 
-      onSelect(response.folder.id);
+      toast({ title: "Subfolder created successfully" });
       setCreatePopup(false);
-      toast({ title: "Created successfully" });
-
-      const folderResponse = await FoldersService.getFolders();
-      dispatch(setFolders(folderResponse));
-
-      const updatedParent = folderResponse.folders.find(
-        (f) => f.id === parentFolderId
-      );
-
-      if (updatedParent?.subfolders) {
-        setSubfolders(updatedParent.subfolders);
-      }
+      await refetchFolders();
     } catch (error) {
       console.error("Error creating subfolder:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to create subfolder",
+        description: "Please try again.",
+      });
     }
   };
+
+  const currentParent = useMemo(() => {
+    if (!folderResponse) return null;
+    return folderResponse.folders.find((f) => f.id === parentFolderId) ?? null;
+  }, [folderResponse, parentFolderId]);
+
+  useEffect(() => {
+    if (currentParent?.subfolders) {
+      setSubfolders(currentParent.subfolders);
+      setSelectedFolderName(currentParent.name);
+    }
+  }, [currentParent]);
 
   return (
     <div className="w-full">
       <div className="text-[18px] font-semibold text-black flex items-center justify-between">
-        {selectedFolderName}
+        {selectedFolderName || "Folder"}
         <button
           onClick={() => setCreatePopup(true)}
           className="p-1 ml-auto rounded hover:bg-gray-100"
@@ -86,6 +95,12 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
           <MaterialIcon iconName="add" />
         </button>
       </div>
+
+      {isFetching && (
+        <p className="text-sm text-gray-400 italic mt-2">
+          Loading subfolders...
+        </p>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto py-4">
         {subfolders.length ? (
@@ -136,7 +151,9 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
             </button>
           ))
         ) : (
-          <div className="text-gray-500">No subfolders found</div>
+          <div className="text-gray-500">
+            {isFetching ? "Loading..." : "No subfolders found"}
+          </div>
         )}
       </div>
 

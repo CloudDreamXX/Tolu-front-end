@@ -1,8 +1,6 @@
 import { toast } from "shared/lib/hooks/use-toast";
-import { Footer } from "../../Footer";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper } from "shared/ui";
-import { useEffect, useState } from "react";
 import { AdminHeader } from "widgets/Header";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
@@ -13,7 +11,6 @@ export const OnboardingFinish = () => {
     (state: RootState) => state.coachOnboarding
   );
   const nav = useNavigate();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
 
   const handleLastClick = async () => {
     try {
@@ -30,18 +27,8 @@ export const OnboardingFinish = () => {
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <AuthPageWrapper>
-      <Footer position={isMobile ? "top-left" : "bottom-right"} />
       <AdminHeader />
       <main className="absolute bottom-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:right-auto md:w-full xl:w-[940px] flex flex-col items-center self-stretch">
         <div className="flex flex-col items-center justify-center gap-[40px] md:mx-[45px] xl:mx-0 md:gap-[32px] py-[24px] px-[24px] md:p-[40px] rounded-t-[20px] md:rounded-[20px] border-[1px] border-[rgba(255, 255, 255, 0.50)] bg-white">
@@ -51,7 +38,7 @@ export const OnboardingFinish = () => {
             </h3>
             <p className="self-stretch text-center text-black  text-[16px] md:text-[24px] font-medium leading-[35px]">
               Start creating personalized research and content for all types of
-              clients. Create, get paid, and grow! Nothing can stop you now
+              clients. Create and grow! Nothing can stop you now.
             </p>
           </div>
           <button

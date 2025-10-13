@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
-import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { PriceCard } from "./components";
 
@@ -11,7 +9,6 @@ export const SubscriptionPlan = () => {
     "starting" | "professional" | ""
   >("");
   const nav = useNavigate();
-  const { isMobile } = usePageWidth();
 
   return (
     <AuthPageWrapper>
@@ -55,7 +52,7 @@ export const SubscriptionPlan = () => {
           </Link>
         </div>
       </main>
-      <Footer position={isMobile ? "top-right" : "bottom-right"} />
+      {/* <Footer position={isMobile ? "top-right" : "bottom-right"} /> */}
     </AuthPageWrapper>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper } from "shared/ui";
-import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 import { Card } from "./Card";
 import { BottomButtons } from "widgets/BottomButtons";
@@ -76,7 +75,6 @@ export const ChooseTest = () => {
           isButtonActive={() => activeCard.length > 0}
         />
       </main>
-      <Footer />
     </AuthPageWrapper>
   );
 };

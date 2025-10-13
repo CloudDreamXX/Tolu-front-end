@@ -7,7 +7,7 @@ import {
   useMoveFilesMutation,
   useUpdateFolderMutation,
   useUploadFilesLibraryMutation,
-} from "entities/files-library/filesLibraryApi";
+} from "entities/files-library/api";
 import { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
@@ -167,6 +167,8 @@ export const FilesLibrary = () => {
         folder_id: targetFolderId,
       }).unwrap();
       refetch();
+      setSelectedFiles([]);
+      setMovePopup(false);
     } catch (error) {
       console.error("Error moving files:", error);
     }

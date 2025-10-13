@@ -33,11 +33,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
             dispatch(
               setCredentials({ user: msg.user, accessToken: msg.accessToken })
             );
-            nav(
-              msg.user.roleID === 3
-                ? "/welcome/client"
-                : "/welcome/practitioner"
-            );
+            nav(msg.user.roleID === 3 ? "/welcome/client" : "/select-type");
           }
         }
 

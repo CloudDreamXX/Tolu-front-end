@@ -7,8 +7,8 @@ import {
   setLastChatId,
   setMessagesToChat,
 } from "entities/client/lib";
-import { CoachService } from "entities/coach";
-import { HealthHistoryService } from "entities/health-history";
+import { CoachService, useLazyGetSessionByIdQuery } from "entities/coach";
+import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { setHealthHistory, setLoading } from "entities/health-history/lib";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
@@ -111,6 +111,8 @@ export const LibraryChat = () => {
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
   const dispatch = useDispatch();
 
+  const [getSessionById] = useLazyGetSessionByIdQuery();
+
   useEffect(() => {
     if (activeChatKey) {
       setSelectedSwitch(activeChatKey);
@@ -151,6 +153,12 @@ export const LibraryChat = () => {
 
   const { tooltipPosition, showTooltip, handleTooltipClick } =
     useTextSelectionTooltip();
+
+  const {
+    data: healthHistory,
+    error: healthHistoryError,
+    isLoading: isHealthHistoryLoading,
+  } = useGetUserHealthHistoryQuery();
 
   useEffect(() => {
     const loadVoices = () => {
@@ -252,19 +260,25 @@ export const LibraryChat = () => {
   };
 
   useEffect(() => {
-    const fetchHealthHistory = async () => {
-      try {
-        dispatch(setLoading(true));
-        const data = await HealthHistoryService.getUserHealthHistory();
-        dispatch(setHealthHistory(data));
-      } catch (error: any) {
-        setError("Failed to load user health history");
-        console.error("Health history fetch error:", error);
-      }
-    };
+    if (healthHistory) {
+      dispatch(setHealthHistory(healthHistory));
+    }
+  }, [dispatch, healthHistory]);
 
-    fetchHealthHistory();
-  }, [dispatch]);
+  useEffect(() => {
+    if (healthHistoryError) {
+      setError("Failed to load user health history");
+      console.error("Health history fetch error:", healthHistoryError);
+    }
+  }, [healthHistoryError]);
+
+  useEffect(() => {
+    if (isHealthHistoryLoading) {
+      dispatch(setLoading(true));
+    } else {
+      dispatch(setLoading(false));
+    }
+  }, [isHealthHistoryLoading, dispatch]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -348,10 +362,14 @@ export const LibraryChat = () => {
 
     try {
       if (activeChatKey === "Create content") {
-        const sessionData = await CoachService.getSessionById(id);
+        const sessionData = await getSessionById(id);
 
-        if (sessionData && sessionData.search_results.length > 0) {
-          sessionData.search_results.forEach((item: any) => {
+        if (
+          sessionData &&
+          sessionData?.data?.search_results &&
+          sessionData?.data?.search_results.length > 0
+        ) {
+          sessionData?.data?.search_results.forEach((item: any) => {
             if (item.query) {
               chatMessages.push({
                 id: `user-${item.id}`,
@@ -636,6 +654,46 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     };
 
     try {
+      // if (isSwitch(SWITCH_KEYS.CARD)) {
+      //   if (!folderState) {
+      //     setIsSearching(false);
+      //     setError("Please select a target folder before using Create.");
+      //     return;
+      //   }
+
+      //   const res = await CoachService.aiLearningCardSearch(
+      //     {
+      //       user_prompt: message,
+      //       is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
+      //       chat_id: currentChatId.startsWith("new_chat_")
+      //         ? undefined
+      //         : currentChatId,
+      //       regenerate_id: null,
+      //       chat_title: "",
+      //       instructions: instruction,
+      //     },
+      //     folderState,
+      //     images,
+      //     pdf,
+      //     clientId ?? undefined,
+      //     filesFromLibrary,
+      //     undefined,
+      //     processChunk,
+      //     processFinalData
+      //   );
+
+      //   if (res.chatId && res.documentId) {
+      //     const targetPath = `/content-manager/library/folder/${folderState}/chat/${res.chatId}`;
+      //     navigate(targetPath, {
+      //       state: {
+      //         selectedSwitch: SWITCH_KEYS.CARD,
+      //         lastId: res.chatId,
+      //         docId: res.documentId,
+      //         folderId: folderState,
+      //       },
+      //     });
+      //   }
+      // } else
       if (isSwitch(SWITCH_KEYS.CREATE)) {
         if (!folderState) {
           setIsSearching(false);
@@ -859,7 +917,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         {isLoadingSession ? (
           <ChatLoading />
         ) : (
-          <div className="flex flex-col flex-1 w-full min-h-0 overflow-clip">
+          <div
+            className={`flex flex-col flex-1 w-full ${isCoach ? "min-h-[calc(100vh-95px)]" : "min-h-[calc(100vh-78px)]"} overflow-clip h-full`}
+          >
             <div className="md:hidden">
               <SwitchDropdown
                 options={config.options}
@@ -992,9 +1052,14 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             </div>
 
             <LibraryChatInput
-              className={`mt-4 xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
+              className={`mt-auto xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
               onSend={handleNewMessage}
-              disabled={isSearching}
+              disabled={
+                isSearching ||
+                (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
+                // (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
+                textContent === ""
+              }
               selectedSwitch={selectedSwitch}
               message={textContent}
               setNewMessage={setTextContent}

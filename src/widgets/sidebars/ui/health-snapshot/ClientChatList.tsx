@@ -1,4 +1,4 @@
-import { useFetchAllChatsQuery } from "entities/chat/chatApi";
+import { useFetchAllChatsQuery } from "entities/chat/api";
 import { chatsSelectors } from "entities/chat/chatsSlice";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

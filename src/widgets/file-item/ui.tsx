@@ -1,5 +1,4 @@
-import { ChatService } from "entities/chat";
-import { useGetUploadedChatFileUrlQuery } from "entities/chat/chatApi";
+import { useGetUploadedChatFileUrlQuery } from "entities/chat/api";
 import {
   clearDownloadProgress,
   setDownloadProgress,
@@ -52,19 +51,19 @@ export const FileItem: React.FC<FileItemProps> = ({
   const [downloading, setDownloading] = useState(false);
 
   const onDownloadClick = async () => {
-    if (!normalized || !fileName || !fileType) return;
+    if (!normalized || !fileName || !previewUrl) return;
     setDownloading(true);
+
     try {
-      const blob = await ChatService.getUploadedChatFiles(normalized, (pct) => {
-        dispatch(setDownloadProgress({ key: `dw${normalized}`, pct }));
-      });
-      const objUrl = URL.createObjectURL(blob);
+      dispatch(setDownloadProgress({ key: `dw${normalized}`, pct: 100 }));
       const a = document.createElement("a");
-      a.href = objUrl;
+      a.href = previewUrl;
       a.download = fileName;
       a.click();
-      URL.revokeObjectURL(objUrl);
-      dispatch(clearDownloadProgress(`dw${normalized}`));
+
+      setTimeout(() => {
+        dispatch(clearDownloadProgress(`dw${normalized}`));
+      }, 300);
     } finally {
       setDownloading(false);
     }

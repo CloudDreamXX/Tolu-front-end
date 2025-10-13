@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SearchResultResponseItem } from "entities/search";
 import { Message } from "features/chat";
 import { Folder } from "./model";
+import { clientApi } from ".";
 
 export interface IClientState {
   isMobileDailyJournalOpen?: boolean;
@@ -143,6 +144,28 @@ const clientSlice = createSlice({
     setFilesFromLibrary: (state, action: PayloadAction<string[]>) => {
       state.selectedFilesFromLibrary = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(
+        clientApi.endpoints.getLibraryContent.matchPending,
+        (state) => {
+          state.loading = true;
+        }
+      )
+      .addMatcher(
+        clientApi.endpoints.getLibraryContent.matchFulfilled,
+        (state, { payload }) => {
+          state.loading = false;
+          state.folders = payload.folders;
+        }
+      )
+      .addMatcher(
+        clientApi.endpoints.getLibraryContent.matchRejected,
+        (state) => {
+          state.loading = false;
+        }
+      );
   },
 });
 

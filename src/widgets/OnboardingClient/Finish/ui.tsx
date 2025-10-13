@@ -1,12 +1,10 @@
 import { AuthPageWrapper } from "shared/ui";
-import { Footer } from "widgets/Footer";
 import Img1 from "shared/assets/images/card1.png";
 import Img2 from "shared/assets/images/card2.png";
 import Img3 from "shared/assets/images/card3.png";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
-import { usePageWidth } from "shared/lib";
 import { ClientHeader } from "widgets/Header";
 import { useSelector } from "react-redux";
 import { RootState } from "entities/store";
@@ -16,7 +14,6 @@ export const FinishClientOnboarding = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const client = useSelector((state: RootState) => state.clientOnboarding);
   const nav = useNavigate();
-  const { isMobileOrTablet } = usePageWidth();
 
   useEffect(() => {
     const handleLast = async () => {
@@ -76,7 +73,7 @@ export const FinishClientOnboarding = () => {
           </div>
         </div>
       </main>
-      <Footer position={isMobileOrTablet ? "top-right" : "bottom-right"} />
+      {/* <Footer position={isMobileOrTablet ? "top-right" : "bottom-right"} /> */}
     </AuthPageWrapper>
   );
 };

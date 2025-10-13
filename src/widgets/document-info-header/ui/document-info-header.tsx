@@ -1,4 +1,8 @@
-import { CoachService, Share, UpdateFolderRequest } from "entities/coach";
+import {
+  useEditFolderMutation,
+  Share,
+  UpdateFolderRequest,
+} from "entities/coach";
 import { IDocument } from "entities/document";
 import { ClientsInfo, FilesInfo, InstructionInfo } from "entities/folder";
 import { HashtagsInfo } from "entities/folder/ui/hashtags-info/ui";
@@ -20,6 +24,8 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
   folderInstructions,
   refreshSharedClients,
 }) => {
+  const [editFolder] = useEditFolderMutation();
+
   const handleInstructionsSave = async (instruction: string) => {
     try {
       if (document) {
@@ -27,7 +33,7 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
           folder_id: document?.originalFolderId,
           instructions: instruction,
         };
-        await CoachService.editFolder(payload);
+        await editFolder({ payload }).unwrap();
         toast({
           title: "Folder's instruction saved successfully",
         });

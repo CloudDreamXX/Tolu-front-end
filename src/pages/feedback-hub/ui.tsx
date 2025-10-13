@@ -45,7 +45,7 @@ export const fmtDate = (iso?: string | null) => {
   const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
   const yyyy = d.getUTCFullYear();
 
-  return `${dd}/${mm}/${yyyy}`;
+  return `${mm}/${dd}/${yyyy}`;
 };
 
 export type SortBy = "newest" | "oldest";
@@ -301,7 +301,7 @@ export const FeedbackHub = () => {
               <MaterialIcon iconName="page_info" />
               Filter
             </Button>
-            <div className="hidden xl:flex gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-[306px]">
+            <div className="hidden xl:flex gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-[320px]">
               <MaterialIcon
                 iconName="search"
                 size={16}
@@ -332,7 +332,7 @@ export const FeedbackHub = () => {
               />
             </button>
           </div>
-          <div className="hidden md:flex xl:hidden gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-[306px]">
+          <div className="hidden md:flex xl:hidden gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-[320px]">
             <MaterialIcon
               iconName="search"
               size={16}
@@ -548,6 +548,7 @@ export const FeedbackHub = () => {
 
       {isFiltersOpen && (
         <FiltersPopup
+          mode="feedback"
           draftFilters={draftFilters}
           setDraftFilters={setDraftFilters}
           onSave={onApplyFilters}

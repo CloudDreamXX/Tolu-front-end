@@ -31,6 +31,7 @@ import {
   LibraryContentStatus,
 } from "entities/content";
 import { useGetDocumentByIdQuery } from "entities/document";
+import { isInteractiveContent } from "widgets/conversation-item/ui/conversation-item";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -208,8 +209,8 @@ export const ContentManagerDocument: React.FC = () => {
     }
   };
 
-  const onSaveEdit = async (contentId: string) => {
-    await handleSaveEdit(contentId, documentId);
+  const onSaveEdit = async (contentId: string, content?: string) => {
+    await handleSaveEdit(contentId, documentId, content);
     setOriginalEdit(null);
   };
 
@@ -267,8 +268,12 @@ export const ContentManagerDocument: React.FC = () => {
     }
   };
 
+  const isCard = selectedDocument
+    ? isInteractiveContent(selectedDocument.content)
+    : false;
+
   return (
-    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] pt-2 md:pt-6 h-[calc(100vh-78px)] w-full overflow-y-auto">
+    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] py-4 md:pt-6 md:pb-0 h-[calc(100vh-95px)] xl:h-[calc(100vh-78px)] w-full overflow-y-auto">
       {loadingConversation && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <span className="inline-flex h-5 w-5 items-center justify-center">
@@ -406,8 +411,8 @@ export const ContentManagerDocument: React.FC = () => {
 
         {isDeleteOpen && (
           <DeleteMessagePopup
-            title="Delete document?"
-            text="Are you sure you want to delete this document? This action cannot be undone"
+            title={`Delete ${isCard ? "card" : "document"}?`}
+            text={`Are you sure you want to delete this ${isCard ? "card" : "document"}? This action cannot be undone`}
             contentId={selectedDocumentId}
             onCancel={() => setIsDeleteOpen(false)}
             onDelete={handleDeleteClick}

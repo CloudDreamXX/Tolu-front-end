@@ -16,6 +16,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button, Calendar } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
+import { MAP_MENOPAUSE_STAGE_TO_TOOLTIP } from "./mock";
 
 export const DemographicStep = () => {
   const nav = useNavigate();
@@ -197,6 +198,7 @@ export const DemographicStep = () => {
     "Perimenopause",
     "Menopause",
     "Postmenopause",
+    "Not sure",
   ];
 
   const conditions = [
@@ -243,9 +245,9 @@ export const DemographicStep = () => {
       numberOfSteps={0}
       headerText=" "
       title={
-        <div className="flex flex-col gap-4 xl:mt-[80px]">
-          <h1 className="text-[#1D1D1F] text-[24px] md:text-[32px] text-center">
-            A few questions to rate your lifestyle skillset & tailor your
+        <div className="flex flex-col gap-4">
+          <h1 className="text-[#1D1D1F] text-[24px] text-center">
+            A few questions to rate your lifestyle skillset & tailor your <br />
             support.
           </h1>
         </div>
@@ -289,7 +291,11 @@ export const DemographicStep = () => {
             onChange={(val) =>
               dispatch(setFormField({ field: "menopause_status", value: val }))
             }
-            options={menopauseStages.map((m) => ({ label: m, value: m }))}
+            options={menopauseStages.map((m) => ({
+              label: m,
+              value: m,
+              tooltip: MAP_MENOPAUSE_STAGE_TO_TOOLTIP[m],
+            }))}
             containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
           />
@@ -308,6 +314,7 @@ export const DemographicStep = () => {
               )
             }
             className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
           />
 
           {/* Stress Levels */}
@@ -350,6 +357,7 @@ export const DemographicStep = () => {
               )
             }
             className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
           />
 
           {/* Physical Activity */}

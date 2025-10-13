@@ -1,15 +1,17 @@
-import { CoachService, Content } from "entities/coach";
+import {
+  useChangeStatusMutation,
+  useGetAllUserContentQuery,
+} from "entities/coach";
 import { useDuplicateContentByIdMutation } from "entities/content";
 import {
-  ContentToMove,
-  FoldersService,
-  FolderToDelete,
-  IFolder,
-  ISubfolder,
-  setFolders,
-} from "entities/folder";
+  useGetFoldersQuery,
+  useDeleteFolderMutation,
+  useMoveFolderContentMutation,
+  useDeleteContentMutation,
+} from "entities/folder/api";
+import { IFolder, ISubfolder, setFolders } from "entities/folder";
 import { RootState } from "entities/store";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, DateSelector, Input } from "shared/ui";
 import { useLibraryLogic } from "../lib";
@@ -23,8 +25,7 @@ export const ContentManagerLibrary: React.FC = () => {
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-  const token = useSelector((state: RootState) => state.user.token);
-  const folders = useSelector((state: RootState) => state.folder);
+  const foldersState = useSelector((state: RootState) => state.folder);
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
@@ -39,43 +40,38 @@ export const ContentManagerLibrary: React.FC = () => {
   const [isImproveOpen, setIsImproveOpen] = useState(false);
   const [idToDuplicate, setIdToDuplicate] = useState("");
   const { expandedFolders, toggleFolder, filteredItems } = useLibraryLogic(
-    folders.folders,
+    foldersState.folders,
     debouncedSearch
   );
-  const [allContent, setAllContent] = useState<Content[]>([]);
   const [contentCardsView, setContentCardsView] = useState<boolean>(false);
+
   const [duplicateContentById] = useDuplicateContentByIdMutation();
+  const [changeStatus] = useChangeStatusMutation();
 
-  useEffect(() => {
-    const fetchAllContent = async () => {
-      const data = await CoachService.getAllUserContent();
-      setAllContent(data.content);
-    };
+  const { data: folderResponse, refetch: refetchFolders } = useGetFoldersQuery(
+    undefined,
+    { refetchOnMountOrArgChange: true }
+  );
+  const [deleteFolder] = useDeleteFolderMutation();
+  const [moveFolderContent] = useMoveFolderContentMutation();
+  const [deleteContent] = useDeleteContentMutation();
 
-    fetchAllContent();
-  }, []);
+  const { data: allContentResponse } = useGetAllUserContentQuery();
+  const allContent = allContentResponse?.content ?? [];
 
-  // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
     }, 300);
-
     return () => clearTimeout(timer);
   }, [search]);
 
-  const fetchFolders = useCallback(async () => {
-    try {
-      const { folders, foldersMap } = await FoldersService.getFolders();
-      dispatch(setFolders({ folders, foldersMap }));
-    } catch (error) {
-      console.error("Error fetching folders:", error);
-    }
-  }, [dispatch]);
-
   useEffect(() => {
-    fetchFolders();
-  }, [token, dispatch]);
+    if (folderResponse) {
+      const { folders, foldersMap } = folderResponse;
+      dispatch(setFolders({ folders, foldersMap }));
+    }
+  }, [folderResponse, dispatch]);
 
   const handleDotsClick = (row: TableRow, event: React.MouseEvent) => {
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
@@ -94,18 +90,17 @@ export const ContentManagerLibrary: React.FC = () => {
       | "Live"
       | "Archived"
   ) => {
-    const newStatus = {
-      id: selectedRow?.id ?? "",
-      status: status,
-    };
-    await CoachService.changeStatus(newStatus);
-    await fetchFolders();
+    const newStatus = { id: selectedRow?.id ?? "", status };
+    await changeStatus(newStatus).unwrap();
+    await refetchFolders();
     setIsMarkAsOpen(false);
     setIsMenuOpen(false);
   };
 
   const isContentId = (id: string): boolean => {
-    const searchContent = (foldersList: typeof folders.folders): boolean => {
+    const searchContent = (
+      foldersList: typeof foldersState.folders
+    ): boolean => {
       for (const folder of foldersList) {
         if (folder.content?.some((c) => c.id === id)) return true;
         for (const sub of folder.subfolders ?? []) {
@@ -117,44 +112,37 @@ export const ContentManagerLibrary: React.FC = () => {
       }
       return false;
     };
-
-    return searchContent(folders.folders);
+    return searchContent(foldersState.folders);
   };
 
   const handleDeleteClick = async (id: string) => {
-    if (isContentId(id)) {
-      await FoldersService.deleteContent(id);
-    } else {
-      let folderToDelete: IFolder | ISubfolder | undefined;
-
-      for (const folder of folders.folders) {
-        if (folder.id === id) {
-          folderToDelete = folder;
-          break;
+    try {
+      if (isContentId(id)) {
+        await deleteContent(id).unwrap();
+      } else {
+        let folderToDelete: IFolder | ISubfolder | undefined;
+        for (const folder of foldersState.folders) {
+          if (folder.id === id) folderToDelete = folder;
+          const foundSub = folder.subfolders?.find((sf) => sf.id === id);
+          if (foundSub) folderToDelete = foundSub;
         }
 
-        const foundSub = folder.subfolders?.find((sf) => sf.id === id);
-        if (foundSub) {
-          folderToDelete = foundSub;
-          break;
-        }
+        const hasChildren =
+          (folderToDelete?.subfolders?.length ?? 0) > 0 ||
+          (folderToDelete?.content?.length ?? 0) > 0;
+
+        await deleteFolder({
+          folder_id: id,
+          force_delete: hasChildren,
+        }).unwrap();
       }
 
-      const hasChildren =
-        (folderToDelete?.subfolders?.length ?? 0) > 0 ||
-        (folderToDelete?.content?.length ?? 0) > 0;
-
-      const folder: FolderToDelete = {
-        folder_id: id,
-        force_delete: hasChildren,
-      };
-
-      await FoldersService.deleteFolder(folder);
+      await refetchFolders();
+      setIsDeleteOpen(false);
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error("Error deleting item:", error);
     }
-
-    await fetchFolders();
-    setIsDeleteOpen(false);
-    setIsMenuOpen(false);
   };
 
   const handleDublicateClick = async (id: string) => {
@@ -171,33 +159,32 @@ export const ContentManagerLibrary: React.FC = () => {
     id: string,
     subfolderId: string
   ) => {
-    const payload: ContentToMove = {
+    await moveFolderContent({
       content_id: id,
       target_folder_id: subfolderId,
-    };
-    await FoldersService.moveFolderContent(payload);
-    await fetchFolders();
+    }).unwrap();
+
+    await refetchFolders();
     setIsDublicateOpen(false);
     setIsImproveOpen(false);
     setIsMenuOpen(false);
   };
 
   const handleMoveClick = async (id: string, subfolderId: string) => {
-    const payload: ContentToMove = {
+    await moveFolderContent({
       content_id: id,
       target_folder_id: subfolderId,
-    };
-    await FoldersService.moveFolderContent(payload);
-    await fetchFolders();
+    }).unwrap();
+
+    await refetchFolders();
     setIsMoveOpen(false);
     setIsMenuOpen(false);
   };
 
   const filteredContent = useMemo(() => {
     if (debouncedSearch === "") return allContent;
-
     const searchLower = debouncedSearch.toLowerCase();
-    return allContent.filter(
+    return allContent?.filter(
       (content) =>
         content.title.toLowerCase().includes(searchLower) ||
         content.query.toLowerCase().includes(searchLower) ||
@@ -229,24 +216,19 @@ export const ContentManagerLibrary: React.FC = () => {
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                if (e.target.value.length > 0) {
-                  setContentCardsView(true);
-                }
+                if (e.target.value.length > 0) setContentCardsView(true);
               }}
               onFocus={() => setContentCardsView(true)}
               onBlur={() => {
-                // Delay the blur to prevent flickering when clicking on search results
                 setTimeout(() => {
-                  if (search === "") {
-                    setContentCardsView(false);
-                  }
+                  if (search === "") setContentCardsView(false);
                 }, 150);
               }}
             />
           </div>
           {contentCardsView && (
             <p className="text-[14px] text-[#5F5F65] font-[500]">
-              Found {filteredContent.length} files
+              Found {filteredContent?.length} files
             </p>
           )}
         </div>
@@ -257,7 +239,8 @@ export const ContentManagerLibrary: React.FC = () => {
           toggleFolder={toggleFolder}
           onDotsClick={handleDotsClick}
         />
-        {filteredContent.length ? (
+
+        {filteredContent?.length ? (
           <>
             {contentCardsView ? (
               <div className="grid grid-cols-2 gap-4">
@@ -277,7 +260,7 @@ export const ContentManagerLibrary: React.FC = () => {
                 filteredItems={filteredItems}
                 expandedFolders={expandedFolders}
                 toggleFolder={toggleFolder}
-                folders={folders.folders}
+                folders={foldersState.folders}
                 selectedRow={selectedRow}
                 isMenuOpen={isMenuOpen}
                 popupPosition={popupPosition}

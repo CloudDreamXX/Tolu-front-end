@@ -231,7 +231,7 @@ export const NavigationClient: React.FC = () => {
               </Button>
             </div>
 
-            <nav className="flex flex-col mb-auto">
+            <nav className="flex flex-col mb-auto max-h-[50vh] overflow-y-auto">
               {/* <NavLink
                 to={"/health-snapshot"}
                 className={({ isActive }) =>

@@ -3,7 +3,7 @@ export const DocumentLoadingSkeleton = () => {
     `${Math.floor(Math.random() * (max - min + 1)) + min}px`;
 
   return (
-    <div className="p-[24px] rounded-[16px] bg-white xl:h-[calc(100vh-48px)] xl:overflow-y-auto animate-pulse w-full">
+    <div className="p-[24px] rounded-[16px] bg-white xl:overflow-y-auto animate-pulse w-full">
       {/* Header block with title and query */}
       <div className="ml-auto w-full flex flex-col gap-[16px] mb-[24px]">
         <div

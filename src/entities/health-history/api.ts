@@ -1,47 +1,77 @@
-import { API_ROUTES, ApiService } from "shared/api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_ROUTES } from "shared/api";
 import {
-  GetLabReportRequest,
   HealthHistory,
   HealthHistoryPostData,
   HealthHistoryResponse,
+  GetLabReportRequest,
 } from "./model";
+import { RootState } from "entities/store";
 
-export class HealthHistoryService {
-  static async getUserHealthHistory(): Promise<HealthHistory> {
-    return ApiService.get<HealthHistoryResponse>(
-      API_ROUTES.HEALTH_HISTORY.GET
-    ).then((response) => response.health_history);
-  }
+export const healthHistoryApi = createApi({
+  reducerPath: "healthHistoryApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
 
-  static async createHealthHistory(
-    healthData: HealthHistoryPostData,
-    labFiles?: File[],
-    clientId?: string | null
-  ): Promise<any> {
-    const formData = new FormData();
-    formData.append("health_data", JSON.stringify(healthData));
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
 
-    if (labFiles && labFiles.length > 0) {
-      labFiles.forEach((file) => {
-        formData.append("lab_file", file);
-      });
-    }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    getUserHealthHistory: builder.query<HealthHistory, void>({
+      query: () => API_ROUTES.HEALTH_HISTORY.GET,
+      transformResponse: (response: HealthHistoryResponse) =>
+        response.health_history,
+    }),
 
-    if (clientId !== undefined) {
-      formData.append("client_id", clientId ?? "");
-    }
+    createHealthHistory: builder.mutation<
+      any,
+      {
+        healthData: HealthHistoryPostData;
+        labFiles?: File[];
+        clientId?: string | null;
+      }
+    >({
+      query: ({ healthData, labFiles, clientId }) => {
+        const formData = new FormData();
 
-    return ApiService.post<any>(API_ROUTES.HEALTH_HISTORY.POST, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+        formData.append("health_data", JSON.stringify(healthData));
+
+        if (labFiles && labFiles.length > 0) {
+          labFiles.forEach((file) => {
+            formData.append("lab_file", file);
+          });
+        }
+
+        if (clientId !== undefined) {
+          formData.append("client_id", clientId ?? "");
+        }
+
+        return {
+          url: API_ROUTES.HEALTH_HISTORY.POST,
+          method: "POST",
+          body: formData,
+        };
       },
-    });
-  }
+    }),
 
-  static async getLabReport({ filename, client_id }: GetLabReportRequest) {
-    return ApiService.get<Blob>(`/health-history/lab-report/${filename}`, {
-      params: { client_id },
-      responseType: "blob",
-    });
-  }
-}
+    getLabReport: builder.query<Blob, GetLabReportRequest>({
+      query: ({ filename, client_id }) => ({
+        url: `/health-history/lab-report/${filename}`,
+        params: { client_id },
+        responseHandler: (res) => res.blob(),
+      }),
+    }),
+  }),
+});
+
+export const {
+  useGetUserHealthHistoryQuery,
+  useCreateHealthHistoryMutation,
+  useGetLabReportQuery,
+} = healthHistoryApi;

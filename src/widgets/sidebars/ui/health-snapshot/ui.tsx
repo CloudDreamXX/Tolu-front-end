@@ -14,7 +14,7 @@ import { ClientChatList } from "./ClientChatList";
 import WrapperLibraryFolderTree from "./FolderTree";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { ChatMessageModel, ChatSocketService } from "entities/chat";
-import { useFetchAllChatsQuery } from "entities/chat/chatApi";
+import { useFetchAllChatsQuery } from "entities/chat/api";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -144,7 +144,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
             </div>
 
             <div
-              className={`flex flex-col w-full ${sidebarOpen ? "items-start" : "items-center"}`}
+              className={`flex flex-col w-full max-h-[50vh] overflow-y-auto ${sidebarOpen ? "items-start" : "items-center"}`}
             >
               <NavLink
                 to={"/library"}

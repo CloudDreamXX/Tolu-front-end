@@ -1,4 +1,8 @@
-import { AIChatMessage, CoachService } from "entities/coach";
+import {
+  AIChatMessage,
+  CoachService,
+  useChangeStatusMutation,
+} from "entities/coach";
 import { RootState } from "entities/store";
 import { title } from "process";
 import { useMemo, useState } from "react";
@@ -33,6 +37,7 @@ export const ContentManagerFolder: React.FC = () => {
   const nav = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [showChangeStatusPopup, setShowChangeStatusPopup] = useState(false);
+  const [changeStatus] = useChangeStatusMutation();
 
   const folderAndSubfolder = useMemo(() => {
     if (!folderId) return { folder: null, subfolder: null };
@@ -111,7 +116,7 @@ export const ContentManagerFolder: React.FC = () => {
       id: folderId ?? "",
       status: status,
     };
-    await CoachService.changeStatus(newStatus);
+    await changeStatus(newStatus);
     setShowChangeStatusPopup(false);
   };
 

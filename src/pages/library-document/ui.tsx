@@ -1,26 +1,29 @@
 import { ChatSocketService } from "entities/chat";
-import { ClientService, CoachListItem } from "entities/client";
-import { clearAllChatHistory, setFolders } from "entities/client/lib";
 import {
-  useGetCreatorProfileQuery,
+  CoachListItem,
+  useLazyDownloadCoachPhotoQuery,
+  useGetCoachesQuery,
+  useGetLibraryContentQuery,
+  useLazyGetCoachProfileQuery,
+} from "entities/client";
+import { clearAllChatHistory } from "entities/client/lib";
+import {
+  ContentStatus,
   useGetCreatorPhotoQuery,
+  useGetCreatorProfileQuery,
   useUpdateStatusMutation,
+  useGetQuizScoreQuery,
 } from "entities/content";
-import { ContentStatus } from "entities/content";
 import { useGetDocumentByIdQuery } from "entities/document";
-import { HealthHistoryService } from "entities/health-history";
-import {
-  setError,
-  setHealthHistory,
-  setLoading,
-} from "entities/health-history/lib";
+import { useGetUserHealthHistoryQuery } from "entities/health-history";
+import { setError, setHealthHistory } from "entities/health-history/lib";
 import { RootState } from "entities/store";
 import { ChatActions, ChatLoading } from "features/chat";
-import parse from "html-react-parser";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { phoneMask, toast, usePageWidth } from "shared/lib";
 import {
   Avatar,
@@ -36,9 +39,22 @@ import {
 } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
 import { LibrarySmallChat } from "widgets/library-small-chat";
-import { DocumentLoadingSkeleton } from "./lib";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import SharePopup from "widgets/share-popup/ui";
+import { DocumentLoadingSkeleton } from "./lib";
+
+const extractScripts = (content: string) => {
+  const scriptRegex = /<script[\s\S]*?>([\s\S]*?)<\/script>/g;
+  const scripts: string[] = [];
+  let match;
+
+  while ((match = scriptRegex.exec(content)) !== null) {
+    scripts.push(match[1]);
+  }
+
+  const contentWithoutScripts = content.replace(scriptRegex, "");
+
+  return { contentWithoutScripts, scripts };
+};
 
 const getHeadshotFilename = (url?: string | null): string | null => {
   if (!url) return null;
@@ -74,7 +90,6 @@ export const LibraryDocument = () => {
   const [sharePopup, setSharePopup] = useState<boolean>(false);
   const [providersOpen, setProvidersOpen] = useState(false);
   const [coaches, setCoaches] = useState<CoachListItem[]>([]);
-  const [coachesLoading, setCoachesLoading] = useState(false);
   const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
 
   const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
@@ -83,8 +98,16 @@ export const LibraryDocument = () => {
 
   const [coachDialogOpen, setCoachDialogOpen] = useState(false);
 
-  const { data: selectedDocument, isLoading: isLoadingDocument } =
-    useGetDocumentByIdQuery(documentId!);
+  const [renderedContent, setRenderedContent] = useState<JSX.Element | null>(
+    null
+  );
+  const [scripts, setScripts] = useState<string[]>([]);
+
+  const {
+    data: selectedDocument,
+    isLoading: isLoadingDocument,
+    refetch,
+  } = useGetDocumentByIdQuery(documentId!);
   const { data: creatorProfileData } = useGetCreatorProfileQuery(
     selectedDocument?.creator_id || ""
   );
@@ -96,11 +119,176 @@ export const LibraryDocument = () => {
         .pop() || "",
   });
   const [updateStatus] = useUpdateStatusMutation();
+  const { data: healthHistoryData, error: healthHistoryError } =
+    useGetUserHealthHistoryQuery();
+  const { refetch: refetchFolders } = useGetLibraryContentQuery({
+    page: 1,
+    page_size: 10,
+    folder_id: null,
+  });
+  const {
+    data: coachesData,
+    refetch: refetchCoaches,
+    isLoading: isLoadingCoaches,
+  } = useGetCoachesQuery();
+  const [getCoachProfile, { data: coachProfileData }] =
+    useLazyGetCoachProfileQuery();
+  const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
+
+  const { data: quizScore } = useGetQuizScoreQuery(documentId!);
+
+  useEffect(() => {
+    if (!documentId) return;
+    if (!quizScore?.data?.questions?.length) return;
+
+    const norm = (s?: string) =>
+      (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const allForms = Array.from(
+      document.querySelectorAll("form[id]")
+    ) as HTMLFormElement[];
+
+    const cssEscape = (v: string) =>
+      (window as any).CSS?.escape
+        ? (window as any).CSS.escape(v)
+        : v.replace(/["\\]/g, "\\$&");
+
+    const extractStepNumber = (s: string) => {
+      const m = s.match(/(\d+)$/);
+      return m?.[1] || "";
+    };
+
+    const findRootSection = (el: Element | null) =>
+      (el?.closest('[id^="quiz"]') ||
+        el?.closest('[id^="card"]') ||
+        el) as HTMLElement | null;
+
+    const getCheckFnForForm = (form: HTMLFormElement) => {
+      const root = findRootSection(form);
+      const btn = root?.querySelector<HTMLButtonElement>(
+        'button[type="button"][onclick^="checkQuiz"]'
+      );
+      if (btn) {
+        const onclick = btn.getAttribute("onclick") || "";
+        const fnNameMatch = onclick.match(/^\s*([a-zA-Z0-9_]+)\s*\(/);
+        const fnName = fnNameMatch?.[1];
+        const maybe = (window as any)[fnName as string];
+        if (typeof maybe === "function") return maybe;
+      }
+
+      const n = extractStepNumber(form.id);
+      const numbered = (window as any)[`checkQuiz${n}`];
+      if (typeof numbered === "function") return numbered;
+
+      const generic = (window as any).checkQuiz;
+      if (typeof generic === "function") return generic;
+
+      return undefined;
+    };
+
+    const applyChecksAndShowResults = () => {
+      quizScore.data.questions.forEach((q) => {
+        const want = norm(q.question_id);
+
+        let form =
+          (document.getElementById(q.question_id) as HTMLFormElement | null) ||
+          null;
+
+        if (!form) {
+          form = allForms.find((f) => norm(f.id) === want) || null;
+        }
+        if (!form) {
+          form =
+            allForms.find((f) => {
+              const fid = norm(f.id);
+              return fid.includes(want) || want.includes(fid);
+            }) || null;
+        }
+        if (!form) return;
+
+        const answer = String(q.answer);
+        const candidate = form.querySelector<HTMLInputElement>(
+          `input[type="radio"][value="${cssEscape(answer)}"]`
+        );
+        if (!candidate) return;
+
+        if (!candidate.checked) {
+          candidate.checked = true;
+          candidate.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        const checkFn = getCheckFnForForm(form);
+        try {
+          if (checkFn) checkFn();
+          else {
+            const root = findRootSection(form);
+            const resultEl =
+              (root?.querySelector('[id$="Result"]') as HTMLElement | null) ||
+              (document.querySelector(
+                `#${form.id.replace("Form", "")}Result`
+              ) as HTMLElement | null);
+            if (resultEl) {
+              resultEl.textContent = q.is_correct ? "Correct!" : "Incorrect.";
+              resultEl.style.color = q.is_correct ? "#27ae60" : "#c0392b";
+            }
+          }
+        } catch (e) {
+          console.warn("checkQuiz invocation failed:", e);
+        }
+      });
+
+      countQuizzesAndResults();
+    };
+
+    const raf = requestAnimationFrame(applyChecksAndShowResults);
+    return () => cancelAnimationFrame(raf);
+  }, [documentId, quizScore, renderedContent, scripts]);
 
   const selectedCoach = useMemo(
     () => coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
     [coaches, selectedCoachId]
   );
+
+  const [quizStatus, setQuizStatus] = useState({
+    totalQuizzes: 0,
+    completedQuizzes: 0,
+  });
+
+  const countQuizzesAndResults = () => {
+    const quizzes = document.querySelectorAll('form[id^="quiz"]');
+    const totalQuizzes = quizzes.length;
+
+    let completedQuizzes = 0;
+
+    quizzes.forEach((quiz) => {
+      const selectedOption = quiz.querySelector('input[type="radio"]:checked');
+
+      if (selectedOption) {
+        completedQuizzes += 1;
+      }
+    });
+
+    setQuizStatus({ totalQuizzes, completedQuizzes });
+  };
+
+  useEffect(() => {
+    countQuizzesAndResults();
+
+    const quizSubmitButtons = document.querySelectorAll(
+      'button[type="button"][onclick^="checkQuiz"]'
+    );
+
+    quizSubmitButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        countQuizzesAndResults();
+      });
+    });
+
+    return () => {
+      quizSubmitButtons.forEach((button) => {
+        button.removeEventListener("click", () => countQuizzesAndResults());
+      });
+    };
+  }, [selectedDocument, renderedContent]);
 
   useEffect(() => {
     if (creatorPhotoData) {
@@ -181,6 +369,30 @@ export const LibraryDocument = () => {
 
   useEffect(() => {
     if (selectedDocument) {
+      const { contentWithoutScripts, scripts } = extractScripts(
+        selectedDocument.content
+      );
+      setRenderedContent(
+        <div dangerouslySetInnerHTML={{ __html: contentWithoutScripts }} />
+      );
+      setScripts(scripts);
+    }
+  }, [selectedDocument]);
+
+  useEffect(() => {
+    scripts.forEach((scriptContent) => {
+      const script = document.createElement("script");
+      script.innerHTML = scriptContent;
+      document.body.appendChild(script);
+
+      return () => {
+        document.body.removeChild(script);
+      };
+    });
+  }, [scripts]);
+
+  useEffect(() => {
+    if (selectedDocument) {
       const strippedText = selectedDocument.content.replace(
         /<\/?[^>]+(>|$)/g,
         ""
@@ -208,21 +420,23 @@ export const LibraryDocument = () => {
   };
 
   useEffect(() => {
-    const fetchHealthHistory = async () => {
-      try {
-        dispatch(setLoading(true));
-        const data = await HealthHistoryService.getUserHealthHistory();
-        dispatch(setHealthHistory(data));
-      } catch (error: any) {
-        dispatch(setError("Failed to load user health history"));
-        console.error("Health history fetch error:", error);
-      }
-    };
-
-    if (healthHistory === undefined) {
-      fetchHealthHistory();
+    if (healthHistoryData) {
+      dispatch(setHealthHistory(healthHistoryData));
     }
-  }, [dispatch, healthHistory]);
+  }, [dispatch, healthHistoryData]);
+
+  useEffect(() => {
+    if (coachesData) {
+      setCoaches(coachesData.coaches);
+    }
+  }, [dispatch, coachesData]);
+
+  useEffect(() => {
+    if (healthHistoryError) {
+      dispatch(setError("Failed to load user health history"));
+      console.error("Health history fetch error:", healthHistoryError);
+    }
+  }, [healthHistoryError, dispatch]);
 
   useEffect(() => {
     return () => {
@@ -230,25 +444,104 @@ export const LibraryDocument = () => {
     };
   }, []);
 
-  const fetchCoaches = useCallback(async () => {
-    if (coaches.length) return;
-    setCoachesLoading(true);
-    try {
-      const data = await ClientService.getCoaches();
-      setCoaches(data.coaches);
-    } catch (e) {
-      console.error("Failed to load coaches:", e);
-    } finally {
-      setCoachesLoading(false);
-    }
-  }, [coaches.length]);
+  useEffect(() => {
+    if (!documentId) return;
+
+    const extractStepNumber = (el?: Element | null) => {
+      if (!el) return "";
+      const id = (el as HTMLElement).id || "";
+      const m = id.match(/^(card|quiz)-?(\d+)$/i) || id.match(/(\d+)$/);
+      return m?.[2] || m?.[1] || "";
+    };
+
+    const findRootSection = (btn: Element) =>
+      (btn.closest('[id^="card"]') ||
+        btn.closest('[id^="quiz"]') ||
+        btn.closest(
+          '[id$="1"],[id$="2"],[id$="3"],[id$="4"],[id$="5"],[id$="6"],[id$="7"],[id$="8"],[id$="9"]'
+        )) as HTMLElement | null;
+
+    const handleSubmitClick = async (ev: Event) => {
+      const btn = ev.currentTarget as HTMLButtonElement;
+
+      const onclick = btn.getAttribute("onclick") || "";
+      const fnNameMatch = onclick.match(/^\s*([a-zA-Z0-9_]+)\s*\(/);
+      const fnName = fnNameMatch?.[1];
+      const maybeFn = (window as any)[fnName as string];
+      if (typeof maybeFn === "function") {
+        try {
+          maybeFn();
+        } catch (e) {
+          console.warn(`${fnName}() failed:`, e);
+        }
+      }
+
+      const root = findRootSection(btn);
+      const current_card_number = extractStepNumber(root);
+
+      const form =
+        (root?.querySelector("form[id^='quiz']") as HTMLFormElement | null) ||
+        (btn.closest("form") as HTMLFormElement | null);
+
+      if (!form) return;
+
+      const question_id = form.id || "quiz-form";
+      const checked = form.querySelector<HTMLInputElement>(
+        'input[type="radio"]:checked'
+      );
+      if (!checked) return;
+
+      const answer = checked.value;
+
+      const resultEl =
+        (root?.querySelector('[id$="Result"]') as HTMLElement | null) ||
+        (document.querySelector(
+          `#${question_id.replace("Form", "")}Result`
+        ) as HTMLElement | null);
+      let is_correct = false;
+      if (resultEl) {
+        const txt = (resultEl.textContent || "").trim().toLowerCase();
+        is_correct = txt.startsWith("correct!");
+      }
+
+      const payload: ContentStatus = {
+        content_id: documentId,
+        status_data: {
+          status: "read",
+          is_archived: false,
+          current_card_number,
+          quiz_attempt: {
+            question_id,
+            answer,
+            is_correct,
+          },
+        },
+      };
+
+      try {
+        await updateStatus(payload);
+      } catch (e) {
+        console.error("updateStatus failed:", e);
+      }
+    };
+
+    const buttons = Array.from(
+      document.querySelectorAll('button[type="button"][onclick^="checkQuiz"]')
+    );
+    buttons.forEach((b) => b.addEventListener("click", handleSubmitClick));
+
+    return () => {
+      buttons.forEach((b) => b.removeEventListener("click", handleSubmitClick));
+    };
+  }, [documentId, renderedContent, updateStatus]);
 
   const fetchPhotoUrl = useCallback(
     async (coachId: string, filename?: string | null) => {
       if (!filename) return null;
       if (photoUrls[coachId]) return photoUrls[coachId];
       try {
-        const blob = await ClientService.downloadCoachPhoto(coachId, filename);
+        const { data: blob } = await downloadCoachPhoto({ coachId, filename });
+        if (!blob) return null;
         const url = URL.createObjectURL(blob);
         setPhotoUrls((prev) => ({ ...prev, [coachId]: url }));
         return url;
@@ -267,10 +560,13 @@ export const LibraryDocument = () => {
 
       try {
         if (!coachProfiles[coach.coach_id]) {
-          const profile = await ClientService.getCoachProfile(coach.coach_id);
-          setCoachProfiles((p) => ({ ...p, [coach.coach_id]: profile }));
+          getCoachProfile(coach.coach_id);
+          setCoachProfiles((p) => ({
+            ...p,
+            [coach.coach_id]: coachProfileData,
+          }));
           const fn = getHeadshotFilename(
-            profile?.detailed_profile?.headshot_url ??
+            coachProfileData?.detailed_profile?.headshot_url ??
               coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
@@ -291,9 +587,9 @@ export const LibraryDocument = () => {
   const onProvidersOpenChange = useCallback(
     (open: boolean) => {
       setProvidersOpen(open);
-      if (open) void fetchCoaches();
+      if (open) refetchCoaches();
     },
-    [fetchCoaches]
+    [setProvidersOpen, refetchCoaches]
   );
 
   useEffect(() => {
@@ -314,17 +610,31 @@ export const LibraryDocument = () => {
     });
   }, [providersOpen, coaches, photoUrls, fetchPhotoUrl]);
 
-  const onStatusChange = async (status: string) => {
+  const onStatusChange = async (
+    status: "read" | "saved_for_later" | "currently_reading"
+  ) => {
+    if (
+      status === "read" &&
+      quizStatus.completedQuizzes !== quizStatus.totalQuizzes
+    ) {
+      toast({
+        title: "Incomplete quizzes",
+        description:
+          "Please answer all the quizzes before marking this document as read.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (documentId) {
       const newStatus: ContentStatus = {
         content_id: documentId,
-        status: status,
+        status_data: { status: status },
       };
       await updateStatus(newStatus);
+      refetch();
     }
-
-    const folders = await ClientService.getLibraryContent();
-    dispatch(setFolders(folders.folders));
+    refetchFolders();
   };
 
   useEffect(() => {
@@ -369,7 +679,7 @@ export const LibraryDocument = () => {
             </div>
 
             <ScrollArea className="max-h-[360px]">
-              {coachesLoading ? (
+              {isLoadingCoaches ? (
                 <div className="p-4 text-sm text-muted-foreground">
                   Loading…
                 </div>
@@ -386,14 +696,14 @@ export const LibraryDocument = () => {
                       >
                         <button
                           onClick={() => handleOpenCoach(c)}
-                          className="w-full text-left flex items-center gap-3"
+                          className="flex items-center w-full gap-3 text-left"
                         >
                           <div className="h-10 w-10 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
                             {photo ? (
                               <img
                                 src={photo}
                                 alt={name}
-                                className="h-full w-full object-cover"
+                                className="object-cover w-full h-full"
                               />
                             ) : (
                               name?.slice(0, 2).toUpperCase()
@@ -419,13 +729,13 @@ export const LibraryDocument = () => {
 
         <Dialog open={coachDialogOpen} onOpenChange={setCoachDialogOpen}>
           <DialogContent className="max-w-[560px] p-0 rounded-xl overflow-hidden">
-            <div className="p-4 flex items-center gap-3 border-b">
+            <div className="flex items-center gap-3 p-4 border-b">
               <div className="h-12 w-12 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
                 {selectedCoachId && photoUrls[selectedCoachId] ? (
                   <img
                     src={photoUrls[selectedCoachId]}
                     alt={selectedCoach?.basic_info?.name || "Coach"}
-                    className="h-full w-full object-cover"
+                    className="object-cover w-full h-full"
                   />
                 ) : (
                   (selectedCoach?.basic_info?.name || "C")
@@ -596,7 +906,7 @@ export const LibraryDocument = () => {
       )}
       {isLoadingDocument && (
         <div className="flex items-center gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <span className="inline-flex h-5 w-5 items-center justify-center">
+          <span className="inline-flex items-center justify-center w-5 h-5">
             <MaterialIcon
               iconName="progress_activity"
               className="text-blue-600 animate-spin"
@@ -605,7 +915,7 @@ export const LibraryDocument = () => {
           Please wait, we are loading the information...
         </div>
       )}
-      <div className="flex flex-row w-full h-full gap-6 xl:h-[calc(100vh-48px)] relative">
+      <div className="flex flex-row w-full xl:h-[80vh] gap-6 relative">
         <div className="hidden xl:block">
           <ChatActions
             initialStatus={selectedDocument?.readStatus}
@@ -617,6 +927,9 @@ export const LibraryDocument = () => {
             onReadAloud={handleReadAloud}
             isReadingAloud={isReadingAloud}
             setSharePopup={setSharePopup}
+            changeStatusDisabled={
+              quizStatus.completedQuizzes !== quizStatus.totalQuizzes
+            }
           />
         </div>
 
@@ -627,7 +940,7 @@ export const LibraryDocument = () => {
             {isLoadingDocument ? (
               <DocumentLoadingSkeleton />
             ) : selectedDocument ? (
-              <div className="p-[24px] rounded-[16px] bg-white xl:h-[calc(100vh-48px)] xl:overflow-y-auto">
+              <div className="p-[24px] rounded-[16px] bg-white xl:overflow-y-auto">
                 <div className="prose-sm prose max-w-none">
                   {showTooltip && tooltipPosition && (
                     <div
@@ -647,7 +960,7 @@ export const LibraryDocument = () => {
                       </button>
                     </div>
                   )}
-                  {parse(selectedDocument.content)}
+                  {renderedContent}
                 </div>
               </div>
             ) : (

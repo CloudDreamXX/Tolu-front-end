@@ -11,11 +11,11 @@ import {
   TooltipTrigger,
 } from "shared/ui";
 import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
-import { Footer } from "../../Footer";
 import { HeaderOnboarding } from "./components";
 import { buttons } from "./mock";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
+import { MultiSelectField } from "widgets/MultiSelectField";
 
 export const OnboardingMain = () => {
   const nav = useNavigate();
@@ -24,7 +24,6 @@ export const OnboardingMain = () => {
   const [otherText, setOtherText] = useState("");
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const state = useSelector((state: RootState) => state.coachOnboarding);
 
   const dispatch = useDispatch();
@@ -56,24 +55,6 @@ export const OnboardingMain = () => {
     setSelectedButtons(nextSelected);
     setOtherText(firstCustom ?? "");
   }, [state?.primary_niches, allOptions]);
-
-  const handleButtonClick = (buttonText: string) => {
-    setSelectedButtons((prevSelected) => {
-      const isSelected = prevSelected.includes(buttonText);
-
-      if (isSelected) {
-        const updated = prevSelected.filter((item) => item !== buttonText);
-        dispatch(updateCoachField({ key: "primary_niches", value: updated }));
-        return updated;
-      }
-
-      if (prevSelected.length >= 5) return prevSelected;
-
-      const updated = [...prevSelected, buttonText];
-      dispatch(updateCoachField({ key: "primary_niches", value: updated }));
-      return updated;
-    });
-  };
 
   const isOtherSelected = () => {
     return selectedButtons.includes("Other");
@@ -108,9 +89,32 @@ export const OnboardingMain = () => {
     }
   };
 
+  const handleSelectionChange = (updated: string[]) => {
+    setSelectedButtons(updated);
+
+    let valueToSave = [...updated];
+
+    if (updated.includes("Other") && otherText.trim()) {
+      valueToSave = updated
+        .filter((b) => b !== "Other")
+        .concat(otherText.trim());
+    }
+
+    dispatch(updateCoachField({ key: "primary_niches", value: valueToSave }));
+  };
+
+  const handleOtherChange = (text: string) => {
+    setOtherText(text);
+    const updatedButtons = selectedButtons.includes("Other")
+      ? [...selectedButtons.filter((b) => b !== "Other"), text.trim()]
+      : selectedButtons;
+    dispatch(
+      updateCoachField({ key: "primary_niches", value: updatedButtons })
+    );
+  };
+
   return (
     <AuthPageWrapper>
-      <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={1} />
       <main
         className={`flex flex-col items-center flex-1 justify-center gap-[32px] md:gap-[60px] self-stretch bg-white py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0
@@ -122,90 +126,16 @@ export const OnboardingMain = () => {
         </h3>
 
         <section className="w-full lg:w-[900px] items-center justify-center flex flex-col">
-          {/* Dropdown Multi-Select */}
-          <div className="relative">
-            <div
-              className="flex justify-between items-center w-full md:w-[620px] py-[11px] px-[16px] rounded-[8px] border bg-white cursor-pointer"
-              onClick={() => setIsDropdownOpen((prev) => !prev)}
-            >
-              <div className="flex flex-wrap gap-[8px]">
-                {selectedButtons.length === 0 && (
-                  <span className="text-[#5F5F65]">
-                    Select one or more options
-                  </span>
-                )}
-                {selectedButtons.map((buttonText) => (
-                  <span
-                    key={buttonText}
-                    className="border border-[#CBCFD8] px-[16px] py-[6px] rounded-[6px] flex items-center gap-2"
-                  >
-                    {buttonText}
-                    <button
-                      type="button"
-                      className="ml-1"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const updated = selectedButtons.filter(
-                          (s) => s !== buttonText
-                        );
-                        setSelectedButtons(updated);
-                        dispatch(
-                          updateCoachField({
-                            key: "primary_niches",
-                            value: updated,
-                          })
-                        );
-                      }}
-                    >
-                      &times;
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="17"
-                viewBox="0 0 16 17"
-                fill="none"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M11.7667 6.33422C11.4542 6.0218 10.9477 6.0218 10.6353 6.33422L8.00098 8.96853L5.36666 6.33422C5.05424 6.0218 4.54771 6.0218 4.23529 6.33422C3.92287 6.64664 3.92287 7.15317 4.23529 7.46559L7.43529 10.6656C7.74771 10.978 8.25424 10.978 8.56666 10.6656L11.7667 7.46559C12.0791 7.15317 12.0791 6.64664 11.7667 6.33422Z"
-                  fill="#1D1D1F"
-                />
-              </svg>
-            </div>
-
-            {isDropdownOpen && (
-              <div className="md:absolute top-full mt-1 left-0 w-full max-h-[174px] overflow-y-auto bg-[#FAFAFA] rounded-md shadow-md flex flex-col gap-[8px]">
-                {customButtons.map((row, rowIdx) => (
-                  <div key={rowIdx} className="flex flex-col">
-                    {row.map((buttonText) => {
-                      const isSelected = selectedButtons.includes(buttonText);
-
-                      return (
-                        <div
-                          key={buttonText}
-                          onClick={() => handleButtonClick(buttonText)}
-                          className="cursor-pointer px-[12px] py-[15px] hover:bg-[#F2F2F2] hover:text-[#1C63DB] flex items-center gap-[12px]"
-                        >
-                          <span className="w-[20px] h-[20px] flex items-center justify-center">
-                            <MaterialIcon
-                              iconName={
-                                isSelected ? "check" : "check_box_outline_blank"
-                              }
-                            />
-                          </span>
-                          {buttonText}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="md:px-[24px] xl:px-0 w-full">
+            <MultiSelectField
+              label=""
+              options={[...customButtons.flat().map((b) => ({ label: b }))]}
+              selected={selectedButtons}
+              onChange={handleSelectionChange}
+              className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+              labelClassName="text-[16px] font-medium"
+              height="h-[100px] md:h-[200px] xl:h-[400px]"
+            />
           </div>
 
           {isOtherSelected() && (
@@ -213,9 +143,9 @@ export const OnboardingMain = () => {
               <input
                 type="text"
                 value={otherText}
-                onChange={(e) => setOtherText(e.target.value)}
+                onChange={(e) => handleOtherChange(e.target.value)}
                 placeholder="Please specify your niche"
-                className="peer w-full md:w-[620px] py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
+                className="peer w-full md:w-[620px] py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DBDEE1] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
               />
             </div>
           )}

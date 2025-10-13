@@ -2,13 +2,16 @@ import {
   Client,
   ClientDetails,
   ClientProfile,
-  ClientsResponse,
-  CoachService,
-  ShareContentData,
+  useShareContentMutation,
+  useRevokeContentMutation,
+  useDeleteClientMutation,
+  useEditClientMutation,
+  useGetManagedClientsQuery,
+  useInviteClientMutation,
+  useLazyGetClientInfoQuery,
+  useLazyGetClientProfileQuery,
 } from "entities/coach";
-import { RootState } from "entities/store";
 import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast } from "shared/lib";
 import {
@@ -124,22 +127,24 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
 
-  const token = useSelector((state: RootState) => state.user.token);
+  const [inviteClient] = useInviteClientMutation();
+  const [deleteClient] = useDeleteClientMutation();
+  const [editClient] = useEditClientMutation();
+  const [getClientInfo] = useLazyGetClientInfoQuery();
+  const [getClientProfile] = useLazyGetClientProfileQuery();
+  const { data: clientsData, refetch: refetchClients } =
+    useGetManagedClientsQuery();
+  const [shareContent] = useShareContentMutation();
+  const [revokeContent] = useRevokeContentMutation();
 
   useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const data: ClientsResponse = await CoachService.getManagedClients();
-        const activeClients = data.clients.filter(
-          (client) => client.status === "active"
-        );
-        setClients(activeClients);
-      } catch (error) {
-        console.error("Error fetching clients:", error);
-      }
-    };
-    fetchClients();
-  }, [token]);
+    if (clientsData) {
+      const activeClients = clientsData.clients.filter(
+        (client) => client.status === "active"
+      );
+      setClients(activeClients);
+    }
+  }, [clientsData, setClients]);
 
   useEffect(() => {
     if (initialSelectedClientsId) {
@@ -212,10 +217,10 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
       if (revokeIds.length > 0) {
         await Promise.all(
           revokeIds.map((id) =>
-            CoachService.revokeContent({
+            revokeContent({
               content_id: documentId,
               client_id: id,
-            })
+            }).unwrap()
           )
         );
       }
@@ -223,13 +228,12 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
       const shareIds = tempArray.filter((id) => !prevSet.has(id));
       if (shareIds.length > 0) {
         await Promise.all(
-          shareIds.map((clientId) => {
-            const data: ShareContentData = {
+          shareIds.map((clientId) =>
+            shareContent({
               content_id: documentId,
               client_id: clientId,
-            };
-            return CoachService.shareContent(data);
-          })
+            }).unwrap()
+          )
         );
       }
 
@@ -246,10 +250,9 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
 
   const handleClientModalSave = async () => {
     try {
-      await CoachService.inviteClient(newClient);
+      await inviteClient({ payload: newClient });
       setShowAddClientModal(false);
-      const updatedClients = await CoachService.getManagedClients();
-      setClients(updatedClients.clients);
+      refetchClients();
     } catch (err) {
       console.error("Error adding new client:", err);
     }
@@ -319,11 +322,15 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
 
   const handleSelectClient = async (clientId: string) => {
     try {
-      const fullClient = await CoachService.getClientProfile(clientId, token);
-      setSelectedFullClient(fullClient);
+      const { data: fullClient } = await getClientProfile(clientId);
+      if (fullClient) {
+        setSelectedFullClient(fullClient);
+      }
 
-      const editClientInfo = await CoachService.getClientInfo(clientId, token);
-      setClientInfo(editClientInfo.client);
+      const { data: editClientInfo } = await getClientInfo(clientId);
+      if (editClientInfo && editClientInfo.client) {
+        setClientInfo(editClientInfo.client);
+      }
     } catch (e) {
       console.error("Error loading client profile", e);
       toast({
@@ -338,9 +345,8 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
     if (!selectedFullClient) return;
 
     try {
-      await CoachService.deleteClient(selectedFullClient.client_info.id, token);
-      const updatedClients = await CoachService.getManagedClients();
-      setClients(updatedClients.clients);
+      await deleteClient(selectedFullClient.client_info.id).unwrap();
+      refetchClients();
       toast({ title: "Deleted successfully" });
     } catch (err) {
       console.error("Failed to delete client", err);
@@ -497,11 +503,10 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
           setActiveEditTab={setActiveEditTab}
           onCancel={() => setEditModal(false)}
           onSave={async () => {
-            await CoachService.editClient(
-              selectedFullClient.client_info.id,
-              clientInfo,
-              token
-            );
+            await editClient({
+              clientId: selectedFullClient.client_info.id,
+              payload: clientInfo,
+            });
             setEditModal(false);
             cleanState();
           }}

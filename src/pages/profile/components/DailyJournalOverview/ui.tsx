@@ -2,7 +2,10 @@ import { Button } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { useEffect, useState } from "react";
 import { DailyJournal } from "widgets/dayli-journal";
-import { SymptomData, SymptomsTrackerService } from "entities/symptoms-tracker";
+import {
+  SymptomData,
+  useGetSymptomByDateQuery,
+} from "entities/symptoms-tracker";
 import { toast } from "shared/lib";
 
 type Props = {
@@ -13,28 +16,26 @@ export const DailyJournalOverview: React.FC<Props> = ({ date }) => {
   const [isFullOpen, setIsFullOpen] = useState<boolean>(false);
   const [symptomsData, setSymptomsData] = useState<SymptomData | null>(null);
 
-  const fetchSymptoms = async () => {
-    if (!date) return;
-    try {
-      const response = await SymptomsTrackerService.getSymptomByDate(
-        date.split("T")[0]
-      );
-      const data: SymptomData[] = response?.data || [];
-      setSymptomsData(data.length > 0 ? data[0] : null);
-    } catch (error) {
-      console.error("Error fetching symptoms:", error);
-      toast({
-        variant: "destructive",
-        title: "Failed to load symptoms data",
-        description:
-          "Could not retrieve your symptoms data. Please try again later.",
-      });
+  const { data, refetch } = useGetSymptomByDateQuery(
+    date ? date.split("T")[0] : "",
+    {
+      skip: !date,
     }
-  };
+  );
 
   useEffect(() => {
-    fetchSymptoms();
-  }, [date]);
+    if (data) {
+      const symptomsData: SymptomData[] = data?.data || [];
+      setSymptomsData(symptomsData.length > 0 ? symptomsData[0] : null);
+    }
+  }, [data]);
+
+  const handleFetchSymptoms = () => {
+    if (date) {
+      refetch();
+      toast({ title: "Symptoms updated" });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,7 +48,7 @@ export const DailyJournalOverview: React.FC<Props> = ({ date }) => {
         </div>
         <Button
           variant={"blue2"}
-          onClick={fetchSymptoms}
+          onClick={handleFetchSymptoms}
           className="hidden md:flex px-8 text-base font-semibold text-blue-700"
         >
           <MaterialIcon iconName="replay" className="text-blue-700" />
@@ -157,7 +158,7 @@ export const DailyJournalOverview: React.FC<Props> = ({ date }) => {
         <Button
           variant={"blue2"}
           className="md:hidden flex px-[8px] text-[14px] font-semibold text-blue-700"
-          onClick={fetchSymptoms}
+          onClick={handleFetchSymptoms}
         >
           <MaterialIcon iconName="replay" className="text-blue-700" />
           Update results

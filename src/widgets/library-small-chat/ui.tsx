@@ -11,7 +11,7 @@ import {
   setLastChatId,
   setMessagesToChat,
 } from "entities/client/lib";
-import { CoachService } from "entities/coach";
+import { CoachService, useLazyGetSessionByIdQuery } from "entities/coach";
 import { IDocument } from "entities/document";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
@@ -316,6 +316,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     }
   }, [isValid]);
 
+  const [getSessionById] = useLazyGetSessionByIdQuery();
+
   const loadExistingSession = async (chatId: string) => {
     setIsLoadingSession(true);
     setError(null);
@@ -323,10 +325,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     try {
       if (activeChatKey === "Create content") {
-        const sessionData = await CoachService.getSessionById(chatId);
+        const sessionData = await getSessionById(chatId);
 
-        if (sessionData && sessionData.search_results.length > 0) {
-          sessionData.search_results.forEach((item) => {
+        if (
+          sessionData &&
+          sessionData.data?.search_results &&
+          sessionData.data?.search_results.length > 0
+        ) {
+          sessionData.data?.search_results.forEach((item) => {
             if (item.query) {
               chatMessages.push({
                 id: `user-${item.id}`,
@@ -556,6 +562,44 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         }
       };
 
+      // if (isSwitch(SWITCH_KEYS.CARD)) {
+      //   const res = await CoachService.aiLearningCardSearch(
+      //     {
+      //       user_prompt: message,
+      //       is_new: !currentChatId,
+      //       chat_id: currentChatId,
+      //       regenerate_id: null,
+      //       chat_title: "",
+      //       instructions: instruction,
+      //     },
+      //     folderState!,
+      //     images,
+      //     pdf,
+      //     clientId,
+      //     filesFromLibrary,
+      //     newAbortController.signal,
+      //     processChunk,
+      //     processFinal
+      //   );
+      //   await loadExistingSession(res.documentId);
+
+      //   if (res.chatId && res.documentId) {
+      //     const targetPath = `/content-manager/library/folder/${folderState}/chat/${res.chatId}`;
+
+      //     if (location.pathname === targetPath) {
+      //       onDocumentRefresh?.(res.documentId, res.chatId);
+      //     } else {
+      //       navigate(targetPath, {
+      //         state: {
+      //           selectedSwitch: SWITCH_KEYS.CARD,
+      //           lastId: res.chatId,
+      //           docId: res.documentId,
+      //           folderId: folderState,
+      //         },
+      //       });
+      //     }
+      //   }
+      // } else
       if (isSwitch(SWITCH_KEYS.CREATE)) {
         const res = await CoachService.aiLearningSearch(
           {
@@ -961,6 +1005,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               disabled={
                 isSearching ||
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
+                // (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
                 message === ""
               }
               selectedText={selectedText}
@@ -970,6 +1015,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               setNewMessage={setMessage}
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) ? (
+                  // || isSwitch(SWITCH_KEYS.CARD)
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
                       <PopoverAttach

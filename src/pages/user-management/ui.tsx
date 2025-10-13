@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { useEffect } from "react";
 import { useGetAllUsersQuery, User } from "entities/admin";
-import { toast } from "shared/lib";
+import { phoneMask, toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { fmtDate } from "pages/feedback-hub";
+import { FiltersPopup, UserFilters } from "widgets/filters-popup";
+import { Button } from "shared/ui";
 
 const PAGE_SIZE = 10;
 
@@ -15,23 +17,68 @@ const ROLE_MAP: Record<number, string> = {
   4: "Reviewer",
 };
 
+const defaultFilters: UserFilters = {
+  role: "All",
+  signup: {},
+  sort: "newest",
+};
+
 export const UserManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = useGetAllUsersQuery();
   const usersData: User[] = data?.users ?? [];
+  const [isFiltersOpen, setFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState<UserFilters>(defaultFilters);
+  const [draftFilters, setDraftFilters] = useState<UserFilters>(defaultFilters);
 
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    if (!term) return usersData;
-    return usersData.filter((u) => {
-      return (
+
+    let result = usersData.filter((u) => {
+      const matchesSearch =
+        !term ||
         (u.name || "").toLowerCase().includes(term) ||
         (u.email || "").toLowerCase().includes(term) ||
-        (u.phone_number || "").toLowerCase().includes(term)
-      );
+        (u.phone_number || "").toLowerCase().includes(term);
+
+      const matchesRole =
+        filters.role === "All" || ROLE_MAP[u.role] === filters.role;
+
+      const matchesDate = (() => {
+        if (!filters.signup.start && !filters.signup.end) return true;
+        if (!u.signup_date) return false;
+
+        const t = new Date(u.signup_date).getTime();
+        const s = filters.signup.start
+          ? new Date(filters.signup.start).setHours(0, 0, 0, 0)
+          : -Infinity;
+        const e = filters.signup.end
+          ? new Date(filters.signup.end).setHours(23, 59, 59, 999)
+          : Infinity;
+
+        return t >= s && t <= e;
+      })();
+
+      return matchesSearch && matchesRole && matchesDate;
     });
-  }, [usersData, searchTerm]);
+
+    if (filters.sort === "newest") {
+      result = result.sort(
+        (a, b) =>
+          new Date(b.signup_date ?? 0).getTime() -
+          new Date(a.signup_date ?? 0).getTime()
+      );
+    } else {
+      result = result.sort(
+        (a, b) =>
+          new Date(a.signup_date ?? 0).getTime() -
+          new Date(b.signup_date ?? 0).getTime()
+      );
+    }
+
+    return result;
+  }, [usersData, searchTerm, filters]);
 
   const paginatedData = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
@@ -39,6 +86,12 @@ export const UserManagement: React.FC = () => {
   }, [page, filteredUsers]);
 
   const totalPages = Math.ceil(filteredUsers.length / PAGE_SIZE) || 1;
+
+  const onApplyFilters = () => {
+    setFilters(draftFilters);
+    setPage(1);
+    setFiltersOpen(false);
+  };
 
   useEffect(() => {
     if (error) {
@@ -87,7 +140,18 @@ export const UserManagement: React.FC = () => {
           Users
         </h1>
         <div className="flex md:flex-row flex-row gap-2 md:gap-[20px] lg:gap-2">
-          <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[32px]">
+          <Button
+            variant={"light-blue"}
+            className="text-[#1C63DB] text-[16px] font-semibold py-[10px] px-[16px]"
+            onClick={() => {
+              setDraftFilters(filters);
+              setFiltersOpen(true);
+            }}
+          >
+            <MaterialIcon iconName="page_info" />
+            Filter
+          </Button>
+          <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[16px] py-[10px] bg-white h-[40px]">
             <MaterialIcon iconName="search" size={16} />
             <input
               placeholder="Search"
@@ -110,11 +174,11 @@ export const UserManagement: React.FC = () => {
           <div className="hidden overflow-x-auto md:block">
             <div className="min-w-[1800px]">
               <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
+                <div className="px-[4px]">Sign Up date</div>
                 <div className="px-[4px]">Name</div>
+                <div className="px-[4px]">Account type</div>
                 <div className="px-[4px]">Email</div>
                 <div className="px-[4px]">Phone number</div>
-                <div className="px-[4px]">Sign Up date</div>
-                <div className="px-[4px]">Role</div>
               </div>
 
               <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
@@ -123,18 +187,20 @@ export const UserManagement: React.FC = () => {
                     key={index}
                     className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
                   >
-                    <div className="px-[4px]">{user.name}</div>
-                    <div className="px-[4px]">{user.email}</div>
-                    <div className="px-[4px]">{user.phone_number}</div>
                     <div className="px-[4px]">
                       {fmtDate(user.signup_date) || "-"}
                     </div>
+                    <div className="px-[4px]">{user.name}</div>
                     <div>
                       <span
                         className={`text-sm font-semibold px-2 py-1 rounded-full ${getRoleStyle(user.role)}`}
                       >
                         {ROLE_MAP[user.role] ?? "Unknown"}
                       </span>
+                    </div>
+                    <div className="px-[4px]">{user.email}</div>
+                    <div className="px-[4px]">
+                      {user.phone_number ? phoneMask(user.phone_number) : "-"}
                     </div>
                   </div>
                 ))}
@@ -234,6 +300,16 @@ export const UserManagement: React.FC = () => {
             <MaterialIcon iconName="arrow_right_alt" />
           </button>
         </div>
+      )}
+
+      {isFiltersOpen && (
+        <FiltersPopup
+          mode="users"
+          draftFilters={draftFilters}
+          setDraftFilters={setDraftFilters}
+          onSave={onApplyFilters}
+          onClose={() => setFiltersOpen(false)}
+        />
       )}
     </div>
   );

@@ -95,8 +95,8 @@ export interface AIChatMessage {
   is_new: boolean;
   chat_id?: string | null;
   regenerate_id?: string | null;
-  chat_title: string;
-  instructions: string | null;
+  chat_title?: string;
+  instructions?: string | null;
 }
 
 export interface Status {
@@ -246,7 +246,8 @@ export interface PersonalInfo {
   email: string;
   phone: string | null;
   date_of_birth: string | null;
-  location: string | null;
+  location?: string | null;
+  country?: string | null;
 }
 
 export interface HealthSummary {

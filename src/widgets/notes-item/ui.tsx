@@ -1,4 +1,5 @@
-import { ChatNoteResponse, ChatService } from "entities/chat";
+import { ChatNoteResponse } from "entities/chat";
+import { useGetUploadedChatFileUrlQuery } from "entities/chat/api";
 import {
   clearDownloadProgress,
   setDownloadProgress,
@@ -41,20 +42,26 @@ const FileBadge = ({
     (state: RootState) => state.downloads.byKey[`dw${normalized}`]
   );
 
+  const { data: fileObjectUrl } = useGetUploadedChatFileUrlQuery(
+    { fileUrl: normalized ?? "" },
+    { skip: !normalized }
+  );
+
   const onDownloadClick = async () => {
-    if (!normalized) return;
+    if (!fileObjectUrl || !normalized) return;
+
     setLoading(true);
     try {
-      const blob = await ChatService.getFileOfChatNotes(normalized, (pct) => {
-        dispatch(setDownloadProgress({ key: `dw${normalized}`, pct }));
-      });
-      const objUrl = URL.createObjectURL(blob);
+      dispatch(setDownloadProgress({ key: `dw${normalized}`, pct: 100 }));
+
       const a = document.createElement("a");
-      a.href = objUrl;
+      a.href = fileObjectUrl;
       a.download = fi.file_name;
       a.click();
-      URL.revokeObjectURL(objUrl);
-      dispatch(clearDownloadProgress(`dw${normalized}`));
+
+      setTimeout(() => {
+        dispatch(clearDownloadProgress(`dw${normalized}`));
+      }, 400);
     } finally {
       setLoading(false);
     }

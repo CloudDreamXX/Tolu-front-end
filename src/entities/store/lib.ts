@@ -1,10 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { chatApi } from "entities/chat/chatApi";
+import { chatApi } from "entities/chat/api";
 import chatReducer from "entities/chat/chatsSlice";
 import downloadsReducer from "entities/chat/downloadSlice";
 import messagesReducer from "entities/chat/messagesSlice";
 import { clientReducer } from "entities/client/lib";
-import { filesLibraryApi } from "entities/files-library/filesLibraryApi";
+import { filesLibraryApi } from "entities/files-library/api";
 import { folderReducer } from "entities/folder";
 import { healthHistoryReducer } from "entities/health-history/lib";
 import { persistReducer, persistStore } from "redux-persist";
@@ -17,6 +17,12 @@ import coachOnboardingReducer from "./coachOnboardingSlice";
 import { adminApi } from "entities/admin";
 import { contentApi } from "entities/content";
 import { documentsApi } from "entities/document";
+import { symptomsTrackerApi } from "entities/symptoms-tracker";
+import { healthHistoryApi } from "entities/health-history";
+import { notificationsApi } from "entities/notifications";
+import { clientApi } from "entities/client";
+import { coachApi } from "entities/coach";
+import { foldersApi } from "entities/folder";
 
 const userPersistConfig = {
   key: "user",
@@ -30,21 +36,27 @@ const clientMoodPersistConfig = {
 
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
+  clientMood: persistReducer(clientMoodPersistConfig, clientMoodReducer),
   coachOnboarding: coachOnboardingReducer,
   clientOnboarding: clientOnboardingReducer,
-  clientMood: persistReducer(clientMoodPersistConfig, clientMoodReducer),
   clientGlucose: clientGlucoseReducer,
   folder: folderReducer,
   healthHistory: healthHistoryReducer,
   client: clientReducer,
   chats: chatReducer,
   messages: messagesReducer,
+  downloads: downloadsReducer,
   [chatApi.reducerPath]: chatApi.reducer,
   [filesLibraryApi.reducerPath]: filesLibraryApi.reducer,
-  downloads: downloadsReducer,
   [adminApi.reducerPath]: adminApi.reducer,
   [contentApi.reducerPath]: contentApi.reducer,
   [documentsApi.reducerPath]: documentsApi.reducer,
+  [symptomsTrackerApi.reducerPath]: symptomsTrackerApi.reducer,
+  [healthHistoryApi.reducerPath]: healthHistoryApi.reducer,
+  [notificationsApi.reducerPath]: notificationsApi.reducer,
+  [clientApi.reducerPath]: clientApi.reducer,
+  [coachApi.reducerPath]: coachApi.reducer,
+  [foldersApi.reducerPath]: foldersApi.reducer,
 });
 
 export const store = configureStore({
@@ -66,7 +78,13 @@ export const store = configureStore({
       .concat(contentApi.middleware)
       .concat(documentsApi.middleware)
       .concat(chatApi.middleware)
-      .concat(filesLibraryApi.middleware),
+      .concat(filesLibraryApi.middleware)
+      .concat(symptomsTrackerApi.middleware)
+      .concat(healthHistoryApi.middleware)
+      .concat(notificationsApi.middleware)
+      .concat(clientApi.middleware)
+      .concat(coachApi.middleware)
+      .concat(foldersApi.middleware),
 });
 
 export const persistor = persistStore(store);

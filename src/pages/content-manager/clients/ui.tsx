@@ -1,14 +1,16 @@
 import { ChatSocketService } from "entities/chat";
 import {
-  Client,
   ClientDetails,
   ClientProfile,
-  CoachService,
   InviteClientPayload,
+  useDeleteClientMutation,
+  useEditClientMutation,
+  useGetManagedClientsQuery,
+  useInviteClientMutation,
+  useLazyGetClientInfoQuery,
+  useLazyGetClientProfileQuery,
 } from "entities/coach";
-import { RootState } from "entities/store";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ConfirmIcon from "shared/assets/icons/confirm";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -94,9 +96,6 @@ export const ContentManagerClients: React.FC = () => {
   const [editModal, setEditModal] = useState<boolean>(false);
   const [addModal, setAddModal] = useState<boolean>(false);
   const [activeEditTab, setActiveEditTab] = useState<string>("editClientInfo");
-  const [clientsData, setClientsData] = useState<Client[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const token = useSelector((state: RootState) => state.user.token);
   const { isMobile, isTablet } = usePageWidth();
   const [popupClientId, setPopupClientId] = useState<string | null>(null);
   const [inviteSuccessPopup, setInviteSuccessPopup] = useState<boolean>(false);
@@ -106,6 +105,17 @@ export const ContentManagerClients: React.FC = () => {
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const {
+    data: clientsData,
+    refetch: refetchClients,
+    isLoading: loading,
+  } = useGetManagedClientsQuery();
+  const [inviteClient] = useInviteClientMutation();
+  const [deleteClient] = useDeleteClientMutation();
+  const [editClient] = useEditClientMutation();
+  const [getClientInfo] = useLazyGetClientInfoQuery();
+  const [getClientProfile] = useLazyGetClientProfileQuery();
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -132,31 +142,10 @@ export const ContentManagerClients: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchClients = async () => {
-      setLoading(true);
-      try {
-        const response = await CoachService.getManagedClients();
-        setClientsData(response.clients);
-      } catch (error) {
-        console.error("Error fetching clients", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to fetch clients",
-          description: "Failed to fetch clients. Please try again.",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClients();
-  }, []);
-
   const filteredClients = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return clientsData;
-    return clientsData.filter((c) => {
+    if (!q) return clientsData?.clients;
+    return clientsData?.clients.filter((c) => {
       const name = (c.name ?? "").toLowerCase();
       const status = (c.status ?? "").toLowerCase();
       return name.includes(q) || status.includes(q);
@@ -165,10 +154,10 @@ export const ContentManagerClients: React.FC = () => {
 
   const paginatedClients = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredClients.slice(start, start + PAGE_SIZE);
+    return filteredClients?.slice(start, start + PAGE_SIZE);
   }, [filteredClients, currentPage]);
 
-  const totalPages = Math.ceil(filteredClients.length / PAGE_SIZE);
+  const totalPages = Math.ceil((filteredClients?.length ?? 0) / PAGE_SIZE);
 
   const handleCancelEdit = () => {
     setConfirmDiscard(true);
@@ -252,21 +241,19 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   const handleEditSuccess = async () => {
-    await CoachService.editClient(
-      selectedClient.client_info.id,
-      clientInfo,
-      token
-    );
+    editClient({
+      clientId: selectedClient.client_info.id,
+      payload: clientInfo,
+    });
     setEditModal(false);
     cleanState();
   };
 
   const handleInviteClient = async (formValues: InviteClientPayload) => {
     try {
-      await CoachService.inviteClient(formValues);
+      inviteClient({ payload: formValues });
       setAddModal(false);
-      const updatedClients = await CoachService.getManagedClients();
-      setClientsData(updatedClients.clients);
+      refetchClients();
       toast({
         title: "Invited successfully",
       });
@@ -282,11 +269,15 @@ export const ContentManagerClients: React.FC = () => {
 
   const handleSelectClient = async (clientId: string) => {
     try {
-      const fullClient = await CoachService.getClientProfile(clientId, token);
-      setSelectedClient(fullClient);
+      const { data: fullClient } = await getClientProfile(clientId);
+      if (fullClient) {
+        setSelectedClient(fullClient);
+      }
 
-      const editClientInfo = await CoachService.getClientInfo(clientId, token);
-      setClientInfo(editClientInfo.client);
+      const { data: editClientInfo } = await getClientInfo(clientId);
+      if (editClientInfo && editClientInfo.client) {
+        setClientInfo(editClientInfo.client);
+      }
     } catch (e) {
       console.error("Error loading client profile", e);
       toast({
@@ -301,9 +292,8 @@ export const ContentManagerClients: React.FC = () => {
     if (!selectedClient) return;
 
     try {
-      await CoachService.deleteClient(selectedClient.client_info.id, token);
-      const updatedClients = await CoachService.getManagedClients();
-      setClientsData(updatedClients.clients);
+      await deleteClient(selectedClient.client_info.id);
+      refetchClients();
       toast({
         title: "Deleted successfully",
       });
@@ -351,9 +341,8 @@ export const ContentManagerClients: React.FC = () => {
     setUploadedFileSize(`${(file.size / 1024).toFixed(0)} KB`);
 
     try {
-      await CoachService.inviteClient(null, file);
-      const updatedClients = await CoachService.getManagedClients();
-      setClientsData(updatedClients.clients);
+      await inviteClient({ payload: null, file });
+      refetchClients();
       toast({
         title: "File imported successfully",
       });
@@ -407,13 +396,11 @@ export const ContentManagerClients: React.FC = () => {
 
   const handleResendInvite = async (clientId: string) => {
     try {
-      const currentClientInfo = await CoachService.getClientInfo(
-        clientId,
-        token
-      );
+      const { data: currentClientInfo } = await getClientInfo(clientId);
 
-      await handleInviteClient(currentClientInfo.client);
-
+      if (currentClientInfo && currentClientInfo.client) {
+        await handleInviteClient(currentClientInfo.client);
+      }
       toast({
         title: "Invite resent successfully",
       });
@@ -445,7 +432,7 @@ export const ContentManagerClients: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : clientsData.length === 0 ? (
+        ) : clientsData && clientsData.clients.length === 0 ? (
           <EmptyStateTolu
             text="Invite your clients to Tolu to deliver personalized education or insight unique to their personal health challenges."
             footer={
@@ -607,7 +594,7 @@ export const ContentManagerClients: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
-                {paginatedClients.map((client, idx) => (
+                {paginatedClients?.map((client, idx) => (
                   <div
                     key={idx}
                     className="
@@ -619,7 +606,7 @@ export const ContentManagerClients: React.FC = () => {
                       <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
                         Name
                       </div>
-                      <div className="flex items-center justify-center w-full text-[16px] font-semibold">
+                      <div className="flex items-center justify-center w-full text-[16px] font-semibold text-center">
                         {client.name}
                       </div>
                     </div>

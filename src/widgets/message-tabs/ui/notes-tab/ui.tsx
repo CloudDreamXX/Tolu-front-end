@@ -4,7 +4,7 @@ import {
   useGetAllChatNotesQuery,
   useSendChatNoteMutation,
   useUpdateChatNoteMutation,
-} from "entities/chat/chatApi";
+} from "entities/chat/api";
 import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -48,10 +48,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
     data: notes,
     isLoading,
     refetch,
-  } = useGetAllChatNotesQuery(
-    { chatId: chat.chat_id },
-    { skip: !chat.chat_id }
-  );
+  } = useGetAllChatNotesQuery(chat.chat_id, { skip: !chat.chat_id });
   const [sendNote, { isLoading: isSending }] = useSendChatNoteMutation();
   const [updateNote, { isLoading: isUpdating }] = useUpdateChatNoteMutation();
   const [deleteNote] = useDeleteChatNoteMutation();
@@ -89,7 +86,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteNote({ noteId: id, chatId: chat.chat_id }).unwrap();
+      await deleteNote(id).unwrap();
       refetch();
     } catch {
       toast({ title: "Failed to delete note", variant: "destructive" });

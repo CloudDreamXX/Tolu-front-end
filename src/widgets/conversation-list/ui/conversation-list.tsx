@@ -26,7 +26,7 @@ interface ConversationListProps {
   onStatusComplete: (status: any, contentId: string) => Promise<void>;
   onCompareToggle: (index: number) => void;
   onEditToggle: (pair: ISessionResult, document: IDocument | null) => void;
-  onSaveEdit: (contentId: string) => Promise<void>;
+  onSaveEdit: (contentId: string, content?: string) => Promise<void>;
   onCancelEdit: () => void;
   setMobilePage: (page: 1 | 2) => void;
   setSelectedDocumentId: (id: string) => void;

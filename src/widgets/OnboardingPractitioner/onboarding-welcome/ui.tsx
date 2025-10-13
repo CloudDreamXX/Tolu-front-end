@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
 import { AdminHeader } from "widgets/Header";
-import { Footer } from "../../Footer";
 import { contents } from "./index";
 import { PrivacyPolicy } from "./components/PrivacyPolicy";
 import { IndependentContractorAgreement } from "./components/IndependentContractorAgreement";
@@ -14,7 +12,6 @@ import { MediaTestimonial } from "./components/MediaTestimonial";
 
 export const OnboardingWelcome = () => {
   const nav = useNavigate();
-  const { isMobile } = usePageWidth();
   const [curentWindow, setCurentWindow] = useState(0);
   const [checkedStates, setCheckedStates] = useState<boolean[]>(
     new Array(contents.length).fill(false)
@@ -30,7 +27,7 @@ export const OnboardingWelcome = () => {
 
   return (
     <AuthPageWrapper>
-      <Footer position={isMobile ? "top-left" : undefined} />
+      {/* <Footer position={isMobile ? "top-left" : undefined} /> */}
       <AdminHeader />
       <main className="xl:absolute bottom-0 mt-[40px] xl:mt-[180px] w-full xl:max-w-[1200px] flex flex-col items-center md:px-[40px] xl:px-0 xl:top-1/2 xl:left-1/2 xl:-translate-x-1/2 xl:-translate-y-1/2 xl:bottom-auto xl:right-auto md:w-full max-h-[65dvh] md:max-h-full">
         {curentWindow === 0 && (

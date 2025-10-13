@@ -17,6 +17,7 @@ export interface IContentItemResponse {
   price: string | null;
   status: string | null;
   messages?: TableRow[];
+  content_type: string | null;
 }
 
 export interface ISubfolderResponse {
@@ -90,6 +91,7 @@ export interface IContentItem {
   price: string | null;
   status: string | null;
   messages?: TableRow[];
+  contentType: string | null;
 }
 
 export interface ISubfolder {

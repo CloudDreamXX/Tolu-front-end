@@ -6,9 +6,14 @@ import {
   DetailsChatItemModel,
   FetchChatMessagesResponse,
 } from "entities/chat";
-import { useFetchChatDetailsByIdQuery } from "entities/chat/chatApi";
+import { useFetchChatDetailsByIdQuery } from "entities/chat/api";
 import { upsertChat } from "entities/chat/chatsSlice";
-import { Client, ClientProfile, CoachService } from "entities/coach";
+import {
+  Client,
+  ClientProfile,
+  useGetManagedClientsQuery,
+  useLazyGetClientProfileQuery,
+} from "entities/coach";
 import { RootState } from "entities/store";
 import { useDispatch, useSelector } from "react-redux";
 import { cn, toast, usePageWidth } from "shared/lib";
@@ -72,10 +77,14 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     data: chatDetails,
     isLoading,
     isError,
-  } = useFetchChatDetailsByIdQuery(
-    { chatId: chatId! },
-    { skip: !chatId, refetchOnMountOrArgChange: true }
-  );
+  } = useFetchChatDetailsByIdQuery(chatId!, {
+    skip: !chatId,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const { data: clients } = useGetManagedClientsQuery();
+  const [getClientProfile] = useLazyGetClientProfileQuery();
+
   const [chat, setChat] = useState<DetailsChatItemModel | null>(null);
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(
     null
@@ -107,8 +116,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
       if (isError) {
         try {
-          const clients = await CoachService.getManagedClients();
-          const client = clients.clients.find((c) => c.client_id === chatId);
+          const client =
+            clients && clients.clients
+              ? clients.clients.find((c) => c.client_id === chatId)
+              : undefined;
           if (client) {
             dispatch(
               upsertChat({
@@ -170,8 +181,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     }
 
     try {
-      const fullClient = await CoachService.getClientProfile(clientId);
-      setSelectedClient(fullClient);
+      const { data: fullClient } = await getClientProfile(clientId);
+      setSelectedClient(fullClient ?? null);
     } catch (e) {
       toast({
         variant: "destructive",

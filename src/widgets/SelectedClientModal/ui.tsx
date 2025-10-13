@@ -1,11 +1,14 @@
 import {
   ClientComprehensiveProfile,
-  CoachService,
   ComprehensiveProfile,
   FmpShareRequest,
   LifestyleSkillsInfo,
   MedicationsAndSupplements,
   UpdateHealthHistoryRequest,
+  useGetComprehensiveClientQuery,
+  useUpdateComprehensiveClientMutation,
+  useShareTrackerMutation,
+  useUpdateHealthHistoryMutation,
 } from "entities/coach";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -114,13 +117,18 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
 
   const [saving, setSaving] = useState<boolean>(false);
 
+  const { data: clientData, refetch: refetchClient } =
+    useGetComprehensiveClientQuery(clientId);
+
+  const [updateComprehensiveClient] = useUpdateComprehensiveClientMutation();
+  const [shareTracker] = useShareTrackerMutation();
+  const [updateHealthHistory] = useUpdateHealthHistoryMutation();
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await CoachService.getComprehensiveClient(clientId);
-      setClient(res);
-    };
-    fetchProfile();
-  }, [clientId]);
+    if (clientData) {
+      setClient(clientData);
+    }
+  }, [clientData]);
 
   const addLifestyleItem = () => {
     setLifestyleSkills((curr) => {
@@ -138,14 +146,16 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
   ) => {
     setSaving(true);
     try {
-      await CoachService.updateComprehensiveClient(clientId, {
-        ...partial,
-        edit_reason: reason,
-      });
+      await updateComprehensiveClient({
+        id: clientId,
+        data: { ...partial, edit_reason: reason },
+      }).unwrap();
+
       toast({
         title: "Profile updated",
         description: "Comprehensive profile was saved successfully.",
       });
+      await refetchClient();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -279,12 +289,25 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
 
   const handleDownloadFile = async (name: string) => {
     try {
-      await CoachService.getLabFile(clientId, name);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/coach-admin/lab-file/${clientId}/${name}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = name;
+      link.click();
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Failed to download the file",
-        description: "Failed to download the file. Please try again.",
+        title: "Failed to download file",
+        description: "Please try again.",
       });
       console.error(error);
     }
@@ -300,7 +323,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         user_id: clientId,
         tracking_date: currentDate,
       };
-      await CoachService.shareTracker(data);
+      await shareTracker(data).unwrap();
+      toast({ title: "FMP tool shared successfully" });
     } catch (error) {
       toast({
         variant: "destructive",
@@ -317,13 +341,13 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         client_id: clientId,
         custom_message: "",
       };
-      await CoachService.updateHealthHistory(data);
+      await updateHealthHistory(data).unwrap();
       nav(`/content-manager/messages/${clientId}`);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Failed to request health history",
-        description: "Failed to request health history. Please try again.",
+        description: "Please try again.",
       });
       console.error(error);
     }

@@ -4,12 +4,14 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import {
   ChatMessageModel,
-  ChatService,
   ChatSocketService,
   DetailsChatItemModel,
   FetchChatMessagesResponse,
 } from "entities/chat";
-import { useFetchAllChatsQuery } from "entities/chat/chatApi";
+import {
+  useFetchAllChatsQuery,
+  useUploadChatFileMutation,
+} from "entities/chat/api";
 import { applyIncomingMessage, updateChat } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -57,6 +59,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   refetch,
 }) => {
   const { refetch: refetchChats } = useFetchAllChatsQuery();
+  const [uploadFile] = useUploadChatFileMutation();
   const nav = useNavigate();
   const dispatch = useDispatch();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
@@ -196,7 +199,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   }, [chat?.chat_id]);
 
   const sendAll = async () => {
-    if (!input.trim() && files.length === 0) return;
+    if (!input.trim() && files.length === 0 && filesFromLibrary.length === 0)
+      return;
 
     const optimistic: ChatMessageModel = {
       id: `tmp-${Date.now()}`,
@@ -243,7 +247,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
         setMessages((prev) => [...prev, optimistic]);
 
-        const response = await ChatService.uploadChatFile(chat.chat_id, file);
+        const response = await uploadFile({
+          chatId: chat.chat_id,
+          file: file,
+        }).unwrap();
         if (response?.type === "file_upload") {
           const newMsg: ChatMessageModel = {
             id: response.message_id || "",
@@ -273,43 +280,20 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
     if (filesFromLibrary.length > 0) {
       try {
-        const optimistics: ChatMessageModel[] = filesFromLibrary.map(
-          (id, idx) => ({
-            id: `tmp-${Date.now()}-lib-${idx}`,
-            content: "",
-            chat_id: chat.chat_id,
-            created_at: new Date().toISOString(),
-            file_url: null,
-            file_name: id,
-            file_size: null,
-            file_type: "library",
-            sender: {
-              id: profile?.id || "",
-              name: profile?.name || "You",
-              email: profile?.email || "",
-            },
-            message_type: "file",
-            is_deleted: false,
-            reactions: [],
-          })
-        );
-
-        setMessages((prev) => [...prev, ...optimistics]);
-
-        const response = await ChatService.uploadChatFile(
-          chat.chat_id,
-          undefined,
-          filesFromLibrary
-        );
+        const response = await uploadFile({
+          chatId: chat.chat_id,
+          file: undefined,
+          libraryFiles: filesFromLibrary,
+        });
 
         if (
-          response?.type === "library_files" &&
-          response.messages &&
-          response.messages?.length
+          response?.data?.type === "library_files" &&
+          response.data.messages &&
+          response.data.messages?.length
         ) {
           setMessages((prev) => {
             const filtered = prev.filter((m) => !m.id.startsWith("tmp-lib"));
-            return [...filtered, ...(response.messages || [])];
+            return [...filtered, ...(response.data?.messages || [])];
           });
         }
       } catch (e) {

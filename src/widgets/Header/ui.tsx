@@ -1,11 +1,11 @@
 export const AdminHeader: React.FC = () => (
   <header className="w-full flex justify-center items-center">
-    <div className="flex flex-col items-center px-[13px] md:p-[40px] lg:py-[25px]  justify-center">
-      <img src="/logo.png" className="w-[60px] h-[60px]" />
-      <p className="text-[#1D1D1F] text-center text-[64px] h-[88px] md:h-[64px] md:text-[46px] font-bold ">
+    <div className="flex flex-col items-center px-[13px] md:p-[40px] lg:py-[25px] justify-center pt-[48px]">
+      <img src="/logo.png" className="w-[50px] h-[46px] mx-auto" />
+      <p className="cursor-pointer text-[#1D1D1F] text-center text-[27px] md:text-[44px] font-bold">
         Tolu AI
       </p>
-      <p className="text-[#1D1D1F] text-center text-[24px] md:text-[17px] font-semibold  leading-[normal]">
+      <p className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[17.733px] font-semibold  leading-[normal]">
         Health Educator Admin
       </p>
     </div>

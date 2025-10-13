@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { AppliedFilters, SortBy } from "pages/feedback-hub/ui";
+import {
+  AppliedFilters,
+  SortBy as FeedbackSortBy,
+} from "pages/feedback-hub/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { SelectField } from "widgets/CRMSelectField";
 import {
@@ -11,17 +14,42 @@ import {
   PopoverTrigger,
 } from "shared/ui";
 
-type Props = {
-  draftFilters: AppliedFilters;
-  setDraftFilters: React.Dispatch<React.SetStateAction<AppliedFilters>>;
-  onSave: () => void;
-  onClose: () => void;
+export type RoleFilter =
+  | "All"
+  | "Super Admin"
+  | "Admin"
+  | "Practitioner"
+  | "Client"
+  | "Reviewer";
+export type SortBy = "newest" | "oldest";
+export type DateRange = { start?: string; end?: string };
+
+export type UserFilters = {
+  role: RoleFilter;
+  signup: DateRange;
+  sort: SortBy;
 };
 
-// Reusable single-date picker that stores parent value as 'yyyy-MM-dd'
+type Props =
+  | {
+      mode: "feedback";
+      draftFilters: AppliedFilters;
+      setDraftFilters: React.Dispatch<React.SetStateAction<AppliedFilters>>;
+      onSave: () => void;
+      onClose: () => void;
+    }
+  | {
+      mode: "users";
+      draftFilters: UserFilters;
+      setDraftFilters: React.Dispatch<React.SetStateAction<UserFilters>>;
+      onSave: () => void;
+      onClose: () => void;
+    };
+
+// --- Reusable single-date picker ---
 function DatePicker({
   label,
-  value, // 'yyyy-MM-dd' | undefined
+  value,
   onChange,
 }: {
   label: string;
@@ -41,7 +69,6 @@ function DatePicker({
     new Date(initialYear, (localDate ?? new Date()).getMonth())
   );
 
-  // keep local state in sync if parent value changes externally
   useEffect(() => {
     const d = parse(value);
     setLocalDate(d);
@@ -145,12 +172,16 @@ function DatePicker({
   );
 }
 
-export const FiltersPopup: React.FC<Props> = ({
-  draftFilters,
-  setDraftFilters,
-  onSave,
-  onClose,
-}) => {
+// --- Main Filters Popup ---
+export const FiltersPopup: React.FC<Props> = (props) => {
+  const { onSave, onClose } = props;
+
+  const isFeedback = props.mode === "feedback";
+  const draftFilters = props.draftFilters as AppliedFilters | UserFilters;
+  const setDraftFilters = props.setDraftFilters as
+    | React.Dispatch<React.SetStateAction<AppliedFilters>>
+    | React.Dispatch<React.SetStateAction<UserFilters>>;
+
   return (
     <div className="fixed inset-0 z-[1000]">
       <div
@@ -162,92 +193,154 @@ export const FiltersPopup: React.FC<Props> = ({
                   w-[calc(100%-32px)] md:w-[650px] rounded-2xl bg-white shadow-2xl p-6"
       >
         <h3 className="text-center text-[28px] font-semibold mb-[32px]">
-          Set Filters
+          {isFeedback ? "Set Feedback Filters" : "Set User Filters"}
         </h3>
 
-        <div className="flex items-center gap-2 justify-center mb-[24px]">
-          {(["all", "positive", "negative"] as const).map((s) => {
-            const active = draftFilters.sentiment === s;
-            return (
-              <button
-                key={s}
-                onClick={() => setDraftFilters((d) => ({ ...d, sentiment: s }))}
-                className={[
-                  "flex items-center gap-[12px] px-3 py-2 rounded-lg text-[16px] border bg-[#F3F7FD]",
-                  active
-                    ? "text-[#1C63DB] border-[#1C63DB]"
-                    : "text-[#1D1D1F] border-[#F3F7FD]",
-                ].join(" ")}
-              >
-                {s === "positive" && (
-                  <MaterialIcon iconName="thumb_up" fill={1} />
-                )}
-                {s === "negative" && (
-                  <MaterialIcon iconName="thumb_down" fill={1} />
-                )}
-                {s === "all"
-                  ? "All"
-                  : s === "positive"
-                    ? "Only Positive"
-                    : "Only Negative"}
-              </button>
-            );
-          })}
-        </div>
-
         <div className="grid grid-cols-1 gap-[24px]">
-          <div>
-            <div className="text-[18px] text-[#1D1D1F] font-semibold mb-[16px]">
-              Date Range
-            </div>
+          {isFeedback ? (
+            <>
+              {/* --- Sentiment Buttons --- */}
+              <div className="flex items-center gap-2 justify-center mb-[24px]">
+                {(["all", "positive", "negative"] as const).map((s) => {
+                  const active =
+                    (draftFilters as AppliedFilters).sentiment === s;
+                  return (
+                    <button
+                      key={s}
+                      onClick={() =>
+                        setDraftFilters((d: any) => ({ ...d, sentiment: s }))
+                      }
+                      className={[
+                        "flex items-center gap-[12px] px-3 py-2 rounded-lg text-[16px] border bg-[#F3F7FD]",
+                        active
+                          ? "text-[#1C63DB] border-[#1C63DB]"
+                          : "text-[#1D1D1F] border-[#F3F7FD]",
+                      ].join(" ")}
+                    >
+                      {s === "positive" && (
+                        <MaterialIcon iconName="thumb_up" fill={1} />
+                      )}
+                      {s === "negative" && (
+                        <MaterialIcon iconName="thumb_down" fill={1} />
+                      )}
+                      {s === "all"
+                        ? "All"
+                        : s === "positive"
+                          ? "Only Positive"
+                          : "Only Negative"}
+                    </button>
+                  );
+                })}
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px] items-end">
-              <DatePicker
-                label="By submission (from)"
-                value={draftFilters.submit.start}
-                onChange={(v) =>
-                  setDraftFilters((d) => ({
-                    ...d,
-                    submit: { ...d.submit, start: v },
-                  }))
-                }
-              />
-              <DatePicker
-                label="By submission (to)"
-                value={draftFilters.submit.end}
-                onChange={(v) =>
-                  setDraftFilters((d) => ({
-                    ...d,
-                    submit: { ...d.submit, end: v },
-                  }))
-                }
-              />
-            </div>
+              {/* --- Date Range Fields --- */}
+              <div>
+                <div className="text-[18px] text-[#1D1D1F] font-semibold mb-[16px]">
+                  Date Range
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px] items-end mt-[16px]">
-              <DatePicker
-                label="By rating date (from)"
-                value={draftFilters.rating.start}
-                onChange={(v) =>
-                  setDraftFilters((d) => ({
-                    ...d,
-                    rating: { ...d.rating, start: v },
-                  }))
-                }
-              />
-              <DatePicker
-                label="By rating date (to)"
-                value={draftFilters.rating.end}
-                onChange={(v) =>
-                  setDraftFilters((d) => ({
-                    ...d,
-                    rating: { ...d.rating, end: v },
-                  }))
-                }
-              />
-            </div>
-          </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px] items-end">
+                  <DatePicker
+                    label="Submission (from)"
+                    value={(draftFilters as AppliedFilters).submit.start}
+                    onChange={(v) =>
+                      setDraftFilters((d: any) => ({
+                        ...d,
+                        submit: { ...d.submit, start: v },
+                      }))
+                    }
+                  />
+                  <DatePicker
+                    label="Submission (to)"
+                    value={(draftFilters as AppliedFilters).submit.end}
+                    onChange={(v) =>
+                      setDraftFilters((d: any) => ({
+                        ...d,
+                        submit: { ...d.submit, end: v },
+                      }))
+                    }
+                  />
+                </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px] items-end mt-[16px]">
+                  <DatePicker
+                    label="Rating date (from)"
+                    value={(draftFilters as AppliedFilters).rating.start}
+                    onChange={(v) =>
+                      setDraftFilters((d: any) => ({
+                        ...d,
+                        rating: { ...d.rating, start: v },
+                      }))
+                    }
+                  />
+                  <DatePicker
+                    label="Rating date (to)"
+                    value={(draftFilters as AppliedFilters).rating.end}
+                    onChange={(v) =>
+                      setDraftFilters((d: any) => ({
+                        ...d,
+                        rating: { ...d.rating, end: v },
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* --- Role Filter --- */}
+              <SelectField
+                label="User Role"
+                className="rounded-[8px]"
+                options={[
+                  { label: "All", value: "All" },
+                  { label: "Super Admin", value: "Super Admin" },
+                  { label: "Admin", value: "Admin" },
+                  { label: "Practitioner", value: "Practitioner" },
+                  { label: "Client", value: "Client" },
+                  { label: "Reviewer", value: "Reviewer" },
+                ]}
+                selected={(draftFilters as UserFilters).role}
+                onChange={(v) =>
+                  setDraftFilters((d: any) => ({
+                    ...d,
+                    role: (v as RoleFilter) || "All",
+                  }))
+                }
+              />
+
+              {/* --- Signup Date Range --- */}
+              <div>
+                <div className="text-[18px] text-[#1D1D1F] font-semibold mb-[16px]">
+                  Signup Date
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px]">
+                  <DatePicker
+                    label="From"
+                    value={(draftFilters as UserFilters).signup.start}
+                    onChange={(v) =>
+                      setDraftFilters((d: any) => ({
+                        ...d,
+                        signup: { ...d.signup, start: v },
+                      }))
+                    }
+                  />
+                  <DatePicker
+                    label="To"
+                    value={(draftFilters as UserFilters).signup.end}
+                    onChange={(v) =>
+                      setDraftFilters((d: any) => ({
+                        ...d,
+                        signup: { ...d.signup, end: v },
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* --- Sort Dropdown (common) --- */}
           <SelectField
             className="rounded-[8px] capitalize"
             label={"Sort by"}
@@ -255,11 +348,11 @@ export const FiltersPopup: React.FC<Props> = ({
               { label: "Newest", value: "newest" },
               { label: "Oldest", value: "oldest" },
             ]}
-            selected={draftFilters.sort}
+            selected={(draftFilters as any).sort}
             onChange={(e) =>
-              setDraftFilters((d) => ({
+              setDraftFilters((d: any) => ({
                 ...d,
-                sort: (e as SortBy) || "newest",
+                sort: (e as FeedbackSortBy | SortBy) || "newest",
               }))
             }
           />

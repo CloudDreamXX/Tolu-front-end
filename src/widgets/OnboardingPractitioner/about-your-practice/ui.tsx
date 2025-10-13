@@ -1,35 +1,35 @@
 import { HeaderOnboarding } from "../../HeaderOnboarding";
-import { Footer } from "../../Footer";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Button, Input } from "shared/ui";
-import { SearchableSelect } from "../components/SearchableSelect";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { RootState } from "entities/store";
 import { UserService } from "entities/user";
+import { MultiSelectField } from "widgets/MultiSelectField";
+import { SelectField } from "widgets/CRMSelectField";
 
 export const AboutYourPractice = () => {
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const nav = useNavigate();
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<
     { file: File; previewUrl: string }[]
   >([]);
   const [dragOver, setDragOver] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
 
-  const [school, setSchool] = useState("");
+  const [selectedSchools, setSelectedSchools] = useState<string[]>([]);
+  const [otherSchoolInput, setOtherSchoolInput] = useState("");
   const [recentClients, setRecentClients] = useState("");
   const [targetClients, setTargetClients] = useState("");
   const [labsUsed, setLabsUsed] = useState("");
-  const nav = useNavigate();
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
-  const [selectedSchools, setSelectedSchools] = useState<string[]>([]);
-  const [schoolDropdownOpen, setSchoolDropdownOpen] = useState(false);
-  const [otherSchoolInput, setOtherSchoolInput] = useState("");
-  const [showOtherInput, setShowOtherInput] = useState(false);
+
   const state = useSelector((state: RootState) => state.coachOnboarding);
+  const OTHER_OPTION = "Other (please specify)";
 
   const schoolOptions = [
     "Functional Medicine Coaching Academy (FMCA)",
@@ -48,12 +48,8 @@ export const AboutYourPractice = () => {
     "Mind Body Food Institute",
     "Transformation Academy",
     "National Board for Health & Wellness Coaching (NBHWC)",
-    "Other (please specify)",
+    OTHER_OPTION,
   ];
-
-  const OTHER_OPTION = "Other (please specify)";
-
-  const allSchoolOptions = useMemo(() => schoolOptions, [schoolOptions]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -61,6 +57,7 @@ export const AboutYourPractice = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Load saved state
   useEffect(() => {
     const savedSchool = state?.school as string | string[] | undefined;
 
@@ -75,40 +72,23 @@ export const AboutYourPractice = () => {
     let firstCustom: string | null = null;
 
     for (const val of savedList) {
-      if (val === OTHER_OPTION) {
-        continue;
-      }
-      if (allSchoolOptions.includes(val)) {
-        if (!nextSelected.includes(val)) nextSelected.push(val);
-      } else if (!firstCustom) {
+      if (schoolOptions.includes(val)) {
+        nextSelected.push(val);
+      } else {
         nextSelected.push(OTHER_OPTION);
         firstCustom = val;
       }
     }
 
     setSelectedSchools(nextSelected);
-    setOtherSchoolInput(firstCustom ?? "");
-    setShowOtherInput(Boolean(firstCustom));
+    if (firstCustom) setOtherSchoolInput(firstCustom);
 
-    const savedRecent = state?.recent_client_count as string | undefined;
-    const savedTarget = state?.target_client_count as string | undefined;
-    if (savedRecent) setRecentClients(savedRecent);
-    if (savedTarget) setTargetClients(savedTarget);
+    setRecentClients(state?.recent_client_count || "");
+    setTargetClients(state?.target_client_count || "");
+    setLabsUsed(state?.uses_labs_supplements || "");
+  }, [state]);
 
-    const savedLabs = state?.uses_labs_supplements as string | undefined;
-    if (savedLabs) setLabsUsed(savedLabs);
-  }, []);
-
-  const allFilled = () => {
-    return (
-      selectedSchools.length > 0 &&
-      recentClients.length > 0 &&
-      targetClients.length > 0 &&
-      labsUsed.length > 0 &&
-      selectedFiles.length > 0
-    );
-  };
-
+  // File handling
   const isValidFile = (file: File) => {
     const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
     return allowedTypes.includes(file.type);
@@ -129,23 +109,14 @@ export const AboutYourPractice = () => {
     });
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) handleFiles(e.target.files);
-  };
-
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setDragOver(false);
     if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDragOver(true);
-  };
-
-  const handleDragLeave = () => {
-    setDragOver(false);
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) handleFiles(e.target.files);
   };
 
   const triggerFileSelect = () => {
@@ -161,35 +132,41 @@ export const AboutYourPractice = () => {
     setFilePreviews(updatedPreviews);
   };
 
-  const handleFieldChange = (field: string, value: string) => {
-    switch (field) {
-      case "school":
-        setSchool(value);
-        dispatch(updateCoachField({ key: "school", value }));
-        break;
-      case "recent":
-        setRecentClients(value);
-        dispatch(updateCoachField({ key: "recent_client_count", value }));
-        break;
-      case "target":
-        setTargetClients(value);
-        dispatch(updateCoachField({ key: "target_client_count", value }));
-        break;
-      case "labs":
-        setLabsUsed(value);
-        dispatch(updateCoachField({ key: "uses_labs_supplements", value }));
-        break;
-    }
+  // Form validation
+  const allFilled = () =>
+    selectedSchools.length > 0 &&
+    recentClients &&
+    targetClients &&
+    labsUsed &&
+    selectedFiles.length > 0;
+
+  // Field change
+  const handleNext = async () => {
+    if (!allFilled()) return;
+    await UserService.onboardUser(state);
+    nav("/profile-setup");
   };
 
-  const handleNext = async () => {
-    await UserService.onboardUser(state);
-    if (allFilled()) nav("/profile-setup");
+  const handleSchoolChange = (updated: string[]) => {
+    setSelectedSchools(updated);
+
+    const processed = updated.includes(OTHER_OPTION)
+      ? updated
+      : updated.map((s) => (s === OTHER_OPTION ? otherSchoolInput : s));
+
+    dispatch(updateCoachField({ key: "school", value: processed.join(", ") }));
+  };
+
+  const handleOtherSchoolChange = (text: string) => {
+    setOtherSchoolInput(text);
+    const updated = selectedSchools.map((s) =>
+      s === OTHER_OPTION ? text.trim() : s
+    );
+    dispatch(updateCoachField({ key: "school", value: updated.join(", ") }));
   };
 
   return (
     <AuthPageWrapper>
-      <Footer position={isMobile ? "top-right" : undefined} />
       <HeaderOnboarding currentStep={2} />
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch bg-white shadow-mdp-[40px] md:shadow-none md:bg-transparent py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0">
         {!isMobile && (
@@ -197,187 +174,49 @@ export const AboutYourPractice = () => {
             About your practice
           </h1>
         )}
-        <div className="w-full md:w-[700px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px]">
+        <div className="w-full md:w-[684px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px]">
           {isMobile && (
             <h1 className="flex text-center  text-[24px] font-medium text-black">
               About your practice
             </h1>
           )}
-          {/* School */}
-          <div className="flex flex-col items-start self-stretch md:mt-[40px] md:ml-[32px] w-full md:w-[620px] relative">
-            <label className=" text-[16px] font-medium text-[#1D1D1F] mb-2 block">
-              Which school did you graduate from? *
-            </label>
 
-            <div
-              className={`peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border bg-white outline-none ${
-                schoolDropdownOpen ? "border-[#1C63DB]" : "border-[#DFDFDF]"
-              }`}
-              onClick={() => setSchoolDropdownOpen((prev) => !prev)}
-            >
-              <div className="flex flex-wrap gap-[8px]">
-                {selectedSchools.length === 0 && (
-                  <span className="text-[#5F5F65]">
-                    Select one or more schools
-                  </span>
-                )}
-                {selectedSchools.map((school, idx) => (
-                  <span
-                    key={idx}
-                    className="border border-[#CBCFD8] px-[16px] py-[6px] rounded-[6px] flex items-center gap-2"
-                  >
-                    {school}
-                    <button
-                      type="button"
-                      className="ml-1"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const updated = selectedSchools.filter(
-                          (s) => s !== school
-                        );
-                        setSelectedSchools(updated);
-
-                        const processed = updated.map((s) =>
-                          s === OTHER_OPTION ? otherSchoolInput : s
-                        );
-                        dispatch(
-                          updateCoachField({ key: "school", value: processed })
-                        );
-
-                        if (school === OTHER_OPTION) {
-                          setShowOtherInput(false);
-                          setOtherSchoolInput("");
-                        }
-                      }}
-                    >
-                      &times;
-                    </button>
-                  </span>
-                ))}
-                <div
-                  className={`pointer-events-none absolute right-4 top-[48px] transition-transform duration-300 ${
-                    schoolDropdownOpen ? "rotate-180" : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="17"
-                    viewBox="0 0 16 17"
-                    fill="none"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M11.7667 6.33422C11.4542 6.0218 10.9477 6.0218 10.6353 6.33422L8.00098 8.96853L5.36666 6.33422C5.05424 6.0218 4.54771 6.0218 4.23529 6.33422C3.92287 6.64664 3.92287 7.15317 4.23529 7.46559L7.43529 10.6656C7.74771 10.978 8.25424 10.978 8.56666 10.6656L11.7667 7.46559C12.0791 7.15317 12.0791 6.64664 11.7667 6.33422Z"
-                      fill="#1D1D1F"
-                    />
-                  </svg>
-                </div>
-              </div>
-
-              {schoolDropdownOpen && (
-                <div className="absolute top-full mt-1 left-0 z-10 w-full max-h-[174px] overflow-y-auto scrollbar-hide bg-[#FAFAFA] rounded-md shadow-md flex flex-col">
-                  {schoolOptions.map((option) => {
-                    const isSelected = selectedSchools.includes(option);
-                    return (
-                      <div
-                        key={option}
-                        onClick={(e) => {
-                          e.stopPropagation();
-
-                          if (option === OTHER_OPTION) {
-                            if (!isSelected) {
-                              const updated = [...selectedSchools, option];
-                              setSelectedSchools(updated);
-                              setShowOtherInput(true);
-                              dispatch(
-                                updateCoachField({
-                                  key: "school",
-                                  value: [
-                                    ...updated.map((s) =>
-                                      s === OTHER_OPTION ? otherSchoolInput : s
-                                    ),
-                                  ].join(", "),
-                                })
-                              );
-                            }
-                            setSchoolDropdownOpen(false);
-                            return;
-                          }
-
-                          const updated = isSelected
-                            ? selectedSchools.filter((s) => s !== option)
-                            : [...selectedSchools, option];
-
-                          setSelectedSchools(updated);
-
-                          const processed = updated.map((s) =>
-                            s === OTHER_OPTION ? otherSchoolInput : s
-                          );
-
-                          dispatch(
-                            updateCoachField({
-                              key: "school",
-                              value: processed.join(", "),
-                            })
-                          );
-                        }}
-                        className="cursor-pointer px-[12px] py-[15px] hover:bg-[#F2F2F2] hover:text-[#1C63DB] flex items-center gap-[12px]"
-                      >
-                        <span className="w-[20px] h-[20px] flex items-center justify-center">
-                          <MaterialIcon
-                            iconName={
-                              isSelected ? "check" : "check_box_outline_blank"
-                            }
-                          />
-                        </span>
-                        {option}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {showOtherInput && (
-              <div className="w-full mt-2">
-                <input
-                  type="text"
-                  value={otherSchoolInput}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setOtherSchoolInput(value);
-
-                    const updatedSchools = selectedSchools.map((s) =>
-                      s === OTHER_OPTION ? value : s
-                    );
-
-                    const processed = updatedSchools.join(", ");
-
-                    dispatch(
-                      updateCoachField({ key: "school", value: processed })
-                    );
-                  }}
-                  placeholder="Type your school"
-                  className="peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB]"
-                />
-              </div>
+          <div className="flex flex-col items-start w-full md:w-[620px] md:mt-[40px] md:ml-[32px] gap-2">
+            <MultiSelectField
+              label="Which school did you graduate from? *"
+              options={schoolOptions.map((label) => ({ label }))}
+              selected={selectedSchools}
+              onChange={handleSchoolChange}
+              className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+              labelClassName="text-[16px] font-medium"
+            />
+            {selectedSchools.includes(OTHER_OPTION) && (
+              <input
+                type="text"
+                value={otherSchoolInput}
+                onChange={(e) => handleOtherSchoolChange(e.target.value)}
+                placeholder="Type your school"
+                className="mt-[4px] outline-none w-full h-[52px] px-[12px] border border-[#DBDEE1] rounded-[8px] bg-[#FAFAFA] text-[16px] text-[#000]"
+              />
             )}
           </div>
 
-          {/* File Upload Section */}
           <div className="flex flex-col items-start w-full gap-2">
-            <p className="md:ml-[32px]  text-[16px] font-medium text-black">
+            <p className="md:ml-[32px] text-[16px] font-medium text-black">
               Upload a certificate or license *
             </p>
 
             <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
               onClick={triggerFileSelect}
-              className={`flex py-[16px] md:ml-[32px] w-full md:w-[620px] px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed ${dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"} bg-white cursor-pointer transition`}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+              className={`flex flex-col items-center justify-center py-[16px] md:ml-[32px] w-full md:w-[620px] px-[24px] gap-[4px] rounded-[12px] border-[1px] border-dashed cursor-pointer transition ${
+                dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
+              } bg-white`}
             >
               <input
                 ref={fileInputRef}
@@ -387,82 +226,86 @@ export const AboutYourPractice = () => {
                 onChange={handleFileSelect}
                 className="hidden"
               />
-              <div className="flex flex-col items-center gap-[8px]">
-                <MaterialIcon
-                  iconName="cloud_upload"
-                  fill={1}
-                  className="text-[#1C63DB] p-2 border rounded-xl"
-                />
-                <p className="text-[#1C63DB]  text-[14px] font-semibold">
-                  Click to upload
-                </p>
-                <p className="text-[#5F5F65]  text-[14px]">or drag and drop</p>
-                <p className="text-[#5F5F65]  text-[14px]">PDF, JPG or PNG</p>
-              </div>
+              <MaterialIcon
+                iconName="cloud_upload"
+                fill={1}
+                className="text-[#1C63DB] p-2 border rounded-xl"
+              />
+              <p className="text-[#1C63DB] text-[14px] font-semibold">
+                Click to upload
+              </p>
+              <p className="text-[#5F5F65] text-[14px]">or drag and drop</p>
+              <p className="text-[#5F5F65] text-[14px]">PDF, JPG or PNG</p>
             </div>
 
-            {/* File previews */}
             {filePreviews.length > 0 && (
               <div className="flex gap-[16px] flex-wrap justify-start w-full mt-4 md:ml-[32px]">
-                {filePreviews.map(({ file, previewUrl }, index) => {
-                  const isPDF = file.type === "application/pdf";
-                  return (
-                    <div key={index} className="relative w-[150px] h-[150px]">
+                {filePreviews.map(({ file, previewUrl }, index) => (
+                  <div key={index} className="relative w-[150px] h-[150px]">
+                    {file.type.startsWith("image/") && (
                       <img
-                        src={isPDF ? "" : previewUrl}
+                        src={previewUrl}
                         alt={`preview-${index}`}
                         className="object-cover w-full h-full rounded-md"
                       />
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteFile(index)}
-                        className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center text-sm"
-                      >
-                        <MaterialIcon
-                          iconName="delete"
-                          fill={1}
-                          className="text-red-500"
-                        />
-                      </button>
-                    </div>
-                  );
-                })}
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteFile(index)}
+                      className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center"
+                    >
+                      <MaterialIcon
+                        iconName="delete"
+                        fill={1}
+                        className="text-red-500"
+                      />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
-          <div className="flex w-full md:ml-[32px] text-[#1C63DB] gap-2 items-center">
-            <MaterialIcon iconName="lightbulb" fill={1} />
-            <p className=" text-[16px] font-medium ">
-              Data is securely saved with a HIPAA-compliant notice
-            </p>
-          </div>
-          {/* Recent clients */}
-          <div className="flex flex-col items-start self-stretch gap-[16px] md:ml-[32px]">
-            <SearchableSelect
-              width="w-full md:w-[620px]"
+          <div className="md:w-[620px] md:ml-[32px]">
+            <SelectField
               label="How many clients have you helped within the past 3 months? *"
-              options={["0-5", "6-15", "16-30", "31-50", "50+"]}
-              value={school}
-              onChange={(value) => handleFieldChange("recent", value)}
+              options={["0-5", "6-15", "16-30", "31-50", "50+"].map((v) => ({
+                value: v,
+                label: v,
+              }))}
+              selected={recentClients}
+              onChange={(val) => {
+                setRecentClients(val);
+                dispatch(
+                  updateCoachField({ key: "recent_client_count", value: val })
+                );
+              }}
+              containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+              labelClassName="text-[16px] font-medium"
             />
           </div>
 
-          {/* Target clients */}
-          <div className="flex flex-col items-start self-stretch gap-[16px] md:ml-[32px]">
-            <SearchableSelect
-              width="w-full md:w-[620px]"
-              label="How many new clients do you hope to acquire over the next 3
-              months? *"
-              options={["0-5", "6-15", "16-30", "31-50", "50+"]}
-              value={school}
-              onChange={(value) => handleFieldChange("target", value)}
+          <div className="md:w-[620px] md:ml-[32px]">
+            <SelectField
+              label="How many new clients do you hope to acquire over the next 3 months? *"
+              options={["0-5", "6-15", "16-30", "31-50", "50+"].map((v) => ({
+                value: v,
+                label: v,
+              }))}
+              selected={targetClients}
+              onChange={(val) => {
+                setTargetClients(val);
+                dispatch(
+                  updateCoachField({ key: "target_client_count", value: val })
+                );
+              }}
+              containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+              labelClassName="text-[16px] font-medium"
             />
           </div>
 
-          {/* Radio - uses labs/supplements */}
           <div className="flex flex-col md:ml-[32px] items-start self-stretch md:mb-[40px] gap-[16px]">
-            <p className=" text-[16px] font-medium text-black">
+            <p className="text-[16px] font-medium text-black">
               Do you currently use labs or supplementation in your practice? *
             </p>
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-[60px]">
@@ -476,10 +319,18 @@ export const AboutYourPractice = () => {
                     name="labs"
                     value={option}
                     checked={labsUsed === option}
-                    onChange={(e) => handleFieldChange("labs", e.target.value)}
-                    className="w-[24px] h-[24px] md:w-[20px] md:h-[20px]"
+                    onChange={(e) => {
+                      setLabsUsed(e.target.value);
+                      dispatch(
+                        updateCoachField({
+                          key: "uses_labs_supplements",
+                          value: e.target.value,
+                        })
+                      );
+                    }}
+                    className="w-[24px] h-[24px]"
                   />
-                  <span className=" text-[16px] font-medium text-black">
+                  <span className="text-[16px] font-medium text-black">
                     {option}
                   </span>
                 </label>
@@ -489,9 +340,7 @@ export const AboutYourPractice = () => {
         </div>
 
         {/* Navigation */}
-        <div
-          className={`flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit md:pb-[100px]`}
-        >
+        <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit md:pb-[100px]">
           <button
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"

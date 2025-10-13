@@ -1,4 +1,8 @@
 import { CoachService, ShareContentData } from "entities/coach";
+import {
+  useShareContentMutation,
+  useLazyGetContentSharesQuery,
+} from "entities/coach";
 
 const isHtmlContent = (content: string): boolean => /<[^>]*>/.test(content);
 
@@ -18,6 +22,10 @@ interface DocumentCreationParams {
 }
 
 export const useDocumentCreation = () => {
+  const [shareContent] = useShareContentMutation();
+
+  const [getContentShares] = useLazyGetContentSharesQuery();
+
   const handleDocumentCreation = async (params: DocumentCreationParams) => {
     const {
       location,
@@ -73,13 +81,15 @@ export const useDocumentCreation = () => {
               content_id: realDocumentId,
               client_id: clientId,
             };
-            await CoachService.shareContent(data);
+            await shareContent(data).unwrap();
           }
 
           await loadConversation(documentId);
 
-          const response = await CoachService.getContentShares(realDocumentId);
-          setSharedClients(response.shares);
+          const response = await getContentShares(realDocumentId).unwrap();
+          if (response.shares) {
+            setSharedClients(response.shares);
+          }
           setIsCreatingDocument(false);
           navigate(
             `/content-manager/library/folder/${folderId}/document/${realDocumentId}`,
