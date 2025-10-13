@@ -318,17 +318,17 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                     size={20}
                     className="shrink-0 group-hover:stroke-blue-500"
                   />
-                  {content.contentType === "Card" ? (
+                  {/* {content.contentType === "Card" ? (
                     <MaterialIcon
                       iconName="playing_cards"
                       className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
                     />
-                  ) : (
-                    <MaterialIcon
-                      iconName="docs"
-                      className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
-                    />
-                  )}
+                  ) : ( */}
+                  <MaterialIcon
+                    iconName="docs"
+                    className="w-5 h-5 shrink-0 group-hover:stroke-blue-500"
+                  />
+                  {/* )} */}
                   <TooltipProvider delayDuration={500}>
                     <Tooltip>
                       <TooltipTrigger asChild>

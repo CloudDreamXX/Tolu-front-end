@@ -32,7 +32,7 @@ export const HeaderOnboarding = ({
         </h2>
         <h4 className="capitalize text-[#1D1D1F] text-center text-[9.7px] md:text-[11.429px] font-semibold  leading-[normal]">
           {isClient ? (
-            <span className="text-[#1D1D1F] text-[16px] md:text-[22px] font-normal  leading-[normal] text-center">
+            <span className="text-[#1D1D1F] text-[16px] md:text-[24px] font-normal  leading-[normal] text-center">
               {text ? text : "Knowledge Before Care"}
             </span>
           ) : (

@@ -113,7 +113,9 @@ export const SymptomsSeverity = () => {
 
           {steps[currentStep].map((symptom) => (
             <div key={symptom} className="flex flex-col gap-2">
-              <label className="font-semibold text-[#1D1D1F]">{symptom}</label>
+              <label className="font-semibold text-[14px] text-[#1D1D1F]">
+                {symptom}
+              </label>
               <Slider
                 min={1}
                 max={4}
