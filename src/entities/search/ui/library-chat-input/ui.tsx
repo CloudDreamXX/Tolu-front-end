@@ -111,7 +111,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
     setFiles([...files, ...pasted]);
   };
 
-  const isSendDisabled = !message.trim() || disabled;
+  const isSendDisabled = voiceFile ? false : !message.trim() || disabled;
 
   const handleSetFolder = (folder: string | null) => {
     dispatch(setFolderToChat(folder));
@@ -120,8 +120,6 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const attachKey = files
     .map((f) => `${f.name}-${f.size}-${f.lastModified}`)
     .join("|");
-
-  console.log(voiceFile)
 
   return (
     <div

@@ -716,7 +716,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         await SearchService.aiSearchStream(
           {
             chat_message: JSON.stringify({
-              user_prompt: message,
+              user_prompt: voiceFile ? undefined : message,
               is_new: !currentChatId,
               chat_id: currentChatId,
               regenerate_id: null,
@@ -726,6 +726,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             ...(images && { images }),
             ...(pdf && { pdf }),
             contentId: documentId,
+            audio: voiceFile ? voiceFile : undefined,
           },
           processChunk,
           processFinal,

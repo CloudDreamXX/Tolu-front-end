@@ -151,6 +151,8 @@ export const LibraryChat = () => {
     useState<SpeechSynthesisVoice | null>(null);
   const [isReadingAloud, setIsReadingAloud] = useState(false);
 
+  const [voiceFile, setVoiceFile] = useState<File | null>(null);
+
   const { tooltipPosition, showTooltip, handleTooltipClick } =
     useTextSelectionTooltip();
 
@@ -761,7 +763,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         await SearchService.aiSearchStream(
           {
             chat_message: JSON.stringify({
-              user_prompt: message,
+              user_prompt: voiceFile ? undefined : message,
               is_new: currentChatId.startsWith("new_chat_"),
               chat_id: currentChatId.startsWith("new_chat_")
                 ? undefined
@@ -771,6 +773,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             }),
             ...(images && { images }),
             ...(pdf && { pdf }),
+            audio: voiceFile ? voiceFile : undefined,
           },
           processChunk,
           processFinalData,
@@ -1068,6 +1071,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               }
               files={newFiles}
               setFiles={setNewFiles}
+              voiceFile={voiceFile}
+              setVoiceFile={setVoiceFile}
               setExistingFiles={setExistingFiles}
               existingFiles={existingFiles}
               existingInstruction={existingInstruction}
