@@ -94,6 +94,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
 
+  const [voiceFile, setVoiceFile] = useState<File | null>(null);
+
   const { isMobileOrTablet } = usePageWidth();
 
   const { documentId } = useParams();
@@ -562,45 +564,44 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         }
       };
 
-      // if (isSwitch(SWITCH_KEYS.CARD)) {
-      //   const res = await CoachService.aiLearningCardSearch(
-      //     {
-      //       user_prompt: message,
-      //       is_new: !currentChatId,
-      //       chat_id: currentChatId,
-      //       regenerate_id: null,
-      //       chat_title: "",
-      //       instructions: instruction,
-      //     },
-      //     folderState!,
-      //     images,
-      //     pdf,
-      //     clientId,
-      //     filesFromLibrary,
-      //     newAbortController.signal,
-      //     processChunk,
-      //     processFinal
-      //   );
-      //   await loadExistingSession(res.documentId);
+      if (isSwitch(SWITCH_KEYS.CARD)) {
+        const res = await CoachService.aiLearningCardSearch(
+          {
+            user_prompt: message,
+            is_new: !currentChatId,
+            chat_id: currentChatId,
+            regenerate_id: null,
+            chat_title: "",
+            instructions: instruction,
+          },
+          folderState!,
+          images,
+          pdf,
+          clientId,
+          filesFromLibrary,
+          newAbortController.signal,
+          processChunk,
+          processFinal
+        );
+        await loadExistingSession(res.documentId);
 
-      //   if (res.chatId && res.documentId) {
-      //     const targetPath = `/content-manager/library/folder/${folderState}/chat/${res.chatId}`;
+        if (res.chatId && res.documentId) {
+          const targetPath = `/content-manager/library/folder/${folderState}/chat/${res.chatId}`;
 
-      //     if (location.pathname === targetPath) {
-      //       onDocumentRefresh?.(res.documentId, res.chatId);
-      //     } else {
-      //       navigate(targetPath, {
-      //         state: {
-      //           selectedSwitch: SWITCH_KEYS.CARD,
-      //           lastId: res.chatId,
-      //           docId: res.documentId,
-      //           folderId: folderState,
-      //         },
-      //       });
-      //     }
-      //   }
-      // } else
-      if (isSwitch(SWITCH_KEYS.CREATE)) {
+          if (location.pathname === targetPath) {
+            onDocumentRefresh?.(res.documentId, res.chatId);
+          } else {
+            navigate(targetPath, {
+              state: {
+                selectedSwitch: SWITCH_KEYS.CARD,
+                lastId: res.chatId,
+                docId: res.documentId,
+                folderId: folderState,
+              },
+            });
+          }
+        }
+      } else if (isSwitch(SWITCH_KEYS.CREATE)) {
         const res = await CoachService.aiLearningSearch(
           {
             user_prompt: message,
@@ -856,10 +857,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {filesState.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />
@@ -883,10 +884,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              1
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -1000,6 +1001,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             <LibraryChatInput
               files={filesState}
               setFiles={handleSetFiles}
+              voiceFile={voiceFile}
+              setVoiceFile={setVoiceFile}
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={
@@ -1034,10 +1037,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
@@ -1061,10 +1064,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  1
+                                </span>
+                              )}
                           </Button>
                         }
                         setInstruction={setInstruction}
@@ -1098,10 +1101,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />

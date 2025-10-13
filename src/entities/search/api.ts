@@ -41,7 +41,9 @@ export class SearchService {
         undefined,
         searchData.images,
         searchData.pdf,
-        searchData.contentId
+        searchData.contentId,
+        undefined,
+        searchData.audio,
       );
 
       const user = localStorage.getItem("persist:user");
@@ -281,10 +283,15 @@ export class SearchService {
     imageFiles?: File[],
     pdfFile?: File,
     contentId?: string,
-    libraryFiles?: string[]
+    libraryFiles?: string[],
+    audio?: File
   ) {
     const formData = new FormData();
     formData.append("chat_message", message);
+
+    if (audio) {
+      formData.append("audio", audio);
+    }
 
     if (clientId) {
       formData.append("client_id", clientId);

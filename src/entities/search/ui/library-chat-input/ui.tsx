@@ -15,6 +15,7 @@ import {
   PopoverInstruction,
 } from "widgets/content-popovers";
 import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
+import { PopoverVoiceRecorder } from "widgets/content-popovers/ui/popover-voice";
 import { DailyJournal } from "widgets/dayli-journal";
 import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
 
@@ -22,6 +23,8 @@ interface LibraryChatInputProps {
   selectedSwitch: string;
   files: File[];
   setFiles: (files: File[]) => void;
+  voiceFile?: File | null;
+  setVoiceFile?: (file: File | null) => void;
   placeholder?: string;
   onSend?: (
     message: string,
@@ -49,6 +52,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   placeholder = "Your message",
   files,
   setFiles,
+  voiceFile,
+  setVoiceFile,
   onSend,
   disabled = false,
   className,
@@ -115,6 +120,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const attachKey = files
     .map((f) => `${f.name}-${f.size}-${f.lastModified}`)
     .join("|");
+
+  console.log(voiceFile)
 
   return (
     <div
@@ -215,10 +222,10 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                         {((instruction && instruction?.length > 0) ||
                           (existingInstruction &&
                             existingInstruction?.length > 0)) && (
-                          <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                            1
-                          </span>
-                        )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
                       </Button>
                     }
                     folderInstruction={existingInstruction}
@@ -228,6 +235,14 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               )
             ) : (
               <div className="flex gap-[8px] items-center">
+                {selectedSwitch === "Smart Search" && <div className="mr-[8px] relative">
+                  <PopoverVoiceRecorder setVoiceFile={(file) => setVoiceFile?.(file)} />
+                  {voiceFile && (
+                    <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                      1
+                    </span>
+                  )}
+                </div>}
                 <Button
                   variant={"brightblue"}
                   onClick={() => {

@@ -3,6 +3,7 @@ export interface AiSearchRequest {
   images?: File[];
   pdf?: File;
   contentId?: string;
+  audio?: File;
 }
 
 export interface AIChatMessageResearch extends AiSearchRequest {

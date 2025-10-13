@@ -132,6 +132,9 @@ export const icons = [
   "check_circle_unread",
   "edit_square",
   "playing_cards",
+  "mic",
+  "check_circle",
+  "stop",
 ] as const;
 
 export type IconName = (typeof icons)[number];
