@@ -1,3 +1,13 @@
+## [1.1.0] - 2025-10-13
+
+### New feature
+
+- Add learning card chat bot.
+- Change icon for cards in the sidebar.
+- Change admin content management view.
+- Add abillity to edit cards.
+- Add tracking progress for client cards.
+
 ## [1.0.4] - 2025-10-13
 
 ### Fixes & Minor Changes
