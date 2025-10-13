@@ -560,7 +560,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     message: string,
     files: File[]
   ): Promise<string | undefined> => {
-    if ((!message.trim() && files.length === 0) || isSearching) return;
+    if ((!voiceFile && !message.trim() && files.length === 0) || isSearching)
+      return;
 
     const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     const previewImages = files
@@ -763,7 +764,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         await SearchService.aiSearchStream(
           {
             chat_message: JSON.stringify({
-              user_prompt: voiceFile ? undefined : message,
+              user_prompt: voiceFile && !message.trim() ? undefined : message,
               is_new: currentChatId.startsWith("new_chat_"),
               chat_id: currentChatId.startsWith("new_chat_")
                 ? undefined
@@ -1060,7 +1061,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 isSearching ||
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
                 (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
-                textContent === ""
+                (!voiceFile && textContent === "")
               }
               selectedSwitch={selectedSwitch}
               message={textContent}

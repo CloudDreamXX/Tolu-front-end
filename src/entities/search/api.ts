@@ -43,7 +43,7 @@ export class SearchService {
         searchData.pdf,
         searchData.contentId,
         undefined,
-        searchData.audio,
+        searchData.audio
       );
 
       const user = localStorage.getItem("persist:user");

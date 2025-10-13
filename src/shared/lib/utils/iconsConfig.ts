@@ -135,6 +135,7 @@ export const icons = [
   "mic",
   "check_circle",
   "stop",
+  "stop_circle",
 ] as const;
 
 export type IconName = (typeof icons)[number];
