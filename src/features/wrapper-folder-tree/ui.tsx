@@ -59,25 +59,25 @@ export const WrapperFolderTree = ({
     }
   }, [folderResponse, dispatch, page, targetFolder]);
 
-  const findFolderInSubfolders = (
-    folderId: string,
-    folders: IFolder[]
-  ): IFolder | null => {
-    for (const folder of folders) {
-      if (folder.id === folderId) return folder;
-      if (folder.subfolders) {
-        const found = findFolderInSubfolders(folderId, folder.subfolders);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
+  // const findFolderInSubfolders = (
+  //   folderId: string,
+  //   folders: IFolder[]
+  // ): IFolder | null => {
+  //   for (const folder of folders) {
+  //     if (folder.id === folderId) return folder;
+  //     if (folder.subfolders) {
+  //       const found = findFolderInSubfolders(folderId, folder.subfolders);
+  //       if (found) return found;
+  //     }
+  //   }
+  //   return null;
+  // };
 
   const handleScroll = () => {
     if (
       containerRef.current &&
       containerRef.current.scrollTop + containerRef.current.clientHeight >=
-        containerRef.current.scrollHeight &&
+      containerRef.current.scrollHeight &&
       hasMore
     ) {
       setPage((prev) => prev + 1);
