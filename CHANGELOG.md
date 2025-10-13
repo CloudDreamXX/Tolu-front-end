@@ -1,3 +1,20 @@
+## [1.0.4] - 2025-10-13
+
+### Fixes & Minor Changes
+
+- Fix super admin accept and reject actions.
+- Fix sending files in the chats.
+- Fix bulleted lists in the coach edit action.
+- Fix client layout.
+- Fix location of the article.
+- Complete the Check invite flow.
+- Fix invite client flow to show client info in the sign up form.
+- Fix displaying of the coach's data in the client library.
+- Fix selection of the year in Edit client profile modal.
+- Update coach, client, files library, folders, document, admin, chat, content, health history, notifications, symptoms tracker endpoints to use RTK query
+- Fix edit client profile endpoint.
+- Update coach and client onboardings.
+
 ## [1.0.3] - 2025-10-02
 
 ### Fixes & Minor Changes
