@@ -54,7 +54,7 @@ export const SymptomsSeverity = () => {
   const handleSliderChange = (symptom: string, value: number[]) => {
     setRatings((prev) => ({
       ...prev,
-      [symptom]: value[0],
+      [symptom]: value[0] - 1,
     }));
   };
 
@@ -62,17 +62,25 @@ export const SymptomsSeverity = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((s) => s + 1);
     } else {
+      const normalizedRatings = Object.fromEntries(
+        Object.entries(ratings).map(([symptom, value]) => [
+          symptom,
+          value === 0 ? 1 : value,
+        ])
+      );
+
       dispatch(
         setFormField({
           field: "symptoms_severity",
-          value: ratings,
+          value: normalizedRatings,
         })
       );
 
       await UserService.onboardClient(
-        { ...clientOnboarding, symptoms_severity: ratings },
+        { ...clientOnboarding, symptoms_severity: normalizedRatings },
         token
       );
+
       nav("/summary");
     }
   };
@@ -118,13 +126,13 @@ export const SymptomsSeverity = () => {
               </label>
               <Slider
                 min={1}
-                max={4}
+                max={5}
                 step={1}
-                value={[ratings[symptom] || 1]}
+                value={[ratings[symptom] + 1 || 1]}
                 onValueChange={(val) => handleSliderChange(symptom, val)}
                 colors={["#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB"]}
               />
-              <div className="flex justify-between text-xs text-[#1D1D1F]">
+              <div className="flex justify-around text-xs text-[#1D1D1F]">
                 {severityLabels.map((label) => (
                   <span key={label}>{label}</span>
                 ))}
@@ -139,7 +147,7 @@ export const SymptomsSeverity = () => {
           <button
             onClick={handleContinue}
             className={
-              "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
+              "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white ml-auto"
             }
           >
             Continue
