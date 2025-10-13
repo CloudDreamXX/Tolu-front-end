@@ -654,47 +654,46 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     };
 
     try {
-      // if (isSwitch(SWITCH_KEYS.CARD)) {
-      //   if (!folderState) {
-      //     setIsSearching(false);
-      //     setError("Please select a target folder before using Create.");
-      //     return;
-      //   }
+      if (isSwitch(SWITCH_KEYS.CARD)) {
+        if (!folderState) {
+          setIsSearching(false);
+          setError("Please select a target folder before using Create.");
+          return;
+        }
 
-      //   const res = await CoachService.aiLearningCardSearch(
-      //     {
-      //       user_prompt: message,
-      //       is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
-      //       chat_id: currentChatId.startsWith("new_chat_")
-      //         ? undefined
-      //         : currentChatId,
-      //       regenerate_id: null,
-      //       chat_title: "",
-      //       instructions: instruction,
-      //     },
-      //     folderState,
-      //     images,
-      //     pdf,
-      //     clientId ?? undefined,
-      //     filesFromLibrary,
-      //     undefined,
-      //     processChunk,
-      //     processFinalData
-      //   );
+        const res = await CoachService.aiLearningCardSearch(
+          {
+            user_prompt: message,
+            is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
+            chat_id: currentChatId.startsWith("new_chat_")
+              ? undefined
+              : currentChatId,
+            regenerate_id: null,
+            chat_title: "",
+            instructions: instruction,
+          },
+          folderState,
+          images,
+          pdf,
+          clientId ?? undefined,
+          filesFromLibrary,
+          undefined,
+          processChunk,
+          processFinalData
+        );
 
-      //   if (res.chatId && res.documentId) {
-      //     const targetPath = `/content-manager/library/folder/${folderState}/chat/${res.chatId}`;
-      //     navigate(targetPath, {
-      //       state: {
-      //         selectedSwitch: SWITCH_KEYS.CARD,
-      //         lastId: res.chatId,
-      //         docId: res.documentId,
-      //         folderId: folderState,
-      //       },
-      //     });
-      //   }
-      // } else
-      if (isSwitch(SWITCH_KEYS.CREATE)) {
+        if (res.chatId && res.documentId) {
+          const targetPath = `/content-manager/library/folder/${folderState}/chat/${res.chatId}`;
+          navigate(targetPath, {
+            state: {
+              selectedSwitch: SWITCH_KEYS.CARD,
+              lastId: res.chatId,
+              docId: res.documentId,
+              folderId: folderState,
+            },
+          });
+        }
+      } else if (isSwitch(SWITCH_KEYS.CREATE)) {
         if (!folderState) {
           setIsSearching(false);
           setError("Please select a target folder before using Create.");
