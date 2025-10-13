@@ -14,7 +14,11 @@ import {
 import { CoachService, useLazyGetSessionByIdQuery } from "entities/coach";
 import { IDocument } from "entities/document";
 import { LibraryChatInput } from "entities/search";
-import { SearchService, StreamChunk } from "entities/search/api";
+import {
+  SearchService,
+  StreamChunk,
+  useLazyGetSessionQuery,
+} from "entities/search/api";
 import { RootState } from "entities/store";
 import {
   ChatActions,
@@ -319,6 +323,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   }, [isValid]);
 
   const [getSessionById] = useLazyGetSessionByIdQuery();
+  const [getSearchSession] = useLazyGetSessionQuery();
 
   const loadExistingSession = async (chatId: string) => {
     setIsLoadingSession(true);
@@ -365,7 +370,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           });
         }
       } else {
-        const sessionData = await SearchService.getSession(chatId);
+        const sessionData = await getSearchSession(chatId).unwrap();
 
         if (sessionData && sessionData.length > 0) {
           sessionData.forEach((item) => {

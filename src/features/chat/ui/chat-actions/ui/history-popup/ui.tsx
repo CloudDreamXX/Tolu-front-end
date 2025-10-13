@@ -1,5 +1,5 @@
 import { setLastChatId } from "entities/client/lib";
-import { SearchHistoryItem, SearchService } from "entities/search";
+import { useGetSearchHistoryQuery } from "entities/search/api";
 import { memo, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
@@ -32,23 +32,19 @@ function useIsMdUp() {
 
 const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [history, setHistory] = useState<SearchHistoryItem[]>();
   const triggerRef = useRef<HTMLDivElement>(null);
   const isMdUp = useIsMdUp();
   const dispatch = useDispatch();
 
+  const { data: history, refetch } = useGetSearchHistoryQuery(
+    {},
+    { skip: !isOpen }
+  );
+
+  // Re-fetch each time popup opens
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const res = await SearchService.getSearchHistory();
-        setHistory(res);
-      } catch (error) {
-        console.error("Failed to fetch search history:", error);
-        setHistory([]);
-      }
-    };
-    fetchHistory();
-  }, [isOpen]);
+    if (isOpen) refetch();
+  }, [isOpen, refetch]);
 
   // Close on Escape
   useEffect(() => {

@@ -12,6 +12,7 @@ import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { setHealthHistory, setLoading } from "entities/health-history/lib";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
+import { useLazyGetSessionQuery } from "entities/search/api";
 import { RootState } from "entities/store";
 import {
   ChatActions,
@@ -112,6 +113,7 @@ export const LibraryChat = () => {
   const dispatch = useDispatch();
 
   const [getSessionById] = useLazyGetSessionByIdQuery();
+  const [getSearchSession] = useLazyGetSessionQuery();
 
   useEffect(() => {
     if (activeChatKey) {
@@ -402,7 +404,7 @@ export const LibraryChat = () => {
           });
         }
       } else {
-        const sessionData = await SearchService.getSession(id);
+        const sessionData = await getSearchSession(id).unwrap();
 
         if (sessionData && sessionData.length > 0) {
           sessionData.forEach((item: any) => {
