@@ -99,7 +99,7 @@ export const ContentManagement = () => {
 
   const [triggerGetFolders] = useLazyGetFoldersStructureQuery();
 
-  // const [isCardsTab, setIsCardsTab] = useState(false);
+  const [isCardsTab, setIsCardsTab] = useState(false);
 
   useEffect(() => {
     if (!resp) return;
@@ -517,7 +517,7 @@ export const ContentManagement = () => {
 
   return (
     <div className="flex flex-col gap-[16px] p-8 overflow-y-auto h-[100%]">
-      {/* <div className="flex gap-[16px] items-center">
+      <div className="flex gap-[16px] items-center">
         <button
           className={`w-[200px] text-[18px] xl:text-xl font-medium px-[16px] py-[8px] rounded-[8px] ${!isCardsTab ? "bg-[#1C63DB] text-white" : ""}`}
           onClick={() => setIsCardsTab(false)}
@@ -530,7 +530,7 @@ export const ContentManagement = () => {
         >
           Cards
         </button>
-      </div> */}
+      </div>
 
       <Input
         placeholder="Search by name or content"
@@ -542,7 +542,7 @@ export const ContentManagement = () => {
       />
 
       <div className="tabs-content">
-        {/* {isCardsTab ? (
+        {isCardsTab ? (
           <div className="flex flex-col gap-4">
             {filteredGroups.length > 0 ? (
               filteredGroups.map((group, gIdx) => {
@@ -609,74 +609,74 @@ export const ContentManagement = () => {
               </div>
             )}
           </div>
-        ) : ( */}
-        <div className="flex flex-col gap-4">
-          {filteredGroups.length > 0 ? (
-            filteredGroups.map((group, gIdx) => {
-              const groupKey = group.key;
-              return (
-                <div key={groupKey} className="mb-2">
-                  {group.folders.length ? (
-                    group.folders.map((folder, index) => {
-                      const valueKey = `g${gIdx}-f${index}`;
-                      const isOpen = (openTop[groupKey] || "") === valueKey;
+        ) : (
+          <div className="flex flex-col gap-4">
+            {filteredGroups.length > 0 ? (
+              filteredGroups.map((group, gIdx) => {
+                const groupKey = group.key;
+                return (
+                  <div key={groupKey} className="mb-2">
+                    {group.folders.length ? (
+                      group.folders.map((folder, index) => {
+                        const valueKey = `g${gIdx}-f${index}`;
+                        const isOpen = (openTop[groupKey] || "") === valueKey;
 
-                      return (
-                        <Accordion
-                          key={folder.id}
-                          type="single"
-                          collapsible
-                          className="w-full"
-                          value={isOpen ? valueKey : ""}
-                          onValueChange={(v) =>
-                            handleOpenTop(groupKey, v, folder)
-                          }
-                        >
-                          <AccordionItem
-                            value={valueKey}
-                            className="border border-[#008FF6] rounded-[18px] transition-shadow duration-200 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+                        return (
+                          <Accordion
+                            key={folder.id}
+                            type="single"
+                            collapsible
+                            className="w-full"
+                            value={isOpen ? valueKey : ""}
+                            onValueChange={(v) =>
+                              handleOpenTop(groupKey, v, folder)
+                            }
                           >
-                            <AccordionTrigger className="pt-0">
-                              {folder.name}
-                            </AccordionTrigger>
+                            <AccordionItem
+                              value={valueKey}
+                              className="border border-[#008FF6] rounded-[18px] transition-shadow duration-200 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+                            >
+                              <AccordionTrigger className="pt-0">
+                                {folder.name}
+                              </AccordionTrigger>
 
-                            <AccordionContent className="flex flex-col gap-4 pb-2">
-                              {Array.isArray(folder.subfolders) &&
-                                folder.subfolders.length > 0 && (
-                                  <div className="flex flex-col gap-2">
-                                    {renderSubTree(
-                                      folder.id,
-                                      folder.subfolders,
-                                      valueKey,
-                                      false
-                                    )}
-                                  </div>
-                                )}
+                              <AccordionContent className="flex flex-col gap-4 pb-2">
+                                {Array.isArray(folder.subfolders) &&
+                                  folder.subfolders.length > 0 && (
+                                    <div className="flex flex-col gap-2">
+                                      {renderSubTree(
+                                        folder.id,
+                                        folder.subfolders,
+                                        valueKey,
+                                        false
+                                      )}
+                                    </div>
+                                  )}
 
-                              <div className="flex flex-row flex-wrap w-full gap-4">
-                                {renderFeed(folder.id, false)}
-                              </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      );
-                    })
-                  ) : (
-                    <div className="w-full text-sm text-muted-foreground">
-                      No folders.
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          ) : (
-            <div className="w-full text-center text-gray-500">
-              We couldn’t find anything matching your search. Try adjusting the
-              filters or search terms.
-            </div>
-          )}
-        </div>
-        {/* )} */}
+                                <div className="flex flex-row flex-wrap w-full gap-4">
+                                  {renderFeed(folder.id, false)}
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        );
+                      })
+                    ) : (
+                      <div className="w-full text-sm text-muted-foreground">
+                        No folders.
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="w-full text-center text-gray-500">
+                We couldn’t find anything matching your search. Try adjusting
+                the filters or search terms.
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

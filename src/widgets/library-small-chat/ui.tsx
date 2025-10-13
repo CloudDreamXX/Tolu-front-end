@@ -1005,7 +1005,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               disabled={
                 isSearching ||
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
-                // (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
+                (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
                 message === ""
               }
               selectedText={selectedText}
@@ -1014,8 +1014,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedSwitch={selectedSwitch}
               setNewMessage={setMessage}
               footer={
-                isSwitch(SWITCH_KEYS.CREATE) ? (
-                  // || isSwitch(SWITCH_KEYS.CARD)
+                isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
                       <PopoverAttach
