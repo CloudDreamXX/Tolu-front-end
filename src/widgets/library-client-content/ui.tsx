@@ -522,20 +522,20 @@ export const LibraryClientContent = ({
 
       try {
         if (!coachProfiles[coach.coach_id]) {
-          await getCoachProfile(coach.coach_id).unwrap();
+          const res = await getCoachProfile(coach.coach_id).unwrap();
           setCoachProfiles((p) => ({
             ...p,
-            [coach.coach_id]: coachProfileData,
+            [coach.coach_id]: res,
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -812,7 +812,7 @@ export const LibraryClientContent = ({
 
                   <AccordionContent className="flex flex-col gap-4 pb-2">
                     {Array.isArray(folder.subfolders) &&
-                    folder.subfolders.length > 0 ? (
+                      folder.subfolders.length > 0 ? (
                       folder.subfolders.map((sub, sIdx) => {
                         const subKey = `sub-${sIdx}`;
                         const subOpen = (openSub[folder.id] || "") === subKey;
