@@ -41,7 +41,7 @@ import {
   SwitchValue,
 } from "widgets/library-small-chat/switch-config";
 import { MessageList } from "widgets/message-list";
-import { pickPreferredMaleEnglishVoice } from "./lib";
+import { IOSUtterance, pickPreferredMaleEnglishVoice } from "./lib";
 
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
@@ -278,21 +278,34 @@ export const LibraryChat = () => {
   }, [chatState.length]);
 
   const handleReadAloud = () => {
-    setIsReadingAloud((prev) => !prev);
+    if (!voiceContent) return;
 
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
-    } else {
-      const utterance = new SpeechSynthesisUtterance(voiceContent);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-        if (selectedVoice.lang) utterance.lang = selectedVoice.lang;
-      }
-      utterance.onend = () => {
-        speechSynthesis.cancel();
-      };
-      speechSynthesis.speak(utterance);
+      setIsReadingAloud(false);
+      return;
     }
+
+    const utterance: IOSUtterance = new SpeechSynthesisUtterance(voiceContent);
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.voiceURI = selectedVoice.voiceURI || selectedVoice.name;
+      utterance.lang = selectedVoice.lang || "en-GB";
+    } else {
+      utterance.lang = "en-GB";
+    }
+
+    utterance.pitch = 0.85;
+    utterance.rate = 1.0;
+
+    utterance.onend = () => {
+      setIsReadingAloud(false);
+      speechSynthesis.cancel();
+    };
+
+    setIsReadingAloud(true);
+    speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {

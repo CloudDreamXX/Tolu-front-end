@@ -1,20 +1,19 @@
-export const pickPreferredMaleEnglishVoice = (voices: SpeechSynthesisVoice[]) => {
+export type IOSUtterance = SpeechSynthesisUtterance & { voiceURI?: string };
+
+export const pickPreferredMaleEnglishVoice = (
+  voices: SpeechSynthesisVoice[]
+): SpeechSynthesisVoice | null => {
   if (!voices?.length) return null;
 
-  const exactPriority = [
-    // macOS
+  const malePriority = [
     "Daniel",
     "Alex",
-    // iOS
     "Rishi",
-    // Google voices
     "Google UK English Male",
     "Google US English Male",
-    // Android Chrome / Edge
     "Microsoft Guy Online (Natural)",
   ];
 
-  // Known female voices to explicitly skip
   const femaleBlacklist = [
     "Samantha",
     "Karen",
@@ -28,28 +27,19 @@ export const pickPreferredMaleEnglishVoice = (voices: SpeechSynthesisVoice[]) =>
     "Google US English Female",
   ];
 
-  const isMaleVoice = (v: SpeechSynthesisVoice) => {
-    const n = v.name.toLowerCase();
-    const l = v.lang?.toLowerCase() ?? "";
-    return (
-      /(daniel|alex|fred|rishi|male|guy|matthew|brian)/i.test(v.name) &&
-      !femaleBlacklist.some((f) => n.includes(f.toLowerCase()))
-    ) && l.startsWith("en");
-  };
+  const isMaleish = (v: SpeechSynthesisVoice) =>
+    /(daniel|alex|rishi|fred|male|guy|matthew|brian|uk)/i.test(v.name) &&
+    !femaleBlacklist.includes(v.name);
 
-  const byExact = voices.find((v) => exactPriority.includes(v.name));
-  if (byExact) return byExact;
+  let match =
+    voices.find((v) => malePriority.includes(v.name)) ||
+    voices.find((v) => isMaleish(v) && v.lang.startsWith("en")) ||
+    voices.find((v) => v.lang.startsWith("en-gb")) ||
+    voices.find((v) => v.lang.startsWith("en-us"));
 
-  const englishVoices = voices.filter(
-    (v) =>
-      v.lang?.toLowerCase().startsWith("en") &&
-      !femaleBlacklist.includes(v.name)
-  );
+  if (!match && voices.some((v) => /male/i.test(v.voiceURI))) {
+    match = voices.find((v) => /male/i.test(v.voiceURI));
+  }
 
-  const maleish = englishVoices.find(isMaleVoice);
-  if (maleish) return maleish;
-
-  if (englishVoices.length > 0) return englishVoices[0];
-
-  return voices[0] ?? null;
+  return match ?? voices.find((v) => v.lang.startsWith("en")) ?? voices[0] ?? null;
 };
