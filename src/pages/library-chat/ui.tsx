@@ -41,6 +41,7 @@ import {
   SwitchValue,
 } from "widgets/library-small-chat/switch-config";
 import { MessageList } from "widgets/message-list";
+import { pickPreferredMaleEnglishVoice } from "./lib";
 
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
@@ -165,48 +166,77 @@ export const LibraryChat = () => {
   } = useGetUserHealthHistoryQuery();
 
   useEffect(() => {
-    const loadVoices = () => {
-      const availableVoices = speechSynthesis.getVoices();
+    let cancelled = false;
+    let pollTimer: number | null = null;
 
-      const storedVoice = localStorage.getItem("selectedVoice");
-
-      let voice: SpeechSynthesisVoice | null = null;
-
-      if (storedVoice) {
-        const storedVoiceSettings = JSON.parse(storedVoice);
-        voice =
-          availableVoices.find(
-            (v) =>
-              v.name === storedVoiceSettings.name &&
-              v.lang === storedVoiceSettings.lang
-          ) || null;
-      }
-
-      if (!voice) {
-        voice =
-          availableVoices.find(
-            (v) => v.name === "Google UK English Male" && v.lang === "en-GB"
-          ) || null;
-      }
-
+    const setAndPersistVoice = (voice: SpeechSynthesisVoice | null) => {
+      if (cancelled) return;
       setSelectedVoice(voice);
-
       if (voice) {
-        const voiceSettings = { name: voice.name, lang: voice.lang };
-        localStorage.setItem("selectedVoice", JSON.stringify(voiceSettings));
+        localStorage.setItem(
+          "selectedVoice",
+          JSON.stringify({ name: voice.name, lang: voice.lang })
+        );
+      } else {
+        localStorage.removeItem("selectedVoice");
+      }
+    };
+
+    const resolveVoice = () => {
+      const availableVoices = speechSynthesis.getVoices() || [];
+      if (!availableVoices.length) return false;
+
+      const stored = localStorage.getItem("selectedVoice");
+      if (stored) {
+        try {
+          const { name, lang } = JSON.parse(stored);
+          const match = availableVoices.find(
+            (v) => v.name === name && v.lang === lang
+          );
+          if (match) {
+            setAndPersistVoice(match);
+            return true;
+          } else {
+            localStorage.removeItem("selectedVoice");
+          }
+        } catch {
+          localStorage.removeItem("selectedVoice");
+        }
+      }
+
+      const picked = pickPreferredMaleEnglishVoice(availableVoices);
+      setAndPersistVoice(picked);
+      return true;
+    };
+
+    const tryLoad = () => {
+      if (!resolveVoice()) {
+        if (pollTimer == null) {
+          pollTimer = window.setInterval(() => {
+            if (resolveVoice()) {
+              if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+              }
+            }
+          }, 250);
+        }
       }
     };
 
     if (speechSynthesis.getVoices().length === 0) {
-      speechSynthesis.onvoiceschanged = loadVoices;
+      speechSynthesis.onvoiceschanged = tryLoad;
+      setTimeout(tryLoad, 100);
     } else {
-      loadVoices();
+      tryLoad();
     }
 
     return () => {
-      if (speechSynthesis.onvoiceschanged) {
-        speechSynthesis.onvoiceschanged = null;
+      cancelled = true;
+      if (pollTimer) {
+        clearInterval(pollTimer);
       }
+      speechSynthesis.onvoiceschanged = null;
     };
   }, []);
 
@@ -249,12 +279,14 @@ export const LibraryChat = () => {
 
   const handleReadAloud = () => {
     setIsReadingAloud((prev) => !prev);
+
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
     } else {
       const utterance = new SpeechSynthesisUtterance(voiceContent);
       if (selectedVoice) {
         utterance.voice = selectedVoice;
+        if (selectedVoice.lang) utterance.lang = selectedVoice.lang;
       }
       utterance.onend = () => {
         speechSynthesis.cancel();
