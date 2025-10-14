@@ -24,6 +24,7 @@ import { clientApi } from "entities/client";
 import { coachApi } from "entities/coach";
 import { foldersApi } from "entities/folder";
 import { searchApi } from "entities/search";
+import { userApi } from "../user";
 
 const userPersistConfig = {
   key: "user",
@@ -59,6 +60,7 @@ const rootReducer = combineReducers({
   [coachApi.reducerPath]: coachApi.reducer,
   [foldersApi.reducerPath]: foldersApi.reducer,
   [searchApi.reducerPath]: searchApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
 });
 
 export const store = configureStore({
@@ -87,7 +89,8 @@ export const store = configureStore({
       .concat(clientApi.middleware)
       .concat(coachApi.middleware)
       .concat(foldersApi.middleware)
-      .concat(searchApi.middleware),
+      .concat(searchApi.middleware)
+      .concat(userApi.middleware),
 });
 
 export const persistor = persistStore(store);

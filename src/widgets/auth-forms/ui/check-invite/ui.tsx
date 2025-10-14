@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "shared/lib/hooks/use-toast";
 import { z } from "zod";
 import { Input } from "shared/ui";
-import { UserService } from "entities/user";
+import { useLazyCheckPendingInviteQuery } from "entities/user/api";
 import { useNavigate } from "react-router-dom";
 
 export const CheckInvite = () => {
@@ -13,6 +13,7 @@ export const CheckInvite = () => {
     null
   );
   const [responseMessage, setResponseMessage] = useState<string>("");
+  const [triggerCheckInvite] = useLazyCheckPendingInviteQuery();
 
   const emailSchema = z.object({
     email: z.string().email("The email format is incorrect."),
@@ -40,11 +41,15 @@ export const CheckInvite = () => {
     try {
       setIsSubmitting(true);
 
-      const response = await UserService.checkPendingInvite(email);
+      const { data, error } = await triggerCheckInvite(email);
 
-      if (response.has_pending_invite) {
-        if (response.token) {
-          nav(`/accept-invite/${response.token}`);
+      if (error) {
+        throw error;
+      }
+
+      if (data?.has_pending_invite) {
+        if (data.token) {
+          nav(`/accept-invite/${data.token}`);
         }
       } else {
         setHasPendingInvite(false);

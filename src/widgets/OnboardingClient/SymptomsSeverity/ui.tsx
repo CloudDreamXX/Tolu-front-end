@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { useOnboardClientMutation } from "entities/user";
 import { OnboardingClientLayout } from "../Layout";
 import { Slider } from "shared/ui/slider";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -51,6 +51,8 @@ export const SymptomsSeverity = () => {
     clientOnboarding.symptoms_severity || {}
   );
 
+  const [onboardClient] = useOnboardClientMutation();
+
   const handleSliderChange = (symptom: string, value: number[]) => {
     setRatings((prev) => ({
       ...prev,
@@ -76,10 +78,10 @@ export const SymptomsSeverity = () => {
         })
       );
 
-      await UserService.onboardClient(
-        { ...clientOnboarding, symptoms_severity: normalizedRatings },
-        token
-      );
+      await onboardClient({
+        data: { ...clientOnboarding, symptoms_severity: normalizedRatings },
+        token: token ?? undefined,
+      });
 
       nav("/summary");
     }

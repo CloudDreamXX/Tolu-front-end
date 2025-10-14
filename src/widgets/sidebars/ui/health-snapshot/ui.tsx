@@ -1,7 +1,7 @@
 import { setChat, setFolderId } from "entities/client/lib";
 import { SearchAiSmallInput } from "entities/search";
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { useSignOutMutation } from "entities/user";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -29,6 +29,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const chatList = useSelector(chatsSelectors.selectAll);
   const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
+  const [signOut] = useSignOutMutation();
 
   const unreadMessagesCount = chatList.reduce((count, chat) => {
     return count + (chat.unreadCount || 0);
@@ -47,7 +48,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
 
   const handleSignOut = async () => {
     try {
-      await UserService.signOut(token);
+      await signOut(token).unwrap();
       toast({
         title: "Sign out successful",
       });

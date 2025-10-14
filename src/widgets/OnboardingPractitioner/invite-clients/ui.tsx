@@ -7,7 +7,7 @@ import { useInviteClientMutation } from "entities/coach";
 import { toast } from "shared/lib";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
-import { UserService } from "entities/user";
+import { useOnboardUserMutation } from "entities/user";
 
 export const InviteClients = () => {
   const nav = useNavigate();
@@ -23,6 +23,7 @@ export const InviteClients = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const state = useSelector((state: RootState) => state.coachOnboarding);
   const [inviteClient] = useInviteClientMutation();
+  const [onboardUser] = useOnboardUserMutation();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -67,7 +68,7 @@ export const InviteClients = () => {
     if (selectedFile) {
       try {
         await inviteClient({ payload: null, file: selectedFile });
-        await UserService.onboardUser(state);
+        await onboardUser({ data: state }).unwrap();
       } catch (error) {
         console.error(error);
         toast({

@@ -7,7 +7,7 @@ import { AuthPageWrapper, TooltipWrapper } from "shared/ui";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { titlesAndIcons } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { UserService } from "entities/user";
+import { useOnboardUserMutation } from "entities/user";
 import { RootState } from "entities/store";
 import { SelectField } from "widgets/CRMSelectField";
 
@@ -24,6 +24,8 @@ export const SelectType = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const state = useSelector((state: RootState) => state.coachOnboarding);
   const practitionerTypes = state?.practitioner_types as string[] | undefined;
+
+  const [onboardUser] = useOnboardUserMutation();
 
   useEffect(() => {
     const initial = Array(titlesAndIcons.length).fill("");
@@ -90,7 +92,7 @@ export const SelectType = () => {
     if (!isSelected()) return;
 
     try {
-      await UserService.onboardUser(state);
+      await onboardUser({ data: state }).unwrap();
       nav("/onboarding-welcome");
     } catch (err) {
       console.error(err);

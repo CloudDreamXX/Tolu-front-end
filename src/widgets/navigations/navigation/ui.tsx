@@ -1,5 +1,5 @@
 import { RootState } from "entities/store";
-import { logout, UserService } from "entities/user";
+import { logout, useSignOutMutation } from "entities/user";
 import { CustomNavLink } from "features/custom-nav-link";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +24,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   const menuMobRef = useRef<HTMLDivElement>(null);
   const chatId = `new_chat_${Date.now()}`;
   const location = useLocation();
+  const [signOut] = useSignOutMutation();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -42,7 +43,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
 
   const handleSignOut = async () => {
     try {
-      await UserService.signOut(token);
+      await signOut(token).unwrap();
       toast({
         title: "Sign out successful",
       });

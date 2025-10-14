@@ -3,7 +3,15 @@ import {
   useRequestNewInviteMutation,
 } from "entities/client";
 import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
-import { setCredentials, UserService } from "entities/user";
+import {
+  setCredentials,
+  useLoginMutation,
+  useRequestPasswordlessLoginMutation,
+  useVerifyPasswordlessLoginMutation,
+  useLazyGetOnboardClientQuery,
+  useLazyGetOnboardingStatusQuery,
+  useLazyGetOnboardingUserQuery,
+} from "entities/user";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -16,8 +24,15 @@ import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboardi
 import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-type/helpers";
 
 export const LoginForm = () => {
+  const [login] = useLoginMutation();
+  const [requestPasswordlessLogin] = useRequestPasswordlessLoginMutation();
+  const [verifyPasswordlessLogin] = useVerifyPasswordlessLoginMutation();
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [requestNewInvite] = useRequestNewInviteMutation();
+
+  const [triggerGetOnboardingStatus] = useLazyGetOnboardingStatusQuery();
+  const [triggerGetOnboardClient] = useLazyGetOnboardClientQuery();
+  const [triggerGetOnboardingUser] = useLazyGetOnboardingUserQuery();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -51,8 +66,6 @@ export const LoginForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
   useEffect(() => {
     localStorage.clear();
     localStorage.removeItem("persist:user");
@@ -61,11 +74,12 @@ export const LoginForm = () => {
 
   const getOnboardingStatusWithRetry = async (attempt = 1) => {
     try {
-      return await UserService.getOnboardingStatus();
+      const res = await triggerGetOnboardingStatus().unwrap();
+      return res;
     } catch (err: any) {
       const status = err?.response?.status ?? err?.status;
       if (status === 403 && attempt < 2) {
-        await sleep(300);
+        await new Promise((r) => setTimeout(r, 300));
         return getOnboardingStatusWithRetry(attempt + 1);
       }
       throw err;
@@ -74,18 +88,19 @@ export const LoginForm = () => {
 
   const redirectClient = async () => {
     const onboardingComplete = await getOnboardingStatusWithRetry();
+
     if (onboardingComplete.onboarding_filled) {
-      if (coachInviteToken) {
+      if (coachInviteToken)
         await acceptCoachInvite({ token: coachInviteToken }).unwrap();
-      }
       navigate("/library");
       return;
     }
-    const userInfo = await UserService.getOnboardClient();
+
+    const userInfo = await triggerGetOnboardClient().unwrap();
     dispatch(setFromUserInfo(userInfo));
-    if (coachInviteToken) {
+
+    if (coachInviteToken)
       await acceptCoachInvite({ token: coachInviteToken }).unwrap();
-    }
     navigate("/library");
   };
 
@@ -95,15 +110,14 @@ export const LoginForm = () => {
       navigate("/content-manager/create");
       return;
     }
-    const coach = await UserService.getOnboardingUser();
+
+    const coach = await triggerGetOnboardingUser().unwrap();
     const coachData = mapUserToCoachOnboarding(coach);
     dispatch(setCoachOnboardingData(coachData));
+
     const issue = findFirstIncompleteStep(coachData);
-    if (issue) {
-      navigate(issue.route);
-    } else {
-      navigate("/content-manager/create");
-    }
+    if (issue) navigate(issue.route);
+    else navigate("/content-manager/create");
   };
 
   const handlePasswordLogin = async (e: FormEvent) => {
@@ -120,42 +134,35 @@ export const LoginForm = () => {
     }
 
     try {
-      const response = await UserService.login(formData);
-      if (!response) throw new Error("No response from server");
+      const response = await login({
+        email: formData.email,
+        password: formData.password,
+      }).unwrap();
 
-      if (response.accessToken && response.user) {
-        dispatch(
-          setCredentials({
-            user: response.user,
-            accessToken: response.accessToken,
-          })
-        );
-        toast({ title: "Login successful", description: "Welcome back!" });
+      dispatch(setCredentials(response));
+      toast({ title: "Login successful", description: "Welcome back!" });
 
-        if (response.user.roleName === "Client") {
-          await redirectClient();
-          return;
-        }
+      if (response.user.roleName === "Client") {
+        await redirectClient();
+        return;
+      }
 
-        if (response.user.roleName === "Coach") {
-          await redirectCoach();
-          return;
-        }
+      if (response.user.roleName === "Coach") {
+        await redirectCoach();
+        return;
+      }
 
-        if (redirectPath) {
-          localStorage.removeItem("redirectAfterLogin");
-          navigate(redirectPath, { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
+      if (redirectPath) {
+        localStorage.removeItem("redirectAfterLogin");
+        navigate(redirectPath, { replace: true });
+      } else {
+        navigate("/", { replace: true });
       }
     } catch (error: any) {
-      console.error(error);
       const message =
-        error?.response?.data?.message ||
+        error?.data?.message ||
         error.message ||
         "Invalid email or password. Please try again.";
-
       setLoginError(message);
       toast({
         variant: "destructive",
@@ -171,8 +178,9 @@ export const LoginForm = () => {
       setLoginError("Please enter your email.");
       return;
     }
+
     try {
-      await UserService.requestPasswordlessLogin({ email: formData.email });
+      await requestPasswordlessLogin({ email: formData.email }).unwrap();
       setIsCodeSent(true);
       toast({
         title: "Code sent",
@@ -182,7 +190,7 @@ export const LoginForm = () => {
       toast({
         variant: "destructive",
         title: "Failed to send code",
-        description: err?.response?.data?.message || "Please try again.",
+        description: err?.data?.message || "Please try again.",
       });
     }
   };
@@ -193,41 +201,35 @@ export const LoginForm = () => {
       setCodeError("Please enter your email and code.");
       return;
     }
+
     try {
-      const response = await UserService.verifyPasswordlessLogin({
+      const response = await verifyPasswordlessLogin({
         email: formData.email,
         code: formData.code,
-      });
+      }).unwrap();
 
-      if (response.accessToken && response.user) {
-        dispatch(
-          setCredentials({
-            user: response.user,
-            accessToken: response.accessToken,
-          })
-        );
-        toast({ title: "Login successful", description: "Welcome back!" });
+      dispatch(setCredentials(response));
+      toast({ title: "Login successful", description: "Welcome back!" });
 
-        if (response.user.roleName === "Client") {
-          await redirectClient();
-          return;
-        }
+      if (response.user.roleName === "Client") {
+        await redirectClient();
+        return;
+      }
 
-        if (response.user.roleName === "Coach") {
-          await redirectCoach();
-          return;
-        }
+      if (response.user.roleName === "Coach") {
+        await redirectCoach();
+        return;
+      }
 
-        if (redirectPath) {
-          localStorage.removeItem("redirectAfterLogin");
-          navigate(redirectPath, { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
+      if (redirectPath) {
+        localStorage.removeItem("redirectAfterLogin");
+        navigate(redirectPath, { replace: true });
+      } else {
+        navigate("/", { replace: true });
       }
     } catch (error: any) {
       const message =
-        error?.response?.data?.message ||
+        error?.data?.message ||
         error.message ||
         "Invalid code or expired link.";
       setCodeError(message);
@@ -251,7 +253,6 @@ export const LoginForm = () => {
       }
 
       await requestNewInvite({ email: formData.email }).unwrap();
-
       toast({
         title: "Invite Requested",
         description: "We've sent your invite request successfully.",
@@ -260,7 +261,7 @@ export const LoginForm = () => {
       navigate("/verify-email", { state: { isInvitedClient: true } });
     } catch (error: any) {
       const msg =
-        error?.response?.data?.message ||
+        error?.data?.message ||
         error.message ||
         "Failed to send invite request.";
       toast({

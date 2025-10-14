@@ -1,4 +1,4 @@
-import { UserService } from "entities/user";
+import { useSetNewPasswordMutation } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
@@ -13,6 +13,7 @@ export const NewPassword = () => {
   const [passwordError, setPasswordError] = useState("");
   const location = useLocation();
   const { token, email } = location.state || {};
+  const [setNewPassword] = useSetNewPasswordMutation();
 
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setPasswordError("");
@@ -29,11 +30,11 @@ export const NewPassword = () => {
 
     try {
       if (email && token) {
-        const msg = await UserService.setNewPassword(
-          email,
-          token,
-          formData.newPassword
-        );
+        const msg = await setNewPassword({
+          email: email,
+          token: token,
+          new_password: formData.newPassword,
+        }).unwrap();
 
         if (msg.message) {
           toast({

@@ -14,7 +14,7 @@ import { StepGeneral } from "./components/StepGeneral";
 import { StepPractice } from "./components/StepPractice";
 import { StepType } from "./components/StepType";
 import { steps } from "./helpers";
-import { UserOnboardingInfo, UserService } from "entities/user";
+import { UserOnboardingInfo, useUpdateUserMutation } from "entities/user";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
@@ -185,6 +185,8 @@ export const CouchEditProfileModal = ({
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [licenseFiles, setLicenseFiles] = useState<File[] | null>(null);
 
+  const [updateUser] = useUpdateUserMutation();
+
   const STEP_FIELDS: Record<string, (keyof CoachOnboardingState)[]> = {
     general: [
       "name",
@@ -230,7 +232,11 @@ export const CouchEditProfileModal = ({
     const licensesArg =
       stepId === "practice" ? (licenseFiles ?? undefined) : undefined;
 
-    await UserService.updateUser(partial as any, photoArg, licensesArg);
+    await updateUser({
+      data: partial as any,
+      photo: photoArg,
+      licenseFiles: licensesArg,
+    }).unwrap();
   };
 
   const handleSave = async () => {

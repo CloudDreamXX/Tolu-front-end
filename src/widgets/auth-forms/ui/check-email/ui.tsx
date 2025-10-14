@@ -1,4 +1,8 @@
-import { setCredentials, UserService } from "entities/user";
+import {
+  useVerifyEmailMutation,
+  useVerifyEmailPassMutation,
+  setCredentials,
+} from "entities/user";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -19,6 +23,9 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
   const location = useLocation();
   const isInvitedClient = location.state?.isInvitedClient === true || null;
 
+  const [verifyEmail] = useVerifyEmailMutation();
+  const [verifyEmailPass] = useVerifyEmailPassMutation();
+
   const didRun = useRef(false);
 
   useEffect(() => {
@@ -28,7 +35,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
     const verify = async () => {
       try {
         if (from === "register" && token && email) {
-          const msg = await UserService.verifyEmail({ email, token });
+          const msg = await verifyEmail({ email, token }).unwrap();
           if (msg.user && msg.accessToken) {
             dispatch(
               setCredentials({ user: msg.user, accessToken: msg.accessToken })
@@ -38,7 +45,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
         }
 
         if (from === "forgot-password" && token && email) {
-          await UserService.verifyEmailPass({ email, token });
+          await verifyEmailPass({ email, token }).unwrap();
           dispatch(
             setCredentials({
               user: { email },

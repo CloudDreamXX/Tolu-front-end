@@ -1,4 +1,5 @@
-import { API_ROUTES, ApiService } from "shared/api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_ROUTES } from "shared/api";
 import {
   ChangePasswordRequest,
   CheckInviteResponse,
@@ -16,276 +17,317 @@ import {
 } from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { FormState } from "entities/store/clientOnboardingSlice";
+import { RootState } from "entities/store";
 
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface IVerify {
-  email: string;
-  token: string;
-}
-
-interface AuthResponse {
-  user: IUser;
-  accessToken: string;
-}
-
-interface UserExistenceResponse {
-  exists: boolean;
-}
-
-export class UserService {
-  static async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.LOGIN, credentials);
-  }
-
-  static async forgotPassword(
-    email: string
-  ): Promise<{ success: boolean; message: string; email: string }> {
-    return ApiService.post<{
-      success: boolean;
-      message: string;
-      email: string;
-    }>(API_ROUTES.USER.FORGOT_PASSWORD, { email });
-  }
-
-  static async setNewPassword(
-    email: string,
-    token: string,
-    new_password: string
-  ): Promise<{ message: string }> {
-    return ApiService.post<{ message: string }>(
-      API_ROUTES.USER.SET_NEW_PASSWORD,
-      { email, token, new_password }
-    );
-  }
-
-  static async registerUser(userInfo: IRegisterUser): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.USER.SIGNUP, userInfo);
-  }
-
-  static async verifyEmail({ email, token }: IVerify): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.COMPLETE_SIGNUP, {
-      email,
-      token,
-    });
-  }
-
-  static async verifyEmailPass({
-    email,
-    token,
-  }: IVerify): Promise<AuthResponse> {
-    return ApiService.post<AuthResponse>(API_ROUTES.USER.VERIFY_RESET_TOKEN, {
-      email,
-      token,
-    });
-  }
-
-  static async onboardUser(
-    data: CoachOnboardingState,
-    photo?: File,
-    licenseFiles: File[] = []
-  ): Promise<any> {
-    const formData = new FormData();
-
-    formData.append("onboarding_data", JSON.stringify(data));
-
-    if (photo) {
-      formData.append("headshot", photo);
-    }
-
-    for (const file of licenseFiles) {
-      if (file) {
-        formData.append("license_files", file);
+export const userApi = createApi({
+  reducerPath: "userApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
       }
-    }
+      return headers;
+    },
+  }),
+  tagTypes: ["User", "Onboarding", "Menopause"],
 
-    const response = await ApiService.post<any>(
-      API_ROUTES.USER.ONBOARD_USER,
-      formData
-    );
+  endpoints: (builder) => ({
+    login: builder.mutation<
+      { user: IUser; accessToken: string },
+      { email: string; password: string }
+    >({
+      query: (body) => ({
+        url: API_ROUTES.USER.LOGIN,
+        method: "POST",
+        body,
+      }),
+    }),
 
-    return response;
-  }
+    forgotPassword: builder.mutation<
+      { success: boolean; message: string; email: string },
+      string
+    >({
+      query: (email) => ({
+        url: API_ROUTES.USER.FORGOT_PASSWORD,
+        method: "POST",
+        body: { email },
+      }),
+    }),
 
-  static async updateUser(
-    data: CoachOnboardingState,
-    photo?: File,
-    licenseFiles: File[] = []
-  ): Promise<any> {
-    const formData = new FormData();
+    setNewPassword: builder.mutation<
+      { message: string },
+      { email: string; token: string; new_password: string }
+    >({
+      query: (body) => ({
+        url: API_ROUTES.USER.SET_NEW_PASSWORD,
+        method: "POST",
+        body,
+      }),
+    }),
 
-    formData.append("onboarding_data", JSON.stringify(data));
+    registerUser: builder.mutation<any, IRegisterUser>({
+      query: (userInfo) => ({
+        url: API_ROUTES.USER.SIGNUP,
+        method: "POST",
+        body: userInfo,
+      }),
+    }),
 
-    if (photo) {
-      formData.append("headshot", photo);
-    }
+    verifyEmail: builder.mutation<
+      { user: IUser; accessToken: string },
+      { email: string; token: string }
+    >({
+      query: (body) => ({
+        url: API_ROUTES.USER.COMPLETE_SIGNUP,
+        method: "POST",
+        body,
+      }),
+    }),
 
-    for (const file of licenseFiles) {
-      if (file) {
-        formData.append("license_files", file);
-      }
-    }
+    verifyEmailPass: builder.mutation<
+      { user: IUser; accessToken: string },
+      { email: string; token: string }
+    >({
+      query: (body) => ({
+        url: API_ROUTES.USER.VERIFY_RESET_TOKEN,
+        method: "POST",
+        body,
+      }),
+    }),
 
-    const response = await ApiService.put<any>(
-      API_ROUTES.USER.ONBOARD_USER,
-      formData
-    );
+    onboardUser: builder.mutation<
+      any,
+      { data: CoachOnboardingState; photo?: File; licenseFiles?: File[] }
+    >({
+      query: ({ data, photo, licenseFiles = [] }) => {
+        const formData = new FormData();
+        formData.append("onboarding_data", JSON.stringify(data));
+        if (photo) formData.append("headshot", photo);
+        licenseFiles.forEach(
+          (file) => file && formData.append("license_files", file)
+        );
+        return {
+          url: API_ROUTES.USER.ONBOARD_USER,
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Onboarding"],
+    }),
 
-    return response;
-  }
+    updateUser: builder.mutation<
+      any,
+      { data: CoachOnboardingState; photo?: File; licenseFiles?: File[] }
+    >({
+      query: ({ data, photo, licenseFiles = [] }) => {
+        const formData = new FormData();
+        formData.append("onboarding_data", JSON.stringify(data));
+        if (photo) formData.append("headshot", photo);
+        licenseFiles.forEach(
+          (file) => file && formData.append("license_files", file)
+        );
+        return {
+          url: API_ROUTES.USER.ONBOARD_USER,
+          method: "PUT",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Onboarding"],
+    }),
 
-  static async getOnboardingUser(): Promise<UserOnboardingInfo> {
-    const response = await ApiService.get<UserOnboardingInfo>(
-      API_ROUTES.USER.ONBOARD_USER
-    );
+    getOnboardingUser: builder.query<UserOnboardingInfo, void>({
+      query: () => API_ROUTES.USER.ONBOARD_USER,
+      providesTags: ["Onboarding"],
+    }),
 
-    return response;
-  }
+    onboardClient: builder.mutation<
+      { message: string },
+      { data: FormState; token?: string }
+    >({
+      query: ({ data, token }) => {
+        const formData = new FormData();
+        formData.append("onboarding_data", JSON.stringify(data));
+        return {
+          url: API_ROUTES.USER.ONBOARD_CLIENT,
+          method: "POST",
+          body: formData,
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        };
+      },
+      invalidatesTags: ["Onboarding"],
+    }),
 
-  static async onboardClient(
-    data: FormState,
-    token: string | null
-  ): Promise<{ message: string }> {
-    const formData = new FormData();
+    getOnboardClient: builder.query<ClientOnboardingResponse, void>({
+      query: () => API_ROUTES.USER.ONBOARD_CLIENT,
+      providesTags: ["Onboarding"],
+    }),
 
-    formData.append("onboarding_data", JSON.stringify(data));
+    getUserProfile: builder.query<IUser, void>({
+      query: () => API_ROUTES.USER.PROFILE,
+      providesTags: ["User"],
+    }),
 
-    const response = await ApiService.post<string>(
-      API_ROUTES.USER.ONBOARD_CLIENT,
-      formData,
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    updateProfile: builder.mutation<IUser, Partial<IUser>>({
+      query: (body) => ({
+        url: API_ROUTES.USER.PROFILE,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
 
-    return { message: response };
-  }
+    deleteAccount: builder.mutation<{ success: boolean }, void>({
+      query: () => ({
+        url: API_ROUTES.USER.DELETE_ACCOUNT,
+        method: "DELETE",
+      }),
+    }),
 
-  static async getOnboardClient(): Promise<ClientOnboardingResponse> {
-    const response = await ApiService.get<ClientOnboardingResponse>(
-      API_ROUTES.USER.ONBOARD_CLIENT
-    );
+    changePassword: builder.mutation<any, ChangePasswordRequest>({
+      query: (body) => ({
+        url: API_ROUTES.USER.CHANGE_PASSWORD,
+        method: "POST",
+        body,
+      }),
+    }),
 
-    return response;
-  }
+    signOut: builder.mutation<{ success: boolean }, string | null>({
+      query: (token) => ({
+        url: API_ROUTES.USER.SIGNOUT,
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      }),
+    }),
 
-  static async checkUserExistence(
-    email: string
-  ): Promise<UserExistenceResponse> {
-    const endpoint = API_ROUTES.USER.EXIST.replace("{email}", email);
-    return ApiService.get<UserExistenceResponse>(endpoint);
-  }
+    checkUserExistence: builder.query<{ exists: boolean }, string>({
+      query: (email) => API_ROUTES.USER.EXIST.replace("{email}", email),
+    }),
 
-  static async getUserProfile(): Promise<IUser> {
-    return ApiService.get<IUser>(API_ROUTES.USER.PROFILE);
-  }
+    getMenopauseSymptoms: builder.query<SymptomsResponse, void>({
+      query: () => API_ROUTES.MENOPAUSE.GET_SYMPTOMS,
+      providesTags: ["Menopause"],
+    }),
 
-  static async deleteAccount(): Promise<{ success: boolean }> {
-    return ApiService.delete<{ success: boolean }>(
-      API_ROUTES.USER.DELETE_ACCOUNT
-    );
-  }
+    submitMenopauseResults: builder.mutation<
+      { success: boolean },
+      MenopauseSubmissionRequest
+    >({
+      query: (body) => ({
+        url: API_ROUTES.MENOPAUSE.POST_SYMPTOMS,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Menopause"],
+    }),
 
-  static async updateProfile(userData: Partial<IUser>): Promise<IUser> {
-    return ApiService.put<IUser>(API_ROUTES.USER.PROFILE, userData);
-  }
+    getMenopauseRecommendations: builder.query<RecommendationsResponse, void>({
+      query: () => API_ROUTES.MENOPAUSE.GET_RECOMMENDATIONS,
+      providesTags: ["Menopause"],
+    }),
 
-  static async signOut(token: string | null): Promise<{ success: boolean }> {
-    return ApiService.post<{ success: boolean }>(
-      API_ROUTES.USER.SIGNOUT,
-      {},
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      }
-    );
-  }
+    referAFriend: builder.mutation<any, ReferFriendRequest>({
+      query: (body) => ({
+        url: API_ROUTES.USER.REFER_FRIEND,
+        method: "POST",
+        body,
+      }),
+    }),
 
-  static async getMenopauseSymptoms(): Promise<SymptomsResponse> {
-    return ApiService.get<SymptomsResponse>(API_ROUTES.MENOPAUSE.GET_SYMPTOMS);
-  }
+    getReferralInvitation: builder.query<any, string>({
+      query: (token) =>
+        API_ROUTES.USER.GET_REFERRAL_INVITATION.replace("{token}", token),
+    }),
 
-  static async submitMenopauseResults(
-    data: MenopauseSubmissionRequest
-  ): Promise<{ success: boolean }> {
-    return ApiService.post<{ success: boolean }>(
-      API_ROUTES.MENOPAUSE.POST_SYMPTOMS,
-      data
-    );
-  }
+    getOnboardingStatus: builder.query<OnboardingStatus, void>({
+      query: () => API_ROUTES.USER.GET_ONBOARDING_STATUS,
+    }),
 
-  static async getMenopauseRecommendations(): Promise<RecommendationsResponse> {
-    return ApiService.get<RecommendationsResponse>(
-      API_ROUTES.MENOPAUSE.GET_RECOMMENDATIONS
-    );
-  }
+    checkPendingInvite: builder.query<CheckInviteResponse, string>({
+      query: (email) =>
+        `${API_ROUTES.USER.CHECK_PENDING_INVITE}?email=${encodeURIComponent(email)}`,
+    }),
 
-  static async changePassword(
-    requestData: ChangePasswordRequest
-  ): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.USER.CHANGE_PASSWORD, requestData);
-  }
+    downloadProfilePhoto: builder.query<Blob, string>({
+      async queryFn(filename) {
+        try {
+          const endpoint = API_ROUTES.USER.DOWNLOAD_PHOTO.replace(
+            "{filename}",
+            encodeURIComponent(filename)
+          );
 
-  static async downloadProfilePhoto(filename: string): Promise<Blob> {
-    const endpoint = API_ROUTES.USER.DOWNLOAD_PHOTO.replace(
-      "{filename}",
-      encodeURIComponent(filename)
-    );
+          const response = await fetch(
+            `${import.meta.env.VITE_API_URL}${endpoint}`,
+            {
+              headers: { Accept: "image/*" },
+              credentials: "include",
+            }
+          );
 
-    const res = await ApiService.get<Blob>(endpoint, {
-      responseType: "blob" as const,
-      headers: { Accept: "image/*" },
-    });
-    return (res as any).data ?? res;
-  }
+          if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
+          }
 
-  static async referAFriend(data: ReferFriendRequest): Promise<any> {
-    return ApiService.post<any>(API_ROUTES.USER.REFER_FRIEND, data);
-  }
+          const blob = await response.blob();
+          return { data: blob };
+        } catch (error: any) {
+          return { error };
+        }
+      },
+    }),
 
-  static async getReferralInvitation(token: string): Promise<any> {
-    const endpoint = API_ROUTES.USER.GET_REFERRAL_INVITATION.replace(
-      "{token}",
-      token
-    );
-    return ApiService.get<any>(endpoint);
-  }
+    requestPasswordlessLogin: builder.mutation<any, PasswordlessLoginRequest>({
+      query: (data) => ({
+        url: API_ROUTES.USER.REQUEST_PASSWORDLESS_LOGIN,
+        method: "POST",
+        body: data,
+      }),
+    }),
 
-  static async getOnboardingStatus(): Promise<OnboardingStatus> {
-    return ApiService.get<OnboardingStatus>(
-      API_ROUTES.USER.GET_ONBOARDING_STATUS
-    );
-  }
+    verifyPasswordlessLogin: builder.mutation<any, VerifyPasswordlessLogin>({
+      query: (data) => ({
+        url: API_ROUTES.USER.VERIFY_PASSWORDLESS_LOGIN,
+        method: "POST",
+        body: data,
+      }),
+    }),
+  }),
+});
 
-  static async checkPendingInvite(email: string): Promise<CheckInviteResponse> {
-    const response = await ApiService.get<CheckInviteResponse>(
-      `${API_ROUTES.USER.CHECK_PENDING_INVITE}?email=${encodeURIComponent(email)}`
-    );
-    return response;
-  }
-
-  static async requestPasswordlessLogin(
-    data: PasswordlessLoginRequest
-  ): Promise<any> {
-    return ApiService.post<any>(
-      API_ROUTES.USER.REQUEST_PASSWORDLESS_LOGIN,
-      data
-    );
-  }
-
-  static async verifyPasswordlessLogin(
-    data: VerifyPasswordlessLogin
-  ): Promise<any> {
-    return ApiService.post<any>(
-      API_ROUTES.USER.VERIFY_PASSWORDLESS_LOGIN,
-      data
-    );
-  }
-}
+export const {
+  useLoginMutation,
+  useForgotPasswordMutation,
+  useSetNewPasswordMutation,
+  useRegisterUserMutation,
+  useVerifyEmailMutation,
+  useVerifyEmailPassMutation,
+  useOnboardUserMutation,
+  useUpdateUserMutation,
+  useGetOnboardingUserQuery,
+  useLazyGetOnboardingUserQuery,
+  useOnboardClientMutation,
+  useLazyGetOnboardClientQuery,
+  useGetOnboardClientQuery,
+  useGetUserProfileQuery,
+  useUpdateProfileMutation,
+  useDeleteAccountMutation,
+  useChangePasswordMutation,
+  useSignOutMutation,
+  useCheckUserExistenceQuery,
+  useGetMenopauseSymptomsQuery,
+  useSubmitMenopauseResultsMutation,
+  useGetMenopauseRecommendationsQuery,
+  useReferAFriendMutation,
+  useGetReferralInvitationQuery,
+  useGetOnboardingStatusQuery,
+  useLazyGetOnboardingStatusQuery,
+  useCheckPendingInviteQuery,
+  useLazyCheckPendingInviteQuery,
+  useDownloadProfilePhotoQuery,
+  useLazyDownloadProfilePhotoQuery,
+  useRequestPasswordlessLoginMutation,
+  useVerifyPasswordlessLoginMutation,
+} = userApi;

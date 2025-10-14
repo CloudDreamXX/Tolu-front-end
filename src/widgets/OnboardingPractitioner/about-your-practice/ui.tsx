@@ -6,7 +6,7 @@ import { updateCoachField } from "entities/store/coachOnboardingSlice";
 import { AuthPageWrapper, Button, Input } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { useOnboardUserMutation } from "entities/user";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { SelectField } from "widgets/CRMSelectField";
 
@@ -27,6 +27,7 @@ export const AboutYourPractice = () => {
   const [recentClients, setRecentClients] = useState("");
   const [targetClients, setTargetClients] = useState("");
   const [labsUsed, setLabsUsed] = useState("");
+  const [onboardUser] = useOnboardUserMutation();
 
   const state = useSelector((state: RootState) => state.coachOnboarding);
   const OTHER_OPTION = "Other (please specify)";
@@ -143,7 +144,7 @@ export const AboutYourPractice = () => {
   // Field change
   const handleNext = async () => {
     if (!allFilled()) return;
-    await UserService.onboardUser(state);
+    await onboardUser({ data: state }).unwrap();
     nav("/profile-setup");
   };
 

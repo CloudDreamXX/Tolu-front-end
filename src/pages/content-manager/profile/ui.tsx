@@ -1,10 +1,6 @@
 import { ChatSocketService } from "entities/chat";
 import { useLazyDownloadLicenseFileQuery } from "entities/coach";
-import {
-  ChangePasswordRequest,
-  UserOnboardingInfo,
-  UserService,
-} from "entities/user";
+import { ChangePasswordRequest } from "entities/user";
 import React, { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, phoneMask, toast } from "shared/lib";
@@ -14,13 +10,17 @@ import {
 } from "shared/lib/utils/passwordChecker";
 import { Avatar, AvatarFallback, AvatarImage, Button, Input } from "shared/ui";
 import { CouchEditProfileModal } from "widgets/couch-edit-profile-modal";
+import {
+  useGetOnboardingUserQuery,
+  useChangePasswordMutation,
+  useLazyDownloadProfilePhotoQuery,
+} from "entities/user";
 
 export const ContentManagerProfile = () => {
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [user, setUser] = useState<UserOnboardingInfo | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
   const [licensePhotos, setLicensePhotos] = useState<string[]>([]);
   const result = useMemo(
@@ -29,6 +29,9 @@ export const ContentManagerProfile = () => {
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [downloadLicenseFile] = useLazyDownloadLicenseFileQuery();
+  const [downloadProfilePhoto] = useLazyDownloadProfilePhotoQuery();
+  const [changePassword] = useChangePasswordMutation();
+  const { data: user } = useGetOnboardingUserQuery();
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -56,7 +59,9 @@ export const ContentManagerProfile = () => {
   }, []);
 
   useEffect(() => {
+    if (!user) return;
     const revokeUrls: string[] = [];
+
     const createUrlFromPath = async (
       path?: string | null
     ): Promise<string | null> => {
@@ -79,51 +84,48 @@ export const ContentManagerProfile = () => {
     };
 
     (async () => {
-      const u = await UserService.getOnboardingUser();
-      setUser(u);
+      try {
+        const headshotFilename = user.profile?.basic_info?.headshot
+          ? user.profile.basic_info.headshot.split("/").pop()
+          : null;
 
-      const headshotFilename = u?.profile?.basic_info?.headshot
-        ? u.profile.basic_info.headshot.split("/").pop()
-        : u.profile.basic_info.headshot;
+        if (headshotFilename) {
+          const blob = await downloadProfilePhoto(headshotFilename).unwrap();
+          const headshot = URL.createObjectURL(blob);
+          revokeUrls.push(headshot);
+          setPhotoUrl(headshot);
+        }
 
-      if (headshotFilename) {
-        const headshotBlob =
-          await UserService.downloadProfilePhoto(headshotFilename);
-        const headshot = URL.createObjectURL(headshotBlob);
-        setPhotoUrl(headshot);
+        const licensePaths: string[] =
+          user.onboarding?.practitioner_info?.license_files ?? [];
+        const urls = await Promise.all(
+          licensePaths.map((p) => createUrlFromPath(p))
+        );
+        setLicensePhotos(urls.filter((x): x is string => Boolean(x)));
+      } finally {
+        setLoading(false);
       }
-
-      const licensePaths: string[] =
-        u?.onboarding?.practitioner_info?.license_files ?? [];
-
-      const urls = await Promise.all(
-        licensePaths.map((p) => createUrlFromPath(p))
-      );
-      setLicensePhotos(urls.filter((x): x is string => Boolean(x)));
-      setLoading(false);
     })();
 
-    return () => {
-      revokeUrls.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, []);
+    return () => revokeUrls.forEach((url) => URL.revokeObjectURL(url));
+  }, [user, downloadLicenseFile, downloadProfilePhoto]);
 
   const handleChangePassword = async (oldPass: string, newPass: string) => {
     try {
-      const data: ChangePasswordRequest = {
+      const body: ChangePasswordRequest = {
         old_password: oldPass,
         new_password: newPass,
       };
-      await UserService.changePassword(data);
-      toast({
-        title: "Updated successfully",
-      });
+      await changePassword(body).unwrap();
+      toast({ title: "Password updated successfully" });
+      setOldPassword("");
+      setNewPassword("");
     } catch (err) {
       console.error("Failed to change password", err);
       toast({
         variant: "destructive",
-        title: "Failed to change password",
-        description: "Failed to change password. Please try again.",
+        title: "Password change failed",
+        description: "Please try again.",
       });
     }
   };
@@ -573,7 +575,7 @@ export const ContentManagerProfile = () => {
       </div>
 
       <CouchEditProfileModal
-        user={user}
+        user={user ?? null}
         open={editModalOpen}
         setOpen={setEditModalOpen}
       />

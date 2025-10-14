@@ -1,9 +1,10 @@
-import { MenopauseSubmissionRequest, UserService } from "entities/user";
+import { MenopauseSubmissionRequest } from "entities/user";
 import { useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button, Input, Switch } from "shared/ui";
 import { MultiStepModal, SymptomCheckModal } from "widgets/MenopauseModals";
+import { useSubmitMenopauseResultsMutation } from "entities/user";
 
 interface SearchAiChatInputProps {
   placeholder?: string;
@@ -25,6 +26,8 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [stepModalOpen, setStepModalOpen] = useState(false);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
+
+  const [submitMenopauseResults] = useSubmitMenopauseResultsMutation();
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -53,7 +56,7 @@ export const SearchAiChatInput: React.FC<SearchAiChatInputProps> = ({
   };
 
   const handleFinishCheckIn = async (results: MenopauseSubmissionRequest) => {
-    await UserService.submitMenopauseResults(results);
+    await submitMenopauseResults(results).unwrap();
     setStepModalOpen(false);
     setCompletionModalOpen(true);
 
