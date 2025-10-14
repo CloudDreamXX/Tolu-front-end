@@ -7,10 +7,12 @@ import {
   IUser,
   MenopauseSubmissionRequest,
   OnboardingStatus,
+  VerifyPasswordlessLogin,
   RecommendationsResponse,
   ReferFriendRequest,
   SymptomsResponse,
   UserOnboardingInfo,
+  PasswordlessLoginRequest,
 } from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { FormState } from "entities/store/clientOnboardingSlice";
@@ -267,5 +269,23 @@ export class UserService {
       `${API_ROUTES.USER.CHECK_PENDING_INVITE}?email=${encodeURIComponent(email)}`
     );
     return response;
+  }
+
+  static async requestPasswordlessLogin(
+    data: PasswordlessLoginRequest
+  ): Promise<any> {
+    return ApiService.post<any>(
+      API_ROUTES.USER.REQUEST_PASSWORDLESS_LOGIN,
+      data
+    );
+  }
+
+  static async verifyPasswordlessLogin(
+    data: VerifyPasswordlessLogin
+  ): Promise<any> {
+    return ApiService.post<any>(
+      API_ROUTES.USER.VERIFY_PASSWORDLESS_LOGIN,
+      data
+    );
   }
 }
