@@ -1,3 +1,14 @@
+## [1.2.0] - 2025-10-14
+
+### New feature
+
+- Fix voices for Read aloud action.
+- Add voice input for Smart Search bot.
+- Implement 2fa sign in.
+- Rewrite user block to RTK query.
+- Fix Slider for client onboarding.
+- Fix coach information modal for client.
+
 ## [1.1.0] - 2025-10-13
 
 ### New feature
