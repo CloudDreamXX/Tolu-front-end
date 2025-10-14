@@ -140,7 +140,6 @@ export const smartRender = async (text: string) => {
             part.isHtml ? (
               <div
                 key={index}
-                className="bg-[#ECEFF4]"
                 dangerouslySetInnerHTML={{ __html: part.content }}
               />
             ) : (
@@ -150,7 +149,7 @@ export const smartRender = async (text: string) => {
                 skipHtml
                 components={{
                   body: (props) => (
-                    <body className=" bg-[#ECEFF4]" {...props} />
+                    <body {...props} />
                   ),
                   h1: (props) => <h1 {...props} />,
                   h2: (props) => <h2 {...props} />,
@@ -172,14 +171,13 @@ export const smartRender = async (text: string) => {
 
     return (
       <div
-        className="bg-[#ECEFF4]"
         style={{ fontFamily: "Inter, sans-serif" }}
         dangerouslySetInnerHTML={{ __html: formattedText }}
       />
     );
   } catch (error) {
     console.error("Error rendering response:", error);
-    return <div className="bg-[#ECEFF4]">Error rendering content.</div>;
+    return <div>Error rendering content.</div>;
   }
 };
 
