@@ -11,7 +11,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Calendar } from "shared/ui";
 import { differenceInYears, format, isAfter } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
-import { UserService } from "entities/user";
+import { useOnboardUserMutation } from "entities/user";
 import { SelectField } from "widgets/CRMSelectField";
 
 export const ProfileSetup = () => {
@@ -31,6 +31,8 @@ export const ProfileSetup = () => {
   const [displayMonth, setDisplayMonth] = useState<Date>(
     new Date(defaultYear, 0)
   );
+
+  const [onboardUser] = useOnboardUserMutation();
 
   const handleFile = (file: File) => {
     if (file) {
@@ -150,7 +152,7 @@ export const ProfileSetup = () => {
   );
 
   const handleNext = async () => {
-    await UserService.onboardUser(state);
+    await onboardUser({ data: state }).unwrap();
     nav("/invite-clients");
   };
 

@@ -8,17 +8,21 @@ import { toast } from "shared/lib/hooks/use-toast";
 import { ClientHeader } from "widgets/Header";
 import { useSelector } from "react-redux";
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { useOnboardClientMutation } from "entities/user";
 
 export const FinishClientOnboarding = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const client = useSelector((state: RootState) => state.clientOnboarding);
   const nav = useNavigate();
+  const [onboardClient] = useOnboardClientMutation();
 
   useEffect(() => {
     const handleLast = async () => {
       try {
-        await UserService.onboardClient(client, token);
+        await onboardClient({
+          data: client,
+          token: token ?? undefined,
+        }).unwrap();
         toast({
           title: "Onboarding successful",
         });

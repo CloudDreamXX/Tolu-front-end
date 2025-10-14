@@ -1,4 +1,3 @@
-import { ApiService } from "shared/api";
 import {
   AIChatMessageResearch,
   AiSearchRequest,
@@ -8,6 +7,8 @@ import {
   SearchResultResponse,
   SearchResultResponseItem,
 } from "./model";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { RootState } from "entities/store";
 
 export interface StreamChunk {
   question?: string;
@@ -21,6 +22,61 @@ export interface StreamChunk {
   content?: string;
   done?: boolean;
 }
+
+export const searchApi = createApi({
+  reducerPath: "searchApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).user?.token;
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },
+  }),
+  tagTypes: ["SearchHistory", "SearchSession"],
+  endpoints: (builder) => ({
+    getSearchHistory: builder.query<SearchHistoryItem[], SearchHistoryParams>({
+      query: (params) => {
+        const searchParams = new URLSearchParams();
+        if (params.client_id)
+          searchParams.append("client_id", params.client_id);
+        if (params.managed_client_id)
+          searchParams.append("managed_client_id", params.managed_client_id);
+
+        return `/searched-result/history${
+          searchParams.toString() ? `?${searchParams.toString()}` : ""
+        }`;
+      },
+      transformResponse: (response: { history: SearchHistoryResponse[] }) => {
+        return response.history.map((item) => ({
+          ...item,
+          chatId: item.chat_id,
+          chatTitle: item.chat_title,
+          createdAt: item.created_at,
+          userId: item.user_id,
+        }));
+      },
+      providesTags: ["SearchHistory"],
+    }),
+
+    getSession: builder.query<SearchResultResponseItem[], string>({
+      query: (chatId) => `/session/${chatId}`,
+      transformResponse: (response: SearchResultResponse) =>
+        response.search_results,
+      providesTags: ["SearchSession"],
+    }),
+  }),
+});
+
+export const {
+  useGetSearchHistoryQuery,
+  useGetSessionQuery,
+  useLazyGetSessionQuery,
+} = searchApi;
 
 export class SearchService {
   static async aiSearchStream(
@@ -41,7 +97,9 @@ export class SearchService {
         undefined,
         searchData.images,
         searchData.pdf,
-        searchData.contentId
+        searchData.contentId,
+        undefined,
+        searchData.audio
       );
 
       const user = localStorage.getItem("persist:user");
@@ -234,57 +292,21 @@ export class SearchService {
     }
   }
 
-  static async getSearchHistory(
-    params: SearchHistoryParams = {}
-  ): Promise<SearchHistoryItem[]> {
-    const searchParams = new URLSearchParams();
-
-    if (params.client_id) {
-      searchParams.append("client_id", params.client_id);
-    }
-
-    if (params.managed_client_id) {
-      searchParams.append("managed_client_id", params.managed_client_id);
-    }
-
-    const url = `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
-
-    const res = await ApiService.get<{
-      history: SearchHistoryResponse[];
-    }>(url);
-
-    return res.history.map((item) => ({
-      ...item,
-      chatId: item.chat_id,
-      chatTitle: item.chat_title,
-      createdAt: item.created_at,
-      userId: item.user_id,
-    }));
-  }
-
-  static async getSession(chatId: string): Promise<SearchResultResponseItem[]> {
-    const endpoint = `/session/${chatId}`;
-
-    const res = await ApiService.get<SearchResultResponse>(endpoint);
-    return res.search_results;
-  }
-
-  static async deleteChat(chatId: string): Promise<string> {
-    const endpoint = `/chat/${chatId}`;
-
-    return ApiService.delete<string>(endpoint);
-  }
-
   static createSearchRequest(
     message: string,
     clientId?: string,
     imageFiles?: File[],
     pdfFile?: File,
     contentId?: string,
-    libraryFiles?: string[]
+    libraryFiles?: string[],
+    audio?: File
   ) {
     const formData = new FormData();
     formData.append("chat_message", message);
+
+    if (audio) {
+      formData.append("audio", audio);
+    }
 
     if (clientId) {
       formData.append("client_id", clientId);

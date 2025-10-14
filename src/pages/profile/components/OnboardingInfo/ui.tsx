@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
 import { Button, Slider } from "shared/ui";
-import { UserService } from "entities/user";
+import { useOnboardClientMutation } from "entities/user/api";
 
 type FormState = Record<string, string>;
 type FieldKey = keyof RootState["clientOnboarding"];
@@ -24,6 +24,8 @@ export const OnboardingInfo = ({
   const [symptomsState, setSymptomsState] = useState<Record<string, number>>(
     client.symptoms_severity || {}
   );
+
+  const [onboardClient] = useOnboardClientMutation();
 
   useEffect(() => {
     if (!isEditingPersonal) {
@@ -148,7 +150,10 @@ export const OnboardingInfo = ({
       );
     });
 
-    await UserService.onboardClient(nextClient, token);
+    await onboardClient({
+      data: nextClient,
+      token: token ? token : undefined,
+    }).unwrap();
 
     setIsEditingPersonal(false);
     setIsEditingSymptoms(false);

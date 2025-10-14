@@ -13,7 +13,12 @@ import {
 } from "entities/notifications";
 import { RootState } from "entities/store";
 import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
-import { ChangePasswordRequest, UserService } from "entities/user";
+import {
+  useSignOutMutation,
+  useChangePasswordMutation,
+  useLazyDownloadProfilePhotoQuery,
+  useLazyGetOnboardClientQuery,
+} from "entities/user";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -89,10 +94,15 @@ export const ClientProfile = () => {
   const [updateUserProfile] = useUpdateUserProfileMutation();
   const { data: u, refetch: refetchUserProfile } = useGetClientProfileQuery();
 
+  const [triggerGetOnboardClient] = useLazyGetOnboardClientQuery();
+  const [triggerDownloadProfilePhoto] = useLazyDownloadProfilePhotoQuery();
+  const [signOut] = useSignOutMutation();
+  const [changePassword] = useChangePasswordMutation();
+
   useEffect(() => {
     const loadUser = async () => {
       if (!user) {
-        const userInfo = await UserService.getOnboardClient();
+        const userInfo = await triggerGetOnboardClient().unwrap();
         dispatch(setFromUserInfo(userInfo));
       }
     };
@@ -108,7 +118,7 @@ export const ClientProfile = () => {
       if (!filename) return;
 
       const loadProfilePhoto = async () => {
-        const blob = await UserService.downloadProfilePhoto(filename);
+        const blob = await triggerDownloadProfilePhoto(filename).unwrap();
         objectUrl = URL.createObjectURL(blob);
         setPhotoUrl(objectUrl);
       };
@@ -186,7 +196,7 @@ export const ClientProfile = () => {
 
   const handleSignOut = async () => {
     try {
-      await UserService.signOut(token);
+      await signOut(token).unwrap();
       toast({
         title: "Sign out successful",
       });
@@ -204,11 +214,10 @@ export const ClientProfile = () => {
 
   const handleChangePassword = async (oldPass: string, newPass: string) => {
     try {
-      const data: ChangePasswordRequest = {
+      await changePassword({
         old_password: oldPass,
         new_password: newPass,
-      };
-      await UserService.changePassword(data);
+      }).unwrap();
       toast({
         title: "Updated successfully",
       });

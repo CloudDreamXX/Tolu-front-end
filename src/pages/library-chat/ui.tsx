@@ -12,6 +12,7 @@ import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { setHealthHistory, setLoading } from "entities/health-history/lib";
 import { LibraryChatInput } from "entities/search";
 import { SearchService, StreamChunk } from "entities/search/api";
+import { useLazyGetSessionQuery } from "entities/search/api";
 import { RootState } from "entities/store";
 import {
   ChatActions,
@@ -40,6 +41,7 @@ import {
   SwitchValue,
 } from "widgets/library-small-chat/switch-config";
 import { MessageList } from "widgets/message-list";
+import { IOSUtterance, pickPreferredMaleEnglishVoice } from "./lib";
 
 export const LibraryChat = () => {
   const { chatId } = useParams<{ chatId: string }>();
@@ -112,6 +114,7 @@ export const LibraryChat = () => {
   const dispatch = useDispatch();
 
   const [getSessionById] = useLazyGetSessionByIdQuery();
+  const [getSearchSession] = useLazyGetSessionQuery();
 
   useEffect(() => {
     if (activeChatKey) {
@@ -151,6 +154,8 @@ export const LibraryChat = () => {
     useState<SpeechSynthesisVoice | null>(null);
   const [isReadingAloud, setIsReadingAloud] = useState(false);
 
+  const [voiceFile, setVoiceFile] = useState<File | null>(null);
+
   const { tooltipPosition, showTooltip, handleTooltipClick } =
     useTextSelectionTooltip();
 
@@ -161,48 +166,77 @@ export const LibraryChat = () => {
   } = useGetUserHealthHistoryQuery();
 
   useEffect(() => {
-    const loadVoices = () => {
-      const availableVoices = speechSynthesis.getVoices();
+    let cancelled = false;
+    let pollTimer: number | null = null;
 
-      const storedVoice = localStorage.getItem("selectedVoice");
-
-      let voice: SpeechSynthesisVoice | null = null;
-
-      if (storedVoice) {
-        const storedVoiceSettings = JSON.parse(storedVoice);
-        voice =
-          availableVoices.find(
-            (v) =>
-              v.name === storedVoiceSettings.name &&
-              v.lang === storedVoiceSettings.lang
-          ) || null;
-      }
-
-      if (!voice) {
-        voice =
-          availableVoices.find(
-            (v) => v.name === "Google UK English Male" && v.lang === "en-GB"
-          ) || null;
-      }
-
+    const setAndPersistVoice = (voice: SpeechSynthesisVoice | null) => {
+      if (cancelled) return;
       setSelectedVoice(voice);
-
       if (voice) {
-        const voiceSettings = { name: voice.name, lang: voice.lang };
-        localStorage.setItem("selectedVoice", JSON.stringify(voiceSettings));
+        localStorage.setItem(
+          "selectedVoice",
+          JSON.stringify({ name: voice.name, lang: voice.lang })
+        );
+      } else {
+        localStorage.removeItem("selectedVoice");
+      }
+    };
+
+    const resolveVoice = () => {
+      const availableVoices = speechSynthesis.getVoices() || [];
+      if (!availableVoices.length) return false;
+
+      const stored = localStorage.getItem("selectedVoice");
+      if (stored) {
+        try {
+          const { name, lang } = JSON.parse(stored);
+          const match = availableVoices.find(
+            (v) => v.name === name && v.lang === lang
+          );
+          if (match) {
+            setAndPersistVoice(match);
+            return true;
+          } else {
+            localStorage.removeItem("selectedVoice");
+          }
+        } catch {
+          localStorage.removeItem("selectedVoice");
+        }
+      }
+
+      const picked = pickPreferredMaleEnglishVoice(availableVoices);
+      setAndPersistVoice(picked);
+      return true;
+    };
+
+    const tryLoad = () => {
+      if (!resolveVoice()) {
+        if (pollTimer == null) {
+          pollTimer = window.setInterval(() => {
+            if (resolveVoice()) {
+              if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+              }
+            }
+          }, 250);
+        }
       }
     };
 
     if (speechSynthesis.getVoices().length === 0) {
-      speechSynthesis.onvoiceschanged = loadVoices;
+      speechSynthesis.onvoiceschanged = tryLoad;
+      setTimeout(tryLoad, 100);
     } else {
-      loadVoices();
+      tryLoad();
     }
 
     return () => {
-      if (speechSynthesis.onvoiceschanged) {
-        speechSynthesis.onvoiceschanged = null;
+      cancelled = true;
+      if (pollTimer) {
+        clearInterval(pollTimer);
       }
+      speechSynthesis.onvoiceschanged = null;
     };
   }, []);
 
@@ -244,19 +278,34 @@ export const LibraryChat = () => {
   }, [chatState.length]);
 
   const handleReadAloud = () => {
-    setIsReadingAloud((prev) => !prev);
+    if (!voiceContent) return;
+
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
-    } else {
-      const utterance = new SpeechSynthesisUtterance(voiceContent);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-      utterance.onend = () => {
-        speechSynthesis.cancel();
-      };
-      speechSynthesis.speak(utterance);
+      setIsReadingAloud(false);
+      return;
     }
+
+    const utterance: IOSUtterance = new SpeechSynthesisUtterance(voiceContent);
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.voiceURI = selectedVoice.voiceURI || selectedVoice.name;
+      utterance.lang = selectedVoice.lang || "en-GB";
+    } else {
+      utterance.lang = "en-GB";
+    }
+
+    utterance.pitch = 0.85;
+    utterance.rate = 1.0;
+
+    utterance.onend = () => {
+      setIsReadingAloud(false);
+      speechSynthesis.cancel();
+    };
+
+    setIsReadingAloud(true);
+    speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
@@ -400,7 +449,7 @@ export const LibraryChat = () => {
           });
         }
       } else {
-        const sessionData = await SearchService.getSession(id);
+        const sessionData = await getSearchSession(id).unwrap();
 
         if (sessionData && sessionData.length > 0) {
           sessionData.forEach((item: any) => {
@@ -558,7 +607,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     message: string,
     files: File[]
   ): Promise<string | undefined> => {
-    if ((!message.trim() && files.length === 0) || isSearching) return;
+    if ((!voiceFile && !message.trim() && files.length === 0) || isSearching)
+      return;
 
     const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     const previewImages = files
@@ -761,7 +811,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         await SearchService.aiSearchStream(
           {
             chat_message: JSON.stringify({
-              user_prompt: message,
+              user_prompt: voiceFile && !message.trim() ? undefined : message,
               is_new: currentChatId.startsWith("new_chat_"),
               chat_id: currentChatId.startsWith("new_chat_")
                 ? undefined
@@ -771,6 +821,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             }),
             ...(images && { images }),
             ...(pdf && { pdf }),
+            audio: voiceFile ? voiceFile : undefined,
           },
           processChunk,
           processFinalData,
@@ -1035,7 +1086,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 />
               </div>
             )}
-            <div className={`xl:hidden block px-[16px] w-fit mx-auto`}>
+            <div
+              className={`xl:hidden block px-[16px] w-fit mx-auto pb-[16px]`}
+            >
               <ChatActions
                 chatState={chatState}
                 onRegenerate={handleRegenerateResponse}
@@ -1056,8 +1109,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               disabled={
                 isSearching ||
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
-                // (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
-                textContent === ""
+                (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
+                (!voiceFile && textContent === "")
               }
               selectedSwitch={selectedSwitch}
               message={textContent}
@@ -1068,6 +1121,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               }
               files={newFiles}
               setFiles={setNewFiles}
+              voiceFile={voiceFile}
+              setVoiceFile={setVoiceFile}
               setExistingFiles={setExistingFiles}
               existingFiles={existingFiles}
               existingInstruction={existingInstruction}

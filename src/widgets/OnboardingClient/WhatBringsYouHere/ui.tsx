@@ -1,6 +1,6 @@
 import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import { UserService } from "entities/user";
+import { useOnboardClientMutation } from "entities/user";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { RadioGroup, RadioGroupItem } from "shared/ui/radio-group";
@@ -24,6 +24,8 @@ export const WhatBringsYouHere = () => {
   const [input, setInput] = useState("");
   const trimmedInput = input.trim();
 
+  const [onboardClient] = useOnboardClientMutation();
+
   useEffect(() => {
     const saved = clientOnboarding.main_transition_goal;
 
@@ -45,7 +47,7 @@ export const WhatBringsYouHere = () => {
       setFormField({ field: "main_transition_goal", value: finalValue })
     );
 
-    await UserService.onboardClient(updated, token);
+    await onboardClient({ data: updated, token: token ?? undefined }).unwrap();
 
     nav("/values");
   };

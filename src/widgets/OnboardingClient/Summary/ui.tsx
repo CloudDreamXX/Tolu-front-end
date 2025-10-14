@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { OnboardingClientLayout } from "../Layout";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { UserService } from "entities/user";
+import { useOnboardClientMutation } from "entities/user";
 import { Slider } from "shared/ui/slider";
 
 export const Summary = () => {
@@ -23,6 +23,8 @@ export const Summary = () => {
   const [symptomsState, setSymptomsState] = useState(
     client.symptoms_severity || {}
   );
+
+  const [onboardClient] = useOnboardClientMutation();
 
   type FormState = RootState["clientOnboarding"];
   type FieldKey = keyof FormState;
@@ -111,7 +113,7 @@ export const Summary = () => {
 
   const handleCreate = async () => {
     try {
-      await UserService.onboardClient(client, token);
+      await onboardClient({ data: client, token: token ?? undefined }).unwrap();
       nav("/finish");
     } catch (err) {
       console.error(err);

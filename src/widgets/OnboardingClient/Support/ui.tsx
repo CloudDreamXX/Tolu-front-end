@@ -6,7 +6,7 @@ import { BottomButtons } from "widgets/BottomButtons";
 import { OnboardingClientLayout } from "../Layout";
 import { checkboxes } from "./utils";
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { useOnboardClientMutation } from "entities/user";
 
 export const Support = () => {
   const nav = useNavigate();
@@ -18,6 +18,8 @@ export const Support = () => {
   );
 
   const selectedSupport = clientOnboarding.support_network || [];
+
+  const [onboardClient] = useOnboardClientMutation();
 
   const handleInputChange = (value: string, checked: boolean) => {
     if (checked) {
@@ -47,7 +49,7 @@ export const Support = () => {
 
     dispatch(setFormField({ field: "support_network", value: finalSupport }));
 
-    await UserService.onboardClient(updated, token);
+    await onboardClient({ data: updated, token: token ?? undefined }).unwrap();
     nav("/personality-type");
   };
 

@@ -3,7 +3,7 @@ import { SearchableSelect } from "widgets/OnboardingPractitioner/components/Sear
 import { useState } from "react";
 import { phoneMask, toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { ReferFriendRequest, UserService } from "entities/user";
+import { ReferFriendRequest, useReferAFriendMutation } from "entities/user";
 
 interface Props {
   isOpen: boolean;
@@ -14,6 +14,8 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState<ReferFriendRequest>({
     email: "",
   });
+
+  const [referAFriend] = useReferAFriendMutation();
 
   const handleChange = (field: string, value: string) => {
     setFormData((prevState) => ({
@@ -29,7 +31,7 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const handleSave = async () => {
     try {
-      await UserService.referAFriend(formData);
+      await referAFriend(formData).unwrap();
       onClose();
       toast({
         title: "Refer completed",

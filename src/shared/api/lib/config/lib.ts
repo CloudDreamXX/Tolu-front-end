@@ -19,6 +19,8 @@ export const API_ROUTES = {
     GET_REFERRAL_INVITATION: "/referral/invitation-details/{token}",
     GET_ONBOARDING_STATUS: "/user/onboarding-status",
     CHECK_PENDING_INVITE: "/client/check-pending-invite",
+    REQUEST_PASSWORDLESS_LOGIN: "/user/email-login",
+    VERIFY_PASSWORDLESS_LOGIN: "/user/verify-login",
   },
   CLIENT: {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",

@@ -522,10 +522,10 @@ export const LibraryClientContent = ({
 
       try {
         if (!coachProfiles[coach.coach_id]) {
-          await getCoachProfile(coach.coach_id).unwrap();
+          const res = await getCoachProfile(coach.coach_id).unwrap();
           setCoachProfiles((p) => ({
             ...p,
-            [coach.coach_id]: coachProfileData,
+            [coach.coach_id]: res,
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??

@@ -15,6 +15,7 @@ import {
   PopoverInstruction,
 } from "widgets/content-popovers";
 import { PopoverClient } from "widgets/content-popovers/ui/popover-client";
+import { VoiceRecorderButton } from "widgets/content-popovers/ui/popover-voice";
 import { DailyJournal } from "widgets/dayli-journal";
 import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
 
@@ -22,6 +23,8 @@ interface LibraryChatInputProps {
   selectedSwitch: string;
   files: File[];
   setFiles: (files: File[]) => void;
+  voiceFile?: File | null;
+  setVoiceFile?: (file: File | null) => void;
   placeholder?: string;
   onSend?: (
     message: string,
@@ -49,6 +52,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   placeholder = "Your message",
   files,
   setFiles,
+  voiceFile,
+  setVoiceFile,
   onSend,
   disabled = false,
   className,
@@ -78,7 +83,8 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   );
 
   const handleSend = () => {
-    if ((!message.trim() && files.length === 0) || disabled) return;
+    if ((!voiceFile && !message.trim() && files.length === 0) || disabled)
+      return;
     onSend?.(message, files, null);
   };
 
@@ -106,7 +112,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
     setFiles([...files, ...pasted]);
   };
 
-  const isSendDisabled = !message.trim() || disabled;
+  const isSendDisabled = voiceFile ? false : !message.trim() || disabled;
 
   const handleSetFolder = (folder: string | null) => {
     dispatch(setFolderToChat(folder));
@@ -228,24 +234,35 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               )
             ) : (
               <div className="flex gap-[8px] items-center">
-                <Button
-                  variant={"brightblue"}
-                  onClick={() => {
-                    dispatch(setIsMobileDailyJournalOpen(true));
-                    setModalOpen(true);
-                  }}
-                >
-                  Daily Journal
-                </Button>
-                <Button
-                  variant={"light-blue"}
-                  onClick={() => {
-                    setReferAFriendOpen(true);
-                  }}
-                  className="hidden md:block"
-                >
-                  Refer a friend
-                </Button>
+                {selectedSwitch === "Smart Search" && (
+                  <div className="mr-[8px] relative">
+                    <VoiceRecorderButton
+                      setVoiceFile={(file) => setVoiceFile?.(file)}
+                    />
+                  </div>
+                )}
+                {!voiceFile && (
+                  <Button
+                    variant={"brightblue"}
+                    onClick={() => {
+                      dispatch(setIsMobileDailyJournalOpen(true));
+                      setModalOpen(true);
+                    }}
+                  >
+                    Daily Journal
+                  </Button>
+                )}
+                {!voiceFile && (
+                  <Button
+                    variant={"light-blue"}
+                    onClick={() => {
+                      setReferAFriendOpen(true);
+                    }}
+                    className="hidden md:block"
+                  >
+                    Refer a friend
+                  </Button>
+                )}
               </div>
             )}
           </div>

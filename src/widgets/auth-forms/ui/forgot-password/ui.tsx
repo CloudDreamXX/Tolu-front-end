@@ -1,4 +1,4 @@
-import { UserService } from "entities/user";
+import { useForgotPasswordMutation } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "shared/ui";
@@ -8,11 +8,13 @@ export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const nav = useNavigate();
 
+  const [forgotPassword] = useForgotPasswordMutation();
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (email) {
       try {
-        await UserService.forgotPassword(email);
+        await forgotPassword(email).unwrap();
         nav("/verify-email-pass");
       } catch (error) {
         console.error("Error sending password reset email:", error);

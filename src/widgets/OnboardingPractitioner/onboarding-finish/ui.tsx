@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthPageWrapper } from "shared/ui";
 import { AdminHeader } from "widgets/Header";
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { useOnboardUserMutation } from "entities/user";
 import { useSelector } from "react-redux";
 
 export const OnboardingFinish = () => {
@@ -11,10 +11,11 @@ export const OnboardingFinish = () => {
     (state: RootState) => state.coachOnboarding
   );
   const nav = useNavigate();
+  const [onboardUser] = useOnboardUserMutation();
 
   const handleLastClick = async () => {
     try {
-      await UserService.onboardUser(coachOnboarding);
+      await onboardUser({ data: coachOnboarding }).unwrap();
       nav("/content-manager/library");
       toast({ title: "Onboarding successful" });
     } catch (error) {

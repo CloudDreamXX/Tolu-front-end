@@ -14,7 +14,11 @@ import {
 import { CoachService, useLazyGetSessionByIdQuery } from "entities/coach";
 import { IDocument } from "entities/document";
 import { LibraryChatInput } from "entities/search";
-import { SearchService, StreamChunk } from "entities/search/api";
+import {
+  SearchService,
+  StreamChunk,
+  useLazyGetSessionQuery,
+} from "entities/search/api";
 import { RootState } from "entities/store";
 import {
   ChatActions,
@@ -46,6 +50,7 @@ import { MessageLoadingSkeleton } from "./components/MessageLoadingSkeleton";
 import { extractVoiceText, generateCaseStory, subTitleSwitch } from "./helpers";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import SwitchDropdown from "./components/switch-dropdown/ui";
+import { pickPreferredMaleEnglishVoice } from "pages/library-chat/lib";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -93,6 +98,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const filesFromLibrary = useSelector(
     (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
+
+  const [voiceFile, setVoiceFile] = useState<File | null>(null);
 
   const { isMobileOrTablet } = usePageWidth();
 
@@ -172,46 +179,77 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   }, [activeChatKey, dispatch]);
 
   useEffect(() => {
-    const loadVoices = () => {
-      const availableVoices = speechSynthesis.getVoices();
+    let cancelled = false;
+    let pollTimer: number | null = null;
 
-      const storedVoice = localStorage.getItem("selectedVoice");
+    const setAndPersistVoice = (voice: SpeechSynthesisVoice | null) => {
+      if (cancelled) return;
+      setSelectedVoice(voice);
+      if (voice) {
+        localStorage.setItem(
+          "selectedVoice",
+          JSON.stringify({ name: voice.name, lang: voice.lang })
+        );
+      } else {
+        localStorage.removeItem("selectedVoice");
+      }
+    };
 
-      let voice: SpeechSynthesisVoice | null = null;
+    const resolveVoice = () => {
+      const availableVoices = speechSynthesis.getVoices() || [];
+      if (!availableVoices.length) return false;
 
-      if (storedVoice) {
-        const storedVoiceSettings = JSON.parse(storedVoice);
-        voice =
-          availableVoices.find(
-            (v) =>
-              v.name === storedVoiceSettings.name &&
-              v.lang === storedVoiceSettings.lang
-          ) || null;
+      const stored = localStorage.getItem("selectedVoice");
+      if (stored) {
+        try {
+          const { name, lang } = JSON.parse(stored);
+          const match = availableVoices.find(
+            (v) => v.name === name && v.lang === lang
+          );
+          if (match) {
+            setAndPersistVoice(match);
+            return true;
+          } else {
+            localStorage.removeItem("selectedVoice");
+          }
+        } catch {
+          localStorage.removeItem("selectedVoice");
+        }
       }
 
-      voice ??=
-        availableVoices.find(
-          (v) => v.name === "Google UK English Male" && v.lang === "en-GB"
-        ) || null;
+      const picked = pickPreferredMaleEnglishVoice(availableVoices);
+      setAndPersistVoice(picked);
+      return true;
+    };
 
-      setSelectedVoice(voice);
-
-      if (voice) {
-        const voiceSettings = { name: voice.name, lang: voice.lang };
-        localStorage.setItem("selectedVoice", JSON.stringify(voiceSettings));
+    const tryLoad = () => {
+      if (!resolveVoice()) {
+        if (pollTimer == null) {
+          pollTimer = window.setInterval(() => {
+            if (resolveVoice()) {
+              if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+              }
+            }
+          }, 250);
+        }
       }
     };
 
     if (speechSynthesis.getVoices().length === 0) {
-      speechSynthesis.onvoiceschanged = loadVoices;
+      speechSynthesis.onvoiceschanged = tryLoad;
+      setTimeout(tryLoad, 100);
     } else {
-      loadVoices();
+      tryLoad();
     }
 
     return () => {
-      if (speechSynthesis.onvoiceschanged) {
-        speechSynthesis.onvoiceschanged = null;
+      cancelled = true;
+      if (pollTimer) {
+        clearInterval(pollTimer);
       }
+      speechSynthesis.onvoiceschanged = null;
     };
   }, []);
 
@@ -254,18 +292,18 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
   const handleReadAloud = () => {
     setIsReadingAloud((prev) => !prev);
+
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
     } else {
       const utterance = new SpeechSynthesisUtterance(voiceContent);
       if (selectedVoice) {
         utterance.voice = selectedVoice;
+        if (selectedVoice.lang) utterance.lang = selectedVoice.lang;
       }
-
       utterance.onend = () => {
         speechSynthesis.cancel();
       };
-
       speechSynthesis.speak(utterance);
     }
   };
@@ -317,6 +355,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   }, [isValid]);
 
   const [getSessionById] = useLazyGetSessionByIdQuery();
+  const [getSearchSession] = useLazyGetSessionQuery();
 
   const loadExistingSession = async (chatId: string) => {
     setIsLoadingSession(true);
@@ -363,7 +402,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           });
         }
       } else {
-        const sessionData = await SearchService.getSession(chatId);
+        const sessionData = await getSearchSession(chatId).unwrap();
 
         if (sessionData && sessionData.length > 0) {
           sessionData.forEach((item) => {
@@ -454,7 +493,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const handleNewMessage = async (
     message: string
   ): Promise<string | undefined> => {
-    if ((!message.trim() && filesState.length === 0) || isSearching) return;
+    if (
+      (!voiceFile && !message.trim() && filesState.length === 0) ||
+      isSearching
+    )
+      return;
 
     const newAbortController = new AbortController();
     setAbortController(newAbortController);
@@ -714,7 +757,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         await SearchService.aiSearchStream(
           {
             chat_message: JSON.stringify({
-              user_prompt: message,
+              user_prompt: voiceFile && !message.trim() ? undefined : message,
               is_new: !currentChatId,
               chat_id: currentChatId,
               regenerate_id: null,
@@ -724,6 +767,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             ...(images && { images }),
             ...(pdf && { pdf }),
             contentId: documentId,
+            audio: voiceFile ? voiceFile : undefined,
           },
           processChunk,
           processFinal,
@@ -999,13 +1043,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             <LibraryChatInput
               files={filesState}
               setFiles={handleSetFiles}
+              voiceFile={voiceFile}
+              setVoiceFile={setVoiceFile}
               className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
               onSend={handleNewMessage}
               disabled={
                 isSearching ||
                 (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
-                // (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
-                message === ""
+                (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
+                (!voiceFile && message === "")
               }
               selectedText={selectedText}
               message={message}
@@ -1013,8 +1059,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedSwitch={selectedSwitch}
               setNewMessage={setMessage}
               footer={
-                isSwitch(SWITCH_KEYS.CREATE) ? (
-                  // || isSwitch(SWITCH_KEYS.CARD)
+                isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
                       <PopoverAttach

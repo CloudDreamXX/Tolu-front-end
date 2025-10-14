@@ -14,7 +14,7 @@ import { updateCoachField } from "../../../entities/store/coachOnboardingSlice";
 import { HeaderOnboarding } from "./components";
 import { buttons } from "./mock";
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { useOnboardUserMutation } from "entities/user";
 import { MultiSelectField } from "widgets/MultiSelectField";
 
 export const OnboardingMain = () => {
@@ -29,6 +29,8 @@ export const OnboardingMain = () => {
   const dispatch = useDispatch();
 
   const allOptions = useMemo(() => customButtons.flat(), [customButtons]);
+
+  const [onboardUser] = useOnboardUserMutation();
 
   useEffect(() => {
     const saved = (state?.primary_niches ?? []) as string[];
@@ -82,7 +84,7 @@ export const OnboardingMain = () => {
     );
 
     try {
-      await UserService.onboardUser(state);
+      await onboardUser({ data: state }).unwrap();
       nav("/about-your-practice");
     } catch (err) {
       console.error(err);

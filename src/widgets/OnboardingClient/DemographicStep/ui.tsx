@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { RootState } from "entities/store";
-import { UserService } from "entities/user";
+import { useOnboardClientMutation } from "entities/user";
 import { SelectField } from "widgets/CRMSelectField";
 import { OnboardingClientLayout } from "../Layout";
 import {
@@ -43,6 +43,8 @@ export const DemographicStep = () => {
       : new Date(selectedYear, 0)
   );
 
+  const [onboardClient] = useOnboardClientMutation();
+
   useEffect(() => {
     if (!dateOfBirth) return;
     const d = parseISO(dateOfBirth);
@@ -67,7 +69,10 @@ export const DemographicStep = () => {
   }, [dateOfBirth, dispatch]);
 
   const handleNext = async () => {
-    await UserService.onboardClient(clientOnboarding, token);
+    await onboardClient({
+      data: clientOnboarding,
+      token: token ? token : undefined,
+    }).unwrap();
     nav("/symptoms-severity");
   };
 

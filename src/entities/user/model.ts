@@ -237,3 +237,12 @@ export interface CheckInviteResponse {
   user_exists: boolean;
   token: string | null;
 }
+
+export interface PasswordlessLoginRequest {
+  email: string;
+}
+
+export interface VerifyPasswordlessLogin {
+  email: string;
+  code: string;
+}

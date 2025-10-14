@@ -2,7 +2,13 @@ import {
   useAcceptCoachInviteMutation,
   useGetInvitationDetailsQuery,
 } from "entities/client";
-import { UserService, logout, setCredentials, setRoleID } from "entities/user";
+import {
+  logout,
+  setCredentials,
+  setRoleID,
+  useLazyGetReferralInvitationQuery,
+  useRegisterUserMutation,
+} from "entities/user";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -50,6 +56,9 @@ export const Register = () => {
   const dispatch = useDispatch();
   const { data } = useGetInvitationDetailsQuery(token ?? "", { skip: !token });
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
+  const [getReferralInvitation] = useLazyGetReferralInvitationQuery();
+
+  const [registerUser] = useRegisterUserMutation();
 
   useEffect(() => {
     if (!token) return;
@@ -135,7 +144,7 @@ export const Register = () => {
       }
 
       try {
-        const data = await UserService.getReferralInvitation(token);
+        const data = await getReferralInvitation(token).unwrap();
         if (cancelled) return;
         setFormData((prev) => ({
           ...prev,
@@ -211,9 +220,9 @@ export const Register = () => {
     dispatch(setRoleID({ roleID: dataBE.roleID }));
 
     try {
-      const res = await UserService.registerUser(dataBE);
+      const res = await registerUser(dataBE).unwrap();
 
-      if (res.user && res.accessToken) {
+      if (res?.user && res.accessToken) {
         dispatch(
           setCredentials({ user: res.user, accessToken: res.accessToken })
         );
