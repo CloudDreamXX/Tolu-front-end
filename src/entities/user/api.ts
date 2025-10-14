@@ -322,6 +322,7 @@ export const {
   useGetMenopauseRecommendationsQuery,
   useReferAFriendMutation,
   useGetReferralInvitationQuery,
+  useLazyGetReferralInvitationQuery,
   useGetOnboardingStatusQuery,
   useLazyGetOnboardingStatusQuery,
   useCheckPendingInviteQuery,

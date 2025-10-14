@@ -148,9 +148,7 @@ export const smartRender = async (text: string) => {
                 remarkPlugins={[remarkGfm, remarkBreaks]}
                 skipHtml
                 components={{
-                  body: (props) => (
-                    <body {...props} />
-                  ),
+                  body: (props) => <body {...props} />,
                   h1: (props) => <h1 {...props} />,
                   h2: (props) => <h2 {...props} />,
                   h3: (props) => <h3 {...props} />,

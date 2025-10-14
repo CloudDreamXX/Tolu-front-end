@@ -41,5 +41,7 @@ export const pickPreferredMaleEnglishVoice = (
     match = voices.find((v) => /male/i.test(v.voiceURI));
   }
 
-  return match ?? voices.find((v) => v.lang.startsWith("en")) ?? voices[0] ?? null;
+  return (
+    match ?? voices.find((v) => v.lang.startsWith("en")) ?? voices[0] ?? null
+  );
 };

@@ -228,10 +228,7 @@ export const LoginForm = () => {
         navigate("/", { replace: true });
       }
     } catch (error: any) {
-      const message =
-        error?.data?.message ||
-        error.message ||
-        "Invalid code or expired link.";
+      const message = error?.data?.message || error.message || "Invalid code";
       setCodeError(message);
       toast({
         variant: "destructive",

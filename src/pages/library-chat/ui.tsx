@@ -1086,7 +1086,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 />
               </div>
             )}
-            <div className={`xl:hidden block px-[16px] w-fit mx-auto`}>
+            <div
+              className={`xl:hidden block px-[16px] w-fit mx-auto pb-[16px]`}
+            >
               <ChatActions
                 chatState={chatState}
                 onRegenerate={handleRegenerateResponse}

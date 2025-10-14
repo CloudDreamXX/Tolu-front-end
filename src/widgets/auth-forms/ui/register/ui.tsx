@@ -6,7 +6,7 @@ import {
   logout,
   setCredentials,
   setRoleID,
-  useGetReferralInvitationQuery,
+  useLazyGetReferralInvitationQuery,
   useRegisterUserMutation,
 } from "entities/user";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
@@ -56,9 +56,7 @@ export const Register = () => {
   const dispatch = useDispatch();
   const { data } = useGetInvitationDetailsQuery(token ?? "", { skip: !token });
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
-  const [getReferralInvitation] = useGetReferralInvitationQuery(token ?? "", {
-    skip: true,
-  }) as any;
+  const [getReferralInvitation] = useLazyGetReferralInvitationQuery();
 
   const [registerUser] = useRegisterUserMutation();
 
