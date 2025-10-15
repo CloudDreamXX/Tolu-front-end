@@ -47,42 +47,6 @@ npm run lint:fix
 npm run format:write
 ```
 
-## Project Structure
-
-├── public/ # Static assets served directly
-│
-├── src/ # Main application source
-│ ├── app/ # App-level configuration (store, providers, routing setup)
-│ ├── entities/ # Reusable domain-specific entities (user, product, etc.)
-│ ├── features/ # Application features (auth, dashboard, etc.)
-│ ├── pages/ # Top-level route pages
-│ ├── shared/ # Shared UI components, hooks, and utilities
-│ ├── widgets/ # Composite UI blocks composed of multiple components
-│ ├── index.css # Global styles
-│ ├── main.tsx # Main application entry point
-│ └── vite-env.d.ts # Vite TypeScript environment declarations
-│
-├── .env # Environment variables
-├── .eslintcache # ESLint cache file
-├── .eslintrc.cjs # ESLint configuration
-├── .gitignore # Ignored files for Git
-├── .prettierignore # Ignore patterns for Prettier
-├── .prettierrc # Prettier formatting rules
-│
-├── CHANGELOG.md # Project changelog
-├── components.json # Component library configuration (if applicable)
-├── eslint.config.js # Alternate ESLint config (JS format)
-├── index.html # Main HTML template
-├── package.json # Project metadata and dependencies
-├── package-lock.json # Dependency lock file
-├── postcss.config.js # PostCSS configuration
-├── tailwind.config.js # TailwindCSS configuration
-├── tsconfig.app.json # TypeScript app configuration
-├── tsconfig.json # Root TypeScript configuration
-├── tsconfig.node.json # TypeScript config for Node-related scripts
-├── vercel.json # Vercel deployment configuration
-└── vite.config.ts # Vite configuration file
-
 ## FE tech listProject tech stack: 
 
 * React
