@@ -130,15 +130,36 @@ export const ContentManagerProfile = () => {
     }
   };
 
-  const initials = user?.profile.basic_info.name
-    ? user.profile.basic_info.name.split(" ").length > 1
-      ? user.profile.basic_info.name
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
-      : user.profile.basic_info.name.slice(0, 2).toUpperCase()
-    : "UN";
+  const initials = (() => {
+    const info = user?.profile?.basic_info;
+    if (!info) return "UN";
+
+    if (info.first_name && info.last_name) {
+      return (
+        `${info.first_name?.[0] ?? ""}${info.last_name?.[0] ?? ""}`.toUpperCase() ||
+        "UN"
+      );
+    }
+
+    if (info.first_name) {
+      return (info.first_name.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    if (info.name) {
+      const parts = info.name.trim().split(" ").filter(Boolean);
+      if (parts.length > 1) {
+        return (
+          parts
+            .map((p) => p[0]?.toUpperCase() ?? "")
+            .slice(0, 2)
+            .join("") || "UN"
+        );
+      }
+      return (parts[0]?.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    return "UN";
+  })();
 
   const ProfileLoadingSkeleton = () => {
     const getRandomWidth = (min: number, max: number) =>
@@ -374,8 +395,8 @@ export const ContentManagerProfile = () => {
               <div className="flex flex-col w-full gap-2.5">
                 <p className="text-[#1D1D1F] text-2xl font-bold">
                   {user?.profile.basic_info.name || ""},{" "}
-                  {user?.profile.basic_info.age
-                    ? String(user?.profile.basic_info.age)
+                  {user?.profile.basic_info.calculated_age
+                    ? String(user?.profile.basic_info.calculated_age)
                     : ""}
                 </p>
                 <Field

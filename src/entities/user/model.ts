@@ -1,5 +1,7 @@
 export interface IUser {
   id: string;
+  first_name: string;
+  last_name: string;
   name: string;
   email: string;
   dob: string;
@@ -131,7 +133,7 @@ export interface BasicInfo {
   headshot: string | null;
   roleID: number;
   roleName: string;
-  age: number;
+  calculated_age: number;
   gender: string;
   bio: string;
   languages: string[];

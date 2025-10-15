@@ -92,6 +92,8 @@ export const AdminMessages: React.FC = () => {
         name: profile?.name || "Admin",
         id: profile?.id || "admin-id",
         email: profile?.email || "admin@example.com",
+        first_name: profile?.first_name || "",
+        last_name: profile?.last_name || "",
       },
     };
   };

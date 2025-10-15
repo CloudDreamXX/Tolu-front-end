@@ -90,18 +90,6 @@ export const ProfileSetup = () => {
     }
   };
 
-  const computeAge = (
-    dob: Date | string | null | undefined
-  ): number | undefined => {
-    if (!dob) return undefined;
-    const d = typeof dob === "string" ? new Date(dob) : dob;
-    if (Number.isNaN(d.getTime())) return undefined;
-    const today = new Date();
-    if (isAfter(d, today)) return undefined;
-    const age = differenceInYears(today, d);
-    return age >= 0 && age <= 120 ? age : undefined;
-  };
-
   const calendarContent = (
     <>
       <div className="flex gap-[8px] items-center m-4 mb-1">
@@ -136,7 +124,10 @@ export const ProfileSetup = () => {
             setDisplayMonth(new Date(y, selectedDate.getMonth()));
 
             dispatch(
-              updateCoachField({ key: "age", value: computeAge(selectedDate) })
+              updateCoachField({
+                key: "dob",
+                value: format(selectedDate, "yyyy-MM-dd"),
+              })
             );
           }
         }}

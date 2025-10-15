@@ -56,15 +56,36 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
     }
   };
 
-  const initials = message.sender.name
-    ? message.sender.name.split(" ").length > 1
-      ? message.sender.name
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
-      : message.sender.name.slice(0, 2).toUpperCase()
-    : "UN";
+  const initials = (() => {
+    const sender = message?.sender;
+    if (!sender) return "UN";
+
+    if (sender.first_name && sender.last_name) {
+      return (
+        `${sender.first_name?.[0] ?? ""}${sender.last_name?.[0] ?? ""}`.toUpperCase() ||
+        "UN"
+      );
+    }
+
+    if (sender.first_name) {
+      return (sender.first_name.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    if (sender.name) {
+      const parts = sender.name.trim().split(" ").filter(Boolean);
+      if (parts.length > 1) {
+        return (
+          parts
+            .map((p) => p[0]?.toUpperCase() ?? "")
+            .slice(0, 2)
+            .join("") || "UN"
+        );
+      }
+      return (parts[0]?.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    return "UN";
+  })();
 
   return (
     <div className="flex flex-col gap-2 bg-[#F3F6FB] py-2 lg:px-3 rounded-lg w-full lg:w-[373px]">

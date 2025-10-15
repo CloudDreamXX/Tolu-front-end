@@ -40,15 +40,36 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   onClick,
   classname,
 }) => {
-  const initials = item.participants[0]?.name
-    ? item.participants[0]?.name.split(" ").length > 1
-      ? item.participants[0]?.name
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
-      : item.participants[0]?.name.slice(0, 2).toUpperCase()
-    : "UN";
+  const initials = (() => {
+    const user = item?.participants?.[0];
+    if (!user) return "UN";
+
+    if (user.first_name && user.last_name) {
+      return (
+        `${user.first_name?.[0] ?? ""}${user.last_name?.[0] ?? ""}`.toUpperCase() ||
+        "UN"
+      );
+    }
+
+    if (user.first_name) {
+      return (user.first_name.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    if (user.name) {
+      const parts = user.name.trim().split(" ").filter(Boolean);
+      if (parts.length > 1) {
+        return (
+          parts
+            .map((p) => p[0]?.toUpperCase() ?? "")
+            .slice(0, 2)
+            .join("") || "UN"
+        );
+      }
+      return (parts[0]?.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    return "UN";
+  })();
 
   return (
     <button

@@ -98,6 +98,7 @@ export const StepGeneral = ({
           placeholder="25"
           value={data.age || ""}
           onChange={(e) => handleInputChange("age", e.target.value)}
+          readOnly
         />
       </div>
 

@@ -84,6 +84,8 @@ export interface UserProfileUpdate {
   gender?: string;
 }
 export interface Client {
+  first_name: string;
+  last_name: string;
   name: string;
   email: string;
   phone: string;
@@ -97,6 +99,7 @@ export interface Client {
   created_at: string;
   updated_at: string;
   last_symptoms_date: string | null;
+  calculated_age: number;
 }
 
 export interface SharedCoachContentByContentIdResponse {
