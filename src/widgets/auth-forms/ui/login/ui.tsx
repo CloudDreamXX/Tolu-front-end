@@ -38,6 +38,7 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isInvitedClient = location.state?.isInvitedClient === true || null;
+  const clientEmail = location.state?.email || null;
   const coachInviteToken = location.state?.coachInviteToken;
   const redirectPath = localStorage.getItem("redirectAfterLogin");
 
@@ -172,6 +173,29 @@ export const LoginForm = () => {
     }
   };
 
+  useEffect(() => {
+    const handleSend = async () => {
+      if (clientEmail) {
+        try {
+          await requestPasswordlessLogin({ email: clientEmail }).unwrap();
+          setIsCodeSent(true);
+          toast({
+            title: "Code sent",
+            description: "Check your email for the verification code.",
+          });
+        } catch (err: any) {
+          toast({
+            variant: "destructive",
+            title: "Failed to send code",
+            description: err?.data?.message || "Please try again.",
+          });
+        }
+      }
+    };
+
+    handleSend();
+  }, [clientEmail]);
+
   const handleSendCode = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData.email) {
@@ -303,7 +327,10 @@ export const LoginForm = () => {
               </div>
               <h3 className="text-center self-stretch text-black  text-[16px] md:text-[24px] font-normal">
                 We&apos;ve sent you a 6-digit code to{" "}
-                <span className="font-semibold">{formData.email}</span>.
+                <span className="font-semibold">
+                  {clientEmail ? clientEmail : formData.email}
+                </span>
+                .
                 <br /> Please enter the code below.
               </h3>
             </div>

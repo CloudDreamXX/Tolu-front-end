@@ -15,6 +15,22 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
 import { SelectType, SignUp } from "./components";
 
+const isAlreadyAccepted = (err: any) => {
+  // const status = Number(
+  //   err?.response?.status ?? err?.status ?? err?.statusCode
+  // );
+  const msg = String(
+    err?.response?.data?.detail ??
+      err?.response?.data?.message ??
+      err?.message ??
+      ""
+  ).toLowerCase();
+  return (
+    // status === 404 ||
+    msg.includes("already accepted")
+  );
+};
+
 const isAuthRevoked = (err: any) => {
   const status = Number(
     err?.response?.status ?? err?.status ?? err?.statusCode
@@ -30,7 +46,8 @@ const isAuthRevoked = (err: any) => {
     status === 401 ||
     msg.includes("session_revoked") ||
     msg.includes("invalid token") ||
-    msg.includes("expired token")
+    msg.includes("expired token") ||
+    msg.includes("expired invitation token")
   );
 };
 
@@ -54,7 +71,10 @@ export const Register = () => {
 
   const { token } = useParams();
   const dispatch = useDispatch();
-  const { data } = useGetInvitationDetailsQuery(token ?? "", { skip: !token });
+  const { data, error: detailsError } = useGetInvitationDetailsQuery(
+    token ?? "",
+    { skip: !token }
+  );
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [getReferralInvitation] = useLazyGetReferralInvitationQuery();
 
@@ -85,7 +105,7 @@ export const Register = () => {
     };
 
     const fetchInviteDetails = async () => {
-      try {
+      if (data) {
         if (cancelled) return;
         setFormData((prev) => ({
           ...prev,
@@ -96,20 +116,29 @@ export const Register = () => {
         }));
         setInviteSource("client");
         return;
-      } catch (err) {
-        if (isAuthRevoked(err)) {
+      }
+
+      if (detailsError) {
+        if (isAlreadyAccepted(detailsError)) {
           dispatch(logout());
-          navigate("/auth", { replace: true });
+          navigate("/auth", {
+            //  state: { email: data?.email },
+            replace: true,
+          });
           return;
         }
-        if (isAuthRevoked(err)) {
+
+        if (isAuthRevoked(detailsError)) {
           dispatch(logout());
-          navigate("/auth", { replace: true });
+          navigate("/auth", {
+            state: { isInvitedClient: true },
+            replace: true,
+          });
           return;
         }
         if (cancelled) return;
 
-        if (isAlreadyRegistered(err)) {
+        if (isAlreadyRegistered(detailsError)) {
           try {
             await acceptCoachInvite({ token }).unwrap();
             navigate("/library");
@@ -132,13 +161,8 @@ export const Register = () => {
           return;
         }
 
-        if (!isNotFound(err)) {
-          console.error("Failed to fetch invitation details", err);
-          toast({
-            title: "Unable to load invitation",
-            description: "Please try again or request a new link.",
-            variant: "destructive",
-          });
+        if (isNotFound(detailsError)) {
+          console.error("Failed to fetch invitation details", detailsError);
           return;
         }
       }
@@ -150,13 +174,13 @@ export const Register = () => {
           ...prev,
           name: data?.referral?.friend_name ?? "",
           email: data?.referral?.friend_email ?? "",
-          phone: data?.referral?.friend_phone ?? "",
+          phone: data?.referral?.friend_phone.replace(/\D/g, "") ?? "",
           accountType: "client",
         }));
         setInviteSource("referral");
         return;
       } catch (err) {
-        if (isAuthRevoked(err)) {
+        if (isAlreadyAccepted(err)) {
           dispatch(logout());
           navigate("/auth", { replace: true });
           return;
@@ -179,13 +203,8 @@ export const Register = () => {
         console.error("Failed to fetch referral invitation", err);
 
         if (isNotFound(err)) {
-          toast({
-            title: "Invalid or expired invitation",
-            description:
-              "This link has expired. Please request a new login link.",
-            variant: "destructive",
-          });
-          navigate("/auth", { state: { isInvitedClient: true } });
+          console.error(err);
+          navigate("/auth");
         } else {
           toast({
             title: "Unable to load invitation",
@@ -200,7 +219,7 @@ export const Register = () => {
     return () => {
       cancelled = true;
     };
-  }, [token, navigate, toast, data]);
+  }, [token, navigate, toast, data, detailsError]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
