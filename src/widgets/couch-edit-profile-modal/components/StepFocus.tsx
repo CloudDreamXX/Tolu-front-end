@@ -34,13 +34,16 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
     new Set(data.expertise_areas || [])
   );
 
+  const [usesAI, setUsesAI] = useState(data.uses_ai || "");
+
   useEffect(() => {
     setDataState((prevState) => ({
       ...prevState,
       expertise_areas: Array.from(selected),
       practice_management_software: softwere,
+      uses_ai: usesAI,
     }));
-  }, [selected, softwere, setDataState]);
+  }, [selected, softwere, usesAI, setDataState]);
 
   const toggle = useCallback((item: FocusOption) => {
     setSelected((prev) => {
@@ -141,7 +144,11 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
 
       <div className="flex flex-col gap-4">
         <label>Do you use AI in your day-to-day work? *</label>
-        <RadioGroup className="flex flex-col gap-4 md:flex-row md:gap-10">
+        <RadioGroup
+          className="flex flex-col gap-4 md:flex-row md:gap-10"
+          value={usesAI}
+          onValueChange={(v) => setUsesAI(v)}
+        >
           {USE_AI_ANSWERS.map((option) => (
             <div key={option} className="flex items-center space-x-2">
               <RadioGroupItem value={option} />

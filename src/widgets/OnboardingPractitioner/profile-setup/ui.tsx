@@ -9,7 +9,7 @@ import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { timezoneOptions } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Calendar } from "shared/ui";
-import { differenceInYears, format, isAfter } from "date-fns";
+import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
 import { useOnboardUserMutation } from "entities/user";
 import { SelectField } from "widgets/CRMSelectField";

@@ -252,30 +252,25 @@ export const userApi = createApi({
     }),
 
     downloadProfilePhoto: builder.query<Blob, string>({
-      async queryFn(filename) {
-        try {
-          const endpoint = API_ROUTES.USER.DOWNLOAD_PHOTO.replace(
-            "{filename}",
-            encodeURIComponent(filename)
-          );
+      async queryFn(filename, _queryApi, _extraOptions, baseQuery) {
+        const endpoint = API_ROUTES.USER.DOWNLOAD_PHOTO.replace(
+          "{filename}",
+          encodeURIComponent(filename)
+        );
 
-          const response = await fetch(
-            `${import.meta.env.VITE_API_URL}${endpoint}`,
-            {
-              headers: { Accept: "image/*" },
-              credentials: "include",
-            }
-          );
+        const result = await baseQuery({
+          url: endpoint,
+          method: "GET",
+          headers: { Accept: "image/*" },
+          responseHandler: async (response) => {
+            if (!response.ok)
+              throw new Error(`Failed to fetch image: ${response.statusText}`);
+            return await response.blob();
+          },
+        });
 
-          if (!response.ok) {
-            throw new Error(`Failed to fetch image: ${response.statusText}`);
-          }
-
-          const blob = await response.blob();
-          return { data: blob };
-        } catch (error: any) {
-          return { error };
-        }
+        if (result.error) return { error: result.error };
+        return { data: result.data as Blob };
       },
     }),
 
