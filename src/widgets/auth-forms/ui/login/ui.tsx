@@ -500,17 +500,19 @@ export const LoginForm = () => {
               </button>
             )}
 
-            <p
-              className="text-[#1C63DB] text-[14px] cursor-pointer"
-              onClick={() => {
-                setLoginMode(loginMode === "password" ? "2fa" : "password");
-                setIsCodeSent(false);
-              }}
-            >
-              {loginMode === "password"
-                ? "Use 2FA Email Login Instead"
-                : "Use Password Login Instead"}
-            </p>
+            {!isInvitedClient && (
+              <p
+                className="text-[#1C63DB] text-[14px] cursor-pointer"
+                onClick={() => {
+                  setLoginMode(loginMode === "password" ? "2fa" : "password");
+                  setIsCodeSent(false);
+                }}
+              >
+                {loginMode === "password"
+                  ? "Use 2FA Email Login Instead"
+                  : "Use Password Login Instead"}
+              </p>
+            )}
 
             <p className="text-black text-[14px] font-medium">
               Don’t have an account yet?{" "}

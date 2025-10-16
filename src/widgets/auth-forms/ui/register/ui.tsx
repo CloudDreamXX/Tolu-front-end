@@ -135,7 +135,6 @@ export const Register = () => {
         if (isAuthRevoked(detailsError)) {
           dispatch(logout());
           navigate("/auth", {
-            state: { isInvitedClient: true },
             replace: true,
           });
           return;
