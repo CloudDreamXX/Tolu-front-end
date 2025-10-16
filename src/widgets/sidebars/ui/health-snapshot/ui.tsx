@@ -237,7 +237,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
               </p>
             )}
             {sidebarOpen && (
-              <button
+              <div
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="w-[40px] h-[40px] p-2 transition-colors duration-200"
               >
@@ -245,7 +245,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   iconName="more_vert"
                   className={cn(menuOpen ? "text-[#1C63DB]" : "text-black")}
                 />
-              </button>
+              </div>
             )}
           </button>
 
