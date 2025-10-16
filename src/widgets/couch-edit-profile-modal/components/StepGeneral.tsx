@@ -2,7 +2,7 @@ import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { useFilePicker } from "shared/hooks/useFilePicker";
-import { cn } from "shared/lib";
+import { cn, phoneMask } from "shared/lib";
 import { Input } from "shared/ui";
 import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
 import { languages } from "widgets/OnboardingClient/DemographicStep";
@@ -67,13 +67,13 @@ export const StepGeneral = ({
         <label>Phone number</label>
         <Input
           placeholder="(123) 456-7890"
-          pattern={"^\\+?[1-9]\\d{1,14}$"}
+          // pattern={"^\\+?[1-9]\\d{1,14}$"}
           type="tel"
           inputMode="tel"
           autoComplete="tel"
-          value={data.phone || ""}
+          value={data.phone ? phoneMask(data.phone) : ""}
           onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+            const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
             handleInputChange("phone", digits);
           }}
         />
@@ -98,6 +98,7 @@ export const StepGeneral = ({
           placeholder="25"
           value={data.age || ""}
           onChange={(e) => handleInputChange("age", e.target.value)}
+          readOnly
         />
       </div>
 

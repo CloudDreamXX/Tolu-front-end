@@ -38,6 +38,7 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isInvitedClient = location.state?.isInvitedClient === true || null;
+  const clientEmail = location.state?.email || null;
   const coachInviteToken = location.state?.coachInviteToken;
   const redirectPath = localStorage.getItem("redirectAfterLogin");
 
@@ -65,6 +66,29 @@ export const LoginForm = () => {
     setCodeError("");
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    const handleSend = async () => {
+      if (clientEmail) {
+        try {
+          await requestPasswordlessLogin({ email: clientEmail }).unwrap();
+          setIsCodeSent(true);
+          toast({
+            title: "Code sent",
+            description: "Check your email for the verification code.",
+          });
+        } catch (err: any) {
+          toast({
+            variant: "destructive",
+            title: "Failed to send code",
+            description: err?.data?.message || "Please try again.",
+          });
+        }
+      }
+    };
+
+    handleSend();
+  }, [clientEmail]);
 
   useEffect(() => {
     localStorage.clear();
@@ -197,14 +221,14 @@ export const LoginForm = () => {
 
   const handleVerifyCode = async (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.email || !formData.code) {
-      setCodeError("Please enter your email and code.");
+    if (!formData.code) {
+      setCodeError("Please enter your code.");
       return;
     }
 
     try {
       const response = await verifyPasswordlessLogin({
-        email: formData.email,
+        email: clientEmail ? clientEmail : formData.email,
         code: formData.code,
       }).unwrap();
 
@@ -303,7 +327,10 @@ export const LoginForm = () => {
               </div>
               <h3 className="text-center self-stretch text-black  text-[16px] md:text-[24px] font-normal">
                 We&apos;ve sent you a 6-digit code to{" "}
-                <span className="font-semibold">{formData.email}</span>.
+                <span className="font-semibold">
+                  {clientEmail ? clientEmail : formData.email}
+                </span>
+                .
                 <br /> Please enter the code below.
               </h3>
             </div>
@@ -459,7 +486,8 @@ export const LoginForm = () => {
               <button
                 type="submit"
                 className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  formData.email
+                  (!isCodeSent && formData.email) ||
+                  (isCodeSent && formData.code)
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
                 }`}
@@ -472,17 +500,19 @@ export const LoginForm = () => {
               </button>
             )}
 
-            <p
-              className="text-[#1C63DB] text-[14px] cursor-pointer"
-              onClick={() => {
-                setLoginMode(loginMode === "password" ? "2fa" : "password");
-                setIsCodeSent(false);
-              }}
-            >
-              {loginMode === "password"
-                ? "Use 2FA Email Login Instead"
-                : "Use Password Login Instead"}
-            </p>
+            {!isInvitedClient && (
+              <p
+                className="text-[#1C63DB] text-[14px] cursor-pointer"
+                onClick={() => {
+                  setLoginMode(loginMode === "password" ? "2fa" : "password");
+                  setIsCodeSent(false);
+                }}
+              >
+                {loginMode === "password"
+                  ? "Use 2FA Email Login Instead"
+                  : "Use Password Login Instead"}
+              </p>
+            )}
 
             <p className="text-black text-[14px] font-medium">
               Don’t have an account yet?{" "}

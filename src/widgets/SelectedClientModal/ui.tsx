@@ -168,32 +168,64 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
     }
   };
 
+  const arrayToString = (value: any): string | undefined => {
+    if (!value) return undefined;
+    if (Array.isArray(value)) {
+      const texts = value
+        .map((item) =>
+          typeof item === "object" && "text" in item
+            ? item.text?.trim()
+            : String(item).trim()
+        )
+        .filter(Boolean);
+      return texts.length > 0 ? texts.join(", ") : undefined;
+    }
+    if (typeof value === "string") {
+      return value.trim() || undefined;
+    }
+    return undefined;
+  };
+
   const saveLifestyle = async () => {
     setIsEditingLifestyle(null);
+
+    const partial: Partial<ComprehensiveProfile> = {
+      lifestyle_information: arrayToString(
+        lifestyleSkills.lifestyle_information
+      ),
+      exercise_habits: arrayToString(lifestyleSkills.exercise_habits),
+      lifestyle_limitations: arrayToString(
+        lifestyleSkills.lifestyle_limitations
+      ),
+      stress_levels: arrayToString(lifestyleSkills.stress_levels),
+    };
+
+    await updateComprehensive(partial, "Updated lifestyle skills");
   };
 
   const saveStory = async () => {
     setIsEditingStory(false);
-    await updateComprehensive(
-      { client_story: client.client_story },
-      "Updated client story"
-    );
+
+    const partial: Partial<ComprehensiveProfile> = {
+      client_story: client.client_story,
+    };
+
+    await updateComprehensive(partial, "Updated client story");
   };
 
   const saveSymptoms = async () => {
     setIsEditingSymptoms(false);
-    const concerns = [
-      ...(client.symptoms?.hormones_and_neurotransmitters_reported_symptoms ||
-        []),
-      client.symptoms?.mind_spirit_emotions_community_reported_state || "",
-    ]
-      .flat()
-      .filter(Boolean)
-      .join("; ");
-    await updateComprehensive(
-      { current_health_concerns: concerns },
-      "Updated symptoms"
-    );
+    const partial: Partial<ComprehensiveProfile> = {
+      current_health_concerns:
+        client.symptoms?.hormones_and_neurotransmitters_reported_symptoms?.join(
+          ", "
+        ) || undefined,
+      support_system:
+        client.symptoms?.mind_spirit_emotions_community_reported_state ||
+        undefined,
+    };
+
+    await updateComprehensive(partial, "Updated symptoms");
   };
 
   const buildMedicationOperations = (
@@ -464,16 +496,15 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           >
             Medications and Supplements
           </button>
-          <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "biometrics"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+          {/* <button
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "biometrics"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("biometrics")}
           >
             Biometrics
-          </button>
+          </button> */}
           <button
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "labs"

@@ -46,6 +46,7 @@ const LABEL: Record<keyof CoachOnboardingState, string> = {
   email: "Email",
   bio: "Bio",
   languages: "Languages",
+  dob: "Birth date",
 };
 
 const REQUIRED_BY_ROUTE: Record<string, (keyof CoachOnboardingState)[]> = {

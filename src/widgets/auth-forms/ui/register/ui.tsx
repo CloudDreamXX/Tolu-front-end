@@ -15,6 +15,22 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
 import { SelectType, SignUp } from "./components";
 
+const isAlreadyAccepted = (err: any) => {
+  const status = Number(
+    err?.response?.status ?? err?.status ?? err?.statusCode
+  );
+  const msg = String(
+    err?.response?.data?.detail ??
+      err?.response?.data?.message ??
+      err?.message ??
+      ""
+  ).toLowerCase();
+  const email = String(
+    err?.response?.data?.detail?.email ?? err?.response?.data?.email ?? ""
+  );
+  return status === 400 || msg.includes("already accepted") || email.trim();
+};
+
 const isAuthRevoked = (err: any) => {
   const status = Number(
     err?.response?.status ?? err?.status ?? err?.statusCode
@@ -30,8 +46,28 @@ const isAuthRevoked = (err: any) => {
     status === 401 ||
     msg.includes("session_revoked") ||
     msg.includes("invalid token") ||
-    msg.includes("expired token")
+    msg.includes("expired token") ||
+    msg.includes("expired invitation token")
   );
+};
+
+const isNotFound = (err: any) => {
+  const status = err?.response?.status ?? err?.status ?? err?.statusCode;
+  return Number(status) === 404;
+};
+
+const isAlreadyRegistered = (err: any) => {
+  const status = Number(
+    err?.response?.status ?? err?.status ?? err?.statusCode
+  );
+  const msg = String(
+    err?.response?.data?.detail ??
+      err?.response?.data?.message ??
+      err?.message ??
+      ""
+  ).toLowerCase();
+
+  return status === 409 || msg.includes("already exists");
 };
 
 export const Register = () => {
@@ -54,7 +90,13 @@ export const Register = () => {
 
   const { token } = useParams();
   const dispatch = useDispatch();
-  const { data } = useGetInvitationDetailsQuery(token ?? "", { skip: !token });
+  const {
+    data,
+    error: detailsError,
+    isError: isClientInviteError,
+    isSuccess: isClientInviteSuccess,
+    isFetching: isClientInviteLoading,
+  } = useGetInvitationDetailsQuery(token ?? "", { skip: !token });
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [getReferralInvitation] = useLazyGetReferralInvitationQuery();
 
@@ -65,28 +107,10 @@ export const Register = () => {
 
     let cancelled = false;
 
-    const isNotFound = (err: any) => {
-      const status = err?.response?.status ?? err?.status ?? err?.statusCode;
-      return Number(status) === 404;
-    };
+    const handleClientInvite = async () => {
+      if (isClientInviteLoading) return;
 
-    const isAlreadyRegistered = (err: any) => {
-      const status = Number(
-        err?.response?.status ?? err?.status ?? err?.statusCode
-      );
-      const msg = String(
-        err?.response?.data?.detail ??
-          err?.response?.data?.message ??
-          err?.message ??
-          ""
-      ).toLowerCase();
-
-      return status === 409 || msg.includes("already exists");
-    };
-
-    const fetchInviteDetails = async () => {
-      try {
-        if (cancelled) return;
+      if (isClientInviteSuccess && data && !cancelled) {
         setFormData((prev) => ({
           ...prev,
           name: data?.client?.full_name ?? "",
@@ -96,20 +120,27 @@ export const Register = () => {
         }));
         setInviteSource("client");
         return;
-      } catch (err) {
-        if (isAuthRevoked(err)) {
-          dispatch(logout());
-          navigate("/auth", { replace: true });
-          return;
-        }
-        if (isAuthRevoked(err)) {
-          dispatch(logout());
-          navigate("/auth", { replace: true });
-          return;
-        }
-        if (cancelled) return;
+      }
 
-        if (isAlreadyRegistered(err)) {
+      if (isClientInviteError && detailsError && !cancelled) {
+        if (isAlreadyAccepted(detailsError)) {
+          dispatch(logout());
+          navigate("/auth", {
+            state: { email: (detailsError as any)?.data?.detail?.email },
+            replace: true,
+          });
+          return;
+        }
+
+        if (isAuthRevoked(detailsError)) {
+          dispatch(logout());
+          navigate("/auth", {
+            replace: true,
+          });
+          return;
+        }
+
+        if (isAlreadyRegistered(detailsError)) {
           try {
             await acceptCoachInvite({ token }).unwrap();
             navigate("/library");
@@ -122,7 +153,6 @@ export const Register = () => {
               });
               return;
             }
-            console.error("Failed to accept coach invite", acceptErr);
             toast({
               title: "Unable to accept invite",
               description: "Please try again or request a new link.",
@@ -132,61 +162,49 @@ export const Register = () => {
           return;
         }
 
-        if (!isNotFound(err)) {
-          console.error("Failed to fetch invitation details", err);
-          toast({
-            title: "Unable to load invitation",
-            description: "Please try again or request a new link.",
-            variant: "destructive",
-          });
-          return;
+        if (isNotFound(detailsError)) {
+          console.error("Client invite not found", detailsError);
         }
       }
 
-      try {
-        const data = await getReferralInvitation(token).unwrap();
-        if (cancelled) return;
-        setFormData((prev) => ({
-          ...prev,
-          name: data?.referral?.friend_name ?? "",
-          email: data?.referral?.friend_email ?? "",
-          phone: data?.referral?.friend_phone ?? "",
-          accountType: "client",
-        }));
-        setInviteSource("referral");
-        return;
-      } catch (err) {
-        if (isAuthRevoked(err)) {
-          dispatch(logout());
-          navigate("/auth", { replace: true });
-          return;
-        }
-        if (isAuthRevoked(err)) {
-          dispatch(logout());
-          navigate("/auth", { replace: true });
-          return;
-        }
-        if (cancelled) return;
-
-        if (isAlreadyRegistered(err)) {
-          toast({
-            title: "Invitation accepted",
-          });
-          navigate("/library");
-          return;
-        }
-
-        console.error("Failed to fetch referral invitation", err);
-
-        if (isNotFound(err)) {
-          toast({
-            title: "Invalid or expired invitation",
-            description:
-              "This link has expired. Please request a new login link.",
-            variant: "destructive",
-          });
-          navigate("/auth", { state: { isInvitedClient: true } });
-        } else {
+      if (!isClientInviteSuccess && !isClientInviteLoading && !cancelled) {
+        try {
+          const referralData = await getReferralInvitation(token).unwrap();
+          if (cancelled) return;
+          setFormData((prev) => ({
+            ...prev,
+            name: referralData?.referral?.friend_name ?? "",
+            email: referralData?.referral?.friend_email ?? "",
+            phone:
+              referralData?.referral?.friend_phone?.replace(/\D/g, "") ?? "",
+            accountType: "client",
+          }));
+          setInviteSource("referral");
+        } catch (err) {
+          if (isAlreadyAccepted(err)) {
+            dispatch(logout());
+            navigate("/auth", { replace: true });
+            return;
+          }
+          if (isAuthRevoked(err)) {
+            dispatch(logout());
+            navigate("/auth", { replace: true });
+            return;
+          }
+          if (isAlreadyRegistered(err)) {
+            toast({ title: "Invitation accepted" });
+            navigate("/library");
+            return;
+          }
+          if (isNotFound(err)) {
+            toast({
+              title: "Invalid or expired invitation",
+              description:
+                "This link has expired. Please request a new login link.",
+              variant: "destructive",
+            });
+            navigate("/auth", { state: { isInvitedClient: true } });
+          }
           toast({
             title: "Unable to load invitation",
             description: "Please try again or request a new link.",
@@ -196,11 +214,18 @@ export const Register = () => {
       }
     };
 
-    fetchInviteDetails();
+    handleClientInvite();
     return () => {
       cancelled = true;
     };
-  }, [token, navigate, toast, data]);
+  }, [
+    token,
+    data,
+    isClientInviteError,
+    isClientInviteSuccess,
+    isClientInviteLoading,
+    detailsError,
+  ]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

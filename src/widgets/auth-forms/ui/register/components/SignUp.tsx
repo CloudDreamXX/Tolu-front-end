@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { Link } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { usePageWidth } from "shared/lib";
 import {
   checkPasswordStrength,
   StrengthMeter,
@@ -68,6 +69,7 @@ export const SignUp: React.FC<SignUpProps> = ({
     [formData.password]
   );
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const { isMobile } = usePageWidth();
 
   const formatPhoneNumber = (val: string) => {
     const digits = val.replace(/\D/g, "");
@@ -387,7 +389,7 @@ export const SignUp: React.FC<SignUpProps> = ({
       </section>
 
       <div className="flex flex-col w-full items-center gap-[24px] self-stretch">
-        <div className="flex items-center justify-center gap-2 self-stretch">
+        <div className="flex items-center justify-center gap-6 md:gap-2 self-stretch">
           <input
             type="checkbox"
             id="agreeTerms"
@@ -396,13 +398,15 @@ export const SignUp: React.FC<SignUpProps> = ({
             className="mt-[2px] w-[16px] h-[16px] border border-[#DFDFDF] rounded-[4px] cursor-pointer"
           />
           <label htmlFor="agreeTerms" className="text-[14px] text-[#5f5f65]">
-            I agree to the Terms and Conditions and{" "}
-            <Link
-              to="https://tolu.health/privacy-policy"
+            I agree to the Terms and {isMobile && <br />} Conditions and{" "}
+            <a
+              href="https://tolu.health/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-[#1C63DB] underline"
             >
               Privacy Policy
-            </Link>
+            </a>
           </label>
         </div>
         <button

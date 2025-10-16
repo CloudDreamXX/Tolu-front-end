@@ -141,7 +141,11 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               type="tel"
               placeholder="Enter phone number"
               value={phoneMask(client?.phone_number) || ""}
-              onChange={(e) => updateClient("phone_number", e.target.value)}
+              onChange={(e) => {
+                const raw = e.target.value;
+                const cleaned = raw.replace(/[+\-()\s]/g, "");
+                updateClient("phone_number", cleaned);
+              }}
               className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${noPhoneNumber ? "bg-gray-100" : ""}`}
               disabled={noPhoneNumber}
             />

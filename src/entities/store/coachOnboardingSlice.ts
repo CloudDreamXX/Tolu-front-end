@@ -46,6 +46,7 @@ export interface CoachOnboardingState {
   email?: string;
   bio?: string;
   languages?: string[];
+  dob?: string;
 }
 
 const initialState: CoachOnboardingState = {};

@@ -135,6 +135,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                     id: client.client_id,
                     email: "",
                     name: client.name,
+                    first_name: client.first_name,
+                    last_name: client.last_name,
                   },
                 ],
               })
@@ -229,15 +231,36 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
       </main>
     );
 
-  const initials = receiver?.user.name
-    ? receiver?.user.name.split(" ").length > 1
-      ? receiver?.user.name
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
-      : receiver?.user.name.slice(0, 2).toUpperCase()
-    : "UN";
+  const initials = (() => {
+    const user = receiver?.user;
+    if (!user) return "UN";
+
+    if (user.first_name && user.last_name) {
+      return (
+        `${user.first_name?.[0] ?? ""}${user.last_name?.[0] ?? ""}`.toUpperCase() ||
+        "UN"
+      );
+    }
+
+    if (user.first_name) {
+      return (user.first_name.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    if (user.name) {
+      const parts = user.name.trim().split(" ").filter(Boolean);
+      if (parts.length > 1) {
+        return (
+          parts
+            .map((p) => p[0]?.toUpperCase() ?? "")
+            .slice(0, 2)
+            .join("") || "UN"
+        );
+      }
+      return (parts[0]?.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    return "UN";
+  })();
 
   if (isLoading) return <MessageTabsLoadingSkeleton />;
   if (!chat) return null;

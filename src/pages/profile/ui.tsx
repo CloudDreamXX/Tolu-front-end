@@ -276,15 +276,33 @@ export const ClientProfile = () => {
     }
   };
 
-  const initials = user?.name
-    ? user.name.split(" ").length > 1
-      ? user.name
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
-      : user.name.slice(0, 2).toUpperCase()
-    : "UN";
+  const initials = (() => {
+    if (user?.first_name && user?.last_name) {
+      return (
+        `${user.first_name?.[0] ?? ""}${user.last_name?.[0] ?? ""}`.toUpperCase() ||
+        "UN"
+      );
+    }
+
+    if (user?.first_name) {
+      return (user.first_name.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    if (user?.name) {
+      const parts = user.name.trim().split(" ").filter(Boolean);
+      if (parts.length > 1) {
+        return (
+          parts
+            .map((p) => p[0]?.toUpperCase() ?? "")
+            .slice(0, 2)
+            .join("") || "UN"
+        );
+      }
+      return (parts[0]?.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    return "UN";
+  })();
 
   const ClientProfileLoadingSkeleton = () => {
     const getRandomWidth = (min: number, max: number) =>

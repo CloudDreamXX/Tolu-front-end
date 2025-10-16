@@ -57,6 +57,8 @@ export interface ClientsResponse {
 export interface Client {
   client_id: string;
   name: string;
+  first_name: string;
+  last_name: string;
   gender: string;
   last_activity: string | null;
   learning_now: LearningNow[];

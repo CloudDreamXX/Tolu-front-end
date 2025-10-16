@@ -109,7 +109,7 @@ export interface PersonalInfo {
   last_name: string;
   bio: string;
   alternate_name: string;
-  age: number;
+  calculated_age: number;
   gender: string;
   location: string;
   timezone: string;

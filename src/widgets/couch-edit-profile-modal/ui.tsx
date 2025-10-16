@@ -80,7 +80,7 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
     phone: bi.phone,
     email: bi.email,
 
-    age: bi.age,
+    age: bi.calculated_age,
     gender: (bi as any).gender ?? "",
     bio: bi.bio ?? "",
     languages: bi.languages ?? [],

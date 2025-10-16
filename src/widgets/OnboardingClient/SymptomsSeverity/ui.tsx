@@ -56,7 +56,7 @@ export const SymptomsSeverity = () => {
   const handleSliderChange = (symptom: string, value: number[]) => {
     setRatings((prev) => ({
       ...prev,
-      [symptom]: value[0] - 1,
+      [symptom]: value[0],
     }));
   };
 
@@ -127,10 +127,10 @@ export const SymptomsSeverity = () => {
                 {symptom}
               </label>
               <Slider
-                min={1}
-                max={5}
+                min={0}
+                max={4}
                 step={1}
-                value={[ratings[symptom] + 1 || 1]}
+                value={[ratings[symptom] || 1]}
                 onValueChange={(val) => handleSliderChange(symptom, val)}
                 colors={["#1C63DB", "#1C63DB", "#1C63DB", "#1C63DB"]}
               />
@@ -146,14 +146,16 @@ export const SymptomsSeverity = () => {
       buttons={
         <>
           {hintBlock}
-          <button
-            onClick={handleContinue}
-            className={
-              "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white ml-auto"
-            }
-          >
-            Continue
-          </button>
+          <div className="w-full lg:max-w-[718px]">
+            <button
+              onClick={handleContinue}
+              className={
+                "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white ml-auto"
+              }
+            >
+              Continue
+            </button>
+          </div>
         </>
       }
     />
