@@ -1,3 +1,16 @@
+## [1.2.1] - 2025-10-16
+
+### Fixes & Minor Changes
+
+- Update all FE data models and interfaces (e.g., User, Coach, Client, Profile, Onboarding, Message) to include: first_name, last_name, calculated_age.
+- Replace old name usage to use first_name and last_name for initials everywhere.
+- Fix downloading coach and client profile photo and fix edit coach profile.
+- Fix slider for symptoms severity to have separate lines and smooth transition.
+- Fix invitation errors conflict.
+- Handle second try to accept coach invitation.
+- Fix displaying of phone numbers.
+- Fix 403 error from fetch all chats endpoint.
+
 ## [1.2.0] - 2025-10-14
 
 ### New feature
