@@ -68,6 +68,29 @@ export const LoginForm = () => {
   };
 
   useEffect(() => {
+    const handleSend = async () => {
+      if (clientEmail) {
+        try {
+          await requestPasswordlessLogin({ email: clientEmail }).unwrap();
+          setIsCodeSent(true);
+          toast({
+            title: "Code sent",
+            description: "Check your email for the verification code.",
+          });
+        } catch (err: any) {
+          toast({
+            variant: "destructive",
+            title: "Failed to send code",
+            description: err?.data?.message || "Please try again.",
+          });
+        }
+      }
+    };
+
+    handleSend();
+  }, [clientEmail]);
+
+  useEffect(() => {
     localStorage.clear();
     localStorage.removeItem("persist:user");
     localStorage.removeItem("persist:clientMood");
@@ -173,29 +196,6 @@ export const LoginForm = () => {
     }
   };
 
-  useEffect(() => {
-    const handleSend = async () => {
-      if (clientEmail) {
-        try {
-          await requestPasswordlessLogin({ email: clientEmail }).unwrap();
-          setIsCodeSent(true);
-          toast({
-            title: "Code sent",
-            description: "Check your email for the verification code.",
-          });
-        } catch (err: any) {
-          toast({
-            variant: "destructive",
-            title: "Failed to send code",
-            description: err?.data?.message || "Please try again.",
-          });
-        }
-      }
-    };
-
-    handleSend();
-  }, [clientEmail]);
-
   const handleSendCode = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData.email) {
@@ -221,14 +221,14 @@ export const LoginForm = () => {
 
   const handleVerifyCode = async (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.email || !formData.code) {
-      setCodeError("Please enter your email and code.");
+    if (!formData.code) {
+      setCodeError("Please enter your code.");
       return;
     }
 
     try {
       const response = await verifyPasswordlessLogin({
-        email: formData.email,
+        email: clientEmail ? clientEmail : formData.email,
         code: formData.code,
       }).unwrap();
 
@@ -486,7 +486,8 @@ export const LoginForm = () => {
               <button
                 type="submit"
                 className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  formData.email
+                  (!isCodeSent && formData.email) ||
+                  (isCodeSent && formData.code)
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
                 }`}
