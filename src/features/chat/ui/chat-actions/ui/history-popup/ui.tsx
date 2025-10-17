@@ -13,7 +13,6 @@ type Props = {
   smallChat?: boolean;
 };
 
-// Tailwind md breakpoint is 768px by default
 function useIsMdUp() {
   const [isMdUp, setIsMdUp] = useState(() =>
     typeof window !== "undefined"
@@ -141,9 +140,9 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
 
       {
         isOpen &&
-          (isMdUp
-            ? DesktopLayer // no portal: md/xl stays exactly as before
-            : createPortal(MobileLayer, document.body)) // portal only on mobile
+        (isMdUp
+          ? DesktopLayer // no portal: md/xl stays exactly as before
+          : createPortal(MobileLayer, document.body)) // portal only on mobile
       }
     </div>
   );
