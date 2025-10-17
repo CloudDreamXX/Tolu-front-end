@@ -31,7 +31,6 @@ export const StepGeneral = ({
   const handleInputChange = (key: keyof CoachOnboardingState, value: any) => {
     setDataState((prevState) => ({ ...prevState, [key]: value }));
   };
-  console.log(data)
 
   return (
     <div className="flex flex-col gap-4">

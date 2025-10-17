@@ -681,7 +681,9 @@ export const ClientProfile = () => {
           </div>
           <div>
             <p className="mb-1 text-[18px] md:text-2xl font-semibold">
-              {(user?.first_name && user?.last_name) ? `${user?.first_name} ${user?.last_name}` : user?.name || ""}
+              {user?.first_name && user?.last_name
+                ? `${user?.first_name} ${user?.last_name}`
+                : user?.name || ""}
             </p>
             {user?.created_at && (
               <p className="px-2 bg-blue-100 py-1.5 text-[14px] text-blue-600 font-semibold rounded-full inline-block text-nowrap">
@@ -783,7 +785,9 @@ export const ClientProfile = () => {
               </div>
               <div>
                 <p className="mb-1 text-[18px] md:text-2xl font-semibold">
-                  {(user?.first_name && user?.last_name) ? `${user?.first_name} ${user?.last_name}` : user?.name || ""}
+                  {user?.first_name && user?.last_name
+                    ? `${user?.first_name} ${user?.last_name}`
+                    : user?.name || ""}
                 </p>
                 {user?.created_at && (
                   <p className="px-2 bg-blue-100 py-1.5 text-[14px] text-blue-600 font-semibold rounded-full inline-block text-nowrap">
@@ -793,7 +797,14 @@ export const ClientProfile = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px]">
-              <Field label="Name" value={(user?.first_name && user?.last_name) ? `${user?.first_name} ${user?.last_name}` : user?.name || ""} />
+              <Field
+                label="Name"
+                value={
+                  user?.first_name && user?.last_name
+                    ? `${user?.first_name} ${user?.last_name}`
+                    : user?.name || ""
+                }
+              />
               <Field
                 label="Phone number"
                 value={phoneMask(user?.phone || "")}
@@ -854,8 +865,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -863,8 +874,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>

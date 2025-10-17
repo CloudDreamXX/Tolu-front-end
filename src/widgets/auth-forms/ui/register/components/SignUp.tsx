@@ -13,7 +13,6 @@ import {
   StrengthMeter,
 } from "shared/lib/utils/passwordChecker";
 import { Input } from "shared/ui";
-import { SelectField } from "widgets/CRMSelectField";
 import { countries } from "widgets/OnboardingClient/DemographicStep";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { z } from "zod";

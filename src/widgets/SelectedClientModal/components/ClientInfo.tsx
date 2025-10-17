@@ -12,7 +12,11 @@ const ClientInfo: React.FC<Props> = ({ client }) => {
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">
             Full name
           </p>
-          <p className="text-[16px] text-[#1D1D1F]">{(client.first_name && client.last_name) ? `${client.first_name} ${client.last_name}` : client.name}</p>
+          <p className="text-[16px] text-[#1D1D1F]">
+            {client.first_name && client.last_name
+              ? `${client.first_name} ${client.last_name}`
+              : client.name}
+          </p>
         </div>
         <div className="h-[50px]">
           <p className="text-[12px] text-[#5F5F65] mb-[4px] font-semibold">

@@ -394,7 +394,11 @@ export const ContentManagerProfile = () => {
 
               <div className="flex flex-col w-full gap-2.5">
                 <p className="text-[#1D1D1F] text-2xl font-bold">
-                  {(user?.profile.basic_info.first_name && user?.profile.basic_info.last_name) ? `${user?.profile.basic_info.first_name} ${user?.profile.basic_info.last_name}` : user?.profile.basic_info.name || ""},{" "}
+                  {user?.profile.basic_info.first_name &&
+                  user?.profile.basic_info.last_name
+                    ? `${user?.profile.basic_info.first_name} ${user?.profile.basic_info.last_name}`
+                    : user?.profile.basic_info.name || ""}
+                  ,{" "}
                   {user?.profile.basic_info.age
                     ? String(user?.profile.basic_info.age)
                     : ""}
