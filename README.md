@@ -108,3 +108,5 @@ npm run format:write
 - Date-fns (^3.6.0)
 - HTML React Parser (^5.2.5)
 - HTML-to-text (^9.0.5)
+
+[Data Flow Documentation](./docs/data-flow.md)
