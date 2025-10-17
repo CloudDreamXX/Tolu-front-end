@@ -50,7 +50,8 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
   ];
 
   const isSaveDisabled =
-    !client?.full_name?.trim() ||
+    !client?.first_name?.trim() ||
+    !client?.last_name?.trim() ||
     !client?.email?.trim() ||
     !client?.permission_type ||
     !client?.focus_areas?.length ||
@@ -66,11 +67,10 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
           Cancel
         </button>
         <button
-          className={`w-full md:w-[144px] h-[40px] rounded-[1000px] text-[16px] font-semibold ${
-            isSaveDisabled
+          className={`w-full md:w-[144px] h-[40px] rounded-[1000px] text-[16px] font-semibold ${isSaveDisabled
               ? "bg-[#D5DAE2] text-[#5F5F65]"
               : "bg-[#1C63DB] text-white"
-          }`}
+            }`}
           onClick={onSave}
           disabled={isSaveDisabled}
         >
@@ -106,20 +106,36 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
             <MaterialIcon iconName="close" />
           </span>
         </div>
+
         <main className="overflow-y-auto pr-[2px] grow flex flex-col gap-[16px] md:gap-[24px]">
-          <div>
-            <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-              Full name
-            </label>
-            <input
-              type="text"
-              placeholder="Enter full name"
-              value={client?.full_name || ""}
-              onChange={(e) => updateClient("full_name", e.target.value)}
-              className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
-            />
+          <div className="flex flex-col md:flex-row gap-[16px] md:gap-[24px]">
+            <div className="w-full">
+              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                First name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter first name"
+                value={client?.first_name || ""}
+                onChange={(e) => updateClient("first_name", e.target.value)}
+                className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+              />
+            </div>
+            <div className="w-full">
+              <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                Last name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter last name"
+                value={client?.last_name || ""}
+                onChange={(e) => updateClient("last_name", e.target.value)}
+                className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+              />
+            </div>
           </div>
 
+          {/* Email */}
           <div>
             <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
               Email address
@@ -129,7 +145,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               placeholder="Enter email address"
               value={client?.email || ""}
               onChange={(e) => updateClient("email", e.target.value)}
-              className="placeholder-custom  w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+              className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
             />
           </div>
 
@@ -146,7 +162,8 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 const cleaned = raw.replace(/[+\-()\s]/g, "");
                 updateClient("phone_number", cleaned);
               }}
-              className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${noPhoneNumber ? "bg-gray-100" : ""}`}
+              className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${noPhoneNumber ? "bg-gray-100" : ""
+                }`}
               disabled={noPhoneNumber}
             />
             <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
@@ -194,6 +211,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
             className="h-[160px]"
           />
         </main>
+
         <div className="mt-auto">{renderFooter()}</div>
       </div>
     </div>

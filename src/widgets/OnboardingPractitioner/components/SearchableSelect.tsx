@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-
 import { cn } from "shared/lib";
 
 interface SearchableSelectProps {
@@ -60,7 +59,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
     <div className={`${width} relative`} ref={containerRef}>
       {label && (
         <label
-          className={`peer-focus:text-[#1D1D1F] ${labelStyle}  text-[16px] font-medium text-[#1D1D1F] mb-2 block`}
+          className={`peer-focus:text-[#1D1D1F] ${labelStyle} text-[16px] font-medium text-[#1D1D1F] mb-2 block`}
         >
           {label}
         </label>
@@ -74,7 +73,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
             setInputValue(e.target.value);
             setIsOpen(true);
           }}
-          placeholder={placeholder ? placeholder : "Select"}
+          placeholder={placeholder}
           className={`peer w-full py-[11px] px-[16px] pr-[40px] rounded-[8px] border border-[#DFDFDF] bg-white outline-none placeholder-[#5F5F65] focus:border-[#1C63DB] ${inputStyles}`}
         />
         <div
@@ -99,10 +98,11 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
           </svg>
         </div>
       </div>
+
       {isOpen && (
         <ul
           className={cn(
-            "bg-[#FAFAFA] absolute z-10 w-full max-h-[160px] overflow-y-auto scrollbar-hide rounded-md shadow-md flex flex-col",
+            "absolute z-[9999] max-h-[400px] overflow-y-auto w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2",
             position === "top" && "bottom-full mb-[-26px]",
             position === "bottom" && "top-full mt-1",
             dropdownStyle
@@ -112,14 +112,16 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
             filteredOptions.map((option) => (
               <li
                 key={option}
+                className="cursor-pointer px-[12px] py-[8px] border border-white hover:border-[#1D1D1F] rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white"
                 onClick={() => handleSelect(option)}
-                className="cursor-pointer hover:bg-[#F2F2F2] hover:text-[#1C63DB] px-[12px] py-[15px]"
               >
                 {option}
               </li>
             ))
           ) : (
-            <li className=" text-[#888]">No matches found</li>
+            <li className="text-[#888] text-[14px] font-medium px-[12px] py-[8px]">
+              No matches found
+            </li>
           )}
         </ul>
       )}

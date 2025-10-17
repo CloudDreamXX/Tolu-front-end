@@ -425,7 +425,94 @@ multipart/form-data
   photo: (binary file)
 ```
 
+##  **Invitation Requests Overview:**
+These flows are part of the user onboarding process and allow clients to join Tolu Health through coach invitations or referral links.
+They are all managed via RTK Query endpoints defined under userApi and clientApi.
 
+### **Check Pending Invite**
+**Endpoint:** `GET /client/check-pending-invite`  
+**Hook:** `useCheckPendingInviteQuery`  
+**Payload Type:** `CheckInviteResponse`  
 
+**Purpose:**  
+Determines if a user has a pending invitation before registration.
 
+**Response Example:**
+```json
+{
+  "has_pending_invite": true,
+  "email": "user@example.com",
+  "user_exists": false,
+  "token": "invite_token_here"
+}
+```
 
+### **Get Referral Invitation**
+**Endpoint:** `GET /referral/invitation-details/{token}`  
+**Hook:** `useLazyGetReferralInvitationQuery`  
+
+**Purpose:**  
+Retrieves details of a referral invitation sent to a potential client.
+
+### **Get Client Invitation Details**
+**Endpoint:** `GET /client/invitation-details/{token}`  
+**Hook:** `useGetInvitationDetailsQuery`  
+**Payload Type:** `ClientInvitationInfo`  
+
+**Purpose:**  
+Fetches client invitation metadata, including practitioner information and invitation expiration.
+
+**Response Example:**
+```json
+{
+  "client": {
+    "full_name": "Anna Smith",
+    "email": "anna@example.com",
+    "phone_number": "+123456789",
+    "date_of_birth": "1990-04-12",
+    "primary_health_challenge": "Stress",
+    "focus_areas": ["Nutrition", "Hormone Balance"]
+  },
+  "invitation": {
+    "permission_type": "shared_profile",
+    "expires_at": "2025-06-01T12:00:00Z",
+    "practitioner_name": "Dr. Jane Doe"
+  }
+}
+```
+
+### **Accept Coach Invite**
+**Endpoint:** `POST /client/accept-coach-invite`  
+**Hook:** `useAcceptCoachInviteMutation`  
+**Request Type:** `AcceptInvitePayload`  
+
+**Purpose:**  
+Completes the invitation process for a client and establishes a connection with the inviting coach.
+
+**Request Example:**
+```json
+{
+  "token": "invite_token_here"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Invitation accepted successfully"
+}
+```
+
+The Register component dynamically handles invitations during user registration based on the presence of a token in the URL.
+
+**Logic Summary**
+
+1. Detect token in URL params (/register/:token).
+2. Attempt to fetch client invitation details via useGetInvitationDetailsQuery.
+3. If client invite not found, attempt referral invitation via useLazyGetReferralInvitationQuery.
+4. Depending on success:
+- Pre-fill registration form with invitation data.
+- Automatically accept invite if already registered.
+- Redirect to login or dashboard if invite already accepted.
+5. If no token, standard registration flow applies.

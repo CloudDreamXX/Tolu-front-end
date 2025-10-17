@@ -15,12 +15,14 @@ import {
 import { Input } from "shared/ui";
 import { SelectField } from "widgets/CRMSelectField";
 import { countries } from "widgets/OnboardingClient/DemographicStep";
+import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { z } from "zod";
 
 interface SignUpProps {
   formData: {
     accountType: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
     password: string;
@@ -35,7 +37,8 @@ interface SignUpProps {
 const signUpSchema = z
   .object({
     accountType: z.string().min(1, "Account type is required"),
-    name: z.string().min(1, "Full name is required"),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
     email: z.string().email("The email format is incorrect"),
     phone: z
       .string()
@@ -143,7 +146,8 @@ export const SignUp: React.FC<SignUpProps> = ({
     const valid =
       Object.values(errors).every((error) => !error) &&
       formData.accountType.length > 0 &&
-      formData.name.length > 0 &&
+      formData.firstName.length > 0 &&
+      formData.lastName.length > 0 &&
       formData.email.length > 0 &&
       formData.phone.length > 0 &&
       formData.password.length > 0 &&
@@ -165,30 +169,57 @@ export const SignUp: React.FC<SignUpProps> = ({
       </div>
 
       <section className="w-full flex flex-col items-start gap-[24px] self-stretch">
-        <div className="flex flex-col items-start gap-[10px] self-stretch">
-          <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
-            Full name
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter Name"
-            name="name"
-            value={formData.name}
-            onChange={(e) => {
-              formDataChangeHandler(e);
-              clearError("name");
-            }}
-            className={
-              errors.name
-                ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
-                : "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
-            }
-          />
-          {errors.name && (
-            <p className="text-[#FF1F0F]  font-medium px-[16px]">
-              {errors.name}
-            </p>
-          )}
+        <div className="flex flex-col md:flex-row gap-4 w-full">
+          <div className="flex flex-col w-full items-start gap-[10px] self-stretch">
+            <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
+              First name
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter First Name"
+              name="firstName"
+              value={formData.firstName}
+              onChange={(e) => {
+                formDataChangeHandler(e);
+                clearError("firstName");
+              }}
+              className={
+                errors.firstName
+                  ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
+                  : "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+              }
+            />
+            {errors.firstName && (
+              <p className="text-[#FF1F0F]  font-medium px-[16px]">
+                {errors.firstName}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col w-full items-start gap-[10px] self-stretch">
+            <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
+              Last name
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter Last Name"
+              name="lastName"
+              value={formData.lastName}
+              onChange={(e) => {
+                formDataChangeHandler(e);
+                clearError("lastName");
+              }}
+              className={
+                errors.lastName
+                  ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
+                  : "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+              }
+            />
+            {errors.lastName && (
+              <p className="text-[#FF1F0F]  font-medium px-[16px]">
+                {errors.lastName}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col items-start gap-[10px] self-stretch">
@@ -338,24 +369,25 @@ export const SignUp: React.FC<SignUpProps> = ({
         </div>
 
         <div className="flex flex-col items-start gap-[10px] self-stretch">
-          <SelectField
+          <SearchableSelect
             label="Country of Residence"
-            labelClassName="self-stretch text-[#5f5f65] text-[16px] font-semibold"
-            selected={formData.country}
-            onChange={(value: string) => {
+            options={countries}
+            value={formData.country}
+            onChange={(value) => {
               const syntheticEvent = {
                 target: { name: "country", value },
               } as React.ChangeEvent<HTMLInputElement>;
               formDataChangeHandler(syntheticEvent);
               clearError("country");
             }}
-            options={countries.map((c) => ({ label: c, value: c }))}
-            containerClassName={
+            placeholder="Select your country"
+            labelStyle="self-stretch text-[#5f5f65] text-[16px] font-semibold"
+            inputStyles={
               errors.country
-                ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
-                : "px-[16px] font-[400] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+                ? "border-[#FF1F0F] text-[14px]"
+                : "focus:border-[#1C63DB] focus:duration-300 focus:ease-in text-[14px]"
             }
-            className="h-[160px]"
+            dropdownStyle="max-h-[160px]"
           />
           {errors.country && (
             <p className="text-[#FF1F0F] font-medium px-[16px]">

@@ -70,11 +70,20 @@ export const ClientEditProfileModal = ({
         <div className="flex flex-col gap-4">
           <div className="flex flex-col w-full gap-6 md:flex-row">
             <div className="flex flex-col gap-2.5 w-full">
-              <label>Name</label>
+              <label>First name</label>
               <Input
-                placeholder="Frances Swann"
-                value={dataState.name}
-                onChange={(e) => setData({ name: e.target.value })}
+                placeholder="Frances"
+                value={dataState.first_name}
+                onChange={(e) => setData({ first_name: e.target.value })}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2.5 w-full">
+              <label>Last name</label>
+              <Input
+                placeholder="Swann"
+                value={dataState.last_name}
+                onChange={(e) => setData({ last_name: e.target.value })}
               />
             </div>
 

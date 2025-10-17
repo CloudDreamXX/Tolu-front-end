@@ -76,11 +76,13 @@ const mapUserToCoachState = (u: UserOnboardingInfo): CoachOnboardingState => {
     ...DEFAULT_STATE,
 
     name: bi.name ?? "",
+    first_name: bi.first_name ?? "",
+    last_name: bi.last_name ?? "",
     alternate_name: bi.alternate_name ?? "",
     phone: bi.phone,
     email: bi.email,
 
-    age: bi.calculated_age,
+    age: bi.age,
     gender: (bi as any).gender ?? "",
     bio: bi.bio ?? "",
     languages: bi.languages ?? [],
@@ -189,6 +191,8 @@ export const CouchEditProfileModal = ({
 
   const STEP_FIELDS: Record<string, (keyof CoachOnboardingState)[]> = {
     general: [
+      "first_name",
+      "last_name",
       "name",
       "alternate_name",
       "gender",

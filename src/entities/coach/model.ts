@@ -1,4 +1,6 @@
 export interface InviteClientPayload {
+  first_name: string;
+  last_name: string;
   full_name: string;
   email: string;
   phone_number: string;
@@ -77,6 +79,8 @@ export interface GetClientInfoResponse {
 
 export interface ClientDetails {
   id?: string;
+  first_name: string;
+  last_name: string;
   full_name: string;
   email: string;
   phone_number: string;
@@ -104,13 +108,13 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
 }
 
 export interface IContentMessage {
@@ -244,6 +248,8 @@ export interface UpdateHealthHistoryRequest {
 }
 
 export interface PersonalInfo {
+  first_name?: string;
+  last_name?: string;
   name: string;
   email: string;
   phone: string | null;

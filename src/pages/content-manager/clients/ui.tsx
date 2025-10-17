@@ -61,6 +61,8 @@ export const ContentManagerClients: React.FC = () => {
     labs: {},
   });
   const [clientInfo, setClientInfo] = useState<ClientDetails>({
+    first_name: "",
+    last_name: "",
     full_name: "",
     email: "",
     phone_number: "",
@@ -76,6 +78,8 @@ export const ContentManagerClients: React.FC = () => {
     permission_type: "",
   });
   const [newClient, setNewClient] = useState<InviteClientPayload>({
+    first_name: "",
+    last_name: "",
     full_name: "",
     email: "",
     phone_number: "",
@@ -195,6 +199,8 @@ export const ContentManagerClients: React.FC = () => {
       labs: {},
     });
     setClientInfo({
+      first_name: "",
+      last_name: "",
       full_name: "",
       email: "",
       phone_number: "",
@@ -210,6 +216,8 @@ export const ContentManagerClients: React.FC = () => {
       permission_type: "",
     });
     setNewClient({
+      first_name: "",
+      last_name: "",
       full_name: "",
       email: "",
       phone_number: "",
@@ -607,7 +615,7 @@ export const ContentManagerClients: React.FC = () => {
                         Name
                       </div>
                       <div className="flex items-center justify-center w-full text-[16px] font-semibold text-center">
-                        {client.name}
+                        {(client.first_name && client.last_name) ? `${client.first_name} ${client.last_name}` : client.name}
                       </div>
                     </div>
 
@@ -787,11 +795,10 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
                 </button>

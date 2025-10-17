@@ -1,5 +1,6 @@
 export type ClientProfileData = {
-  name: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   email: string;
   dob: string;
@@ -8,7 +9,8 @@ export type ClientProfileData = {
 };
 
 export const defaultData: ClientProfileData = {
-  name: "",
+  first_name: "",
+  last_name: "",
   phone: "",
   email: "",
   dob: "",

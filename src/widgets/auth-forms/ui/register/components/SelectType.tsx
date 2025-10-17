@@ -4,7 +4,8 @@ import { cn } from "shared/lib";
 interface SelectType {
   formData: {
     accountType: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
     password: string;

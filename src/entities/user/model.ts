@@ -18,7 +18,8 @@ export interface IUser {
 }
 
 export interface IRegisterUser {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   phone_number: string;
@@ -133,7 +134,7 @@ export interface BasicInfo {
   headshot: string | null;
   roleID: number;
   roleName: string;
-  calculated_age: number;
+  age: number;
   gender: string;
   bio: string;
   languages: string[];

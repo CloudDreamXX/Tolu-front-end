@@ -31,16 +31,28 @@ export const StepGeneral = ({
   const handleInputChange = (key: keyof CoachOnboardingState, value: any) => {
     setDataState((prevState) => ({ ...prevState, [key]: value }));
   };
+  console.log(data)
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2.5">
-        <label>Full name</label>
-        <Input
-          placeholder="John Doe"
-          value={data.name}
-          onChange={(e) => handleInputChange("name", e.target.value)}
-        />
+      {/* First & Last Name */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col gap-2.5 w-full">
+          <label>First name</label>
+          <Input
+            placeholder="John"
+            value={data.first_name || ""}
+            onChange={(e) => handleInputChange("first_name", e.target.value)}
+          />
+        </div>
+        <div className="flex flex-col gap-2.5 w-full">
+          <label>Last name</label>
+          <Input
+            placeholder="Doe"
+            value={data.last_name || ""}
+            onChange={(e) => handleInputChange("last_name", e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="flex flex-col gap-2.5">
@@ -67,7 +79,6 @@ export const StepGeneral = ({
         <label>Phone number</label>
         <Input
           placeholder="(123) 456-7890"
-          // pattern={"^\\+?[1-9]\\d{1,14}$"}
           type="tel"
           inputMode="tel"
           autoComplete="tel"
@@ -102,6 +113,7 @@ export const StepGeneral = ({
         />
       </div>
 
+      {/* Gender */}
       <div className="flex flex-col gap-2.5">
         <label>Gender</label>
         <div className="flex gap-5">
@@ -129,6 +141,7 @@ export const StepGeneral = ({
         </div>
       </div>
 
+      {/* Timezone */}
       <div className="flex flex-col gap-[8px]">
         <SearchableSelect
           placeholder="Search for Time Zone"
@@ -139,6 +152,7 @@ export const StepGeneral = ({
         />
       </div>
 
+      {/* Profile Picture */}
       <div className="flex flex-col gap-[8px]">
         <label>Change Profile Picture</label>
 
@@ -151,7 +165,7 @@ export const StepGeneral = ({
         ) : (
           <div
             className={cn(
-              "w-full md:w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors ",
+              "w-full md:w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors",
               { "bg-blue-50 border-blue-400": dragOver }
             )}
             {...getDropzoneProps()}
@@ -161,11 +175,11 @@ export const StepGeneral = ({
               fill={1}
               className="text-[#1C63DB] p-2 border rounded-xl"
             />
-            <p className="text-[#1C63DB] text-[14px]  font-semibold mt-[8px]">
+            <p className="text-[#1C63DB] text-[14px] font-semibold mt-[8px]">
               Click to upload
             </p>
-            <p className="text-[#5F5F65] text-[14px] ">or drag and drop</p>
-            <p className="text-[#5F5F65] text-[14px] ">JPG or PNG</p>
+            <p className="text-[#5F5F65] text-[14px]">or drag and drop</p>
+            <p className="text-[#5F5F65] text-[14px]">JPG or PNG</p>
 
             <input className="hidden" {...getInputProps()} />
           </div>

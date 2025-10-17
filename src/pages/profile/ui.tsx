@@ -227,7 +227,8 @@ export const ClientProfile = () => {
       setPreviewUrl(URL.createObjectURL(file));
 
       const payload: ClientProfileData = {
-        name: user.name ?? "",
+        first_name: user.first_name ?? "",
+        last_name: user.last_name ?? "",
         email: user.email ?? "",
         phone: user.phone ?? "",
         dob: user.dob ?? "",
@@ -680,7 +681,7 @@ export const ClientProfile = () => {
           </div>
           <div>
             <p className="mb-1 text-[18px] md:text-2xl font-semibold">
-              {user?.name || ""}
+              {(user?.first_name && user?.last_name) ? `${user?.first_name} ${user?.last_name}` : user?.name || ""}
             </p>
             {user?.created_at && (
               <p className="px-2 bg-blue-100 py-1.5 text-[14px] text-blue-600 font-semibold rounded-full inline-block text-nowrap">
@@ -782,7 +783,7 @@ export const ClientProfile = () => {
               </div>
               <div>
                 <p className="mb-1 text-[18px] md:text-2xl font-semibold">
-                  {user?.name || ""}
+                  {(user?.first_name && user?.last_name) ? `${user?.first_name} ${user?.last_name}` : user?.name || ""}
                 </p>
                 {user?.created_at && (
                   <p className="px-2 bg-blue-100 py-1.5 text-[14px] text-blue-600 font-semibold rounded-full inline-block text-nowrap">
@@ -792,13 +793,13 @@ export const ClientProfile = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[16px] md:gap-x-[24px] md:gap-y-[24px]">
-              <Field label="Name" value={user?.name || ""} />
+              <Field label="Name" value={(user?.first_name && user?.last_name) ? `${user?.first_name} ${user?.last_name}` : user?.name || ""} />
               <Field
                 label="Phone number"
                 value={phoneMask(user?.phone || "")}
               />
 
-              <Field label="Date of birth" value={user?.dob || ""} />
+              <Field label="Age" value={String(user?.calculated_age) || ""} />
               <Field label="Gender" value={user?.gender || ""} />
 
               <Field label="Email:" value={user?.email || ""} />
@@ -882,7 +883,8 @@ export const ClientProfile = () => {
 
       <ClientEditProfileModal
         initial={{
-          name: user?.name || "",
+          first_name: user?.first_name || "",
+          last_name: user?.last_name || "",
           email: user?.email || "",
           phone: user?.phone || "",
           dob: user?.dob || "",

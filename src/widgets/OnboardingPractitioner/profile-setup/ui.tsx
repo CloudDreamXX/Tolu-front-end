@@ -78,7 +78,11 @@ export const ProfileSetup = () => {
   };
 
   const isFormValid =
-    !!state.name?.trim() && !!state.gender && !!state.timezone && !!dateOfBirth;
+    !!state.first_name?.trim() &&
+    !!state.last_name?.trim() &&
+    !!state.gender &&
+    !!state.timezone &&
+    !!dateOfBirth;
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -165,23 +169,43 @@ export const ProfileSetup = () => {
           )}
 
           {/* First and Last Name */}
-          <div className="flex flex-col flex-1 gap-[8px]">
-            <label className="text-[#5F5F65] text-[16px] font-medium">
-              Full name
-            </label>
-            <Input
-              type="text"
-              placeholder="Enter Full Name"
-              value={state.name}
-              onChange={(e) =>
-                dispatch(
-                  updateCoachField({ key: "name", value: e.target.value })
-                )
-              }
-              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-            />
+          <div className="flex flex-col md:flex-row gap-[16px]">
+            <div className="flex flex-col flex-1 gap-[8px]">
+              <label className="text-[#5F5F65] text-[16px] font-medium">
+                First name
+              </label>
+              <Input
+                type="text"
+                placeholder="Enter First Name"
+                value={state.first_name || ""}
+                onChange={(e) =>
+                  dispatch(
+                    updateCoachField({ key: "first_name", value: e.target.value })
+                  )
+                }
+                className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+              />
+            </div>
+
+            <div className="flex flex-col flex-1 gap-[8px]">
+              <label className="text-[#5F5F65] text-[16px] font-medium">
+                Last name
+              </label>
+              <Input
+                type="text"
+                placeholder="Enter Last Name"
+                value={state.last_name || ""}
+                onChange={(e) =>
+                  dispatch(
+                    updateCoachField({ key: "last_name", value: e.target.value })
+                  )
+                }
+                className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+              />
+            </div>
           </div>
 
+          {/* Alternative name */}
           <div className="flex flex-col flex-1 gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-medium">
               Alternative name for your practice profile
@@ -202,6 +226,7 @@ export const ProfileSetup = () => {
             />
           </div>
 
+          {/* Bio */}
           <div className="flex flex-col flex-1 gap-[8px]">
             <label className="text-[#5F5F65] text-[16px] font-medium">
               Bio
@@ -210,9 +235,7 @@ export const ProfileSetup = () => {
               placeholder="Enter Bio"
               value={state.bio}
               onChange={(e) =>
-                dispatch(
-                  updateCoachField({ key: "bio", value: e.target.value })
-                )
+                dispatch(updateCoachField({ key: "bio", value: e.target.value }))
               }
               className="text-[16px] md:text-sm xl:text-sm"
               containerClassName="border rounded-[8px] h-[44px] px-[12px]"
@@ -264,9 +287,7 @@ export const ProfileSetup = () => {
                     value={gender}
                     checked={state.gender === gender}
                     onChange={() =>
-                      dispatch(
-                        updateCoachField({ key: "gender", value: gender })
-                      )
+                      dispatch(updateCoachField({ key: "gender", value: gender }))
                     }
                     className="w-[20px] h-[20px]"
                   />
@@ -276,6 +297,7 @@ export const ProfileSetup = () => {
             </div>
           </div>
 
+          {/* Time Zone */}
           <div className="flex flex-col gap-[8px]">
             <SelectField
               label="Time Zone"
@@ -302,9 +324,8 @@ export const ProfileSetup = () => {
               />
             ) : (
               <div
-                className={`w-full md:w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors ${
-                  dragActive ? "bg-blue-50 border-blue-400" : ""
-                }`}
+                className={`w-full md:w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors ${dragActive ? "bg-blue-50 border-blue-400" : ""
+                  }`}
                 onClick={handleClick}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -318,8 +339,8 @@ export const ProfileSetup = () => {
                 <p className="text-[#1C63DB] text-[14px] font-semibold mt-[8px]">
                   Click to upload
                 </p>
-                <p className="text-[#5F5F65] text-[14px] ">or drag and drop</p>
-                <p className="text-[#5F5F65] text-[14px] ">JPG or PNG</p>
+                <p className="text-[#5F5F65] text-[14px]">or drag and drop</p>
+                <p className="text-[#5F5F65] text-[14px]">JPG or PNG</p>
               </div>
             )}
             <input
@@ -331,6 +352,7 @@ export const ProfileSetup = () => {
             />
           </div>
 
+          {/* Mobile Nav */}
           {isMobile && (
             <div className="flex items-center gap-[16px] w-full md:w-fit">
               <button
@@ -345,11 +367,10 @@ export const ProfileSetup = () => {
                 type="button"
                 onClick={() => nav("/invite-clients")}
                 disabled={!isFormValid}
-                className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
-                  isFormValid
+                className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${isFormValid
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-                }`}
+                  }`}
               >
                 Next
               </button>
@@ -357,7 +378,7 @@ export const ProfileSetup = () => {
           )}
         </form>
 
-        {/* Navigation buttons */}
+        {/* Desktop Nav */}
         {!isMobile && (
           <div className="flex items-center gap-[16px] pb-10 md:pb-[100px] w-full md:w-fit">
             <button
@@ -370,11 +391,10 @@ export const ProfileSetup = () => {
             <button
               onClick={handleNext}
               disabled={!isFormValid}
-              className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
-                isFormValid
+              className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${isFormValid
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-              }`}
+                }`}
             >
               Next
             </button>

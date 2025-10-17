@@ -28,7 +28,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const chatList = useSelector(chatsSelectors.selectAll);
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
   const [signOut] = useSignOutMutation();
 
   const unreadMessagesCount = chatList.reduce((count, chat) => {
@@ -93,6 +93,36 @@ export const HealthSnapshotSidebar: React.FC = () => {
     setIsMessagesOpen(false);
   };
 
+  const initials = (() => {
+    if (!user) return "UN";
+
+    if (user.first_name && user.last_name) {
+      return (
+        `${user.first_name?.[0] ?? ""}${user.last_name?.[0] ?? ""}`.toUpperCase() ||
+        "UN"
+      );
+    }
+
+    if (user.first_name) {
+      return (user.first_name.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    if (user.name) {
+      const parts = user.name.trim().split(" ").filter(Boolean);
+      if (parts.length > 1) {
+        return (
+          parts
+            .map((p) => p[0]?.toUpperCase() ?? "")
+            .slice(0, 2)
+            .join("") || "UN"
+        );
+      }
+      return (parts[0]?.slice(0, 2) || "UN").toUpperCase();
+    }
+
+    return "UN";
+  })();
+
   return (
     <>
       {isNarrow && (
@@ -124,9 +154,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
         )}
       >
         <div
-          className={`flex flex-col justify-between h-full overflow-y-hidden ${
-            sidebarOpen ? "w-[268px]" : "w-[81px] items-center"
-          } `}
+          className={`flex flex-col justify-between h-full overflow-y-hidden ${sidebarOpen ? "w-[268px]" : "w-[81px] items-center"
+            } `}
         >
           <div className="flex flex-col gap-[32px]">
             <NavLink
@@ -218,17 +247,13 @@ export const HealthSnapshotSidebar: React.FC = () => {
           </div>
 
           <button
-            onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
+            onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
             className={`flex gap-4 items-center justify-between ${sidebarOpen ? "pl-4" : ""}`}
           >
             <Avatar>
               <AvatarImage src={user?.photo} alt="Avatar" />
               <AvatarFallback>
-                {user?.name
-                  ?.split(" ")
-                  .map((part) => part[0])
-                  .join("")
-                  .toUpperCase()}
+                {initials}
               </AvatarFallback>
             </Avatar>
             {sidebarOpen && (
