@@ -5,6 +5,7 @@ import {
   useSendMessageMutation,
 } from "entities/chat/api";
 import { chatsSelectors } from "entities/chat/chatsSlice";
+import { RootState } from "entities/store";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -18,7 +19,9 @@ export const ClientMessages = () => {
   const chats = useSelector(chatsSelectors.selectAll);
   const firstChatId = chats[0]?.id;
 
-  useFetchAllChatsQuery();
+  const token = useSelector((state: RootState) => state.user?.token);
+
+  useFetchAllChatsQuery(undefined, { skip: !token });
   const [sendMessageMutation] = useSendMessageMutation();
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
 

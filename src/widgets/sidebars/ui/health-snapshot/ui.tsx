@@ -18,8 +18,8 @@ import { useFetchAllChatsQuery } from "entities/chat/api";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
-  useFetchAllChatsQuery();
   const token = useSelector((state: RootState) => state.user.token);
+  useFetchAllChatsQuery(undefined, { skip: !token });
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [isNarrow, setIsNarrow] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);

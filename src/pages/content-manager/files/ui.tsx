@@ -20,6 +20,8 @@ import { cn } from "shared/lib";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
 import { MoveFilesPopup } from "./components/MoveFilesPopup";
 import { findViewingFolderInFiles } from "./lib";
+import { RootState } from "entities/store";
+import { useSelector } from "react-redux";
 
 export const FilesLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,17 +47,22 @@ export const FilesLibrary = () => {
       maxFiles: 10,
     });
 
+  const token = useSelector((state: RootState) => state.user?.token);
+
   const {
     refetch,
     data: files,
     isLoading,
     isFetching,
-  } = useFetchAllFilesQuery({
-    page,
-    per_page: 20,
-    search: null,
-    file_type: null,
-  });
+  } = useFetchAllFilesQuery(
+    {
+      page,
+      per_page: 20,
+      search: null,
+      file_type: null,
+    },
+    { skip: !token }
+  );
 
   const [uploadFiles, { isLoading: isUploading }] =
     useUploadFilesLibraryMutation();

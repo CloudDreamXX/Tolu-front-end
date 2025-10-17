@@ -84,9 +84,11 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
 
   const dispatch = useDispatch();
 
+  const token = useSelector((state: RootState) => state.user?.token);
+
   const { data: filesLibrary } = useFetchAllFilesQuery(
     { page: 1, per_page: 20 },
-    { skip: step !== "From Library" }
+    { skip: step !== "From Library" || !token }
   );
 
   const { data: folderContents } = useGetFolderContentsQuery(

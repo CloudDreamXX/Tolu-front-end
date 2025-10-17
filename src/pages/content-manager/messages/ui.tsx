@@ -14,6 +14,7 @@ import {
 } from "entities/chat/api";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { Client, useGetManagedClientsQuery } from "entities/coach";
+import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -47,7 +48,9 @@ export const ContentManagerMessages: React.FC = () => {
     open: false,
   });
 
-  const { isLoading } = useFetchAllChatsQuery();
+  const token = useSelector((state: RootState) => state.user?.token);
+
+  const { isLoading } = useFetchAllChatsQuery(undefined, { skip: !token });
   const [createGroupChatMutation] = useCreateGroupChatMutation();
   const [updateGroupChatMutation] = useUpdateGroupChatMutation();
   const [sendMessageMutation] = useSendMessageMutation();

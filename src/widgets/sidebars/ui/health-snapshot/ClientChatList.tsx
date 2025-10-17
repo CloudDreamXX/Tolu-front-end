@@ -1,5 +1,6 @@
 import { useFetchAllChatsQuery } from "entities/chat/api";
 import { chatsSelectors } from "entities/chat/chatsSlice";
+import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -16,7 +17,8 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
   onCloseSideBar,
 }) => {
   const nav = useNavigate();
-  const { isLoading } = useFetchAllChatsQuery();
+  const token = useSelector((state: RootState) => state.user?.token);
+  const { isLoading } = useFetchAllChatsQuery(undefined, { skip: !token });
   const chatList = useSelector(chatsSelectors.selectAll);
 
   if (isLoading) {

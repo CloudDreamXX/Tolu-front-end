@@ -58,7 +58,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   loadMessages,
   refetch,
 }) => {
-  const { refetch: refetchChats } = useFetchAllChatsQuery();
+  const token = useSelector((state: RootState) => state.user?.token);
+  const { refetch: refetchChats } = useFetchAllChatsQuery(undefined, {
+    skip: !token,
+  });
   const [uploadFile] = useUploadChatFileMutation();
   const nav = useNavigate();
   const dispatch = useDispatch();
