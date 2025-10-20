@@ -7,7 +7,7 @@ export interface FormState {
   menopause_status?: string;
   health_conditions?: string[];
   stress_levels?: string;
-  weekly_meal_choice?: string;
+  weekly_meal_choice?: string[];
   support_network?: string[];
   physical_activity?: string;
   sleep_quality?: string;

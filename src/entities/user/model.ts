@@ -150,8 +150,7 @@ export interface Testimonial {
 }
 
 export interface ReferFriendRequest {
-  first_name?: string;
-  last_name?: string;
+  name?: string;
   age?: number;
   gender?: string;
   health_concern?: string;
@@ -217,7 +216,7 @@ export interface ClientOnboarding {
   health_lifestyle: {
     health_conditions: string[];
     stress_levels: string;
-    weekly_meal_choice: string;
+    weekly_meal_choice: string[];
     support_network: string[];
     physical_activity: string;
     sleep_quality: string;

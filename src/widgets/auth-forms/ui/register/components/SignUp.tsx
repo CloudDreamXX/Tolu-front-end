@@ -13,7 +13,7 @@ import {
   StrengthMeter,
 } from "shared/lib/utils/passwordChecker";
 import { Input } from "shared/ui";
-import { countries } from "widgets/OnboardingClient/DemographicStep";
+import { countries, states } from "widgets/OnboardingClient/DemographicStep";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { z } from "zod";
 
@@ -397,24 +397,31 @@ export const SignUp: React.FC<SignUpProps> = ({
 
         {formData.country === "United States" && (
           <div className="flex flex-col items-start gap-[10px] self-stretch">
-            <label className="self-stretch text-[#5f5f65] text-[16px] font-semibold ">
-              State
-            </label>
-            <Input
-              type="text"
-              placeholder="Enter State"
-              name="state"
-              value={formData.state}
-              onChange={(e) => {
-                formDataChangeHandler(e);
+            <SearchableSelect
+              label="State"
+              options={states}
+              value={formData.state || ""}
+              onChange={(value) => {
+                const syntheticEvent = {
+                  target: { name: "state", value },
+                } as React.ChangeEvent<HTMLInputElement>;
+                formDataChangeHandler(syntheticEvent);
                 clearError("state");
               }}
-              className={
+              placeholder="Select your state"
+              labelStyle="self-stretch text-[#5f5f65] text-[16px] font-semibold"
+              inputStyles={
                 errors.state
-                  ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
-                  : "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
+                  ? "border-[#FF1F0F] text-[14px]"
+                  : "focus:border-[#1C63DB] focus:duration-300 focus:ease-in text-[14px]"
               }
+              dropdownStyle="max-h-[160px]"
             />
+            {errors.state && (
+              <p className="text-[#FF1F0F] font-medium px-[16px]">
+                {errors.state}
+              </p>
+            )}
           </div>
         )}
       </section>

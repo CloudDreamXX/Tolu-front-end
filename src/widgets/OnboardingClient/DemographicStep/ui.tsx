@@ -335,16 +335,16 @@ export const DemographicStep = () => {
           />
 
           {/* Meal Choice */}
-          <SelectField
+          <MultiSelectField
             label="What is your weekly to-go meal choice?"
-            selected={clientOnboarding.weekly_meal_choice || ""}
+            selected={clientOnboarding.weekly_meal_choice ?? []}
             onChange={(val) =>
               dispatch(
                 setFormField({ field: "weekly_meal_choice", value: val })
               )
             }
             options={mealChoices.map((c) => ({ label: c, value: c }))}
-            containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
+            className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
           />
 

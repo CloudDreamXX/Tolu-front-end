@@ -176,8 +176,7 @@ export const Register = () => {
           if (cancelled) return;
           setFormData((prev) => ({
             ...prev,
-            firstName: referralData?.referral?.friend_first_name ?? "",
-            lastName: referralData?.referral?.friend_last_name ?? "",
+            firstName: referralData?.referral?.friend_name ?? "",
             name: referralData?.referral?.friend_name ?? "",
             email: referralData?.referral?.friend_email ?? "",
             phone:
