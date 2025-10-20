@@ -9,7 +9,6 @@ This document explains how data is received, managed, and transferred from the T
 - Backend API handles validation, authentication, and persistence.
 
 ## API Configuration
-
 All network requests are handled through RTK Query’s fetchBaseQuery, configured in src/entities
 
 - All requests use HTTPS (enforced via backend configuration).
@@ -24,11 +23,11 @@ Redux Toolkit Slices / RTK Query Endpoints
 ↓
 API Middleware (fetchBaseQuery)
 ↓
-Backend REST API
+Backend REST API 
 ↓
-Database
+Database 
 
-# Data Flow Documentation
+# Data Flow Documentation  
 
 ## **Overview**
 
@@ -42,16 +41,13 @@ Each request uses `fetchBaseQuery` with a dynamic `Authorization` header, automa
 ## **Authentication & Token Handling**
 
 ### **Login**
-
-User has two options:
+User has two options: 
 
 ### Login via email (Passwordless Flow):
-
-- **Endpoint:** `POST /user/email-login`
-- **Hook:** `useRequestPasswordlessLoginMutation`
+- **Endpoint:** `POST /user/email-login`  
+- **Hook:** `useRequestPasswordlessLoginMutation`  
 
 **Request:**
-
 ```json
 {
   "email": "user@example.com"
@@ -59,12 +55,10 @@ User has two options:
 ```
 
 User receives verification code on his email and should type it on the page:
-
-- **Endpoint:** `POST /user/verify-login`
-- **Hook:** `useVerifyPasswordlessLoginMutation`
+- **Endpoint:** `POST /user/verify-login`  
+- **Hook:** `useVerifyPasswordlessLoginMutation`  
 
 **Request:**
-
 ```json
 {
   "email": "user@example.com",
@@ -75,12 +69,10 @@ User receives verification code on his email and should type it on the page:
 And then he receives access token to log into his account
 
 ### Login with email and password:
-
-- **Endpoint:** `POST /user/login`
-- **Hook:** `useLoginMutation`
+- **Endpoint:** `POST /user/login`  
+- **Hook:** `useLoginMutation`  
 
 **Request:**
-
 ```json
 {
   "email": "user@example.com",
@@ -89,7 +81,6 @@ And then he receives access token to log into his account
 ```
 
 **Response:**
-
 ```json
 {
   "user": {
@@ -107,15 +98,12 @@ The setCredentials reducer stores both the user object and accessToken.
 Future API calls automatically attach Authorization: Bearer <token>.
 
 ## **Registration Flow**
-
 ### registerUser:
-
 Endpoint: POST /user/signup
 Hook: useRegisterUserMutation
 
 Payload:
-
-```json
+``` json
 {
   "name": "Jane Doe",
   "email": "jane@example.com",
@@ -130,13 +118,11 @@ Payload:
 User receives verification letter on his email with instructions and link.
 
 ### verifyEmail:
-
 Endpoint: POST /user/complete-signup
 Hook: useVerifyEmailMutation
 
 Payload:
-
-```json
+``` json
 {
   "email": "jane@example.com",
   "token": "verification_token_here"
@@ -144,9 +130,7 @@ Payload:
 ```
 
 ## **Coach Onboarding:**
-
 ### onboardUser
-
 User goes to the onboarding flow after registration and verification of the email.
 Uploads both structured JSON and media files using FormData.
 
@@ -167,7 +151,6 @@ Backend validates and stores all data securely.
 
 Payload:
 multipart/form-data
-
 ```json
   onboarding_data: {
     "agreements": { "terms_of_use": true, "confidentiality": true },
@@ -179,9 +162,7 @@ multipart/form-data
 ```
 
 ## **Client Onboarding**
-
 ### onboardClient
-
 User goes to the onboarding flow after registration and verification of the email.
 Uploads both structured JSON and media files using FormData.
 
@@ -189,8 +170,7 @@ Endpoint: POST /client/onboarding
 Hook: useOnboardClientMutation
 
 Payload:
-
-```json
+``` json
 {
   "onboarding_data": {
     "basic_info": {
@@ -213,7 +193,6 @@ Payload:
 We use that onboarding info to show in coach and client profiles and client's health history. No payload needed, only token.
 
 ## **Forgot password flow:**
-
 ### forgotPassword
 
 To change password user clicks 'Forgot password' button, sends his email and receives a link.
@@ -224,8 +203,7 @@ Hook: useForgotPasswordMutation
 Then sets a new password
 
 Payload:
-
-```json
+``` json
 {
   "email": "jane@example.com",
   "token": "verification_token_here",
@@ -234,20 +212,16 @@ Payload:
 ```
 
 ## **Sign out flow:**
-
 ### signout
-
 Endpoint: POST /user/signout
 Hook: useSignOutMutation
 
 ## **User profile management:**
-
 We request onboarding and profile info to show in coach and client profiles
 
 ### **Coach Profile Data**
 
 #### **Get Onboarding User**
-
 - **Endpoint:** `GET /coach/onboarding`
 - **Hook:** `useGetOnboardingUserQuery`
 - **Returns:** `UserOnboardingInfo`
@@ -256,7 +230,6 @@ We request onboarding and profile info to show in coach and client profiles
 Fetches the coach’s full onboarding progress and professional profile information, including agreements, credentials, business setup, and tools used in practice.
 
 **Response Example:**
-
 ```json
 {
   "onboarding": {
@@ -319,7 +292,6 @@ Fetches the coach’s full onboarding progress and professional profile informat
 ### **Client Profile Data**
 
 #### **Get Client Profile**
-
 - **Endpoint:** `GET /client/profile`
 - **Hook:** `useGetClientProfileQuery`
 - **Returns:** `Client`
@@ -328,7 +300,6 @@ Fetches the coach’s full onboarding progress and professional profile informat
 Retrieves the client’s personal and account information to display on their profile and for use in connected dashboards.
 
 **Response Example:**
-
 ```json
 {
   "id": "client_001",
@@ -351,7 +322,6 @@ Retrieves the client’s personal and account information to display on their pr
 ```
 
 #### **Get Onboarding Client**
-
 - **Endpoint:** `GET /client/onboarding`
 - **Hook:** `useGetOnboardClientQuery`
 - **Returns:** `ClientOnboardingResponse`
@@ -360,7 +330,6 @@ Retrieves the client’s personal and account information to display on their pr
 Provides structured onboarding information for the client, used to build health profiles and visualize trends over time.
 
 **Response Example:**
-
 ```json
 {
   "profile": {
@@ -392,13 +361,12 @@ Provides structured onboarding information for the client, used to build health 
 
 **Endpoint:** `PUT /client/profile`  
 **Hook:** `useUpdateUserProfileMutation`  
-**Payload Type:** `UserProfileUpdate` + optional photo (`File | null`)
+**Payload Type:** `UserProfileUpdate` + optional photo (`File | null`) 
 
 **Purpose:**  
 Allows clients to update their personal information (name, email, phone, DOB, timezone, gender) and optionally upload or change a profile photo.
 
 **Implementation Overview:**
-
 1. The mutation constructs a `FormData` object.
 2. Profile fields are serialized into JSON and appended as `profile_data`.
 3. If a photo is provided, it’s added as binary under the `photo` field.
@@ -407,7 +375,6 @@ Allows clients to update their personal information (name, email, phone, DOB, ti
 
 **Request Example:**
 multipart/form-data
-
 ```json
   profile_data: {
     "name": "Anna Smith",
@@ -420,27 +387,24 @@ multipart/form-data
   photo: (binary file)
 ```
 
-### **Update Coach Profile**
-
+###  **Update Coach Profile**
 **Endpoint:** `PUT /coach/onboarding`  
 **Hook:** `useUpdateUserMutation`  
-**Payload Type:** `CoachOnboardingState` + optional `photo`, `licenseFiles[]`
+**Payload Type:** `CoachOnboardingState` + optional `photo`, `licenseFiles[]`  
 
 **Purpose:**  
 Allows a coach to update their **personal profile**, **professional details**, and **certification documents**.  
 The endpoint supports both structured profile updates and file uploads in a single secure request.
 
 **Implementation Overview**
-
-1. The mutation creates a `FormData` object.
-2. The `onboarding_data` JSON payload is appended as a string.
-3. The profile photo (`headshot`) and license files (`license_files`) are appended as binary.
-4. The request is sent as `multipart/form-data` via HTTPS.
+1. The mutation creates a `FormData` object.  
+2. The `onboarding_data` JSON payload is appended as a string.  
+3. The profile photo (`headshot`) and license files (`license_files`) are appended as binary.  
+4. The request is sent as `multipart/form-data` via HTTPS.  
 5. The backend validates and saves the updated onboarding information.
 
 **Request Example:**
 multipart/form-data
-
 ```json
  onboarding_data: {
     "first_name": "Jane",
@@ -461,22 +425,19 @@ multipart/form-data
   photo: (binary file)
 ```
 
-## **Invitation Requests Overview:**
-
+##  **Invitation Requests Overview:**
 These flows are part of the user onboarding process and allow clients to join Tolu Health through coach invitations or referral links.
 They are all managed via RTK Query endpoints defined under userApi and clientApi.
 
 ### **Check Pending Invite**
-
 **Endpoint:** `GET /client/check-pending-invite`  
 **Hook:** `useCheckPendingInviteQuery`  
-**Payload Type:** `CheckInviteResponse`
+**Payload Type:** `CheckInviteResponse`  
 
 **Purpose:**  
 Determines if a user has a pending invitation before registration.
 
 **Response Example:**
-
 ```json
 {
   "has_pending_invite": true,
@@ -487,24 +448,21 @@ Determines if a user has a pending invitation before registration.
 ```
 
 ### **Get Referral Invitation**
-
 **Endpoint:** `GET /referral/invitation-details/{token}`  
-**Hook:** `useLazyGetReferralInvitationQuery`
+**Hook:** `useLazyGetReferralInvitationQuery`  
 
 **Purpose:**  
 Retrieves details of a referral invitation sent to a potential client.
 
 ### **Get Client Invitation Details**
-
 **Endpoint:** `GET /client/invitation-details/{token}`  
 **Hook:** `useGetInvitationDetailsQuery`  
-**Payload Type:** `ClientInvitationInfo`
+**Payload Type:** `ClientInvitationInfo`  
 
 **Purpose:**  
 Fetches client invitation metadata, including practitioner information and invitation expiration.
 
 **Response Example:**
-
 ```json
 {
   "client": {
@@ -524,16 +482,14 @@ Fetches client invitation metadata, including practitioner information and invit
 ```
 
 ### **Accept Coach Invite**
-
 **Endpoint:** `POST /client/accept-coach-invite`  
 **Hook:** `useAcceptCoachInviteMutation`  
-**Request Type:** `AcceptInvitePayload`
+**Request Type:** `AcceptInvitePayload`  
 
 **Purpose:**  
 Completes the invitation process for a client and establishes a connection with the inviting coach.
 
 **Request Example:**
-
 ```json
 {
   "token": "invite_token_here"
@@ -541,7 +497,6 @@ Completes the invitation process for a client and establishes a connection with 
 ```
 
 **Response Example:**
-
 ```json
 {
   "success": true,
@@ -557,9 +512,225 @@ The Register component dynamically handles invitations during user registration 
 2. Attempt to fetch client invitation details via useGetInvitationDetailsQuery.
 3. If client invite not found, attempt referral invitation via useLazyGetReferralInvitationQuery.
 4. Depending on success:
-
 - Pre-fill registration form with invitation data.
 - Automatically accept invite if already registered.
 - Redirect to login or dashboard if invite already accepted.
-
 5. If no token, standard registration flow applies.
+
+## **AI-Powered Content and Search Flows:**
+This section describes how the AI content creation and search functionality works within the Tolu Health Frontend.
+All AI-related requests send FormData payloads with optional files (images, PDFs, audio) and stream back Server-Sent Events (SSE) in real time.
+
+### **Client AI Content Generation**
+**Endpoint:** `POST /ai-personalized-search/`  
+**Class / Method:** `ClientService.aiPersonalizedSearch(chatMessage, referenceContentId, images?, pdf?)`  
+
+**Purpose:**  
+Allows clients to generate AI-personalized responses or insights based on a message and reference content.
+Supports attaching multiple images and a single PDF.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "chat_message": "How can I improve my sleep based on this report?",
+  "reference_content_id": "content_123",
+  "images": [ (binary files) ],
+  "pdf": (binary file)
+}
+```
+
+**Response Handling:**
+1. If the backend returns standard JSON, the client calls onComplete(result).
+2. If the backend streams Server-Sent Events (SSE), the frontend decodes each JSON data: chunk in real time, invoking:
+  - onChunk(data) for incremental updates,
+  - onComplete({ folderId, documentId, chatId }) after the stream ends.
+
+### **Coach AI Learning & Knowledge Search**
+**Endpoints:** `POST /coach/ai-learning-search`, `POST /coach/ai-learning-card-search`  
+**Class / Method:** `CoachService.aiLearningSearch()`, `CoachService.aiLearningCardSearch()`
+
+**Purpose:**  
+Used by coaches to generate AI learning materials or knowledge cards.
+Supports uploading images, PDFs, or library references, and can optionally target a specific client.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "chat_message": {
+    "user_prompt": "Create a summary for menopause nutrition best practices",
+    "is_new": true,
+    "chat_title": "Nutrition Tips",
+    "instructions": "Keep it professional"
+  },
+  "folder_id": "fld_001",
+  "client_id": "client_123",
+  "library_files": ["lib_doc_001", "lib_doc_002"],
+  "files": [ (binary images or PDFs) ]
+}
+```
+
+### **Coach AI Search and Research**
+**Endpoints:** `POST /ai-search/`, `POST /ai-content-search/`, `POST /ai-coach-research/`  
+**Class / Method:** `SearchService.aiSearchStream()`, `SearchService.aiCoachResearchStream()`
+
+**Purpose:**  
+Handles streaming AI searches and research generation.
+Used both by clients (for AI insights) and coaches (for structured research across client data or library files).
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "chat_message": "Summarize this client’s stress management progress.",
+  "client_id": "client_001",
+  "content_id": "content_456",
+  "files": [ (binary images / PDF / audio) ],
+  "library_files": ["lib_001", "lib_002"]
+}
+
+```
+
+**File Validation and Limits:**
+Before upload, files are validated via SearchService.prepareFilesForSearch():
+- Allowed types: jpeg, png, webp, gif, pdf, doc, docx, txt
+- Max file size: 30 MB
+- Max image count: 10
+- Unsupported or oversize files are skipped with descriptive error messages.
+
+## **Content and Document Management Flows:**
+This section explains how content (articles, posts, quizzes, and learning materials) and documents are retrieved, duplicated, updated, and shared between the Tolu Health frontend and backend API.
+
+### **Get Content**
+**Endpoint:** `GET /content/{id}`  
+**Hook:** `useGetContentQuery`
+
+**Purpose:**  
+Retrieve full details of a content item.
+
+**Request Example:**
+```json
+{
+"id": "content_001"
+}
+```
+
+### **Duplicate Content**
+**Endpoint:** `POST /content/duplicate/{contentId}`  
+**Hook:** `useDuplicateContentByIdMutation`
+
+**Purpose:**  
+Create a copy of an existing content item.
+
+**Request Example:**
+```json
+{
+"contentId": "content_001"
+}
+```
+
+### **Edit Content**
+**Endpoint:** `PUT /content/edit`  
+**Hook:** `useEditContentMutation`
+
+**Purpose:**  
+Update the content’s title or text body.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+  "new_title": "Updated Nutrition Guide",
+  "new_content": "Revised content body here...",
+  "new_query": "nutrition sleep health"
+}
+```
+
+### **Update Content Status**
+**Endpoint:** `POST /content/{content_id}/status`  
+**Hook:** `useUpdateStatusMutation`
+
+**Purpose:**  
+Mark content as read, archived, or update reading progress.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+  "status_data": {
+    "status": "currently_reading",
+    "current_card_number": "3"
+  }
+}
+```
+
+### **Get Quiz Score**
+**Endpoint:** `GET /content/{content_id}/quiz-score`  
+**Hook:** `useGetQuizScoreQuery`
+
+**Purpose:**  
+Retrieve a user’s quiz performance for a content item.
+
+**Request Example:**
+```json
+{
+"content_id": "content_001"
+}
+```
+
+### **Add Content Feedback**
+**Endpoint:** `POST /content/feedback`  
+**Hook:** `useAddContentFeedbackMutation`
+
+**Purpose:**  
+Submit satisfaction, comments, and preferences for a content item.
+
+**Request Example:**
+```json
+{
+  "source_id": "content_001",
+  "satisfaction_score": "5",
+  "comments": "Extremely helpful!",
+  "content_preference": "video",
+  "location": "New York",
+  "feedback_type": "engagement",
+  "membership_type": "premium",
+  "severity": "low",
+  "device": "desktop"
+}
+```
+
+### **Add Hashtags**
+**Endpoint:** `POST /content/hashtags`  
+**Hook:** `useAddHashtagsMutation`
+
+**Purpose:**  
+Add new hashtags to a content item.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+  "hashtags": ["wellness", "nutrition"]
+}
+```
+
+### **Delete Hashtags**
+**Endpoint:** `DELETE /content/hashtags`  
+**Hook:** `useDeleteHashtagsMutation`
+
+**Purpose:**  
+Remove hashtags associated with a content item.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+  "hashtags": ["wellness", "nutrition"]
+}
+```
+
+
+
+
