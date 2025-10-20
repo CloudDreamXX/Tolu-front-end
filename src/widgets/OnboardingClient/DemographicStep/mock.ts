@@ -493,4 +493,4 @@ export const states = [
   "West Virginia",
   "Wisconsin",
   "Wyoming",
-]
+];

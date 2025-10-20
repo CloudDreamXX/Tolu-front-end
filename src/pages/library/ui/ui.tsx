@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LibraryClientContent } from "widgets/library-client-content";
 import { LibrarySmallChat } from "widgets/library-small-chat";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,9 +13,13 @@ import { toast } from "shared/lib";
 import { clearChatHistoryExceptActive } from "entities/client/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { useGetUserHealthHistoryQuery } from "entities/health-history";
+import { useLocation } from "react-router-dom";
+import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
 
 export const Library = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const [showPopup, setShowPopup] = useState(false);
 
   const loading = useSelector((state: RootState) => state.client.loading);
 
@@ -24,6 +28,16 @@ export const Library = () => {
     error,
     isLoading,
   } = useGetUserHealthHistoryQuery();
+
+  useEffect(() => {
+    if (
+      location.state &&
+      location.state.incomplete &&
+      location.state.incomplete.length > 0
+    ) {
+      setShowPopup(true);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -87,6 +101,13 @@ export const Library = () => {
             />
           </span>
           Please wait, we are loading the information...
+        </div>
+      )}
+      {location.state?.incomplete && showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
+          <div className="rounded-2xl shadow-xl mx-[16px] md:mx-[24px] lg:p-8 lg:pt-0 overflow-y-auto bg-white">
+            <DemographicStep />
+          </div>
         </div>
       )}
       <div className="flex flex-col flex-1 w-full h-full min-h-0 gap-6 xl:flex-row">

@@ -85,7 +85,13 @@ export const OnboardingMain = () => {
 
     try {
       await onboardUser({ data: state }).unwrap();
-      nav("/about-your-practice");
+      if (location.pathname.startsWith("/content-manager/create")) {
+        nav("/content-manager/create", {
+          state: { incompleteRoute: "/about-your-practice" },
+        });
+      } else {
+        nav("/about-your-practice");
+      }
     } catch (err) {
       console.error(err);
     }
@@ -117,11 +123,13 @@ export const OnboardingMain = () => {
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={1} />
+      {!location.pathname.startsWith("/content-manager/create") && (
+        <HeaderOnboarding currentStep={1} />
+      )}
       <main
         className={`flex flex-col items-center flex-1 justify-center gap-[32px] md:gap-[60px] self-stretch bg-white py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0
-    ${isMobile ? "absolute bottom-0 left-0 w-full z-10" : "relative"} 
-    ${isMobile ? "shadow-md" : ""} md:bg-transparent`}
+    ${isMobile && !location.pathname.startsWith("/content-manager/create") ? "absolute bottom-0 left-0 w-full z-10" : "relative"} 
+    ${isMobile && !location.pathname.startsWith("/content-manager/create") ? "shadow-md" : ""} md:bg-transparent`}
       >
         <h3 className=" text-[24px] md:text-[32px] font-medium text-black text-center self-stretch">
           What are your primary focus areas?

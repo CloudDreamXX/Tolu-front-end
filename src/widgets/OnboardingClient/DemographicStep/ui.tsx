@@ -73,7 +73,11 @@ export const DemographicStep = () => {
       data: clientOnboarding,
       token: token ? token : undefined,
     }).unwrap();
-    nav("/symptoms-severity");
+    if (location.pathname.startsWith("/library")) {
+      nav("/library");
+    } else {
+      nav("/symptoms-severity");
+    }
   };
 
   const hintBlock = (
@@ -258,7 +262,7 @@ export const DemographicStep = () => {
         </div>
       }
       children={
-        <div className="flex flex-col gap-6 w-full">
+        <div className={`flex flex-col gap-6 w-full`}>
           {/* Birth Date */}
           <div className="flex flex-col gap-[10px] items-start w-full">
             <label className=" text-[#1D1D1F] text-[16px]/[22px] font-medium">

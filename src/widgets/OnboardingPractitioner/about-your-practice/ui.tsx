@@ -145,7 +145,13 @@ export const AboutYourPractice = () => {
   const handleNext = async () => {
     if (!allFilled()) return;
     await onboardUser({ data: state }).unwrap();
-    nav("/profile-setup");
+    if (location.pathname.startsWith("/content-manager/create")) {
+      nav("/content-manager/create", {
+        state: { incompleteRoute: "/profile-setup" },
+      });
+    } else {
+      nav("/profile-setup");
+    }
   };
 
   const handleSchoolChange = (updated: string[]) => {
@@ -168,14 +174,18 @@ export const AboutYourPractice = () => {
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={2} />
+      {!location.pathname.startsWith("/content-manager/create") && (
+        <HeaderOnboarding currentStep={2} />
+      )}
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch bg-white shadow-mdp-[40px] md:shadow-none md:bg-transparent py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0">
         {!isMobile && (
           <h1 className="flex text-center  text-[32px] font-medium text-black">
             About your practice
           </h1>
         )}
-        <div className="w-full md:w-[684px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px]">
+        <div
+          className={`w-full md:w-[684px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px] ${location.pathname.startsWith("/content-manager/create") ? "md:h-[60vh] overflow-y-auto" : ""}`}
+        >
           {isMobile && (
             <h1 className="flex text-center  text-[24px] font-medium text-black">
               About your practice
@@ -341,7 +351,9 @@ export const AboutYourPractice = () => {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit md:pb-[100px]">
+        <div
+          className={`flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit ${location.pathname.startsWith("/content-manager/create") ? "" : "md:pb-[100px]"}`}
+        >
           <button
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"

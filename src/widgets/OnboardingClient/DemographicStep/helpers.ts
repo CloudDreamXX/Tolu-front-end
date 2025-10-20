@@ -1,63 +1,51 @@
-// import type { FormState } from "entities/store/clientOnboardingSlice";
+import type { FormState } from "entities/store/clientOnboardingSlice";
 
-// const isBlank = (v: unknown) =>
-//   v == null ||
-//   (typeof v === "string" && v.trim() === "") ||
-//   (Array.isArray(v) &&
-//     v.filter((x) => x != null && String(x).trim() !== "").length === 0);
+const isBlank = (v: unknown) =>
+  v == null ||
+  (typeof v === "string" && v.trim() === "") ||
+  (Array.isArray(v) &&
+    v.filter((x) => x != null && String(x).trim() !== "").length === 0);
 
-// const LABEL_CLIENT: Record<keyof FormState, string> = {
-//   age: "Age",
-//   menopause_status: "Cycle status",
-//   country: "Country",
-//   zip_code: "ZIP code",
-//   language: "Languages",
-//   race_ethnicity: "Race/Ethnicity",
-//   gender: "Gender",
-//   date_of_birth: "Date of birth",
-//   ai_experience: "AI experience",
+const LABEL_CLIENT: Partial<Record<keyof FormState, string>> = {
+  date_of_birth: "Birth date",
+  menopause_status: "Stage in menopause transition",
+  health_conditions: "Health conditions",
+  stress_levels: "Stress levels",
+  weekly_meal_choice: "Weekly meal choice",
+  support_network: "Support network",
+  physical_activity: "Physical activity",
+  sleep_quality: "Sleep quality",
+  hydration_levels: "Hydration level",
+  main_transition_goal: "Main transition goal",
+};
 
-//   household_type: "Household type",
-//   occupation: "Occupation",
-//   education_level: "Education level",
+const REQUIRED_DEMOGRAPHIC_FIELDS: (keyof FormState)[] = [
+  "date_of_birth",
+  "menopause_status",
+  "health_conditions",
+  "stress_levels",
+  "weekly_meal_choice",
+  "support_network",
+  "physical_activity",
+  "sleep_quality",
+  "hydration_levels",
+  "main_transition_goal",
+];
 
-//   main_transition_goal: "Main goal",
-//   important_values: "Important values",
-//   obstacles: "Obstacles",
-//   support_network: "Support network",
+export function findIncompleteClientField(state: FormState) {
+  const missing: string[] = [];
 
-//   personality_type: "Personality type",
-//   readiness_for_change: "Readiness for change",
-// };
+  for (const key of REQUIRED_DEMOGRAPHIC_FIELDS) {
+    const val = state[key];
 
-// const REQUIRED_BY_ROUTE_CLIENT: Record<string, (keyof FormState)[]> = {
-//   "/about-you": ["date_of_birth", "menopause_status"],
-//   "/what-brings-you-here": ["main_transition_goal"],
-//   "/values": ["important_values"],
-//   "/barriers": ["obstacles"],
-//   "/support": ["support_network"],
-//   "/personality-type": ["personality_type"],
-//   "/readiness": ["readiness_for_change"],
-// };
+    if (isBlank(val)) {
+      missing.push(LABEL_CLIENT[key] || key);
+    }
+  }
 
-// export function findFirstIncompleteClientStep(state: FormState) {
-//   for (const [route, fields] of Object.entries(REQUIRED_BY_ROUTE_CLIENT)) {
-//     const missing: string[] = [];
+  if (missing.length > 0) {
+    return missing;
+  }
 
-//     for (const key of fields) {
-//       const val = state[key as keyof FormState];
-//       if (isBlank(val)) {
-//         if (key === "age") {
-//           const hasDOB = !isBlank(state.date_of_birth);
-//           const hasAgeNumber =
-//             typeof state.age === "number" && !Number.isNaN(state.age);
-//           if (hasDOB || hasAgeNumber) continue;
-//         }
-//         missing.push(LABEL_CLIENT[key as keyof FormState]);
-//       }
-//     }
-
-//     if (missing.length > 0) return { route, missing };
-//   }
-//   return null;
-// }
+  return null;
+}

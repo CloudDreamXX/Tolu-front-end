@@ -21,9 +21,9 @@ const isAlreadyAccepted = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-    err?.response?.data?.message ??
-    err?.message ??
-    ""
+      err?.response?.data?.message ??
+      err?.message ??
+      ""
   ).toLowerCase();
   const email = String(
     err?.response?.data?.detail?.email ?? err?.response?.data?.email ?? ""
@@ -37,9 +37,9 @@ const isAuthRevoked = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-    err?.response?.data?.message ??
-    err?.message ??
-    ""
+      err?.response?.data?.message ??
+      err?.message ??
+      ""
   ).toLowerCase();
   return (
     status === 403 ||
@@ -62,9 +62,9 @@ const isAlreadyRegistered = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-    err?.response?.data?.message ??
-    err?.message ??
-    ""
+      err?.response?.data?.message ??
+      err?.message ??
+      ""
   ).toLowerCase();
 
   return status === 409 || msg.includes("already exists");

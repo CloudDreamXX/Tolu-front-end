@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { usePageWidth } from "shared/lib";
 import { AuthPageWrapper } from "shared/ui";
-// import { Footer } from "widgets/Footer";
 import { HeaderOnboarding } from "widgets/HeaderOnboarding";
 
 interface OnboardingClientLayoutProps {
@@ -22,11 +21,7 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
   children,
 }) => {
   const { isMobileOrTablet } = usePageWidth();
-  const mainClass = `
-    flex flex-col items-center justify-end lg:justify-center
-    w-full lg:gap-[32px]
-     h-full 
-  `;
+  const isLibrary = location.pathname.startsWith("/library");
 
   return (
     <AuthPageWrapper>
@@ -39,12 +34,15 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
         />
       )}
 
-      <main className={mainClass}>
+      <main className="flex flex-col items-center justify-start w-full h-full overflow-hidden lg:gap-[32px]">
         {title != null && !isMobileOrTablet && title}
 
         <div
-          className="w-full lg:max-w-[718px] flex flex-col 
-  items-start justify-center gap-[24px] bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px]"
+          className={`w-full lg:max-w-[718px] flex flex-col items-start gap-[24px] bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] ${
+            isLibrary
+              ? "overflow-y-auto flex-1 max-h-[70vh] lg:max-h-[35vh] scroll-smooth"
+              : ""
+          }`}
         >
           {title != null && isMobileOrTablet && title}
           {children}
@@ -52,14 +50,15 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
         </div>
 
         {buttons != null && !isMobileOrTablet && buttons}
-        <div className="bg-white lg:bg-transparent w-full flex items-center justify-center gap-[24px] text-[14px] text-center md:text-[18px] text-[#000] p-[16px] lg:py-[20px]">
-          All information you share is secure and confidential
-          <img src={"/hipaa.png"} className="h-[40px] md:h-[50px]" />
-          <img src={"/ssl.png"} className="h-[40px] md:h-[50px]" />
-        </div>
-      </main>
 
-      {/* <Footer position={isMobileOrTablet ? "top-right" : "bottom-right"} /> */}
+        {!isLibrary && (
+          <div className="bg-white lg:bg-transparent w-full flex items-center justify-center gap-[24px] text-[14px] text-center md:text-[18px] text-[#000] p-[16px] lg:py-[20px]">
+            All information you share is secure and confidential
+            <img src="/hipaa.png" className="h-[40px] md:h-[50px]" />
+            <img src="/ssl.png" className="h-[40px] md:h-[50px]" />
+          </div>
+        )}
+      </main>
     </AuthPageWrapper>
   );
 };

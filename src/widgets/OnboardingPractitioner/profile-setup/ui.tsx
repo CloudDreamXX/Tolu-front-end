@@ -148,20 +148,28 @@ export const ProfileSetup = () => {
 
   const handleNext = async () => {
     await onboardUser({ data: state }).unwrap();
-    nav("/invite-clients");
+    if (location.pathname.startsWith("/content-manager/create")) {
+      nav("/content-manager/create");
+    } else {
+      nav("/invite-clients");
+    }
   };
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={3} />
-      <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full lg:w-[859px] md:px-[24px]">
+      {!location.pathname.startsWith("/content-manager/create") && (
+        <HeaderOnboarding currentStep={3} />
+      )}
+      <main className="mx-auto flex flex-col gap-[32px] items-center justify-center lg:px-0 w-full md:px-[24px]">
         {!isMobile && (
           <h1 className="flex text-center text-[32px] font-medium text-black">
             Profile Setup
           </h1>
         )}
 
-        <form className="flex flex-col w-full lg:w-[700px] overflow-y-auto py-[24px] px-[16px] md:py-[40px] md:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px]">
+        <form
+          className={`flex flex-col w-full lg:w-[700px] overflow-y-auto py-[24px] px-[16px] md:py-[40px] md:px-[40px] bg-white rounded-t-[20px] md:rounded-[20px] shadow-md gap-[24px] ${location.pathname.startsWith("/content-manager/create") ? "md:h-[60vh] overflow-y-auto" : ""}`}
+        >
           {isMobile && (
             <h1 className="flex text-center items-center justify-center text-[24px] font-medium text-black">
               Profile Setup
@@ -392,7 +400,9 @@ export const ProfileSetup = () => {
 
         {/* Desktop Nav */}
         {!isMobile && (
-          <div className="flex items-center gap-[16px] pb-10 md:pb-[100px] w-full md:w-fit">
+          <div
+            className={`flex items-center gap-[16px] ${location.pathname.startsWith("/content-manager/create") ? "" : "pb-10 md:pb-[100px]"} w-full md:w-fit`}
+          >
             <button
               onClick={() => nav(-1)}
               className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold text-[#1C63DB]"

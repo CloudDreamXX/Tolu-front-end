@@ -22,6 +22,8 @@ import { z } from "zod";
 import { setCoachOnboardingData } from "entities/store/coachOnboardingSlice";
 import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboarding-finish/helpers";
 import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-type/helpers";
+import { mapOnboardClientToFormState } from "entities/store/helpers";
+import { findIncompleteClientField } from "widgets/OnboardingClient/DemographicStep/helpers";
 
 export const LoginForm = () => {
   const [login] = useLoginMutation();
@@ -123,9 +125,17 @@ export const LoginForm = () => {
     const userInfo = await triggerGetOnboardClient().unwrap();
     dispatch(setFromUserInfo(userInfo));
 
+    const clientData = mapOnboardClientToFormState(userInfo);
+    const issue = findIncompleteClientField(clientData);
+
     if (coachInviteToken)
       await acceptCoachInvite({ token: coachInviteToken }).unwrap();
-    navigate("/library");
+
+    if (issue) {
+      navigate("/library", { state: { incomplete: true } });
+    } else {
+      navigate("/library");
+    }
   };
 
   const redirectCoach = async () => {
@@ -140,7 +150,10 @@ export const LoginForm = () => {
     dispatch(setCoachOnboardingData(coachData));
 
     const issue = findFirstIncompleteStep(coachData);
-    if (issue) navigate(issue.route);
+    if (issue)
+      navigate("/content-manager/create", {
+        state: { incompleteRoute: issue.route },
+      });
     else navigate("/content-manager/create");
   };
 
@@ -171,7 +184,7 @@ export const LoginForm = () => {
         return;
       }
 
-      if (response.user.roleName === "Coach") {
+      if (response.user.roleName === "Practitioner") {
         await redirectCoach();
         return;
       }

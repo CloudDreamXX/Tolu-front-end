@@ -93,7 +93,13 @@ export const SelectType = () => {
 
     try {
       await onboardUser({ data: state }).unwrap();
-      nav("/onboarding-welcome");
+      if (location.pathname.startsWith("/content-manager/create")) {
+        nav("/content-manager/create", {
+          state: { incompleteRoute: "/onboarding-welcome" },
+        });
+      } else {
+        nav("/onboarding-welcome");
+      }
     } catch (err) {
       console.error(err);
     }
@@ -101,7 +107,9 @@ export const SelectType = () => {
 
   return (
     <AuthPageWrapper>
-      <HeaderOnboarding currentStep={0} />
+      {!location.pathname.startsWith("/content-manager/create") && (
+        <HeaderOnboarding currentStep={0} />
+      )}
 
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch md:px-[24px]">
         {!isMobile && (
@@ -112,7 +120,7 @@ export const SelectType = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-[25px] py-[24px] px-[16px] md:p-[40px] items-center w-full lg:w-fit rounded-t-[20px] md:rounded-[20px] bg-white border-[1px] border-[#1C63DB] shadow-md"
+          className={`flex flex-col gap-[25px] py-[24px] px-[16px] md:p-[40px] items-center w-full lg:w-fit rounded-t-[20px] md:rounded-[20px] bg-white border-[#1C63DB] shadow-md ${location.pathname.startsWith("/content-manager/create") ? "md:h-[50vh] overflow-y-auto md:border-[1px]" : "border-[1px]"}`}
         >
           {isMobile && (
             <h1 className="flex text-center text-[24px] font-medium text-black">
@@ -197,7 +205,9 @@ export const SelectType = () => {
         </form>
 
         {!isMobile && (
-          <div className="pb-10 md:pb-[140px]">
+          <div
+            className={`${location.pathname.startsWith("/content-manager/create") ? "" : "pb-10 md:pb-[140px]"}`}
+          >
             <button
               onClick={handleSubmit}
               type="submit"
