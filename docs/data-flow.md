@@ -731,6 +731,162 @@ Remove hashtags associated with a content item.
 }
 ```
 
+### **Get Content Hashtags**
+**Endpoint:** `GET /content/{content_id}/hashtags`  
+**Hook:** `useGetContentHashtagsQuery`
+
+**Purpose:**  
+Retrieve all hashtags associated with a given content item.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+}
+```
+
+### **Get Content with Similar Tags**
+**Endpoint:** `POST /content/similar`  
+**Hook:** `useGetContentWithSimilarTagsMutation`
+
+**Purpose:**  
+Fetch related content items with overlapping hashtags.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+}
+```
+
+### **Get All Hashtags**
+**Endpoint:** `GET /content/all-hashtags`  
+**Hook:** `useGetAllHashtagsQuery`
+
+**Purpose:**  
+Retrieve all available hashtags in the platform.
+
+### **Get Creator Profile**
+**Endpoint:** `GET /content/creator/{creator_id}`  
+**Hook:** `useGetCreatorProfileQuery`
+
+**Purpose:**  
+Retrieve detailed information about a content creator.
+
+**Request Example:**
+```json
+{
+"creator_id": "coach_123"
+}
+```
+
+### **Get Creator Photo**
+**Endpoint:** `GET /content/creator/{creator_id}/photo/{filename}`  
+**Hook:** `useGetCreatorPhotoQuery`
+
+**Purpose:**  
+Download a creator’s profile photo as a Blob.
+
+**Request Example:**
+```json
+{
+  "id": "coach_123",
+  "filename": "profile_pic.jpg"
+}
+```
+
+### **Share Content via Email**
+**Endpoint:** `POST /content/share/email`  
+**Hook:** `useShareEmailMutation`
+
+**Purpose:**  
+Send a content item to an external recipient by email.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+  "recipient_email": "client@example.com",
+  "personal_message": "Thought you might find this useful!"
+}
+```
+
+### **Share Content with Coach**
+**Endpoint:** `POST /content/share/coach`  
+**Hook:** `useShareCoachMutation`
+
+**Purpose:**  
+Share a content item between client and coach within the platform.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+  "coach_id": "coach_789",
+  "message": "Please review this learning material."
+}
+```
+
+### **Update Library Content Status**
+**Endpoint:** `PUT /content/library-status`  
+**Hook:** `useUpdateContentStatusMutation`
+
+**Purpose:**  
+Update moderation or review status for library-level content.
+
+**Request Example:**
+```json
+{
+  "id": "content_001",
+  "status": "approved",
+  "reviewer_comment": "Reviewed and verified."
+}
+```
+
+### **Get Document by ID**
+**Endpoint:** `GET /documents/{id}`  
+**Hook:** `useGetDocumentByIdQuery`
+
+**Purpose:**  
+Retrieve complete document details including metadata, sharing info.
+
+**Request Example:**
+```json
+{
+"id": "doc_001"
+}
+```
+
+**Response example**
+```json
+{
+  "id": "doc_001",
+  "title": "Understanding Hormone Cycles",
+  "query": "hormone cycles",
+  "creator_name": "Dr. Jane Doe",
+  "original_folder_id": "fld_05",
+  "shared_with": {
+    "total_shares": 3,
+    "clients": [
+      { "name": "Anna Smith", "status": "accepted" }
+    ]
+  },
+  "revenue_generated": "340.00",
+  "read_count": 58,
+  "saved_count": 24,
+  "feedback_count": "5",
+  "status": "active",
+  "rating": 4.8
+}
+```
+
+
+
+
+
+
+
+
 
 
 
