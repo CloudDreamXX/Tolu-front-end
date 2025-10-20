@@ -150,7 +150,8 @@ export interface Testimonial {
 }
 
 export interface ReferFriendRequest {
-  name?: string;
+  first_name?: string;
+  last_name?: string;
   age?: number;
   gender?: string;
   health_concern?: string;

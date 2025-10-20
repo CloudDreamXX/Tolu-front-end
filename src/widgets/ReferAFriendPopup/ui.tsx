@@ -78,17 +78,32 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
             Good things are better when shared.
           </p>
 
-          <div className="flex flex-col flex-1 gap-[8px]">
-            <label className="text-[#1D1D1F] text-[16px]  font-[500]">
-              First name*
-            </label>
-            <Input
-              type="text"
-              placeholder="Enter name"
-              value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
-              className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
-            />
+          <div className="flex w-full gap-[16px]">
+            <div className="flex flex-col flex-1 gap-[8px]">
+              <label className="text-[#1D1D1F] text-[16px]  font-[500]">
+                First name*
+              </label>
+              <Input
+                type="text"
+                placeholder="Enter first name"
+                value={formData.first_name}
+                onChange={(e) => handleChange("first_name", e.target.value)}
+                className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+              />
+            </div>
+
+            <div className="flex flex-col flex-1 gap-[8px]">
+              <label className="text-[#1D1D1F] text-[16px]  font-[500]">
+                Last name*
+              </label>
+              <Input
+                type="text"
+                placeholder="Enter last name"
+                value={formData.last_name}
+                onChange={(e) => handleChange("last_name", e.target.value)}
+                className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
+              />
+            </div>
           </div>
 
           <div className="flex flex-col flex-1 gap-[8px]">

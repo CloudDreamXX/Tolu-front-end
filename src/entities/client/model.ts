@@ -4,6 +4,8 @@ export interface ClientInvitationInfo {
 }
 
 export interface ClientDetailsForInvite {
+  first_name: string;
+  last_name: string;
   full_name: string;
   email: string;
   phone_number: string;
