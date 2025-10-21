@@ -28,7 +28,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const chatList = useSelector(chatsSelectors.selectAll);
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
   const [signOut] = useSignOutMutation();
 
   const unreadMessagesCount = chatList.reduce((count, chat) => {
@@ -154,8 +154,9 @@ export const HealthSnapshotSidebar: React.FC = () => {
         )}
       >
         <div
-          className={`flex flex-col justify-between h-full overflow-y-hidden ${sidebarOpen ? "w-[268px]" : "w-[81px] items-center"
-            } `}
+          className={`flex flex-col justify-between h-full overflow-y-hidden ${
+            sidebarOpen ? "w-[268px]" : "w-[81px] items-center"
+          } `}
         >
           <div className="flex flex-col gap-[32px]">
             <NavLink
@@ -247,7 +248,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
           </div>
 
           <button
-            onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
+            onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
             className={`flex gap-4 items-center justify-between ${sidebarOpen ? "pl-4" : ""}`}
           >
             <Avatar>
@@ -256,7 +257,8 @@ export const HealthSnapshotSidebar: React.FC = () => {
             </Avatar>
             {sidebarOpen && (
               <p className="text-[#1D1D1F] hover:text-[#1C63DB]  text-[16px]/[22px] font-semibold">
-                {user?.first_name ? user?.first_name : user?.name} {user?.last_name}
+                {user?.first_name ? user?.first_name : user?.name}{" "}
+                {user?.last_name}
               </p>
             )}
             {sidebarOpen && (

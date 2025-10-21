@@ -65,9 +65,9 @@ export const AboutYourPractice = () => {
     const savedList: string[] = Array.isArray(savedSchool)
       ? savedSchool
       : (savedSchool ?? "")
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
 
     const nextSelected: string[] = [];
     let firstCustom: string | null = null;
@@ -228,8 +228,9 @@ export const AboutYourPractice = () => {
               }}
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
-              className={`flex flex-col items-center justify-center py-[16px] md:ml-[32px] w-full md:w-[620px] px-[24px] gap-[4px] rounded-[12px] border-[1px] border-dashed cursor-pointer transition ${dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
-                } bg-white`}
+              className={`flex flex-col items-center justify-center py-[16px] md:ml-[32px] w-full md:w-[620px] px-[24px] gap-[4px] rounded-[12px] border-[1px] border-dashed cursor-pointer transition ${
+                dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
+              } bg-white`}
             >
               <input
                 ref={fileInputRef}
@@ -365,10 +366,11 @@ export const AboutYourPractice = () => {
           </button>
           <Button
             onClick={handleNext}
-            className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold ${allFilled()
+            className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold ${
+              allFilled()
                 ? "bg-[#1C63DB] text-white"
                 : "bg-[#D5DAE2] text-[#5F5F65]"
-              }`}
+            }`}
           >
             Next
           </Button>
