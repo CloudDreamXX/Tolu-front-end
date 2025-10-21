@@ -2,7 +2,6 @@
 
 ### New feature
 
-- Fix fetch all chats 403 error.
 - Add docs/data-flow.md.
 - Add onboarding popup for users with unfinished onboarding(coach and client)
 - First and last name for invitations instead of full name.
