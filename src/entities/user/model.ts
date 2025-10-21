@@ -214,9 +214,9 @@ export interface ClientOnboarding {
     date_of_birth: string;
   };
   health_lifestyle: {
-    health_conditions: string[];
+    health_conditions: string;
     stress_levels: string;
-    weekly_meal_choice: string[];
+    weekly_meal_choice: string;
     support_network: string[];
     physical_activity: string;
     sleep_quality: string;

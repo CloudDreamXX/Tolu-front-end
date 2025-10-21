@@ -42,6 +42,27 @@ export const DemographicStep = () => {
       ? new Date(initialDOB.getFullYear(), initialDOB.getMonth())
       : new Date(selectedYear, 0)
   );
+  const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
+    typeof clientOnboarding.weekly_meal_choice === "string"
+      ? clientOnboarding.weekly_meal_choice
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : clientOnboarding.weekly_meal_choice || []
+  );
+
+  useEffect(() => {
+    if (typeof clientOnboarding.weekly_meal_choice === "string") {
+      setLocalWeeklyMeals(
+        clientOnboarding.weekly_meal_choice
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      );
+    } else if (Array.isArray(clientOnboarding.weekly_meal_choice)) {
+      setLocalWeeklyMeals(clientOnboarding.weekly_meal_choice);
+    }
+  }, [clientOnboarding.weekly_meal_choice]);
 
   const [onboardClient] = useOnboardClientMutation();
 
@@ -69,8 +90,15 @@ export const DemographicStep = () => {
   }, [dateOfBirth, dispatch]);
 
   const handleNext = async () => {
+    const payload = {
+      ...clientOnboarding,
+      weekly_meal_choice: Array.isArray(clientOnboarding.weekly_meal_choice)
+        ? clientOnboarding.weekly_meal_choice.join(", ")
+        : clientOnboarding.weekly_meal_choice,
+    };
+
     await onboardClient({
-      data: clientOnboarding,
+      data: payload,
       token: token ? token : undefined,
     }).unwrap();
     if (location.pathname.startsWith("/library")) {
@@ -341,12 +369,13 @@ export const DemographicStep = () => {
           {/* Meal Choice */}
           <MultiSelectField
             label="What is your weekly to-go meal choice?"
-            selected={clientOnboarding.weekly_meal_choice ?? []}
-            onChange={(val) =>
+            selected={localWeeklyMeals}
+            onChange={(vals) => {
+              setLocalWeeklyMeals(vals);
               dispatch(
-                setFormField({ field: "weekly_meal_choice", value: val })
-              )
-            }
+                setFormField({ field: "weekly_meal_choice", value: vals })
+              );
+            }}
             options={mealChoices.map((c) => ({ label: c, value: c }))}
             className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"

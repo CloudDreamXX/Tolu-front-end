@@ -30,11 +30,7 @@ export const Library = () => {
   } = useGetUserHealthHistoryQuery();
 
   useEffect(() => {
-    if (
-      location.state &&
-      location.state.incomplete &&
-      location.state.incomplete.length > 0
-    ) {
+    if (location.state && location.state.incomplete) {
       setShowPopup(true);
     }
   }, [location.state]);

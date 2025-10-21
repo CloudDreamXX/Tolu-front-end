@@ -122,19 +122,36 @@ export const LoginForm = () => {
       return;
     }
 
-    const userInfo = await triggerGetOnboardClient().unwrap();
-    dispatch(setFromUserInfo(userInfo));
+    try {
+      const userInfo = await triggerGetOnboardClient().unwrap();
+      dispatch(setFromUserInfo(userInfo));
 
-    const clientData = mapOnboardClientToFormState(userInfo);
-    const issue = findIncompleteClientField(clientData);
+      const clientData = mapOnboardClientToFormState(userInfo);
+      const issue = findIncompleteClientField(clientData);
 
-    if (coachInviteToken)
-      await acceptCoachInvite({ token: coachInviteToken }).unwrap();
+      if (coachInviteToken)
+        await acceptCoachInvite({ token: coachInviteToken }).unwrap();
 
-    if (issue) {
-      navigate("/library", { state: { incomplete: true } });
-    } else {
-      navigate("/library");
+      if (issue) {
+        navigate("/library", { state: { incomplete: true } });
+      } else {
+        navigate("/library");
+      }
+    } catch (err: any) {
+      const detail = err?.data?.detail;
+      if (
+        err?.status === 400 &&
+        typeof detail === "string" &&
+        detail.includes("No onboarding profile found")
+      ) {
+        navigate("/library", { state: { incomplete: true } });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Failed to load onboarding data",
+          description: detail || "An unexpected error occurred.",
+        });
+      }
     }
   };
 
