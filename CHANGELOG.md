@@ -1,3 +1,16 @@
+## [1.3.0] - 2025-10-21
+
+### New feature
+
+- Fix fetch all chats 403 error.
+- Add docs/data-flow.md.
+- Add onboarding popup for users with unfinished onboarding(coach and client)
+- First and last name for invitations instead of full name.
+- Change weekly meals field (client onboarding) to multiselect.
+- Add drop-down with a list for the States (sign up).
+- Add calculated age from the BE for client profile instead of using age from FE.
+- Add two fields first and last name everywhere instead of full name.
+
 ## [1.2.1] - 2025-10-16
 
 ### Fixes & Minor Changes
