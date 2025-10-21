@@ -36,6 +36,18 @@ export const Library = () => {
   }, [location.state]);
 
   useEffect(() => {
+    if (showPopup) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showPopup]);
+
+  useEffect(() => {
     const handleNewMessage = (message: any) => {
       if (
         message.notification.type === "content_share" ||

@@ -64,6 +64,18 @@ export const ContentManagerCreatePage: React.FC = () => {
   }, [location.state]);
 
   useEffect(() => {
+    if (showPopup) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showPopup]);
+
+  useEffect(() => {
     if (folderResponse && folderResponse.folders.length > 0) {
       const firstFolder =
         folderResponse.folders[1] ?? folderResponse.folders[0];
