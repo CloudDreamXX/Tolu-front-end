@@ -321,6 +321,29 @@ Retrieves the client’s personal and account information to display on their pr
 }
 ```
 
+#### **Get Comprehensive Client**
+- **Endpoint:** `GET /coach/clients/{id}/comprehensive`
+- **Hook:** `useGetComprehensiveClientQuery`
+
+**Purpose:**  
+Retrieves the complete health, goal, and history profile of a client. This view consolidates all relevant records into a single structured dataset.
+
+**Response Example:**
+```json
+{
+  "client_id": "client_123",
+  "profile_summary": {
+    "health_goals": ["Reduce stress", "Improve sleep"],
+    "symptom_trends": ["Fatigue", "Anxiety"],
+    "tracker_overview": { "sleep_hours_avg": 7.5, "energy_avg": "medium" }
+  },
+  "recommendations": [
+    "Continue mindfulness exercises",
+    "Increase hydration"
+  ]
+}
+```
+
 #### **Get Onboarding Client**
 - **Endpoint:** `GET /client/onboarding`
 - **Hook:** `useGetOnboardClientQuery`
@@ -516,6 +539,30 @@ The Register component dynamically handles invitations during user registration 
 - Automatically accept invite if already registered.
 - Redirect to login or dashboard if invite already accepted.
 5. If no token, standard registration flow applies.
+
+### **Request New Invite**
+**Endpoint:** `POST /client/request-invite`  
+**Hook:** `useRequestNewInviteMutation`  
+
+**Purpose:**  
+Allows a prospective client to request a new invite from a coach or the Tolu Health admin team.
+
+**Request Example:**
+```json
+{
+  "email": "anna@example.com",
+  "coach_name": "Jane Doe",
+  "message": "I would like to start working with Coach Jane on nutrition goals."
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Invite request submitted successfully."
+}
+```
 
 ## **AI-Powered Content and Search Flows:**
 This section describes how the AI content creation and search functionality works within the Tolu Health Frontend.
@@ -879,6 +926,1476 @@ Retrieve complete document details including metadata, sharing info.
   "rating": 4.8
 }
 ```
+
+## **Chat and Messaging Flows:**
+This section explains how chat data, messages, files, and notes are managed between the Tolu Health frontend and backend API.
+All interactions are handled via the chatApi slice (src/entities/chat/lib.ts), using RTK Query for secure, token-authenticated communication.
+
+### **Fetch All Chats**
+**Endpoint:** `GET /chat/all`  
+**Hook:** `useFetchAllChatsQuery`
+
+**Purpose:**  
+Fetches all chat conversations (1:1 and group chats) for the logged-in user.
+
+**Response Example:**
+```json
+[
+  {
+    "id": "chat_001",
+    "name": "Wellness Coaching",
+    "avatar_url": "avatar_123.jpg",
+    "type": "group",
+    "lastMessageAt": "2025-01-03T10:15:00Z",
+    "unreadCount": 2,
+    "lastMessage": {
+      "id": "msg_123",
+      "content": "See you tomorrow!",
+      "created_at": "2025-01-03T10:14:00Z"
+    },
+    "participants": [
+      { "id": "user_1", "name": "Jane Doe" },
+      { "id": "user_2", "name": "Anna Smith" }
+    ]
+  }
+]
+```
+
+### **Fetch Chat Details**
+**Endpoint:** `GET /chat/{chat_id}`  
+**Hook:** `useFetchChatDetailsByIdQuery`
+
+**Purpose:**  
+Retrieves full metadata for a chat, including participants, description, and creation info.
+
+**Response Example:**
+```json
+{
+  "chat_id": "chat_001",
+  "name": "Wellness Coaching",
+  "description": "Private chat for stress management program",
+  "avatar_url": "group_123.jpg",
+  "participants": [
+    { "user": { "id": "user_1", "name": "Jane Doe" }, "role": "coach" },
+    { "user": { "id": "user_2", "name": "Anna Smith" }, "role": "client" }
+  ],
+  "created_by": "user_1",
+  "created_at": "2024-12-28T09:00:00Z",
+  "updated_at": "2025-01-03T10:20:00Z"
+}
+```
+
+### **Fetch Chat Messages**
+**Endpoint:** `GET /chat/{chat_id}/messages`  
+**Hook:** `useFetchChatMessagesQuery`
+
+**Purpose:**  
+Fetches paginated messages for a specific chat.
+
+**Request Example:**
+```json
+{
+  "chatId": "chat_001",
+  "page": 1,
+  "limit": 50
+}
+```
+
+**Response Example:**
+```json
+{
+  "messages": [
+    {
+      "id": "msg_123",
+      "chat_id": "chat_001",
+      "content": "Hello, how are you?",
+      "created_at": "2025-01-03T09:00:00Z",
+      "sender": { "id": "user_1", "name": "Jane Doe" }
+    }
+  ],
+  "total": 25,
+  "page": 1,
+  "limit": 50,
+  "has_next": false
+}
+```
+
+### **Send Message**
+**Endpoint:** `POST /chat/send-message`  
+**Hook:** `useSendMessageMutation`
+
+**Purpose:**  
+Sends a text message or reply to a specific chat or target user.
+
+**Request Example:**
+```json
+{
+  "chat_id": "chat_001",
+  "content": "Good morning!",
+  "message_type": "text"
+}
+```
+
+**Response Example:**
+```json
+{
+  "id": "msg_789",
+  "chat_id": "chat_001",
+  "content": "Good morning!",
+  "sender": { "id": "user_1", "name": "Jane Doe" },
+  "created_at": "2025-01-03T09:10:00Z"
+}
+```
+
+### **Delete Message**
+**Endpoint:** `DELETE /chat/{chat_id}/message/{message_id}`  
+**Hook:** `useDeleteMessageMutation`
+
+**Purpose:**  
+Deletes a specific message from a chat.
+
+### **Create Group Chat**
+**Endpoint:** `POST /chat/group`  
+**Hook:** `useCreateGroupChatMutation`
+
+**Purpose:**  
+Creates a new group chat with optional avatar image.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "request": {
+    "name": "Nutrition Team Chat",
+    "participant_ids": ["user_1", "user_2"],
+    "description": "Team communication channel"
+  },
+  "avatar_image": (binary file)
+}
+```
+
+### **Update Group Chat**
+**Endpoint:** `PUT /chat/{chat_id}/update`  
+**Hook:** `useUpdateGroupChatMutation`
+
+**Purpose:**  
+Updates group name, description, participants, or avatar.
+
+### **Upload Chat File**
+**Endpoint:** `POST /chat/{chat_id}/upload-file`  
+**Hook:** `useUploadChatFileMutation`
+
+**Purpose:**  
+Uploads a file (image, PDF, or document) to a chat.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "file": (binary file),
+  "library_files": ["lib_doc_001"]
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "file_url": "uploads/chat_001/file_123.pdf",
+  "file_name": "Report.pdf",
+  "file_size": 204800,
+  "file_type": "application/pdf"
+}
+```
+
+### **Fetch Chat Files**
+**Endpoint:** `GET /chat/{chat_id}/files`  
+**Hook:** `useFetchAllFilesByChatIdQuery`
+
+**Purpose:**  
+Retrieves paginated list of shared files in a chat.
+
+### **Download Uploaded Chat File**
+**Endpoint:** `GET /chat/uploaded-file/{filename}`  
+**Hook:** `useGetUploadedChatFileUrlQuery`
+
+**Purpose:**  
+Downloads or previews uploaded chat file.
+
+### **Send Chat Note**
+**Endpoint:** `POST /chat/note`  
+**Hook:** `useSendChatNoteMutation`
+
+**Purpose:**  
+Sends a structured note or document in chat (e.g., session summary or recommendations).
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "note_data": {
+    "chat_id": "chat_001",
+    "title": "Session Summary",
+    "content": "We discussed nutrition goals and next steps."
+  },
+  "file": (binary PDF)
+}
+```
+
+### **Fetch All Chat Notes**
+**Endpoint:** `GET /chat/{chat_id}/notes`  
+**Hook:** `useGetAllChatNotesQuery`
+
+**Purpose:**  
+Retrieves all notes attached to a chat.
+
+### **Update Chat Note**
+**Endpoint:** `PUT /chat/note/{note_id}`  
+**Hook:** `useUpdateChatNoteMutation`
+
+**Purpose:**  
+Edits an existing chat note or updates its attached file.
+
+### **Delete Chat Note**
+**Endpoint:** `DELETE /chat/note/{note_id}`  
+**Hook:** `useDeleteChatNoteMutation`
+
+**Purpose:**  
+Deletes a note from a chat thread.
+
+### **Delete Chat**
+**Endpoint:** `DELETE /chat/{chat_id}`  
+**Hook:** `useDeleteChatMutation`
+
+**Purpose:**  
+Removes an entire chat (group or direct).
+
+## **Admin Management Flows:**
+This section documents all Admin-only API endpoints that provide access to user management, feedback insights, chat moderation, folder structures, and unpublished content oversight.
+All requests are made via the adminApi slice (src/entities/admin/lib.ts), using RTK Query with secure JWT-based authentication.
+
+### **Get All Users**
+**Endpoint:** `GET /admin/users`  
+**Hook:** `useGetAllUsersQuery`
+
+**Purpose:**  
+Retrieves a list of all registered users (clients, coaches, and admins) for administrative review.
+
+**Response Example:**
+```json
+{
+  "users": [
+    {
+      "email": "coach@example.com",
+      "name": "Jane Doe",
+      "phone_number": "+1234567890",
+      "role": 2,
+      "signup_date": "2024-11-15T09:00:00Z"
+    },
+    {
+      "email": "client@example.com",
+      "name": "Anna Smith",
+      "phone_number": "+1987654321",
+      "role": 3,
+      "signup_date": "2024-11-20T12:45:00Z"
+    }
+  ]
+}
+```
+
+### **Get Feedback**
+**Endpoint:** `GET /admin/feedback`  
+**Hook:** `useGetFeedbackQuery`
+
+**Purpose:**  
+Retrieves all coach and client feedback, including satisfaction scores, ratings, and comments.
+
+**Request parameters**
+```json
+{
+  "limit": 10,
+  "offset": 0,
+  "start_date": "2025-01-01",
+  "end_date": "2025-01-31"
+}
+```
+
+**Response Example:**
+```json
+{
+  "coach_feedback": {
+    "data": [
+      {
+        "query": "Nutrition advice",
+        "content": "Balanced diet tips",
+        "coach_email": "coach@example.com",
+        "rating": 4,
+        "rating_comment": "Helpful",
+        "rated_at": "2025-01-10T14:30:00Z"
+      }
+    ],
+    "total": 20,
+    "count": 10
+  },
+  "client_feedback": {
+    "data": [
+      {
+        "client_email": "anna@example.com",
+        "query": "Stress management",
+        "source_id": "content_001",
+        "satisfaction_score": 5,
+        "comments": "Very useful!",
+        "created_at": "2025-01-09T11:00:00Z"
+      }
+    ],
+    "total": 25,
+    "count": 10
+  },
+  "pagination": {
+    "limit": 10,
+    "offset": 0,
+    "has_more_coach": true,
+    "has_more_client": true
+  },
+  "summary": {
+    "total_coach_feedback": 20,
+    "total_client_feedback": 25,
+    "combined_total": 45
+  }
+}
+```
+
+### **Get All Chats**
+**Endpoint:** `GET /admin/chats`  
+**Hook:** `useGetAllChatsQuery`
+
+**Purpose:**  
+Fetches all chat threads accessible by the admin, including their metadata and unread message counts.
+
+**Response Example:**
+```json
+[
+  {
+    "id": "chat_001",
+    "name": "Client Support",
+    "chat_type": "group",
+    "last_message_time": "2025-01-04T09:00:00Z",
+    "unread_count": 3
+  },
+  {
+    "id": "chat_002",
+    "name": "Private Message: Anna Smith",
+    "chat_type": "direct",
+    "last_message_time": "2025-01-05T12:15:00Z",
+    "unread_count": 0
+  }
+]
+```
+
+### **Get Messages by Chat ID**
+**Endpoint:** `GET /admin/chats/{chat_id}/messages`  
+**Hook:** `useGetMessagesByChatIdQuery`
+
+**Purpose:**  
+Retrieves paginated messages within a specific chat for moderation or review.
+
+**Request Example:**
+```json
+{
+  "chat_id": "chat_001",
+  "page": 1,
+  "page_size": 50
+}
+```
+
+**Response Example:**
+```json
+[
+  {
+    "id": "msg_001",
+    "chat_id": "chat_001",
+    "content": "Hello, how can I help?",
+    "sender": { "id": "admin_1", "name": "Support Agent" },
+    "created_at": "2025-01-04T09:00:00Z"
+  }
+]
+```
+
+### **Send Admin Message**
+**Endpoint:** `POST /admin/send-message`  
+**Hook:** `useSendMessageMutation`
+
+**Purpose:**  
+Allows an admin to broadcast or send a message to a specific user group (e.g., all coaches, clients, or admins).
+
+**Request Example:**
+```json
+{
+  "content": "Reminder: Submit feedback by Friday.",
+  "message_type": "announcement",
+  "target_group": "coaches"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Message sent to 12 recipients",
+  "admin_chat_id": "admin_chat_005",
+  "recipients_count": 12
+}
+```
+
+### **Get Folders Structure**
+**Endpoint:** `GET /admin/folders`  
+**Hook:** `useGetFoldersStructureQuery`
+
+**Purpose:**  
+Retrieves the entire folder structure visible to the admin, optionally filtered by user or folder ID.
+
+**Request Example:**
+```json
+{
+  "page": 1,
+  "page_size": 10,
+  "user_id": "coach_123"
+}
+```
+
+**Response Example:**
+```json
+{
+  "approved": [
+    { "id": "fld_01", "name": "Published Articles", "content_count": 12 }
+  ],
+  "in_review": [
+    { "id": "fld_02", "name": "Pending Review", "content_count": 4 }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "page_size": 10,
+    "total_content_items": 16
+  },
+  "admin_access": true,
+  "filtered_by_user": true,
+  "target_user_id": "coach_123"
+}
+```
+
+### **Get Unpublished Content**
+**Endpoint:** `GET /admin/unpublished-content`  
+**Hook:** `useGetUnpublishedContentQuery`
+
+**Purpose:**  
+Lists all unpublished or rejected content across the platform with optional date and author filters.
+
+**Request Example:**
+```json
+{
+  "page": 1,
+  "limit": 10,
+  "creator_id": "coach_123",
+  "date_from": "2025-01-01",
+  "date_to": "2025-02-01"
+}
+```
+
+**Response Example:**
+```json
+{
+  "items": [
+    {
+      "id": "content_001",
+      "title": "Understanding Stress Hormones",
+      "status": "unpublished",
+      "creator_id": "coach_123",
+      "unpublished_by": "admin_456",
+      "date": "2025-01-20T12:00:00Z"
+    }
+  ],
+  "total": 1
+}
+```
+
+### **Manage Content**
+**Endpoint:** `PUT /admin/manage-content`  
+**Hook:** `useManageContentMutation`
+
+**Purpose:**  
+Allows an admin to approve, reject, or unpublish a specific content item, optionally adding a comment or reason.
+
+**Request Example:**
+```json
+{
+  "content_id": "content_001",
+  "action": "unpublish",
+  "admin_comment": "Duplicate of another post",
+  "unpublish_reason": "Content duplication"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Content successfully unpublished"
+}
+```
+
+## **Client Health History Flows:**
+This section describes how a client’s health history data is created, retrieved, and managed through the Tolu Health frontend and backend API.
+All health history data is handled securely through the healthHistoryApi slice (src/entities/health-history/lib.ts) using RTK Query and FormData-based REST API calls.
+
+### **Get User Health History**
+**Endpoint:** `GET /health-history`  
+**Hook:** `useGetUserHealthHistoryQuery`
+
+**Purpose:**  
+Retrieves the complete health history profile for the currently authenticated client.
+Includes demographic, lifestyle, medical, and goal-related information as filled during onboarding or updates.
+
+**Response Example:**
+```json
+{
+  "id": "hh_001",
+  "user_id": "client_123",
+  "created_at": "2025-01-04T12:00:00Z",
+  "updated_at": "2025-01-18T10:30:00Z",
+  "age": 49,
+  "gender": "female",
+  "gender_identity": "cisgender woman",
+  "height": "165",
+  "weight": "68",
+  "ethnicity": "Caucasian",
+  "language": "English",
+  "location": "Los Angeles, CA",
+  "marital_status": "married",
+  "menopause_status": "postmenopausal",
+  "current_health_concerns": "stress and fatigue",
+  "diagnosed_conditions": "hypertension",
+  "lifestyle_information": "Regular morning walks and balanced meals",
+  "exercise_habits": "3x/week yoga",
+  "sleep_quality": "good",
+  "stress_levels": "moderate",
+  "energy_levels": "fluctuating",
+  "recent_lab_tests": true,
+  "lab_results_file": [
+    {
+      "filename": "lab_results_2025_01.pdf",
+      "content_type": "application/pdf",
+      "upload_timestamp": "2025-01-04T12:05:00Z"
+    }
+  ],
+  "health_goals": "Reduce stress and improve sleep quality",
+  "desired_results_timeline": "3 months",
+  "privacy_consent": true,
+  "follow_up_recommendation": "Schedule with nutrition coach",
+  "recommendation_destination": "coach_dashboard"
+}
+```
+
+### **Create or Update Health History**
+**Endpoint:** `POST /health-history`  
+**Hook:** `useCreateHealthHistoryMutation`
+
+**Purpose:**  
+Creates or updates the client’s health history record.
+Supports uploading lab reports and linking the record to a specific client (for admin/coach use).
+
+- The mutation constructs a FormData object.
+- Health history fields are serialized into JSON and appended as health_data.
+- If lab files are provided, they are appended as binary lab_file.
+- An optional client_id can be attached (for coaches submitting data on behalf of clients).
+- The request is securely sent as multipart/form-data via HTTPS.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "health_data": {
+    "age": 49,
+    "gender": "female",
+    "location": "Los Angeles, CA",
+    "ethnicity": "Caucasian",
+    "current_health_concerns": "Fatigue and stress",
+    "diagnosed_conditions": "Hypertension",
+    "exercise_habits": "Yoga 3x/week",
+    "sleep_quality": "good",
+    "stress_levels": "moderate",
+    "energy_levels": "low",
+    "recent_lab_tests": true,
+    "health_goals": "Improve sleep, lower blood pressure",
+    "desired_results_timeline": "3 months",
+    "privacy_consent": true
+  },
+  "lab_file": (binary PDF file),
+  "client_id": "client_123"
+}
+```
+
+### **Get Lab Report**
+**Endpoint:** `GET /health-history/lab-report/{filename}`  
+**Hook:** `useGetLabReportQuery`
+
+**Purpose:**  
+Downloads a specific lab report previously uploaded as part of the client’s health history.
+Supports optional client_id for admin or coach access.
+
+**Request Example:**
+```json
+{
+  "filename": "lab_results_2025_01.pdf",
+  "client_id": "client_123"
+}
+```
+
+**Response:**
+Returns the binary file (PDF or image) for secure download or inline preview.
+
+## **Symptoms Tracker Flows:**
+This section describes how clients can log, update, and analyze their daily symptoms in the Tolu Health platform, as well as how AI suggestions assist in symptom identification and tracking.
+
+### **Add Symptoms Record**
+**Endpoint:** `POST /symptoms-tracker`  
+**Hook:** `useAddSymptomsMutation`
+
+**Purpose:**  
+Creates a new daily symptom record for the user.
+Clients can attach optional photos (e.g., skin condition, meal photo) or voice notes for faster journaling.
+
+- A FormData object is created.
+- The structured symptom data is serialized as JSON and appended as symptom_data.
+- Optional photo and voice_note files are attached as binary.
+- The request is sent as multipart/form-data via HTTPS.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "symptom_data": {
+    "tracking_date": "2025-01-22",
+    "symptoms": ["fatigue", "hot flashes"],
+    "symptom_intensities": ["moderate", "severe"],
+    "duration_category": "2-4 hours",
+    "suspected_triggers": ["poor sleep", "stress"],
+    "sleep_quality": "Fair",
+    "sleep_hours": 6,
+    "sleep_minutes": 45,
+    "times_woke_up": 2,
+    "meal_notes": "Ate late dinner",
+    "meal_details": [
+      { "meal_type": "dinner", "food_items": "pasta and wine", "time": "21:30" }
+    ],
+    "user_notes": "Felt more tired than usual."
+  },
+  "photo": (binary image),
+  "voice_note": (binary audio)
+}
+```
+
+### **Edit Symptoms Record**
+**Endpoint:** `PUT /symptoms-tracker/{record_id}`  
+**Hook:** `useEditSymptomsMutation`
+
+**Purpose:**  
+Updates an existing symptom record for a given date or record ID.
+Used when users need to modify previously logged entries.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "symptom_data": {
+    "tracking_date": "2025-01-22",
+    "symptoms": ["fatigue", "headache"],
+    "symptom_intensities": ["moderate", "mild"],
+    "duration_category": "1-2 hours",
+    "user_notes": "Slept better today, symptoms improving."
+  },
+  "photo": (new image file)
+}
+```
+
+### **Get Symptom by Date**
+**Endpoint:** `GET /symptoms-tracker/{target_date}`  
+**Hook:** `useGetSymptomByDateQuery`
+
+**Purpose:**  
+Retrieves all recorded symptoms and details for a specific date.
+
+**Request Example:**
+```json
+{
+  "target_date": "2025-01-22"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "sym_001",
+      "tracking_date": "2025-01-22",
+      "symptoms": ["fatigue", "hot flashes"],
+      "symptom_intensities": ["moderate", "severe"],
+      "suspected_triggers": ["stress", "sleep deprivation"],
+      "sleep_quality": "Fair",
+      "sleep_hours": 6,
+      "meal_notes": "Had late dinner",
+      "created_at": "2025-01-22T21:00:00Z"
+    }
+  ]
+}
+```
+
+### **Delete Symptom Record**
+**Endpoint:** `DELETE /symptoms-tracker/{symptom_id}`  
+**Hook:** `useDeleteSymptomMutation`
+
+**Purpose:**  
+Deletes a specific symptom record (for instance, when the user wants to remove a duplicate or incorrect entry).
+
+**Request Example:**
+```json
+{
+  "symptom_id": "sym_001"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Symptom record deleted successfully."
+}
+```
+
+### **Get AI Suggestions**
+**Endpoint:** `GET /symptoms-tracker/ai-suggestions`  
+**Hook:** `useGetAiSuggestionsQuery`
+
+**Purpose:**  
+Provides AI-powered symptom and trigger recommendations based on previously logged entries and similar user data patterns.
+
+**Response Example:**
+```json
+{
+  "suggested_symptoms": [
+    "fatigue",
+    "bloating",
+    "irritability"
+  ],
+  "suggested_triggers": [
+    "lack of sleep",
+    "high sugar intake",
+    "stressful events"
+  ]
+}
+```
+
+## **Notifications Flows:**
+This section outlines how notifications are retrieved, managed, and customized in the Tolu Health platform.
+All notification data flows through the notificationsApi slice (src/entities/notifications/lib.ts) using RTK Query and secure JWT-authenticated REST API calls.
+
+### **Get Notifications**
+**Endpoint:** `GET /notifications`  
+**Hook:** `useGetNotificationsQuery`
+
+**Purpose:**  
+Fetches paginated user notifications, with optional filters for unread items and notification type.
+
+**Request Example:**
+```json
+{
+  "page": 1,
+  "limit": 20,
+  "unread_only": false,
+  "type_filter": "content_share"
+}
+```
+
+**Response Example:**
+```json
+[
+  {
+    "id": "notif_001",
+    "user_id": "client_123",
+    "title": "New Content Shared",
+    "message": "Your coach shared 'Healthy Sleep Routine' with you.",
+    "type": "content_share",
+    "priority": "normal",
+    "is_read": false,
+    "is_dismissed": false,
+    "created_at": "2025-01-20T10:30:00Z",
+    "read_at": null,
+    "expires_at": "2025-02-01T00:00:00Z",
+    "notification_metadata": {
+      "content_id": "content_123",
+      "shared_by": "coach_456"
+    }
+  }
+]
+```
+
+### **Get Unread Count**
+**Endpoint:** `GET /notifications/unread`  
+**Hook:** `useGetUnreadCountQuery`
+
+**Purpose:**  
+Retrieves the total number of unread notifications for the logged-in user.
+
+**Response Example:**
+```json
+{
+  "unread_count": 3
+}
+```
+
+### **Mark Notifications as Read**
+**Endpoint:** `POST /notifications/mark-as-read`  
+**Hook:** `useMarkNotificationAsReadMutation`
+
+**Purpose:**  
+Marks one or more notifications as read.
+
+**Request Example:**
+```json
+{
+  "notification_ids": ["notif_001", "notif_002"]
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Notifications marked as read."
+}
+```
+
+### **Dismiss Notification**
+**Endpoint:** `POST /notifications/{notification_id}/dismiss`  
+**Hook:** `useDismissNotificationsMutation`
+
+**Purpose:**  
+Dismisses or removes a specific notification from the user’s notification list.
+
+**Request Example:**
+```json
+{
+  "notification_id": "notif_003"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Notification dismissed successfully."
+}
+```
+
+### **Get Notification Preferences**
+**Endpoint:** `GET /notifications/preferences`  
+**Hook:** `useGetNotificationPreferencesQuery`
+
+**Purpose:**  
+Retrieves the user’s notification settings, such as whether in-app or email notifications are enabled.
+
+**Response Example:**
+```json
+{
+  "notifications_enabled": true
+}
+```
+
+### **Update Notification Preferences**
+**Endpoint:** `PUT /notifications/preferences`  
+**Hook:** `useUpdateNotificationPreferencesMutation`
+
+**Purpose:**  
+Allows the user to update their notification settings (e.g., toggle notification delivery).
+
+**Request Example:**
+```json
+{
+  "notifications_enabled": false
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Notification preferences updated successfully."
+}
+```
+
+## **Coach Files Library Flows:**
+This section describes how coaches manage files and folders in the Tolu Health Files Library.
+All operations (upload, download, folder management, and moving files) are handled through the filesLibraryApi slice (src/entities/files-library/lib.ts) using RTK Query and JWT-secured REST endpoints.
+
+### **Fetch All Files**
+**Endpoint:** `GET /files-library`  
+**Hook:** `useFetchAllFilesQuery`
+
+**Purpose:**  
+Retrieves all files and folders accessible to the logged-in coach.
+Supports pagination, search, and file-type filtering.
+
+**Request Example:**
+```json
+{
+  "page": 1,
+  "per_page": 20,
+  "search": "nutrition",
+  "file_type": "pdf"
+}
+```
+
+**Response Example:**
+```json
+{
+  "root_folders": [
+    {
+      "id": "fld_001",
+      "name": "Client Reports",
+      "files": [],
+      "subfolders": [],
+      "type": "folder",
+      "created_at": "2025-01-18T10:00:00Z"
+    }
+  ],
+  "root_files": [
+    {
+      "id": "file_001",
+      "name": "Wellness Summary.pdf",
+      "type": "pdf",
+      "size": 240000,
+      "mime_type": "application/pdf",
+      "created_at": "2025-01-19T08:30:00Z"
+    }
+  ],
+  "total_files": 12,
+  "total_folders": 3,
+  "max_depth_retrieved": 2,
+  "structure": "hierarchical"
+}
+```
+
+### **Fetch Single File**
+**Endpoint:** `GET /files-library/{file_id}`  
+**Hook:** `useFetchFileLibraryQuery`
+
+**Purpose:**  
+Retrieves detailed metadata for a specific uploaded file.
+
+**Response Example:**
+```json
+{
+  "id": "file_001",
+  "user_id": "coach_123",
+  "filename": "Wellness Summary.pdf",
+  "original_filename": "summary.pdf",
+  "description": "Client wellness progress report",
+  "file_type": "pdf",
+  "file_extension": "pdf",
+  "size": 240000,
+  "upload_date": "2025-01-19T08:30:00Z",
+  "created_at": "2025-01-19T08:30:00Z",
+  "updated_at": "2025-01-19T08:45:00Z"
+}
+```
+
+### **Upload Files**
+**Endpoint:** `POST /files-library/upload`  
+**Hook:** `useUploadFilesLibraryMutation`
+
+**Purpose:**  
+Uploads one or multiple files to a folder. Coaches can attach descriptions and optionally specify a target folder.
+
+- Each file is added to a FormData object as files.
+- descriptions (optional) are appended as text.
+- folder_id (optional) determines upload destination.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "files": [(binary file), (binary file)],
+  "descriptions": "Session documents for January",
+  "folder_id": "fld_001"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "2 files uploaded successfully."
+}
+```
+
+### **Download File**
+**Endpoint:** `GET /files-library/download/{file_id}`  
+**Hook:** `useDownloadFileLibraryQuery`
+
+**Purpose:**  
+Downloads a file from the library for offline access or review.
+
+**Request Example:**
+```json
+{
+  "file_id": "file_001"
+}
+```
+
+**Response:**
+Returns the binary file (e.g., PDF, DOCX, or image) as a Blob.
+
+### **Delete File**
+**Endpoint:** `DELETE /files-library/{file_id}`  
+**Hook:** `useDeleteFileLibraryMutation`
+
+**Purpose:**  
+Deletes a specific file from the coach’s library.
+
+**Request Example:**
+```json
+{
+  "file_id": "file_001"
+}
+```
+
+### **Create Folder**
+**Endpoint:** `POST /files-library/folders`  
+**Hook:** `useCreateFolderMutation`
+
+**Purpose:**  
+Creates a new folder to organize uploaded files. Supports nested folder structures.
+
+**Request Example:**
+```json
+{
+  "name": "Hormone Health",
+  "description": "Resources and case studies",
+  "parent_folder_id": null
+}
+```
+
+**Response Example:**
+```json
+{
+  "id": "fld_002",
+  "name": "Hormone Health",
+  "description": "Resources and case studies",
+  "path": "/Hormone Health",
+  "created_at": "2025-01-19T09:00:00Z"
+}
+```
+
+### **Get Folder Details**
+**Endpoint:** `GET /files-library/folders/{folder_id}`  
+**Hook:** `useGetFolderQuery`
+
+**Purpose:**  
+Retrieves metadata for a specific folder.
+
+**Response Example:**
+```json
+{
+  "id": "fld_002",
+  "name": "Hormone Health",
+  "description": "Resources and case studies",
+  "parent_folder_id": null,
+  "path": "/Hormone Health",
+  "created_at": "2025-01-19T09:00:00Z",
+  "updated_at": "2025-01-19T09:15:00Z"
+}
+```
+
+### **Update Folder**
+**Endpoint:** `PUT /files-library/folders/{folder_id}`  
+**Hook:** `useUpdateFolderMutation`
+
+**Purpose:**  
+Updates the name or description of a folder, or reassigns its parent folder.
+
+**Request Example:**
+```json
+{
+  "folderId": "fld_002",
+  "payload": {
+    "name": "Hormone Education",
+    "description": "Updated resource folder"
+  }
+}
+```
+
+**Response Example:**
+```json
+{
+  "id": "fld_002",
+  "name": "Hormone Education",
+  "description": "Updated resource folder",
+  "updated_at": "2025-01-20T08:00:00Z"
+}
+```
+
+### **Get Folder Contents**
+**Endpoint:** `GET /files-library/folders/{folder_id}/contents`  
+**Hook:** `useGetFolderContentsQuery`
+
+**Purpose:**  
+Lists subfolders and files contained in a specific folder with pagination support.
+
+**Request Example:**
+```json
+{
+  "folderId": "fld_002",
+  "page": "1",
+  "per_page": "10"
+}
+```
+
+**Response Example:**
+```json
+{
+  "current_folder": {
+    "id": "fld_002",
+    "name": "Hormone Education",
+    "description": "Updated resource folder"
+  },
+  "subfolders": [
+    { "id": "fld_003", "name": "Case Studies", "description": null }
+  ],
+  "files": [
+    {
+      "id": "file_010",
+      "original_filename": "Hormone_Basics.pdf",
+      "file_type": "pdf",
+      "size": 150000
+    }
+  ],
+  "breadcrumbs": [
+    { "id": "fld_001", "name": "Client Reports" },
+    { "id": "fld_002", "name": "Hormone Education" }
+  ]
+}
+```
+
+### **Delete Folder**
+**Endpoint:** `DELETE /files-library/folders/{folder_id}`  
+**Hook:** `useDeleteFolderMutation`
+
+**Purpose:**  
+Deletes a folder and all contained sub-items (if allowed by policy).
+
+**Request Example:**
+```json
+{
+  "folder_id": "fld_003"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Folder deleted successfully."
+}
+```
+
+### **Move Files Between Folders**
+**Endpoint:** `POST /files-library/move-files`  
+**Hook:** `useMoveFilesMutation`
+
+**Purpose:**  
+Moves one or more files into another folder.
+
+**Request Example:**
+```json
+{
+  "file_ids": ["file_001", "file_002"],
+  "folder_id": "fld_004"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Files moved successfully."
+}
+```
+
+## **Tracker Management (FMP Tracker):**
+These endpoints enable coaches to submit, share, and delete tracker data such as Food-Mood-Poop logs or similar client metrics.
+
+### **Submit Tracker**
+**Endpoint:** `POST /coach/fmp`  
+**Hook:** `useSubmitTrackerMutation`
+
+**Purpose:**  
+Submits a new FMP tracker entry for a client, recording daily lifestyle and health metrics.
+
+**Request Example:**
+```json
+{
+  "client_id": "client_123",
+  "tracker_data": {
+    "mood": "good",
+    "energy": "high",
+    "sleep_hours": 8,
+    "notes": "Slept well and maintained hydration."
+  }
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Tracker record created successfully."
+}
+```
+
+### **Share Tracker**
+**Endpoint:** `POST /coach/share-fmp`  
+**Hook:** `useShareTrackerMutation`
+
+**Purpose:**  
+Shares an existing tracker entry with a client or another practitioner for collaborative review.
+
+**Request Example:**
+```json
+{
+  "tracker_id": "trk_123",
+  "recipient_id": "client_123"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Tracker shared successfully."
+}
+```
+
+### **Delete Tracker**
+**Endpoint:** `DELETE /coach/fmp/{tracker_id}`  
+**Hook:** `useDeleteTrackerMutation`
+
+**Purpose:**  
+Removes a previously submitted tracker entry.
+
+**Request Example:**
+```json
+{
+  "tracker_id": "trk_123"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Tracker deleted successfully."
+}
+```
+
+## **Lab Files Management:**
+
+### **Get Lab File**
+**Endpoint:** `GET /coach/labs/{client_id}/{file_name}`  
+**Hook:** `useGetLabFileQuery`
+
+**Purpose:**  
+Downloads or previews a lab file uploaded for a client.
+
+**Request Example:**
+```json
+{
+  "client_id": "client_123",
+  "file_name": "lab_results_2025_01.pdf"
+}
+```
+
+**Response:**
+Returns the binary lab file (PDF, image, or text report) for preview or download.
+
+## **Coach Content Library:**
+
+### **Get All User Content**
+**Endpoint:** `GET /coach/search-content`  
+**Hook:** `useGetAllUserContentQuery`
+
+**Purpose:**  
+Fetches all content items authored or shared by the coach. Used in the coach dashboard for browsing personal and AI-generated materials.
+
+**Response Example:**
+```json
+{
+  "contents": [
+    {
+      "id": "cnt_001",
+      "title": "Nutrition Tips for Menopause",
+      "status": "active",
+      "created_at": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "cnt_002",
+      "title": "Mindfulness and Sleep Quality",
+      "status": "draft",
+      "created_at": "2025-01-12T10:30:00Z"
+    }
+  ]
+}
+```
+
+## **Folder editing:**
+
+### **Edit Folder**
+**Endpoint:** `PUT /coach/edit-folder`  
+**Hook:** `useEditFolderMutation`
+
+**Purpose:**  
+Updates a folder’s metadata (e.g., name or description) and optionally adds new files in a single request.
+Supports uploading multiple files along with folder details using multipart/form-data.
+
+**Request Example:**
+multipart/form-data
+```json
+{
+  "edit_data": {
+    "folder_id": "fld_002",
+    "name": "Updated Educational Resources",
+    "description": "Reorganized folder with new guides"
+  },
+  "files": [(binary file), (binary file)]
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Folder updated and files added successfully."
+}
+```
+
+## **Coach Management and Client Interaction Flows:**
+
+### **Delete Client**
+**Endpoint:** `DELETE /coach/clients/{client_id}`  
+**Hook:** `useDeleteClientMutation`
+
+**Purpose:**  
+Removes a client from the coach’s managed list. Typically used when the coaching relationship has ended or the client requests removal.
+
+**Request Example:**
+```json
+{
+  "client_id": "client_123"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Client removed successfully."
+}
+```
+
+### **Get Client Info**
+**Endpoint:** `GET /coach/clients/{client_id}/info`  
+**Hook:** `useLazyGetClientInfoQuery`
+
+**Purpose:**  
+Retrieves full detailed client information, including demographics, onboarding status, goals, and recent interactions. Used in the coach’s client detail dashboard.
+
+**Response Example:**
+```json
+{
+  "id": "client_123",
+  "name": "Anna Smith",
+  "email": "anna@example.com",
+  "photo_url": "https://cdn.toluhealth.com/photos/client_123.jpg",
+  "dob": "1988-04-12",
+  "timezone": "Europe/London",
+  "coach_notes": "Focusing on stress and energy improvement.",
+  "onboarding_completed": true,
+  "last_activity": "2025-01-19T09:00:00Z"
+}
+```
+
+### **Edit Client Info**
+**Endpoint:** `PUT /coach/clients/{client_id}/info`  
+**Hook:** `useEditClientMutation`
+
+**Purpose:**  
+Allows a coach to update a client’s profile data — such as name, email, timezone, and coach notes — directly from the management panel.
+
+**Request Example:**
+```json
+{
+  "clientId": "client_123",
+  "payload": {
+    "name": "Anna S.",
+    "email": "anna.s@example.com",
+    "timezone": "Europe/London",
+    "notes": "Updated nutrition plan and next check-in scheduled."
+  }
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Client information updated successfully."
+}
+```
+
+### **Update Chat Title**
+**Endpoint:** `PUT /ai/update-chat-title`  
+**Hook:** `useUpdateChatTitleMutation`
+
+**Purpose:**  
+Renames a chat session (for example, an AI learning thread or a client conversation) to keep chat history organized and contextual.
+
+**Request Example:**
+```json
+{
+  "chat_id": "chat_001",
+  "new_title": "Stress Management Coaching - Week 3"
+}
+```
+
+**Response Example:**
+```json
+{
+  "success": true,
+  "message": "Chat title updated."
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
