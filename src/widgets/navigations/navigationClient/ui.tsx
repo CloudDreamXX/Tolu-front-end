@@ -102,8 +102,7 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/library"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -114,8 +113,7 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -248,8 +246,7 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/library"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={toggleLibrary}
@@ -266,8 +263,7 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/messages"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={() => setMenuMobOpen(false)}
@@ -297,7 +293,7 @@ export const NavigationClient: React.FC = () => {
                   </AvatarFallback>
                 </Avatar>
                 <p className="text-[#1D1D1F] hover:text-[#1C63DB]  text-[16px]/[22px] font-semibold">
-                  {user?.first_name} {user?.last_name}
+                  {user?.first_name ? user?.first_name : user?.name} {user?.last_name}
                 </p>
                 <span className="ml-auto">
                   <MaterialIcon iconName="keyboard_arrow_right" />
