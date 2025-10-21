@@ -31,6 +31,7 @@ export const ProfileSetup = () => {
   const [displayMonth, setDisplayMonth] = useState<Date>(
     new Date(defaultYear, 0)
   );
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
   const [onboardUser] = useOnboardUserMutation();
 
@@ -47,6 +48,7 @@ export const ProfileSetup = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setProfilePhoto(file);
       handleFile(file);
     }
   };
@@ -147,7 +149,10 @@ export const ProfileSetup = () => {
   );
 
   const handleNext = async () => {
-    await onboardUser({ data: state }).unwrap();
+    await onboardUser({
+      data: state,
+      photo: profilePhoto ?? undefined,
+    }).unwrap();
     if (location.pathname.startsWith("/content-manager/create")) {
       nav("/content-manager/create");
     } else {

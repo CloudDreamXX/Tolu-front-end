@@ -297,7 +297,7 @@ export const NavigationClient: React.FC = () => {
                   </AvatarFallback>
                 </Avatar>
                 <p className="text-[#1D1D1F] hover:text-[#1C63DB]  text-[16px]/[22px] font-semibold">
-                  {user?.name}
+                  {user?.first_name} {user?.last_name}
                 </p>
                 <span className="ml-auto">
                   <MaterialIcon iconName="keyboard_arrow_right" />

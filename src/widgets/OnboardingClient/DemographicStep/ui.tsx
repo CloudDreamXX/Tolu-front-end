@@ -51,19 +51,6 @@ export const DemographicStep = () => {
       : clientOnboarding.weekly_meal_choice || []
   );
 
-  useEffect(() => {
-    if (typeof clientOnboarding.weekly_meal_choice === "string") {
-      setLocalWeeklyMeals(
-        clientOnboarding.weekly_meal_choice
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-      );
-    } else if (Array.isArray(clientOnboarding.weekly_meal_choice)) {
-      setLocalWeeklyMeals(clientOnboarding.weekly_meal_choice);
-    }
-  }, [clientOnboarding.weekly_meal_choice]);
-
   const [onboardClient] = useOnboardClientMutation();
 
   useEffect(() => {
@@ -92,9 +79,7 @@ export const DemographicStep = () => {
   const handleNext = async () => {
     const payload = {
       ...clientOnboarding,
-      weekly_meal_choice: Array.isArray(clientOnboarding.weekly_meal_choice)
-        ? clientOnboarding.weekly_meal_choice.join(", ")
-        : clientOnboarding.weekly_meal_choice,
+      weekly_meal_choice: clientOnboarding.weekly_meal_choice || "",
     };
 
     await onboardClient({
@@ -372,13 +357,12 @@ export const DemographicStep = () => {
             selected={localWeeklyMeals}
             onChange={(vals) => {
               setLocalWeeklyMeals(vals);
+              const joined = vals.join(", ");
               dispatch(
-                setFormField({ field: "weekly_meal_choice", value: vals })
+                setFormField({ field: "weekly_meal_choice", value: joined })
               );
             }}
             options={mealChoices.map((c) => ({ label: c, value: c }))}
-            className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
-            labelClassName="text-[16px] font-medium"
           />
 
           {/* Support Network */}

@@ -144,7 +144,10 @@ export const AboutYourPractice = () => {
   // Field change
   const handleNext = async () => {
     if (!allFilled()) return;
-    await onboardUser({ data: state }).unwrap();
+    await onboardUser({
+      data: state,
+      licenseFiles: selectedFiles.length ? selectedFiles : undefined,
+    }).unwrap();
     if (location.pathname.startsWith("/content-manager/create")) {
       nav("/content-manager/create", {
         state: { incompleteRoute: "/profile-setup" },

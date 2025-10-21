@@ -51,7 +51,7 @@ const LABEL: Record<keyof CoachOnboardingState, string> = {
 
 const REQUIRED_BY_ROUTE: Record<string, (keyof CoachOnboardingState)[]> = {
   "/select-type": ["practitioner_types"],
-  "/onboarding-main": ["expertise_areas"],
+  "/onboarding-welcome": ["expertise_areas"],
   "/about-your-practice": [
     "school",
     "recent_client_count",

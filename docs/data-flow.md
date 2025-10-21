@@ -351,6 +351,7 @@ Retrieves the client’s personal and account information to display on their pr
 ```
 
 #### **Get Comprehensive Client**
+
 - **Endpoint:** `GET /coach/clients/{id}/comprehensive`
 - **Hook:** `useGetComprehensiveClientQuery`
 
@@ -358,6 +359,7 @@ Retrieves the client’s personal and account information to display on their pr
 Retrieves the complete health, goal, and history profile of a client. This view consolidates all relevant records into a single structured dataset.
 
 **Response Example:**
+
 ```json
 {
   "client_id": "client_123",
@@ -366,10 +368,7 @@ Retrieves the complete health, goal, and history profile of a client. This view 
     "symptom_trends": ["Fatigue", "Anxiety"],
     "tracker_overview": { "sleep_hours_avg": 7.5, "energy_avg": "medium" }
   },
-  "recommendations": [
-    "Continue mindfulness exercises",
-    "Increase hydration"
-  ]
+  "recommendations": ["Continue mindfulness exercises", "Increase hydration"]
 }
 ```
 
@@ -588,13 +587,15 @@ The Register component dynamically handles invitations during user registration 
 5. If no token, standard registration flow applies.
 
 ### **Request New Invite**
+
 **Endpoint:** `POST /client/request-invite`  
-**Hook:** `useRequestNewInviteMutation`  
+**Hook:** `useRequestNewInviteMutation`
 
 **Purpose:**  
 Allows a prospective client to request a new invite from a coach or the Tolu Health admin team.
 
 **Request Example:**
+
 ```json
 {
   "email": "anna@example.com",
@@ -604,6 +605,7 @@ Allows a prospective client to request a new invite from a coach or the Tolu Hea
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1018,10 +1020,12 @@ Retrieve complete document details including metadata, sharing info.
 ```
 
 ## **Chat and Messaging Flows:**
+
 This section explains how chat data, messages, files, and notes are managed between the Tolu Health frontend and backend API.
 All interactions are handled via the chatApi slice (src/entities/chat/lib.ts), using RTK Query for secure, token-authenticated communication.
 
 ### **Fetch All Chats**
+
 **Endpoint:** `GET /chat/all`  
 **Hook:** `useFetchAllChatsQuery`
 
@@ -1029,6 +1033,7 @@ All interactions are handled via the chatApi slice (src/entities/chat/lib.ts), u
 Fetches all chat conversations (1:1 and group chats) for the logged-in user.
 
 **Response Example:**
+
 ```json
 [
   {
@@ -1052,6 +1057,7 @@ Fetches all chat conversations (1:1 and group chats) for the logged-in user.
 ```
 
 ### **Fetch Chat Details**
+
 **Endpoint:** `GET /chat/{chat_id}`  
 **Hook:** `useFetchChatDetailsByIdQuery`
 
@@ -1059,6 +1065,7 @@ Fetches all chat conversations (1:1 and group chats) for the logged-in user.
 Retrieves full metadata for a chat, including participants, description, and creation info.
 
 **Response Example:**
+
 ```json
 {
   "chat_id": "chat_001",
@@ -1076,6 +1083,7 @@ Retrieves full metadata for a chat, including participants, description, and cre
 ```
 
 ### **Fetch Chat Messages**
+
 **Endpoint:** `GET /chat/{chat_id}/messages`  
 **Hook:** `useFetchChatMessagesQuery`
 
@@ -1083,6 +1091,7 @@ Retrieves full metadata for a chat, including participants, description, and cre
 Fetches paginated messages for a specific chat.
 
 **Request Example:**
+
 ```json
 {
   "chatId": "chat_001",
@@ -1092,6 +1101,7 @@ Fetches paginated messages for a specific chat.
 ```
 
 **Response Example:**
+
 ```json
 {
   "messages": [
@@ -1111,6 +1121,7 @@ Fetches paginated messages for a specific chat.
 ```
 
 ### **Send Message**
+
 **Endpoint:** `POST /chat/send-message`  
 **Hook:** `useSendMessageMutation`
 
@@ -1118,6 +1129,7 @@ Fetches paginated messages for a specific chat.
 Sends a text message or reply to a specific chat or target user.
 
 **Request Example:**
+
 ```json
 {
   "chat_id": "chat_001",
@@ -1127,6 +1139,7 @@ Sends a text message or reply to a specific chat or target user.
 ```
 
 **Response Example:**
+
 ```json
 {
   "id": "msg_789",
@@ -1138,6 +1151,7 @@ Sends a text message or reply to a specific chat or target user.
 ```
 
 ### **Delete Message**
+
 **Endpoint:** `DELETE /chat/{chat_id}/message/{message_id}`  
 **Hook:** `useDeleteMessageMutation`
 
@@ -1145,6 +1159,7 @@ Sends a text message or reply to a specific chat or target user.
 Deletes a specific message from a chat.
 
 ### **Create Group Chat**
+
 **Endpoint:** `POST /chat/group`  
 **Hook:** `useCreateGroupChatMutation`
 
@@ -1153,6 +1168,7 @@ Creates a new group chat with optional avatar image.
 
 **Request Example:**
 multipart/form-data
+
 ```json
 {
   "request": {
@@ -1165,6 +1181,7 @@ multipart/form-data
 ```
 
 ### **Update Group Chat**
+
 **Endpoint:** `PUT /chat/{chat_id}/update`  
 **Hook:** `useUpdateGroupChatMutation`
 
@@ -1172,6 +1189,7 @@ multipart/form-data
 Updates group name, description, participants, or avatar.
 
 ### **Upload Chat File**
+
 **Endpoint:** `POST /chat/{chat_id}/upload-file`  
 **Hook:** `useUploadChatFileMutation`
 
@@ -1180,6 +1198,7 @@ Uploads a file (image, PDF, or document) to a chat.
 
 **Request Example:**
 multipart/form-data
+
 ```json
 {
   "file": (binary file),
@@ -1188,6 +1207,7 @@ multipart/form-data
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1199,6 +1219,7 @@ multipart/form-data
 ```
 
 ### **Fetch Chat Files**
+
 **Endpoint:** `GET /chat/{chat_id}/files`  
 **Hook:** `useFetchAllFilesByChatIdQuery`
 
@@ -1206,6 +1227,7 @@ multipart/form-data
 Retrieves paginated list of shared files in a chat.
 
 ### **Download Uploaded Chat File**
+
 **Endpoint:** `GET /chat/uploaded-file/{filename}`  
 **Hook:** `useGetUploadedChatFileUrlQuery`
 
@@ -1213,6 +1235,7 @@ Retrieves paginated list of shared files in a chat.
 Downloads or previews uploaded chat file.
 
 ### **Send Chat Note**
+
 **Endpoint:** `POST /chat/note`  
 **Hook:** `useSendChatNoteMutation`
 
@@ -1221,6 +1244,7 @@ Sends a structured note or document in chat (e.g., session summary or recommenda
 
 **Request Example:**
 multipart/form-data
+
 ```json
 {
   "note_data": {
@@ -1233,6 +1257,7 @@ multipart/form-data
 ```
 
 ### **Fetch All Chat Notes**
+
 **Endpoint:** `GET /chat/{chat_id}/notes`  
 **Hook:** `useGetAllChatNotesQuery`
 
@@ -1240,6 +1265,7 @@ multipart/form-data
 Retrieves all notes attached to a chat.
 
 ### **Update Chat Note**
+
 **Endpoint:** `PUT /chat/note/{note_id}`  
 **Hook:** `useUpdateChatNoteMutation`
 
@@ -1247,6 +1273,7 @@ Retrieves all notes attached to a chat.
 Edits an existing chat note or updates its attached file.
 
 ### **Delete Chat Note**
+
 **Endpoint:** `DELETE /chat/note/{note_id}`  
 **Hook:** `useDeleteChatNoteMutation`
 
@@ -1254,6 +1281,7 @@ Edits an existing chat note or updates its attached file.
 Deletes a note from a chat thread.
 
 ### **Delete Chat**
+
 **Endpoint:** `DELETE /chat/{chat_id}`  
 **Hook:** `useDeleteChatMutation`
 
@@ -1261,10 +1289,12 @@ Deletes a note from a chat thread.
 Removes an entire chat (group or direct).
 
 ## **Admin Management Flows:**
+
 This section documents all Admin-only API endpoints that provide access to user management, feedback insights, chat moderation, folder structures, and unpublished content oversight.
 All requests are made via the adminApi slice (src/entities/admin/lib.ts), using RTK Query with secure JWT-based authentication.
 
 ### **Get All Users**
+
 **Endpoint:** `GET /admin/users`  
 **Hook:** `useGetAllUsersQuery`
 
@@ -1272,6 +1302,7 @@ All requests are made via the adminApi slice (src/entities/admin/lib.ts), using 
 Retrieves a list of all registered users (clients, coaches, and admins) for administrative review.
 
 **Response Example:**
+
 ```json
 {
   "users": [
@@ -1294,6 +1325,7 @@ Retrieves a list of all registered users (clients, coaches, and admins) for admi
 ```
 
 ### **Get Feedback**
+
 **Endpoint:** `GET /admin/feedback`  
 **Hook:** `useGetFeedbackQuery`
 
@@ -1301,6 +1333,7 @@ Retrieves a list of all registered users (clients, coaches, and admins) for admi
 Retrieves all coach and client feedback, including satisfaction scores, ratings, and comments.
 
 **Request parameters**
+
 ```json
 {
   "limit": 10,
@@ -1311,6 +1344,7 @@ Retrieves all coach and client feedback, including satisfaction scores, ratings,
 ```
 
 **Response Example:**
+
 ```json
 {
   "coach_feedback": {
@@ -1356,6 +1390,7 @@ Retrieves all coach and client feedback, including satisfaction scores, ratings,
 ```
 
 ### **Get All Chats**
+
 **Endpoint:** `GET /admin/chats`  
 **Hook:** `useGetAllChatsQuery`
 
@@ -1363,6 +1398,7 @@ Retrieves all coach and client feedback, including satisfaction scores, ratings,
 Fetches all chat threads accessible by the admin, including their metadata and unread message counts.
 
 **Response Example:**
+
 ```json
 [
   {
@@ -1383,6 +1419,7 @@ Fetches all chat threads accessible by the admin, including their metadata and u
 ```
 
 ### **Get Messages by Chat ID**
+
 **Endpoint:** `GET /admin/chats/{chat_id}/messages`  
 **Hook:** `useGetMessagesByChatIdQuery`
 
@@ -1390,6 +1427,7 @@ Fetches all chat threads accessible by the admin, including their metadata and u
 Retrieves paginated messages within a specific chat for moderation or review.
 
 **Request Example:**
+
 ```json
 {
   "chat_id": "chat_001",
@@ -1399,6 +1437,7 @@ Retrieves paginated messages within a specific chat for moderation or review.
 ```
 
 **Response Example:**
+
 ```json
 [
   {
@@ -1412,6 +1451,7 @@ Retrieves paginated messages within a specific chat for moderation or review.
 ```
 
 ### **Send Admin Message**
+
 **Endpoint:** `POST /admin/send-message`  
 **Hook:** `useSendMessageMutation`
 
@@ -1419,6 +1459,7 @@ Retrieves paginated messages within a specific chat for moderation or review.
 Allows an admin to broadcast or send a message to a specific user group (e.g., all coaches, clients, or admins).
 
 **Request Example:**
+
 ```json
 {
   "content": "Reminder: Submit feedback by Friday.",
@@ -1428,6 +1469,7 @@ Allows an admin to broadcast or send a message to a specific user group (e.g., a
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1438,6 +1480,7 @@ Allows an admin to broadcast or send a message to a specific user group (e.g., a
 ```
 
 ### **Get Folders Structure**
+
 **Endpoint:** `GET /admin/folders`  
 **Hook:** `useGetFoldersStructureQuery`
 
@@ -1445,6 +1488,7 @@ Allows an admin to broadcast or send a message to a specific user group (e.g., a
 Retrieves the entire folder structure visible to the admin, optionally filtered by user or folder ID.
 
 **Request Example:**
+
 ```json
 {
   "page": 1,
@@ -1454,6 +1498,7 @@ Retrieves the entire folder structure visible to the admin, optionally filtered 
 ```
 
 **Response Example:**
+
 ```json
 {
   "approved": [
@@ -1474,6 +1519,7 @@ Retrieves the entire folder structure visible to the admin, optionally filtered 
 ```
 
 ### **Get Unpublished Content**
+
 **Endpoint:** `GET /admin/unpublished-content`  
 **Hook:** `useGetUnpublishedContentQuery`
 
@@ -1481,6 +1527,7 @@ Retrieves the entire folder structure visible to the admin, optionally filtered 
 Lists all unpublished or rejected content across the platform with optional date and author filters.
 
 **Request Example:**
+
 ```json
 {
   "page": 1,
@@ -1492,6 +1539,7 @@ Lists all unpublished or rejected content across the platform with optional date
 ```
 
 **Response Example:**
+
 ```json
 {
   "items": [
@@ -1509,6 +1557,7 @@ Lists all unpublished or rejected content across the platform with optional date
 ```
 
 ### **Manage Content**
+
 **Endpoint:** `PUT /admin/manage-content`  
 **Hook:** `useManageContentMutation`
 
@@ -1516,6 +1565,7 @@ Lists all unpublished or rejected content across the platform with optional date
 Allows an admin to approve, reject, or unpublish a specific content item, optionally adding a comment or reason.
 
 **Request Example:**
+
 ```json
 {
   "content_id": "content_001",
@@ -1526,6 +1576,7 @@ Allows an admin to approve, reject, or unpublish a specific content item, option
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1534,10 +1585,12 @@ Allows an admin to approve, reject, or unpublish a specific content item, option
 ```
 
 ## **Client Health History Flows:**
+
 This section describes how a client’s health history data is created, retrieved, and managed through the Tolu Health frontend and backend API.
 All health history data is handled securely through the healthHistoryApi slice (src/entities/health-history/lib.ts) using RTK Query and FormData-based REST API calls.
 
 ### **Get User Health History**
+
 **Endpoint:** `GET /health-history`  
 **Hook:** `useGetUserHealthHistoryQuery`
 
@@ -1546,6 +1599,7 @@ Retrieves the complete health history profile for the currently authenticated cl
 Includes demographic, lifestyle, medical, and goal-related information as filled during onboarding or updates.
 
 **Response Example:**
+
 ```json
 {
   "id": "hh_001",
@@ -1586,6 +1640,7 @@ Includes demographic, lifestyle, medical, and goal-related information as filled
 ```
 
 ### **Create or Update Health History**
+
 **Endpoint:** `POST /health-history`  
 **Hook:** `useCreateHealthHistoryMutation`
 
@@ -1601,6 +1656,7 @@ Supports uploading lab reports and linking the record to a specific client (for 
 
 **Request Example:**
 multipart/form-data
+
 ```json
 {
   "health_data": {
@@ -1625,6 +1681,7 @@ multipart/form-data
 ```
 
 ### **Get Lab Report**
+
 **Endpoint:** `GET /health-history/lab-report/{filename}`  
 **Hook:** `useGetLabReportQuery`
 
@@ -1633,6 +1690,7 @@ Downloads a specific lab report previously uploaded as part of the client’s he
 Supports optional client_id for admin or coach access.
 
 **Request Example:**
+
 ```json
 {
   "filename": "lab_results_2025_01.pdf",
@@ -1644,9 +1702,11 @@ Supports optional client_id for admin or coach access.
 Returns the binary file (PDF or image) for secure download or inline preview.
 
 ## **Symptoms Tracker Flows:**
+
 This section describes how clients can log, update, and analyze their daily symptoms in the Tolu Health platform, as well as how AI suggestions assist in symptom identification and tracking.
 
 ### **Add Symptoms Record**
+
 **Endpoint:** `POST /symptoms-tracker`  
 **Hook:** `useAddSymptomsMutation`
 
@@ -1661,6 +1721,7 @@ Clients can attach optional photos (e.g., skin condition, meal photo) or voice n
 
 **Request Example:**
 multipart/form-data
+
 ```json
 {
   "symptom_data": {
@@ -1685,6 +1746,7 @@ multipart/form-data
 ```
 
 ### **Edit Symptoms Record**
+
 **Endpoint:** `PUT /symptoms-tracker/{record_id}`  
 **Hook:** `useEditSymptomsMutation`
 
@@ -1694,6 +1756,7 @@ Used when users need to modify previously logged entries.
 
 **Request Example:**
 multipart/form-data
+
 ```json
 {
   "symptom_data": {
@@ -1708,6 +1771,7 @@ multipart/form-data
 ```
 
 ### **Get Symptom by Date**
+
 **Endpoint:** `GET /symptoms-tracker/{target_date}`  
 **Hook:** `useGetSymptomByDateQuery`
 
@@ -1715,6 +1779,7 @@ multipart/form-data
 Retrieves all recorded symptoms and details for a specific date.
 
 **Request Example:**
+
 ```json
 {
   "target_date": "2025-01-22"
@@ -1722,6 +1787,7 @@ Retrieves all recorded symptoms and details for a specific date.
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1742,6 +1808,7 @@ Retrieves all recorded symptoms and details for a specific date.
 ```
 
 ### **Delete Symptom Record**
+
 **Endpoint:** `DELETE /symptoms-tracker/{symptom_id}`  
 **Hook:** `useDeleteSymptomMutation`
 
@@ -1749,6 +1816,7 @@ Retrieves all recorded symptoms and details for a specific date.
 Deletes a specific symptom record (for instance, when the user wants to remove a duplicate or incorrect entry).
 
 **Request Example:**
+
 ```json
 {
   "symptom_id": "sym_001"
@@ -1756,6 +1824,7 @@ Deletes a specific symptom record (for instance, when the user wants to remove a
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1764,6 +1833,7 @@ Deletes a specific symptom record (for instance, when the user wants to remove a
 ```
 
 ### **Get AI Suggestions**
+
 **Endpoint:** `GET /symptoms-tracker/ai-suggestions`  
 **Hook:** `useGetAiSuggestionsQuery`
 
@@ -1771,13 +1841,10 @@ Deletes a specific symptom record (for instance, when the user wants to remove a
 Provides AI-powered symptom and trigger recommendations based on previously logged entries and similar user data patterns.
 
 **Response Example:**
+
 ```json
 {
-  "suggested_symptoms": [
-    "fatigue",
-    "bloating",
-    "irritability"
-  ],
+  "suggested_symptoms": ["fatigue", "bloating", "irritability"],
   "suggested_triggers": [
     "lack of sleep",
     "high sugar intake",
@@ -1787,10 +1854,12 @@ Provides AI-powered symptom and trigger recommendations based on previously logg
 ```
 
 ## **Notifications Flows:**
+
 This section outlines how notifications are retrieved, managed, and customized in the Tolu Health platform.
 All notification data flows through the notificationsApi slice (src/entities/notifications/lib.ts) using RTK Query and secure JWT-authenticated REST API calls.
 
 ### **Get Notifications**
+
 **Endpoint:** `GET /notifications`  
 **Hook:** `useGetNotificationsQuery`
 
@@ -1798,6 +1867,7 @@ All notification data flows through the notificationsApi slice (src/entities/not
 Fetches paginated user notifications, with optional filters for unread items and notification type.
 
 **Request Example:**
+
 ```json
 {
   "page": 1,
@@ -1808,6 +1878,7 @@ Fetches paginated user notifications, with optional filters for unread items and
 ```
 
 **Response Example:**
+
 ```json
 [
   {
@@ -1831,6 +1902,7 @@ Fetches paginated user notifications, with optional filters for unread items and
 ```
 
 ### **Get Unread Count**
+
 **Endpoint:** `GET /notifications/unread`  
 **Hook:** `useGetUnreadCountQuery`
 
@@ -1838,6 +1910,7 @@ Fetches paginated user notifications, with optional filters for unread items and
 Retrieves the total number of unread notifications for the logged-in user.
 
 **Response Example:**
+
 ```json
 {
   "unread_count": 3
@@ -1845,6 +1918,7 @@ Retrieves the total number of unread notifications for the logged-in user.
 ```
 
 ### **Mark Notifications as Read**
+
 **Endpoint:** `POST /notifications/mark-as-read`  
 **Hook:** `useMarkNotificationAsReadMutation`
 
@@ -1852,6 +1926,7 @@ Retrieves the total number of unread notifications for the logged-in user.
 Marks one or more notifications as read.
 
 **Request Example:**
+
 ```json
 {
   "notification_ids": ["notif_001", "notif_002"]
@@ -1859,6 +1934,7 @@ Marks one or more notifications as read.
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1867,6 +1943,7 @@ Marks one or more notifications as read.
 ```
 
 ### **Dismiss Notification**
+
 **Endpoint:** `POST /notifications/{notification_id}/dismiss`  
 **Hook:** `useDismissNotificationsMutation`
 
@@ -1874,6 +1951,7 @@ Marks one or more notifications as read.
 Dismisses or removes a specific notification from the user’s notification list.
 
 **Request Example:**
+
 ```json
 {
   "notification_id": "notif_003"
@@ -1881,6 +1959,7 @@ Dismisses or removes a specific notification from the user’s notification list
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1889,6 +1968,7 @@ Dismisses or removes a specific notification from the user’s notification list
 ```
 
 ### **Get Notification Preferences**
+
 **Endpoint:** `GET /notifications/preferences`  
 **Hook:** `useGetNotificationPreferencesQuery`
 
@@ -1896,6 +1976,7 @@ Dismisses or removes a specific notification from the user’s notification list
 Retrieves the user’s notification settings, such as whether in-app or email notifications are enabled.
 
 **Response Example:**
+
 ```json
 {
   "notifications_enabled": true
@@ -1903,6 +1984,7 @@ Retrieves the user’s notification settings, such as whether in-app or email no
 ```
 
 ### **Update Notification Preferences**
+
 **Endpoint:** `PUT /notifications/preferences`  
 **Hook:** `useUpdateNotificationPreferencesMutation`
 
@@ -1910,6 +1992,7 @@ Retrieves the user’s notification settings, such as whether in-app or email no
 Allows the user to update their notification settings (e.g., toggle notification delivery).
 
 **Request Example:**
+
 ```json
 {
   "notifications_enabled": false
@@ -1917,6 +2000,7 @@ Allows the user to update their notification settings (e.g., toggle notification
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -1925,10 +2009,12 @@ Allows the user to update their notification settings (e.g., toggle notification
 ```
 
 ## **Coach Files Library Flows:**
+
 This section describes how coaches manage files and folders in the Tolu Health Files Library.
 All operations (upload, download, folder management, and moving files) are handled through the filesLibraryApi slice (src/entities/files-library/lib.ts) using RTK Query and JWT-secured REST endpoints.
 
 ### **Fetch All Files**
+
 **Endpoint:** `GET /files-library`  
 **Hook:** `useFetchAllFilesQuery`
 
@@ -1937,6 +2023,7 @@ Retrieves all files and folders accessible to the logged-in coach.
 Supports pagination, search, and file-type filtering.
 
 **Request Example:**
+
 ```json
 {
   "page": 1,
@@ -1947,6 +2034,7 @@ Supports pagination, search, and file-type filtering.
 ```
 
 **Response Example:**
+
 ```json
 {
   "root_folders": [
@@ -1977,6 +2065,7 @@ Supports pagination, search, and file-type filtering.
 ```
 
 ### **Fetch Single File**
+
 **Endpoint:** `GET /files-library/{file_id}`  
 **Hook:** `useFetchFileLibraryQuery`
 
@@ -1984,6 +2073,7 @@ Supports pagination, search, and file-type filtering.
 Retrieves detailed metadata for a specific uploaded file.
 
 **Response Example:**
+
 ```json
 {
   "id": "file_001",
@@ -2001,6 +2091,7 @@ Retrieves detailed metadata for a specific uploaded file.
 ```
 
 ### **Upload Files**
+
 **Endpoint:** `POST /files-library/upload`  
 **Hook:** `useUploadFilesLibraryMutation`
 
@@ -2013,6 +2104,7 @@ Uploads one or multiple files to a folder. Coaches can attach descriptions and o
 
 **Request Example:**
 multipart/form-data
+
 ```json
 {
   "files": [(binary file), (binary file)],
@@ -2022,6 +2114,7 @@ multipart/form-data
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2030,6 +2123,7 @@ multipart/form-data
 ```
 
 ### **Download File**
+
 **Endpoint:** `GET /files-library/download/{file_id}`  
 **Hook:** `useDownloadFileLibraryQuery`
 
@@ -2037,6 +2131,7 @@ multipart/form-data
 Downloads a file from the library for offline access or review.
 
 **Request Example:**
+
 ```json
 {
   "file_id": "file_001"
@@ -2047,6 +2142,7 @@ Downloads a file from the library for offline access or review.
 Returns the binary file (e.g., PDF, DOCX, or image) as a Blob.
 
 ### **Delete File**
+
 **Endpoint:** `DELETE /files-library/{file_id}`  
 **Hook:** `useDeleteFileLibraryMutation`
 
@@ -2054,6 +2150,7 @@ Returns the binary file (e.g., PDF, DOCX, or image) as a Blob.
 Deletes a specific file from the coach’s library.
 
 **Request Example:**
+
 ```json
 {
   "file_id": "file_001"
@@ -2061,6 +2158,7 @@ Deletes a specific file from the coach’s library.
 ```
 
 ### **Create Folder**
+
 **Endpoint:** `POST /files-library/folders`  
 **Hook:** `useCreateFolderMutation`
 
@@ -2068,6 +2166,7 @@ Deletes a specific file from the coach’s library.
 Creates a new folder to organize uploaded files. Supports nested folder structures.
 
 **Request Example:**
+
 ```json
 {
   "name": "Hormone Health",
@@ -2077,6 +2176,7 @@ Creates a new folder to organize uploaded files. Supports nested folder structur
 ```
 
 **Response Example:**
+
 ```json
 {
   "id": "fld_002",
@@ -2088,6 +2188,7 @@ Creates a new folder to organize uploaded files. Supports nested folder structur
 ```
 
 ### **Get Folder Details**
+
 **Endpoint:** `GET /files-library/folders/{folder_id}`  
 **Hook:** `useGetFolderQuery`
 
@@ -2095,6 +2196,7 @@ Creates a new folder to organize uploaded files. Supports nested folder structur
 Retrieves metadata for a specific folder.
 
 **Response Example:**
+
 ```json
 {
   "id": "fld_002",
@@ -2108,6 +2210,7 @@ Retrieves metadata for a specific folder.
 ```
 
 ### **Update Folder**
+
 **Endpoint:** `PUT /files-library/folders/{folder_id}`  
 **Hook:** `useUpdateFolderMutation`
 
@@ -2115,6 +2218,7 @@ Retrieves metadata for a specific folder.
 Updates the name or description of a folder, or reassigns its parent folder.
 
 **Request Example:**
+
 ```json
 {
   "folderId": "fld_002",
@@ -2126,6 +2230,7 @@ Updates the name or description of a folder, or reassigns its parent folder.
 ```
 
 **Response Example:**
+
 ```json
 {
   "id": "fld_002",
@@ -2136,6 +2241,7 @@ Updates the name or description of a folder, or reassigns its parent folder.
 ```
 
 ### **Get Folder Contents**
+
 **Endpoint:** `GET /files-library/folders/{folder_id}/contents`  
 **Hook:** `useGetFolderContentsQuery`
 
@@ -2143,6 +2249,7 @@ Updates the name or description of a folder, or reassigns its parent folder.
 Lists subfolders and files contained in a specific folder with pagination support.
 
 **Request Example:**
+
 ```json
 {
   "folderId": "fld_002",
@@ -2152,6 +2259,7 @@ Lists subfolders and files contained in a specific folder with pagination suppor
 ```
 
 **Response Example:**
+
 ```json
 {
   "current_folder": {
@@ -2178,6 +2286,7 @@ Lists subfolders and files contained in a specific folder with pagination suppor
 ```
 
 ### **Delete Folder**
+
 **Endpoint:** `DELETE /files-library/folders/{folder_id}`  
 **Hook:** `useDeleteFolderMutation`
 
@@ -2185,6 +2294,7 @@ Lists subfolders and files contained in a specific folder with pagination suppor
 Deletes a folder and all contained sub-items (if allowed by policy).
 
 **Request Example:**
+
 ```json
 {
   "folder_id": "fld_003"
@@ -2192,6 +2302,7 @@ Deletes a folder and all contained sub-items (if allowed by policy).
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2200,6 +2311,7 @@ Deletes a folder and all contained sub-items (if allowed by policy).
 ```
 
 ### **Move Files Between Folders**
+
 **Endpoint:** `POST /files-library/move-files`  
 **Hook:** `useMoveFilesMutation`
 
@@ -2207,6 +2319,7 @@ Deletes a folder and all contained sub-items (if allowed by policy).
 Moves one or more files into another folder.
 
 **Request Example:**
+
 ```json
 {
   "file_ids": ["file_001", "file_002"],
@@ -2215,6 +2328,7 @@ Moves one or more files into another folder.
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2223,9 +2337,11 @@ Moves one or more files into another folder.
 ```
 
 ## **Tracker Management (FMP Tracker):**
+
 These endpoints enable coaches to submit, share, and delete tracker data such as Food-Mood-Poop logs or similar client metrics.
 
 ### **Submit Tracker**
+
 **Endpoint:** `POST /coach/fmp`  
 **Hook:** `useSubmitTrackerMutation`
 
@@ -2233,6 +2349,7 @@ These endpoints enable coaches to submit, share, and delete tracker data such as
 Submits a new FMP tracker entry for a client, recording daily lifestyle and health metrics.
 
 **Request Example:**
+
 ```json
 {
   "client_id": "client_123",
@@ -2246,6 +2363,7 @@ Submits a new FMP tracker entry for a client, recording daily lifestyle and heal
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2254,6 +2372,7 @@ Submits a new FMP tracker entry for a client, recording daily lifestyle and heal
 ```
 
 ### **Share Tracker**
+
 **Endpoint:** `POST /coach/share-fmp`  
 **Hook:** `useShareTrackerMutation`
 
@@ -2261,6 +2380,7 @@ Submits a new FMP tracker entry for a client, recording daily lifestyle and heal
 Shares an existing tracker entry with a client or another practitioner for collaborative review.
 
 **Request Example:**
+
 ```json
 {
   "tracker_id": "trk_123",
@@ -2269,6 +2389,7 @@ Shares an existing tracker entry with a client or another practitioner for colla
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2277,6 +2398,7 @@ Shares an existing tracker entry with a client or another practitioner for colla
 ```
 
 ### **Delete Tracker**
+
 **Endpoint:** `DELETE /coach/fmp/{tracker_id}`  
 **Hook:** `useDeleteTrackerMutation`
 
@@ -2284,6 +2406,7 @@ Shares an existing tracker entry with a client or another practitioner for colla
 Removes a previously submitted tracker entry.
 
 **Request Example:**
+
 ```json
 {
   "tracker_id": "trk_123"
@@ -2291,6 +2414,7 @@ Removes a previously submitted tracker entry.
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2301,6 +2425,7 @@ Removes a previously submitted tracker entry.
 ## **Lab Files Management:**
 
 ### **Get Lab File**
+
 **Endpoint:** `GET /coach/labs/{client_id}/{file_name}`  
 **Hook:** `useGetLabFileQuery`
 
@@ -2308,6 +2433,7 @@ Removes a previously submitted tracker entry.
 Downloads or previews a lab file uploaded for a client.
 
 **Request Example:**
+
 ```json
 {
   "client_id": "client_123",
@@ -2321,6 +2447,7 @@ Returns the binary lab file (PDF, image, or text report) for preview or download
 ## **Coach Content Library:**
 
 ### **Get All User Content**
+
 **Endpoint:** `GET /coach/search-content`  
 **Hook:** `useGetAllUserContentQuery`
 
@@ -2328,6 +2455,7 @@ Returns the binary lab file (PDF, image, or text report) for preview or download
 Fetches all content items authored or shared by the coach. Used in the coach dashboard for browsing personal and AI-generated materials.
 
 **Response Example:**
+
 ```json
 {
   "contents": [
@@ -2350,6 +2478,7 @@ Fetches all content items authored or shared by the coach. Used in the coach das
 ## **Folder editing:**
 
 ### **Edit Folder**
+
 **Endpoint:** `PUT /coach/edit-folder`  
 **Hook:** `useEditFolderMutation`
 
@@ -2359,6 +2488,7 @@ Supports uploading multiple files along with folder details using multipart/form
 
 **Request Example:**
 multipart/form-data
+
 ```json
 {
   "edit_data": {
@@ -2371,6 +2501,7 @@ multipart/form-data
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2381,6 +2512,7 @@ multipart/form-data
 ## **Coach Management and Client Interaction Flows:**
 
 ### **Delete Client**
+
 **Endpoint:** `DELETE /coach/clients/{client_id}`  
 **Hook:** `useDeleteClientMutation`
 
@@ -2388,6 +2520,7 @@ multipart/form-data
 Removes a client from the coach’s managed list. Typically used when the coaching relationship has ended or the client requests removal.
 
 **Request Example:**
+
 ```json
 {
   "client_id": "client_123"
@@ -2395,6 +2528,7 @@ Removes a client from the coach’s managed list. Typically used when the coachi
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2403,6 +2537,7 @@ Removes a client from the coach’s managed list. Typically used when the coachi
 ```
 
 ### **Get Client Info**
+
 **Endpoint:** `GET /coach/clients/{client_id}/info`  
 **Hook:** `useLazyGetClientInfoQuery`
 
@@ -2410,6 +2545,7 @@ Removes a client from the coach’s managed list. Typically used when the coachi
 Retrieves full detailed client information, including demographics, onboarding status, goals, and recent interactions. Used in the coach’s client detail dashboard.
 
 **Response Example:**
+
 ```json
 {
   "id": "client_123",
@@ -2425,6 +2561,7 @@ Retrieves full detailed client information, including demographics, onboarding s
 ```
 
 ### **Edit Client Info**
+
 **Endpoint:** `PUT /coach/clients/{client_id}/info`  
 **Hook:** `useEditClientMutation`
 
@@ -2432,6 +2569,7 @@ Retrieves full detailed client information, including demographics, onboarding s
 Allows a coach to update a client’s profile data — such as name, email, timezone, and coach notes — directly from the management panel.
 
 **Request Example:**
+
 ```json
 {
   "clientId": "client_123",
@@ -2445,6 +2583,7 @@ Allows a coach to update a client’s profile data — such as name, email, time
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -2453,6 +2592,7 @@ Allows a coach to update a client’s profile data — such as name, email, time
 ```
 
 ### **Update Chat Title**
+
 **Endpoint:** `PUT /ai/update-chat-title`  
 **Hook:** `useUpdateChatTitleMutation`
 
@@ -2460,6 +2600,7 @@ Allows a coach to update a client’s profile data — such as name, email, time
 Renames a chat session (for example, an AI learning thread or a client conversation) to keep chat history organized and contextual.
 
 **Request Example:**
+
 ```json
 {
   "chat_id": "chat_001",
@@ -2468,32 +2609,10 @@ Renames a chat session (for example, an AI learning thread or a client conversat
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
   "message": "Chat title updated."
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
