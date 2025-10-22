@@ -1,8 +1,7 @@
 import { logout } from "entities/user";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useRef } from "react";
+import { useDispatch, useStore } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useStore } from "react-redux";
 
 export const AuthErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -10,35 +9,52 @@ export const AuthErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const store = useStore();
+  const hasLoggedOut = useRef(false);
 
   useEffect(() => {
     if (location.pathname === "/auth") return;
-    // Subscribe to RTK Query error updates
+
     const unsubscribe = store.subscribe(() => {
+      if (hasLoggedOut.current) return;
+
       const state: any = store.getState();
-      const queries = state.userApi?.queries ?? {};
-      const mutations = state.userApi?.mutations ?? {};
 
-      // Combine queries + mutations so we can inspect all
-      const all = { ...queries, ...mutations };
+      const apiSlices = Object.keys(state).filter(
+        (key) =>
+          state[key] &&
+          typeof state[key] === "object" &&
+          state[key].queries &&
+          state[key].mutations
+      );
 
-      for (const key in all) {
-        const result = all[key];
-        const error = result?.error;
-        if (!error) continue;
+      for (const sliceKey of apiSlices) {
+        const slice = state[sliceKey];
+        const all = { ...slice.queries, ...slice.mutations };
 
-        const status = error.status;
-        const message =
-          error.data?.detail || error.data?.message || error.data?.error || "";
+        for (const key in all) {
+          const result = all[key];
+          const error = result?.error;
+          if (!error) continue;
 
-        if (
-          (status === 401 || status === 403) &&
-          message.toLowerCase().includes("token")
-        ) {
-          dispatch(logout());
-          localStorage.clear();
-          navigate("/auth", { replace: true });
-          break;
+          const status = error.status;
+          const message =
+            error.data?.detail ||
+            error.data?.message ||
+            error.data?.error ||
+            "";
+
+          if (
+            status === 403 &&
+            (message.toLowerCase().includes("token") ||
+              message.toLowerCase().includes("authenticated"))
+          ) {
+            hasLoggedOut.current = true;
+            unsubscribe();
+            dispatch(logout());
+            localStorage.clear();
+            navigate("/auth", { replace: true });
+            return;
+          }
         }
       }
     });
