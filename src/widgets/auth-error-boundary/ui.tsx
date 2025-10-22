@@ -2,34 +2,49 @@ import { logout } from "entities/user";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useStore } from "react-redux";
 
 export const AuthErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const store = useStore();
 
   useEffect(() => {
-    const handleError = (
-      event: CustomEvent<{ status?: number; message?: string }>
-    ) => {
-      if (location.pathname === "/auth") return;
+    if (location.pathname === "/auth") return;
+    // Subscribe to RTK Query error updates
+    const unsubscribe = store.subscribe(() => {
+      const state: any = store.getState();
+      const queries = state.userApi?.queries ?? {};
+      const mutations = state.userApi?.mutations ?? {};
 
-      const status = event.detail?.status;
-      const msg = (event.detail?.message ?? "").toLowerCase();
-      if (
-        (status === 403 || status === 401) &&
-        (msg.includes("invalid token") || msg.includes("expired token"))
-      ) {
-        dispatch(logout());
-        localStorage.clear();
-        navigate("/auth", { replace: true });
+      // Combine queries + mutations so we can inspect all
+      const all = { ...queries, ...mutations };
+
+      for (const key in all) {
+        const result = all[key];
+        const error = result?.error;
+        if (!error) continue;
+
+        const status = error.status;
+        const message =
+          error.data?.detail || error.data?.message || error.data?.error || "";
+
+        if (
+          (status === 401 || status === 403) &&
+          message.toLowerCase().includes("token")
+        ) {
+          dispatch(logout());
+          localStorage.clear();
+          navigate("/auth", { replace: true });
+          break;
+        }
       }
-    };
-    window.addEventListener("api-error", handleError as EventListener);
-    return () =>
-      window.removeEventListener("api-error", handleError as EventListener);
-  }, [navigate]);
+    });
+
+    return () => unsubscribe();
+  }, [dispatch, navigate, store]);
 
   return <>{children}</>;
 };
