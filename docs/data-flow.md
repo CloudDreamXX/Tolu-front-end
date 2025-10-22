@@ -1,5 +1,19 @@
 # Tolu Health Frontend – Data & Architecture Documentation
 
+## Purpose & Goals
+
+Tolu Health Frontend is the client-facing application of the Tolu Health platform.  
+Its purpose is to provide a seamless, secure, and responsive interface for:
+- Clients tracking health, symptoms, and progress.
+- Coaches managing clients, onboarding, and content.
+- Admins monitoring users, feedback, and content moderation.
+
+### Key Goals
+- Enable **data-driven health coaching** through AI insights and user tracking.
+- Maintain **high security and privacy standards** (HIPAA / SSL).
+- Ensure **modular, scalable frontend architecture** using FSD.
+- Support **multi-role access** (client, coach, admin) with shared components.
+
 ## Overview
 
 This document provides a **complete overview of data flow, architecture, and API integration** between the Tolu Health frontend and backend services.
@@ -47,6 +61,18 @@ Database
 | Production | https://app.tolu.health/ | Live environment |
 
 Environment variables are managed via `.env`:
+
+### Tooling Overview
+
+| Tool | Scope | Notes |
+|------|--------|-------|
+| React + Vite | Frontend framework and build tool | Used for all UI rendering |
+| Redux Toolkit | Global state management | Centralized user/session data |
+| RTK Query | API communication layer | Handles all backend integration |
+| TailwindCSS | UI design system | Shared theme and responsive layout |
+| React Hook Form | Form handling | Validation integrated with Zod |
+| Axios | REST API requests | Used inside RTK Query baseQuery |
+| ESLint + Prettier | Code quality | Enforced via CI/CD pipeline |
 
 ## Data Flow Documentation
 
@@ -189,13 +215,15 @@ Payload:
 multipart/form-data
 
 ```json
-  onboarding_data: {
+{
+  "onboarding_data": {
     "agreements": { "terms_of_use": true, "confidentiality": true },
     "practitioner_info": { "school": "Stanford", "types": ["nutritionist"] },
     "business_setup": { "practice_software": "Notion" }
-  }
-  headshot: (binary file)
-  license_files: (binary files)
+  },
+  "headshot": (binary file),
+  "license_files": (binary files)
+}
 ```
 
 ## **Client Onboarding**
@@ -451,15 +479,17 @@ Allows clients to update their personal information (name, email, phone, DOB, ti
 multipart/form-data
 
 ```json
-  profile_data: {
+{
+  "profile_data": {
     "name": "Anna Smith",
     "email": "anna.smith@example.com",
     "phone": "+1234567890",
     "dob": "1988-04-12",
     "timezone": "Europe/London",
     "gender": "female"
-  }
-  photo: (binary file)
+  },
+  "photo": (binary file)
+}
 ```
 
 ### **Update Coach Profile**
@@ -484,7 +514,8 @@ The endpoint supports both structured profile updates and file uploads in a sing
 multipart/form-data
 
 ```json
- onboarding_data: {
+{
+"onboarding_data": {
     "first_name": "Jane",
     "last_name": "Doe",
     "email": "jane.doe@example.com",
@@ -497,10 +528,11 @@ multipart/form-data
     "bio": "Helping women achieve balanced health through holistic nutrition.",
     "terms_of_use_accepted": true,
     "confidentiality_accepted": true
-  }
-  headshot: (binary file)
-  license_files: (binary file array)
-  photo: (binary file)
+  },
+  "headshot": (binary file),
+  "license_files": (binary file array),
+  "photo": (binary file)
+}
 ```
 
 ## **Invitation Requests Overview:**
@@ -2643,7 +2675,7 @@ Renames a chat session (for example, an AI learning thread or a client conversat
 - JWT authentication with refresh token rotation.
 - Sensitive data (tokens, credentials) stored only in Redux and localStorage.
 - File uploads sanitized and validated before submission.
-- Compliant with GDPR and HIPAA guidelines.
+- Compliant with SSL and HIPAA guidelines.
 - Regular vulnerability scans and dependency audits.
 
 ## Component Organization
@@ -2653,6 +2685,7 @@ Each layer of the `src/` directory has a specific purpose and interaction rules 
 
 ## Frontend Code Structure
 
+```bash
 src/
 ├─ app/ # Application root: routing, providers, layouts
 │ ├─ routes/ # Route configuration, guards, and layout wrappers
@@ -2730,6 +2763,7 @@ src/
 ├─ index.css # Global styles and Tailwind base layers
 ├─ main.tsx # Entry point: renders <App />, connects providers and routes
 └─ vite-env.d.ts # Vite TypeScript environment definitions
+```
 
 ## Layer Interaction Rules (Detailed Frontend Architecture)
 
@@ -2837,17 +2871,73 @@ They are typically larger than a single feature but smaller than a page.
 
 | Widget | Purpose |
 |--------|----------|
-| `AddClientModal` | Modal for adding new clients (includes form + API call) |
-| `auth-error-boundary` | Error boundary for authentication routes |
-| `auth-forms` | All login/signup/reset forms |
-| `bad-rate-response-popup` | Pop-up for user feedback with rating |
-| `BottomButtons` | Sticky footer buttons used in onboarding and forms |
-| `Calendar` | Calendar widget for scheduling sessions or tracking progress |
-| `change-admin-status-popup` | Admin status change modal |
-| `change-password-modal` | Modal for user password update |
-| `ChangeStatusPopup` | Generic popup for changing entity state |
-| `ChooseSubfolderPanel` / `ChooseSubfolderPopup` | UI for folder selection in file management |
-| `client-edit-profile-modal` | Modal for editing client profiles |
+| `AddClientModal` | Modal for adding a new client, includes validation and API call. |
+| `auth-error-boundary` | Handles authentication-related runtime errors gracefully. |
+| `auth-forms` | Contains login, signup, and password recovery forms. |
+| `bad-rate-response-popup` | Popup shown for failed or invalid rating submissions. |
+| `BottomButtons` | Sticky footer buttons for mobile or form navigation. |
+| `Calendar` | Calendar view for scheduling or tracking sessions. |
+| `change-admin-status-popup` | Modal for changing admin privileges. |
+| `change-password-modal` | User password update dialog. |
+| `ChangeStatusPopup` | Generic entity status change modal. |
+| `ChooseSubfolderPanel` | Panel for selecting subfolders during file organization. |
+| `ChooseSubfolderPopup` | Popup for selecting destination subfolders. |
+| `client-edit-profile-modal` | Edit form for client profile details. |
+| `ConfirmCancelModal` | Confirmation dialog for cancel actions. |
+| `ConfirmDeleteModal` | Confirmation dialog for delete actions. |
+| `ConfirmDiscardModal` | Confirms discarding unsaved changes. |
+| `ConfirmModal` | General-purpose confirmation modal. |
+| `content-popovers` | Tooltip/popover wrappers for contextual UI hints. |
+| `conversation-item` | Single chat or conversation preview item. |
+| `conversation-list` | List view of multiple chat conversations. |
+| `couch-edit-profile-modal` | Modal for editing practitioner or “coach” profiles. |
+| `CreateSubfolderPopup` | UI for creating a new subfolder. |
+| `CRMSelectField` | Custom select field for CRM-related inputs. |
+| `CustomRadio` | Styled radio input component with enhanced accessibility. |
+| `date-of-birth-picker` | Date picker specialized for birth date input. |
+| `date-time-picker` | Combined date and time selector widget. |
+| `dayli-journal` | Client daily journal entry view/editor. |
+| `DeleteMessagePopup` | Confirmation popup for message deletion. |
+| `document-breadcrumbs` | Breadcrumb navigation for document hierarchy. |
+| `document-header` | Header bar for document views. |
+| `document-info-header` | Displays metadata (author, date, etc.) for a document. |
+| `EditClientModal` | Modal for editing existing client information. |
+| `EditDocumentPopup` | Popup for editing document properties. |
+| `empty-state-tolu` | Empty-state display for list or page with no data. |
+| `file-item` | Represents a single file in a list/grid view. |
+| `file-message-item` | Message bubble with attached file. |
+| `filters-popup` | Popup for applying list or table filters. |
+| `Footer` | Global footer layout component. |
+| `Header` | Main header bar/navigation for app layout. |
+| `HeaderOnboarding` | Header variant for onboarding screens. |
+| `health-profile-form` | Form for capturing user health data. |
+| `HealthGoalsCard` | Displays health goals and progress tracking. |
+| `HealthTable` | Tabular view of health-related data points. |
+| `LanguagesMultiSelect` | Multi-select dropdown for choosing languages. |
+| `library-client-content` | Content section for client resource library. |
+| `library-small-chat` | Compact chat panel embedded in library views. |
+| `MenopauseModals` | Group of modals for menopause-related flow handling. |
+| `message-bubble` | Visual bubble for individual chat messages. |
+| `message-input` | Input box for composing chat messages. |
+| `message-list` | Container showing the list of chat messages. |
+| `message-sidebar` | Sidebar with conversation participants or threads. |
+| `message-tabs` | Tabs for switching between chat contexts. |
+| `MoodScore` | Displays mood score graph or metric for user tracking. |
+| `MultiSelectField` | Generic multi-select input field. |
+| `navigations` | Navigation components (breadcrumbs, side menus, etc.). |
+| `notes-item` | Single note element in a notes list. |
+| `OnboardingClient` | Client-side onboarding flow component. |
+| `OnboardingPractitioner` | Practitioner-side onboarding flow component. |
+| `RatePopup` | Popup for user rating or feedback submission. |
+| `ReferAFriendPopup` | Modal for inviting or referring new users. |
+| `SelectedClientModal` | Displays information of the currently selected client. |
+| `share-popup` | Modal for sharing files, documents, or links. |
+| `sidebars` | Collection of sidebars used across the app. |
+| `StepperWithLabels` | Stepper component with labeled steps for guided flows. |
+| `switch-group` | Grouped toggle switches for preference settings. |
+| `TimelineItem` | Timeline component representing a dated activity. |
+| `upload-client-modal` | Modal for uploading client-related documents. |
+| `user-engagement-sidebar` | Sidebar for engagement analytics or user activity. |
 
 **Responsibilities:**
 - Combine multiple `features` and `entities` into a single UI unit
@@ -2861,7 +2951,7 @@ They are typically larger than a single feature but smaller than a page.
 Each folder inside `pages/` corresponds to a full **application route** (screen).  
 Pages combine widgets, features, and entities to render complete UI flows.
 
-**Examples from your project:**
+**Examples:**
 
 | Page | Description |
 |------|--------------|
@@ -2937,6 +3027,21 @@ This layered structure allows for predictable imports, clean scalability, and ma
 - **Local Development:** `npm run dev`
 - **Build for Production:** `npm run build`
 - **Preview build:** `npm run preview`
+
+## Developer Onboarding Guide
+
+### Prerequisites
+- Node.js v18+
+- npm 
+- Access to `.env` and API credentials
+
+### Setup
+```bash
+git clone https://github.com/CloudDreamXX/Tolu-front-end.git
+cd Tolu-front-end
+npm install
+npm run dev
+```
 
 ### Git Branching Convention
 - `master` → Production-ready code  
