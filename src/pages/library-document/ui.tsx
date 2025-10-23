@@ -368,16 +368,249 @@ export const LibraryDocument = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedDocument) {
-      const { contentWithoutScripts, scripts } = extractScripts(
-        selectedDocument.content
+    if (!selectedDocument) return;
+
+    const { contentWithoutScripts, scripts } = extractScripts(
+      selectedDocument.content
+    );
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(contentWithoutScripts, "text/html");
+
+    const getCards = () =>
+      Array.from(doc.querySelectorAll<HTMLElement>("[id^='card']")).filter(
+        (el) => /card[-_]?\d+$/i.test(el.id)
       );
-      setRenderedContent(
-        <div dangerouslySetInnerHTML={{ __html: contentWithoutScripts }} />
-      );
-      setScripts(scripts);
+
+    const cards = getCards();
+
+    if (cards.length > 0 && quizScore?.data) {
+      const lastCard = cards[cards.length - 1];
+      const nextIndex = cards.length + 1;
+      const nextCardId = `card-${nextIndex}`;
+
+      const summaryDiv = doc.createElement("div");
+      summaryDiv.id = nextCardId;
+      summaryDiv.style.display = "none";
+      summaryDiv.style.background = "transparent";
+
+      summaryDiv.innerHTML = `
+      <h3 class="text-lg font-semibold text-[#1D1D1F] mb-3">Quiz Summary</h3>
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm text-muted-foreground">
+          ${quizScore.data.correct_questions}/${quizScore.data.total_questions} correct
+        </span>
+        <span class="text-sm font-medium text-[#1C63DB]">
+          ${quizScore.data.score_percent.toFixed(1)}%
+        </span>
+      </div>
+
+      <div class="relative h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden mb-4">
+        <div class="absolute top-0 left-0 h-full bg-[#1C63DB] transition-all"
+          style="width: ${Math.min(
+            100,
+            (quizScore.data.correct_questions /
+              quizScore.data.total_questions) *
+              100
+          )}%;">
+        </div>
+      </div>
+
+      <div class="divide-y border-t border-[#EAEAEA]">
+        ${quizScore.data.questions
+          .map(
+            (q) => `
+          <div class="flex items-center justify-between py-2 text-sm">
+            <div>
+              <div class="font-medium text-[#1D1D1F]">${q.question_id}</div>
+              <div class="text-xs text-muted-foreground">Answer: ${q.answer.toUpperCase()}</div>
+            </div>
+            <div class="px-3 py-1 rounded-full text-xs font-medium ${
+              q.is_correct
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-red-100 text-red-700"
+            }">
+              ${q.is_correct ? "Correct" : "Incorrect"}
+            </div>
+          </div>`
+          )
+          .join("")}
+      </div>
+
+      <div class="card-nav" style="display:flex; justify-content:flex-start; margin-top:24px; gap:12px;">
+        <button id="prevBtn" onclick="prevCard()" style="background:#007acc; color:#fff; border:none; border-radius:4px; padding:8px 18px; font-size:16px;">Previous</button>
+      </div>
+    `;
+
+      lastCard.insertAdjacentElement("afterend", summaryDiv);
+
+      const lastNavContainer =
+        lastCard.querySelector<HTMLElement>(".card-nav") ||
+        lastCard.querySelector<HTMLElement>(
+          'div[style*="display:flex"][style*="justify-content:space-between"]'
+        ) ||
+        lastCard.querySelector<HTMLElement>(
+          'div[style*="display:flex"][style*="justify-content:flex-start"]'
+        ) ||
+        lastCard.querySelector<HTMLElement>(
+          'div[style*="text-align:left"][style*="margin-top:24px"]'
+        );
+
+      if (lastNavContainer) {
+        Object.assign(lastNavContainer.style, {
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "24px",
+          gap: "12px",
+        });
+
+        const nextBtn = doc.createElement("button");
+        nextBtn.id = "nextBtn";
+        nextBtn.textContent = "See Results";
+        nextBtn.setAttribute("onclick", `showCard(${nextIndex})`);
+        Object.assign(nextBtn.style, {
+          background: "#007acc",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          padding: "8px 18px",
+          fontSize: "16px",
+          marginLeft: "auto",
+        });
+
+        lastNavContainer.appendChild(nextBtn);
+      } else {
+        const navContainer = doc.createElement("div");
+        navContainer.classList.add("card-nav");
+        Object.assign(navContainer.style, {
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "24px",
+          gap: "12px",
+        });
+
+        const prevBtn = doc.createElement("button");
+        prevBtn.id = "prevBtn";
+        prevBtn.textContent = "Previous";
+        prevBtn.setAttribute("onclick", `prevCard()`);
+        Object.assign(prevBtn.style, {
+          background: "#007acc",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          padding: "8px 18px",
+          fontSize: "16px",
+        });
+
+        const nextBtn = doc.createElement("button");
+        nextBtn.id = "nextBtn";
+        nextBtn.textContent = "Next";
+        nextBtn.setAttribute("onclick", `showCard(${nextIndex})`);
+        Object.assign(nextBtn.style, {
+          background: "#007acc",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          padding: "8px 18px",
+          fontSize: "16px",
+        });
+
+        navContainer.appendChild(prevBtn);
+        navContainer.appendChild(nextBtn);
+        lastCard.appendChild(navContainer);
+      }
     }
-  }, [selectedDocument]);
+
+    const navFixScript = `
+    (function(){
+      function getCards() {
+        return Array.from(document.querySelectorAll("[id^='card']")).filter(function(el){
+          return /card[-_]?\\d+$/i.test(el.id);
+        });
+      }
+
+      function getVisibleIndex(cards) {
+        for (var i = 0; i < cards.length; i++) {
+          var s = (cards[i].style && cards[i].style.display) || "";
+          if (s !== "none") return i + 1;
+        }
+        return 1;
+      }
+
+      window.showCard = function(n){
+        var cards = getCards();
+        var idx = Math.max(1, Math.min(n, cards.length));
+        for (var i = 0; i < cards.length; i++) {
+          cards[i].style.display = (i === (idx - 1)) ? "block" : "none";
+        }
+        var prevBtn = document.getElementById("prevBtn");
+        var nextBtn = document.getElementById("nextBtn");
+        if (prevBtn) prevBtn.style.visibility = idx > 1 ? "visible" : "hidden";
+        if (nextBtn) nextBtn.style.visibility = idx < cards.length ? "visible" : "hidden";
+      };
+
+      window.nextCard = function(){
+        var cards = getCards();
+        var cur = getVisibleIndex(cards);
+        window.showCard(cur + 1);
+      };
+
+      window.prevCard = function(){
+        var cards = getCards();
+        var cur = getVisibleIndex(cards);
+        window.showCard(cur - 1);
+      };
+    })();
+  `;
+
+    setRenderedContent(
+      <div dangerouslySetInnerHTML={{ __html: doc.body.innerHTML }} />
+    );
+    setScripts([...(scripts || []), navFixScript]);
+  }, [selectedDocument, quizScore]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const container = document.querySelector(".prose");
+      if (!container) return;
+
+      container
+        .querySelectorAll<HTMLFormElement>("form[id^='quiz-']")
+        .forEach((form) => {
+          const radios = form.querySelectorAll<HTMLInputElement>(
+            'input[type="radio"]'
+          );
+          const submitBtn = form.querySelector<HTMLButtonElement>(
+            'button[id$="-submit"]'
+          );
+          if (!submitBtn) return;
+
+          const quizNum = form.id.replace("quiz-", "");
+          const nextBtn = container.querySelector<HTMLButtonElement>(
+            `#next-quiz-${quizNum}`
+          );
+
+          const answered = Array.from(radios).some((r) => r.checked);
+          if (answered) {
+            submitBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = false;
+          }
+
+          radios.forEach((r) =>
+            r.addEventListener("change", () => {
+              submitBtn.disabled = false;
+            })
+          );
+
+          submitBtn.addEventListener("click", () => {
+            submitBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = false;
+          });
+        });
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [renderedContent]);
 
   useEffect(() => {
     scripts.forEach((scriptContent) => {
@@ -495,13 +728,26 @@ export const LibraryDocument = () => {
 
       const resultEl =
         (root?.querySelector('[id$="Result"]') as HTMLElement | null) ||
+        (root?.querySelector('[id$="-result"]') as HTMLElement | null) ||
+        (root?.querySelector('[id$="Feedback"]') as HTMLElement | null) ||
+        (root?.querySelector('[id$="-feedback"]') as HTMLElement | null) ||
         (document.querySelector(
           `#${question_id.replace("Form", "")}Result`
+        ) as HTMLElement | null) ||
+        (document.querySelector(
+          `#${question_id.replace("Form", "")}-result`
+        ) as HTMLElement | null) ||
+        (document.querySelector(
+          `#${question_id.replace("Form", "")}Feedback`
+        ) as HTMLElement | null) ||
+        (document.querySelector(
+          `#${question_id.replace("Form", "")}-feedback`
         ) as HTMLElement | null);
+
       let is_correct = false;
       if (resultEl) {
         const txt = (resultEl.textContent || "").trim().toLowerCase();
-        is_correct = txt.startsWith("correct!");
+        is_correct = txt.includes("correct");
       }
 
       const payload: ContentStatus = {
@@ -961,6 +1207,11 @@ export const LibraryDocument = () => {
                     </div>
                   )}
                   {renderedContent}
+                  {/* {resultsCard && (
+                    <div className="mt-6">
+                      {resultsCard}
+                    </div>
+                  )} */}
                 </div>
               </div>
             ) : (

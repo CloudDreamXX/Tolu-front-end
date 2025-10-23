@@ -286,6 +286,33 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     };
   }, [pair.content]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      document
+        .querySelectorAll('form[id^="quiz-"] button[id$="-submit"]')
+        .forEach((btn) => {
+          (btn as HTMLButtonElement).disabled = true;
+        });
+      document.querySelectorAll('button[id^="next-quiz-"]').forEach((btn) => {
+        (btn as HTMLButtonElement).disabled = true;
+      });
+
+      document.querySelectorAll('form[id^="quiz-"]').forEach((form) => {
+        const radios = form.querySelectorAll('input[type="radio"]');
+        const submitBtn = form.querySelector('button[id$="-submit"]');
+        if (submitBtn) {
+          radios.forEach((r) =>
+            r.addEventListener("change", () => {
+              (submitBtn as HTMLButtonElement).disabled = false;
+            })
+          );
+        }
+      });
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [renderedContent]);
+
   const renderCompareView = () => (
     <div className="flex-row block gap-4 md:flex">
       <div className="block md:hidden">

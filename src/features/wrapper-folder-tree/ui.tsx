@@ -47,6 +47,30 @@ export const WrapperFolderTree = ({
   const [moveFolderContent] = useMoveFolderContentMutation();
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasMore) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { root: containerRef.current, threshold: 1.0 }
+    );
+
+    const sentinel = document.createElement("div");
+    sentinel.id = "scroll-sentinel";
+    containerRef.current.appendChild(sentinel);
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+      sentinel.remove();
+    };
+  }, [hasMore]);
+
+  useEffect(() => {
     if (folderResponse) {
       const { folders: newFolders, foldersMap } = folderResponse;
       dispatch(setFolders({ folders: newFolders, foldersMap }));
@@ -112,14 +136,21 @@ export const WrapperFolderTree = ({
   };
 
   const toggleFolder = (folder: IFolder) => {
-    setTargetFolder(folder);
     setOpenFolders((prev) => {
       const newOpenFolders = new Set(prev);
-      if (newOpenFolders.has(folder.id)) {
+      const isOpen = newOpenFolders.has(folder.id);
+
+      if (isOpen) {
         newOpenFolders.delete(folder.id);
+        if (targetFolder?.id === folder.id) {
+          setTargetFolder(undefined);
+        }
       } else {
         newOpenFolders.add(folder.id);
+        setTargetFolder(folder);
+        setPage(1);
       }
+
       return newOpenFolders;
     });
   };

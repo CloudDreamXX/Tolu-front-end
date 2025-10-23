@@ -4,11 +4,13 @@
 
 Tolu Health Frontend is the client-facing application of the Tolu Health platform.  
 Its purpose is to provide a seamless, secure, and responsive interface for:
+
 - Clients tracking health, symptoms, and progress.
 - Coaches managing clients, onboarding, and content.
 - Admins monitoring users, feedback, and content moderation.
 
 ### Key Goals
+
 - Enable **data-driven health coaching** through AI insights and user tracking.
 - Maintain **high security and privacy standards** (HIPAA / SSL).
 - Ensure **modular, scalable frontend architecture** using FSD.
@@ -19,6 +21,7 @@ Its purpose is to provide a seamless, secure, and responsive interface for:
 This document provides a **complete overview of data flow, architecture, and API integration** between the Tolu Health frontend and backend services.
 
 It explains how user data moves through the system, including:
+
 - Authentication and onboarding
 - API communication patterns (RTK Query)
 - File uploads and streaming data
@@ -55,24 +58,24 @@ Database
 
 ## Project Configuration
 
-| Environment | API Base URL | Notes |
-|--------------|--------------|-------|
-| Staging | https://vvitai.vercel.app | QA environment |
-| Production | https://app.tolu.health/ | Live environment |
+| Environment | API Base URL              | Notes            |
+| ----------- | ------------------------- | ---------------- |
+| Staging     | https://vvitai.vercel.app | QA environment   |
+| Production  | https://app.tolu.health/  | Live environment |
 
 Environment variables are managed via `.env`:
 
 ### Tooling Overview
 
-| Tool | Scope | Notes |
-|------|--------|-------|
-| React + Vite | Frontend framework and build tool | Used for all UI rendering |
-| Redux Toolkit | Global state management | Centralized user/session data |
-| RTK Query | API communication layer | Handles all backend integration |
-| TailwindCSS | UI design system | Shared theme and responsive layout |
-| React Hook Form | Form handling | Validation integrated with Zod |
-| Axios | REST API requests | Used inside RTK Query baseQuery |
-| ESLint + Prettier | Code quality | Enforced via CI/CD pipeline |
+| Tool              | Scope                             | Notes                              |
+| ----------------- | --------------------------------- | ---------------------------------- |
+| React + Vite      | Frontend framework and build tool | Used for all UI rendering          |
+| Redux Toolkit     | Global state management           | Centralized user/session data      |
+| RTK Query         | API communication layer           | Handles all backend integration    |
+| TailwindCSS       | UI design system                  | Shared theme and responsive layout |
+| React Hook Form   | Form handling                     | Validation integrated with Zod     |
+| Axios             | REST API requests                 | Used inside RTK Query baseQuery    |
+| ESLint + Prettier | Code quality                      | Enforced via CI/CD pipeline        |
 
 ## Data Flow Documentation
 
@@ -2779,11 +2782,13 @@ Most folders include an `index.ts` file that acts as a **barrel file**, re-expor
 This approach simplifies imports and keeps module boundaries clean.
 
 **Example:**
+
 ```ts
 // src/app/routes/index.ts
 export * from "./lib";
 export * from "./ui";
 ```
+
 ---
 
 ### 1. `app/` — Application Core and Routing Layer
@@ -2798,6 +2803,7 @@ It defines how the app is initialized, routes are registered, and global provide
   - `lib.tsx` — defines route configuration and navigation tree, helper functions for route guards, redirects, or lazy loading.
 
 **Responsibilities:**
+
 - Initialize app (`main.tsx`)
 - Register global providers (Redux, Theme, Router, RTK Query)
 - Set up global error boundaries and suspense wrappers
@@ -2812,24 +2818,25 @@ This is the layer where **RTK Query API slices, Redux slices, and types** are de
 
 **Examples:**
 
-| Entity | Description |
-|--------|--------------|
-| `admin/` | Administrative APIs for user management, moderation, feedback, and chat oversight |
-| `chat/` | Handles chat messages, participants, files, and note management |
-| `client/` | Client data models, onboarding, and profile APIs |
-| `coach/` | Coach onboarding, licensing, and client relationship management |
-| `content/` | Learning materials, quizzes, and AI-generated content |
-| `document/` | Document metadata and retrieval endpoints |
-| `files-library/` | File and folder management for coaches |
-| `folder/` | Folder structure representation and hierarchy operations |
-| `health-history/` | Client medical and lifestyle history records |
-| `notifications/` | System notification API and preference settings |
-| `search/` | AI-powered search and semantic matching endpoints |
-| `symptoms-tracker/` | Daily symptom tracking and AI suggestion APIs |
-| `user/` | Authentication, JWT handling, and user profile operations |
-| `store/` | Global Redux store setup with middleware and slice registration |
+| Entity              | Description                                                                       |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `admin/`            | Administrative APIs for user management, moderation, feedback, and chat oversight |
+| `chat/`             | Handles chat messages, participants, files, and note management                   |
+| `client/`           | Client data models, onboarding, and profile APIs                                  |
+| `coach/`            | Coach onboarding, licensing, and client relationship management                   |
+| `content/`          | Learning materials, quizzes, and AI-generated content                             |
+| `document/`         | Document metadata and retrieval endpoints                                         |
+| `files-library/`    | File and folder management for coaches                                            |
+| `folder/`           | Folder structure representation and hierarchy operations                          |
+| `health-history/`   | Client medical and lifestyle history records                                      |
+| `notifications/`    | System notification API and preference settings                                   |
+| `search/`           | AI-powered search and semantic matching endpoints                                 |
+| `symptoms-tracker/` | Daily symptom tracking and AI suggestion APIs                                     |
+| `user/`             | Authentication, JWT handling, and user profile operations                         |
+| `store/`            | Global Redux store setup with middleware and slice registration                   |
 
 **Responsibilities:**
+
 - Define business entities and data contracts
 - Encapsulate data fetching and normalization via RTK Query
 - Provide typed models and constants to `features` and `widgets`
@@ -2844,17 +2851,18 @@ Each subfolder corresponds to an isolated **use case** or **user interaction sce
 
 **Examples:**
 
-| Folder | Description |
-|---------|--------------|
-| `chat/` | Chat input, message sending, and typing indicators |
-| `chat-item/` | Chat preview component (name, avatar, last message) |
-| `custom-nav-link/` | Navigation link with active route highlighting |
-| `document-management/` | Document upload, edit, and version control |
-| `library-card/` | UI card for displaying library content items |
-| `steps/` | Step-based forms (e.g., onboarding flows, registration wizards) |
-| `wrapper-folder-tree/` | File/folder hierarchy tree and drag-drop logic |
+| Folder                 | Description                                                     |
+| ---------------------- | --------------------------------------------------------------- |
+| `chat/`                | Chat input, message sending, and typing indicators              |
+| `chat-item/`           | Chat preview component (name, avatar, last message)             |
+| `custom-nav-link/`     | Navigation link with active route highlighting                  |
+| `document-management/` | Document upload, edit, and version control                      |
+| `library-card/`        | UI card for displaying library content items                    |
+| `steps/`               | Step-based forms (e.g., onboarding flows, registration wizards) |
+| `wrapper-folder-tree/` | File/folder hierarchy tree and drag-drop logic                  |
 
 **Responsibilities:**
+
 - Combine shared UI components with entity logic
 - Manage isolated state for small features
 - Provide reusable hooks (`useChatActions`, `useUploadDocument`)
@@ -2869,77 +2877,78 @@ They are typically larger than a single feature but smaller than a page.
 
 **Examples:**
 
-| Widget | Purpose |
-|--------|----------|
-| `AddClientModal` | Modal for adding a new client, includes validation and API call. |
-| `auth-error-boundary` | Handles authentication-related runtime errors gracefully. |
-| `auth-forms` | Contains login, signup, and password recovery forms. |
-| `bad-rate-response-popup` | Popup shown for failed or invalid rating submissions. |
-| `BottomButtons` | Sticky footer buttons for mobile or form navigation. |
-| `Calendar` | Calendar view for scheduling or tracking sessions. |
-| `change-admin-status-popup` | Modal for changing admin privileges. |
-| `change-password-modal` | User password update dialog. |
-| `ChangeStatusPopup` | Generic entity status change modal. |
-| `ChooseSubfolderPanel` | Panel for selecting subfolders during file organization. |
-| `ChooseSubfolderPopup` | Popup for selecting destination subfolders. |
-| `client-edit-profile-modal` | Edit form for client profile details. |
-| `ConfirmCancelModal` | Confirmation dialog for cancel actions. |
-| `ConfirmDeleteModal` | Confirmation dialog for delete actions. |
-| `ConfirmDiscardModal` | Confirms discarding unsaved changes. |
-| `ConfirmModal` | General-purpose confirmation modal. |
-| `content-popovers` | Tooltip/popover wrappers for contextual UI hints. |
-| `conversation-item` | Single chat or conversation preview item. |
-| `conversation-list` | List view of multiple chat conversations. |
-| `couch-edit-profile-modal` | Modal for editing practitioner or “coach” profiles. |
-| `CreateSubfolderPopup` | UI for creating a new subfolder. |
-| `CRMSelectField` | Custom select field for CRM-related inputs. |
-| `CustomRadio` | Styled radio input component with enhanced accessibility. |
-| `date-of-birth-picker` | Date picker specialized for birth date input. |
-| `date-time-picker` | Combined date and time selector widget. |
-| `dayli-journal` | Client daily journal entry view/editor. |
-| `DeleteMessagePopup` | Confirmation popup for message deletion. |
-| `document-breadcrumbs` | Breadcrumb navigation for document hierarchy. |
-| `document-header` | Header bar for document views. |
-| `document-info-header` | Displays metadata (author, date, etc.) for a document. |
-| `EditClientModal` | Modal for editing existing client information. |
-| `EditDocumentPopup` | Popup for editing document properties. |
-| `empty-state-tolu` | Empty-state display for list or page with no data. |
-| `file-item` | Represents a single file in a list/grid view. |
-| `file-message-item` | Message bubble with attached file. |
-| `filters-popup` | Popup for applying list or table filters. |
-| `Footer` | Global footer layout component. |
-| `Header` | Main header bar/navigation for app layout. |
-| `HeaderOnboarding` | Header variant for onboarding screens. |
-| `health-profile-form` | Form for capturing user health data. |
-| `HealthGoalsCard` | Displays health goals and progress tracking. |
-| `HealthTable` | Tabular view of health-related data points. |
-| `LanguagesMultiSelect` | Multi-select dropdown for choosing languages. |
-| `library-client-content` | Content section for client resource library. |
-| `library-small-chat` | Compact chat panel embedded in library views. |
-| `MenopauseModals` | Group of modals for menopause-related flow handling. |
-| `message-bubble` | Visual bubble for individual chat messages. |
-| `message-input` | Input box for composing chat messages. |
-| `message-list` | Container showing the list of chat messages. |
-| `message-sidebar` | Sidebar with conversation participants or threads. |
-| `message-tabs` | Tabs for switching between chat contexts. |
-| `MoodScore` | Displays mood score graph or metric for user tracking. |
-| `MultiSelectField` | Generic multi-select input field. |
-| `navigations` | Navigation components (breadcrumbs, side menus, etc.). |
-| `notes-item` | Single note element in a notes list. |
-| `OnboardingClient` | Client-side onboarding flow component. |
-| `OnboardingPractitioner` | Practitioner-side onboarding flow component. |
-| `RatePopup` | Popup for user rating or feedback submission. |
-| `ReferAFriendPopup` | Modal for inviting or referring new users. |
-| `SelectedClientModal` | Displays information of the currently selected client. |
-| `share-popup` | Modal for sharing files, documents, or links. |
-| `sidebars` | Collection of sidebars used across the app. |
-| `StepperWithLabels` | Stepper component with labeled steps for guided flows. |
-| `switch-group` | Grouped toggle switches for preference settings. |
-| `TimelineItem` | Timeline component representing a dated activity. |
-| `upload-client-modal` | Modal for uploading client-related documents. |
-| `user-engagement-sidebar` | Sidebar for engagement analytics or user activity. |
+| Widget                      | Purpose                                                          |
+| --------------------------- | ---------------------------------------------------------------- |
+| `AddClientModal`            | Modal for adding a new client, includes validation and API call. |
+| `auth-error-boundary`       | Handles authentication-related runtime errors gracefully.        |
+| `auth-forms`                | Contains login, signup, and password recovery forms.             |
+| `bad-rate-response-popup`   | Popup shown for failed or invalid rating submissions.            |
+| `BottomButtons`             | Sticky footer buttons for mobile or form navigation.             |
+| `Calendar`                  | Calendar view for scheduling or tracking sessions.               |
+| `change-admin-status-popup` | Modal for changing admin privileges.                             |
+| `change-password-modal`     | User password update dialog.                                     |
+| `ChangeStatusPopup`         | Generic entity status change modal.                              |
+| `ChooseSubfolderPanel`      | Panel for selecting subfolders during file organization.         |
+| `ChooseSubfolderPopup`      | Popup for selecting destination subfolders.                      |
+| `client-edit-profile-modal` | Edit form for client profile details.                            |
+| `ConfirmCancelModal`        | Confirmation dialog for cancel actions.                          |
+| `ConfirmDeleteModal`        | Confirmation dialog for delete actions.                          |
+| `ConfirmDiscardModal`       | Confirms discarding unsaved changes.                             |
+| `ConfirmModal`              | General-purpose confirmation modal.                              |
+| `content-popovers`          | Tooltip/popover wrappers for contextual UI hints.                |
+| `conversation-item`         | Single chat or conversation preview item.                        |
+| `conversation-list`         | List view of multiple chat conversations.                        |
+| `couch-edit-profile-modal`  | Modal for editing practitioner or “coach” profiles.              |
+| `CreateSubfolderPopup`      | UI for creating a new subfolder.                                 |
+| `CRMSelectField`            | Custom select field for CRM-related inputs.                      |
+| `CustomRadio`               | Styled radio input component with enhanced accessibility.        |
+| `date-of-birth-picker`      | Date picker specialized for birth date input.                    |
+| `date-time-picker`          | Combined date and time selector widget.                          |
+| `dayli-journal`             | Client daily journal entry view/editor.                          |
+| `DeleteMessagePopup`        | Confirmation popup for message deletion.                         |
+| `document-breadcrumbs`      | Breadcrumb navigation for document hierarchy.                    |
+| `document-header`           | Header bar for document views.                                   |
+| `document-info-header`      | Displays metadata (author, date, etc.) for a document.           |
+| `EditClientModal`           | Modal for editing existing client information.                   |
+| `EditDocumentPopup`         | Popup for editing document properties.                           |
+| `empty-state-tolu`          | Empty-state display for list or page with no data.               |
+| `file-item`                 | Represents a single file in a list/grid view.                    |
+| `file-message-item`         | Message bubble with attached file.                               |
+| `filters-popup`             | Popup for applying list or table filters.                        |
+| `Footer`                    | Global footer layout component.                                  |
+| `Header`                    | Main header bar/navigation for app layout.                       |
+| `HeaderOnboarding`          | Header variant for onboarding screens.                           |
+| `health-profile-form`       | Form for capturing user health data.                             |
+| `HealthGoalsCard`           | Displays health goals and progress tracking.                     |
+| `HealthTable`               | Tabular view of health-related data points.                      |
+| `LanguagesMultiSelect`      | Multi-select dropdown for choosing languages.                    |
+| `library-client-content`    | Content section for client resource library.                     |
+| `library-small-chat`        | Compact chat panel embedded in library views.                    |
+| `MenopauseModals`           | Group of modals for menopause-related flow handling.             |
+| `message-bubble`            | Visual bubble for individual chat messages.                      |
+| `message-input`             | Input box for composing chat messages.                           |
+| `message-list`              | Container showing the list of chat messages.                     |
+| `message-sidebar`           | Sidebar with conversation participants or threads.               |
+| `message-tabs`              | Tabs for switching between chat contexts.                        |
+| `MoodScore`                 | Displays mood score graph or metric for user tracking.           |
+| `MultiSelectField`          | Generic multi-select input field.                                |
+| `navigations`               | Navigation components (breadcrumbs, side menus, etc.).           |
+| `notes-item`                | Single note element in a notes list.                             |
+| `OnboardingClient`          | Client-side onboarding flow component.                           |
+| `OnboardingPractitioner`    | Practitioner-side onboarding flow component.                     |
+| `RatePopup`                 | Popup for user rating or feedback submission.                    |
+| `ReferAFriendPopup`         | Modal for inviting or referring new users.                       |
+| `SelectedClientModal`       | Displays information of the currently selected client.           |
+| `share-popup`               | Modal for sharing files, documents, or links.                    |
+| `sidebars`                  | Collection of sidebars used across the app.                      |
+| `StepperWithLabels`         | Stepper component with labeled steps for guided flows.           |
+| `switch-group`              | Grouped toggle switches for preference settings.                 |
+| `TimelineItem`              | Timeline component representing a dated activity.                |
+| `upload-client-modal`       | Modal for uploading client-related documents.                    |
+| `user-engagement-sidebar`   | Sidebar for engagement analytics or user activity.               |
 
 **Responsibilities:**
+
 - Combine multiple `features` and `entities` into a single UI unit
 - Handle intermediate business logic at UI level (form validation, state sync)
 - Reusable between multiple `pages` (e.g., Dashboard and Profile use same widgets)
@@ -2953,23 +2962,24 @@ Pages combine widgets, features, and entities to render complete UI flows.
 
 **Examples:**
 
-| Page | Description |
-|------|--------------|
-| `admin-messages/` | Admin chat and moderation dashboard |
-| `auth/` | Login, registration, password reset screens |
-| `content-management/` | Admin interface for managing published content |
-| `content-manager/` | Coach content editor and library management |
-| `feedback-hub/` / `feedback-details/` | Feedback analytics and details view |
-| `health-snapshot/` | Summary of client’s health and progress |
-| `home/` | Main dashboard landing page |
-| `library/`, `library-chat/`, `library-document/` | Content and AI library pages |
-| `messages/` | Chat and direct messaging interface |
-| `onboarding-main/`, `onboarding-welcome/` | Client and coach onboarding flows |
-| `profile/` | Profile management screen for client or coach |
-| `subscription-plan/` | Subscription and payment management |
-| `user-management/` | Admin user list and controls |
+| Page                                             | Description                                    |
+| ------------------------------------------------ | ---------------------------------------------- |
+| `admin-messages/`                                | Admin chat and moderation dashboard            |
+| `auth/`                                          | Login, registration, password reset screens    |
+| `content-management/`                            | Admin interface for managing published content |
+| `content-manager/`                               | Coach content editor and library management    |
+| `feedback-hub/` / `feedback-details/`            | Feedback analytics and details view            |
+| `health-snapshot/`                               | Summary of client’s health and progress        |
+| `home/`                                          | Main dashboard landing page                    |
+| `library/`, `library-chat/`, `library-document/` | Content and AI library pages                   |
+| `messages/`                                      | Chat and direct messaging interface            |
+| `onboarding-main/`, `onboarding-welcome/`        | Client and coach onboarding flows              |
+| `profile/`                                       | Profile management screen for client or coach  |
+| `subscription-plan/`                             | Subscription and payment management            |
+| `user-management/`                               | Admin user list and controls                   |
 
 **Responsibilities:**
+
 - Represent top-level route components
 - Connect global layout (`app/routes/ui.tsx`) with page content
 - Compose multiple widgets and features into full-page experiences
@@ -2981,13 +2991,15 @@ Pages combine widgets, features, and entities to render complete UI flows.
 The `shared/` folder contains **fundamental, reusable code** that can be used anywhere in the project.
 
 **Subfolders:**
-- `api/` → global API helpers and configurations  
-- `assets/` → static assets like logos, icons, illustrations  
-- `hooks/` → global React hooks (e.g., `useModal`, `useClickOutside`, `useTheme`)  
-- `lib/` → pure JS/TS utilities (date, validation, sanitization, formatting)  
+
+- `api/` → global API helpers and configurations
+- `assets/` → static assets like logos, icons, illustrations
+- `hooks/` → global React hooks (e.g., `useModal`, `useClickOutside`, `useTheme`)
+- `lib/` → pure JS/TS utilities (date, validation, sanitization, formatting)
 - `ui/` → reusable UI primitives (buttons, inputs, modals, loaders)
 
 **Responsibilities:**
+
 - Provide building blocks for all other layers
 - Must not depend on any higher layer
 - Contain no business-specific logic
@@ -2996,31 +3008,30 @@ The `shared/` folder contains **fundamental, reusable code** that can be used an
 
 ### Summary
 
-- **`app/`** → Bootstraps the app, sets up routing and providers  
-- **`entities/`** → Defines domain logic and API communication  
-- **`features/`** → Implements specific functional use cases  
-- **`widgets/`** → Builds larger composite UI elements  
-- **`pages/`** → Assembles full user-facing screens  
-- **`shared/`** → Foundation layer for utilities, hooks, and UI primitives  
+- **`app/`** → Bootstraps the app, sets up routing and providers
+- **`entities/`** → Defines domain logic and API communication
+- **`features/`** → Implements specific functional use cases
+- **`widgets/`** → Builds larger composite UI elements
+- **`pages/`** → Assembles full user-facing screens
+- **`shared/`** → Foundation layer for utilities, hooks, and UI primitives
 
 This layered structure allows for predictable imports, clean scalability, and maintainable development across a growing frontend codebase.
 
-
 ### Component Types
 
-| Type | Purpose | Example |
-|------|----------|----------|
-| **UI Component** | Pure presentational elements (buttons, inputs, modals) | `shared/ui/Button.tsx` |
-| **Container Component** | Connects logic and data (uses hooks, RTK Query, etc.) | `features/auth/ui/LoginForm.tsx` |
-| **Page Component** | Route-level component composed of widgets | `pages/DashboardPage.tsx` |
-| **Widget Component** | Reusable composition of features/entities | `widgets/ClientProfileCard.tsx` |
+| Type                    | Purpose                                                | Example                          |
+| ----------------------- | ------------------------------------------------------ | -------------------------------- |
+| **UI Component**        | Pure presentational elements (buttons, inputs, modals) | `shared/ui/Button.tsx`           |
+| **Container Component** | Connects logic and data (uses hooks, RTK Query, etc.)  | `features/auth/ui/LoginForm.tsx` |
+| **Page Component**      | Route-level component composed of widgets              | `pages/DashboardPage.tsx`        |
+| **Widget Component**    | Reusable composition of features/entities              | `widgets/ClientProfileCard.tsx`  |
 
 ### Key Principles
 
-- **Separation of concerns:** UI, logic, and data are isolated by layers.  
-- **Scalability:** New features are added as isolated modules.  
-- **Reusability:** Shared components live in `/shared` and are dependency-free.  
-- **Predictable imports:** Higher layers can use lower ones, never vice versa.  
+- **Separation of concerns:** UI, logic, and data are isolated by layers.
+- **Scalability:** New features are added as isolated modules.
+- **Reusability:** Shared components live in `/shared` and are dependency-free.
+- **Predictable imports:** Higher layers can use lower ones, never vice versa.
 
 ## Development & Deployment
 
@@ -3031,11 +3042,13 @@ This layered structure allows for predictable imports, clean scalability, and ma
 ## Developer Onboarding Guide
 
 ### Prerequisites
+
 - Node.js v18+
-- npm 
+- npm
 - Access to `.env` and API credentials
 
 ### Setup
+
 ```bash
 git clone https://github.com/CloudDreamXX/Tolu-front-end.git
 cd Tolu-front-end
@@ -3044,14 +3057,16 @@ npm run dev
 ```
 
 ### Git Branching Convention
-- `master` → Production-ready code  
-- `dev` → Active development  
-- `feature/*` → New features  
-- `fix/*` → Bug fixes  
+
+- `master` → Production-ready code
+- `dev` → Active development
+- `feature/*` → New features
+- `fix/*` → Bug fixes
 
 ### CI/CD Pipeline
-- GitHub Actions: lint → test → build → deploy  
-- Staging deployment auto-triggers on `dev` merge  
+
+- GitHub Actions: lint → test → build → deploy
+- Staging deployment auto-triggers on `dev` merge
 - Production deployment auto-triggers on `master` merge
 
 ## References
