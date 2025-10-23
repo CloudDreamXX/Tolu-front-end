@@ -417,16 +417,16 @@ export const CYCLE_HELTH = [
 ];
 
 export const MAP_CYCLE_HEALTH_TO_TOOLTIP: Record<string, string> = {
-  "Still menstruating":
+  Regular:
     "You’re having regular monthly periods without major changes in timing or flow.",
-  "Irregular cycles":
-    "Your periods are becoming unpredictable — shorter, longer, lighter, or heavier than before. This often signals the transition toward menopause (perimenopause).",
-  "No periods for 12+ months":
-    "You haven’t had a menstrual period for at least a year. This usually marks the natural start of menopause.",
-  Postmenopausal:
+  Irregular:
+    "Your periods are becoming unpredictable — shorter, longer, lighter, or heavier than before.",
+  "Post-menopause":
     "You reached menopause more than a year ago. Your cycle has stopped, and this is the stage after menopause.",
-  "Not sure":
-    "You’re uncertain where you are in the transition — and that’s completely normal. Tolu will help you track and understand your stage.",
+  Other:
+    "Use this option if your cycle pattern doesn’t fit the listed categories — you’ll be able to describe it below.",
+  "Not applicable":
+    "Choose this if menstruation doesn’t apply to you (e.g., due to medical reasons or gender identity).",
 };
 
 export const MAP_MENOPAUSE_STAGE_TO_TOOLTIP: Record<string, string> = {

@@ -8,9 +8,12 @@ import {
   FormMessage,
   RadioGroup,
   RadioGroupItem,
+  TooltipWrapper,
 } from "shared/ui";
 import z from "zod";
 import { MultiSelect } from "../MultiSelect";
+import { MAP_CYCLE_HEALTH_TO_TOOLTIP } from "widgets/OnboardingClient/DemographicStep";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const womensHealthSchema = z.object({
   menstrualCycleStatus: z.string().optional(),
@@ -114,10 +117,26 @@ export const WomensHealthForm = ({ form }: { form: any }) => {
                   <FormControl>
                     <RadioGroupItem value={option} id={option} />
                   </FormControl>
-                  <FormLabel htmlFor={option}>{option}</FormLabel>
+
+                  <div className="flex items-center gap-2">
+                    <FormLabel htmlFor={option}>{option}</FormLabel>
+                    {MAP_CYCLE_HEALTH_TO_TOOLTIP[option] && (
+                      <TooltipWrapper
+                        content={MAP_CYCLE_HEALTH_TO_TOOLTIP[option]}
+                      >
+                        <MaterialIcon
+                          iconName="help"
+                          size={16}
+                          fill={1}
+                          className="text-[#1C63DB] opacity-80 hover:opacity-100 transition-opacity"
+                        />
+                      </TooltipWrapper>
+                    )}
+                  </div>
                 </FormItem>
               ))}
             </RadioGroup>
+
             {form.watch("menstrualCycleStatus") === "Other" && (
               <FormField
                 control={form.control}
