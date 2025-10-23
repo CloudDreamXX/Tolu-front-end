@@ -57,9 +57,11 @@ export const MultiSelect = ({
     <li key={option}>
       <button
         type="button"
-        className={cn("rounded-sm py-1.5 pl-3 pr-2 cursor-pointer flex items-center gap-[8px] font-[500] text-sm hover:bg-[#F2F2F2] w-full text-left transition-colors",
+        className={cn(
+          "rounded-sm py-1.5 pl-3 pr-2 cursor-pointer flex items-center gap-[8px] font-[500] text-sm hover:bg-[#F2F2F2] w-full text-left transition-colors",
           "hover:!text-blue-500 hover:bg-[#F2F2F2] focus:bg-accent focus:text-accent-foreground",
-          "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",)}
+          "data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+        )}
         onClick={() => toggleOption(option)}
       >
         <span className="relative flex h-3.5 w-3.5 items-center justify-center">

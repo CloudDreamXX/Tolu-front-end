@@ -10,44 +10,15 @@ import {
   Slider,
 } from "shared/ui";
 import { z } from "zod";
-import { useState } from "react";
-import { MultiSelect } from "../MultiSelect";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const lifestyleHabitsSchema = z.object({
-  dietDetails: z.string().optional(),
   exerciseHabits: z.string().optional(),
   otherExerciseHabits: z.string().optional(),
   sleepQuality: z.number().optional(),
   stressLevels: z.number().optional(),
   energyLevels: z.number().optional(),
 });
-
-const dietDetailsOptions = [
-  "Basic Elimination",
-  "Full Elimination",
-  "Nightshade Elimination",
-  "Specific Carbohydrate Diet (SCD)",
-  "Paleo",
-  "Primal",
-  "Traditional/WAPF",
-  "Low Lectin",
-  "Autoimmune Paleo",
-  "Minus Glutamates",
-  "Minus Oxalates",
-  "Low FODMAP",
-  "Minus Salicylates",
-  "Minus Amines",
-  "GAPS (Gut & Psychology Syndrome)",
-  "Elemental (Food-Based)",
-  "Ketogenic",
-  "Low Carb",
-  "Low Glycemic",
-  "Body Ecology",
-  "Anti-Candida",
-  "Raw or Live Food Diet",
-  "Other",
-];
 
 const sleepQualityLabels = [
   "Poor: Restless, interrupted sleep",
@@ -68,58 +39,14 @@ const energyLevelsLabels = [
   "Varies: Energy levels fluctuate significantly",
 ];
 
-const joinVals = (vals: string[], extra?: string) => {
-  const filtered = vals.filter((v) => v !== "Other");
-  return [...filtered, ...(extra ? [extra] : [])].join(" , ");
-};
-
 export const LifestyleHabitsForm = ({ form }: { form: any }) => {
   const exerciseHabits = form.watch("exerciseHabits");
-
-  const [dietDetailsSel, setDietDetailsSel] = useState<string[]>([]);
-  const [dietDetailsOther, setDietDetailsOther] = useState("");
-
-  const onDietDetailsChange = (val: string[]) => {
-    setDietDetailsSel(val);
-    form.setValue("dietDetails", joinVals(val, dietDetailsOther));
-  };
 
   return (
     <div className="space-y-6">
       <p className="text-gray-500 ">
         Tell us about your daily routines — diet, exercise, and sleep.
       </p>
-
-      <FormField
-        control={form.control}
-        name="dietDetails"
-        render={() => (
-          <FormItem>
-            <FormLabel>Are you on any specific diet?</FormLabel>
-            <MultiSelect
-              placeholder="None"
-              options={dietDetailsOptions}
-              selected={dietDetailsSel}
-              onChange={onDietDetailsChange}
-              defaultValue={form.getValues("dietDetails")}
-            />
-            {dietDetailsSel.includes("Other") && (
-              <div className="pt-2">
-                <Input
-                  placeholder="Type your diet"
-                  value={dietDetailsOther}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setDietDetailsOther(v);
-                    form.setValue("dietDetails", joinVals(dietDetailsSel, v));
-                  }}
-                />
-              </div>
-            )}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
 
       {/* Exercise habits (unchanged) */}
       <FormField

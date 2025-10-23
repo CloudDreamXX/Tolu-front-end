@@ -46,7 +46,13 @@ export const basicInformationSchema = z
     }
   });
 
-export const BasicInformationForm = ({ form, age }: { form: any, age: number }) => {
+export const BasicInformationForm = ({
+  form,
+  age,
+}: {
+  form: any;
+  age: number;
+}) => {
   const identity = form.watch("genderIdentity");
 
   const languagesStr = form.watch("language") as string | undefined;
@@ -65,7 +71,7 @@ export const BasicInformationForm = ({ form, age }: { form: any, age: number }) 
       <FormField
         control={form.control}
         name="age"
-        render={({ field }) => (
+        render={() => (
           <FormItem>
             <FormLabel>Age</FormLabel>
             <FormControl>

@@ -176,9 +176,13 @@ const familyHistoryOptions = [
 
 const commitOther = (fieldName: string, otherValue: string) => (form: any) => {
   const vals = split(form.getValues(fieldName));
-  const withoutOthers = vals.filter(v => v !== "Other" && !v.startsWith("Other:"));
+  const withoutOthers = vals.filter(
+    (v) => v !== "Other" && !v.startsWith("Other:")
+  );
   const extraTrim = otherValue.trim();
-  const merged = extraTrim ? [...withoutOthers, `Other: ${extraTrim}`] : withoutOthers;
+  const merged = extraTrim
+    ? [...withoutOthers, `Other: ${extraTrim}`]
+    : withoutOthers;
   form.setValue(fieldName, merged.join(", "));
 };
 

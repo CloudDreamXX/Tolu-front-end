@@ -56,7 +56,7 @@ const commonFoodOptions = [
   "Other",
 ];
 
-const dietTypeOptions = [
+const dietDetailsOptions = [
   "Vegetarian",
   "Vegan",
   "Pescatarian",
@@ -70,13 +70,19 @@ const dietTypeOptions = [
   "Elimination / Rotation Diet",
 ];
 
+const joinVals = (vals: string[], extra?: string) => {
+  const filtered = vals.filter((v) => v !== "Other");
+  return [...filtered, ...(extra ? [extra] : [])].join(" , ");
+};
+
 export const NutritionHabitsForm = ({ form }: { form: any }) => {
   const [commonFoodsSelected, setCommonFoodsSelected] = useState<string[]>([]);
-  const [dietDetailsSelected, setDietDetailsSelected] = useState<string[]>([]);
   const [otherFood, setOtherFood] = useState<string>("");
   const [decisionMakersSelected, setDecisionMakersSelected] = useState<
     string[]
   >([]);
+  const [dietDetailsSel, setDietDetailsSel] = useState<string[]>([]);
+  const [dietDetailsOther, setDietDetailsOther] = useState("");
 
   const handleDecisionMakersChange = (val: string[]) => {
     setDecisionMakersSelected(val);
@@ -88,9 +94,9 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
     form.setValue("commonFoods", val.join(" , "));
   };
 
-  const handleDietDetailsChange = (val: string[]) => {
-    setDietDetailsSelected(val);
-    form.setValue("dietDetails", val.join(" , "));
+  const onDietDetailsChange = (val: string[]) => {
+    setDietDetailsSel(val);
+    form.setValue("dietDetails", joinVals(val, dietDetailsOther));
   };
 
   const handleOtherFoodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,10 +230,16 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
             </FormLabel>
             <FormControl>
               <RadioGroup
-                onValueChange={field.onChange}
+                onValueChange={(val) => {
+                  field.onChange(val);
+                  form.setValue("dietDetails", "");
+                  setDietDetailsSel([]);
+                  setDietDetailsOther("");
+                }}
                 defaultValue={field.value}
                 className="space-y-[10px]"
               >
+                {/* YES option */}
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
                     <RadioGroupItem value="Yes" id="Yes" />
@@ -236,6 +248,35 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                     Yes
                   </FormLabel>
                 </FormItem>
+
+                {form.watch("dietType") === "Yes" && (
+                  <div className="pl-6 pt-2">
+                    <MultiSelect
+                      placeholder="Select diet(s)"
+                      options={dietDetailsOptions}
+                      selected={dietDetailsSel}
+                      onChange={onDietDetailsChange}
+                      defaultValue={form.getValues("dietDetails")}
+                    />
+                    {dietDetailsSel.includes("Other") && (
+                      <div className="pt-2">
+                        <Input
+                          placeholder="Type your diet"
+                          value={dietDetailsOther}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setDietDetailsOther(v);
+                            form.setValue(
+                              "dietDetails",
+                              joinVals(dietDetailsSel, v)
+                            );
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
                     <RadioGroupItem value="Other" id="Other" />
@@ -244,29 +285,27 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                     Other (please specify)
                   </FormLabel>
                 </FormItem>
+
                 {form.watch("dietType") === "Other" && (
-                  <FormField
-                    control={form.control}
-                    name="dietDetails"
-                    render={() => (
-                      <FormItem>
-                        <MultiSelect
-                          placeholder="Select diet"
-                          options={dietTypeOptions}
-                          selected={dietDetailsSelected}
-                          onChange={handleDietDetailsChange}
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="pl-6 pt-2">
+                    <Input
+                      placeholder="Type your diet"
+                      value={dietDetailsOther}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setDietDetailsOther(v);
+                        form.setValue("dietDetails", v);
+                      }}
+                    />
+                  </div>
                 )}
+
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
-                    <RadioGroupItem value="None" id="None" />
+                    <RadioGroupItem value="No" id="No" />
                   </FormControl>
-                  <FormLabel htmlFor="None" className="font-normal">
-                    Not sure / I don’t follow a specific diet
+                  <FormLabel htmlFor="No" className="font-normal">
+                    No / I don’t follow a specific diet
                   </FormLabel>
                 </FormItem>
               </RadioGroup>

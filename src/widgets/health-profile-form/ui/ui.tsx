@@ -595,7 +595,10 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           <>
             <div className="space-y-6 max-h-[80vh] overflow-y-auto">
               <Section title="Demographics">
-                <SummaryRow label="Age" value={String(client?.calculated_age) ?? ""} />
+                <SummaryRow
+                  label="Age"
+                  value={String(client?.calculated_age) || ""}
+                />
                 <SummaryRow label="Gender" value={resolvedGenderIdentity} />
                 {values.genderIdentity === "self_describe" && (
                   <SummaryRow
@@ -650,10 +653,6 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
               </Section>
 
               <Section title="Lifestyle & Habits">
-                <SummaryRow
-                  label="Specific diet"
-                  value={values.dietDetails ?? ""}
-                />
                 <SummaryRow label="Exercise habits" value={resolvedExercise} />
                 <SummaryRow
                   label="Sleep quality"
@@ -686,7 +685,10 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                   label="Common foods"
                   value={values.commonFoods ?? ""}
                 />
-                <SummaryRow label="Diet type" value={values.dietType ?? ""} />
+                <SummaryRow
+                  label="Specific diet"
+                  value={values.dietDetails ?? ""}
+                />
               </Section>
 
               <Section title="Women’s Health">
@@ -786,7 +788,12 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
 
             <div className="max-h-[65vh] overflow-y-auto">
               <Form {...form}>
-                {currentStep === 0 && <BasicInformationForm form={form} age={client?.calculated_age || 0} />}
+                {currentStep === 0 && (
+                  <BasicInformationForm
+                    form={form}
+                    age={client?.calculated_age || 0}
+                  />
+                )}
                 {currentStep === 1 && <SocialFactorsForm form={form} />}
                 {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
                 {currentStep === 3 && <LifestyleHabitsForm form={form} />}
@@ -808,9 +815,9 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                      setIsOpen(false);
-                      setConfirmOpen(true);
-                    }
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
                 }
               >
                 Cancel
