@@ -20,7 +20,6 @@ const healthConcernsOptions = [
   "Anxiety / stress",
   "Depression / low mood",
   "Hot flashes / night sweats",
-  "Irregular periods",
   "Digestive issues (bloating, constipation, diarrhea)",
   "Brain fog / memory issues",
   "Joint or muscle pain",
@@ -175,16 +174,12 @@ const familyHistoryOptions = [
   "Other",
 ];
 
-const joinVals = (vals: string[], extra?: string) => {
-  const extraTrim = extra?.trim() ?? "";
-  const hasExtra = extraTrim.length > 0;
-  const base = hasExtra ? vals.filter((v) => v !== "Other") : vals;
-  return [...base, ...(hasExtra ? [extraTrim] : [])].join(", ");
-};
-
 const commitOther = (fieldName: string, otherValue: string) => (form: any) => {
-  const sel = split(form.getValues(fieldName));
-  form.setValue(fieldName, joinVals(sel, otherValue));
+  const vals = split(form.getValues(fieldName));
+  const withoutOthers = vals.filter(v => v !== "Other" && !v.startsWith("Other:"));
+  const extraTrim = otherValue.trim();
+  const merged = extraTrim ? [...withoutOthers, `Other: ${extraTrim}`] : withoutOthers;
+  form.setValue(fieldName, merged.join(", "));
 };
 
 const handleEnterCommit =

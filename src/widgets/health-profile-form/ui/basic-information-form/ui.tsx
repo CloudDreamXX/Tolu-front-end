@@ -46,7 +46,7 @@ export const basicInformationSchema = z
     }
   });
 
-export const BasicInformationForm = ({ form }: { form: any }) => {
+export const BasicInformationForm = ({ form, age }: { form: any, age: number }) => {
   const identity = form.watch("genderIdentity");
 
   const languagesStr = form.watch("language") as string | undefined;
@@ -69,7 +69,7 @@ export const BasicInformationForm = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>Age</FormLabel>
             <FormControl>
-              <Input placeholder="34" {...field} />
+              <Input readOnly value={age} />
             </FormControl>
             <FormMessage />
           </FormItem>

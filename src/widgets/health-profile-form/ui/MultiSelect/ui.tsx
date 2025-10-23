@@ -57,17 +57,20 @@ export const MultiSelect = ({
     <li key={option}>
       <button
         type="button"
-        className={cn(
-          "px-[17px] py-[8px] cursor-pointer flex items-center gap-[8px] font-[500] text-[16px] hover:bg-[#F2F2F2] w-full text-left",
-          { "text-[#1C63DB]": selected.includes(option) }
-        )}
+        className={cn("rounded-sm py-1.5 pl-3 pr-2 cursor-pointer flex items-center gap-[8px] font-[500] text-sm hover:bg-[#F2F2F2] w-full text-left transition-colors",
+          "hover:!text-blue-500 hover:bg-[#F2F2F2] focus:bg-accent focus:text-accent-foreground",
+          "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",)}
         onClick={() => toggleOption(option)}
       >
-        <MaterialIcon
-          iconName={
-            selected.includes(option) ? "check" : "check_box_outline_blank"
-          }
-        />
+        <span className="relative flex h-3.5 w-3.5 items-center justify-center">
+          <MaterialIcon iconName="check_box_outline_blank" />
+          {selected.includes(option) && (
+            <MaterialIcon
+              iconName="check"
+              className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+            />
+          )}
+        </span>
 
         {option}
       </button>
@@ -79,7 +82,7 @@ export const MultiSelect = ({
       <button
         type="button"
         className={
-          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 min-h-[38px] h-auto text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center outline-0"
+          "w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 min-h-[44px] h-auto text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center outline-0"
         }
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
@@ -110,7 +113,7 @@ export const MultiSelect = ({
       {open && (
         <ul
           role="listbox"
-          className="fixed z-50 mt-[4px] bg-white border border-[#DBDEE1] rounded-md shadow-sm max-h-[200px] overflow-y-auto"
+          className="absolute z-50 mt-[4px] bg-white border border-[#DBDEE1] rounded-md shadow-sm max-h-[200px] overflow-y-auto"
           style={{
             width: dropdownRef.current?.getBoundingClientRect().width ?? "auto",
           }}
@@ -118,7 +121,7 @@ export const MultiSelect = ({
           {options.map((item, idx) =>
             isGroup(item) ? (
               <li key={`group-${idx}`} className="py-[6px]">
-                <div className="px-[17px] py-[6px] font-[700] text-[16px] text-[#1D1D1F] cursor-default pointer-events-none">
+                <div className="px-[17px] py-[6px] font-[700] text-sm text-[#1D1D1F] cursor-default pointer-events-none">
                   {item.title}
                 </div>
                 <ul>{item.options.map(renderOption)}</ul>

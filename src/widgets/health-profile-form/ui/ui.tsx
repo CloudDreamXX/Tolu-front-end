@@ -54,6 +54,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { LabFilePreview } from "./metabolic-digestive-health-form/LabFilePreview";
 import { setHealthHistory } from "entities/health-history/lib";
 import { useDispatch } from "react-redux";
+import { useGetClientProfileQuery } from "entities/client";
 
 const steps = [
   "Demographics",
@@ -192,6 +193,8 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const { data: healthHistoryData, refetch } = useGetUserHealthHistoryQuery();
 
   const [createHealthHistory] = useCreateHealthHistoryMutation();
+
+  const { data: client } = useGetClientProfileQuery();
 
   useEffect(() => {
     if (healthHistory) {
@@ -592,7 +595,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
           <>
             <div className="space-y-6 max-h-[80vh] overflow-y-auto">
               <Section title="Demographics">
-                <SummaryRow label="Age" value={values.age ?? ""} />
+                <SummaryRow label="Age" value={String(client?.calculated_age) ?? ""} />
                 <SummaryRow label="Gender" value={resolvedGenderIdentity} />
                 {values.genderIdentity === "self_describe" && (
                   <SummaryRow
@@ -783,7 +786,7 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
 
             <div className="max-h-[65vh] overflow-y-auto">
               <Form {...form}>
-                {currentStep === 0 && <BasicInformationForm form={form} />}
+                {currentStep === 0 && <BasicInformationForm form={form} age={client?.calculated_age || 0} />}
                 {currentStep === 1 && <SocialFactorsForm form={form} />}
                 {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
                 {currentStep === 3 && <LifestyleHabitsForm form={form} />}
@@ -805,9 +808,9 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                        setIsOpen(false);
-                        setConfirmOpen(true);
-                      }
+                      setIsOpen(false);
+                      setConfirmOpen(true);
+                    }
                 }
               >
                 Cancel
