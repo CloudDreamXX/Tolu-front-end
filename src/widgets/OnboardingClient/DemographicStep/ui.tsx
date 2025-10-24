@@ -17,6 +17,7 @@ import { cn } from "shared/lib";
 import { Button, Calendar } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { MAP_MENOPAUSE_STAGE_TO_TOOLTIP } from "./mock";
+import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 
 export const DemographicStep = () => {
   const nav = useNavigate();
@@ -31,23 +32,24 @@ export const DemographicStep = () => {
   const healthConditions = clientOnboarding.health_conditions || [];
   const supportNetwork = clientOnboarding.support_network || [];
 
-  const initialDOB = dateOfBirth ? parseISO(dateOfBirth) : null;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const initialDOB = dateOfBirth
+    ? toZonedTime(parseISO(dateOfBirth), timezone)
+    : null;
+
   const [localDate, setLocalDate] = useState<Date | null>(initialDOB);
 
   const [selectedYear, setSelectedYear] = useState<number>(
     initialDOB ? initialDOB.getFullYear() : new Date().getFullYear()
   );
-  const [displayMonth, setDisplayMonth] = useState<Date>(
-    initialDOB
-      ? new Date(initialDOB.getFullYear(), initialDOB.getMonth())
-      : new Date(selectedYear, 0)
-  );
+
   const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
     typeof clientOnboarding.weekly_meal_choice === "string"
       ? clientOnboarding.weekly_meal_choice
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
       : clientOnboarding.weekly_meal_choice || []
   );
 
@@ -60,7 +62,6 @@ export const DemographicStep = () => {
 
     setLocalDate(d);
     setSelectedYear(d.getFullYear());
-    setDisplayMonth(new Date(d.getFullYear(), d.getMonth()));
   }, [dateOfBirth, dispatch]);
 
   useEffect(() => {
@@ -118,7 +119,6 @@ export const DemographicStep = () => {
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
-    setDisplayMonth((prev) => new Date(year, prev.getMonth()));
     if (localDate) {
       const d = new Date(localDate);
       d.setFullYear(year);
@@ -151,27 +151,21 @@ export const DemographicStep = () => {
         selected={localDate ?? undefined}
         onSelect={(selectedDate) => {
           if (selectedDate) {
-            setLocalDate(selectedDate);
+            const localZonedDate = toZonedTime(selectedDate, Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+            setLocalDate(localZonedDate);
+
+            const isoDob = formatInTimeZone(localZonedDate, 'UTC', 'yyyy-MM-dd');
             dispatch(
               setFormField({
                 field: "date_of_birth",
-                value: format(selectedDate, "yyyy-MM-dd"),
+                value: isoDob,
               })
             );
 
-            const y = selectedDate.getFullYear();
+            const y = localZonedDate.getFullYear();
             if (y !== selectedYear) setSelectedYear(y);
-            setDisplayMonth(
-              new Date(selectedDate.getFullYear(), selectedDate.getMonth())
-            );
           }
-        }}
-        initialFocus
-        month={displayMonth}
-        onMonthChange={(m) => {
-          setDisplayMonth(m);
-          const y = m.getFullYear();
-          if (y !== selectedYear) setSelectedYear(y);
         }}
       />
     </>
