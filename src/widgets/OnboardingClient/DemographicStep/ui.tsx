@@ -47,9 +47,9 @@ export const DemographicStep = () => {
   const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
     typeof clientOnboarding.weekly_meal_choice === "string"
       ? clientOnboarding.weekly_meal_choice
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : clientOnboarding.weekly_meal_choice || []
   );
 
@@ -151,11 +151,18 @@ export const DemographicStep = () => {
         selected={localDate ?? undefined}
         onSelect={(selectedDate) => {
           if (selectedDate) {
-            const localZonedDate = toZonedTime(selectedDate, Intl.DateTimeFormat().resolvedOptions().timeZone);
+            const localZonedDate = toZonedTime(
+              selectedDate,
+              Intl.DateTimeFormat().resolvedOptions().timeZone
+            );
 
             setLocalDate(localZonedDate);
 
-            const isoDob = formatInTimeZone(localZonedDate, 'UTC', 'yyyy-MM-dd');
+            const isoDob = formatInTimeZone(
+              localZonedDate,
+              "UTC",
+              "yyyy-MM-dd"
+            );
             dispatch(
               setFormField({
                 field: "date_of_birth",
