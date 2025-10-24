@@ -17,7 +17,7 @@ export const AboutYourPractice = () => {
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<
-    { file: File; previewUrl: string }[]
+    { file: File; previewUrl: string; isPdf: boolean }[]
   >([]);
   const [dragOver, setDragOver] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
@@ -58,7 +58,6 @@ export const AboutYourPractice = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Load saved state
   useEffect(() => {
     const savedSchool = state?.school as string | string[] | undefined;
 
@@ -89,25 +88,22 @@ export const AboutYourPractice = () => {
     setLabsUsed(state?.uses_labs_supplements || "");
   }, [state]);
 
-  // File handling
-  const isValidFile = (file: File) => {
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-    return allowedTypes.includes(file.type);
-  };
-
   const handleFiles = (files: FileList) => {
-    const validFiles = Array.from(files).filter(isValidFile);
-    validFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setFilePreviews((prev) => [
-          ...prev,
-          { file, previewUrl: reader.result as string },
-        ]);
-        setSelectedFiles((prev) => [...prev, file]);
-      };
-      reader.readAsDataURL(file);
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+    const validFiles = Array.from(files).filter((f) =>
+      allowedTypes.includes(f.type)
+    );
+
+    const previews = validFiles.map((file) => {
+      const isPdf =
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf");
+      const url = URL.createObjectURL(file);
+      return { file, previewUrl: url, isPdf };
     });
+
+    setFilePreviews((prev) => [...prev, ...previews]);
+    setSelectedFiles((prev) => [...prev, ...validFiles]);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -127,13 +123,19 @@ export const AboutYourPractice = () => {
   const handleDeleteFile = (index: number) => {
     const updatedFiles = [...selectedFiles];
     const updatedPreviews = [...filePreviews];
+    URL.revokeObjectURL(updatedPreviews[index].previewUrl);
     updatedFiles.splice(index, 1);
     updatedPreviews.splice(index, 1);
     setSelectedFiles(updatedFiles);
     setFilePreviews(updatedPreviews);
   };
 
-  // Form validation
+  useEffect(() => {
+    return () => {
+      filePreviews.forEach((p) => URL.revokeObjectURL(p.previewUrl));
+    };
+  }, [filePreviews]);
+
   const allFilled = () =>
     selectedSchools.length > 0 &&
     recentClients &&
@@ -141,7 +143,6 @@ export const AboutYourPractice = () => {
     labsUsed &&
     selectedFiles.length > 0;
 
-  // Field change
   const handleNext = async () => {
     if (!allFilled()) return;
     await onboardUser({
@@ -159,11 +160,9 @@ export const AboutYourPractice = () => {
 
   const handleSchoolChange = (updated: string[]) => {
     setSelectedSchools(updated);
-
     const processed = updated.includes(OTHER_OPTION)
       ? updated
       : updated.map((s) => (s === OTHER_OPTION ? otherSchoolInput : s));
-
     dispatch(updateCoachField({ key: "school", value: processed.join(", ") }));
   };
 
@@ -182,15 +181,19 @@ export const AboutYourPractice = () => {
       )}
       <main className="flex flex-col items-center flex-1 justify-center gap-[32px] self-stretch bg-white shadow-mdp-[40px] md:shadow-none md:bg-transparent py-[24px] px-[16px] md:p-0 rounded-t-[20px] md:rounded-0">
         {!isMobile && (
-          <h1 className="flex text-center  text-[32px] font-medium text-black">
+          <h1 className="flex text-center text-[32px] font-medium text-black">
             About your practice
           </h1>
         )}
         <div
-          className={`w-full md:w-[684px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px] ${location.pathname.startsWith("/content-manager/create") ? "md:h-[60vh] overflow-y-auto" : ""}`}
+          className={`w-full md:w-[684px] md:bg-white md:shadow-mdp-[40px] flex flex-col items-center md:items-start gap-[24px] md:rounded-[20px] ${
+            location.pathname.startsWith("/content-manager/create")
+              ? "md:h-[60vh] overflow-y-auto"
+              : ""
+          }`}
         >
           {isMobile && (
-            <h1 className="flex text-center  text-[24px] font-medium text-black">
+            <h1 className="flex text-center text-[24px] font-medium text-black">
               About your practice
             </h1>
           )}
@@ -254,9 +257,15 @@ export const AboutYourPractice = () => {
 
             {filePreviews.length > 0 && (
               <div className="flex gap-[16px] flex-wrap justify-start w-fit mt-4 md:ml-[32px]">
-                {filePreviews.map(({ file, previewUrl }, index) => (
+                {filePreviews.map(({ file, previewUrl, isPdf }, index) => (
                   <div key={index} className="relative w-[150px] h-[150px]">
-                    {file.type.startsWith("image/") && (
+                    {isPdf ? (
+                      <iframe
+                        src={previewUrl}
+                        title={file.name}
+                        className="w-full  rounded-md border"
+                      />
+                    ) : (
                       <img
                         src={previewUrl}
                         alt={`preview-${index}`}
@@ -353,20 +362,23 @@ export const AboutYourPractice = () => {
           </div>
         </div>
 
-        {/* Navigation */}
         <div
-          className={`flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit ${location.pathname.startsWith("/content-manager/create") ? "" : "md:pb-[100px]"}`}
+          className={`flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit ${
+            location.pathname.startsWith("/content-manager/create")
+              ? ""
+              : "md:pb-[100px]"
+          }`}
         >
           <button
             onClick={() => nav(-1)}
-            className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
+            className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
           </button>
           <Button
             onClick={handleNext}
-            className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold ${
+            className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
               allFilled()
                 ? "bg-[#1C63DB] text-white"
                 : "bg-[#D5DAE2] text-[#5F5F65]"

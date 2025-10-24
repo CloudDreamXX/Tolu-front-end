@@ -9,7 +9,6 @@ import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { timezoneOptions } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Calendar } from "shared/ui";
-import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
 import { useOnboardUserMutation } from "entities/user";
 import { SelectField } from "widgets/CRMSelectField";
@@ -121,20 +120,27 @@ export const ProfileSetup = () => {
         selected={localDate ?? undefined}
         onSelect={(selectedDate) => {
           if (selectedDate) {
-            setLocalDate(selectedDate);
-            const isoDob = format(selectedDate, "yyyy-MM-dd");
-            setDateOfBirth(isoDob);
-
-            const y = selectedDate.getFullYear();
-            if (y !== selectedYear) setSelectedYear(y);
-            setDisplayMonth(new Date(y, selectedDate.getMonth()));
-
-            dispatch(
-              updateCoachField({
-                key: "dob",
-                value: format(selectedDate, "yyyy-MM-dd"),
-              })
+            const localCleanDate = new Date(
+              selectedDate.getFullYear(),
+              selectedDate.getMonth(),
+              selectedDate.getDate()
             );
+
+            setLocalDate(localCleanDate);
+
+            const isoDob = `${localCleanDate.getFullYear()}-${String(
+              localCleanDate.getMonth() + 1
+            ).padStart(
+              2,
+              "0"
+            )}-${String(localCleanDate.getDate()).padStart(2, "0")}`;
+
+            setDateOfBirth(isoDob);
+            dispatch(updateCoachField({ key: "dob", value: isoDob }));
+
+            const y = localCleanDate.getFullYear();
+            if (y !== selectedYear) setSelectedYear(y);
+            setDisplayMonth(new Date(y, localCleanDate.getMonth()));
           }
         }}
         initialFocus
@@ -275,7 +281,13 @@ export const ProfileSetup = () => {
                   placeholder="Select Birth Date"
                   readOnly
                   value={
-                    dateOfBirth ? format(new Date(dateOfBirth), "PPP") : ""
+                    dateOfBirth
+                      ? new Intl.DateTimeFormat("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }).format(new Date(dateOfBirth + "T00:00:00"))
+                      : ""
                   }
                   className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
                 />
