@@ -569,48 +569,48 @@ export const LibraryDocument = () => {
     setScripts([...(scripts || []), navFixScript]);
   }, [selectedDocument, quizScore]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const container = document.querySelector(".prose");
-      if (!container) return;
+useEffect(() => {
+  const timer = setTimeout(() => {
+    const container = document.querySelector(".prose");
+    if (!container) return;
 
-      container
-        .querySelectorAll<HTMLFormElement>("form[id^='quiz-']")
-        .forEach((form) => {
-          const radios = form.querySelectorAll<HTMLInputElement>(
-            'input[type="radio"]'
-          );
-          const submitBtn = form.querySelector<HTMLButtonElement>(
-            'button[id$="-submit"]'
-          );
-          if (!submitBtn) return;
+    container.querySelectorAll<HTMLFormElement>("form[id^='quiz-']").forEach((form) => {
+      const radios = form.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+      const submitBtn = form.querySelector<HTMLButtonElement>('button[id$="-submit"]');
+      if (!submitBtn) return;
 
-          const quizNum = form.id.replace("quiz-", "");
-          const nextBtn = container.querySelector<HTMLButtonElement>(
-            `#next-quiz-${quizNum}`
-          );
+      const quizNum = form.id.replace("quiz-", "");
+      const nextBtn = container.querySelector<HTMLButtonElement>(`#next-quiz-${quizNum}`);
 
-          const answered = Array.from(radios).some((r) => r.checked);
-          if (answered) {
-            submitBtn.disabled = true;
-            if (nextBtn) nextBtn.disabled = false;
-          }
+      const anyChecked = Array.from(radios).some((r) => r.checked);
+      submitBtn.disabled = !anyChecked;
+      submitBtn.style.opacity = anyChecked ? "1" : "0.5";
+      if (nextBtn) {
+        nextBtn.disabled = !anyChecked;
+        nextBtn.style.opacity = anyChecked ? "1" : "0.5";
+      }
 
-          radios.forEach((r) =>
-            r.addEventListener("change", () => {
-              submitBtn.disabled = false;
-            })
-          );
-
-          submitBtn.addEventListener("click", () => {
-            submitBtn.disabled = true;
-            if (nextBtn) nextBtn.disabled = false;
-          });
+      radios.forEach((r) => {
+        r.addEventListener("change", () => {
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = "1";
         });
-    }, 100);
+      });
 
-    return () => clearTimeout(timer);
-  }, [renderedContent]);
+      submitBtn.addEventListener("click", () => {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.5";
+        if (nextBtn) {
+          nextBtn.disabled = false;
+          nextBtn.style.opacity = "1";
+        }
+      });
+    });
+  }, 150);
+
+  return () => clearTimeout(timer);
+}, [renderedContent]);
+
 
   useEffect(() => {
     scripts.forEach((scriptContent) => {

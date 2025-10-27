@@ -286,32 +286,44 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     };
   }, [pair.content]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      document
-        .querySelectorAll('form[id^="quiz-"] button[id$="-submit"]')
-        .forEach((btn) => {
-          (btn as HTMLButtonElement).disabled = true;
+useEffect(() => {
+  const timer = setTimeout(() => {
+    const container = document.querySelector(".prose, .richtext, .conversation-content");
+    if (!container) return;
+
+    container.querySelectorAll<HTMLFormElement>('form[id^="quiz-"]').forEach((form) => {
+      const radios = form.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+      const submitBtn = form.querySelector<HTMLButtonElement>('button[id$="-submit"]');
+      const quizNum = form.id.replace("quiz-", "");
+      const nextBtn = container.querySelector<HTMLButtonElement>(`#next-quiz-${quizNum}`);
+
+      submitBtn && ((submitBtn.disabled = true), (submitBtn.style.opacity = "0.5"));
+      nextBtn && ((nextBtn.disabled = true), (nextBtn.style.opacity = "0.5"));
+
+      radios.forEach((r) =>
+        r.addEventListener("change", () => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+          }
+        })
+      );
+
+      if (submitBtn) {
+        submitBtn.addEventListener("click", () => {
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = "0.5";
+          if (nextBtn) {
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = "1";
+          }
         });
-      document.querySelectorAll('button[id^="next-quiz-"]').forEach((btn) => {
-        (btn as HTMLButtonElement).disabled = true;
-      });
+      }
+    });
+  }, 150);
 
-      document.querySelectorAll('form[id^="quiz-"]').forEach((form) => {
-        const radios = form.querySelectorAll('input[type="radio"]');
-        const submitBtn = form.querySelector('button[id$="-submit"]');
-        if (submitBtn) {
-          radios.forEach((r) =>
-            r.addEventListener("change", () => {
-              (submitBtn as HTMLButtonElement).disabled = false;
-            })
-          );
-        }
-      });
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [renderedContent]);
+  return () => clearTimeout(timer);
+}, [renderedContent]);
 
   const renderCompareView = () => (
     <div className="flex-row block gap-4 md:flex">
