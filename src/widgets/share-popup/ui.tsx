@@ -1,5 +1,5 @@
 import { useShareEmailMutation, useShareCoachMutation } from "entities/content";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Facebook from "shared/assets/icons/facebook";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib";
@@ -31,15 +31,10 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
     try {
       await shareEmail(data).unwrap();
       onClose();
-      toast({
-        title: "Email sent successfully!",
-      });
+      toast({ title: "Email sent successfully!" });
     } catch (error) {
       console.error(error);
-      toast({
-        variant: "destructive",
-        title: "Failed to send email",
-      });
+      toast({ variant: "destructive", title: "Failed to send email" });
     }
   };
 
@@ -52,28 +47,38 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
     try {
       await shareCoach(data).unwrap();
       onClose();
-      toast({
-        title: "Message sent to coach!",
-      });
+      toast({ title: "Message sent to coach!" });
     } catch (error) {
       console.error(error);
-      toast({
-        variant: "destructive",
-        title: "Error sending to coach",
-      });
+      toast({ variant: "destructive", title: "Error sending to coach" });
     }
   };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: "Link copied to clipboard!",
-    });
+    toast({ title: "Link copied to clipboard!" });
+  };
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", onKey, { capture: true });
+  }, [onClose]);
+
+  const handleBackdropMouseDown = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   return (
     <div
-      className={`fixed inset-0 z-[999] flex flex-col items-center px-[16px] overflow-y-auto flex items-center justify-center`}
+      className="fixed inset-0 z-[999] flex items-center justify-center px-[16px] overflow-y-auto"
       style={{
         background: "rgba(0, 0, 0, 0.30)",
         backdropFilter: "blur(2px)",
@@ -82,20 +87,11 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
       aria-modal="true"
       role="dialog"
       aria-labelledby="modal-title"
+      onMouseDown={handleBackdropMouseDown}
     >
       <div
-        className={`
-          flex flex-col 
-          bg-white 
-          rounded-[18px] 
-          w-full
-          md:w-[500px] 
-          px-[24px] 
-          py-[24px] 
-          gap-[24px] 
-          relative
-          top-0
-        `}
+        className="flex flex-col bg-white rounded-[18px] w-full md:w-[500px] px-[24px] py-[24px] gap-[24px] relative"
+        onMouseDown={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -128,6 +124,7 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
               className={`${isEmailForm ? "text-blue-500" : ""}`}
             />
           </button>
+
           <button
             className={`bg-white p-6 rounded-full flex justify-center gap-4 items-center cursor-pointer border ${isCoachForm && "border-blue-500"}`}
             onClick={() => {
@@ -140,6 +137,7 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
               className={`${isCoachForm ? "text-blue-500" : ""}`}
             />
           </button>
+
           <div
             className="fb-share-button"
             data-href={window.location.href}
@@ -149,8 +147,8 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
             <a
               href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
               target="_blank"
-              className="fb-xfbml-parse-ignore bg-white p-6 rounded-full flex justify-center gap-4 items-center cursor-pointer border"
               rel="noopener noreferrer"
+              className="fb-xfbml-parse-ignore bg-white p-6 rounded-full flex justify-center gap-4 items-center cursor-pointer border"
             >
               <Facebook />
             </a>

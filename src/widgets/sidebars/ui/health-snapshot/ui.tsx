@@ -35,6 +35,33 @@ export const HealthSnapshotSidebar: React.FC = () => {
     return count + (chat.unreadCount || 0);
   }, 0);
 
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (menuRef.current && !menuRef.current.contains(target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside, true);
+    document.addEventListener("keydown", handleEscape, true);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside, true);
+      document.removeEventListener("keydown", handleEscape, true);
+    };
+  }, [menuOpen]);
+
   useEffect(() => {
     const checkWidth = () => {
       const w = window.innerWidth;
@@ -82,7 +109,6 @@ export const HealthSnapshotSidebar: React.FC = () => {
     setIsLibraryOpen(!isLibraryOpen);
     setSidebarOpen(true);
     if (isNarrow) {
-      // Close the menu if it's mobile and clicked
       setMenuOpen(false);
     }
   };
@@ -276,6 +302,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
 
           {menuOpen && (
             <div
+              ref={menuRef}
               className={`absolute ${sidebarOpen ? "left-[90px] bottom-[80px]" : "left-[70px] bottom-[20px]"} 
             mt-2 w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 py-[12px] px-[20px]
             flex flex-col gap-2 z-50

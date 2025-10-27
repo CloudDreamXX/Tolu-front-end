@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-
 import { Input } from "shared/ui";
 
 interface CreateFolderPopupProps {
@@ -18,7 +17,6 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
 
   const handleComplete = async () => {
     if (!name.trim()) return;
-
     setIsCreating(true);
     try {
       await onComplete(name.trim(), description.trim());
@@ -35,9 +33,26 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
     }
   };
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", onKey, { capture: true });
+  }, [onClose]);
+
+  const handleBackdropMouseDown = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
     <div
-      className={`fixed inset-0 z-[999] flex flex-col items-center px-[16px] overflow-y-auto flex items-center justify-center`}
+      className="fixed inset-0 z-[999] flex items-center justify-center px-[16px] overflow-y-auto"
       style={{
         background: "rgba(0, 0, 0, 0.30)",
         backdropFilter: "blur(2px)",
@@ -46,20 +61,11 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
       aria-modal="true"
       role="dialog"
       aria-labelledby="modal-title"
+      onMouseDown={handleBackdropMouseDown}
     >
       <div
-        className={`
-          flex flex-col 
-          bg-white 
-          rounded-[18px] 
-          w-full
-          md:w-[742px] 
-          px-[24px] 
-          py-[24px] 
-          gap-[24px] 
-          relative
-          top-0
-        `}
+        className="flex flex-col bg-white rounded-[18px] w-full md:w-[742px] px-[24px] py-[24px] gap-[24px] relative"
+        onMouseDown={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -81,7 +87,7 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
         </p>
 
         <div className="flex flex-col gap-[10px] items-start w-full">
-          <label className=" text-[#5F5F65] text-[12px] font-medium">
+          <label className="text-[#5F5F65] text-[12px] font-medium">
             Subfolder name *
           </label>
           <Input
@@ -94,8 +100,9 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
             autoFocus
           />
         </div>
+
         <div className="flex flex-col gap-[10px] items-start w-full">
-          <label className=" text-[#5F5F65] text-[12px] font-medium">
+          <label className="text-[#5F5F65] text-[12px] font-medium">
             Subfolder description
           </label>
           <Input
@@ -107,6 +114,7 @@ export const CreateSubfolderPopup: React.FC<CreateFolderPopupProps> = ({
             disabled={isCreating}
           />
         </div>
+
         <div className="flex flex-col-reverse gap-[8px] md:gap-[16px] md:flex-row justify-between w-full">
           <button
             onClick={onClose}
