@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 const reasons = [
@@ -29,14 +29,44 @@ export const BadRateResponse: React.FC<Props> = ({
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [comment, setComment] = useState<string>("");
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey, { capture: true });
+    return () => document.removeEventListener("keydown", onKey, { capture: true });
+  }, [onClose]);
+
+  const handleBackdropMouseDown = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const handleSubmit = async () => {
+    const details =
+      selectedReason && comment
+        ? `${selectedReason}, ${comment}`
+        : selectedReason || comment || "";
+    await handleRateClick(contentId, 0, details, true);
+
+    onClose();
+  };
+
   return (
     <div
       className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm"
       aria-modal="true"
       role="dialog"
       aria-labelledby="modal-title"
+      onMouseDown={handleBackdropMouseDown}
     >
-      <div className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[95vh]">
+      <div
+        className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[95vh]"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <button
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
@@ -45,10 +75,7 @@ export const BadRateResponse: React.FC<Props> = ({
           <MaterialIcon iconName="close" />
         </button>
 
-        <h3
-          id="modal-title"
-          className="text-[24px] font-semibold text-[#1D1D1F]"
-        >
+        <h3 id="modal-title" className="text-[24px] font-semibold text-[#1D1D1F]">
           What was wrong with this response?
         </h3>
 
@@ -57,11 +84,10 @@ export const BadRateResponse: React.FC<Props> = ({
             <button
               key={reason}
               onClick={() => setSelectedReason(reason)}
-              className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${
-                selectedReason === reason
+              className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${selectedReason === reason
                   ? "border-[#1C63DB] text-[#676767]"
                   : "border-[#E3E3E3] text-[#676767]"
-              }`}
+                }`}
             >
               {reason}
             </button>
@@ -83,16 +109,9 @@ export const BadRateResponse: React.FC<Props> = ({
             Cancel
           </button>
           <button
-            onClick={() =>
-              handleRateClick(
-                contentId,
-                0,
-                `${selectedReason}, ${comment}`,
-                true
-              )
-            }
+            onClick={handleSubmit}
             disabled={!selectedReason}
-            className="px-[16px] py-[11px] rounded-full text-[16px] font-[600] bg-[#1C63DB] text-white disabled:opacity-50"
+            className="px-[16px] py-[11px] rounded-full text-[16px] font-[600] bg-[#1C63DB] text-white disabled:opacity-50 md:w-[180px]"
           >
             Submit Feedback
           </button>

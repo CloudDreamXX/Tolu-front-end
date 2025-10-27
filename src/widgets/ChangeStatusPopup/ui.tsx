@@ -1,5 +1,5 @@
 import { FOLDER_STATUS_MAPPING, ORDERED_STATUSES } from "entities/folder";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ChooseSubfolderPanel } from "widgets/ChooseSubfolderPanel";
 
@@ -16,13 +16,13 @@ interface ChangeStatusPopupProps {
       | "Archived"
   ) => Promise<void>;
   currentStatus:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
   handleMoveClick?: (id: string, subfolderId: string) => Promise<void>;
   contentId?: string;
 }
@@ -37,9 +37,7 @@ Object.entries(FOLDER_STATUS_MAPPING).forEach(([backend, ui]) => {
   }
 });
 
-const STATUS_OPTIONS = Array.from(
-  new Set(Object.values(FOLDER_STATUS_MAPPING))
-);
+const STATUS_OPTIONS = Array.from(new Set(Object.values(FOLDER_STATUS_MAPPING)));
 
 export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
   contentId,
@@ -61,20 +59,16 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
 
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [subfoldersOpen, setSubfoldersOpen] = useState<boolean>(false);
-  const [selectedSubfolderId, setSelectedSubfolderId] = useState<string | null>(
-    null
-  );
+  const [selectedSubfolderId, setSelectedSubfolderId] = useState<string | null>(null);
+
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
   const handleSave = async () => {
     const backendValue = UI_TO_BACKEND_STATUS[selectedStatus];
-
     if (!backendValue) return;
 
     if (selectedStatus === "AI-Generated") {
-      if (!selectedSubfolderId) {
-        return;
-      }
-
+      if (!selectedSubfolderId) return;
       await onComplete(backendValue);
       if (handleMoveClick && contentId) {
         await handleMoveClick(contentId, selectedSubfolderId);
@@ -84,13 +78,33 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
     }
   };
 
+  const handleBackdropMouseDown = (e: React.MouseEvent<HTMLDialogElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey, { capture: true });
+    return () => document.removeEventListener("keydown", onKey, { capture: true });
+  }, [onClose]);
+
   return (
     <dialog
       className="fixed inset-0 z-[999] flex items-center w-full h-full justify-center bg-black/30 backdrop-blur-sm"
       aria-modal="true"
       aria-labelledby="modal-title"
+      role="dialog"
+      onMouseDown={handleBackdropMouseDown}
     >
-      <div className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px]">
+      <div
+        ref={contentRef}
+        className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px]"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <button
           onClick={onClose}
           className="absolute top-[16px] right-[16px]"

@@ -61,15 +61,13 @@ export const MultiSelect = ({
       const dropdownEl = dropdownRef.current;
       const containerEl = containerRef.current;
 
-      if (containerEl?.contains(target) || dropdownEl?.contains(target)) {
-        return;
-      }
+      if (containerEl?.contains(target) || dropdownEl?.contains(target)) return;
 
       requestAnimationFrame(() => setOpen(false));
     };
 
-    document.addEventListener("click", handlePointerDown, true);
-    return () => document.removeEventListener("click", handlePointerDown, true);
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    return () => document.removeEventListener("pointerdown", handlePointerDown, true);
   }, []);
 
   useEffect(() => {

@@ -40,10 +40,24 @@ export const SelectField = ({
   });
 
   useEffect(() => {
-    if (open && buttonRef.current) {
+    if (open && buttonRef.current && dropdownRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const dropdownRect = dropdownRef.current.getBoundingClientRect();
+
+      const gap = 6;
+      const viewportHeight = window.innerHeight;
+
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      const openUp = spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
+
+      const top = openUp
+        ? rect.top + window.scrollY - dropdownRect.height - gap
+        : rect.bottom + window.scrollY + gap;
+
       setCoords({
-        top: rect.bottom + window.scrollY,
+        top,
         left: rect.left + window.scrollX,
         width: rect.width,
       });
@@ -90,9 +104,8 @@ export const SelectField = ({
         createPortal(
           <ul
             ref={dropdownRef}
-            className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2 ${
-              className || ""
-            }`}
+            className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2 ${className || ""
+              }`}
             style={{
               top: coords.top,
               left: coords.left,

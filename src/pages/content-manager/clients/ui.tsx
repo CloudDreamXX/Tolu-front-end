@@ -146,6 +146,22 @@ export const ContentManagerClients: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        deleteMenuId &&
+        !(document.querySelector(`[data-delete-menu-id="${deleteMenuId}"]`)?.contains(target) ||
+          (event.target as HTMLElement).closest('[data-delete-trigger="true"]'))
+      ) {
+        setDeleteMenuId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [deleteMenuId]);
+
   const filteredClients = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return clientsData?.clients;
@@ -670,16 +686,18 @@ export const ContentManagerClients: React.FC = () => {
                     </button>
 
                     {!isMobile && !isTablet && (
-                      <div className="relative ml-auto">
+                      <div
+                        className="relative ml-auto"
+                        data-delete-menu-id={client.client_id}
+                      >
                         <button
                           onClick={() =>
                             setDeleteMenuId(
-                              deleteMenuId === client.client_id
-                                ? null
-                                : client.client_id
+                              deleteMenuId === client.client_id ? null : client.client_id
                             )
                           }
                           className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
+                          data-delete-trigger="true"
                         >
                           <MaterialIcon iconName="more_vert" />
                         </button>
@@ -691,6 +709,7 @@ export const ContentManagerClients: React.FC = () => {
                               onClick={async () => {
                                 handleSelectClient(client.client_id);
                                 setConfirmDelete(true);
+                                setDeleteMenuId(null);
                               }}
                             >
                               <MaterialIcon
@@ -797,11 +816,10 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
                 </button>

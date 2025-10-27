@@ -55,10 +55,24 @@ export const MultiSelectField = ({
   };
 
   useEffect(() => {
-    if (open && buttonRef.current) {
+    if (open && buttonRef.current && dropdownRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const dropdownRect = dropdownRef.current.getBoundingClientRect();
+
+      const gap = 6;
+      const viewportHeight = window.innerHeight;
+
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      const openUp = spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
+
+      const top = openUp
+        ? rect.top + window.scrollY - dropdownRect.height - gap
+        : rect.bottom + window.scrollY + gap;
+
       setCoords({
-        top: rect.bottom + window.scrollY,
+        top,
         left: rect.left + window.scrollX,
         width: rect.width,
       });
@@ -151,7 +165,7 @@ export const MultiSelectField = ({
           <div
             ref={dropdownRef}
             onClick={(e) => e.stopPropagation()}
-            className={`absolute z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8 ${height || ""}`}
+            className={`absolute z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8 `}
             style={{
               top: coords.top,
               left: coords.left,
@@ -163,11 +177,10 @@ export const MultiSelectField = ({
               {options.map((option) => (
                 <li
                   key={option.label}
-                  className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${
-                    selected.includes(option.label)
-                      ? "border-[#1D1D1F]"
-                      : "border-white hover:border-[#1D1D1F]"
-                  }`}
+                  className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${selected.includes(option.label)
+                    ? "border-[#1D1D1F]"
+                    : "border-white hover:border-[#1D1D1F]"
+                    }`}
                   onClick={() => toggleOption(option.label)}
                 >
                   <MaterialIcon

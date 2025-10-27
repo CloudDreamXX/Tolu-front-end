@@ -47,9 +47,9 @@ export const DemographicStep = () => {
   const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
     typeof clientOnboarding.weekly_meal_choice === "string"
       ? clientOnboarding.weekly_meal_choice
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
       : clientOnboarding.weekly_meal_choice || []
   );
 
@@ -150,29 +150,20 @@ export const DemographicStep = () => {
         mode="single"
         selected={localDate ?? undefined}
         onSelect={(selectedDate) => {
-          if (selectedDate) {
-            const localZonedDate = toZonedTime(
-              selectedDate,
-              Intl.DateTimeFormat().resolvedOptions().timeZone
-            );
+          if (!selectedDate) return;
 
-            setLocalDate(localZonedDate);
+          setLocalDate(selectedDate);
 
-            const isoDob = formatInTimeZone(
-              localZonedDate,
-              "UTC",
-              "yyyy-MM-dd"
-            );
-            dispatch(
-              setFormField({
-                field: "date_of_birth",
-                value: isoDob,
-              })
-            );
+          const isoDob = format(selectedDate, "yyyy-MM-dd");
+          dispatch(
+            setFormField({
+              field: "date_of_birth",
+              value: isoDob,
+            })
+          );
 
-            const y = localZonedDate.getFullYear();
-            if (y !== selectedYear) setSelectedYear(y);
-          }
+          const y = selectedDate.getFullYear();
+          if (y !== selectedYear) setSelectedYear(y);
         }}
       />
     </>

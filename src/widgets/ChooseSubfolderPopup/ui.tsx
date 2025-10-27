@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ChooseSubfolderPanel } from "widgets/ChooseSubfolderPanel";
 
@@ -21,9 +21,33 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
 }) => {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey, { capture: true });
+    return () => document.removeEventListener("keydown", onKey, { capture: true });
+  }, [onClose]);
+
+  const handleBackdropMouseDown = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] w-full h-full backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[720px] lg:max-w-[742px] w-full shadow-lg mx-[16px] relative">
+    <div
+      className="fixed inset-0 bg-[rgba(0,0,0,0.3)] w-full h-full backdrop-blur-sm flex items-center justify-center z-50"
+      aria-modal="true"
+      role="dialog"
+      onMouseDown={handleBackdropMouseDown}
+    >
+      <div
+        className="bg-[#F9FAFB] rounded-[12px] p-[24px] md:max-w-[720px] lg:max-w-[742px] w-full shadow-lg mx-[16px] relative"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <button
           onClick={onClose}
           className="absolute top-[16px] right-[16px]"
@@ -40,11 +64,13 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
           {title === "Duplicate" && <MaterialIcon iconName="stack" fill={1} />}
           {title}
         </h3>
+
         {description && (
           <p className="text-[14px] text-[#5F5F65] font-[500] mt-[8px]">
             {description}
           </p>
         )}
+
         <div className="mt-[24px]">
           <ChooseSubfolderPanel
             parentFolderId={parentFolderId}
@@ -60,6 +86,7 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
           >
             Cancel
           </button>
+
           <button
             disabled={!selectedFolderId}
             onClick={() =>
