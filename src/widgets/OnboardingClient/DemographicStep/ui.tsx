@@ -47,9 +47,9 @@ export const DemographicStep = () => {
   const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
     typeof clientOnboarding.weekly_meal_choice === "string"
       ? clientOnboarding.weekly_meal_choice
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
       : clientOnboarding.weekly_meal_choice || []
   );
 
@@ -364,6 +364,8 @@ export const DemographicStep = () => {
               );
             }}
             options={mealChoices.map((c) => ({ label: c, value: c }))}
+            className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
+            labelClassName="text-[16px] font-medium"
           />
 
           {/* Support Network */}

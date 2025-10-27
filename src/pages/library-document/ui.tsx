@@ -946,7 +946,7 @@ window.showCard = function(n){
   return (
     <div className={`flex flex-col w-full h-full gap-6 p-6`}>
       <div className="flex items-center gap-2 mb-4 md:gap-4">
-        <HealthProfileForm healthHistory={healthHistory} />
+        <HealthProfileForm />
         <Popover open={providersOpen} onOpenChange={onProvidersOpenChange}>
           <PopoverTrigger asChild>
             <Button

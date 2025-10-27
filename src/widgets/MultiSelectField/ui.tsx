@@ -163,11 +163,10 @@ export const MultiSelectField = ({
               {options.map((option) => (
                 <li
                   key={option.label}
-                  className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${
-                    selected.includes(option.label)
+                  className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${selected.includes(option.label)
                       ? "border-[#1D1D1F]"
                       : "border-white hover:border-[#1D1D1F]"
-                  }`}
+                    }`}
                   onClick={() => toggleOption(option.label)}
                 >
                   <MaterialIcon

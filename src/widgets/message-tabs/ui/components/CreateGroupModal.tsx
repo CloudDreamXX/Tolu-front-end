@@ -118,11 +118,33 @@ export const CreateGroupModal = ({
 
   return (
     <div
-      className={`fixed top-[85px] md:top-0 inset-0 z-[999] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto`}
+      className={cn(
+        "fixed top-[85px] md:top-0 inset-0 z-[999] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px]",
+        "flex items-start md:items-center justify-center overflow-y-auto"
+      )}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
       <div
-        className={`bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] md:p-[24px] top-0 bottom-0 h-full md:min-h-auto md:max-h-[90vh] w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-hidden flex flex-col gap-[24px]`}
+        className={cn(
+          "relative bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl",
+          "px-[16px] py-[24px] md:p-[24px] top-0 bottom-0 h-full md:min-h-auto md:max-h-[90vh]",
+          "w-full md:h-fit md:w-[720px] lg:w-[800px] text-left md:mx-[16px]",
+          "overflow-hidden flex flex-col gap-[24px]"
+        )}
+        onClick={(e) => e.stopPropagation()}
       >
+        <button
+          onClick={onClose}
+          aria-label="Close modal"
+          className="absolute top-4 right-4 text-[#5F5F65] hover:text-[#1D1D1F] transition-colors"
+        >
+          <MaterialIcon iconName="close" className="text-[24px]" />
+        </button>
+
         <div>
           <div className="flex gap-2">
             <MaterialIcon iconName="forum" fill={1} />
@@ -143,11 +165,11 @@ export const CreateGroupModal = ({
               openFilePicker();
             }}
             className={cn(
-              "mt-1 text-center  rounded-lg w-52 h-52 flex flex-col items-center justify-center gap-[2px]",
+              "mt-1 text-center rounded-lg w-52 h-52 flex flex-col items-center justify-center gap-[2px]",
               dragOver ? "bg-blue-50" : "bg-white",
               previewUrl
                 ? "undefined"
-                : " border-blue-500 p-6  border-dashed border-2"
+                : "border-blue-500 p-6 border-dashed border-2"
             )}
           >
             {previewUrl ? (
@@ -157,7 +179,6 @@ export const CreateGroupModal = ({
                   alt="Preview"
                   className="object-cover w-full h-full rounded-lg"
                 />
-
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 transition-opacity duration-200 rounded-lg opacity-0 bg-black/40 group-hover:opacity-100">
                   <button
                     className="flex items-center w-[104px] gap-1 px-3 py-2 text-black bg-white rounded-md hover:bg-gray-100"
@@ -170,7 +191,6 @@ export const CreateGroupModal = ({
                     <MaterialIcon iconName="edit" fill={1} />
                     Change
                   </button>
-
                   <button
                     className="flex items-center w-[104px] gap-1 px-3 py-2 text-red-600 font-semibold bg-red-200 rounded-md hover:bg-red-300"
                     onClick={(e) => {

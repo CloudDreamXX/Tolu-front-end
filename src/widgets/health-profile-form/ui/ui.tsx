@@ -166,7 +166,7 @@ const isFilled = (v: any) => {
   return typeof v === "number" || typeof v === "boolean";
 };
 
-export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
+export const HealthProfileForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
@@ -181,30 +181,30 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   });
   const dispatch = useDispatch();
 
+  const { data: healthHistoryData, refetch } = useGetUserHealthHistoryQuery();
+
   const form = useForm<BaseValues>({
     resolver: zodResolver(formSchema),
     shouldUnregister: false,
     defaultValues: {
       ...DEFAULT_NEW_FIELDS,
-      ...mapHealthHistoryToFormDefaults(healthHistory),
+      ...mapHealthHistoryToFormDefaults(healthHistoryData),
     } as Partial<BaseValues>,
   });
-
-  const { data: healthHistoryData, refetch } = useGetUserHealthHistoryQuery();
 
   const [createHealthHistory] = useCreateHealthHistoryMutation();
 
   const { data: client } = useGetClientProfileQuery();
 
   useEffect(() => {
-    if (healthHistory) {
+    if (healthHistoryData) {
       const defaults = {
         ...DEFAULT_NEW_FIELDS,
-        ...mapHealthHistoryToFormDefaults(healthHistory),
+        ...mapHealthHistoryToFormDefaults(healthHistoryData),
       };
       form.reset(defaults as any);
     }
-  }, [healthHistory]);
+  }, [healthHistoryData]);
 
   const stepFields: Array<(keyof BaseValues)[]> = [
     [
@@ -544,12 +544,41 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
   const openPreview = (file: LabResultFile) => setPreview({ open: true, file });
   const closePreview = () => setPreview({ open: false, file: undefined });
 
+  const stripOther = (s?: string) => {
+    if (!s) return "";
+    return s
+      .split(",")
+      .map((p) =>
+        p
+          .trim()
+          .replace(/^Other:?/i, "")
+          .trim()
+      )
+      .filter((p) => p.length > 0)
+      .join(", ");
+  };
+
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(o) => {
+      onOpenChange={async (o) => {
         setIsOpen(o);
-        if (!o) setIsEditing(false);
+
+        if (!o) {
+          try {
+            const { data: fresh } = await refetch();
+            if (fresh) {
+              const defaults = {
+                ...DEFAULT_NEW_FIELDS,
+                ...mapHealthHistoryToFormDefaults(fresh),
+              };
+              form.reset(defaults as any);
+            }
+          } catch (err) {
+            console.error("Failed to refetch health history:", err);
+          }
+          setIsEditing(false);
+        }
       }}
     >
       <DialogTrigger asChild>
@@ -631,24 +660,27 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
               <Section title="Health Status & History">
                 <SummaryRow
                   label="Current health concerns"
-                  value={values.healthConcerns ?? ""}
+                  value={stripOther(values.healthConcerns)}
                 />
                 <SummaryRow
                   label="Diagnosed medical conditions"
-                  value={values.medicalConditions ?? ""}
+                  value={stripOther(values.medicalConditions)}
                 />
-                <SummaryRow label="Medications" value={resolvedMedications} />
+                <SummaryRow
+                  label="Medications"
+                  value={stripOther(resolvedMedications)}
+                />
                 <SummaryRow
                   label="Supplements"
-                  value={values.supplements ?? ""}
+                  value={stripOther(values.supplements)}
                 />
                 <SummaryRow
                   label="Known allergies or intolerances"
-                  value={values.allergies ?? ""}
+                  value={stripOther(values.allergies)}
                 />
                 <SummaryRow
                   label="Family health history"
-                  value={values.familyHistory ?? ""}
+                  value={stripOther(values.familyHistory)}
                 />
               </Section>
 
@@ -815,9 +847,9 @@ export const HealthProfileForm: React.FC<Props> = ({ healthHistory }) => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                        setIsOpen(false);
-                        setConfirmOpen(true);
-                      }
+                      setIsOpen(false);
+                      setConfirmOpen(true);
+                    }
                 }
               >
                 Cancel

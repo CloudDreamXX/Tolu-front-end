@@ -529,13 +529,13 @@ export const LibraryClientContent = ({
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -574,7 +574,7 @@ export const LibraryClientContent = ({
   return (
     <div className="flex flex-col w-full">
       <div className="flex items-center gap-2 mb-4 md:gap-4">
-        <HealthProfileForm healthHistory={healthHistory} />
+        <HealthProfileForm />
         <Popover open={providersOpen} onOpenChange={onProvidersOpenChange}>
           <PopoverTrigger asChild>
             <Button
@@ -812,7 +812,7 @@ export const LibraryClientContent = ({
 
                   <AccordionContent className="flex flex-col gap-4 pb-2">
                     {Array.isArray(folder.subfolders) &&
-                    folder.subfolders.length > 0 ? (
+                      folder.subfolders.length > 0 ? (
                       folder.subfolders.map((sub, sIdx) => {
                         const subKey = `sub-${sIdx}`;
                         const subOpen = (openSub[folder.id] || "") === subKey;

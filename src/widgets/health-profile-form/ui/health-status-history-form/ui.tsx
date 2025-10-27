@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { FormField, FormItem, FormLabel, FormMessage, Input } from "shared/ui";
 import { z } from "zod";
 import { MultiSelect } from "../MultiSelect";
@@ -72,71 +72,18 @@ const medicationOptions = [
 const supplementsOptions = [
   "Alpha-Lipoic Acid",
   "Ashwagandha",
-  "Beta-Alanine",
-  "Branched-Chain Amino Acids (BCAAs)",
   "Calcium",
-  "Casein Protein",
-  "Chasteberry (Vitex)",
-  "Chondroitin",
-  "Chromium",
-  "Coenzyme Q10 (CoQ10)",
   "Collagen",
-  "Copper",
+  "Coenzyme Q10 (CoQ10)",
   "Creatine",
   "DHEA",
   "Digestive Enzymes",
-  "Echinacea",
-  "Electrolytes",
-  "Evening Primrose Oil",
-  "Fenugreek",
   "Fish Oil (Omega-3)",
-  "Flaxseed Oil",
-  "Ginger",
-  "Ginkgo Biloba",
-  "Ginseng",
-  "Glucosamine",
-  "Glutamine",
-  "Green Tea Extract",
-  "HMB (β-Hydroxy β-Methylbutyrate)",
-  "Hyaluronic Acid",
-  "Iodine",
-  "Iron",
-  "Krill Oil",
-  "L-Carnitine",
-  "MCT Oil",
-  "MSM (Methylsulfonylmethane)",
-  "Maca",
   "Magnesium",
-  "Manganese",
-  "Melatonin",
-  "Milk Thistle",
-  "Molybdenum",
-  "N-Acetyl Cysteine (NAC)",
-  "Prebiotics (Inulin, FOS)",
   "Probiotics",
-  "Quercetin",
-  "Resveratrol",
-  "Rhodiola",
-  "Saw Palmetto",
-  "Selenium",
-  "Soy Protein",
-  "Tribulus Terrestris",
-  "Turmeric (Curcumin)",
-  "Valerian Root",
-  "Vitamin A",
-  "Vitamin B1 (Thiamine)",
-  "Vitamin B12",
-  "Vitamin B2 (Riboflavin)",
-  "Vitamin B3 (Niacin)",
-  "Vitamin B5 (Pantothenic Acid)",
-  "Vitamin B6",
-  "Vitamin B7 (Biotin)",
-  "Vitamin B9 (Folate)",
-  "Vitamin C",
   "Vitamin D",
-  "Vitamin E",
-  "Vitamin K",
-  "Whey Protein",
+  "Vitamin B12",
+  "Vitamin C",
   "Zinc",
   "None",
   "Other",
@@ -174,26 +121,17 @@ const familyHistoryOptions = [
   "Other",
 ];
 
-const commitOther = (fieldName: string, otherValue: string) => (form: any) => {
-  const vals = split(form.getValues(fieldName));
-  const withoutOthers = vals.filter(
-    (v) => v !== "Other" && !v.startsWith("Other:")
-  );
-  const extraTrim = otherValue.trim();
-  const merged = extraTrim
-    ? [...withoutOthers, `Other: ${extraTrim}`]
-    : withoutOthers;
-  form.setValue(fieldName, merged.join(", "));
-};
+const split = (s?: string) =>
+  (s ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
 
-const handleEnterCommit =
-  (onCommit: () => void) => (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      onCommit();
-      (e.target as HTMLInputElement).blur();
-    }
-  };
+const extractOtherValue = (joined: string) => {
+  const parts = split(joined);
+  const other = parts.find((v) => v.startsWith("Other:"));
+  return other ? other.replace(/^Other:\s*/, "") : "";
+};
 
 const normalizeNone = (next: string[], prev: string[]) => {
   const prevSet = new Set(prev);
@@ -208,29 +146,16 @@ const normalizeNone = (next: string[], prev: string[]) => {
     : next;
 };
 
-const split = (s?: string) =>
-  (s ?? "")
-    .split(",")
-    .map((t) => t.trim())
-    .filter(Boolean);
+const commitOther =
+  (fieldName: string, otherValue: string) => (form: any) => {
+    const vals = split(form.getValues(fieldName));
+    const withoutOthers = vals.filter((v) => !v.startsWith("Other"));
+    const trimmed = otherValue.trim();
+    const merged = ["Other", ...(trimmed ? [`Other: ${trimmed}`] : [])];
+    form.setValue(fieldName, [...withoutOthers, ...merged].join(", "));
+  };
 
 export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
-  // const [healthConcernsSel, setHealthConcernsSel] = useState<string[]>([]);
-  // const [medicalConditionsSel, setMedicalConditionsSel] = useState<string[]>(
-  //   []
-  // );
-  // const [medicationsSel, setMedicationsSel] = useState<string[]>([]);
-  // const [supplementsSel, setSupplementsSel] = useState<string[]>([]);
-  // const [allergiesSel, setAllergiesSel] = useState<string[]>([]);
-  // const [familyHistorySel, setFamilyHistorySel] = useState<string[]>([]);
-
-  const [healthConcernsOther, setHealthConcernsOther] = useState("");
-  const [medicalConditionsOther, setMedicalConditionsOther] = useState("");
-  const [medicationsOther, setMedicationsOther] = useState("");
-  const [supplementsOther, setSupplementsOther] = useState("");
-  const [allergiesOther, setAllergiesOther] = useState("");
-  const [familyHistoryOther, setFamilyHistoryOther] = useState("");
-
   const healthConcernsStr = form.watch("healthConcerns") as string | undefined;
   const medicalConditionsStr = form.watch("medicalConditions") as
     | string
@@ -256,38 +181,67 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
     [familyHistoryStr]
   );
 
+  const healthConcernsOther = useMemo(
+    () => extractOtherValue(healthConcernsStr || ""),
+    [healthConcernsStr]
+  );
+  const medicalConditionsOther = useMemo(
+    () => extractOtherValue(medicalConditionsStr || ""),
+    [medicalConditionsStr]
+  );
+  const medicationsOther = useMemo(
+    () => extractOtherValue(medicationsStr || ""),
+    [medicationsStr]
+  );
+  const supplementsOther = useMemo(
+    () => extractOtherValue(supplementsStr || ""),
+    [supplementsStr]
+  );
+  const allergiesOther = useMemo(
+    () => extractOtherValue(allergiesStr || ""),
+    [allergiesStr]
+  );
+  const familyHistoryOther = useMemo(
+    () => extractOtherValue(familyHistoryStr || ""),
+    [familyHistoryStr]
+  );
+
   const onHealthConcernsChange = (val: string[]) => {
-    const cleaned = normalizeNone(val, healthConcernsSel);
-    form.setValue("healthConcerns", cleaned.join(", "));
+    form.setValue(
+      "healthConcerns",
+      normalizeNone(val, healthConcernsSel).join(", ")
+    );
   };
-
   const onMedicalConditionsChange = (val: string[]) => {
-    const cleaned = normalizeNone(val, medicalConditionsSel);
-    form.setValue("medicalConditions", cleaned.join(", "));
+    form.setValue(
+      "medicalConditions",
+      normalizeNone(val, medicalConditionsSel).join(", ")
+    );
   };
-
   const onMedicationsChange = (val: string[]) => {
     const cleaned = normalizeNone(val, medicationsSel);
     form.setValue("medications", cleaned.join(", "));
-
-    if (cleaned.length === 1 && cleaned[0] === "None") {
+    if (cleaned.includes("None")) {
       form.setValue("otherMedications", undefined);
     }
   };
-
   const onSupplementsChange = (val: string[]) => {
-    const cleaned = normalizeNone(val, supplementsSel);
-    form.setValue("supplements", cleaned.join(", "));
+    form.setValue(
+      "supplements",
+      normalizeNone(val, supplementsSel).join(", ")
+    );
   };
-
   const onAllergiesChange = (val: string[]) => {
-    const cleaned = normalizeNone(val, allergiesSel);
-    form.setValue("allergies", cleaned.join(", "));
+    form.setValue(
+      "allergies",
+      normalizeNone(val, allergiesSel).join(", ")
+    );
   };
-
   const onFamilyHistoryChange = (val: string[]) => {
-    const cleaned = normalizeNone(val, familyHistorySel);
-    form.setValue("familyHistory", cleaned.join(", "));
+    form.setValue(
+      "familyHistory",
+      normalizeNone(val, familyHistorySel).join(", ")
+    );
   };
 
   return (
@@ -297,7 +251,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
         conditions, medications, supplements, and any family history.
       </p>
 
-      {/* Health Concerns */}
       <FormField
         control={form.control}
         name="healthConcerns"
@@ -315,13 +268,9 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
                 <Input
                   placeholder="Other concerns"
                   value={healthConcernsOther}
-                  onChange={(e) => setHealthConcernsOther(e.target.value)}
-                  onBlur={() =>
-                    commitOther("healthConcerns", healthConcernsOther)(form)
+                  onChange={(e) =>
+                    commitOther("healthConcerns", e.target.value)(form)
                   }
-                  onKeyDown={handleEnterCommit(() =>
-                    commitOther("healthConcerns", healthConcernsOther)(form)
-                  )}
                 />
               </div>
             )}
@@ -330,7 +279,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
         )}
       />
 
-      {/* Medical Conditions */}
       <FormField
         control={form.control}
         name="medicalConditions"
@@ -348,19 +296,9 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
                 <Input
                   placeholder="Other conditions"
                   value={medicalConditionsOther}
-                  onChange={(e) => setMedicalConditionsOther(e.target.value)}
-                  onBlur={() =>
-                    commitOther(
-                      "medicalConditions",
-                      medicalConditionsOther
-                    )(form)
+                  onChange={(e) =>
+                    commitOther("medicalConditions", e.target.value)(form)
                   }
-                  onKeyDown={handleEnterCommit(() =>
-                    commitOther(
-                      "medicalConditions",
-                      medicalConditionsOther
-                    )(form)
-                  )}
                 />
               </div>
             )}
@@ -369,7 +307,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
         )}
       />
 
-      {/* Medications */}
       <FormField
         control={form.control}
         name="medications"
@@ -387,21 +324,13 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
                 <Input
                   placeholder="Other medications"
                   value={medicationsOther}
-                  onChange={(e) => setMedicationsOther(e.target.value)}
-                  onBlur={() => {
-                    commitOther("medications", medicationsOther)(form);
+                  onChange={(e) => {
+                    commitOther("medications", e.target.value)(form);
                     form.setValue(
                       "otherMedications",
-                      medicationsOther?.trim() || undefined
+                      e.target.value.trim() || undefined
                     );
                   }}
-                  onKeyDown={handleEnterCommit(() => {
-                    commitOther("medications", medicationsOther)(form);
-                    form.setValue(
-                      "otherMedications",
-                      medicationsOther?.trim() || undefined
-                    );
-                  })}
                 />
               </div>
             )}
@@ -410,7 +339,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
         )}
       />
 
-      {/* Supplements */}
       <FormField
         control={form.control}
         name="supplements"
@@ -428,13 +356,9 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
                 <Input
                   placeholder="Other supplements"
                   value={supplementsOther}
-                  onChange={(e) => setSupplementsOther(e.target.value)}
-                  onBlur={() =>
-                    commitOther("supplements", supplementsOther)(form)
+                  onChange={(e) =>
+                    commitOther("supplements", e.target.value)(form)
                   }
-                  onKeyDown={handleEnterCommit(() =>
-                    commitOther("supplements", supplementsOther)(form)
-                  )}
                 />
               </div>
             )}
@@ -443,7 +367,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
         )}
       />
 
-      {/* Allergies */}
       <FormField
         control={form.control}
         name="allergies"
@@ -461,11 +384,9 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
                 <Input
                   placeholder="Other allergies or intolerances"
                   value={allergiesOther}
-                  onChange={(e) => setAllergiesOther(e.target.value)}
-                  onBlur={() => commitOther("allergies", allergiesOther)(form)}
-                  onKeyDown={handleEnterCommit(() =>
-                    commitOther("allergies", allergiesOther)(form)
-                  )}
+                  onChange={(e) =>
+                    commitOther("allergies", e.target.value)(form)
+                  }
                 />
               </div>
             )}
@@ -474,7 +395,6 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
         )}
       />
 
-      {/* Family History */}
       <FormField
         control={form.control}
         name="familyHistory"
@@ -492,13 +412,9 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
                 <Input
                   placeholder="Other family history"
                   value={familyHistoryOther}
-                  onChange={(e) => setFamilyHistoryOther(e.target.value)}
-                  onBlur={() =>
-                    commitOther("familyHistory", familyHistoryOther)(form)
+                  onChange={(e) =>
+                    commitOther("familyHistory", e.target.value)(form)
                   }
-                  onKeyDown={handleEnterCommit(() =>
-                    commitOther("familyHistory", familyHistoryOther)(form)
-                  )}
                 />
               </div>
             )}

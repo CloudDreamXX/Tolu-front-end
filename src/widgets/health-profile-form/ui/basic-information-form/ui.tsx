@@ -180,6 +180,7 @@ export const BasicInformationForm = ({
                 selected={languagesSel}
                 onChange={onLanguagesChange}
                 className="text-sm"
+                dropdownPosition="top"
               />
             </FormControl>
             <FormMessage />
