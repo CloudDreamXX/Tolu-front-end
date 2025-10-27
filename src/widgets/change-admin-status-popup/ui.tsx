@@ -28,16 +28,15 @@ export const ChangeAdminStatusPopup: React.FC<Props> = ({
   );
 
   const canSubmit =
-    action === "unpublish"
-      ? unpublishReason.trim().length > 0
-      : true;
+    action === "unpublish" ? unpublishReason.trim().length > 0 : true;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey, { capture: true });
-    return () => document.removeEventListener("keydown", onKey, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", onKey, { capture: true });
   }, [onClose]);
 
   const handleBackdropMouseDown = (

@@ -56,7 +56,8 @@ const serializeSubfolder = (subfolder: ISubfolderResponse): any => ({
     ? subfolder.subfolders.map(serializeSubfolder)
     : [],
   content: Array.isArray(subfolder.content)
-    ? subfolder.content.map(serializeContentItem) : [],
+    ? subfolder.content.map(serializeContentItem)
+    : [],
 });
 
 const serializeFolder = (folder: IFolderItemResponse): IFolder => ({

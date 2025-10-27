@@ -8,7 +8,7 @@ import {
   useUpdateFolderMutation,
   useUploadFilesLibraryMutation,
 } from "entities/files-library/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
 import { FileLibrary } from "./components/FileLibrary";
@@ -84,6 +84,33 @@ export const FilesLibrary = () => {
     },
     { skip: !viewingFolder && !menuOpenFolder }
   );
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (menuRef.current && !menuRef.current.contains(target)) {
+        setMenuOpenFolder(null);
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpenFolder(null);
+      }
+    };
+
+    if (menuOpenFolder) {
+      document.addEventListener("mousedown", handleClickOutside, true);
+      document.addEventListener("keydown", handleEscape, true);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside, true);
+      document.removeEventListener("keydown", handleEscape, true);
+    };
+  }, [menuOpenFolder]);
 
   useEffect(() => {
     if (viewingFolder?.id) {
@@ -397,7 +424,10 @@ export const FilesLibrary = () => {
                     <MaterialIcon iconName="more_vert" />
                   </span>
                   {menuOpenFolder && menuOpenFolder.id === folder.id && (
-                    <div className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px] bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-0 top-[45px]">
+                    <div
+                      ref={menuRef}
+                      className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px] bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-0 top-[45px]"
+                    >
                       <MenuItem
                         icon={<MaterialIcon iconName="create_new_folder" />}
                         label="Create subfolder"

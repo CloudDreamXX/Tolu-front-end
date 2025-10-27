@@ -67,7 +67,8 @@ export const MultiSelect = ({
     };
 
     document.addEventListener("pointerdown", handlePointerDown, true);
-    return () => document.removeEventListener("pointerdown", handlePointerDown, true);
+    return () =>
+      document.removeEventListener("pointerdown", handlePointerDown, true);
   }, []);
 
   useEffect(() => {

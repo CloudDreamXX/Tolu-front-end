@@ -151,8 +151,12 @@ export const ContentManagerClients: React.FC = () => {
       const target = event.target as Node;
       if (
         deleteMenuId &&
-        !(document.querySelector(`[data-delete-menu-id="${deleteMenuId}"]`)?.contains(target) ||
-          (event.target as HTMLElement).closest('[data-delete-trigger="true"]'))
+        !(
+          document
+            .querySelector(`[data-delete-menu-id="${deleteMenuId}"]`)
+            ?.contains(target) ||
+          (event.target as HTMLElement).closest('[data-delete-trigger="true"]')
+        )
       ) {
         setDeleteMenuId(null);
       }
@@ -693,7 +697,9 @@ export const ContentManagerClients: React.FC = () => {
                         <button
                           onClick={() =>
                             setDeleteMenuId(
-                              deleteMenuId === client.client_id ? null : client.client_id
+                              deleteMenuId === client.client_id
+                                ? null
+                                : client.client_id
                             )
                           }
                           className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
@@ -816,10 +822,11 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                    ? "border-[#1C63DB] text-[#1C63DB]"
-                    : "border-[#DBDEE1]"
-                    }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                    currentPage === page
+                      ? "border-[#1C63DB] text-[#1C63DB]"
+                      : "border-[#DBDEE1]"
+                  }`}
                 >
                   {page}
                 </button>

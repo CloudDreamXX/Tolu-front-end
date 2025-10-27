@@ -17,7 +17,7 @@ import { cn } from "shared/lib";
 import { Button, Calendar } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { MAP_MENOPAUSE_STAGE_TO_TOOLTIP } from "./mock";
-import { formatInTimeZone, toZonedTime } from "date-fns-tz";
+import { toZonedTime } from "date-fns-tz";
 
 export const DemographicStep = () => {
   const nav = useNavigate();
@@ -47,9 +47,9 @@ export const DemographicStep = () => {
   const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
     typeof clientOnboarding.weekly_meal_choice === "string"
       ? clientOnboarding.weekly_meal_choice
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : clientOnboarding.weekly_meal_choice || []
   );
 

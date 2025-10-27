@@ -16,13 +16,13 @@ interface ChangeStatusPopupProps {
       | "Archived"
   ) => Promise<void>;
   currentStatus:
-  | "Raw"
-  | "Ready for Review"
-  | "Waiting"
-  | "Second Review Requested"
-  | "Ready to Publish"
-  | "Live"
-  | "Archived";
+    | "Raw"
+    | "Ready for Review"
+    | "Waiting"
+    | "Second Review Requested"
+    | "Ready to Publish"
+    | "Live"
+    | "Archived";
   handleMoveClick?: (id: string, subfolderId: string) => Promise<void>;
   contentId?: string;
 }
@@ -37,7 +37,9 @@ Object.entries(FOLDER_STATUS_MAPPING).forEach(([backend, ui]) => {
   }
 });
 
-const STATUS_OPTIONS = Array.from(new Set(Object.values(FOLDER_STATUS_MAPPING)));
+const STATUS_OPTIONS = Array.from(
+  new Set(Object.values(FOLDER_STATUS_MAPPING))
+);
 
 export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
   contentId,
@@ -59,7 +61,9 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
 
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [subfoldersOpen, setSubfoldersOpen] = useState<boolean>(false);
-  const [selectedSubfolderId, setSelectedSubfolderId] = useState<string | null>(null);
+  const [selectedSubfolderId, setSelectedSubfolderId] = useState<string | null>(
+    null
+  );
 
   const contentRef = useRef<HTMLDivElement | null>(null);
 
@@ -89,7 +93,8 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey, { capture: true });
-    return () => document.removeEventListener("keydown", onKey, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", onKey, { capture: true });
   }, [onClose]);
 
   return (

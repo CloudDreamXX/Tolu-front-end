@@ -34,7 +34,8 @@ export const BadRateResponse: React.FC<Props> = ({
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey, { capture: true });
-    return () => document.removeEventListener("keydown", onKey, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", onKey, { capture: true });
   }, [onClose]);
 
   const handleBackdropMouseDown = (
@@ -75,7 +76,10 @@ export const BadRateResponse: React.FC<Props> = ({
           <MaterialIcon iconName="close" />
         </button>
 
-        <h3 id="modal-title" className="text-[24px] font-semibold text-[#1D1D1F]">
+        <h3
+          id="modal-title"
+          className="text-[24px] font-semibold text-[#1D1D1F]"
+        >
           What was wrong with this response?
         </h3>
 
@@ -84,10 +88,11 @@ export const BadRateResponse: React.FC<Props> = ({
             <button
               key={reason}
               onClick={() => setSelectedReason(reason)}
-              className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${selectedReason === reason
+              className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${
+                selectedReason === reason
                   ? "border-[#1C63DB] text-[#676767]"
                   : "border-[#E3E3E3] text-[#676767]"
-                }`}
+              }`}
             >
               {reason}
             </button>

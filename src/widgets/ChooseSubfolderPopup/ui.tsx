@@ -26,7 +26,8 @@ export const ChooseSubfolderPopup: React.FC<Props> = ({
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey, { capture: true });
-    return () => document.removeEventListener("keydown", onKey, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", onKey, { capture: true });
   }, [onClose]);
 
   const handleBackdropMouseDown = (

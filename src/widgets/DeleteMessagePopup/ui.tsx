@@ -21,7 +21,8 @@ export const DeleteMessagePopup: React.FC<Props> = ({
       if (e.key === "Escape") onCancel();
     };
     document.addEventListener("keydown", onKey, { capture: true });
-    return () => document.removeEventListener("keydown", onKey, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", onKey, { capture: true });
   }, [onCancel]);
 
   const handleBackdropMouseDown = (
