@@ -135,7 +135,9 @@ export const LibraryDocument = () => {
     useLazyGetCoachProfileQuery();
   const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
 
-  const { data: quizScore } = useGetQuizScoreQuery(documentId!);
+  const { data: quizScore, refetch: refetchQuizScore } = useGetQuizScoreQuery(documentId!);
+
+  const [currentCardIndex, setCurrentCardIndex] = useState<number>(1);
 
   useEffect(() => {
     if (!documentId) return;
@@ -368,6 +370,26 @@ export const LibraryDocument = () => {
   }, []);
 
   useEffect(() => {
+    (window as any).__refetchQuizScore = refetchQuizScore;
+    return () => {
+      delete (window as any).__refetchQuizScore;
+    };
+  }, [refetchQuizScore]);
+
+  useEffect(() => {
+    const idx = (window as any).__currentCardIndex;
+    if (idx) {
+      const restore = setTimeout(() => {
+        if ((window as any).showCard) {
+          (window as any).showCard(idx);
+        }
+      }, 100);
+      return () => clearTimeout(restore);
+    }
+  }, [renderedContent]);
+
+
+  useEffect(() => {
     if (!selectedDocument) return;
 
     const { contentWithoutScripts, scripts } = extractScripts(
@@ -383,16 +405,17 @@ export const LibraryDocument = () => {
 
     const cards = getCards();
 
-    if (cards.length > 0 && quizScore?.data) {
-      const lastCard = cards[cards.length - 1];
-      const nextIndex = cards.length + 1;
-      const nextCardId = `card-${nextIndex}`;
+    // if (cards.length > 0 && quizScore?.data) {
+    const lastCard = cards[cards.length - 1];
+    const nextIndex = cards.length + 1;
+    const nextCardId = `card-${nextIndex}`;
 
-      const summaryDiv = doc.createElement("div");
-      summaryDiv.id = nextCardId;
-      summaryDiv.style.display = "none";
-      summaryDiv.style.background = "transparent";
+    const summaryDiv = doc.createElement("div");
+    summaryDiv.id = nextCardId;
+    summaryDiv.style.display = "none";
+    summaryDiv.style.background = "transparent";
 
+    if (quizScore?.data) {
       summaryDiv.innerHTML = `
       <h3 class="text-lg font-semibold text-[#1D1D1F] mb-3">Quiz Summary</h3>
       <div class="flex items-center justify-between mb-2">
@@ -407,11 +430,11 @@ export const LibraryDocument = () => {
       <div class="relative h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden mb-4">
         <div class="absolute top-0 left-0 h-full bg-[#1C63DB] transition-all"
           style="width: ${Math.min(
-            100,
-            (quizScore.data.correct_questions /
-              quizScore.data.total_questions) *
-              100
-          )}%;">
+        100,
+        (quizScore.data.correct_questions /
+          quizScore.data.total_questions) *
+        100
+      )}%;">
         </div>
       </div>
 
@@ -424,11 +447,10 @@ export const LibraryDocument = () => {
               <div class="font-medium text-[#1D1D1F]">${q.question_id}</div>
               <div class="text-xs text-muted-foreground">Answer: ${q.answer.toUpperCase()}</div>
             </div>
-            <div class="px-3 py-1 rounded-full text-xs font-medium ${
-              q.is_correct
+            <div class="px-3 py-1 rounded-full text-xs font-medium ${q.is_correct
                 ? "bg-emerald-100 text-emerald-700"
                 : "bg-red-100 text-red-700"
-            }">
+              }">
               ${q.is_correct ? "Correct" : "Incorrect"}
             </div>
           </div>`
@@ -440,86 +462,112 @@ export const LibraryDocument = () => {
         <button id="prevBtn" onclick="prevCard()" style="background:#007acc; color:#fff; border:none; border-radius:4px; padding:8px 18px; font-size:16px;">Previous</button>
       </div>
     `;
-
-      lastCard.insertAdjacentElement("afterend", summaryDiv);
-
-      const lastNavContainer =
-        lastCard.querySelector<HTMLElement>(".card-nav") ||
-        lastCard.querySelector<HTMLElement>(
-          'div[style*="display:flex"][style*="justify-content:space-between"]'
-        ) ||
-        lastCard.querySelector<HTMLElement>(
-          'div[style*="display:flex"][style*="justify-content:flex-start"]'
-        ) ||
-        lastCard.querySelector<HTMLElement>(
-          'div[style*="text-align:left"][style*="margin-top:24px"]'
-        );
-
-      if (lastNavContainer) {
-        Object.assign(lastNavContainer.style, {
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: "24px",
-          gap: "12px",
-        });
-
-        const nextBtn = doc.createElement("button");
-        nextBtn.id = "nextBtn";
-        nextBtn.textContent = "See Results";
-        nextBtn.setAttribute("onclick", `showCard(${nextIndex})`);
-        Object.assign(nextBtn.style, {
-          background: "#007acc",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          padding: "8px 18px",
-          fontSize: "16px",
-          marginLeft: "auto",
-        });
-
-        lastNavContainer.appendChild(nextBtn);
-      } else {
-        const navContainer = doc.createElement("div");
-        navContainer.classList.add("card-nav");
-        Object.assign(navContainer.style, {
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: "24px",
-          gap: "12px",
-        });
-
-        const prevBtn = doc.createElement("button");
-        prevBtn.id = "prevBtn";
-        prevBtn.textContent = "Previous";
-        prevBtn.setAttribute("onclick", `prevCard()`);
-        Object.assign(prevBtn.style, {
-          background: "#007acc",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          padding: "8px 18px",
-          fontSize: "16px",
-        });
-
-        const nextBtn = doc.createElement("button");
-        nextBtn.id = "nextBtn";
-        nextBtn.textContent = "Next";
-        nextBtn.setAttribute("onclick", `showCard(${nextIndex})`);
-        Object.assign(nextBtn.style, {
-          background: "#007acc",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          padding: "8px 18px",
-          fontSize: "16px",
-        });
-
-        navContainer.appendChild(prevBtn);
-        navContainer.appendChild(nextBtn);
-        lastCard.appendChild(navContainer);
-      }
     }
+
+
+    lastCard.insertAdjacentElement("afterend", summaryDiv);
+
+    const lastNavContainer =
+      lastCard.querySelector<HTMLElement>(".card-nav") ||
+      lastCard.querySelector<HTMLElement>(
+        'div[style*="display:flex"][style*="justify-content:space-between"]'
+      ) ||
+      lastCard.querySelector<HTMLElement>(
+        'div[style*="display:flex"][style*="justify-content:flex-start"]'
+      ) ||
+      lastCard.querySelector<HTMLElement>(
+        'div[style*="text-align:left"][style*="margin-top:24px"]'
+      );
+
+    if (lastNavContainer) {
+      Object.assign(lastNavContainer.style, {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: "24px",
+        gap: "12px",
+      });
+
+      const nextBtn = doc.createElement("button");
+      nextBtn.id = "nextBtn";
+      nextBtn.textContent = "See Results";
+      nextBtn.setAttribute(
+        "onclick",
+        `
+    (function() {
+      if (window.showCard) {
+        showCard(${nextIndex});
+      }
+      if (window.__refetchQuizScore) {
+        window.__refetchQuizScore();
+      }
+    })()
+  `
+      );
+      Object.assign(nextBtn.style, {
+        background: "#007acc",
+        color: "#fff",
+        border: "none",
+        borderRadius: "4px",
+        padding: "8px 18px",
+        fontSize: "16px",
+        marginLeft: "auto",
+      });
+
+      lastNavContainer.appendChild(nextBtn);
+    } else {
+      const navContainer = doc.createElement("div");
+      navContainer.classList.add("card-nav");
+      Object.assign(navContainer.style, {
+        display: "flex",
+        justifyContent: "space-between",
+        marginTop: "24px",
+        gap: "12px",
+      });
+
+      const prevBtn = doc.createElement("button");
+      prevBtn.id = "prevBtn";
+      prevBtn.textContent = "Previous";
+      prevBtn.setAttribute("onclick", `prevCard()`);
+      Object.assign(prevBtn.style, {
+        background: "#007acc",
+        color: "#fff",
+        border: "none",
+        borderRadius: "4px",
+        padding: "8px 18px",
+        fontSize: "16px",
+      });
+
+      const nextBtn = doc.createElement("button");
+      nextBtn.id = "nextBtn";
+      nextBtn.textContent = "Next";
+      nextBtn.setAttribute(
+        "onclick",
+        `
+    (function() {
+      if (window.showCard) {
+        showCard(${nextIndex});
+      }
+      if (window.__refetchQuizScore) {
+        window.__refetchQuizScore();
+      }
+    })()
+  `
+      );
+      Object.assign(nextBtn.style, {
+        background: "#007acc",
+        color: "#fff",
+        border: "none",
+        borderRadius: "4px",
+        padding: "8px 18px",
+        fontSize: "16px",
+      });
+
+      navContainer.appendChild(prevBtn);
+      navContainer.appendChild(nextBtn);
+      lastCard.appendChild(navContainer);
+    }
+    // }
 
     const navFixScript = `
     (function(){
@@ -537,17 +585,20 @@ export const LibraryDocument = () => {
         return 1;
       }
 
-      window.showCard = function(n){
-        var cards = getCards();
-        var idx = Math.max(1, Math.min(n, cards.length));
-        for (var i = 0; i < cards.length; i++) {
-          cards[i].style.display = (i === (idx - 1)) ? "block" : "none";
-        }
-        var prevBtn = document.getElementById("prevBtn");
-        var nextBtn = document.getElementById("nextBtn");
-        if (prevBtn) prevBtn.style.visibility = idx > 1 ? "visible" : "hidden";
-        if (nextBtn) nextBtn.style.visibility = idx < cards.length ? "visible" : "hidden";
-      };
+window.showCard = function(n){
+  var cards = getCards();
+  var idx = Math.max(1, Math.min(n, cards.length));
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].style.display = (i === (idx - 1)) ? "block" : "none";
+  }
+  var prevBtn = document.getElementById("prevBtn");
+  var nextBtn = document.getElementById("nextBtn");
+  if (prevBtn) prevBtn.style.visibility = idx > 1 ? "visible" : "hidden";
+  if (nextBtn) nextBtn.style.visibility = idx < cards.length ? "visible" : "hidden";
+
+  // 👇 store current card globally
+  window.__currentCardIndex = idx;
+};
 
       window.nextCard = function(){
         var cards = getCards();
@@ -569,47 +620,47 @@ export const LibraryDocument = () => {
     setScripts([...(scripts || []), navFixScript]);
   }, [selectedDocument, quizScore]);
 
-useEffect(() => {
-  const timer = setTimeout(() => {
-    const container = document.querySelector(".prose");
-    if (!container) return;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const container = document.querySelector(".prose");
+      if (!container) return;
 
-    container.querySelectorAll<HTMLFormElement>("form[id^='quiz-']").forEach((form) => {
-      const radios = form.querySelectorAll<HTMLInputElement>('input[type="radio"]');
-      const submitBtn = form.querySelector<HTMLButtonElement>('button[id$="-submit"]');
-      if (!submitBtn) return;
+      container.querySelectorAll<HTMLFormElement>("form[id^='quiz-']").forEach((form) => {
+        const radios = form.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+        const submitBtn = form.querySelector<HTMLButtonElement>('button[id$="-submit"]');
+        if (!submitBtn) return;
 
-      const quizNum = form.id.replace("quiz-", "");
-      const nextBtn = container.querySelector<HTMLButtonElement>(`#next-quiz-${quizNum}`);
+        const quizNum = form.id.replace("quiz-", "");
+        const nextBtn = container.querySelector<HTMLButtonElement>(`#next-quiz-${quizNum}`);
 
-      const anyChecked = Array.from(radios).some((r) => r.checked);
-      submitBtn.disabled = !anyChecked;
-      submitBtn.style.opacity = anyChecked ? "1" : "0.5";
-      if (nextBtn) {
-        nextBtn.disabled = !anyChecked;
-        nextBtn.style.opacity = anyChecked ? "1" : "0.5";
-      }
+        const anyChecked = Array.from(radios).some((r) => r.checked);
+        submitBtn.disabled = !anyChecked;
+        submitBtn.style.opacity = anyChecked ? "1" : "0.5";
+        if (nextBtn) {
+          nextBtn.disabled = !anyChecked;
+          nextBtn.style.opacity = anyChecked ? "1" : "0.5";
+        }
 
-      radios.forEach((r) => {
-        r.addEventListener("change", () => {
-          submitBtn.disabled = false;
-          submitBtn.style.opacity = "1";
+        radios.forEach((r) => {
+          r.addEventListener("change", () => {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+          });
+        });
+
+        submitBtn.addEventListener("click", () => {
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = "0.5";
+          if (nextBtn) {
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = "1";
+          }
         });
       });
+    }, 150);
 
-      submitBtn.addEventListener("click", () => {
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = "0.5";
-        if (nextBtn) {
-          nextBtn.disabled = false;
-          nextBtn.style.opacity = "1";
-        }
-      });
-    });
-  }, 150);
-
-  return () => clearTimeout(timer);
-}, [renderedContent]);
+    return () => clearTimeout(timer);
+  }, [renderedContent]);
 
 
   useEffect(() => {
@@ -813,13 +864,13 @@ useEffect(() => {
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -1110,12 +1161,12 @@ useEffect(() => {
                     <AvatarFallback className="text-3xl bg-slate-300 ">
                       {creatorProfileData.detailed_profile.personal_info
                         .first_name !== "" &&
-                      creatorProfileData.detailed_profile.personal_info
-                        .first_name !== null &&
-                      creatorProfileData.detailed_profile.personal_info
-                        .last_name !== null &&
-                      creatorProfileData.detailed_profile.personal_info
-                        .last_name !== "" ? (
+                        creatorProfileData.detailed_profile.personal_info
+                          .first_name !== null &&
+                        creatorProfileData.detailed_profile.personal_info
+                          .last_name !== null &&
+                        creatorProfileData.detailed_profile.personal_info
+                          .last_name !== "" ? (
                         <div className="flex items-center">
                           <span>
                             {creatorProfileData.detailed_profile.personal_info.first_name.slice(
@@ -1166,7 +1217,7 @@ useEffect(() => {
           <ChatActions
             initialStatus={selectedDocument?.readStatus}
             initialRating={selectedDocument?.userRating}
-            onRegenerate={() => {}}
+            onRegenerate={() => { }}
             isSearching={false}
             hasMessages={messages.length >= 2}
             onStatusChange={onStatusChange}
@@ -1224,7 +1275,7 @@ useEffect(() => {
               <ChatActions
                 initialStatus={selectedDocument?.readStatus}
                 initialRating={selectedDocument?.rating}
-                onRegenerate={() => {}}
+                onRegenerate={() => { }}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}
