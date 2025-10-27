@@ -146,14 +146,13 @@ const normalizeNone = (next: string[], prev: string[]) => {
     : next;
 };
 
-const commitOther =
-  (fieldName: string, otherValue: string) => (form: any) => {
-    const vals = split(form.getValues(fieldName));
-    const withoutOthers = vals.filter((v) => !v.startsWith("Other"));
-    const trimmed = otherValue.trim();
-    const merged = ["Other", ...(trimmed ? [`Other: ${trimmed}`] : [])];
-    form.setValue(fieldName, [...withoutOthers, ...merged].join(", "));
-  };
+const commitOther = (fieldName: string, otherValue: string) => (form: any) => {
+  const vals = split(form.getValues(fieldName));
+  const withoutOthers = vals.filter((v) => !v.startsWith("Other"));
+  const trimmed = otherValue.trim();
+  const merged = ["Other", ...(trimmed ? [`Other: ${trimmed}`] : [])];
+  form.setValue(fieldName, [...withoutOthers, ...merged].join(", "));
+};
 
 export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   const healthConcernsStr = form.watch("healthConcerns") as string | undefined;
@@ -226,16 +225,10 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
     }
   };
   const onSupplementsChange = (val: string[]) => {
-    form.setValue(
-      "supplements",
-      normalizeNone(val, supplementsSel).join(", ")
-    );
+    form.setValue("supplements", normalizeNone(val, supplementsSel).join(", "));
   };
   const onAllergiesChange = (val: string[]) => {
-    form.setValue(
-      "allergies",
-      normalizeNone(val, allergiesSel).join(", ")
-    );
+    form.setValue("allergies", normalizeNone(val, allergiesSel).join(", "));
   };
   const onFamilyHistoryChange = (val: string[]) => {
     form.setValue(

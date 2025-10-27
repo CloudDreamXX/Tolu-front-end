@@ -56,19 +56,20 @@ export const MultiSelect = ({
   const dropdownRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const handlePointerDown = (e: PointerEvent) => {
       const target = e.target as Node;
-      if (
-        containerRef.current?.contains(target) ||
-        dropdownRef.current?.contains(target)
-      ) {
+      const dropdownEl = dropdownRef.current;
+      const containerEl = containerRef.current;
+
+      if (containerEl?.contains(target) || dropdownEl?.contains(target)) {
         return;
       }
-      setOpen(false);
+
+      requestAnimationFrame(() => setOpen(false));
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handlePointerDown, true);
+    return () => document.removeEventListener("click", handlePointerDown, true);
   }, []);
 
   useEffect(() => {
@@ -77,16 +78,27 @@ export const MultiSelect = ({
     }
   }, [defaultValue, selected, onChange]);
 
+  useEffect(() => {
+    const handleBlur = (e: FocusEvent) => {
+      if (
+        !containerRef.current?.contains(e.relatedTarget as Node) &&
+        !dropdownRef.current?.contains(e.relatedTarget as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("blur", handleBlur, true);
+    return () => window.removeEventListener("blur", handleBlur, true);
+  }, []);
+
   const measureAndPlace = () => {
     if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    const container = getScrollParent(containerRef.current);
-    const containerRect = container.getBoundingClientRect();
-
     const gap = 6;
-    const spaceBelow = containerRect.bottom - rect.bottom - gap;
-    const spaceAbove = rect.top - containerRect.top - gap;
+    const spaceBelow = window.innerHeight - rect.bottom - gap;
+    const spaceAbove = rect.top - gap;
 
     const openUp =
       dropdownPosition === "top" ||
@@ -97,17 +109,14 @@ export const MultiSelect = ({
     const maxHeight = Math.min(380, openUp ? spaceAbove : spaceBelow);
 
     setDropdownBox({
-      top: openUp
-        ? rect.top - containerRect.top - gap - maxHeight
-        : rect.bottom - containerRect.top + gap,
-      left: rect.left - containerRect.left,
+      top: openUp ? rect.top - maxHeight - gap : rect.bottom + gap,
+      left: rect.left,
       width: rect.width,
       maxHeight: Math.max(160, maxHeight),
     });
 
-    setPortalTarget(container);
+    setPortalTarget(document.body);
   };
-
 
   useEffect(() => {
     if (!open) return;
@@ -191,36 +200,52 @@ export const MultiSelect = ({
       {open &&
         portalTarget &&
         createPortal(
-          <ul
-            ref={dropdownRef}
-            role="listbox"
-            className={cn(
-              "absolute z-[9999] bg-white border border-[#DBDEE1] rounded-md shadow-sm",
-              "overflow-y-auto overscroll-contain"
-            )}
+          <div
             style={{
-              top: dropdownBox.top,
-              left: dropdownBox.left,
-              width: dropdownBox.width,
-              maxHeight: dropdownBox.maxHeight,
-              WebkitOverflowScrolling: "touch",
+              position: "fixed",
+              inset: 0,
+              zIndex: 99999,
+              pointerEvents: "none",
             }}
-            onClick={(e) => e.stopPropagation()}
           >
-            {options.map((item, idx) =>
-              isGroup(item) ? (
-                <li key={`group-${idx}`} className="py-[6px]">
-                  <div className="px-[17px] py-[6px] font-[700] text-sm text-[#1D1D1F] cursor-default pointer-events-none">
-                    {item.title}
-                  </div>
-                  <ul>{item.options.map(renderOption)}</ul>
-                </li>
-              ) : (
-                renderOption(item)
-              )
-            )}
-          </ul>,
-          portalTarget
+            <ul
+              ref={dropdownRef}
+              role="listbox"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
+              className={cn(
+                "absolute bg-white border border-[#DBDEE1] rounded-md shadow-sm",
+                "overflow-y-auto overscroll-contain pointer-events-auto",
+                "scrollable-dropdown"
+              )}
+              style={{
+                position: "absolute",
+                top: dropdownBox.top,
+                left: dropdownBox.left,
+                width: dropdownBox.width,
+                maxHeight: dropdownBox.maxHeight,
+                WebkitOverflowScrolling: "touch",
+                overscrollBehavior: "contain",
+                touchAction: "auto",
+              }}
+            >
+              {options.map((item, idx) =>
+                isGroup(item) ? (
+                  <li key={`group-${idx}`} className="py-[6px]">
+                    <div className="px-[17px] py-[6px] font-[700] text-sm text-[#1D1D1F] cursor-default pointer-events-none">
+                      {item.title}
+                    </div>
+                    <ul>{item.options.map(renderOption)}</ul>
+                  </li>
+                ) : (
+                  renderOption(item)
+                )
+              )}
+            </ul>
+          </div>,
+          document.body
         )}
     </div>
   );

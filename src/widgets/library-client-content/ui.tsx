@@ -8,7 +8,6 @@ import {
   useLazyGetLibraryContentQuery,
 } from "entities/client";
 import { ContentStatus, useUpdateStatusMutation } from "entities/content";
-import { HealthHistory } from "entities/health-history";
 import { RootState } from "entities/store";
 import { LibraryCard } from "features/library-card";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -31,10 +30,6 @@ import {
   ScrollArea,
 } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
-
-interface LibraryClientContentProps {
-  healthHistory?: HealthHistory;
-}
 
 type ContentItem = NonNullable<Folder["content"]>[number];
 
@@ -70,9 +65,7 @@ const getHeadshotFilename = (url?: string | null): string | null => {
   return last ? decodeURIComponent(last) : null;
 };
 
-export const LibraryClientContent = ({
-  healthHistory,
-}: LibraryClientContentProps) => {
+export const LibraryClientContent = () => {
   const [search, setSearch] = useState("");
   const [statusMap, setStatusMap] = useState<Record<string, ContentStatus>>({});
   const [filteredFolders, setFilteredFolders] = useState<Folder[]>([]);
@@ -529,13 +522,13 @@ export const LibraryClientContent = ({
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??
-            coach.profile?.headshot_url
+              coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
-            coach.profile?.headshot_url
+              coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -812,7 +805,7 @@ export const LibraryClientContent = ({
 
                   <AccordionContent className="flex flex-col gap-4 pb-2">
                     {Array.isArray(folder.subfolders) &&
-                      folder.subfolders.length > 0 ? (
+                    folder.subfolders.length > 0 ? (
                       folder.subfolders.map((sub, sIdx) => {
                         const subKey = `sub-${sIdx}`;
                         const subOpen = (openSub[folder.id] || "") === subKey;

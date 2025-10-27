@@ -47,9 +47,9 @@ export const DemographicStep = () => {
   const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
     typeof clientOnboarding.weekly_meal_choice === "string"
       ? clientOnboarding.weekly_meal_choice
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : clientOnboarding.weekly_meal_choice || []
   );
 

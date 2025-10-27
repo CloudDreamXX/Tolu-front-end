@@ -286,44 +286,60 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     };
   }, [pair.content]);
 
-useEffect(() => {
-  const timer = setTimeout(() => {
-    const container = document.querySelector(".prose, .richtext, .conversation-content");
-    if (!container) return;
-
-    container.querySelectorAll<HTMLFormElement>('form[id^="quiz-"]').forEach((form) => {
-      const radios = form.querySelectorAll<HTMLInputElement>('input[type="radio"]');
-      const submitBtn = form.querySelector<HTMLButtonElement>('button[id$="-submit"]');
-      const quizNum = form.id.replace("quiz-", "");
-      const nextBtn = container.querySelector<HTMLButtonElement>(`#next-quiz-${quizNum}`);
-
-      submitBtn && ((submitBtn.disabled = true), (submitBtn.style.opacity = "0.5"));
-      nextBtn && ((nextBtn.disabled = true), (nextBtn.style.opacity = "0.5"));
-
-      radios.forEach((r) =>
-        r.addEventListener("change", () => {
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = "1";
-          }
-        })
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const container = document.querySelector(
+        ".prose, .richtext, .conversation-content"
       );
+      if (!container) return;
 
-      if (submitBtn) {
-        submitBtn.addEventListener("click", () => {
-          submitBtn.disabled = true;
-          submitBtn.style.opacity = "0.5";
+      container
+        .querySelectorAll<HTMLFormElement>('form[id^="quiz-"]')
+        .forEach((form) => {
+          const radios = form.querySelectorAll<HTMLInputElement>(
+            'input[type="radio"]'
+          );
+          const submitBtn = form.querySelector<HTMLButtonElement>(
+            'button[id$="-submit"]'
+          );
+          const quizNum = form.id.replace("quiz-", "");
+          const nextBtn = container.querySelector<HTMLButtonElement>(
+            `#next-quiz-${quizNum}`
+          );
+
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.5";
+          }
           if (nextBtn) {
-            nextBtn.disabled = false;
-            nextBtn.style.opacity = "1";
+            nextBtn.disabled = true;
+            nextBtn.style.opacity = "0.5";
+          }
+
+          radios.forEach((r) =>
+            r.addEventListener("change", () => {
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+              }
+            })
+          );
+
+          if (submitBtn) {
+            submitBtn.addEventListener("click", () => {
+              submitBtn.disabled = true;
+              submitBtn.style.opacity = "0.5";
+              if (nextBtn) {
+                nextBtn.disabled = false;
+                nextBtn.style.opacity = "1";
+              }
+            });
           }
         });
-      }
-    });
-  }, 150);
+    }, 150);
 
-  return () => clearTimeout(timer);
-}, [renderedContent]);
+    return () => clearTimeout(timer);
+  }, [renderedContent]);
 
   const renderCompareView = () => (
     <div className="flex-row block gap-4 md:flex">

@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  HealthHistory,
   HealthHistoryPostData,
   LabResultFile,
   useCreateHealthHistoryMutation,
@@ -118,8 +117,6 @@ const formSchema = baseFormSchema
       }
     }
   });
-
-type Props = { healthHistory?: HealthHistory };
 
 const DEFAULT_NEW_FIELDS = {
   genderIdentity: "",
@@ -847,9 +844,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                      setIsOpen(false);
-                      setConfirmOpen(true);
-                    }
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
                 }
               >
                 Cancel

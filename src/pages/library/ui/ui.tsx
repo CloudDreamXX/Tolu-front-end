@@ -119,7 +119,7 @@ export const Library = () => {
         </div>
       )}
       <div className="flex flex-col flex-1 w-full h-full min-h-0 gap-6 xl:flex-row">
-        <LibraryClientContent healthHistory={healthHistory} />
+        <LibraryClientContent />
         <div className="hidden w-full xl:block">
           <LibrarySmallChat />
         </div>

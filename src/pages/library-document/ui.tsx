@@ -17,11 +17,10 @@ import {
 import { useGetDocumentByIdQuery } from "entities/document";
 import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { setError, setHealthHistory } from "entities/health-history/lib";
-import { RootState } from "entities/store";
 import { ChatActions, ChatLoading } from "features/chat";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { phoneMask, toast, usePageWidth } from "shared/lib";
@@ -70,9 +69,6 @@ export const LibraryDocument = () => {
   const [isLoadingSession] = useState(false);
   const [isCreatorCardOpen, setIsCreatorCardOpen] = useState(false);
 
-  const healthHistory = useSelector(
-    (state: RootState) => state.healthHistory.data
-  );
   const dispatch = useDispatch();
 
   const [textContent, setTextContent] = useState("");
@@ -135,9 +131,9 @@ export const LibraryDocument = () => {
     useLazyGetCoachProfileQuery();
   const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
 
-  const { data: quizScore, refetch: refetchQuizScore } = useGetQuizScoreQuery(documentId!);
-
-  const [currentCardIndex, setCurrentCardIndex] = useState<number>(1);
+  const { data: quizScore, refetch: refetchQuizScore } = useGetQuizScoreQuery(
+    documentId!
+  );
 
   useEffect(() => {
     if (!documentId) return;
@@ -388,7 +384,6 @@ export const LibraryDocument = () => {
     }
   }, [renderedContent]);
 
-
   useEffect(() => {
     if (!selectedDocument) return;
 
@@ -430,11 +425,11 @@ export const LibraryDocument = () => {
       <div class="relative h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden mb-4">
         <div class="absolute top-0 left-0 h-full bg-[#1C63DB] transition-all"
           style="width: ${Math.min(
-        100,
-        (quizScore.data.correct_questions /
-          quizScore.data.total_questions) *
-        100
-      )}%;">
+            100,
+            (quizScore.data.correct_questions /
+              quizScore.data.total_questions) *
+              100
+          )}%;">
         </div>
       </div>
 
@@ -447,10 +442,11 @@ export const LibraryDocument = () => {
               <div class="font-medium text-[#1D1D1F]">${q.question_id}</div>
               <div class="text-xs text-muted-foreground">Answer: ${q.answer.toUpperCase()}</div>
             </div>
-            <div class="px-3 py-1 rounded-full text-xs font-medium ${q.is_correct
+            <div class="px-3 py-1 rounded-full text-xs font-medium ${
+              q.is_correct
                 ? "bg-emerald-100 text-emerald-700"
                 : "bg-red-100 text-red-700"
-              }">
+            }">
               ${q.is_correct ? "Correct" : "Incorrect"}
             </div>
           </div>`
@@ -463,7 +459,6 @@ export const LibraryDocument = () => {
       </div>
     `;
     }
-
 
     lastCard.insertAdjacentElement("afterend", summaryDiv);
 
@@ -625,43 +620,50 @@ window.showCard = function(n){
       const container = document.querySelector(".prose");
       if (!container) return;
 
-      container.querySelectorAll<HTMLFormElement>("form[id^='quiz-']").forEach((form) => {
-        const radios = form.querySelectorAll<HTMLInputElement>('input[type="radio"]');
-        const submitBtn = form.querySelector<HTMLButtonElement>('button[id$="-submit"]');
-        if (!submitBtn) return;
+      container
+        .querySelectorAll<HTMLFormElement>("form[id^='quiz-']")
+        .forEach((form) => {
+          const radios = form.querySelectorAll<HTMLInputElement>(
+            'input[type="radio"]'
+          );
+          const submitBtn = form.querySelector<HTMLButtonElement>(
+            'button[id$="-submit"]'
+          );
+          if (!submitBtn) return;
 
-        const quizNum = form.id.replace("quiz-", "");
-        const nextBtn = container.querySelector<HTMLButtonElement>(`#next-quiz-${quizNum}`);
+          const quizNum = form.id.replace("quiz-", "");
+          const nextBtn = container.querySelector<HTMLButtonElement>(
+            `#next-quiz-${quizNum}`
+          );
 
-        const anyChecked = Array.from(radios).some((r) => r.checked);
-        submitBtn.disabled = !anyChecked;
-        submitBtn.style.opacity = anyChecked ? "1" : "0.5";
-        if (nextBtn) {
-          nextBtn.disabled = !anyChecked;
-          nextBtn.style.opacity = anyChecked ? "1" : "0.5";
-        }
+          const anyChecked = Array.from(radios).some((r) => r.checked);
+          submitBtn.disabled = !anyChecked;
+          submitBtn.style.opacity = anyChecked ? "1" : "0.5";
+          if (nextBtn) {
+            nextBtn.disabled = !anyChecked;
+            nextBtn.style.opacity = anyChecked ? "1" : "0.5";
+          }
 
-        radios.forEach((r) => {
-          r.addEventListener("change", () => {
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = "1";
+          radios.forEach((r) => {
+            r.addEventListener("change", () => {
+              submitBtn.disabled = false;
+              submitBtn.style.opacity = "1";
+            });
+          });
+
+          submitBtn.addEventListener("click", () => {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.5";
+            if (nextBtn) {
+              nextBtn.disabled = false;
+              nextBtn.style.opacity = "1";
+            }
           });
         });
-
-        submitBtn.addEventListener("click", () => {
-          submitBtn.disabled = true;
-          submitBtn.style.opacity = "0.5";
-          if (nextBtn) {
-            nextBtn.disabled = false;
-            nextBtn.style.opacity = "1";
-          }
-        });
-      });
     }, 150);
 
     return () => clearTimeout(timer);
   }, [renderedContent]);
-
 
   useEffect(() => {
     scripts.forEach((scriptContent) => {
@@ -864,13 +866,13 @@ window.showCard = function(n){
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??
-            coach.profile?.headshot_url
+              coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
-            coach.profile?.headshot_url
+              coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -1161,12 +1163,12 @@ window.showCard = function(n){
                     <AvatarFallback className="text-3xl bg-slate-300 ">
                       {creatorProfileData.detailed_profile.personal_info
                         .first_name !== "" &&
-                        creatorProfileData.detailed_profile.personal_info
-                          .first_name !== null &&
-                        creatorProfileData.detailed_profile.personal_info
-                          .last_name !== null &&
-                        creatorProfileData.detailed_profile.personal_info
-                          .last_name !== "" ? (
+                      creatorProfileData.detailed_profile.personal_info
+                        .first_name !== null &&
+                      creatorProfileData.detailed_profile.personal_info
+                        .last_name !== null &&
+                      creatorProfileData.detailed_profile.personal_info
+                        .last_name !== "" ? (
                         <div className="flex items-center">
                           <span>
                             {creatorProfileData.detailed_profile.personal_info.first_name.slice(
@@ -1217,7 +1219,7 @@ window.showCard = function(n){
           <ChatActions
             initialStatus={selectedDocument?.readStatus}
             initialRating={selectedDocument?.userRating}
-            onRegenerate={() => { }}
+            onRegenerate={() => {}}
             isSearching={false}
             hasMessages={messages.length >= 2}
             onStatusChange={onStatusChange}
@@ -1275,7 +1277,7 @@ window.showCard = function(n){
               <ChatActions
                 initialStatus={selectedDocument?.readStatus}
                 initialRating={selectedDocument?.rating}
-                onRegenerate={() => { }}
+                onRegenerate={() => {}}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}
