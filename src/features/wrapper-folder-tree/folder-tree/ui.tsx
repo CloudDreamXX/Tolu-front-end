@@ -66,6 +66,20 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   const [createFolderMutation] = useCreateFolderMutation();
   const [deleteFolderMutation] = useDeleteFolderMutation();
   const { refetch: refetchFolders } = useGetFoldersQuery();
+    const dropdownRef = useRef<HTMLDivElement>(null);
+  
+    useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(e.target as Node)
+        ) {
+          setMenuOpenFolderId(null);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
   useEffect(() => {
     if (!documentId) return;
@@ -237,13 +251,17 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
 
           {menuOpenFolderId === folder.id && (
             <div
+            ref={dropdownRef}
               className="absolute z-50 w-fit p-[16px_14px] flex flex-col items-start gap-[6px]
              bg-white rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] right-8"
             >
               <MenuItem
                 icon={<MaterialIcon iconName="add" />}
                 label={"Create folder"}
-                onClick={() => setCreatePopup(true)}
+                onClick={() => {
+                  setCreatePopup(true)
+                  setMenuOpenFolderId(null)
+                }}
               />
               {!allFolders.find((item) => item.id === menuOpenFolderId) && (
                 <MenuItem
