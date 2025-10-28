@@ -240,6 +240,7 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
                     field.onChange(Math.max(0, value[0] - 1))
                   }
                   max={4}
+                  min={0}
                   step={1}
                   className="py-2"
                   withSeparator

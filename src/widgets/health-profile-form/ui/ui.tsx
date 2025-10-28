@@ -163,6 +163,21 @@ const isFilled = (v: any) => {
   return typeof v === "number" || typeof v === "boolean";
 };
 
+export const stripOther = (s?: string) => {
+  if (!s) return "";
+  return s
+    .split(",")
+    .map((p) =>
+      p
+        .trim()
+        .replace(/^Other \(please specify\)/i, "")
+        .replace(/^Other:?/i, "")
+        .trim()
+    )
+    .filter((p) => p.length > 0)
+    .join(", ");
+};
+
 export const HealthProfileForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -541,20 +556,6 @@ export const HealthProfileForm = () => {
   const openPreview = (file: LabResultFile) => setPreview({ open: true, file });
   const closePreview = () => setPreview({ open: false, file: undefined });
 
-  const stripOther = (s?: string) => {
-    if (!s) return "";
-    return s
-      .split(",")
-      .map((p) =>
-        p
-          .trim()
-          .replace(/^Other:?/i, "")
-          .trim()
-      )
-      .filter((p) => p.length > 0)
-      .join(", ");
-  };
-
   return (
     <Dialog
       open={isOpen}
@@ -644,9 +645,9 @@ export const HealthProfileForm = () => {
               </Section>
 
               <Section title="Social Factors">
-                <SummaryRow label="Ethnicity" value={resolvedEthnicity} />
-                <SummaryRow label="Household Type" value={resolvedHousehold} />
-                <SummaryRow label="Occupation" value={resolvedOccupation} />
+                <SummaryRow label="Ethnicity" value={stripOther(resolvedEthnicity)} />
+                <SummaryRow label="Household Type" value={stripOther(resolvedHousehold)} />
+                <SummaryRow label="Occupation" value={stripOther(resolvedOccupation)} />
                 <SummaryRow
                   label="Education level"
                   value={values.education ?? ""}
@@ -844,9 +845,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                        setIsOpen(false);
-                        setConfirmOpen(true);
-                      }
+                      setIsOpen(false);
+                      setConfirmOpen(true);
+                    }
                 }
               >
                 Cancel

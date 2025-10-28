@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { SwitchValue } from "widgets/library-small-chat/switch-config";
 
@@ -14,10 +14,29 @@ const SwitchDropdown: React.FC<Props> = ({
   handleSwitchChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <div className="relative flex items-center justify-center">
@@ -30,7 +49,10 @@ const SwitchDropdown: React.FC<Props> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-[30px] md:top-[38px] left-1/2 transform -translate-x-1/2 mt-2 w-[160px] bg-white border border-[#1C63DB] rounded-[8px] shadow-lg z-10">
+        <div
+          ref={dropdownRef}
+          className="absolute top-[30px] md:top-[38px] left-1/2 transform -translate-x-1/2 mt-2 w-[160px] bg-white border border-[#1C63DB] rounded-[8px] shadow-lg z-10"
+        >
           <ul className="py-2">
             {options.map((option) => (
               <li
