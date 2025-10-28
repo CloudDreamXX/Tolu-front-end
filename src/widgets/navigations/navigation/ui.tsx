@@ -188,6 +188,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
 
         {menuOpen && (
           <div
+            ref={menuRef}
             className="absolute right-0 top-full mt-2 w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 p-3
              flex flex-col gap-2 z-50
              before:absolute before:-top-2 before:right-4 before:border-8 before:border-transparent before:border-b-white"

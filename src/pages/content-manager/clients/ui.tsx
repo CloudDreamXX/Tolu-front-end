@@ -605,6 +605,93 @@ export const ContentManagerClients: React.FC = () => {
                   Add new client
                   <MaterialIcon iconName="add" size={20} />
                 </Button>
+                <Dialog
+                  open={importClientsPopup}
+                  onOpenChange={setImportClientsPopup}
+                >
+                  <DialogTrigger>
+                    <Button
+                      variant="blue2"
+                      className="text-black border border-blue-600 min-w-40"
+                    >
+                      Upload client list
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
+                    {uploadedFileName ? (
+                      <div className="w-full max-w-[330px]">
+                        <p className="text-left  text-black text-base font-medium mb-[8px]">
+                          Import PDF
+                        </p>
+                        <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
+                          <MaterialIcon iconName="docs" fill={1} />
+                          <div className="flex flex-col leading-[1.2]">
+                            <p className="text-[14px]  text-black font-semibold">
+                              {uploadedFileName}
+                            </p>
+                            <p className="text-[12px]  text-[#5F5F65]">
+                              {uploadedFileSize}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setUploadedFileName(null);
+                              setUploadedFileSize(null);
+                            }}
+                            className="absolute top-[6px] right-[6px]"
+                          >
+                            <MaterialIcon iconName="close" size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      // Drop Zone
+                      <div className="w-full">
+                        <p className="text-left  text-black text-base font-medium mb-[8px]">
+                          Import СSV/XLSX
+                        </p>
+                        <button
+                          tabIndex={0}
+                          aria-label="Upload client list"
+                          className={`w-full border ${dragOver ? "border-[#0057C2]" : "border-dashed border-[#1C63DB]"} rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
+                          onClick={handleUploadClick}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              handleUploadClick();
+                            }
+                          }}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setDragOver(true);
+                          }}
+                          onDragLeave={() => setDragOver(false)}
+                          onDrop={handleDrop}
+                        >
+                          <MaterialIcon
+                            iconName="cloud_upload"
+                            fill={1}
+                            className="text-[#1C63DB] p-2 border rounded-xl"
+                          />
+                          <div className="text-[#1C63DB]  text-[14px] font-semibold">
+                            Click {isMobile || isTablet ? "" : "or drag"} to
+                            upload
+                          </div>
+                          <p className="text-[#5F5F65]  text-[14px] mt-[4px]">
+                            СSV/XLSX
+                          </p>
+                        </button>
+                      </div>
+                    )}
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 
@@ -822,11 +909,10 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
                 </button>
