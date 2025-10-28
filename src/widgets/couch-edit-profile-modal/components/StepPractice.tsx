@@ -122,7 +122,7 @@ export function StepPractice({
             className="hidden"
             type="file"
             multiple
-            accept="application/pdf,image/png,image/jpeg"
+            accept="image/png,image/jpeg"
             onChange={handleFileChange}
           />
           <div className="flex flex-col items-center gap-[8px]">
@@ -135,7 +135,7 @@ export function StepPractice({
               Click to upload
             </p>
             <p className="text-[#5F5F65]  text-[14px]">or drag and drop</p>
-            <p className="text-[#5F5F65]  text-[14px]">PDF, JPG or PNG</p>
+            <p className="text-[#5F5F65]  text-[14px]">JPG or PNG</p>
           </div>
         </label>
 

@@ -48,10 +48,13 @@ export const SymptomsSeverity = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const [ratings, setRatings] = useState<Record<string, number>>(
-    SYMPTOMS.reduce((acc, symptom) => {
-      acc[symptom] = clientOnboarding.symptoms_severity?.[symptom] || 1;
-      return acc;
-    }, {} as Record<string, number>)
+    SYMPTOMS.reduce(
+      (acc, symptom) => {
+        acc[symptom] = clientOnboarding.symptoms_severity?.[symptom] || 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    )
   );
 
   const [onboardClient] = useOnboardClientMutation();
@@ -164,4 +167,3 @@ export const SymptomsSeverity = () => {
     />
   );
 };
-

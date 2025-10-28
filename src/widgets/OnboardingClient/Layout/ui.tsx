@@ -38,10 +38,11 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
         {title != null && !isMobileOrTablet && title}
 
         <div
-          className={`w-full lg:max-w-[718px] flex flex-col items-start gap-[24px] bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] ${isLibrary
+          className={`w-full lg:max-w-[718px] flex flex-col items-start gap-[24px] bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] ${
+            isLibrary
               ? "overflow-y-auto flex-1 max-h-[70vh] lg:max-h-[35vh] scroll-smooth"
               : ""
-            }`}
+          }`}
         >
           {title != null && isMobileOrTablet && title}
           {children}

@@ -238,7 +238,7 @@ export const AboutYourPractice = () => {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
+                accept=".jpg,.jpeg,.png"
                 multiple
                 onChange={handleFileSelect}
                 className="hidden"
@@ -252,7 +252,7 @@ export const AboutYourPractice = () => {
                 Click to upload
               </p>
               <p className="text-[#5F5F65] text-[14px]">or drag and drop</p>
-              <p className="text-[#5F5F65] text-[14px]">PDF, JPG or PNG</p>
+              <p className="text-[#5F5F65] text-[14px]">JPG or PNG</p>
             </div>
 
             {filePreviews.length > 0 && (

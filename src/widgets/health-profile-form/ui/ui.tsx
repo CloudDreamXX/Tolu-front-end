@@ -844,9 +844,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                      setIsOpen(false);
-                      setConfirmOpen(true);
-                    }
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
                 }
               >
                 Cancel

@@ -68,7 +68,6 @@ export const InviteClients = () => {
     if (selectedFile) {
       try {
         await inviteClient({ payload: null, file: selectedFile });
-        await onboardUser({ data: state }).unwrap();
       } catch (error) {
         console.error(error);
         toast({
@@ -78,7 +77,19 @@ export const InviteClients = () => {
         });
       }
     }
-    nav("/onboarding-finish");
+
+    try {
+      await onboardUser({ data: state }).unwrap();
+      nav("/content-manager/library");
+      toast({ title: "Onboarding successful" });
+    } catch (error) {
+      console.error("Error during onboarding:", error);
+      toast({
+        variant: "destructive",
+        title: "Error during onboarding",
+        description: "Error during onboarding. Please try again",
+      });
+    }
   };
 
   return (
@@ -245,7 +256,7 @@ export const InviteClients = () => {
               </div>
               <button
                 className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB]  text-[16px] font-semibold"
-                onClick={() => nav("/onboarding-finish")}
+                onClick={handleNextStep}
               >
                 Skip this step
               </button>
@@ -274,7 +285,7 @@ export const InviteClients = () => {
             </div>
             <button
               className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB]  text-[16px] font-semibold"
-              onClick={() => nav("/onboarding-finish")}
+              onClick={handleNextStep}
             >
               Skip this step
             </button>

@@ -1,6 +1,6 @@
 import { Input } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { phoneMask, toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { ReferFriendRequest, useReferAFriendMutation } from "entities/user";
@@ -16,6 +16,27 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
   });
 
   const [referAFriend] = useReferAFriendMutation();
+
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prevState) => ({
@@ -58,7 +79,10 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
       role="dialog"
       aria-labelledby="modal-title"
     >
-      <div className="bg-white z-[22] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[90%] overflow-y-auto">
+      <div
+        ref={modalRef}
+        className="bg-white z-[22] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[90%] overflow-y-auto"
+      >
         <button
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
