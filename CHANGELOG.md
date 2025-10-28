@@ -1,3 +1,23 @@
+## [1.3.1] - 2025-10-28
+
+### Fixes & Minor Changes
+
+- Fix dropdown position and height to appear top or bottom depending on the page height.
+- Add development-and-deployment.md and component-organization.md.
+- Remove Diet type from Nutrition Habits and move there Specific diet from Lifestyle & Habits.
+- Remove item from drop-down list - "Irregular periods".
+- Add explanations for "Cycle status" options as on the onboarding.
+- Add Close button to the Multiple chat settings modal.
+- Close all popups and modals on outside click.
+- Make Submit and Next buttons inactive if nothing was selected in Cards.
+- Make See result button in Cards to appear immediately, not after refreshing the page.
+- Fix displaying of the symptoms in onboarding summary to show all the symptoms, not only changed ones.
+- Remove "You're all set" page.
+- Remove footer about privacy.
+- Remove book image in empty articles view.
+- Remove PDFs support for certificates and licenses.
+- Go to the first incomplete step in onboarding for coach after login.
+
 ## [1.3.0] - 2025-10-21
 
 ### New feature
