@@ -47,9 +47,9 @@ export const DemographicStep = () => {
   const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
     typeof clientOnboarding.weekly_meal_choice === "string"
       ? clientOnboarding.weekly_meal_choice
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
       : clientOnboarding.weekly_meal_choice || []
   );
 
@@ -325,6 +325,7 @@ export const DemographicStep = () => {
             }))}
             containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
 
           {/* Conditions (multi-choice simplified) */}
@@ -342,6 +343,7 @@ export const DemographicStep = () => {
             }
             className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
 
           {/* Stress Levels */}
@@ -354,6 +356,7 @@ export const DemographicStep = () => {
             options={stressLevels.map((s) => ({ label: s, value: s }))}
             containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
 
           {/* Meal Choice */}
@@ -370,6 +373,7 @@ export const DemographicStep = () => {
             options={mealChoices.map((c) => ({ label: c, value: c }))}
             className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
 
           {/* Support Network */}
@@ -387,6 +391,7 @@ export const DemographicStep = () => {
             }
             className="py-[11px] px-[16px] md:rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
 
           {/* Physical Activity */}
@@ -399,6 +404,7 @@ export const DemographicStep = () => {
             options={activityLevels.map((lvl) => ({ label: lvl, value: lvl }))}
             containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
 
           {/* Sleep Quality */}
@@ -411,6 +417,7 @@ export const DemographicStep = () => {
             options={sleepOptions.map((opt) => ({ label: opt, value: opt }))}
             containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
 
           {/* Hydration */}
@@ -426,6 +433,7 @@ export const DemographicStep = () => {
             }))}
             containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
 
           {/* Goals */}
@@ -440,6 +448,7 @@ export const DemographicStep = () => {
             options={goalsOptions.map((opt) => ({ label: opt, value: opt }))}
             containerClassName="py-[11px] px-[16px] rounded-[8px] text-[16px] font-medium"
             labelClassName="text-[16px] font-medium"
+            dropdownPosition={false}
           />
         </div>
       }

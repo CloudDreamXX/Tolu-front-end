@@ -18,6 +18,7 @@ export const MultiSelectField = ({
   onSave,
   className,
   labelClassName,
+  dropdownPosition = true,
 }: {
   label?: string;
   options: MultiSelectOption[];
@@ -27,6 +28,7 @@ export const MultiSelectField = ({
   className?: string;
   height?: string;
   labelClassName?: string;
+  dropdownPosition?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -64,12 +66,16 @@ export const MultiSelectField = ({
       const spaceBelow = viewportHeight - rect.bottom;
       const spaceAbove = rect.top;
 
-      const openUp =
-        spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
+      let top = rect.bottom + window.scrollY + gap;
 
-      const top = openUp
-        ? rect.top + window.scrollY - dropdownRect.height - gap
-        : rect.bottom + window.scrollY + gap;
+      if (dropdownPosition) {
+        const openUp =
+          spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
+
+        top = openUp
+          ? rect.top + window.scrollY - dropdownRect.height - gap
+          : rect.bottom + window.scrollY + gap;
+      }
 
       setCoords({
         top,
@@ -77,7 +83,7 @@ export const MultiSelectField = ({
         width: rect.width,
       });
     }
-  }, [open]);
+  }, [open, dropdownPosition]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -165,7 +171,7 @@ export const MultiSelectField = ({
           <div
             ref={dropdownRef}
             onClick={(e) => e.stopPropagation()}
-            className={`absolute z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8 `}
+            className={`absolute z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8`}
             style={{
               top: coords.top,
               left: coords.left,
@@ -177,11 +183,10 @@ export const MultiSelectField = ({
               {options.map((option) => (
                 <li
                   key={option.label}
-                  className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${
-                    selected.includes(option.label)
+                  className={`cursor-pointer px-[12px] py-[8px] border rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center gap-[8px] ${selected.includes(option.label)
                       ? "border-[#1D1D1F]"
                       : "border-white hover:border-[#1D1D1F]"
-                  }`}
+                    }`}
                   onClick={() => toggleOption(option.label)}
                 >
                   <MaterialIcon

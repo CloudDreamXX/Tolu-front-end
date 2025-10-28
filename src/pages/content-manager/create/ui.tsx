@@ -13,10 +13,6 @@ import {
 } from "entities/folder/api";
 import { toast } from "shared/lib/hooks/use-toast";
 import { setFolders } from "entities/folder";
-import { AboutYourPractice } from "widgets/OnboardingPractitioner/about-your-practice";
-import { ProfileSetup } from "widgets/OnboardingPractitioner/profile-setup";
-import { OnboardingMain } from "widgets/OnboardingPractitioner/onboarding-main";
-import { SelectType } from "widgets/OnboardingPractitioner/select-type";
 
 export const caseBaseSchema = z.object({
   age: z
@@ -50,30 +46,6 @@ export const ContentManagerCreatePage: React.FC = () => {
     refetchOnMountOrArgChange: true,
   });
   const [createFolderMutation] = useCreateFolderMutation();
-  const location = useLocation();
-  const [showPopup, setShowPopup] = useState(false);
-
-  useEffect(() => {
-    if (
-      location.state &&
-      location.state.incompleteRoute &&
-      location.state.incompleteRoute.length > 0
-    ) {
-      setShowPopup(true);
-    }
-  }, [location.state]);
-
-  useEffect(() => {
-    if (showPopup) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [showPopup]);
 
   useEffect(() => {
     if (folderResponse && folderResponse.folders.length > 0) {
@@ -105,21 +77,6 @@ export const ContentManagerCreatePage: React.FC = () => {
         title: "Failed to create folder",
         description: "Please try again.",
       });
-    }
-  };
-
-  const renderIncompletePage = () => {
-    switch (location.state?.incompleteRoute) {
-      case "/profile-setup":
-        return <ProfileSetup />;
-      case "/select-type":
-        return <SelectType />;
-      case "/onboarding-welcome":
-        return <OnboardingMain />;
-      case "/about-your-practice":
-        return <AboutYourPractice />;
-      default:
-        return <SelectType />;
     }
   };
 
@@ -161,19 +118,6 @@ export const ContentManagerCreatePage: React.FC = () => {
       <div className="w-full h-full">
         <LibrarySmallChat isCoach isDraft />
       </div>
-
-      {location.state?.incompleteRoute && showPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
-          <div
-            className="rounded-2xl shadow-xl max-h-[90%] mx-[16px] md:p-8 overflow-y-auto"
-            style={{
-              background: `linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), radial-gradient(107.14% 107.09% at 50.55% 99.73%, rgba(248, 251, 255, 0.81) 0%, rgba(222, 236, 255, 0.90) 68.27%, rgba(247, 230, 255, 0.90) 100%), #FFF`,
-            }}
-          >
-            {renderIncompletePage()}
-          </div>
-        </div>
-      )}
 
       {createPopup && (
         <CreateSubfolderPopup
