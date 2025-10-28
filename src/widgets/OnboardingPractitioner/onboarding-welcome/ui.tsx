@@ -134,9 +134,9 @@ export const OnboardingWelcome = () => {
           />
         )}
         <div className="bg-white md:bg-transparent md:mt-[37px] w-full flex items-center justify-center gap-[24px] text-[14px] text-center md:text-[18px] text-[#000] p-[16px]">
-          All information you share is secure and confidential
+          {/* All information you share is secure and confidential
           <img src={"/hipaa.png"} className="h-[40px] md:h-[50px]" />
-          <img src={"/ssl.png"} className="h-[40px] md:h-[50px]" />
+          <img src={"/ssl.png"} className="h-[40px] md:h-[50px]" /> */}
         </div>
       </main>
     </AuthPageWrapper>

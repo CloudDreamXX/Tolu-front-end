@@ -274,10 +274,10 @@ export const HealthProfileForm = () => {
   const values = form.watch() as BaseValues;
 
   const allKeys = useMemo(() => stepFields.flat() as (keyof BaseValues)[], []);
-  const hasAnyValue = useMemo(
-    () => allKeys.some((k) => isFilled((values as any)[k])),
-    [values, allKeys]
-  );
+  // const hasAnyValue = useMemo(
+  //   () => allKeys.some((k) => isFilled((values as any)[k])),
+  //   [values, allKeys]
+  // );
 
   const percentage = useMemo(() => {
     const filled = allKeys.reduce(
@@ -287,7 +287,7 @@ export const HealthProfileForm = () => {
     return allKeys.length ? Math.round((filled / allKeys.length) * 100) : 0;
   }, [values, allKeys]);
 
-  const showSummary = !isEditing && hasAnyValue;
+  const showSummary = !isEditing;
 
   const SummaryLabel = ({ children }: { children: React.ReactNode }) => (
     <div className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-base">
@@ -844,9 +844,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                        setIsOpen(false);
-                        setConfirmOpen(true);
-                      }
+                      setIsOpen(false);
+                      setConfirmOpen(true);
+                    }
                 }
               >
                 Cancel

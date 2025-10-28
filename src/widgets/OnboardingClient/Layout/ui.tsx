@@ -38,11 +38,10 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
         {title != null && !isMobileOrTablet && title}
 
         <div
-          className={`w-full lg:max-w-[718px] flex flex-col items-start gap-[24px] bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] ${
-            isLibrary
+          className={`w-full lg:max-w-[718px] flex flex-col items-start gap-[24px] bg-white rounded-t-3xl lg:rounded-3xl py-[24px] px-[16px] md:p-[40px] lg:p-[24px] ${isLibrary
               ? "overflow-y-auto flex-1 max-h-[70vh] lg:max-h-[35vh] scroll-smooth"
               : ""
-          }`}
+            }`}
         >
           {title != null && isMobileOrTablet && title}
           {children}
@@ -53,9 +52,9 @@ export const OnboardingClientLayout: React.FC<OnboardingClientLayoutProps> = ({
 
         {!isLibrary && (
           <div className="bg-white lg:bg-transparent w-full flex items-center justify-center gap-[24px] text-[14px] text-center md:text-[18px] text-[#000] p-[16px] lg:py-[20px]">
-            All information you share is secure and confidential
+            {/* All information you share is secure and confidential
             <img src="/hipaa.png" className="h-[40px] md:h-[50px]" />
-            <img src="/ssl.png" className="h-[40px] md:h-[50px]" />
+            <img src="/ssl.png" className="h-[40px] md:h-[50px]" /> */}
           </div>
         )}
       </main>

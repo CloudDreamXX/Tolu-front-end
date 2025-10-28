@@ -47,13 +47,25 @@ export const DemographicStep = () => {
   const [localWeeklyMeals, setLocalWeeklyMeals] = useState<string[]>(
     typeof clientOnboarding.weekly_meal_choice === "string"
       ? clientOnboarding.weekly_meal_choice
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
       : clientOnboarding.weekly_meal_choice || []
   );
 
   const [onboardClient] = useOnboardClientMutation();
+
+  const [month, setMonth] = useState<Date>(
+    localDate || new Date(selectedYear, 0, 1)
+  );
+
+  useEffect(() => {
+    if (localDate) {
+      setMonth(new Date(localDate.getFullYear(), localDate.getMonth(), 1));
+    } else {
+      setMonth(new Date(selectedYear, 0, 1));
+    }
+  }, [selectedYear, localDate]);
 
   useEffect(() => {
     if (!dateOfBirth) return;
@@ -148,12 +160,13 @@ export const DemographicStep = () => {
 
       <Calendar
         mode="single"
+        month={month}
+        onMonthChange={setMonth}
         selected={localDate ?? undefined}
         onSelect={(selectedDate) => {
           if (!selectedDate) return;
 
           setLocalDate(selectedDate);
-
           const isoDob = format(selectedDate, "yyyy-MM-dd");
           dispatch(
             setFormField({

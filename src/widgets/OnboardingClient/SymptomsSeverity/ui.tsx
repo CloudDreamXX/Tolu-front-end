@@ -48,7 +48,10 @@ export const SymptomsSeverity = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const [ratings, setRatings] = useState<Record<string, number>>(
-    clientOnboarding.symptoms_severity || {}
+    SYMPTOMS.reduce((acc, symptom) => {
+      acc[symptom] = clientOnboarding.symptoms_severity?.[symptom] || 1;
+      return acc;
+    }, {} as Record<string, number>)
   );
 
   const [onboardClient] = useOnboardClientMutation();
@@ -95,7 +98,7 @@ export const SymptomsSeverity = () => {
         className="text-[#1C63DB]"
         fill={1}
       />
-      <p className="text-[#1B2559]  text-base font-normal">
+      <p className="text-[#1B2559] text-base font-normal">
         Your information is kept private and secure. It helps me provide
         smarter, more relevant support. Visit our website for the complete{" "}
         <a
@@ -161,3 +164,4 @@ export const SymptomsSeverity = () => {
     />
   );
 };
+

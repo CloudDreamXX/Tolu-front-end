@@ -7,6 +7,7 @@ import { OnboardingClientLayout } from "../Layout";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { useOnboardClientMutation } from "entities/user";
 import { Slider } from "shared/ui/slider";
+import { toast } from "shared/lib";
 
 export const Summary = () => {
   const nav = useNavigate();
@@ -114,9 +115,17 @@ export const Summary = () => {
   const handleCreate = async () => {
     try {
       await onboardClient({ data: client, token: token ?? undefined }).unwrap();
-      nav("/finish");
+      toast({
+        title: "Onboarding successful",
+      });
+      nav("/library");
     } catch (err) {
       console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Error during onboarding",
+        description: "Error during onboarding. Please try again",
+      });
     }
   };
 
@@ -318,7 +327,7 @@ export const Summary = () => {
       onClick={handleCreate}
       className="p-4 w-full md:w-fit h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
     >
-      Create My Personalized Dashboard
+      Go to My Dashboard
     </button>
   );
 

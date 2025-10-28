@@ -105,9 +105,8 @@ export const SelectField = ({
         createPortal(
           <ul
             ref={dropdownRef}
-            className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2 ${
-              className || ""
-            }`}
+            className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2 ${className || ""
+              }`}
             style={{
               top: coords.top,
               left: coords.left,
