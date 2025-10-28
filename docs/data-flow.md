@@ -2680,5 +2680,3 @@ Renames a chat session (for example, an AI learning thread or a client conversat
 - File uploads sanitized and validated before submission.
 - Compliant with SSL and HIPAA guidelines.
 - Regular vulnerability scans and dependency audits.
-
-

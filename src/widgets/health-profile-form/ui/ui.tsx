@@ -645,9 +645,18 @@ export const HealthProfileForm = () => {
               </Section>
 
               <Section title="Social Factors">
-                <SummaryRow label="Ethnicity" value={stripOther(resolvedEthnicity)} />
-                <SummaryRow label="Household Type" value={stripOther(resolvedHousehold)} />
-                <SummaryRow label="Occupation" value={stripOther(resolvedOccupation)} />
+                <SummaryRow
+                  label="Ethnicity"
+                  value={stripOther(resolvedEthnicity)}
+                />
+                <SummaryRow
+                  label="Household Type"
+                  value={stripOther(resolvedHousehold)}
+                />
+                <SummaryRow
+                  label="Occupation"
+                  value={stripOther(resolvedOccupation)}
+                />
                 <SummaryRow
                   label="Education level"
                   value={values.education ?? ""}
@@ -845,9 +854,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                      setIsOpen(false);
-                      setConfirmOpen(true);
-                    }
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
                 }
               >
                 Cancel

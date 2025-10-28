@@ -1,6 +1,6 @@
 import { RootState } from "entities/store";
 import { useSelector, useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "shared/ui";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
 import { LibrarySmallChat } from "widgets/library-small-chat";
