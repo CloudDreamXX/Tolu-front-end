@@ -34,7 +34,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
   customTrigger,
   setExistingFiles,
   setExistingInstruction,
-  smallChat
+  smallChat,
 }) => {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(
     folderId || null
@@ -209,8 +209,8 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
         <PopoverTrigger asChild>
           {customTrigger ?? (
             <Button
-            variant={smallChat ? "default" : "secondary"}
-            className={`w-12 h-12 p-[10px] rounded-full relative ${smallChat ? "text-[#1C63DB]" : "bg-[#F3F6FB]"}`}
+              variant={smallChat ? "default" : "secondary"}
+              className={`w-12 h-12 p-[10px] rounded-full relative ${smallChat ? "text-[#1C63DB]" : "bg-[#F3F6FB]"}`}
             >
               <MaterialIcon iconName="folder" />
               {selectedFolder && (

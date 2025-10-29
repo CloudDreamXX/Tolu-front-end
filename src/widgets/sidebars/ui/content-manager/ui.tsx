@@ -3,7 +3,13 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast } from "shared/lib";
-import { Avatar, AvatarFallback, AvatarImage, Button, ScrollArea } from "shared/ui";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  ScrollArea,
+} from "shared/ui";
 import { sideBarContent } from "./lib";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,7 +20,7 @@ import {
   setFolderToChat,
   setLastChatId,
 } from "entities/client/lib";
-import user, { useSignOutMutation } from "entities/user";
+import { useSignOutMutation } from "entities/user";
 import { RootState } from "entities/store";
 
 export const ContentManagerSidebar: React.FC = () => {
@@ -206,7 +212,7 @@ export const ContentManagerSidebar: React.FC = () => {
           </div>
         </ScrollArea>
         <button
-          onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
+          onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
           className={`flex gap-4 items-center ${sidebarOpen ? "pl-4 justify-between" : "justify-center"}`}
         >
           <Avatar className="mr-[20px]">

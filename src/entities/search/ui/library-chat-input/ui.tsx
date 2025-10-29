@@ -75,7 +75,9 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [referAFriendOpen, setReferAFriendOpen] = useState<boolean>(false);
   const location = useLocation();
-  const isContentManager = location.pathname.includes("content-manager");
+  const isContentManager =
+    location.pathname.includes("content-manager") ||
+    location.pathname.includes("clients");
   const dispatch = useDispatch();
   const folderState = useSelector(
     (state: RootState) => state.client.selectedChatFolder || null
@@ -147,32 +149,34 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           </button>
         </div>
       )}
-      {textarea ?? <div className={`relative mb-4 flex gap-[32px] md:block`}>
-        <Textarea
-          placeholder={placeholder}
-          value={message}
-          onPaste={handlePaste}
-          onChange={(e) => {
-            if (setNewMessage) {
-              setNewMessage(e.target.value);
-            }
-          }}
-          onKeyDown={handleKeyPress}
-          className="w-full h-[80px] text-base sm:text-base md:text-base xl:text-base resize-none focus:outline-none focus:ring-0 focus:border-transparent"
-          containerClassName={`border-0 md:border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base`}
-          style={{
-            WebkitTextSizeAdjust: "100%",
-            textSizeAdjust: "100%",
-          }}
-        />
-        <Button
-          onClick={() => handleSend()}
-          disabled={isSendDisabled}
-          className="md:hidden w-[32px] h-[32px] p-[8px] bg-blue-600 rounded-full hover:bg-blue-700 disabled:bg-[#D5DAE2] disabled:cursor-not-allowed"
-        >
-          <MaterialIcon iconName="arrow_upward" />
-        </Button>
-      </div>}
+      {textarea ?? (
+        <div className={`relative mb-4 flex gap-[32px] md:block`}>
+          <Textarea
+            placeholder={placeholder}
+            value={message}
+            onPaste={handlePaste}
+            onChange={(e) => {
+              if (setNewMessage) {
+                setNewMessage(e.target.value);
+              }
+            }}
+            onKeyDown={handleKeyPress}
+            className="w-full h-[80px] text-base sm:text-base md:text-base xl:text-base resize-none focus:outline-none focus:ring-0 focus:border-transparent"
+            containerClassName={`border-0 md:border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base`}
+            style={{
+              WebkitTextSizeAdjust: "100%",
+              textSizeAdjust: "100%",
+            }}
+          />
+          <Button
+            onClick={() => handleSend()}
+            disabled={isSendDisabled}
+            className="md:hidden w-[32px] h-[32px] p-[8px] bg-blue-600 rounded-full hover:bg-blue-700 disabled:bg-[#D5DAE2] disabled:cursor-not-allowed"
+          >
+            <MaterialIcon iconName="arrow_upward" />
+          </Button>
+        </div>
+      )}
       {footer ?? (
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -199,7 +203,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               }
             />
             {isContentManager ? (
-              selectedSwitch === "RESEARCH" ? (
+              selectedSwitch === "Research" ? (
                 <div className="flex items-center gap-[10px]">
                   <PopoverClient setClientId={setClientId} />
                 </div>

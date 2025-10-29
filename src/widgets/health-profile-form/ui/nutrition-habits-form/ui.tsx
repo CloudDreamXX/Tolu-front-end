@@ -288,13 +288,14 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                 </FormItem>
 
                 {form.watch("dietType") === "Yes" && (
-                  <div className="pl-6 pt-2">
+                  <div className="pl-6">
                     <MultiSelect
                       placeholder="Select diet(s)"
                       options={dietDetailsOptions}
                       selected={dietDetailsSel}
                       onChange={onDietDetailsChange}
                       defaultValue={form.getValues("dietDetails")}
+                      dropdownPosition="top"
                     />
                     {dietDetailsSel.includes("Other") && (
                       <div className="pt-2">

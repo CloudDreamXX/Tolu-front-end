@@ -484,7 +484,7 @@ export const ContentManagerClients: React.FC = () => {
                   <DialogTrigger>
                     <Button
                       variant="blue2"
-                      className="text-black border border-blue-600 min-w-40"
+                      className="text-black border border-blue-600 w-full md:w-fit min-w-40"
                     >
                       Upload client list
                     </Button>
@@ -612,7 +612,7 @@ export const ContentManagerClients: React.FC = () => {
                   <DialogTrigger>
                     <Button
                       variant="blue2"
-                      className="text-black border border-blue-600 min-w-40"
+                      className="text-black border border-blue-600 w-full md:w-fit min-w-40"
                     >
                       Upload client list
                     </Button>
@@ -909,10 +909,11 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                    ? "border-[#1C63DB] text-[#1C63DB]"
-                    : "border-[#DBDEE1]"
-                    }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                    currentPage === page
+                      ? "border-[#1C63DB] text-[#1C63DB]"
+                      : "border-[#DBDEE1]"
+                  }`}
                 >
                   {page}
                 </button>

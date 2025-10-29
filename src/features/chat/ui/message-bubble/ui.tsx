@@ -16,6 +16,9 @@ interface MessageBubbleProps {
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const [renderedContent, setRenderedContent] = useState<React.ReactNode>(null);
+  const isContentManager =
+    location.pathname.includes("content-manager") ||
+    location.pathname.includes("clients");
 
   const cleanedContent = message.content.replace(
     /Conversational Response/g,
@@ -50,7 +53,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                 <span className="font-semibold ">You</span>
                 <span>{message.timestamp.toLocaleDateString()}</span>
               </div>
-              <div className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg ">
+              <div
+                className={`w-full px-4 py-2 ${isContentManager ? "text-black bg-blue-500/10" : "text-white bg-blue-500"} rounded-lg`}
+              >
                 {message.content}
                 {!!message.images?.length && (
                   <div

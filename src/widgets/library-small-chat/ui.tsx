@@ -38,7 +38,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
-import { Button, Card, CardContent, CardFooter, CardHeader, Textarea } from "shared/ui";
+import { Button, Card, CardContent, CardFooter, CardHeader } from "shared/ui";
 import {
   PopoverAttach,
   PopoverClient,
@@ -815,6 +815,44 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     dispatch(setFolderToChat(folder));
   };
 
+  const handleSend = () => {
+    if (
+      (!voiceFile && !message.trim() && filesState.length === 0) ||
+      isSearching
+    )
+      return;
+    handleNewMessage(message);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (
+      (isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD)) &&
+      !folderState
+    )
+      return;
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+      if (deleteSelectedText) deleteSelectedText();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const pasted: File[] = [];
+    Array.from(items).forEach((it) => {
+      if (it.kind === "file") {
+        const f = it.getAsFile();
+        if (f) {
+          pasted.push(f);
+        }
+      }
+    });
+
+    handleSetFiles([...filesState, ...pasted]);
+  };
+
   return (
     <>
       <div className="xl:hidden mb-[16px]">
@@ -826,7 +864,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       </div>
       {isSwitch(SWITCH_KEYS.CASE) ? (
         <Card className="relative flex flex-col w-full h-full overflow-auto border-none rounded-none">
-          <CardHeader className={`relative flex flex-col ${isCoach ? "items-baseline" : "items-center"} gap-4`}>
+          <CardHeader
+            className={`relative flex flex-col ${isCoach ? "items-baseline" : "items-center"} gap-4`}
+          >
             <SwitchDropdown
               options={config.options}
               handleSwitchChange={handleSwitchChange}
@@ -900,10 +940,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              {filesState.length + filesFromLibrary.length}
+                            </span>
+                          )}
                         </Button>
                       }
                     />
@@ -927,10 +967,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -954,9 +994,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           </CardFooter>
         </Card>
       ) : (
-        <Card className={`relative flex flex-col w-full h-full border-none ${isCoach ? "rounded-none" : "rounded-2xl"}`}>
-          <CardHeader className={`relative flex items-center ${isCoach ? "flex-row justify-between" : "flex-col"} gap-2`}>
-            <div className={`flex ${isCoach ? "" : "flex-col"} items-center gap-2`}>
+        <Card
+          className={`relative flex flex-col w-full h-full border-none ${isCoach ? "rounded-none" : "rounded-2xl"}`}
+        >
+          <CardHeader
+            className={`relative flex items-center ${isCoach ? "flex-row justify-between h-[100px]" : "flex-col"} gap-2`}
+          >
+            <div
+              className={`flex ${isCoach ? "" : "flex-col"} items-center gap-2`}
+            >
               <SwitchDropdown
                 options={config.options}
                 handleSwitchChange={handleSwitchChange}
@@ -964,7 +1010,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 isCoach={isCoach}
               />
               {subTitleSwitch(selectedSwitch as SwitchValue) && (
-                <p className={`${isCoach ? "text-[#1C63DB] text-[18px]" : "text-[#1D1D1F]"}`}>
+                <p
+                  className={`${isCoach ? "text-[#1C63DB] text-[18px]" : "text-[#1D1D1F]"}`}
+                >
                   {subTitleSwitch(selectedSwitch as SwitchValue)}
                 </p>
               )}
@@ -979,19 +1027,29 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 Get Expert-verified Guidance You Can Trust
               </p>
             )}
-            {isCoach && <div className="flex items-center gap-[18px]">
-              <HistoryPopup
-                fromPath={location.state?.from?.pathname ?? null}
-                smallChat
-              />
-              <Button variant={"brightblue"} className="h-[32px] w-[92px] text-[14px] font-normal">Create</Button>
-            </div>}
-            {!isCoach && <button
-              className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 h-8 w-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full"
-              onClick={handleNewChatOpen}
-            >
-              <MaterialIcon iconName="add" />
-            </button>}
+            {isCoach && (
+              <div className="flex items-center gap-[18px]">
+                <HistoryPopup
+                  fromPath={location.state?.from?.pathname ?? null}
+                  smallChat
+                />
+                <Button
+                  variant={"brightblue"}
+                  onClick={handleNewChatOpen}
+                  className="h-[32px] w-[92px] text-[14px] font-normal"
+                >
+                  Create
+                </Button>
+              </div>
+            )}
+            {!isCoach && (
+              <button
+                className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 h-8 w-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full"
+                onClick={handleNewChatOpen}
+              >
+                <MaterialIcon iconName="add" />
+              </button>
+            )}
             {activeChatKey !== "Create content" && !isCoach && (
               <HistoryPopup
                 fromPath={location.state?.from?.pathname ?? null}
@@ -1003,22 +1061,23 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           <CardContent
             className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}
           >
-            {!isMobileOrTablet && (
-              <div className="w-fit h-fit">
-                <ChatActions
-                  chatState={chatState}
-                  isSearching={isSearching}
-                  hasMessages={chatState.length >= 2}
-                  isHistoryPopup
-                  initialRating={
-                    chat.length ? (chat[0].liked ? 5 : undefined) : undefined
-                  }
-                  onReadAloud={handleReadAloud}
-                  isReadingAloud={isReadingAloud}
-                  currentChatId={sourceId || undefined}
-                />
-              </div>
-            )}
+            {!isMobileOrTablet ||
+              (!isCoach && (
+                <div className="w-fit h-fit">
+                  <ChatActions
+                    chatState={chatState}
+                    isSearching={isSearching}
+                    hasMessages={chatState.length >= 2}
+                    isHistoryPopup
+                    initialRating={
+                      chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+                    }
+                    onReadAloud={handleReadAloud}
+                    isReadingAloud={isReadingAloud}
+                    currentChatId={sourceId || undefined}
+                  />
+                </div>
+              ))}
             {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <MessageLoadingSkeleton />
             ) : chatState.length ? (
@@ -1032,22 +1091,25 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               <div></div>
             )}
           </CardContent>
-          {isMobileOrTablet && (
-            <div className="w-fit mx-auto h-fit mb-[16px]">
-              <ChatActions
-                chatState={chatState}
-                isSearching={isSearching}
-                hasMessages={chatState.length >= 2}
-                isHistoryPopup
-                initialRating={
-                  chat.length ? (chat[0].liked ? 5 : undefined) : undefined
-                }
-                onReadAloud={handleReadAloud}
-                isReadingAloud={isReadingAloud}
-                currentChatId={sourceId || undefined}
-              />
-            </div>
-          )}
+          {isMobileOrTablet ||
+            (isCoach && (
+              <div
+                className={`${isCoach ? "ml-[24px]" : "mx-auto"} w-fit h-fit mb-[16px]`}
+              >
+                <ChatActions
+                  chatState={chatState}
+                  isSearching={isSearching}
+                  hasMessages={chatState.length >= 2}
+                  isHistoryPopup
+                  initialRating={
+                    chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+                  }
+                  onReadAloud={handleReadAloud}
+                  isReadingAloud={isReadingAloud}
+                  currentChatId={sourceId || undefined}
+                />
+              </div>
+            ))}
           <CardFooter className="w-full p-0">
             <LibraryChatInput
               files={filesState}
@@ -1067,33 +1129,41 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               deleteSelectedText={deleteSelectedText}
               selectedSwitch={selectedSwitch}
               setNewMessage={setMessage}
-              textarea={isSwitch(SWITCH_KEYS.RESEARCH) || isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? <div>
-                <Textarea
-                  placeholder={"How can I help you today?"}
-                  value={message}
-                  // onPaste={handlePaste}
-                  onChange={(e) => {
-                    setMessage(e.target.value);
-                  }}
-                  // onKeyDown={handleKeyPress}
-                  className="w-full h-[31px] min-h-[31px] pb-0 text-base sm:text-base md:text-base xl:text-base resize-none focus:outline-none focus:ring-0 focus:border-transparent"
-                  containerClassName={`border-0 md:border border-[#1C63DB] rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base`}
-                  style={{
-                    WebkitTextSizeAdjust: "100%",
-                    textSizeAdjust: "100%",
-                  }}
-                />
-                {/* <Button
-                  onClick={() => {
-                    handleNewMessage(message);
-                  }}
-                  variant="brightblue"
-                  disabled={((isSwitch(SWITCH_KEYS.CASE) || isSwitch(SWITCH_KEYS.CREATE)) && !folderState) || isSearching || message === ""}
-                  className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
-                >
-                  <MaterialIcon iconName="send" size={24} />
-                </Button> */}
-              </div> : undefined
+              textarea={
+                isSwitch(SWITCH_KEYS.RESEARCH) ||
+                isSwitch(SWITCH_KEYS.CREATE) ||
+                isSwitch(SWITCH_KEYS.CARD) ? (
+                  <div className="flex items-center mb-[10px] h-[48px] border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base">
+                    <textarea
+                      placeholder={"How can I help you today?"}
+                      value={message}
+                      onPaste={handlePaste}
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                      }}
+                      onKeyDown={handleKeyPress}
+                      className="w-full py-[11px] max-h-[46px] placeholder:text-[#1C63DB] text-[14px] font-medium resize-none focus:outline-none focus:ring-0 focus:border-transparent"
+                      style={{
+                        WebkitTextSizeAdjust: "100%",
+                        textSizeAdjust: "100%",
+                      }}
+                    />
+                    <Button
+                      onClick={() => {
+                        handleNewMessage(message);
+                      }}
+                      disabled={
+                        isSearching ||
+                        (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
+                        (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
+                        (!voiceFile && message === "")
+                      }
+                      className="h-[44px] w-[44px] p-0 rounded-full text-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                    >
+                      <MaterialIcon iconName="send" fill={1} size={24} />
+                    </Button>
+                  </div>
+                ) : undefined
               }
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? (
@@ -1105,9 +1175,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         existingFiles={existingFiles}
                         disabled={!folderState}
                         customTrigger={
-                          <Button
-                            className="relative text-[#1C63DB] rounded-full w-12 h-12 hover:bg-secondary/80"
-                          >
+                          <Button className="relative text-[#1C63DB] rounded-full w-12 h-12 hover:bg-secondary/80">
                             <MaterialIcon
                               iconName="attach_file"
                               size={24}
@@ -1115,10 +1183,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {filesState.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />
@@ -1143,25 +1211,16 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  1
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                           </Button>
                         }
                         setInstruction={setInstruction}
                         folderInstruction={existingInstruction}
                       />
                     </div>
-                    <Button
-                      onClick={() => {
-                        handleNewMessage(message);
-                      }}
-                      disabled={isSearching || !folderState || message === ""}
-                      className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
-                    >
-                      <MaterialIcon iconName="send" size={24} />
-                    </Button>
                   </div>
                 ) : isSwitch(SWITCH_KEYS.RESEARCH) ? (
                   <div className="flex items-center justify-between">
@@ -1173,16 +1232,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         disabled={false}
                         hideFromLibrary={isCoach ? false : true}
                         customTrigger={
-                          <Button
-                            className="relative text-[#1C63DB] rounded-full w-12 h-12"
-                          >
+                          <Button className="relative text-[#1C63DB] rounded-full w-12 h-12">
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {filesState.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />

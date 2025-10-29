@@ -970,41 +970,46 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           <div
             className={`flex flex-col flex-1 w-full ${isCoach ? "min-h-[calc(100vh-95px)]" : "min-h-[calc(100vh-78px)]"} overflow-clip h-full`}
           >
-            <div className="md:hidden">
-              <SwitchDropdown
-                options={config.options}
+            <div
+              className={`flex ${isCoach ? "flex-row items-center justify-between w-full" : "flex-col"}`}
+            >
+              <div className="md:hidden">
+                <SwitchDropdown
+                  options={config.options}
+                  handleSwitchChange={(value) => {
+                    handleNewChatOpen();
+                    setSelectedSwitch(value);
+                    dispatch(setActiveChat(value));
+                  }}
+                  selectedSwitch={selectedSwitch}
+                  isCoach={isCoach}
+                />
+              </div>
+              <ChatHeader
+                switchOptions={config.options}
                 handleSwitchChange={(value) => {
                   handleNewChatOpen();
                   setSelectedSwitch(value);
                   dispatch(setActiveChat(value));
                 }}
+                displayChatTitle={displayChatTitle}
+                isExistingChat={!!isExistingChat}
+                isSwitch={isSwitch}
                 selectedSwitch={selectedSwitch}
+                onNewSearch={handleNewChatOpen}
+                onClose={() => {
+                  const fromPath =
+                    location.state?.from?.pathname ||
+                    location.state?.from ||
+                    null;
+                  if (fromPath) {
+                    navigate(fromPath);
+                  } else {
+                    navigate(-1);
+                  }
+                }}
               />
             </div>
-            <ChatHeader
-              switchOptions={config.options}
-              handleSwitchChange={(value) => {
-                handleNewChatOpen();
-                setSelectedSwitch(value);
-                dispatch(setActiveChat(value));
-              }}
-              displayChatTitle={displayChatTitle}
-              isExistingChat={!!isExistingChat}
-              isSwitch={isSwitch}
-              selectedSwitch={selectedSwitch}
-              onNewSearch={handleNewChatOpen}
-              onClose={() => {
-                const fromPath =
-                  location.state?.from?.pathname ||
-                  location.state?.from ||
-                  null;
-                if (fromPath) {
-                  navigate(fromPath);
-                } else {
-                  navigate(-1);
-                }
-              }}
-            />
             {showTooltip && tooltipPosition && (
               <div
                 className="fixed px-2 py-1 bg-white border border-blue-500 rounded-md"

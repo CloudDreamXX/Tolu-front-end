@@ -52,7 +52,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   multiple = false,
   maxSelections,
   allowSingleDeselect = true,
-  smallChat
+  smallChat,
 }) => {
   const [selectedClients, setSelectedClients] = useState<string[]>(
     initialSelectedClientsId ?? []
