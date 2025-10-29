@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FormControl,
   FormField,
@@ -22,6 +22,7 @@ export const nutritionHabitsSchema = z.object({
   cookFrequency: z.string().optional(),
   takeoutFrequency: z.string().optional(),
   commonFoods: z.string().optional(),
+  otherCommonFoods: z.string().optional(), // ⬅️ Added field for typed "other"
   dietType: z.string().optional(),
   dietDetails: z.string().optional(),
 });
@@ -53,7 +54,7 @@ const commonFoodOptions = [
   "Fast food",
   "Dairy",
   "Sugary foods",
-  "Other",
+  "Other (please specify)",
 ];
 
 const dietDetailsOptions = [
@@ -70,14 +71,30 @@ const dietDetailsOptions = [
   "Elimination / Rotation Diet",
 ];
 
-const joinVals = (vals: string[], extra?: string) => {
-  const filtered = vals.filter((v) => v !== "Other");
-  return [...filtered, ...(extra ? [extra] : [])].join(" , ");
+const split = (s?: string) =>
+  (s ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+
+const extractOtherValue = (joined: string) => {
+  const parts = split(joined);
+  const other = parts.find((v) => v.startsWith("Other:"));
+  return other ? other.replace(/^Other:\s*/, "") : "";
+};
+
+const commitOther = (fieldName: string, otherValue: string) => (form: any) => {
+  const vals = split(form.getValues(fieldName));
+  const withoutOthers = vals.filter((v) => !v.startsWith("Other"));
+  const trimmed = otherValue.trim();
+  const merged = [
+    "Other (please specify)",
+    ...(trimmed ? [`Other: ${trimmed}`] : []),
+  ];
+  form.setValue(fieldName, [...withoutOthers, ...merged].join(", "));
 };
 
 export const NutritionHabitsForm = ({ form }: { form: any }) => {
-  const [commonFoodsSelected, setCommonFoodsSelected] = useState<string[]>([]);
-  const [otherFood, setOtherFood] = useState<string>("");
   const [decisionMakersSelected, setDecisionMakersSelected] = useState<
     string[]
   >([]);
@@ -89,25 +106,28 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
     form.setValue("decisionMaker", val.join(" , "));
   };
 
-  const handleCommonFoodsChange = (val: string[]) => {
-    setCommonFoodsSelected(val);
-    form.setValue("commonFoods", val.join(" , "));
+  const commonFoodsStr = form.watch("commonFoods") as string | undefined;
+  const commonFoodsSel = useMemo(() => split(commonFoodsStr), [commonFoodsStr]);
+  const showOtherCommonFoods = commonFoodsSel.includes(
+    "Other (please specify)"
+  );
+  const otherCommonFoods = useMemo(
+    () => extractOtherValue(commonFoodsStr ?? ""),
+    [commonFoodsStr]
+  );
+
+  const onCommonFoodsChange = (vals: string[]) => {
+    form.setValue("commonFoods", vals.join(" , "));
   };
 
   const onDietDetailsChange = (val: string[]) => {
     setDietDetailsSel(val);
-    form.setValue("dietDetails", joinVals(val, dietDetailsOther));
-  };
-
-  const handleOtherFoodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setOtherFood(newValue);
-
     form.setValue(
-      "commonFoods",
-      [...commonFoodsSelected, newValue]
-        .filter((v) => v !== "Other")
-        .join(" , ")
+      "dietDetails",
+      [
+        ...val.filter((v) => v !== "Other"),
+        ...(dietDetailsOther ? [dietDetailsOther] : []),
+      ].join(" , ")
     );
   };
 
@@ -193,28 +213,47 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
       <FormField
         control={form.control}
         name="commonFoods"
-        render={({ field }) => (
-          <FormItem>
+        render={() => (
+          <FormItem className="flex w-full flex-col items-start gap-[10px]">
             <FormLabel>
               What kind of food do you find yourself eating the most each week?
             </FormLabel>
-            <MultiSelect
-              defaultValue={field.value}
-              placeholder="Select common foods"
-              options={commonFoodOptions}
-              selected={commonFoodsSelected}
-              onChange={handleCommonFoodsChange}
-            />
-            {commonFoodsSelected.includes("Other") && (
-              <div className="pt-2">
-                <Input
-                  placeholder="Other"
-                  value={otherFood}
-                  onChange={handleOtherFoodChange}
-                />
-              </div>
-            )}
+            <FormControl>
+              <MultiSelect
+                placeholder="Select common foods..."
+                options={commonFoodOptions}
+                selected={commonFoodsSel}
+                onChange={onCommonFoodsChange}
+                defaultValue={form.getValues("commonFoods")}
+                className="text-sm w-full"
+              />
+            </FormControl>
             <FormMessage />
+            {showOtherCommonFoods && (
+              <FormField
+                control={form.control}
+                name="otherCommonFoods"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel className="sr-only">
+                      Other common foods
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter food type"
+                        className="mt-2"
+                        {...field}
+                        value={otherCommonFoods}
+                        onChange={(e) =>
+                          commitOther("commonFoods", e.target.value)(form)
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </FormItem>
         )}
       />
@@ -239,7 +278,6 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                 defaultValue={field.value}
                 className="space-y-[10px]"
               >
-                {/* YES option */}
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
                     <RadioGroupItem value="Yes" id="Yes" />
@@ -268,7 +306,10 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
                             setDietDetailsOther(v);
                             form.setValue(
                               "dietDetails",
-                              joinVals(dietDetailsSel, v)
+                              [
+                                ...dietDetailsSel.filter((v) => v !== "Other"),
+                                v,
+                              ].join(" , ")
                             );
                           }}
                         />

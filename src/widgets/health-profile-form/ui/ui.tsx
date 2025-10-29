@@ -6,7 +6,7 @@ import {
   useGetUserHealthHistoryQuery,
 } from "entities/health-history";
 import { Steps } from "features/steps/ui";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Button,
@@ -330,6 +330,18 @@ export const HealthProfileForm = () => {
   const titleToStepIndex = (title: string, all: string[]) =>
     all.findIndex((t) => normalize(t) === normalize(title));
 
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    if (!isEditing && currentStep >= 0) {
+      const title = steps[currentStep];
+      const el = sectionRefs.current[title];
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [isEditing]);
+
   const Section = ({
     title,
     children,
@@ -340,13 +352,15 @@ export const HealthProfileForm = () => {
     const onEdit = () => {
       const idx = titleToStepIndex(title, steps);
       const next = idx < 0 ? 0 : idx;
-
       setIsEditing(true);
       setCurrentStep(next);
     };
 
     return (
-      <div className="space-y-4 border-b border-[#EAEAEA] pb-4">
+      <div
+        ref={(el) => (sectionRefs.current[title] = el)}
+        className="space-y-4 border-b border-[#EAEAEA] pb-4"
+      >
         <div className="text-[20px] font-medium flex items-center justify-between mr-[24px]">
           {title}
           <button className="cursor-pointer" onClick={onEdit}>
@@ -442,13 +456,13 @@ export const HealthProfileForm = () => {
       stress_levels: String(v.stressLevels),
       energy_levels: String(v.energyLevels),
 
-      menstrual_cycle_status: v.menstrualCycleStatus,
+      menstrual_cycle_status: v.menstrualOther,
       hormone_replacement_therapy: v.hormoneTherapy,
       fertility_concerns: v.fertilityConcerns,
       birth_control_use: v.birthControlUse,
 
-      blood_sugar_concerns: v.bloodSugarConcern,
-      digestive_issues: v.digestiveIssues,
+      blood_sugar_concerns: v.bloodSugarOther,
+      digestive_issues: v.digestiveOther,
       recent_lab_tests: v.recentLabTests === "Yes",
 
       health_goals: v.goals,
@@ -722,7 +736,7 @@ export const HealthProfileForm = () => {
                 />
                 <SummaryRow
                   label="Common foods"
-                  value={values.commonFoods ?? ""}
+                  value={stripOther(values.commonFoods) ?? ""}
                 />
                 <SummaryRow
                   label="Specific diet"
@@ -752,11 +766,11 @@ export const HealthProfileForm = () => {
               <Section title="Metabolic & Digestive Health">
                 <SummaryRow
                   label="Blood sugar concerns"
-                  value={values.bloodSugarConcern ?? ""}
+                  value={stripOther(values.bloodSugarConcern) ?? ""}
                 />
                 <SummaryRow
                   label="Digestive issues"
-                  value={values.digestiveIssues ?? ""}
+                  value={stripOther(values.digestiveIssues) ?? ""}
                 />
                 <SummaryRow
                   label="Recent lab tests"
@@ -854,9 +868,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                      setIsOpen(false);
-                      setConfirmOpen(true);
-                    }
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
                 }
               >
                 Cancel

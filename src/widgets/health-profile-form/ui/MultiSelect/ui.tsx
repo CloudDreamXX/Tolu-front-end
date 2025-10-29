@@ -131,7 +131,7 @@ export const MultiSelect = ({
       window.removeEventListener("resize", handleChange);
       scrollParent.removeEventListener("scroll", handleChange);
     };
-  }, [open, dropdownPosition]);
+  }, [open, dropdownPosition, selected]);
 
   const toggleOption = (option: string) => {
     if (selected.includes(option)) {
