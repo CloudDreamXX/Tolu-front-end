@@ -71,7 +71,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
 
   return (
     <div
-      className={`${location.pathname.startsWith("/content-manager/library") ? "bg-white" : ""} xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] relative px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]`}
+      className={`${location.pathname.startsWith("/content-manager/library") ? "bg-white" : ""} ${location.pathname.startsWith("/content-manager") || location.pathname.startsWith("/clients") ? "xl:hidden" : ""} xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] relative px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]`}
     >
       {/* Mobile Hamburger */}
       <div className="flex items-center justify-between w-full xl:hidden">

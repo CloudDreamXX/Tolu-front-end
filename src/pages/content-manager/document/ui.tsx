@@ -273,7 +273,7 @@ export const ContentManagerDocument: React.FC = () => {
     : false;
 
   return (
-    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] py-4 md:pt-6 md:pb-0 h-[calc(100vh-95px)] xl:h-[calc(100vh-78px)] w-full overflow-y-auto">
+    <div className="flex flex-col gap-2 px-[16px] md:px-[24px] xl:pt-0 xl:pl-0 xl:pr-0 xl:pb-0 py-4 md:pt-6 md:pb-0 h-[calc(100vh-95px)] xl:h-screen w-full overflow-y-auto">
       {loadingConversation && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <span className="inline-flex h-5 w-5 items-center justify-center">
@@ -286,7 +286,7 @@ export const ContentManagerDocument: React.FC = () => {
         </div>
       )}
       <div className="flex flex-row justify-end w-full h-full gap-[26px]">
-        <div className="relative flex flex-col w-full h-full gap-2 overflow-y-auto">
+        <div className="relative flex flex-col w-full h-full gap-2 overflow-y-auto xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] xl:pt-6">
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
 
           <DocumentInfoHeader
@@ -388,13 +388,13 @@ export const ContentManagerDocument: React.FC = () => {
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-                | "Raw"
-                | "Ready for Review"
-                | "Waiting"
-                | "Second Review Requested"
-                | "Ready to Publish"
-                | "Live"
-                | "Archived"
+              | "Raw"
+              | "Ready for Review"
+              | "Waiting"
+              | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}
