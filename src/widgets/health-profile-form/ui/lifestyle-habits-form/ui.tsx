@@ -41,6 +41,7 @@ const energyLevelsLabels = [
 
 export const LifestyleHabitsForm = ({ form }: { form: any }) => {
   const exerciseHabits = form.watch("exerciseHabits");
+  console.log(form.getValues())
 
   return (
     <div className="space-y-6">
@@ -140,16 +141,17 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
             </p>
             <div className="flex items-center gap-2 text-sm text-[#1B2559] font-medium">
               <MaterialIcon iconName="lightbulb" />
-              <span>{sleepQualityLabels[field.value]}</span>
+              <span>{sleepQualityLabels[field.value ? field.value : 0]}</span>
             </div>
             <FormControl>
               <div className="relative">
                 <Slider
-                  value={[field.value + 1]}
+                  value={field.value ? [field.value + 1] : [1]}
                   onValueChange={(value) =>
                     field.onChange(Math.max(0, value[0] - 1))
                   }
                   max={4}
+                  min={0}
                   step={1}
                   className="py-2"
                 />
@@ -185,16 +187,17 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
             </p>
             <div className="flex items-center gap-2 text-sm text-[#1B2559] font-medium">
               <MaterialIcon iconName="lightbulb" />
-              <span>{stressLevelsLabels[field.value]}</span>
+              <span>{stressLevelsLabels[field.value ? field.value : 0]}</span>
             </div>
             <FormControl>
               <div className="relative">
                 <Slider
-                  value={[field.value + 1]}
+                  value={field.value ? [field.value + 1] : [1]}
                   onValueChange={(value) =>
                     field.onChange(Math.max(0, value[0] - 1))
                   }
                   max={4}
+                  min={0}
                   step={1}
                   className="py-2"
                 />
@@ -230,12 +233,12 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
             </p>
             <div className="flex items-center gap-2 text-sm text-[#1B2559] font-medium">
               <MaterialIcon iconName="lightbulb" />
-              <span>{energyLevelsLabels[field.value]}</span>
+              <span>{energyLevelsLabels[field.value ? field.value : 0]}</span>
             </div>
             <FormControl>
               <div className="relative">
                 <Slider
-                  value={[field.value + 1]}
+                  value={field.value ? [field.value + 1] : [1]}
                   onValueChange={(value) =>
                     field.onChange(Math.max(0, value[0] - 1))
                   }
