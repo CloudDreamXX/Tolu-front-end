@@ -6,12 +6,14 @@ type Props = {
   options: SwitchValue[];
   selectedSwitch: string;
   handleSwitchChange: (value: string) => void;
+  isCoach?: boolean;
 };
 
 const SwitchDropdown: React.FC<Props> = ({
   options,
   selectedSwitch,
   handleSwitchChange,
+  isCoach
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -44,7 +46,7 @@ const SwitchDropdown: React.FC<Props> = ({
   return (
     <div className="relative flex items-center justify-center">
       <button
-        className="flex items-center gap-2 p-[6px] md:p-2 bg-[#1C63DB] text-white font-[500] text-[16px] md:text-[18px] rounded-lg"
+        className={`flex items-center gap-2 p-[6px] md:p-2 ${isCoach ? "flex-row-reverse text-[#1C63DB] font-semibold" : "bg-[#1C63DB] text-white font-[500]"} text-[16px] md:text-[18px] rounded-lg`}
         onClick={toggleDropdown}
       >
         <span>{selectedSwitch}</span>

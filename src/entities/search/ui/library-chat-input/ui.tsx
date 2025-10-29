@@ -34,6 +34,7 @@ interface LibraryChatInputProps {
   disabled?: boolean;
   className?: string;
   footer?: React.ReactNode;
+  textarea?: React.ReactNode;
   setNewMessage?: React.Dispatch<React.SetStateAction<string>>;
   isLoading?: boolean;
   message: string;
@@ -60,6 +61,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
   selectedSwitch,
   setNewMessage,
   footer,
+  textarea,
   message,
   setClientId,
   selectedText,
@@ -145,7 +147,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
           </button>
         </div>
       )}
-      <div className={`relative mb-4 flex gap-[32px] md:block`}>
+      {textarea ?? <div className={`relative mb-4 flex gap-[32px] md:block`}>
         <Textarea
           placeholder={placeholder}
           value={message}
@@ -170,7 +172,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         >
           <MaterialIcon iconName="arrow_upward" />
         </Button>
-      </div>
+      </div>}
       {footer ?? (
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">

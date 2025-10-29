@@ -38,7 +38,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
-import { Button, Card, CardContent, CardFooter, CardHeader } from "shared/ui";
+import { Button, Card, CardContent, CardFooter, CardHeader, Textarea } from "shared/ui";
 import {
   PopoverAttach,
   PopoverClient,
@@ -831,6 +831,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               options={config.options}
               handleSwitchChange={handleSwitchChange}
               selectedSwitch={selectedSwitch}
+              isCoach={isCoach}
             />
             {chatState.length > 0 && (
               <button
@@ -954,15 +955,16 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         </Card>
       ) : (
         <Card className={`relative flex flex-col w-full h-full border-none ${isCoach ? "rounded-none" : "rounded-2xl"}`}>
-          <CardHeader className={`relative flex flex-col ${isCoach ? "items-baseline" : "items-center"} gap-2`}>
-            <div className="flex flex-col items-center gap-2">
+          <CardHeader className={`relative flex items-center ${isCoach ? "flex-row justify-between" : "flex-col"} gap-2`}>
+            <div className={`flex ${isCoach ? "" : "flex-col"} items-center gap-2`}>
               <SwitchDropdown
                 options={config.options}
                 handleSwitchChange={handleSwitchChange}
                 selectedSwitch={selectedSwitch}
+                isCoach={isCoach}
               />
               {subTitleSwitch(selectedSwitch as SwitchValue) && (
-                <p className=" text-[#1D1D1F] ">
+                <p className={`${isCoach ? "text-[#1C63DB] text-[18px]" : "text-[#1D1D1F]"}`}>
                   {subTitleSwitch(selectedSwitch as SwitchValue)}
                 </p>
               )}
@@ -977,13 +979,20 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 Get Expert-verified Guidance You Can Trust
               </p>
             )}
-            <button
+            {isCoach && <div className="flex items-center gap-[18px]">
+              <HistoryPopup
+                fromPath={location.state?.from?.pathname ?? null}
+                smallChat
+              />
+              <Button variant={"brightblue"} className="h-[32px] w-[92px] text-[14px] font-normal">Create</Button>
+            </div>}
+            {!isCoach && <button
               className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 h-8 w-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full"
               onClick={handleNewChatOpen}
             >
               <MaterialIcon iconName="add" />
-            </button>
-            {activeChatKey !== "Create content" && (
+            </button>}
+            {activeChatKey !== "Create content" && !isCoach && (
               <HistoryPopup
                 fromPath={location.state?.from?.pathname ?? null}
                 className="absolute md:flex right-[24px] top-[64px]"
@@ -1045,7 +1054,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               setFiles={handleSetFiles}
               voiceFile={voiceFile}
               setVoiceFile={setVoiceFile}
-              className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
+              className={`w-full p-6 ${isCoach ? "border-none" : "border-t"} rounded-t-none rounded-b-2xl`}
               onSend={handleNewMessage}
               disabled={
                 isSearching ||
@@ -1058,6 +1067,34 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               deleteSelectedText={deleteSelectedText}
               selectedSwitch={selectedSwitch}
               setNewMessage={setMessage}
+              textarea={isSwitch(SWITCH_KEYS.RESEARCH) || isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? <div>
+                <Textarea
+                  placeholder={"How can I help you today?"}
+                  value={message}
+                  // onPaste={handlePaste}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                  }}
+                  // onKeyDown={handleKeyPress}
+                  className="w-full h-[31px] min-h-[31px] pb-0 text-base sm:text-base md:text-base xl:text-base resize-none focus:outline-none focus:ring-0 focus:border-transparent"
+                  containerClassName={`border-0 md:border border-[#1C63DB] rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base`}
+                  style={{
+                    WebkitTextSizeAdjust: "100%",
+                    textSizeAdjust: "100%",
+                  }}
+                />
+                {/* <Button
+                  onClick={() => {
+                    handleNewMessage(message);
+                  }}
+                  variant="brightblue"
+                  disabled={((isSwitch(SWITCH_KEYS.CASE) || isSwitch(SWITCH_KEYS.CREATE)) && !folderState) || isSearching || message === ""}
+                  className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                >
+                  <MaterialIcon iconName="send" size={24} />
+                </Button> */}
+              </div> : undefined
+              }
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? (
                   <div className="flex items-center justify-between">
@@ -1069,8 +1106,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         disabled={!folderState}
                         customTrigger={
                           <Button
-                            variant="ghost"
-                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                            className="relative text-[#1C63DB] rounded-full w-12 h-12 hover:bg-secondary/80"
                           >
                             <MaterialIcon
                               iconName="attach_file"
@@ -1089,18 +1125,19 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       <PopoverClient
                         setClientId={setClientId}
                         documentName={chatTitle}
+                        smallChat
                       />
                       <PopoverFolder
                         folderId={folderState || folderId || undefined}
                         setFolderId={handleSetFolder}
                         setExistingFiles={setExistingFiles}
                         setExistingInstruction={setExistingInstruction}
+                        smallChat
                       />
                       <PopoverInstruction
                         customTrigger={
                           <Button
-                            variant="ghost"
-                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                            className="relative text-[#1C63DB] rounded-full w-12 h-12 hover:bg-secondary/80"
                             disabled={!folderState}
                           >
                             <MaterialIcon iconName="settings" size={24} />
@@ -1137,8 +1174,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         hideFromLibrary={isCoach ? false : true}
                         customTrigger={
                           <Button
-                            variant="ghost"
-                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                            className="relative text-[#1C63DB] rounded-full w-12 h-12"
                           >
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
@@ -1153,18 +1189,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       <PopoverClient
                         setClientId={setClientId}
                         documentName={chatTitle}
+                        smallChat
                       />
                     </div>
-                    <Button
-                      onClick={() => {
-                        handleNewMessage(message);
-                      }}
-                      variant="brightblue"
-                      disabled={isSearching || message === ""}
-                      className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
-                    >
-                      <MaterialIcon iconName="send" size={24} />
-                    </Button>
                   </div>
                 ) : undefined
               }
