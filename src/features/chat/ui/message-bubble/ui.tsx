@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { renderResultBlocks, smartRender } from "./lib";
+import { ChatActions } from "../chat-actions";
 
 export interface Message {
   id: string;
@@ -12,9 +13,21 @@ export interface Message {
 
 interface MessageBubbleProps {
   message: Message;
+  isHistoryPopup?: boolean;
+  onReadAloud?: () => void;
+  isReadingAloud?: boolean;
+  isSearching?: boolean;
+  currentChatId?: string;
 }
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
+export const MessageBubble: React.FC<MessageBubbleProps> = ({
+  message,
+  isHistoryPopup,
+  isReadingAloud,
+  isSearching,
+  onReadAloud,
+  currentChatId,
+}) => {
   const [renderedContent, setRenderedContent] = useState<React.ReactNode>(null);
   const isContentManager =
     location.pathname.includes("content-manager") ||
@@ -36,16 +49,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   return (
     <div style={{ all: "revert", fontFamily: "'Inter', sans-serif" }}>
       <div
-        className={`flex ${
-          message.type === "user" ? "justify-end" : "justify-start"
-        }`}
+        className={`flex ${message.type === "user" ? "justify-end" : "justify-start"
+          }`}
       >
         <div
-          className={`w-full ${
-            message.type === "user"
-              ? "order-2 max-w-[40%]"
-              : "order-1 w-full md:max-w-[70%]"
-          }`}
+          className={`w-full ${message.type === "user"
+            ? "order-2 max-w-[40%]"
+            : "order-1 w-full md:max-w-[70%]"
+            }`}
         >
           {message.type === "user" ? (
             <div className="flex flex-col justify-end w-full">
@@ -95,6 +106,17 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2  pb-[10px]">
                     {renderResultBlocks(message.document || "")}
                   </div>
+                )}
+                {isContentManager && onReadAloud && (
+                  <ChatActions
+                    chatState={[message]}
+                    isSearching={isSearching ?? false}
+                    hasMessages={true}
+                    isHistoryPopup={isHistoryPopup}
+                    onReadAloud={onReadAloud}
+                    isReadingAloud={isReadingAloud}
+                    currentChatId={currentChatId}
+                  />
                 )}
               </div>
             </div>

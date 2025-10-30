@@ -213,14 +213,14 @@ export const ContentManagerSidebar: React.FC = () => {
         </ScrollArea>
         <button
           onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
-          className={`flex gap-4 items-center ${sidebarOpen ? "pl-4 justify-between" : "justify-center"}`}
+          className={`flex gap-4 items-center ${sidebarOpen ? "px-4 justify-between" : "justify-center"}`}
         >
           <Avatar className="mr-[20px]">
             <AvatarImage src={user?.photo} alt="Avatar" />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           {sidebarOpen && (
-            <p className="text-[#1D1D1F] hover:text-[#1C63DB]  text-[16px]/[22px] font-semibold">
+            <p className="text-[#1D1D1F] hover:text-[#1C63DB] my-0 text-[16px]/[22px] font-semibold">
               {user?.first_name ? user?.first_name : user?.name}{" "}
               {user?.last_name}
             </p>

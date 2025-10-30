@@ -11,6 +11,10 @@ interface MessageListProps {
   isSearching: boolean;
   streamingText: string;
   error: string | null;
+  isHistoryPopup?: boolean;
+  onReadAloud?: () => void;
+  isReadingAloud?: boolean;
+  currentChatId?: string;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
@@ -18,6 +22,10 @@ export const MessageList: React.FC<MessageListProps> = ({
   isSearching,
   streamingText,
   error,
+  isHistoryPopup,
+  onReadAloud,
+  isReadingAloud,
+  currentChatId,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -62,7 +70,14 @@ export const MessageList: React.FC<MessageListProps> = ({
     >
       <div className="space-y-4 md:px-4">
         {messages.map((message) => (
-          <MessageBubble key={message.id} message={message} />
+          <MessageBubble
+            key={message.id}
+            message={message}
+            isHistoryPopup={isHistoryPopup}
+            isReadingAloud={isReadingAloud}
+            onReadAloud={onReadAloud}
+            currentChatId={currentChatId}
+          />
         ))}
 
         {isSearching && <StreamingResponse streamingText={streamingText} />}
