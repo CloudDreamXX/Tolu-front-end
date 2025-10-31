@@ -85,8 +85,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                         xmlns="http://www.w3.org/2000/svg"
                         fill="#1C63DB"
                         viewBox="0 0 24 24"
-                        width="24"
-                        height="24"
+                        width="18"
+                        height="18"
                       >
                         <path
                           d="M6 2a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 

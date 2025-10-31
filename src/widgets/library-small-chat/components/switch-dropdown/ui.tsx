@@ -56,7 +56,7 @@ const SwitchDropdown: React.FC<Props> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className={`absolute top-[30px] md:top-[38px] ${isCoach ? "left-[16px]" : "left-1/2 -translate-x-1/2"} transform mt-2 w-[160px] bg-white border border-[#1C63DB] rounded-[8px] shadow-lg z-10`}
+          className={`absolute top-[30px] md:top-[38px] ${isCoach ? "left-[16px]" : "left-1/2 -translate-x-1/2"} transform mt-2 w-[160px] bg-white border border-[#1C63DB] rounded-[8px] shadow-lg z-[999]`}
         >
           <ul className="py-2">
             {options.map((option) => (
