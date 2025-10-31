@@ -129,6 +129,14 @@ export interface SearchResultResponseItem {
   created_at: string;
   chat_title: string;
   text_quote: string | null;
+  stored_files: {
+    path: string;
+    size: number;
+    source: string;
+    filename: string;
+    uploaded_at: string;
+    content_type: string;
+  }[];
 }
 
 export interface SearchResultResponse {

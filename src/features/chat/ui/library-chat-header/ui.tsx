@@ -86,22 +86,26 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     <div
       className={`flex flex-col items-center justify-between ${isContentManager ? "w-fit md:w-full md:flex-row" : "w-full  xl:flex-row"} p-4 bg-white md:border-b rounded-t-xl`}
     >
-      {!isContentManager && <div className="flex items-center gap-3">
-        <div
-          className={`text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px] ${isContentManager ? "" : "min-w-[200px]"}`}
-        >
-          <button onClick={onClose} className="hidden xl:block">
-            <MaterialIcon iconName="arrows_input" size={24} />
-          </button>
-          {isExistingChat && <span>{displayChatTitle}</span>}
-        </div>
-        {isExistingChat && (
-          <div className="hidden px-2 py-1 text-xs text-green-700 bg-green-100 rounded xl:block">
-            Existing Chat
+      {!isContentManager && (
+        <div className="flex items-center gap-3">
+          <div
+            className={`text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px] ${isContentManager ? "" : "min-w-[200px]"}`}
+          >
+            <button onClick={onClose} className="hidden xl:block">
+              <MaterialIcon iconName="arrows_input" size={24} />
+            </button>
+            {isExistingChat && <span>{displayChatTitle}</span>}
           </div>
-        )}
-      </div>}
-      <div className={`relative items-center justify-center hidden gap-2 md:flex ${isContentManager ? "flex-row" : "flex-col"}`}>
+          {isExistingChat && (
+            <div className="hidden px-2 py-1 text-xs text-green-700 bg-green-100 rounded xl:block">
+              Existing Chat
+            </div>
+          )}
+        </div>
+      )}
+      <div
+        className={`relative items-center justify-center hidden gap-2 md:flex ${isContentManager ? "flex-row" : "flex-col"}`}
+      >
         <SwitchDropdown
           options={switchOptions}
           handleSwitchChange={handleSwitchChange}

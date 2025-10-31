@@ -159,10 +159,6 @@ export const LibraryChat = () => {
 
   const [selectedSwitch, setSelectedSwitch] = useState<string>("");
 
-  console.log("PATH:", location.pathname);
-  console.log("isCoach:", isCoach);
-  console.log("config.defaultOption:", config.defaultOption);
-
   useEffect(() => {
     setSelectedSwitch(config.defaultOption);
   }, [config, isCoach]);

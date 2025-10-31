@@ -161,7 +161,7 @@ export const LoginForm = () => {
     const onboardingComplete = await getOnboardingStatusWithRetry();
     if (onboardingComplete.onboarding_filled) {
       if (isMobileOrTablet) {
-        navigate(`/content-manager/library/new_chat_${Date.now()}`)
+        navigate(`/content-manager/library/new_chat_${Date.now()}`);
       } else {
         navigate("/content-manager/create");
       }
@@ -407,10 +407,11 @@ export const LoginForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={formDataChangeHandler}
-                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${loginError
-                    ? "border border-[#FF1F0F]"
-                    : "border border-[#DFDFDF]"
-                    }`}
+                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${
+                    loginError
+                      ? "border border-[#FF1F0F]"
+                      : "border border-[#DFDFDF]"
+                  }`}
                 />
                 {loginError && (
                   <p className="text-[#FF1F0F] text-[14px]">{loginError}</p>
@@ -429,10 +430,11 @@ export const LoginForm = () => {
                     placeholder="Enter Password"
                     name="password"
                     onChange={formDataChangeHandler}
-                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${passwordError
-                      ? "border border-[#FF1F0F]"
-                      : "border border-[#DFDFDF] focus:border-[#1C63DB]"
-                      }`}
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${
+                      passwordError
+                        ? "border border-[#FF1F0F]"
+                        : "border border-[#DFDFDF] focus:border-[#1C63DB]"
+                    }`}
                   />
                   {formData.password && (
                     <button
@@ -523,10 +525,11 @@ export const LoginForm = () => {
           <div className="flex flex-col items-center gap-[24px] w-full">
             {isInvitedClient ? (
               <button
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${formData.email && !loginError
-                  ? "bg-[#1C63DB] text-white"
-                  : "bg-[#D5DAE2] text-[#5F5F65]"
-                  }`}
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
+                  formData.email && !loginError
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5F5F65]"
+                }`}
                 onClick={handleRequestInvite}
               >
                 Request invite
@@ -534,11 +537,12 @@ export const LoginForm = () => {
             ) : (
               <button
                 type="submit"
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${(!isCodeSent && formData.email) ||
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
+                  (!isCodeSent && formData.email) ||
                   (isCodeSent && formData.code)
-                  ? "bg-[#1C63DB] text-white"
-                  : "bg-[#D5DAE2] text-[#5F5F65]"
-                  }`}
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5F5F65]"
+                }`}
               >
                 {loginMode === "2fa"
                   ? isCodeSent
