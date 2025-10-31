@@ -59,7 +59,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       >
         <div
           className={`w-full ${message.type === "user"
-            ? "order-2 max-w-[40%]"
+            ? "order-2 max-w-[50%]"
             : "order-1 w-full md:max-w-[70%]"
             }`}
         >
@@ -80,7 +80,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 mt-2 p-3 rounded-lg bg-[#2C2C2C] hover:bg-[#3A3A3A] transition-colors w-full max-w-[280px]"
                   >
-                    <div className="flex items-center justify-center w-10 h-10 bg-[#1C63DB]/10 rounded-md">
+                    <div className="flex items-center justify-center w-8 h-8 bg-[#1C63DB]/10 rounded-md">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="#1C63DB"
@@ -97,10 +97,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                     </div>
 
                     <div className="flex flex-col overflow-hidden">
-                      <p className="text-white font-medium truncate max-w-[180px]">
+                      <p className="text-white text-[14px] font-medium truncate max-w-[180px]">
                         {pdf.name}
                       </p>
-                      <span className="text-gray-400 text-sm uppercase tracking-wide">
+                      <span className="text-gray-400 text-[13px] uppercase tracking-wide">
                         {pdf.type.split("/")[1] || "PDF"}
                       </span>
                     </div>
