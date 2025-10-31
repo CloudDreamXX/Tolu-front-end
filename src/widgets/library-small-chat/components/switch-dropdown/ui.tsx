@@ -46,10 +46,10 @@ const SwitchDropdown: React.FC<Props> = ({
   return (
     <div className="relative flex items-center justify-center">
       <button
-        className={`flex items-center gap-2 p-[6px] md:p-2 ${isCoach ? "flex-row-reverse text-[#1C63DB] font-semibold" : "bg-[#1C63DB] text-white font-[500]"} text-[16px] md:text-[18px] rounded-lg`}
+        className={`flex items-center gap-2 p-[6px] md:p-2 ${isCoach ? "flex-row-reverse text-[#1C63DB] font-semibold" : "bg-[#1C63DB] text-white font-[500]"} text-[16px] lg:text-[14px] 2xl:text-[18px] rounded-lg`}
         onClick={toggleDropdown}
       >
-        <span>{selectedSwitch}</span>
+        <div className="whitespace-nowrap">{selectedSwitch}</div>
         <MaterialIcon iconName="keyboard_arrow_down" size={24} />
       </button>
 

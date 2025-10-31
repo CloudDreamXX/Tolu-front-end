@@ -102,8 +102,7 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/library"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -114,8 +113,7 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -175,7 +173,7 @@ export const NavigationClient: React.FC = () => {
 
       {/* Mobile Hamburger */}
       <div
-        className={`flex xl:hidden justify-between items-center p-[16px] md:p-6 ${location.pathname.startsWith(`${basePath}/library`) && location.pathname.split("/").length > 2 ? "bg-white md:bg-transparent" : ""}`}
+        className={`flex xl:hidden justify-between items-center p-[16px] md:p-6 ${location.pathname.startsWith(`${basePath}/library`) && location.pathname.split("/").length > 2 ? "bg-white md:bg-transparent fixed top-0 w-full md:static" : ""}`}
       >
         <h1 className="text-[27px] md:text-[46px] font-[700] ">Tolu</h1>
         <div className="flex items-center gap-[16px]">
@@ -248,8 +246,7 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/library"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={toggleLibrary}
@@ -266,8 +263,7 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/messages"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={() => setMenuMobOpen(false)}

@@ -177,6 +177,18 @@ export const AppRoutes = () => {
           }
         />
         <Route
+          path="/content-manager/create"
+          element={
+            <Navigate
+              to={
+                isMobileOrTablet
+                  ? `/content-manager/library/new_chat_${Date.now()}`
+                  : "/content-manager/create"
+              }
+            />
+          }
+        />
+        <Route
           path="/content-manager"
           element={
             <Navigate

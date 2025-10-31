@@ -110,9 +110,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       ? SWITCH_CONFIG.personalize
       : SWITCH_CONFIG.default;
 
-  const [selectedSwitch, setSelectedSwitch] = useState<string>(
-    config.defaultOption
-  );
   const lastId = location.state?.lastId;
   const isNew = location.state?.isNew;
   const folderId = location.state?.folderId;
@@ -142,6 +139,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     scrollRef.current?.scrollIntoView({ block: "end", behavior });
   };
+  const [selectedSwitch, setSelectedSwitch] = useState<string>("");
+
+  useEffect(() => {
+    setSelectedSwitch(config.defaultOption);
+  }, [config, isCoach]);
 
   useEffect(() => {
     const wasSearching = prevSearchingRef.current;
@@ -1011,7 +1013,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               />
               {subTitleSwitch(selectedSwitch as SwitchValue) && (
                 <p
-                  className={`${isCoach ? "text-[#1C63DB] text-[18px]" : "text-[#1D1D1F]"} my-0`}
+                  className={`${isCoach ? "text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px]" : "text-[#1D1D1F]"} my-0`}
                 >
                   {subTitleSwitch(selectedSwitch as SwitchValue)}
                 </p>
@@ -1031,7 +1033,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               <div className="flex items-center gap-[18px]">
                 <HistoryPopup
                   fromPath={location.state?.from?.pathname ?? null}
-                  smallChat
+                  smallChat={isCoach}
                 />
                 <Button
                   variant={"brightblue"}
@@ -1054,7 +1056,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               <HistoryPopup
                 fromPath={location.state?.from?.pathname ?? null}
                 className="absolute md:flex right-[24px] top-[64px]"
-                smallChat
+                smallChat={isCoach}
               />
             )}
           </CardHeader>
@@ -1143,7 +1145,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         setMessage(e.target.value);
                       }}
                       onKeyDown={handleKeyPress}
-                      className="w-full py-[11px] max-h-[46px] placeholder:text-[#1C63DB] text-[14px] font-medium resize-none focus:outline-none focus:ring-0 focus:border-transparent"
+                      className="w-full py-[11px] max-h-[46px] text-[14px] font-medium resize-none placeholder:text-black focus:outline-none focus:ring-0 focus:border-transparent"
                       style={{
                         WebkitTextSizeAdjust: "100%",
                         textSizeAdjust: "100%",
@@ -1159,7 +1161,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
                         (!voiceFile && message === "")
                       }
-                      className="h-[44px] w-[44px] p-0 rounded-full text-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                      className="h-[44px] w-[44px] p-0 rounded-full text-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
                     >
                       <MaterialIcon iconName="send" fill={1} size={24} />
                     </Button>

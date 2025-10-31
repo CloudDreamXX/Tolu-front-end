@@ -28,7 +28,7 @@ import {
   FormValues,
 } from "pages/content-manager/create/case-search";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -87,19 +87,12 @@ export const LibraryChat = () => {
     (state: RootState) => state.client.chatHistory[currentChatId] || []
   );
 
-  const userPersisted = localStorage.getItem("persist:user");
-  let isCoach = false;
-
-  if (userPersisted) {
-    try {
-      const parsed = JSON.parse(userPersisted);
-      const user = parsed?.user ? JSON.parse(parsed.user) : null;
-      const roleID = user?.roleID;
-      isCoach = roleID === 2;
-    } catch (error) {
-      console.error("Failed to parse persisted user:", error);
-    }
-  }
+  const isCoach = useMemo(
+    () =>
+      location.pathname.startsWith("/content-manager") ||
+      location.pathname.startsWith("/clients"),
+    [location.pathname]
+  );
 
   const config = isCoach
     ? SWITCH_CONFIG.coach
@@ -107,9 +100,6 @@ export const LibraryChat = () => {
       ? SWITCH_CONFIG.personalize
       : SWITCH_CONFIG.default;
 
-  const [selectedSwitch, setSelectedSwitch] = useState<string>(
-    config.defaultOption
-  );
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
   const dispatch = useDispatch();
 
@@ -120,13 +110,15 @@ export const LibraryChat = () => {
     if (activeChatKey) {
       setSelectedSwitch(activeChatKey);
     } else {
-      const switchKey = documentId
-        ? SWITCH_CONFIG.personalize.options[0]
-        : SWITCH_CONFIG.default.options[0];
+      const switchKey = isCoach
+        ? SWITCH_CONFIG.coach.options[0]
+        : documentId
+          ? SWITCH_CONFIG.personalize.options[0]
+          : SWITCH_CONFIG.default.options[0];
       dispatch(setActiveChat(switchKey));
       setSelectedSwitch(switchKey);
     }
-  }, [activeChatKey, dispatch, documentId]);
+  }, [activeChatKey, dispatch, documentId, isCoach]);
 
   const caseForm = useForm<FormValues>({
     resolver: zodResolver(caseBaseSchema),
@@ -164,6 +156,16 @@ export const LibraryChat = () => {
     error: healthHistoryError,
     isLoading: isHealthHistoryLoading,
   } = useGetUserHealthHistoryQuery();
+
+  const [selectedSwitch, setSelectedSwitch] = useState<string>("");
+
+  console.log("PATH:", location.pathname);
+  console.log("isCoach:", isCoach);
+  console.log("config.defaultOption:", config.defaultOption);
+
+  useEffect(() => {
+    setSelectedSwitch(config.defaultOption);
+  }, [config, isCoach]);
 
   useEffect(() => {
     let cancelled = false;
@@ -968,10 +970,10 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           <ChatLoading />
         ) : (
           <div
-            className={`flex flex-col flex-1 w-full ${isCoach ? "min-h-[calc(100vh-95px)]" : "min-h-[calc(100vh-78px)]"} overflow-clip h-full`}
+            className={`flex flex-col flex-1 w-full ${isCoach ? "min-h-[calc(100dvh-85px)] pt-[157px] md:pt-[85px] pb-[180px] md:pb-0" : "min-h-[calc(100dvh-78px)] pt-[186px] md:pt-0 pb-[180px] md:pb-0"} overflow-clip h-full`}
           >
             <div
-              className={`flex ${isCoach ? "flex-row items-center justify-between w-full" : "flex-col"}`}
+              className={`flex bg-white fixed md:static ${isCoach ? "flex-row items-center justify-between w-full top-[85px]" : "flex-col top-[78px] w-full"}`}
             >
               <div className="md:hidden">
                 <SwitchDropdown
@@ -1046,7 +1048,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 </div>
               </div>
             ) : isSwitch(SWITCH_KEYS.CASE) ? (
-              <>
+              <div>
                 <MessageList
                   messages={chatState}
                   isSearching={isSearching}
@@ -1078,7 +1080,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                     </div>
                   </CardContent>
                 </Card>
-              </>
+              </div>
             ) : (
               <div
                 className={`overflow-y-auto h-full px-[16px] md:px-0 md:mb-[16px] xl:mb-0`}
@@ -1092,7 +1094,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               </div>
             )}
             <div
-              className={`xl:hidden block px-[16px] w-fit mx-auto pb-[16px]`}
+              className={`xl:hidden block px-[16px] w-fit mx-auto md:pb-[16px]`}
             >
               <ChatActions
                 chatState={chatState}
@@ -1109,7 +1111,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             </div>
 
             <LibraryChatInput
-              className={`mt-auto xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
+              className={`fixed bottom-0 md:static w-full mt-auto xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
               onSend={handleNewMessage}
               disabled={
                 isSearching ||

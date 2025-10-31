@@ -60,7 +60,7 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
         "absolute z-[999999] flex flex-col bottom-0 top-[300px] left-0 w-full md:max-w-[350px] md:max-h-full md:h-full",
         smallChat
           ? "lg:left-auto md:top-[68px] right-[162px] lg:h-[400px]"
-          : "md:left-28 lg:right-64 lg:left-auto md:top-2",
+          : "md:left-auto md:right-[160px] lg:right-[4rem] lg:left-auto md:top-[130px]",
         "overflow-y-auto p-4 bg-white border rounded-t-[18px] md:rounded-xl shadow-lg"
       )}
       onClick={(e) => e.stopPropagation()}
@@ -140,9 +140,9 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
 
       {
         isOpen &&
-          (isMdUp
-            ? DesktopLayer // no portal: md/xl stays exactly as before
-            : createPortal(MobileLayer, document.body)) // portal only on mobile
+        (isMdUp
+          ? DesktopLayer // no portal: md/xl stays exactly as before
+          : createPortal(MobileLayer, document.body)) // portal only on mobile
       }
     </div>
   );

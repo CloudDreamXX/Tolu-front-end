@@ -150,7 +150,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
         </div>
       )}
       {textarea ?? (
-        <div className={`relative mb-4 flex gap-[32px] md:block`}>
+        <div className={`relative mb-4 flex gap-[32px] md:block h-[60px] md:h-fit`}>
           <Textarea
             placeholder={placeholder}
             value={message}
@@ -161,7 +161,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               }
             }}
             onKeyDown={handleKeyPress}
-            className="w-full h-[80px] text-base sm:text-base md:text-base xl:text-base resize-none focus:outline-none focus:ring-0 focus:border-transparent"
+            className="w-full text-base sm:text-base md:text-base xl:text-base resize-none focus:outline-none focus:ring-0 focus:border-transparent"
             containerClassName={`border-0 md:border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base`}
             style={{
               WebkitTextSizeAdjust: "100%",
@@ -227,10 +227,10 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
                         {((instruction && instruction?.length > 0) ||
                           (existingInstruction &&
                             existingInstruction?.length > 0)) && (
-                          <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                            1
-                          </span>
-                        )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
                       </Button>
                     }
                     folderInstruction={existingInstruction}

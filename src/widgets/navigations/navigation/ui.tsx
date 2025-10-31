@@ -71,15 +71,15 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
 
   return (
     <div
-      className={`${location.pathname.startsWith("/content-manager/library") ? "bg-white" : ""} ${location.pathname.startsWith("/content-manager") || location.pathname.startsWith("/clients") ? "xl:hidden" : ""} xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] relative px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]`}
+      className={`${location.pathname.startsWith(`/content-manager/library`) && location.pathname.split("/").length === 4 ? "fixed top-0 w-full" : ""} z-[5] xl:static ${location.pathname.startsWith("/content-manager/library") ? "bg-white" : ""} ${location.pathname.startsWith("/content-manager") || location.pathname.startsWith("/clients") ? "xl:hidden" : ""} xl:bg-transparent flex flex-row items-center justify-center xl:h-[78px] gap-[30px] px-[16px] py-[12px] md:px-[24px] md:py-[16px] xl:px-[48px] xl:py-[19px]`}
     >
       {/* Mobile Hamburger */}
       <div className="flex items-center justify-between w-full xl:hidden">
         <div className="flex flex-col">
-          <h1 className="text-[32px] md:text-[40px] font-[700] h-[50px]  leading-normal">
+          <h1 className="text-[32px] md:text-[40px] font-[700] leading-tight">
             Tolu
           </h1>
-          <p className="text-[16px] md:text-[18px] font-[700] h-[21px] md:h-[27px]  leading-normal">
+          <p className="text-[16px] md:text-[18px] font-[700] h-[21px] md:h-[27px] leading-normal">
             {pageLocation === "user-management" ? "Admin" : "Creator Studio"}
           </p>
         </div>
