@@ -78,7 +78,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                     href={pdf.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 mt-2 p-3 rounded-lg bg-[#2C2C2C] hover:bg-[#3A3A3A] transition-colors w-full max-w-[280px]"
+                    className="flex items-center gap-3 mt-2 px-3 py-1 mb-[5px] rounded-lg bg-white border hover:bg-[#3A3A3A] transition-colors w-full max-w-[280px]"
                   >
                     <div className="flex items-center justify-center w-8 h-8 bg-[#1C63DB]/10 rounded-md">
                       <svg
@@ -97,7 +97,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                     </div>
 
                     <div className="flex flex-col overflow-hidden">
-                      <p className="text-white text-[14px] font-medium truncate max-w-[180px]">
+                      <p className="text-[14px] font-medium truncate max-w-[180px]">
                         {pdf.name}
                       </p>
                       <span className="text-gray-400 text-[13px] uppercase tracking-wide">
