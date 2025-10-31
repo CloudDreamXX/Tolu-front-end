@@ -1088,7 +1088,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               </div>
             )}
             {isEmpty && !isSwitch(SWITCH_KEYS.CASE) ? (
-              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px] overflow-y-auto md:mb-[16px] xl:mb-0">
+              <div className="absolute top-[50%] translate-y-[-50%] w-full left-[50%] translate-x-[-50%] flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px] overflow-y-auto md:mb-[16px] xl:mb-0">
                 <div className="flex flex-col items-center justify-center flex-1 md:hidden">
                   <div className="max-w-[300px] sm:max-w-[360px] mx-auto">
                     <h2 className="text-[24px] leading-tight font-[700] text-[#1D1D1F]">
