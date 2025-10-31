@@ -47,9 +47,8 @@ export const searchApi = createApi({
         if (params.managed_client_id)
           searchParams.append("managed_client_id", params.managed_client_id);
 
-        return `/searched-result/history${
-          searchParams.toString() ? `?${searchParams.toString()}` : ""
-        }`;
+        return `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""
+          }`;
       },
       transformResponse: (response: { history: SearchHistoryResponse[] }) => {
         return response.history.map((item) => ({
@@ -216,6 +215,107 @@ export class SearchService {
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/${"ai-coach-research"}/`,
+        {
+          method: "POST",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: formData,
+          signal,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedText = ""; // Buffer for chunk accumulation
+
+      if (!reader) {
+        throw new Error("No response body reader available");
+      }
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        accumulatedText += chunk; // Append the chunk to the buffer
+
+        // Check if accumulated text contains a complete response
+        const lines = accumulatedText.split("\n");
+
+        for (const line of lines) {
+          if (line.trim() === "") continue;
+
+          const jsonLine = line.replace(/^data:\s*/, "").trim();
+
+          if (jsonLine === "[DONE]") {
+            break;
+          }
+
+          try {
+            const parsed: StreamChunk = JSON.parse(jsonLine);
+
+            if (parsed.message === "Stream completed" || parsed.done) {
+              if (parsed.searched_result_id && parsed.chat_id) {
+                onComplete({
+                  searched_result_id: parsed.searched_result_id,
+                  chat_id: parsed.chat_id,
+                  chat_title: parsed.chat_title ?? null,
+                });
+              }
+              if (parsed.done) {
+                onComplete({
+                  searched_result_id: new Date().toISOString(),
+                  chat_id: new Date().toISOString(),
+                  chat_title: null,
+                });
+              }
+            } else {
+              onChunk(parsed); // Pass the chunk as is to the callback
+            }
+          } catch (parseError) {
+            console.warn("Failed to parse JSON chunk:", jsonLine, parseError);
+          }
+        }
+
+        // Clear the accumulated buffer if we processed all valid chunks
+        accumulatedText = "";
+      }
+    } catch (error) {
+      onError(error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+
+  static async aiCoachAssistantStream(
+    searchData: AIChatMessageResearch,
+    onChunk: (chunk: StreamChunk) => void,
+    onComplete: (finalData: {
+      searched_result_id: string;
+      chat_id: string;
+      chat_title?: string | null;
+    }) => void,
+    onError: (error: Error) => void,
+    signal?: AbortSignal
+  ): Promise<void> {
+    try {
+      const formData = this.createSearchRequest(
+        searchData.chat_message,
+        searchData.clientId,
+        searchData.images,
+        searchData.pdf,
+        searchData.contentId
+      );
+
+      const user = localStorage.getItem("persist:user");
+      const token = user ? JSON.parse(user)?.token?.replace(/"/g, "") : null;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/${"ai-coach-assistant"}/`,
         {
           method: "POST",
           headers: {

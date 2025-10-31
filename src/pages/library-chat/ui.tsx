@@ -449,6 +449,40 @@ export const LibraryChat = () => {
       } else {
         const sessionData = await getSearchSession(id).unwrap();
 
+        const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+        const pdfMime = ["application/pdf"];
+
+        // Only process items that actually have stored files
+        const validFiles = sessionData.filter(
+          (f) => Array.isArray(f.stored_files) && f.stored_files.length > 0
+        );
+
+        const imagePreviews = await Promise.all(
+          validFiles
+            .filter((f) => imageMime.includes(f.stored_files[0].content_type))
+            .map(async (f) => {
+              const file = f.stored_files[0];
+              const res = await fetch(file.path);
+              const blob = await res.blob();
+              return URL.createObjectURL(blob);
+            })
+        );
+
+        const pdfPreviews = await Promise.all(
+          validFiles
+            .filter((f) => pdfMime.includes(f.stored_files[0].content_type))
+            .map(async (f) => {
+              const file = f.stored_files[0];
+              const res = await fetch(file.path);
+              const blob = await res.blob();
+              return {
+                name: file.filename,
+                url: URL.createObjectURL(blob),
+                type: file.content_type,
+              };
+            })
+        );
+
         if (sessionData && sessionData.length > 0) {
           sessionData.forEach((item: any) => {
             if (item.query) {
@@ -457,6 +491,8 @@ export const LibraryChat = () => {
                 type: "user",
                 content: item.query,
                 timestamp: new Date(item.created_at),
+                images: imagePreviews,
+                pdfs: pdfPreviews,
               });
             }
 
@@ -782,6 +818,31 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
         }
       } else if (isSwitch(SWITCH_KEYS.RESEARCH)) {
         await SearchService.aiCoachResearchStream(
+          {
+            chat_message: JSON.stringify({
+              user_prompt: message,
+              is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
+              chat_id: currentChatId.startsWith("new_chat_")
+                ? undefined
+                : currentChatId,
+              text_quote: undefined,
+              library_files: filesFromLibrary,
+            }),
+            images,
+            pdf,
+            contentId: documentId,
+            clientId: clientId ?? undefined,
+          },
+          processChunk,
+          processFinalData,
+          (error) => {
+            setIsSearching(false);
+            setError(error.message);
+            console.error("Search error:", error);
+          }
+        );
+      } else if (isSwitch(SWITCH_KEYS.ASSISTANT)) {
+        await SearchService.aiCoachAssistantStream(
           {
             chat_message: JSON.stringify({
               user_prompt: message,

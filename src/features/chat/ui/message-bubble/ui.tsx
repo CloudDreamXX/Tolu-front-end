@@ -54,16 +54,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   return (
     <div style={{ all: "revert", fontFamily: "'Inter', sans-serif" }}>
       <div
-        className={`flex ${
-          message.type === "user" ? "justify-end" : "justify-start"
-        }`}
+        className={`flex ${message.type === "user" ? "justify-end" : "justify-start"
+          }`}
       >
         <div
-          className={`w-full ${
-            message.type === "user"
-              ? "order-2 max-w-[40%]"
-              : "order-1 w-full md:max-w-[70%]"
-          }`}
+          className={`w-full ${message.type === "user"
+            ? "order-2 max-w-[40%]"
+            : "order-1 w-full md:max-w-[70%]"
+            }`}
         >
           {message.type === "user" ? (
             <div className="flex flex-col justify-end w-full">
@@ -82,10 +80,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 mt-2 p-3 rounded-lg bg-[#2C2C2C] hover:bg-[#3A3A3A] transition-colors w-full max-w-[280px]"
                   >
-                    <div className="flex items-center justify-center w-10 h-10 bg-[#F44336]/10 rounded-md">
+                    <div className="flex items-center justify-center w-10 h-10 bg-[#1C63DB]/10 rounded-md">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        fill="#F44336"
+                        fill="#1C63DB"
                         viewBox="0 0 24 24"
                         width="24"
                         height="24"
