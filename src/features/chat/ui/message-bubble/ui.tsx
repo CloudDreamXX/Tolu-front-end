@@ -150,7 +150,22 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                     let updatedContent = message.content;
 
                     updatedContent = updatedContent.replace(
-                      /<header\b[^>]*>([\s\S]*?)<\/header>/i,
+                      /<header([^>]*)style="([^"]*?)"/gi,
+                      (match, attrs, style) => {
+                        let newStyle = style;
+
+                        if (/align-items\s*:\s*center/.test(newStyle)) {
+                          newStyle = newStyle.replace(/align-items\s*:\s*center/gi, "align-items:flex-start");
+                        } else if (!/align-items\s*:/.test(newStyle)) {
+                          newStyle += ";align-items:flex-start";
+                        }
+
+                        return `<header${attrs}style="${newStyle}"`;
+                      }
+                    );
+
+                    updatedContent = updatedContent.replace(
+                      /<header\b[^>]*>([\s\S]*?)<\/header>/gi,
                       (match, inner) => {
                         const modifiedInner = inner.replace(
                           /<div\s+style="([^"]*?)"/i,
@@ -160,7 +175,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                             return `<div style="${newStyle}"`;
                           }
                         );
-                        return `<header${match.match(/<header([^>]*)>/i)?.[1] || ""}>${modifiedInner}</header>`;
+                        const headerAttrs = match.match(/<header([^>]*)>/i)?.[1] || "";
+                        return `<header${headerAttrs}>${modifiedInner}</header>`;
                       }
                     );
 
