@@ -27,7 +27,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   onReadAloud,
   isReadingAloud,
   currentChatId,
-  selectedSwitch
+  selectedSwitch,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);

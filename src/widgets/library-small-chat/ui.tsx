@@ -406,7 +406,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       } else {
         const sessionData = await getSearchSession(chatId).unwrap();
 
-        const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+        const imageMime = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
         const pdfMime = ["application/pdf"];
 
         // Only process items that actually have stored files
@@ -1013,10 +1018,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              {filesState.length + filesFromLibrary.length}
+                            </span>
+                          )}
                         </Button>
                       }
                     />
@@ -1040,10 +1045,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -1206,8 +1211,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               setNewMessage={setMessage}
               textarea={
                 isSwitch(SWITCH_KEYS.RESEARCH) ||
-                  isSwitch(SWITCH_KEYS.CREATE) ||
-                  isSwitch(SWITCH_KEYS.CARD) || isSwitch(SWITCH_KEYS.ASSISTANT) ? (
+                isSwitch(SWITCH_KEYS.CREATE) ||
+                isSwitch(SWITCH_KEYS.CARD) ||
+                isSwitch(SWITCH_KEYS.ASSISTANT) ? (
                   <div className="flex items-center mb-[10px] h-[48px] border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base">
                     <textarea
                       placeholder={"How can I help you today?"}
@@ -1258,10 +1264,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {filesState.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />
@@ -1286,10 +1292,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  1
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                           </Button>
                         }
                         setInstruction={setInstruction}
@@ -1297,7 +1303,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       />
                     </div>
                   </div>
-                ) : (isSwitch(SWITCH_KEYS.RESEARCH) || isSwitch(SWITCH_KEYS.ASSISTANT)) ? (
+                ) : isSwitch(SWITCH_KEYS.RESEARCH) ||
+                  isSwitch(SWITCH_KEYS.ASSISTANT) ? (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
                       <PopoverAttach
@@ -1311,10 +1318,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {filesState.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />

@@ -56,7 +56,10 @@ export const smartRender = async (text: string) => {
 
     const trimmedText = cutIndex !== -1 ? text.slice(0, cutIndex) : text;
 
-    const withoutCodeFences = trimmedText.replace(/```[a-zA-Z]*\n?([\s\S]*?)```/g, "$1");
+    const withoutCodeFences = trimmedText.replace(
+      /```[a-zA-Z]*\n?([\s\S]*?)```/g,
+      "$1"
+    );
 
     const preprocessedText = withoutCodeFences
       .replace(/^##\s?/gm, "")

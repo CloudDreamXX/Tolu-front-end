@@ -701,9 +701,7 @@ export const ContentManagerClients: React.FC = () => {
                   Full name
                 </div>
                 <div className="flex items-center justify-center">Status</div>
-                <div className="flex items-center justify-center">
-                  Summary
-                </div>
+                <div className="flex items-center justify-center">Summary</div>
                 <div className="flex items-center justify-center">Message</div>
                 <div className="flex items-center justify-center"></div>
               </div>

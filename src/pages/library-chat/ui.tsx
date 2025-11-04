@@ -449,7 +449,12 @@ export const LibraryChat = () => {
       } else {
         const sessionData = await getSearchSession(id).unwrap();
 
-        const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+        const imageMime = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
         const pdfMime = ["application/pdf"];
 
         // Only process items that actually have stored files
