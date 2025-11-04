@@ -15,6 +15,7 @@ interface MessageListProps {
   onReadAloud?: () => void;
   isReadingAloud?: boolean;
   currentChatId?: string;
+  selectedSwitch?: string;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
@@ -26,6 +27,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   onReadAloud,
   isReadingAloud,
   currentChatId,
+  selectedSwitch
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -77,6 +79,7 @@ export const MessageList: React.FC<MessageListProps> = ({
             isReadingAloud={isReadingAloud}
             onReadAloud={onReadAloud}
             currentChatId={currentChatId}
+            selectedSwitch={selectedSwitch}
           />
         ))}
 

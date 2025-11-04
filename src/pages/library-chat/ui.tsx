@@ -1111,6 +1111,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
+                  selectedSwitch={selectedSwitch}
                 />
                 <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
                   <div className="w-full mb-[24px]" />
@@ -1147,6 +1148,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
+                  selectedSwitch={selectedSwitch}
                 />
               </div>
             )}

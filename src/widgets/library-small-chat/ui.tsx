@@ -1163,6 +1163,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 onReadAloud={handleReadAloud}
                 isReadingAloud={isReadingAloud}
                 currentChatId={sourceId || undefined}
+                selectedSwitch={selectedSwitch}
               />
             ) : (
               <div></div>

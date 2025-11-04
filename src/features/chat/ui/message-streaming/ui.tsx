@@ -8,9 +8,9 @@ export const StreamingResponse: React.FC<StreamingResponseProps> = ({
   streamingText,
 }) => (
   <div className="flex justify-start">
-    <div className="w-full md:max-w-[70%] min-w-36">
+    <div className="w-full md:max-w-[80%] min-w-36">
       <div className="flex flex-col items-start gap-3">
-        <div className="flex flex-row justify-between w-full text-sm text-[#1D1D1F]">
+        <div className="flex flex-row gap-[16px] w-full text-sm text-[#1D1D1F]">
           <span className="font-semibold">AI Assistant</span>
           <span>Just Now</span>
         </div>

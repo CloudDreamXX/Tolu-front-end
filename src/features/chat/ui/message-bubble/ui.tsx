@@ -23,6 +23,7 @@ interface MessageBubbleProps {
   isReadingAloud?: boolean;
   isSearching?: boolean;
   currentChatId?: string;
+  selectedSwitch?: string;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -32,6 +33,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   isSearching,
   onReadAloud,
   currentChatId,
+  selectedSwitch
 }) => {
   const [renderedContent, setRenderedContent] = useState<React.ReactNode>(null);
   const isContentManager =
@@ -41,6 +43,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const cleanedContent = message.content.replace(
     /Conversational Response/g,
     ""
+  ).replace(
+    /<head[^>]*>[\s\S]*?<title>[\s\S]*?<\/title>[\s\S]*?<\/head>/gi,
+    (match) => match.replace(/<title>[\s\S]*?<\/title>/gi, "")
   );
 
   useEffect(() => {
@@ -60,12 +65,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         <div
           className={`w-full ${message.type === "user"
             ? "order-2 max-w-[50%]"
-            : "order-1 w-full md:max-w-[70%]"
+            : "order-1 w-full md:max-w-[80%]"
             }`}
         >
           {message.type === "user" ? (
             <div className="flex flex-col justify-end w-full">
-              <div className="flex flex-row justify-between w-full text-sm text-[#1D1D1F]">
+              <div className="flex flex-row gap-[16px] w-full text-sm text-[#1D1D1F]">
                 <span className="font-semibold ">You</span>
                 <span>{message.timestamp.toLocaleDateString()}</span>
               </div>
@@ -135,12 +140,37 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             </div>
           ) : (
             <div className="flex flex-col justify-end w-full">
-              <div className="flex flex-row justify-between w-full text-sm text-[#1D1D1F]">
+              <div className="flex flex-row gap-[16px] w-full text-sm text-[#1D1D1F]">
                 <span className="font-semibold ">AI Assistant</span>
                 <span>{message.timestamp.toLocaleDateString()}</span>
               </div>
-              <div className="text-[#1D1D1F] bg-white px-[14px] py-[10px] rounded-md ">
-                {renderedContent}
+              <div className={`text-[#1D1D1F] ${selectedSwitch === "Coach Assistant" ? "bg-[#fafafa]" : "bg-white"} px-[14px] py-[10px] rounded-md`}>
+                {selectedSwitch === "Coach Assistant" ? (
+                  (() => {
+                    let updatedContent = message.content;
+
+                    updatedContent = updatedContent.replace(
+                      /<header\b[^>]*>([\s\S]*?)<\/header>/i,
+                      (match, inner) => {
+                        const modifiedInner = inner.replace(
+                          /<div\s+style="([^"]*?)"/i,
+                          (divMatch: any, style: string) => {
+                            if (/flex-shrink\s*:\s*0/.test(style)) return divMatch;
+                            const newStyle = `${style};flex-shrink:0;`;
+                            return `<div style="${newStyle}"`;
+                          }
+                        );
+                        return `<header${match.match(/<header([^>]*)>/i)?.[1] || ""}>${modifiedInner}</header>`;
+                      }
+                    );
+
+                    return (
+                      <div dangerouslySetInnerHTML={{ __html: updatedContent }} />
+                    );
+                  })()
+                ) : (
+                  renderedContent
+                )}
                 {message.document && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2  pb-[10px]">
                     {renderResultBlocks(message.document || "")}
