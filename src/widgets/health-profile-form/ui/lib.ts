@@ -38,14 +38,14 @@ export const mapHealthHistoryToFormDefaults = (
     commonFoods: healthHistory.kind_of_food || "",
 
     exerciseHabits: healthHistory.exercise_habits || "light",
-    otherExerciseHabits: "",
+    otherExerciseHabits: healthHistory.exercise_habits || "light",
 
     sleepQuality: parseInt(healthHistory.sleep_quality || "1", 10),
     stressLevels: parseInt(healthHistory.stress_levels || "1", 10),
     energyLevels: parseInt(healthHistory.energy_levels || "2", 10),
 
     menstrualCycleStatus: healthHistory.menstrual_cycle_status || "",
-    menstrualOther: "",
+    menstrualOther: healthHistory.menstrual_cycle_status || "",
     hormoneTherapy: healthHistory.hormone_replacement_therapy || "",
     hormoneDetails: "",
     hormoneDuration: "",
@@ -55,9 +55,9 @@ export const mapHealthHistoryToFormDefaults = (
     birthControlDetails: "",
 
     bloodSugarConcern: healthHistory.blood_sugar_concerns || "",
-    bloodSugarOther: "",
+    bloodSugarOther: healthHistory.blood_sugar_concerns || "",
     digestiveIssues: healthHistory.digestive_issues || "",
-    digestiveOther: "",
+    digestiveOther: healthHistory.digestive_issues || "",
 
     recentLabTests: healthHistory.recent_lab_tests ? "Yes" : "No",
     labTestFiles: healthHistory.lab_results_file,

@@ -41,7 +41,6 @@ const energyLevelsLabels = [
 
 export const LifestyleHabitsForm = ({ form }: { form: any }) => {
   const exerciseHabits = form.watch("exerciseHabits");
-  console.log(form.getValues())
 
   return (
     <div className="space-y-6">

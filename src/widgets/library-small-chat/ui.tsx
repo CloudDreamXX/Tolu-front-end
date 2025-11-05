@@ -110,9 +110,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       ? SWITCH_CONFIG.personalize
       : SWITCH_CONFIG.default;
 
-  const [selectedSwitch, setSelectedSwitch] = useState<string>(
-    config.defaultOption
-  );
   const lastId = location.state?.lastId;
   const isNew = location.state?.isNew;
   const folderId = location.state?.folderId;
@@ -142,6 +139,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     scrollRef.current?.scrollIntoView({ block: "end", behavior });
   };
+  const [selectedSwitch, setSelectedSwitch] = useState<string>("");
+
+  useEffect(() => {
+    setSelectedSwitch(config.defaultOption);
+  }, [config, isCoach]);
 
   useEffect(() => {
     const wasSearching = prevSearchingRef.current;
@@ -404,6 +406,45 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       } else {
         const sessionData = await getSearchSession(chatId).unwrap();
 
+        const imageMime = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+        const pdfMime = ["application/pdf"];
+
+        // Only process items that actually have stored files
+        const validFiles = sessionData.filter(
+          (f) => Array.isArray(f.stored_files) && f.stored_files.length > 0
+        );
+
+        const imagePreviews = await Promise.all(
+          validFiles
+            .filter((f) => imageMime.includes(f.stored_files[0].content_type))
+            .map(async (f) => {
+              const file = f.stored_files[0];
+              const res = await fetch(file.path);
+              const blob = await res.blob();
+              return URL.createObjectURL(blob);
+            })
+        );
+
+        const pdfPreviews = await Promise.all(
+          validFiles
+            .filter((f) => pdfMime.includes(f.stored_files[0].content_type))
+            .map(async (f) => {
+              const file = f.stored_files[0];
+              const res = await fetch(file.path);
+              const blob = await res.blob();
+              return {
+                name: file.filename,
+                url: URL.createObjectURL(blob),
+                type: file.content_type,
+              };
+            })
+        );
+
         if (sessionData && sessionData.length > 0) {
           sessionData.forEach((item) => {
             if (item.query) {
@@ -412,6 +453,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 type: "user",
                 content: item.query,
                 timestamp: new Date(item.created_at),
+                images: imagePreviews,
+                pdfs: pdfPreviews,
               });
             }
 
@@ -503,16 +546,27 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setAbortController(newAbortController);
 
     const imageMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-    const previewImages = filesState
+    const pdfMime = ["application/pdf"];
+
+    const imagePreviews = filesState
       .filter((f) => imageMime.includes(f.type))
       .map((f) => URL.createObjectURL(f));
+
+    const pdfPreviews = filesState
+      .filter((f) => pdfMime.includes(f.type))
+      .map((f) => ({
+        name: f.name,
+        url: URL.createObjectURL(f),
+        type: f.type,
+      }));
 
     const userMessage: Message = {
       id: Date.now().toString(),
       type: "user",
       content: message,
       timestamp: new Date(),
-      images: previewImages,
+      images: imagePreviews,
+      pdfs: pdfPreviews,
     };
 
     const writeKeyForUser = currentChatId || lastChatId || activeChatKey;
@@ -753,6 +807,30 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           },
           newAbortController.signal
         );
+      } else if (isSwitch(SWITCH_KEYS.ASSISTANT)) {
+        await SearchService.aiCoachAssistantStream(
+          {
+            chat_message: JSON.stringify({
+              user_prompt: message,
+              is_new: !currentChatId,
+              chat_id: currentChatId,
+              text_quote: selectedText,
+              library_files: filesFromLibrary,
+            }),
+            images,
+            pdf,
+            contentId: documentId,
+            clientId: clientId ?? undefined,
+          },
+          processChunk,
+          processFinal,
+          (error) => {
+            setIsSearching(false);
+            setError(error.message);
+            console.error("Search error:", error);
+          },
+          newAbortController.signal
+        );
       } else {
         await SearchService.aiSearchStream(
           {
@@ -815,6 +893,44 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     dispatch(setFolderToChat(folder));
   };
 
+  const handleSend = () => {
+    if (
+      (!voiceFile && !message.trim() && filesState.length === 0) ||
+      isSearching
+    )
+      return;
+    handleNewMessage(message);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (
+      (isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD)) &&
+      !folderState
+    )
+      return;
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+      if (deleteSelectedText) deleteSelectedText();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const pasted: File[] = [];
+    Array.from(items).forEach((it) => {
+      if (it.kind === "file") {
+        const f = it.getAsFile();
+        if (f) {
+          pasted.push(f);
+        }
+      }
+    });
+
+    handleSetFiles([...filesState, ...pasted]);
+  };
+
   return (
     <>
       <div className="xl:hidden mb-[16px]">
@@ -825,12 +941,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         />
       </div>
       {isSwitch(SWITCH_KEYS.CASE) ? (
-        <Card className="relative flex flex-col w-full h-full overflow-auto border-none rounded-2xl">
-          <CardHeader className="relative flex flex-col items-center gap-4">
+        <Card className="relative flex flex-col w-full h-full overflow-auto border-none rounded-none">
+          <CardHeader
+            className={`relative flex flex-col ${isCoach ? "items-baseline" : "items-center"} gap-4`}
+          >
             <SwitchDropdown
               options={config.options}
               handleSwitchChange={handleSwitchChange}
               selectedSwitch={selectedSwitch}
+              isCoach={isCoach}
             />
             {chatState.length > 0 && (
               <button
@@ -953,16 +1072,25 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           </CardFooter>
         </Card>
       ) : (
-        <Card className="relative flex flex-col w-full h-full border-none rounded-2xl">
-          <CardHeader className="relative flex flex-col items-center gap-2">
-            <div className="flex flex-col items-center gap-2">
+        <Card
+          className={`relative flex flex-col w-full h-full border-none ${isCoach ? "rounded-none" : "rounded-2xl"}`}
+        >
+          <CardHeader
+            className={`relative flex items-center ${isCoach ? "flex-row justify-between h-[100px]" : "flex-col"} gap-2`}
+          >
+            <div
+              className={`flex ${isCoach ? "" : "flex-col"} items-center gap-2`}
+            >
               <SwitchDropdown
                 options={config.options}
                 handleSwitchChange={handleSwitchChange}
                 selectedSwitch={selectedSwitch}
+                isCoach={isCoach}
               />
               {subTitleSwitch(selectedSwitch as SwitchValue) && (
-                <p className=" text-[#1D1D1F] ">
+                <p
+                  className={`${isCoach ? "text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px]" : "text-[#1D1D1F]"} my-0`}
+                >
                   {subTitleSwitch(selectedSwitch as SwitchValue)}
                 </p>
               )}
@@ -977,39 +1105,57 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 Get Expert-verified Guidance You Can Trust
               </p>
             )}
-            <button
-              className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 h-8 w-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full"
-              onClick={handleNewChatOpen}
-            >
-              <MaterialIcon iconName="add" />
-            </button>
-            {activeChatKey !== "Create content" && (
+            {isCoach && (
+              <div className="flex items-center gap-[18px]">
+                <HistoryPopup
+                  fromPath={location.state?.from?.pathname ?? null}
+                  smallChat={isCoach}
+                />
+                <Button
+                  variant={"brightblue"}
+                  onClick={handleNewChatOpen}
+                  className="h-[32px] w-[92px] text-[14px] font-normal"
+                >
+                  Create
+                </Button>
+              </div>
+            )}
+            {!isCoach && (
+              <button
+                className="absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 h-8 w-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full"
+                onClick={handleNewChatOpen}
+              >
+                <MaterialIcon iconName="add" />
+              </button>
+            )}
+            {activeChatKey !== "Create content" && !isCoach && (
               <HistoryPopup
                 fromPath={location.state?.from?.pathname ?? null}
                 className="absolute md:flex right-[24px] top-[64px]"
-                smallChat
+                smallChat={isCoach}
               />
             )}
           </CardHeader>
           <CardContent
             className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}
           >
-            {!isMobileOrTablet && (
-              <div className="w-fit h-fit">
-                <ChatActions
-                  chatState={chatState}
-                  isSearching={isSearching}
-                  hasMessages={chatState.length >= 2}
-                  isHistoryPopup
-                  initialRating={
-                    chat.length ? (chat[0].liked ? 5 : undefined) : undefined
-                  }
-                  onReadAloud={handleReadAloud}
-                  isReadingAloud={isReadingAloud}
-                  currentChatId={sourceId || undefined}
-                />
-              </div>
-            )}
+            {!isMobileOrTablet ||
+              (!isCoach && (
+                <div className="w-fit h-fit">
+                  <ChatActions
+                    chatState={chatState}
+                    isSearching={isSearching}
+                    hasMessages={chatState.length >= 2}
+                    isHistoryPopup
+                    initialRating={
+                      chat.length ? (chat[0].liked ? 5 : undefined) : undefined
+                    }
+                    onReadAloud={handleReadAloud}
+                    isReadingAloud={isReadingAloud}
+                    currentChatId={sourceId || undefined}
+                  />
+                </div>
+              ))}
             {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <MessageLoadingSkeleton />
             ) : chatState.length ? (
@@ -1018,13 +1164,18 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 isSearching={isSearching}
                 streamingText={streamingText}
                 error={error}
+                isHistoryPopup
+                onReadAloud={handleReadAloud}
+                isReadingAloud={isReadingAloud}
+                currentChatId={sourceId || undefined}
+                selectedSwitch={selectedSwitch}
               />
             ) : (
               <div></div>
             )}
           </CardContent>
-          {isMobileOrTablet && (
-            <div className="w-fit mx-auto h-fit mb-[16px]">
+          {isMobileOrTablet && !isCoach && (
+            <div className={`mx-auto w-fit h-fit mb-[16px]`}>
               <ChatActions
                 chatState={chatState}
                 isSearching={isSearching}
@@ -1045,7 +1196,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               setFiles={handleSetFiles}
               voiceFile={voiceFile}
               setVoiceFile={setVoiceFile}
-              className="w-full p-6 border-t rounded-t-none rounded-b-2xl"
+              className={`w-full p-6 ${isCoach ? "border-none" : "border-t"} rounded-t-none rounded-b-2xl`}
               onSend={handleNewMessage}
               disabled={
                 isSearching ||
@@ -1058,6 +1209,43 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               deleteSelectedText={deleteSelectedText}
               selectedSwitch={selectedSwitch}
               setNewMessage={setMessage}
+              textarea={
+                isSwitch(SWITCH_KEYS.RESEARCH) ||
+                isSwitch(SWITCH_KEYS.CREATE) ||
+                isSwitch(SWITCH_KEYS.CARD) ||
+                isSwitch(SWITCH_KEYS.ASSISTANT) ? (
+                  <div className="flex items-center mb-[10px] h-[48px] border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base">
+                    <textarea
+                      placeholder={"How can I help you today?"}
+                      value={message}
+                      onPaste={handlePaste}
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                      }}
+                      onKeyDown={handleKeyPress}
+                      className="w-full py-[11px] max-h-[46px] text-[14px] font-medium resize-none placeholder:text-black focus:outline-none focus:ring-0 focus:border-transparent"
+                      style={{
+                        WebkitTextSizeAdjust: "100%",
+                        textSizeAdjust: "100%",
+                      }}
+                    />
+                    <Button
+                      onClick={() => {
+                        handleNewMessage(message);
+                      }}
+                      disabled={
+                        isSearching ||
+                        (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
+                        (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
+                        (!voiceFile && message === "")
+                      }
+                      className="h-[44px] w-[44px] p-0 rounded-full text-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                    >
+                      <MaterialIcon iconName="send" fill={1} size={24} />
+                    </Button>
+                  </div>
+                ) : undefined
+              }
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? (
                   <div className="flex items-center justify-between">
@@ -1068,10 +1256,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         existingFiles={existingFiles}
                         disabled={!folderState}
                         customTrigger={
-                          <Button
-                            variant="ghost"
-                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
-                          >
+                          <Button className="relative text-[#1C63DB] rounded-full w-12 h-12 hover:bg-secondary/80">
                             <MaterialIcon
                               iconName="attach_file"
                               size={24}
@@ -1089,18 +1274,19 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       <PopoverClient
                         setClientId={setClientId}
                         documentName={chatTitle}
+                        smallChat
                       />
                       <PopoverFolder
                         folderId={folderState || folderId || undefined}
                         setFolderId={handleSetFolder}
                         setExistingFiles={setExistingFiles}
                         setExistingInstruction={setExistingInstruction}
+                        smallChat
                       />
                       <PopoverInstruction
                         customTrigger={
                           <Button
-                            variant="ghost"
-                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
+                            className="relative text-[#1C63DB] rounded-full w-12 h-12 hover:bg-secondary/80"
                             disabled={!folderState}
                           >
                             <MaterialIcon iconName="settings" size={24} />
@@ -1116,17 +1302,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         folderInstruction={existingInstruction}
                       />
                     </div>
-                    <Button
-                      onClick={() => {
-                        handleNewMessage(message);
-                      }}
-                      disabled={isSearching || !folderState || message === ""}
-                      className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
-                    >
-                      <MaterialIcon iconName="send" size={24} />
-                    </Button>
                   </div>
-                ) : isSwitch(SWITCH_KEYS.RESEARCH) ? (
+                ) : isSwitch(SWITCH_KEYS.RESEARCH) ||
+                  isSwitch(SWITCH_KEYS.ASSISTANT) ? (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
                       <PopoverAttach
@@ -1136,10 +1314,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                         disabled={false}
                         hideFromLibrary={isCoach ? false : true}
                         customTrigger={
-                          <Button
-                            variant="ghost"
-                            className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
-                          >
+                          <Button className="relative text-[#1C63DB] rounded-full w-12 h-12">
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
@@ -1153,18 +1328,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       <PopoverClient
                         setClientId={setClientId}
                         documentName={chatTitle}
+                        smallChat
                       />
                     </div>
-                    <Button
-                      onClick={() => {
-                        handleNewMessage(message);
-                      }}
-                      variant="brightblue"
-                      disabled={isSearching || message === ""}
-                      className="w-12 h-12 p-0 rounded-full bg-[#1C63DB] disabled:opacity-[0.5] disabled:cursor-not-allowed"
-                    >
-                      <MaterialIcon iconName="send" size={24} />
-                    </Button>
                   </div>
                 ) : undefined
               }

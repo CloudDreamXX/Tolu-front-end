@@ -28,7 +28,7 @@ import {
   FormValues,
 } from "pages/content-manager/create/case-search";
 import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -87,19 +87,12 @@ export const LibraryChat = () => {
     (state: RootState) => state.client.chatHistory[currentChatId] || []
   );
 
-  const userPersisted = localStorage.getItem("persist:user");
-  let isCoach = false;
-
-  if (userPersisted) {
-    try {
-      const parsed = JSON.parse(userPersisted);
-      const user = parsed?.user ? JSON.parse(parsed.user) : null;
-      const roleID = user?.roleID;
-      isCoach = roleID === 2;
-    } catch (error) {
-      console.error("Failed to parse persisted user:", error);
-    }
-  }
+  const isCoach = useMemo(
+    () =>
+      location.pathname.startsWith("/content-manager") ||
+      location.pathname.startsWith("/clients"),
+    [location.pathname]
+  );
 
   const config = isCoach
     ? SWITCH_CONFIG.coach
@@ -107,9 +100,6 @@ export const LibraryChat = () => {
       ? SWITCH_CONFIG.personalize
       : SWITCH_CONFIG.default;
 
-  const [selectedSwitch, setSelectedSwitch] = useState<string>(
-    config.defaultOption
-  );
   const isSwitch = (value: SwitchValue) => selectedSwitch === value;
   const dispatch = useDispatch();
 
@@ -120,13 +110,15 @@ export const LibraryChat = () => {
     if (activeChatKey) {
       setSelectedSwitch(activeChatKey);
     } else {
-      const switchKey = documentId
-        ? SWITCH_CONFIG.personalize.options[0]
-        : SWITCH_CONFIG.default.options[0];
+      const switchKey = isCoach
+        ? SWITCH_CONFIG.coach.options[0]
+        : documentId
+          ? SWITCH_CONFIG.personalize.options[0]
+          : SWITCH_CONFIG.default.options[0];
       dispatch(setActiveChat(switchKey));
       setSelectedSwitch(switchKey);
     }
-  }, [activeChatKey, dispatch, documentId]);
+  }, [activeChatKey, dispatch, documentId, isCoach]);
 
   const caseForm = useForm<FormValues>({
     resolver: zodResolver(caseBaseSchema),
@@ -164,6 +156,12 @@ export const LibraryChat = () => {
     error: healthHistoryError,
     isLoading: isHealthHistoryLoading,
   } = useGetUserHealthHistoryQuery();
+
+  const [selectedSwitch, setSelectedSwitch] = useState<string>("");
+
+  useEffect(() => {
+    setSelectedSwitch(config.defaultOption);
+  }, [config, isCoach]);
 
   useEffect(() => {
     let cancelled = false;
@@ -451,6 +449,45 @@ export const LibraryChat = () => {
       } else {
         const sessionData = await getSearchSession(id).unwrap();
 
+        const imageMime = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+        const pdfMime = ["application/pdf"];
+
+        // Only process items that actually have stored files
+        const validFiles = sessionData.filter(
+          (f) => Array.isArray(f.stored_files) && f.stored_files.length > 0
+        );
+
+        const imagePreviews = await Promise.all(
+          validFiles
+            .filter((f) => imageMime.includes(f.stored_files[0].content_type))
+            .map(async (f) => {
+              const file = f.stored_files[0];
+              const res = await fetch(file.path);
+              const blob = await res.blob();
+              return URL.createObjectURL(blob);
+            })
+        );
+
+        const pdfPreviews = await Promise.all(
+          validFiles
+            .filter((f) => pdfMime.includes(f.stored_files[0].content_type))
+            .map(async (f) => {
+              const file = f.stored_files[0];
+              const res = await fetch(file.path);
+              const blob = await res.blob();
+              return {
+                name: file.filename,
+                url: URL.createObjectURL(blob),
+                type: file.content_type,
+              };
+            })
+        );
+
         if (sessionData && sessionData.length > 0) {
           sessionData.forEach((item: any) => {
             if (item.query) {
@@ -459,6 +496,8 @@ export const LibraryChat = () => {
                 type: "user",
                 content: item.query,
                 timestamp: new Date(item.created_at),
+                images: imagePreviews,
+                pdfs: pdfPreviews,
               });
             }
 
@@ -807,6 +846,31 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             console.error("Search error:", error);
           }
         );
+      } else if (isSwitch(SWITCH_KEYS.ASSISTANT)) {
+        await SearchService.aiCoachAssistantStream(
+          {
+            chat_message: JSON.stringify({
+              user_prompt: message,
+              is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
+              chat_id: currentChatId.startsWith("new_chat_")
+                ? undefined
+                : currentChatId,
+              text_quote: undefined,
+              library_files: filesFromLibrary,
+            }),
+            images,
+            pdf,
+            contentId: documentId,
+            clientId: clientId ?? undefined,
+          },
+          processChunk,
+          processFinalData,
+          (error) => {
+            setIsSearching(false);
+            setError(error.message);
+            console.error("Search error:", error);
+          }
+        );
       } else {
         await SearchService.aiSearchStream(
           {
@@ -968,43 +1032,48 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           <ChatLoading />
         ) : (
           <div
-            className={`flex flex-col flex-1 w-full ${isCoach ? "min-h-[calc(100vh-95px)]" : "min-h-[calc(100vh-78px)]"} overflow-clip h-full`}
+            className={`flex flex-col flex-1 w-full ${isCoach ? "min-h-[calc(100dvh-85px)] pt-[157px] md:pt-[85px] pb-[180px] md:pb-0" : "min-h-[calc(100dvh-78px)] pt-[186px] md:pt-0 pb-[180px] md:pb-0"} overflow-clip h-full`}
           >
-            <div className="md:hidden">
-              <SwitchDropdown
-                options={config.options}
+            <div
+              className={`flex bg-white fixed md:static ${isCoach ? "flex-row items-center justify-between w-full top-[85px]" : "flex-col top-[78px] w-full"}`}
+            >
+              <div className="md:hidden">
+                <SwitchDropdown
+                  options={config.options}
+                  handleSwitchChange={(value) => {
+                    handleNewChatOpen();
+                    setSelectedSwitch(value);
+                    dispatch(setActiveChat(value));
+                  }}
+                  selectedSwitch={selectedSwitch}
+                  isCoach={isCoach}
+                />
+              </div>
+              <ChatHeader
+                switchOptions={config.options}
                 handleSwitchChange={(value) => {
                   handleNewChatOpen();
                   setSelectedSwitch(value);
                   dispatch(setActiveChat(value));
                 }}
+                displayChatTitle={displayChatTitle}
+                isExistingChat={!!isExistingChat}
+                isSwitch={isSwitch}
                 selectedSwitch={selectedSwitch}
+                onNewSearch={handleNewChatOpen}
+                onClose={() => {
+                  const fromPath =
+                    location.state?.from?.pathname ||
+                    location.state?.from ||
+                    null;
+                  if (fromPath) {
+                    navigate(fromPath);
+                  } else {
+                    navigate(-1);
+                  }
+                }}
               />
             </div>
-            <ChatHeader
-              switchOptions={config.options}
-              handleSwitchChange={(value) => {
-                handleNewChatOpen();
-                setSelectedSwitch(value);
-                dispatch(setActiveChat(value));
-              }}
-              displayChatTitle={displayChatTitle}
-              isExistingChat={!!isExistingChat}
-              isSwitch={isSwitch}
-              selectedSwitch={selectedSwitch}
-              onNewSearch={handleNewChatOpen}
-              onClose={() => {
-                const fromPath =
-                  location.state?.from?.pathname ||
-                  location.state?.from ||
-                  null;
-                if (fromPath) {
-                  navigate(fromPath);
-                } else {
-                  navigate(-1);
-                }
-              }}
-            />
             {showTooltip && tooltipPosition && (
               <div
                 className="fixed px-2 py-1 bg-white border border-blue-500 rounded-md"
@@ -1041,12 +1110,13 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 </div>
               </div>
             ) : isSwitch(SWITCH_KEYS.CASE) ? (
-              <>
+              <div>
                 <MessageList
                   messages={chatState}
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
+                  selectedSwitch={selectedSwitch}
                 />
                 <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
                   <div className="w-full mb-[24px]" />
@@ -1073,7 +1143,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                     </div>
                   </CardContent>
                 </Card>
-              </>
+              </div>
             ) : (
               <div
                 className={`overflow-y-auto h-full px-[16px] md:px-0 md:mb-[16px] xl:mb-0`}
@@ -1083,11 +1153,12 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   isSearching={isSearching}
                   streamingText={streamingText}
                   error={error}
+                  selectedSwitch={selectedSwitch}
                 />
               </div>
             )}
             <div
-              className={`xl:hidden block px-[16px] w-fit mx-auto pb-[16px]`}
+              className={`xl:hidden block px-[16px] w-fit mx-auto md:pb-[16px]`}
             >
               <ChatActions
                 chatState={chatState}
@@ -1104,7 +1175,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             </div>
 
             <LibraryChatInput
-              className={`mt-auto xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
+              className={`fixed bottom-0 md:static w-full mt-auto xl:border-0 xl:border-t xl:rounded-none border border-[#DBDEE1] bg-white box-shadow-input rounded-t-[16px] rounded-b-none`}
               onSend={handleNewMessage}
               disabled={
                 isSearching ||

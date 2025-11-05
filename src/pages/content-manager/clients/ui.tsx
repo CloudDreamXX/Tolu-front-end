@@ -443,8 +443,8 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   return (
-    <div className="flex gap-6 p-4 pr-0 md:p-8  h-[calc(100vh-78px)]">
-      <div className="flex flex-col gap-[16px] pr-4 md:p-0 md:gap-[24px] overflow-y-auto h-full w-full">
+    <div className="flex gap-6 p-4 pr-0 md:p-8 xl:p-0 h-screen">
+      <div className="flex flex-col gap-[16px] pr-4 md:p-0 xl:p-8 md:gap-[24px] overflow-y-auto h-full w-full">
         {loading ? (
           <div className="lg:mt-4 md:rounded-[8px]">
             <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
@@ -484,7 +484,7 @@ export const ContentManagerClients: React.FC = () => {
                   <DialogTrigger>
                     <Button
                       variant="blue2"
-                      className="text-black border border-blue-600 min-w-40"
+                      className="text-black border border-blue-600 w-full md:w-fit min-w-40"
                     >
                       Upload client list
                     </Button>
@@ -612,7 +612,7 @@ export const ContentManagerClients: React.FC = () => {
                   <DialogTrigger>
                     <Button
                       variant="blue2"
-                      className="text-black border border-blue-600 min-w-40"
+                      className="text-black border border-blue-600 w-full md:w-fit min-w-40"
                     >
                       Upload client list
                     </Button>
@@ -701,9 +701,7 @@ export const ContentManagerClients: React.FC = () => {
                   Full name
                 </div>
                 <div className="flex items-center justify-center">Status</div>
-                <div className="flex items-center justify-center">
-                  View summary
-                </div>
+                <div className="flex items-center justify-center">Summary</div>
                 <div className="flex items-center justify-center">Message</div>
                 <div className="flex items-center justify-center"></div>
               </div>

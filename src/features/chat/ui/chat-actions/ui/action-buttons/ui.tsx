@@ -46,6 +46,9 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
     thumbsDown: false,
   });
   const nav = useNavigate();
+  const isContentManager =
+    location.pathname.includes("content-manager") ||
+    location.pathname.includes("clients");
 
   useEffect(() => {
     if (initialStatus !== undefined) {
@@ -151,7 +154,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
       </div>
 
       {chatState && chatState.length > 0 && (
-        <div className="flex gap-2 xl:flex-col">
+        <div className={`flex gap-2 ${isContentManager ? "" : "xl:flex-col"}`}>
           {onStatusChange && (
             <button
               className="xl:hidden block bg-[#DDEBF6] rounded-full h-8 w-8"

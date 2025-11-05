@@ -56,7 +56,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             onChange={(e) => onValueChange?.(e.target.value)}
             disabled={disabled}
             className={cn(
-              "flex min-h-[80px] w-full text-[14px] md:text-[18px] xl:text-[18px] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-10 md:text-sm",
+              "flex w-full text-[14px] md:text-[18px] xl:text-[18px] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-10 md:text-sm",
               footer ? "rounded-b-none border-b-0" : "pb-4",
               className
             )}

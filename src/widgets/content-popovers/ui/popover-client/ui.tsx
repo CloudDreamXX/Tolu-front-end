@@ -40,6 +40,7 @@ interface IPopoverClientProps {
   multiple?: boolean;
   maxSelections?: number;
   allowSingleDeselect?: boolean;
+  smallChat?: boolean;
 }
 
 export const PopoverClient: React.FC<IPopoverClientProps> = ({
@@ -51,6 +52,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   multiple = false,
   maxSelections,
   allowSingleDeselect = true,
+  smallChat,
 }) => {
   const [selectedClients, setSelectedClients] = useState<string[]>(
     initialSelectedClientsId ?? []
@@ -384,8 +386,8 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
       <PopoverTrigger asChild>
         {customTrigger ?? (
           <Button
-            variant="secondary"
-            className="w-12 h-12 p-[10px] rounded-full relative bg-[#F3F6FB]"
+            variant={smallChat ? "default" : "secondary"}
+            className={`w-12 h-12 p-[10px] rounded-full relative ${smallChat ? "text-[#1C63DB]" : "bg-[#F3F6FB]"}`}
             onClick={() => setPopoverOpen(true)}
           >
             <MaterialIcon iconName="account_circle" size={24} fill={1} />

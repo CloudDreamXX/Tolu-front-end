@@ -82,9 +82,9 @@ export const ContentManagerCreatePage: React.FC = () => {
 
   return (
     <div
-      className={`flex gap-[24px] items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-[calc(100vh-78px)] p-[16px]`}
+      className={`flex gap-[24px] items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-screen`}
     >
-      <div className="hidden w-full h-full xl:block">
+      <div className="hidden w-full h-full xl:block p-[16px] pr-0">
         <EmptyStateTolu
           text={
             activeChatKey === "Research"

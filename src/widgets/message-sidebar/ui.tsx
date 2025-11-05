@@ -119,7 +119,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
               Coaches
             </TabsTrigger>
           </TabsList>
-          <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-238px)]">
+          <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-160px)]">
             <TabsContent value="clients" className="mt-0">
               {chats.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">

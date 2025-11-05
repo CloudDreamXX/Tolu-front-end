@@ -105,10 +105,10 @@ export const MultiSelect = ({
         spaceBelow < 200 &&
         spaceAbove > spaceBelow);
 
-    const maxHeight = Math.min(380, openUp ? spaceAbove : spaceBelow);
+    const maxHeight = Math.min(300, openUp ? spaceAbove : spaceBelow);
 
     setDropdownBox({
-      top: openUp ? rect.top - maxHeight - gap : rect.bottom + gap,
+      top: openUp ? rect.top - maxHeight : rect.bottom + gap,
       left: rect.left,
       width: rect.width,
       maxHeight: Math.max(160, maxHeight),
@@ -131,7 +131,7 @@ export const MultiSelect = ({
       window.removeEventListener("resize", handleChange);
       scrollParent.removeEventListener("scroll", handleChange);
     };
-  }, [open, dropdownPosition]);
+  }, [open, dropdownPosition, selected]);
 
   const toggleOption = (option: string) => {
     if (selected.includes(option)) {

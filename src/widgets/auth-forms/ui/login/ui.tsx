@@ -24,6 +24,7 @@ import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboardi
 import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-type/helpers";
 import { mapOnboardClientToFormState } from "entities/store/helpers";
 import { findIncompleteClientField } from "widgets/OnboardingClient/DemographicStep/helpers";
+import { usePageWidth } from "shared/lib";
 
 export const LoginForm = () => {
   const [login] = useLoginMutation();
@@ -56,6 +57,7 @@ export const LoginForm = () => {
   const [loginError, setLoginError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [codeError, setCodeError] = useState("");
+  const { isMobileOrTablet } = usePageWidth();
 
   const loginSchema = z.object({
     email: z.string().email("The email format is incorrect."),
@@ -158,7 +160,11 @@ export const LoginForm = () => {
   const redirectCoach = async () => {
     const onboardingComplete = await getOnboardingStatusWithRetry();
     if (onboardingComplete.onboarding_filled) {
-      navigate("/content-manager/create");
+      if (isMobileOrTablet) {
+        navigate(`/content-manager/library/new_chat_${Date.now()}`);
+      } else {
+        navigate("/content-manager/create");
+      }
       return;
     }
 
