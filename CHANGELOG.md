@@ -1,3 +1,14 @@
+## [1.4.0] - 2025-11-05
+
+### New feature
+
+- Implement new chatwindow for coach.
+- Add new chat bot Coach assistant.
+- Move actions to be under each ai message, not for all chat (coach).
+- Move Profile and Exit buttons from header to the sidebar (coach).
+- Update displaying of the attached file in the chatwindow.
+- Remove gap between field and dropdown in up position.
+
 ## [1.3.1] - 2025-10-28
 
 ### Fixes & Minor Changes
