@@ -87,30 +87,30 @@ export const FilesLibrary = () => {
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (menuRef.current && !menuRef.current.contains(target)) {
-        setMenuOpenFolder(null);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (e: MouseEvent) => {
+  //     const target = e.target as Node;
+  //     if (menuRef.current && !menuRef.current.contains(target)) {
+  //       setMenuOpenFolder(null);
+  //     }
+  //   };
 
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMenuOpenFolder(null);
-      }
-    };
+  //   const handleEscape = (e: KeyboardEvent) => {
+  //     if (e.key === "Escape") {
+  //       setMenuOpenFolder(null);
+  //     }
+  //   };
 
-    if (menuOpenFolder) {
-      document.addEventListener("mousedown", handleClickOutside, true);
-      document.addEventListener("keydown", handleEscape, true);
-    }
+  //   if (menuOpenFolder) {
+  //     document.addEventListener("mousedown", handleClickOutside, true);
+  //     document.addEventListener("keydown", handleEscape, true);
+  //   }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside, true);
-      document.removeEventListener("keydown", handleEscape, true);
-    };
-  }, [menuOpenFolder]);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside, true);
+  //     document.removeEventListener("keydown", handleEscape, true);
+  //   };
+  // }, [menuOpenFolder]);
 
   useEffect(() => {
     if (viewingFolder?.id) {
@@ -166,7 +166,6 @@ export const FilesLibrary = () => {
   };
 
   const handleFolderDelete = async (folderId: string) => {
-    console.log("delete")
     await deleteFolder(folderId);
     refetch();
     setIsDeleteOpen(false);

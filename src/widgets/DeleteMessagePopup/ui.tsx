@@ -16,8 +16,6 @@ export const DeleteMessagePopup: React.FC<Props> = ({
   title,
   text,
 }) => {
-  const backdropRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCancel();
@@ -38,8 +36,8 @@ export const DeleteMessagePopup: React.FC<Props> = ({
   return (
     <div
       className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm flex items-center justify-center z-50"
-      aria-modal="true"
-      role="dialog"
+      // aria-modal="true"
+      // role="dialog"
       onClick={handleBackdropClick}
     >
       <div
