@@ -166,6 +166,7 @@ export const FilesLibrary = () => {
   };
 
   const handleFolderDelete = async (folderId: string) => {
+    console.log("delete")
     await deleteFolder(folderId);
     refetch();
     setIsDeleteOpen(false);
