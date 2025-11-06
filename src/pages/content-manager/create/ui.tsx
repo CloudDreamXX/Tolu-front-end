@@ -1,24 +1,21 @@
-import { RootState } from "entities/store";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button } from "shared/ui";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
-import { LibrarySmallChat } from "widgets/library-small-chat";
 import { CreateSubfolderPopup } from "widgets/CreateSubfolderPopup";
-import z from "zod";
-import { useEffect, useState } from "react";
 import {
   useGetFoldersQuery,
   useCreateFolderMutation,
 } from "entities/folder/api";
-import { toast } from "shared/lib/hooks/use-toast";
 import { setFolders } from "entities/folder";
+import { toast } from "shared/lib/hooks/use-toast";
+import { RootState } from "entities/store";
+import z from "zod";
+import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
 
 export const caseBaseSchema = z.object({
-  age: z
-    .string()
-    .min(1, "Age is required")
-    .regex(/^\d+$/, "Age must be a number"),
+  age: z.string().min(1, "Age is required").regex(/^\d+$/, "Age must be a number"),
   employmentStatus: z.string().min(1, "Employment status is required"),
   menopausePhase: z.string().min(1, "Menopause phase is required"),
   symptoms: z.string().min(1, "Symptoms are required"),
@@ -39,6 +36,7 @@ export const ContentManagerCreatePage: React.FC = () => {
     (state: RootState) => state.client.activeChatKey
   );
 
+  const [widthPercent, setWidthPercent] = useState(50);
   const [parentFolderId, setParentFolderId] = useState<string | null>(null);
   const [createPopup, setCreatePopup] = useState(false);
 
@@ -81,10 +79,13 @@ export const ContentManagerCreatePage: React.FC = () => {
   };
 
   return (
-    <div
-      className={`flex gap-[24px] items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-screen`}
-    >
-      <div className="hidden w-full h-full xl:block p-[16px] pr-0">
+    <div className="flex items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-screen overflow-hidden">
+      <div
+        className="hidden xl:flex h-full p-[16px] pr-0 transition-all duration-150"
+        style={{
+          width: `${100 - widthPercent}%`,
+        }}
+      >
         <EmptyStateTolu
           text={
             activeChatKey === "Research"
@@ -115,9 +116,10 @@ export const ContentManagerCreatePage: React.FC = () => {
         />
       </div>
 
-      <div className="w-full h-full">
-        <LibrarySmallChat isCoach isDraft />
-      </div>
+      <ResizableLibraryChat
+        widthPercent={widthPercent}
+        setWidthPercent={setWidthPercent}
+      />
 
       {createPopup && (
         <CreateSubfolderPopup

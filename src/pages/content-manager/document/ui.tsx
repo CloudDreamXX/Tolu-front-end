@@ -17,7 +17,6 @@ import {
   useMessageState,
 } from "features/document-management";
 import { cn, toast } from "shared/lib";
-import { LibrarySmallChat } from "widgets/library-small-chat";
 import { findFolderPath } from "features/wrapper-folder-tree";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 import { useTextSelectionTooltip } from "./lib";
@@ -32,6 +31,7 @@ import {
 } from "entities/content";
 import { useGetDocumentByIdQuery } from "entities/document";
 import { isInteractiveContent } from "widgets/conversation-item/ui/conversation-item";
+import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
 
 export const ContentManagerDocument: React.FC = () => {
   const {
@@ -129,6 +129,8 @@ export const ContentManagerDocument: React.FC = () => {
 
   const [updateContentStatus] = useUpdateContentStatusMutation();
   const { refetch } = useGetDocumentByIdQuery(documentId!);
+
+  const [widthPercent, setWidthPercent] = useState(50);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -286,7 +288,10 @@ export const ContentManagerDocument: React.FC = () => {
         </div>
       )}
       <div className="flex flex-row justify-end w-full h-full gap-[26px]">
-        <div className="relative flex flex-col w-full h-full gap-2 overflow-y-auto xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] xl:pt-6">
+        <div
+          className="relative flex flex-col w-full h-full gap-2 overflow-y-auto xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] xl:pt-6"
+          style={{ width: `${100 - widthPercent}%` }}
+        >
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
 
           <DocumentInfoHeader
@@ -388,13 +393,13 @@ export const ContentManagerDocument: React.FC = () => {
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-                | "Raw"
-                | "Ready for Review"
-                | "Waiting"
-                | "Second Review Requested"
-                | "Ready to Publish"
-                | "Live"
-                | "Archived"
+              | "Raw"
+              | "Ready for Review"
+              | "Waiting"
+              | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}
@@ -453,16 +458,10 @@ export const ContentManagerDocument: React.FC = () => {
           />
         )}
 
-        <div className="hidden xl:block max-w-[40%] w-full">
-          <LibrarySmallChat
-            isCoach
-            isDraft={isDraft}
-            isLoading={loadingConversation}
-            selectedText={textForInput}
-            deleteSelectedText={handleDeleteSelectedText}
-            initialDocument={selectedDocument}
-          />
-        </div>
+        <ResizableLibraryChat
+          widthPercent={widthPercent}
+          setWidthPercent={setWidthPercent}
+        />
       </div>
     </div>
   );

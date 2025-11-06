@@ -22,7 +22,7 @@ import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
 import { EditClientModal } from "widgets/EditClientModal";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
-import { LibrarySmallChat } from "widgets/library-small-chat";
+import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
 import { SelectedClientModal } from "widgets/SelectedClientModal";
 
 const PAGE_SIZE = 10;
@@ -109,6 +109,7 @@ export const ContentManagerClients: React.FC = () => {
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [widthPercent, setWidthPercent] = useState(50);
 
   const {
     data: clientsData,
@@ -444,7 +445,10 @@ export const ContentManagerClients: React.FC = () => {
 
   return (
     <div className="flex gap-6 p-4 pr-0 md:p-8 xl:p-0 h-screen">
-      <div className="flex flex-col gap-[16px] pr-4 md:p-0 xl:p-8 md:gap-[24px] overflow-y-auto h-full w-full">
+      <div
+        className="flex flex-col gap-[16px] pr-4 md:p-0 xl:p-8 md:gap-[24px] overflow-y-auto h-full w-full"
+        style={{ width: `${100 - widthPercent}%` }}
+      >
         {loading ? (
           <div className="lg:mt-4 md:rounded-[8px]">
             <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
@@ -907,11 +911,10 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
                 </button>
@@ -1008,9 +1011,10 @@ export const ContentManagerClients: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="hidden w-full xl:block">
-        <LibrarySmallChat isCoach isLoading={loading} />
-      </div>
+      <ResizableLibraryChat
+        widthPercent={widthPercent}
+        setWidthPercent={setWidthPercent}
+      />
     </div>
   );
 };
