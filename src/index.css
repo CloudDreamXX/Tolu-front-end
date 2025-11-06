@@ -116,7 +116,7 @@ li::marker {
 
 .prose .ql-editor p,
 .prose .ql-editor li,
-.prose .ql-editor li > p {
+.prose .ql-editor li>p {
   margin: 0;
 }
 
@@ -230,7 +230,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (max-width: 640px) {
-  .scroll-area-viewport > div {
+  .scroll-area-viewport>div {
     display: block !important;
   }
 }
@@ -322,6 +322,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (max-width: 767px) {
+
   input,
   textarea,
   select,
@@ -336,6 +337,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0 !important;
 }
 
-.docx-wrapper > section.docx {
+.docx-wrapper>section.docx {
   margin-bottom: 0 !important;
+}
+
+.message-content table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+}
+
+.message-content th,
+.message-content td {
+  word-wrap: break-word !important;
+  vertical-align: top !important;
+  padding: 8px !important;
+  border: 1px solid #efefef !important;
 }
