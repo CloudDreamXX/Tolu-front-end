@@ -35,7 +35,7 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
   const isMdUp = useIsMdUp();
   const dispatch = useDispatch();
 
-  const { data: history, refetch } = useGetSearchHistoryQuery(
+  const { data: history, refetch, isLoading } = useGetSearchHistoryQuery(
     {},
     { skip: !isOpen }
   );
@@ -52,6 +52,16 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [isOpen]);
+
+  const HistorySkeletonRow = () => (
+    <div className="flex flex-row items-center p-4 border rounded-lg bg-white animate-pulse">
+      <div className="flex flex-col gap-2 flex-1">
+        <div className="h-[14px] w-3/4 skeleton-gradient rounded-[4px]" />
+        <div className="h-[10px] w-1/3 skeleton-gradient rounded-[4px]" />
+      </div>
+      <div className="h-[32px] w-[32px] skeleton-gradient rounded-full" />
+    </div>
+  );
 
   // Shared panel markup (keeps your original md/xl classes)
   const Panel = (
@@ -70,9 +80,11 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
     >
       <h3 className="mb-2 text-lg font-bold">Your history</h3>
       <ul className="space-y-[18px]">
-        {history && history.length > 0 ? (
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <HistorySkeletonRow key={i} />)
+        ) : history && history.length > 0 ? (
           history.map((item) => (
-            <li key={item.id} className="flex flex-row p-4 border rounded-lg">
+            <li key={item.id} className="flex flex-row p-4 border rounded-lg bg-white">
               <div className="flex flex-col gap-1">
                 <span className="text-lg font-bold leading-none text-gray-800">
                   {item.chatTitle || "Untitled Chat"}
@@ -140,9 +152,9 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
 
       {
         isOpen &&
-          (isMdUp
-            ? DesktopLayer // no portal: md/xl stays exactly as before
-            : createPortal(MobileLayer, document.body)) // portal only on mobile
+        (isMdUp
+          ? DesktopLayer // no portal: md/xl stays exactly as before
+          : createPortal(MobileLayer, document.body)) // portal only on mobile
       }
     </div>
   );

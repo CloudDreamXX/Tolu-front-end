@@ -13,6 +13,7 @@ import { toast } from "shared/lib/hooks/use-toast";
 import { RootState } from "entities/store";
 import z from "zod";
 import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
+import { usePageWidth } from "shared/lib";
 
 export const caseBaseSchema = z.object({
   age: z.string().min(1, "Age is required").regex(/^\d+$/, "Age must be a number"),
@@ -44,6 +45,7 @@ export const ContentManagerCreatePage: React.FC = () => {
     refetchOnMountOrArgChange: true,
   });
   const [createFolderMutation] = useCreateFolderMutation();
+  const { isMobileOrTablet } = usePageWidth();
 
   useEffect(() => {
     if (folderResponse && folderResponse.folders.length > 0) {
@@ -82,9 +84,7 @@ export const ContentManagerCreatePage: React.FC = () => {
     <div className="flex items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-screen overflow-hidden">
       <div
         className="hidden xl:flex h-full p-[16px] pr-0 transition-all duration-150"
-        style={{
-          width: `${100 - widthPercent}%`,
-        }}
+        style={{ width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%` }}
       >
         <EmptyStateTolu
           text={

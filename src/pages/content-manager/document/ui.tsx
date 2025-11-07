@@ -16,7 +16,7 @@ import {
   useDocumentState,
   useMessageState,
 } from "features/document-management";
-import { cn, toast } from "shared/lib";
+import { cn, toast, usePageWidth } from "shared/lib";
 import { findFolderPath } from "features/wrapper-folder-tree";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 import { useTextSelectionTooltip } from "./lib";
@@ -106,6 +106,8 @@ export const ContentManagerDocument: React.FC = () => {
     handleMoveClick,
     handleSaveEdit,
   } = useContentActions();
+
+  const { isMobileOrTablet } = usePageWidth();
 
   const dispatch = useDispatch();
   const { handleDocumentCreation } = useDocumentCreation();
@@ -290,7 +292,7 @@ export const ContentManagerDocument: React.FC = () => {
       <div className="flex flex-row justify-end w-full h-full gap-[26px]">
         <div
           className="relative flex flex-col w-full h-full gap-2 overflow-y-auto xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] xl:pt-6"
-          style={{ width: `${100 - widthPercent}%` }}
+          style={{ width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%` }}
         >
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
 

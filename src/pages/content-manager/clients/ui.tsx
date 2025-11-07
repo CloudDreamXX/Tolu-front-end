@@ -100,7 +100,7 @@ export const ContentManagerClients: React.FC = () => {
   const [editModal, setEditModal] = useState<boolean>(false);
   const [addModal, setAddModal] = useState<boolean>(false);
   const [activeEditTab, setActiveEditTab] = useState<string>("editClientInfo");
-  const { isMobile, isTablet } = usePageWidth();
+  const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
   const [popupClientId, setPopupClientId] = useState<string | null>(null);
   const [inviteSuccessPopup, setInviteSuccessPopup] = useState<boolean>(false);
   const [importClientsPopup, setImportClientsPopup] = useState<boolean>(false);
@@ -121,6 +121,19 @@ export const ContentManagerClients: React.FC = () => {
   const [editClient] = useEditClientMutation();
   const [getClientInfo] = useLazyGetClientInfoQuery();
   const [getClientProfile] = useLazyGetClientProfileQuery();
+
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isWide, setIsWide] = useState(false);
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      setIsWide(width > 480);
+    });
+    observer.observe(contentRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -444,21 +457,23 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   return (
-    <div className="flex gap-6 p-4 pr-0 md:p-8 xl:p-0 h-screen">
+    <div className={`flex gap-6 p-4 ${isWide ? "p-8" : ""} xl:p-0 h-screen`}>
       <div
-        className="flex flex-col gap-[16px] pr-4 md:p-0 xl:p-8 md:gap-[24px] overflow-y-auto h-full w-full"
-        style={{ width: `${100 - widthPercent}%` }}
+        ref={contentRef}
+        className={`flex flex-col overflow-y-auto xl:p-8 xl:pr-0 h-full w-full
+    ${isWide ? "gap-[24px] p-0" : "gap-[16px]"}`}
+        style={{ width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%` }}
       >
         {loading ? (
-          <div className="lg:mt-4 md:rounded-[8px]">
-            <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]">
+          <div className={`${isWide ? "lg:mt-4 rounded-[8px]" : ""}`}>
+            <div className={`hidden ${isWide ? "grid" : ""} grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]`}>
               <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="pr-4 text-right"></div>
             </div>
-            <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
+            <div className={`flex flex-col gap-4 pb-[16px] ${isWide ? "bg-white gap-0" : ""}`}>
               {Array.from({ length: 10 }).map((_, i) => (
                 <ClientSkeletonRow key={i} />
               ))}
@@ -488,12 +503,12 @@ export const ContentManagerClients: React.FC = () => {
                   <DialogTrigger>
                     <Button
                       variant="blue2"
-                      className="text-black border border-blue-600 w-full md:w-fit min-w-40"
+                      className={`text-black border border-blue-600 w-full ${isWide ? "w-fit" : ""} min-w-40`}
                     >
                       Upload client list
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
+                  <DialogContent className={`${isWide ? "max-w-3xl" : ""} gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]`}>
                     {uploadedFileName ? (
                       <div className="w-full max-w-[330px]">
                         <p className="text-left  text-black text-base font-medium mb-[8px]">
@@ -523,7 +538,7 @@ export const ContentManagerClients: React.FC = () => {
                     ) : (
                       // Drop Zone
                       <div className="w-full">
-                        <p className="text-left  text-black text-base font-medium mb-[8px]">
+                        <p className="text-left text-black text-base font-medium mb-[8px]">
                           Import СSV/XLSX
                         </p>
                         <button
@@ -548,11 +563,11 @@ export const ContentManagerClients: React.FC = () => {
                             fill={1}
                             className="text-[#1C63DB] p-2 border rounded-xl"
                           />
-                          <div className="text-[#1C63DB]  text-[14px] font-semibold">
+                          <div className="text-[#1C63DB] text-[14px] font-semibold">
                             Click {isMobile || isTablet ? "" : "or drag"} to
                             upload
                           </div>
-                          <p className="text-[#5F5F65]  text-[14px] mt-[4px]">
+                          <p className="text-[#5F5F65] text-[14px] mt-[4px]">
                             СSV/XLSX
                           </p>
                         </button>
@@ -573,7 +588,7 @@ export const ContentManagerClients: React.FC = () => {
           />
         ) : (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col md:flex-row flex-wrap gap-[16px] justify-between md:items-end">
+            <div className={`flex flex-wrap gap-[16px] justify-between ${isWide ? "items-end flex-row" : "flex-col"}`}>
               <div className="flex flex-col gap-2">
                 <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
                   <MaterialIcon iconName="person_search" fill={1} />
@@ -584,8 +599,8 @@ export const ContentManagerClients: React.FC = () => {
                   individual client records.
                 </p>
               </div>
-              <div className="flex md:flex-row flex-col gap-2 md:gap-[50px] lg:gap-2 w-full">
-                <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[40px]">
+              <div className={`flex ${isWide ? "flex-row gap-[50px] md:gap-2" : "flex-col gap-2"} w-full`}>
+                <div className={`flex gap-[8px] items-center ${isWide ? "lg:w-[300px]" : "w-full"} rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[40px]`}>
                   <MaterialIcon iconName="search" size={16} />
                   <input
                     placeholder="Search"
@@ -599,7 +614,7 @@ export const ContentManagerClients: React.FC = () => {
                 </div>
                 <Button
                   variant={"brightblue"}
-                  className="h-[40px] md:w-fit md:ml-auto w-full"
+                  className={`h-[40px] ${isWide ? "w-fit ml-auto" : "w-full"}`}
                   onClick={() => {
                     cleanState();
                     setActiveEditTab("editClientInfo");
@@ -616,12 +631,12 @@ export const ContentManagerClients: React.FC = () => {
                   <DialogTrigger>
                     <Button
                       variant="blue2"
-                      className="text-black border border-blue-600 w-full md:w-fit min-w-40"
+                      className={`text-black border border-blue-600 ${isWide ? "w-fit" : "w-full"} min-w-40`}
                     >
                       Upload client list
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="md:max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
+                  <DialogContent className={`${isWide ? "max-w-3xl" : ""} gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]`}>
                     {uploadedFileName ? (
                       <div className="w-full max-w-[330px]">
                         <p className="text-left  text-black text-base font-medium mb-[8px]">
@@ -676,11 +691,11 @@ export const ContentManagerClients: React.FC = () => {
                             fill={1}
                             className="text-[#1C63DB] p-2 border rounded-xl"
                           />
-                          <div className="text-[#1C63DB]  text-[14px] font-semibold">
+                          <div className="text-[#1C63DB] text-[14px] font-semibold">
                             Click {isMobile || isTablet ? "" : "or drag"} to
                             upload
                           </div>
-                          <p className="text-[#5F5F65]  text-[14px] mt-[4px]">
+                          <p className="text-[#5F5F65] text-[14px] mt-[4px]">
                             СSV/XLSX
                           </p>
                         </button>
@@ -699,8 +714,8 @@ export const ContentManagerClients: React.FC = () => {
               </div>
             </div>
 
-            <div className="md:rounded-[8px]">
-              <div className="hidden md:grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]">
+            <div className={`${isWide ? "rounded-[8px]" : ""}`}>
+              <div className={`${isWide ? "grid" : "hidden"} grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]`}>
                 <div className="flex items-center justify-center">
                   Full name
                 </div>
@@ -710,17 +725,14 @@ export const ContentManagerClients: React.FC = () => {
                 <div className="flex items-center justify-center"></div>
               </div>
 
-              <div className="flex flex-col gap-4 md:gap-0 pb-[16px] md:bg-white">
+              <div className={`flex flex-col gap-4 pb-[16px] ${isWide ? "bg-white gap-0" : ""}`}>
                 {paginatedClients?.map((client, idx) => (
                   <div
                     key={idx}
-                    className="
-            md:grid md:grid-cols-5 md:items-center md:p-[12px]
-            flex flex-col gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white md:rounded-none md:border-x-0 md:border-t-0 md:border-b md:border-[#DBDEE1]
-          "
+                    className={`${isWide ? "grid grid-cols-5 items-center p-[12px] rounded-none border-x-0 border-t-0 border-b border-[#DBDEE1]" : "flex flex-col"} gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white`}
                   >
-                    <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                      <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
+                    <div className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} flex items-center`}>
+                      <div className={`w-full ${isWide ? "hidden" : ""} text-[14px] text-[#5F5F65]`}>
                         Name
                       </div>
                       <div className="flex items-center justify-center w-full text-[16px] font-semibold text-center">
@@ -730,8 +742,8 @@ export const ContentManagerClients: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="md:text-[16px] flex items-center border-b border-[#F3F6FB] md:border-none pb-[10px] md:pb-0">
-                      <div className="w-full md:hidden text-[14px] text-[#5F5F65]">
+                    <div className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} flex items-center`}>
+                      <div className={`w-full ${isWide ? "hidden" : ""} text-[14px] text-[#5F5F65]`}>
                         Status
                       </div>
                       <div className="w-full text-[16px] flex items-center justify-center">
@@ -761,12 +773,12 @@ export const ContentManagerClients: React.FC = () => {
                         handleSelectClient(client.client_id);
                       }}
                       disabled={client.status !== "active"}
-                      className={`hidden md:flex items-center justify-center text-[#000] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
+                      className={`${isWide ? "flex" : "hidden"} items-center justify-center text-[#000] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                     >
                       <MaterialIcon iconName="visibility" fill={1} />
                     </button>
                     <button
-                      className={`items-center justify-center hidden md:flex ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
+                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                       disabled={client.status !== "active"}
                       onClick={() => {
                         if (client.status !== "active") return;
@@ -778,7 +790,7 @@ export const ContentManagerClients: React.FC = () => {
                       <MaterialIcon iconName="forum" fill={1} />
                     </button>
 
-                    {!isMobile && !isTablet && (
+                    {isWide && (
                       <div
                         className="relative ml-auto"
                         data-delete-menu-id={client.client_id}
@@ -819,7 +831,7 @@ export const ContentManagerClients: React.FC = () => {
                       </div>
                     )}
 
-                    {isMobile ? (
+                    {isMobile || !isWide ? (
                       <div className="w-full flex flex-col gap-[8px] mt-[24px]">
                         <button
                           className={`w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}

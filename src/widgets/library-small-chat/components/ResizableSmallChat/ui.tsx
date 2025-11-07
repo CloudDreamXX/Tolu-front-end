@@ -13,7 +13,7 @@ export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
     setWidthPercent,
 }) => {
     const [dragging, setDragging] = useState(false);
-    const [position, setPosition] = useState<"left" | "right">("right");
+    const [position, _] = useState<"left" | "right">("right");
     const chatRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -34,7 +34,16 @@ export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
             setWidthPercent(newPercent);
         };
 
-        const handleMouseUp = () => setDragging(false);
+        const handleMouseUp = () => {
+            setDragging(false);
+            document.body.style.userSelect = "";
+            document.body.style.cursor = "";
+        };
+
+        if (dragging) {
+            document.body.style.userSelect = "none";
+            document.body.style.cursor = "ew-resize";
+        }
 
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("mouseup", handleMouseUp);
@@ -42,40 +51,30 @@ export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
+            document.body.style.userSelect = "";
+            document.body.style.cursor = "";
         };
     }, [dragging, position, setWidthPercent]);
+
 
     return (
         <div
             ref={chatRef}
-            className="h-full bg-white shadow-lg border-l border-gray-200 relative flex flex-col transition-all duration-150"
+            className="hidden xl:block h-full bg-white relative flex flex-col transition-all duration-150"
             style={{ width: `${widthPercent}%` }}
         >
-            <div className="absolute top-2 right-2 flex gap-2">
-                <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() =>
-                        setPosition(position === "right" ? "left" : "right")
-                    }
-                >
-                    {position === "right" ? (
-                        <MaterialIcon iconName="keyboard_arrow_left" />
-                    ) : (
-                        <MaterialIcon iconName="keyboard_arrow_right" />
-                    )}
-                </Button>
-            </div>
 
             <LibrarySmallChat isCoach isDraft />
 
             <div
                 onMouseDown={() => setDragging(true)}
-                className={`absolute top-0 bottom-0 ${position === "right"
-                        ? "left-0 cursor-ew-resize"
-                        : "right-0 cursor-ew-resize"
-                    } w-1 bg-transparent hover:bg-blue-300 transition`}
-            />
+                className={`absolute top-[65%] ${position === "right"
+                    ? "-left-[20px] cursor-ew-resize"
+                    : "-right-[20px] cursor-ew-resize"
+                    } flex items-center justify-center w-[40px] h-[40px] rounded-full transition bg-white hover:bg-gray-50 text-blue-700`}
+            ><MaterialIcon iconName="arrow_range" /></div>
+
+
         </div>
     );
 };
