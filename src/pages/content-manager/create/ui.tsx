@@ -38,6 +38,7 @@ export const ContentManagerCreatePage: React.FC = () => {
   );
 
   const [widthPercent, setWidthPercent] = useState(50);
+  const [isResizing, setIsResizing] = useState(false);
   const [parentFolderId, setParentFolderId] = useState<string | null>(null);
   const [createPopup, setCreatePopup] = useState(false);
 
@@ -83,7 +84,8 @@ export const ContentManagerCreatePage: React.FC = () => {
   return (
     <div className="flex items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-screen overflow-hidden">
       <div
-        className="hidden xl:flex h-full p-[16px] pr-0 transition-all duration-150"
+        className={`hidden xl:flex h-full p-[16px] flex-none ${!isResizing ? "transition-[width] duration-300 ease-in-out" : ""
+          }`}
         style={{ width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%` }}
       >
         <EmptyStateTolu
@@ -119,6 +121,8 @@ export const ContentManagerCreatePage: React.FC = () => {
       <ResizableLibraryChat
         widthPercent={widthPercent}
         setWidthPercent={setWidthPercent}
+        onResizeStart={() => setIsResizing(true)}
+        onResizeEnd={() => setIsResizing(false)}
       />
 
       {createPopup && (

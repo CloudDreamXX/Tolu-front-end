@@ -5,50 +5,60 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 interface ResizableLibraryChatProps {
     widthPercent: number;
     setWidthPercent: (value: number) => void;
+    onResizeStart?: () => void;
+    onResizeEnd?: () => void;
 }
 
 export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
     widthPercent,
     setWidthPercent,
+    onResizeStart,
+    onResizeEnd,
 }) => {
     const [dragging, setDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [startWidth, setStartWidth] = useState(widthPercent);
-    const [position] = useState<"left" | "right">("right");
+    const position: "left" | "right" = "right";
+
     const chatRef = useRef<HTMLDivElement>(null);
+    const startXRef = useRef(0);
+    const startWidthRef = useRef(widthPercent);
 
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (!dragging) return;
+        if (!dragging) return;
 
-            const containerWidth = window.innerWidth;
-            let deltaPercent;
+        const handleMouseMove = (e: MouseEvent) => {
+            const container =
+                chatRef.current?.parentElement ?? chatRef.current ?? document.body;
+            const containerWidth = container.clientWidth || window.innerWidth;
+
+            const startX = startXRef.current;
+            const startWidth = startWidthRef.current;
+
+            let deltaPercent: number;
 
             if (position === "right") {
-                const deltaX = startX - e.clientX;
+                const deltaX = startX - e.clientX; // двигаем границу вправо — уменьшаем чат
                 deltaPercent = (deltaX / containerWidth) * 100;
-                let newPercent = startWidth + deltaPercent;
-                newPercent = Math.max(30, Math.min(newPercent, 70));
-                setWidthPercent(newPercent);
             } else {
                 const deltaX = e.clientX - startX;
                 deltaPercent = (deltaX / containerWidth) * 100;
-                let newPercent = startWidth + deltaPercent;
-                newPercent = Math.max(30, Math.min(newPercent, 70));
-                setWidthPercent(newPercent);
             }
+
+            let newPercent = startWidth + deltaPercent;
+            newPercent = Math.max(30, Math.min(newPercent, 70)); // кламп, чтобы не ломать сетку
+            setWidthPercent(newPercent);
         };
 
         const handleMouseUp = () => {
             setDragging(false);
+            onResizeEnd?.();
             document.body.style.userSelect = "";
             document.body.style.cursor = "";
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
         };
 
-        if (dragging) {
-            document.body.style.userSelect = "none";
-            document.body.style.cursor = "ew-resize";
-        }
+        document.body.style.userSelect = "none";
+        document.body.style.cursor = "ew-resize";
 
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("mouseup", handleMouseUp);
@@ -59,18 +69,19 @@ export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
             document.body.style.userSelect = "";
             document.body.style.cursor = "";
         };
-    }, [dragging, startX, startWidth, position, setWidthPercent]);
+    }, [dragging, position, setWidthPercent, onResizeEnd]);
 
     const handleMouseDown = (e: React.MouseEvent) => {
         setDragging(true);
-        setStartX(e.clientX);
-        setStartWidth(widthPercent);
+        onResizeStart?.();
+        startXRef.current = e.clientX;
+        startWidthRef.current = widthPercent;
     };
 
     return (
         <div
             ref={chatRef}
-            className={`hidden xl:block h-full bg-white relative flex flex-col ${dragging ? "" : "transition-[width] duration-300 ease-in-out"
+            className={`hidden xl:flex flex-col h-full bg-white relative flex-none ${!dragging ? "transition-[width] duration-300 ease-in-out" : ""
                 }`}
             style={{ width: `${widthPercent}%` }}
         >
