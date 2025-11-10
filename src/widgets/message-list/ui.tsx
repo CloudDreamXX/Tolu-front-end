@@ -68,7 +68,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`flex-1 w-full ${messages.length ? "py-4" : ""} overflow-y-auto bg-white rounded-b-xl h-full`}
+      className={`flex-1 w-full ${messages.length ? "py-4" : ""} overflow-y-auto bg-white h-full`}
     >
       <div className="space-y-4 md:px-4">
         {messages.map((message) => (

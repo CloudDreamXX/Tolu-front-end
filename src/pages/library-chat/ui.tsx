@@ -1035,7 +1035,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
             className={`flex flex-col flex-1 w-full ${isCoach ? "min-h-[calc(100dvh-85px)] pt-[157px] md:pt-[85px] pb-[180px] md:pb-0" : "min-h-[calc(100dvh-78px)] pt-[186px] md:pt-0 pb-[180px] md:pb-0"} overflow-clip h-full`}
           >
             <div
-              className={`flex bg-white fixed md:static ${isCoach ? "flex-row items-center justify-between w-full top-[85px]" : "flex-col top-[78px] w-full"}`}
+              className={`flex bg-white fixed md:static flex-row items-center justify-between w-full ${isCoach ? "top-[85px]" : "top-[78px]"}`}
             >
               <div className="md:hidden">
                 <SwitchDropdown
@@ -1046,7 +1046,6 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                     dispatch(setActiveChat(value));
                   }}
                   selectedSwitch={selectedSwitch}
-                  isCoach={isCoach}
                 />
               </div>
               <ChatHeader
@@ -1093,7 +1092,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               </div>
             )}
             {isEmpty && !isSwitch(SWITCH_KEYS.CASE) ? (
-              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white rounded-b-xl p-[24px] overflow-y-auto md:mb-[16px] xl:mb-0">
+              <div className="flex flex-col items-center justify-center flex-1 text-center bg-white p-[24px] overflow-y-auto">
                 <div className="flex flex-col items-center justify-center flex-1 md:hidden">
                   <div className="max-w-[300px] sm:max-w-[360px] mx-auto">
                     <h2 className="text-[24px] leading-tight font-[700] text-[#1D1D1F]">
@@ -1118,7 +1117,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   error={error}
                   selectedSwitch={selectedSwitch}
                 />
-                <Card className="flex flex-col w-full overflow-auto border-none rounded-0 rounded-b-xl">
+                <Card className="flex flex-col w-full overflow-auto border-none rounded-0">
                   <div className="w-full mb-[24px]" />
                   <CardContent className={`w-full px-6 mt-auto rounded-0`}>
                     <div className="p-[24px] border border-[#008FF6] rounded-[20px]">

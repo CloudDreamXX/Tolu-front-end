@@ -36,7 +36,7 @@ export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
       let deltaPercent: number;
 
       if (position === "right") {
-        const deltaX = startX - e.clientX; // двигаем границу вправо — уменьшаем чат
+        const deltaX = startX - e.clientX;
         deltaPercent = (deltaX / containerWidth) * 100;
       } else {
         const deltaX = e.clientX - startX;
@@ -44,7 +44,7 @@ export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
       }
 
       let newPercent = startWidth + deltaPercent;
-      newPercent = Math.max(30, Math.min(newPercent, 70)); // кламп, чтобы не ломать сетку
+      newPercent = Math.max(30, Math.min(newPercent, 70));
       setWidthPercent(newPercent);
     };
 

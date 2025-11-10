@@ -27,14 +27,12 @@ interface ChatHeaderProps {
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
-  displayChatTitle,
   isExistingChat,
   selectedSwitch,
   switchOptions,
   handleSwitchChange,
   isSwitch,
   onNewSearch,
-  onClose,
 }) => {
   const location = useLocation();
   const [isActionsPopupOpen, setIsActionsPopupOpen] = useState(false);
@@ -42,9 +40,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const { chatId } = useParams();
   const [updateChatTitle] = useUpdateChatTitleMutation();
-  const isContentManager =
-    location.pathname.includes("content-manager") ||
-    location.pathname.includes("clients");
 
   const handleEdit = () => {
     setIsEditPopupOpen(true);
@@ -84,12 +79,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   return (
     <div
-      className={`flex flex-col items-center justify-between ${isContentManager ? "w-fit md:w-full md:flex-row" : "w-full  xl:flex-row"} p-4 bg-white md:border-b rounded-t-xl`}
+      className={`flex flex-col items-center justify-between w-fit md:w-full md:flex-row p-4 bg-white md:border-b rounded-t-xl`}
     >
-      {!isContentManager && (
+      {/* {!isContentManager && (
         <div className="flex items-center gap-3">
           <div
-            className={`text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px] ${isContentManager ? "" : "min-w-[200px]"}`}
+            className={`text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px]`}
           >
             <button onClick={onClose} className="hidden xl:block">
               <MaterialIcon iconName="arrows_input" size={24} />
@@ -102,52 +97,41 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             </div>
           )}
         </div>
-      )}
+      )} */}
       <div
-        className={`relative items-center justify-center hidden gap-2 md:flex ${isContentManager ? "flex-row" : "flex-col"}`}
+        className={`relative items-center justify-center hidden gap-2 md:flex flex-row`}
       >
         <SwitchDropdown
           options={switchOptions}
           handleSwitchChange={handleSwitchChange}
           selectedSwitch={selectedSwitch}
-          isCoach={isContentManager}
         />
         {subTitleSwitch(selectedSwitch as SwitchValue) && (
           <p
-            className={`${isContentManager ? "text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px]" : "text-[#1D1D1F]"} my-0`}
+            className={`text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px] my-0`}
           >
             {subTitleSwitch(selectedSwitch as SwitchValue)}
           </p>
         )}
         {isSwitch(SWITCH_KEYS.DEF) && (
-          <p className="text-[18px] text-[#1D1D1F] font-[600]">
+          <p className="text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px] my-0">
             Get Personalized Answers
           </p>
         )}
         {isSwitch(SWITCH_KEYS.LEARN) && (
-          <p className="text-[18px] text-[#1D1D1F] font-[600]">
+          <p className="text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px] my-0">
             Get Expert-verified Guidance You Can Trust
           </p>
         )}
       </div>
       <div className="flex flex-row items-center gap-2 w-full md:w-fit mt-[8px] xl:mt-0">
         <HistoryPopup fromPath={location.state?.from?.pathname ?? null} />
-        {isContentManager ? (
-          <button
-            className="flex flex-row items-center justify-center gap-2 px-4 h-8 text-sm font-medium bg-[#1C63DB] text-white rounded-full hoverable:hover:bg-blue-700 w-[92px] xl:w-fit"
-            onClick={onNewSearch}
-          >
-            Create
-          </button>
-        ) : (
-          <button
-            className="flex flex-row items-center justify-center gap-2 px-4 h-8 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hoverable:hover:bg-blue-700 w-full xl:w-fit"
-            onClick={onNewSearch}
-          >
-            <MaterialIcon iconName="search" size={24} />
-            New Search
-          </button>
-        )}
+        <button
+          className="flex flex-row items-center justify-center gap-2 px-4 h-8 text-sm font-medium bg-[#1C63DB] text-white rounded-full hoverable:hover:bg-blue-700 w-[92px] xl:w-fit"
+          onClick={onNewSearch}
+        >
+          Create
+        </button>
         {isExistingChat && (
           <button
             className="flex flex-row items-center shrink-0 w-8 h-8 text-sm font-medium justify-center text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"

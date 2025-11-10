@@ -263,7 +263,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                   setMenuOpenFolderId(null);
                 }}
               />
-              {!allFolders.find((item) => item.id === menuOpenFolderId) && (
+              {level > 0 && (
                 <MenuItem
                   icon={
                     <MaterialIcon

@@ -37,9 +37,9 @@ import {
   ScrollArea,
 } from "shared/ui";
 import { HealthProfileForm } from "widgets/health-profile-form";
-import { LibrarySmallChat } from "widgets/library-small-chat";
 import SharePopup from "widgets/share-popup/ui";
 import { DocumentLoadingSkeleton } from "./lib";
+import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
 
 const extractScripts = (content: string) => {
   const scriptRegex = /<script[\s\S]*?>([\s\S]*?)<\/script>/g;
@@ -74,15 +74,10 @@ export const LibraryDocument = () => {
   const [textContent, setTextContent] = useState("");
   const [selectedVoice, setSelectedVoice] =
     useState<SpeechSynthesisVoice | null>(null);
-  const {
-    textForInput,
-    tooltipPosition,
-    showTooltip,
-    handleTooltipClick,
-    handleDeleteSelectedText,
-  } = useTextSelectionTooltip();
+  const { tooltipPosition, showTooltip, handleTooltipClick } =
+    useTextSelectionTooltip();
   const [isReadingAloud, setIsReadingAloud] = useState<boolean>(false);
-  const { isMobile } = usePageWidth();
+  const { isMobile, isMobileOrTablet } = usePageWidth();
   const [sharePopup, setSharePopup] = useState<boolean>(false);
   const [providersOpen, setProvidersOpen] = useState(false);
   const [coaches, setCoaches] = useState<CoachListItem[]>([]);
@@ -91,6 +86,9 @@ export const LibraryDocument = () => {
   const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [coachProfiles, setCoachProfiles] = useState<Record<string, any>>({});
+
+  const [widthPercent, setWidthPercent] = useState(50);
+  const [isResizing, setIsResizing] = useState(false);
 
   const [coachDialogOpen, setCoachDialogOpen] = useState(false);
 
@@ -107,13 +105,22 @@ export const LibraryDocument = () => {
   const { data: creatorProfileData } = useGetCreatorProfileQuery(
     selectedDocument?.creator_id || ""
   );
-  const { data: creatorPhotoData } = useGetCreatorPhotoQuery({
-    id: creatorProfileData?.creator_id || "",
-    filename:
-      creatorProfileData?.detailed_profile?.personal_info?.headshot_url
-        .split("/")
-        .pop() || "",
-  });
+  const shouldLoadPhoto =
+    !!creatorProfileData?.creator_id &&
+    !!creatorProfileData?.detailed_profile?.personal_info?.headshot_url;
+
+  const { data: creatorPhotoData } = useGetCreatorPhotoQuery(
+    {
+      id: creatorProfileData?.creator_id || "",
+      filename:
+        creatorProfileData?.detailed_profile?.personal_info?.headshot_url
+          ?.split("/")
+          .pop() || "",
+    },
+    {
+      skip: !shouldLoadPhoto,
+    }
+  );
   const [updateStatus] = useUpdateStatusMutation();
   const { data: healthHistoryData, error: healthHistoryError } =
     useGetUserHealthHistoryQuery();
@@ -289,10 +296,14 @@ export const LibraryDocument = () => {
   }, [selectedDocument, renderedContent]);
 
   useEffect(() => {
-    if (creatorPhotoData) {
-      const objectUrl = URL.createObjectURL(creatorPhotoData);
-      setCreatorPhoto(objectUrl);
-    }
+    if (!creatorPhotoData) return;
+
+    const objectUrl = URL.createObjectURL(creatorPhotoData);
+    setCreatorPhoto(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
   }, [creatorPhotoData]);
 
   useEffect(() => {
@@ -385,11 +396,16 @@ export const LibraryDocument = () => {
   }, [renderedContent]);
 
   useEffect(() => {
-    if (!selectedDocument) return;
+    if (!selectedDocument) {
+      setRenderedContent(null);
+      setScripts([]);
+      return;
+    }
 
-    const { contentWithoutScripts, scripts } = extractScripts(
+    const { contentWithoutScripts, scripts: extractedScripts } = extractScripts(
       selectedDocument.content
     );
+
     const parser = new DOMParser();
     const doc = parser.parseFromString(contentWithoutScripts, "text/html");
 
@@ -400,169 +416,181 @@ export const LibraryDocument = () => {
 
     const cards = getCards();
 
-    // if (cards.length > 0 && quizScore?.data) {
-    const lastCard = cards[cards.length - 1];
-    const nextIndex = cards.length + 1;
-    const nextCardId = `card-${nextIndex}`;
-
-    const summaryDiv = doc.createElement("div");
-    summaryDiv.id = nextCardId;
-    summaryDiv.style.display = "none";
-    summaryDiv.style.background = "transparent";
+    if (!cards.length) {
+      setRenderedContent(
+        <div dangerouslySetInnerHTML={{ __html: doc.body.innerHTML }} />
+      );
+      setScripts(extractedScripts || []);
+      return;
+    }
 
     if (quizScore?.data) {
-      summaryDiv.innerHTML = `
-      <h3 class="text-lg font-semibold text-[#1D1D1F] mb-3">Quiz Summary</h3>
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-sm text-muted-foreground">
-          ${quizScore.data.correct_questions}/${quizScore.data.total_questions} correct
-        </span>
-        <span class="text-sm font-medium text-[#1C63DB]">
-          ${quizScore.data.score_percent.toFixed(1)}%
-        </span>
-      </div>
+      const lastCard = cards[cards.length - 1];
+      if (lastCard) {
+        const nextIndex = cards.length + 1;
+        const nextCardId = `card-${nextIndex}`;
 
-      <div class="relative h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden mb-4">
-        <div class="absolute top-0 left-0 h-full bg-[#1C63DB] transition-all"
-          style="width: ${Math.min(
-            100,
-            (quizScore.data.correct_questions /
-              quizScore.data.total_questions) *
-              100
-          )}%;">
+        const summaryDiv = doc.createElement("div");
+        summaryDiv.id = nextCardId;
+        summaryDiv.style.display = "none";
+        summaryDiv.style.background = "transparent";
+
+        const { correct_questions, total_questions, score_percent, questions } =
+          quizScore.data;
+
+        summaryDiv.innerHTML = `
+        <h3 class="text-lg font-semibold text-[#1D1D1F] mb-3">Quiz Summary</h3>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm text-muted-foreground">
+            ${correct_questions}/${total_questions} correct
+          </span>
+          <span class="text-sm font-medium text-[#1C63DB]">
+            ${score_percent.toFixed(1)}%
+          </span>
         </div>
-      </div>
 
-      <div class="divide-y border-t border-[#EAEAEA]">
-        ${quizScore.data.questions
-          .map(
-            (q) => `
-          <div class="flex items-center justify-between py-2 text-sm">
-            <div>
-              <div class="font-medium text-[#1D1D1F]">${q.question_id}</div>
-              <div class="text-xs text-muted-foreground">Answer: ${q.answer.toUpperCase()}</div>
-            </div>
-            <div class="px-3 py-1 rounded-full text-xs font-medium ${
-              q.is_correct
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-red-100 text-red-700"
-            }">
-              ${q.is_correct ? "Correct" : "Incorrect"}
-            </div>
-          </div>`
-          )
-          .join("")}
-      </div>
+        <div class="relative h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden mb-4">
+          <div class="absolute top-0 left-0 h-full bg-[#1C63DB] transition-all"
+            style="width: ${Math.min(
+              100,
+              (correct_questions / total_questions) * 100
+            )}%;"></div>
+        </div>
 
-      <div class="card-nav" style="display:flex; justify-content:flex-start; margin-top:24px; gap:12px;">
-        <button id="prevBtn" onclick="prevCard()" style="background:#007acc; color:#fff; border:none; border-radius:4px; padding:8px 18px; font-size:16px;">Previous</button>
-      </div>
-    `;
+        <div class="divide-y border-t border-[#EAEAEA]">
+          ${questions
+            .map(
+              (q) => `
+            <div class="flex items-center justify-between py-2 text-sm">
+              <div>
+                <div class="font-medium text-[#1D1D1F]">${q.question_id}</div>
+                <div class="text-xs text-muted-foreground">
+                  Answer: ${String(q.answer).toUpperCase()}
+                </div>
+              </div>
+              <div class="px-3 py-1 rounded-full text-xs font-medium ${
+                q.is_correct
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-red-100 text-red-700"
+              }">
+                ${q.is_correct ? "Correct" : "Incorrect"}
+              </div>
+            </div>`
+            )
+            .join("")}
+        </div>
+
+        <div class="card-nav" style="display:flex; justify-content:flex-start; margin-top:24px; gap:12px;">
+          <button id="prevBtn" onclick="prevCard()" style="background:#007acc; color:#fff; border:none; border-radius:4px; padding:8px 18px; font-size:16px;">
+            Previous
+          </button>
+        </div>
+      `;
+
+        lastCard.insertAdjacentElement("afterend", summaryDiv);
+
+        const lastNavContainer =
+          lastCard.querySelector<HTMLElement>(".card-nav") ||
+          lastCard.querySelector<HTMLElement>(
+            'div[style*="display:flex"][style*="justify-content:space-between"]'
+          ) ||
+          lastCard.querySelector<HTMLElement>(
+            'div[style*="display:flex"][style*="justify-content:flex-start"]'
+          ) ||
+          lastCard.querySelector<HTMLElement>(
+            'div[style*="text-align:left"][style*="margin-top:24px"]'
+          );
+
+        if (lastNavContainer) {
+          Object.assign(lastNavContainer.style, {
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "24px",
+            gap: "12px",
+          });
+
+          const nextBtn = doc.createElement("button");
+          nextBtn.id = "nextBtn";
+          nextBtn.textContent = "See Results";
+          nextBtn.setAttribute(
+            "onclick",
+            `
+            (function() {
+              if (window.showCard) {
+                showCard(${nextIndex});
+              }
+              if (window.__refetchQuizScore) {
+                window.__refetchQuizScore();
+              }
+            })()
+          `
+          );
+          Object.assign(nextBtn.style, {
+            background: "#007acc",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            padding: "8px 18px",
+            fontSize: "16px",
+            marginLeft: "auto",
+          });
+
+          lastNavContainer.appendChild(nextBtn);
+        } else {
+          const navContainer = doc.createElement("div");
+          navContainer.classList.add("card-nav");
+          Object.assign(navContainer.style, {
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "24px",
+            gap: "12px",
+          });
+
+          const prevBtn = doc.createElement("button");
+          prevBtn.id = "prevBtn";
+          prevBtn.textContent = "Previous";
+          prevBtn.setAttribute("onclick", `prevCard()`);
+          Object.assign(prevBtn.style, {
+            background: "#007acc",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            padding: "8px 18px",
+            fontSize: "16px",
+          });
+
+          const nextBtn = doc.createElement("button");
+          nextBtn.id = "nextBtn";
+          nextBtn.textContent = "See Results";
+          nextBtn.setAttribute(
+            "onclick",
+            `
+            (function() {
+              if (window.showCard) {
+                showCard(${nextIndex});
+              }
+              if (window.__refetchQuizScore) {
+                window.__refetchQuizScore();
+              }
+            })()
+          `
+          );
+          Object.assign(nextBtn.style, {
+            background: "#007acc",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            padding: "8px 18px",
+            fontSize: "16px",
+          });
+
+          navContainer.appendChild(prevBtn);
+          navContainer.appendChild(nextBtn);
+          lastCard.appendChild(navContainer);
+        }
+      }
     }
-
-    lastCard.insertAdjacentElement("afterend", summaryDiv);
-
-    const lastNavContainer =
-      lastCard.querySelector<HTMLElement>(".card-nav") ||
-      lastCard.querySelector<HTMLElement>(
-        'div[style*="display:flex"][style*="justify-content:space-between"]'
-      ) ||
-      lastCard.querySelector<HTMLElement>(
-        'div[style*="display:flex"][style*="justify-content:flex-start"]'
-      ) ||
-      lastCard.querySelector<HTMLElement>(
-        'div[style*="text-align:left"][style*="margin-top:24px"]'
-      );
-
-    if (lastNavContainer) {
-      Object.assign(lastNavContainer.style, {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: "24px",
-        gap: "12px",
-      });
-
-      const nextBtn = doc.createElement("button");
-      nextBtn.id = "nextBtn";
-      nextBtn.textContent = "See Results";
-      nextBtn.setAttribute(
-        "onclick",
-        `
-    (function() {
-      if (window.showCard) {
-        showCard(${nextIndex});
-      }
-      if (window.__refetchQuizScore) {
-        window.__refetchQuizScore();
-      }
-    })()
-  `
-      );
-      Object.assign(nextBtn.style, {
-        background: "#007acc",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        padding: "8px 18px",
-        fontSize: "16px",
-        marginLeft: "auto",
-      });
-
-      lastNavContainer.appendChild(nextBtn);
-    } else {
-      const navContainer = doc.createElement("div");
-      navContainer.classList.add("card-nav");
-      Object.assign(navContainer.style, {
-        display: "flex",
-        justifyContent: "space-between",
-        marginTop: "24px",
-        gap: "12px",
-      });
-
-      const prevBtn = doc.createElement("button");
-      prevBtn.id = "prevBtn";
-      prevBtn.textContent = "Previous";
-      prevBtn.setAttribute("onclick", `prevCard()`);
-      Object.assign(prevBtn.style, {
-        background: "#007acc",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        padding: "8px 18px",
-        fontSize: "16px",
-      });
-
-      const nextBtn = doc.createElement("button");
-      nextBtn.id = "nextBtn";
-      nextBtn.textContent = "Next";
-      nextBtn.setAttribute(
-        "onclick",
-        `
-    (function() {
-      if (window.showCard) {
-        showCard(${nextIndex});
-      }
-      if (window.__refetchQuizScore) {
-        window.__refetchQuizScore();
-      }
-    })()
-  `
-      );
-      Object.assign(nextBtn.style, {
-        background: "#007acc",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        padding: "8px 18px",
-        fontSize: "16px",
-      });
-
-      navContainer.appendChild(prevBtn);
-      navContainer.appendChild(nextBtn);
-      lastCard.appendChild(navContainer);
-    }
-    // }
 
     const navFixScript = `
     (function(){
@@ -580,29 +608,34 @@ export const LibraryDocument = () => {
         return 1;
       }
 
-window.showCard = function(n){
-  var cards = getCards();
-  var idx = Math.max(1, Math.min(n, cards.length));
-  for (var i = 0; i < cards.length; i++) {
-    cards[i].style.display = (i === (idx - 1)) ? "block" : "none";
-  }
-  var prevBtn = document.getElementById("prevBtn");
-  var nextBtn = document.getElementById("nextBtn");
-  if (prevBtn) prevBtn.style.visibility = idx > 1 ? "visible" : "hidden";
-  if (nextBtn) nextBtn.style.visibility = idx < cards.length ? "visible" : "hidden";
+      window.showCard = function(n){
+        var cards = getCards();
+        if (!cards.length) return;
 
-  // 👇 store current card globally
-  window.__currentCardIndex = idx;
-};
+        var idx = Math.max(1, Math.min(n, cards.length));
+        for (var i = 0; i < cards.length; i++) {
+          cards[i].style.display = (i === (idx - 1)) ? "block" : "none";
+        }
+
+        var prevBtn = document.getElementById("prevBtn");
+        var nextBtn = document.getElementById("nextBtn");
+        if (prevBtn) prevBtn.style.visibility = idx > 1 ? "visible" : "hidden";
+        if (nextBtn) nextBtn.style.visibility = idx < cards.length ? "visible" : "hidden";
+
+        // сохраняем текущий индекс глобально
+        window.__currentCardIndex = idx;
+      };
 
       window.nextCard = function(){
         var cards = getCards();
+        if (!cards.length) return;
         var cur = getVisibleIndex(cards);
         window.showCard(cur + 1);
       };
 
       window.prevCard = function(){
         var cards = getCards();
+        if (!cards.length) return;
         var cur = getVisibleIndex(cards);
         window.showCard(cur - 1);
       };
@@ -612,7 +645,7 @@ window.showCard = function(n){
     setRenderedContent(
       <div dangerouslySetInnerHTML={{ __html: doc.body.innerHTML }} />
     );
-    setScripts([...(scripts || []), navFixScript]);
+    setScripts([...(extractedScripts || []), navFixScript]);
   }, [selectedDocument, quizScore]);
 
   useEffect(() => {
@@ -946,337 +979,292 @@ window.showCard = function(n){
   }, [selectedDocument]);
 
   return (
-    <div className={`flex flex-col w-full h-full gap-6 p-6`}>
-      <div className="flex items-center gap-2 mb-4 md:gap-4">
-        <HealthProfileForm />
-        <Popover open={providersOpen} onOpenChange={onProvidersOpenChange}>
-          <PopoverTrigger asChild>
+    <div className={`flex flex-col w-full h-full gap-6`}>
+      <div className="flex flex-row w-full min-h-[calc(100vh-117px)] xl:h-[100vh] gap-6 relative">
+        <div
+          className={`flex flex-col gap-6 p-6 pt-[102px] md:pt-6 xl:pr-0 w-full ${!isResizing ? "transition-[width] duration-300 ease-in-out" : ""}`}
+          style={{
+            width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%`,
+          }}
+        >
+          <div className="flex items-center gap-2 md:gap-4">
+            <HealthProfileForm />
+            <Popover open={providersOpen} onOpenChange={onProvidersOpenChange}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="blue2"
+                  size={isMobile ? "sm" : "icon"}
+                  className="text-[12px] px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+                >
+                  {isMobile ? (
+                    "Providers"
+                  ) : (
+                    <MaterialIcon iconName="groups" fill={1} />
+                  )}
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent
+                className="w-fit md:w-[360px] p-0 rounded-[18px] border border-[#1C63DB] shadow-[0px_4px_12px_rgba(0,0,0,0.12)] bg-white"
+                align="start"
+              >
+                <div className="p-3 border-b border-[#EAEAEA]">
+                  <div className="text-[14px] font-semibold text-[#1D1D1F]">
+                    Your Providers
+                  </div>
+                  <div className="text-[12px] text-muted-foreground">
+                    Coaches linked to your account
+                  </div>
+                </div>
+
+                <ScrollArea className="max-h-[360px]">
+                  {isLoadingCoaches ? (
+                    <div className="p-4 text-sm text-muted-foreground">
+                      Loading…
+                    </div>
+                  ) : coaches.length ? (
+                    <ul className="p-2">
+                      {coaches.map((c) => {
+                        const name = c.basic_info?.name;
+                        const photo = photoUrls[c.coach_id];
+
+                        return (
+                          <li
+                            key={c.coach_id}
+                            className="p-2 rounded-[12px] hover:bg-[#F5F5F5] transition-colors"
+                          >
+                            <button
+                              onClick={() => handleOpenCoach(c)}
+                              className="flex items-center w-full gap-3 text-left"
+                            >
+                              <div className="h-10 w-10 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
+                                {photo ? (
+                                  <img
+                                    src={photo}
+                                    alt={name}
+                                    className="object-cover w-full h-full"
+                                  />
+                                ) : (
+                                  name?.slice(0, 2).toUpperCase()
+                                )}
+                              </div>
+
+                              <div className="truncate font-medium text-[14px]">
+                                {name}
+                              </div>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : (
+                    <div className="p-4 text-sm text-muted-foreground">
+                      No providers yet.
+                    </div>
+                  )}
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
+
+            <Dialog open={coachDialogOpen} onOpenChange={setCoachDialogOpen}>
+              <DialogContent className="max-w-[560px] p-0 rounded-xl overflow-hidden">
+                <div className="flex items-center gap-3 p-4 border-b">
+                  <div className="h-12 w-12 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
+                    {selectedCoachId && photoUrls[selectedCoachId] ? (
+                      <img
+                        src={photoUrls[selectedCoachId]}
+                        alt={selectedCoach?.basic_info?.name || "Coach"}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      (selectedCoach?.basic_info?.name || "C")
+                        .slice(0, 2)
+                        .toUpperCase()
+                    )}
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="text-base font-semibold truncate">
+                      {coachProfiles[selectedCoachId!]?.basic_info?.name ||
+                        selectedCoach?.basic_info?.name ||
+                        "Coach"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {coachProfiles[selectedCoachId!]?.basic_info?.role_name ||
+                        "Practitioner"}
+                      {coachProfiles[selectedCoachId!]?.relationship_details
+                        ?.is_primary_coach === "yes"
+                        ? " • Primary coach"
+                        : ""}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-3 text-sm">
+                  <p className="leading-relaxed">
+                    {coachProfiles[selectedCoachId!]?.detailed_profile?.bio ||
+                      selectedCoach?.profile?.bio ||
+                      "No bio provided."}
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-y-1 gap-x-3">
+                    <span className="text-muted-foreground">Email:</span>
+                    {coachProfiles[selectedCoachId!]?.basic_info?.email || "—"}
+
+                    <span className="text-muted-foreground">Phone:</span>
+                    {(coachProfiles[selectedCoachId!]?.basic_info?.phone &&
+                      phoneMask(
+                        coachProfiles[selectedCoachId!]?.basic_info?.phone
+                      )) ||
+                      "—"}
+
+                    <span className="text-muted-foreground">Timezone:</span>
+                    {coachProfiles[selectedCoachId!]?.detailed_profile
+                      ?.timezone || "—"}
+
+                    <span className="text-muted-foreground">Languages:</span>
+                    {(
+                      coachProfiles[selectedCoachId!]?.detailed_profile
+                        ?.languages || []
+                    ).join(", ") || "—"}
+
+                    <span className="text-muted-foreground">Experience:</span>
+                    {coachProfiles[selectedCoachId!]?.detailed_profile
+                      ?.years_experience ?? "—"}
+
+                    <span className="text-muted-foreground">
+                      Working duration:
+                    </span>
+                    {coachProfiles[selectedCoachId!]?.relationship_details
+                      ?.working_duration || "—"}
+                  </div>
+                </div>
+
+                <Button onClick={() => setCoachDialogOpen(false)}>Close</Button>
+              </DialogContent>
+            </Dialog>
+
             <Button
               variant="blue2"
               size={isMobile ? "sm" : "icon"}
               className="text-[12px] px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
+              disabled
             >
               {isMobile ? (
-                "Providers"
+                "Communities (soon)"
               ) : (
-                <MaterialIcon iconName="groups" fill={1} />
+                <MaterialIcon iconName="language" />
               )}
             </Button>
-          </PopoverTrigger>
+          </div>
+          {!isLoadingDocument && selectedDocument && (
+            <div className="w-full flex justify-end text-[16px] text-[#1D1D1F] font-semibold relative">
+              Created by{" "}
+              {
+                <span
+                  tabIndex={0}
+                  aria-haspopup="dialog"
+                  aria-expanded={isCreatorCardOpen}
+                  onMouseEnter={
+                    !isMobile ? () => setIsCreatorCardOpen(true) : undefined
+                  }
+                  onMouseLeave={
+                    !isMobile ? () => setIsCreatorCardOpen(false) : undefined
+                  }
+                  onFocus={
+                    !isMobile ? () => setIsCreatorCardOpen(true) : undefined
+                  }
+                  onBlur={
+                    !isMobile ? () => setIsCreatorCardOpen(false) : undefined
+                  }
+                  onClick={
+                    isMobile ? () => setIsCreatorCardOpen((v) => !v) : undefined
+                  }
+                  className="underline ml-[6px] cursor-pointer"
+                >
+                  {selectedDocument.creator_name}
+                </span>
+              }{" "}
+              <span className="ml-[6px]">
+                {selectedDocument.published_date
+                  ? `on ${selectedDocument.published_date}`
+                  : ""}
+              </span>
+              {isCreatorCardOpen && (
+                <div
+                  className="absolute right-0 top-full mt-2 w-full max-w-[500px] rounded-2xl border border-[#E5E7EB] bg-white shadow-xl p-4 z-50 flex items-start gap-6"
+                  onMouseEnter={
+                    !isMobile ? () => setIsCreatorCardOpen(true) : undefined
+                  }
+                  onMouseLeave={
+                    !isMobile ? () => setIsCreatorCardOpen(false) : undefined
+                  }
+                  role="dialog"
+                  aria-label="Coach details"
+                >
+                  <div className="flex flex-col items-center justify-center gap-3">
+                    {creatorProfileData && (
+                      <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
+                        <AvatarImage src={creatorPhoto || undefined} />
+                        <AvatarFallback className="text-3xl bg-slate-300 ">
+                          {creatorProfileData.detailed_profile.personal_info
+                            .first_name !== "" &&
+                          creatorProfileData.detailed_profile.personal_info
+                            .first_name !== null &&
+                          creatorProfileData.detailed_profile.personal_info
+                            .last_name !== null &&
+                          creatorProfileData.detailed_profile.personal_info
+                            .last_name !== "" ? (
+                            <div className="flex items-center">
+                              <span>
+                                {creatorProfileData.detailed_profile.personal_info.first_name.slice(
+                                  0,
+                                  1
+                                )}
+                              </span>
+                              <span>
+                                {creatorProfileData.detailed_profile.personal_info.last_name.slice(
+                                  0,
+                                  1
+                                )}
+                              </span>
+                            </div>
+                          ) : (
+                            creatorProfileData.basic_info.name.slice(0, 1)
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
 
-          <PopoverContent
-            className="w-fit md:w-[360px] p-0 rounded-[18px] border border-[#1C63DB] shadow-[0px_4px_12px_rgba(0,0,0,0.12)] bg-white"
-            align="start"
-          >
-            <div className="p-3 border-b border-[#EAEAEA]">
-              <div className="text-[14px] font-semibold text-[#1D1D1F]">
-                Your Providers
-              </div>
-              <div className="text-[12px] text-muted-foreground">
-                Coaches linked to your account
-              </div>
-            </div>
-
-            <ScrollArea className="max-h-[360px]">
-              {isLoadingCoaches ? (
-                <div className="p-4 text-sm text-muted-foreground">
-                  Loading…
-                </div>
-              ) : coaches.length ? (
-                <ul className="p-2">
-                  {coaches.map((c) => {
-                    const name = c.basic_info?.name;
-                    const photo = photoUrls[c.coach_id];
-
-                    return (
-                      <li
-                        key={c.coach_id}
-                        className="p-2 rounded-[12px] hover:bg-[#F5F5F5] transition-colors"
-                      >
-                        <button
-                          onClick={() => handleOpenCoach(c)}
-                          className="flex items-center w-full gap-3 text-left"
-                        >
-                          <div className="h-10 w-10 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
-                            {photo ? (
-                              <img
-                                src={photo}
-                                alt={name}
-                                className="object-cover w-full h-full"
-                              />
-                            ) : (
-                              name?.slice(0, 2).toUpperCase()
-                            )}
-                          </div>
-
-                          <div className="truncate font-medium text-[14px]">
-                            {name}
-                          </div>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              ) : (
-                <div className="p-4 text-sm text-muted-foreground">
-                  No providers yet.
+                    <div className="text-[18px] text-[#111827] text-center font-semibold">
+                      {creatorProfileData?.basic_info.name}
+                    </div>
+                  </div>
+                  <div className="text-[16px] text-[#5F5F65] whitespace-pre-line w-full">
+                    Bio: <br />{" "}
+                    {creatorProfileData?.detailed_profile.personal_info.bio ||
+                      "No bio provided."}
+                  </div>
                 </div>
               )}
-            </ScrollArea>
-          </PopoverContent>
-        </Popover>
-
-        <Dialog open={coachDialogOpen} onOpenChange={setCoachDialogOpen}>
-          <DialogContent className="max-w-[560px] p-0 rounded-xl overflow-hidden">
-            <div className="flex items-center gap-3 p-4 border-b">
-              <div className="h-12 w-12 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
-                {selectedCoachId && photoUrls[selectedCoachId] ? (
-                  <img
-                    src={photoUrls[selectedCoachId]}
-                    alt={selectedCoach?.basic_info?.name || "Coach"}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  (selectedCoach?.basic_info?.name || "C")
-                    .slice(0, 2)
-                    .toUpperCase()
-                )}
-              </div>
-
-              <div className="min-w-0">
-                <div className="text-base font-semibold truncate">
-                  {coachProfiles[selectedCoachId!]?.basic_info?.name ||
-                    selectedCoach?.basic_info?.name ||
-                    "Coach"}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {coachProfiles[selectedCoachId!]?.basic_info?.role_name ||
-                    "Practitioner"}
-                  {coachProfiles[selectedCoachId!]?.relationship_details
-                    ?.is_primary_coach === "yes"
-                    ? " • Primary coach"
-                    : ""}
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 space-y-3 text-sm">
-              <p className="leading-relaxed">
-                {coachProfiles[selectedCoachId!]?.detailed_profile?.bio ||
-                  selectedCoach?.profile?.bio ||
-                  "No bio provided."}
-              </p>
-
-              <div className="grid grid-cols-2 gap-y-1 gap-x-3">
-                <span className="text-muted-foreground">Email:</span>
-                {coachProfiles[selectedCoachId!]?.basic_info?.email || "—"}
-
-                <span className="text-muted-foreground">Phone:</span>
-                {(coachProfiles[selectedCoachId!]?.basic_info?.phone &&
-                  phoneMask(
-                    coachProfiles[selectedCoachId!]?.basic_info?.phone
-                  )) ||
-                  "—"}
-
-                <span className="text-muted-foreground">Timezone:</span>
-                {coachProfiles[selectedCoachId!]?.detailed_profile?.timezone ||
-                  "—"}
-
-                <span className="text-muted-foreground">Languages:</span>
-                {(
-                  coachProfiles[selectedCoachId!]?.detailed_profile
-                    ?.languages || []
-                ).join(", ") || "—"}
-
-                <span className="text-muted-foreground">Experience:</span>
-                {coachProfiles[selectedCoachId!]?.detailed_profile
-                  ?.years_experience ?? "—"}
-
-                <span className="text-muted-foreground">Working duration:</span>
-                {coachProfiles[selectedCoachId!]?.relationship_details
-                  ?.working_duration || "—"}
-              </div>
-            </div>
-
-            <Button onClick={() => setCoachDialogOpen(false)}>Close</Button>
-          </DialogContent>
-        </Dialog>
-
-        <Button
-          variant="blue2"
-          size={isMobile ? "sm" : "icon"}
-          className="text-[12px] px-[10px] rounded-full text-[#1C63DB] md:h-14 md:w-14"
-          disabled
-        >
-          {isMobile ? (
-            "Communities (soon)"
-          ) : (
-            <MaterialIcon iconName="language" />
-          )}
-        </Button>
-      </div>
-      {!isLoadingDocument && selectedDocument && (
-        <div className="w-full xl:w-[50%] flex justify-end text-[16px] text-[#1D1D1F] font-semibold relative">
-          Created by{" "}
-          {
-            <span
-              tabIndex={0}
-              aria-haspopup="dialog"
-              aria-expanded={isCreatorCardOpen}
-              onMouseEnter={
-                !isMobile ? () => setIsCreatorCardOpen(true) : undefined
-              }
-              onMouseLeave={
-                !isMobile ? () => setIsCreatorCardOpen(false) : undefined
-              }
-              onFocus={!isMobile ? () => setIsCreatorCardOpen(true) : undefined}
-              onBlur={!isMobile ? () => setIsCreatorCardOpen(false) : undefined}
-              onClick={
-                isMobile ? () => setIsCreatorCardOpen((v) => !v) : undefined
-              }
-              className="underline ml-[6px] cursor-pointer"
-            >
-              {selectedDocument.creator_name}
-            </span>
-          }{" "}
-          <span className="ml-[6px]">
-            {selectedDocument.published_date
-              ? `on ${selectedDocument.published_date}`
-              : ""}
-          </span>
-          {isCreatorCardOpen && (
-            <div
-              className="absolute right-0 top-full mt-2 w-full max-w-[500px] rounded-2xl border border-[#E5E7EB] bg-white shadow-xl p-4 z-50 flex items-start gap-6"
-              onMouseEnter={
-                !isMobile ? () => setIsCreatorCardOpen(true) : undefined
-              }
-              onMouseLeave={
-                !isMobile ? () => setIsCreatorCardOpen(false) : undefined
-              }
-              role="dialog"
-              aria-label="Coach details"
-            >
-              <div className="flex flex-col items-center justify-center gap-3">
-                {creatorProfileData && (
-                  <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
-                    <AvatarImage src={creatorPhoto || undefined} />
-                    <AvatarFallback className="text-3xl bg-slate-300 ">
-                      {creatorProfileData.detailed_profile.personal_info
-                        .first_name !== "" &&
-                      creatorProfileData.detailed_profile.personal_info
-                        .first_name !== null &&
-                      creatorProfileData.detailed_profile.personal_info
-                        .last_name !== null &&
-                      creatorProfileData.detailed_profile.personal_info
-                        .last_name !== "" ? (
-                        <div className="flex items-center">
-                          <span>
-                            {creatorProfileData.detailed_profile.personal_info.first_name.slice(
-                              0,
-                              1
-                            )}
-                          </span>
-                          <span>
-                            {creatorProfileData.detailed_profile.personal_info.last_name.slice(
-                              0,
-                              1
-                            )}
-                          </span>
-                        </div>
-                      ) : (
-                        creatorProfileData.basic_info.name.slice(0, 1)
-                      )}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-
-                <div className="text-[18px] text-[#111827] text-center font-semibold">
-                  {creatorProfileData?.basic_info.name}
-                </div>
-              </div>
-              <div className="text-[16px] text-[#5F5F65] whitespace-pre-line w-full">
-                Bio: <br />{" "}
-                {creatorProfileData?.detailed_profile.personal_info.bio ||
-                  "No bio provided."}
-              </div>
             </div>
           )}
-        </div>
-      )}
-      {isLoadingDocument && (
-        <div className="flex items-center gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
-          <span className="inline-flex items-center justify-center w-5 h-5">
-            <MaterialIcon
-              iconName="progress_activity"
-              className="text-blue-600 animate-spin"
-            />
-          </span>
-          Please wait, we are loading the information...
-        </div>
-      )}
-      <div className="flex flex-row w-full xl:h-[80vh] gap-6 relative">
-        <div className="hidden xl:block">
-          <ChatActions
-            initialStatus={selectedDocument?.readStatus}
-            initialRating={selectedDocument?.userRating}
-            onRegenerate={() => {}}
-            isSearching={false}
-            hasMessages={messages.length >= 2}
-            onStatusChange={onStatusChange}
-            onReadAloud={handleReadAloud}
-            isReadingAloud={isReadingAloud}
-            setSharePopup={setSharePopup}
-            changeStatusDisabled={
-              quizStatus.completedQuizzes !== quizStatus.totalQuizzes
-            }
-          />
-        </div>
-
-        {isLoadingSession ? (
-          <ChatLoading />
-        ) : (
-          <div className={`relative flex flex-col w-full h-full xl:pr-4`}>
-            {isLoadingDocument ? (
-              <DocumentLoadingSkeleton />
-            ) : selectedDocument ? (
-              <div className="p-[24px] rounded-[16px] bg-white xl:overflow-y-auto">
-                <div className="prose-sm prose max-w-none">
-                  {showTooltip && tooltipPosition && (
-                    <div
-                      className="fixed px-2 py-1 bg-white border border-blue-500 rounded-md"
-                      style={{
-                        top: `${tooltipPosition.top}px`,
-                        left: `${tooltipPosition.left}px`,
-                        transform: "translateX(-50%)",
-                        zIndex: 9999,
-                      }}
-                    >
-                      <button
-                        onClick={handleTooltipClick}
-                        className="text-black text-[16px] font-semibold"
-                      >
-                        Ask Tolu
-                      </button>
-                    </div>
-                  )}
-                  {renderedContent}
-                  {/* {resultsCard && (
-                    <div className="mt-6">
-                      {resultsCard}
-                    </div>
-                  )} */}
-                </div>
-              </div>
-            ) : (
-              <div className="p-6 text-center text-red-500">
-                Failed to load the document.
-              </div>
-            )}
-
-            <div className="xl:hidden block mt-[16px] mb-[16px]">
+          {isLoadingDocument && (
+            <div className="flex items-center gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
+              <span className="inline-flex items-center justify-center w-5 h-5">
+                <MaterialIcon
+                  iconName="progress_activity"
+                  className="text-blue-600 animate-spin"
+                />
+              </span>
+              Please wait, we are loading the information...
+            </div>
+          )}
+          <div className="flex flex-row w-full xl:h-[calc(100vh-176px)] gap-6 relative">
+            <div className="hidden xl:block">
               <ChatActions
                 initialStatus={selectedDocument?.readStatus}
-                initialRating={selectedDocument?.rating}
+                initialRating={selectedDocument?.userRating}
                 onRegenerate={() => {}}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
@@ -1284,10 +1272,70 @@ window.showCard = function(n){
                 onReadAloud={handleReadAloud}
                 isReadingAloud={isReadingAloud}
                 setSharePopup={setSharePopup}
+                changeStatusDisabled={
+                  quizStatus.completedQuizzes !== quizStatus.totalQuizzes
+                }
               />
             </div>
+
+            {isLoadingSession ? (
+              <ChatLoading />
+            ) : (
+              <div className={`relative flex flex-col w-full h-full`}>
+                {isLoadingDocument ? (
+                  <DocumentLoadingSkeleton />
+                ) : selectedDocument ? (
+                  <div className="p-[24px] rounded-[16px] bg-white xl:overflow-y-auto">
+                    <div className="prose-sm prose max-w-none">
+                      {showTooltip && tooltipPosition && (
+                        <div
+                          className="fixed px-2 py-1 bg-white border border-blue-500 rounded-md"
+                          style={{
+                            top: `${tooltipPosition.top}px`,
+                            left: `${tooltipPosition.left}px`,
+                            transform: "translateX(-50%)",
+                            zIndex: 9999,
+                          }}
+                        >
+                          <button
+                            onClick={handleTooltipClick}
+                            className="text-black text-[16px] font-semibold"
+                          >
+                            Ask Tolu
+                          </button>
+                        </div>
+                      )}
+                      {renderedContent}
+                      {/* {resultsCard && (
+                    <div className="mt-6">
+                      {resultsCard}
+                    </div>
+                  )} */}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-6 text-center text-red-500">
+                    Failed to load the document.
+                  </div>
+                )}
+
+                <div className="xl:hidden block mt-[16px] mb-[16px]">
+                  <ChatActions
+                    initialStatus={selectedDocument?.readStatus}
+                    initialRating={selectedDocument?.rating}
+                    onRegenerate={() => {}}
+                    isSearching={false}
+                    hasMessages={messages.length >= 2}
+                    onStatusChange={onStatusChange}
+                    onReadAloud={handleReadAloud}
+                    isReadingAloud={isReadingAloud}
+                    setSharePopup={setSharePopup}
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         {sharePopup && documentId && (
           <SharePopup
@@ -1297,13 +1345,12 @@ window.showCard = function(n){
           />
         )}
 
-        <div className="hidden w-full xl:block">
-          <LibrarySmallChat
-            isLoading={isLoadingDocument}
-            selectedText={textForInput}
-            deleteSelectedText={handleDeleteSelectedText}
-          />
-        </div>
+        <ResizableLibraryChat
+          widthPercent={widthPercent}
+          setWidthPercent={setWidthPercent}
+          onResizeStart={() => setIsResizing(true)}
+          onResizeEnd={() => setIsResizing(false)}
+        />
       </div>
     </div>
   );

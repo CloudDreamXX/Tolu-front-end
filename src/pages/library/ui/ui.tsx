@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { LibraryClientContent } from "widgets/library-client-content";
-import { LibrarySmallChat } from "widgets/library-small-chat";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setError,
@@ -9,17 +8,21 @@ import {
 } from "entities/health-history/lib";
 import { RootState } from "entities/store";
 import { ChatSocketService } from "entities/chat";
-import { toast } from "shared/lib";
+import { toast, usePageWidth } from "shared/lib";
 import { clearChatHistoryExceptActive } from "entities/client/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { useLocation } from "react-router-dom";
 import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
+import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
 
 export const Library = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const [showPopup, setShowPopup] = useState(false);
+  const [widthPercent, setWidthPercent] = useState(50);
+  const [isResizing, setIsResizing] = useState(false);
+  const { isMobileOrTablet } = usePageWidth();
 
   const loading = useSelector((state: RootState) => state.client.loading);
 
@@ -99,7 +102,7 @@ export const Library = () => {
   }, [dispatch]);
 
   return (
-    <main className="flex flex-col h-screen items-start gap-6 p-4 md:p-6 self-stretch overflow-y-auto bg-[#F2F4F6]">
+    <main className="flex flex-col h-screen items-start gap-6 p-4 md:p-6 xl:p-0 self-stretch overflow-y-auto bg-[#F2F4F6]">
       {loading && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <span className="inline-flex h-5 w-5 items-center justify-center">
@@ -118,11 +121,23 @@ export const Library = () => {
           </div>
         </div>
       )}
-      <div className="flex flex-col flex-1 w-full h-full min-h-0 gap-6 xl:flex-row">
-        <LibraryClientContent />
-        <div className="hidden w-full xl:block">
-          <LibrarySmallChat />
+      <div
+        className={`flex flex-col flex-1 w-full h-full min-h-0 gap-6 xl:flex-row ${!isResizing ? "transition-[width] duration-300 ease-in-out" : ""}`}
+      >
+        <div
+          className="xl:p-6 xl:pr-0 w-full h-full"
+          style={{
+            width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%`,
+          }}
+        >
+          <LibraryClientContent />
         </div>
+        <ResizableLibraryChat
+          widthPercent={widthPercent}
+          setWidthPercent={setWidthPercent}
+          onResizeStart={() => setIsResizing(true)}
+          onResizeEnd={() => setIsResizing(false)}
+        />
       </div>
     </main>
   );

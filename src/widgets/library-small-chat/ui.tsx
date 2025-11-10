@@ -949,7 +949,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               options={config.options}
               handleSwitchChange={handleSwitchChange}
               selectedSwitch={selectedSwitch}
-              isCoach={isCoach}
             />
             {chatState.length > 0 && (
               <button
@@ -1073,38 +1072,35 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         </Card>
       ) : (
         <Card
-          className={`relative flex flex-col w-full h-full border-none ${isCoach ? "rounded-none" : "rounded-2xl"}`}
+          className={`relative flex flex-col w-full h-full border-none rounded-none`}
         >
           <CardHeader
-            className={`relative flex items-center ${isCoach ? "flex-row justify-between h-[100px]" : "flex-col"} gap-2`}
+            className={`relative flex items-center flex-row justify-between h-[100px] gap-2`}
           >
-            <div
-              className={`flex ${isCoach ? "" : "flex-col"} items-center gap-2`}
-            >
+            <div className={`flex items-center gap-2`}>
               <SwitchDropdown
                 options={config.options}
                 handleSwitchChange={handleSwitchChange}
                 selectedSwitch={selectedSwitch}
-                isCoach={isCoach}
               />
               {subTitleSwitch(selectedSwitch as SwitchValue) && (
                 <p
-                  className={`${isCoach ? "text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px]" : "text-[#1D1D1F]"} my-0`}
+                  className={`text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px] my-0`}
                 >
                   {subTitleSwitch(selectedSwitch as SwitchValue)}
                 </p>
               )}
+              {isSwitch(SWITCH_KEYS.DEF) && (
+                <p className="text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px] my-0">
+                  Get Personalized Answers
+                </p>
+              )}
+              {isSwitch(SWITCH_KEYS.LEARN) && (
+                <p className="text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px] my-0">
+                  Get Expert-verified Guidance You Can Trust
+                </p>
+              )}
             </div>
-            {isSwitch(SWITCH_KEYS.DEF) && (
-              <p className="text-[18px] text-[#1D1D1F] font-[600]">
-                Get Personalized Answers
-              </p>
-            )}
-            {isSwitch(SWITCH_KEYS.LEARN) && (
-              <p className="text-[18px] text-[#1D1D1F] font-[600]">
-                Get Expert-verified Guidance You Can Trust
-              </p>
-            )}
             {isCoach && (
               <div className="flex items-center gap-[18px]">
                 <HistoryPopup
@@ -1137,7 +1133,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             )}
           </CardHeader>
           <CardContent
-            className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto ${isCoach ? "pb-0" : ""}`}
+            className={`flex flex-1 w-full h-full min-h-0 overflow-y-auto pb-0`}
           >
             {!isMobileOrTablet ||
               (!isCoach && (
@@ -1174,7 +1170,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               <div></div>
             )}
           </CardContent>
-          {isMobileOrTablet && !isCoach && (
+          {isMobileOrTablet && (
             <div className={`mx-auto w-fit h-fit mb-[16px]`}>
               <ChatActions
                 chatState={chatState}
@@ -1196,7 +1192,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               setFiles={handleSetFiles}
               voiceFile={voiceFile}
               setVoiceFile={setVoiceFile}
-              className={`w-full p-6 ${isCoach ? "border-none" : "border-t"} rounded-t-none rounded-b-2xl`}
+              className={`w-full p-6 border-none rounded-t-none rounded-b-2xl`}
               onSend={handleNewMessage}
               disabled={
                 isSearching ||
@@ -1210,41 +1206,36 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedSwitch={selectedSwitch}
               setNewMessage={setMessage}
               textarea={
-                isSwitch(SWITCH_KEYS.RESEARCH) ||
-                isSwitch(SWITCH_KEYS.CREATE) ||
-                isSwitch(SWITCH_KEYS.CARD) ||
-                isSwitch(SWITCH_KEYS.ASSISTANT) ? (
-                  <div className="flex items-center mb-[10px] h-[48px] border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base">
-                    <textarea
-                      placeholder={"How can I help you today?"}
-                      value={message}
-                      onPaste={handlePaste}
-                      onChange={(e) => {
-                        setMessage(e.target.value);
-                      }}
-                      onKeyDown={handleKeyPress}
-                      className="w-full py-[11px] max-h-[46px] text-[14px] font-medium resize-none placeholder:text-black focus:outline-none focus:ring-0 focus:border-transparent"
-                      style={{
-                        WebkitTextSizeAdjust: "100%",
-                        textSizeAdjust: "100%",
-                      }}
-                    />
-                    <Button
-                      onClick={() => {
-                        handleNewMessage(message);
-                      }}
-                      disabled={
-                        isSearching ||
-                        (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
-                        (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
-                        (!voiceFile && message === "")
-                      }
-                      className="h-[44px] w-[44px] p-0 rounded-full text-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
-                    >
-                      <MaterialIcon iconName="send" fill={1} size={24} />
-                    </Button>
-                  </div>
-                ) : undefined
+                <div className="flex items-center mb-[10px] h-[48px] border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base">
+                  <textarea
+                    placeholder={"How can I help you today?"}
+                    value={message}
+                    onPaste={handlePaste}
+                    onChange={(e) => {
+                      setMessage(e.target.value);
+                    }}
+                    onKeyDown={handleKeyPress}
+                    className="w-full py-[11px] max-h-[46px] text-[14px] font-medium resize-none placeholder:text-black focus:outline-none focus:ring-0 focus:border-transparent"
+                    style={{
+                      WebkitTextSizeAdjust: "100%",
+                      textSizeAdjust: "100%",
+                    }}
+                  />
+                  <Button
+                    onClick={() => {
+                      handleNewMessage(message);
+                    }}
+                    disabled={
+                      isSearching ||
+                      (isSwitch(SWITCH_KEYS.CREATE) && !folderState) ||
+                      (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
+                      (!voiceFile && message === "")
+                    }
+                    className="h-[44px] w-[44px] p-0 rounded-full text-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                  >
+                    <MaterialIcon iconName="send" fill={1} size={24} />
+                  </Button>
+                </div>
               }
               footer={
                 isSwitch(SWITCH_KEYS.CREATE) || isSwitch(SWITCH_KEYS.CARD) ? (
