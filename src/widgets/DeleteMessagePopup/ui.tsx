@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 type Props = {

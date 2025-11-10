@@ -16,7 +16,10 @@ import { ResizableLibraryChat } from "widgets/library-small-chat/components/Resi
 import { usePageWidth } from "shared/lib";
 
 export const caseBaseSchema = z.object({
-  age: z.string().min(1, "Age is required").regex(/^\d+$/, "Age must be a number"),
+  age: z
+    .string()
+    .min(1, "Age is required")
+    .regex(/^\d+$/, "Age must be a number"),
   employmentStatus: z.string().min(1, "Employment status is required"),
   menopausePhase: z.string().min(1, "Menopause phase is required"),
   symptoms: z.string().min(1, "Symptoms are required"),
@@ -84,8 +87,9 @@ export const ContentManagerCreatePage: React.FC = () => {
   return (
     <div className="flex items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-screen overflow-hidden">
       <div
-        className={`hidden xl:flex h-full p-[16px] flex-none ${!isResizing ? "transition-[width] duration-300 ease-in-out" : ""
-          }`}
+        className={`hidden xl:flex h-full p-[16px] flex-none ${
+          !isResizing ? "transition-[width] duration-300 ease-in-out" : ""
+        }`}
         style={{ width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%` }}
       >
         <EmptyStateTolu

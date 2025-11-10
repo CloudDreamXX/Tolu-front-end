@@ -466,14 +466,18 @@ export const ContentManagerClients: React.FC = () => {
       >
         {loading ? (
           <div className={`${isWide ? "lg:mt-4 rounded-[8px]" : ""}`}>
-            <div className={`hidden ${isWide ? "grid" : ""} grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]`}>
+            <div
+              className={`hidden ${isWide ? "grid" : ""} grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[22px]`}
+            >
               <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="h-[10px] w-[60px] xl:w-[80px] skeleton-gradient rounded-[24px]" />
               <div className="pr-4 text-right"></div>
             </div>
-            <div className={`flex flex-col gap-4 pb-[16px] ${isWide ? "bg-white gap-0" : ""}`}>
+            <div
+              className={`flex flex-col gap-4 pb-[16px] ${isWide ? "bg-white gap-0" : ""}`}
+            >
               {Array.from({ length: 10 }).map((_, i) => (
                 <ClientSkeletonRow key={i} />
               ))}
@@ -508,7 +512,9 @@ export const ContentManagerClients: React.FC = () => {
                       Upload client list
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className={`${isWide ? "max-w-3xl" : ""} gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]`}>
+                  <DialogContent
+                    className={`${isWide ? "max-w-3xl" : ""} gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]`}
+                  >
                     {uploadedFileName ? (
                       <div className="w-full max-w-[330px]">
                         <p className="text-left  text-black text-base font-medium mb-[8px]">
@@ -588,7 +594,9 @@ export const ContentManagerClients: React.FC = () => {
           />
         ) : (
           <div className="flex flex-col gap-4">
-            <div className={`flex flex-wrap gap-[16px] justify-between ${isWide ? "items-end flex-row" : "flex-col"}`}>
+            <div
+              className={`flex flex-wrap gap-[16px] justify-between ${isWide ? "items-end flex-row" : "flex-col"}`}
+            >
               <div className="flex flex-col gap-2">
                 <h1 className="flex flex-row items-center gap-2 text-3xl font-bold">
                   <MaterialIcon iconName="person_search" fill={1} />
@@ -599,8 +607,12 @@ export const ContentManagerClients: React.FC = () => {
                   individual client records.
                 </p>
               </div>
-              <div className={`flex ${isWide ? "flex-row gap-[50px] md:gap-2" : "flex-col gap-2"} w-full`}>
-                <div className={`flex gap-[8px] items-center ${isWide ? "lg:w-[300px]" : "w-full"} rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[40px]`}>
+              <div
+                className={`flex ${isWide ? "flex-row gap-[50px] md:gap-2" : "flex-col gap-2"} w-full`}
+              >
+                <div
+                  className={`flex gap-[8px] items-center ${isWide ? "lg:w-[300px]" : "w-full"} rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[40px]`}
+                >
                   <MaterialIcon iconName="search" size={16} />
                   <input
                     placeholder="Search"
@@ -636,7 +648,9 @@ export const ContentManagerClients: React.FC = () => {
                       Upload client list
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className={`${isWide ? "max-w-3xl" : ""} gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]`}>
+                  <DialogContent
+                    className={`${isWide ? "max-w-3xl" : ""} gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-50 grid translate-x-[-50%] translate-y-[-50%] mx-[16px]`}
+                  >
                     {uploadedFileName ? (
                       <div className="w-full max-w-[330px]">
                         <p className="text-left  text-black text-base font-medium mb-[8px]">
@@ -715,7 +729,9 @@ export const ContentManagerClients: React.FC = () => {
             </div>
 
             <div className={`${isWide ? "rounded-[8px]" : ""}`}>
-              <div className={`${isWide ? "grid" : "hidden"} grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]`}>
+              <div
+                className={`${isWide ? "grid" : "hidden"} grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]`}
+              >
                 <div className="flex items-center justify-center">
                   Full name
                 </div>
@@ -725,14 +741,20 @@ export const ContentManagerClients: React.FC = () => {
                 <div className="flex items-center justify-center"></div>
               </div>
 
-              <div className={`flex flex-col gap-4 pb-[16px] ${isWide ? "bg-white gap-0" : ""}`}>
+              <div
+                className={`flex flex-col gap-4 pb-[16px] ${isWide ? "bg-white gap-0" : ""}`}
+              >
                 {paginatedClients?.map((client, idx) => (
                   <div
                     key={idx}
                     className={`${isWide ? "grid grid-cols-5 items-center p-[12px] rounded-none border-x-0 border-t-0 border-b border-[#DBDEE1]" : "flex flex-col"} gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white`}
                   >
-                    <div className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} flex items-center`}>
-                      <div className={`w-full ${isWide ? "hidden" : ""} text-[14px] text-[#5F5F65]`}>
+                    <div
+                      className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} flex items-center`}
+                    >
+                      <div
+                        className={`w-full ${isWide ? "hidden" : ""} text-[14px] text-[#5F5F65]`}
+                      >
                         Name
                       </div>
                       <div className="flex items-center justify-center w-full text-[16px] font-semibold text-center">
@@ -742,8 +764,12 @@ export const ContentManagerClients: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} flex items-center`}>
-                      <div className={`w-full ${isWide ? "hidden" : ""} text-[14px] text-[#5F5F65]`}>
+                    <div
+                      className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} flex items-center`}
+                    >
+                      <div
+                        className={`w-full ${isWide ? "hidden" : ""} text-[14px] text-[#5F5F65]`}
+                      >
                         Status
                       </div>
                       <div className="w-full text-[16px] flex items-center justify-center">
@@ -923,10 +949,11 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                    ? "border-[#1C63DB] text-[#1C63DB]"
-                    : "border-[#DBDEE1]"
-                    }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                    currentPage === page
+                      ? "border-[#1C63DB] text-[#1C63DB]"
+                      : "border-[#DBDEE1]"
+                  }`}
                 >
                   {page}
                 </button>

@@ -35,10 +35,11 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
   const isMdUp = useIsMdUp();
   const dispatch = useDispatch();
 
-  const { data: history, refetch, isLoading } = useGetSearchHistoryQuery(
-    {},
-    { skip: !isOpen }
-  );
+  const {
+    data: history,
+    refetch,
+    isLoading,
+  } = useGetSearchHistoryQuery({}, { skip: !isOpen });
 
   // Re-fetch each time popup opens
   useEffect(() => {
@@ -81,10 +82,15 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
       <h3 className="mb-2 text-lg font-bold">Your history</h3>
       <ul className="space-y-[18px]">
         {isLoading ? (
-          Array.from({ length: 5 }).map((_, i) => <HistorySkeletonRow key={i} />)
+          Array.from({ length: 5 }).map((_, i) => (
+            <HistorySkeletonRow key={i} />
+          ))
         ) : history && history.length > 0 ? (
           history.map((item) => (
-            <li key={item.id} className="flex flex-row p-4 border rounded-lg bg-white">
+            <li
+              key={item.id}
+              className="flex flex-row p-4 border rounded-lg bg-white"
+            >
               <div className="flex flex-col gap-1">
                 <span className="text-lg font-bold leading-none text-gray-800">
                   {item.chatTitle || "Untitled Chat"}
@@ -152,9 +158,9 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
 
       {
         isOpen &&
-        (isMdUp
-          ? DesktopLayer // no portal: md/xl stays exactly as before
-          : createPortal(MobileLayer, document.body)) // portal only on mobile
+          (isMdUp
+            ? DesktopLayer // no portal: md/xl stays exactly as before
+            : createPortal(MobileLayer, document.body)) // portal only on mobile
       }
     </div>
   );

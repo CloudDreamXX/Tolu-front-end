@@ -3,97 +3,99 @@ import { LibrarySmallChat } from "widgets/library-small-chat";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface ResizableLibraryChatProps {
-    widthPercent: number;
-    setWidthPercent: (value: number) => void;
-    onResizeStart?: () => void;
-    onResizeEnd?: () => void;
+  widthPercent: number;
+  setWidthPercent: (value: number) => void;
+  onResizeStart?: () => void;
+  onResizeEnd?: () => void;
 }
 
 export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
-    widthPercent,
-    setWidthPercent,
-    onResizeStart,
-    onResizeEnd,
+  widthPercent,
+  setWidthPercent,
+  onResizeStart,
+  onResizeEnd,
 }) => {
-    const [dragging, setDragging] = useState(false);
-    const position: "left" | "right" = "right";
+  const [dragging, setDragging] = useState(false);
+  const position: "left" | "right" = "right";
 
-    const chatRef = useRef<HTMLDivElement>(null);
-    const startXRef = useRef(0);
-    const startWidthRef = useRef(widthPercent);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(widthPercent);
 
-    useEffect(() => {
-        if (!dragging) return;
+  useEffect(() => {
+    if (!dragging) return;
 
-        const handleMouseMove = (e: MouseEvent) => {
-            const container =
-                chatRef.current?.parentElement ?? chatRef.current ?? document.body;
-            const containerWidth = container.clientWidth || window.innerWidth;
+    const handleMouseMove = (e: MouseEvent) => {
+      const container =
+        chatRef.current?.parentElement ?? chatRef.current ?? document.body;
+      const containerWidth = container.clientWidth || window.innerWidth;
 
-            const startX = startXRef.current;
-            const startWidth = startWidthRef.current;
+      const startX = startXRef.current;
+      const startWidth = startWidthRef.current;
 
-            let deltaPercent: number;
+      let deltaPercent: number;
 
-            if (position === "right") {
-                const deltaX = startX - e.clientX; // двигаем границу вправо — уменьшаем чат
-                deltaPercent = (deltaX / containerWidth) * 100;
-            } else {
-                const deltaX = e.clientX - startX;
-                deltaPercent = (deltaX / containerWidth) * 100;
-            }
+      if (position === "right") {
+        const deltaX = startX - e.clientX; // двигаем границу вправо — уменьшаем чат
+        deltaPercent = (deltaX / containerWidth) * 100;
+      } else {
+        const deltaX = e.clientX - startX;
+        deltaPercent = (deltaX / containerWidth) * 100;
+      }
 
-            let newPercent = startWidth + deltaPercent;
-            newPercent = Math.max(30, Math.min(newPercent, 70)); // кламп, чтобы не ломать сетку
-            setWidthPercent(newPercent);
-        };
-
-        const handleMouseUp = () => {
-            setDragging(false);
-            onResizeEnd?.();
-            document.body.style.userSelect = "";
-            document.body.style.cursor = "";
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", handleMouseUp);
-        };
-
-        document.body.style.userSelect = "none";
-        document.body.style.cursor = "ew-resize";
-
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", handleMouseUp);
-            document.body.style.userSelect = "";
-            document.body.style.cursor = "";
-        };
-    }, [dragging, position, setWidthPercent, onResizeEnd]);
-
-    const handleMouseDown = (e: React.MouseEvent) => {
-        setDragging(true);
-        onResizeStart?.();
-        startXRef.current = e.clientX;
-        startWidthRef.current = widthPercent;
+      let newPercent = startWidth + deltaPercent;
+      newPercent = Math.max(30, Math.min(newPercent, 70)); // кламп, чтобы не ломать сетку
+      setWidthPercent(newPercent);
     };
 
-    return (
-        <div
-            ref={chatRef}
-            className={`hidden xl:flex flex-col h-full bg-white relative flex-none ${!dragging ? "transition-[width] duration-300 ease-in-out" : ""
-                }`}
-            style={{ width: `${widthPercent}%` }}
-        >
-            <LibrarySmallChat isCoach isDraft />
+    const handleMouseUp = () => {
+      setDragging(false);
+      onResizeEnd?.();
+      document.body.style.userSelect = "";
+      document.body.style.cursor = "";
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
 
-            <div
-                onMouseDown={handleMouseDown}
-                className={`absolute top-[65%] ${position === "right" ? "-left-[20px]" : "-right-[20px]"
-                    } cursor-ew-resize flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white hover:bg-gray-50 text-blue-700 transition`}
-            >
-                <MaterialIcon iconName="arrow_range" />
-            </div>
-        </div>
-    );
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "ew-resize";
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.userSelect = "";
+      document.body.style.cursor = "";
+    };
+  }, [dragging, position, setWidthPercent, onResizeEnd]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setDragging(true);
+    onResizeStart?.();
+    startXRef.current = e.clientX;
+    startWidthRef.current = widthPercent;
+  };
+
+  return (
+    <div
+      ref={chatRef}
+      className={`hidden xl:flex flex-col h-full bg-white relative flex-none ${
+        !dragging ? "transition-[width] duration-300 ease-in-out" : ""
+      }`}
+      style={{ width: `${widthPercent}%` }}
+    >
+      <LibrarySmallChat isCoach isDraft />
+
+      <div
+        onMouseDown={handleMouseDown}
+        className={`absolute top-[65%] ${
+          position === "right" ? "-left-[20px]" : "-right-[20px]"
+        } cursor-ew-resize flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white hover:bg-gray-50 text-blue-700 transition`}
+      >
+        <MaterialIcon iconName="arrow_range" />
+      </div>
+    </div>
+  );
 };

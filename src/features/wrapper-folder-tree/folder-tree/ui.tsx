@@ -74,7 +74,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
         dropdownRef.current &&
         !dropdownRef.current.contains(e.target as Node)
       ) {
-        setMenuOpenFolderId(null);
+        setMenuOpenFolderId((prev) => prev);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);

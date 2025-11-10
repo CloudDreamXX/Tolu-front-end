@@ -111,14 +111,8 @@ export const ContentManagerDocument: React.FC = () => {
 
   const dispatch = useDispatch();
   const { handleDocumentCreation } = useDocumentCreation();
-  const isDraft = documentPath[0]?.name.toLowerCase() === "drafts";
-  const {
-    textForInput,
-    tooltipPosition,
-    showTooltip,
-    handleTooltipClick,
-    handleDeleteSelectedText,
-  } = useTextSelectionTooltip();
+  const { tooltipPosition, showTooltip, handleTooltipClick } =
+    useTextSelectionTooltip();
 
   const [originalEdit, setOriginalEdit] = useState<{
     contentId: string;
@@ -292,7 +286,9 @@ export const ContentManagerDocument: React.FC = () => {
       <div className="flex flex-row justify-end w-full h-full gap-[26px]">
         <div
           className="relative flex flex-col w-full h-full gap-2 overflow-y-auto xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] xl:pt-6"
-          style={{ width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%` }}
+          style={{
+            width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%`,
+          }}
         >
           <DocumentBreadcrumbs tab={tab} folder={folder} path={documentPath} />
 
@@ -395,13 +391,13 @@ export const ContentManagerDocument: React.FC = () => {
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-              | "Raw"
-              | "Ready for Review"
-              | "Waiting"
-              | "Second Review Requested"
-              | "Ready to Publish"
-              | "Live"
-              | "Archived"
+                | "Raw"
+                | "Ready for Review"
+                | "Waiting"
+                | "Second Review Requested"
+                | "Ready to Publish"
+                | "Live"
+                | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}
