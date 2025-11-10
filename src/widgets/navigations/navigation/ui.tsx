@@ -104,7 +104,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
       {menuMobOpen && (
         <div className="fixed inset-0 bg-[#F1F3F5] top-[70px] md:top-0 md:bg-black md:bg-opacity-40 flex items-center justify-center z-[999]">
           <div
-            className="fixed top-0 right-0 bottom-0 left-0 bg-white z-[999] p-[4] pr-0 flex flex-col 
+            className="fixed top-0 right-0 bottom-0 left-0 bg-white z-[999] flex flex-col 
              md:w-[390px] md:right-[10px] md:top-[10px] md:bottom-[10px] md:left-auto md:rounded-[16px]"
             ref={menuMobRef}
           >
@@ -127,7 +127,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 </span>
               </button>
             </div>
-            <ScrollArea className="h-full px-4">
+            <ScrollArea className="h-full px-4 z-[999]">
               <div className="flex flex-col gap-4 mt-6">
                 {sideBarContent.map((link) => (
                   <CustomNavLink

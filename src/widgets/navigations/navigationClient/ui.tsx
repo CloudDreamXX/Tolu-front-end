@@ -17,6 +17,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
 import { ClientChatList } from "widgets/sidebars/ui/health-snapshot/ClientChatList";
 import WrapperLibraryFolderTree from "widgets/sidebars/ui/health-snapshot/FolderTree";
+import { createPortal } from "react-dom";
+
+export function ModalRoot({ children }: { children: React.ReactNode }) {
+  if (typeof document === "undefined") return null;
+  return createPortal(children, document.body);
+}
 
 export const NavigationClient: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -102,8 +108,7 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/library"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -114,8 +119,7 @@ export const NavigationClient: React.FC = () => {
           <NavLink
             to={"/messages"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${
-                isActive ? "font-bold" : "font-semibold"
+              `flex items-center gap-3 px-[16px] py-[16px] text-lg text-[#1D1D1F] hover:text-[#1C63DB] ${isActive ? "font-bold" : "font-semibold"
               }`
             }
           >
@@ -248,8 +252,7 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/library"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={toggleLibrary}
@@ -266,8 +269,7 @@ export const NavigationClient: React.FC = () => {
               <NavLink
                 to={"/messages"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-[16px] py-[16px] text-lg hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
                 onClick={() => setMenuMobOpen(false)}

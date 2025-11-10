@@ -522,13 +522,13 @@ export const LibraryClientContent = () => {
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -744,7 +744,7 @@ export const LibraryClientContent = () => {
         autoFocus
       />
 
-      <ScrollArea className="flex-1 min-h-0 pr-2 mt-4">
+      <ScrollArea className="flex-1 min-h-0 mt-4">
         {loading ? (
           <div className="flex flex-col w-full gap-4 px-2">
             {[...Array(5)].map((_, idx) => (
@@ -805,7 +805,7 @@ export const LibraryClientContent = () => {
 
                   <AccordionContent className="flex flex-col gap-4 pb-2">
                     {Array.isArray(folder.subfolders) &&
-                    folder.subfolders.length > 0 ? (
+                      folder.subfolders.length > 0 ? (
                       folder.subfolders.map((sub, sIdx) => {
                         const subKey = `sub-${sIdx}`;
                         const subOpen = (openSub[folder.id] || "") === subKey;
