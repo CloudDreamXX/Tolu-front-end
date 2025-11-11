@@ -17,12 +17,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import { ReferAFriendPopup } from "widgets/ReferAFriendPopup/ui";
 import { ClientChatList } from "widgets/sidebars/ui/health-snapshot/ClientChatList";
 import WrapperLibraryFolderTree from "widgets/sidebars/ui/health-snapshot/FolderTree";
-import { createPortal } from "react-dom";
-
-export function ModalRoot({ children }: { children: React.ReactNode }) {
-  if (typeof document === "undefined") return null;
-  return createPortal(children, document.body);
-}
 
 export const NavigationClient: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
