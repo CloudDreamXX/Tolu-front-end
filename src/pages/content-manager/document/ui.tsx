@@ -391,13 +391,13 @@ export const ContentManagerDocument: React.FC = () => {
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-                | "Raw"
-                | "Ready for Review"
-                | "Waiting"
-                | "Second Review Requested"
-                | "Ready to Publish"
-                | "Live"
-                | "Archived"
+              | "Raw"
+              | "Ready for Review"
+              | "Waiting"
+              | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}
@@ -459,6 +459,7 @@ export const ContentManagerDocument: React.FC = () => {
         <ResizableLibraryChat
           widthPercent={widthPercent}
           setWidthPercent={setWidthPercent}
+          isCoach
         />
       </div>
     </div>

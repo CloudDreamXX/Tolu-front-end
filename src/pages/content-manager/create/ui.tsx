@@ -87,9 +87,8 @@ export const ContentManagerCreatePage: React.FC = () => {
   return (
     <div className="flex items-center h-[calc(100vh-125px)] md:h-[calc(100vh-145px)] xl:h-screen overflow-hidden">
       <div
-        className={`hidden xl:flex h-full p-[16px] flex-none ${
-          !isResizing ? "transition-[width] duration-300 ease-in-out" : ""
-        }`}
+        className={`hidden xl:flex h-full p-[16px] flex-none ${!isResizing ? "transition-[width] duration-300 ease-in-out" : ""
+          }`}
         style={{ width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%` }}
       >
         <EmptyStateTolu
@@ -127,6 +126,7 @@ export const ContentManagerCreatePage: React.FC = () => {
         setWidthPercent={setWidthPercent}
         onResizeStart={() => setIsResizing(true)}
         onResizeEnd={() => setIsResizing(false)}
+        isCoach
       />
 
       {createPopup && (

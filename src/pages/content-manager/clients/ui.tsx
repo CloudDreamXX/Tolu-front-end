@@ -949,11 +949,10 @@ export const ContentManagerClients: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
                       ? "border-[#1C63DB] text-[#1C63DB]"
                       : "border-[#DBDEE1]"
-                  }`}
+                    }`}
                 >
                   {page}
                 </button>
@@ -1053,6 +1052,7 @@ export const ContentManagerClients: React.FC = () => {
       <ResizableLibraryChat
         widthPercent={widthPercent}
         setWidthPercent={setWidthPercent}
+        isCoach
       />
     </div>
   );
