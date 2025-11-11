@@ -178,6 +178,8 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
     }
   };
 
+  console.log(menuOpenFolderId)
+
   const createFolder = async (name: string, description: string) => {
     if (!menuOpenFolderId) return;
     try {
@@ -217,8 +219,8 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                 "flex items-center gap-3 cursor-pointer transition-colors",
                 folderId === folder.id ? "text-blue-500" : "",
                 isSameRoot(allFolders, dragOverFolderId, rootFolderId) &&
-                  dragOverFolderId === folder.id &&
-                  "bg-blue-50"
+                dragOverFolderId === folder.id &&
+                "bg-blue-50"
               )}
               onClick={() => toggleFolder(folder)}
             >
@@ -260,7 +262,6 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                 label={"Create folder"}
                 onClick={() => {
                   setCreatePopup(true);
-                  setMenuOpenFolderId(null);
                 }}
               />
               {level > 0 && (
