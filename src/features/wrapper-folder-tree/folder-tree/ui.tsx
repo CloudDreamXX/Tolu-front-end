@@ -69,19 +69,6 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setMenuOpenFolderId((prev) => prev);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
     if (!documentId) return;
     if (expandedForDocRef.current === documentId) return;
     if (!allFolders?.length) return;
