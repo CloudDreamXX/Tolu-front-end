@@ -24,10 +24,7 @@ import {
 } from "./basic-information-form";
 import { SocialFactorsForm, socialFactorsSchema } from "./social-factors";
 
-import {
-  ConsentSubmissionForm,
-  consentSubmissionSchema,
-} from "./consent-and-submission";
+import { consentSubmissionSchema } from "./consent-and-submission";
 import {
   HealthStatusHistoryForm,
   healthStatusHistorySchema,
@@ -461,8 +458,12 @@ export const HealthProfileForm = () => {
       fertility_concerns: v.fertilityConcerns,
       birth_control_use: v.birthControlUse,
 
-      blood_sugar_concerns: v.bloodSugarConcern === "Other" ? v.bloodSugarOther : v.bloodSugarConcern,
-      digestive_issues: v.digestiveIssues === "Other" ? v.digestiveOther : v.digestiveIssues,
+      blood_sugar_concerns:
+        v.bloodSugarConcern === "Other"
+          ? v.bloodSugarOther
+          : v.bloodSugarConcern,
+      digestive_issues:
+        v.digestiveIssues === "Other" ? v.digestiveOther : v.digestiveIssues,
       recent_lab_tests: v.recentLabTests === "Yes",
 
       health_goals: v.goals,
@@ -490,8 +491,6 @@ export const HealthProfileForm = () => {
     const blob = new Blob([byteArray], { type: contentType });
     return new File([blob], filename, { type: contentType });
   };
-
-  console.log(form.getValues().recentLabTests)
 
   const submitHealthHistory = async (
     vals: BaseValues,
@@ -870,9 +869,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                      setIsOpen(false);
-                      setConfirmOpen(true);
-                    }
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
                 }
               >
                 Cancel

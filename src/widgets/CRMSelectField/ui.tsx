@@ -117,9 +117,7 @@ export const SelectField = ({
               position: "absolute",
             }}
           >
-            <ul
-              className={`space-y-2 ${className || ""}`}
-            >
+            <ul className={`space-y-2 ${className || ""}`}>
               {options.map(({ value, label, tooltip }) => (
                 <li
                   key={value}
