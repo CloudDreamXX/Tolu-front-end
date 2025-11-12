@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { TooltipWrapper } from "shared/ui/TooltipWrapper";
@@ -30,47 +30,42 @@ export const SelectField = ({
 }) => {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLUListElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [coords, setCoords] = useState<{
     top: number;
     left: number;
     width: number;
-  }>({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
+  } | null>(null);
 
-useEffect(() => {
-  if (open && buttonRef.current && dropdownRef.current) {
-    const rect = buttonRef.current.getBoundingClientRect();
-    const dropdownRect = dropdownRef.current.getBoundingClientRect();
+  useLayoutEffect(() => {
+    if (open && buttonRef.current && dropdownRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const dropdownRect = dropdownRef.current.getBoundingClientRect();
 
-    const gap = 6;
-    const viewportHeight = window.innerHeight;
+      const gap = 6;
+      const viewportHeight = window.innerHeight;
 
-    const spaceBelow = viewportHeight - rect.bottom;
-    const spaceAbove = rect.top;
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
 
-    let top = rect.bottom + gap;
+      let top = rect.bottom + window.scrollY + gap;
 
-    if (dropdownPosition) {
-      const openUp =
-        spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
+      if (dropdownPosition) {
+        const openUp =
+          spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
 
-      top = openUp
-        ? rect.top - dropdownRect.height - gap
-        : rect.bottom + gap;
+        top = openUp
+          ? rect.top + window.scrollY - dropdownRect.height - gap
+          : rect.bottom + window.scrollY + gap;
+      }
+
+      setCoords({
+        top,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
     }
-
-    setCoords({
-      top,
-      left: rect.left, 
-      width: rect.width,
-    });
-  }
-}, [open, dropdownPosition]);
-
+  }, [open, dropdownPosition]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -81,6 +76,7 @@ useEffect(() => {
         !dropdownRef.current?.contains(target)
       ) {
         setOpen(false);
+        setCoords(null);
       }
     };
 
@@ -110,39 +106,44 @@ useEffect(() => {
 
       {open &&
         createPortal(
-          <ul
+          <div
             ref={dropdownRef}
-            className={`absolute z-[9999] max-h-[400px] overflow-y-auto mt-[4px] w-full bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-2 ${className || ""}`}
+            onClick={(e) => e.stopPropagation()}
+            className={`absolute z-[9999] max-h-[400px] overflow-y-auto bg-[#F9FAFB] rounded-[18px] shadow-[0_4px_8px_rgba(0,0,0,0.25)] p-[12px] space-y-8`}
             style={{
-              top: coords.top,
-              left: coords.left,
-              width: coords.width,
+              top: coords?.top,
+              left: coords?.left,
+              width: coords?.width,
               position: "absolute",
             }}
           >
-            {options.map(({ value, label, tooltip }) => (
-              <li
-                key={value}
-                className="cursor-pointer px-[12px] py-[8px] border border-white hover:border-[#1D1D1F] rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center justify-between gap-2"
-                onClick={() => {
-                  onChange(value);
-                  setOpen(false);
-                }}
-              >
-                <span>{label}</span>
-                {tooltip && (
-                  <TooltipWrapper content={tooltip}>
-                    <MaterialIcon
-                      iconName="help"
-                      size={16}
-                      fill={1}
-                      className="text-[#1C63DB] opacity-80 hover:opacity-100 transition-opacity"
-                    />
-                  </TooltipWrapper>
-                )}
-              </li>
-            ))}
-          </ul>,
+            <ul
+              className={`space-y-2 ${className || ""}`}
+            >
+              {options.map(({ value, label, tooltip }) => (
+                <li
+                  key={value}
+                  className="cursor-pointer px-[12px] py-[8px] border border-white hover:border-[#1D1D1F] rounded-[8px] text-[14px] text-[#1D1D1F] font-semibold bg-white flex items-center justify-between gap-2"
+                  onClick={() => {
+                    onChange(value);
+                    setOpen(false);
+                  }}
+                >
+                  <span>{label}</span>
+                  {tooltip && (
+                    <TooltipWrapper content={tooltip}>
+                      <MaterialIcon
+                        iconName="help"
+                        size={16}
+                        fill={1}
+                        className="text-[#1C63DB] opacity-80 hover:opacity-100 transition-opacity"
+                      />
+                    </TooltipWrapper>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>,
           document.body
         )}
     </div>
