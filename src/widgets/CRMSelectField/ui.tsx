@@ -41,35 +41,36 @@ export const SelectField = ({
     width: 0,
   });
 
-  useEffect(() => {
-    if (open && buttonRef.current && dropdownRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      const dropdownRect = dropdownRef.current.getBoundingClientRect();
+useEffect(() => {
+  if (open && buttonRef.current && dropdownRef.current) {
+    const rect = buttonRef.current.getBoundingClientRect();
+    const dropdownRect = dropdownRef.current.getBoundingClientRect();
 
-      const gap = 6;
-      const viewportHeight = window.innerHeight;
+    const gap = 6;
+    const viewportHeight = window.innerHeight;
 
-      const spaceBelow = viewportHeight - rect.bottom;
-      const spaceAbove = rect.top;
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
 
-      let top = rect.bottom + window.scrollY + gap;
+    let top = rect.bottom + gap;
 
-      if (dropdownPosition) {
-        const openUp =
-          spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
+    if (dropdownPosition) {
+      const openUp =
+        spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
 
-        top = openUp
-          ? rect.top + window.scrollY - dropdownRect.height - gap
-          : rect.bottom + window.scrollY + gap;
-      }
-
-      setCoords({
-        top,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
+      top = openUp
+        ? rect.top - dropdownRect.height - gap
+        : rect.bottom + gap;
     }
-  }, [open, dropdownPosition]);
+
+    setCoords({
+      top,
+      left: rect.left, 
+      width: rect.width,
+    });
+  }
+}, [open, dropdownPosition]);
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

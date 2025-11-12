@@ -491,6 +491,8 @@ export const HealthProfileForm = () => {
     return new File([blob], filename, { type: contentType });
   };
 
+  console.log(form.getValues().recentLabTests)
+
   const submitHealthHistory = async (
     vals: BaseValues,
     { partial = false }: { partial?: boolean } = {}
@@ -499,7 +501,7 @@ export const HealthProfileForm = () => {
 
     let labFiles: File[] | undefined;
 
-    if (Array.isArray(vals.labTestFiles)) {
+    if (vals.recentLabTests === "Yes" && Array.isArray(vals.labTestFiles)) {
       if (
         vals.labTestFiles.length > 0 &&
         vals.labTestFiles[0].content &&
