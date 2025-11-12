@@ -172,7 +172,7 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
 
   const filteredClients = useMemo(() => {
     return clients.filter((client) =>
-      client.name.toLowerCase().includes(search.toLowerCase())
+      client.name && client.name.toLowerCase().includes(search.toLowerCase()) || client.first_name.toLowerCase().includes(search.toLowerCase()) || client.last_name.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, clients]);
 
@@ -393,15 +393,15 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
             <MaterialIcon iconName="account_circle" size={24} fill={1} />
             {(selectedClients.length > 0 ||
               tempSelectedClients.values.length > 0) && (
-              <Badge
-                variant="destructive"
-                className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
-              >
-                {selectedClients.length > 0
-                  ? selectedClients.length
-                  : tempSelectedClients.values.length}
-              </Badge>
-            )}
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
+                >
+                  {selectedClients.length > 0
+                    ? selectedClients.length
+                    : tempSelectedClients.values.length}
+                </Badge>
+              )}
           </Button>
         )}
       </PopoverTrigger>
@@ -440,11 +440,11 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
                     className={cn(
                       !multiple && "w-4 h-4 border-gray-300 rounded-full",
                       tempSelectedClients.has(client.client_id) &&
-                        "border-gray-600"
+                      "border-gray-600"
                     )}
                     checkClassName={cn(
                       !multiple &&
-                        "min-w-2.5 w-2.5 h-2.5 border-gray-300 rounded-full bg-gray-600 text-gray-600"
+                      "min-w-2.5 w-2.5 h-2.5 border-gray-300 rounded-full bg-gray-600 text-gray-600"
                     )}
                     customCheck={!multiple}
                   />

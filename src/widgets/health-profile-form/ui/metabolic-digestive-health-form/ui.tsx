@@ -26,6 +26,7 @@ export const metabolicDigestiveHealthSchema = z.object({
 export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const files: File[] = form.watch("labTestFiles") || [];
+  console.log(form.getValues())
 
   return (
     <div className="space-y-6">

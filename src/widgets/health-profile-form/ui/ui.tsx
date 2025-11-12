@@ -64,7 +64,7 @@ const steps = [
   "Women’s Health",
   "Metabolic & Digestive Health",
   "Drives and Goals",
-  "Consent & Submission",
+  // "Consent & Submission",
 ];
 
 export const baseFormSchema = basicInformationSchema
@@ -461,8 +461,8 @@ export const HealthProfileForm = () => {
       fertility_concerns: v.fertilityConcerns,
       birth_control_use: v.birthControlUse,
 
-      blood_sugar_concerns: v.bloodSugarOther,
-      digestive_issues: v.digestiveOther,
+      blood_sugar_concerns: v.bloodSugarConcern === "Other" ? v.bloodSugarOther : v.bloodSugarConcern,
+      digestive_issues: v.digestiveIssues === "Other" ? v.digestiveOther : v.digestiveIssues,
       recent_lab_tests: v.recentLabTests === "Yes",
 
       health_goals: v.goals,
@@ -815,7 +815,7 @@ export const HealthProfileForm = () => {
                 />
               </Section>
 
-              <Section title="Consent & Submission">
+              {/* <Section title="Consent & Submission">
                 <SummaryRow
                   label="Agree to privacy"
                   value={fmtBool(values.agreeToPrivacy) as string}
@@ -824,7 +824,7 @@ export const HealthProfileForm = () => {
                   label="Follow-up method"
                   value={values.followUpMethod ?? ""}
                 />
-              </Section>
+              </Section> */}
             </div>
           </>
         ) : (
@@ -856,7 +856,7 @@ export const HealthProfileForm = () => {
                   <MetabolicDigestiveHealthForm form={form} />
                 )}
                 {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
-                {currentStep === 8 && <ConsentSubmissionForm form={form} />}
+                {/* {currentStep === 8 && <ConsentSubmissionForm form={form} />} */}
               </Form>
             </div>
 
@@ -868,9 +868,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                        setIsOpen(false);
-                        setConfirmOpen(true);
-                      }
+                      setIsOpen(false);
+                      setConfirmOpen(true);
+                    }
                 }
               >
                 Cancel
