@@ -117,7 +117,7 @@ export interface SharedCoachContentByContentIdResponse {
 export interface CoachListItem {
   relationship_id: string;
   coach_id: string;
-  basic_info?: { name?: string };
+  basic_info?: { name?: string, first_name?: string, last_name?: string };
   profile?: { bio?: string; headshot_url?: string };
 }
 

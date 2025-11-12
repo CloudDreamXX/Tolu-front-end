@@ -604,7 +604,7 @@ export const LibraryClientContent = () => {
               ) : coaches?.coaches.length ? (
                 <ul className="p-2">
                   {coaches?.coaches.map((c) => {
-                    const name = c.basic_info?.name;
+                    const name = (c?.basic_info?.first_name && `${c?.basic_info?.first_name.slice(0, 1)} ${c?.basic_info?.last_name?.slice(0, 1)}`) || c.basic_info?.name;
                     const photo = photoUrls[c.coach_id];
 
                     return (
@@ -656,7 +656,7 @@ export const LibraryClientContent = () => {
                     className="object-cover w-full h-full"
                   />
                 ) : (
-                  (selectedCoach?.basic_info?.name || "C")
+                  ((coachProfileData?.basic_info?.first_name && `${coachProfileData?.basic_info?.first_name.slice(0, 1)}${coachProfileData?.basic_info?.last_name.slice(0, 1)}`) || selectedCoach?.basic_info?.name || "C")
                     .slice(0, 2)
                     .toUpperCase()
                 )}
@@ -664,7 +664,7 @@ export const LibraryClientContent = () => {
 
               <div className="min-w-0">
                 <div className="text-base font-semibold truncate">
-                  {coachProfiles[selectedCoachId!]?.basic_info?.name ||
+                  {(coachProfileData?.basic_info?.first_name && `${coachProfileData?.basic_info?.first_name} ${coachProfileData?.basic_info?.last_name}`) ||
                     selectedCoach?.basic_info?.name ||
                     "Coach"}
                 </div>
