@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useEffect } from "react";
-import { useGetAllUsersQuery, User } from "entities/admin";
+import { useDeleteUserMutation, useGetAllUsersQuery, User } from "entities/admin";
 import { phoneMask, toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { fmtDate } from "pages/feedback-hub";
@@ -27,12 +27,14 @@ const defaultFilters: UserFilters = {
 export const UserManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
-  const { data, isLoading, error } = useGetAllUsersQuery();
+  const { data, isLoading, error, refetch } = useGetAllUsersQuery();
   const usersData: User[] = data?.users ?? [];
   const [isFiltersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<UserFilters>(defaultFilters);
   const [draftFilters, setDraftFilters] = useState<UserFilters>(defaultFilters);
   const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
+  const [deleteUser] = useDeleteUserMutation();
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const filteredUsers = useMemo(() => {
@@ -156,25 +158,26 @@ export const UserManagement: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    // if (!selectedClient) return;
+    if (!selectedUserId) return;
 
-    // try {
-    //   await deleteClient(selectedClient.client_info.id);
-    //   refetchClients();
-    //   toast({
-    //     title: "Deleted successfully",
-    //   });
-    // } catch (err) {
-    //   console.error("Failed to delete client", err);
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Failed to delete client",
-    //     description: "Failed to delete client. Please try again.",
-    //   });
-    // } finally {
-    //   setConfirmDelete(false);
-    //   cleanState();
-    // }
+    try {
+      await deleteUser({ userId: selectedUserId }).unwrap();
+      refetch()
+
+      toast({
+        title: "User deleted",
+        description: "The user has been removed successfully.",
+      });
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Failed to delete user",
+        description: err?.data?.detail || "Please try again.",
+      });
+    } finally {
+      setConfirmDelete(false);
+      setSelectedUserId(null);
+    }
   };
 
   return (
@@ -272,6 +275,7 @@ export const UserManagement: React.FC = () => {
                           <button
                             className="flex items-center gap-[8px] w-full text-left"
                             onClick={async () => {
+                              setSelectedUserId(user.id);
                               setConfirmDelete(true);
                               setDeleteMenuId(null);
                             }}

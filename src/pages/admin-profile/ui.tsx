@@ -1,7 +1,9 @@
+import { useChangeOwnPasswordMutation } from "entities/admin";
 import { Card, Field } from "pages/content-manager/profile";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { StrengthMeter } from "shared/lib/utils/passwordChecker";
+import { toast } from "shared/lib";
+import { checkPasswordStrength, StrengthMeter } from "shared/lib/utils/passwordChecker";
 import { Button, Input } from "shared/ui";
 
 function getStoredUser() {
@@ -31,6 +33,36 @@ export const AdminProfile = () => {
     const [oldPassword, setOldPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    const result = useMemo(
+        () => checkPasswordStrength(newPassword),
+        [newPassword]
+    );
+
+    const [changeOwnPassword] = useChangeOwnPasswordMutation();
+
+    const handleChangePassword = async (oldPass: string, newPass: string) => {
+        try {
+            await changeOwnPassword({
+                old_password: oldPass,
+                new_password: newPass
+            }).unwrap();
+
+            toast({
+                title: "Password successfully changed!",
+            });
+
+            setOldPassword("");
+            setNewPassword("");
+        } catch (err: any) {
+            console.error(err)
+            toast({
+                variant: "destructive",
+                title: "Failed to change password",
+                description: "Please try again later.",
+            });
+        }
+    };
 
     return (
         <div className="p-[16px] md:p-[24px] xl:py-[32px] xl:px-[24px] flex flex-col gap-[24px] md:gap-[32px] overflow-y-auto">
@@ -116,34 +148,34 @@ export const AdminProfile = () => {
                                         />
                                     </button>
                                 </div>
-                                {/* <div className="w-full lg:w-[70%]">
-                                {newPassword && (
-                                    <StrengthMeter
-                                        level={result.level as 0 | 1 | 2 | 3}
-                                        label={result.label}
-                                    />
-                                )}
+                                <div className="w-full lg:w-[70%]">
+                                    {newPassword && (
+                                        <StrengthMeter
+                                            level={result.level as 0 | 1 | 2 | 3}
+                                            label={result.label}
+                                        />
+                                    )}
 
-                                {newPassword && !result.isValid && (
-                                    <ul
-                                        id="password-help"
-                                        className="mt-2 list-disc pl-2 text-xs  text-[#6B7280]"
-                                    >
-                                        {result.feedback.map((f) => (
-                                            <li key={f}>{f}</li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div> */}
+                                    {newPassword && !result.isValid && (
+                                        <ul
+                                            id="password-help"
+                                            className="mt-2 list-disc pl-2 text-xs  text-[#6B7280]"
+                                        >
+                                            {result.feedback.map((f) => (
+                                                <li key={f}>{f}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
                             </div>
                         </div>
                         <Button
                             variant="brightblue"
                             className="mt-3 w-full md:w-[250px] disabled:opacity-[0.5] disabled:bg-slate-400 disabled:text-slate-900"
-                        // onClick={() => handleChangePassword(oldPassword, newPassword)}
-                        // disabled={
-                        //     oldPassword === "" || newPassword === "" || !result.isValid
-                        // }
+                            onClick={() => handleChangePassword(oldPassword, newPassword)}
+                            disabled={
+                                oldPassword === "" || newPassword === "" || !result.isValid
+                            }
                         >
                             Change
                         </Button>
