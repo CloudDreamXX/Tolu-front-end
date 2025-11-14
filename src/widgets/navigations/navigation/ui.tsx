@@ -17,6 +17,7 @@ type Props = {
 export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const token = useSelector((state: RootState) => state.user.token);
+  console.log(pageLocation)
 
   const nav = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -151,7 +152,11 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 <button
                   onClick={() => {
                     setMenuMobOpen(false);
-                    nav("/content-manager/profile");
+                    if (pageLocation === "user-management") {
+                      nav("/admin/profile");
+                    } else {
+                      nav("/content-manager/profile");
+                    }
                   }}
                   className="flex gap-4 items-center pl-4 bg-[#F3F6FB] w-full py-[8px] px-[16px] rounded-[8px] justify-between"
                 >
@@ -198,7 +203,11 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
             <button
               onClick={() => {
                 setMenuOpen(false);
-                nav("/content-manager/profile");
+                if (pageLocation === "user-management") {
+                  nav("/admin/profile");
+                } else {
+                  nav("/content-manager/profile");
+                }
               }}
               className="flex items-center gap-3 px-4 py-2 text-gray-800 rounded-lg hover:bg-gray-100"
             >
