@@ -10,6 +10,7 @@ import {
 import { ChatMessageModel } from "entities/chat";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store/lib";
+import { ChangePasswordRequest } from "entities/user";
 
 export const adminApi = createApi({
   reducerPath: "adminApi",
@@ -124,6 +125,26 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ["Content"],
     }),
+
+    deleteUser: builder.mutation<any, { userId: string }>({
+      query: ({ userId }) => ({
+        url: API_ROUTES.ADMIN.DELETE_USER.replace("{user_id}", userId),
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    changeOwnPassword: builder.mutation<
+      any,
+      ChangePasswordRequest
+    >({
+      query: (body) => ({
+        url: API_ROUTES.ADMIN.CHANGE_PASSWORD,
+        method: "POST",
+        body,
+      }),
+    }),
+
   }),
 });
 
@@ -138,4 +159,6 @@ export const {
   useLazyGetFoldersStructureQuery,
   useGetUnpublishedContentQuery,
   useManageContentMutation,
+  useDeleteUserMutation,
+  useChangeOwnPasswordMutation,
 } = adminApi;

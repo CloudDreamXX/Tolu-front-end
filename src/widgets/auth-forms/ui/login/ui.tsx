@@ -25,6 +25,7 @@ import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-
 import { mapOnboardClientToFormState } from "entities/store/helpers";
 import { findIncompleteClientField } from "widgets/OnboardingClient/DemographicStep/helpers";
 import { usePageWidth } from "shared/lib";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "shared/ui/input-otp";
 
 export const LoginForm = () => {
   const [login] = useLoginMutation();
@@ -407,11 +408,10 @@ export const LoginForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={formDataChangeHandler}
-                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${
-                    loginError
+                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${loginError
                       ? "border border-[#FF1F0F]"
                       : "border border-[#DFDFDF]"
-                  }`}
+                    }`}
                 />
                 {loginError && (
                   <p className="text-[#FF1F0F] text-[14px]">{loginError}</p>
@@ -430,11 +430,10 @@ export const LoginForm = () => {
                     placeholder="Enter Password"
                     name="password"
                     onChange={formDataChangeHandler}
-                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${
-                      passwordError
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${passwordError
                         ? "border border-[#FF1F0F]"
                         : "border border-[#DFDFDF] focus:border-[#1C63DB]"
-                    }`}
+                      }`}
                   />
                   {formData.password && (
                     <button
@@ -463,46 +462,24 @@ export const LoginForm = () => {
                   Verification Code
                 </label>
 
-                <div className="flex justify-between w-full max-w-[320px] gap-[8px]">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <input
-                      key={i}
-                      type="text"
-                      maxLength={1}
-                      inputMode="text"
-                      pattern="[A-Za-z0-9]"
-                      className="w-[44px] h-[56px] text-[24px] font-semibold text-center border border-[#DFDFDF] rounded-[8px] focus:border-[#1C63DB] focus:outline-none"
-                      value={formData.code[i] || ""}
-                      onChange={(e) => {
-                        const val = e.target.value.toUpperCase();
-                        if (!/^[A-Za-z0-9]?$/.test(val)) return;
-                        const newCode = formData.code.split("");
-                        newCode[i] = val;
-                        const joined = newCode.join("");
-                        setFormData({ ...formData, code: joined });
-                        if (val && i < 5) {
-                          const next = document.getElementById(
-                            `code-input-${i + 1}`
-                          );
-                          next?.focus();
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (
-                          e.key === "Backspace" &&
-                          !formData.code[i] &&
-                          i > 0
-                        ) {
-                          const prev = document.getElementById(
-                            `code-input-${i - 1}`
-                          );
-                          prev?.focus();
-                        }
-                      }}
-                      id={`code-input-${i}`}
-                    />
-                  ))}
-                </div>
+                <InputOTP
+                  maxLength={6}
+                  value={formData.code}
+                  onChange={(value) => {
+                    setFormData((prev) => ({ ...prev, code: value.toUpperCase() }));
+                  }}
+                  containerClassName="w-full flex justify-center"
+                >
+                  <InputOTPGroup className="gap-2">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <InputOTPSlot
+                        key={index}
+                        index={index}
+                        className="w-[44px] h-[56px] text-[24px] font-semibold border border-[#DFDFDF] rounded-[8px] bg-white focus-within:border-[#1C63DB] focus-within:ring-0"
+                      />
+                    ))}
+                  </InputOTPGroup>
+                </InputOTP>
 
                 {codeError && (
                   <p className="text-[#FF1F0F] text-[14px] font-medium pt-[4px]">
@@ -525,11 +502,10 @@ export const LoginForm = () => {
           <div className="flex flex-col items-center gap-[24px] w-full">
             {isInvitedClient ? (
               <button
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  formData.email && !loginError
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${formData.email && !loginError
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  }`}
                 onClick={handleRequestInvite}
               >
                 Request invite
@@ -537,12 +513,11 @@ export const LoginForm = () => {
             ) : (
               <button
                 type="submit"
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  (!isCodeSent && formData.email) ||
-                  (isCodeSent && formData.code)
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${(!isCodeSent && formData.email) ||
+                    (isCodeSent && formData.code)
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  }`}
               >
                 {loginMode === "2fa"
                   ? isCodeSent

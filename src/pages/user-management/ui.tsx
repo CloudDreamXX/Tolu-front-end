@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from "react";
 import { useEffect } from "react";
-import { useGetAllUsersQuery, User } from "entities/admin";
+import { useDeleteUserMutation, useGetAllUsersQuery, User } from "entities/admin";
 import { phoneMask, toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { fmtDate } from "pages/feedback-hub";
 import { FiltersPopup, UserFilters } from "widgets/filters-popup";
 import { Button } from "shared/ui";
+import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 
 const PAGE_SIZE = 10;
 
@@ -26,11 +27,15 @@ const defaultFilters: UserFilters = {
 export const UserManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
-  const { data, isLoading, error } = useGetAllUsersQuery();
+  const { data, isLoading, error, refetch } = useGetAllUsersQuery();
   const usersData: User[] = data?.users ?? [];
   const [isFiltersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<UserFilters>(defaultFilters);
   const [draftFilters, setDraftFilters] = useState<UserFilters>(defaultFilters);
+  const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
+  const [deleteUser] = useDeleteUserMutation();
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -94,6 +99,26 @@ export const UserManagement: React.FC = () => {
   };
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        deleteMenuId &&
+        !(
+          document
+            .querySelector(`[data-delete-menu-id="${deleteMenuId}"]`)
+            ?.contains(target) ||
+          (event.target as HTMLElement).closest('[data-delete-trigger="true"]')
+        )
+      ) {
+        setDeleteMenuId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [deleteMenuId]);
+
+  useEffect(() => {
     if (error) {
       toast({
         variant: "destructive",
@@ -129,6 +154,29 @@ export const UserManagement: React.FC = () => {
         return "bg-purple-100 text-purple-700";
       default:
         return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedUserId) return;
+
+    try {
+      await deleteUser({ userId: selectedUserId }).unwrap();
+      refetch()
+
+      toast({
+        title: "User deleted",
+        description: "The user has been removed successfully.",
+      });
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Failed to delete user",
+        description: err?.data?.detail || "Please try again.",
+      });
+    } finally {
+      setConfirmDelete(false);
+      setSelectedUserId(null);
     }
   };
 
@@ -173,24 +221,25 @@ export const UserManagement: React.FC = () => {
           {/* Table View for Desktop */}
           <div className="hidden overflow-x-auto md:block">
             <div className="min-w-[1800px]">
-              <div className="grid grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
+              <div className="grid [grid-template-columns:repeat(5,minmax(0,1fr))_30px] bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
                 <div className="px-[4px]">Sign Up date</div>
                 <div className="px-[4px]">Name</div>
                 <div className="px-[4px]">Account type</div>
                 <div className="px-[4px]">Email</div>
                 <div className="px-[4px]">Phone number</div>
+                <div className="px-[4px]"></div>
               </div>
 
               <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
                 {paginatedData.map((user, index) => (
                   <div
                     key={index}
-                    className="grid grid-cols-5 items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
+                    className="grid [grid-template-columns:repeat(5,minmax(0,1fr))_30px] items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
                   >
                     <div className="px-[4px]">
                       {fmtDate(user.signup_date) || "-"}
                     </div>
-                    <div className="px-[4px]">{user.name}</div>
+                    <div className="px-[4px]">{user.first_name ? `${user.first_name} ${user.last_name}` : user.name}</div>
                     <div>
                       <span
                         className={`text-sm font-semibold px-2 py-1 rounded-full ${getRoleStyle(user.role)}`}
@@ -201,6 +250,53 @@ export const UserManagement: React.FC = () => {
                     <div className="px-[4px]">{user.email}</div>
                     <div className="px-[4px]">
                       {user.phone_number ? phoneMask(user.phone_number) : "-"}
+                    </div>
+
+                    <div
+                      className="
+                      w-[50px]
+    px-[4px] 
+    sticky -right-1 
+    bg-white 
+    z-20 
+    flex justify-center 
+    relative
+  "
+                      data-delete-menu-id={user.id}
+                    >
+                      <button
+                        onClick={() =>
+                          setDeleteMenuId(
+                            deleteMenuId === user.id
+                              ? null
+                              : user.id
+                          )
+                        }
+                        className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
+                        data-delete-trigger="true"
+                      >
+                        <MaterialIcon iconName="more_vert" />
+                      </button>
+
+                      {deleteMenuId === user.id && (
+                        <div className="absolute top-[30px] right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50">
+                          <button
+                            className="flex items-center gap-[8px] w-full text-left"
+                            onClick={async () => {
+                              setSelectedUserId(user.id);
+                              setConfirmDelete(true);
+                              setDeleteMenuId(null);
+                            }}
+                          >
+                            <MaterialIcon
+                              iconName="delete"
+                              fill={1}
+                              className="text-[#FF1F0F]"
+                            />
+                            Delete
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -282,11 +378,10 @@ export const UserManagement: React.FC = () => {
             <button
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                page === pageNumber
-                  ? "border-[#1C63DB] text-[#1C63DB]"
-                  : "border-[#DBDEE1] text-black"
-              }`}
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
+                ? "border-[#1C63DB] text-[#1C63DB]"
+                : "border-[#DBDEE1] text-black"
+                }`}
             >
               {pageNumber}
             </button>
@@ -309,6 +404,15 @@ export const UserManagement: React.FC = () => {
           setDraftFilters={setDraftFilters}
           onSave={onApplyFilters}
           onClose={() => setFiltersOpen(false)}
+        />
+      )}
+
+      {confirmDelete && (
+        <ConfirmDeleteModal
+          onCancel={() => {
+            setConfirmDelete(false);
+          }}
+          onDelete={handleDelete}
         />
       )}
     </div>

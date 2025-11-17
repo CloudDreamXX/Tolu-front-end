@@ -155,6 +155,8 @@ export const API_ROUTES = {
     GET_FOLDERS: "/admin/folders/structure",
     GET_UNPUBLISHED_CONTENT: "/admin/content/unpublished",
     MANAGE_CONTENT: "/admin/content/manage",
+    CHANGE_PASSWORD: "/admin/change-own-password",
+    DELETE_USER: "/admin/delete-user/{user_id}",
   },
   SYMPTOMS_TRACKER: {
     POST_SYMPTOMS: "/symptom-tracker/log-symptoms/",
