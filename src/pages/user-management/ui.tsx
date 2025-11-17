@@ -253,7 +253,15 @@ export const UserManagement: React.FC = () => {
                     </div>
 
                     <div
-                      className="px-[4px] relative ml-auto"
+                      className="
+                      w-[50px]
+    px-[4px] 
+    sticky -right-1 
+    bg-white 
+    z-20 
+    flex justify-center 
+    relative
+  "
                       data-delete-menu-id={user.id}
                     >
                       <button
