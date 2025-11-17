@@ -1,3 +1,13 @@
+## [1.5.0] - 2025-11-17
+
+### New feature
+
+- Add super admin profile page.
+- Add abillity for super admin to change password.
+- Add abillity for super admin to delete users.
+- Change password validation to have at least 12 symbols.
+- Reuse shadcn input otp for login with abillity to copy-paste the code.
+
 ## [1.4.1] - 2025-11-12
 
 ### Fixes & Minor Changes
