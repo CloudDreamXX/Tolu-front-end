@@ -4,7 +4,6 @@ import {
   ChangePasswordRequest,
   CheckInviteResponse,
   ClientOnboardingResponse,
-  IRegisterUser,
   IUser,
   MenopauseSubmissionRequest,
   OnboardingStatus,
@@ -14,6 +13,7 @@ import {
   SymptomsResponse,
   UserOnboardingInfo,
   PasswordlessLoginRequest,
+  SignUpDetails,
 } from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { FormState } from "entities/store/clientOnboardingSlice";
@@ -67,7 +67,7 @@ export const userApi = createApi({
       }),
     }),
 
-    registerUser: builder.mutation<any, IRegisterUser>({
+    registerUser: builder.mutation<any, SignUpDetails>({
       query: (userInfo) => ({
         url: API_ROUTES.USER.SIGNUP,
         method: "POST",

@@ -39,7 +39,7 @@ export function checkPasswordStrength(password: string) {
   const labels = ["Weak", "Fair", "Good", "Strong"] as const;
 
   return {
-    isValid: password.length >= minLength && classesCount >= 3, // policy: ≥8 chars & at least 3 of 4 classes
+    isValid: password.length >= minLength && classesCount >= 4, // policy: ≥12 chars & at least 3 of 4 classes
     rawScore,
     level, // 0..3
     label: labels[level], // "Weak" | "Fair" | "Good" | "Strong"

@@ -22,4 +22,9 @@ export const sideBarContent: SideBarItem[] = [
     link: "/admin-messages",
     icon: <MaterialIcon iconName="forum" fill={1} />,
   },
+  {
+    title: "Requests",
+    link: "/admin/requests",
+    icon: <MaterialIcon iconName="person_raised_hand" fill={1} />,
+  },
 ];

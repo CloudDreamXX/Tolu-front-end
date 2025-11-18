@@ -13,7 +13,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "shared/lib/hooks/use-toast";
-import { SelectType, SignUp } from "./components";
+import { OtpScreen, SelectType, SignUp } from "./components";
 
 const isAlreadyAccepted = (err: any) => {
   const status = Number(
@@ -21,9 +21,9 @@ const isAlreadyAccepted = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   const email = String(
     err?.response?.data?.detail?.email ?? err?.response?.data?.email ?? ""
@@ -37,9 +37,9 @@ const isAuthRevoked = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   return (
     status === 403 ||
@@ -62,9 +62,9 @@ const isAlreadyRegistered = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
 
   return status === 409 || msg.includes("already exists");
@@ -88,6 +88,9 @@ export const Register = () => {
   const [inviteSource, setInviteSource] = useState<
     "client" | "referral" | null
   >(null);
+
+  const [stage, setStage] = useState<"otp" | "select" | "form">("otp");
+  const [otpCode, setOtpCode] = useState("");
 
   const { token } = useParams();
   const dispatch = useDispatch();
@@ -251,7 +254,10 @@ export const Register = () => {
     dispatch(setRoleID({ roleID: dataBE.roleID }));
 
     try {
-      const res = await registerUser(dataBE).unwrap();
+      const res = await registerUser({
+        user: dataBE,
+        access_code: otpCode,
+      }).unwrap();
 
       if (res?.user && res.accessToken) {
         dispatch(
@@ -295,11 +301,6 @@ export const Register = () => {
     }
   };
 
-  const handleCardClick = (user: string) => {
-    setFormData((prev) => ({ ...prev, accountType: user }));
-    setInviteSource(null);
-  };
-
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -317,14 +318,30 @@ export const Register = () => {
         </aside>
       </div>
       <div className="w-full px-[16px] py-[24px] mt-[40px] md:p-0 md:pb-[24px] md:pt-[63px] md:mt-0 flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
-        {formData.accountType.length > 1 ? (
+        {stage === "otp" && (
+          <OtpScreen
+            setStage={setStage}
+            otpCode={otpCode}
+            setOtpCode={setOtpCode}
+          />
+        )}
+
+        {stage === "select" && (
+          <SelectType
+            formData={formData}
+            handleCardClick={(type) => {
+              setFormData({ ...formData, accountType: type });
+              setStage("form");
+            }}
+          />
+        )}
+
+        {stage === "form" && (
           <SignUp
             formData={formData}
             handleSubmit={handleSubmit}
             formDataChangeHandler={formDataChangeHandler}
           />
-        ) : (
-          <SelectType formData={formData} handleCardClick={handleCardClick} />
         )}
       </div>
     </div>

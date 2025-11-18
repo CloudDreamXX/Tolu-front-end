@@ -26,7 +26,15 @@ export const adminApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Users", "Chats", "Messages", "Feedback", "Folders", "Content"],
+  tagTypes: [
+    "Users",
+    "Chats",
+    "Messages",
+    "Feedback",
+    "Folders",
+    "Content",
+    "Requests",
+  ],
   endpoints: (builder) => ({
     getAllUsers: builder.query<UsersResponse, void>({
       query: () => API_ROUTES.ADMIN.GET_ALL_USERS,
@@ -134,10 +142,7 @@ export const adminApi = createApi({
       invalidatesTags: ["Users"],
     }),
 
-    changeOwnPassword: builder.mutation<
-      any,
-      ChangePasswordRequest
-    >({
+    changeOwnPassword: builder.mutation<any, ChangePasswordRequest>({
       query: (body) => ({
         url: API_ROUTES.ADMIN.CHANGE_PASSWORD,
         method: "POST",
@@ -145,6 +150,29 @@ export const adminApi = createApi({
       }),
     }),
 
+    getAllAccessRequests: builder.query<any, void>({
+      query: () => API_ROUTES.ADMIN.GET_ALL_REQUESTS,
+      providesTags: ["Requests"],
+    }),
+
+    approveRequest: builder.mutation<any, { request_id: string }>({
+      query: ({ request_id }) => ({
+        url: API_ROUTES.ADMIN.APPROVE_REQUEST.replace(
+          "{request_id}",
+          request_id
+        ),
+        method: "POST",
+      }),
+      invalidatesTags: ["Requests"],
+    }),
+
+    denyRequest: builder.mutation<any, { request_id: string }>({
+      query: ({ request_id }) => ({
+        url: API_ROUTES.ADMIN.DENY_REQUEST.replace("{request_id}", request_id),
+        method: "POST",
+      }),
+      invalidatesTags: ["Requests"],
+    }),
   }),
 });
 
@@ -161,4 +189,7 @@ export const {
   useManageContentMutation,
   useDeleteUserMutation,
   useChangeOwnPasswordMutation,
+  useGetAllAccessRequestsQuery,
+  useApproveRequestMutation,
+  useDenyRequestMutation,
 } = adminApi;

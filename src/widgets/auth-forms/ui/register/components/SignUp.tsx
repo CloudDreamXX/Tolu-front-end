@@ -44,8 +44,8 @@ const signUpSchema = z
       .min(10, "Phone number is too short")
       .max(15, "Phone number is too long")
       .regex(/^\d+$/, "Phone number must contain digits only"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    password: z.string().min(12, "Password must be at least 12 characters"),
+    newPassword: z.string().min(12, "Password must be at least 12 characters"),
     country: z.string().min(1, "Country of residence is required"),
     state: z.string().optional(),
   })

@@ -17,7 +17,6 @@ type Props = {
 export const Navigation: React.FC<Props> = ({ pageLocation }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const token = useSelector((state: RootState) => state.user.token);
-  console.log(pageLocation)
 
   const nav = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);

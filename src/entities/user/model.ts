@@ -17,6 +17,11 @@ export interface IUser {
   onboarding_filled?: string;
 }
 
+export interface SignUpDetails {
+  user: IRegisterUser;
+  access_code: string;
+}
+
 export interface IRegisterUser {
   first_name: string;
   last_name: string;

@@ -157,6 +157,9 @@ export const API_ROUTES = {
     MANAGE_CONTENT: "/admin/content/manage",
     CHANGE_PASSWORD: "/admin/change-own-password",
     DELETE_USER: "/admin/delete-user/{user_id}",
+    GET_ALL_REQUESTS: "/admin/access-requests",
+    APPROVE_REQUEST: "/admin/access-requests/{request_id}/approve",
+    DENY_REQUEST: "/admin/access-requests/{request_id}/deny",
   },
   SYMPTOMS_TRACKER: {
     POST_SYMPTOMS: "/symptom-tracker/log-symptoms/",

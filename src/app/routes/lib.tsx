@@ -54,6 +54,7 @@ import { usePageWidth } from "shared/lib";
 import { SymptomsSeverity } from "widgets/OnboardingClient/SymptomsSeverity";
 import { CheckInvite } from "widgets/auth-forms/ui/check-invite";
 import { AdminProfile } from "pages/admin-profile";
+import { AdminRequests } from "pages/admin-requests";
 
 export const AppRoutes = () => {
   const { isMobileOrTablet } = usePageWidth();
@@ -239,10 +240,8 @@ export const AppRoutes = () => {
         <Route path="/feedback" element={<FeedbackHub />} />
         <Route path="/feedback/details" element={<FeedbackDetails />} />
         <Route path="/admin-messages/:chatId?" element={<AdminMessages />} />
-        <Route
-          path="/admin/profile"
-          element={<AdminProfile />}
-        />
+        <Route path="/admin/profile" element={<AdminProfile />} />
+        <Route path="/admin/requests" element={<AdminRequests />} />
       </Route>
 
       {/* 404 route */}

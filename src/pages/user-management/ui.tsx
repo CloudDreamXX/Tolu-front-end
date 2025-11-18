@@ -1,6 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { useEffect } from "react";
-import { useDeleteUserMutation, useGetAllUsersQuery, User } from "entities/admin";
+import {
+  useDeleteUserMutation,
+  useGetAllUsersQuery,
+  User,
+} from "entities/admin";
 import { phoneMask, toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { fmtDate } from "pages/feedback-hub";
@@ -162,7 +166,7 @@ export const UserManagement: React.FC = () => {
 
     try {
       await deleteUser({ userId: selectedUserId }).unwrap();
-      refetch()
+      refetch();
 
       toast({
         title: "User deleted",
@@ -239,7 +243,11 @@ export const UserManagement: React.FC = () => {
                     <div className="px-[4px]">
                       {fmtDate(user.signup_date) || "-"}
                     </div>
-                    <div className="px-[4px]">{user.first_name ? `${user.first_name} ${user.last_name}` : user.name}</div>
+                    <div className="px-[4px]">
+                      {user.first_name
+                        ? `${user.first_name} ${user.last_name}`
+                        : user.name}
+                    </div>
                     <div>
                       <span
                         className={`text-sm font-semibold px-2 py-1 rounded-full ${getRoleStyle(user.role)}`}
@@ -267,9 +275,7 @@ export const UserManagement: React.FC = () => {
                       <button
                         onClick={() =>
                           setDeleteMenuId(
-                            deleteMenuId === user.id
-                              ? null
-                              : user.id
+                            deleteMenuId === user.id ? null : user.id
                           )
                         }
                         className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
@@ -378,10 +384,11 @@ export const UserManagement: React.FC = () => {
             <button
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
-                ? "border-[#1C63DB] text-[#1C63DB]"
-                : "border-[#DBDEE1] text-black"
-                }`}
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                page === pageNumber
+                  ? "border-[#1C63DB] text-[#1C63DB]"
+                  : "border-[#DBDEE1] text-black"
+              }`}
             >
               {pageNumber}
             </button>

@@ -137,6 +137,7 @@ export const icons = [
   "stop",
   "stop_circle",
   "arrow_range",
+  "person_raised_hand",
 ] as const;
 
 export type IconName = (typeof icons)[number];

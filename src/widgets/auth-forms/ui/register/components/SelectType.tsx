@@ -64,7 +64,7 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
           </div>
         </button>
       </div>
-      <div className="flex flex-col w-full md:w-[250px] items-center gap-[24px] slef-stretch">
+      <div className="flex flex-col w-full md:w-[250px] items-center gap-[24px]">
         <button
           type="button"
           onClick={() => handleCardClick(cardActive)}
