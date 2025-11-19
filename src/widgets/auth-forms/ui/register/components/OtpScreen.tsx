@@ -3,13 +3,13 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "shared/ui/input-otp";
 type Props = {
   otpCode: string;
   setOtpCode: React.Dispatch<React.SetStateAction<string>>;
-  setStage: React.Dispatch<React.SetStateAction<"otp" | "select" | "form">>;
+  handleCodeSend: () => Promise<void>;
 };
 
 export const OtpScreen: React.FC<Props> = ({
   otpCode,
   setOtpCode,
-  setStage,
+  handleCodeSend,
 }) => {
   return (
     <div className="flex flex-col w-full md:w-[450px] gap-[32px] mt-[80px]">
@@ -38,12 +38,11 @@ export const OtpScreen: React.FC<Props> = ({
         </InputOTP>
 
         <button
-          onClick={() => setStage("select")}
-          className={`flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full text-[16px] font-semibold ${
-            otpCode.length === 6
+          onClick={handleCodeSend}
+          className={`flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full text-[16px] font-semibold ${otpCode.length === 6
               ? "bg-[#1C63DB] text-white"
               : "bg-[#D5DAE2] text-[#5F5F65]"
-          }`}
+            }`}
         >
           Continue
         </button>

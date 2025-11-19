@@ -6,6 +6,7 @@ import {
   logout,
   setCredentials,
   setRoleID,
+  useAccessCodeRequestMutation,
   useLazyGetReferralInvitationQuery,
   useRegisterUserMutation,
 } from "entities/user";
@@ -103,6 +104,7 @@ export const Register = () => {
   } = useGetInvitationDetailsQuery(token ?? "", { skip: !token });
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [getReferralInvitation] = useLazyGetReferralInvitationQuery();
+  const [accessCodeRequest] = useAccessCodeRequestMutation();
 
   const [registerUser] = useRegisterUserMutation();
 
@@ -305,6 +307,31 @@ export const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleCodeSend = async () => {
+    try {
+      const res = await accessCodeRequest({ access_code: otpCode }).unwrap()
+
+      if (res.success) {
+        setStage("select")
+      } else {
+        toast({
+          title: "Invalid access code",
+          description:
+            "Please check your code or send a request again.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error("Error sending access code:", err);
+      toast({
+        title: "Invalid access code",
+        description:
+          "Please check your code or send a request again.",
+        variant: "destructive",
+      });
+    }
+  }
+
   return (
     <div className="flex flex-col w-full min-h-screen xl:flex-row">
       <div className="w-full xl:max-w-[550px] 2xl:max-w-[665px] h-[150px] xl:h-auto bg-[#1C63DB] flex justify-center items-center xl:px-6 xl:px-[76.5px]">
@@ -320,7 +347,7 @@ export const Register = () => {
       <div className="w-full px-[16px] py-[24px] mt-[40px] md:p-0 md:pb-[24px] md:pt-[63px] md:mt-0 flex justify-center items-center self-stretch flex-1 bg-[linear-gradient(0deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 100%), #FFF]">
         {stage === "otp" && (
           <OtpScreen
-            setStage={setStage}
+            handleCodeSend={handleCodeSend}
             otpCode={otpCode}
             setOtpCode={setOtpCode}
           />

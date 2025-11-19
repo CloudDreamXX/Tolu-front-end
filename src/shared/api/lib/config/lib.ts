@@ -21,6 +21,7 @@ export const API_ROUTES = {
     CHECK_PENDING_INVITE: "/client/check-pending-invite",
     REQUEST_PASSWORDLESS_LOGIN: "/user/email-login",
     VERIFY_PASSWORDLESS_LOGIN: "/user/verify-login",
+    ACCESS_CODE_REQUEST: "/access-request/code-exist",
   },
   CLIENT: {
     GET_INVITATION_DETAILS: "/client/invitation-details/{token}",

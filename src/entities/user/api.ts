@@ -14,6 +14,7 @@ import {
   UserOnboardingInfo,
   PasswordlessLoginRequest,
   SignUpDetails,
+  AccessCodeRequest,
 } from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { FormState } from "entities/store/clientOnboardingSlice";
@@ -289,6 +290,14 @@ export const userApi = createApi({
         body: data,
       }),
     }),
+
+    accessCodeRequest: builder.mutation<any, AccessCodeRequest>({
+      query: (data) => ({
+        url: API_ROUTES.USER.ACCESS_CODE_REQUEST,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -326,4 +335,5 @@ export const {
   useLazyDownloadProfilePhotoQuery,
   useRequestPasswordlessLoginMutation,
   useVerifyPasswordlessLoginMutation,
+  useAccessCodeRequestMutation
 } = userApi;

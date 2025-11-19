@@ -255,3 +255,7 @@ export interface VerifyPasswordlessLogin {
   email: string;
   code: string;
 }
+
+export interface AccessCodeRequest {
+  access_code: string;
+}
