@@ -161,7 +161,7 @@ export const adminApi = createApi({
           "{request_id}",
           request_id
         ),
-        method: "POST",
+        method: "PUT",
       }),
       invalidatesTags: ["Requests"],
     }),
@@ -169,7 +169,7 @@ export const adminApi = createApi({
     denyRequest: builder.mutation<any, { request_id: string }>({
       query: ({ request_id }) => ({
         url: API_ROUTES.ADMIN.DENY_REQUEST.replace("{request_id}", request_id),
-        method: "POST",
+        method: "PUT",
       }),
       invalidatesTags: ["Requests"],
     }),

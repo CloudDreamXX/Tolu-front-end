@@ -3,6 +3,7 @@ import {
   useApproveRequestMutation,
   useDenyRequestMutation,
 } from "entities/admin";
+import { useState, useRef, useEffect } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
 
@@ -10,6 +11,19 @@ export const AdminRequests = () => {
   const { data, isLoading, isError } = useGetAllAccessRequestsQuery();
   const [approveRequest] = useApproveRequestMutation();
   const [denyRequest] = useDenyRequestMutation();
+
+  const [popupFor, setPopupFor] = useState<string | null>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
+        setPopupFor(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleApprove = async (id: string) => {
     try {
@@ -59,29 +73,57 @@ export const AdminRequests = () => {
           >
             <div className="flex flex-col gap-1">
               <span className="font-medium text-gray-900">
-                {req.user?.name ?? "Unknown User"}
+                {req?.first_name ? `${req?.first_name} ${req?.last_name}` : "Unknown User"}
               </span>
-              <span className="text-sm text-gray-600">{req.user?.email}</span>
+              <span className="text-sm text-gray-600">{req?.email}</span>
               <span className="text-xs text-gray-400">
                 Requested at: {new Date(req.created_at).toLocaleString()}
               </span>
             </div>
 
-            <div className="flex flex-row gap-3 justify-end">
-              <Button
+            {req?.status === "approved" ? <p className="text-[14px] px-[12px] py-[8px] text-[#4BD37B] ml-auto">Approved</p> : <div className="flex flex-row gap-3 justify-end">
+              {req?.status === "denied" ? <p className="text-[14px] px-[12px] py-[8px] text-[#FF1F0F]">Denied</p> : <Button
                 className="px-[12px] py-[8px] bg-[#FF1F0F] rounded-[8px]"
                 onClick={() => handleDeny(req.id)}
               >
                 Deny
-              </Button>
+              </Button>}
 
-              <Button
-                className="px-[12px] py-[8px] bg-[#4BD37B] rounded-[8px]"
-                onClick={() => handleApprove(req.id)}
-              >
-                Approve
-              </Button>
-            </div>
+              {req?.status === "denied" ? (
+                <div className="relative flex items-center justify-center">
+                  <button
+                    className="flex items-center justify-center"
+                    onClick={() => setPopupFor(req.id)}
+                  >
+                    <MaterialIcon iconName="more_vert" />
+                  </button>
+
+                  {popupFor === req.id && (
+                    <div
+                      ref={popupRef}
+                      className="absolute right-0 mt-16 bg-white border rounded-lg shadow-lg z-50"
+                    >
+                      <button
+                        className="w-full text-center px-[12px] py-[8px] rounded-[8px] hover:bg-gray-100 text-[#4BD37B] text-[14px]"
+                        onClick={() => {
+                          handleApprove(req.id);
+                          setPopupFor(null);
+                        }}
+                      >
+                        Approve
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Button
+                  className="px-[12px] py-[8px] bg-[#4BD37B] rounded-[8px]"
+                  onClick={() => handleApprove(req.id)}
+                >
+                  Approve
+                </Button>
+              )}
+            </div>}
           </div>
         ))}
       </div>
