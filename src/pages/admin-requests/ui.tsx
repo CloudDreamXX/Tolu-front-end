@@ -75,7 +75,9 @@ export const AdminRequests = () => {
               <span className="font-medium text-gray-900">
                 {req?.first_name ? `${req?.first_name} ${req?.last_name}` : "Unknown User"}
               </span>
-              <span className="text-sm text-gray-600">{req?.email}</span>
+              <span className="text-sm text-gray-600">Email: {req?.email}</span>
+              {req?.phone_number && <span className="text-sm text-gray-600">Phone number: {req?.phone_number}</span>}
+              {req?.account_type && <span className="text-sm text-gray-600">Account type: {req?.account_type}</span>}
               <span className="text-xs text-gray-400">
                 Requested at: {new Date(req.created_at).toLocaleString()}
               </span>

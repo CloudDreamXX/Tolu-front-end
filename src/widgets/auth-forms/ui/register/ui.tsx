@@ -307,12 +307,17 @@ export const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  console.log(formData)
+
   const handleCodeSend = async () => {
     try {
       const res = await accessCodeRequest({ access_code: otpCode }).unwrap()
 
       if (res.success) {
-        setStage("select")
+        setFormData({
+          ...formData, email: res.email, firstName: res.first_name, lastName: res.last_name, accountType: res.account_type === "Individual/Women" ? "client" : "coach", phone: res.phone_number
+        })
+        setStage("form")
       } else {
         toast({
           title: "Invalid access code",
