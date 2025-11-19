@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
-import { AuthPageWrapper, TooltipWrapper } from "shared/ui";
+import { AuthPageWrapper, Button, Input, TooltipWrapper } from "shared/ui";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { titlesAndIcons } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -174,7 +174,7 @@ export const SelectType = () => {
                   />
 
                   {selectedOptions[index] === "Other (please specify)" && (
-                    <input
+                    <Input
                       ref={inputRef}
                       type="text"
                       value={otherText}
@@ -189,7 +189,9 @@ export const SelectType = () => {
           </div>
 
           {isMobile && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={handleSubmit}
               type="submit"
               disabled={!isSelected()}
@@ -200,7 +202,7 @@ export const SelectType = () => {
               }`}
             >
               Next
-            </button>
+            </Button>
           )}
         </form>
 
@@ -208,7 +210,9 @@ export const SelectType = () => {
           <div
             className={`${location.pathname.startsWith("/content-manager/create") ? "" : "pb-10 md:pb-[140px]"}`}
           >
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={handleSubmit}
               type="submit"
               disabled={!isSelected()}
@@ -219,7 +223,7 @@ export const SelectType = () => {
               }`}
             >
               Next
-            </button>
+            </Button>
           </div>
         )}
       </main>

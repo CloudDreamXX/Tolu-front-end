@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "shared/lib";
+import { Input } from "shared/ui";
 
 interface SearchableSelectProps {
   label?: string;
@@ -65,7 +66,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
         </label>
       )}
       <div className="relative">
-        <input
+        <Input
           type="text"
           value={inputValue}
           onClick={() => setIsOpen(true)}

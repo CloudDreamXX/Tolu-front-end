@@ -360,9 +360,14 @@ export const HealthProfileForm = () => {
       >
         <div className="text-[20px] font-medium flex items-center justify-between mr-[24px]">
           {title}
-          <button className="cursor-pointer" onClick={onEdit}>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
+            className="cursor-pointer"
+            onClick={onEdit}
+          >
             <MaterialIcon iconName="edit" />
-          </button>
+          </Button>
         </div>
         <div className="space-y-2">{children}</div>
       </div>
@@ -791,14 +796,16 @@ export const HealthProfileForm = () => {
                       </span>
                     </div>
 
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       onClick={() => openPreview(file)}
                       className="flex items-center justify-center p-2 rounded hover:bg-black/5"
                       title="View"
                       aria-label="View"
                     >
                       <MaterialIcon iconName="visibility" fill={1} />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </Section>
@@ -912,12 +919,14 @@ export const HealthProfileForm = () => {
                     “{preview.file.filename}”
                   </span>
                 </h2>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className="p-1 rounded hover:bg-black/5"
                   onClick={closePreview}
                 >
                   <MaterialIcon iconName="close" fill={1} />
-                </button>
+                </Button>
               </div>
 
               <div className="relative flex-1 bg-[#F7F7F8] rounded-[8px] mx-[5px] md:mx-[40px] mb-[24px] px-[5px] md:px-6 py-6 overflow-auto">

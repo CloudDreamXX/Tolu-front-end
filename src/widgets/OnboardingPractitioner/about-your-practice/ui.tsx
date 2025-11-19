@@ -208,7 +208,7 @@ export const AboutYourPractice = () => {
               labelClassName="text-[16px] font-medium"
             />
             {selectedSchools.includes(OTHER_OPTION) && (
-              <input
+              <Input
                 type="text"
                 value={otherSchoolInput}
                 onChange={(e) => handleOtherSchoolChange(e.target.value)}
@@ -235,7 +235,7 @@ export const AboutYourPractice = () => {
                 dragOver ? "border-[#0057C2]" : "border-[#1C63DB]"
               } bg-white`}
             >
-              <input
+              <Input
                 ref={fileInputRef}
                 type="file"
                 accept=".jpg,.jpeg,.png"
@@ -272,7 +272,9 @@ export const AboutYourPractice = () => {
                         className="object-cover w-full h-full rounded-md"
                       />
                     )}
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       type="button"
                       onClick={() => handleDeleteFile(index)}
                       className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center"
@@ -282,7 +284,7 @@ export const AboutYourPractice = () => {
                         fill={1}
                         className="text-red-500"
                       />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -369,13 +371,15 @@ export const AboutYourPractice = () => {
               : "md:pb-[100px]"
           }`}
         >
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
-          </button>
+          </Button>
           <Button
             onClick={handleNext}
             className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${

@@ -141,12 +141,14 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
             </div>
             <div className="truncate-text">{selectedText}</div>
           </div>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="w-[20px] h-[20px] flex items-center justify-center"
             onClick={deleteSelectedText}
           >
             <MaterialIcon iconName="close" size={20} />
-          </button>
+          </Button>
         </div>
       )}
       {textarea ?? (

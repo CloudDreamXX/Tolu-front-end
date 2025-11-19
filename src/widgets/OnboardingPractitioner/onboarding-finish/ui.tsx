@@ -1,6 +1,6 @@
 import { toast } from "shared/lib/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { AuthPageWrapper } from "shared/ui";
+import { AuthPageWrapper, Button } from "shared/ui";
 import { AdminHeader } from "widgets/Header";
 import { RootState } from "entities/store";
 import { useOnboardUserMutation } from "entities/user";
@@ -42,12 +42,14 @@ export const OnboardingFinish = () => {
               clients. Create and grow! Nothing can stop you now.
             </p>
           </div>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleLastClick}
             className="flex justify-center items-center h-[44px] w-full md:w-[250px] p-[16px] rounded-full bg-[#1C63DB] text-white"
           >
             Go to my library
-          </button>
+          </Button>
         </div>
       </main>
     </AuthPageWrapper>

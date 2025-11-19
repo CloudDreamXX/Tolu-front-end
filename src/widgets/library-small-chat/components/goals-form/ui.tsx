@@ -1,4 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
+import { Input } from "shared/ui";
 import { baseSchema } from "widgets/library-small-chat/lib";
 import { z } from "zod";
 
@@ -18,7 +19,7 @@ export const GoalsForm = ({ form }: GoalsFormProps) => {
     <div className="pt-[16px] border-t border-[#DBDEE1] mt-[16px] space-y-[12px]">
       <div className={lineClass}>
         <span>My goal is to</span>
-        <input
+        <Input
           {...form.register("goals")}
           placeholder="sleep better, lose weight"
           className={`${inputClass} w-[227px]`}

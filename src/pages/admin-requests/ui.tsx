@@ -73,7 +73,9 @@ export const AdminRequests = () => {
           >
             <div className="flex flex-col gap-1">
               <span className="font-medium text-gray-900">
-                {req?.first_name ? `${req?.first_name} ${req?.last_name}` : "Unknown User"}
+                {req?.first_name
+                  ? `${req?.first_name} ${req?.last_name}`
+                  : "Unknown User"}
               </span>
               <span className="text-sm text-gray-600">Email: {req?.email}</span>
               {req?.phone_number && <span className="text-sm text-gray-600">Phone number: {req?.phone_number}</span>}
@@ -83,49 +85,65 @@ export const AdminRequests = () => {
               </span>
             </div>
 
-            {req?.status === "approved" ? <p className="text-[14px] px-[12px] py-[8px] text-[#4BD37B] ml-auto">Approved</p> : <div className="flex flex-row gap-3 justify-end">
-              {req?.status === "denied" ? <p className="text-[14px] px-[12px] py-[8px] text-[#FF1F0F]">Denied</p> : <Button
-                className="px-[12px] py-[8px] bg-[#FF1F0F] rounded-[8px]"
-                onClick={() => handleDeny(req.id)}
-              >
-                Deny
-              </Button>}
-
-              {req?.status === "denied" ? (
-                <div className="relative flex items-center justify-center">
-                  <button
-                    className="flex items-center justify-center"
-                    onClick={() => setPopupFor(req.id)}
+            {req?.status === "approved" ? (
+              <p className="text-[14px] px-[12px] py-[8px] text-[#4BD37B] ml-auto">
+                Approved
+              </p>
+            ) : (
+              <div className="flex flex-row gap-3 justify-end">
+                {req?.status === "denied" ? (
+                  <p className="text-[14px] px-[12px] py-[8px] text-[#FF1F0F]">
+                    Denied
+                  </p>
+                ) : (
+                  <Button
+                    className="px-[12px] py-[8px] bg-[#FF1F0F] rounded-[8px]"
+                    onClick={() => handleDeny(req.id)}
                   >
-                    <MaterialIcon iconName="more_vert" />
-                  </button>
+                    Deny
+                  </Button>
+                )}
 
-                  {popupFor === req.id && (
-                    <div
-                      ref={popupRef}
-                      className="absolute right-0 mt-16 bg-white border rounded-lg shadow-lg z-50"
+                {req?.status === "denied" ? (
+                  <div className="relative flex items-center justify-center">
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
+                      className="flex items-center justify-center"
+                      onClick={() => setPopupFor(req.id)}
                     >
-                      <button
-                        className="w-full text-center px-[12px] py-[8px] rounded-[8px] hover:bg-gray-100 text-[#4BD37B] text-[14px]"
-                        onClick={() => {
-                          handleApprove(req.id);
-                          setPopupFor(null);
-                        }}
+                      <MaterialIcon iconName="more_vert" />
+                    </Button>
+
+                    {popupFor === req.id && (
+                      <div
+                        ref={popupRef}
+                        className="absolute right-0 mt-16 bg-white border rounded-lg shadow-lg z-50"
                       >
-                        Approve
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Button
-                  className="px-[12px] py-[8px] bg-[#4BD37B] rounded-[8px]"
-                  onClick={() => handleApprove(req.id)}
-                >
-                  Approve
-                </Button>
-              )}
-            </div>}
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
+                          className="w-full text-center px-[12px] py-[8px] rounded-[8px] hover:bg-gray-100 text-[#4BD37B] text-[14px]"
+                          onClick={() => {
+                            handleApprove(req.id);
+                            setPopupFor(null);
+                          }}
+                        >
+                          Approve
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Button
+                    className="px-[12px] py-[8px] bg-[#4BD37B] rounded-[8px]"
+                    onClick={() => handleApprove(req.id)}
+                  >
+                    Approve
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>

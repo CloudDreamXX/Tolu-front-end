@@ -1,3 +1,4 @@
+import { Button } from "shared/ui";
 import { PopoverInstruction } from "widgets/content-popovers";
 
 interface InstructionInfoProps {
@@ -18,11 +19,15 @@ export const InstructionInfo: React.FC<InstructionInfoProps> = ({
   return (
     <PopoverInstruction
       customTrigger={
-        <button className="flex flex-row items-baseline group">
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
+          className="flex flex-row items-baseline group"
+        >
           <div className="text-sm font-semibold md:text-base lg:text-lg group-hover:text-[#008FF6]">
             Instructions
           </div>
-        </button>
+        </Button>
       }
       title={title}
       description={description}

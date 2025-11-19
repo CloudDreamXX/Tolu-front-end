@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 type Props = {
   action: "approve" | "reject" | "unpublish" | "Waiting";
@@ -58,13 +59,15 @@ export const ChangeAdminStatusPopup: React.FC<Props> = ({
         className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px]"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClose}
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
         >
           <MaterialIcon iconName="close" />
-        </button>
+        </Button>
 
         <h3
           id="modal-title"
@@ -103,14 +106,18 @@ export const ChangeAdminStatusPopup: React.FC<Props> = ({
         )}
 
         <div className="flex items-center justify-between gap-2 pt-2">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             type="button"
             onClick={onClose}
             className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px]"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             type="submit"
             disabled={!canSubmit}
             className="px-[16px] py-[11px] rounded-[1000px] w-full md:w-[128px] text-[16px] font-[600] leading-[22px] bg-[#1C63DB] text-white disabled:opacity-50 flex items-center justify-center"
@@ -122,7 +129,7 @@ export const ChangeAdminStatusPopup: React.FC<Props> = ({
             }
           >
             Save
-          </button>
+          </Button>
         </div>
       </div>
     </dialog>

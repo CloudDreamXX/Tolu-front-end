@@ -140,12 +140,14 @@ export const ContentManagerFolder: React.FC = () => {
         )}
       </Breadcrumb>
       <div className="flex items-center justify-end">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="bg-[#F3F6FB] rounded-full px-[4px] py-[3.5px]"
           onClick={() => setShowPopup((prev) => !prev)}
         >
           <MaterialIcon iconName="more_vert" />
-        </button>
+        </Button>
       </div>
       <div className="flex flex-col gap-6">
         <div className="flex flex-row flex-wrap items-center justify-between w-full">
@@ -261,11 +263,13 @@ const MenuItem: React.FC<{
   className?: string;
   onClick?: () => void;
 }> = ({ icon, label, className = "", onClick }) => (
-  <button
+  <Button
+    variant={"unstyled"}
+    size={"unstyled"}
     onClick={onClick}
     className={`flex items-center gap-2 w-full text-left text-[16px] font-[500] ${className}`}
   >
     <span className="w-[24px] h-[24px]">{icon}</span>
     {label}
-  </button>
+  </Button>
 );

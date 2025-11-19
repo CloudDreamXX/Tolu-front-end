@@ -131,7 +131,9 @@ export const MultiSelectField = ({
         </label>
       )}
 
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         className={cn(
           "w-full text-left border border-[#DBDEE1] rounded-[16px] md:rounded-[1000px] px-[12px] py-[8px] pr-[40px] text-[14px] text-[#1D1D1F] font-semibold bg-white relative flex flex-wrap gap-[8px] items-center min-h-[48px]",
           className
@@ -149,7 +151,9 @@ export const MultiSelectField = ({
               className="flex items-center gap-[8px] bg-[#DBDEE1] rounded-[8px] px-[8px] py-[6px] text-[14px] font-semibold"
             >
               {option}
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -157,14 +161,14 @@ export const MultiSelectField = ({
                 }}
               >
                 <MaterialIcon iconName="close" size={20} />
-              </button>
+              </Button>
             </span>
           ))
         )}
         <span className="pointer-events-none absolute right-[12px] top-1/2 -translate-y-1/2">
           <MaterialIcon iconName="keyboard_arrow_down" />
         </span>
-      </button>
+      </Button>
 
       {open &&
         createPortal(

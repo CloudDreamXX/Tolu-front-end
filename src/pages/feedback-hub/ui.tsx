@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
   Button,
+  Input,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -230,7 +231,9 @@ export const FeedbackHub = () => {
         {(["All", "Coach", "Client"] as const).map((tab) => {
           const isActive = typeFilter === tab;
           return (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={tab}
               role="tab"
               aria-selected={isActive}
@@ -276,7 +279,7 @@ export const FeedbackHub = () => {
                   />
                 </>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -307,30 +310,38 @@ export const FeedbackHub = () => {
                 size={16}
                 className="text-gray-600"
               />
-              <input
+              <Input
                 type="text"
                 placeholder="Search by keyword, email, or content ID"
-                className="outline-none w-full text-[14px] text-[#1D1D1F] placeholder:text-[#5F5F65]"
+                className="outline-none w-full text-[14px] text-[#1D1D1F] placeholder:text-[#5F5F65] border-none p-0 h-auto"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button className="hidden md:flex items-center justify-center px-[16px] py-[8px] rounded-[8px] border border-transparent hover:border-[#1C63DB] text-[#5F5F65] hover:text-[#1C63DB]">
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              className="hidden md:flex items-center justify-center px-[16px] py-[8px] rounded-[8px] border border-transparent hover:border-[#1C63DB] text-[#5F5F65] hover:text-[#1C63DB]"
+            >
               <MaterialIcon
                 iconName="table"
                 size={20}
                 fill={1}
                 className="text-[#1C63DB]"
               />
-            </button>
-            <button className="hidden md:flex items-center justify-center px-[16px] py-[8px] rounded-[8px] border border-transparent hover:border-[#1C63DB] text-[#5F5F65] hover:text-[#1C63DB]">
+            </Button>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              className="hidden md:flex items-center justify-center px-[16px] py-[8px] rounded-[8px] border border-transparent hover:border-[#1C63DB] text-[#5F5F65] hover:text-[#1C63DB]"
+            >
               <MaterialIcon
                 iconName="stack"
                 fill={1}
                 size={20}
                 className="text-[#1C63DB]"
               />
-            </button>
+            </Button>
           </div>
           <div className="hidden md:flex xl:hidden gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-[320px]">
             <MaterialIcon
@@ -338,7 +349,7 @@ export const FeedbackHub = () => {
               size={16}
               className="text-gray-600"
             />
-            <input
+            <Input
               type="text"
               placeholder="Search by keyword, email, or content ID"
               className="outline-none w-full text-[14px] text-[#1D1D1F] placeholder:text-[#5F5F65]"
@@ -350,7 +361,7 @@ export const FeedbackHub = () => {
       </div>
       <div className="md:hidden flex gap-2 items-center rounded-full border border-[#DBDEE1] px-[12px] py-[10px] bg-white w-full">
         <MaterialIcon iconName="search" size={16} className="text-gray-600" />
-        <input
+        <Input
           type="text"
           placeholder="Search by keyword, email, or content ID"
           className="outline-none w-full text-[14px] text-[#1D1D1F] placeholder:text-[#5F5F65]"
@@ -387,17 +398,15 @@ export const FeedbackHub = () => {
               filtered.slice(0, PAGE_SIZE).map((r, idx) => (
                 <div
                   key={idx}
-                  className={`grid grid-cols-11 px-[12px] py-[8px] items-center h-[56px] ${
-                    idx % 2 === 0 ? "bg-white" : "bg-[#F7F9FD] rounded-[8px]"
-                  }`}
+                  className={`grid grid-cols-11 px-[12px] py-[8px] items-center h-[56px] ${idx % 2 === 0 ? "bg-white" : "bg-[#F7F9FD] rounded-[8px]"
+                    }`}
                 >
                   <div className="col-span-1">
                     <span
-                      className={`px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${
-                        r.type === "Coach"
-                          ? "bg-[#F0F3FF] text-[#000E66]"
-                          : "bg-[#FBF0FF] text-[#460066]"
-                      }`}
+                      className={`px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${r.type === "Coach"
+                        ? "bg-[#F0F3FF] text-[#000E66]"
+                        : "bg-[#FBF0FF] text-[#460066]"
+                        }`}
                     >
                       {r.type}
                     </span>
@@ -438,13 +447,15 @@ export const FeedbackHub = () => {
                           >
                             {queryText}
                           </h2>
-                          <button
+                          <Button
+                            variant={"unstyled"}
+                            size={"unstyled"}
                             onClick={closeQuery}
                             className="rounded hover:bg-gray-100"
                             aria-label="Close"
                           >
                             <MaterialIcon iconName="close" />
-                          </button>
+                          </Button>
                         </div>
 
                         <div className="mt-8 text-[16px] text-[#1D1D1F] whitespace-pre-wrap break-words">
@@ -457,13 +468,12 @@ export const FeedbackHub = () => {
                   <div className="flex items-center col-span-1 gap-2">
                     {r.rating != null ? (
                       <span
-                        className={`inline-flex items-center justify-center px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${
-                          r.rating >= 4
-                            ? "bg-[#F0FFF5] text-[#006622]"
-                            : r.rating === 3
-                              ? "bg-[#FFF6F0] text-[#663C00]"
-                              : "bg-[#FFF0F0] text-[#660000]"
-                        }`}
+                        className={`inline-flex items-center justify-center px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${r.rating >= 4
+                          ? "bg-[#F0FFF5] text-[#006622]"
+                          : r.rating === 3
+                            ? "bg-[#FFF6F0] text-[#663C00]"
+                            : "bg-[#FFF0F0] text-[#660000]"
+                          }`}
                       >
                         {r.rating}
                       </span>
@@ -514,35 +524,40 @@ export const FeedbackHub = () => {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pb-4">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             disabled={page === 1}
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
             className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
           >
             <MaterialIcon iconName="arrow_left_alt" />
-          </button>
+          </Button>
 
           {getVisiblePages(page, totalPages).map((pageNumber) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                page === pageNumber
-                  ? "border-[#1C63DB] text-[#1C63DB]"
-                  : "border-[#DBDEE1] text-black"
-              }`}
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
+                ? "border-[#1C63DB] text-[#1C63DB]"
+                : "border-[#DBDEE1] text-black"
+                }`}
             >
               {pageNumber}
-            </button>
+            </Button>
           ))}
 
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             disabled={page === totalPages}
             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
             className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
           >
             <MaterialIcon iconName="arrow_right_alt" />
-          </button>
+          </Button>
         </div>
       )}
 

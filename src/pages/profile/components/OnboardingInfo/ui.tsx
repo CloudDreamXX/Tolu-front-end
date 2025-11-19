@@ -2,7 +2,7 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
 import { RootState } from "entities/store";
 import { setFormField } from "entities/store/clientOnboardingSlice";
-import { Button, Slider } from "shared/ui";
+import { Button, Input, Slider } from "shared/ui";
 import { useOnboardClientMutation } from "entities/user/api";
 
 type FormState = Record<string, string>;
@@ -239,7 +239,7 @@ export const OnboardingInfo = ({
               </span>
 
               {isEditingPersonal ? (
-                <input
+                <Input
                   id={`field-${String(key)}`}
                   value={value}
                   onChange={(e) =>

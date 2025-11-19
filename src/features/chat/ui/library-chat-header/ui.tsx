@@ -14,6 +14,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { HistoryPopup } from "../chat-actions";
 import SwitchDropdown from "widgets/library-small-chat/components/switch-dropdown/ui";
 import { subTitleSwitch } from "widgets/library-small-chat/helpers";
+import { Button } from "shared/ui";
 
 interface ChatHeaderProps {
   displayChatTitle: string;
@@ -86,9 +87,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           <div
             className={`text-[18px] md:text-[24px] xl:text-3xl font-semibold text-gray-800 flex items-center gap-[12px]`}
           >
-            <button onClick={onClose} className="hidden xl:block">
+            <Button variant={"unstyled"} size={"unstyled"} onClick={onClose} className="hidden xl:block">
               <MaterialIcon iconName="arrows_input" size={24} />
-            </button>
+            </Button>
             {isExistingChat && <span>{displayChatTitle}</span>}
           </div>
           {isExistingChat && (
@@ -126,19 +127,23 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       </div>
       <div className="flex flex-row items-center gap-2 w-full md:w-fit mt-[8px] xl:mt-0">
         <HistoryPopup fromPath={location.state?.from?.pathname ?? null} />
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="flex flex-row items-center justify-center gap-2 px-4 h-8 text-sm font-medium bg-[#1C63DB] text-white rounded-full hoverable:hover:bg-blue-700 w-[92px] xl:w-fit"
           onClick={onNewSearch}
         >
           Create
-        </button>
+        </Button>
         {isExistingChat && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="flex flex-row items-center shrink-0 w-8 h-8 text-sm font-medium justify-center text-white bg-[#DDEBF6] rounded-full hover:bg-blue-200"
             onClick={() => setIsActionsPopupOpen(!isActionsPopupOpen)}
           >
             <MaterialIcon iconName="more_vert" size={20} />
-          </button>
+          </Button>
         )}
       </div>
       {isActionsPopupOpen && (

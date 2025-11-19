@@ -1,6 +1,7 @@
 import { FOLDER_STATUS_MAPPING, ORDERED_STATUSES } from "entities/folder";
 import React, { useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 import { ChooseSubfolderPanel } from "widgets/ChooseSubfolderPanel";
 
 interface ChangeStatusPopupProps {
@@ -110,13 +111,15 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
         className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px]"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClose}
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
         >
           <MaterialIcon iconName="close" />
-        </button>
+        </Button>
 
         <h3
           id="modal-title"
@@ -143,7 +146,9 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
                 backendValue === prevAllowed || backendValue === nextAllowed;
 
               return (
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   key={status}
                   onClick={() => {
                     if (isEnabled) setSelectedStatus(status);
@@ -155,26 +160,30 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
                   ${!isEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   {status}
-                </button>
+                </Button>
               );
             })}
           </div>
         )}
 
         <div className="flex flex-col-reverse gap-[8px] md:flex-row md:justify-between md:mt-[24px]">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={onClose}
             className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600]"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleSave}
             className="px-[16px] py-[11px] rounded-full w-full md:w-[128px] text-[16px] font-[600] bg-[#1C63DB] text-white"
             disabled={!selectedStatus}
           >
             Save
-          </button>
+          </Button>
         </div>
       </div>
     </dialog>

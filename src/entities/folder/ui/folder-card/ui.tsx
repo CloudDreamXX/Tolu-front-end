@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { IFolderMock } from "../document-card";
-import { Card, CardContent } from "shared/ui";
+import { Button, Card, CardContent } from "shared/ui";
 import {
   renderDate,
   renderFiles,
@@ -31,7 +31,9 @@ export const FolderCard: React.FC<FolderCardProps> = ({ folder, withText }) => {
   } = folder;
 
   return (
-    <button
+    <Button
+      variant={"unstyled"}
+      size={"unstyled"}
       className="relative group w-full h-fit max-w-[277px]"
       onClick={(e) => {
         e.preventDefault();
@@ -65,12 +67,14 @@ export const FolderCard: React.FC<FolderCardProps> = ({ folder, withText }) => {
             <MaterialIcon iconName="folder" className="min-w-6" size={20} />
             <h2 className="text-xl font-bold truncate max-w-30">{name}</h2>
             {status === "archived" && (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="z-10 ml-auto"
                 onClick={(e) => e.stopPropagation()}
               >
                 <MaterialIcon iconName="backup" />
-              </button>
+              </Button>
             )}
           </div>
           {renderFiles(files, withText)}
@@ -80,6 +84,6 @@ export const FolderCard: React.FC<FolderCardProps> = ({ folder, withText }) => {
           {renderDate(createdAt, withText)}
         </CardContent>
       </Card>
-    </button>
+    </Button>
   );
 };

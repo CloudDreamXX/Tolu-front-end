@@ -481,9 +481,9 @@ export const LibraryDocument = () => {
         </div>
 
         <div class="card-nav" style="display:flex; justify-content:flex-start; margin-top:24px; gap:12px;">
-          <button id="prevBtn" onclick="prevCard()" style="background:#007acc; color:#fff; border:none; border-radius:4px; padding:8px 18px; font-size:16px;">
+          <Button variant={"unstyled"} size={"unstyled"} id="prevBtn" onclick="prevCard()" style="background:#007acc; color:#fff; border:none; border-radius:4px; padding:8px 18px; font-size:16px;">
             Previous
-          </button>
+          </Button>
         </div>
       `;
 
@@ -1033,7 +1033,9 @@ export const LibraryDocument = () => {
                             key={c.coach_id}
                             className="p-2 rounded-[12px] hover:bg-[#F5F5F5] transition-colors"
                           >
-                            <button
+                            <Button
+                              variant={"unstyled"}
+                              size={"unstyled"}
                               onClick={() => handleOpenCoach(c)}
                               className="flex items-center w-full gap-3 text-left"
                             >
@@ -1052,7 +1054,7 @@ export const LibraryDocument = () => {
                               <div className="truncate font-medium text-[14px]">
                                 {name}
                               </div>
-                            </button>
+                            </Button>
                           </li>
                         );
                       })}
@@ -1297,12 +1299,14 @@ export const LibraryDocument = () => {
                             zIndex: 9999,
                           }}
                         >
-                          <button
+                          <Button
+                            variant={"unstyled"}
+                            size={"unstyled"}
                             onClick={handleTooltipClick}
                             className="text-black text-[16px] font-semibold"
                           >
                             Ask Tolu
-                          </button>
+                          </Button>
                         </div>
                       )}
                       {renderedContent}

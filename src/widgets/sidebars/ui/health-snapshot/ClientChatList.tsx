@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
-import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 
 interface ClientChatListProps {
   onPopupClose?: () => void;
@@ -38,7 +38,9 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
         const reciver = chat.participants[0];
 
         return (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             key={chat.id}
             className="flex pl-8 mb-4"
             onClick={() => {
@@ -76,7 +78,7 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
                 @{chat.name || reciver.email}
               </p>
             </div>
-          </button>
+          </Button>
         );
       })}
     </>

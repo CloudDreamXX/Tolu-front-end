@@ -205,7 +205,9 @@ export const FiltersPopup: React.FC<Props> = (props) => {
                   const active =
                     (draftFilters as AppliedFilters).sentiment === s;
                   return (
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       key={s}
                       onClick={() =>
                         setDraftFilters((d: any) => ({ ...d, sentiment: s }))
@@ -228,7 +230,7 @@ export const FiltersPopup: React.FC<Props> = (props) => {
                         : s === "positive"
                           ? "Only Positive"
                           : "Only Negative"}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -358,12 +360,14 @@ export const FiltersPopup: React.FC<Props> = (props) => {
           />
         </div>
 
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="mt-[32px] w-full p-[11px] rounded-full bg-[#1C63DB] text-[16px] text-white font-semibold"
           onClick={onSave}
         >
           Apply
-        </button>
+        </Button>
       </div>
     </div>
   );

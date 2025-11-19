@@ -88,12 +88,14 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
     <div className="w-full">
       <div className="text-[18px] font-semibold text-black flex items-center justify-between">
         {selectedFolderName || "Folder"}
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={() => setCreatePopup(true)}
           className="p-1 ml-auto rounded hover:bg-gray-100"
         >
           <MaterialIcon iconName="add" />
-        </button>
+        </Button>
       </div>
 
       {isFetching && (
@@ -105,7 +107,9 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto py-4">
         {subfolders.length ? (
           subfolders.map((subfolder) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={subfolder.id}
               className={`flex justify-between items-center py-2 px-3 rounded-[10px] shadow-lg ${
                 selectedFolderId === subfolder.id
@@ -148,7 +152,7 @@ export const ChooseSubfolderPanel: React.FC<ChooseSubfolderPanelProps> = ({
                   </Button>
                 </PopoverContent>
               </Popover>
-            </button>
+            </Button>
           ))
         ) : (
           <div className="text-gray-500">

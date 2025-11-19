@@ -3,6 +3,7 @@ import { baseSchema } from "widgets/library-small-chat/lib";
 import { z } from "zod";
 import { CustomSelect } from "../CustomSelect";
 import { MultiSelect } from "../MultiSelect";
+import { Input } from "shared/ui";
 
 export type FormValues = z.infer<typeof baseSchema>;
 
@@ -55,7 +56,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
     <div className="pt-[16px] border-t border-[#DBDEE1] mt-[16px] space-y-[12px]">
       <div className={lineClass}>
         <span>Right now I have a</span>
-        <input
+        <Input
           {...register("lifestyleInfo")}
           placeholder="stress level"
           className={`${inputClass} w-[117px]`}
@@ -65,13 +66,13 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
 
       <div className={lineClass}>
         <span>I eat about</span>
-        <input
+        <Input
           {...register("takeout")}
           placeholder="%"
           className={`${inputClass} w-[46px]`}
         />
         <span>takeout food and</span>
-        <input
+        <Input
           {...register("homeCooked")}
           placeholder="%"
           className={`${inputClass} w-[41px]`}
@@ -103,7 +104,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
           )}
         />
         <span>and I exercise</span>
-        <input
+        <Input
           {...register("exercise")}
           placeholder="days"
           className={`${inputClass} w-[63px]`}
@@ -127,7 +128,7 @@ export const LifestyleForm = ({ form }: LifestyleFormProps) => {
           )}
         />
         <span>and my emotional support network is usually</span>
-        <input
+        <Input
           {...register("supportSystem")}
           placeholder="option"
           className={`${inputClass} w-[77px]`}

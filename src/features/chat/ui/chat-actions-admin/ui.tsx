@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 interface ChatActionsProps {
   setStatusPopup: React.Dispatch<
@@ -17,14 +18,21 @@ export const ChatActionsAdmin: React.FC<ChatActionsProps> = ({
   return (
     <div className="flex flex-row gap-2 xl:flex-col w-full xl:w-[32px] h-[32px] xl:h-full">
       <div className="flex flex-row gap-2 xl:hidden">
-        <button className="w-8 h-8" onClick={() => nav(-1)}>
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
+          className="w-8 h-8"
+          onClick={() => nav(-1)}
+        >
           <MaterialIcon
             iconName="arrow_back"
             className="w-4 h-4 m-auto text-black"
           />
-        </button>
+        </Button>
         {status === "Live" && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => setStatusPopup("unpublish")}
           >
@@ -33,10 +41,12 @@ export const ChatActionsAdmin: React.FC<ChatActionsProps> = ({
               className="text-blue-600"
               fill={1}
             />
-          </button>
+          </Button>
         )}
         {(status === "Live" || status === "Waiting") && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => setStatusPopup("approve")}
           >
@@ -45,10 +55,12 @@ export const ChatActionsAdmin: React.FC<ChatActionsProps> = ({
               size={24}
               className="text-[#2DC38F]"
             />
-          </button>
+          </Button>
         )}
         {(status === "Live" || status === "Waiting") && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="rounded-full h-8 w-8 flex justify-center items-center"
             onClick={() => setStatusPopup("reject")}
           >
@@ -57,18 +69,25 @@ export const ChatActionsAdmin: React.FC<ChatActionsProps> = ({
               size={24}
               className="text-[#660000]"
             />
-          </button>
+          </Button>
         )}
       </div>
       <div className="flex-col self-start hidden gap-4 xl:flex fixed top-[110px]">
-        <button className="w-8 h-8" onClick={() => nav(-1)}>
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
+          className="w-8 h-8"
+          onClick={() => nav(-1)}
+        >
           <MaterialIcon
             iconName="arrow_back"
             className="w-5 h-5 m-auto text-black"
           />
-        </button>
+        </Button>
         {status === "Live" && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => setStatusPopup("unpublish")}
           >
@@ -77,10 +96,12 @@ export const ChatActionsAdmin: React.FC<ChatActionsProps> = ({
               className="text-blue-600"
               fill={1}
             />
-          </button>
+          </Button>
         )}
         {(status === "Live" || status === "Waiting") && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="rounded-full h-8 w-8 flex justify-center items-center"
             onClick={() => setStatusPopup("approve")}
           >
@@ -89,10 +110,12 @@ export const ChatActionsAdmin: React.FC<ChatActionsProps> = ({
               size={24}
               className="text-[#2DC38F]"
             />
-          </button>
+          </Button>
         )}
         {(status === "Live" || status === "Waiting") && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="rounded-full h-8 w-8 flex justify-center items-center"
             onClick={() => setStatusPopup("reject")}
           >
@@ -101,7 +124,7 @@ export const ChatActionsAdmin: React.FC<ChatActionsProps> = ({
               size={24}
               className="text-[#660000]"
             />
-          </button>
+          </Button>
         )}
       </div>
     </div>

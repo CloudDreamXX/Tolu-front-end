@@ -1,3 +1,5 @@
+import { Button } from "shared/ui";
+
 export const Switch = ({
   checked,
   onChange,
@@ -5,7 +7,9 @@ export const Switch = ({
   checked: boolean;
   onChange: (v: boolean) => void;
 }) => (
-  <button
+  <Button
+    variant={"unstyled"}
+    size={"unstyled"}
     type="button"
     onClick={() => onChange(!checked)}
     className={`relative inline-flex h-[28px] w-[52px] items-center rounded-full transition-colors ${
@@ -18,5 +22,5 @@ export const Switch = ({
         checked ? "translate-x-[26px]" : "translate-x-[2px]"
       }`}
     />
-  </button>
+  </Button>
 );

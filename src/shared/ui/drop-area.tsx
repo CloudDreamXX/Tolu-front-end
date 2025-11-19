@@ -1,4 +1,5 @@
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "./button";
 
 export const DropArea = ({
   dragActive,
@@ -14,7 +15,9 @@ export const DropArea = ({
   onBrowseClick: () => void;
 }) => {
   return (
-    <button
+    <Button
+      variant={"unstyled"}
+      size={"unstyled"}
       type="button"
       aria-label="Drop files here or click to browse"
       className={`w-full mt-4 p-6 border border-dashed rounded-2xl text-left ${
@@ -41,6 +44,6 @@ export const DropArea = ({
           The size of the file should be less than 30mb
         </p>
       </div>
-    </button>
+    </Button>
   );
 };

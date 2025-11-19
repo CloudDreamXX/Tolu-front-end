@@ -1,5 +1,6 @@
 import { usePageWidth } from "shared/lib";
 import {
+  Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -32,7 +33,9 @@ export const TooltipWrapper: React.FC<TooltipWrapperProps> = ({
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             type="button"
             className={tooltipTriggerStyle}
             onClick={() => setOpen((v) => !v)}
@@ -40,7 +43,7 @@ export const TooltipWrapper: React.FC<TooltipWrapperProps> = ({
             aria-expanded={open}
           >
             {children}
-          </button>
+          </Button>
         </PopoverTrigger>
         <PopoverContent
           className={tooltipContentStyle}
@@ -59,9 +62,14 @@ export const TooltipWrapper: React.FC<TooltipWrapperProps> = ({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button type="button" className={tooltipTriggerStyle}>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
+            type="button"
+            className={tooltipTriggerStyle}
+          >
             {children}
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent className={tooltipContentStyle}>
           {content}

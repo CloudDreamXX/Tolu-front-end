@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib/hooks/use-toast";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { z } from "zod";
 import { setCoachOnboardingData } from "entities/store/coachOnboardingSlice";
 import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboarding-finish/helpers";
@@ -438,7 +438,9 @@ export const LoginForm = () => {
                     }`}
                   />
                   {formData.password && (
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       type="button"
                       className="absolute right-4"
                       onClick={() => setShowPassword(!showPassword)}
@@ -449,7 +451,7 @@ export const LoginForm = () => {
                         }
                         size={16}
                       />
-                    </button>
+                    </Button>
                   )}
                 </div>
                 {passwordError && (
@@ -506,7 +508,9 @@ export const LoginForm = () => {
 
           <div className="flex flex-col items-center gap-[24px] w-full">
             {isInvitedClient ? (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
                   formData.email && !loginError
                     ? "bg-[#1C63DB] text-white"
@@ -515,9 +519,11 @@ export const LoginForm = () => {
                 onClick={handleRequestInvite}
               >
                 Request invite
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="submit"
                 className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
                   (!isCodeSent && formData.email) ||
@@ -531,7 +537,7 @@ export const LoginForm = () => {
                     ? "Verify Code"
                     : "Send Code"
                   : "Log In"}
-              </button>
+              </Button>
             )}
 
             {!isInvitedClient && (

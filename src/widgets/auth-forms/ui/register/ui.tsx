@@ -318,7 +318,7 @@ export const Register = () => {
 
   const handleCodeSend = async () => {
     try {
-      const res = await accessCodeRequest({ access_code: otpCode }).unwrap()
+      const res = await accessCodeRequest({ access_code: otpCode }).unwrap();
 
       if (res.success) {
         setFormData({
@@ -328,8 +328,7 @@ export const Register = () => {
       } else {
         toast({
           title: "Invalid access code",
-          description:
-            "Please check your code or send a request again.",
+          description: "Please check your code or send a request again.",
           variant: "destructive",
         });
       }
@@ -337,12 +336,11 @@ export const Register = () => {
       console.error("Error sending access code:", err);
       toast({
         title: "Invalid access code",
-        description:
-          "Please check your code or send a request again.",
+        description: "Please check your code or send a request again.",
         variant: "destructive",
       });
     }
-  }
+  };
 
   return (
     <div className="flex flex-col w-full min-h-screen xl:flex-row">

@@ -16,7 +16,7 @@ import ConfirmIcon from "shared/assets/icons/confirm";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
 import { toast } from "shared/lib/hooks/use-toast";
-import { Button, Dialog, DialogContent, DialogTrigger } from "shared/ui";
+import { Button, Dialog, DialogContent, DialogTrigger, Input } from "shared/ui";
 import { AddClientModal } from "widgets/AddClientModal/ui";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
@@ -530,7 +530,9 @@ export const ContentManagerClients: React.FC = () => {
                               {uploadedFileSize}
                             </p>
                           </div>
-                          <button
+                          <Button
+                            variant={"unstyled"}
+                            size={"unstyled"}
                             onClick={() => {
                               setUploadedFileName(null);
                               setUploadedFileSize(null);
@@ -538,7 +540,7 @@ export const ContentManagerClients: React.FC = () => {
                             className="absolute top-[6px] right-[6px]"
                           >
                             <MaterialIcon iconName="close" size={16} />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ) : (
@@ -547,7 +549,9 @@ export const ContentManagerClients: React.FC = () => {
                         <p className="text-left text-black text-base font-medium mb-[8px]">
                           Import СSV/XLSX
                         </p>
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           tabIndex={0}
                           aria-label="Upload client list"
                           className={`w-full border ${dragOver ? "border-[#0057C2]" : "border-dashed border-[#1C63DB]"} rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
@@ -576,11 +580,11 @@ export const ContentManagerClients: React.FC = () => {
                           <p className="text-[#5F5F65] text-[14px] mt-[4px]">
                             СSV/XLSX
                           </p>
-                        </button>
+                        </Button>
                       </div>
                     )}
 
-                    <input
+                    <Input
                       ref={fileInputRef}
                       type="file"
                       accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -614,14 +618,14 @@ export const ContentManagerClients: React.FC = () => {
                   className={`flex gap-[8px] items-center ${isWide ? "lg:w-[300px]" : "w-full"} rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[40px]`}
                 >
                   <MaterialIcon iconName="search" size={16} />
-                  <input
+                  <Input
                     placeholder="Search"
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000]"
+                    className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-9"
                   />
                 </div>
                 <Button
@@ -666,7 +670,9 @@ export const ContentManagerClients: React.FC = () => {
                               {uploadedFileSize}
                             </p>
                           </div>
-                          <button
+                          <Button
+                            variant={"unstyled"}
+                            size={"unstyled"}
                             onClick={() => {
                               setUploadedFileName(null);
                               setUploadedFileSize(null);
@@ -674,7 +680,7 @@ export const ContentManagerClients: React.FC = () => {
                             className="absolute top-[6px] right-[6px]"
                           >
                             <MaterialIcon iconName="close" size={16} />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ) : (
@@ -683,7 +689,9 @@ export const ContentManagerClients: React.FC = () => {
                         <p className="text-left  text-black text-base font-medium mb-[8px]">
                           Import СSV/XLSX
                         </p>
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           tabIndex={0}
                           aria-label="Upload client list"
                           className={`w-full border ${dragOver ? "border-[#0057C2]" : "border-dashed border-[#1C63DB]"} rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
@@ -712,11 +720,11 @@ export const ContentManagerClients: React.FC = () => {
                           <p className="text-[#5F5F65] text-[14px] mt-[4px]">
                             СSV/XLSX
                           </p>
-                        </button>
+                        </Button>
                       </div>
                     )}
 
-                    <input
+                    <Input
                       ref={fileInputRef}
                       type="file"
                       accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -776,14 +784,16 @@ export const ContentManagerClients: React.FC = () => {
                         {client.status === "waiting to accept invite" ? (
                           <div className="flex flex-col items-center justify-center ">
                             Pending
-                            <button
+                            <Button
+                              variant={"unstyled"}
+                              size={"unstyled"}
                               className="text-[14px] text-[#1C63DB]"
                               onClick={() =>
                                 handleResendInvite(client.client_id)
                               }
                             >
                               Resend invitation
-                            </button>
+                            </Button>
                           </div>
                         ) : client.status === "active" ? (
                           "Active"
@@ -793,16 +803,21 @@ export const ContentManagerClients: React.FC = () => {
                       </div>
                     </div>
 
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       onClick={() => {
                         handleSelectClient(client.client_id);
                       }}
                       className={`${isWide ? "flex" : "hidden"} items-center justify-center text-[#000]`}
                     >
                       <MaterialIcon iconName="visibility" fill={1} />
-                    </button>
-                    <button
-                      className={`items-center justify-center ${isWide ? "flex" : "hidden"}`}
+                    </Button>
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
+                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
+                      disabled={client.status !== "active"}
                       onClick={() => {
                         navigate(
                           `/content-manager/messages/${client.client_id}`
@@ -810,14 +825,16 @@ export const ContentManagerClients: React.FC = () => {
                       }}
                     >
                       <MaterialIcon iconName="forum" fill={1} />
-                    </button>
+                    </Button>
 
                     {isWide && (
                       <div
                         className="relative ml-auto"
                         data-delete-menu-id={client.client_id}
                       >
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           onClick={() =>
                             setDeleteMenuId(
                               deleteMenuId === client.client_id
@@ -829,11 +846,13 @@ export const ContentManagerClients: React.FC = () => {
                           data-delete-trigger="true"
                         >
                           <MaterialIcon iconName="more_vert" />
-                        </button>
+                        </Button>
 
                         {deleteMenuId === client.client_id && (
                           <div className="absolute top-[30px] right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50">
-                            <button
+                            <Button
+                              variant={"unstyled"}
+                              size={"unstyled"}
                               className="flex items-center gap-[8px] w-full text-left"
                               onClick={async () => {
                                 handleSelectClient(client.client_id);
@@ -847,7 +866,7 @@ export const ContentManagerClients: React.FC = () => {
                                 className="text-[#FF1F0F]"
                               />
                               Delete
-                            </button>
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -855,15 +874,19 @@ export const ContentManagerClients: React.FC = () => {
 
                     {isMobile || !isWide ? (
                       <div className="w-full flex flex-col gap-[8px] mt-[24px]">
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           className={`w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                           onClick={() => handleSelectClient(client.client_id)}
                           disabled={client.status !== "active"}
                         >
                           <MaterialIcon iconName="visibility" fill={1} />
                           View profile
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           className={`w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                           onClick={() => {
                             if (client.status !== "active") return;
@@ -875,7 +898,55 @@ export const ContentManagerClients: React.FC = () => {
                         >
                           <MaterialIcon iconName="forum" fill={1} />
                           Chat
-                        </button>
+                        </Button>
+                      </div>
+                    ) : isTablet ? (
+                      <div className="relative ml-auto h-[24px]">
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
+                          className="w-fit h-fit"
+                          onClick={() => {
+                            setPopupClientId(
+                              popupClientId === client.client_id
+                                ? null
+                                : client.client_id
+                            );
+                          }}
+                        >
+                          <MaterialIcon
+                            iconName="more_vert"
+                            className="text-blue-500"
+                          />
+                        </Button>
+
+                        {popupClientId === client.client_id && (
+                          <div
+                            className="
+        absolute right-0 top-[34px]
+        w-[238px] bg-white shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
+        rounded-[10px] px-[14px] py-[16px] flex flex-col gap-[16px] z-50
+      "
+                          >
+                            <Button
+                              variant={"unstyled"}
+                              size={"unstyled"}
+                              className="flex items-center gap-[8px] text-[#FF1F0F] font-[500] text-[16px]"
+                              onClick={() => {
+                                handleSelectClient(client.client_id);
+                                setConfirmDelete(true);
+                                setPopupClientId(null);
+                              }}
+                            >
+                              <MaterialIcon
+                                iconName="delete"
+                                fill={1}
+                                className="text-[#FF1F0F]"
+                              />
+                              Delete user
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     ) : undefined}
                   </div>
@@ -887,32 +958,37 @@ export const ContentManagerClients: React.FC = () => {
 
         {totalPages > 1 && !loading && (
           <div className="flex items-center justify-center gap-2 pb-4">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
             >
               <MaterialIcon iconName="arrow_left_alt" />
-            </button>
+            </Button>
 
             {Array.from({ length: totalPages }).map((_, i) => {
               const page = i + 1;
               return (
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
-                </button>
+                </Button>
               );
             })}
 
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               disabled={currentPage === totalPages}
               onClick={() =>
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))
@@ -920,7 +996,7 @@ export const ContentManagerClients: React.FC = () => {
               className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
             >
               <MaterialIcon iconName="arrow_right_alt" />
-            </button>
+            </Button>
           </div>
         )}
 
@@ -980,24 +1056,28 @@ export const ContentManagerClients: React.FC = () => {
         {inviteSuccessPopup && (
           <div className="absolute inset-0 top-0 min-h-[calc(100vh-85px)] bottom-0 z-50 bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex stretch items-center justify-center">
             <div className="bg-white rounded-[16px] shadow-xl p-[24px] w-full h-fit text-center relative mx-[16px] md:w-[550px]">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="absolute top-[24px] right-[24px] cursor-pointer"
                 onClick={() => setInviteSuccessPopup(false)}
               >
                 <MaterialIcon iconName="close" />
-              </button>
+              </Button>
               <div className="flex justify-center items-center mb-[24px]">
                 <ConfirmIcon />
               </div>
               <p className="text-[#1D1D1F] text-[28px] font-semibold mb-[24px]">
                 Client has been invited successfully
               </p>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="bg-[#1C63DB] text-white px-[16px] py-[10px] w-full max-w-[250px] rounded-full font-semibold text-[16px] leading-normal"
                 onClick={() => setInviteSuccessPopup(false)}
               >
                 Go Back to Home
-              </button>
+              </Button>
             </div>
           </div>
         )}

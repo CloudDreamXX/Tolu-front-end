@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthPageWrapper } from "shared/ui";
+import { AuthPageWrapper, Button } from "shared/ui";
 import { AdminHeader } from "widgets/Header";
 import { contents } from "./index";
 import { PrivacyPolicy } from "./components/PrivacyPolicy";
@@ -59,12 +59,14 @@ export const OnboardingWelcome = () => {
                 and content
               </p>
             </div>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={addStep}
               className="flex justify-center items-center h-[56px] w-full md:w-[250px] p-[16px] rounded-full bg-[#1C63DB] text-white"
             >
               Get Started
-            </button>
+            </Button>
           </div>
         )}
         {curentWindow === 1 && (

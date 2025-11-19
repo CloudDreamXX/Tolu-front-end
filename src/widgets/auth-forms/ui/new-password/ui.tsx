@@ -2,7 +2,7 @@ import { useSetNewPasswordMutation } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "shared/lib/hooks/use-toast";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 
 export const NewPassword = () => {
   const nav = useNavigate();
@@ -129,7 +129,9 @@ export const NewPassword = () => {
 
           {/* Submit Button */}
           <div className="flex flex-col items-center gap-[24px] w-full mt-auto md:mt-0">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="submit"
               className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
                 formData.newPassword.length >= 8 &&
@@ -140,7 +142,7 @@ export const NewPassword = () => {
               }`}
             >
               Create
-            </button>
+            </Button>
           </div>
         </form>
       </div>

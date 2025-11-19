@@ -1,6 +1,6 @@
 import React from "react";
 import { Step as StepType } from "../../mock";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface StepContentProps {
@@ -39,13 +39,15 @@ export const StepContent: React.FC<StepContentProps> = ({
           </p>
           <div className="flex flex-row flex-wrap gap-2 mb-2">
             {selectedOptions.map((option) => (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => onOptionToggle(option)}
                 key={option}
                 className=" flex text-left px-[16px] py-[8px] rounded-[8px] bg-[#F3F7FD] border border-[#1C63DB] text-[#1C63DB] text-[16px] leading-[22px]"
               >
                 {option}
-              </button>
+              </Button>
             ))}
           </div>
           <div className="flex flex-row">
@@ -55,9 +57,13 @@ export const StepContent: React.FC<StepContentProps> = ({
               onChange={(e) => onOtherInputChange(e.target.value)}
               className="px-4"
             />
-            <button onClick={addCustomSymptom}>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              onClick={addCustomSymptom}
+            >
               <MaterialIcon iconName="add" className="ml-2 w-[24px] h-[24px]" />
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -81,7 +87,9 @@ export const StepContent: React.FC<StepContentProps> = ({
             }
 
             return (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 key={id}
                 onClick={() => onOptionToggle(id)}
                 className={`flex text-left px-[16px] py-[8px] rounded-[8px] bg-[#F3F7FD] ${
@@ -94,7 +102,7 @@ export const StepContent: React.FC<StepContentProps> = ({
                 }
               >
                 {label}
-              </button>
+              </Button>
             );
           })}
         </div>

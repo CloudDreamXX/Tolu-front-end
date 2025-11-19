@@ -1,7 +1,7 @@
 import { ISessionResult } from "entities/coach";
 import parse from "html-react-parser";
 import React, { useEffect, useState } from "react";
-import { Button } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { ConversationItemActions } from "./conversationItem-actions";
 import { Editor } from "primereact/editor";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -357,7 +357,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
             </div>
 
             <div className="flex justify-center items-center gap-[8px] text-[#1C63DB]">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => setMobilePage(1)}
                 disabled={mobilePage === 1}
               >
@@ -367,18 +369,22 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                     className="text-blue-600"
                   />
                 </span>
-              </button>
+              </Button>
 
               <div className="text-[16px] font-[500]">{mobilePage}/2</div>
 
-              <button onClick={() => setMobilePage(2)}>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
+                onClick={() => setMobilePage(2)}
+              >
                 <span className="block transform rotate-180">
                   <MaterialIcon
                     iconName="keyboard_arrow_left"
                     className="text-blue-600"
                   />
                 </span>
-              </button>
+              </Button>
             </div>
 
             <Button
@@ -404,18 +410,24 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
             </div>
 
             <div className="flex justify-center items-center gap-[8px] text-[#1C63DB]">
-              <button onClick={() => setMobilePage(1)}>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
+                onClick={() => setMobilePage(1)}
+              >
                 <span>
                   <MaterialIcon
                     iconName="keyboard_arrow_left"
                     className="text-blue-600"
                   />
                 </span>
-              </button>
+              </Button>
 
               <div className="text-[16px] font-[500]">{mobilePage}/2</div>
 
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => setMobilePage(2)}
                 disabled={mobilePage === 2}
               >
@@ -425,7 +437,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
                     className="text-blue-600"
                   />
                 </span>
-              </button>
+              </Button>
             </div>
 
             <Button
@@ -778,12 +790,14 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
           {isEditing && (
             <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="text-[#1C63DB] text-[16px] px-4 py-2"
                 onClick={onCancelEdit}
               >
                 Cancel
-              </button>
+              </Button>
 
               <Button
                 className="px-4 py-2"
@@ -828,7 +842,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
     return (
       <div className="flex flex-col gap-2 w-full min-w-0">
-        <input
+        <Input
           type="text"
           value={editedTitle}
           onChange={(e) => setEditedTitle(e.target.value)}
@@ -874,12 +888,14 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
         {isEditing && (
           <div className="flex flex-col flex-col-reverse md:flex-row flex-wrap md:justify-end gap-2">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="text-[#1C63DB] text-[16px] px-4 py-2"
               onClick={onCancelEdit}
             >
               Cancel
-            </button>
+            </Button>
             <Button
               className="px-4 py-2"
               variant="light-blue"

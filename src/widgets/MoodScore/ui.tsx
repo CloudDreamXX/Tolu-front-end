@@ -11,6 +11,7 @@ import Smiley from "shared/assets/images/Smiley.svg";
 import { MoodModal } from "./MoodModal";
 import { MoodSelector } from "./MoodSelector";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 export const moodMap = {
   Angry: Angry,
@@ -49,13 +50,15 @@ export const MoodScore: React.FC = () => {
                 <MaterialIcon iconName="help" fill={1} size={20} />
               </span>
             </div>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               aria-label="Edit mood"
               onClick={() => setShowMoodModal(true)}
               className="rounded-full bg-[#DDEBF6] p-2 hover:bg-[#B9D5F3] transition"
             >
               <MaterialIcon iconName="edit" fill={1} />
-            </button>
+            </Button>
           </div>
 
           <p className="text-[#1D1D1F] text-[14px]/[20px] font-semibold">

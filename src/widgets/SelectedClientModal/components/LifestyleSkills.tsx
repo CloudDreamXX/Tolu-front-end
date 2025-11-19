@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from "react";
 
 import { LifestyleSkillsInfo } from "entities/coach";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button, Input } from "shared/ui";
 
 export type LifestyleItem = { text: string; sign?: "plus" | "minus" };
 
@@ -112,14 +113,16 @@ const LifestyleSkills: React.FC<Props> = ({
                   {!editing && <span>•</span>} {title}
                 </p>
                 {!editing && (
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     type="button"
                     onClick={() => setIsEditing(title)}
                     className="p-1 rounded hover:bg-black/5"
                     aria-label={editing ? "Save" : "Edit"}
                   >
                     <MaterialIcon iconName="edit" fill={1} />
-                  </button>
+                  </Button>
                 )}
               </div>
 
@@ -147,13 +150,15 @@ const LifestyleSkills: React.FC<Props> = ({
                       key={i}
                       className="flex items-center gap-[8px] rounded-full border border-[#DBDEE1] bg-white px-[16px] py-[10px]"
                     >
-                      <input
+                      <Input
                         value={it.text}
                         onChange={(e) => changeItem(title, i, e.target.value)}
                         placeholder="Enter item"
                         className="w-full outline-none text-[16px] text-[#1D1D1F]"
                       />
-                      <button
+                      <Button
+                        variant={"unstyled"}
+                        size={"unstyled"}
                         type="button"
                         onClick={() => removeItem(title, i)}
                         className="shrink-0 text-[#FF1F0F] m-0 first-line:hover:opacity-80 flex items-center justify-center"
@@ -161,7 +166,7 @@ const LifestyleSkills: React.FC<Props> = ({
                         aria-label="Remove"
                       >
                         <MaterialIcon iconName="delete" fill={1} />
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>

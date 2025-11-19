@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
-import { Button, Textarea } from "shared/ui";
+import { Button, Input, Textarea } from "shared/ui";
 import { PopoverAttach } from "widgets/content-popovers";
 import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
@@ -532,12 +532,14 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         )}
 
         {showScrollButton && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={scrollToBottom}
             className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-4 hover:bg-blue-600"
           >
             <MaterialIcon iconName="keyboard_arrow_down" />
-          </button>
+          </Button>
         )}
       </div>
 
@@ -558,7 +560,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             <div className="flex flex-col w-full text-[#1D1D1F]">
               <div className="flex items-center justify-between w-full ">
                 <div className="flex items-center gap-4">
-                  <input {...getInputProps()} className="hidden" />
+                  <Input {...getInputProps()} className="hidden" />
                   {isClient ? (
                     <label
                       className={`relative items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800 hidden md:flex`}

@@ -2,6 +2,7 @@ import React from "react";
 
 import { usePageWidth } from "../../../shared/lib/hooks/use-page-width";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 interface SymptomCheckModalProps {
   isOpen: boolean;
@@ -59,28 +60,34 @@ export const SymptomCheckModal: React.FC<SymptomCheckModalProps> = ({
           </p>
         </div>
         <div className="w-full md:w-fit flex flex-col gap-[16px]">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="w-full md:w-fit py-[11px] px-[24px] bg-[#1C63DB] text-white leading-[22px] rounded-full text-[16px] font-semibold"
             onClick={onStepModalOpen}
           >
             {variant === "completion" ? "Show My Results" : "Start My Check-In"}
-          </button>
+          </Button>
           {isMobile && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="w-full md:w-fit py-[11px] px-[24px] text-[#1C63DB] leading-[22px] rounded-full text-[16px] font-semibold"
               onClick={onClose}
             >
               Cancel
-            </button>
+            </Button>
           )}
         </div>
         {!isMobile && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={onClose}
             className="absolute text-sm text-gray-500 top-4 right-4 hover:text-black"
           >
             <MaterialIcon iconName="close" />
-          </button>
+          </Button>
         )}
       </div>
     </div>

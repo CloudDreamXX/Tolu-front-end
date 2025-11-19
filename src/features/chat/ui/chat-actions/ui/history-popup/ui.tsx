@@ -144,7 +144,9 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
 
   return (
     <div ref={triggerRef}>
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         onClick={() => setIsOpen((p) => !p)}
         className={cn(
           "bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center",
@@ -154,7 +156,7 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
         aria-expanded={isOpen}
       >
         <MaterialIcon iconName="replay" className="text-[#1C63DB]" size={20} />
-      </button>
+      </Button>
 
       {
         isOpen &&

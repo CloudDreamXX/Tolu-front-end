@@ -1,5 +1,6 @@
 import React from "react";
 import { Content } from "../index";
+import { Button } from "shared/ui";
 
 interface MiddleCardProps extends Content {
   handleNext: () => void;
@@ -22,12 +23,14 @@ export const MiddleCard: React.FC<MiddleCardProps> = ({
           <p>{description}</p>
         </div>
       </div>
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         onClick={handleNext}
         className="flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-[250px] h-[44px] p-[16px] shrink-0"
       >
         Continue
-      </button>
+      </Button>
     </div>
   );
 };

@@ -513,7 +513,9 @@ export const ContentManagerProfile = () => {
                         "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
                       }
                     />
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       type="button"
                       className="absolute mr-4"
                       onClick={() => setShowPassword(!showPassword)}
@@ -527,7 +529,7 @@ export const ContentManagerProfile = () => {
                         }
                         size={16}
                       />
-                    </button>
+                    </Button>
                   </div>
                 </div>
                 <div className="flex flex-col gap-[10px]">
@@ -547,7 +549,9 @@ export const ContentManagerProfile = () => {
                         "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
                       }
                     />
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       type="button"
                       className="absolute mr-4"
                       onClick={() => setShowPassword(!showPassword)}
@@ -561,7 +565,7 @@ export const ContentManagerProfile = () => {
                         }
                         size={16}
                       />
-                    </button>
+                    </Button>
                   </div>
                   <div className="w-full lg:w-[70%]">
                     {newPassword && (

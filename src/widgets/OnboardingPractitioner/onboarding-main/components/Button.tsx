@@ -1,4 +1,5 @@
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button as ShadcnButton } from "shared/ui";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -23,7 +24,9 @@ export const Button: React.FC<ButtonProps> = ({
   const disabledClasses = disabled ? "opacity-[0.4]" : "";
 
   return (
-    <button
+    <ShadcnButton
+      variant={"unstyled"}
+      size={"unstyled"}
       onClick={onClick}
       className={`${baseClasses} ${selectedClasses} ${disabledClasses}`}
       disabled={disabled}
@@ -32,6 +35,6 @@ export const Button: React.FC<ButtonProps> = ({
       {selected && (
         <MaterialIcon iconName="close" className="text-[#1C63DB]" size={16} />
       )}
-    </button>
+    </ShadcnButton>
   );
 };

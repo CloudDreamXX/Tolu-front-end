@@ -1,5 +1,6 @@
 import React from "react";
 import { findPercentage } from "./utils";
+import { Button } from "shared/ui";
 
 interface HealthGoalsCardProps {
   name: string;
@@ -19,9 +20,13 @@ export const HealthGoalsCard: React.FC<HealthGoalsCardProps> = ({
         <h2 className="text-[18px]/[24px] font-semibold text-[#1D1D1F] ">
           {name}
         </h2>
-        <button className="py-[6px] px-[8px] flex justify-center items-center rounded-full bg-[#DDEBF6] self-stretch text-[14px]/[20px] font-semibold text-[#1C63DB] ">
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
+          className="py-[6px] px-[8px] flex justify-center items-center rounded-full bg-[#DDEBF6] self-stretch text-[14px]/[20px] font-semibold text-[#1C63DB] "
+        >
           Update
-        </button>
+        </Button>
       </div>
       <div className="flex flex-col items-start self-stretch gap-4">
         <p className="text-[14px]/[20px] font-medium  text-[#1D1D1F]">

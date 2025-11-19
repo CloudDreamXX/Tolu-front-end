@@ -1,5 +1,6 @@
 import React from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button, Input } from "shared/ui";
 
 type ClientSymptoms = {
   hormones_and_neurotransmitters_reported_symptoms: string[];
@@ -79,13 +80,15 @@ const Symptoms: React.FC<Props> = ({
                   key={i}
                   className="flex items-center gap-[8px] rounded-full border border-[#DBDEE1] bg-white px-[16px] py-[10px]"
                 >
-                  <input
+                  <Input
                     value={val}
                     onChange={(e) => updateHormoneItem(i, e.target.value)}
                     placeholder="Hot flashes (3–5/day)"
                     className="w-full outline-none text-[14px] text-[#1D1D1F]"
                   />
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     type="button"
                     onClick={() => removeHormoneItem(i)}
                     className="shrink-0 text-[#E86C4A] hover:opacity-80"
@@ -93,16 +96,18 @@ const Symptoms: React.FC<Props> = ({
                     title="Remove"
                   >
                     <MaterialIcon iconName="delete" fill={1} />
-                  </button>
+                  </Button>
                 </div>
               ))}
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 onClick={addHormoneItem}
                 className="inline-flex items-center gap-2 text-[#008FF6] font-semibold ml-auto"
               >
                 <span className="text-[20px] leading-none">+</span> Add
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -123,7 +128,7 @@ const Symptoms: React.FC<Props> = ({
               {mind?.trim() ? mind : "—"}
             </div>
           ) : (
-            <input
+            <Input
               value={mind}
               onChange={(e) => updateMind(e.target.value)}
               placeholder="Irritability, fatigue, anxiety around peers …"

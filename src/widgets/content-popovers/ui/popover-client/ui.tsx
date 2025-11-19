@@ -410,12 +410,14 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
         )}
       </PopoverTrigger>
       <PopoverContent className="w-[358px] md:w-[419px] p-6 flex flex-col z-50">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="absolute top-[24px] right-[24px] z-[999]"
           onClick={handleAddClientModal}
         >
           <MaterialIcon iconName="add" />
-        </button>
+        </Button>
         <Input
           variant="bottom-border"
           placeholder="Choose a client"
@@ -432,7 +434,9 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
                 key={client.client_id}
                 className="flex items-center justify-between"
               >
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   key={client.client_id}
                   className="flex items-center w-full py-2 px-[14px] gap-2 rounded-md cursor-pointer bg-white"
                   onClick={() => toggleClient(client.client_id)}
@@ -458,13 +462,15 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
                   >
                     {client.name}
                   </label>
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={() => handleSelectClient(client.client_id)}
                   className="flex items-center justify-center text-[#1C63DB]"
                 >
                   View
-                </button>
+                </Button>
               </div>
             ))}
           </div>

@@ -569,7 +569,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
               onChange={(e) => handleUserNoteChange(e.target.value)}
             />
             <div className="flex items-center gap-4 font-semibold">
-              <input
+              <Input
                 ref={photoInputRef}
                 type="file"
                 accept="image/*"
@@ -595,7 +595,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                 </div>
               )}
 
-              <input
+              <Input
                 ref={voiceInputRef}
                 type="file"
                 accept="audio/*"
