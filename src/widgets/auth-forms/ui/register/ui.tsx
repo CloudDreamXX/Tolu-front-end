@@ -90,7 +90,6 @@ export const Register = () => {
     "client" | "referral" | null
   >(null);
 
-  const [stage, setStage] = useState<"otp" | "select" | "form">("otp");
   const [otpCode, setOtpCode] = useState("");
 
   const { token } = useParams();
@@ -106,7 +105,15 @@ export const Register = () => {
   const [getReferralInvitation] = useLazyGetReferralInvitationQuery();
   const [accessCodeRequest] = useAccessCodeRequestMutation();
 
+    const [stage, setStage] = useState<"otp" | "select" | "form">("otp");
+
   const [registerUser] = useRegisterUserMutation();
+
+  useEffect(() => {
+    if (data) {
+      setStage("select")
+    }
+  }, [data])
 
   useEffect(() => {
     if (!token) return;

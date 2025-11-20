@@ -211,7 +211,11 @@ export const ContentManagerMessages: React.FC = () => {
         page,
       }).unwrap();
       return data;
-    } catch {
+    } catch (err) {
+      console.error(err)
+      if ((err as any).data.detail === 'Access denied') {
+              return undefined;
+      }
       toast({
         variant: "destructive",
         title: "Failed to load messages",
