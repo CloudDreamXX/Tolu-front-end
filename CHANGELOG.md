@@ -1,3 +1,28 @@
+## [1.5.0] - 2025-11-17
+
+### New feature
+
+- Add super admin profile page.
+- Add abillity for super admin to change password.
+- Add abillity for super admin to delete users.
+- Change password validation to have at least 12 symbols.
+- Reuse shadcn input otp for login with abillity to copy-paste the code.
+
+## [1.4.1] - 2025-11-12
+
+### Fixes & Minor Changes
+
+- Fix delete folder action in the popup.
+- Update client Chatbot UI.
+- Add email in the top of the client's opened card.
+- Fix linked coach name in the client library.
+- Fix saving of 'Metabolic & digestive health' fields.
+- Remove 'Content & submissions' from health profile.
+- Fix dropdown top position in SelectField.
+- Implement resizable chat.
+- Fix height of the clients popup.
+- Fix tables view in the coach assistant bot.
+
 ## [1.4.0] - 2025-11-05
 
 ### New feature
