@@ -105,7 +105,7 @@ export const Register = () => {
   const [getReferralInvitation] = useLazyGetReferralInvitationQuery();
   const [accessCodeRequest] = useAccessCodeRequestMutation();
 
-    const [stage, setStage] = useState<"otp" | "select" | "form">("otp");
+  const [stage, setStage] = useState<"otp" | "select" | "form">("otp");
 
   const [registerUser] = useRegisterUserMutation();
 

@@ -234,22 +234,22 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
     const operations: {
       action: string;
       medication:
-        | {
-            name: string;
-            dosage: string;
-            prescribed_date: string;
-            prescribed_by: string;
-            status: string;
-          }
-        | { dosage: string; status: string }
-        | {
-            name: string;
-            dosage: string;
-            prescribed_date: string;
-            prescribed_by: string;
-            status: string;
-          }
-        | { dosage: any };
+      | {
+        name: string;
+        dosage: string;
+        prescribed_date: string;
+        prescribed_by: string;
+        status: string;
+      }
+      | { dosage: string; status: string }
+      | {
+        name: string;
+        dosage: string;
+        prescribed_date: string;
+        prescribed_by: string;
+        status: string;
+      }
+      | { dosage: any };
       medication_id?: any;
     }[] = [];
 
@@ -403,9 +403,12 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         <div className="flex gap-[24px] items-center justify-between md:justify-start mb-[24px]">
           <div className="flex items-center gap-[8px]">
             <MaterialIcon iconName="account_circle" fill={1} />
-            <h2 className="text-[20px] font-[700]">
-              {client?.personal_info.email}
-            </h2>
+            <div className="flex flex-col gap-[8px]">
+              <h2 className="text-[18px] font-[700]">
+                {client?.personal_info.email}
+              </h2>
+              {client?.personal_info?.joined_date && <p className="text-[16px] font-[700]">Date joined: {client?.personal_info?.joined_date}</p>}
+            </div>
           </div>
           {/* <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
             <button
@@ -437,61 +440,55 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             Personal information
           </button> */}
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "healthProfile"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "healthProfile"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("healthProfile")}
           >
             Health summary
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "foodMoodPoop"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "foodMoodPoop"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("foodMoodPoop")}
           >
             Food Mood Poop Journal
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "clientStory"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "clientStory"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("clientStory")}
           >
             Client Story
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "symptoms"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "symptoms"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("symptoms")}
           >
             Symptoms
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "lifestyleSkills"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "lifestyleSkills"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("lifestyleSkills")}
           >
             Lifestyle Skills
           </button>
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "medicationsAndSupplements"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "medicationsAndSupplements"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("medicationsAndSupplements")}
           >
             Medications and Supplements
@@ -506,11 +503,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             Biometrics
           </button> */}
           <button
-            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
-              activeTab === "labs"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
-            }`}
+            className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "labs"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
+              }`}
             onClick={() => setActiveTab("labs")}
           >
             Labs

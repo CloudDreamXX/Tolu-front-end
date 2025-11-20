@@ -108,13 +108,13 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
 }
 
 export interface IContentMessage {
@@ -256,6 +256,7 @@ export interface PersonalInfo {
   date_of_birth: string | null;
   location?: string | null;
   country?: string | null;
+  joined_date?: string;
 }
 
 export interface HealthSummary {
