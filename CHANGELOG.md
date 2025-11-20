@@ -1,3 +1,11 @@
+## [1.6.0] - 2025-11-20
+
+### New feature
+
+- New page Requests for Super admin, where he can approve or deny request for sign up.
+- New sign up flow: Add OTP code for the user to know if he is allowed to sign up.
+- Prefill sign up form with user's info from the request to sign up.
+
 ## [1.5.0] - 2025-11-17
 
 ### New feature
