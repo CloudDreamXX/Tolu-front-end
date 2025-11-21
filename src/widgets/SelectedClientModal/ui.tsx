@@ -406,13 +406,13 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         <div className="flex gap-[24px] items-center justify-between md:justify-start mb-[24px]">
           <div className="flex items-center gap-[8px]">
             <MaterialIcon iconName="account_circle" fill={1} />
-            <div className="flex flex-col gap-[8px]">
+            <div className="flex flex-col">
               <h2 className="text-[18px] font-[700]">
                 {client?.personal_info.email}
               </h2>
-              {client?.personal_info?.joined_date && (
-                <p className="text-[16px] font-[700]">
-                  Date joined: {client?.personal_info?.joined_date}
+              {client?.personal_info?.signup_date && (
+                <p className="text-[14px] text-[#5F5F65] font-[500]">
+                  Date joined: {new Date(client.personal_info.signup_date).toLocaleDateString("en-GB")}
                 </p>
               )}
             </div>
