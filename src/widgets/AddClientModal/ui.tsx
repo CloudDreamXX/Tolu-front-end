@@ -72,11 +72,10 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
         <Button
           variant={"unstyled"}
           size={"unstyled"}
-          className={`w-full md:w-[144px] h-[40px] rounded-[1000px] text-[16px] font-semibold ${
-            isSaveDisabled
+          className={`w-full md:w-[144px] h-[40px] rounded-[1000px] text-[16px] font-semibold ${isSaveDisabled
               ? "bg-[#D5DAE2] text-[#5F5F65]"
               : "bg-[#1C63DB] text-white"
-          }`}
+            }`}
           onClick={onSave}
           disabled={isSaveDisabled}
         >
@@ -168,9 +167,8 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 const cleaned = raw.replace(/[+\-()\s]/g, "");
                 updateClient("phone_number", cleaned);
               }}
-              className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${
-                noPhoneNumber ? "bg-gray-100" : ""
-              }`}
+              className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${noPhoneNumber ? "bg-gray-100" : ""
+                }`}
               disabled={noPhoneNumber}
             />
             <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
@@ -181,7 +179,8 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   setNoPhoneNumber(!noPhoneNumber);
                   if (!noPhoneNumber) updateClient("phone_number", "");
                 }}
-                className="accent-[#1C63DB]"
+                className="accent-[#1C63DB] h-fit w-fit"
+                containerClassName="w-fit"
               />
               <label>I don’t have this client’s phone number</label>
             </div>

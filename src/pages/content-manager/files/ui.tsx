@@ -316,7 +316,7 @@ export const FilesLibrary = () => {
               <MaterialIcon iconName="search" size={16} />
               <Input
                 placeholder="Search"
-                className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-7"
+                className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-7 p-0"
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);

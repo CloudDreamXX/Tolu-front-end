@@ -41,12 +41,12 @@ export const OtpScreen: React.FC<Props> = ({
         <Button
           variant={"unstyled"}
           size={"unstyled"}
+          disabled={otpCode.length < 6}
           onClick={handleCodeSend}
-          className={`flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full text-[16px] font-semibold ${
-            otpCode.length === 6
+          className={`flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full text-[16px] font-semibold ${otpCode.length === 6
               ? "bg-[#1C63DB] text-white"
               : "bg-[#D5DAE2] text-[#5F5F65]"
-          }`}
+            }`}
         >
           Continue
         </Button>

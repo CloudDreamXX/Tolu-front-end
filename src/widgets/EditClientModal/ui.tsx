@@ -248,7 +248,8 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                       setNoPhoneNumber(!noPhoneNumber);
                       if (!noPhoneNumber) updateClient("phone_number", "");
                     }}
-                    className="accent-[#1C63DB]"
+                    className="accent-[#1C63DB] h-fit w-fit"
+                    containerClassName="w-fit"
                   />
                   <label>I don’t have this client’s phone number</label>
                 </div>
