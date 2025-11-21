@@ -766,7 +766,7 @@ export const ContentManagerClients: React.FC = () => {
                         Name
                       </div>
                       <div className="flex items-center justify-center w-full text-[16px] font-semibold text-center">
-                        {(client.first_name && client.last_name)
+                        {client.first_name && client.last_name
                           ? `${client.first_name} ${client.last_name}`
                           : client.first_name || client.name}
                       </div>
@@ -976,10 +976,11 @@ export const ContentManagerClients: React.FC = () => {
                   size={"unstyled"}
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                    ? "border-[#1C63DB] text-[#1C63DB]"
-                    : "border-[#DBDEE1]"
-                    }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                    currentPage === page
+                      ? "border-[#1C63DB] text-[#1C63DB]"
+                      : "border-[#DBDEE1]"
+                  }`}
                 >
                   {page}
                 </Button>

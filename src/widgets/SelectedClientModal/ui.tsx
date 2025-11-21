@@ -412,7 +412,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
               </h2>
               {client?.personal_info?.signup_date && (
                 <p className="text-[14px] text-[#5F5F65] font-[500]">
-                  Date joined: {new Date(client.personal_info.signup_date).toLocaleDateString("en-GB")}
+                  Date joined:{" "}
+                  {new Date(
+                    client.personal_info.signup_date
+                  ).toLocaleDateString("en-GB")}
                 </p>
               )}
             </div>
