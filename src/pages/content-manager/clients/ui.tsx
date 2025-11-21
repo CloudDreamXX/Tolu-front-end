@@ -625,7 +625,7 @@ export const ContentManagerClients: React.FC = () => {
                       setSearchQuery(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-9"
+                    className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-9 p-0"
                   />
                 </div>
                 <Button
@@ -976,11 +976,10 @@ export const ContentManagerClients: React.FC = () => {
                   size={"unstyled"}
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
                       ? "border-[#1C63DB] text-[#1C63DB]"
                       : "border-[#DBDEE1]"
-                  }`}
+                    }`}
                 >
                   {page}
                 </Button>

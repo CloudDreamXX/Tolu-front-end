@@ -117,7 +117,7 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
           placeholder="Search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="rounded-full "
+          className="rounded-full"
         />
       </div>
 
