@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { twMerge } from "tailwind-merge";
 import { Button } from "./button";
+import { cn } from "shared/lib";
 
 type InputVariant = "default" | "bottom-border" | "none";
 
@@ -9,6 +10,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;
   iconRight?: React.ReactNode;
   variant?: InputVariant;
+  containerClassName?: string;
   onIconClick?: () => void;
 }
 
@@ -16,6 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
       className,
+      containerClassName,
       icon,
       iconRight,
       type,
@@ -26,7 +29,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     return (
-      <div className="relative w-full">
+      <div className={cn("relative w-full", containerClassName)}>
         {icon && (
           <div className="absolute inset-y-0 left-[12px] flex items-center pointer-events-none">
             {icon}

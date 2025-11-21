@@ -97,6 +97,7 @@ export interface Agreements {
 }
 
 export interface PractitionerInfo {
+  target_targets: string;
   types: string[];
   niches: string[];
   school: string | null;

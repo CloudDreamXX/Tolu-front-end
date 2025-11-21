@@ -438,6 +438,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             checked={agreeTerms}
             onChange={(e) => setAgreeTerms(e.target.checked)}
             className="mt-[2px] w-[16px] h-[16px] border border-[#DFDFDF] rounded-[4px] cursor-pointer"
+            containerClassName="w-fit"
           />
           <label htmlFor="agreeTerms" className="text-[14px] text-[#5f5f65]">
             I agree to the Terms and {isMobile && <br />} Conditions and{" "}
