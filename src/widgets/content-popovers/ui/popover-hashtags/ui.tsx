@@ -5,7 +5,13 @@ import {
   useDeleteHashtagsMutation,
 } from "entities/content";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Popover, PopoverTrigger, PopoverContent, Button } from "shared/ui";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Button,
+  Input,
+} from "shared/ui";
 
 interface HashtagPopoverProps {
   contentId: string;
@@ -138,12 +144,14 @@ const HashtagPopover: React.FC<HashtagPopoverProps> = ({
               className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-sm"
             >
               #{item}
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="text-gray-500 hover:text-black"
                 onClick={() => remove(item)}
               >
                 ×
-              </button>
+              </Button>
             </span>
           ))}
           {selected.length === 0 && (
@@ -151,7 +159,7 @@ const HashtagPopover: React.FC<HashtagPopoverProps> = ({
           )}
         </div>
 
-        <input
+        <Input
           ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}

@@ -5,6 +5,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Button,
   Input,
 } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -518,18 +519,22 @@ export const ContentManagement = () => {
   return (
     <div className="flex flex-col gap-[16px] p-8 overflow-y-auto h-[100%]">
       <div className="flex gap-[16px] items-center">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className={`w-[200px] text-[18px] xl:text-xl font-medium px-[16px] py-[8px] rounded-[8px] ${!isCardsTab ? "bg-[#1C63DB] text-white" : ""}`}
           onClick={() => setIsCardsTab(false)}
         >
           Articles
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className={`w-[200px] text-[18px] xl:text-xl font-medium px-[16px] py-[8px] rounded-[8px] ${isCardsTab ? "bg-[#1C63DB] text-white" : ""}`}
           onClick={() => setIsCardsTab(true)}
         >
           Cards
-        </button>
+        </Button>
       </div>
 
       <Input

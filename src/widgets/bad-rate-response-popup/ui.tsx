@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 const reasons = [
   "Information was incorrect",
@@ -68,13 +69,15 @@ export const BadRateResponse: React.FC<Props> = ({
         className="bg-[#F9FAFB] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[95vh]"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
           onClick={onClose}
         >
           <MaterialIcon iconName="close" />
-        </button>
+        </Button>
 
         <h3
           id="modal-title"
@@ -85,7 +88,9 @@ export const BadRateResponse: React.FC<Props> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[8px] overflow-y-auto">
           {reasons.map((reason) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={reason}
               onClick={() => setSelectedReason(reason)}
               className={`border rounded-[8px] px-[16px] py-[12px] text-left text-[14px] font-medium bg-white ${
@@ -95,7 +100,7 @@ export const BadRateResponse: React.FC<Props> = ({
               }`}
             >
               {reason}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -107,19 +112,23 @@ export const BadRateResponse: React.FC<Props> = ({
         />
 
         <div className="flex flex-col flex-col-reverse gap-[8px] md:flex-row md:justify-between mt-[24px] w-full">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] text-[16px] font-[600] md:w-[128px]"
             onClick={onClose}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleSubmit}
             disabled={!selectedReason}
             className="px-[16px] py-[11px] rounded-full text-[16px] font-[600] bg-[#1C63DB] text-white disabled:opacity-50 md:w-[180px]"
           >
             Submit Feedback
-          </button>
+          </Button>
         </div>
       </div>
     </div>

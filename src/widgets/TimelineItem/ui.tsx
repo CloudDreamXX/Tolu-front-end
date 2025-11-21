@@ -2,6 +2,7 @@ import React from "react";
 
 import { cn } from "shared/lib";
 import { MaterialIcon } from "../../shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 interface TimelineItemProps {
   title: string;
@@ -68,9 +69,13 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
             variantIconList[iconsElList[iconName].variant]
           )}
         >
-          <button className="flex w-12 h-12 p-2 items-center justify-center shrink-0 rounded-[6px]">
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
+            className="flex w-12 h-12 p-2 items-center justify-center shrink-0 rounded-[6px]"
+          >
             {iconsElList[iconName].el}
-          </button>
+          </Button>
         </div>
         <div className="flex flex-col items-start w-full gap-1">
           <div className="flex items-center self-stretch justify-between w-full">

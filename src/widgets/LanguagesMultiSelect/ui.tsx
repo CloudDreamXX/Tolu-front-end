@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button, Input } from "shared/ui";
 
 type MultiSelectProps = {
   options: string[];
@@ -87,7 +88,7 @@ export function LanguagesMultiSelect({
     <div ref={rootRef} className="w-full">
       {name &&
         value.map((v) => (
-          <input key={v} type="hidden" name={`${name}[]`} value={v} />
+          <Input key={v} type="hidden" name={`${name}[]`} value={v} />
         ))}
 
       <div
@@ -119,7 +120,9 @@ export function LanguagesMultiSelect({
             className="inline-flex items-center gap-1 rounded-md bg-gray-100 text-black px-2 py-0.5 text-sm"
           >
             {lang}
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
@@ -129,11 +132,11 @@ export function LanguagesMultiSelect({
               className="opacity-60 hover:opacity-100"
             >
               ×
-            </button>
+            </Button>
           </span>
         ))}
 
-        <input
+        <Input
           ref={inputRef}
           type="text"
           value={query}
@@ -192,7 +195,7 @@ export function LanguagesMultiSelect({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => toggle(opt)}
               >
-                <input
+                <Input
                   type="checkbox"
                   readOnly
                   checked={checked}

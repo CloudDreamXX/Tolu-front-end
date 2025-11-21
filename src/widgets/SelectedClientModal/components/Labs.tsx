@@ -1,7 +1,7 @@
 import { LabsInfo } from "entities/coach";
 import React, { useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 
 type LabReport = {
   id: string;
@@ -147,22 +147,26 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       onClick={() => openPreview(r)}
                       className="p-2 rounded hover:bg-black/5"
                       title="View"
                       aria-label="View"
                     >
                       <MaterialIcon iconName="visibility" fill={1} />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       onClick={() => handleDownloadFile(r.name)}
                       className="p-2 rounded hover:bg-black/5"
                       title="Download"
                       aria-label="Download"
                     >
                       <MaterialIcon iconName="download" fill={1} />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -180,12 +184,14 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                 Preview{" "}
                 <span className="text-[#1D1D1F]">“{preview.file.name}”</span>
               </h2>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="p-1 rounded hover:bg-black/5"
                 onClick={closePreview}
               >
                 <MaterialIcon iconName="close" fill={1} />
-              </button>
+              </Button>
             </div>
 
             <div className="relative flex-1 bg-[#F7F7F8] rounded-[8px] mx-[5px] md:mx-[40px] mb-[24px] px-[5px] md:px-6 py-6 overflow-auto">
@@ -207,7 +213,9 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
               </div>
 
               <div className="flex items-center justify-center gap-3 mt-4">
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={prevPage}
                   disabled={preview.page <= 0}
                   className={[
@@ -218,8 +226,10 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                   ].join(" ")}
                 >
                   Prev
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={nextPage}
                   disabled={preview.page >= totalPages - 1}
                   className={[
@@ -230,7 +240,7 @@ const Labs: React.FC<Props> = ({ client, handleDownloadFile }) => {
                   ].join(" ")}
                 >
                   Next
-                </button>
+                </Button>
               </div>
             </div>
           </div>

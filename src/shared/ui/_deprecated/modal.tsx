@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "../button";
 
 interface SignupFormProps {
   isModalOpen: boolean;
@@ -22,13 +23,15 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-2xl p-6 mx-auto bg-white rounded-lg shadow-lg sm:p-8">
         <div className="flex justify-end">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={onClose}
             className="text-gray-500 hover:text-gray-800"
             aria-label="Close modal"
           >
             ✕
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-col items-center">
@@ -43,7 +46,9 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
 
         <div className="flex flex-wrap justify-center gap-4">
           {categories?.map((category) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={category.id}
               onClick={() => onCategoryClick && onCategoryClick(category.name)}
               className={`p-2 border-2 rounded-full text-center cursor-pointer transition ${
@@ -53,13 +58,15 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
               }`}
             >
               {category.name}
-            </button>
+            </Button>
           ))}
         </div>
 
         {/* Modal Footer */}
         <div className="flex justify-end">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`mt-6 w-[100px] p-3 rounded-lg font-semibold transition ${
               selectedCategories.length >= 2
                 ? "bg-blue-500 text-white hover:bg-blue-600"
@@ -69,7 +76,7 @@ export const SingUpModal1: React.FC<SignupFormProps> = ({
             onClick={onClose}
           >
             Finish
-          </button>
+          </Button>
         </div>
       </div>
     </div>

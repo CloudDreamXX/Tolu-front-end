@@ -268,7 +268,9 @@ export const CouchEditProfileModal = ({
           </DialogTitle>
           <div className="flex items-center max-w-full gap-4 p-2 overflow-x-auto bg-white border rounded-full no-scrollbar">
             {steps.map((s, i) => (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 key={s.id}
                 className={cn(
                   "py-2.5 px-4 font-bold text-sm text-nowrap",
@@ -279,7 +281,7 @@ export const CouchEditProfileModal = ({
                 onClick={() => setStep(i)}
               >
                 {s.label}
-              </button>
+              </Button>
             ))}
           </div>
         </DialogHeader>

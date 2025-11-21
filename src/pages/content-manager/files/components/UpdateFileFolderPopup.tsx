@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FolderContentsResponse } from "entities/files-library";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 
 interface UpdateFolderPopupProps {
   onClose: () => void;
@@ -61,13 +61,15 @@ export const UpdateFolderPopup: React.FC<UpdateFolderPopupProps> = ({
         className="flex flex-col bg-white rounded-[18px] w-full md:w-[742px] px-[24px] py-[24px] gap-[24px] relative"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClose}
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
         >
           <MaterialIcon iconName="close" />
-        </button>
+        </Button>
 
         <h3 className="text-xl font-bold">
           {mode === "Create"
@@ -117,19 +119,23 @@ export const UpdateFolderPopup: React.FC<UpdateFolderPopupProps> = ({
         </div>
 
         <div className="flex flex-col-reverse gap-[8px] md:gap-[16px] md:flex-row justify-between w-full">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={onClose}
             className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600]"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleSubmit}
             disabled={!folderName.trim()}
             className="px-[16px] py-[11px] rounded-[1000px] w-full md:w-[128px] text-[16px] font-[600] bg-[#1C63DB] text-white disabled:opacity-50 flex items-center justify-center"
           >
             Save
-          </button>
+          </Button>
         </div>
       </div>
     </div>

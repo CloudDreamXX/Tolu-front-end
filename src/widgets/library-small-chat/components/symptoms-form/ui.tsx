@@ -3,6 +3,7 @@ import { baseSchema } from "widgets/library-small-chat/lib";
 import { z } from "zod";
 import { CustomSelect } from "../CustomSelect/ui";
 import {
+  Input,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -27,32 +28,32 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
     <div className="pt-[16px] border-t border-[#DBDEE1] mt-[16px] space-y-[12px]">
       <div className={lineClass}>
         <span>Hi Tolu, I'm a</span>
-        <input
+        <Input
           {...register("age")}
           placeholder="age"
           className={`${inputClass} w-[46px]`}
         />
         <span>and I'm</span>
-        <input
+        <Input
           {...register("maritalStatus")}
           placeholder="marital status"
           className={`${inputClass} w-[138px]`}
         />
         <span>. I work as a</span>
-        <input
+        <Input
           {...register("job")}
           placeholder="job"
           className={`${inputClass} w-[96px]`}
         />
         <span>and I have</span>
-        <input
+        <Input
           {...register("children")}
           placeholder="number of"
           className={`${inputClass} w-[109px]`}
         />
         <span>children.</span>
         <span>I live in</span>
-        <input
+        <Input
           {...register("location")}
           placeholder="city"
           className={`${inputClass} w-[90px]`}
@@ -62,7 +63,7 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <input
+                <Input
                   {...register("religion")}
                   placeholder="religion"
                   className={`${inputClass} w-[120px]`}
@@ -107,13 +108,13 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
         />
         <span>.</span>
         <span>I was born a</span>
-        <input
+        <Input
           {...register("genderAssignedAtBirth")}
           placeholder="gender"
           className={`${inputClass} w-[82px]`}
         />
         <span>and I identify as a</span>
-        <input
+        <Input
           {...register("genderIdentity")}
           placeholder="gender"
           className={`${inputClass} w-[82px]`}
@@ -142,7 +143,7 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
           )}
         />
         <span>but lately I’ve been dealing with</span>
-        <input
+        <Input
           {...register("mainSymptoms")}
           placeholder="e.g., trouble sleeping, mood swings"
           className={`${inputClass} w-[320px]`}
@@ -152,13 +153,13 @@ export const SymptomsForm = ({ form }: SymptomsFormProps) => {
 
       <div className={lineClass}>
         <span>I’ve also noticed</span>
-        <input
+        <Input
           {...register("otherChallenges")}
           placeholder="e.g., cravings, low energy"
           className={`${inputClass} w-[300px]`}
         />
         <span>, and it feels like no matter</span>
-        <input
+        <Input
           {...register("strategiesTried")}
           placeholder="e.g., dieting, exercising"
           className={`${inputClass} w-[280px]`}

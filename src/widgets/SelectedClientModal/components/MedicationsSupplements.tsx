@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MedicationsAndSupplements, MedicationInfo } from "entities/coach";
 import { usePageWidth } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button, Input } from "shared/ui";
 
 export type Medication = {
   medication_id: string;
@@ -26,7 +27,7 @@ const PillInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
   className = "",
   ...rest
 }) => (
-  <input
+  <Input
     {...rest}
     className={[
       "w-full rounded-[12px] border border-[#DBDEE1] bg-white",
@@ -82,14 +83,16 @@ const RowView: React.FC<{ med: Medication; onEdit: () => void }> = ({
       </div>
     </div>
 
-    <button
+    <Button
+      variant={"unstyled"}
+      size={"unstyled"}
       onClick={onEdit}
       className="absolute right-[16px] md:right-0 top-1/2 -translate-y-1/2 md:-bottom-5 p-1 rounded hover:bg-black/5"
       title="Edit"
       aria-label="Edit row"
     >
       <MaterialIcon iconName="edit" fill={1} />
-    </button>
+    </Button>
   </div>
 );
 

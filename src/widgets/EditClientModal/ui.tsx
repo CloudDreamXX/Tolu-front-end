@@ -7,6 +7,7 @@ import { MultiSelectField } from "widgets/MultiSelectField";
 import {
   Button,
   Calendar,
+  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -101,18 +102,22 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   const renderFooter = () => {
     return (
       <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[24px]">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
           onClick={onCancel}
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="w-full md:w-[144px] h-[40px] rounded-[1000px] text-white bg-[#1C63DB] text-[16px] font-semibold"
           onClick={onSave}
         >
           Save
-        </button>
+        </Button>
       </div>
     );
   };
@@ -165,13 +170,15 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
             ref={tabsContainerRef}
           >
             {tabs.map((tab) => (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 key={tab}
                 className={`w-full px-[24px] py-[10px] rounded-full text-nowrap font-semibold text-[14px] ${activeEditTab === tab ? "bg-[#F2F4F6] text-[#000000] border border-[#DBDEE1]" : "text-[#000000]"}`}
                 onClick={() => setActiveEditTab(tab)}
               >
                 {getLabel(tab)}
-              </button>
+              </Button>
             ))}
           </div>
           <div className="w-full mb-[16px] md:hidden">
@@ -196,7 +203,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
                   Full name
                 </label>
-                <input
+                <Input
                   type="text"
                   placeholder="Enter full name"
                   value={client?.full_name || ""}
@@ -208,7 +215,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
                   Email address
                 </label>
-                <input
+                <Input
                   type="email"
                   placeholder="Enter email address"
                   value={client?.email || ""}
@@ -224,7 +231,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
                   Phone number
                 </label>
-                <input
+                <Input
                   type="tel"
                   placeholder="Enter phone number"
                   value={client?.phone_number || ""}
@@ -234,7 +241,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                   required={!noPhoneNumber}
                 />
                 <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={noPhoneNumber}
                     onChange={() => {
@@ -330,7 +337,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
                   Primary health challenge
                 </label>
-                <input
+                <Input
                   type="text"
                   placeholder="What's your client's chief concern?"
                   value={client?.primary_health_challenge || ""}
@@ -427,7 +434,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                 <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
                   How do you believe your client can benefit from TOLU?
                 </label>
-                <input
+                <Input
                   placeholder="Type here"
                   type="text"
                   value={client?.tolu_benefit || ""}

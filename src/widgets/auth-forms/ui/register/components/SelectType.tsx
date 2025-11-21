@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "shared/lib";
+import { Button } from "shared/ui";
 
 interface SelectType {
   formData: {
@@ -25,7 +26,9 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
         </h3>
       </div>
       <div className="flex flex-col md:flex-row gap-[24px] md:gap-[40px] items-stretch">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={() => setCardActive("client")}
           className={cn(
             "rounded-[24px] px-[40px] py-[24px] md:py-[32px] lg:w-[370px] border border-blue-500",
@@ -43,8 +46,10 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
               together.
             </p>
           </div>
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={() => setCardActive("practitioner")}
           className={cn(
             "rounded-[24px] px-[40px] py-[24px] md:py-[32px] lg:w-[370px] border border-blue-500",
@@ -62,10 +67,12 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
               women’s health.
             </p>
           </div>
-        </button>
+        </Button>
       </div>
       <div className="flex flex-col w-full md:w-[250px] items-center gap-[24px]">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           type="button"
           onClick={() => handleCardClick(cardActive)}
           className={cn(
@@ -76,7 +83,7 @@ export const SelectType: React.FC<SelectType> = ({ handleCardClick }) => {
           )}
         >
           Continue
-        </button>
+        </Button>
       </div>
     </main>
   );

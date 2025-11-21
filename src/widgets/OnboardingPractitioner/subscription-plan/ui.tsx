@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthPageWrapper } from "shared/ui";
+import { AuthPageWrapper, Button } from "shared/ui";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { PriceCard } from "./components";
 
@@ -33,13 +33,15 @@ export const SubscriptionPlan = () => {
           />
         </section>
         <div className="flex items-center gap-[16px] pb-8 md:pb-[100px] w-full md:w-fit">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
-          </button>
+          </Button>
           <Link
             to="/profile-setup"
             className={

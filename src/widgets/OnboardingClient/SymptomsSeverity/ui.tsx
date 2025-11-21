@@ -7,6 +7,7 @@ import { useOnboardClientMutation } from "entities/user";
 import { OnboardingClientLayout } from "../Layout";
 import { Slider } from "shared/ui/slider";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 const SYMPTOMS = [
   "Hot Flashes",
@@ -153,14 +154,16 @@ export const SymptomsSeverity = () => {
         <>
           {hintBlock}
           <div className="w-full lg:max-w-[718px]">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={handleContinue}
               className={
                 "p-4 w-full md:w-[128px] h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white ml-auto"
               }
             >
               Continue
-            </button>
+            </Button>
           </div>
         </>
       }

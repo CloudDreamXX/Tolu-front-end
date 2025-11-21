@@ -76,7 +76,7 @@ export const PersonalityType = () => {
   //     </div>
   //     <div className="flex flex-col items-start gap-4">
   //       <div className="flex items-center h-6 gap-4">
-  //         <input
+  //         <Input
   //           onChange={handleRadioChange}
   //           id="test"
   //           name="personality"
@@ -89,7 +89,7 @@ export const PersonalityType = () => {
   //         </p>
   //       </div>
   //       <div className="flex items-center h-6 gap-4">
-  //         <input
+  //         <Input
   //           onChange={handleRadioChange}
   //           type="radio"
   //           id="know"
@@ -131,7 +131,7 @@ export const PersonalityType = () => {
   //         </div>
   //       )}
   //       <div className="flex items-center h-6 gap-4">
-  //         <input
+  //         <Input
   //           onChange={handleRadioChange}
   //           type="radio"
   //           id="later"

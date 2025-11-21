@@ -2,6 +2,7 @@ import { InviteClientPayload } from "entities/coach";
 import React, { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { phoneMask } from "shared/lib";
+import { Button, Input } from "shared/ui";
 import { SelectField } from "widgets/CRMSelectField";
 import { MultiSelectField } from "widgets/MultiSelectField";
 
@@ -60,13 +61,17 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
   const renderFooter = () => {
     return (
       <div className="flex flex-col-reverse gap-[8px] md:flex-row justify-between items-center mt-[24px]">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
           onClick={onCancel}
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className={`w-full md:w-[144px] h-[40px] rounded-[1000px] text-[16px] font-semibold ${
             isSaveDisabled
               ? "bg-[#D5DAE2] text-[#5F5F65]"
@@ -76,7 +81,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
           disabled={isSaveDisabled}
         >
           Invite Client
-        </button>
+        </Button>
       </div>
     );
   };
@@ -114,7 +119,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
                 First name
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Enter first name"
                 value={client?.first_name || ""}
@@ -126,7 +131,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
                 Last name
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Enter last name"
                 value={client?.last_name || ""}
@@ -141,7 +146,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
             <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
               Email address
             </label>
-            <input
+            <Input
               type="email"
               placeholder="Enter email address"
               value={client?.email || ""}
@@ -154,7 +159,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
             <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
               Phone number (optional)
             </label>
-            <input
+            <Input
               type="tel"
               placeholder="Enter phone number"
               value={phoneMask(client?.phone_number) || ""}
@@ -169,7 +174,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               disabled={noPhoneNumber}
             />
             <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">
-              <input
+              <Input
                 type="checkbox"
                 checked={noPhoneNumber}
                 onChange={() => {

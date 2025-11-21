@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib";
-import { ScrollArea } from "shared/ui";
+import { Button, ScrollArea } from "shared/ui";
 import { sideBarContent } from "widgets/sidebars/ui/content-manager/lib";
 import { createPortal } from "react-dom";
 
@@ -91,19 +91,26 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
           </p>
         </div>
         <div className="flex items-center gap-[16px]">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleOpenChat}
             className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px]"
           >
             AI Assistant
-          </button>
-          <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
+            onClick={() => setMenuMobOpen(true)}
+            aria-label="Open menu"
+          >
             <MaterialIcon
               iconName="menu"
               size={40}
               className="text-black w-[32px] md:w-[40px]"
             />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -127,7 +134,9 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                     Creator Studio
                   </p>
                 </div>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={() => setMenuMobOpen(false)}
                   aria-label="Close menu"
                   className="absolute top-[16px] right-[16px] z-10"
@@ -135,7 +144,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                   <span className="text-2xl font-bold">
                     <MaterialIcon iconName="close" />
                   </span>
-                </button>
+                </Button>
               </div>
               <ScrollArea className="h-full px-4 z-[999]">
                 <div className="flex flex-col gap-4 mt-6">
@@ -148,7 +157,9 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 </div>
               </ScrollArea>
               <div className="flex flex-col gap-[16px] mt-6 py-[16px] px-[32px] ">
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={() => {
                     setMenuMobOpen(false);
                     if (pageLocation === "user-management") {
@@ -165,14 +176,16 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                   <span className="ml-auto">
                     <MaterialIcon iconName="keyboard_arrow_right" />
                   </span>
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={handleSignOut}
                   className="flex gap-[12px] py-[16px] text-[16px] text-[#1C63DB] font-semibold cursor-pointer select-none"
                 >
                   <MaterialIcon iconName="exit_to_app" />
                   Sign out
-                </button>
+                </Button>
               </div>
             </div>
           </div>,
@@ -180,7 +193,9 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
         )}
 
       <div className="relative hidden ml-auto xl:flex">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={() => setMenuOpen(!menuOpen)}
           className="transition-colors duration-200"
         >
@@ -189,7 +204,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
             size={40}
             className={menuOpen ? "text-[#1C63DB]" : "text-black"}
           />
-        </button>
+        </Button>
 
         {menuOpen && (
           <div
@@ -199,7 +214,9 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
              before:absolute before:-top-2 before:right-4 before:border-8 before:border-transparent before:border-b-white"
             style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
           >
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => {
                 setMenuOpen(false);
                 if (pageLocation === "user-management") {
@@ -214,9 +231,11 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 <MaterialIcon iconName="account_circle" />
               </div>
               Profile
-            </button>
+            </Button>
 
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => {
                 setMenuOpen(false);
                 handleSignOut();
@@ -227,7 +246,7 @@ export const Navigation: React.FC<Props> = ({ pageLocation }) => {
                 <MaterialIcon iconName="exit_to_app" />
               </div>
               Sign out
-            </button>
+            </Button>
           </div>
         )}
       </div>

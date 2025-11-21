@@ -216,7 +216,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                 </div>
               </div>
               {!isDocumentPage && (
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={() => removeFile(index)}
                   className="flex items-center justify-center p-1 rounded hover:bg-red-50"
                 >
@@ -226,7 +228,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                     size={16}
                     className="text-red-500"
                   />
-                </button>
+                </Button>
               )}
             </div>
           ))}
@@ -307,7 +309,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                   </div>
                 </div>
                 {!isDocumentPage && (
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     onClick={() => handleRemoveFileLibrary(file)}
                     className="flex items-center justify-center p-1 rounded hover:bg-red-50"
                   >
@@ -317,7 +321,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                       size={16}
                       className="text-red-500"
                     />
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
@@ -340,12 +344,14 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         {renderUploadFromLibrary()}
         {viewingFolder && (
           <div className="flex items-center gap-2 mb-2">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={handleReturnToRoot}
               className="flex items-center text-sm text-blue-600 hover:underline"
             >
               <MaterialIcon iconName="arrow_back" />
-            </button>
+            </Button>
             <span className="font-bold text-gray-800">
               {viewingFolder.name}
             </span>
@@ -353,7 +359,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         )}
         <div className="grid grid-cols-2 gap-2">
           {currentFolders.map((folder: any) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={folder.id}
               className="h-[55px] w-full bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center border hover:border-gray-300"
               onClick={() => handleFolderClick(folder)}
@@ -366,11 +374,13 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                 />
                 <h3>{folder.name}</h3>
               </div>
-            </button>
+            </Button>
           ))}
 
           {currentFiles.map((file: any) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={file.id}
               onClick={() => handleSelectFileLibrary(file)}
               className={cn(
@@ -395,7 +405,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                   </span>
                 </div>
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -468,7 +478,9 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
             {!hideFromLibrary && (
               <div className="flex items-center gap-4 p-2 bg-white border rounded-full max-w-fit">
                 {TABS.map((s) => (
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     key={s}
                     className={cn(
                       "py-2.5 px-4 font-bold text-sm text-nowrap flex items-center justify-center gap-2.5",
@@ -484,7 +496,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
                         {selectedFiles.size}
                       </span>
                     )}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}

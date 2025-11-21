@@ -229,7 +229,9 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
           <div className="text-[18px] font-semibold text-black flex items-center justify-between gap-2">
             <div className="flex gap-[8px] items-center">
               {folderHistory.length > 0 && (
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className="p-1 rounded w-fit hover:bg-gray-100"
                   onClick={() => {
                     const previous = folderHistory[folderHistory.length - 1];
@@ -241,16 +243,18 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                   }}
                 >
                   <MaterialIcon iconName="arrow_back" />
-                </button>
+                </Button>
               )}
               {selectedFolderName || "Folders"}
             </div>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => handleCreateSubfolder(parentFolderId!)}
               className="p-1 rounded hover:bg-gray-100"
             >
               <MaterialIcon iconName="add" />
-            </button>
+            </Button>
           </div>
 
           <div className="grid w-full md:grid-cols-2 overflow-y-auto max-h-[200px] gap-x-6 gap-y-2">
@@ -258,7 +262,9 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
               <p className="text-gray-400 italic">Loading folders...</p>
             ) : subfolders.length > 0 ? (
               subfolders.map((subfolder) => (
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
                     selectedFolder === subfolder.id
                       ? "bg-blue-50 border border-blue-200"
@@ -336,7 +342,7 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                       </Button>
                     </PopoverContent>
                   </Popover>
-                </button>
+                </Button>
               ))
             ) : (
               <p className="text-gray-500">No subfolders found</p>

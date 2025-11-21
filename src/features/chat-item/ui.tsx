@@ -1,6 +1,6 @@
 import { ChatItemModel } from "entities/chat";
 import { cn } from "shared/lib";
-import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { toUserTZ } from "../../widgets/message-tabs/helpers";
 
 export const timeAgo = (date: string | Date | null) => {
@@ -72,7 +72,9 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   })();
 
   return (
-    <button
+    <Button
+      variant={"unstyled"}
+      size={"unstyled"}
       className={cn(
         "flex flex-col w-full gap-2 lg:gap-4 p-4 md:px-6 md:py-5 lg:p-4 lg:pl-8 border-b cursor-pointer hover:bg-white border-[#DBDEE1] text-left",
         classname
@@ -109,6 +111,6 @@ export const ChatItem: React.FC<ChatItemProps> = ({
       <p className="text-muted-foreground text-[14px] font-normal max-w-[250px] truncate">
         {item.lastMessage?.content || "There are no messages ..."}
       </p>
-    </button>
+    </Button>
   );
 };

@@ -1,6 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { baseSchema } from "widgets/library-small-chat/lib";
+import { Input } from "shared/ui";
 
 export type FormValues = z.infer<typeof baseSchema>;
 
@@ -20,13 +21,13 @@ export const HealthHistoryForm = ({ form }: HealthHistoryFormProps) => {
     <div className="pt-[16px] border-t border-[#DBDEE1] mt-[16px] space-y-[12px]">
       <div className={lineClass}>
         <span>I have a history of</span>
-        <input
+        <Input
           {...register("diagnosedConditions")}
           placeholder="diseases and conditions"
           className={`${inputClass} w-[219px]`}
         />
         <span>. My genetic test indicates I have</span>
-        <input
+        <Input
           {...register("geneticTraits")}
           placeholder="genetic disease"
           className={`${inputClass} w-[308px]`}
@@ -36,13 +37,13 @@ export const HealthHistoryForm = ({ form }: HealthHistoryFormProps) => {
 
       <div className={lineClass}>
         <span>In my family there's history of</span>
-        <input
+        <Input
           {...register("maternalSide")}
           placeholder="disease"
           className={`${inputClass} w-[90px]`}
         />
         <span>. I take</span>
-        <input
+        <Input
           {...register("medications")}
           placeholder="medication/supplement"
           className={`${inputClass} w-[221px]`}

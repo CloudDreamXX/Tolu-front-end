@@ -4,6 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  Input,
 } from "shared/ui";
 
 interface DateSelectorProps {
@@ -24,7 +25,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
       <DropdownMenuContent className="w-[200px]">
         <div className="flex flex-col gap-2 p-4">
           <h2 className="text-sm font-semibold">Select date</h2>
-          <input
+          <Input
             type="date"
             value={choosedDate.toISOString().split("T")[0]}
             onChange={(e) => onDateChange(new Date(e.target.value))}

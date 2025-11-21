@@ -8,7 +8,7 @@ import { AuthPageWrapper, Input, Textarea } from "shared/ui";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { timezoneOptions } from "./mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { Calendar } from "shared/ui";
+import { Calendar, Button } from "shared/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "shared/ui/popover";
 import { useOnboardUserMutation } from "entities/user";
 import { SelectField } from "widgets/CRMSelectField";
@@ -314,7 +314,7 @@ export const ProfileSetup = () => {
                   key={gender}
                   className="flex items-center gap-[8px] text-[16px] text-black"
                 >
-                  <input
+                  <Input
                     type="radio"
                     name="gender"
                     value={gender}
@@ -379,7 +379,7 @@ export const ProfileSetup = () => {
                 <p className="text-[#5F5F65] text-[14px]">JPG or PNG</p>
               </div>
             )}
-            <input
+            <Input
               ref={ref}
               type="file"
               accept="image/*"
@@ -391,15 +391,19 @@ export const ProfileSetup = () => {
           {/* Mobile Nav */}
           {isMobile && (
             <div className="flex items-center gap-[16px] w-full md:w-fit">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 onClick={() => nav(-1)}
                 className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold text-[#1C63DB]"
                 style={{ background: "rgba(0, 143, 246, 0.10)" }}
               >
                 Back
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 onClick={() => nav("/invite-clients")}
                 disabled={!isFormValid}
@@ -410,7 +414,7 @@ export const ProfileSetup = () => {
                 }`}
               >
                 Next
-              </button>
+              </Button>
             </div>
           )}
         </form>
@@ -420,14 +424,18 @@ export const ProfileSetup = () => {
           <div
             className={`flex items-center gap-[16px] ${location.pathname.startsWith("/content-manager/create") ? "" : "pb-10 md:pb-[100px]"} w-full md:w-fit`}
           >
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => nav(-1)}
               className="flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold text-[#1C63DB]"
               style={{ background: "rgba(0, 143, 246, 0.10)" }}
             >
               Back
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={handleNext}
               disabled={!isFormValid}
               className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
@@ -437,7 +445,7 @@ export const ProfileSetup = () => {
               }`}
             >
               Next
-            </button>
+            </Button>
           </div>
         )}
       </main>

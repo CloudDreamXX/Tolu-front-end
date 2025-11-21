@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 interface StepsProps {
   steps: string[];
@@ -53,7 +54,9 @@ export const Steps: React.FC<StepsProps> = ({
 
         return (
           <React.Fragment key={index}>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               ref={(el) => (stepRefs.current[index] = el)}
               type="button"
               disabled={disabled}
@@ -75,7 +78,7 @@ export const Steps: React.FC<StepsProps> = ({
                     : step}
                 </span>
               )}
-            </button>
+            </Button>
 
             {index < steps.length - 1 && (
               <div

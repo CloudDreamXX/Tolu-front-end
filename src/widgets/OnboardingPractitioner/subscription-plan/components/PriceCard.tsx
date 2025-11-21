@@ -1,5 +1,6 @@
 import React from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 interface PriceCardProps {
   plan: "starting" | "professional";
@@ -25,7 +26,9 @@ export const PriceCard: React.FC<PriceCardProps> = ({
           Most Popular
         </div>
       )}
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         onClick={onClick}
         className={`${
           active ? "bg-[#F4F9FF]" : "bg-white"
@@ -111,7 +114,7 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             /per month
           </h4>
         </div>
-      </button>
+      </Button>
     </div>
   );
 };

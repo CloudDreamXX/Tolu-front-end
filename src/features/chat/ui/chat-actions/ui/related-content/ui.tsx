@@ -1,3 +1,5 @@
+import { Button } from "shared/ui";
+
 const mockContent = [
   {
     id: "1",
@@ -38,7 +40,11 @@ export const RelatedContent = () => {
       <ul className="flex flex-col gap-4">
         {mockContent.map((item) => (
           <li key={item.label}>
-            <button className="flex flex-col gap-4 p-4 text-left border rounded-2xl">
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              className="flex flex-col gap-4 p-4 text-left border rounded-2xl"
+            >
               <p className="text-lg font-semibold leading-tight">
                 {item.title}
               </p>
@@ -48,7 +54,7 @@ export const RelatedContent = () => {
                 </p>
                 <p className="font-semibold leading-none">{item.description}</p>
               </div>
-            </button>
+            </Button>
           </li>
         ))}
       </ul>

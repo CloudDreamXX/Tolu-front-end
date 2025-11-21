@@ -1,4 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
+import { Input } from "shared/ui";
 import { baseSchema } from "widgets/library-small-chat/lib";
 import z from "zod";
 
@@ -20,13 +21,13 @@ export const MenopauseForm = ({
     <div className="pt-[16px] border-t border-[#DBDEE1] mt-[16px] space-y-[12px]">
       <div className={lineClass}>
         <span>I am in</span>
-        <input
+        <Input
           {...register("menopauseStatus")}
           placeholder="menopause status"
           className={`${inputClass} w-[174px]`}
         />
         <span>and my common symptoms are</span>
-        <input
+        <Input
           {...register("mainSymptoms")}
           placeholder="symptoms"
           className={`${inputClass} w-[110px]`}
@@ -36,13 +37,13 @@ export const MenopauseForm = ({
 
       <div className={lineClass}>
         <span>I</span>
-        <input
+        <Input
           {...register("symptomTracking")}
           placeholder="track/don't track"
           className={`${inputClass} w-[157px]`}
         />
         <span>my symptoms often using</span>
-        <input
+        <Input
           {...register("trackingDevice")}
           placeholder="device"
           className={`${inputClass} w-[76px]`}
@@ -52,13 +53,13 @@ export const MenopauseForm = ({
 
       <div className={lineClass}>
         <span>My biggest challenge is</span>
-        <input
+        <Input
           {...register("biggestChallenge")}
           placeholder="symptom/obstacle"
           className={`${inputClass} w-[174px]`}
         />
         <span>. Currently I</span>
-        <input
+        <Input
           {...register("successManaging")}
           placeholder="am/am not"
           className={`${inputClass} w-[111px]`}

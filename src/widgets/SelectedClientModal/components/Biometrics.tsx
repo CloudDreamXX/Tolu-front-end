@@ -2,6 +2,7 @@ import React from "react";
 
 import { BiometricsInfo } from "entities/coach";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button, Input } from "shared/ui";
 
 type BiometricKey =
   | "hrv"
@@ -80,7 +81,9 @@ const Biometrics: React.FC<Props> = ({
           <div className="text-[12px] text-[#5F5F65] font-semibold flex justify-between items-center">
             {label}
             {edit && (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 onClick={() => clearField(key)}
                 className="text-[#FF1F0F] hover:opacity-80"
@@ -88,7 +91,7 @@ const Biometrics: React.FC<Props> = ({
                 title="Clear"
               >
                 <MaterialIcon iconName="delete" fill={1} />
-              </button>
+              </Button>
             )}
           </div>
 
@@ -98,7 +101,7 @@ const Biometrics: React.FC<Props> = ({
             </p>
           ) : (
             <div className="relative flex items-center gap-2">
-              <input
+              <Input
                 value={client[key] ?? ""}
                 onChange={(e) => setField(key, e.target.value)}
                 placeholder={placeholder || label}

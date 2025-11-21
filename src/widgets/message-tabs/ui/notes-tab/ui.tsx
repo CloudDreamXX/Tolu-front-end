@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
-import { Button, Textarea } from "shared/ui";
+import { Button, Input, Textarea } from "shared/ui";
 import { NoteItem } from "widgets/notes-item/ui";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
@@ -268,7 +268,9 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                               {(file.file.size / 1024).toFixed(1)} KB
                             </span>
                           </div>
-                          <button
+                          <Button
+                            variant={"unstyled"}
+                            size={"unstyled"}
                             onClick={() => remove(file.id)}
                             className="text-sm text-red-500 hover:text-red-700"
                             title="Remove File"
@@ -278,7 +280,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                               className="w-5 h-5 "
                               fill={1}
                             />
-                          </button>
+                          </Button>
                         </div>
                       ))}
                     </div>
@@ -286,7 +288,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                 )}
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-4">
-                    <input {...getInputProps()} className="hidden" />
+                    <Input {...getInputProps()} className="hidden" />
                     <Button value={"ghost"} className="p-0" onClick={open}>
                       <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
                     </Button>

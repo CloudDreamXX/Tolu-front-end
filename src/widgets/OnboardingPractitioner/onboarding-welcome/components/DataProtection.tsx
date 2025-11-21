@@ -1,4 +1,4 @@
-import { Checkbox } from "shared/ui";
+import { Button, Checkbox } from "shared/ui";
 import Handshake from "shared/assets/icons/handshake";
 
 type Props = {
@@ -73,13 +73,15 @@ export const DataProtection: React.FC<Props> = ({
               </a>
             </p>
           </div>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleNext}
             className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}
             disabled={!isChecked}
           >
             Agree & Continue
-          </button>
+          </Button>
         </div>
       </div>
     </div>

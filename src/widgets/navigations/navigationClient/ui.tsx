@@ -124,7 +124,9 @@ export const NavigationClient: React.FC = () => {
           </NavLink>
         </div>
         <div className="relative" ref={menuMobRef}>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => setMenuOpen(!menuOpen)}
             // aria-label="Toggle menu"
             className="p-2 transition-colors duration-200"
@@ -134,7 +136,7 @@ export const NavigationClient: React.FC = () => {
               size={40}
               className={menuOpen ? "text-[#1C63DB]" : "text-black"}
             />
-          </button>
+          </Button>
 
           {menuMobOpen && (
             <div
@@ -143,7 +145,9 @@ export const NavigationClient: React.FC = () => {
              before:absolute before:-top-2 before:right-4 before:border-8 before:border-transparent before:border-b-white"
               style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
             >
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => {
                   setMenuMobOpen(false);
                   nav("/profile");
@@ -154,9 +158,11 @@ export const NavigationClient: React.FC = () => {
                   <MaterialIcon iconName="account_circle" />
                 </div>
                 Profile
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => {
                   setMenuOpen(false);
                   handleSignOut();
@@ -167,7 +173,7 @@ export const NavigationClient: React.FC = () => {
                   <MaterialIcon iconName="exit_to_app" />
                 </div>
                 Sign out
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -179,15 +185,22 @@ export const NavigationClient: React.FC = () => {
       >
         <h1 className="text-[27px] md:text-[46px] font-[700] ">Tolu</h1>
         <div className="flex items-center gap-[16px]">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleOpenChat}
             className="px-[8px] py-[6px] md:py-4 rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[14px]  md:text-[16px] font-[600] leading-[22px]"
           >
             AI Assistant
-          </button>
-          <button onClick={() => setMenuMobOpen(true)} aria-label="Open menu">
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
+            onClick={() => setMenuMobOpen(true)}
+            aria-label="Open menu"
+          >
             <MaterialIcon iconName="menu" size={40} className="w-[32px]" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -201,14 +214,16 @@ export const NavigationClient: React.FC = () => {
           >
             <div className="flex items-center justify-between mb-6">
               <h1 className="md:text-[36.5px] text-[27px] font-[700] ">Tolu</h1>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => setMenuMobOpen(false)}
                 aria-label="Close menu"
               >
                 <span className="text-2xl font-bold">
                   <MaterialIcon iconName="close" />
                 </span>
-              </button>
+              </Button>
             </div>
             <div className="flex flex-col gap-[16px] mt-[8px] mb-[72px]">
               <Button
@@ -279,7 +294,9 @@ export const NavigationClient: React.FC = () => {
             </nav>
 
             <div className="flex flex-col gap-[16px] mt-6">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => {
                   nav("/profile");
                   setMenuMobOpen(false);
@@ -303,14 +320,16 @@ export const NavigationClient: React.FC = () => {
                 <span className="ml-auto">
                   <MaterialIcon iconName="keyboard_arrow_right" />
                 </span>
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={handleSignOut}
                 className="flex justify-center gap-[12px] py-[8px] px-[16px] text-[16px] text-[#1C63DB] font-semibold cursor-pointer select-none"
               >
                 <MaterialIcon iconName="exit_to_app" />
                 Sign out
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -323,7 +342,9 @@ export const NavigationClient: React.FC = () => {
              before:absolute before:-top-2 before:right-4 before:border-8 before:border-transparent before:border-b-white"
           style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
         >
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => {
               setMenuOpen(false);
               nav("/profile");
@@ -334,9 +355,11 @@ export const NavigationClient: React.FC = () => {
               <MaterialIcon iconName="account_circle" fill={1} />
             </div>
             Profile
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => {
               setMenuOpen(false);
               handleSignOut();
@@ -347,7 +370,7 @@ export const NavigationClient: React.FC = () => {
               <MaterialIcon iconName="exit_to_app" />
             </div>
             Sign out
-          </button>
+          </Button>
         </div>
       )}
 

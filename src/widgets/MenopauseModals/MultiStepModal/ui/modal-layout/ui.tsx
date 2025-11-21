@@ -7,7 +7,7 @@ import {
 import React, { useEffect } from "react";
 
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { DialogHeader } from "shared/ui";
+import { Button, DialogHeader } from "shared/ui";
 
 interface ModalLayoutProps {
   children: React.ReactNode;
@@ -54,21 +54,25 @@ export const ModalLayout: React.FC<ModalLayoutProps> = ({
       >
         <div className="flex flex-col bg-white rounded-[18px] w-full md:w-[742px] px-[16px] md:px-[24px] py-[24px] gap-[24px] relative pt-12 md:pt-[24px]">
           {currentStep !== 0 && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={onBack}
               className="absolute z-10 top-[16px] left-[16px] md:hidden"
             >
               <MaterialIcon iconName="keyboard_arrow_left" size={20} />
-            </button>
+            </Button>
           )}
 
           <DialogClose asChild>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="absolute top-[16px] right-[16px] hidden md:block"
               aria-label="Close modal"
             >
               <MaterialIcon iconName="close" />
-            </button>
+            </Button>
           </DialogClose>
 
           <DialogHeader>

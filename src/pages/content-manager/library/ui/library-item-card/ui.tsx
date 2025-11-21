@@ -4,6 +4,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { formatDateToSlash } from "shared/lib";
 import { getIcon } from "../../lib/lib";
 import { TableRow } from "../../models";
+import { Button } from "shared/ui";
 
 interface LibraryItemCardProps {
   item: TableRow;
@@ -61,13 +62,19 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
   return (
     <div className="border border-[#AAC6EC] rounded-[8px] p-4 bg-white">
       {/* Header */}
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         className="flex items-center justify-between bg-[#AAC6EC1A] p-[8px] rounded-[4px]"
         onClick={onClick}
       >
         <div className="flex items-center gap-[8px]">
           {hasChildren && (
-            <button onClick={() => toggleFolder(item.id)}>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              onClick={() => toggleFolder(item.id)}
+            >
               <MaterialIcon
                 iconName="keyboard_arrow_down"
                 size={16}
@@ -75,7 +82,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                   isExpanded ? "rotate-180" : ""
                 }`}
               />
-            </button>
+            </Button>
           )}
           <div className="flex items-center gap-2">
             {getIcon(item.type)}
@@ -84,15 +91,17 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
             </span>
           </div>
         </div>
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={(e) => {
             e.stopPropagation();
             onDotsClick?.(item, e);
           }}
         >
           <MaterialIcon iconName="more_vert" />
-        </button>
-      </button>
+        </Button>
+      </Button>
 
       <div className="mt-[8px]">
         <DetailRow
@@ -146,7 +155,9 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
 
           {/* Messages */}
           {item.messages?.map((msg) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={msg.id}
               className="border border-[#AAC6EC] rounded-[6px] p-3"
               onClick={(e) => {
@@ -163,14 +174,16 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                     {truncateTitle(msg.title)}
                   </span>
                 </div>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={(e) => {
                     e.stopPropagation();
                     onDotsClick?.(item, e);
                   }}
                 >
                   <MaterialIcon iconName="more_vert" />
-                </button>
+                </Button>
               </div>
               <div className="mt-2 space-y-[4px]">
                 <DetailRow
@@ -179,7 +192,7 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
                 />
                 <DetailRow label="Status" value={msg.status ?? "-"} isLast />
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -194,9 +207,13 @@ export const LibraryItemCard: React.FC<LibraryItemCardProps> = ({
               <h2 className="text-[20px] font-[700] text-[#1D1D1F]">
                 Files in "{popupRow.title}"
               </h2>
-              <button onClick={() => setPopupRow(null)}>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
+                onClick={() => setPopupRow(null)}
+              >
                 <MaterialIcon iconName="close" />
-              </button>
+              </Button>
             </div>
 
             <div className="overflow-y-auto" style={{ height: "179px" }}>

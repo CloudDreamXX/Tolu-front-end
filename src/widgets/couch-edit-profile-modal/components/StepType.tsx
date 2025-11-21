@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
-import { TooltipWrapper } from "shared/ui";
+import { Button, Input, TooltipWrapper } from "shared/ui";
 import { titlesAndIcons } from "widgets/OnboardingPractitioner/select-type";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
@@ -63,7 +63,9 @@ export function StepType({ data, setDataState }: StepTypeProps) {
           </div>
 
           <div className="relative w-full">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               className="flex w-full items-center justify-between bg-[#FAFAFA] border-[#9D9D9D] border-[1px] rounded-[8px] h-[52px] px-[12px] cursor-pointer"
               onClick={() => toggleDropdown(index)}
@@ -72,25 +74,27 @@ export function StepType({ data, setDataState }: StepTypeProps) {
                 {selectedOptions[index] || "Select your type"}
               </span>
               <MaterialIcon iconName="keyboard_arrow_down" />
-            </button>
+            </Button>
 
             {activeDropdown === index && (
               <div className="border border-[#9D9D9D] absolute z-10 flex flex-col w-full mt-[4px] bg-[#FAFAFA] rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto scrollbar-hide">
                 {item.options.map((option) => (
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     type="button"
                     key={option}
                     className="py-[15px] px-[12px] text-left text-[#1D1D1F] text-[16px] font-medium cursor-pointer hover:bg-[#F2F2F2] hover:text-[#1C63DB]"
                     onClick={() => handleSelection(index, option)}
                   >
                     {option}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
 
             {selectedOptions[index] === "Other (please specify)" && (
-              <input
+              <Input
                 type="text"
                 value={otherText}
                 onChange={(e) => setOtherText(e.target.value)}

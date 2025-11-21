@@ -1,4 +1,4 @@
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { useEffect, useRef, useState } from "react";
 import { phoneMask, toast } from "shared/lib";
@@ -83,13 +83,15 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
         ref={modalRef}
         className="bg-white z-[22] rounded-[18px] w-[742px] px-[24px] py-[24px] flex flex-col gap-[24px] relative mx-[16px] max-h-[90%] overflow-y-auto"
       >
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
           onClick={onClose}
         >
           <MaterialIcon iconName="close" />
-        </button>
+        </Button>
 
         <h3
           id="modal-title"
@@ -229,19 +231,23 @@ export const ReferAFriendPopup: React.FC<Props> = ({ isOpen, onClose }) => {
         </div>
 
         <div className="gap-[16px] flex justify-between mt-[24px] w-full">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="w-full md:w-[128px] px-[16px] py-[11px] rounded-full bg-[#DDEBF6] text-[#1C63DB] text-[16px] font-[600] md:w-[128px]"
             onClick={onClose}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleSave}
             className={`w-full md:w-[128px] px-[16px] py-[11px] rounded-full text-[16px] font-[600] bg-[#1C63DB] text-white ${isButtonDisabled ? "opacity-50" : ""}`}
             disabled={isButtonDisabled}
           >
             Refer
-          </button>
+          </Button>
         </div>
       </div>
     </div>

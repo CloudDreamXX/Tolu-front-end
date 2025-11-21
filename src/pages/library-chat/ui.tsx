@@ -33,7 +33,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { usePageWidth } from "shared/lib";
-import { Card, CardContent } from "shared/ui";
+import { Button, Card, CardContent } from "shared/ui";
 import SwitchDropdown from "widgets/library-small-chat/components/switch-dropdown/ui";
 import {
   SWITCH_CONFIG,
@@ -1083,12 +1083,14 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                   zIndex: 9999,
                 }}
               >
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={handleTooltipClick}
                   className="text-black text-[16px] font-semibold"
                 >
                   Ask Tolu
-                </button>
+                </Button>
               </div>
             )}
             {isEmpty && !isSwitch(SWITCH_KEYS.CASE) ? (
@@ -1128,7 +1130,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                         <CaseSearchForm form={caseForm} />
                       </form>
                       <div className="flex justify-end gap-2 mt-6">
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           type="button"
                           className="py-[11px] px-[30px] rounded-full text-[16px] font-semibold transition-colors duration-200 bg-[#1C63DB] text-white"
                           onClick={async () => {
@@ -1137,7 +1141,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                           }}
                         >
                           Continue
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </CardContent>

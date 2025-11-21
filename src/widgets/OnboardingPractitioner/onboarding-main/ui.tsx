@@ -5,6 +5,8 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { usePageWidth } from "shared/lib";
 import {
   AuthPageWrapper,
+  Button,
+  Input,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -150,7 +152,7 @@ export const OnboardingMain = () => {
 
           {isOtherSelected() && (
             <div className="flex justify-center w-full mt-2">
-              <input
+              <Input
                 type="text"
                 value={otherText}
                 onChange={(e) => handleOtherChange(e.target.value)}
@@ -163,18 +165,22 @@ export const OnboardingMain = () => {
 
         {/* Next Button */}
         <div className="flex items-center gap-[8px] md:gap-[16px] w-full md:w-fit">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => nav(-1)}
             className="flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
-          </button>
+          </Button>
 
           <TooltipProvider delayDuration={500}>
             <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
               <TooltipTrigger asChild>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className={
                     !isNextDisabled
                       ? "bg-[#1C63DB] flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-white"
@@ -185,7 +191,7 @@ export const OnboardingMain = () => {
                   onClick={handleNext}
                 >
                   Next
-                </button>
+                </Button>
               </TooltipTrigger>
 
               <TooltipContent side="bottom">
@@ -199,12 +205,14 @@ export const OnboardingMain = () => {
                     </span>
                     You can update your focus areas anytime from your dashboard.
                   </h3>
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     className="bg-[#1C63DB] inline-flex py-1 px-4 justify-center items-center gap-2 rounded-full  font-semibold text-white self-center"
                     onClick={handleHintButtonClick}
                   >
                     Got It
-                  </button>
+                  </Button>
                 </div>
               </TooltipContent>
             </Tooltip>

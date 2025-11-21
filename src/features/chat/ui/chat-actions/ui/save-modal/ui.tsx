@@ -65,7 +65,9 @@ const SaveModal: React.FC<Props> = ({ initialStatus, onStatusChange }) => {
 
   return (
     <>
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         className="bg-[#DDEBF6] rounded-full p-[4px] flex items-center justify-center cursor-pointer"
         onClick={
           documentId ? () => onDocumentStatusChange() : () => setIsOpen(true)
@@ -78,7 +80,7 @@ const SaveModal: React.FC<Props> = ({ initialStatus, onStatusChange }) => {
             className="text-blue-600 "
           />
         )}
-      </button>
+      </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
@@ -101,13 +103,17 @@ const SaveModal: React.FC<Props> = ({ initialStatus, onStatusChange }) => {
               <TooltipProvider delayDuration={500} disableHoverableContent>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button onClick={handleBookmarkClick}>
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
+                      onClick={handleBookmarkClick}
+                    >
                       <MaterialIcon
                         iconName="bookmark"
                         fill={1}
                         className="text-blue-600"
                       />
-                    </button>
+                    </Button>
                   </TooltipTrigger>
 
                   <TooltipContent
@@ -130,9 +136,13 @@ const SaveModal: React.FC<Props> = ({ initialStatus, onStatusChange }) => {
                 </Tooltip>
               </TooltipProvider>
             ) : (
-              <button onClick={handleBookmarkClick}>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
+                onClick={handleBookmarkClick}
+              >
                 <MaterialIcon iconName="bookmark" className="text-blue-600" />
-              </button>
+              </Button>
             )}
 
             <div className="flex flex-col gap-1">

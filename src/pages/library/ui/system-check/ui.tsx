@@ -3,6 +3,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import ListImage from "shared/assets/images/List.png";
 import QuestionImage from "shared/assets/images/Question.png";
 import { usePageWidth } from "shared/lib";
+import { Button } from "shared/ui";
 
 interface SystemCheckProps {
   showResults?: boolean;
@@ -47,22 +48,26 @@ export const SystemCheck: React.FC<SystemCheckProps> = ({
             our Menopause Symptom Checker.
           </p>
         </div>
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="hidden  ml-auto w-full md:w-fit px-4 py-2 rounded-full bg-[#1C63DB] text-white text-[16px] font-semibold whitespace-nowrap lg:flex items-center justify-center gap-[12px]"
           onClick={() => setModalOpen(true)}
         >
           <MaterialIcon iconName="checklist" />
           Start Symptom Check
-        </button>
+        </Button>
       </div>
       <div className="lg:hidden w-full flex items-center justify-end mt-[16px]">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="w-full h-fit md:w-fit px-4 py-2 rounded-full bg-[#1C63DB] text-white text-[16px] font-semibold whitespace-nowrap gap-[12px] flex items-center justify-center"
           onClick={() => setModalOpen(true)}
         >
           <MaterialIcon iconName="checklist" />
           Start Symptom Check
-        </button>
+        </Button>
       </div>
     </div>
   ) : (
@@ -134,14 +139,22 @@ export const SystemCheck: React.FC<SystemCheckProps> = ({
               </p>
 
               <div className="flex items-center gap-[8px] flex-col-reverse w-full md:flex-row md:w-fit">
-                <button className="w-full md:w-[176px] flex items-center justify-center gap-[12px] rounded-[1000px] px-[16px] py-[11px] text-[14px] md:text-[16px] font-semibold text-[#1C63DB]">
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
+                  className="w-full md:w-[176px] flex items-center justify-center gap-[12px] rounded-[1000px] px-[16px] py-[11px] text-[14px] md:text-[16px] font-semibold text-[#1C63DB]"
+                >
                   Hide my results
-                </button>
+                </Button>
 
-                <button className="w-full md:w-[176px] flex items-center justify-center gap-[12px] bg-[#DDEBF6] rounded-[1000px] px-[16px] py-[11px] text-[14px] md:text-[16px] font-semibold text-[#1C63DB]">
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
+                  className="w-full md:w-[176px] flex items-center justify-center gap-[12px] bg-[#DDEBF6] rounded-[1000px] px-[16px] py-[11px] text-[14px] md:text-[16px] font-semibold text-[#1C63DB]"
+                >
                   <MaterialIcon iconName="replay" />
                   Update results
-                </button>
+                </Button>
               </div>
             </div>
           </div>

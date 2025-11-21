@@ -9,7 +9,7 @@ import { phoneMask, toast } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { fmtDate } from "pages/feedback-hub";
 import { FiltersPopup, UserFilters } from "widgets/filters-popup";
-import { Button } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 
 const PAGE_SIZE = 10;
@@ -205,9 +205,9 @@ export const UserManagement: React.FC = () => {
           </Button>
           <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[16px] py-[10px] bg-white h-[40px]">
             <MaterialIcon iconName="search" size={16} />
-            <input
+            <Input
               placeholder="Search"
-              className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000]"
+              className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-9"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -272,7 +272,9 @@ export const UserManagement: React.FC = () => {
   "
                       data-delete-menu-id={user.id}
                     >
-                      <button
+                      <Button
+                        variant={"unstyled"}
+                        size={"unstyled"}
                         onClick={() =>
                           setDeleteMenuId(
                             deleteMenuId === user.id ? null : user.id
@@ -282,11 +284,13 @@ export const UserManagement: React.FC = () => {
                         data-delete-trigger="true"
                       >
                         <MaterialIcon iconName="more_vert" />
-                      </button>
+                      </Button>
 
                       {deleteMenuId === user.id && (
                         <div className="absolute top-[30px] right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50">
-                          <button
+                          <Button
+                            variant={"unstyled"}
+                            size={"unstyled"}
                             className="flex items-center gap-[8px] w-full text-left"
                             onClick={async () => {
                               setSelectedUserId(user.id);
@@ -300,7 +304,7 @@ export const UserManagement: React.FC = () => {
                               className="text-[#FF1F0F]"
                             />
                             Delete
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -372,34 +376,41 @@ export const UserManagement: React.FC = () => {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pb-4">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             disabled={page === 1}
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
             className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
           >
             <MaterialIcon iconName="arrow_left_alt" />
-          </button>
+          </Button>
 
           {getVisiblePages(page, totalPages).map((pageNumber) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                page === pageNumber
                   ? "border-[#1C63DB] text-[#1C63DB]"
                   : "border-[#DBDEE1] text-black"
-                }`}
+              }`}
             >
               {pageNumber}
-            </button>
+            </Button>
           ))}
 
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             disabled={page === totalPages}
             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
             className="flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border border-[#DBDEE1] rounded-[8px] disabled:opacity-60"
           >
             <MaterialIcon iconName="arrow_right_alt" />
-          </button>
+          </Button>
         </div>
       )}
 

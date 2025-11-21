@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollArea } from "shared/ui";
+import { Button, ScrollArea } from "shared/ui";
 import { BadRateResponse } from "widgets/bad-rate-response-popup";
 import { ChangeStatusPopup } from "widgets/ChangeStatusPopup";
 import { ChooseSubfolderPopup } from "widgets/ChooseSubfolderPopup";
@@ -315,12 +315,14 @@ export const ContentManagerDocument: React.FC = () => {
                   zIndex: 9999,
                 }}
               >
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={handleTooltipClick}
                   className="text-black text-[16px] font-semibold"
                 >
                   Ask Tolu
-                </button>
+                </Button>
               </div>
             )}
             <ScrollArea className={cn("pr-2 md:pr-6")}>

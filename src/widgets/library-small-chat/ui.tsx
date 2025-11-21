@@ -951,12 +951,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedSwitch={selectedSwitch}
             />
             {chatState.length > 0 && (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="xl:absolute right-[24px] top-[18px] flex flex-row items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full w-full md:w-fit"
                 onClick={handleNewChatOpen}
               >
                 <MaterialIcon iconName="search" size={24} /> New Search
-              </button>
+              </Button>
             )}
           </CardHeader>
           <div className="border-t border-[#DDEBF6] w-full mb-[24px]" />

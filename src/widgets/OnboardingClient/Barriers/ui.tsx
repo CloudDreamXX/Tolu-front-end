@@ -53,7 +53,7 @@ export const Barriers = () => {
   //     <div className="flex flex-col gap-4">
   //       {radioContent.map((item, index) => (
   //         <div key={item} className="flex items-center w-full gap-4">
-  //           <input
+  //           <Input
   //             type="radio"
   //             name="problem"
   //             value={item}

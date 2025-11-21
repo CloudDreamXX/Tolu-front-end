@@ -93,9 +93,13 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
       {modifiable && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <button className="absolute right-[12px] top-[12px] py-[6px] px-[6px] h-[24px] w-[24px] md:w-8 md:h-8 rounded-full bg-[#DDEBF6] flex items-center justify-center">
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              className="absolute right-[12px] top-[12px] py-[6px] px-[6px] h-[24px] w-[24px] md:w-8 md:h-8 rounded-full bg-[#DDEBF6] flex items-center justify-center"
+            >
               <MaterialIcon iconName="edit" fill={1} />
-            </button>
+            </Button>
           </DialogTrigger>
           <DialogContent className="max-w-[768px] md:max-w-[742px] flex flex-col gap-6 p-6 items-start">
             <div className="flex flex-col items-start gap-2">
@@ -195,19 +199,23 @@ export const GlucoseCard: React.FC<GlucoseCardProps> = ({
             </div>
 
             <div className="flex items-center justify-between w-full">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => setDialogOpen(false)}
                 className="flex justify-center items-center rounded-full bg-[#DDEBF6] text-[16px]/[22px] font-semibold  text-[#1C63DB] p-4 w-32 h-[44px]"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 onClick={handleSave}
                 className="flex justify-center items-center rounded-full bg-[#1C63DB] text-[16px]/[22px] font-semibold  text-white p-4 w-32 h-[44px]"
               >
                 Save
-              </button>
+              </Button>
             </div>
           </DialogContent>
         </Dialog>

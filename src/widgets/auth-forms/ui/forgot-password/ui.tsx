@@ -1,7 +1,7 @@
 import { useForgotPasswordMutation } from "entities/user";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { toast } from "shared/lib/hooks/use-toast";
 
 export const ForgotPassword = () => {
@@ -81,14 +81,18 @@ export const ForgotPassword = () => {
 
           <div className="flex flex-col items-center gap-[24px] w-full mt-auto md:mt-0">
             <div className="flex flex-row gap-[8px] md:gap-[24px] w-full md:justify-center">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 onClick={() => nav(-1)}
                 className="bg-[#008FF61A] w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center text-[#1C63DB] gap-[8px] rounded-full  text-[16px] font-semibold"
               >
                 Back
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="submit"
                 className={`w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center gap-[8px] rounded-full  text-[16px] font-semibold ${
                   email
@@ -97,7 +101,7 @@ export const ForgotPassword = () => {
                 }`}
               >
                 Send
-              </button>
+              </Button>
             </div>
 
             <p className="text-black  text-[14px] font-medium">

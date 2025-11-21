@@ -12,7 +12,7 @@ import {
   checkPasswordStrength,
   StrengthMeter,
 } from "shared/lib/utils/passwordChecker";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { countries, states } from "widgets/OnboardingClient/DemographicStep";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { z } from "zod";
@@ -291,7 +291,9 @@ export const SignUp: React.FC<SignUpProps> = ({
                   : "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
               }
             />
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               className="absolute mr-4"
               onClick={() => setShowPassword(!showPassword)}
@@ -301,7 +303,7 @@ export const SignUp: React.FC<SignUpProps> = ({
                 iconName={showPassword ? "visibility_off" : "visibility"}
                 size={16}
               />
-            </button>
+            </Button>
           </div>
           {errors.password && (
             <p className="text-[#FF1F0F]  font-medium px-[16px]">
@@ -348,7 +350,9 @@ export const SignUp: React.FC<SignUpProps> = ({
                   : "w-full px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#DFDFDF] bg-white outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in"
               }
             />
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               className="absolute mr-4"
               onClick={() => setShowNewPassword(!showNewPassword)}
@@ -358,7 +362,7 @@ export const SignUp: React.FC<SignUpProps> = ({
                 iconName={showNewPassword ? "visibility_off" : "visibility"}
                 size={16}
               />
-            </button>
+            </Button>
           </div>
           {errors.newPassword && (
             <p className="text-[#FF1F0F]  font-medium px-[16px]">
@@ -428,7 +432,7 @@ export const SignUp: React.FC<SignUpProps> = ({
 
       <div className="flex flex-col w-full items-center gap-[24px] self-stretch">
         <div className="flex items-center justify-center gap-6 md:gap-2 self-stretch">
-          <input
+          <Input
             type="checkbox"
             id="agreeTerms"
             checked={agreeTerms}
@@ -447,7 +451,9 @@ export const SignUp: React.FC<SignUpProps> = ({
             </a>
           </label>
         </div>
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           type="submit"
           disabled={!isFormValid() || loading || !result.isValid || !agreeTerms}
           className={
@@ -465,7 +471,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           ) : (
             "Proceed"
           )}
-        </button>
+        </Button>
         <p className="text-[14px]  font-medium">
           Already have an account?{" "}
           <Link to="/auth" className="cursor-pointer text-[#1C63DB] underline">

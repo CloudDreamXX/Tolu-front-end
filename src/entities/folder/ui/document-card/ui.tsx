@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
-import { Card, CardContent } from "shared/ui";
+import { Button, Card, CardContent } from "shared/ui";
 import {
   renderAuthor,
   renderDate,
@@ -36,7 +36,9 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
   } = document;
 
   return (
-    <button
+    <Button
+      variant={"unstyled"}
+      size={"unstyled"}
       className="relative group w-full h-fit max-w-[277px]"
       onClick={(e) => {
         e.preventDefault();
@@ -71,12 +73,14 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
           <div className="flex items-center gap-2">
             <MaterialIcon iconName="draft" className="min-w-6" />
             <h2 className="text-xl font-bold truncate max-w-30">{title}</h2>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="z-10 ml-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <DocumentEditPopover />
-            </button>
+            </Button>
           </div>
           {!withText && (
             <p className="flex items-center gap-2 text-base font-semibold truncate">
@@ -92,6 +96,6 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
           {renderDate(createdAt, withText)}
         </CardContent>
       </Card>
-    </button>
+    </Button>
   );
 };

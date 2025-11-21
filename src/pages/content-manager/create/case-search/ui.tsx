@@ -3,6 +3,7 @@ import { z } from "zod";
 import { caseBaseSchema } from "../ui";
 import { useState } from "react";
 import { CustomSelect } from "widgets/library-small-chat/components/CustomSelect/ui";
+import { Input } from "shared/ui";
 
 export type FormValues = z.infer<typeof caseBaseSchema>;
 
@@ -25,13 +26,13 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
     <div className="pb-[16px] space-y-[12px] w-full">
       <div className={lineClass}>
         <span>This case involves a</span>
-        <input
+        <Input
           {...register("age")}
           placeholder="52"
           className={`${inputClass} w-[46px]`}
         />
         <span>-year-old</span>
-        <input
+        <Input
           {...register("employmentStatus")}
           placeholder="full-time teacher"
           className={`${inputClass} w-[162px]`}
@@ -48,7 +49,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
           className="w-[179px]"
         />
         <span>phase, presenting with</span>
-        <input
+        <Input
           {...register("symptoms")}
           placeholder="hot flashes"
           className={`${inputClass} w-[115px]`}
@@ -56,13 +57,13 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
         <span>.</span>
 
         <span>Her health history includes</span>
-        <input
+        <Input
           {...register("diagnosedConditions")}
           placeholder="Mild hypertension"
           className={`${inputClass} w-[172px]`}
         />
         <span>, and she is currently taking</span>
-        <input
+        <Input
           {...register("medication")}
           placeholder="levothyroxine"
           className={`${inputClass} w-[136px]`}
@@ -70,7 +71,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
         <span>.</span>
 
         <span>Lifestyle factors such as</span>
-        <input
+        <Input
           {...register("lifestyleFactors")}
           placeholder="poor sleep and high emotional stress"
           className={`${inputClass} w-[328px]`}
@@ -78,13 +79,13 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
         <span>may be contributing.</span>
 
         <span>Previous interventions have included</span>
-        <input
+        <Input
           {...register("previousInterventions")}
           placeholder="DIM, B-complex"
           className={`${inputClass} w-[157px]`}
         />
         <span>, with</span>
-        <input
+        <Input
           {...register("interventionOutcome")}
           placeholder="limited improvement in symptoms"
           className={`${inputClass} w-[303px]`}
@@ -92,7 +93,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
         <span>.</span>
 
         <span>The suspected root causes include</span>
-        <input
+        <Input
           {...register("suspectedRootCauses")}
           placeholder="hormonal imbalance, inflammation, stress, poor detox, gut dysfunction"
           className={`${inputClass} w-[602px]`}
@@ -111,7 +112,7 @@ export const CaseSearchForm = ({ form }: CaseSearchFormProps) => {
           className={`w-[120px]`}
         />
         <span>aimed at</span>
-        <input
+        <Input
           {...register("goal")}
           placeholder="guiding other practitioners managing similar cases"
           className={`${inputClass} w-[438px]`}

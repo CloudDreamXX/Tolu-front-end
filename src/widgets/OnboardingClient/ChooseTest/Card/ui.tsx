@@ -1,3 +1,5 @@
+import { Button } from "shared/ui";
+
 interface CardProps {
   title: string;
   description: React.ReactNode;
@@ -14,7 +16,9 @@ export const Card: React.FC<CardProps> = ({
   return (
     <>
       {active ? (
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClick}
           style={{ border: "1px solid rgba(28, 99, 219, 0.50)" }}
           className="bg-[#F6F9FE] p-4 flex flex-col gap-3 items-start rounded-[8px]"
@@ -25,9 +29,11 @@ export const Card: React.FC<CardProps> = ({
           <p className="text-[#5F5F65] text-start  text-base font-normal">
             {description}
           </p>
-        </button>
+        </Button>
       ) : (
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClick}
           className="p-4 text-start flex flex-col gap-3 items-start rounded-[8px]"
         >
@@ -35,7 +41,7 @@ export const Card: React.FC<CardProps> = ({
           <p className="text-[#5F5F65]  text-start text-base font-normal">
             {description}
           </p>
-        </button>
+        </Button>
       )}
     </>
   );

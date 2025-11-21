@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Facebook from "shared/assets/icons/facebook";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib";
-import { Button } from "shared/ui";
+import { Button, Input } from "shared/ui";
 
 type Props = {
   contentId: string;
@@ -93,13 +93,15 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
         className="flex flex-col bg-white rounded-[18px] w-full md:w-[500px] px-[24px] py-[24px] gap-[24px] relative"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClose}
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
         >
           <MaterialIcon iconName="close" />
-        </button>
+        </Button>
 
         <h3
           id="modal-title"
@@ -112,7 +114,9 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
         </p>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`bg-white p-6 rounded-full flex justify-center gap-4 items-center cursor-pointer border ${isEmailForm && "border-blue-500"}`}
             onClick={() => {
               setIsEmailForm(true);
@@ -123,9 +127,11 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
               iconName="mail"
               className={`${isEmailForm ? "text-blue-500" : ""}`}
             />
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`bg-white p-6 rounded-full flex justify-center gap-4 items-center cursor-pointer border ${isCoachForm && "border-blue-500"}`}
             onClick={() => {
               setIsCoachForm(true);
@@ -136,7 +142,7 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
               iconName="inbox"
               className={`${isCoachForm ? "text-blue-500" : ""}`}
             />
-          </button>
+          </Button>
 
           <div
             className="fb-share-button"
@@ -157,7 +163,7 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
 
         <p className="text-[16px] text-[#5F5F65] font-[500]">Or copy link:</p>
         <div className="flex items-center gap-2">
-          <input
+          <Input
             type="text"
             value={window.location.href}
             className="w-full p-2 border border-gray-300 rounded-md outline-none"
@@ -171,7 +177,7 @@ const SharePopup: React.FC<Props> = ({ contentId, coachId, onClose }) => {
         {isEmailForm && (
           <div>
             <h3 className="text-lg font-semibold mb-4">Share via Email</h3>
-            <input
+            <Input
               type="email"
               className="w-full p-2 mb-4 border border-gray-300 rounded-md outline-none"
               placeholder="Recipient's Email"

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 import { TooltipWrapper } from "shared/ui/TooltipWrapper";
 
 type Option = {
@@ -92,7 +93,9 @@ export const SelectField = ({
         {label}
       </label>
 
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         ref={buttonRef}
         className={`w-full text-left border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] pr-[40px] text-[#1D1D1F] bg-white relative ${containerClassName || "text-[14px] font-semibold"}`}
         onClick={() => setOpen(!open)}
@@ -102,7 +105,7 @@ export const SelectField = ({
         <span className="pointer-events-none absolute right-[12px] top-1/2 -translate-y-1/2">
           <MaterialIcon iconName="keyboard_arrow_down" />
         </span>
-      </button>
+      </Button>
 
       {open &&
         createPortal(
