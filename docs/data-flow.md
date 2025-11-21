@@ -789,7 +789,7 @@ multipart/form-data
 
 ### **Coach AI Search and Research**
 
-**Endpoints:** `POST /ai-search/`, `POST /ai-content-search/`, `POST /ai-coach-research/`  
+**Endpoints:** `POST /ai-search/`, `POST /ai-content-search/`, `POST /ai-coach-research/`, `POST /ai-coach-assistant`  
 **Class / Method:** `SearchService.aiSearchStream()`, `SearchService.aiCoachResearchStream()`
 
 **Purpose:**  
@@ -1696,6 +1696,14 @@ Allows an admin to approve, reject, or unpublish a specific content item, option
   "message": "Content successfully unpublished"
 }
 ```
+
+### **Delete user**
+
+**Endpoint:** `DELETE /admin/delete-user/{user_id}`  
+**Hook:** `useDeleteUserMutation`
+
+**Purpose:**  
+Allows admin to delete a user.
 
 ## **Client Health History Flows:**
 
