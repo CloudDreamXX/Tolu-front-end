@@ -212,9 +212,9 @@ export const ContentManagerMessages: React.FC = () => {
       }).unwrap();
       return data;
     } catch (err) {
-      console.error(err)
-      if ((err as any).data.detail === 'Access denied') {
-              return undefined;
+      console.error(err);
+      if ((err as any).data.detail === "Access denied") {
+        return undefined;
       }
       toast({
         variant: "destructive",

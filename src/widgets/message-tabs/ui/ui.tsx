@@ -120,7 +120,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             clients && clients.clients
               ? clients.clients.find((c) => c.client_id === chatId)
               : undefined;
-              console.log(client)
           if (client) {
             dispatch(
               upsertChat({
@@ -265,8 +264,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     return "UN";
   })();
 
-  console.log(receiver)
-
   if (isLoading) return <MessageTabsLoadingSkeleton />;
   if (!chat) return null;
 
@@ -295,7 +292,12 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-semibold text-[18px] text-[#1D1D1F]">
-                {chat.name || (receiver?.user.first_name && receiver?.user.last_name) && `${receiver?.user.first_name} ${receiver?.user.last_name}` ||  receiver?.user.name || "Unknown name"}
+                {chat.name ||
+                  (receiver?.user.first_name &&
+                    receiver?.user.last_name &&
+                    `${receiver?.user.first_name} ${receiver?.user.last_name}`) ||
+                  receiver?.user.name ||
+                  "Unknown name"}
               </span>
               <span className="font-semibold text-muted-foreground text-[14px]">
                 {chat.description || receiver?.user.email || ""}
@@ -465,8 +467,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => { }}
-          onDelete={() => { }}
+          onEdit={() => {}}
+          onDelete={() => {}}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
