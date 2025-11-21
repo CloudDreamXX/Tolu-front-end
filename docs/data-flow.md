@@ -143,6 +143,8 @@ And then he receives access token to log into his account
 {
   "user": {
     "id": "123",
+    "first_name": "Jane",
+    "last_name": "Doe",
     "name": "Jane Doe",
     "email": "user@example.com",
     "role": "coach"
@@ -159,6 +161,41 @@ Future API calls automatically attach Authorization: Bearer <token>.
 
 ### registerUser:
 
+Firstly, user needs to fill the form on https://tolu.health/.
+
+Endpoint: POST /access-request
+
+Payload:
+
+```json
+{
+  "first_name": "Jane Doe",
+  "last_name": "Jane Doe",
+  "email": "jane@example.com",
+  "phone_number": "+123456789",
+  "account_type": "Individual/Women"
+}
+```
+
+Super admin can either deny it or approve.
+
+Endpoint: PUT /admin/access-requests/{request_id}/approve
+Hook: useApproveRequestMutation
+
+Endpoint: PUT /admin/access-requests/{request_id}/deny
+Hook: useDenyRequestMutation
+
+After approve user receives OTP code which he need to pass on the /register page to be able to fill registration form.
+
+Endpoint: POST /access-request/code-exist
+Hook: useAccessCodeRequestMutation
+
+```json
+{
+  "access_code": "123456"
+}
+```
+
 Endpoint: POST /user/signup
 Hook: useRegisterUserMutation
 
@@ -166,6 +203,7 @@ Payload:
 
 ```json
 {
+  "user": {
   "name": "Jane Doe",
   "email": "jane@example.com",
   "password": "StrongPass123!",
@@ -173,6 +211,8 @@ Payload:
   "roleID": 2,
   "country": "USA",
   "state": "CA"
+  },
+  "access_code": "123456"
 }
 ```
 
@@ -484,7 +524,8 @@ multipart/form-data
 ```json
 {
   "profile_data": {
-    "name": "Anna Smith",
+    "first_name": "Anna",
+    "last_name": "Smith",
     "email": "anna.smith@example.com",
     "phone": "+1234567890",
     "dob": "1988-04-12",
@@ -535,6 +576,23 @@ multipart/form-data
   "headshot": (binary file),
   "license_files": (binary file array),
   "photo": (binary file)
+}
+```
+
+### **Super Admin Profile Data**
+Super admin has abillity to change his password on the profile page.
+
+#### **Change password**
+
+- **Endpoint:** `POST /admin/change-own-password`
+- **Hook:** `useChangeOwnPasswordMutation`
+
+**Request Example:**
+
+```json
+{
+  "old_password" : "Qasdf12345678!",
+  "new_password": "Aasdf12345678!",
 }
 ```
 
@@ -1499,7 +1557,7 @@ Retrieves paginated messages within a specific chat for moderation or review.
     "id": "msg_001",
     "chat_id": "chat_001",
     "content": "Hello, how can I help?",
-    "sender": { "id": "admin_1", "name": "Support Agent" },
+    "sender": { "id": "admin_1", "first_name": "Support", "last_name": "Agent" },
     "created_at": "2025-01-04T09:00:00Z"
   }
 ]
@@ -2604,6 +2662,8 @@ Retrieves full detailed client information, including demographics, onboarding s
 ```json
 {
   "id": "client_123",
+  "first_name": "Anna",
+  "last_name": "Smith",
   "name": "Anna Smith",
   "email": "anna@example.com",
   "photo_url": "https://cdn.toluhealth.com/photos/client_123.jpg",
