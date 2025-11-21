@@ -455,7 +455,9 @@ export const DemographicStep = () => {
       buttons={
         <>
           {hintBlock}
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleNext}
             disabled={!isFormValid}
             className={cn(
@@ -466,7 +468,7 @@ export const DemographicStep = () => {
             )}
           >
             Continue
-          </button>
+          </Button>
         </>
       }
     />

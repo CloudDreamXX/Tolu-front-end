@@ -1,3 +1,15 @@
+## [1.6.1] - 2025-11-21
+
+### Fixes & Minor Changes
+
+- Fix login with empty onboarding data.
+- Fix password validation to deny passwords without special character.
+- Fix opening new chat error.
+- Fix first name and last name of the participants in the chats.
+- Allow coach to view profile of clients with pending status.
+- Add signup_date to the client profile card for coaches.
+- Fix delete user action for super admin.
+
 ## [1.6.0] - 2025-11-20
 
 ### New feature

@@ -4,7 +4,7 @@ import { useTextSelectionTooltip } from "pages/content-manager/document/lib";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast, usePageWidth } from "shared/lib";
-import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { DocumentLoadingSkeleton } from "pages/library-document/lib";
 import { ChatActionsAdmin } from "features/chat/ui/chat-actions-admin/ui";
@@ -255,12 +255,14 @@ export const ContentManagementDocument = () => {
                         zIndex: 9999,
                       }}
                     >
-                      <button
+                      <Button
+                        variant={"unstyled"}
+                        size={"unstyled"}
                         onClick={handleTooltipClick}
                         className="text-black text-[16px] font-semibold"
                       >
                         Ask Tolu
-                      </button>
+                      </Button>
                     </div>
                   )}
                   {renderedContent}

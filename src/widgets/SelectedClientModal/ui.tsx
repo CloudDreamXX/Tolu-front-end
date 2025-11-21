@@ -29,6 +29,7 @@ import MedicationsSupplements, {
   MedsEditing,
 } from "./components/MedicationsSupplements";
 import Symptoms from "./components/Symptoms";
+import { Button } from "shared/ui";
 
 interface SelectedClientModalProps {
   clientId: string;
@@ -388,12 +389,14 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
   return (
     <div className="fixed inset-0 z-[60] bg-transparent md:bg-[rgba(0,0,0,0.3)] md:backdrop-blur-[2px] flex items-start md:items-center justify-center overflow-y-auto">
       <div className="bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl px-[16px] py-[24px] pt-[64px] md:p-[24px] top-0 bottom-0 h-full w-full md:h-fit md:w-[720px] lg:w-[800px] text-left relative md:mx-[16px] overflow-y-auto">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="absolute md:hidden top-[24px] flex justify-center items-center text-[#1D1D1F]"
           onClick={onClose}
         >
           <MaterialIcon iconName="keyboard_arrow_left" />
-        </button>
+        </Button>
         <span
           className="hidden md:block absolute top-[16px] right-[16px] cursor-pointer"
           onClick={onClose}
@@ -403,30 +406,40 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         <div className="flex gap-[24px] items-center justify-between md:justify-start mb-[24px]">
           <div className="flex items-center gap-[8px]">
             <MaterialIcon iconName="account_circle" fill={1} />
-            <h2 className="text-[20px] font-[700]">
-              {client?.personal_info.email}
-            </h2>
+            <div className="flex flex-col">
+              <h2 className="text-[18px] font-[700]">
+                {client?.personal_info.email}
+              </h2>
+              {client?.personal_info?.signup_date && (
+                <p className="text-[14px] text-[#5F5F65] font-[500]">
+                  Date joined:{" "}
+                  {new Date(
+                    client.personal_info.signup_date
+                  ).toLocaleDateString("en-GB")}
+                </p>
+              )}
+            </div>
           </div>
           {/* <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
-            <button
+            <Button variant={"unstyled"} size={"unstyled"}
               className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]"
               onClick={() => nav(`/content-manager/messages/${clientId}`)}
             >
               <MaterialIcon iconName="forum" fill={1} />
               Chat
-            </button>
-            <button
+            </Button>
+            <Button variant={"unstyled"} size={"unstyled"}
               className="flex items-center gap-[8px] px-[12px] py-[4px]"
               onClick={onEdit}
             >
               <MaterialIcon iconName="folder_supervised" fill={1} />
               Client's Intake
-            </button>
+            </Button>
           </div> */}
         </div>
 
         <div className="flex gap-[16px] mb-[24px] border border-[#DBDEE1] bg-white rounded-[1000px] p-[8px] overflow-x-auto">
-          {/* <button
+          {/* <Button variant={"unstyled"} size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "clientInfo"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -435,8 +448,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("clientInfo")}
           >
             Personal information
-          </button> */}
-          <button
+          </Button> */}
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "healthProfile"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -445,8 +460,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("healthProfile")}
           >
             Health summary
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "foodMoodPoop"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -455,8 +472,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("foodMoodPoop")}
           >
             Food Mood Poop Journal
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "clientStory"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -465,8 +484,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("clientStory")}
           >
             Client Story
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "symptoms"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -475,8 +496,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("symptoms")}
           >
             Symptoms
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "lifestyleSkills"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -485,8 +508,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("lifestyleSkills")}
           >
             Lifestyle Skills
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "medicationsAndSupplements"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -495,8 +520,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("medicationsAndSupplements")}
           >
             Medications and Supplements
-          </button>
-          {/* <button
+          </Button>
+          {/* <Button variant={"unstyled"} size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "biometrics"
               ? "bg-[#F2F4F6] text-[#000000]"
               : "text-[#000000]"
@@ -504,8 +529,10 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("biometrics")}
           >
             Biometrics
-          </button> */}
-          <button
+          </Button> */}
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${
               activeTab === "labs"
                 ? "bg-[#F2F4F6] text-[#000000]"
@@ -514,7 +541,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             onClick={() => setActiveTab("labs")}
           >
             Labs
-          </button>
+          </Button>
         </div>
 
         <div className="md:max-h-[350px] min-h-60 overflow-y-auto">
@@ -567,12 +594,14 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           )}
           {activeTab === "biometrics" && (
             <>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 className="md:hidden p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold text-end w-full"
               >
                 <span className="text-[24px]">+</span> Add
-              </button>
+              </Button>
               <Biometrics
                 client={client.biometrics}
                 edit={isEditingBiometrics}
@@ -616,90 +645,112 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         </div>
 
         <div className="flex flex-col-reverse gap-[8px] md:flex-row md:justify-between items-center mt-[18px] md:mt-[24px]">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="hidden md:block p-[16px] py-[10px] w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
             onClick={onClose}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="w-full md:hidden p-[16px] py-[10px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center"
             onClick={() => nav(`/content-manager/messages/${clientId}`)}
           >
             <MaterialIcon iconName="forum" fill={1} />
             Chat
-          </button>
+          </Button>
 
           {activeTab === "foodMoodPoop" && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => setShareOpen(true)}
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
             >
               Share FMP
-            </button>
+            </Button>
           )}
           {activeTab === "healthProfile" && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => setSuggestOpen(true)}
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
             >
               Suggest
-            </button>
+            </Button>
           )}
           {activeTab === "clientStory" && !isEditingStory && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={() => setIsEditingStory(true)}
             >
               Edit
-            </button>
+            </Button>
           )}
           {activeTab === "clientStory" && isEditingStory && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={saveStory}
               disabled={saving}
             >
               {saving ? "Saving..." : "Save"}
-            </button>
+            </Button>
           )}
           {activeTab === "symptoms" && !isEditingSymptoms && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={() => setIsEditingSymptoms(true)}
             >
               Edit
-            </button>
+            </Button>
           )}
           {activeTab === "symptoms" && isEditingSymptoms && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={saveSymptoms}
               disabled={saving}
             >
               {saving ? "Saving..." : "Save"}
-            </button>
+            </Button>
           )}
           {activeTab === "lifestyleSkills" && isEditingLifestyle && (
             <div className="flex items-center w-full gap-3 md:w-fit">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 onClick={addLifestyleItem}
                 className="hidden md:block p-[16px] py-[10px] rounded-[1000px] text:[16px] text-[#008FF6] font-semibold"
               >
                 <span className="text-[24px]">+</span> Add
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
                 onClick={saveLifestyle}
                 disabled={saving}
               >
                 {saving ? "Saving..." : "Save"}
-              </button>
+              </Button>
             </div>
           )}
           {activeTab === "medicationsAndSupplements" && medsEditing && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={saveMeds}
               disabled={saving || medsEditing === null}
               className={[
@@ -710,30 +761,36 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
               ].join(" ")}
             >
               {saving ? "Saving..." : "Save"}
-            </button>
+            </Button>
           )}
           {activeTab === "biometrics" && !isEditingBiometrics && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               onClick={() => setIsEditingBiometrics(true)}
             >
               Edit
-            </button>
+            </Button>
           )}
           {activeTab === "biometrics" && isEditingBiometrics && (
             <div className="flex items-center w-full gap-3 md:w-fit">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="button"
                 className="hidden md:block p-[16px] py-[10px] rounded-[1000px] text-[16px] text-[#008FF6] font-semibold"
               >
                 <span className="text-[24px]">+</span> Add
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
                 onClick={() => setIsEditingBiometrics(false)}
               >
                 Save
-              </button>
+              </Button>
             </div>
           )}
         </div>

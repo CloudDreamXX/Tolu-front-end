@@ -117,7 +117,7 @@ export const StepGeneral = ({
         <label>Gender</label>
         <div className="flex gap-5">
           <label className="flex items-center space-x-2">
-            <input
+            <Input
               type="radio"
               name="gender"
               value="male"
@@ -128,7 +128,7 @@ export const StepGeneral = ({
           </label>
 
           <label className="flex items-center space-x-2">
-            <input
+            <Input
               type="radio"
               name="gender"
               value="female"
@@ -180,7 +180,7 @@ export const StepGeneral = ({
             <p className="text-[#5F5F65] text-[14px]">or drag and drop</p>
             <p className="text-[#5F5F65] text-[14px]">JPG or PNG</p>
 
-            <input className="hidden" {...getInputProps()} />
+            <Input className="hidden" {...getInputProps()} />
           </div>
         )}
       </div>

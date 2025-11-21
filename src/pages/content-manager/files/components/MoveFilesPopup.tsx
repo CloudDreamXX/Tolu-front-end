@@ -1,6 +1,7 @@
 import { FileLibraryFolder } from "entities/files-library";
 import { useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 export const MoveFilesPopup: React.FC<{
   folders?: FileLibraryFolder[];
@@ -35,17 +36,21 @@ export const MoveFilesPopup: React.FC<{
           top-0
         `}
       >
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClose}
           className="absolute top-[16px] right-[16px]"
           aria-label="Close modal"
         >
           <MaterialIcon iconName="close" />
-        </button>
+        </Button>
         <h3 className="text-xl font-bold">Select Folder to Move Files</h3>
         <div className="flex flex-wrap w-full gap-2">
           {folders?.map((folder) => (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               key={folder.id}
               className={`h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative border rounded-md ${selectedFolder === folder.id ? "border-blue-500" : ""}`}
               onClick={() => setSelectedFolder(folder.id)}
@@ -58,23 +63,27 @@ export const MoveFilesPopup: React.FC<{
                 />
                 <h3>{folder.name}</h3>
               </div>
-            </button>
+            </Button>
           ))}
         </div>
         <div className="flex flex-col-reverse gap-[8px] md:gap-[16px] md:flex-row justify-between w-full">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={onClose}
             className="px-[16px] py-[11px] rounded-[1000px] bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px] disabled:opacity-50"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => onMove(selectedFolder)}
             disabled={!selectedFolder.trim()}
             className="px-[16px] py-[11px] rounded-[1000px] w-full md:w-[128px] text-[16px] font-[600] leading-[22px] bg-[#1C63DB] text-white disabled:opacity-50 flex items-center justify-center"
           >
             Move
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -335,5 +335,5 @@ export const {
   useLazyDownloadProfilePhotoQuery,
   useRequestPasswordlessLoginMutation,
   useVerifyPasswordlessLoginMutation,
-  useAccessCodeRequestMutation
+  useAccessCodeRequestMutation,
 } = userApi;

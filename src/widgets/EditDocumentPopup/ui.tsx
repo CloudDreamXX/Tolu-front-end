@@ -1,4 +1,5 @@
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 type Props = {
   onEdit: () => void;
@@ -95,11 +96,13 @@ export const MenuItem: React.FC<{
   className?: string;
   onClick?: () => void;
 }> = ({ icon, label, className = "", onClick }) => (
-  <button
+  <Button
+    variant={"unstyled"}
+    size={"unstyled"}
     onClick={onClick}
     className={`flex items-center gap-2 w-full text-left text-[16px] font-[500] ${className}`}
   >
     <span className="w-[24px] h-[24px]">{icon}</span>
     {label}
-  </button>
+  </Button>
 );

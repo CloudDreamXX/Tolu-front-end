@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "shared/ui";
 
 interface ModalNavigationProps {
   onClose: () => void;
@@ -21,24 +22,30 @@ export const ModalNavigation: React.FC<ModalNavigationProps> = ({
 }) => {
   return (
     <div className="flex flex-col-reverse gap-[16px] md:flex-row justify-between w-full">
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         onClick={onClose}
         className="px-[16px] py-[11px] rounded-[1000px] md:bg-[#DDEBF6] text-[#1C63DB] w-full md:w-[128px] text-[16px] font-[600] leading-[22px]"
       >
         Cancel
-      </button>
+      </Button>
 
       <div>
         {currentStep > 0 && !isMobile && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={onBack}
             className="px-[16px] py-[11px] rounded-[1000px] text-[#1C63DB] w-[128px] text-[16px] font-[600] leading-[22px]"
           >
             Back
-          </button>
+          </Button>
         )}
 
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onNext}
           className={`px-[16px] py-[11px] rounded-[1000px] w-full md:w-[128px] text-[16px] font-[600] leading-[22px] bg-[#1C63DB] text-white ${
             !isStepValid ? "opacity-50" : ""
@@ -46,7 +53,7 @@ export const ModalNavigation: React.FC<ModalNavigationProps> = ({
           disabled={!isStepValid}
         >
           {isLastStep ? "Done" : "Continue"}
-        </button>
+        </Button>
       </div>
     </div>
   );

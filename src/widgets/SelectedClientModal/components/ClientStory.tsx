@@ -1,6 +1,7 @@
 import { ClientStoryInfo } from "entities/coach";
 import React from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button, Input } from "shared/ui";
 
 type Props = {
   client: ClientStoryInfo;
@@ -103,14 +104,16 @@ export const ClientStory: React.FC<Props> = ({
         ) : (
           <div className="flex gap-[8px] items-center w-full">
             <div className="w-full flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[10px]">
-              <input
+              <Input
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add notes (e.g., “Father had a stroke at 62”)"
                 className="w-full outline-none text-[16px] text-[#1D1D1F]"
               />
             </div>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               onClick={() => setNotes("")}
               className="shrink-0 text-[#FF1F0F] m-0 first-line:hover:opacity-80 flex items-center justify-center"
@@ -118,7 +121,7 @@ export const ClientStory: React.FC<Props> = ({
               aria-label="Remove"
             >
               <MaterialIcon iconName="delete" fill={1} />
-            </button>
+            </Button>
           </div>
         )}
       </section>
@@ -171,7 +174,7 @@ export const ClientStory: React.FC<Props> = ({
                   </div>
 
                   <div className="flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[10px] flex-1">
-                    <input
+                    <Input
                       value={p?.description ?? ""}
                       onChange={(e) =>
                         setPivot(i, "description", e.target.value)
@@ -180,7 +183,9 @@ export const ClientStory: React.FC<Props> = ({
                       className="w-full outline-none text-[16px] text-[#1D1D1F]"
                     />
                   </div>
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     type="button"
                     onClick={() => removePivot(i)}
                     className="shrink-0 text-[#FF1F0F] m-0 first-line:hover:opacity-80 flex items-center justify-center"
@@ -188,17 +193,19 @@ export const ClientStory: React.FC<Props> = ({
                     aria-label="Remove"
                   >
                     <MaterialIcon iconName="delete" fill={1} />
-                  </button>
+                  </Button>
                 </div>
               );
             })}
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               onClick={addPivot}
               className="text-[#008FF6] font-semibold flex items-center gap-1"
             >
               <span className="text-[20px]">+</span> Add
-            </button>
+            </Button>
           </div>
         )}
       </section>
@@ -224,7 +231,7 @@ export const ClientStory: React.FC<Props> = ({
             {symptomEntries.map(([k, v], i) => (
               <div key={i} className="flex flex-col md:flex-row gap-[8px]">
                 <div className="flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[10px] md:w-[240px]">
-                  <input
+                  <Input
                     value={k}
                     onChange={(e) => setSymptomEntry(i, "key", e.target.value)}
                     placeholder="Symptom (e.g., Work stress)"
@@ -232,7 +239,7 @@ export const ClientStory: React.FC<Props> = ({
                   />
                 </div>
                 <div className="flex items-center gap-[8px] border border-[#DBDEE1] rounded-full bg-white px-[16px] py-[10px] flex-1">
-                  <input
+                  <Input
                     value={v}
                     onChange={(e) =>
                       setSymptomEntry(i, "value", e.target.value)
@@ -241,7 +248,9 @@ export const ClientStory: React.FC<Props> = ({
                     className="w-full outline-none text-[16px] text-[#1D1D1F]"
                   />
                 </div>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   type="button"
                   onClick={() => removeSymptom(i)}
                   className="shrink-0 text-[#FF1F0F] m-0 first-line:hover:opacity-80 flex items-center justify-center"
@@ -249,16 +258,18 @@ export const ClientStory: React.FC<Props> = ({
                   aria-label="Remove"
                 >
                   <MaterialIcon iconName="delete" fill={1} />
-                </button>
+                </Button>
               </div>
             ))}
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               onClick={addSymptom}
               className="text-[#008FF6] font-semibold flex items-center gap-1"
             >
               <span className="text-[20px]">+</span> Add
-            </button>
+            </Button>
           </div>
         )}
       </section>

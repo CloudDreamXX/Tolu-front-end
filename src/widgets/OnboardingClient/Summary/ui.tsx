@@ -8,6 +8,7 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { useOnboardClientMutation } from "entities/user";
 import { Slider } from "shared/ui/slider";
 import { toast } from "shared/lib";
+import { Button, Input } from "shared/ui";
 
 export const Summary = () => {
   const nav = useNavigate();
@@ -139,7 +140,7 @@ export const Summary = () => {
       <div key={key} className="flex flex-col flex-1 gap-1">
         <p className="text-[#5F5F65] text-[12px] font-normal ">{label}</p>
         {editing ? (
-          <input
+          <Input
             name={key}
             value={toInputString(value)}
             onChange={(e) =>
@@ -200,21 +201,27 @@ export const Summary = () => {
             Lifestyle skillset
           </h2>
           {!isEditingPersonal ? (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="cursor-pointer"
               onClick={() => setIsEditingPersonal(true)}
             >
               <MaterialIcon iconName="edit" />
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="text-[#1C63DB] text-sm"
                 onClick={() => handleSave("personal")}
               >
                 Save
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="text-sm text-gray-500"
                 onClick={() => {
                   setPersonalState({ ...client });
@@ -222,7 +229,7 @@ export const Summary = () => {
                 }}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -234,21 +241,27 @@ export const Summary = () => {
         <div className="flex items-center justify-between w-full">
           <h2 className="text-[#1D1D1F] text-[18px] font-bold">Symptoms</h2>
           {!isEditingSymptoms ? (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="cursor-pointer"
               onClick={() => setIsEditingSymptoms(true)}
             >
               <MaterialIcon iconName="edit" />
-            </button>
+            </Button>
           ) : (
             <div className="flex gap-2">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="text-[#1C63DB] text-sm"
                 onClick={() => handleSave("symptoms")}
               >
                 Save
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="text-sm text-gray-500"
                 onClick={() => {
                   setSymptomsState(client.symptoms_severity || {});
@@ -256,7 +269,7 @@ export const Summary = () => {
                 }}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -323,12 +336,14 @@ export const Summary = () => {
   );
 
   const buttonsBlock = (
-    <button
+    <Button
+      variant={"unstyled"}
+      size={"unstyled"}
       onClick={handleCreate}
       className="p-4 w-full md:w-fit h-[44px] flex items-center justify-center rounded-full text-base font-semibold bg-[#1C63DB] text-white"
     >
       Go to My Dashboard
-    </button>
+    </Button>
   );
 
   return (

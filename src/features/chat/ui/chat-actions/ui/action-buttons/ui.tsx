@@ -4,6 +4,7 @@ import { Message } from "features/chat";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import SaveModal from "../save-modal/ui";
+import { Button } from "shared/ui";
 
 interface ChatActionsProps {
   chatState?: Message[];
@@ -60,12 +61,17 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
     <div className="flex flex-row gap-2 xl:flex-col w-full h-[32px] xl:h-full">
       <div className="flex flex-row gap-2 xl:hidden">
         {!isHistoryPopup && (
-          <button className="w-8 h-8" onClick={() => nav(-1)}>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
+            className="w-8 h-8"
+            onClick={() => nav(-1)}
+          >
             <MaterialIcon
               iconName="arrow_back"
               className="w-4 h-4 m-auto text-black"
             />
-          </button>
+          </Button>
         )}
         {!chatState && (
           <SaveModal
@@ -74,7 +80,9 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           />
         )}
         {onStatusChange && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => {
               const newStatus =
@@ -90,10 +98,12 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               fill={readStatus === "read" ? 1 : 0}
               className="text-blue-600 "
             />
-          </button>
+          </Button>
         )}
         {!chatState && setSharePopup && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center"
             onClick={() => setSharePopup(true)}
           >
@@ -102,17 +112,22 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               size={16}
               className="text-blue-600"
             />
-          </button>
+          </Button>
         )}
       </div>
       <div className="flex-col self-start hidden gap-4 xl:flex">
         {!isHistoryPopup && (
-          <button className="w-8 h-8" onClick={() => nav(-1)}>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
+            className="w-8 h-8"
+            onClick={() => nav(-1)}
+          >
             <MaterialIcon
               iconName="arrow_back"
               className="w-5 h-5 m-auto text-black"
             />
-          </button>
+          </Button>
         )}
         {!chatState && (
           <SaveModal
@@ -121,7 +136,9 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
           />
         )}
         {onStatusChange && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => {
               const newStatus =
@@ -137,10 +154,12 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               fill={readStatus === "read" ? 1 : 0}
               className="text-blue-600 "
             />
-          </button>
+          </Button>
         )}
         {!chatState && setSharePopup && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex justify-center items-center"
             onClick={() => setSharePopup(true)}
           >
@@ -149,14 +168,16 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               size={16}
               className="text-blue-600"
             />
-          </button>
+          </Button>
         )}
       </div>
 
       {chatState && chatState.length > 0 && (
         <div className={`flex gap-2 ${isContentManager ? "" : "xl:flex-col"}`}>
           {onStatusChange && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="xl:hidden block bg-[#DDEBF6] rounded-full h-8 w-8"
               onClick={() => {
                 const newStatus =
@@ -172,9 +193,11 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
                 fill={readStatus === "read" ? 1 : 0}
                 className="w-4 h-4 m-auto text-blue-600"
               />
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={onReadAloud}
           >
@@ -184,8 +207,10 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               size={20}
               className="text-blue-600"
             />
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => setThumbsUpModalOpen(true)}
           >
@@ -195,8 +220,10 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               size={20}
               className="text-blue-600"
             />
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="bg-[#DDEBF6] rounded-full h-8 w-8 flex items-center justify-center"
             onClick={() => setThumbsDownModalOpen(true)}
           >
@@ -206,7 +233,7 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
               size={16}
               className="text-blue-600"
             />
-          </button>
+          </Button>
 
           <FeedbackModal
             initialRating={5}
@@ -230,14 +257,14 @@ export const ChatActions: React.FC<ChatActionsProps> = ({
             }}
             currentChatId={currentChatId}
           />
-          {/* <button
+          {/* <Button variant={"unstyled"} size={"unstyled"}
           className="bg-[#DDEBF6] rounded-full h-8 w-8"
           onClick={onRegenerate}
           disabled={isSearching || !hasMessages}
           title="Regenerate response"
         >
           <RotateCw className="w-4 h-4 m-auto text-blue-600" />
-        </button> */}
+        </Button> */}
         </div>
       )}
     </div>

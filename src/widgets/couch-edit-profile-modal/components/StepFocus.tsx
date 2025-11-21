@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "shared/lib";
 import {
+  Button,
   Input,
   RadioGroup,
   RadioGroupItem,
@@ -67,7 +68,9 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
   const renderItem = (label: FocusOption) => {
     const isActive = selected.has(label);
     return (
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         key={label}
         onClick={() => toggle(label)}
         className={cn(
@@ -79,7 +82,7 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
       >
         {label}
         {isActive && <span className="ml-2">x</span>}
-      </button>
+      </Button>
     );
   };
 
@@ -114,7 +117,7 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
           placeholder="Search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="rounded-full "
+          className="rounded-full"
         />
       </div>
 
@@ -124,7 +127,7 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
 
       {isOtherSelected && (
         <div className="flex items-start justify-center gap-[8px]">
-          <input
+          <Input
             value={otherText}
             onChange={(e) => setOtherText(e.target.value)}
             type="text"
@@ -132,12 +135,14 @@ export const StepFocus = ({ data, setDataState }: StepFocusProps) => {
             className="flex h-[44px] w-[220px] md:w-[300px] items-center justify-center self-stretch rounded-[8px] border-[1px] border-[#DFDFDF] bg-white px-[16px] py-[11px]  text-[16px] font-medium text-[#5F5F65] outline-none"
           />
           {otherText.trim().length > 0 && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={handleAddNiche}
               className="flex h-[44px] items-center rounded-full bg-[#1C63DB] p-[16px]  text-[14px] md:text-[16px] font-semibold text-white"
             >
               Add niche
-            </button>
+            </Button>
           )}
         </div>
       )}

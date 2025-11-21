@@ -273,7 +273,9 @@ export const HealthSnapshotSidebar: React.FC = () => {
             </div>
           </div>
 
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
             className={`flex gap-4 items-center justify-between ${sidebarOpen ? "pl-4" : ""}`}
           >
@@ -298,7 +300,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 />
               </div>
             )}
-          </button>
+          </Button>
 
           {menuOpen && (
             <div
@@ -309,7 +311,9 @@ export const HealthSnapshotSidebar: React.FC = () => {
             ${sidebarOpen && "before:content-[''] before:absolute before:-bottom-2 before:right-7 before:border-x-8 before:border-t-8 before:border-x-transparent before:border-t-white"}`}
               style={{ boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
             >
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => {
                   setMenuOpen(false);
                   nav("/profile");
@@ -320,9 +324,11 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   <MaterialIcon iconName="account_circle" fill={1} />
                 </div>
                 Profile
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => {
                   setMenuOpen(false);
                   handleSignOut();
@@ -333,7 +339,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   <MaterialIcon iconName="exit_to_app" />
                 </div>
                 Sign out
-              </button>
+              </Button>
             </div>
           )}
         </div>

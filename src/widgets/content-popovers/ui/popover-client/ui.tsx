@@ -410,12 +410,14 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
         )}
       </PopoverTrigger>
       <PopoverContent className="w-[358px] md:w-[419px] p-6 flex flex-col z-50">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="absolute top-[24px] right-[24px] z-[999]"
           onClick={handleAddClientModal}
         >
           <MaterialIcon iconName="add" />
-        </button>
+        </Button>
         <Input
           variant="bottom-border"
           placeholder="Choose a client"
@@ -432,7 +434,9 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
                 key={client.client_id}
                 className="flex items-center justify-between"
               >
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   key={client.client_id}
                   className="flex items-center w-full py-2 px-[14px] gap-2 rounded-md cursor-pointer bg-white"
                   onClick={() => toggleClient(client.client_id)}
@@ -456,15 +460,19 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
                     htmlFor={`client-${client.client_id}`}
                     className="text-sm font-medium text-gray-900 cursor-pointer"
                   >
-                    {client.name}
+                    {client.first_name && client.last_name
+                      ? `${client.first_name} ${client.last_name}`
+                      : client.first_name || client.name}
                   </label>
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={() => handleSelectClient(client.client_id)}
                   className="flex items-center justify-center text-[#1C63DB]"
                 >
                   View
-                </button>
+                </Button>
               </div>
             ))}
           </div>

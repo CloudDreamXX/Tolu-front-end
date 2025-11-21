@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ClientWelcomePicture from "shared/assets/images/Illustration.png";
-import { AuthPageWrapper } from "shared/ui";
+import { AuthPageWrapper, Button } from "shared/ui";
 import { ClientHeader } from "widgets/Header";
 import { ConfirmCancelModal } from "widgets/ConfirmCancelModal";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -66,7 +66,9 @@ export const WelcomeScreen = () => {
             </p>
           </div>
 
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => nav("/about-you")}
             type="button"
             className="p-4 pl-6 flex gap-2 items-center w-full md:w-auto justify-center rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
@@ -79,7 +81,7 @@ export const WelcomeScreen = () => {
               size={20}
               className="text-white"
             />
-          </button>
+          </Button>
         </div>
         <div className="bg-white lg:bg-transparent  w-full flex items-center justify-center gap-[24px] text-[14px] text-center md:text-[18px] text-[#000] p-[16px] lg:py-[20px]">
           {/* All information you share is secure and confidential

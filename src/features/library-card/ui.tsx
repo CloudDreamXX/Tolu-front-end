@@ -1,7 +1,13 @@
 import { AdminStatus, ContentStatus } from "entities/content";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
-import { Card, CardContent, renderAuthor, renderStatus } from "shared/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  renderAuthor,
+  renderStatus,
+} from "shared/ui";
 
 interface LibraryCardProps {
   id: string;
@@ -23,7 +29,9 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
   adminStatus,
 }) => {
   return (
-    <button
+    <Button
+      variant={"unstyled"}
+      size={"unstyled"}
       className="relative w-full group h-fit"
       onClick={() => onDocumentClick(id)}
     >
@@ -59,7 +67,9 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
           </div>
           {onStatusChange && (
             <div className="flex items-center gap-[12px]">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="bg-white"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -81,11 +91,11 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
                     className="text-[#1C63DB]"
                   />
                 )}
-              </button>
+              </Button>
             </div>
           )}
         </CardContent>
       </Card>
-    </button>
+    </Button>
   );
 };

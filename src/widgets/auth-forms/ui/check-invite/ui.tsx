@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "shared/lib/hooks/use-toast";
 import { z } from "zod";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { useLazyCheckPendingInviteQuery } from "entities/user/api";
 import { useNavigate } from "react-router-dom";
 
@@ -131,18 +131,22 @@ export const CheckInvite = () => {
           )}
 
           {hasPendingInvite !== null && !hasPendingInvite && (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold bg-[#1C63DB] text-white`}
               onClick={() => nav("/register")}
             >
               Sign up
-            </button>
+            </Button>
           )}
 
           {hasPendingInvite === null && (
             <div className="flex flex-col gap-[8px]">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="submit"
                 disabled={isSubmitting}
                 className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
@@ -152,7 +156,7 @@ export const CheckInvite = () => {
                 }`}
               >
                 {isSubmitting ? "Checking..." : "Check Invite"}
-              </button>
+              </Button>
             </div>
           )}
         </form>

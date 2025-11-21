@@ -7,6 +7,7 @@ import {
   RadioGroup,
   RadioGroupItem,
   Input,
+  Button,
 } from "shared/ui";
 import { useRef } from "react";
 import z from "zod";
@@ -177,16 +178,18 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
                           )}
                         </ul>
 
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           type="button"
                           className="flex items-center gap-[8px] px-[16.5px] py-[6px] text-[14px] font-medium text-[#1C63DB] bg-[#DDEBF6] rounded-full hover:bg-[#D6ECFD]/80 transition"
                           onClick={() => fileInputRef.current?.click()}
                         >
                           <MaterialIcon iconName="group" />
                           Upload files
-                        </button>
+                        </Button>
 
-                        <input
+                        <Input
                           ref={fileInputRef}
                           type="file"
                           multiple

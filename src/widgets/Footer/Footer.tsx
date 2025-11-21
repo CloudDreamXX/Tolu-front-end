@@ -1,4 +1,5 @@
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 import {
   Tooltip,
   TooltipContent,
@@ -24,7 +25,9 @@ export const Footer: React.FC<Props> = ({ position }) => {
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className={`bg-[#008FF61A] flex items-center justify-center z-[999] gap-[8px] rounded-full transition-colors duration-200 hover:bg-[#008FF6] hover:bg-opacity-30 ${
                 position === "top-left" || position === "top-right"
                   ? "p-[13px]"
@@ -39,7 +42,7 @@ export const Footer: React.FC<Props> = ({ position }) => {
                   position === "top-left" || position === "top-right" ? 16 : 24
                 }
               />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent>
             <p className="text-[#1D1D1F]  text-base font-normal">

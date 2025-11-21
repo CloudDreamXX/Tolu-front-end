@@ -2,6 +2,7 @@ import { cloneElement, isValidElement, useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
+import { Button } from "shared/ui";
 import { SideBarItem } from "widgets/sidebars/ui/model";
 interface CustomNavLinkProps {
   item: SideBarItem;
@@ -51,7 +52,9 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
   if (item.content) {
     return (
       <div className="flex flex-col">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className={cn(
             "flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB]",
             location.pathname.includes(item.title.toLowerCase())
@@ -72,7 +75,7 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
             ) : (
               <MaterialIcon iconName="keyboard_arrow_down" />
             ))}
-        </button>
+        </Button>
         {open && (
           <div className="pl-6">
             {isValidElement(item.content)

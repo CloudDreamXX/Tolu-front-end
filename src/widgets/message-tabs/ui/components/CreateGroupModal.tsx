@@ -137,13 +137,15 @@ export const CreateGroupModal = ({
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClose}
           aria-label="Close modal"
           className="absolute top-4 right-4 text-[#5F5F65] hover:text-[#1D1D1F] transition-colors"
         >
           <MaterialIcon iconName="close" className="text-[24px]" />
-        </button>
+        </Button>
 
         <div>
           <div className="flex gap-2">
@@ -158,7 +160,9 @@ export const CreateGroupModal = ({
 
         <div>
           <p className="text-sm font-semibold text-gray-700">Chat avatar</p>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             {...getDropzoneProps()}
             onClick={() => {
               if (files.length > 0) return;
@@ -180,7 +184,9 @@ export const CreateGroupModal = ({
                   className="object-cover w-full h-full rounded-lg"
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 transition-opacity duration-200 rounded-lg opacity-0 bg-black/40 group-hover:opacity-100">
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     className="flex items-center w-[104px] gap-1 px-3 py-2 text-black bg-white rounded-md hover:bg-gray-100"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -190,8 +196,10 @@ export const CreateGroupModal = ({
                   >
                     <MaterialIcon iconName="edit" fill={1} />
                     Change
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     className="flex items-center w-[104px] gap-1 px-3 py-2 text-red-600 font-semibold bg-red-200 rounded-md hover:bg-red-300"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -201,7 +209,7 @@ export const CreateGroupModal = ({
                   >
                     <MaterialIcon iconName="delete" fill={1} />
                     Delete
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
@@ -220,8 +228,8 @@ export const CreateGroupModal = ({
                 </p>
               </>
             )}
-            <input className="hidden" {...getInputProps()} />
-          </button>
+            <Input className="hidden" {...getInputProps()} />
+          </Button>
         </div>
 
         <div className="flex flex-col gap-[24px]">
@@ -257,7 +265,7 @@ export const CreateGroupModal = ({
                   className="mt-[4px] md:rounded-sm"
                   options={
                     clientsData?.map((c) => ({
-                      label: c.name,
+                      label: (c.first_name && c.last_name) ? `${c.first_name} ${c.last_name}` : c.first_name || c.name,
                     })) || []
                   }
                   selected={selectedOption}

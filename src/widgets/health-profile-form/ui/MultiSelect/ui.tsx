@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib/utils";
+import { Button } from "shared/ui";
 
 type Group = { title: string; options: string[] };
 type OptionsInput = Array<string | Group>;
@@ -143,7 +144,9 @@ export const MultiSelect = ({
 
   const renderOption = (option: string) => (
     <li key={option}>
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         type="button"
         className={cn(
           "rounded-sm py-1.5 pl-3 pr-2 cursor-pointer flex items-center gap-[8px] font-[500] text-sm hover:bg-[#F2F2F2] w-full text-left transition-colors"
@@ -163,13 +166,15 @@ export const MultiSelect = ({
           )}
         </span>
         {option}
-      </button>
+      </Button>
     </li>
   );
 
   return (
     <div className={cn("relative", className)} ref={containerRef}>
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         type="button"
         className="w-full text-left border border-[#DBDEE1] rounded-md px-3 py-2 pr-10 min-h-[44px] text-sm font-[500] text-[#1D1D1F] bg-white relative flex flex-wrap items-center outline-0"
         onClick={() => setOpen((v) => !v)}
@@ -194,7 +199,7 @@ export const MultiSelect = ({
             className="text-[#1D1D1F] opacity-50"
           />
         </span>
-      </button>
+      </Button>
 
       {open &&
         portalTarget &&

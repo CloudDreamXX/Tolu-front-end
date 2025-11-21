@@ -11,6 +11,7 @@ import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 import { EditDocumentPopup } from "widgets/EditDocumentPopup";
 import { getIcon } from "../../lib/lib";
 import { TableRow } from "../../models";
+import { Button } from "shared/ui";
 
 type LibraryDesktopViewProps = {
   filteredItems: TableRow[];
@@ -291,12 +292,14 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
         <td className="py-[12px] px-[8px] font-medium text-gray-700 w-[112px]">
           <div className="flex items-center w-24 gap-2">
             {hasChildren ? (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => toggleFolder(row.id)}
                 className={`${isExpanded ? "rotate-[180deg]" : ""} cursor-pointer`}
               >
                 <MaterialIcon iconName="keyboard_arrow_down" />
-              </button>
+              </Button>
             ) : (
               <span className="ml-6"></span>
             )}
@@ -387,9 +390,13 @@ const LibraryTableRow: React.FC<LibraryTableRowProps> = ({
             <h2 className="text-[20px] font-[700] text-[#1D1D1F] ">
               Files in "{popupRow.title}"
             </h2>
-            <button onClick={() => setPopupRow(null)}>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              onClick={() => setPopupRow(null)}
+            >
               <MaterialIcon iconName="close" />
-            </button>
+            </Button>
           </div>
 
           <div className="overflow-y-auto" style={{ height: "179px" }}>
@@ -487,12 +494,14 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
       <tr className={bgClass}>
         <td className="py-[12px] pr-[8px] pl-[38px] flex items-center gap-2">
           {hasContent ? (
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => toggleFolder(subfolder.id)}
               className={`${isExpanded ? "rotate-[180deg]" : ""} cursor-pointer`}
             >
               <MaterialIcon iconName="keyboard_arrow_down" />
-            </button>
+            </Button>
           ) : (
             <span className="ml-6"></span>
           )}
@@ -538,7 +547,9 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
           ) === false && subfolder.status}
         </td>
         <td className="py-[12px] pr-[8px]">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={(e) => {
               e.stopPropagation();
               onDotsClick(subfolder, e);
@@ -546,7 +557,7 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
             className="rounded-full hover:bg-[#AAC6EC40]"
           >
             <MaterialIcon iconName="more_vert" />
-          </button>
+          </Button>
         </td>
       </tr>
 
@@ -576,9 +587,13 @@ const SubfolderTableRow: React.FC<SubfolderTableRowProps> = ({
             <h2 className="text-[20px] font-[700] text-[#1D1D1F] ">
               Files in "{popupRow.title}"
             </h2>
-            <button onClick={() => setPopupRow(null)}>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              onClick={() => setPopupRow(null)}
+            >
               <MaterialIcon iconName="close" />
-            </button>
+            </Button>
           </div>
 
           <div className="overflow-y-auto" style={{ height: "179px" }}>
@@ -740,14 +755,16 @@ const ContentTableRow: React.FC<ContentTableRowProps> = ({
               ) === false && msg.status}
             </td>
             <td className="py-[12px] pr-[8px]">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={(e) => {
                   e.stopPropagation();
                   onDotsClick(msg, e);
                 }}
               >
                 <MaterialIcon iconName="more_vert" />
-              </button>
+              </Button>
             </td>
           </tr>
         ))}

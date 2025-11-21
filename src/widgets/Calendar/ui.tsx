@@ -9,6 +9,7 @@ import {
 } from "date-fns";
 import { useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button, Input } from "shared/ui";
 import {
   Dialog,
   DialogContent,
@@ -100,7 +101,9 @@ export const CalendarPopup = () => {
     const dayEvents = events.filter((e) => e.date === dateStr);
 
     dayGrid.push(
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         key={i}
         onClick={() => {
           setSelectedDate(dateStr);
@@ -138,7 +141,7 @@ export const CalendarPopup = () => {
             </div>
           );
         })}
-      </button>
+      </Button>
     );
 
     day = addDays(day, 1);
@@ -152,12 +155,14 @@ export const CalendarPopup = () => {
 
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2 w-full max-w-[256px]">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
             className="h-[44px] w-[44px] bg-[#DDEBF6] flex items-center justify-center rounded-[8px]"
           >
             <MaterialIcon iconName="keyboard_arrow_left" />
-          </button>
+          </Button>
           <div className="flex h-[44px] items-center gap-2 px-4 py-[11px] border border-[#DFDFDF] rounded-[8px] bg-white w-full max-w-[152px]">
             <MaterialIcon
               iconName="calendar_today"
@@ -169,19 +174,23 @@ export const CalendarPopup = () => {
               {format(currentMonth, "MMMM yyyy")}
             </span>
           </div>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             className="h-[44px] w-[44px] bg-[#DDEBF6] flex items-center justify-center rounded-[8px]"
           >
             <MaterialIcon iconName="keyboard_arrow_right" />
-          </button>
+          </Button>
         </div>
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={() => setCurrentMonth(new Date())}
           className="h-[44px] px-6 rounded-full bg-[#DDEBF6] text-[#1C63DB]  text-[16px] font-semibold"
         >
           Today
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-7 text-xs font-medium text-[#5F5F65] text-center border-t pt-2">
@@ -200,13 +209,13 @@ export const CalendarPopup = () => {
             <h3 className="text-lg font-semibold text-[#1D1D1F] ">
               {editIndex !== null ? "Edit event" : "New event"}
             </h3>
-            <button onClick={resetModal}>
+            <Button variant={"unstyled"} size={"unstyled"} onClick={resetModal}>
               <MaterialIcon iconName="close" size={20} />
-            </button>
+            </Button>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-sm text-[#1D1D1F]">Name</label>
-            <input
+            <Input
               value={newEventName}
               onChange={(e) => setNewEventName(e.target.value)}
               placeholder="Enter event name"
@@ -221,7 +230,7 @@ export const CalendarPopup = () => {
                 size={16}
                 className="text-[#71717A] mr-2"
               />
-              <input
+              <Input
                 value={newEventTime}
                 onChange={(e) => setNewEventTime(e.target.value)}
                 className="w-full text-sm"
@@ -233,7 +242,7 @@ export const CalendarPopup = () => {
             <label className="text-sm text-[#1D1D1F]">
               Notes <span className="text-[#A1A1AA]">(Optional)</span>
             </label>
-            <input
+            <Input
               value={newEventNote}
               onChange={(e) => setNewEventNote(e.target.value)}
               placeholder="Leave short note"
@@ -242,7 +251,9 @@ export const CalendarPopup = () => {
           </div>
           <div className="flex items-center justify-between mt-4">
             {editIndex !== null ? (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={handleDeleteEvent}
                 className="flex items-center gap-2 text-sm font-semibold text-red-500"
               >
@@ -253,16 +264,18 @@ export const CalendarPopup = () => {
                   className="text-[#FF1F0F]"
                 />
                 Delete event
-              </button>
+              </Button>
             ) : (
               <div />
             )}
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={handleAddEvent}
               className="rounded-full bg-[#1C63DB] px-4 py-2 text-white font-semibold text-sm"
             >
               {editIndex !== null ? "Save changes" : "Add event"}
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -280,18 +293,22 @@ export const CalendarPopup = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex items-center justify-between w-full">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => setShowDeleteConfirm(false)}
               className="flex items-center rounded-full justify-center w-32 h-[44px] text-sm p-4 bg-[#DDEBF6] text-[#1C63DB]"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={confirmDeleteEvent}
               className="w-32 h-[44px] text-sm p-4 rounded-full bg-[#FF1F0F] text-white flex items-center justify-center"
             >
               Delete
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

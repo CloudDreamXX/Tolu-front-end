@@ -1,3 +1,5 @@
+import { Button as ShadcnButton } from "shared/ui";
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string | React.ReactNode;
   bg?: string;
@@ -17,7 +19,9 @@ export const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => {
   return (
-    <button
+    <ShadcnButton
+      variant={"unstyled"}
+      size={"unstyled"}
       disabled={disabled}
       {...rest}
       className={`${width ?? "w-full sm:w-auto"} ${bg ?? "bg-[rgb(152, 153, 155)]"} 
@@ -28,6 +32,6 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {children}
       {text}
-    </button>
+    </ShadcnButton>
   );
 };

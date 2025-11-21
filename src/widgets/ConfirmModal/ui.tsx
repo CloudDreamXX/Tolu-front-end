@@ -1,5 +1,6 @@
 import React, { useEffect, useId } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 type ConfirmModalProps = {
   isOpen: boolean;
@@ -55,13 +56,15 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             >
               {title}
             </h3>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={onClose}
               className="text-[#1D1D1F]"
               aria-label="Close"
             >
               <MaterialIcon iconName="close" />
-            </button>
+            </Button>
           </div>
 
           {description ? (
@@ -71,20 +74,24 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           ) : null}
 
           <div className="flex items-center justify-between gap-3">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={onClose}
               className="w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
             >
               {cancelText}
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={onConfirm}
               className={
                 "w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
               }
             >
               {confirmText}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

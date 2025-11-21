@@ -1,3 +1,4 @@
+import { Button } from "shared/ui";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "shared/ui/input-otp";
 
 type Props = {
@@ -37,7 +38,10 @@ export const OtpScreen: React.FC<Props> = ({
           </InputOTPGroup>
         </InputOTP>
 
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
+          disabled={otpCode.length < 6}
           onClick={handleCodeSend}
           className={`flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full text-[16px] font-semibold ${otpCode.length === 6
               ? "bg-[#1C63DB] text-white"
@@ -45,7 +49,7 @@ export const OtpScreen: React.FC<Props> = ({
             }`}
         >
           Continue
-        </button>
+        </Button>
       </div>
     </div>
   );

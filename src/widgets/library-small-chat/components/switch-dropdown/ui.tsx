@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 import { SwitchValue } from "widgets/library-small-chat/switch-config";
 
 type Props = {
@@ -43,13 +44,15 @@ const SwitchDropdown: React.FC<Props> = ({
 
   return (
     <div className="relative flex items-center justify-center">
-      <button
+      <Button
+        variant={"unstyled"}
+        size={"unstyled"}
         className={`flex items-center gap-2 p-[6px] md:p-2 flex-row-reverse text-[#1C63DB] font-semibold text-[16px] lg:text-[14px] 2xl:text-[18px] rounded-lg`}
         onClick={toggleDropdown}
       >
         <div className="whitespace-nowrap">{selectedSwitch}</div>
         <MaterialIcon iconName="keyboard_arrow_down" size={24} />
-      </button>
+      </Button>
 
       {isOpen && (
         <div

@@ -136,15 +136,21 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               setFiles={setFiles}
               disabled={!folderId}
               customTrigger={
-                <button className="flex items-center justify-center w-[48px] h-[48px] rounded-full bg-[#F3F6FB]">
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
+                  className="flex items-center justify-center w-[48px] h-[48px] rounded-full bg-[#F3F6FB]"
+                >
                   <MaterialIcon iconName="attach_file" />
-                </button>
+                </Button>
               }
             />
             <PopoverClient setClientId={setClientId} documentId={documentId} />
             <div className="flex items-center gap-[32px] ml-auto">
               <div className="items-center hidden gap-2 md:flex">
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   type="button"
                   aria-pressed={enabled}
                   onClick={() => setEnabled(!enabled)}
@@ -159,7 +165,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                       enabled ? "translate-x-[25px]" : "translate-x-0"
                     }`}
                   />
-                </button>
+                </Button>
                 <span
                   className={`font-semibold text-[16px] ${enabled ? "text-[#1C63DB]" : "text-[#5F5F65]"}`}
                 >
@@ -182,7 +188,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               type="button"
               aria-pressed={enabled}
               onClick={() => setEnabled(!enabled)}
@@ -197,7 +205,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                   enabled ? "translate-x-[25px]" : "translate-x-0"
                 }`}
               />
-            </button>
+            </Button>
             <span
               className={`font-semibold text-[16px] ${enabled ? "text-[#1C63DB]" : "text-[#5F5F65]"}`}
             >

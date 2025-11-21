@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import avatar from "shared/assets/images/Avatar.png";
-import { ClientCard, GlucoseCard, Input, SliderCard } from "shared/ui";
+import { Button, ClientCard, GlucoseCard, Input, SliderCard } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import { CalendarPopup } from "widgets/Calendar";
 import { HealthGoalsCard } from "widgets/HealthGoalsCard";
@@ -55,20 +55,24 @@ export const HealthSnapshot = () => {
           </h1>
         )}
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => setNetworkSupportOpen((prev) => !prev)}
             className={`md:h-[44px] w-[115px] md:w-fit  text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${networkSupportOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
           >
             <MaterialIcon iconName="ecg_heart" size={20} />
             Network Support
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => setTimelineOpen((prev) => !prev)}
             className={`md:h-[44px] w-[115px] md:w-fit  text-[12px] md:text-[14px]/[20px] font-semibold text-[#1C63DB] rounded-[8px] md:rounded-full ${timelineOpen ? "bg-[#AAC6EC]" : "bg-[#DDEBF6]"} justify-center  items-center p-[8px] md:py-[6px] md:px-3 flex flex-col md:flex-row gap-[8px] md:gap-2`}
           >
             <MaterialIcon iconName="clock_loader_10" size={20} />
             {!timelineOpen ? "Open timeline" : "Close timeline"}
-          </button>
+          </Button>
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full p-[16px] md:p-[24px] items-start rounded-2xl bg-white">
@@ -107,12 +111,12 @@ export const HealthSnapshot = () => {
                       Low sugar meals correlated with reduced brain fog
                     </p>
                   </div>
-                  <button>
+                  <Button variant={"unstyled"} size={"unstyled"}>
                     <MaterialIcon
                       iconName="arrow_right_alt"
                       className="text-[#1C63DB]"
                     />
-                  </button>
+                  </Button>
                 </div>
               </div>
               <div className="flex items-start flex-1 w-full h-full xl:w-fit">
@@ -125,12 +129,12 @@ export const HealthSnapshot = () => {
                       Skipping sleep routines increased cravings
                     </p>
                   </div>
-                  <button>
+                  <Button variant={"unstyled"} size={"unstyled"}>
                     <MaterialIcon
                       iconName="arrow_right_alt"
                       className="text-[#1C63DB]"
                     />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -301,21 +305,25 @@ export const HealthSnapshot = () => {
                     <br /> to support recovery.
                   </div>
                   <div className="flex items-center self-stretch gap-3">
-                    <button>
+                    <Button variant={"unstyled"} size={"unstyled"}>
                       <MaterialIcon iconName="bookmark" />
-                    </button>
-                    <button>
+                    </Button>
+                    <Button variant={"unstyled"} size={"unstyled"}>
                       <MaterialIcon iconName="share_windows" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex bg-white rounded-b-[8px] border-t-[#DDEBF6] border-t p-6 items-center gap-2 self-stretch mb-[68px]">
               <Input placeholder="Your message" />
-              <button className="rounded-full bg-[#1C63DB] flex h-[44px] justify-center items-center px-[10px] py-4 ">
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
+                className="rounded-full bg-[#1C63DB] flex h-[44px] justify-center items-center px-[10px] py-4 "
+              >
                 <MaterialIcon iconName="send" />
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -327,9 +335,13 @@ export const HealthSnapshot = () => {
             <h2 className=" text-[#1D1D1F] text-[24px]/[32px] font-semibold">
               Timeline
             </h2>
-            <button className=" text-[#1C63DB] text-[14px]/[20px] font-semibold">
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              className=" text-[#1C63DB] text-[14px]/[20px] font-semibold"
+            >
               Mark all as read
-            </button>
+            </Button>
           </div>
           {timelines.map((item, index) => (
             <TimelineItem

@@ -1,4 +1,4 @@
-import { Checkbox } from "shared/ui";
+import { Button, Checkbox } from "shared/ui";
 import PapersLock from "shared/assets/icons/papers-lock";
 
 type Props = {
@@ -111,13 +111,15 @@ export const AffiliatePromoter: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleNext}
             className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}
             disabled={!isChecked}
           >
             Continue
-          </button>
+          </Button>
         </div>
       </div>
     </div>

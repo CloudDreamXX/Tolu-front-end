@@ -189,12 +189,14 @@ export const VoiceRecorderButton: React.FC<VoiceRecorderButtonProps> = ({
             src={audioUrl}
             className="h-8 w-[250px] md:w-[300px]"
           />
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleCancel}
             className="flex items-center justify-center text-[#5F5F65] hover:text-red-500"
           >
             <MaterialIcon iconName="delete" />
-          </button>
+          </Button>
         </div>
       )}
     </div>

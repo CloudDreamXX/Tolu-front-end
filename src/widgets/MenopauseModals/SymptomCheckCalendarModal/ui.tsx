@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 interface SymptomCheckModalProps {
   handleDateChange: (date: Date) => void;
@@ -137,20 +138,27 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
           <h2 className="text-[20px] md:text-[24px] font-bold text-[#1D1D1F]">
             Calendar
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black">
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
+            onClick={onClose}
+            className="text-gray-400 hover:text-black"
+          >
             <MaterialIcon iconName="close" />
-          </button>
+          </Button>
         </div>
 
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={prevGroup}
               className="h-[44px] w-[44px] rounded-[8px] bg-[#DDEBF6] flex items-center justify-center"
               aria-label="Previous months"
             >
               <MaterialIcon iconName="keyboard_arrow_left" />
-            </button>
+            </Button>
 
             <div className="flex items-center gap-2 border border-[#DFDFDF] rounded-[8px] px-4 py-2.5 h-[44px]">
               <MaterialIcon iconName="calendar_today" fill={1} />
@@ -172,21 +180,25 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
               </select>
             </div>
 
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={nextGroup}
               className="h-[44px] w-[44px] rounded-[8px] bg-[#DDEBF6] flex items-center justify-center"
               aria-label="Next months"
             >
               <MaterialIcon iconName="keyboard_arrow_right" />
-            </button>
+            </Button>
           </div>
 
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={jumpToToday}
             className="px-4 py-3 rounded-full bg-[#E7F0FF] text-[#1C63DB] text-[14px] font-semibold hover:bg-[#d7e7ff]"
           >
             Today
-          </button>
+          </Button>
         </div>
 
         <div className="rounded-[12px] overflow-hidden">
@@ -218,7 +230,9 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
                         : false;
 
                       return (
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           key={i}
                           onClick={() => onPick(c.date)}
                           className={[
@@ -231,7 +245,7 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
                           aria-label={c.date.toDateString()}
                         >
                           {c.date.getDate()}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>

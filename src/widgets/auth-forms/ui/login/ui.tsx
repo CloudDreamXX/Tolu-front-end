@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib/hooks/use-toast";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { z } from "zod";
 import { setCoachOnboardingData } from "entities/store/coachOnboardingSlice";
 import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboarding-finish/helpers";
@@ -408,11 +408,10 @@ export const LoginForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={formDataChangeHandler}
-                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${
-                    loginError
-                      ? "border border-[#FF1F0F]"
-                      : "border border-[#DFDFDF]"
-                  }`}
+                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${loginError
+                    ? "border border-[#FF1F0F]"
+                    : "border border-[#DFDFDF]"
+                    }`}
                 />
                 {loginError && (
                   <p className="text-[#FF1F0F] text-[14px]">{loginError}</p>
@@ -431,14 +430,15 @@ export const LoginForm = () => {
                     placeholder="Enter Password"
                     name="password"
                     onChange={formDataChangeHandler}
-                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${
-                      passwordError
-                        ? "border border-[#FF1F0F]"
-                        : "border border-[#DFDFDF] focus:border-[#1C63DB]"
-                    }`}
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${passwordError
+                      ? "border border-[#FF1F0F]"
+                      : "border border-[#DFDFDF]"
+                      }`}
                   />
                   {formData.password && (
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       type="button"
                       className="absolute right-4"
                       onClick={() => setShowPassword(!showPassword)}
@@ -449,7 +449,7 @@ export const LoginForm = () => {
                         }
                         size={16}
                       />
-                    </button>
+                    </Button>
                   )}
                 </div>
                 {passwordError && (
@@ -506,32 +506,34 @@ export const LoginForm = () => {
 
           <div className="flex flex-col items-center gap-[24px] w-full">
             {isInvitedClient ? (
-              <button
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  formData.email && !loginError
-                    ? "bg-[#1C63DB] text-white"
-                    : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${formData.email && !loginError
+                  ? "bg-[#1C63DB] text-white"
+                  : "bg-[#D5DAE2] text-[#5F5F65]"
+                  }`}
                 onClick={handleRequestInvite}
               >
                 Request invite
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 type="submit"
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  (!isCodeSent && formData.email) ||
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${(!isCodeSent && formData.email) ||
                   (isCodeSent && formData.code)
-                    ? "bg-[#1C63DB] text-white"
-                    : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  ? "bg-[#1C63DB] text-white"
+                  : "bg-[#D5DAE2] text-[#5F5F65]"
+                  }`}
               >
                 {loginMode === "2fa"
                   ? isCodeSent
                     ? "Verify Code"
                     : "Send Code"
                   : "Log In"}
-              </button>
+              </Button>
             )}
 
             {!isInvitedClient && (

@@ -10,7 +10,7 @@ import {
 } from "entities/files-library/api";
 import { useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { Button } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { FileLibrary } from "./components/FileLibrary";
 import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 import { UpdateFolderPopup } from "./components/UpdateFileFolderPopup";
@@ -314,9 +314,9 @@ export const FilesLibrary = () => {
           <div className="flex items-center md:flex-row flex-row gap-2 md:gap-[20px] lg:gap-2">
             <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[32px]">
               <MaterialIcon iconName="search" size={16} />
-              <input
+              <Input
                 placeholder="Search"
-                className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000]"
+                className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-7 p-0"
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -368,7 +368,7 @@ export const FilesLibrary = () => {
             </div>
           )}
 
-          <input className="hidden" {...getInputProps()} />
+          <Input className="hidden" {...getInputProps()} />
         </div>
         {items.length > 0 && (
           <Button
@@ -389,20 +389,24 @@ export const FilesLibrary = () => {
         )}
 
         {selectedFiles.length > 0 && (
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             className="w-fit flex items-center gap-2"
             onClick={() => setMovePopup(true)}
           >
             Move to another folder
             <MaterialIcon iconName="drive_file_move" />
-          </button>
+          </Button>
         )}
 
         <div className="flex flex-wrap gap-2">
           {!viewingFolder ? (
             <>
               {filterBySearch(files?.root_folders).map((folder) => (
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   key={folder.id}
                   className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
                   onClick={() => handleFolderClick(folder)}
@@ -450,7 +454,7 @@ export const FilesLibrary = () => {
                       />
                     </div>
                   )}
-                </button>
+                </Button>
               ))}
 
               {filterBySearch(files?.root_files).map((file) => (
@@ -467,7 +471,9 @@ export const FilesLibrary = () => {
           ) : (
             <>
               <div className="flex gap-[8px] items-start">
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className="flex items-center justify-center w-fit"
                   onClick={handleReturnToAll}
                 >
@@ -475,7 +481,7 @@ export const FilesLibrary = () => {
                     iconName="arrow_back"
                     className="flex items-center justify-center w-[32px] h-[32px]"
                   />
-                </button>
+                </Button>
                 <div className="flex flex-col gap-[8px] mb-[24px] justify-start">
                   <h2 className="text-2xl font-bold">
                     {folderContents?.current_folder.name}
@@ -487,7 +493,9 @@ export const FilesLibrary = () => {
               <div className="flex flex-col items-center justify-center w-full gap-[24px]">
                 <div className="flex flex-wrap w-full gap-2">
                   {filterBySearch(viewingFolder.subfolders).map((subfolder) => (
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       key={subfolder.id}
                       className="h-[55px] w-full md:w-[49%] bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center relative"
                       onClick={() => handleFolderClick(subfolder)}
@@ -532,7 +540,7 @@ export const FilesLibrary = () => {
                           />
                         </div>
                       )}
-                    </button>
+                    </Button>
                   ))}
                   {filterBySearch(viewingFolder.files).map((file) => (
                     <FileLibrary
@@ -600,7 +608,9 @@ const MenuItem: React.FC<{
   className?: string;
   onClick: () => void;
 }> = ({ icon, label, className = "", onClick }) => (
-  <button
+  <Button
+    variant={"unstyled"}
+    size={"unstyled"}
     onClick={(e) => {
       e.stopPropagation();
       onClick();
@@ -609,5 +619,5 @@ const MenuItem: React.FC<{
   >
     <span className="w-[24px] h-[24px]">{icon}</span>
     {label}
-  </button>
+  </Button>
 );

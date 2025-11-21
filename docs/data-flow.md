@@ -204,13 +204,13 @@ Payload:
 ```json
 {
   "user": {
-  "name": "Jane Doe",
-  "email": "jane@example.com",
-  "password": "StrongPass123!",
-  "phone_number": "+123456789",
-  "roleID": 2,
-  "country": "USA",
-  "state": "CA"
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "password": "StrongPass123!",
+    "phone_number": "+123456789",
+    "roleID": 2,
+    "country": "USA",
+    "state": "CA"
   },
   "access_code": "123456"
 }
@@ -580,6 +580,7 @@ multipart/form-data
 ```
 
 ### **Super Admin Profile Data**
+
 Super admin has abillity to change his password on the profile page.
 
 #### **Change password**
@@ -591,8 +592,8 @@ Super admin has abillity to change his password on the profile page.
 
 ```json
 {
-  "old_password" : "Qasdf12345678!",
-  "new_password": "Aasdf12345678!",
+  "old_password": "Qasdf12345678!",
+  "new_password": "Aasdf12345678!"
 }
 ```
 
@@ -1557,7 +1558,11 @@ Retrieves paginated messages within a specific chat for moderation or review.
     "id": "msg_001",
     "chat_id": "chat_001",
     "content": "Hello, how can I help?",
-    "sender": { "id": "admin_1", "first_name": "Support", "last_name": "Agent" },
+    "sender": {
+      "id": "admin_1",
+      "first_name": "Support",
+      "last_name": "Agent"
+    },
     "created_at": "2025-01-04T09:00:00Z"
   }
 ]

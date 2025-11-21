@@ -3,6 +3,7 @@ import { useDocumentState } from "features/document-management";
 import React, { useEffect, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
+  Button,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -135,12 +136,14 @@ export const ConversationItemActions: React.FC<
         <TooltipProvider delayDuration={500}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                 onClick={() => onEditToggle(pair, null)}
               >
                 <MaterialIcon iconName="edit" size={20} fill={1} />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent
               side="right"
@@ -153,7 +156,9 @@ export const ConversationItemActions: React.FC<
           {document?.status !== "Rejected" && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                   onClick={() => {
                     setSelectedDocumentId(pair.id);
@@ -161,7 +166,7 @@ export const ConversationItemActions: React.FC<
                   }}
                 >
                   <MaterialIcon iconName="arrow_right_alt" size={20} />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent
                 side="right"
@@ -175,12 +180,14 @@ export const ConversationItemActions: React.FC<
           {document?.status !== "Rejected" && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                   onClick={() => handleDublicateClick(pair.id)}
                 >
                   <MaterialIcon iconName="stack" size={20} fill={1} />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent
                 side="right"
@@ -193,7 +200,9 @@ export const ConversationItemActions: React.FC<
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                 onClick={handleReadAloud}
               >
@@ -202,7 +211,7 @@ export const ConversationItemActions: React.FC<
                   size={20}
                   fill={isReadingAloud ? 1 : 0}
                 />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent
               side="right"
@@ -214,7 +223,9 @@ export const ConversationItemActions: React.FC<
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                 onClick={() => {
                   setSelectedDocumentId(pair.id);
@@ -226,7 +237,7 @@ export const ConversationItemActions: React.FC<
                 ) : (
                   <MaterialIcon iconName="thumb_down" size={20} fill={1} />
                 )}
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent
               side="right"
@@ -238,7 +249,9 @@ export const ConversationItemActions: React.FC<
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={() => {
                   setSelectedDocumentId(pair.id);
                   setIsDeleteOpen(true);
@@ -246,7 +259,7 @@ export const ConversationItemActions: React.FC<
                 className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
               >
                 <MaterialIcon iconName="delete" size={20} fill={1} />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent
               side="right"
@@ -259,12 +272,14 @@ export const ConversationItemActions: React.FC<
           {document?.status !== "Rejected" && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={() => handleMarkAsClick()}
                   className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                 >
                   <MaterialIcon iconName="compare_arrows" size={20} />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent
                 side="right"
@@ -278,12 +293,14 @@ export const ConversationItemActions: React.FC<
           {document?.status === "Raw" && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                   onClick={() => onMarkAsFinalHandler(pair.id)}
                 >
                   <MaterialIcon iconName="check" size={20} />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent
                 side="right"
@@ -297,12 +314,14 @@ export const ConversationItemActions: React.FC<
           {document?.status === "Rejected" && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
                   onClick={() => setStatusPopup(true)}
                 >
                   <MaterialIcon iconName="check_circle_unread" size={20} />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent
                 side="right"

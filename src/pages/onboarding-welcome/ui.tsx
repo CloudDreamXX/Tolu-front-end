@@ -8,6 +8,7 @@ import Handshake from "shared/assets/icons/handshake";
 import Like from "shared/assets/icons/like";
 import { useNavigate } from "react-router-dom";
 import { Header } from "./components";
+import { Button } from "shared/ui";
 
 export const OnboardingWerlcome = () => {
   const icons = [
@@ -59,12 +60,14 @@ export const OnboardingWerlcome = () => {
                 and content
               </p>
             </div>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={addStep}
               className="flex justify-center items-center h-[44px] w-[250px] p-[16px] rounded-full bg-[#1C63DB] text-white"
             >
               Get Started
-            </button>
+            </Button>
           </div>
         ) : (
           <MiddleCard

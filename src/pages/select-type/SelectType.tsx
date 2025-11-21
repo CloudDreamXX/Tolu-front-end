@@ -5,6 +5,7 @@ import LeavesIcon from "shared/assets/icons/leaves";
 import Brain from "shared/assets/icons/brain";
 import Chemistry from "shared/assets/icons/chemistry";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { Button } from "shared/ui";
 
 export const SelectType = () => {
   const titlesAndIcosn = [
@@ -83,7 +84,9 @@ export const SelectType = () => {
               </div>
               {/* Custom Dropdown */}
               <div className="relative w-full">
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   type="button"
                   className="flex w-full items-center justify-between bg-[#FAFAFA] border-[#9D9D9D] border-[1px] rounded-[8px] h-[52px] px-[12px] cursor-pointer"
                   onClick={() => toggleDropdown(index)} // Toggle dropdown visibility based on index
@@ -96,7 +99,7 @@ export const SelectType = () => {
                     size={20}
                     className="text-[#9D9D9D]"
                   />
-                </button>
+                </Button>
                 {/* Dropdown options */}
                 {activeDropdown === index && ( // Only show dropdown if it's the active one
                   <div className="absolute z-10 flex flex-col gap-[10px] w-full mt-[4px] bg-white border-[#9D9D9D] border-[1px] rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto">
@@ -109,14 +112,16 @@ export const SelectType = () => {
                       "Licensed Professional Counselor",
                       "Marriage and Family Therapist",
                     ].map((item) => (
-                      <button
+                      <Button
+                        variant={"unstyled"}
+                        size={"unstyled"}
                         type="button"
                         key={item}
                         className={`p-[12px] text-[#1D1D1F] text-[16px] font-medium cursor-pointer hover:bg-[#F1F1F1] hover:text-[#1C63DB] ${selectedOptions[index] === item ? "bg-[#E4E9F2]" : ""}`}
                         onClick={() => handleSelection(index, item)} // Update selection for this dropdown
                       >
                         {item}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -124,7 +129,9 @@ export const SelectType = () => {
             </div>
           ))}
         </form>
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           type="submit"
           className={
             isAllSelected()
@@ -133,7 +140,7 @@ export const SelectType = () => {
           }
         >
           Next
-        </button>
+        </Button>
       </main>
       <Footer />
     </div>

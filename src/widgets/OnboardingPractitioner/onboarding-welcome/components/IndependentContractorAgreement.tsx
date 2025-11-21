@@ -1,4 +1,4 @@
-import { Checkbox } from "shared/ui";
+import { Button, Checkbox } from "shared/ui";
 
 type Props = {
   isChecked: boolean;
@@ -149,13 +149,15 @@ export const IndependentContractorAgreement: React.FC<Props> = ({
               I have read and agree to this agreement.
             </p>
           </div>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={handleNext}
             className={`flex justify-center items-center rounded-full bg-[#1C63DB] text-white w-full md:w-[250px] h-[56px] p-[16px] ${!isChecked ? "opacity-[50%]" : "cursor-pointer"}`}
             disabled={!isChecked}
           >
             Continue
-          </button>
+          </Button>
         </div>
       </div>
     </div>

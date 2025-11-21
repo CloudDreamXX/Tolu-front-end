@@ -2,7 +2,7 @@ import { setLastLogIn, setLastMood } from "entities/store/clientMoodSlice";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { Input } from "shared/ui";
+import { Button, Input } from "shared/ui";
 import { Slider } from "shared/ui/slider";
 import { moodLabels, moodMap } from "../ui";
 
@@ -32,13 +32,15 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
       </span>
       <div className="bg-white absolute bottom-0 rounded-t-[16px] md:rounded-[16px] px-[16px] py-[24px] md:p-[24px] xl:p-8 w-full md:w-[742px] flex flex-col gap-8 md:relative shadow-lg">
         {/* Close button */}
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           onClick={onClose}
           className="absolute text-gray-400 top-6 right-6 hover:text-gray-600"
           aria-label="Close modal"
         >
           <MaterialIcon iconName="close" />
-        </button>
+        </Button>
 
         <div className="flex flex-col items-center justify-center gap-6">
           {/* Header */}
@@ -121,18 +123,22 @@ export const MoodModal: React.FC<MoodModalProps> = ({ onClose }) => {
 
           {/* Buttons */}
           <div className="flex justify-between w-full max-w-[600px]">
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={onClose}
               className="px-4 py-2 font-semibold text-blue-500 rounded hover:underline"
             >
               Skip for today
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={handleSubmit}
               className="px-6 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
             >
               Submit
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Footer } from "pages/onboarding-welcome/components";
 import { Button, HeaderOnboarding } from "./components";
+import { Input, Button as ShadcnButton } from "shared/ui";
 
 export const OnboardingMain = () => {
   const [otherText, setOtherText] = useState("");
@@ -38,7 +39,7 @@ export const OnboardingMain = () => {
         </h3>
         <section className="w-[900px] items-center justify-center flex flex-col gap-[32px]">
           <div className="flex w-[500px] items-start gap-[12px] flex-col">
-            <input
+            <Input
               type="text"
               placeholder="Search"
               className="h-[44px] px-[12px] py-[8px] flex items-center gap-[8px] self-stretch rounded-full border-[1px] border-[#DBDEE1] bg-white flex-1  text-[14px] font-semibold text-[#5F5F65]"
@@ -200,16 +201,20 @@ export const OnboardingMain = () => {
           </div>
           {isOtherSelected() ? (
             <div className="flex justify-center gap-[8px] items-start">
-              <input
+              <Input
                 onChange={(e) => setOtherText(e.target.value)}
                 type="text"
                 placeholder="Please specify your niche"
                 className="flex outline-none w-[300px] h-[44px] py-[11px] px-[16px] justify-center items-center self-stretch text-[#5F5F65] font-[Bubito] text-[16px] font-medium rounded-[8px] border-[1px] border-[#DFDFDF] bg-white"
               />
               {otherText.length > 0 && (
-                <button className="flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center  text-[16px] font-semibold text-white">
+                <ShadcnButton
+                  variant={"unstyled"}
+                  size={"unstyled"}
+                  className="flex rounded-full bg-[#1C63DB] h-[44px] p-[16px] items-center  text-[16px] font-semibold text-white"
+                >
                   Add niche
-                </button>
+                </ShadcnButton>
               )}
             </div>
           ) : (
@@ -217,13 +222,17 @@ export const OnboardingMain = () => {
           )}
         </section>
         <div className="flex items-center gap-[16px]">
-          <button
+          <ShadcnButton
+            variant={"unstyled"}
+            size={"unstyled"}
             className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
             style={{ background: "rgba(0, 143, 246, 0.10)" }}
           >
             Back
-          </button>
-          <button
+          </ShadcnButton>
+          <ShadcnButton
+            variant={"unstyled"}
+            size={"unstyled"}
             className={
               selectedButtons.length >= 1
                 ? "bg-[#1C63DB] flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-white"
@@ -231,7 +240,7 @@ export const OnboardingMain = () => {
             }
           >
             Next
-          </button>
+          </ShadcnButton>
         </div>
       </main>
       <Footer />

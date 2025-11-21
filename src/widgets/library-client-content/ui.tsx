@@ -615,7 +615,9 @@ export const LibraryClientContent = () => {
                         key={c.coach_id}
                         className="p-2 rounded-[12px] hover:bg-[#F5F5F5] transition-colors"
                       >
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           onClick={() => handleOpenCoach(c)}
                           className="flex items-center w-full gap-3 text-left"
                         >
@@ -634,7 +636,7 @@ export const LibraryClientContent = () => {
                           <div className="truncate font-medium text-[14px]">
                             {name}
                           </div>
-                        </button>
+                        </Button>
                       </li>
                     );
                   })}

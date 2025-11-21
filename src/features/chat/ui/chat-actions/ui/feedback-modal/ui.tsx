@@ -84,12 +84,14 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
       >
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold">Was this helpful for you?</h2>
-          <button
+          <Button
+            variant={"unstyled"}
+            size={"unstyled"}
             onClick={() => onOpenChange(false)}
             className="absolute text-gray-500 top-4 right-4 hover:text-gray-900"
           >
             <MaterialIcon iconName="close" size={24} />
-          </button>
+          </Button>
         </div>
         <div className="flex flex-col gap-6 overflow-y-auto">
           <p className="text-gray-600">
@@ -101,7 +103,9 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
             <span className="ml-2 text-2xl">{getRatingText()}</span>
             <div className="flex items-center justify-center gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   key={star}
                   onClick={() => setRating(star)}
                   className={`${
@@ -112,7 +116,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                     iconName="star"
                     className="cursor-pointer w-14 h-14"
                   />
-                </button>
+                </Button>
               ))}
             </div>
           </div>

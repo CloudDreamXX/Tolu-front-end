@@ -1,3 +1,5 @@
+import { Button } from "shared/ui";
+
 export const ConfirmDiscardModal = ({
   onCancel,
   onDiscard,
@@ -15,18 +17,22 @@ export const ConfirmDiscardModal = ({
         Unsaved data will be lost.
       </p>
       <div className="flex justify-between gap-[8px] md:gap-[16px]">
-        <button
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="p-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
           onClick={onCancel}
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
           className="px-[16px] py-[10px] w-full md:w-[128px] rounded-[1000px] bg-[#FF1F0F] text-white text-[16px] font-semibold"
           onClick={onDiscard}
         >
           Discard
-        </button>
+        </Button>
       </div>
     </div>
   </div>

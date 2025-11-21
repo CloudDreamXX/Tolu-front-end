@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { Popover, PopoverContent, PopoverTrigger } from "shared/ui";
+import { Button, Popover, PopoverContent, PopoverTrigger } from "shared/ui";
 
 interface RatePopupProps {
   contentId: string;
@@ -38,12 +38,16 @@ export const RatePopup: React.FC<RatePopupProps> = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] flex items-center justify-center">
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
+          className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] flex items-center justify-center"
+        >
           <MaterialIcon
             iconName={!ratingsMap[contentId] ? "star" : "star_half"}
             className="text-blue-500"
           />
-        </button>
+        </Button>
       </PopoverTrigger>
 
       <PopoverContent className="w-[425px] md:w-[239px] xl:w-[203px] p-4 shadow-[2px_2px_10px_0px_rgba(0,0,0,0.15)]">
@@ -56,7 +60,9 @@ export const RatePopup: React.FC<RatePopupProps> = ({
         <div className="flex flex-col space-y-4">
           <div className="flex justify-center gap-2">
             {[1, 2, 3, 4, 5].map((val) => (
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 key={val}
                 onClick={() => setRating(val)}
                 onMouseEnter={() => setHoveredRating(val)}
@@ -71,7 +77,7 @@ export const RatePopup: React.FC<RatePopupProps> = ({
                       : "text-gray-400"
                   }
                 />
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -84,12 +90,14 @@ export const RatePopup: React.FC<RatePopupProps> = ({
                 onChange={(e) => setComment(e.target.value)}
               />
 
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={handleSubmit}
                 className="w-full bg-[#1C63DB] text-white font-semibold text-[16px] py-[4px] rounded-full hover:bg-[#1556c1] transition-colors"
               >
                 Send
-              </button>
+              </Button>
             </div>
           )}
         </div>

@@ -37,14 +37,18 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="flex flex-row items-center group">
+        <Button
+          variant={"unstyled"}
+          size={"unstyled"}
+          className="flex flex-row items-center group"
+        >
           <h4 className="text-lg font-semibold">
             Clients: {clients?.length ?? "N/A"}
           </h4>
           <div className="mb-1 ml-1 text-xs font-semibold group-hover:text-[#008FF6]">
             <MaterialIcon iconName="edit" />
           </div>
-        </button>
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB]">
         <h4 className="flex flex-row gap-2 text-xl font-bold">
@@ -73,7 +77,9 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
                         <div className="flex flex-col w-full gap-1">
                           <span className="text-sm font-medium">{client}</span>
                         </div>
-                        <button
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
                           onClick={() => {
                             setClients((prev) =>
                               prev.filter((_, i) => i !== index)
@@ -84,7 +90,7 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
                             iconName="delete"
                             className="text-[#FF1F0F]"
                           />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -122,7 +128,9 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
               <ScrollArea className="h-[256px] w-full">
                 <div className="flex flex-col w-full gap-1 pr-1">
                   {[...clients, ...possibleClientNames].map((client) => (
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       key={client}
                       className={cn(
                         `flex items-center w-full py-3 px-3 gap-2 rounded-md cursor-pointer bg-white border-white border`,
@@ -147,7 +155,7 @@ export const FolderClientsInfo: React.FC<FolderClientsInfoProps> = ({
                       >
                         {client}
                       </label>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </ScrollArea>

@@ -1,5 +1,7 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import {
+  Button,
+  Input,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -117,7 +119,7 @@ export function StepPractice({
           className="flex py-[16px] w-full px-[24px] gap-[4px] flex-col items-center justify-center rounded-[12px] border-[1px] border-dashed border-[#1C63DB] cursor-pointer"
           htmlFor="license-files-input"
         >
-          <input
+          <Input
             id="license-files-input"
             className="hidden"
             type="file"
@@ -159,13 +161,15 @@ export function StepPractice({
                       className="object-cover w-[150px] h-[150px] rounded-md"
                     />
                   )}
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     type="button"
                     onClick={() => removeFile(index)}
                     className="absolute top-[4px] right-[4px] bg-white p-[4px] rounded-[8px] flex items-center justify-center text-sm"
                   >
                     <MaterialIcon iconName="delete" className="text-red-500" />
-                  </button>
+                  </Button>
                 </div>
               );
             })}

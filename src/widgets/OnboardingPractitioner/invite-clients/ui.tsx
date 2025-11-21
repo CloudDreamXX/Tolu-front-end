@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { HeaderOnboarding } from "../../HeaderOnboarding";
 import { useNavigate } from "react-router-dom";
-import { AuthPageWrapper, Input } from "shared/ui";
+import { AuthPageWrapper, Button, Input } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { useInviteClientMutation } from "entities/coach";
 import { toast } from "shared/lib";
@@ -135,7 +135,9 @@ export const InviteClients = () => {
                     {uploadedFileSize}
                   </p>
                 </div>
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={() => {
                     setUploadedFileName(null);
                     setUploadedFileSize(null);
@@ -143,7 +145,7 @@ export const InviteClients = () => {
                   className="absolute top-[6px] right-[6px]"
                 >
                   <MaterialIcon iconName="close" size={16} />
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
@@ -181,7 +183,7 @@ export const InviteClients = () => {
             </div>
           )}
 
-          <input
+          <Input
             ref={fileInputRef}
             type="file"
             accept=".csv,application/pdf"
@@ -227,39 +229,47 @@ export const InviteClients = () => {
                 className="h-[44px] w-full rounded-[8px] border border-[#DFDFDF] px-[16px]  text-[14px] text-[#5F5F65]"
               />
             ))}
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               onClick={() => setClientel([...clientel, ""])}
               type="button"
               style={{ background: "rgba(0, 143, 246, 0.10)" }}
               className="mt-4 h-11 md:h-7 w-44 rounded-full text-[#1C63DB]  flex items-center justify-center text-[14px] font-semibold"
             >
               + Add another
-            </button>
+            </Button>
           </div>
           {isMobile && (
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center gap-[8px] bg-transparent w-full">
-                <button
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   className="flex w-full p-[16px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
                   style={{ background: "rgba(0, 143, 246, 0.10)" }}
                   onClick={() => nav(-1)}
                 >
                   <MaterialIcon iconName="keyboard_arrow_left" />
                   Back
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
                   onClick={handleNextStep}
                   className={`flex w-full p-[16px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold bg-[#1C63DB] text-white`}
                 >
                   Next
-                </button>
+                </Button>
               </div>
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB]  text-[16px] font-semibold"
                 onClick={handleNextStep}
               >
                 Skip this step
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -268,27 +278,33 @@ export const InviteClients = () => {
         {!isMobile && (
           <div className="flex flex-col items-center gap-4 pb-10 md:pb-[140px]">
             <div className="flex items-center gap-[16px] bg-transparent">
-              <button
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 className="flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-[#1C63DB]"
                 style={{ background: "rgba(0, 143, 246, 0.10)" }}
                 onClick={() => nav(-1)}
               >
                 <MaterialIcon iconName="keyboard_arrow_left" />
                 Back
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
                 onClick={handleNextStep}
                 className={`flex w-[250px] h-[44px] py-[4px] px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold bg-[#1C63DB] text-white`}
               >
                 Next
-              </button>
+              </Button>
             </div>
-            <button
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
               className="flex items-center justify-center py-1 px-8 self-stretch rounded-full text-[#1C63DB]  text-[16px] font-semibold"
               onClick={handleNextStep}
             >
               Skip this step
-            </button>
+            </Button>
           </div>
         )}
       </main>

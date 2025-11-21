@@ -34,6 +34,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Input,
 } from "shared/ui";
 import { ChangePasswordModal } from "widgets/change-password-modal";
 import { ClientEditProfileModal } from "widgets/client-edit-profile-modal";
@@ -552,23 +553,28 @@ export const ClientProfile = () => {
         <div className="flex items-center gap-[24px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
           Personal profile
         </div>
-        <button onClick={togglePopup}>
+        <Button variant={"unstyled"} size={"unstyled"} onClick={togglePopup}>
           <MaterialIcon iconName="notifications" fill={1} />
           {unreadCount > 0 && (
             <span className="absolute flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full top-1 right-4">
               {unreadCount}
             </span>
           )}
-        </button>
+        </Button>
       </div>
 
       {isPopupOpen && (
         <div className="absolute p-4 overflow-y-auto bg-white shadow-md top-16 right-4 rounded-xl w-96 max-h-96 z-[999]">
           <div className="flex justify-between mb-2">
             <h4 className="text-lg font-semibold">Notifications</h4>
-            <button onClick={togglePopup} className="text-gray-600">
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              onClick={togglePopup}
+              className="text-gray-600"
+            >
               Close
-            </button>
+            </Button>
           </div>
           <div className="space-y-3">
             {notifications?.length ? (
@@ -586,22 +592,26 @@ export const ClientProfile = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       onClick={() =>
                         handleNotificationAction(notification.id, "read")
                       }
                       className="text-xs text-white bg-[#1C63DB] p-[8px] rounded-[8px]"
                     >
                       Mark as read
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant={"unstyled"}
+                      size={"unstyled"}
                       onClick={() =>
                         handleNotificationAction(notification.id, "dismiss")
                       }
                       className="text-xs text-black bg-[#D5DAE2] p-[8px] rounded-[8px]"
                     >
                       Dismiss
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))
@@ -621,7 +631,7 @@ export const ClientProfile = () => {
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <input
+            <Input
               className="hidden"
               {...getInputProps()}
               onChange={(e) => {
@@ -725,7 +735,7 @@ export const ClientProfile = () => {
                     {initials}
                   </AvatarFallback>
                 </Avatar>
-                <input
+                <Input
                   className="hidden"
                   {...getInputProps()}
                   onChange={(e) => {
@@ -835,7 +845,9 @@ export const ClientProfile = () => {
             action={
               <div className="flex items-center max-w-full gap-4 p-2 overflow-x-auto bg-white border rounded-full no-scrollbar">
                 {tabs.map((s, i) => (
-                  <button
+                  <Button
+                    variant={"unstyled"}
+                    size={"unstyled"}
                     key={s.id}
                     className={cn(
                       "py-2.5 px-4 font-bold text-sm text-nowrap",
@@ -846,7 +858,7 @@ export const ClientProfile = () => {
                     onClick={() => setTab(i)}
                   >
                     {s.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             }

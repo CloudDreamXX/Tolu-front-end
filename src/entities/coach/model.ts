@@ -256,6 +256,7 @@ export interface PersonalInfo {
   date_of_birth: string | null;
   location?: string | null;
   country?: string | null;
+  signup_date?: string;
 }
 
 export interface HealthSummary {
