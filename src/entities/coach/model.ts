@@ -1,17 +1,11 @@
 export interface InviteClientPayload {
   first_name: string;
   last_name: string;
-  full_name: string;
   email: string;
   phone_number: string;
-  date_of_birth: string;
-  primary_health_challenge: string;
-  connection_source: string;
-  working_duration: string;
-  is_primary_coach: string;
+  is_primary_coach: boolean;
   focus_areas: string[];
-  tolu_benefit: string;
-  collaborative_usage: string;
+  created_at?: string;
   permission_type: string;
 }
 
@@ -81,17 +75,16 @@ export interface ClientDetails {
   id?: string;
   first_name: string;
   last_name: string;
-  full_name: string;
   email: string;
   phone_number: string;
-  date_of_birth: string;
-  primary_health_challenge: string;
-  connection_source: string;
-  working_duration: string;
-  is_primary_coach: string;
+  date_of_birth?: string;
+  primary_health_challenge?: string;
+  connection_source?: string;
+  working_duration?: string;
+  is_primary_coach: boolean;
   focus_areas: string[];
-  tolu_benefit: string;
-  collaborative_usage: string;
+  tolu_benefit?: string;
+  collaborative_usage?: string;
   created_at?: string;
   permission_type: string;
 }
@@ -108,13 +101,13 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
 }
 
 export interface IContentMessage {

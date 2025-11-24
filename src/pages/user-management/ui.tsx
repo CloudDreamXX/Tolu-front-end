@@ -207,7 +207,7 @@ export const UserManagement: React.FC = () => {
             <MaterialIcon iconName="search" size={16} />
             <Input
               placeholder="Search"
-              className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-9"
+              className="outline-none w-full placeholder-custom text-[14px] font-semibold text-[#000] border-none h-9 p-0"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -223,7 +223,7 @@ export const UserManagement: React.FC = () => {
       ) : (
         <div>
           {/* Table View for Desktop */}
-          <div className="hidden overflow-x-auto md:block">
+          <div className="hidden overflow-x-auto overflow-y-hidden md:block">
             <div className="min-w-[1800px]">
               <div className="grid [grid-template-columns:repeat(5,minmax(0,1fr))_30px] bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[24px] py-[16px]">
                 <div className="px-[4px]">Sign Up date</div>
@@ -392,11 +392,10 @@ export const UserManagement: React.FC = () => {
               size={"unstyled"}
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                page === pageNumber
-                  ? "border-[#1C63DB] text-[#1C63DB]"
-                  : "border-[#DBDEE1] text-black"
-              }`}
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
+                ? "border-[#1C63DB] text-[#1C63DB]"
+                : "border-[#DBDEE1] text-black"
+                }`}
             >
               {pageNumber}
             </Button>

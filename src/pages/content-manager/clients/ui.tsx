@@ -63,34 +63,19 @@ export const ContentManagerClients: React.FC = () => {
   const [clientInfo, setClientInfo] = useState<ClientDetails>({
     first_name: "",
     last_name: "",
-    full_name: "",
     email: "",
     phone_number: "",
-    date_of_birth: "",
-    primary_health_challenge: "",
-    connection_source: "",
-    working_duration: "",
-    is_primary_coach: "",
+    is_primary_coach: false,
     focus_areas: [],
-    tolu_benefit: "",
-    collaborative_usage: "",
-    created_at: "",
     permission_type: "",
   });
   const [newClient, setNewClient] = useState<InviteClientPayload>({
     first_name: "",
     last_name: "",
-    full_name: "",
     email: "",
     phone_number: "",
-    date_of_birth: "",
-    primary_health_challenge: "",
-    connection_source: "",
-    working_duration: "",
-    is_primary_coach: "",
+    is_primary_coach: false,
     focus_areas: [],
-    tolu_benefit: "",
-    collaborative_usage: "",
     permission_type: "",
   });
   const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
@@ -235,34 +220,19 @@ export const ContentManagerClients: React.FC = () => {
     setClientInfo({
       first_name: "",
       last_name: "",
-      full_name: "",
       email: "",
       phone_number: "",
-      date_of_birth: "",
-      primary_health_challenge: "",
-      connection_source: "",
-      working_duration: "",
-      is_primary_coach: "",
+      is_primary_coach: false,
       focus_areas: [],
-      tolu_benefit: "",
-      collaborative_usage: "",
-      created_at: "",
       permission_type: "",
     });
     setNewClient({
       first_name: "",
       last_name: "",
-      full_name: "",
       email: "",
       phone_number: "",
-      date_of_birth: "",
-      primary_health_challenge: "",
-      connection_source: "",
-      working_duration: "",
-      is_primary_coach: "",
+      is_primary_coach: false,
       focus_areas: [],
-      tolu_benefit: "",
-      collaborative_usage: "",
       permission_type: "",
     });
   };
@@ -977,8 +947,8 @@ export const ContentManagerClients: React.FC = () => {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
                     }`}
                 >
                   {page}

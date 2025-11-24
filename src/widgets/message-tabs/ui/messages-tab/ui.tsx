@@ -545,7 +545,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
       <div className="pt-2">
         <Textarea
-          placeholder={`Message ${receiver?.user.name}`}
+          placeholder={`Message ${receiver?.user.first_name ? receiver?.user.first_name : ""} ${receiver?.user.last_name ? receiver?.user.last_name : ""}`}
           className={cn("resize-none min-h-[80px]")}
           containerClassName={cn(
             "px-4 py-3",
@@ -595,10 +595,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                           />
                           {(files.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {files.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />

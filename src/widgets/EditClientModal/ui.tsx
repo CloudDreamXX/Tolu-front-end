@@ -201,13 +201,25 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
             <div className="flex flex-col gap-[16px] md:gap-[24px]">
               <div>
                 <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
-                  Full name
+                  First name
                 </label>
                 <Input
                   type="text"
-                  placeholder="Enter full name"
-                  value={client?.full_name || ""}
-                  onChange={(e) => updateClient("full_name", e.target.value)}
+                  placeholder="Enter first name"
+                  value={client?.first_name || ""}
+                  onChange={(e) => updateClient("first_name", e.target.value)}
+                  className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
+                />
+              </div>
+              <div>
+                <label className="block mb-[12px] text-[16px] text-[#000] font-semibold">
+                  Last name
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Enter last name"
+                  value={client?.last_name || ""}
+                  onChange={(e) => updateClient("last_name", e.target.value)}
                   className="placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold"
                 />
               </div>
@@ -395,7 +407,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                     label="Yes"
                     name="primaryCoach"
                     value="yes"
-                    selected={client.is_primary_coach || ""}
+                    selected={client.is_primary_coach ? "yes" : "no"}
                     onChange={(value) =>
                       updateClient("is_primary_coach", value)
                     }
@@ -404,7 +416,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
                     label="No – I’m part of a care team"
                     name="primaryCoach"
                     value="no"
-                    selected={client.is_primary_coach || ""}
+                    selected={client.is_primary_coach ? "yes" : "no"}
                     onChange={(value) =>
                       updateClient("is_primary_coach", value)
                     }
