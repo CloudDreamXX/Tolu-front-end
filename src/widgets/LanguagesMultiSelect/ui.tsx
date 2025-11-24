@@ -148,7 +148,8 @@ export function LanguagesMultiSelect({
           onKeyDown={onKeyDown}
           disabled={disabled}
           placeholder={value.length ? "" : undefined}
-          className="flex-1 min-w-[6ch] bg-transparent outline-none text-sm h-6"
+          className="flex-1 min-w-[6ch] bg-transparent outline-none text-sm h-0 min-h-0 hidden"
+          containerClassName="hidden"
           aria-label="Languages"
         />
 
@@ -200,6 +201,7 @@ export function LanguagesMultiSelect({
                   readOnly
                   checked={checked}
                   className="w-4 h-4 border-gray-300 rounded"
+                  containerClassName="w-fit"
                 />
                 {opt}
               </li>

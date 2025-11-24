@@ -491,7 +491,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="bg-white md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto inset-0 flex lg:max-w-[800px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)]">
+    <div className="bg-white md:fixed md:top-0 bottom-0 right-0 lg:top-6 lg:bottom-6 lg:right-6 overflow-hidden left-auto inset-0 flex lg:max-w-[800px] w-full flex-col border lg:rounded-2xl shadow-[-6px_6px_32px_0_rgba(29,29,31,0.08)] z-50">
       <CalendarBlock
         selectedDate={selectedDate}
         handleDateChange={handleDateChange}

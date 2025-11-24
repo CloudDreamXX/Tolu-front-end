@@ -235,8 +235,9 @@ export const UserManagement: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
-                {paginatedData.map((user, index) => (
-                  <div
+                {paginatedData.map((user, index) => {
+                  const isLast = index === paginatedData.length - 1;
+                  return <div
                     key={index}
                     className="grid [grid-template-columns:repeat(5,minmax(0,1fr))_30px] items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
                   >
@@ -287,7 +288,7 @@ export const UserManagement: React.FC = () => {
                       </Button>
 
                       {deleteMenuId === user.id && (
-                        <div className="absolute top-[30px] right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50">
+                        <div className={`absolute ${isLast ? "bottom-[30px]" : "top-[30px]"} right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50`}>
                           <Button
                             variant={"unstyled"}
                             size={"unstyled"}
@@ -309,7 +310,7 @@ export const UserManagement: React.FC = () => {
                       )}
                     </div>
                   </div>
-                ))}
+                })}
               </div>
             </div>
           </div>
