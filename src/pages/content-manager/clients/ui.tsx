@@ -870,54 +870,6 @@ export const ContentManagerClients: React.FC = () => {
                           Chat
                         </Button>
                       </div>
-                    ) : isTablet ? (
-                      <div className="relative ml-auto h-[24px]">
-                        <Button
-                          variant={"unstyled"}
-                          size={"unstyled"}
-                          className="w-fit h-fit"
-                          onClick={() => {
-                            setPopupClientId(
-                              popupClientId === client.client_id
-                                ? null
-                                : client.client_id
-                            );
-                          }}
-                        >
-                          <MaterialIcon
-                            iconName="more_vert"
-                            className="text-blue-500"
-                          />
-                        </Button>
-
-                        {popupClientId === client.client_id && (
-                          <div
-                            className="
-        absolute right-0 top-[34px]
-        w-[238px] bg-white shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
-        rounded-[10px] px-[14px] py-[16px] flex flex-col gap-[16px] z-50
-      "
-                          >
-                            <Button
-                              variant={"unstyled"}
-                              size={"unstyled"}
-                              className="flex items-center gap-[8px] text-[#FF1F0F] font-[500] text-[16px]"
-                              onClick={() => {
-                                handleSelectClient(client.client_id);
-                                setConfirmDelete(true);
-                                setPopupClientId(null);
-                              }}
-                            >
-                              <MaterialIcon
-                                iconName="delete"
-                                fill={1}
-                                className="text-[#FF1F0F]"
-                              />
-                              Delete user
-                            </Button>
-                          </div>
-                        )}
-                      </div>
                     ) : undefined}
                   </div>
                 ))}

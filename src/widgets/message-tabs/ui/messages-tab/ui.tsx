@@ -413,7 +413,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     }
 
     return isMobileOrTablet ? (
-      <MaterialIcon iconName="send" className="w-5 h-5" />
+      <MaterialIcon iconName="send" className="w-5 h-5 flex items-center justify-center" />
     ) : (
       "Send"
     );

@@ -395,7 +395,7 @@ export const ContentManagerProfile = () => {
               <div className="flex flex-col w-full gap-2.5">
                 <p className="text-[#1D1D1F] text-2xl font-bold">
                   {user?.profile.basic_info.first_name &&
-                  user?.profile.basic_info.last_name
+                    user?.profile.basic_info.last_name
                     ? `${user?.profile.basic_info.first_name} ${user?.profile.basic_info.last_name}`
                     : user?.profile.basic_info.name || ""}
                   ,{" "}
@@ -418,7 +418,7 @@ export const ContentManagerProfile = () => {
               <Field
                 label="Practitioner Type:"
                 value={
-                  user?.onboarding?.practitioner_info.types.join(", ") || ""
+                  user?.onboarding?.practitioner_info.types.filter((item) => item !== "").join(", ") || ""
                 }
                 truncate={false}
               />
