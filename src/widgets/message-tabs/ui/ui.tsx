@@ -224,7 +224,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <MultiSelectField
           className="mt-[4px] md:rounded-sm"
           options={clientsData.map((c) => ({
-            label: (c.first_name && c.last_name) ? `${c.first_name} ${c.last_name}` : c.first_name || c.name,
+            label:
+              c.first_name && c.last_name
+                ? `${c.first_name} ${c.last_name}`
+                : c.first_name || c.name,
           }))}
           selected={selectedOption}
           onChange={setSelectedOption}

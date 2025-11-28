@@ -283,10 +283,10 @@ export const ProfileSetup = () => {
                   value={
                     dateOfBirth
                       ? new Intl.DateTimeFormat("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }).format(new Date(dateOfBirth + "T00:00:00"))
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }).format(new Date(dateOfBirth + "T00:00:00"))
                       : ""
                   }
                   className="border rounded-[8px] h-[44px] px-[12px] text-[16px]"
@@ -360,8 +360,9 @@ export const ProfileSetup = () => {
               />
             ) : (
               <div
-                className={`w-full md:w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors ${dragActive ? "bg-blue-50 border-blue-400" : ""
-                  }`}
+                className={`w-full md:w-[430px] border-[2px] border-dashed border-[#1C63DB] rounded-[12px] h-[180px] flex flex-col justify-center items-center text-center px-[20px] cursor-pointer transition-colors ${
+                  dragActive ? "bg-blue-50 border-blue-400" : ""
+                }`}
                 onClick={handleClick}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -407,10 +408,11 @@ export const ProfileSetup = () => {
                 type="button"
                 onClick={() => nav("/invite-clients")}
                 disabled={!isFormValid}
-                className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${isFormValid
+                className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
+                  isFormValid
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-                  }`}
+                }`}
               >
                 Next
               </Button>
@@ -437,10 +439,11 @@ export const ProfileSetup = () => {
               size={"unstyled"}
               onClick={handleNext}
               disabled={!isFormValid}
-              className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${isFormValid
+              className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
+                isFormValid
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
-                }`}
+              }`}
             >
               Next
             </Button>

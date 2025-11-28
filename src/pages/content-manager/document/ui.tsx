@@ -285,7 +285,7 @@ export const ContentManagerDocument: React.FC = () => {
       )}
       <div className="flex flex-row justify-end w-full h-full gap-[26px]">
         <div
-          className="relative flex flex-col w-full h-full gap-2 overflow-y-auto xl:pl-[48px] xl:pr-[24px] xl:pb-[24px] xl:pt-6"
+          className="relative flex flex-col w-full h-screen gap-2 overflow-y-hidden xl:pl-[48px] xl:pr-0 xl:pb-[24px] xl:pt-6"
           style={{
             width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%`,
           }}
@@ -304,7 +304,7 @@ export const ContentManagerDocument: React.FC = () => {
             }
           />
 
-          <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px]">
+          <div className="flex flex-col xl:bg-white p-2 pr-0 md:p-8 md:pr-0 w-full mx-auto rounded-[24px] overflow-y-auto">
             {showTooltip && tooltipPosition && (
               <div
                 className="fixed px-2 py-1 bg-white border border-blue-500 rounded-md"

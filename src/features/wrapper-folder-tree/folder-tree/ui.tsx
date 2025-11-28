@@ -68,6 +68,18 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   const { refetch: refetchFolders } = useGetFoldersQuery();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const startHoverTimer = (callback: () => void) => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    hoverTimer.current = setTimeout(callback, 400);
+  };
+
+  const clearHoverTimer = () => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  };
+
   useEffect(() => {
     if (!documentId) return;
     if (expandedForDocRef.current === documentId) return;
@@ -99,17 +111,31 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
     return undefined;
   };
 
+  const hoverTimer = useRef<NodeJS.Timeout | null>(null);
+
   const folderToDelete = findFolder(menuOpenFolderId as string, allFolders);
   const hasContentInside =
     (folderToDelete && folderToDelete?.content?.length > 0) || false;
 
-  const onFolderDragOver = (e: React.DragEvent, folderId: string) => {
+  const onFolderDragOver = (
+    e: React.DragEvent,
+    folderId: string,
+    folder: IFolder
+  ) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
+    e.stopPropagation();
+
     setDragOverFolderId(folderId);
+
+    if (!openFolders.has(folderId)) {
+      startHoverTimer(() => {
+        setTimeout(() => toggleFolder(folder), 0);
+      });
+    }
   };
 
   const onFolderDragLeave = (e: React.DragEvent) => {
+    clearHoverTimer();
     if (!e.currentTarget.contains(e.relatedTarget as Node)) {
       setDragOverFolderId(null);
     }
@@ -195,7 +221,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
         <div key={folder.id} className="relative ml-4 select-none">
           <div
             className="flex items-center px-4 py-[7px]"
-            onDragOver={(e) => onFolderDragOver(e, folder.id)}
+            onDragOver={(e) => onFolderDragOver(e, folder.id, folder)}
             onDragLeave={onFolderDragLeave}
             onDrop={(e) => onFolderDrop(e, folder.id)}
           >
@@ -287,7 +313,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                 dragOverFolderId === folder.id && "bg-blue-50"
               )}
               onDrop={(e) => onFolderDrop(e, folder.id)}
-              onDragOver={(e) => onFolderDragOver(e, folder.id)}
+              onDragOver={(e) => onFolderDragOver(e, folder.id, folder)}
               onDragLeave={onFolderDragLeave}
             >
               {folder.content?.map((content) => (
@@ -308,7 +334,31 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                       rootFolderId ?? folder.id
                     )
                   }
-                  onDragEnd={onContentDragEnd}
+                  onDragEnd={() => {
+                    onContentDragEnd();
+                    nav(
+                      `/content-manager/library/folder/${rootFolderId ?? folder.id}/document/${content.id}`
+                    );
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    startHoverTimer(() => {
+                      if (isMoving) {
+                        setTimeout(() => {
+                          nav(
+                            `/content-manager/library/folder/${rootFolderId ?? folder.id}/document/${content.id}`
+                          );
+                        }, 0);
+                      }
+                    });
+                  }}
+                  onDragLeave={clearHoverTimer}
+                  onDrop={(e) => {
+                    onFolderDrop(e, folder.id);
+                    clearHoverTimer();
+                  }}
                   onClick={() => {
                     onChildrenItemClick?.();
                     nav(

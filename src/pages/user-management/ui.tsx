@@ -237,32 +237,33 @@ export const UserManagement: React.FC = () => {
               <div className="flex flex-col gap-4 md:gap-0 md:px-[12px] pb-[16px] bg-white rounded-b-[8px]">
                 {paginatedData.map((user, index) => {
                   const isLast = index === paginatedData.length - 1;
-                  return <div
-                    key={index}
-                    className="grid [grid-template-columns:repeat(5,minmax(0,1fr))_30px] items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
-                  >
-                    <div className="px-[4px]">
-                      {fmtDate(user.signup_date) || "-"}
-                    </div>
-                    <div className="px-[4px]">
-                      {user.first_name
-                        ? `${user.first_name} ${user.last_name}`
-                        : user.name}
-                    </div>
-                    <div>
-                      <span
-                        className={`text-sm font-semibold px-2 py-1 rounded-full ${getRoleStyle(user.role)}`}
-                      >
-                        {ROLE_MAP[user.role] ?? "Unknown"}
-                      </span>
-                    </div>
-                    <div className="px-[4px]">{user.email}</div>
-                    <div className="px-[4px]">
-                      {user.phone_number ? phoneMask(user.phone_number) : "-"}
-                    </div>
-
+                  return (
                     <div
-                      className="
+                      key={index}
+                      className="grid [grid-template-columns:repeat(5,minmax(0,1fr))_30px] items-center p-[12px] border-b border-[#DBDEE1] text-[16px]"
+                    >
+                      <div className="px-[4px]">
+                        {fmtDate(user.signup_date) || "-"}
+                      </div>
+                      <div className="px-[4px]">
+                        {user.first_name
+                          ? `${user.first_name} ${user.last_name}`
+                          : user.name}
+                      </div>
+                      <div>
+                        <span
+                          className={`text-sm font-semibold px-2 py-1 rounded-full ${getRoleStyle(user.role)}`}
+                        >
+                          {ROLE_MAP[user.role] ?? "Unknown"}
+                        </span>
+                      </div>
+                      <div className="px-[4px]">{user.email}</div>
+                      <div className="px-[4px]">
+                        {user.phone_number ? phoneMask(user.phone_number) : "-"}
+                      </div>
+
+                      <div
+                        className="
                       w-[50px]
     px-[4px] 
     sticky -right-1 
@@ -271,45 +272,48 @@ export const UserManagement: React.FC = () => {
     flex justify-center 
     relative
   "
-                      data-delete-menu-id={user.id}
-                    >
-                      <Button
-                        variant={"unstyled"}
-                        size={"unstyled"}
-                        onClick={() =>
-                          setDeleteMenuId(
-                            deleteMenuId === user.id ? null : user.id
-                          )
-                        }
-                        className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
-                        data-delete-trigger="true"
+                        data-delete-menu-id={user.id}
                       >
-                        <MaterialIcon iconName="more_vert" />
-                      </Button>
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
+                          onClick={() =>
+                            setDeleteMenuId(
+                              deleteMenuId === user.id ? null : user.id
+                            )
+                          }
+                          className="flex items-center justify-center hover:bg-[#ECEFF4] rounded-full w-fit"
+                          data-delete-trigger="true"
+                        >
+                          <MaterialIcon iconName="more_vert" />
+                        </Button>
 
-                      {deleteMenuId === user.id && (
-                        <div className={`absolute ${isLast ? "bottom-[30px]" : "top-[30px]"} right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50`}>
-                          <Button
-                            variant={"unstyled"}
-                            size={"unstyled"}
-                            className="flex items-center gap-[8px] w-full text-left"
-                            onClick={async () => {
-                              setSelectedUserId(user.id);
-                              setConfirmDelete(true);
-                              setDeleteMenuId(null);
-                            }}
+                        {deleteMenuId === user.id && (
+                          <div
+                            className={`absolute ${isLast ? "bottom-[30px]" : "top-[30px]"} right-0 bg-white py-[16px] px-[14px] rounded-[10px] flex items-center gap-[8px] text-[#FF1F0F] text-[16px] font-[500] w-[238px] shadow-[0px_8px_18px_rgba(0,0,0,0.15)] z-50`}
                           >
-                            <MaterialIcon
-                              iconName="delete"
-                              fill={1}
-                              className="text-[#FF1F0F]"
-                            />
-                            Delete
-                          </Button>
-                        </div>
-                      )}
+                            <Button
+                              variant={"unstyled"}
+                              size={"unstyled"}
+                              className="flex items-center gap-[8px] w-full text-left"
+                              onClick={async () => {
+                                setSelectedUserId(user.id);
+                                setConfirmDelete(true);
+                                setDeleteMenuId(null);
+                              }}
+                            >
+                              <MaterialIcon
+                                iconName="delete"
+                                fill={1}
+                                className="text-[#FF1F0F]"
+                              />
+                              Delete
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  );
                 })}
               </div>
             </div>
@@ -393,10 +397,11 @@ export const UserManagement: React.FC = () => {
               size={"unstyled"}
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
-                ? "border-[#1C63DB] text-[#1C63DB]"
-                : "border-[#DBDEE1] text-black"
-                }`}
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                page === pageNumber
+                  ? "border-[#1C63DB] text-[#1C63DB]"
+                  : "border-[#DBDEE1] text-black"
+              }`}
             >
               {pageNumber}
             </Button>
