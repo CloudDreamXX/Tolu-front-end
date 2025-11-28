@@ -1,3 +1,16 @@
+## [1.6.2] - 2025-11-28
+
+### Fixes & Minor Changes
+
+- Update styles for User Engagement block.
+- Move scrollbar to the block of document content.
+- Fix displaying of clients names in Add client(s) dropdown on Messages page.
+- Fix delete user action for Super admin.
+- Fix error in client invitation.
+- Fix displaying of coach's data in Providers popup.
+- Fix coach onboarding error on the coach profile page.
+- Fix the last delete popup to appear above the button in super admin users table.
+
 ## [1.6.1] - 2025-11-21
 
 ### Fixes & Minor Changes
