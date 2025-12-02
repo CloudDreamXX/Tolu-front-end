@@ -79,10 +79,8 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
       ) : (
         <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
       )}
-      {document && document.status === "Live" ? (
+      {(document && document.status === "Live") && (
         <EngagementInfo document={document} />
-      ) : (
-        <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
       )}
     </div>
   );
