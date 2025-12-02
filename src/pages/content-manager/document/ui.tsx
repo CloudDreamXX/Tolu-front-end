@@ -126,7 +126,7 @@ export const ContentManagerDocument: React.FC = () => {
   const [updateContentStatus] = useUpdateContentStatusMutation();
   const { refetch } = useGetDocumentByIdQuery(documentId!);
 
-  const [widthPercent, setWidthPercent] = useState(50);
+  const [widthPercent, setWidthPercent] = useState(30);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -382,24 +382,19 @@ export const ContentManagerDocument: React.FC = () => {
           </div>
         </div>
 
-        <UserEngagementSidebar
-          document={selectedDocument ? selectedDocument : null}
-          folderName={folder?.name ?? ""}
-        />
-
         {isMarkAsOpen && selectedDocumentId && selectedDocumentStatus && (
           <ChangeStatusPopup
             onClose={() => setIsMarkAsOpen(false)}
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-                | "Raw"
-                | "Ready for Review"
-                | "Waiting"
-                | "Second Review Requested"
-                | "Ready to Publish"
-                | "Live"
-                | "Archived"
+              | "Raw"
+              // | "Ready for Review"
+              // | "Waiting"
+              // | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}

@@ -33,7 +33,9 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
       <NavLink
         to={item.link}
         onClick={() => {
-          setOpenSidebar?.(false);
+          if (!location.pathname.includes("document")) {
+            setOpenSidebar?.(false);
+          }
           onClick?.();
         }}
         className={({ isActive }) =>
@@ -80,11 +82,13 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
           <div className="pl-6">
             {isValidElement(item.content)
               ? cloneElement(item.content, {
-                  onChildrenItemClick: () => {
+                onChildrenItemClick: () => {
+                  if (!location.pathname.includes("document")) {
                     setOpenSidebar?.(false);
-                    onClick?.();
-                  },
-                })
+                  }
+                  onClick?.();
+                },
+              })
               : item.content}
           </div>
         )}

@@ -12,7 +12,8 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const ContentManagerInReview: React.FC = () => {
   const [documents] = useState<IDocumentMock[]>(
-    MOCK_DOCUMENT.filter((doc) => doc.status === "in-review")
+    // MOCK_DOCUMENT.filter((doc) => doc.status === "in-review")
+    []
   );
   const [choosedDate, setChoosedDate] = useState<Date>(new Date());
   const [search, setSearch] = useState<string>("");

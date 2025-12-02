@@ -63,8 +63,8 @@ export const ContentManagerSidebar: React.FC = () => {
   useEffect(() => {
     const checkWidth = () => {
       const w = window.innerWidth;
-      setIsNarrow(w >= 1280 && w <= 1536);
-      setSidebarOpen(w >= 1536);
+      setIsNarrow(location.pathname.includes("document") ? false : w >= 1280 && w <= 1536);
+      setSidebarOpen(location.pathname.includes("document") ? true : w >= 1536);
     };
     checkWidth();
     window.addEventListener("resize", checkWidth);
@@ -214,7 +214,7 @@ export const ContentManagerSidebar: React.FC = () => {
         <Button
           variant={"unstyled"}
           size={"unstyled"}
-          onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
+          onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
           className={`flex gap-4 items-center ${sidebarOpen ? "px-4 justify-between" : "justify-center"}`}
         >
           <Avatar className="mr-[20px]">

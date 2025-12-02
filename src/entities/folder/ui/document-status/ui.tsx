@@ -8,7 +8,7 @@ interface ProgressBarProps {
 
 const STEPS: { id: DocumentStatus; label: string }[] = [
   { id: "ai-generated", label: "AI-generated" },
-  { id: "in-review", label: "In review" },
+  // { id: "in-review", label: "In review" },
   { id: "approved", label: "Approved" },
   { id: "published", label: "Published" },
   { id: "archived", label: "Archived" },

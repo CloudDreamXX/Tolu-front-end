@@ -138,7 +138,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -160,7 +161,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -182,7 +184,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -204,7 +207,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -226,7 +230,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -248,7 +253,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -270,7 +276,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -292,7 +299,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -314,7 +322,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",
@@ -336,7 +345,8 @@ export const MOCK_DOCUMENT: IDocumentMock[] = [
     ],
     instructions: ["Instruction 1"],
     client: ["Client A", "Client B", "Client C", "Client D", "Client E"],
-    status: "in-review",
+    // status: "in-review",
+    status: "ai-generated",
     documentText:
       "This is a sample AI generated document text. It contains information about the document.",
     folderId: "2",

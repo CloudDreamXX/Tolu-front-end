@@ -5,6 +5,7 @@ import {
 } from "entities/coach";
 import { IDocument } from "entities/document";
 import { ClientsInfo, FilesInfo, InstructionInfo } from "entities/folder";
+import { EngagementInfo } from "entities/folder/ui/engagement-info";
 import { HashtagsInfo } from "entities/folder/ui/hashtags-info/ui";
 import React from "react";
 import { toast } from "shared/lib";
@@ -75,6 +76,11 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
       )}
       {document ? (
         <HashtagsInfo contentId={document.id} />
+      ) : (
+        <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
+      )}
+      {document && document.status === "Live" ? (
+        <EngagementInfo document={document} />
       ) : (
         <div className="w-1/2 h-6 bg-gray-200 rounded animate-pulse"></div>
       )}

@@ -9,21 +9,21 @@ interface ChangeStatusPopupProps {
   onComplete: (
     status:
       | "Raw"
-      | "Ready for Review"
-      | "Waiting"
-      | "Second Review Requested"
+      // | "Ready for Review"
+      // | "Waiting"
+      // | "Second Review Requested"
       | "Ready to Publish"
       | "Live"
       | "Archived"
   ) => Promise<void>;
   currentStatus:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  // | "Ready for Review"
+  // | "Waiting"
+  // | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
   handleMoveClick?: (id: string, subfolderId: string) => Promise<void>;
   contentId?: string;
 }
@@ -53,12 +53,12 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
   let prevAllowed = ORDERED_STATUSES[currentIndex - 1];
   let nextAllowed = ORDERED_STATUSES[currentIndex + 1];
 
-  if (prevAllowed === "Waiting" || prevAllowed === "Second Review Requested") {
-    prevAllowed = "Ready for Review";
-  }
-  if (nextAllowed === "Waiting" || nextAllowed === "Second Review Requested") {
-    nextAllowed = "Ready to Publish";
-  }
+  // if (prevAllowed === "Waiting" || prevAllowed === "Second Review Requested") {
+  //   prevAllowed = "Ready for Review";
+  // }
+  // if (nextAllowed === "Waiting" || nextAllowed === "Second Review Requested") {
+  //   nextAllowed = "Ready to Publish";
+  // }
 
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [subfoldersOpen, setSubfoldersOpen] = useState<boolean>(false);

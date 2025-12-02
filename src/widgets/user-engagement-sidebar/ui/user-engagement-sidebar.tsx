@@ -3,17 +3,11 @@ import { IDocument } from "entities/document";
 
 interface UserEngagementSidebarProps {
   document: IDocument | null;
-  folderName: string;
 }
 
 export const UserEngagementSidebar: React.FC<UserEngagementSidebarProps> = ({
   document,
-  folderName,
 }) => {
-  if (folderName !== "Published") {
-    return null;
-  }
-
   const engagementItems = [
     { label: "Read by users", value: document?.readCount || "-" },
     { label: "Saved by users", value: document?.savedCount || "-" },
@@ -25,7 +19,7 @@ export const UserEngagementSidebar: React.FC<UserEngagementSidebarProps> = ({
   ];
 
   return (
-    <div className="mt-[152px] pt-[23px] w-full max-w-[196px] bg-[#F6F9FF] h-fit rounded-[24px] px-0.5">
+    <div className="pt-[23px] w-full max-w-[196px] bg-[#F6F9FF] h-fit rounded-[24px] px-0.5">
       <h3 className="text-lg font-semibold px-[22px] pb-[15px] border-b border-[#008FF6] border-opacity-20">
         User Engagement
       </h3>

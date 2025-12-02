@@ -26,11 +26,11 @@ export const navigationItems: NavigationItem[] = [
         link: "/content-manager/published",
         icon: <></>,
       },
-      {
-        title: "In Review",
-        link: "/content-manager/in-review",
-        icon: <MaterialIcon iconName="mystery" fill={1} />,
-      },
+      // {
+      //   title: "In Review",
+      //   link: "/content-manager/in-review",
+      //   icon: <MaterialIcon iconName="mystery" fill={1} />,
+      // },
       {
         title: "Archived",
         link: "/content-manager/archived",

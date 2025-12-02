@@ -192,7 +192,7 @@ export type ReviewStatus =
 
 export type DocumentStatus =
   | "ai-generated"
-  | "in-review"
+  // | "in-review"
   | "approved"
   | "rejected"
   | "published"
@@ -240,9 +240,9 @@ export interface FolderResponse {
 
 export const FOLDER_STATUS_MAPPING = {
   Raw: "AI-Generated",
-  "Ready for Review": "In-Review",
-  Waiting: "In-Review",
-  "Second Review Requested": "In-Review",
+  // "Ready for Review": "In-Review",
+  // Waiting: "In-Review",
+  // "Second Review Requested": "In-Review",
   "Ready to Publish": "Approved",
   Live: "Published",
   Archived: "Archived",
@@ -250,9 +250,9 @@ export const FOLDER_STATUS_MAPPING = {
 
 export const ORDERED_STATUSES: (keyof typeof FOLDER_STATUS_MAPPING)[] = [
   "Raw",
-  "Ready for Review",
-  "Waiting",
-  "Second Review Requested",
+  // "Ready for Review",
+  // "Waiting",
+  // "Second Review Requested",
   "Ready to Publish",
   "Live",
   "Archived",
