@@ -6,7 +6,6 @@ import {
   ContentManagerCreatePage,
   ContentManagerDocument,
   ContentManagerFolder,
-  ContentManagerInReview,
   ContentManagerPublished,
   FilesLibrary,
 } from "pages/content-manager";

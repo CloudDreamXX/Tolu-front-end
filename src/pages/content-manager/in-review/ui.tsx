@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
   Input,
 } from "shared/ui";
-import { MOCK_DOCUMENT } from "../document/mock";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 export const ContentManagerInReview: React.FC = () => {

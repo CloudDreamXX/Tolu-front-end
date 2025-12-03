@@ -8,7 +8,6 @@ import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
 import { DocumentBreadcrumbs } from "widgets/document-breadcrumbs";
 import { DocumentHeader } from "widgets/document-header";
 import { DocumentInfoHeader } from "widgets/document-info-header";
-import { UserEngagementSidebar } from "widgets/user-engagement-sidebar";
 
 import {
   useContentActions,
@@ -388,13 +387,13 @@ export const ContentManagerDocument: React.FC = () => {
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-              | "Raw"
-              // | "Ready for Review"
-              // | "Waiting"
-              // | "Second Review Requested"
-              | "Ready to Publish"
-              | "Live"
-              | "Archived"
+                | "Raw"
+                // | "Ready for Review"
+                // | "Waiting"
+                // | "Second Review Requested"
+                | "Ready to Publish"
+                | "Live"
+                | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}

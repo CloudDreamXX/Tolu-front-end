@@ -103,7 +103,7 @@ export const WrapperFolderTree = ({
     if (
       containerRef.current &&
       containerRef.current.scrollTop + containerRef.current.clientHeight >=
-      containerRef.current.scrollHeight &&
+        containerRef.current.scrollHeight &&
       hasMore
     ) {
       setPage((prev) => prev + 1);
