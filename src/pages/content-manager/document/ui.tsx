@@ -8,7 +8,6 @@ import { DeleteMessagePopup } from "widgets/DeleteMessagePopup/ui";
 import { DocumentBreadcrumbs } from "widgets/document-breadcrumbs";
 import { DocumentHeader } from "widgets/document-header";
 import { DocumentInfoHeader } from "widgets/document-info-header";
-import { UserEngagementSidebar } from "widgets/user-engagement-sidebar";
 
 import {
   useContentActions,
@@ -126,7 +125,7 @@ export const ContentManagerDocument: React.FC = () => {
   const [updateContentStatus] = useUpdateContentStatusMutation();
   const { refetch } = useGetDocumentByIdQuery(documentId!);
 
-  const [widthPercent, setWidthPercent] = useState(50);
+  const [widthPercent, setWidthPercent] = useState(30);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -382,11 +381,6 @@ export const ContentManagerDocument: React.FC = () => {
           </div>
         </div>
 
-        <UserEngagementSidebar
-          document={selectedDocument ? selectedDocument : null}
-          folderName={folder?.name ?? ""}
-        />
-
         {isMarkAsOpen && selectedDocumentId && selectedDocumentStatus && (
           <ChangeStatusPopup
             onClose={() => setIsMarkAsOpen(false)}
@@ -394,9 +388,9 @@ export const ContentManagerDocument: React.FC = () => {
             currentStatus={
               selectedDocumentStatus as
                 | "Raw"
-                | "Ready for Review"
-                | "Waiting"
-                | "Second Review Requested"
+                // | "Ready for Review"
+                // | "Waiting"
+                // | "Second Review Requested"
                 | "Ready to Publish"
                 | "Live"
                 | "Archived"

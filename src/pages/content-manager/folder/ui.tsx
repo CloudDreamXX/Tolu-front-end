@@ -212,9 +212,9 @@ export const ContentManagerFolder: React.FC = () => {
             currentStatus={
               folder!.status as
                 | "Raw"
-                | "Ready for Review"
-                | "Waiting"
-                | "Second Review Requested"
+                // | "Ready for Review"
+                // | "Waiting"
+                // | "Second Review Requested"
                 | "Ready to Publish"
                 | "Live"
                 | "Archived"

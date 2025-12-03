@@ -6,7 +6,6 @@ import {
   ContentManagerCreatePage,
   ContentManagerDocument,
   ContentManagerFolder,
-  ContentManagerInReview,
   ContentManagerPublished,
   FilesLibrary,
 } from "pages/content-manager";
@@ -129,10 +128,10 @@ export const AppRoutes = () => {
           path="/content-manager/ai-generated"
           element={<ContentManagerAiGenerated />}
         />
-        <Route
+        {/* <Route
           path="/content-manager/in-review"
           element={<ContentManagerInReview />}
-        />
+        /> */}
         <Route
           path="/content-manager/approved"
           element={<ContentManagerApproved />}

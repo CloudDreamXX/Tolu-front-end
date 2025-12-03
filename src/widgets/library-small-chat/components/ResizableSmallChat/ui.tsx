@@ -92,7 +92,7 @@ export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
 
       <div
         onMouseDown={handleMouseDown}
-        className={`absolute top-[65%] ${
+        className={`absolute top-[50%] translate-y-[-50%] ${
           position === "right" ? "-left-[20px]" : "-right-[20px]"
         } cursor-ew-resize flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white hover:bg-gray-50 text-blue-700 transition`}
       >

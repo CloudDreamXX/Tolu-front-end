@@ -177,9 +177,9 @@ export const LibraryDesktopView: React.FC<LibraryDesktopViewProps> = ({
           currentStatus={
             selectedRow!.status as
               | "Raw"
-              | "Ready for Review"
-              | "Waiting"
-              | "Second Review Requested"
+              // | "Ready for Review"
+              // | "Waiting"
+              // | "Second Review Requested"
               | "Ready to Publish"
               | "Live"
               | "Archived"

@@ -29,6 +29,8 @@ export const WrapperFolderTree = ({
   const [hasMore, setHasMore] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const filteredFolders = folders.filter((item) => item.name !== "In-Review");
+
   const {
     data: folderResponse,
     isLoading,
@@ -192,7 +194,7 @@ export const WrapperFolderTree = ({
         <FolderSkeletonRow />
       ) : (
         <FolderTree
-          folders={folders}
+          folders={filteredFolders}
           level={0}
           isNarrow={false}
           openFolders={openFolders}

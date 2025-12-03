@@ -1,3 +1,14 @@
+## [1.6.3] - 2025-12-03
+
+### Fixes & Minor Changes
+
+- Hide status "In review" for content.
+- Restrict editing of published content.
+- Move User engagement block above the content in a popover.
+- Keep the sidebar expanded when content is opened.
+- Shrink chat window to minimum when content is opened.
+- Fix initial chat bot for the client.
+
 ## [1.6.2] - 2025-11-28
 
 ### Fixes & Minor Changes

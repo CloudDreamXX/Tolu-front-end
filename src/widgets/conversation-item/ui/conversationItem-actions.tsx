@@ -134,24 +134,26 @@ export const ConversationItemActions: React.FC<
     <div className="flex items-start gap-2 md:flex-col">
       <div className="flex items-center gap-2 md:flex-col">
         <TooltipProvider delayDuration={500}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant={"unstyled"}
-                size={"unstyled"}
-                className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
-                onClick={() => onEditToggle(pair, null)}
+          {document?.status !== "Live" && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
+                  className="w-8 h-8 md:p-[8px] rounded-full bg-[#DDEBF6] text-blue-500 flex items-center justify-center"
+                  onClick={() => onEditToggle(pair, null)}
+                >
+                  <MaterialIcon iconName="edit" size={20} fill={1} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
               >
-                <MaterialIcon iconName="edit" size={20} fill={1} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              className="z-50 py-[4px] px-[16px] w-fit text-[16px] font-semibold text-[#1D1D1F] ml-0"
-            >
-              Edit
-            </TooltipContent>
-          </Tooltip>
+                Edit
+              </TooltipContent>
+            </Tooltip>
+          )}
 
           {document?.status !== "Rejected" && (
             <Tooltip>
