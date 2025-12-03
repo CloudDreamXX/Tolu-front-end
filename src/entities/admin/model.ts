@@ -95,7 +95,7 @@ export interface ManageContentData {
 
 export interface AdminFoldersStructureResponse {
   ai_generated?: Folder[];
-  in_review?: Folder[];
+  // in_review?: Folder[];
   approved?: Folder[];
   published?: Folder[];
   archived?: Folder[];

@@ -29,6 +29,8 @@ export const WrapperFolderTree = ({
   const [hasMore, setHasMore] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const filteredFolders = folders.filter((item) => item.name !== "In-Review");
+
   const {
     data: folderResponse,
     isLoading,
@@ -101,7 +103,7 @@ export const WrapperFolderTree = ({
     if (
       containerRef.current &&
       containerRef.current.scrollTop + containerRef.current.clientHeight >=
-        containerRef.current.scrollHeight &&
+      containerRef.current.scrollHeight &&
       hasMore
     ) {
       setPage((prev) => prev + 1);
@@ -192,7 +194,7 @@ export const WrapperFolderTree = ({
         <FolderSkeletonRow />
       ) : (
         <FolderTree
-          folders={folders}
+          folders={filteredFolders}
           level={0}
           isNarrow={false}
           openFolders={openFolders}

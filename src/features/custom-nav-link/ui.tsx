@@ -33,7 +33,7 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
       <NavLink
         to={item.link}
         onClick={() => {
-          if (!location.pathname.includes("document")) {
+          if (!location.pathname.startsWith("/content-manager/library/folder/")) {
             setOpenSidebar?.(false);
           }
           onClick?.();
@@ -83,7 +83,7 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
             {isValidElement(item.content)
               ? cloneElement(item.content, {
                 onChildrenItemClick: () => {
-                  if (!location.pathname.includes("document")) {
+                  if (!location.pathname.startsWith("/content-manager/library/folder/")) {
                     setOpenSidebar?.(false);
                   }
                   onClick?.();

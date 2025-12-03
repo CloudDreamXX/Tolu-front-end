@@ -33,7 +33,7 @@ type FolderFeed = {
 const CATEGORY_LABEL: Record<keyof AdminFoldersStructureResponse, string> = {
   flagged: "Flagged",
   ai_generated: "AI Generated",
-  in_review: "In Review",
+  // in_review: "In Review",
   approved: "Approved",
   published: "Published",
   archived: "Archived",
@@ -46,7 +46,7 @@ const CATEGORY_LABEL: Record<keyof AdminFoldersStructureResponse, string> = {
 const CATEGORY_KEYS: (keyof AdminFoldersStructureResponse)[] = [
   "flagged",
   "ai_generated",
-  "in_review",
+  // "in_review",
   "approved",
   "published",
   "archived",
