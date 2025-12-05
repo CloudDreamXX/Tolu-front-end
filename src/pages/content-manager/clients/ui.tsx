@@ -727,14 +727,21 @@ export const ContentManagerClients: React.FC = () => {
                     className={`${isWide ? "grid grid-cols-5 items-center p-[12px] rounded-none border-x-0 border-t-0 border-b border-[#DBDEE1]" : "flex flex-col"} gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white`}
                   >
                     <div
-                      className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} flex items-center`}
+                      className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} 
+              flex items-center min-w-0 max-w-full overflow-hidden`}
                     >
                       <div
                         className={`w-full ${isWide ? "hidden" : ""} text-[14px] text-[#5F5F65]`}
                       >
                         Name
                       </div>
-                      <div className="flex items-center justify-center w-full text-[16px] font-semibold text-center">
+
+                      <div
+                        className="flex items-center justify-center 
+               w-full min-w-0 max-w-full overflow-hidden
+               text-[16px] font-semibold text-center
+               break-all whitespace-normal"
+                      >
                         {client.first_name && client.last_name
                           ? `${client.first_name} ${client.last_name}`
                           : client.first_name || client.name}
@@ -897,11 +904,10 @@ export const ContentManagerClients: React.FC = () => {
                   size={"unstyled"}
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
                 </Button>

@@ -71,12 +71,6 @@ export const ForgotPassword = () => {
               }
               className="px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white border border-[#DFDFDF] outline-none focus-visible:outline-none focus:border-[#1C63DB] focus:duration-300 focus:ease-in w-full"
             />
-            <p className="flex px-[4px] pt-[4px] text-black text-[14px] font-normal  w-full xl:justify-end">
-              Didn't get the code?{" "}
-              <span className="cursor-pointer text-[#1C63DB] underline ml-1">
-                Resend
-              </span>
-            </p>
           </div>
 
           <div className="flex flex-col items-center gap-[24px] w-full mt-auto md:mt-0">
@@ -94,11 +88,10 @@ export const ForgotPassword = () => {
                 variant={"unstyled"}
                 size={"unstyled"}
                 type="submit"
-                className={`w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center gap-[8px] rounded-full  text-[16px] font-semibold ${
-                  email
+                className={`w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center gap-[8px] rounded-full  text-[16px] font-semibold ${email
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  }`}
               >
                 Send
               </Button>

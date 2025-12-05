@@ -312,7 +312,7 @@ export const FilesLibrary = () => {
             <p>All the files you were attaching through the Tolu platform</p>
           </div>
           <div className="flex items-center md:flex-row flex-row gap-2 md:gap-[20px] lg:gap-2">
-            <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[32px]">
+            <div className="flex gap-[8px] items-center w-full lg:w-[300px] rounded-full border border-[#DBDEE1] px-[12px] py-[8px] bg-white h-[40px]">
               <MaterialIcon iconName="search" size={16} />
               <Input
                 placeholder="Search"
