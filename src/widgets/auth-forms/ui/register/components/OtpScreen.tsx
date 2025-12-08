@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Button } from "shared/ui";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "shared/ui/input-otp";
 
@@ -45,15 +44,20 @@ export const OtpScreen: React.FC<Props> = ({
             size={"unstyled"}
             disabled={otpCode.length < 6}
             onClick={handleCodeSend}
-            className={`flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full text-[16px] font-semibold ${otpCode.length === 6
-              ? "bg-[#1C63DB] text-white"
-              : "bg-[#D5DAE2] text-[#5F5F65]"
-              }`}
+            className={`flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full text-[16px] font-semibold ${
+              otpCode.length === 6
+                ? "bg-[#1C63DB] text-white"
+                : "bg-[#D5DAE2] text-[#5F5F65]"
+            }`}
           >
             Continue
           </Button>
           <p className="text-[14px]  font-medium">
-            <a href="https://tolu.health/" target={"_blank"} className="cursor-pointer text-[#1C63DB] underline">
+            <a
+              href="https://tolu.health/"
+              target={"_blank"}
+              className="cursor-pointer text-[#1C63DB] underline"
+            >
               Request an access code
             </a>
           </p>
