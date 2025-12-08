@@ -175,11 +175,11 @@ export const ContentManagementDocument = () => {
                       <AvatarFallback className="text-3xl bg-slate-300 ">
                         {creator.detailed_profile.personal_info.first_name !==
                           "" &&
-                        creator.detailed_profile.personal_info.first_name !==
+                          creator.detailed_profile.personal_info.first_name !==
                           null &&
-                        creator.detailed_profile.personal_info.last_name !==
+                          creator.detailed_profile.personal_info.last_name !==
                           null &&
-                        creator.detailed_profile.personal_info.last_name !==
+                          creator.detailed_profile.personal_info.last_name !==
                           "" ? (
                           <div className="flex items-center">
                             <span>

@@ -110,7 +110,7 @@ export const ContentManagerDocument: React.FC = () => {
 
   const dispatch = useDispatch();
   const { handleDocumentCreation } = useDocumentCreation();
-  const { tooltipPosition, showTooltip, handleTooltipClick } =
+  const { tooltipPosition, showTooltip, handleTooltipClick, textForInput } =
     useTextSelectionTooltip();
 
   const [originalEdit, setOriginalEdit] = useState<{
@@ -387,13 +387,13 @@ export const ContentManagerDocument: React.FC = () => {
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-                | "Raw"
-                // | "Ready for Review"
-                // | "Waiting"
-                // | "Second Review Requested"
-                | "Ready to Publish"
-                | "Live"
-                | "Archived"
+              | "Raw"
+              // | "Ready for Review"
+              // | "Waiting"
+              // | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}
@@ -456,6 +456,7 @@ export const ContentManagerDocument: React.FC = () => {
           widthPercent={widthPercent}
           setWidthPercent={setWidthPercent}
           isCoach
+          textForInput={textForInput}
         />
       </div>
     </div>

@@ -148,7 +148,7 @@ export const LibraryChat = () => {
 
   const [voiceFile, setVoiceFile] = useState<File | null>(null);
 
-  const { tooltipPosition, showTooltip, handleTooltipClick } =
+  const { tooltipPosition, showTooltip, handleTooltipClick, textForInput } =
     useTextSelectionTooltip();
 
   const {
@@ -830,7 +830,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               chat_id: currentChatId.startsWith("new_chat_")
                 ? undefined
                 : currentChatId,
-              text_quote: undefined,
+              text_quote: textForInput,
               library_files: filesFromLibrary,
             }),
             images,
@@ -855,7 +855,7 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
               chat_id: currentChatId.startsWith("new_chat_")
                 ? undefined
                 : currentChatId,
-              text_quote: undefined,
+              text_quote: textForInput,
               library_files: filesFromLibrary,
             }),
             images,

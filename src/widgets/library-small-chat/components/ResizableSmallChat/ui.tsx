@@ -9,6 +9,7 @@ interface ResizableLibraryChatProps {
   onResizeStart?: () => void;
   onResizeEnd?: () => void;
   isCoach?: boolean;
+  textForInput?: string;
 }
 
 export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
@@ -17,10 +18,10 @@ export const ResizableLibraryChat: React.FC<ResizableLibraryChatProps> = ({
   onResizeStart,
   onResizeEnd,
   isCoach,
+  textForInput
 }) => {
   const [dragging, setDragging] = useState(false);
   const position: "left" | "right" = "right";
-  const { textForInput } = useTextSelectionTooltip();
 
   const chatRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
