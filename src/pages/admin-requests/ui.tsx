@@ -88,6 +88,11 @@ export const AdminRequests = () => {
                   Account type: {req?.account_type}
                 </span>
               )}
+                            {req?.source && (
+                <span className="text-sm text-gray-600">
+                  Source: {req?.source}
+                </span>
+              )}
               <span className="text-xs text-gray-400">
                 Requested at: {new Date(req.created_at).toLocaleString()}
               </span>
