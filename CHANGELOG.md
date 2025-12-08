@@ -1,3 +1,16 @@
+## [1.6.4] - 2025-12-08
+
+### Fixes & Minor Changes
+
+- Add a link that will lead to our website with form to request access opened on the screen with code input for sign up.
+- Update styles for successfully submited form on the website.
+- Send requests to support@tolu.health only.
+- Add an additional field to the form: How did you hear about Tolu?
+- Add field Source for super admin requests.
+- Fix search bar size on the Files library page.
+- Limit the size of the email block in the clients table so that the text cannot overlap other blocks.
+- Remove the question “Didn't receive the code?” on the Forgot password page near the emal input.
+
 ## [1.6.3] - 2025-12-03
 
 ### Fixes & Minor Changes
