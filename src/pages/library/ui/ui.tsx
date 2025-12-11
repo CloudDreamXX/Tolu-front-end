@@ -116,7 +116,10 @@ export const Library = () => {
       )}
       {location.state?.incomplete && showPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
-          <div className="rounded-2xl shadow-xl mx-[16px] md:mx-[24px] lg:p-8 lg:pt-0 overflow-y-auto bg-white">
+          <div className="rounded-2xl shadow-xl mx-[16px] md:mx-[24px] lg:p-8 lg:pt-0 overflow-y-auto bg-white relative">
+            <div className="absolute top-[20px] right-[20px] z-50 cursor-pointer" onClick={() => setShowPopup(false)}>
+              <MaterialIcon iconName="close" />
+            </div>
             <DemographicStep />
           </div>
         </div>
