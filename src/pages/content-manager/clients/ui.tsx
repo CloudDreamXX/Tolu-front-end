@@ -18,12 +18,13 @@ import { usePageWidth } from "shared/lib";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Button, Dialog, DialogContent, DialogTrigger, Input } from "shared/ui";
 import { AddClientModal } from "widgets/AddClientModal/ui";
+import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
 import { EditClientModal } from "widgets/EditClientModal";
 import { EmptyStateTolu } from "widgets/empty-state-tolu";
 import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
-import { SelectedClientModal } from "widgets/SelectedClientModal";
+// import { SelectedClientModal } from "widgets/SelectedClientModal";
 
 const PAGE_SIZE = 10;
 
@@ -81,7 +82,7 @@ export const ContentManagerClients: React.FC = () => {
   const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("healthProfile");
+  // const [activeTab, setActiveTab] = useState<string>("healthProfile");
   const [editModal, setEditModal] = useState<boolean>(false);
   const [addModal, setAddModal] = useState<boolean>(false);
   const [activeEditTab, setActiveEditTab] = useState<string>("editClientInfo");
@@ -939,16 +940,23 @@ export const ContentManagerClients: React.FC = () => {
         {selectedClient.client_info.id !== "" &&
           !confirmDelete &&
           !editModal && (
-            <SelectedClientModal
+            // <SelectedClientModal
+            //   clientId={selectedClient.client_info.id}
+            //   onClose={() => {
+            //     setConfirmDelete(false);
+            //     cleanState();
+            //   }}
+            //   onEdit={() => setEditModal(true)}
+            //   onDelete={() => setConfirmDelete(true)}
+            //   activeTab={activeTab}
+            //   setActiveTab={setActiveTab}
+            // />
+            <ClientComprehensiveSummary
               clientId={selectedClient.client_info.id}
-              onClose={() => {
+              onOpenChange={() => {
                 setConfirmDelete(false);
                 cleanState();
               }}
-              onEdit={() => setEditModal(true)}
-              onDelete={() => setConfirmDelete(true)}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
             />
           )}
 

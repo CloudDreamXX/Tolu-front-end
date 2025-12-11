@@ -88,7 +88,7 @@ export const AdminRequests = () => {
                   Account type: {req?.account_type}
                 </span>
               )}
-                            {req?.source && (
+              {req?.source && (
                 <span className="text-sm text-gray-600">
                   Source: {req?.source}
                 </span>
