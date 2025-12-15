@@ -10,6 +10,7 @@ import {
   useLazyGetClientInfoQuery,
   useLazyGetClientProfileQuery,
 } from "entities/coach";
+import { useLazyCheckUserExistenceQuery } from "entities/user";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmIcon from "shared/assets/icons/confirm";
@@ -106,6 +107,11 @@ export const ContentManagerClients: React.FC = () => {
   const [editClient] = useEditClientMutation();
   const [getClientInfo] = useLazyGetClientInfoQuery();
   const [getClientProfile] = useLazyGetClientProfileQuery();
+  const [checkUserExistence] = useLazyCheckUserExistenceQuery();
+
+  const [confirmExistingUser, setConfirmExistingUser] = useState(false);
+  const [pendingInvitePayload, setPendingInvitePayload] =
+    useState<InviteClientPayload | null>(null);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const [isWide, setIsWide] = useState(false);
@@ -263,14 +269,53 @@ export const ContentManagerClients: React.FC = () => {
 
   const handleInviteClient = async (formValues: InviteClientPayload) => {
     try {
-      inviteClient({ payload: formValues });
-      setAddModal(false);
-      refetchClients();
-      toast({
-        title: "Invited successfully",
-      });
+      const email = newClient.email?.trim();
+      if (!email) return;
+
+      const { success: exists } = await checkUserExistence(email).unwrap();
+
+      if (exists) {
+        setPendingInvitePayload(newClient);
+        setConfirmExistingUser(true);
+        return;
+      } else {
+        await inviteClient({ payload: formValues });
+        refetchClients();
+
+        toast({ title: "Invited successfully" });
+
+        cleanState();
+        setAddModal(false);
+        setInviteSuccessPopup(true);
+      }
     } catch (error) {
-      console.error("Error inviting client", error);
+      console.error("Invite error:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to invite client",
+        description: "Please try again.",
+      });
+    }
+  };
+
+  const handleConfirmInviteExisting = async () => {
+    if (!pendingInvitePayload) return;
+
+    try {
+      await inviteClient({ payload: pendingInvitePayload });
+      refetchClients();
+
+      toast({
+        title: "Existing client invited successfully",
+      });
+
+      setConfirmExistingUser(false);
+      setPendingInvitePayload(null);
+      cleanState();
+      setAddModal(false);
+      setInviteSuccessPopup(true);
+    } catch (error) {
+      console.error("Failed to invite existing user", error);
       toast({
         variant: "destructive",
         title: "Failed to invite client",
@@ -326,7 +371,6 @@ export const ContentManagerClients: React.FC = () => {
     handleInviteClient(newClient);
     cleanState();
     setAddModal(false);
-    setInviteSuccessPopup(true);
   };
 
   const handleUploadClick = () => {
@@ -928,6 +972,40 @@ export const ContentManagerClients: React.FC = () => {
               <MaterialIcon iconName="arrow_right_alt" />
             </Button>
           </div>
+        )}
+
+        {confirmExistingUser && (
+          <Dialog open onOpenChange={setConfirmExistingUser}>
+            <DialogContent className="max-w-md rounded-[16px]">
+              <h2 className="text-xl font-semibold mb-2">
+                Client already exists
+              </h2>
+
+              <p className="text-sm text-[#5F5F65] mb-6">
+                This email is already registered. Would you like to invite this
+                existing client to connect with you as their coach?
+              </p>
+
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="blue2"
+                  onClick={() => {
+                    setConfirmExistingUser(false);
+                    setPendingInvitePayload(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  variant="brightblue"
+                  onClick={handleConfirmInviteExisting}
+                >
+                  Invite client
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
 
         {confirmDiscard && (

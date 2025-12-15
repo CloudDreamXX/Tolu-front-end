@@ -110,12 +110,6 @@ export const Register = () => {
   const [registerUser] = useRegisterUserMutation();
 
   useEffect(() => {
-    if (data) {
-      setStage("select");
-    }
-  }, [data]);
-
-  useEffect(() => {
     if (!token) return;
 
     let cancelled = false;

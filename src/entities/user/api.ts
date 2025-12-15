@@ -204,7 +204,7 @@ export const userApi = createApi({
       }),
     }),
 
-    checkUserExistence: builder.query<{ exists: boolean }, string>({
+    checkUserExistence: builder.query<{ success: boolean }, string>({
       query: (email) => API_ROUTES.USER.EXIST.replace("{email}", email),
     }),
 
@@ -321,6 +321,7 @@ export const {
   useChangePasswordMutation,
   useSignOutMutation,
   useCheckUserExistenceQuery,
+  useLazyCheckUserExistenceQuery,
   useGetMenopauseSymptomsQuery,
   useSubmitMenopauseResultsMutation,
   useGetMenopauseRecommendationsQuery,
