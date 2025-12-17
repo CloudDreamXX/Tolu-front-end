@@ -1,3 +1,12 @@
+## [1.7.0] - 2025-12-17
+
+### New feature
+
+- Add access code to the invitation email for new client.
+- Add check if the client exists before inviting him to join the platform and popup to inform about that.
+- Add banner on existing client's platform that the coach invited her/him.
+- Add endpoint to decline coach invitation.
+
 ## [1.6.4] - 2025-12-08
 
 ### Fixes & Minor Changes
