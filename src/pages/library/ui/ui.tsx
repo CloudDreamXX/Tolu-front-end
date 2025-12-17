@@ -153,13 +153,26 @@ export const Library = () => {
     }
   };
 
+  const handleConfirmDeclineInvite = async () => {
+    try {
+
+    } catch (err) {
+      console.error(err)
+      toast({
+        title: "Unable to decline invite",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
+  }
+
   return (
     <main className="flex flex-col h-screen items-start gap-6 p-4 md:p-6 xl:p-0 self-stretch overflow-y-auto bg-[#F2F4F6]">
       {acceptInvitePopup && invitations?.invitations?.length > 0 && (
         <div className="pt-[24px] px-[24px] w-full">
           <AcceptInviteBanner
             coachName={invitations.invitations[0].coach_name}
-            onCancelConfirmed={() => {}}
+            onCancelConfirmed={handleConfirmDeclineInvite}
             onAccept={handleConfirmAcceptInvite}
           />
         </div>
