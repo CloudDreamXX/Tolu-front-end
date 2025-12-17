@@ -958,8 +958,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -967,8 +967,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>

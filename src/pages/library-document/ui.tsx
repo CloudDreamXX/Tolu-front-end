@@ -746,7 +746,11 @@ export const LibraryDocument = () => {
 
   useEffect(() => {
     if (coachesData) {
-      setCoaches(coachesData.coaches);
+      const uniqueCoaches = coachesData.coaches.filter(
+        (coach, index, self) =>
+          index === self.findIndex((c) => c.coach_id === coach.coach_id)
+      );
+      setCoaches(uniqueCoaches);
     }
   }, [dispatch, coachesData]);
 

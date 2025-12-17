@@ -603,43 +603,49 @@ export const LibraryClientContent = () => {
                 </div>
               ) : coaches?.coaches.length ? (
                 <ul className="p-2">
-                  {coaches?.coaches.map((c) => {
-                    const name =
-                      (c?.basic_info?.first_name &&
-                        `${c?.basic_info?.first_name.slice(0, 1)} ${c?.basic_info?.last_name?.slice(0, 1)}`) ||
-                      c.basic_info?.name;
-                    const photo = photoUrls[c.coach_id];
+                  {coaches?.coaches
+                    .filter(
+                      (coach, index, self) =>
+                        index ===
+                        self.findIndex((c) => c.coach_id === coach.coach_id)
+                    )
+                    .map((c) => {
+                      const name =
+                        (c?.basic_info?.first_name &&
+                          `${c?.basic_info?.first_name.slice(0, 1)} ${c?.basic_info?.last_name?.slice(0, 1)}`) ||
+                        c.basic_info?.name;
+                      const photo = photoUrls[c.coach_id];
 
-                    return (
-                      <li
-                        key={c.coach_id}
-                        className="p-2 rounded-[12px] hover:bg-[#F5F5F5] transition-colors"
-                      >
-                        <Button
-                          variant={"unstyled"}
-                          size={"unstyled"}
-                          onClick={() => handleOpenCoach(c)}
-                          className="flex items-center w-full gap-3 text-left"
+                      return (
+                        <li
+                          key={c.coach_id}
+                          className="p-2 rounded-[12px] hover:bg-[#F5F5F5] transition-colors"
                         >
-                          <div className="h-10 w-10 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
-                            {photo ? (
-                              <img
-                                src={photo}
-                                alt={name}
-                                className="object-cover w-full h-full"
-                              />
-                            ) : (
-                              name?.slice(0, 2).toUpperCase()
-                            )}
-                          </div>
+                          <Button
+                            variant={"unstyled"}
+                            size={"unstyled"}
+                            onClick={() => handleOpenCoach(c)}
+                            className="flex items-center w-full gap-3 text-left"
+                          >
+                            <div className="h-10 w-10 rounded-full bg-[#E0F0FF] overflow-hidden flex items-center justify-center text-sm font-medium text-[#1C63DB]">
+                              {photo ? (
+                                <img
+                                  src={photo}
+                                  alt={name}
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                name?.slice(0, 2).toUpperCase()
+                              )}
+                            </div>
 
-                          <div className="truncate font-medium text-[14px]">
-                            {name}
-                          </div>
-                        </Button>
-                      </li>
-                    );
-                  })}
+                            <div className="truncate font-medium text-[14px]">
+                              {name}
+                            </div>
+                          </Button>
+                        </li>
+                      );
+                    })}
                 </ul>
               ) : (
                 <div className="p-4 text-sm text-muted-foreground">
