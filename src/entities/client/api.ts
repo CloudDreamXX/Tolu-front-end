@@ -42,6 +42,16 @@ export const clientApi = createApi({
         body: payload,
       }),
     }),
+    declineCoachInvite: builder.mutation<
+      AcceptInviteResponse,
+      AcceptInvitePayload
+    >({
+      query: (payload) => ({
+        url: `${API_ROUTES.CLIENT.DECLINE_COACH_INVITE}`,
+        method: "POST",
+        body: payload,
+      }),
+    }),
     getSharedContentById: builder.query<any, string>({
       query: (contentId) => ({
         url: API_ROUTES.CLIENT.GET_SHARED_CONTENT_BY_ID.replace(
@@ -134,6 +144,7 @@ export const {
   useGetInvitationDetailsQuery,
   useLazyGetInvitationDetailsQuery,
   useAcceptCoachInviteMutation,
+  useDeclineCoachInviteMutation,
   useGetLibraryContentQuery,
   useLazyGetLibraryContentQuery,
   useUpdateUserProfileMutation,

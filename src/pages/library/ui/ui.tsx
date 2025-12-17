@@ -17,6 +17,7 @@ import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
 import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
 import {
   useAcceptCoachInviteMutation,
+  useDeclineCoachInviteMutation,
   useGetPendingInvitationsQuery,
 } from "entities/client";
 import { AcceptInviteBanner } from "./AcceptInviteBanner";
@@ -30,6 +31,7 @@ export const Library = () => {
   const { isMobileOrTablet } = usePageWidth();
   const [acceptInvitePopup, setAcceptInvitePopup] = useState<boolean>(false);
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
+  const [declineCoachInvite] = useDeclineCoachInviteMutation();
   const { data: invitations } = useGetPendingInvitationsQuery();
 
   const loading = useSelector((state: RootState) => state.client.loading);
@@ -156,7 +158,15 @@ export const Library = () => {
 
   const handleConfirmDeclineInvite = async () => {
     try {
-      setAcceptInvitePopup(false);
+      if (invitations?.invitations[0].invitation_token) {
+        await declineCoachInvite({
+          token: invitations.invitations[0].invitation_token,
+        }).unwrap();
+        setAcceptInvitePopup(false);
+        toast({
+          title: "Invitation declined successfully",
+        });
+      }
     } catch (err) {
       console.error(err);
       toast({

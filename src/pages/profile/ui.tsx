@@ -2,6 +2,7 @@ import { ChatSocketService } from "entities/chat";
 import {
   Client,
   useAcceptCoachInviteMutation,
+  useDeclineCoachInviteMutation,
   useGetClientProfileQuery,
   useGetPendingInvitationsQuery,
   useUpdateUserProfileMutation,
@@ -47,7 +48,6 @@ import { Field } from "./components/Field";
 import { OnboardingInfo } from "./components/OnboardingInfo";
 import { Switch } from "./components/Switch";
 import { AcceptInviteBanner } from "pages/library/ui/AcceptInviteBanner";
-import { set } from "date-fns";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -105,6 +105,7 @@ export const ClientProfile = () => {
   const [changePassword] = useChangePasswordMutation();
   const [acceptInvitePopup, setAcceptInvitePopup] = useState<boolean>(false);
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
+  const [declineCoachInvite] = useDeclineCoachInviteMutation();
   const { data: invitations } = useGetPendingInvitationsQuery();
 
   useEffect(() => {
@@ -350,7 +351,15 @@ export const ClientProfile = () => {
 
   const handleConfirmDeclineInvite = async () => {
     try {
-      setAcceptInvitePopup(false);
+      if (invitations?.invitations[0].invitation_token) {
+        await declineCoachInvite({
+          token: invitations.invitations[0].invitation_token,
+        }).unwrap();
+        setAcceptInvitePopup(false);
+        toast({
+          title: "Invitation declined successfully",
+        });
+      }
     } catch (err) {
       console.error(err);
       toast({
@@ -949,8 +958,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => {}}
-                  // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => { }}
+                // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -958,8 +967,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => {}}
-                  // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => { }}
+                // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>
