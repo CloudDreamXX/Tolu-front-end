@@ -8,13 +8,14 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { toast } from "shared/lib/hooks/use-toast";
-import { Button } from "shared/ui";
+import { Badge, Button } from "shared/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui/avatar";
 import { ClientChatList } from "./ClientChatList";
 import WrapperLibraryFolderTree from "./FolderTree";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { ChatMessageModel, ChatSocketService } from "entities/chat";
 import { useFetchAllChatsQuery } from "entities/chat/api";
+import { useGetPendingInvitationsQuery } from "entities/client";
 
 export const HealthSnapshotSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -30,6 +31,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const chatList = useSelector(chatsSelectors.selectAll);
   const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
   const [signOut] = useSignOutMutation();
+  const { data: invitations } = useGetPendingInvitationsQuery();
 
   const unreadMessagesCount = chatList.reduce((count, chat) => {
     return count + (chat.unreadCount || 0);
@@ -277,8 +279,16 @@ export const HealthSnapshotSidebar: React.FC = () => {
             variant={"unstyled"}
             size={"unstyled"}
             onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
-            className={`flex gap-4 items-center justify-between ${sidebarOpen ? "pl-4" : ""}`}
+            className={`flex gap-4 items-center justify-between relative ${sidebarOpen ? "pl-4" : ""}`}
           >
+            {invitations && invitations.invitations.length > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 left-11 z-50 min-w-5 h-5 flex items-center justify-center px-1 rounded-full text-[10px] font-bold"
+              >
+                {invitations.invitations.length}
+              </Badge>
+            )}
             <Avatar>
               <AvatarImage src={user?.photo} alt="Avatar" />
               <AvatarFallback>{initials}</AvatarFallback>

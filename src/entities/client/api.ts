@@ -124,6 +124,9 @@ export const clientApi = createApi({
         };
       },
     }),
+    getPendingInvitations: builder.query<any, void>({
+      query: () => API_ROUTES.CLIENT.GET_INVITATIONS,
+    }),
   }),
 });
 
@@ -140,6 +143,7 @@ export const {
   useGetCoachesQuery,
   useLazyGetCoachProfileQuery,
   useLazyDownloadCoachPhotoQuery,
+  useGetPendingInvitationsQuery,
 } = clientApi;
 
 export class ClientService {

@@ -7,10 +7,22 @@ import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "shared/ui/toaster";
 import { AppRoutes } from "./routes";
 import { AuthErrorBoundary } from "widgets/auth-error-boundary/ui";
+import { ChatSocketService } from "entities/chat";
 
 export const App: React.FC = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state: RootState) => state.user.isLoading);
+  const userId = useSelector((state: RootState) => state.user.user?.id);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    ChatSocketService.connect(userId);
+
+    return () => {
+      ChatSocketService.disconnect();
+    };
+  }, [userId]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

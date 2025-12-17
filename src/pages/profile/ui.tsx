@@ -1,7 +1,9 @@
 import { ChatSocketService } from "entities/chat";
 import {
   Client,
+  useAcceptCoachInviteMutation,
   useGetClientProfileQuery,
+  useGetPendingInvitationsQuery,
   useUpdateUserProfileMutation,
 } from "entities/client";
 import {
@@ -44,6 +46,7 @@ import { DailyJournalOverview } from "./components/DailyJournalOverview/ui";
 import { Field } from "./components/Field";
 import { OnboardingInfo } from "./components/OnboardingInfo";
 import { Switch } from "./components/Switch";
+import { AcceptInviteBanner } from "pages/library/ui/AcceptInviteBanner";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -99,6 +102,9 @@ export const ClientProfile = () => {
   const [triggerDownloadProfilePhoto] = useLazyDownloadProfilePhotoQuery();
   const [signOut] = useSignOutMutation();
   const [changePassword] = useChangePasswordMutation();
+  const [acceptInvitePopup, setAcceptInvitePopup] = useState<boolean>(false);
+  const [acceptCoachInvite] = useAcceptCoachInviteMutation();
+  const { data: invitations } = useGetPendingInvitationsQuery();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -131,6 +137,30 @@ export const ClientProfile = () => {
       };
     }
   }, [u]);
+
+  useEffect(() => {
+    if (invitations && invitations.invitations.length) {
+      setAcceptInvitePopup(true);
+    }
+  }, [invitations]);
+
+  useEffect(() => {
+    const handleCoachInvitation = (payload: any) => {
+      toast({
+        title: payload.title || "New coach invitation",
+        description: payload.message,
+        variant: "default",
+      });
+
+      setAcceptInvitePopup(true);
+    };
+
+    ChatSocketService.on("coach_invitation", handleCoachInvitation);
+
+    return () => {
+      ChatSocketService.off("coach_invitation", handleCoachInvitation);
+    };
+  }, []);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -295,6 +325,25 @@ export const ClientProfile = () => {
 
     return "UN";
   })();
+
+  const handleConfirmAcceptInvite = async () => {
+    try {
+      if (token) {
+        await acceptCoachInvite({ token }).unwrap();
+        setAcceptInvitePopup(false);
+        toast({
+          title: "Invitation accepted successfully",
+        });
+      }
+    } catch (acceptErr) {
+      console.error(acceptErr);
+      toast({
+        title: "Unable to accept invite",
+        description: "Please try again or request a new link.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const ClientProfileLoadingSkeleton = () => {
     const getRandomWidth = (min: number, max: number) =>
@@ -549,6 +598,13 @@ export const ClientProfile = () => {
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 overflow-y-auto">
+      {acceptInvitePopup && invitations?.invitations?.length > 0 && (
+        <AcceptInviteBanner
+          coachName={invitations.invitations[0].coach_name}
+          onCancelConfirmed={() => {}}
+          onAccept={handleConfirmAcceptInvite}
+        />
+      )}
       <div className="flex gap-3 items-center justify-between">
         <div className="flex items-center gap-[24px] text-[#1D1D1F] text-[24px] md:text-[32px] font-bold">
           Personal profile

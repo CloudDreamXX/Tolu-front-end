@@ -15,8 +15,11 @@ import { useGetUserHealthHistoryQuery } from "entities/health-history";
 import { useLocation } from "react-router-dom";
 import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
 import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
-import { Button, Dialog, DialogContent } from "shared/ui";
-import { useAcceptCoachInviteMutation } from "entities/client";
+import {
+  useAcceptCoachInviteMutation,
+  useGetPendingInvitationsQuery,
+} from "entities/client";
+import { AcceptInviteBanner } from "./AcceptInviteBanner";
 
 export const Library = () => {
   const dispatch = useDispatch();
@@ -27,6 +30,7 @@ export const Library = () => {
   const { isMobileOrTablet } = usePageWidth();
   const [acceptInvitePopup, setAcceptInvitePopup] = useState<boolean>(false);
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
+  const { data: invitations } = useGetPendingInvitationsQuery();
   const token = useSelector((state: RootState) => state.user.token);
 
   const loading = useSelector((state: RootState) => state.client.loading);
@@ -54,6 +58,30 @@ export const Library = () => {
       document.body.style.overflow = "";
     };
   }, [showPopup]);
+
+  useEffect(() => {
+    if (invitations && invitations.invitations.length) {
+      setAcceptInvitePopup(true);
+    }
+  }, [invitations]);
+
+  useEffect(() => {
+    const handleCoachInvitation = (payload: any) => {
+      toast({
+        title: payload.title || "New coach invitation",
+        description: payload.message,
+        variant: "default",
+      });
+
+      setAcceptInvitePopup(true);
+    };
+
+    ChatSocketService.on("coach_invitation", handleCoachInvitation);
+
+    return () => {
+      ChatSocketService.off("coach_invitation", handleCoachInvitation);
+    };
+  }, []);
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -127,32 +155,14 @@ export const Library = () => {
 
   return (
     <main className="flex flex-col h-screen items-start gap-6 p-4 md:p-6 xl:p-0 self-stretch overflow-y-auto bg-[#F2F4F6]">
-      {acceptInvitePopup && (
-        <Dialog open onOpenChange={setAcceptInvitePopup}>
-          <DialogContent className="max-w-md rounded-[16px]">
-            <h2 className="text-xl font-semibold mb-2">New invitation</h2>
-
-            <p className="text-sm text-[#5F5F65] mb-6">
-              You’ve received a new invitation from your coach. Would you like
-              to accept it and connect with them as a client?
-            </p>
-
-            <div className="flex gap-3 justify-end">
-              <Button
-                variant="blue2"
-                onClick={() => {
-                  setAcceptInvitePopup(false);
-                }}
-              >
-                Cancel
-              </Button>
-
-              <Button variant="brightblue" onClick={handleConfirmAcceptInvite}>
-                Accept
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+      {acceptInvitePopup && invitations?.invitations?.length > 0 && (
+        <div className="pt-[24px] px-[24px] w-full">
+          <AcceptInviteBanner
+            coachName={invitations.invitations[0].coach_name}
+            onCancelConfirmed={() => {}}
+            onAccept={handleConfirmAcceptInvite}
+          />
+        </div>
       )}
       {loading && (
         <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">

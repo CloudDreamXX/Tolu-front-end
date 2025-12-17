@@ -44,15 +44,11 @@ export const coachApi = createApi({
       { success: boolean; message: string },
       { payload: InviteClientPayload | null; file?: File }
     >({
-      query: ({ payload, file }) => {
-        const formData = new FormData();
-        if (file) formData.append("file", file);
-        if (payload) formData.append("invite_data", JSON.stringify(payload));
-
+      query: ({ payload }) => {
         return {
           url: API_ROUTES.COACH_ADMIN.POST_CLIENT,
           method: "POST",
-          body: formData,
+          body: payload,
         };
       },
     }),
