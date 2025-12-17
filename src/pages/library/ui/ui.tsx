@@ -31,7 +31,6 @@ export const Library = () => {
   const [acceptInvitePopup, setAcceptInvitePopup] = useState<boolean>(false);
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const { data: invitations } = useGetPendingInvitationsQuery();
-  const token = useSelector((state: RootState) => state.user.token);
 
   const loading = useSelector((state: RootState) => state.client.loading);
 
@@ -136,8 +135,8 @@ export const Library = () => {
 
   const handleConfirmAcceptInvite = async () => {
     try {
-      if (token) {
-        await acceptCoachInvite({ token }).unwrap();
+      if (invitations?.invitations[0].invitation_token) {
+        await acceptCoachInvite({ token: invitations.invitations[0].invitation_token }).unwrap();
         setAcceptInvitePopup(false);
         toast({
           title: "Invitation accepted successfully",
@@ -169,7 +168,7 @@ export const Library = () => {
   return (
     <main className="flex flex-col h-screen items-start gap-6 p-4 md:p-6 xl:p-0 self-stretch overflow-y-auto bg-[#F2F4F6]">
       {acceptInvitePopup && invitations?.invitations?.length > 0 && (
-        <div className="pt-[24px] px-[24px] w-full">
+        <div className="xl:pt-[24px] xl:px-[24px] w-full">
           <AcceptInviteBanner
             coachName={invitations.invitations[0].coach_name}
             onCancelConfirmed={handleConfirmDeclineInvite}
@@ -207,7 +206,7 @@ export const Library = () => {
         <div
           className="xl:p-6 xl:pr-0 w-full h-full"
           style={{
-            width: isMobileOrTablet ? "100%" : `${100 - widthPercent}%`,
+            width: isMobileOrTablet || window.innerWidth < 1280 ? "100%" : `${100 - widthPercent}%`,
           }}
         >
           <LibraryClientContent />

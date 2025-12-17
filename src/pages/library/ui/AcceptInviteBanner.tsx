@@ -27,11 +27,11 @@ export const AcceptInviteBanner = ({
   const [confirmOpen, setConfirmOpen] = useState(false);
   return (
     <>
-      <div className="w-full bg-white border-b shadow">
+      <div className="w-full bg-white border-b shadow flex flex-col">
         <Item>
           <ItemContent>
             <ItemTitle>New Invitation</ItemTitle>
-            <ItemDescription>
+            <ItemDescription className="line-clamp-none">
               You've received an invitation from{" "}
               <span className="font-medium">{coachName}</span>
             </ItemDescription>
