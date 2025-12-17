@@ -47,6 +47,7 @@ import { Field } from "./components/Field";
 import { OnboardingInfo } from "./components/OnboardingInfo";
 import { Switch } from "./components/Switch";
 import { AcceptInviteBanner } from "pages/library/ui/AcceptInviteBanner";
+import { set } from "date-fns";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -328,8 +329,10 @@ export const ClientProfile = () => {
 
   const handleConfirmAcceptInvite = async () => {
     try {
-      if (token) {
-        await acceptCoachInvite({ token }).unwrap();
+      if (invitations?.invitations[0].invitation_token) {
+        await acceptCoachInvite({
+          token: invitations.invitations[0].invitation_token,
+        }).unwrap();
         setAcceptInvitePopup(false);
         toast({
           title: "Invitation accepted successfully",
@@ -347,16 +350,16 @@ export const ClientProfile = () => {
 
   const handleConfirmDeclineInvite = async () => {
     try {
-
+      setAcceptInvitePopup(false);
     } catch (err) {
-      console.error(err)
+      console.error(err);
       toast({
         title: "Unable to decline invite",
         description: "Please try again",
         variant: "destructive",
       });
     }
-  }
+  };
 
   const ClientProfileLoadingSkeleton = () => {
     const getRandomWidth = (min: number, max: number) =>
@@ -946,8 +949,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -955,8 +958,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>

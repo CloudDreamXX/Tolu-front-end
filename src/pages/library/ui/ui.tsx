@@ -136,7 +136,9 @@ export const Library = () => {
   const handleConfirmAcceptInvite = async () => {
     try {
       if (invitations?.invitations[0].invitation_token) {
-        await acceptCoachInvite({ token: invitations.invitations[0].invitation_token }).unwrap();
+        await acceptCoachInvite({
+          token: invitations.invitations[0].invitation_token,
+        }).unwrap();
         setAcceptInvitePopup(false);
         toast({
           title: "Invitation accepted successfully",
@@ -154,16 +156,16 @@ export const Library = () => {
 
   const handleConfirmDeclineInvite = async () => {
     try {
-
+      setAcceptInvitePopup(false);
     } catch (err) {
-      console.error(err)
+      console.error(err);
       toast({
         title: "Unable to decline invite",
         description: "Please try again",
         variant: "destructive",
       });
     }
-  }
+  };
 
   return (
     <main className="flex flex-col h-screen items-start gap-6 p-4 md:p-6 xl:p-0 self-stretch overflow-y-auto bg-[#F2F4F6]">
@@ -206,7 +208,10 @@ export const Library = () => {
         <div
           className="xl:p-6 xl:pr-0 w-full h-full"
           style={{
-            width: isMobileOrTablet || window.innerWidth < 1280 ? "100%" : `${100 - widthPercent}%`,
+            width:
+              isMobileOrTablet || window.innerWidth < 1280
+                ? "100%"
+                : `${100 - widthPercent}%`,
           }}
         >
           <LibraryClientContent />
