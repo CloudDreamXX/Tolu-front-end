@@ -96,7 +96,7 @@ export const ClientComprehensiveSummary = ({
 
   return (
     <Dialog open={true} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100%-32px)] md:max-w-3xl gap-6 rounded-[18px] flex flex-col">
+      <DialogContent showMobileBack={false} className="min-h-[80vh] w-[calc(100%-32px)] md:max-w-3xl gap-6 rounded-[18px] flex flex-col left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%]">
         <DialogTitle>Client Health Summary</DialogTitle>
 
         <div className="max-h-[70vh] overflow-y-auto space-y-6 pr-2">

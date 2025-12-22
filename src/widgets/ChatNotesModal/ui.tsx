@@ -67,7 +67,7 @@ export const ChatNotesModal: React.FC<Props> = ({ chatId, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-[rgba(0,0,0,0.3)] backdrop-blur-[2px]">
-      <div className="bg-white rounded-[18px] p-[24px] w-full max-w-[800px] max-h-[90vh] flex flex-col relative">
+      <div className="bg-white mx-[16px] rounded-[18px] p-[24px] w-full max-w-[800px] max-h-[90vh] flex flex-col relative">
         <span
           className="absolute top-[16px] right-[16px] cursor-pointer"
           onClick={onClose}
