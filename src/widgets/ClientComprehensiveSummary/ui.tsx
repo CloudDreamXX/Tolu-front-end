@@ -14,10 +14,6 @@ export const ClientComprehensiveSummary = ({
   const { data: healthHistoryData } =
     useGetCoachClientHealthHistoryQuery(clientId);
 
-  if (!healthHistoryData) {
-    return null;
-  }
-
   const values = mapHealthHistoryToFormDefaults(healthHistoryData);
 
   const GI_LABELS: Record<string, string> = {
@@ -105,7 +101,10 @@ export const ClientComprehensiveSummary = ({
 
         <div className="max-h-[70vh] overflow-y-auto space-y-6 pr-2">
           <Section title="Demographics">
-            <SummaryRow label="Age" value={String(values.age) || ""} />
+            <SummaryRow
+              label="Age"
+              value={values.age ? String(values.age) : ""}
+            />
             <SummaryRow label="Gender" value={resolvedGender} />
             {values.genderIdentity === "self_describe" && (
               <SummaryRow
@@ -169,15 +168,15 @@ export const ClientComprehensiveSummary = ({
             <SummaryRow label="Exercise habits" value={resolvedExercise} />
             <SummaryRow
               label="Sleep quality"
-              value={String(values.sleepQuality)}
+              value={values.sleepQuality ? String(values.sleepQuality) : ""}
             />
             <SummaryRow
               label="Stress levels"
-              value={String(values.stressLevels)}
+              value={values.stressLevels ? String(values.stressLevels) : ""}
             />
             <SummaryRow
               label="Energy levels"
-              value={String(values.energyLevels)}
+              value={values.energyLevels ? String(values.energyLevels) : ""}
             />
           </Section>
 

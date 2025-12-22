@@ -1,4 +1,4 @@
-import { ChatSocketService } from "entities/chat";
+import { ChatSocketService, useFetchAllChatsQuery } from "entities/chat";
 import {
   ClientDetails,
   ClientProfile,
@@ -19,6 +19,7 @@ import { usePageWidth } from "shared/lib";
 import { toast } from "shared/lib/hooks/use-toast";
 import { Button, Dialog, DialogContent, DialogTrigger, Input } from "shared/ui";
 import { AddClientModal } from "widgets/AddClientModal/ui";
+import { ChatNotesModal } from "widgets/ChatNotesModal/ui";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { ConfirmDiscardModal } from "widgets/ConfirmDiscardModal";
@@ -96,6 +97,9 @@ export const ContentManagerClients: React.FC = () => {
   const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [widthPercent, setWidthPercent] = useState(50);
+  const [notesModal, setNotesModal] = useState<boolean>(false);
+  const [notesChatId, setNotesChatId] = useState<string | null>(null);
+  const { data: chats } = useFetchAllChatsQuery(undefined);
 
   const {
     data: clientsData,
@@ -413,6 +417,14 @@ export const ContentManagerClients: React.FC = () => {
         description: "An error occurred during import. Please try again.",
       });
     }
+  };
+
+  const getChatIdByClientId = (clientId: string): string | null => {
+    const chat =
+      chats?.find((c) => c.participants?.[0]?.id === clientId) ||
+      chats?.find((c) => c.id === clientId);
+
+    return chat?.id ?? null;
   };
 
   const ClientSkeletonRow = () => {
@@ -752,7 +764,7 @@ export const ContentManagerClients: React.FC = () => {
 
             <div className={`${isWide ? "rounded-[8px]" : ""}`}>
               <div
-                className={`${isWide ? "grid" : "hidden"} grid-cols-5 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]`}
+                className={`${isWide ? "grid" : "hidden"} grid-cols-6 bg-[#C7D8EF] text-[#000000] rounded-t-[8px] text-[16px] font-semibold px-[12px] py-[16px]`}
               >
                 <div className="flex items-center justify-center">
                   Full name
@@ -760,6 +772,7 @@ export const ContentManagerClients: React.FC = () => {
                 <div className="flex items-center justify-center">Status</div>
                 <div className="flex items-center justify-center">Summary</div>
                 <div className="flex items-center justify-center">Message</div>
+                <div className="flex items-center justify-center">Notes</div>
                 <div className="flex items-center justify-center"></div>
               </div>
 
@@ -769,7 +782,7 @@ export const ContentManagerClients: React.FC = () => {
                 {paginatedClients?.map((client, idx) => (
                   <div
                     key={idx}
-                    className={`${isWide ? "grid grid-cols-5 items-center p-[12px] rounded-none border-x-0 border-t-0 border-b border-[#DBDEE1]" : "flex flex-col"} gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white`}
+                    className={`${isWide ? "grid grid-cols-6 items-center p-[12px] rounded-none border-x-0 border-t-0 border-b border-[#DBDEE1]" : "flex flex-col"} gap-2 p-[16px] border border-[#AAC6EC] rounded-[8px] bg-white`}
                   >
                     <div
                       className={`${isWide ? "text-[16px] border-none pb-0" : "border-b border-[#F3F6FB] pb-[10px]"} 
@@ -847,6 +860,21 @@ export const ContentManagerClients: React.FC = () => {
                     >
                       <MaterialIcon iconName="forum" fill={1} />
                     </Button>
+                    <Button
+                      variant="unstyled"
+                      size="unstyled"
+                      disabled={client.status !== "active"}
+                      className={`items-center justify-center ${
+                        client.status !== "active" ? "opacity-[0.5]" : ""
+                      }`}
+                      onClick={() => {
+                        const chatId = getChatIdByClientId(client.client_id);
+                        setNotesChatId(chatId);
+                        setNotesModal(true);
+                      }}
+                    >
+                      <MaterialIcon iconName="article" fill={1} />
+                    </Button>
 
                     {isWide && (
                       <div
@@ -919,6 +947,25 @@ export const ContentManagerClients: React.FC = () => {
                         >
                           <MaterialIcon iconName="forum" fill={1} />
                           Chat
+                        </Button>
+                        <Button
+                          variant="unstyled"
+                          size="unstyled"
+                          disabled={client.status !== "active"}
+                          className={`w-full flex justify-center items-center gap-[8px]
+    text-[16px] text-[#1C63DB] font-[500]
+    px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px]
+    ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
+                          onClick={() => {
+                            const chatId = getChatIdByClientId(
+                              client.client_id
+                            );
+                            setNotesChatId(chatId);
+                            setNotesModal(true);
+                          }}
+                        >
+                          <MaterialIcon iconName="article" fill={1} />
+                          Notes
                         </Button>
                       </div>
                     ) : undefined}
@@ -1065,6 +1112,16 @@ export const ContentManagerClients: React.FC = () => {
               cleanState();
             }}
             onDelete={handleDelete}
+          />
+        )}
+
+        {notesModal && (
+          <ChatNotesModal
+            chatId={notesChatId}
+            onClose={() => {
+              setNotesModal(false);
+              setNotesChatId(null);
+            }}
           />
         )}
 
