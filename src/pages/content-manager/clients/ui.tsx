@@ -864,7 +864,7 @@ export const ContentManagerClients: React.FC = () => {
                       variant="unstyled"
                       size="unstyled"
                       disabled={client.status !== "active"}
-                      className={`items-center justify-center ${
+                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${
                         client.status !== "active" ? "opacity-[0.5]" : ""
                       }`}
                       onClick={() => {
