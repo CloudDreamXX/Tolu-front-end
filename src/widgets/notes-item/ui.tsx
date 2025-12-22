@@ -21,7 +21,7 @@ const formatBytes = (bytes?: number) => {
   return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
 };
 
-const FileBadge = ({
+export const FileBadge = ({
   fi,
 }: {
   fi: NonNullable<ChatNoteResponse["file_info"]>;
