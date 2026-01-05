@@ -37,7 +37,7 @@ import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { usePageWidth } from "shared/lib";
+import { toast, usePageWidth } from "shared/lib";
 import { Button, Card, CardContent, CardFooter, CardHeader } from "shared/ui";
 import {
   PopoverAttach,
@@ -51,6 +51,7 @@ import { extractVoiceText, generateCaseStory, subTitleSwitch } from "./helpers";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import SwitchDropdown from "./components/switch-dropdown/ui";
 import { pickPreferredMaleEnglishVoice } from "pages/library-chat/lib";
+import { ChatItemModel, useSendChatNoteMutation } from "entities/chat";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -140,6 +141,55 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     scrollRef.current?.scrollIntoView({ block: "end", behavior });
   };
   const [selectedSwitch, setSelectedSwitch] = useState<string>("");
+
+  const [selectedTextRange, setSelectedTextRange] = useState<{
+    text: string;
+    rect: DOMRect;
+  } | null>(null);
+
+  const popupRef = useRef<HTMLDivElement | null>(null);
+
+  const [sendNote] = useSendChatNoteMutation();
+
+  const chats = useSelector((state: RootState) => state.chats.entities);
+
+  const findChatIdByParticipantId = (
+    chats: Record<string, ChatItemModel>,
+    participantId: string
+  ): string | null => {
+    const chat = Object.values(chats).find((c) =>
+      c.participants?.some((p) => p.id === participantId)
+    );
+
+    return chat?.id ?? null;
+  };
+
+  useEffect(() => {
+    const handleMouseUp = (e: MouseEvent) => {
+      if (popupRef.current && popupRef.current.contains(e.target as Node)) {
+        return;
+      }
+
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        setSelectedTextRange(null);
+        return;
+      }
+
+      const text = selection.toString().trim();
+      if (!text) return;
+
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+
+      if (rect.width === 0 || rect.height === 0) return;
+
+      setSelectedTextRange({ text, rect });
+    };
+
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => document.removeEventListener("mouseup", handleMouseUp);
+  }, []);
 
   useEffect(() => {
     setSelectedSwitch(config.defaultOption);
@@ -931,6 +981,76 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     handleSetFiles([...filesState, ...pasted]);
   };
 
+  const handleAddSelectionToNotes = async (text: string) => {
+    if (!clientId) return;
+
+    const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
+
+    try {
+      await sendNote({
+        noteData: {
+          title: "Note from the chat",
+          content: text,
+          chat_id: chatIdForNotes || "",
+        },
+      }).unwrap();
+
+      toast({ title: "Added to notes" });
+    } catch {
+      toast({ title: "Failed to add note", variant: "destructive" });
+    } finally {
+      setSelectedTextRange(null);
+      window.getSelection()?.removeAllRanges();
+    }
+  };
+
+  const TextSelectionPopup = ({
+    selection,
+    onAddNote,
+  }: {
+    selection: { text: string; rect: DOMRect };
+    onAddNote: (text: string) => void;
+  }) => {
+    return (
+      <div
+        ref={popupRef}
+        className="fixed z-50 bg-white border shadow-md rounded-md flex flex-col px-2 py-1"
+        style={{
+          top: selection.rect.top + 30 + window.scrollY,
+          left: selection.rect.left + window.scrollX,
+        }}
+        onMouseDown={(e) => e.preventDefault()}
+      >
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onAddNote(selection.text)}
+          className="w-full"
+        >
+          Add to Notes
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onAddNote(selection.text)}
+          disabled
+          className="w-full"
+        >
+          Add to Research
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onAddNote(selection.text)}
+          disabled
+          className="w-full"
+        >
+          Add to Action plan
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="xl:hidden mb-[16px]">
@@ -1317,6 +1437,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             />
           </CardFooter>
         </Card>
+      )}
+
+      {selectedTextRange && clientId && isCoach && (
+        <TextSelectionPopup
+          selection={selectedTextRange}
+          onAddNote={handleAddSelectionToNotes}
+        />
       )}
     </>
   );

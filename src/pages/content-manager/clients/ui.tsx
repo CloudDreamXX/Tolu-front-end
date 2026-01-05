@@ -800,9 +800,23 @@ export const ContentManagerClients: React.FC = () => {
                text-[16px] font-semibold text-center
                break-all whitespace-normal"
                       >
-                        {client.first_name && client.last_name
-                          ? `${client.first_name} ${client.last_name}`
-                          : client.first_name || client.name}
+                        <Button
+                          variant={"unstyled"}
+                          size={"unstyled"}
+                          className={`w-full ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
+                          onClick={() => {
+                            if (client.status !== "active") return;
+                            navigate(
+                              `/content-manager/messages/${client.client_id}`,
+                              { state: { id: "profile" } }
+                            );
+                          }}
+                          disabled={client.status !== "active"}
+                        >
+                          {client.first_name && client.last_name
+                            ? `${client.first_name} ${client.last_name}`
+                            : client.first_name || client.name}
+                        </Button>
                       </div>
                     </div>
 
@@ -1082,6 +1096,7 @@ export const ContentManagerClients: React.FC = () => {
                 setConfirmDelete(false);
                 cleanState();
               }}
+              asDialog
             />
           )}
 

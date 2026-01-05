@@ -146,6 +146,7 @@ export const API_ROUTES = {
     UPDATE_HEALTH_HISTORY: "/coach/client/request-health-history-update",
     DOWNLOAD_LICENSE: "/coach/license/{filename}",
     DELETE_LICENSE: "/coach/license/{filename}",
+    GET_CLIENT_COACHES: "/coach/client/{client_id}/coaches",
   },
   DOCUMENTS: {
     DETAILS: "/content/retrieve",

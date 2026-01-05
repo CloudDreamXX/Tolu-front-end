@@ -7,6 +7,7 @@ import {
   ChatSocketService,
   DetailsChatItemModel,
   FetchChatMessagesResponse,
+  useSendChatNoteMutation,
 } from "entities/chat";
 import {
   useFetchAllChatsQuery,
@@ -146,6 +147,61 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     return out;
   }, [messages, search, chat.unread_count]);
 
+  const [selectedTextRange, setSelectedTextRange] = useState<{
+    text: string;
+    rect: DOMRect;
+  } | null>(null);
+
+  const popupRef = useRef<HTMLDivElement | null>(null);
+
+  const [sendNote] = useSendChatNoteMutation();
+
+  const handleAddSelectionToNotes = async (text: string) => {
+    try {
+      await sendNote({
+        noteData: {
+          title: "Note from messages",
+          content: text,
+          chat_id: chat.chat_id,
+        },
+      }).unwrap();
+
+      toast({ title: "Added to notes" });
+    } catch {
+      toast({ title: "Failed to add note", variant: "destructive" });
+    } finally {
+      setSelectedTextRange(null);
+      window.getSelection()?.removeAllRanges();
+    }
+  };
+
+  useEffect(() => {
+    const handleMouseUp = (e: MouseEvent) => {
+      if (popupRef.current?.contains(e.target as Node)) {
+        return;
+      }
+
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        setSelectedTextRange(null);
+        return;
+      }
+
+      const text = selection.toString().trim();
+      if (!text) return;
+
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+
+      if (rect.width === 0 || rect.height === 0) return;
+
+      setSelectedTextRange({ text, rect });
+    };
+
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => document.removeEventListener("mouseup", handleMouseUp);
+  }, []);
+
   useEffect(() => {
     if (chat.unread_count > 0) {
       const timer = setTimeout(() => {
@@ -268,7 +324,13 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             file_name: response.file_name || "",
             file_size: response.file_size || 0,
             file_type: "file_upload",
-            sender: profile!,
+            sender: {
+              id: profile!.id,
+              email: profile!.email,
+              name: profile!.name,
+              first_name: profile!.first_name,
+              last_name: profile!.last_name,
+            },
             message_type: "file",
             is_deleted: false,
             reactions: [],
@@ -498,6 +560,53 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     }
   };
 
+  const TextSelectionPopup = ({
+    selection,
+    onAddNote,
+  }: {
+    selection: { text: string; rect: DOMRect };
+    onAddNote: (text: string) => void;
+  }) => {
+    return (
+      <div
+        ref={popupRef}
+        className="fixed z-50 bg-white border shadow-md w-fit flex flex-col rounded-md px-2 py-1"
+        style={{
+          top: selection.rect.top + 40 + window.scrollY,
+          left: selection.rect.left + window.scrollX - 100,
+        }}
+        onMouseDown={(e) => e.preventDefault()}
+      >
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onAddNote(selection.text)}
+          className="w-full"
+        >
+          Add to Notes
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onAddNote(selection.text)}
+          disabled
+          className="w-full"
+        >
+          Add to Research
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onAddNote(selection.text)}
+          disabled
+          className="w-full"
+        >
+          Add to Action plan
+        </Button>
+      </div>
+    );
+  };
+
   if (loadingInitial) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -652,6 +761,13 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           }
         />
       </div>
+
+      {selectedTextRange && (
+        <TextSelectionPopup
+          selection={selectedTextRange}
+          onAddNote={handleAddSelectionToNotes}
+        />
+      )}
     </>
   );
 };
