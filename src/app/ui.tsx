@@ -1,5 +1,5 @@
 import { RootState } from "entities/store/lib";
-import { setLoading } from "entities/user";
+import { setLoading, useGetUserProfileQuery } from "entities/user";
 import { LoadingScreen } from "pages/loading";
 import { Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,17 +12,18 @@ import { ChatSocketService } from "entities/chat";
 export const App: React.FC = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state: RootState) => state.user.isLoading);
-  const userId = useSelector((state: RootState) => state.user.user?.id);
+  // const userId = useSelector((state: RootState) => state.user.user?.id);
+  const { data: user } = useGetUserProfileQuery()
 
   useEffect(() => {
-    if (!userId) return;
+    if (!user?.id) return;
 
-    ChatSocketService.connect(userId);
+    ChatSocketService.connect(user.id);
 
     return () => {
       ChatSocketService.disconnect();
     };
-  }, [userId]);
+  }, [user?.id]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

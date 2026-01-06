@@ -1,4 +1,4 @@
-import { FileMessage } from "entities/chat";
+import { FileMessage, useLazyGetUploadedChatFileQuery } from "entities/chat";
 import { useGetUploadedChatFileUrlQuery } from "entities/chat/api";
 import {
   clearDownloadProgress,
@@ -9,6 +9,7 @@ import { RootState } from "entities/store";
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { toast } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 interface FileMessageProps {
   message: FileMessage;
@@ -19,6 +20,10 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
   message,
   avatar,
 }) => {
+  const [preview, setPreview] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
   const dispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.user?.user);
   const normalized = useMemo(
@@ -35,6 +40,8 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
     { fileUrl: normalized },
     { skip: !normalized }
   );
+
+  const [triggerPreview] = useLazyGetUploadedChatFileQuery();
 
   const onDownloadClick = async () => {
     if (!normalized || !message.file_name || !fileObjectUrl) return;
@@ -54,6 +61,35 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const openPreview = async () => {
+    if (!normalized) return;
+
+    setPreview(true);
+    setPreviewLoading(true);
+
+    try {
+      const result = await triggerPreview({ fileKey: normalized });
+
+      if ("data" in result && result.data) {
+        const url = URL.createObjectURL(result.data);
+        setPreviewUrl(url);
+      }
+    } catch {
+      toast({
+        title: "Preview failed",
+        variant: "destructive",
+      });
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const closePreview = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setPreview(false);
   };
 
   const initials = (() => {
@@ -88,8 +124,8 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
   })();
 
   return (
-    <div className="flex flex-col gap-2 bg-[#F3F6FB] py-2 lg:px-3 rounded-lg w-full lg:w-[373px]">
-      <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-col gap-2 bg-white border border-gray-200 py-2 px-3 rounded-lg w-full lg:w-[373px]">
+      <div className="flex items-center justify-between gap-1">
         <div className="flex items-center justify-between gap-2">
           <MaterialIcon iconName="draft" fill={1} className="text-blue-600" />
           <div className="flex flex-col ">
@@ -115,9 +151,18 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
             }
           })()
         ) : (
-          <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
-            <MaterialIcon iconName="download" />
-          </Button>
+          <div className="flex gap-[4px]">
+            <Button
+              variant="ghost"
+              className="p-1"
+              onClick={openPreview}
+            >
+              <MaterialIcon iconName="visibility" />
+            </Button>
+            <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
+              <MaterialIcon iconName="download" />
+            </Button>
+          </div>
         )}
       </div>
       <div className="flex flex-col gap-1">
@@ -138,6 +183,73 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
           </p>
         </div>
       </div>
+
+      {preview && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50"
+          onClick={closePreview}
+        >
+          <div
+            className="bg-white w-full h-full rounded-[16px] shadow-xl overflow-hidden flex flex-col max-w-[70vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 py-4">
+              <h2 className="text-[18px] font-bold">
+                Preview <span>“{message.file_name}”</span>
+              </h2>
+              <Button variant="unstyled" onClick={closePreview}>
+                <MaterialIcon iconName="close" />
+              </Button>
+            </div>
+
+            <div className="relative flex-1 bg-[#F7F7F8] mx-5 mb-5 p-6 overflow-auto">
+              <div className="m-auto h-full w-full bg-white rounded-[12px] shadow p-6">
+                {previewLoading && (
+                  <div className="flex justify-center py-10">
+                    <MaterialIcon
+                      iconName="progress_activity"
+                      className="animate-spin text-blue-600"
+                    />
+                  </div>
+                )}
+
+                {!previewLoading && previewUrl && (
+                  <>
+                    {message.file_type.startsWith("image/") && (
+                      <img
+                        src={previewUrl}
+                        className="max-h-[70vh] m-auto object-contain rounded"
+                      />
+                    )}
+
+                    {message.file_type === "video/mp4" && (
+                      <video
+                        src={previewUrl}
+                        controls
+                        className="w-full max-h-[70vh] rounded"
+                      />
+                    )}
+
+                    {message.file_type === "application/pdf" && (
+                      <iframe
+                        src={previewUrl}
+                        className="w-full h-[70vh] rounded border"
+                      />
+                    )}
+                  </>
+                )}
+
+                {!previewLoading && !previewUrl && (
+                  <p className="text-center text-sm text-gray-500">
+                    Preview not available
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

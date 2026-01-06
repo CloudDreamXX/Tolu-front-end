@@ -69,6 +69,16 @@ const ALL_TABS: TabItem[] = [
   },
 ];
 
+const CLIENT_TABS: TabItem[] = [
+  { id: "messages", label: "Chat" },
+  { id: "files", label: "Files", requiresFiles: true },
+  {
+    id: "recommended",
+    label: "Recommended for you",
+    requiresRecommended: true,
+  },
+];
+
 interface MessageTabsProps {
   goBackMobile: () => void;
   onEditGroup?: (chat: DetailsChatItemModel) => void;
@@ -134,16 +144,29 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
   const pinned = new Set(pinnedTabs);
 
-  const availableTabs = ALL_TABS.filter((tab) => {
-    if (tab.requiresFiles && hideFiles) return false;
-    if (tab.requiresNotes && hideNotes) return false;
-    if (tab.requiresRecommended && !isClient) return false;
-    return true;
-  });
+  const availableTabs = useMemo(() => {
+    if (isClient) {
+      return CLIENT_TABS.filter((tab) => {
+        if (tab.requiresFiles && hideFiles) return false;
+        return true;
+      });
+    }
 
-  const visibleTabs = availableTabs.filter((t) => pinned.has(t.id));
+    return ALL_TABS.filter((tab) => {
+      if (tab.requiresFiles && hideFiles) return false;
+      if (tab.requiresNotes && hideNotes) return false;
+      if (tab.requiresRecommended && !isClient) return false;
+      return true;
+    });
+  }, [isClient, hideFiles, hideNotes]);
 
-  const overflowTabs = availableTabs.filter((t) => !pinned.has(t.id));
+  const visibleTabs = isClient
+    ? availableTabs
+    : availableTabs.filter((t) => pinned.has(t.id));
+
+  const overflowTabs = isClient
+    ? []
+    : availableTabs.filter((t) => !pinned.has(t.id));
 
   const location = useLocation();
 
@@ -330,7 +353,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   if (!chat) return null;
 
   return (
-    <main className="flex flex-col w-full h-full px-4 py-6 md:p-6 lg:p-8">
+    <main className="flex flex-col w-full h-full px-4 py-6 md:p-6 lg:p-8 min-h-screen">
       <div className="flex flex-col border-x-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center ">
@@ -486,11 +509,11 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsList className="border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden">
           {visibleTabs.map((tab) => (
             <div key={tab.id} className="relative group">
-              <TabsTrigger value={tab.id} className="w-[120px]">
-                {tab.label}
+              <TabsTrigger value={tab.id} className="min-w-[120px]">
+                {tab.id === "messages" && isClient ? "Chat" : tab.label}
               </TabsTrigger>
 
-              <Button
+              {!isClient && <Button
                 size="icon"
                 variant="unstyled"
                 className="absolute z-50 hover:bg-transparent text-[#737373] hover:text-black rounded-full p-[1px] -right-3 -top-2
@@ -506,54 +529,56 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 }}
               >
                 <MaterialIcon iconName="close" size={14} />
-              </Button>
+              </Button>}
             </div>
           ))}
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="unstyled">
-                <MaterialIcon iconName="more_vert" className="rotate-90" />
-              </Button>
-            </DropdownMenuTrigger>
+          {!isClient && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="unstyled">
+                  <MaterialIcon iconName="more_vert" className="rotate-90" />
+                </Button>
+              </DropdownMenuTrigger>
 
-            <DropdownMenuContent
-              align="end"
-              sideOffset={8}
-              className="bg-[#F2F4F6] border p-2 shadow-lg"
-            >
-              {overflowTabs.map((tab) => (
-                <DropdownMenuItem
-                  key={tab.id}
-                  className="flex items-center justify-between gap-2"
-                >
-                  <TabsTrigger
-                    value={tab.id}
-                    className="flex-1 justify-start rounded-none"
+              <DropdownMenuContent
+                align="end"
+                sideOffset={8}
+                className="bg-[#F2F4F6] border p-2 shadow-lg"
+              >
+                {overflowTabs.map((tab) => (
+                  <DropdownMenuItem
+                    key={tab.id}
+                    className="flex items-center justify-between gap-2"
                   >
-                    {tab.label}
-                  </TabsTrigger>
+                    <TabsTrigger
+                      value={tab.id}
+                      className="flex-1 justify-start rounded-none"
+                    >
+                      {tab.label}
+                    </TabsTrigger>
 
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPinnedTabs((prev) => [...prev, tab.id]);
-                    }}
-                  >
-                    <MaterialIcon iconName="push_pin" size={16} />
-                  </Button>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPinnedTabs((prev) => [...prev, tab.id]);
+                      }}
+                    >
+                      <MaterialIcon iconName="push_pin" size={16} />
+                    </Button>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </TabsList>
 
         <TabsContent value="profile">
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || ""}
-            onOpenChange={() => {}}
+            onOpenChange={() => { }}
           />
         </TabsContent>
         <TabsContent value="messages">
@@ -615,8 +640,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => {}}
-          onDelete={() => {}}
+          onEdit={() => { }}
+          onDelete={() => { }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />

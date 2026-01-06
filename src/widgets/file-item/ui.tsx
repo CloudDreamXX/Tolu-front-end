@@ -1,11 +1,11 @@
-import { useGetUploadedChatFileUrlQuery } from "entities/chat/api";
+import { useLazyGetUploadedChatFileQuery } from "entities/chat/api";
 import {
   clearDownloadProgress,
   setDownloadProgress,
 } from "entities/chat/downloadSlice";
 import { fileKeyFromUrl } from "entities/chat/helpers";
 import { RootState } from "entities/store";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useInViewport } from "./useInViewport";
 import { cn } from "shared/lib";
@@ -42,13 +42,43 @@ export const FileItem: React.FC<FileItemProps> = ({
     threshold: 0.01,
   });
 
-  const { data: previewUrl, isFetching: previewLoading } =
-    useGetUploadedChatFileUrlQuery(
-      { fileUrl: normalized },
-      { skip: !isImage || !inView || !normalized }
-    );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const [triggerPreview] = useLazyGetUploadedChatFileQuery();
 
   const [downloading, setDownloading] = useState(false);
+
+  useEffect(() => {
+    if (!isImage || !inView || !normalized || previewUrl) return;
+
+    let cancelled = false;
+
+    const loadPreview = async () => {
+      setPreviewLoading(true);
+      try {
+        const result = await triggerPreview({ fileKey: normalized });
+        if ("data" in result && result.data && !cancelled) {
+          const url = URL.createObjectURL(result.data);
+          setPreviewUrl(url);
+        }
+      } finally {
+        if (!cancelled) setPreviewLoading(false);
+      }
+    };
+
+    loadPreview();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isImage, inView, normalized]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   const onDownloadClick = async () => {
     if (!normalized || !fileName || !previewUrl) return;
@@ -85,13 +115,25 @@ export const FileItem: React.FC<FileItemProps> = ({
             {(() => {
               if (previewUrl) {
                 return (
-                  <img
-                    src={previewUrl}
-                    alt={fileName || "File preview"}
-                    className="object-cover w-10 h-10"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <div className="flex items-center justify-center w-10 h-10 overflow-hidden rounded">
+                    {previewLoading && (
+                      <MaterialIcon
+                        iconName="progress_activity"
+                        className="text-gray-400 animate-spin"
+                      />
+                    )}
+
+                    {!previewLoading && previewUrl && (
+                      <img
+                        src={previewUrl}
+                        alt={fileName || "File preview"}
+                        className="object-cover w-10 h-10"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                  </div>
+
                 );
               } else if (dlPct) {
                 return <span className="text-sm">{dlPct}%</span>;

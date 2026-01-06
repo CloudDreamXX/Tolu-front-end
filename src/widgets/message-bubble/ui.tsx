@@ -1,9 +1,12 @@
 import { ChatMessageModel } from "entities/chat";
-import React from "react";
+import React, { useRef, useState } from "react";
 import { cn, usePageWidth } from "shared/lib";
-import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { FileItem } from "widgets/file-item";
 import { toUserTZ } from "widgets/message-tabs/helpers";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 interface MessageBubbleProps {
   message: ChatMessageModel;
@@ -22,6 +25,15 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   isOwn = false,
   className = "",
 }) => {
+  const [emojiModalOpen, setEmojiModalOpen] = useState(false);
+  const [reaction, setReaction] = useState<string | null>(null);
+
+  const bubbleRef = useRef<HTMLDivElement | null>(null);
+  const [pickerPosition, setPickerPosition] = useState<{
+    vertical: "top" | "bottom";
+    horizontal: "left" | "right";
+  }>({ vertical: "bottom", horizontal: "left" });
+
   const { isMobile } = usePageWidth();
   const instant = toUserTZ(message.created_at);
 
@@ -46,7 +58,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         fileSize={message.file_size}
         fileUrl={message.file_url}
         fileType={message.file_type}
-        className={cn(isOwn ? "bg-white " : "bg-[#AAC6EC] ")}
+        className={cn(isOwn ? "bg-white " : "bg-[#AAC6EC]")}
       />
     </div>
   );
@@ -68,15 +80,52 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const initials = author
     ? author.split(" ").length > 1
       ? author
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
+        .split(" ")
+        .map((word) => word[0].toUpperCase())
+        .slice(0, 2)
+        .join("")
       : author.slice(0, 2).toUpperCase()
     : "UN";
 
+  const handleAddReaction = (emoji: string) => {
+    // console.log("React to message:", message.id, emoji);
+
+    // addReaction({ messageId: message.id, emoji })
+
+    setReaction((prev) => (prev === emoji ? null : emoji));
+  };
+
+  const openEmojiPicker = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const rect = bubbleRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const pickerWidth = 350;
+    const pickerHeight = 400;
+
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const spaceRight = viewportWidth - rect.left;
+    const spaceLeft = rect.right;
+
+    setPickerPosition({
+      vertical: spaceBelow < pickerHeight && spaceAbove > spaceBelow
+        ? "top"
+        : "bottom",
+      horizontal: spaceRight < pickerWidth && spaceLeft > spaceRight
+        ? "right"
+        : "left",
+    });
+
+    setEmojiModalOpen((prev) => !prev);
+  };
+
   return (
-    <div className={cn("flex flex-col w-full ", isOwn ? "" : "items-start")}>
+    <div className={cn("flex flex-col w-full", isOwn ? "" : "items-start")}>
       <div className={cn("flex", isOwn && "justify-end")}>
         {!isMobile && !isOwn && (
           <div className="relative mr-3">
@@ -93,7 +142,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
         <div
           className={cn(
-            "flex flex-col-reverse md:flex-col md:gap-1.5 max-w-[70%] min-w-0 py-2",
+            "flex flex-col-reverse md:flex-col md:gap-1.5 min-w-0 py-2 lg:max-w-[70%]",
             isOwn && isMobile ? "items-end" : undefined
           )}
         >
@@ -108,7 +157,43 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               })}
             </span>
           </div>
-          {isFileMessage ? renderFileMessage() : renderTextMessage()}
+          <div
+            ref={bubbleRef}
+            onClick={openEmojiPicker}
+            className="relative w-fit"
+          >
+            {isFileMessage ? renderFileMessage() : renderTextMessage()}
+
+            {reaction && (
+              <div
+                className={`absolute -bottom-2 ${isOwn ? "-left-4" : "-right-4"} bg-white border border-gray-300 rounded-full p-1 w-[28px] h-[28px] flex items-center justify-center text-sm shadow`}
+              >
+                {reaction}
+              </div>
+            )}
+
+            {emojiModalOpen && (
+              <div
+                className={cn(
+                  "absolute z-50 h-[200px]",
+                  pickerPosition.vertical === "bottom" ? "top-full mt-1" : "bottom-full mb-1",
+                  pickerPosition.horizontal === "left" ? "left-0" : "right-0"
+                )}
+              >
+                <Picker
+                  data={data}
+                  onEmojiSelect={(emoji: { native: string }) => {
+                    handleAddReaction(emoji.native);
+                  }}
+                  onClickOutside={() => setEmojiModalOpen(false)}
+                  theme="light"
+                  previewPosition="none"
+                  skinTonePosition="none"
+                />
+              </div>
+            )}
+
+          </div>
         </div>
       </div>
     </div>
