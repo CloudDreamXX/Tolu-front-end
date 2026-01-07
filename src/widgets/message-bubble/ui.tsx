@@ -95,8 +95,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     setReaction((prev) => (prev === emoji ? null : emoji));
   };
 
-  const openEmojiPicker = (e: React.MouseEvent) => {
+  const hasTextSelection = () => {
+    const selection = window.getSelection();
+    return selection !== null && selection.toString().trim().length > 0;
+  };
+
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const LONG_PRESS_DELAY = 500;
+
+  const openEmojiPicker = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
+
+    if (hasTextSelection()) return;
 
     const rect = bubbleRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -113,15 +123,40 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     const spaceLeft = rect.right;
 
     setPickerPosition({
-      vertical: spaceBelow < pickerHeight && spaceAbove > spaceBelow
-        ? "top"
-        : "bottom",
-      horizontal: spaceRight < pickerWidth && spaceLeft > spaceRight
-        ? "right"
-        : "left",
+      vertical:
+        spaceBelow < pickerHeight && spaceAbove > spaceBelow
+          ? "top"
+          : "bottom",
+      horizontal:
+        spaceRight < pickerWidth && spaceLeft > spaceRight
+          ? "right"
+          : "left",
     });
 
     setEmojiModalOpen((prev) => !prev);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isMobile) return;
+
+    longPressTimer.current = setTimeout(() => {
+      openEmojiPicker(e);
+    }, LONG_PRESS_DELAY);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleTouchMove = () => {
+    // Cancel long press if user starts scrolling
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
   };
 
   return (
@@ -159,8 +194,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
           <div
             ref={bubbleRef}
-            onClick={openEmojiPicker}
             className="relative w-fit"
+            onClick={openEmojiPicker}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
           >
             {isFileMessage ? renderFileMessage() : renderTextMessage()}
 
