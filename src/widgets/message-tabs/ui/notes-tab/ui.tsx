@@ -43,25 +43,34 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [input, setInput] = useState("");
+  const [title, setTitle] = useState("");
 
   const {
     data: notes,
     isLoading,
     refetch,
-  } = useGetAllChatNotesQuery(chat.chat_id, { skip: !chat.chat_id });
+  } = useGetAllChatNotesQuery(chat.chat_id, {
+    skip: !chat.chat_id,
+    refetchOnMountOrArgChange: true,
+  });
+
   const [sendNote, { isLoading: isSending }] = useSendChatNoteMutation();
   const [updateNote, { isLoading: isUpdating }] = useUpdateChatNoteMutation();
   const [deleteNote] = useDeleteChatNoteMutation();
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!title.trim() || !input.trim()) return;
 
     try {
       if (editingId) {
         await updateNote({
           noteId: editingId,
           payload: {
-            noteData: { title: "test-title", content: input },
+            noteData: {
+              title,
+              content: input,
+              remove_file: items.length === 0,
+            },
             file: items[0]?.file,
           },
         }).unwrap();
@@ -69,14 +78,16 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
       } else {
         await sendNote({
           noteData: {
-            title: "test-title",
+            title,
             content: input,
             chat_id: chat.chat_id,
           },
           file: items[0]?.file,
         }).unwrap();
       }
+
       setInput("");
+      setTitle("");
       clear();
       refetch();
     } catch {
@@ -93,8 +104,9 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
     }
   };
 
-  const handleEdit = (id: string, content: string) => {
+  const handleEdit = (id: string, title: string, content: string) => {
     setEditingId(id);
+    setTitle(title);
     setInput(content);
   };
 
@@ -116,7 +128,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const containerStyleLg = {
     height: isClient
       ? `calc(100vh - ${316 + filesDivHeight}px)`
-      : `calc(100vh - ${396 + filesDivHeight}px)`,
+      : `calc(100vh - ${360 + filesDivHeight}px)`,
   };
 
   let currentStyle = containerStyleLg;
@@ -212,7 +224,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
             itemContent={(_index, note) => (
               <NoteItem
                 note={note}
-                onEdit={handleEdit}
+                onEdit={(id, title, content) => handleEdit(id, title, content)}
                 onDelete={handleDelete}
               />
             )}
@@ -238,6 +250,13 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
 
       {!isToluAdmin && (
         <div className="pt-2">
+          <Input
+            placeholder="Note title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mb-2 md:text-[18px] rounded-[18px]"
+          />
+
           <Textarea
             placeholder={`Write note...`}
             className={cn("resize-none min-h-[80px]")}

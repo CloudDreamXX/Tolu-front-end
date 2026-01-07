@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, formatFileSize, toast } from "shared/lib";
 import { Button } from "shared/ui";
+import mammoth from "mammoth";
 
 interface FileLibraryProps {
   fileLibrary: FileLibraryFile;
@@ -28,6 +29,7 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
   const [preview, setPreview] = useState<boolean>(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [docxHtml, setDocxHtml] = useState<string | null>(null);
 
   const dispatch = useDispatch();
   const dlPct = useSelector(
@@ -74,12 +76,26 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
   const openPreview = async () => {
     setPreview(true);
     setPreviewLoading(true);
+    setDocxHtml(null);
+    setPreviewUrl(null);
 
     try {
       const result = await triggerDownload({ fileId: fileLibrary.id });
 
       if ("data" in result && result.data) {
         const blob = result.data;
+
+        if (
+          fileLibrary.mime_type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          const arrayBuffer = await blob.arrayBuffer();
+          const { value } = await mammoth.convertToHtml({ arrayBuffer });
+
+          setDocxHtml(value);
+          return;
+        }
+
         const url = URL.createObjectURL(blob);
         setPreviewUrl(url);
       }
@@ -209,6 +225,13 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
                   </div>
                 )}
 
+                {!previewLoading && docxHtml && (
+                  <div
+                    className="prose max-w-none"
+                    dangerouslySetInnerHTML={{ __html: docxHtml }}
+                  />
+                )}
+
                 {!previewLoading && previewUrl && (
                   <>
                     {fileLibrary.mime_type.startsWith("image/") && (
@@ -232,20 +255,10 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
                         className="w-full h-[70vh] rounded border"
                       />
                     )}
-
-                    {fileLibrary.mime_type ===
-                      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-                      <iframe
-                        src={`https://docs.google.com/gview?url=${encodeURIComponent(
-                          previewUrl
-                        )}&embedded=true`}
-                        className="w-full h-[70vh] rounded border"
-                      />
-                    )}
                   </>
                 )}
 
-                {!previewLoading && !previewUrl && (
+                {!previewLoading && !previewUrl && !docxHtml && (
                   <p className="text-center text-sm text-gray-500">
                     Preview not available
                   </p>

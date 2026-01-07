@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
+import mammoth from "mammoth";
+
 interface FileMessageProps {
   message: FileMessage;
   avatar?: string;
@@ -23,6 +25,7 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
   const [preview, setPreview] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [docxHtml, setDocxHtml] = useState<string | null>(null);
 
   const dispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.user?.user);
@@ -68,12 +71,27 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
 
     setPreview(true);
     setPreviewLoading(true);
+    setPreviewUrl(null);
+    setDocxHtml(null);
 
     try {
       const result = await triggerPreview({ fileKey: normalized });
 
       if ("data" in result && result.data) {
-        const url = URL.createObjectURL(result.data);
+        const blob = result.data;
+
+        if (
+          message.file_type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          const arrayBuffer = await blob.arrayBuffer();
+          const { value } = await mammoth.convertToHtml({ arrayBuffer });
+
+          setDocxHtml(value);
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
         setPreviewUrl(url);
       }
     } catch {
@@ -209,6 +227,13 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
                   </div>
                 )}
 
+                {!previewLoading && docxHtml && (
+                  <div
+                    className="prose max-w-none"
+                    dangerouslySetInnerHTML={{ __html: docxHtml }}
+                  />
+                )}
+
                 {!previewLoading && previewUrl && (
                   <>
                     {message.file_type.startsWith("image/") && (
@@ -235,7 +260,7 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
                   </>
                 )}
 
-                {!previewLoading && !previewUrl && (
+                {!previewLoading && !previewUrl && !docxHtml && (
                   <p className="text-center text-sm text-gray-500">
                     Preview not available
                   </p>

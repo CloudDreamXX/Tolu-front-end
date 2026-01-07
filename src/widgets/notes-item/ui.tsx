@@ -134,7 +134,7 @@ export const NoteItem = memo(function NoteItem({
         <Button
           value="ghost"
           aria-label="Edit"
-          onClick={() => onEdit(note.id, note.content, note.title)}
+          onClick={() => onEdit(note.id, note.title, note.content)}
         >
           <MaterialIcon iconName="edit" className="w-4 h-4 p-0 text-black" />
         </Button>

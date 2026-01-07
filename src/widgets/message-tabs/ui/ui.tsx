@@ -52,7 +52,7 @@ type TabItem = {
 };
 
 const ALL_TABS: TabItem[] = [
-  { id: "profile", label: "Quick view" },
+  { id: "profile", label: "Case" },
   { id: "messages", label: "Messages" },
   { id: "notes", label: "Notes", requiresNotes: true },
   { id: "files", label: "Files", requiresFiles: true },
