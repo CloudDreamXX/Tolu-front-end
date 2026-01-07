@@ -94,7 +94,11 @@ export const ChatItem: React.FC<ChatItemProps> = ({
           </div>
           <div className="flex">
             <span className="font-semibold text-[18px] text-[#1D1D1F]">
-              {item.name || item.participants[0]?.name || item.participants[0]?.first_name && item.participants[0]?.last_name && `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`}
+              {item.name ||
+                item.participants[0]?.name ||
+                (item.participants[0]?.first_name &&
+                  item.participants[0]?.last_name &&
+                  `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`)}
             </span>
           </div>
         </div>

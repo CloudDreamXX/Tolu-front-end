@@ -39,7 +39,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     setLocalReactions(message.reactions ?? []);
   }, [message.reactions]);
 
-  const user = useSelector((state: RootState) => state.user.user)
+  const user = useSelector((state: RootState) => state.user.user);
 
   const [addReaction] = useAddMessageReactionMutation();
   const [deleteReaction] = useDeleteMessageReactionMutation();
@@ -96,30 +96,22 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const initials = author
     ? author.split(" ").length > 1
       ? author
-        .split(" ")
-        .map((word) => word[0].toUpperCase())
-        .slice(0, 2)
-        .join("")
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
       : author.slice(0, 2).toUpperCase()
     : "UN";
 
   const handleReactionSelect = async (emoji: string) => {
     const alreadyReacted = localReactions.some(
-      (reaction) =>
-        reaction.reaction === emoji &&
-        reaction.user.id === user?.id
+      (reaction) => reaction.reaction === emoji && reaction.user.id === user?.id
     );
 
     try {
       if (alreadyReacted) {
         setLocalReactions((prev) =>
-          prev.filter(
-            (r) =>
-              !(
-                r.reaction === emoji &&
-                r.user.id === user?.id
-              )
-          )
+          prev.filter((r) => !(r.reaction === emoji && r.user.id === user?.id))
         );
 
         await deleteReaction({
@@ -184,13 +176,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
     setPickerPosition({
       vertical:
-        spaceBelow < pickerHeight && spaceAbove > spaceBelow
-          ? "top"
-          : "bottom",
+        spaceBelow < pickerHeight && spaceAbove > spaceBelow ? "top" : "bottom",
       horizontal:
-        spaceRight < pickerWidth && spaceLeft > spaceRight
-          ? "right"
-          : "left",
+        spaceRight < pickerWidth && spaceLeft > spaceRight ? "right" : "left",
     });
 
     setEmojiModalOpen((prev) => !prev);
@@ -270,7 +258,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 )}
               >
                 {localReactions.map((emoji, index) => (
-                  <span key={`${emoji}-${index}`} className="text-sm flex bg-white border border-gray-300 rounded-full p-1 w-[30px] h-[30px] justify-center items-center shadow">
+                  <span
+                    key={`${emoji}-${index}`}
+                    className="text-sm flex bg-white border border-gray-300 rounded-full p-1 w-[30px] h-[30px] justify-center items-center shadow"
+                  >
                     {emoji.reaction}
                   </span>
                 ))}
@@ -281,7 +272,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               <div
                 className={cn(
                   "absolute z-50 h-[200px]",
-                  pickerPosition.vertical === "bottom" ? "top-full mt-1" : "bottom-full mb-1",
+                  pickerPosition.vertical === "bottom"
+                    ? "top-full mt-1"
+                    : "bottom-full mb-1",
                   pickerPosition.horizontal === "left" ? "left-0" : "right-0"
                 )}
               >
@@ -297,7 +290,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 />
               </div>
             )}
-
           </div>
         </div>
       </div>

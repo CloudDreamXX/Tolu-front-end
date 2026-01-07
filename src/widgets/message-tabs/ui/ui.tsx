@@ -513,23 +513,25 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 {tab.id === "messages" && isClient ? "Chat" : tab.label}
               </TabsTrigger>
 
-              {!isClient && <Button
-                size="icon"
-                variant="unstyled"
-                className="absolute z-50 hover:bg-transparent text-[#737373] hover:text-black rounded-full p-[1px] -right-3 -top-2
+              {!isClient && (
+                <Button
+                  size="icon"
+                  variant="unstyled"
+                  className="absolute z-50 hover:bg-transparent text-[#737373] hover:text-black rounded-full p-[1px] -right-3 -top-2
                opacity-0 group-hover:opacity-100"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setPinnedTabs((prev) => {
-                    if (prev.length <= 3) {
-                      return prev;
-                    }
-                    return prev.filter((id) => id !== tab.id);
-                  });
-                }}
-              >
-                <MaterialIcon iconName="close" size={14} />
-              </Button>}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPinnedTabs((prev) => {
+                      if (prev.length <= 3) {
+                        return prev;
+                      }
+                      return prev.filter((id) => id !== tab.id);
+                    });
+                  }}
+                >
+                  <MaterialIcon iconName="close" size={14} />
+                </Button>
+              )}
             </div>
           ))}
 
@@ -578,7 +580,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsContent value="profile">
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || ""}
-            onOpenChange={() => { }}
+            onOpenChange={() => {}}
           />
         </TabsContent>
         <TabsContent value="messages">
@@ -640,8 +642,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => { }}
-          onDelete={() => { }}
+          onEdit={() => {}}
+          onDelete={() => {}}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />

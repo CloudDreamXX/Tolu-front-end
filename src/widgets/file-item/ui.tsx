@@ -133,7 +133,6 @@ export const FileItem: React.FC<FileItemProps> = ({
                       />
                     )}
                   </div>
-
                 );
               } else if (dlPct) {
                 return <span className="text-sm">{dlPct}%</span>;

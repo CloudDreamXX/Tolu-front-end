@@ -152,11 +152,7 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
           })()
         ) : (
           <div className="flex gap-[4px]">
-            <Button
-              variant="ghost"
-              className="p-1"
-              onClick={openPreview}
-            >
+            <Button variant="ghost" className="p-1" onClick={openPreview}>
               <MaterialIcon iconName="visibility" />
             </Button>
             <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
@@ -249,7 +245,6 @@ export const FileMessageItem: React.FC<FileMessageProps> = ({
           </div>
         </div>
       )}
-
     </div>
   );
 };

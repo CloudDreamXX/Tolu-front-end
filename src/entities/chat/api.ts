@@ -406,15 +406,14 @@ export const chatApi = createApi({
       AddMessageReactionPayload
     >({
       query: ({ chatId, messageId, reaction }) => ({
-        url: API_ROUTES.CHAT.ADD_REACTION
-          .replace("{chat_id}", chatId)
-          .replace("{message_id}", messageId),
+        url: API_ROUTES.CHAT.ADD_REACTION.replace("{chat_id}", chatId).replace(
+          "{message_id}",
+          messageId
+        ),
         method: "POST",
         body: { reaction },
       }),
-      invalidatesTags: (_r, _e, arg) => [
-        { type: "Message", id: arg.chatId },
-      ],
+      invalidatesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
     }),
 
     deleteMessageReaction: builder.mutation<
@@ -422,15 +421,14 @@ export const chatApi = createApi({
       AddMessageReactionPayload
     >({
       query: ({ chatId, messageId, reaction }) => ({
-        url: API_ROUTES.CHAT.DELETE_REACTION
-          .replace("{chat_id}", chatId)
-          .replace("{message_id}", messageId),
+        url: API_ROUTES.CHAT.DELETE_REACTION.replace(
+          "{chat_id}",
+          chatId
+        ).replace("{message_id}", messageId),
         method: "DELETE",
         body: { reaction },
       }),
-      invalidatesTags: (_r, _e, arg) => [
-        { type: "Message", id: arg.chatId },
-      ],
+      invalidatesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
     }),
   }),
 });
@@ -456,5 +454,5 @@ export const {
   useUpdateChatNoteMutation,
   useDeleteChatNoteMutation,
   useAddMessageReactionMutation,
-  useDeleteMessageReactionMutation
+  useDeleteMessageReactionMutation,
 } = chatApi;

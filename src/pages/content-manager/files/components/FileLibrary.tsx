@@ -130,7 +130,11 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
             openPreview();
           }}
         >
-          <MaterialIcon iconName="visibility" fill={1} className="text-[#5F5F65] hover:text-blue-600" />
+          <MaterialIcon
+            iconName="visibility"
+            fill={1}
+            className="text-[#5F5F65] hover:text-blue-600"
+          />
         </Button>
         <Button
           variant={"ghost"}
@@ -182,9 +186,7 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
             <div className="flex items-center justify-between px-5 py-4">
               <h2 className="text-[18px] font-bold">
                 Preview{" "}
-                <span className="text-[#1D1D1F]">
-                  “{fileLibrary.name}”
-                </span>
+                <span className="text-[#1D1D1F]">“{fileLibrary.name}”</span>
               </h2>
               <Button
                 variant="unstyled"
@@ -233,13 +235,13 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
 
                     {fileLibrary.mime_type ===
                       "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-                        <iframe
-                          src={`https://docs.google.com/gview?url=${encodeURIComponent(
-                            previewUrl
-                          )}&embedded=true`}
-                          className="w-full h-[70vh] rounded border"
-                        />
-                      )}
+                      <iframe
+                        src={`https://docs.google.com/gview?url=${encodeURIComponent(
+                          previewUrl
+                        )}&embedded=true`}
+                        className="w-full h-[70vh] rounded border"
+                      />
+                    )}
                   </>
                 )}
 
@@ -253,7 +255,6 @@ export const FileLibrary: React.FC<FileLibraryProps> = ({
           </div>
         </div>
       )}
-
     </div>
   );
 };
