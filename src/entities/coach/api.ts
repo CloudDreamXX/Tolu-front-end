@@ -61,6 +61,14 @@ export const coachApi = createApi({
         ),
     }),
 
+    getClientCoaches: builder.query<any, string>({
+      query: (clientId) =>
+        API_ROUTES.COACH_ADMIN.GET_CLIENT_COACHES.replace(
+          "{client_id}",
+          clientId
+        ),
+    }),
+
     deleteClient: builder.mutation<any, string>({
       query: (clientId) => ({
         url: API_ROUTES.COACH_ADMIN.DELETE_CLIENT.replace(
@@ -267,6 +275,7 @@ export const {
   useEditClientMutation,
   useLazyGetClientInfoQuery,
   useLazyGetClientProfileQuery,
+  useGetClientCoachesQuery,
   useChangeStatusMutation,
   useGetSessionByIdQuery,
   useLazyGetSessionByIdQuery,

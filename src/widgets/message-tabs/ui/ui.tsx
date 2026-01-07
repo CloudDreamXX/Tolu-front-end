@@ -11,6 +11,7 @@ import { upsertChat } from "entities/chat/chatsSlice";
 import {
   Client,
   ClientProfile,
+  useGetClientCoachesQuery,
   useGetManagedClientsQuery,
   useLazyGetClientProfileQuery,
 } from "entities/coach";
@@ -39,6 +40,44 @@ import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { RecommendedTab } from "./recommended-tab";
+import { useLocation } from "react-router-dom";
+import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
+
+type TabItem = {
+  id: string;
+  label: string;
+  requiresFiles?: boolean;
+  requiresNotes?: boolean;
+  requiresRecommended?: boolean;
+};
+
+const ALL_TABS: TabItem[] = [
+  { id: "profile", label: "Quick view" },
+  { id: "messages", label: "Messages" },
+  { id: "notes", label: "Notes", requiresNotes: true },
+  { id: "files", label: "Files", requiresFiles: true },
+  { id: "labs", label: "Labs" },
+  { id: "providers", label: "Providers" },
+  { id: "biometrics", label: "Biometrics" },
+  { id: "journals", label: "Journals" },
+  { id: "research", label: "Research" },
+  { id: "plan", label: "Action plan" },
+  {
+    id: "recommended",
+    label: "Recommended for you",
+    requiresRecommended: true,
+  },
+];
+
+const CLIENT_TABS: TabItem[] = [
+  { id: "messages", label: "Chat" },
+  { id: "files", label: "Files", requiresFiles: true },
+  {
+    id: "recommended",
+    label: "Recommended for you",
+    requiresRecommended: true,
+  },
+];
 
 interface MessageTabsProps {
   goBackMobile: () => void;
@@ -94,6 +133,44 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
+  const [pinnedTabs, setPinnedTabs] = useState<string[]>([
+    "profile",
+    "messages",
+    "notes",
+    "files",
+  ]);
+
+  const isClient = profile?.roleName === "Client";
+
+  const pinned = new Set(pinnedTabs);
+
+  const availableTabs = useMemo(() => {
+    if (isClient) {
+      return CLIENT_TABS.filter((tab) => {
+        if (tab.requiresFiles && hideFiles) return false;
+        return true;
+      });
+    }
+
+    return ALL_TABS.filter((tab) => {
+      if (tab.requiresFiles && hideFiles) return false;
+      if (tab.requiresNotes && hideNotes) return false;
+      if (tab.requiresRecommended && !isClient) return false;
+      return true;
+    });
+  }, [isClient, hideFiles, hideNotes]);
+
+  const visibleTabs = isClient
+    ? availableTabs
+    : availableTabs.filter((t) => pinned.has(t.id));
+
+  const overflowTabs = isClient
+    ? []
+    : availableTabs.filter((t) => !pinned.has(t.id));
+
+  const location = useLocation();
+
+  const defaultTab = location.state?.id ?? "messages";
 
   useEffect(() => {
     if (!chatId) {
@@ -212,7 +289,12 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     () => chat?.participants?.find((p) => p.user.email !== profile?.email),
     [chat, profile?.email]
   );
-  const isClient = profile?.roleName === "Client";
+
+  const receiverUserId = receiver?.user?.id;
+
+  const { data: clientCoaches } = useGetClientCoachesQuery(receiverUserId!, {
+    skip: !receiverUserId,
+  });
 
   if (!chatId && showAddClient)
     return (
@@ -271,7 +353,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   if (!chat) return null;
 
   return (
-    <main className="flex flex-col w-full h-full px-4 py-6 md:p-6 lg:p-8">
+    <main className="flex flex-col w-full h-full px-4 py-6 md:p-6 lg:p-8 min-h-screen">
       <div className="flex flex-col border-x-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center ">
@@ -423,27 +505,84 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         )}
       </div>
 
-      <Tabs defaultValue="messages">
-        <TabsList className="border-b border-[#DBDEE1] w-full justify-start">
-          <TabsTrigger value="messages" className="w-[120px]">
-            {isClient ? "Chat" : "Messages"}
-          </TabsTrigger>
-          {!hideFiles && (
-            <TabsTrigger value="files" className="w-[120px]">
-              Files
-            </TabsTrigger>
-          )}
-          {!isClient && !hideNotes && (
-            <TabsTrigger value="notes" className="w-[fit]">
-              Notes
-            </TabsTrigger>
-          )}
-          {isClient && (
-            <TabsTrigger value="recommended" className="w-[fit]">
-              Recommended for you
-            </TabsTrigger>
+      <Tabs defaultValue={defaultTab}>
+        <TabsList className="border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden">
+          {visibleTabs.map((tab) => (
+            <div key={tab.id} className="relative group">
+              <TabsTrigger value={tab.id} className="min-w-[120px]">
+                {tab.id === "messages" && isClient ? "Chat" : tab.label}
+              </TabsTrigger>
+
+              {!isClient && (
+                <Button
+                  size="icon"
+                  variant="unstyled"
+                  className="absolute z-50 hover:bg-transparent text-[#737373] hover:text-black rounded-full p-[1px] -right-3 -top-2
+               opacity-0 group-hover:opacity-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPinnedTabs((prev) => {
+                      if (prev.length <= 3) {
+                        return prev;
+                      }
+                      return prev.filter((id) => id !== tab.id);
+                    });
+                  }}
+                >
+                  <MaterialIcon iconName="close" size={14} />
+                </Button>
+              )}
+            </div>
+          ))}
+
+          {!isClient && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="unstyled">
+                  <MaterialIcon iconName="more_vert" className="rotate-90" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                align="end"
+                sideOffset={8}
+                className="bg-[#F2F4F6] border p-2 shadow-lg"
+              >
+                {overflowTabs.map((tab) => (
+                  <DropdownMenuItem
+                    key={tab.id}
+                    className="flex items-center justify-between gap-2"
+                  >
+                    <TabsTrigger
+                      value={tab.id}
+                      className="flex-1 justify-start rounded-none"
+                    >
+                      {tab.label}
+                    </TabsTrigger>
+
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPinnedTabs((prev) => [...prev, tab.id]);
+                      }}
+                    >
+                      <MaterialIcon iconName="push_pin" size={16} />
+                    </Button>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </TabsList>
+
+        <TabsContent value="profile">
+          <ClientComprehensiveSummary
+            clientId={receiver?.user.id || ""}
+            onOpenChange={() => {}}
+          />
+        </TabsContent>
         <TabsContent value="messages">
           <MessagesTab
             refetch={refetch}
@@ -461,6 +600,39 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         </TabsContent>
         <TabsContent value="notes">
           <NotesTab chat={chat} search={search} />
+        </TabsContent>
+        <TabsContent value="providers">
+          {clientCoaches && clientCoaches.coaches.length ? (
+            <ul className="p-2">
+              {clientCoaches.coaches.map((c: any) => {
+                return (
+                  <li
+                    key={c.coach_id}
+                    className="p-3 mb-5 shadow-sm rounded-xl bg-white border border-gray-200 flex flex-col gap-[4px]"
+                  >
+                    <div className="truncate font-medium text-[14px]">
+                      Name: {c.name}
+                    </div>
+                    <div className="truncate font-medium text-[14px]">
+                      Email: {c.email}
+                    </div>
+                    <div className="truncate font-medium text-[14px] text-[#737373]">
+                      Managed since:{" "}
+                      {new Date(c.managed_since).toLocaleDateString("de-DE", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <div className="p-4 text-sm text-muted-foreground">
+              No providers yet.
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 

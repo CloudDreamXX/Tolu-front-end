@@ -1,3 +1,15 @@
+## [1.8.0] - 2026-01-07
+
+### New feature
+
+- Add abillity to the coach to highlight text in the chat and add to client notes.
+- The client health profile is visible in the message area, and access is visible by clicking on the name of the client.
+- Add tabs Quick view, Notes, Labs, Files, Chat, Providers, Biometrics, Journals in the message area.
+- Fix displaying of users first and last name in messages sidebar.
+- Fix notifications integration to show a notification inside of a platform for a new message.
+- Add ability for emojies rection to messages.
+- Add preview for files inside of File library and Files tab in messaging.
+
 ## [1.7.0] - 2025-12-17
 
 ### New feature

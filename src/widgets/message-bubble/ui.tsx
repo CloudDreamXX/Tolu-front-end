@@ -1,12 +1,21 @@
 import { ChatMessageModel } from "entities/chat";
-import React from "react";
-import { cn, usePageWidth } from "shared/lib";
+import React, { useEffect, useRef, useState } from "react";
+import { cn, toast, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
 import { FileItem } from "widgets/file-item";
 import { toUserTZ } from "widgets/message-tabs/helpers";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+import {
+  useAddMessageReactionMutation,
+  useDeleteMessageReactionMutation,
+} from "entities/chat/api";
+import { useSelector } from "react-redux";
+import { RootState } from "entities/store";
 
 interface MessageBubbleProps {
   message: ChatMessageModel;
+  chatId: string;
   avatar?: string;
   author?: string;
   isOnlaine?: boolean;
@@ -16,12 +25,31 @@ interface MessageBubbleProps {
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
+  chatId,
   avatar,
   author,
   isOnlaine = false,
   isOwn = false,
   className = "",
 }) => {
+  const [emojiModalOpen, setEmojiModalOpen] = useState(false);
+  const [localReactions, setLocalReactions] = useState(message.reactions ?? []);
+
+  useEffect(() => {
+    setLocalReactions(message.reactions ?? []);
+  }, [message.reactions]);
+
+  const user = useSelector((state: RootState) => state.user.user);
+
+  const [addReaction] = useAddMessageReactionMutation();
+  const [deleteReaction] = useDeleteMessageReactionMutation();
+
+  const bubbleRef = useRef<HTMLDivElement | null>(null);
+  const [pickerPosition, setPickerPosition] = useState<{
+    vertical: "top" | "bottom";
+    horizontal: "left" | "right";
+  }>({ vertical: "bottom", horizontal: "left" });
+
   const { isMobile } = usePageWidth();
   const instant = toUserTZ(message.created_at);
 
@@ -46,7 +74,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         fileSize={message.file_size}
         fileUrl={message.file_url}
         fileType={message.file_type}
-        className={cn(isOwn ? "bg-white " : "bg-[#AAC6EC] ")}
+        className={cn(isOwn ? "bg-white " : "bg-[#AAC6EC]")}
       />
     </div>
   );
@@ -75,8 +103,112 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       : author.slice(0, 2).toUpperCase()
     : "UN";
 
+  const handleReactionSelect = async (emoji: string) => {
+    const alreadyReacted = localReactions.some(
+      (reaction) => reaction.reaction === emoji && reaction.user.id === user?.id
+    );
+
+    try {
+      if (alreadyReacted) {
+        setLocalReactions((prev) =>
+          prev.filter((r) => !(r.reaction === emoji && r.user.id === user?.id))
+        );
+
+        await deleteReaction({
+          chatId,
+          messageId: message.id,
+          reaction: emoji,
+        }).unwrap();
+      } else {
+        const optimisticReaction = {
+          id: crypto.randomUUID(),
+          reaction: emoji,
+          user: user!,
+          created_at: new Date().toISOString(),
+        };
+
+        setLocalReactions((prev) => [...prev, optimisticReaction]);
+
+        await addReaction({
+          chatId,
+          messageId: message.id,
+          reaction: emoji,
+        }).unwrap();
+      }
+
+      setEmojiModalOpen(false);
+    } catch {
+      setLocalReactions(message.reactions ?? []);
+
+      toast({
+        title: "Failed to update reaction",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const hasTextSelection = () => {
+    const selection = window.getSelection();
+    return selection !== null && selection.toString().trim().length > 0;
+  };
+
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const LONG_PRESS_DELAY = 500;
+
+  const openEmojiPicker = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+
+    if (hasTextSelection()) return;
+
+    const rect = bubbleRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const pickerWidth = 350;
+    const pickerHeight = 400;
+
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const spaceRight = viewportWidth - rect.left;
+    const spaceLeft = rect.right;
+
+    setPickerPosition({
+      vertical:
+        spaceBelow < pickerHeight && spaceAbove > spaceBelow ? "top" : "bottom",
+      horizontal:
+        spaceRight < pickerWidth && spaceLeft > spaceRight ? "right" : "left",
+    });
+
+    setEmojiModalOpen((prev) => !prev);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isMobile) return;
+
+    longPressTimer.current = setTimeout(() => {
+      openEmojiPicker(e);
+    }, LONG_PRESS_DELAY);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleTouchMove = () => {
+    // Cancel long press if user starts scrolling
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
   return (
-    <div className={cn("flex flex-col w-full ", isOwn ? "" : "items-start")}>
+    <div className={cn("flex flex-col w-full", isOwn ? "" : "items-start")}>
       <div className={cn("flex", isOwn && "justify-end")}>
         {!isMobile && !isOwn && (
           <div className="relative mr-3">
@@ -93,7 +225,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
         <div
           className={cn(
-            "flex flex-col-reverse md:flex-col md:gap-1.5 max-w-[70%] min-w-0 py-2",
+            "flex flex-col-reverse md:flex-col md:gap-1.5 min-w-0 py-2 lg:max-w-[70%]",
             isOwn && isMobile ? "items-end" : undefined
           )}
         >
@@ -108,7 +240,57 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               })}
             </span>
           </div>
-          {isFileMessage ? renderFileMessage() : renderTextMessage()}
+          <div
+            ref={bubbleRef}
+            className="relative w-fit"
+            onClick={openEmojiPicker}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
+          >
+            {isFileMessage ? renderFileMessage() : renderTextMessage()}
+
+            {localReactions && localReactions.length > 0 && (
+              <div
+                className={cn(
+                  "absolute -bottom-2 flex gap-1",
+                  isOwn ? "-left-4" : "-right-4"
+                )}
+              >
+                {localReactions.map((emoji, index) => (
+                  <span
+                    key={`${emoji}-${index}`}
+                    className="text-sm flex bg-white border border-gray-300 rounded-full p-1 w-[30px] h-[30px] justify-center items-center shadow"
+                  >
+                    {emoji.reaction}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {emojiModalOpen && (
+              <div
+                className={cn(
+                  "absolute z-50 h-[200px]",
+                  pickerPosition.vertical === "bottom"
+                    ? "top-full mt-1"
+                    : "bottom-full mb-1",
+                  pickerPosition.horizontal === "left" ? "left-0" : "right-0"
+                )}
+              >
+                <Picker
+                  data={data}
+                  onEmojiSelect={(emoji: { native: string }) => {
+                    handleReactionSelect(emoji.native);
+                  }}
+                  onClickOutside={() => setEmojiModalOpen(false)}
+                  theme="light"
+                  previewPosition="none"
+                  skinTonePosition="none"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

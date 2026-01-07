@@ -7,9 +7,11 @@ import { mapHealthHistoryToFormDefaults } from "widgets/health-profile-form/ui/l
 export const ClientComprehensiveSummary = ({
   clientId,
   onOpenChange,
+  asDialog,
 }: {
   clientId: string;
   onOpenChange: (v: boolean) => void;
+  asDialog?: boolean;
 }) => {
   const { data: healthHistoryData } =
     useGetCoachClientHealthHistoryQuery(clientId);
@@ -94,167 +96,151 @@ export const ClientComprehensiveSummary = ({
     </div>
   );
 
+  const content = (
+    <div className="max-h-[70vh] overflow-y-auto space-y-6 pr-2">
+      <Section title="Demographics">
+        <SummaryRow label="Age" value={values.age ? String(values.age) : ""} />
+        <SummaryRow label="Gender" value={resolvedGender} />
+        {values.genderIdentity === "self_describe" && (
+          <SummaryRow
+            label="Self-description"
+            value={values.genderSelfDescribe}
+          />
+        )}
+        <SummaryRow label="Sex assigned at birth" value={resolvedBirthSex} />
+        <SummaryRow label="Language" value={languagesSel} />
+        <SummaryRow label="Country of Residence" value={values.country} />
+      </Section>
+
+      <Section title="Social Factors">
+        <SummaryRow label="Ethnicity" value={stripOther(resolvedEthnicity)} />
+        <SummaryRow
+          label="Household Type"
+          value={stripOther(resolvedHousehold)}
+        />
+        <SummaryRow label="Occupation" value={stripOther(resolvedOccupation)} />
+        <SummaryRow label="Education" value={values.education} />
+        <SummaryRow label="Religion" value={values.religion} />
+      </Section>
+
+      <Section title="Health Status & History">
+        <SummaryRow
+          label="Current health concerns"
+          value={stripOther(values.healthConcerns)}
+        />
+        <SummaryRow
+          label="Medical conditions"
+          value={stripOther(values.medicalConditions)}
+        />
+        <SummaryRow
+          label="Medications"
+          value={stripOther(resolvedMedications)}
+        />
+        <SummaryRow
+          label="Supplements"
+          value={stripOther(values.supplements)}
+        />
+        <SummaryRow label="Allergies" value={stripOther(values.allergies)} />
+        <SummaryRow
+          label="Family health history"
+          value={stripOther(values.familyHistory)}
+        />
+      </Section>
+
+      <Section title="Lifestyle & Habits">
+        <SummaryRow label="Exercise habits" value={resolvedExercise} />
+        <SummaryRow
+          label="Sleep quality"
+          value={values.sleepQuality ? String(values.sleepQuality) : ""}
+        />
+        <SummaryRow
+          label="Stress levels"
+          value={values.stressLevels ? String(values.stressLevels) : ""}
+        />
+        <SummaryRow
+          label="Energy levels"
+          value={values.energyLevels ? String(values.energyLevels) : ""}
+        />
+      </Section>
+
+      <Section title="Nutrition Habits">
+        <SummaryRow label="Decision maker" value={values.decisionMaker} />
+        <SummaryRow
+          label="Cook at home frequency"
+          value={values.cookFrequency}
+        />
+        <SummaryRow label="Takeout frequency" value={values.takeoutFrequency} />
+        <SummaryRow
+          label="Common foods"
+          value={stripOther(values.commonFoods)}
+        />
+        <SummaryRow label="Specific diet" value={values.dietDetails} />
+      </Section>
+
+      <Section title="Women’s Health">
+        <SummaryRow
+          label="Menstrual cycle status"
+          value={values.menstrualCycleStatus}
+        />
+        <SummaryRow
+          label="Hormone therapy"
+          value={fmtBool(values.hormoneTherapy)}
+        />
+        <SummaryRow
+          label="Fertility concerns"
+          value={values.fertilityConcerns}
+        />
+        <SummaryRow label="Birth control use" value={values.birthControlUse} />
+      </Section>
+
+      <Section title="Metabolic & Digestive Health">
+        <SummaryRow
+          label="Blood sugar concerns"
+          value={stripOther(values.bloodSugarConcern)}
+        />
+        <SummaryRow
+          label="Digestive issues"
+          value={stripOther(values.digestiveIssues)}
+        />
+        <SummaryRow label="Recent lab tests" value={values.recentLabTests} />
+
+        {values.labTestFiles?.map((file: any) => (
+          <div
+            key={file.filename}
+            className="px-3 py-1 flex items-center justify-between border border-[#DBDEE1] rounded-[8px]"
+          >
+            <div className="flex items-center gap-3">
+              <MaterialIcon iconName="picture_as_pdf" />
+              <span className="text-[14px] text-[#1D1D1F]">
+                {file.original_filename}
+              </span>
+            </div>
+          </div>
+        ))}
+      </Section>
+
+      <Section title="Drives & Goals">
+        <SummaryRow label="Goals" value={values.goals} />
+        <SummaryRow label="Why these goals" value={values.goalReason} />
+        <SummaryRow label="Urgency" value={values.urgency} />
+        <SummaryRow label="Approach preference" value={values.healthApproach} />
+      </Section>
+    </div>
+  );
+
+  if (!asDialog) {
+    return (
+      <div className="w-full rounded-[18px] border border-[#EAEAEA] p-6">
+        {content}
+      </div>
+    );
+  }
+
   return (
     <Dialog open={true} onOpenChange={onOpenChange}>
       <DialogContent showMobileBack={false} className="min-h-[80vh] w-[calc(100%-32px)] md:max-w-3xl gap-6 rounded-[18px] flex flex-col left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%]">
         <DialogTitle>Client Health Summary</DialogTitle>
-
-        <div className="max-h-[70vh] overflow-y-auto space-y-6 pr-2">
-          <Section title="Demographics">
-            <SummaryRow
-              label="Age"
-              value={values.age ? String(values.age) : ""}
-            />
-            <SummaryRow label="Gender" value={resolvedGender} />
-            {values.genderIdentity === "self_describe" && (
-              <SummaryRow
-                label="Self-description"
-                value={values.genderSelfDescribe}
-              />
-            )}
-            <SummaryRow
-              label="Sex assigned at birth"
-              value={resolvedBirthSex}
-            />
-            <SummaryRow label="Language" value={languagesSel} />
-            <SummaryRow label="Country of Residence" value={values.country} />
-          </Section>
-
-          <Section title="Social Factors">
-            <SummaryRow
-              label="Ethnicity"
-              value={stripOther(resolvedEthnicity)}
-            />
-            <SummaryRow
-              label="Household Type"
-              value={stripOther(resolvedHousehold)}
-            />
-            <SummaryRow
-              label="Occupation"
-              value={stripOther(resolvedOccupation)}
-            />
-            <SummaryRow label="Education" value={values.education} />
-            <SummaryRow label="Religion" value={values.religion} />
-          </Section>
-
-          <Section title="Health Status & History">
-            <SummaryRow
-              label="Current health concerns"
-              value={stripOther(values.healthConcerns)}
-            />
-            <SummaryRow
-              label="Medical conditions"
-              value={stripOther(values.medicalConditions)}
-            />
-            <SummaryRow
-              label="Medications"
-              value={stripOther(resolvedMedications)}
-            />
-            <SummaryRow
-              label="Supplements"
-              value={stripOther(values.supplements)}
-            />
-            <SummaryRow
-              label="Allergies"
-              value={stripOther(values.allergies)}
-            />
-            <SummaryRow
-              label="Family health history"
-              value={stripOther(values.familyHistory)}
-            />
-          </Section>
-
-          <Section title="Lifestyle & Habits">
-            <SummaryRow label="Exercise habits" value={resolvedExercise} />
-            <SummaryRow
-              label="Sleep quality"
-              value={values.sleepQuality ? String(values.sleepQuality) : ""}
-            />
-            <SummaryRow
-              label="Stress levels"
-              value={values.stressLevels ? String(values.stressLevels) : ""}
-            />
-            <SummaryRow
-              label="Energy levels"
-              value={values.energyLevels ? String(values.energyLevels) : ""}
-            />
-          </Section>
-
-          <Section title="Nutrition Habits">
-            <SummaryRow label="Decision maker" value={values.decisionMaker} />
-            <SummaryRow
-              label="Cook at home frequency"
-              value={values.cookFrequency}
-            />
-            <SummaryRow
-              label="Takeout frequency"
-              value={values.takeoutFrequency}
-            />
-            <SummaryRow
-              label="Common foods"
-              value={stripOther(values.commonFoods)}
-            />
-            <SummaryRow label="Specific diet" value={values.dietDetails} />
-          </Section>
-
-          <Section title="Women’s Health">
-            <SummaryRow
-              label="Menstrual cycle status"
-              value={values.menstrualCycleStatus}
-            />
-            <SummaryRow
-              label="Hormone therapy"
-              value={fmtBool(values.hormoneTherapy)}
-            />
-            <SummaryRow
-              label="Fertility concerns"
-              value={values.fertilityConcerns}
-            />
-            <SummaryRow
-              label="Birth control use"
-              value={values.birthControlUse}
-            />
-          </Section>
-
-          <Section title="Metabolic & Digestive Health">
-            <SummaryRow
-              label="Blood sugar concerns"
-              value={stripOther(values.bloodSugarConcern)}
-            />
-            <SummaryRow
-              label="Digestive issues"
-              value={stripOther(values.digestiveIssues)}
-            />
-            <SummaryRow
-              label="Recent lab tests"
-              value={values.recentLabTests}
-            />
-
-            {values.labTestFiles?.map((file: any) => (
-              <div
-                key={file.filename}
-                className="px-3 py-1 flex items-center justify-between border border-[#DBDEE1] rounded-[8px]"
-              >
-                <div className="flex items-center gap-3">
-                  <MaterialIcon iconName="picture_as_pdf" />
-                  <span className="text-[14px] text-[#1D1D1F]">
-                    {file.original_filename}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </Section>
-
-          <Section title="Drives & Goals">
-            <SummaryRow label="Goals" value={values.goals} />
-            <SummaryRow label="Why these goals" value={values.goalReason} />
-            <SummaryRow label="Urgency" value={values.urgency} />
-            <SummaryRow
-              label="Approach preference"
-              value={values.healthApproach}
-            />
-          </Section>
-        </div>
+        {content}
       </DialogContent>
     </Dialog>
   );

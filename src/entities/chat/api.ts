@@ -5,6 +5,8 @@ import { setChats } from "./chatsSlice";
 import { clearDownloadProgress } from "./downloadSlice";
 import { fileKeyFromUrl, toChatItem } from "./helpers";
 import {
+  AddMessageReactionPayload,
+  AddMessageReactionResponse,
   ChatFileUploadResponse,
   ChatItemModel,
   ChatNoteResponse,
@@ -275,6 +277,13 @@ export const chatApi = createApi({
       providesTags: (_r, _e, arg) => [{ type: "Files", id: arg.chatId }],
     }),
 
+    getUploadedChatFile: builder.query<Blob, { fileKey: string }>({
+      query: ({ fileKey }) => ({
+        url: API_ROUTES.CHAT.UPLOADED_FILE.replace("{filename}", fileKey),
+        responseHandler: (response) => response.blob(),
+      }),
+    }),
+
     getUploadedChatFileUrl: builder.query<string, { fileUrl: string }>({
       async queryFn({ fileUrl }, { signal, dispatch }) {
         try {
@@ -391,6 +400,36 @@ export const chatApi = createApi({
         method: "DELETE",
       }),
     }),
+
+    addMessageReaction: builder.mutation<
+      AddMessageReactionResponse,
+      AddMessageReactionPayload
+    >({
+      query: ({ chatId, messageId, reaction }) => ({
+        url: API_ROUTES.CHAT.ADD_REACTION.replace("{chat_id}", chatId).replace(
+          "{message_id}",
+          messageId
+        ),
+        method: "POST",
+        body: { reaction },
+      }),
+      invalidatesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
+    }),
+
+    deleteMessageReaction: builder.mutation<
+      AddMessageReactionResponse,
+      AddMessageReactionPayload
+    >({
+      query: ({ chatId, messageId, reaction }) => ({
+        url: API_ROUTES.CHAT.DELETE_REACTION.replace(
+          "{chat_id}",
+          chatId
+        ).replace("{message_id}", messageId),
+        method: "DELETE",
+        body: { reaction },
+      }),
+      invalidatesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
+    }),
   }),
 });
 
@@ -404,6 +443,7 @@ export const {
   useDeleteMessageMutation,
   useCreateGroupChatMutation,
   useUpdateGroupChatMutation,
+  useLazyGetUploadedChatFileQuery,
   useUploadChatFileMutation,
   useFetchAllFilesByChatIdQuery,
   useLazyFetchAllFilesByChatIdQuery,
@@ -413,4 +453,6 @@ export const {
   useGetAllChatNotesQuery,
   useUpdateChatNoteMutation,
   useDeleteChatNoteMutation,
+  useAddMessageReactionMutation,
+  useDeleteMessageReactionMutation,
 } = chatApi;
