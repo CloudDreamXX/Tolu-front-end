@@ -119,7 +119,22 @@ export interface ChatMessageModel {
   sender?: MessageUser;
   created_at: string;
   is_deleted?: boolean;
-  reactions?: any[];
+  reactions?: Reaction[];
+}
+
+export interface Reaction {
+  id: string;
+  reaction: string;
+  user: ReactionUser;
+  created_at: string;
+}
+
+export interface ReactionUser {
+  id: string;
+  name: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string;
 }
 
 export interface UpdateGroupChatPayload {
@@ -143,29 +158,30 @@ export interface ChatMessageModel {
   file_type: string | null;
   sender?: MessageUser;
   files?: UploadChatFileResponse[];
+  reactions?: Reaction[];
 }
 
 export type WebSocketMessage =
   | {
-      type: "new_message";
-      data: ChatMessageModel;
-    }
+    type: "new_message";
+    data: ChatMessageModel;
+  }
   | {
-      type: "message_deleted";
-      data: { messageId: string };
-    }
+    type: "message_deleted";
+    data: { messageId: string };
+  }
   | {
-      type: "chat_updated";
-      data: ChatUpdatedPayload;
-    }
+    type: "chat_updated";
+    data: ChatUpdatedPayload;
+  }
   | {
-      type: "pong";
-      data: any;
-    }
+    type: "pong";
+    data: any;
+  }
   | {
-      type: "content_share";
-      data: any;
-    };
+    type: "content_share";
+    data: any;
+  };
 
 export interface ChatUpdatedPayload {
   chat_id: string;
@@ -234,3 +250,18 @@ export interface UpdateChatNotePayload {
   };
   file?: File;
 }
+
+export interface AddMessageReactionPayload {
+  chatId: string;
+  messageId: string;
+  reaction: string;
+}
+
+export interface AddMessageReactionResponse {
+  id: string;
+  reaction: string;
+  user_id: string;
+  message_id: string;
+  created_at: string;
+}
+

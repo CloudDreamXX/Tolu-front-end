@@ -1,15 +1,21 @@
 import { ChatMessageModel } from "entities/chat";
-import React, { useRef, useState } from "react";
-import { cn, usePageWidth } from "shared/lib";
-import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
+import React, { useEffect, useRef, useState } from "react";
+import { cn, toast, usePageWidth } from "shared/lib";
+import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
 import { FileItem } from "widgets/file-item";
 import { toUserTZ } from "widgets/message-tabs/helpers";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import {
+  useAddMessageReactionMutation,
+  useDeleteMessageReactionMutation,
+} from "entities/chat/api";
+import { useSelector } from "react-redux";
+import { RootState } from "entities/store";
 
 interface MessageBubbleProps {
   message: ChatMessageModel;
+  chatId: string;
   avatar?: string;
   author?: string;
   isOnlaine?: boolean;
@@ -19,6 +25,7 @@ interface MessageBubbleProps {
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
+  chatId,
   avatar,
   author,
   isOnlaine = false,
@@ -26,7 +33,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   className = "",
 }) => {
   const [emojiModalOpen, setEmojiModalOpen] = useState(false);
-  const [reaction, setReaction] = useState<string | null>(null);
+  const [localReactions, setLocalReactions] = useState(message.reactions ?? []);
+
+  useEffect(() => {
+    setLocalReactions(message.reactions ?? []);
+  }, [message.reactions]);
+
+  const user = useSelector((state: RootState) => state.user.user)
+
+  const [addReaction] = useAddMessageReactionMutation();
+  const [deleteReaction] = useDeleteMessageReactionMutation();
 
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const [pickerPosition, setPickerPosition] = useState<{
@@ -87,12 +103,56 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       : author.slice(0, 2).toUpperCase()
     : "UN";
 
-  const handleAddReaction = (emoji: string) => {
-    // console.log("React to message:", message.id, emoji);
+  const handleReactionSelect = async (emoji: string) => {
+    const alreadyReacted = localReactions.some(
+      (reaction) =>
+        reaction.reaction === emoji &&
+        reaction.user.id === user?.id
+    );
 
-    // addReaction({ messageId: message.id, emoji })
+    try {
+      if (alreadyReacted) {
+        setLocalReactions((prev) =>
+          prev.filter(
+            (r) =>
+              !(
+                r.reaction === emoji &&
+                r.user.id === user?.id
+              )
+          )
+        );
 
-    setReaction((prev) => (prev === emoji ? null : emoji));
+        await deleteReaction({
+          chatId,
+          messageId: message.id,
+          reaction: emoji,
+        }).unwrap();
+      } else {
+        const optimisticReaction = {
+          id: crypto.randomUUID(),
+          reaction: emoji,
+          user: user!,
+          created_at: new Date().toISOString(),
+        };
+
+        setLocalReactions((prev) => [...prev, optimisticReaction]);
+
+        await addReaction({
+          chatId,
+          messageId: message.id,
+          reaction: emoji,
+        }).unwrap();
+      }
+
+      setEmojiModalOpen(false);
+    } catch {
+      setLocalReactions(message.reactions ?? []);
+
+      toast({
+        title: "Failed to update reaction",
+        variant: "destructive",
+      });
+    }
   };
 
   const hasTextSelection = () => {
@@ -202,11 +262,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           >
             {isFileMessage ? renderFileMessage() : renderTextMessage()}
 
-            {reaction && (
+            {localReactions && localReactions.length > 0 && (
               <div
-                className={`absolute -bottom-2 ${isOwn ? "-left-4" : "-right-4"} bg-white border border-gray-300 rounded-full p-1 w-[28px] h-[28px] flex items-center justify-center text-sm shadow`}
+                className={cn(
+                  "absolute -bottom-2 flex gap-1",
+                  isOwn ? "-left-4" : "-right-4"
+                )}
               >
-                {reaction}
+                {localReactions.map((emoji, index) => (
+                  <span key={`${emoji}-${index}`} className="text-sm flex bg-white border border-gray-300 rounded-full p-1 w-[30px] h-[30px] justify-center items-center shadow">
+                    {emoji.reaction}
+                  </span>
+                ))}
               </div>
             )}
 
@@ -221,7 +288,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 <Picker
                   data={data}
                   onEmojiSelect={(emoji: { native: string }) => {
-                    handleAddReaction(emoji.native);
+                    handleReactionSelect(emoji.native);
                   }}
                   onClickOutside={() => setEmojiModalOpen(false)}
                   theme="light"

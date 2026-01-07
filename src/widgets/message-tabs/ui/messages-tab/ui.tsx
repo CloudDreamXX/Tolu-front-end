@@ -457,7 +457,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   const containerStyleLg = {
-    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 396px)`,
+    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 316px)`,
   };
 
   let currentStyle = containerStyleLg;
@@ -554,8 +554,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             message={item.msg}
             avatar={chat.chat_type === "group" ? undefined : chat.avatar_url}
             isOwn={item.msg.sender?.email === profile?.email}
-            author={item.msg.sender?.name || (item.msg.sender?.first_name && item.msg.sender?.last_name && `${item.msg.sender?.first_name} ${item.msg.sender?.last_name}`) || "Unknown User"}
-          />
+            author={item.msg.sender?.name || (item.msg.sender?.first_name && item.msg.sender?.last_name && `${item.msg.sender?.first_name} ${item.msg.sender?.last_name}`) || "Unknown User"} chatId={chat.chat_id} />
         );
     }
   };
