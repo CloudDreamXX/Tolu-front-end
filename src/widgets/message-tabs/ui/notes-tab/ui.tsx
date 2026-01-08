@@ -36,7 +36,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
     open,
     clear,
   } = useFilePicker({
-    accept: ["application/pdf", "image/jpeg", "image/png"],
+    accept: ["application/pdf", "image/jpeg", "image/png", "video/mp4"],
     maxFiles: 1,
     maxFileSize: 10 * 1024 * 1024,
   });
@@ -277,28 +277,39 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
                       Attached Files:
                     </p>
                     <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
-                      {items.map((file) => (
-                        <div key={file.id} className="flex items-center gap-2">
+                      {items.map((item) => (
+                        <div key={item.id} className="flex items-center gap-3">
+                          {item.isVideo && item.previewUrl && (
+                            <video
+                              src={item.previewUrl}
+                              className="w-[80px] h-[50px] rounded object-cover"
+                              controls
+                            />
+                          )}
+
+                          {item.isImage && item.previewUrl && (
+                            <img
+                              src={item.previewUrl}
+                              className="w-[50px] h-[50px] rounded object-cover"
+                            />
+                          )}
+
                           <div className="flex flex-col items-start">
-                            <span className="text-sm text-[#4B5563] text-nowrap max-w-20 truncate">
-                              {file.file.name}
+                            <span className="text-sm text-[#4B5563] truncate max-w-20">
+                              {item.file.name}
                             </span>
                             <span className="text-xs text-[#6B7280]">
-                              {(file.file.size / 1024).toFixed(1)} KB
+                              {(item.file.size / 1024).toFixed(1)} KB
                             </span>
                           </div>
+
                           <Button
-                            variant={"unstyled"}
-                            size={"unstyled"}
-                            onClick={() => remove(file.id)}
-                            className="text-sm text-red-500 hover:text-red-700"
-                            title="Remove File"
+                            variant="unstyled"
+                            size="unstyled"
+                            onClick={() => remove(item.id)}
+                            className="text-red-500"
                           >
-                            <MaterialIcon
-                              iconName="delete"
-                              className="w-5 h-5 "
-                              fill={1}
-                            />
+                            <MaterialIcon iconName="delete" fill={1} />
                           </Button>
                         </div>
                       ))}

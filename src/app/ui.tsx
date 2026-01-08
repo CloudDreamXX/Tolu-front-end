@@ -12,7 +12,6 @@ import { ChatSocketService } from "entities/chat";
 export const App: React.FC = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state: RootState) => state.user.isLoading);
-  // const userId = useSelector((state: RootState) => state.user.user?.id);
   const { data: user } = useGetUserProfileQuery();
 
   useEffect(() => {

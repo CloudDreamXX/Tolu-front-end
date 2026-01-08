@@ -61,6 +61,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     ".jpeg",
     ".gif",
     ".txt",
+    ".mp4",
   ],
   maxFiles = 10,
   hideFromLibrary = false,

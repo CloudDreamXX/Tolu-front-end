@@ -79,7 +79,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     clear,
     setFiles,
   } = useFilePicker({
-    accept: ["application/pdf", "image/jpeg", "image/png"],
+    accept: ["application/pdf", "image/jpeg", "image/png", "video/mp4"],
     maxFileSize: 10 * 1024 * 1024,
   });
 

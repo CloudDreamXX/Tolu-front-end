@@ -284,6 +284,19 @@ export const chatApi = createApi({
       }),
     }),
 
+    getUploadedNoteFile: builder.query<
+      Blob,
+      { userId: string; fileKey: string }
+    >({
+      query: ({ userId, fileKey }) => ({
+        url: API_ROUTES.CHAT.UPLOADED_NOTE_FILE.replace(
+          "{user_id}",
+          userId
+        ).replace("{filename}", fileKey),
+        responseHandler: (response) => response.blob(),
+      }),
+    }),
+
     getUploadedChatFileUrl: builder.query<string, { fileUrl: string }>({
       async queryFn({ fileUrl }, { signal, dispatch }) {
         try {
@@ -444,6 +457,7 @@ export const {
   useCreateGroupChatMutation,
   useUpdateGroupChatMutation,
   useLazyGetUploadedChatFileQuery,
+  useLazyGetUploadedNoteFileQuery,
   useUploadChatFileMutation,
   useFetchAllFilesByChatIdQuery,
   useLazyFetchAllFilesByChatIdQuery,

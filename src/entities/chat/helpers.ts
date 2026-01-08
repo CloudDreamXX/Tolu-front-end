@@ -14,11 +14,20 @@ export const toChatItem = (s: ServerChatItemModel): ChatItemModel => ({
 
 export function fileKeyFromUrl(input: string): string {
   if (!input) return "";
+
   try {
     const last = input.split("/").pop() || input;
-    return last.split("?")[0].split("#")[0].toLowerCase().trim();
+    const clean = last.split("?")[0].split("#")[0];
+
+    return clean
+      .replace(/\.mp4$/i, "")
+      .toLowerCase()
+      .trim();
   } catch {
-    return input.toLowerCase().trim();
+    return input
+      .replace(/\.mp4$/i, "")
+      .toLowerCase()
+      .trim();
   }
 }
 

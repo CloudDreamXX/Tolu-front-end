@@ -194,6 +194,7 @@ export const API_ROUTES = {
     DELETE_CHAT: "/chat/{chat_id}",
     ADD_REACTION: "/chats/{chat_id}/messages/{message_id}/reactions",
     DELETE_REACTION: "/chats/{chat_id}/messages/{message_id}/reactions",
+    UPLOADED_NOTE_FILE: "/uploads/{user_id}/{filename}",
   },
   NOTIFICATIONS: {
     GET_NOTIFICATIONS: "/notifications",

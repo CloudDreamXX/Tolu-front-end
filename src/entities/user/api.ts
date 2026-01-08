@@ -316,6 +316,7 @@ export const {
   useLazyGetOnboardClientQuery,
   useGetOnboardClientQuery,
   useGetUserProfileQuery,
+  useLazyGetUserProfileQuery,
   useUpdateProfileMutation,
   useDeleteAccountMutation,
   useChangePasswordMutation,

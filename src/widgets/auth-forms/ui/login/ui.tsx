@@ -11,6 +11,7 @@ import {
   useLazyGetOnboardClientQuery,
   useLazyGetOnboardingStatusQuery,
   useLazyGetOnboardingUserQuery,
+  setUserId,
 } from "entities/user";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -26,6 +27,7 @@ import { mapOnboardClientToFormState } from "entities/store/helpers";
 import { findIncompleteClientField } from "widgets/OnboardingClient/DemographicStep/helpers";
 import { usePageWidth } from "shared/lib";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "shared/ui/input-otp";
+import { useLazyGetUserProfileQuery } from "entities/user";
 
 export const LoginForm = () => {
   const [login] = useLoginMutation();
@@ -37,6 +39,7 @@ export const LoginForm = () => {
   const [triggerGetOnboardingStatus] = useLazyGetOnboardingStatusQuery();
   const [triggerGetOnboardClient] = useLazyGetOnboardClientQuery();
   const [triggerGetOnboardingUser] = useLazyGetOnboardingUserQuery();
+  const [getUserProfile] = useLazyGetUserProfileQuery();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -217,6 +220,15 @@ export const LoginForm = () => {
       }).unwrap();
 
       dispatch(setCredentials(response));
+
+      try {
+        const profile = await getUserProfile().unwrap();
+
+        dispatch(setUserId(profile.id));
+      } catch (err) {
+        console.error("Failed to fetch user profile", err);
+      }
+
       toast({ title: "Login successful", description: "Welcome back!" });
 
       if (response.user.roleName === "Client") {

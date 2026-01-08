@@ -43,6 +43,7 @@ export const FilesLibrary = () => {
         "image/jpeg",
         "image/png",
         "text/plain",
+        "video/mp4",
       ],
       maxFiles: 10,
     });

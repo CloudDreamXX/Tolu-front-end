@@ -53,7 +53,7 @@ export const CreateGroupModal = ({
     dragOver,
     remove,
   } = useFilePicker({
-    accept: ["image/png", "image/jpeg", "application/pdf", ".pdf"],
+    accept: ["image/png", "image/jpeg", "application/pdf", ".pdf", "video/mp4"],
   });
   const [selectedOption, setSelectedOption] = useState<string[]>(
     chat?.participants.map((p) => p.user.name || "") || []

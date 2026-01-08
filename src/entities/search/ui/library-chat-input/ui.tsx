@@ -189,7 +189,7 @@ export const LibraryChatInput: React.FC<LibraryChatInputProps> = ({
               files={files}
               setFiles={setFiles}
               hideFromLibrary
-              fileExtensions={[".pdf", ".png", ".jpg", ".jpeg", ".gif"]}
+              fileExtensions={[".pdf", ".png", ".jpg", ".jpeg", ".gif", ".mp4"]}
               title="Attach files"
               description="Add credible references to support information integrity"
               customTrigger={

@@ -6,6 +6,7 @@ export type PickItem = {
   previewUrl?: string;
   isImage: boolean;
   isPdf: boolean;
+  isVideo: boolean;
 };
 
 export interface UseFilePickerOptions {
@@ -19,7 +20,7 @@ const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 
 export function useFilePicker(opts: UseFilePickerOptions = {}) {
   const {
-    accept = ["application/pdf", "image/jpeg", "image/png"],
+    accept = ["application/pdf", "image/jpeg", "image/png", "video/mp4"],
     maxFiles,
     maxFileSize,
     dedupe = true,
@@ -61,9 +62,21 @@ export function useFilePicker(opts: UseFilePickerOptions = {}) {
     const isPdf =
       file.type === "application/pdf" ||
       file.name.toLowerCase().endsWith(".pdf");
+
     const isImage = file.type.startsWith("image/");
-    const previewUrl = isImage ? URL.createObjectURL(file) : undefined;
-    return { id: uid(), file, isImage, isPdf, previewUrl };
+    const isVideo = file.type === "video/mp4";
+
+    const previewUrl =
+      isImage || isVideo ? URL.createObjectURL(file) : undefined;
+
+    return {
+      id: uid(),
+      file,
+      isImage,
+      isPdf,
+      isVideo,
+      previewUrl,
+    };
   };
 
   const makeItems = (files: File[]): PickItem[] => {
