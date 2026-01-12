@@ -58,16 +58,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   return (
     <div style={{ all: "revert", fontFamily: "'Inter', sans-serif" }}>
       <div
-        className={`flex ${
-          message.type === "user" ? "justify-end" : "justify-start"
-        }`}
+        className={`flex ${message.type === "user" ? "justify-end" : "justify-start"
+          }`}
       >
         <div
-          className={`w-full ${
-            message.type === "user"
-              ? "order-2 max-w-[50%]"
-              : "order-1 w-full md:max-w-[80%]"
-          }`}
+          className={`w-full ${message.type === "user"
+            ? "order-2 max-w-[50%]"
+            : "order-1 w-full md:max-w-[80%]"
+            }`}
         >
           {message.type === "user" ? (
             <div className="flex flex-col justify-end w-full">
@@ -150,71 +148,71 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               >
                 {selectedSwitch === "Coach Assistant"
                   ? (() => {
-                      let updatedContent = message.content;
+                    let updatedContent = message.content;
 
-                      updatedContent = updatedContent.replace(
-                        /<header([^>]*)style="([^"]*?)"/gi,
-                        (match, attrs, style) => {
-                          let newStyle = style;
+                    updatedContent = updatedContent.replace(
+                      /<header([^>]*)style="([^"]*?)"/gi,
+                      (match, attrs, style) => {
+                        let newStyle = style;
 
-                          if (/align-items\s*:\s*center/.test(newStyle)) {
-                            newStyle = newStyle.replace(
-                              /align-items\s*:\s*center/gi,
-                              "align-items:flex-start"
-                            );
-                          } else if (!/align-items\s*:/.test(newStyle)) {
-                            newStyle += ";align-items:flex-start";
-                          }
-
-                          return `<header${attrs}style="${newStyle}"`;
-                        }
-                      );
-
-                      updatedContent = updatedContent.replace(
-                        /<header\b[^>]*>([\s\S]*?)<\/header>/gi,
-                        (match, inner) => {
-                          const modifiedInner = inner.replace(
-                            /<div\s+style="([^"]*?)"/i,
-                            (divMatch: any, style: string) => {
-                              if (/flex-shrink\s*:\s*0/.test(style))
-                                return divMatch;
-                              const newStyle = `${style};flex-shrink:0;`;
-                              return `<div style="${newStyle}"`;
-                            }
+                        if (/align-items\s*:\s*center/.test(newStyle)) {
+                          newStyle = newStyle.replace(
+                            /align-items\s*:\s*center/gi,
+                            "align-items:flex-start"
                           );
-                          const headerAttrs =
-                            match.match(/<header([^>]*)>/i)?.[1] || "";
-                          return `<header${headerAttrs}>${modifiedInner}</header>`;
+                        } else if (!/align-items\s*:/.test(newStyle)) {
+                          newStyle += ";align-items:flex-start";
                         }
-                      );
 
-                      updatedContent = updatedContent.replace(
-                        /<footer([^>]*)style="([^"]*?)"/gi,
-                        (match, attrs, style) => {
-                          let newStyle = style;
+                        return `<header${attrs}style="${newStyle}"`;
+                      }
+                    );
 
-                          if (/display\s*:\s*flex/.test(newStyle)) {
-                            if (!/flex-direction\s*:/.test(newStyle)) {
-                              newStyle += ";flex-direction:column";
-                            } else {
-                              newStyle = newStyle.replace(
-                                /flex-direction\s*:\s*[^;]+/gi,
-                                "flex-direction:column"
-                              );
-                            }
+                    updatedContent = updatedContent.replace(
+                      /<header\b[^>]*>([\s\S]*?)<\/header>/gi,
+                      (match, inner) => {
+                        const modifiedInner = inner.replace(
+                          /<div\s+style="([^"]*?)"/i,
+                          (divMatch: any, style: string) => {
+                            if (/flex-shrink\s*:\s*0/.test(style))
+                              return divMatch;
+                            const newStyle = `${style};flex-shrink:0;`;
+                            return `<div style="${newStyle}"`;
                           }
+                        );
+                        const headerAttrs =
+                          match.match(/<header([^>]*)>/i)?.[1] || "";
+                        return `<header${headerAttrs}>${modifiedInner}</header>`;
+                      }
+                    );
 
-                          return `<footer${attrs}style="${newStyle}"`;
+                    updatedContent = updatedContent.replace(
+                      /<footer([^>]*)style="([^"]*?)"/gi,
+                      (match, attrs, style) => {
+                        let newStyle = style;
+
+                        if (/display\s*:\s*flex/.test(newStyle)) {
+                          if (!/flex-direction\s*:/.test(newStyle)) {
+                            newStyle += ";flex-direction:column";
+                          } else {
+                            newStyle = newStyle.replace(
+                              /flex-direction\s*:\s*[^;]+/gi,
+                              "flex-direction:column"
+                            );
+                          }
                         }
-                      );
 
-                      return (
-                        <div
-                          className="message-content"
-                          dangerouslySetInnerHTML={{ __html: updatedContent }}
-                        />
-                      );
-                    })()
+                        return `<footer${attrs}style="${newStyle}"`;
+                      }
+                    );
+
+                    return (
+                      <div
+                        className="message-content"
+                        dangerouslySetInnerHTML={{ __html: updatedContent }}
+                      />
+                    );
+                  })()
                   : renderedContent}
                 {message.document && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2  pb-[10px]">

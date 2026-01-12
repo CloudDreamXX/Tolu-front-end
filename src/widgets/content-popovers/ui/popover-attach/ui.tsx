@@ -102,6 +102,17 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   );
 
   useEffect(() => {
+    const noUploadedFiles = !files || files.length === 0;
+    const noLibraryFiles = filesFromLibrary.length === 0;
+
+    if (noUploadedFiles && noLibraryFiles) {
+      setAttachedFiles([]);
+      setSelectedFiles(new Set());
+      setViewingFolder(null);
+    }
+  }, [files, filesFromLibrary]);
+
+  useEffect(() => {
     if (attachedFiles.length && setFiles) {
       setFiles(attachedFiles.map((file) => file.file));
     }
@@ -197,6 +208,8 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   const handleReturnToRoot = () => {
     setViewingFolder(null);
   };
+
+  console.log(attachedFiles)
 
   const renderUpload = () => (
     <>
@@ -443,7 +456,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <MaterialIcon iconName="attach_file" />
           {attachedFiles.length > 0 ||
-          (existingFiles && existingFiles?.length > 0)
+            (existingFiles && existingFiles?.length > 0)
             ? "Sources"
             : (title ?? "Attach files to folder")}
         </h4>

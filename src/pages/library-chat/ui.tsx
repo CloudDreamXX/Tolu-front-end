@@ -831,8 +831,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 ? undefined
                 : currentChatId,
               text_quote: textForInput,
-              library_files: filesFromLibrary,
             }),
+            libraryFiles: filesFromLibrary,
             images,
             pdf,
             contentId: documentId,
@@ -856,8 +856,8 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
                 ? undefined
                 : currentChatId,
               text_quote: textForInput,
-              library_files: filesFromLibrary,
             }),
+            libraryFiles: filesFromLibrary,
             images,
             pdf,
             contentId: documentId,

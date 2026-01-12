@@ -47,9 +47,8 @@ export const searchApi = createApi({
         if (params.managed_client_id)
           searchParams.append("managed_client_id", params.managed_client_id);
 
-        return `/searched-result/history${
-          searchParams.toString() ? `?${searchParams.toString()}` : ""
-        }`;
+        return `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""
+          }`;
       },
       transformResponse: (response: { history: SearchHistoryResponse[] }) => {
         return response.history.map((item) => ({
@@ -208,7 +207,8 @@ export class SearchService {
         searchData.clientId,
         searchData.images,
         searchData.pdf,
-        searchData.contentId
+        searchData.contentId,
+        searchData.libraryFiles,
       );
 
       const user = localStorage.getItem("persist:user");
@@ -309,7 +309,8 @@ export class SearchService {
         searchData.clientId,
         searchData.images,
         searchData.pdf,
-        searchData.contentId
+        searchData.contentId,
+        searchData.libraryFiles,
       );
 
       const user = localStorage.getItem("persist:user");
