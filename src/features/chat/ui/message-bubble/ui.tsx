@@ -112,10 +112,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 ))}
                 {message.content}
                 {!!message.images?.length && (
-                  <div
-                    className={`mt-2 grid gap-2 grid-cols-1
-                      `}
-                  >
+                  <div className="mt-2 grid gap-2 grid-cols-1">
                     {message.images.map((src, idx) => (
                       <a
                         key={src + idx}
@@ -130,6 +127,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                           alt={`uploaded-${idx + 1}`}
                           className="w-full h-32 object-cover rounded-lg border border-[#E5E7EB]"
                           loading="lazy"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            target.style.display = "none";
+                            target.parentElement?.remove();
+                          }}
                         />
                       </a>
                     ))}
