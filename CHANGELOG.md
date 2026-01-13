@@ -4,6 +4,7 @@
 
 - Fix reading of library file in AI bots.
 - Fix attached files being cleared when opening a new chat.
+- Fix coach onboarding empty values.
 
 ## [1.8.0] - 2026-01-07
 
