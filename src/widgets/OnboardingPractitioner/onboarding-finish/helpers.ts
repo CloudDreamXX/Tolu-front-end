@@ -51,7 +51,7 @@ const LABEL: Record<keyof CoachOnboardingState, string> = {
 
 const REQUIRED_BY_ROUTE: Record<string, (keyof CoachOnboardingState)[]> = {
   "/select-type": ["practitioner_types"],
-  "/onboarding-welcome": ["expertise_areas"],
+  "/onboarding-welcome": ["primary_niches"],
   "/about-your-practice": [
     "school",
     "recent_client_count",
@@ -62,7 +62,7 @@ const REQUIRED_BY_ROUTE: Record<string, (keyof CoachOnboardingState)[]> = {
     "name",
     "alternate_name",
     "bio",
-    "gender",
+    // "gender",
     "timezone",
     "age",
   ],
@@ -87,13 +87,13 @@ export function findFirstIncompleteStep(state: CoachOnboardingState) {
       }
     }
 
-    if (route === "/about-your-practice") {
-      const oneFile = !isBlank(state.license_certificate_file);
-      const manyFiles = !isBlank(state.license_certificate_files);
-      if (!oneFile && !manyFiles) {
-        missing.push("License/certificate file(s)");
-      }
-    }
+    // if (route === "/about-your-practice") {
+    //   const oneFile = !isBlank(state.license_certificate_file);
+    //   const manyFiles = !isBlank(state.license_certificate_files);
+    //   if (!oneFile && !manyFiles) {
+    //     missing.push("License/certificate file(s)");
+    //   }
+    // }
 
     if (missing.length > 0) return { route, missing };
   }

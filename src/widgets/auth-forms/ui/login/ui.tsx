@@ -178,6 +178,7 @@ export const LoginForm = () => {
       dispatch(setCoachOnboardingData(coachData));
 
       const issue = findFirstIncompleteStep(coachData);
+      console.log(issue)
       if (issue) navigate(issue.route);
       else navigate("/content-manager/create");
     } catch (err: any) {

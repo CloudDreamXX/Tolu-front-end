@@ -59,8 +59,8 @@ export const mapUserToCoachOnboarding = (coach: UserOnboardingInfo) => {
     primary_niches: practitioner_info.niches || [],
     school: practitioner_info.school || "",
     recent_client_count: practitioner_info.recent_clients || "",
-    target_client_count: practitioner_info.target_targets || "",
-    uses_labs_supplements: practitioner_info.uses_labs_supplements
+    target_client_count: practitioner_info.target_clients || "",
+    uses_labs_supplements: practitioner_info.uses_labs_supplements !== null
       ? "Yes"
       : "No",
 
@@ -87,5 +87,6 @@ export const mapUserToCoachOnboarding = (coach: UserOnboardingInfo) => {
     email: profile.basic_info.email || "",
     bio: profile.basic_info.bio || "",
     languages: profile.basic_info.languages || [],
+    timezone: profile.basic_info.timezone || "",
   };
 };
