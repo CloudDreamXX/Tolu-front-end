@@ -15,6 +15,13 @@ import {
   useChangePasswordMutation,
   useLazyDownloadProfilePhotoQuery,
 } from "entities/user";
+import {
+  useDismissNotificationsMutation,
+  useGetNotificationPreferencesQuery,
+  useGetNotificationsQuery,
+  useGetUnreadCountQuery,
+  useMarkNotificationAsReadMutation,
+} from "entities/notifications";
 
 export const ContentManagerProfile = () => {
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
@@ -32,6 +39,21 @@ export const ContentManagerProfile = () => {
   const [downloadProfilePhoto] = useLazyDownloadProfilePhotoQuery();
   const [changePassword] = useChangePasswordMutation();
   const { data: user } = useGetOnboardingUserQuery();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const { data: notifications, refetch: refetchNotifications } =
+    useGetNotificationsQuery({
+      page: 1,
+      limit: 20,
+      unread_only: false,
+      type_filter: null,
+    });
+  const { data: unreadCount, refetch: refetchUnreadCount } =
+    useGetUnreadCountQuery();
+  const { refetch: refetchNotificationPreferences } =
+    useGetNotificationPreferencesQuery();
+  const [markNotificationAsRead] = useMarkNotificationAsReadMutation();
+  const [dismissNotification] = useDismissNotificationsMutation();
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
@@ -57,6 +79,37 @@ export const ContentManagerProfile = () => {
       );
     };
   }, []);
+
+  const handleNotificationAction = async (
+    notificationId: string,
+    action: "read" | "dismiss"
+  ) => {
+    try {
+      if (action === "read") {
+        await markNotificationAsRead({ notification_ids: [notificationId] });
+      } else {
+        await dismissNotification(notificationId);
+      }
+    } catch (error) {
+      console.error("Failed to update notification", error);
+    }
+  };
+
+  const togglePopup = () => {
+    setIsPopupOpen((prev) => !prev);
+    if (!isPopupOpen) {
+      refetchNotifications();
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}.${month}.${year}`;
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -373,14 +426,83 @@ export const ContentManagerProfile = () => {
               <MaterialIcon iconName="edit_square" size={20} /> Edit
             </Button>
           </div>
-          <Button
-            variant={"brightblue"}
-            className="hidden lg:flex w-full md:w-[166px] justify-center"
-            onClick={() => setEditModalOpen(true)}
-          >
-            <MaterialIcon iconName="edit_square" size={20} /> Edit
-          </Button>
+          <div className="flex gap-[24px] items-center">
+            <Button variant={"unstyled"} size={"unstyled"} className="flex items-center justify-center" onClick={togglePopup}>
+              <MaterialIcon iconName="notifications" fill={1} />
+              {unreadCount > 0 && (
+                <span className="absolute flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full top-1 right-4">
+                  {unreadCount}
+                </span>
+              )}
+            </Button>
+            <Button
+              variant={"brightblue"}
+              className="hidden lg:flex w-full md:w-[166px] justify-center"
+              onClick={() => setEditModalOpen(true)}
+            >
+              <MaterialIcon iconName="edit_square" size={20} /> Edit
+            </Button>
+          </div>
         </div>
+
+        {isPopupOpen && (
+          <div className="absolute p-4 overflow-y-auto bg-white shadow-md top-16 right-4 rounded-xl w-96 max-h-96 z-[999]">
+            <div className="flex justify-between mb-2">
+              <h4 className="text-lg font-semibold">Notifications</h4>
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
+                onClick={togglePopup}
+                className="text-gray-600"
+              >
+                Close
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {notifications?.length ? (
+                notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className="flex flex-col justify-between gap-[16px] p-3 border-b border-gray-200 rounded-md"
+                  >
+                    <div className="flex flex-col">
+                      <p className="text-sm font-medium text-gray-800">
+                        {notification.message}
+                      </p>
+                      <span className="text-xs text-gray-500">
+                        {formatDate(notification.created_at)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant={"unstyled"}
+                        size={"unstyled"}
+                        onClick={() =>
+                          handleNotificationAction(notification.id, "read")
+                        }
+                        className="text-xs text-white bg-[#1C63DB] p-[8px] rounded-[8px]"
+                      >
+                        Mark as read
+                      </Button>
+                      <Button
+                        variant={"unstyled"}
+                        size={"unstyled"}
+                        onClick={() =>
+                          handleNotificationAction(notification.id, "dismiss")
+                        }
+                        className="text-xs text-black bg-[#D5DAE2] p-[8px] rounded-[8px]"
+                      >
+                        Dismiss
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No new notifications</p>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px] md:gap-[24px]">
           <Card>
@@ -395,7 +517,7 @@ export const ContentManagerProfile = () => {
               <div className="flex flex-col w-full gap-2.5">
                 <p className="text-[#1D1D1F] text-2xl font-bold">
                   {user?.profile.basic_info.first_name &&
-                  user?.profile.basic_info.last_name
+                    user?.profile.basic_info.last_name
                     ? `${user?.profile.basic_info.first_name} ${user?.profile.basic_info.last_name}`
                     : user?.profile.basic_info.name || ""}
                   ,{" "}
