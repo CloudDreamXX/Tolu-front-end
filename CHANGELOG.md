@@ -1,3 +1,11 @@
+## [1.9.0] - 2026-01-16
+
+### New feature
+
+- Add notifications to the coach profile.
+- Add amount of unread messages to the sidebar messages tab.
+- Fix GET /chats and GET /chats/{chat_id} 500 and 403 error.
+
 ## [1.8.1] - 2026-01-13
 
 ### Fixes & Minor Changes

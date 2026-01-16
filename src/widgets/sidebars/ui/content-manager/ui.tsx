@@ -22,6 +22,7 @@ import {
 } from "entities/client/lib";
 import { useSignOutMutation } from "entities/user";
 import { RootState } from "entities/store";
+import { useFetchAllChatsQuery } from "entities/chat";
 
 export const ContentManagerSidebar: React.FC = () => {
   const nav = useNavigate();
@@ -34,6 +35,13 @@ export const ContentManagerSidebar: React.FC = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const user = useSelector((state: RootState) => state.user.user);
   const [signOut] = useSignOutMutation();
+
+  const { data: chats } = useFetchAllChatsQuery();
+
+  const totalUnreadCount = chats?.reduce(
+    (sum, chat) => sum + (chat.unreadCount ?? 0),
+    0
+  ) ?? 0;
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -201,13 +209,20 @@ export const ContentManagerSidebar: React.FC = () => {
                 )}
               >
                 {links.map((link) => (
-                  <CustomNavLink
-                    key={link.title}
-                    item={link}
-                    isNarrow={!sidebarOpen}
-                    setOpenSidebar={setSidebarOpen}
-                    hideArrow
-                  />
+                  <div className="relative">
+                    <CustomNavLink
+                      key={link.title}
+                      item={link}
+                      isNarrow={!sidebarOpen}
+                      setOpenSidebar={setSidebarOpen}
+                      hideArrow
+                    />
+                    {link.title === "Messages" && totalUnreadCount > 0 && (
+                      <span className="absolute top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">
+                        {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
+                      </span>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
@@ -216,7 +231,7 @@ export const ContentManagerSidebar: React.FC = () => {
         <Button
           variant={"unstyled"}
           size={"unstyled"}
-          onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
+          onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
           className={`flex gap-4 items-center ${sidebarOpen ? "px-4 justify-between" : "justify-center"}`}
         >
           <Avatar className="mr-[20px]">
