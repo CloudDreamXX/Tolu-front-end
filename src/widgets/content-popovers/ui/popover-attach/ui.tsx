@@ -209,8 +209,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     setViewingFolder(null);
   };
 
-  console.log(attachedFiles)
-
   const renderUpload = () => (
     <>
       {attachedFiles.length > 0 && (
