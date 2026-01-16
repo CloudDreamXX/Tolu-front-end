@@ -26,7 +26,7 @@ export const symptomsTrackerApi = createApi({
         const formData = new FormData();
         formData.append("symptom_data", JSON.stringify(data));
         if (photo) formData.append("photo", photo);
-        if (voice) formData.append("voice_note", voice);
+        if (voice) formData.append("audio_note", voice);
 
         return {
           url: API_ROUTES.SYMPTOMS_TRACKER.POST_SYMPTOMS,
@@ -48,7 +48,7 @@ export const symptomsTrackerApi = createApi({
         const formData = new FormData();
         formData.append("symptom_data", JSON.stringify(data));
         if (photo) formData.append("photo", photo);
-        if (voice) formData.append("voice_note", voice);
+        if (voice) formData.append("audio_note", voice);
 
         return {
           url: API_ROUTES.SYMPTOMS_TRACKER.PUT_SYMPTOMS.replace(
