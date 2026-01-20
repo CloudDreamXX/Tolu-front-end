@@ -62,7 +62,7 @@ export const BasicInformationForm = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-y-auto">
       <p className="text-sm text-gray-500">
         Tell us about any key health conditions or goals you'd like to track.
         This helps us personalize your insights and recommendations.

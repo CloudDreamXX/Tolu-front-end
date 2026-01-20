@@ -273,7 +273,7 @@ export const ContentManagerMessages: React.FC = () => {
         />
 
         <MessageTabs
-          chatId={selectedChat?.id || routeChatId || undefined}
+          chatId={selectedChat?.id || undefined}
           goBackMobile={() => setSelectedChat(null)}
           clientsData={clientsData}
           onEditGroup={openEditGroup}

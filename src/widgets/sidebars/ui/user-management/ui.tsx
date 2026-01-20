@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { sideBarContent } from "./lib";
+import { useFetchAllChatsQuery } from "entities/chat";
 
 export const UserManagementSideBar: React.FC = () => {
   const location = useLocation();
@@ -16,6 +17,11 @@ export const UserManagementSideBar: React.FC = () => {
     folderId: string;
     documentId: string;
   }>();
+
+  const { data: chats } = useFetchAllChatsQuery();
+
+  const totalUnreadCount =
+    chats?.reduce((sum, chat) => sum + (chat.unreadCount ?? 0), 0) ?? 0;
 
   useEffect(() => {
     const pathSegments = location.pathname.split("/");
@@ -51,7 +57,7 @@ export const UserManagementSideBar: React.FC = () => {
           className={`flex flex-col ${isNarrow ? "items-center" : "items-start"}`}
         >
           {links.map((link) => (
-            <div key={link.title} className="flex flex-col w-full">
+            <div key={link.title} className="flex flex-col w-full relative">
               <NavLink
                 to={link.link || "/"}
                 className={({ isActive }) =>
@@ -91,6 +97,11 @@ export const UserManagementSideBar: React.FC = () => {
                     className="ml-auto min-w-6"
                   />
                 </NavLink>
+              )}
+              {link.title === "Messages" && totalUnreadCount > 0 && (
+                <span className="absolute top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">
+                  {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
+                </span>
               )}
             </div>
           ))}

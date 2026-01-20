@@ -209,8 +209,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
     setViewingFolder(null);
   };
 
-  console.log(attachedFiles)
-
   const renderUpload = () => (
     <>
       {attachedFiles.length > 0 && (
@@ -456,7 +454,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <MaterialIcon iconName="attach_file" />
           {attachedFiles.length > 0 ||
-            (existingFiles && existingFiles?.length > 0)
+          (existingFiles && existingFiles?.length > 0)
             ? "Sources"
             : (title ?? "Attach files to folder")}
         </h4>

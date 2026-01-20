@@ -132,7 +132,7 @@ export const NutritionHabitsForm = ({ form }: { form: any }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-y-auto">
       <p className="text-sm text-gray-500">
         Share key information related to your menstrual cycle, reproductive
         health, and hormonal patterns.

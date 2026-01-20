@@ -161,7 +161,7 @@ export const DrivesAndGoalsForm = ({ form }: { form: any }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-y-auto">
       <p className="text-sm text-gray-500">
         Tell us what you’re aiming for—whether it’s better energy, hormonal
         balance, or weight management.

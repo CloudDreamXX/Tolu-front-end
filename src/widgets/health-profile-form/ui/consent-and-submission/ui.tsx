@@ -13,13 +13,13 @@ import z from "zod";
 
 export const consentSubmissionSchema = z.object({
   agreeToPrivacy: z.boolean().optional(),
-  followUpMethod: z.string().optional(),
+  followUpRecommendation: z.string().optional(),
   phoneNumber: z.string().optional(),
   countryCode: z.string().optional(),
 });
 
 export const ConsentSubmissionForm = ({ form }: { form: any }) => {
-  // const watchFollowUp = form.watch("followUpMethod");
+  // const watchFollowUp = form.watch("followUpRecommendation");
   // const [countryCode, setCountryCode] = useState("+1");
 
   return (
@@ -64,7 +64,7 @@ export const ConsentSubmissionForm = ({ form }: { form: any }) => {
 
       <FormField
         control={form.control}
-        name="followUpMethod"
+        name="followUpRecommendation"
         render={({ field }) => (
           <FormItem>
             <FormLabel>
