@@ -1,3 +1,11 @@
+## [2.0.0] - 2026-01-20
+
+### New feature
+
+- Add abillity for the coach to edit client's health history.
+- Add coach input for client's health history.
+- Left align the items in highlighted text popup.
+
 ## [1.9.0] - 2026-01-16
 
 ### New feature
