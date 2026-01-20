@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import * as z from "zod";
 
 import {
@@ -16,7 +16,7 @@ import {
 } from "widgets/health-profile-form";
 
 import { Steps } from "features/steps/ui";
-import { Dialog, DialogContent, DialogTitle, Button, Form, FormField, FormControl, FormItem, FormLabel, Input, Textarea } from "shared/ui";
+import { Dialog, DialogContent, DialogTitle, Button, Form, FormField, FormControl, FormItem, Textarea } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { BasicInformationForm } from "widgets/health-profile-form/ui/basic-information-form";
 import { DrivesAndGoalsForm } from "widgets/health-profile-form/ui/drives-and-goals";
@@ -99,7 +99,14 @@ export const ClientComprehensiveSummary = ({
     }
   }, [healthHistoryData]);
 
-  const values = form.watch() as BaseValues;
+  const values = useWatch({
+    control: form.control,
+  });
+
+  const followUpRecommendation = useWatch({
+    control: form.control,
+    name: "followUpRecommendation",
+  });
 
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingCoachInput, setIsEditingCoachInput] = useState(false);
@@ -410,22 +417,35 @@ export const ClientComprehensiveSummary = ({
               value={values.healthApproach}
             />
           </Section>
-          <Section title="Coach Input" button={<Button
+          {/* <Section title="Coach Input" button={<Button
             variant="unstyled"
             size="unstyled"
             onClick={() => setIsEditingCoachInput(true)}
           >
             <MaterialIcon iconName="edit" />
-          </Button>}>
+          </Button>}> */}
+          <div className="space-y-4 border-b border-[#EAEAEA] pb-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-[18px] font-medium">Coach Input</h3>
+              <Button
+                variant="unstyled"
+                size="unstyled"
+                onClick={() => setIsEditingCoachInput(true)}
+              >
+                <MaterialIcon iconName="edit" />
+              </Button>
+            </div>
+            <div className="space-y-2">
+            </div>
             {!isEditingCoachInput ? (
               <>
                 <SummaryRow
                   label=""
-                  value={values.followUpRecommendation}
+                  value={followUpRecommendation}
                 />
               </>
             ) : (
-              <Form {...form}>
+              <>
                 <FormField
                   control={form.control}
                   name="followUpRecommendation"
@@ -469,9 +489,9 @@ export const ClientComprehensiveSummary = ({
                     Save
                   </Button>
                 </div>
-              </Form>
+              </>
             )}
-          </Section>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-[24px] overflow-y-auto">
@@ -482,23 +502,21 @@ export const ClientComprehensiveSummary = ({
             onStepClick={setCurrentStep}
           />
 
-          <Form {...form}>
-            {currentStep === 0 && (
-              <BasicInformationForm
-                form={form}
-                age={Number(values?.age) || 0}
-              />
-            )}
-            {currentStep === 1 && <SocialFactorsForm form={form} />}
-            {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
-            {currentStep === 3 && <LifestyleHabitsForm form={form} />}
-            {currentStep === 4 && <NutritionHabitsForm form={form} />}
-            {currentStep === 5 && <WomensHealthForm form={form} />}
-            {currentStep === 6 && (
-              <MetabolicDigestiveHealthForm form={form} />
-            )}
-            {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
-          </Form>
+          {currentStep === 0 && (
+            <BasicInformationForm
+              form={form}
+              age={Number(values?.age) || 0}
+            />
+          )}
+          {currentStep === 1 && <SocialFactorsForm form={form} />}
+          {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
+          {currentStep === 3 && <LifestyleHabitsForm form={form} />}
+          {currentStep === 4 && <NutritionHabitsForm form={form} />}
+          {currentStep === 5 && <WomensHealthForm form={form} />}
+          {currentStep === 6 && (
+            <MetabolicDigestiveHealthForm form={form} />
+          )}
+          {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
 
           <div className="flex justify-between mt-4">
             <Button variant="light-blue" onClick={() => setIsEditing(false)}>
@@ -518,7 +536,9 @@ export const ClientComprehensiveSummary = ({
       <Dialog open onOpenChange={onOpenChange}>
         <DialogContent className="min-h-[80vh] h-[90vh] md:max-w-3xl rounded-[18px]">
           <DialogTitle>Client Health Summary</DialogTitle>
-          {content}
+          <Form {...form}>
+            {content}
+          </Form>
         </DialogContent>
       </Dialog>
     );
@@ -526,7 +546,9 @@ export const ClientComprehensiveSummary = ({
 
   return (
     <div className="w-full rounded-[18px] border border-[#EAEAEA] p-6 overflow-y-auto">
-      {content}
+      <Form {...form}>
+        {content}
+      </Form>
 
       {/* Preview modal */}
       {preview.open && preview.file && (
@@ -563,3 +585,5 @@ export const ClientComprehensiveSummary = ({
     </div>
   );
 };
+
+
