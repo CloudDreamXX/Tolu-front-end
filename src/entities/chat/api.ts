@@ -42,7 +42,6 @@ async function resolveAvatar(fileUrl: string) {
   return safe;
 }
 
-
 export const chatApi = createApi({
   reducerPath: "chatApi",
   baseQuery: fetchBaseQuery({
@@ -63,7 +62,7 @@ export const chatApi = createApi({
       query: () => ({
         url: API_ROUTES.CHAT.FETCH_ALL,
         method: "GET",
-        params: { page: 1, limit: 50 }
+        params: { page: 1, limit: 50 },
       }),
       transformResponse: (res: FetchAllChatsResponse) => res.map(toChatItem),
       providesTags: ["Chat"],

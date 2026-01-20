@@ -20,10 +20,8 @@ export const UserManagementSideBar: React.FC = () => {
 
   const { data: chats } = useFetchAllChatsQuery();
 
-  const totalUnreadCount = chats?.reduce(
-    (sum, chat) => sum + (chat.unreadCount ?? 0),
-    0
-  ) ?? 0;
+  const totalUnreadCount =
+    chats?.reduce((sum, chat) => sum + (chat.unreadCount ?? 0), 0) ?? 0;
 
   useEffect(() => {
     const pathSegments = location.pathname.split("/");
@@ -63,7 +61,8 @@ export const UserManagementSideBar: React.FC = () => {
               <NavLink
                 to={link.link || "/"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] ${
+                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
               >

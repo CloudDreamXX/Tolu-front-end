@@ -15,12 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  Input,
-  Textarea,
 } from "shared/ui";
 import * as z from "zod";
 
@@ -349,7 +343,7 @@ export const HealthProfileForm = () => {
   const Section = ({
     title,
     children,
-    button
+    button,
   }: {
     title: string;
     children: React.ReactNode;
@@ -369,14 +363,18 @@ export const HealthProfileForm = () => {
       >
         <div className="text-[20px] font-medium flex items-center justify-between mr-[24px]">
           {title}
-          {button ? button : <Button
-            variant={"unstyled"}
-            size={"unstyled"}
-            className="cursor-pointer"
-            onClick={onEdit}
-          >
-            <MaterialIcon iconName="edit" />
-          </Button>}
+          {button ? (
+            button
+          ) : (
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              className="cursor-pointer"
+              onClick={onEdit}
+            >
+              <MaterialIcon iconName="edit" />
+            </Button>
+          )}
         </div>
         <div className="space-y-2">{children}</div>
       </div>
@@ -843,10 +841,7 @@ export const HealthProfileForm = () => {
                 />
               </Section> */}
               <Section title="Coach Input" button={<></>}>
-                <SummaryRow
-                  label=""
-                  value={values.followUpRecommendation}
-                />
+                <SummaryRow label="" value={values.followUpRecommendation} />
               </Section>
             </div>
           </>
@@ -891,9 +886,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                      setIsOpen(false);
-                      setConfirmOpen(true);
-                    }
+                        setIsOpen(false);
+                        setConfirmOpen(true);
+                      }
                 }
               >
                 Cancel

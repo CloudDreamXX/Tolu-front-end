@@ -580,7 +580,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsContent value="profile">
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || ""}
-            onOpenChange={() => { }}
+            onOpenChange={() => {}}
           />
         </TabsContent>
         <TabsContent value="messages">
@@ -642,8 +642,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => { }}
-          onDelete={() => { }}
+          onEdit={() => {}}
+          onDelete={() => {}}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />

@@ -10,13 +10,20 @@ import {
   LabResultFile,
 } from "entities/health-history";
 
-import {
-  baseFormSchema,
-  stripOther,
-} from "widgets/health-profile-form";
+import { baseFormSchema, stripOther } from "widgets/health-profile-form";
 
 import { Steps } from "features/steps/ui";
-import { Dialog, DialogContent, DialogTitle, Button, Form, FormField, FormControl, FormItem, Textarea } from "shared/ui";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Button,
+  Form,
+  FormField,
+  FormControl,
+  FormItem,
+  Textarea,
+} from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { BasicInformationForm } from "widgets/health-profile-form/ui/basic-information-form";
 import { DrivesAndGoalsForm } from "widgets/health-profile-form/ui/drives-and-goals";
@@ -78,8 +85,7 @@ export const ClientComprehensiveSummary = ({
   const { data: healthHistoryData, refetch } =
     useGetCoachClientHealthHistoryQuery(clientId);
 
-  const [updateHealthHistory] =
-    useUpdateCoachClientHealthHistoryMutation();
+  const [updateHealthHistory] = useUpdateCoachClientHealthHistoryMutation();
 
   const form = useForm<BaseValues>({
     resolver: zodResolver(baseFormSchema),
@@ -92,9 +98,7 @@ export const ClientComprehensiveSummary = ({
   useEffect(() => {
     if (healthHistoryData) {
       form.reset(
-        mapHealthHistoryToFormDefaults(
-          healthHistoryData
-        ) as Partial<FormValues>
+        mapHealthHistoryToFormDefaults(healthHistoryData) as Partial<FormValues>
       );
     }
   }, [healthHistoryData]);
@@ -152,9 +156,7 @@ export const ClientComprehensiveSummary = ({
 
       specific_diet: v.dietDetails,
       exercise_habits:
-        v.exerciseHabits === "other"
-          ? v.otherExerciseHabits
-          : v.exerciseHabits,
+        v.exerciseHabits === "other" ? v.otherExerciseHabits : v.exerciseHabits,
 
       eat_decision: v.decisionMaker,
       cook_at_home: v.cookFrequency,
@@ -209,16 +211,13 @@ export const ClientComprehensiveSummary = ({
     setIsEditing(false);
   };
 
-  const resolvedGenderIdentity =
-    values.genderIdentity
-      ? GI_LABELS[values.genderIdentity] ?? values.genderIdentity
-      : "";
+  const resolvedGenderIdentity = values.genderIdentity
+    ? (GI_LABELS[values.genderIdentity] ?? values.genderIdentity)
+    : "";
 
-  const resolvedSexAtBirth =
-    values.gender
-      ? SAB_LABELS[values.gender] ??
-      values.gender
-      : "";
+  const resolvedSexAtBirth = values.gender
+    ? (SAB_LABELS[values.gender] ?? values.gender)
+    : "";
 
   const languagesSel = split(values.language).join(", ");
 
@@ -236,7 +235,7 @@ export const ClientComprehensiveSummary = ({
   const Section = ({
     title,
     children,
-    button
+    button,
   }: {
     title: string;
     children: React.ReactNode;
@@ -245,18 +244,20 @@ export const ClientComprehensiveSummary = ({
     <div className="space-y-4 border-b border-[#EAEAEA] pb-4">
       <div className="flex items-center justify-between">
         <h3 className="text-[18px] font-medium">{title}</h3>
-        {button ? button : (!isEditing && (
-          <Button
-            variant="unstyled"
-            size="unstyled"
-            onClick={() => {
-              setIsEditing(true);
-              setCurrentStep(steps.indexOf(title));
-            }}
-          >
-            <MaterialIcon iconName="edit" />
-          </Button>
-        ))}
+        {button
+          ? button
+          : !isEditing && (
+              <Button
+                variant="unstyled"
+                size="unstyled"
+                onClick={() => {
+                  setIsEditing(true);
+                  setCurrentStep(steps.indexOf(title));
+                }}
+              >
+                <MaterialIcon iconName="edit" />
+              </Button>
+            )}
       </div>
       <div className="space-y-2">{children}</div>
     </div>
@@ -274,10 +275,7 @@ export const ClientComprehensiveSummary = ({
               value={resolvedSexAtBirth}
             />
             <SummaryRow label="Language" value={languagesSel} />
-            <SummaryRow
-              label="Country of Residence"
-              value={values.country}
-            />
+            <SummaryRow label="Country of Residence" value={values.country} />
           </Section>
 
           <Section title="Health Status & History">
@@ -304,10 +302,7 @@ export const ClientComprehensiveSummary = ({
           </Section>
 
           <Section title="Lifestyle & Habits">
-            <SummaryRow
-              label="Exercise habits"
-              value={values.exerciseHabits}
-            />
+            <SummaryRow label="Exercise habits" value={values.exerciseHabits} />
             <SummaryRow
               label="Sleep quality"
               value={String(values.sleepQuality) || ""}
@@ -407,15 +402,9 @@ export const ClientComprehensiveSummary = ({
 
           <Section title="Drives & Goals">
             <SummaryRow label="Goals" value={values.goals} />
-            <SummaryRow
-              label="Why these goals"
-              value={values.goalReason}
-            />
+            <SummaryRow label="Why these goals" value={values.goalReason} />
             <SummaryRow label="Urgency" value={values.urgency} />
-            <SummaryRow
-              label="Health approach"
-              value={values.healthApproach}
-            />
+            <SummaryRow label="Health approach" value={values.healthApproach} />
           </Section>
           {/* <Section title="Coach Input" button={<Button
             variant="unstyled"
@@ -435,14 +424,10 @@ export const ClientComprehensiveSummary = ({
                 <MaterialIcon iconName="edit" />
               </Button>
             </div>
-            <div className="space-y-2">
-            </div>
+            <div className="space-y-2"></div>
             {!isEditingCoachInput ? (
               <>
-                <SummaryRow
-                  label=""
-                  value={followUpRecommendation}
-                />
+                <SummaryRow label="" value={followUpRecommendation} />
               </>
             ) : (
               <>
@@ -503,19 +488,14 @@ export const ClientComprehensiveSummary = ({
           />
 
           {currentStep === 0 && (
-            <BasicInformationForm
-              form={form}
-              age={Number(values?.age) || 0}
-            />
+            <BasicInformationForm form={form} age={Number(values?.age) || 0} />
           )}
           {currentStep === 1 && <SocialFactorsForm form={form} />}
           {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
           {currentStep === 3 && <LifestyleHabitsForm form={form} />}
           {currentStep === 4 && <NutritionHabitsForm form={form} />}
           {currentStep === 5 && <WomensHealthForm form={form} />}
-          {currentStep === 6 && (
-            <MetabolicDigestiveHealthForm form={form} />
-          )}
+          {currentStep === 6 && <MetabolicDigestiveHealthForm form={form} />}
           {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
 
           <div className="flex justify-between mt-4">
@@ -536,9 +516,7 @@ export const ClientComprehensiveSummary = ({
       <Dialog open onOpenChange={onOpenChange}>
         <DialogContent className="min-h-[80vh] h-[90vh] md:max-w-3xl rounded-[18px]">
           <DialogTitle>Client Health Summary</DialogTitle>
-          <Form {...form}>
-            {content}
-          </Form>
+          <Form {...form}>{content}</Form>
         </DialogContent>
       </Dialog>
     );
@@ -546,9 +524,7 @@ export const ClientComprehensiveSummary = ({
 
   return (
     <div className="w-full rounded-[18px] border border-[#EAEAEA] p-6 overflow-y-auto">
-      <Form {...form}>
-        {content}
-      </Form>
+      <Form {...form}>{content}</Form>
 
       {/* Preview modal */}
       {preview.open && preview.file && (
@@ -585,5 +561,3 @@ export const ClientComprehensiveSummary = ({
     </div>
   );
 };
-
-

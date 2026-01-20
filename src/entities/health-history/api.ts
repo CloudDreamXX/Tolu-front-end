@@ -110,16 +110,12 @@ export const healthHistoryApi = createApi({
         }
 
         return {
-          url: API_ROUTES.HEALTH_HISTORY.EDIT.replace(
-            "{client_id}",
-            clientId
-          ),
+          url: API_ROUTES.HEALTH_HISTORY.EDIT.replace("{client_id}", clientId),
           method: "PUT",
           body: formData,
         };
       },
     }),
-
   }),
 });
 

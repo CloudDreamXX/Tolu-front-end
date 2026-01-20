@@ -86,7 +86,7 @@ export const mapHealthHistoryToFormDefaults = (
     privacyConsent: healthHistory?.privacy_consent ?? false,
     followUpRecommendation: healthHistory?.follow_up_recommendation ?? "",
     recommendationDestination: healthHistory?.recommendation_destination ?? "",
-    language: healthHistory?.language
+    language: healthHistory?.language,
   };
 };
 

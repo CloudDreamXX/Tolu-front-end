@@ -17,7 +17,6 @@ import {
 } from "entities/user";
 import {
   useDismissNotificationsMutation,
-  useGetNotificationPreferencesQuery,
   useGetNotificationsQuery,
   useGetUnreadCountQuery,
   useMarkNotificationAsReadMutation,
@@ -48,10 +47,7 @@ export const ContentManagerProfile = () => {
       unread_only: false,
       type_filter: null,
     });
-  const { data: unreadCount, refetch: refetchUnreadCount } =
-    useGetUnreadCountQuery();
-  const { refetch: refetchNotificationPreferences } =
-    useGetNotificationPreferencesQuery();
+  const { data: unreadCount } = useGetUnreadCountQuery();
   const [markNotificationAsRead] = useMarkNotificationAsReadMutation();
   const [dismissNotification] = useDismissNotificationsMutation();
 
@@ -427,7 +423,12 @@ export const ContentManagerProfile = () => {
             </Button>
           </div>
           <div className="flex gap-[24px] items-center">
-            <Button variant={"unstyled"} size={"unstyled"} className="flex items-center justify-center" onClick={togglePopup}>
+            <Button
+              variant={"unstyled"}
+              size={"unstyled"}
+              className="flex items-center justify-center"
+              onClick={togglePopup}
+            >
               <MaterialIcon iconName="notifications" fill={1} />
               {unreadCount > 0 && (
                 <span className="absolute flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full top-1 right-4">
@@ -517,7 +518,7 @@ export const ContentManagerProfile = () => {
               <div className="flex flex-col w-full gap-2.5">
                 <p className="text-[#1D1D1F] text-2xl font-bold">
                   {user?.profile.basic_info.first_name &&
-                    user?.profile.basic_info.last_name
+                  user?.profile.basic_info.last_name
                     ? `${user?.profile.basic_info.first_name} ${user?.profile.basic_info.last_name}`
                     : user?.profile.basic_info.name || ""}
                   ,{" "}
