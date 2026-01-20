@@ -6,9 +6,9 @@ import { clearDownloadProgress } from "./downloadSlice";
 import { fileKeyFromUrl, toChatItem } from "./helpers";
 import {
   AddMessageReactionPayload,
-  AddMessageReactionResponse,
   ChatFileUploadResponse,
   ChatItemModel,
+  ChatMessageModel,
   ChatNoteResponse,
   CreateChatGroupResponse,
   CreateChatPayload,
@@ -31,11 +31,14 @@ import { RootState } from "entities/store";
 const avatarCache = new Map<string, string | null>();
 
 async function resolveAvatar(fileUrl: string) {
-  const key = fileUrl?.split("/").pop() || fileUrl;
-  if (avatarCache.has(key)) return avatarCache.get(key)!;
-  const full = await getAvatarUrl(key);
+  if (!fileUrl) return null;
+
+  const filename = fileUrl.split("/").pop()!;
+  if (avatarCache.has(filename)) return avatarCache.get(filename)!;
+
+  const full = await getAvatarUrl(filename);
   const safe = typeof full === "string" && full.trim() ? full : null;
-  avatarCache.set(key, safe);
+  avatarCache.set(filename, safe);
   return safe;
 }
 
@@ -59,6 +62,7 @@ export const chatApi = createApi({
       query: () => ({
         url: API_ROUTES.CHAT.FETCH_ALL,
         method: "GET",
+        params: { page: 1, limit: 50 },
       }),
       transformResponse: (res: FetchAllChatsResponse) => res.map(toChatItem),
       providesTags: ["Chat"],
@@ -415,7 +419,7 @@ export const chatApi = createApi({
     }),
 
     addMessageReaction: builder.mutation<
-      AddMessageReactionResponse,
+      ChatMessageModel,
       AddMessageReactionPayload
     >({
       query: ({ chatId, messageId, reaction }) => ({
@@ -430,7 +434,7 @@ export const chatApi = createApi({
     }),
 
     deleteMessageReaction: builder.mutation<
-      AddMessageReactionResponse,
+      ChatMessageModel,
       AddMessageReactionPayload
     >({
       query: ({ chatId, messageId, reaction }) => ({

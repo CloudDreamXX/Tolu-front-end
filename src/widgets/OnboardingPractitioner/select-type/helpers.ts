@@ -60,9 +60,8 @@ export const mapUserToCoachOnboarding = (coach: UserOnboardingInfo) => {
     school: practitioner_info.school || "",
     recent_client_count: practitioner_info.recent_clients || "",
     target_client_count: practitioner_info.target_clients || "",
-    uses_labs_supplements: practitioner_info.uses_labs_supplements !== null
-      ? "Yes"
-      : "No",
+    uses_labs_supplements:
+      practitioner_info.uses_labs_supplements !== null ? "Yes" : "No",
 
     business_challenges: business_setup.challenges || [],
     uses_ai: business_setup.uses_ai || "",

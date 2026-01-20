@@ -140,8 +140,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     "files",
   ]);
 
-  console.log(chatId)
-
   const isClient = profile?.roleName === "Client";
 
   const pinned = new Set(pinnedTabs);
@@ -582,7 +580,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsContent value="profile">
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || ""}
-            onOpenChange={() => { }}
+            onOpenChange={() => {}}
           />
         </TabsContent>
         <TabsContent value="messages">
@@ -644,8 +642,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => { }}
-          onDelete={() => { }}
+          onEdit={() => {}}
+          onDelete={() => {}}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />

@@ -238,7 +238,7 @@ export const HealthStatusHistoryForm = ({ form }: { form: any }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-y-auto">
       <p className="text-gray-500">
         Help us understand your current health picture by sharing symptoms,
         conditions, medications, supplements, and any family history.

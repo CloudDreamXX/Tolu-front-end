@@ -43,7 +43,7 @@ export const LifestyleHabitsForm = ({ form }: { form: any }) => {
   const exerciseHabits = form.watch("exerciseHabits");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-y-auto">
       <p className="text-gray-500 ">
         Tell us about your daily routines — diet, exercise, and sleep.
       </p>
