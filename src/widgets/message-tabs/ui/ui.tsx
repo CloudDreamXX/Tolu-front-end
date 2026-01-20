@@ -140,8 +140,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     "files",
   ]);
 
-  console.log(chatId)
-
   const isClient = profile?.roleName === "Client";
 
   const pinned = new Set(pinnedTabs);

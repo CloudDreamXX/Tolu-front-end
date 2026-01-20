@@ -15,6 +15,12 @@ import {
   DialogTitle,
   DialogTrigger,
   Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  Input,
+  Textarea,
 } from "shared/ui";
 import * as z from "zod";
 
@@ -104,7 +110,7 @@ const formSchema = baseFormSchema
     }
   )
   .superRefine((data: BaseValues, ctx) => {
-    if (data.followUpMethod === "Text") {
+    if (data.followUpRecommendation === "Text") {
       if (!data.phoneNumber || !/^\d{10}$/.test(data.phoneNumber)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -116,6 +122,7 @@ const formSchema = baseFormSchema
   });
 
 const DEFAULT_NEW_FIELDS = {
+  gender: "",
   genderIdentity: "",
   genderSelfDescribe: "",
   sexAssignedAtBirth: "",
@@ -280,7 +287,7 @@ export const HealthProfileForm = () => {
       "labTestFiles",
     ],
     ["goals", "goalReason", "urgency", "healthApproach"],
-    ["agreeToPrivacy", "followUpMethod", "countryCode", "phoneNumber"],
+    ["agreeToPrivacy", "followUpRecommendation", "countryCode", "phoneNumber"],
   ];
 
   const values = form.watch() as BaseValues;
@@ -342,9 +349,11 @@ export const HealthProfileForm = () => {
   const Section = ({
     title,
     children,
+    button
   }: {
     title: string;
     children: React.ReactNode;
+    button?: React.ReactNode;
   }) => {
     const onEdit = () => {
       const idx = titleToStepIndex(title, steps);
@@ -360,14 +369,14 @@ export const HealthProfileForm = () => {
       >
         <div className="text-[20px] font-medium flex items-center justify-between mr-[24px]">
           {title}
-          <Button
+          {button ? button : <Button
             variant={"unstyled"}
             size={"unstyled"}
             className="cursor-pointer"
             onClick={onEdit}
           >
             <MaterialIcon iconName="edit" />
-          </Button>
+          </Button>}
         </div>
         <div className="space-y-2">{children}</div>
       </div>
@@ -477,7 +486,7 @@ export const HealthProfileForm = () => {
       health_approach_preference: v.healthApproach,
 
       privacy_consent: v.agreeToPrivacy,
-      follow_up_recommendation: v.followUpMethod,
+      follow_up_recommendation: v.followUpRecommendation,
       recommendation_destination: `${v.countryCode ?? ""}${v.phoneNumber ?? ""}`,
     };
   };
@@ -830,9 +839,15 @@ export const HealthProfileForm = () => {
                 />
                 <SummaryRow
                   label="Follow-up method"
-                  value={values.followUpMethod ?? ""}
+                  value={values.followUpRecommendation ?? ""}
                 />
               </Section> */}
+              <Section title="Coach Input" button={<></>}>
+                <SummaryRow
+                  label=""
+                  value={values.followUpRecommendation}
+                />
+              </Section>
             </div>
           </>
         ) : (
@@ -876,9 +891,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                        setIsOpen(false);
-                        setConfirmOpen(true);
-                      }
+                      setIsOpen(false);
+                      setConfirmOpen(true);
+                    }
                 }
               >
                 Cancel

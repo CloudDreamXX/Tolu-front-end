@@ -52,6 +52,7 @@ export const FileBadge = ({
 
   const [triggerPreview] = useLazyGetUploadedNoteFileQuery();
   const user = useSelector((state: RootState) => state.user.user);
+  console.log(user)
 
   const openPreview = async () => {
     if (!normalized || !user?.id) return;

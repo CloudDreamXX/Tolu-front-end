@@ -99,6 +99,7 @@ export const API_ROUTES = {
     POST: "/health-history",
     GET_LAB_REPORT: "/health-history/lab-report/{filename}",
     GET_COACH_CLIENT: "/coach/client/{client_id}/health-history",
+    EDIT: "/coach/client/{client_id}/health-history",
   },
   PRACTITIONER: {
     CREATE_CLIENT: "/practitioner/create-client",

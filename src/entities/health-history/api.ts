@@ -77,6 +77,49 @@ export const healthHistoryApi = createApi({
         responseHandler: (res) => res.blob(),
       }),
     }),
+
+    updateCoachClientHealthHistory: builder.mutation<
+      {
+        message: string;
+        health_history_id: string;
+        user_id: string;
+        updated_at: string;
+        lab_files_count: number;
+      },
+      {
+        clientId: string;
+        data: Partial<HealthHistoryPostData>;
+        labFiles?: File[];
+      }
+    >({
+      query: ({ clientId, data, labFiles }) => {
+        const formData = new FormData();
+
+        // Append all provided health history fields individually
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
+        });
+
+        // Append lab files (matches: lab_file: List[UploadFile])
+        if (labFiles && labFiles.length > 0) {
+          labFiles.forEach((file) => {
+            formData.append("lab_file", file);
+          });
+        }
+
+        return {
+          url: API_ROUTES.HEALTH_HISTORY.EDIT.replace(
+            "{client_id}",
+            clientId
+          ),
+          method: "PUT",
+          body: formData,
+        };
+      },
+    }),
+
   }),
 });
 
@@ -85,4 +128,5 @@ export const {
   useGetCoachClientHealthHistoryQuery,
   useCreateHealthHistoryMutation,
   useGetLabReportQuery,
+  useUpdateCoachClientHealthHistoryMutation,
 } = healthHistoryApi;

@@ -131,7 +131,7 @@ export const adminApi = createApi({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Content"],
+      invalidatesTags: ["Content", "Folders"]
     }),
 
     deleteUser: builder.mutation<any, { userId: string }>({

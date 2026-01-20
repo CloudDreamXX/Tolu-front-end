@@ -878,9 +878,8 @@ export const ContentManagerClients: React.FC = () => {
                       variant="unstyled"
                       size="unstyled"
                       disabled={client.status !== "active"}
-                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${
-                        client.status !== "active" ? "opacity-[0.5]" : ""
-                      }`}
+                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${client.status !== "active" ? "opacity-[0.5]" : ""
+                        }`}
                       onClick={() => {
                         const chatId = getChatIdByClientId(client.client_id);
                         setNotesChatId(chatId);
@@ -1010,11 +1009,10 @@ export const ContentManagerClients: React.FC = () => {
                   size={"unstyled"}
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
                 </Button>

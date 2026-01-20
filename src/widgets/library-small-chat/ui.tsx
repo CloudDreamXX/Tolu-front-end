@@ -1036,7 +1036,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           variant="ghost"
           size="sm"
           onClick={() => onAddNote(selection.text)}
-          className="w-full"
+          className="w-full justify-start"
         >
           Add to Notes
         </Button>
@@ -1045,7 +1045,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           size="sm"
           onClick={() => onAddNote(selection.text)}
           disabled
-          className="w-full"
+          className="w-full justify-start"
         >
           Add to Research
         </Button>
@@ -1054,7 +1054,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           size="sm"
           onClick={() => onAddNote(selection.text)}
           disabled
-          className="w-full"
+          className="w-full justify-start"
         >
           Add to Action plan
         </Button>

@@ -588,7 +588,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           variant="ghost"
           size="sm"
           onClick={() => onAddNote(selection.text)}
-          className="w-full"
+          className="w-full justify-start"
         >
           Add to Notes
         </Button>
@@ -597,7 +597,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           size="sm"
           onClick={() => onAddNote(selection.text)}
           disabled
-          className="w-full"
+          className="w-full justify-start"
         >
           Add to Research
         </Button>
@@ -606,7 +606,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           size="sm"
           onClick={() => onAddNote(selection.text)}
           disabled
-          className="w-full"
+          className="w-full justify-start"
         >
           Add to Action plan
         </Button>
@@ -714,10 +714,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                           />
                           {(files.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {files.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />
