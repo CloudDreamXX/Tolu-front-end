@@ -1,3 +1,11 @@
+## [1.11.0] - 2026-01-22
+
+### New feature
+
+- Add medications and supplements tabs for each client.
+- Add abillity to add, update and delete medication and supplement.
+- Add abillity to preview files for medications and supplements.
+
 ## [1.10.0] - 2026-01-20
 
 ### New feature
