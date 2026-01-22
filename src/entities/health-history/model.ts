@@ -151,3 +151,88 @@ export interface GetLabReportRequest {
   filename: string;
   client_id?: string | null;
 }
+
+export interface Medication {
+  id: string;
+  chat_id: string;
+  title?: string;
+  content: string;
+  file_info: {
+    file_url: string,
+    file_name: string,
+    file_size: number,
+    file_type: string,
+    file_category: string
+  },
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Supplement {
+  id: string;
+  chat_id: string;
+  title?: string;
+  content: string;
+  file_info: {
+    file_url: string,
+    file_name: string,
+    file_size: number,
+    file_type: string,
+    file_category: string
+  },
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GetMedicationsParams {
+  chatId: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface GetSupplementsParams {
+  chatId: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface CreateMedicationParams {
+  medicationData: {
+    chat_id?: string;
+    target_user_id?: string;
+    title?: string;
+    content: string;
+  };
+  file?: File;
+}
+
+export interface CreateSupplementParams {
+  supplementData: {
+    chat_id?: string;
+    target_user_id?: string;
+    title?: string;
+    content: string;
+  };
+  file?: File;
+}
+
+export interface UpdateMedicationParams {
+  medicationId: string;
+  medicationData: {
+    title?: string;
+    content?: string;
+    remove_file?: boolean;
+  };
+  file?: File;
+}
+
+export interface UpdateSupplementParams {
+  supplementId: string;
+  supplementData: {
+    title?: string;
+    content?: string;
+    remove_file?: boolean;
+  };
+  file?: File;
+}
+

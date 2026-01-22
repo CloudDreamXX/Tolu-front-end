@@ -100,6 +100,16 @@ export const API_ROUTES = {
     GET_LAB_REPORT: "/health-history/lab-report/{filename}",
     GET_COACH_CLIENT: "/coach/client/{client_id}/health-history",
     EDIT: "/coach/client/{client_id}/health-history",
+    ADD_MEDICATION: "/medications",
+    GET_MEDICATIONS: "/medications/{chat_id}",
+    UPDATE_MEDICATION: "/medications/{medication_id}",
+    DELETE_MEDICATION: "/medications/{medication_id}",
+    SERVE_MEDICATION_FILE: "/medications/uploads/{file_uuid}",
+    ADD_SUPPLEMENT: "/supplements",
+    GET_SUPPLEMENTS: "/supplements/{chat_id}",
+    UPDATE_SUPPLEMENT: "/supplements/{supplement_id}",
+    DELETE_SUPPLEMENT: "/supplements/{supplement_id}",
+    SERVE_SUPPLEMENT_FILE: "/supplements/uploads/{file_uuid}"
   },
   PRACTITIONER: {
     CREATE_CLIENT: "/practitioner/create-client",

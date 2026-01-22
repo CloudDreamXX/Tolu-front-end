@@ -5,6 +5,14 @@ import {
   HealthHistoryPostData,
   HealthHistoryResponse,
   GetLabReportRequest,
+  CreateMedicationParams,
+  GetMedicationsParams,
+  Medication,
+  UpdateMedicationParams,
+  Supplement,
+  GetSupplementsParams,
+  CreateSupplementParams,
+  UpdateSupplementParams,
 } from "./model";
 import { RootState } from "entities/store";
 
@@ -95,14 +103,12 @@ export const healthHistoryApi = createApi({
       query: ({ clientId, data, labFiles }) => {
         const formData = new FormData();
 
-        // Append all provided health history fields individually
         Object.entries(data).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             formData.append(key, String(value));
           }
         });
 
-        // Append lab files (matches: lab_file: List[UploadFile])
         if (labFiles && labFiles.length > 0) {
           labFiles.forEach((file) => {
             formData.append("lab_file", file);
@@ -116,6 +122,154 @@ export const healthHistoryApi = createApi({
         };
       },
     }),
+
+    getMedicationsByChat: builder.query<Medication[], GetMedicationsParams>({
+      query: ({ chatId, limit = 100, offset = 0 }) => ({
+        url: API_ROUTES.HEALTH_HISTORY.GET_MEDICATIONS.replace("{chat_id}", chatId),
+        params: { limit, offset },
+      }),
+      transformResponse: (response: { medications: Medication[] }) =>
+        response.medications,
+    }),
+
+    createMedication: builder.mutation<Medication, CreateMedicationParams>({
+      query: ({ medicationData, file }) => {
+        const formData = new FormData();
+
+        formData.append(
+          "medication_data",
+          JSON.stringify(medicationData)
+        );
+
+        if (file) {
+          formData.append("file", file);
+        }
+
+        return {
+          url: API_ROUTES.HEALTH_HISTORY.ADD_MEDICATION,
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
+
+    updateMedication: builder.mutation<
+      Medication,
+      UpdateMedicationParams
+    >({
+      query: ({ medicationId, medicationData, file }) => {
+        const formData = new FormData();
+
+        formData.append(
+          "medication_data",
+          JSON.stringify({
+            remove_file: false,
+            ...medicationData,
+          })
+        );
+
+        if (file) {
+          formData.append("file", file);
+        }
+
+        return {
+          url: API_ROUTES.HEALTH_HISTORY.UPDATE_MEDICATION.replace("{medication_id}", medicationId),
+          method: "PUT",
+          body: formData,
+        };
+      },
+    }),
+
+    deleteMedication: builder.mutation<
+      { message: string },
+      { medicationId: string }
+    >({
+      query: ({ medicationId }) => ({
+        url: API_ROUTES.HEALTH_HISTORY.DELETE_MEDICATION.replace("{medication_id}", medicationId),
+        method: "DELETE",
+      }),
+    }),
+
+    serveMedicationFile: builder.query<Blob, { fileUuid: string }>({
+      query: ({ fileUuid }) => ({
+        url: API_ROUTES.HEALTH_HISTORY.SERVE_MEDICATION_FILE.replace("{file_uuid}", fileUuid),
+        responseHandler: (response) => response.blob(),
+      }),
+    }),
+
+    getSupplementsByChat: builder.query<Supplement[], GetSupplementsParams>({
+      query: ({ chatId, limit = 100, offset = 0 }) => ({
+        url: API_ROUTES.HEALTH_HISTORY.GET_SUPPLEMENTS.replace("{chat_id}", chatId),
+        params: { limit, offset },
+      }),
+      transformResponse: (response: { supplements: Supplement[] }) =>
+        response.supplements,
+    }),
+
+    createSupplement: builder.mutation<Supplement, CreateSupplementParams>({
+      query: ({ supplementData, file }) => {
+        const formData = new FormData();
+
+        formData.append(
+          "supplement_data",
+          JSON.stringify(supplementData)
+        );
+
+        if (file) {
+          formData.append("file", file);
+        }
+
+        return {
+          url: API_ROUTES.HEALTH_HISTORY.ADD_SUPPLEMENT,
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
+
+    updateSupplement: builder.mutation<
+      Supplement,
+      UpdateSupplementParams
+    >({
+      query: ({ supplementId, supplementData, file }) => {
+        const formData = new FormData();
+
+        formData.append(
+          "supplement_data",
+          JSON.stringify({
+            remove_file: false,
+            ...supplementData,
+          })
+        );
+
+        if (file) {
+          formData.append("file", file);
+        }
+
+        return {
+          url: API_ROUTES.HEALTH_HISTORY.UPDATE_SUPPLEMENT.replace("{supplement_id}", supplementId),
+          method: "PUT",
+          body: formData,
+        };
+      },
+    }),
+
+    deleteSupplement: builder.mutation<
+      { message: string },
+      { supplementId: string }
+    >({
+      query: ({ supplementId }) => ({
+        url: API_ROUTES.HEALTH_HISTORY.DELETE_SUPPLEMENT.replace("{supplement_id}", supplementId),
+        method: "DELETE",
+      }),
+    }),
+
+    serveSupplementFile: builder.query<Blob, { fileUuid: string }>({
+      query: ({ fileUuid }) => ({
+        url: API_ROUTES.HEALTH_HISTORY.SERVE_SUPPLEMENT_FILE.replace("{file_uuid}", fileUuid),
+        responseHandler: (response) => response.blob(),
+      }),
+    }),
   }),
 });
 
@@ -125,4 +279,14 @@ export const {
   useCreateHealthHistoryMutation,
   useGetLabReportQuery,
   useUpdateCoachClientHealthHistoryMutation,
+  useGetMedicationsByChatQuery,
+  useCreateMedicationMutation,
+  useUpdateMedicationMutation,
+  useDeleteMedicationMutation,
+  useServeMedicationFileQuery,
+  useGetSupplementsByChatQuery,
+  useCreateSupplementMutation,
+  useUpdateSupplementMutation,
+  useDeleteSupplementMutation,
+  useServeSupplementFileQuery,
 } = healthHistoryApi;

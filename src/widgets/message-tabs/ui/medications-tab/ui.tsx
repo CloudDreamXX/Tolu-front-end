@@ -1,10 +1,10 @@
 import { DetailsChatItemModel } from "entities/chat";
 import {
-  useDeleteChatNoteMutation,
-  useGetAllChatNotesQuery,
-  useSendChatNoteMutation,
-  useUpdateChatNoteMutation,
-} from "entities/chat/api";
+  useGetMedicationsByChatQuery,
+  useCreateMedicationMutation,
+  useUpdateMedicationMutation,
+  useDeleteMedicationMutation,
+} from "entities/health-history/api";
 import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -15,6 +15,7 @@ import { Button, Input, Textarea } from "shared/ui";
 import { NoteItem } from "widgets/notes-item/ui";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
+import { MedicationItem } from "widgets/medication-item/ui";
 
 interface edicationsTabProps {
   search?: string;
@@ -46,41 +47,47 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({ chat, search }) =
   const [title, setTitle] = useState("");
 
   const {
-    data: notes,
+    data: medications,
     isLoading,
     refetch,
-  } = useGetAllChatNotesQuery(chat.chat_id, {
-    skip: !chat.chat_id,
-    refetchOnMountOrArgChange: true,
-  });
+  } = useGetMedicationsByChatQuery(
+    { chatId: chat.chat_id },
+    {
+      skip: !chat.chat_id,
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
-  const [sendNote, { isLoading: isSending }] = useSendChatNoteMutation();
-  const [updateNote, { isLoading: isUpdating }] = useUpdateChatNoteMutation();
-  const [deleteNote] = useDeleteChatNoteMutation();
+  const [createMedication, { isLoading: isSending }] =
+    useCreateMedicationMutation();
+
+  const [updateMedication, { isLoading: isUpdating }] =
+    useUpdateMedicationMutation();
+
+  const [deleteMedication] = useDeleteMedicationMutation();
 
   const handleSend = async () => {
     if (!title.trim() || !input.trim()) return;
 
     try {
       if (editingId) {
-        await updateNote({
-          noteId: editingId,
-          payload: {
-            noteData: {
-              title,
-              content: input,
-              remove_file: items.length === 0,
-            },
-            file: items[0]?.file,
-          },
-        }).unwrap();
-        setEditingId(null);
-      } else {
-        await sendNote({
-          noteData: {
+        await updateMedication({
+          medicationId: editingId,
+          medicationData: {
             title,
             content: input,
+            remove_file: items.length === 0,
+          },
+          file: items[0]?.file,
+        }).unwrap();
+
+        setEditingId(null);
+      } else {
+        await createMedication({
+          medicationData: {
             chat_id: chat.chat_id,
+            title,
+            content: input,
           },
           file: items[0]?.file,
         }).unwrap();
@@ -91,13 +98,14 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({ chat, search }) =
       clear();
       refetch();
     } catch {
-      toast({ title: "Failed to save note", variant: "destructive" });
+      toast({ title: "Failed to save medication", variant: "destructive" });
     }
   };
 
+
   const handleDelete = async (id: string) => {
     try {
-      await deleteNote(id).unwrap();
+      await deleteMedication({ medicationId: id }).unwrap();
       refetch();
     } catch {
       toast({ title: "Failed to delete note", variant: "destructive" });
@@ -153,17 +161,17 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({ chat, search }) =
   const [atBottom, setAtBottom] = useState(true);
 
   const dataForList = useMemo(() => {
-    const arr = (notes?.notes ?? []).slice();
+    const arr = (medications ?? []).slice();
     arr.sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
     return search
       ? arr.filter((n) =>
-          (n.content || "").toLowerCase().includes(search.toLowerCase())
-        )
+        (n.content || "").toLowerCase().includes(search.toLowerCase())
+      )
       : arr;
-  }, [notes?.notes, search]);
+  }, [medications, search]);
 
   const prevLenRef = useRef(0);
 
@@ -221,9 +229,9 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({ chat, search }) =
             ref={virtuosoRef}
             style={{ height: "100%" }}
             data={dataForList}
-            itemContent={(_index, note) => (
-              <NoteItem
-                note={note}
+            itemContent={(_index, medication) => (
+              <MedicationItem
+                medication={medication}
                 onEdit={(id, title, content) => handleEdit(id, title, content)}
                 onDelete={handleDelete}
               />
