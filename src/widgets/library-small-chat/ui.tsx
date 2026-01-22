@@ -1096,7 +1096,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           variant="ghost"
           size="sm"
           onClick={() => onAddMedication(selection.text)}
-          disabled
           className="w-full justify-start"
         >
           Add to Medications
@@ -1105,7 +1104,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           variant="ghost"
           size="sm"
           onClick={() => onAddSupplement(selection.text)}
-          disabled
           className="w-full justify-start"
         >
           Add to Supplements

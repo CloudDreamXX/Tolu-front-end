@@ -641,7 +641,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           variant="ghost"
           size="sm"
           onClick={() => onAddMedication(selection.text)}
-          disabled
           className="w-full justify-start"
         >
           Add to Medications
@@ -650,7 +649,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           variant="ghost"
           size="sm"
           onClick={() => onAddSupplement(selection.text)}
-          disabled
           className="w-full justify-start"
         >
           Add to Supplements
