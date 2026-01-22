@@ -158,12 +158,12 @@ export interface Medication {
   title?: string;
   content: string;
   file_info: {
-    file_url: string,
-    file_name: string,
-    file_size: number,
-    file_type: string,
-    file_category: string
-  },
+    file_url: string;
+    file_name: string;
+    file_size: number;
+    file_type: string;
+    file_category: string;
+  };
   created_at: string;
   updated_at: string;
 }
@@ -174,12 +174,12 @@ export interface Supplement {
   title?: string;
   content: string;
   file_info: {
-    file_url: string,
-    file_name: string,
-    file_size: number,
-    file_type: string,
-    file_category: string
-  },
+    file_url: string;
+    file_name: string;
+    file_size: number;
+    file_type: string;
+    file_category: string;
+  };
   created_at: string;
   updated_at: string;
 }
@@ -235,4 +235,3 @@ export interface UpdateSupplementParams {
   };
   file?: File;
 }
-

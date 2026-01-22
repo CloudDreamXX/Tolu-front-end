@@ -109,7 +109,7 @@ export const API_ROUTES = {
     GET_SUPPLEMENTS: "/supplements/{chat_id}",
     UPDATE_SUPPLEMENT: "/supplements/{supplement_id}",
     DELETE_SUPPLEMENT: "/supplements/{supplement_id}",
-    SERVE_SUPPLEMENT_FILE: "/supplements/uploads/{file_uuid}"
+    SERVE_SUPPLEMENT_FILE: "/supplements/uploads/{file_uuid}",
   },
   PRACTITIONER: {
     CREATE_CLIENT: "/practitioner/create-client",

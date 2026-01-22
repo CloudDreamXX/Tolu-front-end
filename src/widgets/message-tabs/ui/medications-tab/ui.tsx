@@ -12,7 +12,6 @@ import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Input, Textarea } from "shared/ui";
-import { NoteItem } from "widgets/notes-item/ui";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
 import { MedicationItem } from "widgets/medication-item/ui";
@@ -22,7 +21,10 @@ interface edicationsTabProps {
   chat: DetailsChatItemModel;
 }
 
-export const MedicationsTab: React.FC<edicationsTabProps> = ({ chat, search }) => {
+export const MedicationsTab: React.FC<edicationsTabProps> = ({
+  chat,
+  search,
+}) => {
   const profile = useSelector((state: RootState) => state.user.user);
   const isToluAdmin = chat?.participants.some((p) => p.role === "admin");
 
@@ -102,7 +104,6 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({ chat, search }) =
     }
   };
 
-
   const handleDelete = async (id: string) => {
     try {
       await deleteMedication({ medicationId: id }).unwrap();
@@ -168,8 +169,8 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({ chat, search }) =
     );
     return search
       ? arr.filter((n) =>
-        (n.content || "").toLowerCase().includes(search.toLowerCase())
-      )
+          (n.content || "").toLowerCase().includes(search.toLowerCase())
+        )
       : arr;
   }, [medications, search]);
 

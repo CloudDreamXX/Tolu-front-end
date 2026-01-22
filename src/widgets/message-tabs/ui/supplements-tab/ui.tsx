@@ -12,17 +12,19 @@ import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Input, Textarea } from "shared/ui";
-import { NoteItem } from "widgets/notes-item/ui";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
-import { MedicationItem } from "widgets/medication-item/ui";
+import { SupplementItem } from "widgets/supplement-item/ui";
 
 interface SupplementsTabProps {
   search?: string;
   chat: DetailsChatItemModel;
 }
 
-export const SupplementsTab: React.FC<SupplementsTabProps> = ({ chat, search }) => {
+export const SupplementsTab: React.FC<SupplementsTabProps> = ({
+  chat,
+  search,
+}) => {
   const profile = useSelector((state: RootState) => state.user.user);
   const isToluAdmin = chat?.participants.some((p) => p.role === "admin");
 
@@ -102,7 +104,6 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({ chat, search }) 
     }
   };
 
-
   const handleDelete = async (id: string) => {
     try {
       await deleteSupplement({ supplementId: id }).unwrap();
@@ -160,8 +161,6 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({ chat, search }) 
   const virtuosoRef = useRef<VirtuosoHandle>(null);
   const [atBottom, setAtBottom] = useState(true);
 
-  console.log(supplements)
-
   const dataForList = useMemo(() => {
     const arr = (supplements ?? []).slice();
     arr.sort(
@@ -170,8 +169,8 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({ chat, search }) 
     );
     return search
       ? arr.filter((n) =>
-        (n.content || "").toLowerCase().includes(search.toLowerCase())
-      )
+          (n.content || "").toLowerCase().includes(search.toLowerCase())
+        )
       : arr;
   }, [supplements, search]);
 
@@ -232,8 +231,8 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({ chat, search }) 
             style={{ height: "100%" }}
             data={dataForList}
             itemContent={(_index, supplement) => (
-              <MedicationItem
-                medication={supplement}
+              <SupplementItem
+                supplement={supplement}
                 onEdit={(id, title, content) => handleEdit(id, title, content)}
                 onDelete={handleDelete}
               />

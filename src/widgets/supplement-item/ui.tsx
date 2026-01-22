@@ -3,8 +3,8 @@ import { Button } from "shared/ui";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toUserTZ } from "widgets/message-tabs/helpers";
 import {
-  Medication,
-  useLazyServeMedicationFileQuery,
+  Supplement,
+  useLazyServeSupplementFileQuery,
 } from "entities/health-history";
 import { ChatNoteResponse } from "entities/chat";
 import {
@@ -53,7 +53,7 @@ export const FileBadge = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [docxHtml, setDocxHtml] = useState<string | null>(null);
 
-  const [triggerPreview] = useLazyServeMedicationFileQuery();
+  const [triggerPreview] = useLazyServeSupplementFileQuery();
   const user = useSelector((state: RootState) => state.user.user);
 
   const openPreview = async () => {
@@ -242,42 +242,42 @@ export const FileBadge = ({
   );
 };
 
-export const MedicationItem = memo(function MedicationItem({
-  medication,
+export const SupplementItem = memo(function SupplementItem({
+  supplement,
   onEdit,
   onDelete,
 }: {
-  medication: Medication;
+  supplement: Supplement;
   onEdit: (id: string, title: string, content: string) => void;
   onDelete: (id: string) => void;
 }) {
   return (
     <div className="flex justify-between gap-3 p-3 mb-5 bg-white border border-gray-200 shadow-sm rounded-xl">
       <div className="min-w-0">
-        {medication.title && (
+        {supplement.title && (
           <h4 className="mb-1 text-sm font-semibold text-gray-900 truncate">
-            {medication.title}
+            {supplement.title}
           </h4>
         )}
 
-        {medication.content && (
+        {supplement.content && (
           <p className="text-sm text-gray-800 break-words whitespace-pre-wrap">
-            {medication.content}
+            {supplement.content}
           </p>
         )}
 
-        {medication.file_info && (
+        {supplement.file_info && (
           <div className="mt-2">
-            <FileBadge fi={medication.file_info} />
+            <FileBadge fi={supplement.file_info} />
           </div>
         )}
 
         <p className="mt-2 text-xs text-gray-500">
-          • Created: {toUserTZ(medication.created_at).toLocaleString()}
+          • Created: {toUserTZ(supplement.created_at).toLocaleString()}
         </p>
 
         <p className="mt-2 text-xs text-gray-500">
-          • Updated: {toUserTZ(medication.updated_at).toLocaleString()}
+          • Updated: {toUserTZ(supplement.updated_at).toLocaleString()}
         </p>
       </div>
 
@@ -286,7 +286,7 @@ export const MedicationItem = memo(function MedicationItem({
           value="ghost"
           aria-label="Edit"
           onClick={() =>
-            onEdit(medication.id, medication.title ?? "", medication.content)
+            onEdit(supplement.id, supplement.title ?? "", supplement.content)
           }
         >
           <MaterialIcon iconName="edit" className="w-4 h-4 p-0 text-black" />
@@ -295,7 +295,7 @@ export const MedicationItem = memo(function MedicationItem({
         <Button
           value="ghost"
           aria-label="Delete"
-          onClick={() => onDelete(medication.id)}
+          onClick={() => onDelete(supplement.id)}
         >
           <MaterialIcon
             iconName="delete"

@@ -125,7 +125,10 @@ export const healthHistoryApi = createApi({
 
     getMedicationsByChat: builder.query<Medication[], GetMedicationsParams>({
       query: ({ chatId, limit = 100, offset = 0 }) => ({
-        url: API_ROUTES.HEALTH_HISTORY.GET_MEDICATIONS.replace("{chat_id}", chatId),
+        url: API_ROUTES.HEALTH_HISTORY.GET_MEDICATIONS.replace(
+          "{chat_id}",
+          chatId
+        ),
         params: { limit, offset },
       }),
       transformResponse: (response: { medications: Medication[] }) =>
@@ -136,10 +139,7 @@ export const healthHistoryApi = createApi({
       query: ({ medicationData, file }) => {
         const formData = new FormData();
 
-        formData.append(
-          "medication_data",
-          JSON.stringify(medicationData)
-        );
+        formData.append("medication_data", JSON.stringify(medicationData));
 
         if (file) {
           formData.append("file", file);
@@ -153,10 +153,7 @@ export const healthHistoryApi = createApi({
       },
     }),
 
-    updateMedication: builder.mutation<
-      Medication,
-      UpdateMedicationParams
-    >({
+    updateMedication: builder.mutation<Medication, UpdateMedicationParams>({
       query: ({ medicationId, medicationData, file }) => {
         const formData = new FormData();
 
@@ -173,7 +170,10 @@ export const healthHistoryApi = createApi({
         }
 
         return {
-          url: API_ROUTES.HEALTH_HISTORY.UPDATE_MEDICATION.replace("{medication_id}", medicationId),
+          url: API_ROUTES.HEALTH_HISTORY.UPDATE_MEDICATION.replace(
+            "{medication_id}",
+            medicationId
+          ),
           method: "PUT",
           body: formData,
         };
@@ -185,21 +185,30 @@ export const healthHistoryApi = createApi({
       { medicationId: string }
     >({
       query: ({ medicationId }) => ({
-        url: API_ROUTES.HEALTH_HISTORY.DELETE_MEDICATION.replace("{medication_id}", medicationId),
+        url: API_ROUTES.HEALTH_HISTORY.DELETE_MEDICATION.replace(
+          "{medication_id}",
+          medicationId
+        ),
         method: "DELETE",
       }),
     }),
 
     serveMedicationFile: builder.query<Blob, { fileUuid: string }>({
       query: ({ fileUuid }) => ({
-        url: API_ROUTES.HEALTH_HISTORY.SERVE_MEDICATION_FILE.replace("{file_uuid}", fileUuid),
+        url: API_ROUTES.HEALTH_HISTORY.SERVE_MEDICATION_FILE.replace(
+          "{file_uuid}",
+          fileUuid
+        ),
         responseHandler: (response) => response.blob(),
       }),
     }),
 
     getSupplementsByChat: builder.query<Supplement[], GetSupplementsParams>({
       query: ({ chatId, limit = 100, offset = 0 }) => ({
-        url: API_ROUTES.HEALTH_HISTORY.GET_SUPPLEMENTS.replace("{chat_id}", chatId),
+        url: API_ROUTES.HEALTH_HISTORY.GET_SUPPLEMENTS.replace(
+          "{chat_id}",
+          chatId
+        ),
         params: { limit, offset },
       }),
       transformResponse: (response: { supplements: Supplement[] }) =>
@@ -210,10 +219,7 @@ export const healthHistoryApi = createApi({
       query: ({ supplementData, file }) => {
         const formData = new FormData();
 
-        formData.append(
-          "supplement_data",
-          JSON.stringify(supplementData)
-        );
+        formData.append("supplement_data", JSON.stringify(supplementData));
 
         if (file) {
           formData.append("file", file);
@@ -227,10 +233,7 @@ export const healthHistoryApi = createApi({
       },
     }),
 
-    updateSupplement: builder.mutation<
-      Supplement,
-      UpdateSupplementParams
-    >({
+    updateSupplement: builder.mutation<Supplement, UpdateSupplementParams>({
       query: ({ supplementId, supplementData, file }) => {
         const formData = new FormData();
 
@@ -247,7 +250,10 @@ export const healthHistoryApi = createApi({
         }
 
         return {
-          url: API_ROUTES.HEALTH_HISTORY.UPDATE_SUPPLEMENT.replace("{supplement_id}", supplementId),
+          url: API_ROUTES.HEALTH_HISTORY.UPDATE_SUPPLEMENT.replace(
+            "{supplement_id}",
+            supplementId
+          ),
           method: "PUT",
           body: formData,
         };
@@ -259,14 +265,20 @@ export const healthHistoryApi = createApi({
       { supplementId: string }
     >({
       query: ({ supplementId }) => ({
-        url: API_ROUTES.HEALTH_HISTORY.DELETE_SUPPLEMENT.replace("{supplement_id}", supplementId),
+        url: API_ROUTES.HEALTH_HISTORY.DELETE_SUPPLEMENT.replace(
+          "{supplement_id}",
+          supplementId
+        ),
         method: "DELETE",
       }),
     }),
 
     serveSupplementFile: builder.query<Blob, { fileUuid: string }>({
       query: ({ fileUuid }) => ({
-        url: API_ROUTES.HEALTH_HISTORY.SERVE_SUPPLEMENT_FILE.replace("{file_uuid}", fileUuid),
+        url: API_ROUTES.HEALTH_HISTORY.SERVE_SUPPLEMENT_FILE.replace(
+          "{file_uuid}",
+          fileUuid
+        ),
         responseHandler: (response) => response.blob(),
       }),
     }),
@@ -284,9 +296,11 @@ export const {
   useUpdateMedicationMutation,
   useDeleteMedicationMutation,
   useServeMedicationFileQuery,
+  useLazyServeMedicationFileQuery,
   useGetSupplementsByChatQuery,
   useCreateSupplementMutation,
   useUpdateSupplementMutation,
   useDeleteSupplementMutation,
   useServeSupplementFileQuery,
+  useLazyServeSupplementFileQuery,
 } = healthHistoryApi;
