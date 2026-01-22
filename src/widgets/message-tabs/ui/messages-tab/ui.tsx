@@ -26,6 +26,7 @@ import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { DaySeparator, NewMessagesSeparator } from "../components/Separator";
 import { VirtuosoHeader } from "../components/VirtuosoHeader";
+import { useCreateMedicationMutation, useCreateSupplementMutation } from "entities/health-history";
 
 function uniqById(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
@@ -155,6 +156,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const popupRef = useRef<HTMLDivElement | null>(null);
 
   const [sendNote] = useSendChatNoteMutation();
+  const [createMedication] = useCreateMedicationMutation();
+  const [createSupplement] = useCreateSupplementMutation();
 
   const handleAddSelectionToNotes = async (text: string) => {
     try {
@@ -169,6 +172,44 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       toast({ title: "Added to notes" });
     } catch {
       toast({ title: "Failed to add note", variant: "destructive" });
+    } finally {
+      setSelectedTextRange(null);
+      window.getSelection()?.removeAllRanges();
+    }
+  };
+
+  const handleAddSelectionToMedications = async (text: string) => {
+    try {
+      await createMedication({
+        medicationData: {
+          title: "Medication from messages",
+          content: text,
+          chat_id: chat.chat_id,
+        },
+      }).unwrap();
+
+      toast({ title: "Added to medications" });
+    } catch {
+      toast({ title: "Failed to add medication", variant: "destructive" });
+    } finally {
+      setSelectedTextRange(null);
+      window.getSelection()?.removeAllRanges();
+    }
+  };
+
+  const handleAddSelectionToSupplements = async (text: string) => {
+    try {
+      await createSupplement({
+        supplementData: {
+          title: "Supplement from messages",
+          content: text,
+          chat_id: chat.chat_id,
+        },
+      }).unwrap();
+
+      toast({ title: "Added to supplements" });
+    } catch {
+      toast({ title: "Failed to add supplement", variant: "destructive" });
     } finally {
       setSelectedTextRange(null);
       window.getSelection()?.removeAllRanges();
@@ -570,9 +611,13 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const TextSelectionPopup = ({
     selection,
     onAddNote,
+    onAddMedication,
+    onAddSupplement
   }: {
     selection: { text: string; rect: DOMRect };
     onAddNote: (text: string) => void;
+    onAddMedication: (text: string) => void;
+    onAddSupplement: (text: string) => void;
   }) => {
     return (
       <div
@@ -595,20 +640,20 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onAddNote(selection.text)}
+          onClick={() => onAddMedication(selection.text)}
           disabled
           className="w-full justify-start"
         >
-          Add to Research
+          Add to Medications
         </Button>
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onAddNote(selection.text)}
+          onClick={() => onAddSupplement(selection.text)}
           disabled
           className="w-full justify-start"
         >
-          Add to Action plan
+          Add to Supplements
         </Button>
       </div>
     );
@@ -714,10 +759,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                           />
                           {(files.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {files.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />
@@ -773,6 +818,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         <TextSelectionPopup
           selection={selectedTextRange}
           onAddNote={handleAddSelectionToNotes}
+          onAddMedication={handleAddSelectionToMedications}
+          onAddSupplement={handleAddSelectionToSupplements}
         />
       )}
     </>

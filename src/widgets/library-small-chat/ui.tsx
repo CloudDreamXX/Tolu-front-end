@@ -53,6 +53,7 @@ import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import SwitchDropdown from "./components/switch-dropdown/ui";
 import { pickPreferredMaleEnglishVoice } from "pages/library-chat/lib";
 import { ChatItemModel, useSendChatNoteMutation } from "entities/chat";
+import { useCreateMedicationMutation, useCreateSupplementMutation } from "entities/health-history/api";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -151,6 +152,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const popupRef = useRef<HTMLDivElement | null>(null);
 
   const [sendNote] = useSendChatNoteMutation();
+  const [createMedication] = useCreateMedicationMutation();
+  const [createSupplement] = useCreateSupplementMutation();
 
   const chats = useSelector((state: RootState) => state.chats.entities);
 
@@ -992,14 +995,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   const handleAddSelectionToNotes = async (text: string) => {
-    if (!clientId) return;
+    if (!clientId) return
 
     const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
 
     try {
       await sendNote({
         noteData: {
-          title: "Note from the chat",
+          title: "Note from messages",
           content: text,
           chat_id: chatIdForNotes || "",
         },
@@ -1014,12 +1017,62 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     }
   };
 
+  const handleAddSelectionToMedications = async (text: string) => {
+    if (!clientId) return
+
+    const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
+
+    try {
+      await createMedication({
+        medicationData: {
+          title: "Medication from messages",
+          content: text,
+          chat_id: chatIdForNotes || ""
+        },
+      }).unwrap();
+
+      toast({ title: "Added to medications" });
+    } catch {
+      toast({ title: "Failed to add medication", variant: "destructive" });
+    } finally {
+      setSelectedTextRange(null);
+      window.getSelection()?.removeAllRanges();
+    }
+  };
+
+  const handleAddSelectionToSupplements = async (text: string) => {
+    if (!clientId) return
+
+    const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
+
+    try {
+      await createSupplement({
+        supplementData: {
+          title: "Supplement from messages",
+          content: text,
+          chat_id: chatIdForNotes || ""
+        },
+      }).unwrap();
+
+      toast({ title: "Added to supplements" });
+    } catch {
+      toast({ title: "Failed to add supplement", variant: "destructive" });
+    } finally {
+      setSelectedTextRange(null);
+      window.getSelection()?.removeAllRanges();
+    }
+  };
+
   const TextSelectionPopup = ({
     selection,
     onAddNote,
+    onAddMedication,
+    onAddSupplement
   }: {
     selection: { text: string; rect: DOMRect };
     onAddNote: (text: string) => void;
+    onAddMedication: (text: string) => void;
+    onAddSupplement: (text: string) => void;
   }) => {
     return (
       <div
@@ -1042,20 +1095,20 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onAddNote(selection.text)}
+          onClick={() => onAddMedication(selection.text)}
           disabled
           className="w-full justify-start"
         >
-          Add to Research
+          Add to Medications
         </Button>
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onAddNote(selection.text)}
+          onClick={() => onAddSupplement(selection.text)}
           disabled
           className="w-full justify-start"
         >
-          Add to Action plan
+          Add to Supplements
         </Button>
       </div>
     );
@@ -1149,10 +1202,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {filesState.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />
@@ -1176,10 +1229,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              1
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -1373,10 +1426,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
@@ -1401,10 +1454,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  1
+                                </span>
+                              )}
                           </Button>
                         }
                         setInstruction={setInstruction}
@@ -1427,10 +1480,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
@@ -1453,6 +1506,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         <TextSelectionPopup
           selection={selectedTextRange}
           onAddNote={handleAddSelectionToNotes}
+          onAddMedication={handleAddSelectionToMedications}
+          onAddSupplement={handleAddSelectionToSupplements}
         />
       )}
     </>
