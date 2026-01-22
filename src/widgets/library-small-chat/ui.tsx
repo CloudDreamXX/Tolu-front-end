@@ -1002,7 +1002,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     try {
       await sendNote({
         noteData: {
-          title: "Note from messages",
+          title: "Note from the chat",
           content: text,
           chat_id: chatIdForNotes || "",
         },
@@ -1025,7 +1025,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     try {
       await createMedication({
         medicationData: {
-          title: "Medication from messages",
+          title: "Medication from the chat",
           content: text,
           chat_id: chatIdForNotes || ""
         },
@@ -1048,7 +1048,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     try {
       await createSupplement({
         supplementData: {
-          title: "Supplement from messages",
+          title: "Supplement from the chat",
           content: text,
           chat_id: chatIdForNotes || ""
         },
