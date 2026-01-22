@@ -42,6 +42,8 @@ import { NotesTab } from "./notes-tab";
 import { RecommendedTab } from "./recommended-tab";
 import { useLocation } from "react-router-dom";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
+import { MedicationsTab } from "./medications-tab";
+import { SupplementsTab } from "./supplements-tab";
 
 type TabItem = {
   id: string;
@@ -62,6 +64,8 @@ const ALL_TABS: TabItem[] = [
   { id: "journals", label: "Journals" },
   { id: "research", label: "Research" },
   { id: "plan", label: "Action plan" },
+  { id: "medications", label: "Medications" },
+  { id: "supplements", label: "Supplements" },
   {
     id: "recommended",
     label: "Recommended for you",
@@ -580,7 +584,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsContent value="profile">
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || ""}
-            onOpenChange={() => {}}
+            onOpenChange={() => { }}
           />
         </TabsContent>
         <TabsContent value="messages">
@@ -600,6 +604,12 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         </TabsContent>
         <TabsContent value="notes">
           <NotesTab chat={chat} search={search} />
+        </TabsContent>
+        <TabsContent value="medications">
+          <MedicationsTab chat={chat} search={search} />
+        </TabsContent>
+        <TabsContent value="supplements">
+          <SupplementsTab chat={chat} search={search} />
         </TabsContent>
         <TabsContent value="providers">
           {clientCoaches && clientCoaches.coaches.length ? (
@@ -642,8 +652,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => {}}
-          onDelete={() => {}}
+          onEdit={() => { }}
+          onDelete={() => { }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
