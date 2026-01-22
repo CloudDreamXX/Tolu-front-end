@@ -63,6 +63,7 @@ export const mapHealthHistoryToFormDefaults = (
     supportSystem: healthHistory?.support_system ?? "",
     goals: healthHistory?.health_goals ?? "",
     gender: healthHistory?.gender ?? "",
+    genderIdentity: healthHistory?.gender_identity ?? "",
     height: healthHistory?.height ?? "",
     weight: healthHistory?.weight ?? "",
     supplements: healthHistory?.supplements ?? "",
@@ -85,6 +86,7 @@ export const mapHealthHistoryToFormDefaults = (
     privacyConsent: healthHistory?.privacy_consent ?? false,
     followUpRecommendation: healthHistory?.follow_up_recommendation ?? "",
     recommendationDestination: healthHistory?.recommendation_destination ?? "",
+    language: healthHistory?.language,
   };
 };
 

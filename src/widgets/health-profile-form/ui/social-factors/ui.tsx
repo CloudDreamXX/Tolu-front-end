@@ -49,6 +49,8 @@ const religionOptions = [
 
 export const socialFactorsSchema = z
   .object({
+    gender: z.string().optional(),
+    genderIdentity: z.string().optional(),
     ethnicity: z.string().optional(),
     otherEthnicity: z.string().optional(),
     household: z.string().optional(),
@@ -153,7 +155,7 @@ export const SocialFactorsForm = ({ form }: SocialFactorsFormProps) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-y-auto">
       {/* Ethnicity Field */}
       <FormField
         control={form.control}

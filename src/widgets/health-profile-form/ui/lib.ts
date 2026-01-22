@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { HealthHistory } from "entities/health-history";
+import { HealthHistory, HealthHistoryPostData } from "entities/health-history";
 import { baseFormSchema } from "./ui";
 
 type FormValues = z.infer<typeof baseFormSchema>;
@@ -11,6 +11,7 @@ export const mapHealthHistoryToFormDefaults = (
 
   return {
     age: healthHistory.age?.toString() || "",
+    gender: healthHistory.gender || "",
     genderIdentity: healthHistory.gender_identity || "woman",
     sexAssignedAtBirth: healthHistory.gender || "female",
     race: healthHistory.ethnicity || "",
@@ -68,7 +69,7 @@ export const mapHealthHistoryToFormDefaults = (
     healthApproach: healthHistory.health_approach_preference || "",
 
     agreeToPrivacy: healthHistory.privacy_consent || false,
-    followUpMethod: healthHistory.follow_up_recommendation || "",
+    followUpRecommendation: healthHistory.follow_up_recommendation || "",
     countryCode: "",
     phoneNumber: "",
   };
@@ -98,4 +99,69 @@ export const prune = (obj: Record<string, any>): Record<string, any> => {
     out[k] = v;
   }
   return out;
+};
+
+export const mapFormValuesToHealthHistoryPayload = (
+  values: Partial<FormValues>
+): Partial<HealthHistoryPostData> => {
+  return prune({
+    age:
+      values.age !== undefined && values.age !== ""
+        ? Number(values.age)
+        : undefined,
+
+    gender_identity: values.genderIdentity,
+    gender: values.sexAssignedAtBirth,
+    ethnicity: values.ethnicity,
+    language: values.language,
+    location: values.country,
+    job: values.occupation,
+    household: values.household,
+    education: values.education,
+    religion: values.religion,
+
+    current_health_concerns: values.healthConcerns,
+    diagnosed_conditions: values.medicalConditions,
+    medications: values.medications,
+    supplements: values.supplements,
+    allergies_intolerances: values.allergies,
+    family_health_history: values.familyHistory,
+
+    diet_pattern: values.dietType,
+    specific_diet: values.dietDetails,
+    cook_at_home: values.cookFrequency,
+    takeout_food: values.takeoutFrequency,
+    eat_decision: values.decisionMaker,
+    kind_of_food: values.commonFoods,
+
+    exercise_habits: values.exerciseHabits,
+    sleep_quality:
+      values.sleepQuality !== undefined
+        ? String(values.sleepQuality)
+        : undefined,
+    stress_levels:
+      values.stressLevels !== undefined
+        ? String(values.stressLevels)
+        : undefined,
+    energy_levels:
+      values.energyLevels !== undefined
+        ? String(values.energyLevels)
+        : undefined,
+
+    menstrual_cycle_status: values.menstrualCycleStatus,
+    hormone_replacement_therapy: values.hormoneTherapy,
+    fertility_concerns: values.fertilityConcerns,
+    birth_control_use: values.birthControlUse,
+
+    blood_sugar_concerns: values.bloodSugarConcern,
+    digestive_issues: values.digestiveIssues,
+
+    health_goals: values.goals,
+    why_these_goals: values.goalReason,
+    desired_results_timeline: values.urgency,
+    health_approach_preference: values.healthApproach,
+
+    follow_up_recommendation: values.followUpRecommendation,
+    privacy_consent: values.agreeToPrivacy,
+  });
 };

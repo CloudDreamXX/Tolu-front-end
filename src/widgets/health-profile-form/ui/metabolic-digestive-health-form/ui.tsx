@@ -29,7 +29,7 @@ export const MetabolicDigestiveHealthForm = ({ form }: { form: any }) => {
   const files: File[] = form.watch("labTestFiles") || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-y-auto">
       <p className="text-sm text-gray-500">
         Provide details about your digestion, blood sugar, metabolism, and gut
         health.

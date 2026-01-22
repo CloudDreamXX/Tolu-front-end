@@ -1,3 +1,19 @@
+## [2.0.0] - 2026-01-20
+
+### New feature
+
+- Add abillity for the coach to edit client's health history.
+- Add coach input for client's health history.
+- Left align the items in highlighted text popup.
+
+## [1.9.0] - 2026-01-16
+
+### New feature
+
+- Add notifications to the coach profile.
+- Add amount of unread messages to the sidebar messages tab.
+- Fix GET /chats and GET /chats/{chat_id} 500 and 403 error.
+
 ## [1.8.1] - 2026-01-13
 
 ### Fixes & Minor Changes

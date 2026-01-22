@@ -108,16 +108,17 @@ export interface ChatFileUploadResponse {
 
 export interface ChatMessageModel {
   id: string;
-  content: string;
-  message_type?: "text" | "image" | "file" | string;
   chat_id: string;
+  content: string;
+  message_type?: "text" | "image" | "document" | "file" | string;
+  created_at: string;
+  updated_at?: string;
   file_url: string | null;
   file_name: string | null;
   file_size: number | null;
   file_type: string | null;
-  library_file_id?: string;
+  library_file_id?: string | null;
   sender?: MessageUser;
-  created_at: string;
   is_deleted?: boolean;
   reactions?: Reaction[];
 }
@@ -145,20 +146,6 @@ export interface UpdateGroupChatPayload {
     description?: string;
   };
   avatar_image?: File | null;
-}
-
-export interface ChatMessageModel {
-  id: string;
-  chat_id: string;
-  content: string;
-  created_at: string;
-  file_url: string | null;
-  file_name: string | null;
-  file_size: number | null;
-  file_type: string | null;
-  sender?: MessageUser;
-  files?: UploadChatFileResponse[];
-  reactions?: Reaction[];
 }
 
 export type WebSocketMessage =
@@ -226,7 +213,7 @@ export interface ChatNoteResponse {
   chat_id: string;
   title: string;
   content: string;
-  file_info: {
+  file_info?: {
     file_url: string;
     file_name: string;
     file_size: number;
@@ -255,12 +242,4 @@ export interface AddMessageReactionPayload {
   chatId: string;
   messageId: string;
   reaction: string;
-}
-
-export interface AddMessageReactionResponse {
-  id: string;
-  reaction: string;
-  user_id: string;
-  message_id: string;
-  created_at: string;
 }
