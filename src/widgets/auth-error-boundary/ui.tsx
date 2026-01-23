@@ -2,6 +2,7 @@ import { logout } from "entities/user";
 import { useEffect, useRef } from "react";
 import { useDispatch, useStore } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "shared/lib";
 
 export const AuthErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -44,12 +45,22 @@ export const AuthErrorBoundary: React.FC<{ children: React.ReactNode }> = ({
             "";
 
           if (
-            status === 403 &&
-            (message.toLowerCase().includes("token") ||
-              message.toLowerCase().includes("authenticated"))
+            (status === 403 &&
+              (message.toLowerCase().includes("token") ||
+                message.toLowerCase().includes("authenticated"))) ||
+            (status === 401 &&
+              message.toLowerCase().includes("session") &&
+              message.toLowerCase().includes("expired"))
           ) {
             hasLoggedOut.current = true;
             unsubscribe();
+
+            toast({
+              variant: "destructive",
+              title: "Session expired",
+              description: "Please sign in again to continue.",
+            });
+
             dispatch(logout());
             localStorage.clear();
             navigate("/auth", { replace: true });
