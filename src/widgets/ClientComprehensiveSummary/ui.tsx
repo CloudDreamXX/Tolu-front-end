@@ -247,17 +247,17 @@ export const ClientComprehensiveSummary = ({
         {button
           ? button
           : !isEditing && (
-              <Button
-                variant="unstyled"
-                size="unstyled"
-                onClick={() => {
-                  setIsEditing(true);
-                  setCurrentStep(steps.indexOf(title));
-                }}
-              >
-                <MaterialIcon iconName="edit" />
-              </Button>
-            )}
+            <Button
+              variant="unstyled"
+              size="unstyled"
+              onClick={() => {
+                setIsEditing(true);
+                setCurrentStep(steps.indexOf(title));
+              }}
+            >
+              <MaterialIcon iconName="edit" />
+            </Button>
+          )}
       </div>
       <div className="space-y-2">{children}</div>
     </div>
@@ -514,7 +514,7 @@ export const ClientComprehensiveSummary = ({
   if (asDialog) {
     return (
       <Dialog open onOpenChange={onOpenChange}>
-        <DialogContent className="min-h-[80vh] h-[90vh] md:max-w-3xl rounded-[18px]">
+        <DialogContent className="min-h-[80vh] h-[90vh] md:max-w-3xl rounded-[18px] overflow-y-auto">
           <DialogTitle>Client Health Summary</DialogTitle>
           <Form {...form}>{content}</Form>
         </DialogContent>
