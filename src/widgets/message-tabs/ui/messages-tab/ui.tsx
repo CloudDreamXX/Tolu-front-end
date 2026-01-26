@@ -606,6 +606,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             onDeleted={(id) => {
               setMessages((prev) => prev.filter((m) => m.id !== id));
             }}
+            onEdited={refetchMessages}
           />
         );
     }
@@ -658,6 +659,22 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         </Button>
       </div>
     );
+  };
+
+  const refetchMessages = async () => {
+    try {
+      const res = await loadMessages(1);
+      if (!res) return;
+
+      setMessages(uniqById(res.messages));
+      setPage(1);
+      setHasNext(res.has_next);
+    } catch {
+      toast({
+        title: "Failed to refresh messages",
+        variant: "destructive",
+      });
+    }
   };
 
   if (loadingInitial) {

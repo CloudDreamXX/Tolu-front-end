@@ -23,6 +23,8 @@ import {
   UpdateChatNotePayload,
   UpdateGroupChatPayload,
   UpdateGroupChatResponse,
+  UpdateMessagePayload,
+  UpdateMessageResponse,
 } from "./model";
 import { upsertMessages } from "./messagesSlice";
 import { API_ROUTES } from "shared/api";
@@ -181,6 +183,22 @@ export const chatApi = createApi({
         method: "DELETE",
       }),
       invalidatesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
+    }),
+
+    updateMessage: builder.mutation<
+      UpdateMessageResponse,
+      UpdateMessagePayload
+    >({
+      query: ({ chatId, messageId, content }) => ({
+        url: API_ROUTES.CHAT.UPDATE_MESSAGE
+          .replace("{chat_id}", chatId)
+          .replace("{message_id}", messageId),
+        method: "PUT",
+        body: { content },
+      }),
+      invalidatesTags: (_r, _e, arg) => [
+        { type: "Message", id: arg.chatId },
+      ],
     }),
 
     createGroupChat: builder.mutation<
@@ -458,6 +476,7 @@ export const {
   useLazyFetchChatMessagesQuery,
   useSendMessageMutation,
   useDeleteMessageMutation,
+  useUpdateMessageMutation,
   useCreateGroupChatMutation,
   useUpdateGroupChatMutation,
   useLazyGetUploadedChatFileQuery,

@@ -150,25 +150,25 @@ export interface UpdateGroupChatPayload {
 
 export type WebSocketMessage =
   | {
-      type: "new_message";
-      data: ChatMessageModel;
-    }
+    type: "new_message";
+    data: ChatMessageModel;
+  }
   | {
-      type: "message_deleted";
-      data: { messageId: string };
-    }
+    type: "message_deleted";
+    data: { messageId: string };
+  }
   | {
-      type: "chat_updated";
-      data: ChatUpdatedPayload;
-    }
+    type: "chat_updated";
+    data: ChatUpdatedPayload;
+  }
   | {
-      type: "pong";
-      data: any;
-    }
+    type: "pong";
+    data: any;
+  }
   | {
-      type: "content_share";
-      data: any;
-    };
+    type: "content_share";
+    data: any;
+  };
 
 export interface ChatUpdatedPayload {
   chat_id: string;
@@ -243,3 +243,14 @@ export interface AddMessageReactionPayload {
   messageId: string;
   reaction: string;
 }
+
+export interface UpdateMessagePayload {
+  chatId: string;
+  messageId: string;
+  content: string;
+}
+
+export interface UpdateMessageResponse {
+  message: ChatMessageModel;
+}
+

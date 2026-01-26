@@ -1,7 +1,7 @@
-import { ChatMessageModel, useDeleteMessageMutation } from "entities/chat";
+import { ChatMessageModel, useDeleteMessageMutation, useUpdateMessageMutation } from "entities/chat";
 import React, { useEffect, useRef, useState } from "react";
 import { cn, toast, usePageWidth } from "shared/lib";
-import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { FileItem } from "widgets/file-item";
 import { toUserTZ } from "widgets/message-tabs/helpers";
 import Picker from "@emoji-mart/react";
@@ -24,6 +24,7 @@ interface MessageBubbleProps {
   isOwn?: boolean;
   className?: string;
   onDeleted?: (messageId: string) => void;
+  onEdited?: () => void;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -34,7 +35,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   isOnlaine = false,
   isOwn = false,
   className = "",
-  onDeleted
+  onDeleted,
+  onEdited,
 }) => {
   const [emojiModalOpen, setEmojiModalOpen] = useState(false);
   const [localReactions, setLocalReactions] = useState(message.reactions ?? []);
@@ -49,9 +51,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const [deleteReaction] = useDeleteMessageReactionMutation();
   const [deleteMessage] =
     useDeleteMessageMutation();
+  const [updateMessage] = useUpdateMessageMutation();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(message.content);
 
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const [pickerPosition, setPickerPosition] = useState<{
@@ -66,6 +72,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     message.file_name !== null &&
     message.file_size !== null &&
     message.file_url !== null;
+
+  useEffect(() => {
+    setEditedContent(message.content);
+  }, [message.content]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -104,19 +114,52 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     </div>
   );
 
-  const renderTextMessage = () => (
-    <div
-      className={cn(
-        "inline-block rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F] max-w-full overflow-hidden break-words [overflow-wrap:anywhere] whitespace-pre-wrap [&_a]:break-all",
-        isOwn
-          ? "bg-[#AAC6EC] rounded-tr-none self-end"
-          : "bg-white border border-[#DBDEE1] rounded-tl-none",
-        className
-      )}
-    >
-      {message.content}
-    </div>
-  );
+  const renderTextMessage = () => {
+    if (isEditing) {
+      return (
+        <>
+          <textarea
+            autoFocus
+            value={editedContent}
+            onChange={(e) => setEditedContent(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSaveEdit();
+              }
+              if (e.key === "Escape") {
+                handleCancelEdit();
+              }
+            }}
+            className={cn(
+              "w-full rounded-lg px-[14px] py-[10px] text-base resize-none",
+              "border border-[#008FF6] focus:outline-none bg-white",
+              className
+            )}
+          />
+          <div className="flex items-center justify-end gap-[4px]">
+            <Button variant={"light-blue"} className=" h-7" size={"sm"} onClick={() => handleCancelEdit()}>Cancel</Button>
+            <Button variant={"brightblue"} className="h-7" size={"sm"} onClick={() => handleSaveEdit()}>Save</Button>
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <div
+        className={cn(
+          "inline-block rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F]",
+          "max-w-full overflow-hidden break-words whitespace-pre-wrap",
+          isOwn
+            ? "bg-[#AAC6EC] rounded-tr-none"
+            : "bg-white border border-[#DBDEE1] rounded-tl-none",
+          className
+        )}
+      >
+        {message.content}
+      </div>
+    );
+  };
 
   const initials = author
     ? author.split(" ").length > 1
@@ -224,6 +267,36 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     }
   };
 
+  const handleSaveEdit = async () => {
+    if (!editedContent.trim() || editedContent === message.content) {
+      setIsEditing(false);
+      return;
+    }
+
+    try {
+      await updateMessage({
+        chatId,
+        messageId: message.id,
+        content: editedContent,
+      }).unwrap();
+
+      toast({ title: "Message updated" });
+      setIsEditing(false);
+
+      onEdited?.();
+    } catch {
+      toast({
+        title: "Failed to update message",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditedContent(message.content);
+    setIsEditing(false);
+  };
+
   const handleTouchMove = () => {
     // Cancel long press if user starts scrolling
     if (longPressTimer.current) {
@@ -271,7 +344,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
         <div
           className={cn(
-            "flex flex-col-reverse md:flex-col md:gap-1.5 min-w-0 py-2 lg:max-w-[70%]",
+            "flex flex-col-reverse md:flex-col md:gap-1.5 min-w-0 py-2 lg:max-w-[70%] items-end",
             isOwn && isMobile ? "items-end" : undefined
           )}
         >
@@ -289,7 +362,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           <div
             ref={bubbleRef}
             className="relative w-fit"
-            onClick={openEmojiPicker}
+            onClick={isEditing ? undefined : openEmojiPicker}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onTouchMove={handleTouchMove}
@@ -342,7 +415,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 className="absolute -top-2 -right-4"
                 data-message-menu
               >
-                <button
+                {!isEditing && <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setMenuOpen((prev) => !prev);
@@ -353,7 +426,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                   title="Message actions"
                 >
                   <MaterialIcon iconName="more_vert" size={20} />
-                </button>
+                </button>}
 
                 {menuOpen && (
                   <div
@@ -361,6 +434,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
           z-50 w-[160px] gap-[6px] bg-white w-fit flex flex-col items-start rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
                   >
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuOpen(false);
+                        setIsEditing(true);
+                      }}
+                      className="w-full px-[14px] py-[10px] flex items-center gap-[8px]"
+                    >
+                      <MaterialIcon iconName="edit" />
+                      Edit
+                    </button>
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
