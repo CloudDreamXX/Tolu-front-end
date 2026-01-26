@@ -15,6 +15,7 @@ import { Folder } from "entities/client";
 import { LibraryCard } from "features/library-card";
 import { AdminStatus } from "entities/content";
 import {
+  AdminFolders,
   AdminFoldersStructureResponse,
   useGetFoldersStructureQuery,
   useLazyGetFoldersStructureQuery,
@@ -30,20 +31,20 @@ type FolderFeed = {
   loading: boolean;
 };
 
-const CATEGORY_LABEL: Record<keyof AdminFoldersStructureResponse, string> = {
+const CATEGORY_LABEL: Record<keyof AdminFolders, string> = {
   flagged: "Flagged",
   ai_generated: "AI Generated",
-  // in_review: "In Review",
+  in_review: "In Review",
   approved: "Approved",
   published: "Published",
   archived: "Archived",
-  pagination: "Meta",
-  admin_access: "Meta",
-  filtered_by_user: "Meta",
-  target_user_id: "Meta",
+  // pagination: "Meta",
+  // admin_access: "Meta",
+  // filtered_by_user: "Meta",
+  // target_user_id: "Meta",
 };
 
-const CATEGORY_KEYS: (keyof AdminFoldersStructureResponse)[] = [
+const CATEGORY_KEYS: (keyof AdminFolders)[] = [
   "flagged",
   "ai_generated",
   // "in_review",
@@ -103,26 +104,29 @@ export const ContentManagement = () => {
   const [isCardsTab, setIsCardsTab] = useState(false);
 
   useEffect(() => {
-    if (!resp) return;
-    const built =
-      CATEGORY_KEYS.map((k) => ({
-        key: String(k),
-        label: CATEGORY_LABEL[k],
-        folders: (resp[k] as Folder[]) || [],
-      })) || [];
+    if (!resp?.data?.folders) return;
+
+    const built = CATEGORY_KEYS.map((key) => ({
+      key,
+      label: CATEGORY_LABEL[key],
+      folders: resp.data.folders[key] ?? [],
+    }));
+
     setGroups(built);
     setFilteredGroups(built);
 
     const status: Record<string, AdminStatus> = {};
-    const collect = (fs: Folder[]) => {
-      fs.forEach((f) => {
-        f.content?.forEach((c) => {
-          const st = (c as any).status;
-          if (st) status[c.id] = { content_id: c.id, status: st };
+    const collect = (folders: Folder[]) => {
+      folders.forEach((f) => {
+        f.content?.forEach((c: any) => {
+          if (c.status) {
+            status[c.id] = { content_id: c.id, status: c.status };
+          }
         });
         if (f.subfolders?.length) collect(f.subfolders);
       });
     };
+
     built.forEach((g) => collect(g.folders));
     setStatusMap(status);
   }, [resp]);
@@ -172,27 +176,23 @@ export const ContentManagement = () => {
   const loadFolderPage = useCallback(
     async (folderId: string, reset = false) => {
       setFolderContentMap((prev) => {
-        const current = prev[folderId] || {
-          items: [],
-          page: 0,
-          hasMore: true,
-          loading: false,
-        };
-        if (current.loading || (!reset && !current.hasMore)) return prev;
+        const current = prev[folderId];
+        if (current?.loading || (!reset && current && !current.hasMore))
+          return prev;
+
         return {
           ...prev,
           [folderId]: {
-            ...current,
-            ...(reset
-              ? { items: [], page: 0, hasMore: true, totalPages: undefined }
-              : {}),
+            items: reset ? [] : current?.items ?? [],
+            page: reset ? 0 : current?.page ?? 0,
+            hasMore: true,
             loading: true,
           },
         };
       });
 
-      const currentFeed = folderContentMapRef.current[folderId];
-      const nextPage = reset ? 1 : (currentFeed?.page || 0) + 1;
+      const current = folderContentMapRef.current[folderId];
+      const nextPage = reset ? 1 : (current?.page ?? 0) + 1;
 
       try {
         const res = await triggerGetFolders({
@@ -201,57 +201,25 @@ export const ContentManagement = () => {
           folder_id: folderId,
         }).unwrap();
 
-        const allRoots = CATEGORY_KEYS.flatMap(
-          (k) => (res[k] as Folder[]) || []
+        const allFolders = CATEGORY_KEYS.flatMap(
+          (k) => res.data.folders[k] ?? []
         );
-        let returned = findFolderById(allRoots, folderId);
-        if (!returned && allRoots.length === 1 && allRoots[0].id === folderId) {
-          returned = allRoots[0];
-        }
-        if (!returned) {
-          setFolderContentMap((prev) => ({
-            ...prev,
-            [folderId]: { ...prev[folderId], loading: false, hasMore: false },
-          }));
-          return;
-        }
 
-        const newItems: ContentItem[] = returned.content ?? [];
-        const pageFromApi = returned.pagination?.current_page ?? nextPage;
-        const hasMoreFromApi = Boolean(returned.pagination?.has_next);
-        const totalPagesFromApi = returned.pagination?.total_pages;
+        const returned = findFolderById(allFolders, folderId);
+        const newItems = returned?.content ?? [];
 
-        setFolderContentMap((prev) => {
-          const base = prev[folderId] || {
-            items: [],
-            page: 0,
-            hasMore: true,
+        setFolderContentMap((prev) => ({
+          ...prev,
+          [folderId]: {
+            items: reset
+              ? newItems
+              : [...(prev[folderId]?.items ?? []), ...newItems],
+            page: nextPage,
+            hasMore: newItems.length === PAGE_SIZE,
             loading: false,
-          };
-          const merged = reset ? newItems : [...base.items, ...newItems];
-          return {
-            ...prev,
-            [folderId]: {
-              items: merged,
-              page: pageFromApi,
-              hasMore: hasMoreFromApi,
-              totalPages: totalPagesFromApi,
-              loading: false,
-            },
-          };
-        });
-
-        if (newItems.length) {
-          const updates: Record<string, AdminStatus> = {};
-          newItems.forEach((it) => {
-            const st = (it as any).status;
-            if (st) updates[it.id] = { content_id: it.id, status: st };
-          });
-          if (Object.keys(updates).length)
-            setStatusMap((prev) => ({ ...prev, ...updates }));
-        }
-      } catch (e) {
-        console.error("Failed to load folder page:", e);
+          },
+        }));
+      } catch {
         setFolderContentMap((prev) => ({
           ...prev,
           [folderId]: { ...prev[folderId], loading: false, hasMore: false },

@@ -1,16 +1,20 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   AdminChatModel,
+  AdminContentActionPayload,
+  AdminFoldersStructureResponse,
   AdminGetFeedbackResponse,
-  ManageContentData,
+  AdminUsersResponse,
+  ManageContentResponse,
   SendMessagePayload,
   SendMessageResponse,
-  UsersResponse,
+  UnpublishedContentResponse,
 } from "./model";
 import { ChatMessageModel } from "entities/chat";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store/lib";
 import { ChangePasswordRequest } from "entities/user";
+import { BaseResponse } from "entities/models";
 
 export const adminApi = createApi({
   reducerPath: "adminApi",
@@ -36,7 +40,7 @@ export const adminApi = createApi({
     "Requests",
   ],
   endpoints: (builder) => ({
-    getAllUsers: builder.query<UsersResponse, void>({
+    getAllUsers: builder.query<BaseResponse<AdminUsersResponse>, void>({
       query: () => API_ROUTES.ADMIN.GET_ALL_USERS,
       providesTags: ["Users"],
     }),
@@ -50,9 +54,9 @@ export const adminApi = createApi({
         end_date?: string;
       }
     >({
-      query: ({ limit, offset, start_date, end_date }) => ({
+      query: (params) => ({
         url: API_ROUTES.ADMIN.GET_FEEDBACK,
-        params: { limit, offset, start_date, end_date },
+        params,
       }),
       providesTags: ["Feedback"],
     }),
@@ -85,7 +89,7 @@ export const adminApi = createApi({
     }),
 
     getFoldersStructure: builder.query<
-      any,
+      AdminFoldersStructureResponse,
       {
         page?: number;
         page_size?: number;
@@ -93,15 +97,15 @@ export const adminApi = createApi({
         user_id?: string;
       }
     >({
-      query: ({ page = 1, page_size = 10, folder_id, user_id }) => ({
+      query: (params) => ({
         url: API_ROUTES.ADMIN.GET_FOLDERS,
-        params: { page, page_size, folder_id, user_id },
+        params,
       }),
       providesTags: ["Folders"],
     }),
 
     getUnpublishedContent: builder.query<
-      any,
+      UnpublishedContentResponse,
       {
         page?: number;
         limit?: number;
@@ -111,25 +115,21 @@ export const adminApi = createApi({
         date_to?: string;
       }
     >({
-      query: ({
-        page = 1,
-        limit = 10,
-        creator_id,
-        unpublished_by,
-        date_from,
-        date_to,
-      }) => ({
+      query: (params) => ({
         url: API_ROUTES.ADMIN.GET_UNPUBLISHED_CONTENT,
-        params: { page, limit, creator_id, unpublished_by, date_from, date_to },
+        params,
       }),
       providesTags: ["Content"],
     }),
 
-    manageContent: builder.mutation<any, ManageContentData>({
-      query: (data) => ({
+    manageContent: builder.mutation<
+      BaseResponse<ManageContentResponse>,
+      AdminContentActionPayload
+    >({
+      query: (body) => ({
         url: API_ROUTES.ADMIN.MANAGE_CONTENT,
         method: "PUT",
-        body: data,
+        body,
       }),
       invalidatesTags: ["Content", "Folders"],
     }),
