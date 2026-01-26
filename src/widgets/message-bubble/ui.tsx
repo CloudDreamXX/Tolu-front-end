@@ -1,4 +1,4 @@
-import { ChatMessageModel } from "entities/chat";
+import { ChatMessageModel, useDeleteMessageMutation } from "entities/chat";
 import React, { useEffect, useRef, useState } from "react";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage } from "shared/ui";
@@ -12,6 +12,8 @@ import {
 } from "entities/chat/api";
 import { useSelector } from "react-redux";
 import { RootState } from "entities/store";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 
 interface MessageBubbleProps {
   message: ChatMessageModel;
@@ -21,6 +23,7 @@ interface MessageBubbleProps {
   isOnlaine?: boolean;
   isOwn?: boolean;
   className?: string;
+  onDeleted?: (messageId: string) => void;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -31,6 +34,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   isOnlaine = false,
   isOwn = false,
   className = "",
+  onDeleted
 }) => {
   const [emojiModalOpen, setEmojiModalOpen] = useState(false);
   const [localReactions, setLocalReactions] = useState(message.reactions ?? []);
@@ -43,6 +47,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   const [addReaction] = useAddMessageReactionMutation();
   const [deleteReaction] = useDeleteMessageReactionMutation();
+  const [deleteMessage] =
+    useDeleteMessageMutation();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const [pickerPosition, setPickerPosition] = useState<{
@@ -57,6 +66,22 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     message.file_name !== null &&
     message.file_size !== null &&
     message.file_url !== null;
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest("[data-message-menu]")) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   const renderFileMessage = () => (
     <div
@@ -96,10 +121,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const initials = author
     ? author.split(" ").length > 1
       ? author
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
+        .split(" ")
+        .map((word) => word[0].toUpperCase())
+        .slice(0, 2)
+        .join("")
       : author.slice(0, 2).toUpperCase()
     : "UN";
 
@@ -207,6 +232,27 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     }
   };
 
+  const handleDeleteMessage = async (id: string) => {
+    try {
+      await deleteMessage({
+        chatId,
+        messageId: id,
+      }).unwrap();
+      setConfirmDelete(false)
+
+      toast({
+        title: "Message deleted successfully",
+      });
+
+      onDeleted?.(message.id);
+    } catch {
+      toast({
+        title: "Failed to delete message",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className={cn("flex flex-col w-full", isOwn ? "" : "items-start")}>
       <div className={cn("flex", isOwn && "justify-end")}>
@@ -290,6 +336,59 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 />
               </div>
             )}
+
+            {isOwn && (
+              <div
+                className="absolute -top-2 -right-4"
+                data-message-menu
+              >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuOpen((prev) => !prev);
+                  }}
+                  className="rounded-full bg-white border shadow
+        w-6 h-6 flex items-center justify-center
+        hover:bg-[#ECEFF4]"
+                  title="Message actions"
+                >
+                  <MaterialIcon iconName="more_vert" size={20} />
+                </button>
+
+                {menuOpen && (
+                  <div
+                    className="absolute right-0 mt-1 bg-white rounded-[10px]
+          shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
+          z-50 w-[160px] gap-[6px] bg-white w-fit flex flex-col items-start rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+                  >
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuOpen(false);
+                        setConfirmDelete(true);
+                      }}
+                      className="w-full px-[14px] py-[10px]
+            flex items-center gap-[8px]
+            text-[#FF1F0F]"
+                    >
+                      <MaterialIcon iconName="delete" className="text-[#FF1F0F]" />
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {confirmDelete && (
+              <DeleteMessagePopup
+                contentId={message.id}
+                onCancel={() => setConfirmDelete(false)}
+                onDelete={handleDeleteMessage}
+                title="Delete message?"
+                text="This action cannot be undone."
+              />
+            )}
+
           </div>
         </div>
       </div>

@@ -603,6 +603,9 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
               "Unknown User"
             }
             chatId={chat.chat_id}
+            onDeleted={(id) => {
+              setMessages((prev) => prev.filter((m) => m.id !== id));
+            }}
           />
         );
     }
