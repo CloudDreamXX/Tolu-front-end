@@ -36,7 +36,7 @@ export const ContentManagerSidebar: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const [signOut] = useSignOutMutation();
 
-  const { data: chats } = useFetchAllChatsQuery();
+  const { data: chats } = useFetchAllChatsQuery(undefined, { skip: !token });
 
   const totalUnreadCount =
     chats?.reduce((sum, chat) => sum + (chat.unreadCount ?? 0), 0) ?? 0;
@@ -229,7 +229,7 @@ export const ContentManagerSidebar: React.FC = () => {
         <Button
           variant={"unstyled"}
           size={"unstyled"}
-          onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
+          onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
           className={`flex gap-4 items-center ${sidebarOpen ? "px-4 justify-between" : "justify-center"}`}
         >
           <Avatar className="mr-[20px]">

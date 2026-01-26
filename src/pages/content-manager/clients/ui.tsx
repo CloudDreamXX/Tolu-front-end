@@ -10,8 +10,10 @@ import {
   useLazyGetClientInfoQuery,
   useLazyGetClientProfileQuery,
 } from "entities/coach";
+import { RootState } from "entities/store";
 import { useLazyCheckUserExistenceQuery } from "entities/user";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ConfirmIcon from "shared/assets/icons/confirm";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -99,7 +101,8 @@ export const ContentManagerClients: React.FC = () => {
   const [widthPercent, setWidthPercent] = useState(50);
   const [notesModal, setNotesModal] = useState<boolean>(false);
   const [notesChatId, setNotesChatId] = useState<string | null>(null);
-  const { data: chats } = useFetchAllChatsQuery(undefined);
+  const token = useSelector((state: RootState) => state.user?.token);
+  const { data: chats } = useFetchAllChatsQuery(undefined, { skip: !token });
 
   const {
     data: clientsData,
@@ -878,9 +881,8 @@ export const ContentManagerClients: React.FC = () => {
                       variant="unstyled"
                       size="unstyled"
                       disabled={client.status !== "active"}
-                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${
-                        client.status !== "active" ? "opacity-[0.5]" : ""
-                      }`}
+                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${client.status !== "active" ? "opacity-[0.5]" : ""
+                        }`}
                       onClick={() => {
                         const chatId = getChatIdByClientId(client.client_id);
                         setNotesChatId(chatId);
@@ -1010,11 +1012,10 @@ export const ContentManagerClients: React.FC = () => {
                   size={"unstyled"}
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
                 </Button>

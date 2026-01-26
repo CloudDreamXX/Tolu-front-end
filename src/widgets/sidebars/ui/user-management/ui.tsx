@@ -5,6 +5,8 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { sideBarContent } from "./lib";
 import { useFetchAllChatsQuery } from "entities/chat";
+import { useSelector } from "react-redux";
+import { RootState } from "entities/store";
 
 export const UserManagementSideBar: React.FC = () => {
   const location = useLocation();
@@ -17,8 +19,9 @@ export const UserManagementSideBar: React.FC = () => {
     folderId: string;
     documentId: string;
   }>();
+  const token = useSelector((state: RootState) => state.user?.token);
 
-  const { data: chats } = useFetchAllChatsQuery();
+  const { data: chats } = useFetchAllChatsQuery(undefined, { skip: !token });
 
   const totalUnreadCount =
     chats?.reduce((sum, chat) => sum + (chat.unreadCount ?? 0), 0) ?? 0;
@@ -61,8 +64,7 @@ export const UserManagementSideBar: React.FC = () => {
               <NavLink
                 to={link.link || "/"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] ${
-                    isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+                  `flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] ${isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
                   }`
                 }
               >
