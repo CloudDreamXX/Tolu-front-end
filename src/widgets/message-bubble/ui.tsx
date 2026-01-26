@@ -20,7 +20,7 @@ interface MessageBubbleProps {
   chatId: string;
   avatar?: string;
   author?: string;
-  isOnlaine?: boolean;
+  isOnline?: boolean;
   isOwn?: boolean;
   className?: string;
   onDeleted?: (messageId: string) => void;
@@ -32,7 +32,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   chatId,
   avatar,
   author,
-  isOnlaine = false,
+  isOnline = false,
   isOwn = false,
   className = "",
   onDeleted,
@@ -337,7 +337,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 {initials}
               </AvatarFallback>
             </Avatar>
-            {isOnlaine && (
+            {isOnline && (
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
             )}
           </div>

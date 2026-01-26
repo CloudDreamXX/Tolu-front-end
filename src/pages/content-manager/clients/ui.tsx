@@ -512,7 +512,7 @@ export const ContentManagerClients: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : clientsData && clientsData.clients.length === 0 ? (
+        ) : clientsData && clientsData.clients && clientsData.clients.length === 0 ? (
           <EmptyStateTolu
             text="Invite your clients to Tolu to deliver personalized education or insight unique to their personal health challenges."
             footer={

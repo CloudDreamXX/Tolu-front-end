@@ -55,7 +55,19 @@ export interface SendMessagePayload {
   target_user_id?: string;
 }
 
-export type FetchAllChatsResponse = ServerChatItemModel[];
+export interface FetchAllChatsResponse {
+  status: string;
+  message: string;
+  data: ServerChatItemModel[];
+  meta: any;
+  timestamp: string;
+  pagination: {
+    total: number;
+    limit: number;
+    offset: number;
+  };
+}
+
 export type CreateChatResponse = ServerChatItemModel;
 export type FetchChatDetailsResponse = DetailsChatItemModel;
 
