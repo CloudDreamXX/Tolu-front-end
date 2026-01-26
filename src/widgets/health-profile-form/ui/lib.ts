@@ -165,3 +165,4 @@ export const mapFormValuesToHealthHistoryPayload = (
     privacy_consent: values.agreeToPrivacy,
   });
 };
+

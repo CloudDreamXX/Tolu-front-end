@@ -266,7 +266,7 @@ export const ClientComprehensiveSummary = ({
   const content = (
     <>
       {!isEditing ? (
-        <div className="space-y-6 max-h-[80vh] overflow-y-auto">
+        <div className="space-y-6">
           <Section title="Demographics">
             <SummaryRow label="Age" value={values.age} />
             <SummaryRow label="Gender" value={resolvedGenderIdentity} />
@@ -523,7 +523,7 @@ export const ClientComprehensiveSummary = ({
   }
 
   return (
-    <div className="w-full rounded-[18px] border border-[#EAEAEA] p-6 overflow-y-auto">
+    <div className="w-full rounded-[18px] border border-[#EAEAEA] p-6 overflow-y-auto max-h-[calc(100vh-130px)]">
       <Form {...form}>{content}</Form>
 
       {/* Preview modal */}

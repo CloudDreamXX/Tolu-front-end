@@ -22,9 +22,9 @@ const isAlreadyAccepted = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   const email = String(
     err?.response?.data?.detail?.email ?? err?.response?.data?.email ?? ""
@@ -38,9 +38,9 @@ const isAuthRevoked = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   return (
     status === 403 ||
@@ -48,7 +48,9 @@ const isAuthRevoked = (err: any) => {
     msg.includes("session_revoked") ||
     msg.includes("invalid token") ||
     msg.includes("expired token") ||
-    msg.includes("expired invitation token")
+    msg.includes("expired invitation token") ||
+    msg.toLowerCase().includes("session") ||
+    msg.toLowerCase().includes("expired")
   );
 };
 
@@ -63,9 +65,9 @@ const isAlreadyRegistered = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
 
   return status === 409 || msg.includes("already exists");
@@ -142,6 +144,11 @@ export const Register = () => {
         }
 
         if (isAuthRevoked(detailsError)) {
+          toast({
+            variant: "destructive",
+            title: "Session expired",
+            description: "Please sign in again to continue.",
+          });
           dispatch(logout());
           navigate("/auth", {
             replace: true,
@@ -155,6 +162,11 @@ export const Register = () => {
             navigate("/library");
           } catch (acceptErr) {
             if (isAuthRevoked(acceptErr)) {
+              toast({
+                variant: "destructive",
+                title: "Session expired",
+                description: "Please sign in again to continue.",
+              });
               dispatch(logout());
               navigate("/auth", {
                 replace: true,
@@ -198,6 +210,11 @@ export const Register = () => {
             return;
           }
           if (isAuthRevoked(err)) {
+            toast({
+              variant: "destructive",
+              title: "Session expired",
+              description: "Please sign in again to continue.",
+            });
             dispatch(logout());
             navigate("/auth", { replace: true });
             return;
@@ -285,11 +302,21 @@ export const Register = () => {
       }
     } catch (error) {
       if (isAuthRevoked(error)) {
+        toast({
+          variant: "destructive",
+          title: "Session expired",
+          description: "Please sign in again to continue.",
+        });
         dispatch(logout());
         navigate("/auth", { replace: true });
         return;
       }
       if (isAuthRevoked(error)) {
+        toast({
+          variant: "destructive",
+          title: "Session expired",
+          description: "Please sign in again to continue.",
+        });
         dispatch(logout());
         navigate("/auth", { replace: true });
         return;

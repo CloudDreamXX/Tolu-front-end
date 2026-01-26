@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FormField,
   FormItem,
@@ -141,17 +141,20 @@ export const DrivesAndGoalsForm = ({ form }: { form: any }) => {
   const [goalsSelected, setGoalsSelected] = useState<string[]>([]);
   const [otherGoal, setOtherGoal] = useState<string>("");
   const [reasonsSelected, setReasonsSelected] = useState<string[]>([]);
+  const [otherGoals, setOtherGoals] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (goalsSelected.includes("Other") && otherGoals.length === 0) {
+      setOtherGoals([""]);
+    }
+  }, [goalsSelected]);
 
   const handleGoalsChange = (val: string[]) => {
     setGoalsSelected(val);
-    form.setValue("goals", val.join(" , "));
-  };
-
-  const handleOtherGoalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setOtherGoal(newValue);
-
-    const merged = [...goalsSelected, newValue].filter((v) => v !== "Other");
+    const merged = [
+      ...val.filter(v => v !== "Other"),
+      ...otherGoals.filter(v => v.trim()).map(v => `Other: ${v.trim()}`)
+    ];
     form.setValue("goals", merged.join(" , "));
   };
 
@@ -181,12 +184,32 @@ export const DrivesAndGoalsForm = ({ form }: { form: any }) => {
               onChange={handleGoalsChange}
             />
             {goalsSelected.includes("Other") && (
-              <div className="pt-2">
-                <Input
-                  placeholder="Describe your goal"
-                  value={otherGoal}
-                  onChange={handleOtherGoalChange}
-                />
+              <div className="pt-2 space-y-2">
+                {otherGoals.map((val, idx) => (
+                  <Input
+                    key={idx}
+                    placeholder="Describe your goal"
+                    value={val}
+                    onChange={(e) => {
+                      const newVals = [...otherGoals];
+                      newVals[idx] = e.target.value;
+                      setOtherGoals(newVals);
+
+                      const merged = [
+                        ...goalsSelected.filter(v => v !== "Other"),
+                        ...newVals.filter(v => v.trim()).map(v => `Other: ${v.trim()}`)
+                      ];
+                      form.setValue("goals", merged.join(" , "));
+                    }}
+                  />
+                ))}
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 hover:underline"
+                  onClick={() => setOtherGoals([...otherGoals, ""])}
+                >
+                  + Add another
+                </button>
               </div>
             )}
             <FormMessage />
