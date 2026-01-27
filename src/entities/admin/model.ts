@@ -1,5 +1,4 @@
 import { Folder } from "entities/client";
-import { BaseResponse, PaginatedResponse } from "entities/models";
 
 export interface User {
   id: string;
@@ -15,15 +14,12 @@ export interface User {
 export interface UsersResponse {
   users: User[];
 }
-export interface AdminFeedbackResponse {
+export interface AdminGetFeedbackResponse {
   coach_feedback: CoachFeedbackSection;
   client_feedback: ClientFeedbackSection;
   pagination: FeedbackPagination;
   summary: FeedbackSummary;
 }
-
-export type AdminGetFeedbackResponse =
-  PaginatedResponse<AdminFeedbackResponse>;
 
 export interface PaginatedSection<T> {
   data: T[];
@@ -97,74 +93,23 @@ export interface ManageContentData {
   unpublish_reason?: string;
 }
 
-export type AdminFoldersStructureResponse =
-  BaseResponse<AdminFoldersData>;
-
-export interface AdminUser {
-  id: string;
-  email: string;
-  name: string;
-  first_name: string;
-  last_name: string;
-  phone_number: string | null;
-  signup_date: string | null;
-  role: number;
-}
-
-export interface AdminUsersResponse {
-  users: AdminUser[];
-}
-export interface AdminFeedbackResponse {
-  coach_feedback: CoachFeedbackSection;
-  client_feedback: ClientFeedbackSection;
-}
-
-export interface AdminFolders {
+export interface AdminFoldersStructureResponse {
   ai_generated?: Folder[];
-  in_review?: Folder[];
+  // in_review?: Folder[];
   approved?: Folder[];
   published?: Folder[];
   archived?: Folder[];
   flagged?: Folder[];
-}
-
-export interface AdminFoldersData {
-  folders: AdminFolders;
-  admin_access: boolean;
-  filtered_by_user: boolean;
-  target_user_id: string | null;
-}
-
-export interface UnpublishedContentItem {
-  id: string;
-  title: string;
-  creator_id: string;
-  unpublished_by: string;
-  unpublished_at: string;
-}
-
-export type UnpublishedContentResponse =
-  PaginatedResponse<UnpublishedContentItem[]>;
-
-export interface AdminContentActionPayload {
-  content_id: string;
-  action: "unpublish" | "approve" | "reject";
-  admin_comment?: string;
-  unpublish_reason?: string;
-}
-
-export interface ManageContentResponse {
-  content: {
-    id: string;
-    status: string;
-    folder_name: string;
-    email_notification_sent: boolean;
+  pagination?: {
+    current_page: number;
+    page_size: number;
+    total_content_items: number;
+    applied_to_specific_folder: boolean;
+    target_folder_id: string | null;
+    admin_view: boolean;
+    showing_all_users: boolean;
   };
-  action_performed: {
-    action: string;
-    performed_by: string;
-    performed_at: string;
-    moved_to_folder: string;
-  };
+  admin_access?: boolean;
+  filtered_by_user?: boolean;
+  target_user_id?: string | null;
 }
-

@@ -93,7 +93,7 @@ export const FeedbackHub = () => {
   useEffect(() => {
     if (!data) return;
 
-    const coach: Row[] = (data?.data.coach_feedback?.data ?? []).map((c: any) => ({
+    const coach: Row[] = (data?.coach_feedback?.data ?? []).map((c: any) => ({
       type: "Coach",
       name: nameFromEmail(c.coach_email),
       email: c.coach_email,
@@ -104,7 +104,7 @@ export const FeedbackHub = () => {
       comments: c.rating_comment,
     }));
 
-    const client: Row[] = (data?.data.client_feedback?.data ?? []).map((c: any) => ({
+    const client: Row[] = (data?.client_feedback?.data ?? []).map((c: any) => ({
       type: "Client",
       name: nameFromEmail(c.client_email),
       email: c.client_email,
@@ -126,10 +126,10 @@ export const FeedbackHub = () => {
     setRows(merged);
 
     const combinedTotal =
-      data?.data.summary?.combined_total ??
+      data?.summary?.combined_total ??
       Math.max(
-        data?.data.coach_feedback?.total ?? 0,
-        data?.data.client_feedback?.total ?? 0
+        data?.coach_feedback?.total ?? 0,
+        data?.client_feedback?.total ?? 0
       );
     setTotalPages(Math.max(1, Math.ceil(combinedTotal / PAGE_SIZE)));
   }, [data]);
@@ -398,15 +398,17 @@ export const FeedbackHub = () => {
               filtered.slice(0, PAGE_SIZE).map((r, idx) => (
                 <div
                   key={idx}
-                  className={`grid grid-cols-11 px-[12px] py-[8px] items-center h-[56px] ${idx % 2 === 0 ? "bg-white" : "bg-[#F7F9FD] rounded-[8px]"
-                    }`}
+                  className={`grid grid-cols-11 px-[12px] py-[8px] items-center h-[56px] ${
+                    idx % 2 === 0 ? "bg-white" : "bg-[#F7F9FD] rounded-[8px]"
+                  }`}
                 >
                   <div className="col-span-1">
                     <span
-                      className={`px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${r.type === "Coach"
-                        ? "bg-[#F0F3FF] text-[#000E66]"
-                        : "bg-[#FBF0FF] text-[#460066]"
-                        }`}
+                      className={`px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${
+                        r.type === "Coach"
+                          ? "bg-[#F0F3FF] text-[#000E66]"
+                          : "bg-[#FBF0FF] text-[#460066]"
+                      }`}
                     >
                       {r.type}
                     </span>
@@ -468,12 +470,13 @@ export const FeedbackHub = () => {
                   <div className="flex items-center col-span-1 gap-2">
                     {r.rating != null ? (
                       <span
-                        className={`inline-flex items-center justify-center px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${r.rating >= 4
-                          ? "bg-[#F0FFF5] text-[#006622]"
-                          : r.rating === 3
-                            ? "bg-[#FFF6F0] text-[#663C00]"
-                            : "bg-[#FFF0F0] text-[#660000]"
-                          }`}
+                        className={`inline-flex items-center justify-center px-[12px] py-[8px] rounded-full text-[16px] font-[500] ${
+                          r.rating >= 4
+                            ? "bg-[#F0FFF5] text-[#006622]"
+                            : r.rating === 3
+                              ? "bg-[#FFF6F0] text-[#663C00]"
+                              : "bg-[#FFF0F0] text-[#660000]"
+                        }`}
                       >
                         {r.rating}
                       </span>
@@ -540,10 +543,11 @@ export const FeedbackHub = () => {
               size={"unstyled"}
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
-                ? "border-[#1C63DB] text-[#1C63DB]"
-                : "border-[#DBDEE1] text-black"
-                }`}
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                page === pageNumber
+                  ? "border-[#1C63DB] text-[#1C63DB]"
+                  : "border-[#DBDEE1] text-black"
+              }`}
             >
               {pageNumber}
             </Button>
