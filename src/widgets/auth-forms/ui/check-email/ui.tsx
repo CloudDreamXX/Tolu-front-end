@@ -36,11 +36,11 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
       try {
         if (from === "register" && token && email) {
           const msg = await verifyEmail({ email, token }).unwrap();
-          if (msg.data.user && msg.data.accessToken) {
+          if (msg.user && msg.accessToken) {
             dispatch(
-              setCredentials({ user: msg.data.user, accessToken: msg.data.accessToken })
+              setCredentials({ user: msg.user, accessToken: msg.accessToken })
             );
-            nav(msg.data.user.roleID === 3 ? "/welcome/client" : "/select-type");
+            nav(msg.user.roleID === 3 ? "/welcome/client" : "/select-type");
           }
         }
 

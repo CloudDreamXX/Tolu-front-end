@@ -134,8 +134,8 @@ export const ContentManagerProfile = () => {
 
     (async () => {
       try {
-        const headshotFilename = user.data.profile?.basic_info?.headshot
-          ? user.data.profile.basic_info.headshot.split("/").pop()
+        const headshotFilename = user.profile?.basic_info?.headshot
+          ? user.profile.basic_info.headshot.split("/").pop()
           : null;
 
         if (headshotFilename) {
@@ -146,7 +146,7 @@ export const ContentManagerProfile = () => {
         }
 
         const licensePaths: string[] =
-          user.data.onboarding?.practitioner_info?.license_files ?? [];
+          user.onboarding?.practitioner_info?.license_files ?? [];
         const urls = await Promise.all(
           licensePaths.map((p) => createUrlFromPath(p))
         );
@@ -180,7 +180,7 @@ export const ContentManagerProfile = () => {
   };
 
   const initials = (() => {
-    const info = user?.data.profile?.basic_info;
+    const info = user?.profile?.basic_info;
     if (!info) return "UN";
 
     if (info.first_name && info.last_name) {
@@ -517,18 +517,18 @@ export const ContentManagerProfile = () => {
 
               <div className="flex flex-col w-full gap-2.5">
                 <p className="text-[#1D1D1F] text-2xl font-bold">
-                  {user?.data.profile.basic_info.first_name &&
-                    user?.data.profile.basic_info.last_name
-                    ? `${user?.data.profile.basic_info.first_name} ${user?.data.profile.basic_info.last_name}`
-                    : user?.data.profile.basic_info.name || ""}
+                  {user?.profile.basic_info.first_name &&
+                  user?.profile.basic_info.last_name
+                    ? `${user?.profile.basic_info.first_name} ${user?.profile.basic_info.last_name}`
+                    : user?.profile.basic_info.name || ""}
                   ,{" "}
-                  {user?.data.profile.basic_info.age
-                    ? String(user?.data.profile.basic_info.age)
+                  {user?.profile.basic_info.age
+                    ? String(user?.profile.basic_info.age)
                     : ""}
                 </p>
                 <Field
                   label="Bio (400 Characters):"
-                  value={user?.data.profile.basic_info.bio?.slice(0, 400) || ""}
+                  value={user?.profile.basic_info.bio?.slice(0, 400) || ""}
                   truncate={false}
                 />
               </div>
@@ -541,7 +541,7 @@ export const ContentManagerProfile = () => {
               <Field
                 label="Practitioner Type:"
                 value={
-                  user?.data.onboarding?.practitioner_info.types
+                  user?.onboarding?.practitioner_info.types
                     .filter((item) => item !== "")
                     .join(", ") || ""
                 }
@@ -550,13 +550,13 @@ export const ContentManagerProfile = () => {
 
               <Field
                 label="Languages:"
-                value={user?.data.profile?.basic_info?.languages?.join(", ") || ""}
+                value={user?.profile?.basic_info?.languages?.join(", ") || ""}
                 truncate={false}
               />
 
               <Field
                 label="Primary focus:"
-                value={user?.data.profile.expertise?.join(", ") || ""}
+                value={user?.profile.expertise?.join(", ") || ""}
                 truncate={false}
               />
 
@@ -574,14 +574,14 @@ export const ContentManagerProfile = () => {
                       Education:
                     </span>
                     <span className="text-[#1D1D1F] text-[16px] font-[500]">
-                      {user?.data.onboarding?.practitioner_info?.school || ""}
+                      {user?.onboarding?.practitioner_info?.school || ""}
                     </span>
                   </div>
                 </div>
                 <div className="md:col-span-1 flex flex-col gap-[8px]">
                   <span className="text-[#5F5F65] text-[18px] font-[500]">
                     Certificates:{" "}
-                    {user?.data.onboarding?.practitioner_info?.license_files
+                    {user?.onboarding?.practitioner_info?.license_files
                       .length || licensePhotos.length}
                   </span>
                   <div className="flex flex-wrap items-center gap-3">
@@ -607,17 +607,17 @@ export const ContentManagerProfile = () => {
               <Field
                 className="flex-row"
                 label="Email:"
-                value={user?.data.profile.basic_info.email || ""}
+                value={user?.profile.basic_info.email || ""}
               />
               <Field
                 className="flex-row"
                 label="Phone number:"
-                value={phoneMask(user?.data.profile.basic_info.phone || "")}
+                value={phoneMask(user?.profile.basic_info.phone || "")}
               />
               <Field
                 className="flex-row"
                 label="Time zone:"
-                value={user?.data.profile.basic_info.timezone || ""}
+                value={user?.profile.basic_info.timezone || ""}
               />
 
               <div className="flex flex-col w-full gap-4">
@@ -729,7 +729,7 @@ export const ContentManagerProfile = () => {
       </div>
 
       <CouchEditProfileModal
-        user={user?.data ?? null}
+        user={user ?? null}
         open={editModalOpen}
         setOpen={setEditModalOpen}
       />

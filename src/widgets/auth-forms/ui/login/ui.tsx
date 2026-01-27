@@ -174,7 +174,7 @@ export const LoginForm = () => {
 
     try {
       const coach = await triggerGetOnboardingUser().unwrap();
-      const coachData = mapUserToCoachOnboarding(coach.data);
+      const coachData = mapUserToCoachOnboarding(coach);
       dispatch(setCoachOnboardingData(coachData));
 
       const issue = findFirstIncompleteStep(coachData);
@@ -182,7 +182,6 @@ export const LoginForm = () => {
       else navigate("/content-manager/create");
     } catch (err: any) {
       const detail = err?.data?.detail;
-      console.log(err)
       if (
         err?.status === 400 &&
         typeof detail === "string" &&
@@ -220,24 +219,24 @@ export const LoginForm = () => {
         password: formData.password,
       }).unwrap();
 
-      dispatch(setCredentials(response.data));
+      dispatch(setCredentials(response));
 
       try {
         const profile = await getUserProfile().unwrap();
 
-        dispatch(setUserId(profile.data.id));
+        dispatch(setUserId(profile.id));
       } catch (err) {
         console.error("Failed to fetch user profile", err);
       }
 
       toast({ title: "Login successful", description: "Welcome back!" });
 
-      if (response.data.user.roleName === "Client") {
+      if (response.user.roleName === "Client") {
         await redirectClient();
         return;
       }
 
-      if (response.data.user.roleName === "Practitioner") {
+      if (response.user.roleName === "Practitioner") {
         await redirectCoach();
         return;
       }
@@ -421,10 +420,11 @@ export const LoginForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={formDataChangeHandler}
-                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${loginError
-                    ? "border border-[#FF1F0F]"
-                    : "border border-[#DFDFDF]"
-                    }`}
+                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${
+                    loginError
+                      ? "border border-[#FF1F0F]"
+                      : "border border-[#DFDFDF]"
+                  }`}
                 />
                 {loginError && (
                   <p className="text-[#FF1F0F] text-[14px]">{loginError}</p>
@@ -443,10 +443,11 @@ export const LoginForm = () => {
                     placeholder="Enter Password"
                     name="password"
                     onChange={formDataChangeHandler}
-                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${passwordError
-                      ? "border border-[#FF1F0F]"
-                      : "border border-[#DFDFDF]"
-                      }`}
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${
+                      passwordError
+                        ? "border border-[#FF1F0F]"
+                        : "border border-[#DFDFDF]"
+                    }`}
                   />
                   {formData.password && (
                     <Button
@@ -522,10 +523,11 @@ export const LoginForm = () => {
               <Button
                 variant={"unstyled"}
                 size={"unstyled"}
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${formData.email && !loginError
-                  ? "bg-[#1C63DB] text-white"
-                  : "bg-[#D5DAE2] text-[#5F5F65]"
-                  }`}
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
+                  formData.email && !loginError
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5F5F65]"
+                }`}
                 onClick={handleRequestInvite}
               >
                 Request invite
@@ -535,11 +537,12 @@ export const LoginForm = () => {
                 variant={"unstyled"}
                 size={"unstyled"}
                 type="submit"
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${(!isCodeSent && formData.email) ||
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
+                  (!isCodeSent && formData.email) ||
                   (isCodeSent && formData.code)
-                  ? "bg-[#1C63DB] text-white"
-                  : "bg-[#D5DAE2] text-[#5F5F65]"
-                  }`}
+                    ? "bg-[#1C63DB] text-white"
+                    : "bg-[#D5DAE2] text-[#5F5F65]"
+                }`}
               >
                 {loginMode === "2fa"
                   ? isCodeSent
