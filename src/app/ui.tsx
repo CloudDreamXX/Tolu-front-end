@@ -15,14 +15,14 @@ export const App: React.FC = () => {
   const { data: user } = useGetUserProfileQuery();
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.data.id) return;
 
-    ChatSocketService.connect(user.id);
+    ChatSocketService.connect(user.data.id);
 
     return () => {
       ChatSocketService.disconnect();
     };
-  }, [user?.id]);
+  }, [user?.data.id]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

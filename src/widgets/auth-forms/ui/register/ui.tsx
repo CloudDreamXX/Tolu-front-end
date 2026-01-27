@@ -279,12 +279,12 @@ export const Register = () => {
         access_code: otpCode,
       }).unwrap();
 
-      if (res?.user && res.accessToken) {
+      if (res?.data.user && res.data.accessToken) {
         dispatch(
-          setCredentials({ user: res.user, accessToken: res.accessToken })
+          setCredentials({ user: res.data.user, accessToken: res.data.accessToken })
         );
 
-        if (res.user.roleID === 3) {
+        if (res.data.user.roleID === 3) {
           navigate("/welcome/client", {
             state: {
               inviteSource: inviteSource,
@@ -296,7 +296,7 @@ export const Register = () => {
         return;
       }
 
-      if (!res.accessToken) {
+      if (!res.data?.accessToken) {
         toast({ title: "Register successful", description: "Welcome!" });
         navigate("/verify-email");
       }

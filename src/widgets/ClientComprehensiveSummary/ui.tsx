@@ -434,7 +434,7 @@ export const ClientComprehensiveSummary = ({
                 <FormField
                   control={form.control}
                   name="followUpRecommendation"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormControl>
                         <Textarea
@@ -444,6 +444,12 @@ export const ClientComprehensiveSummary = ({
                           {...field}
                         />
                       </FormControl>
+
+                      {fieldState.error && (
+                        <p className="text-sm text-red-600 mt-1">
+                          {fieldState.error.message}
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />

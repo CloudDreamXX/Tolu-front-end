@@ -13,7 +13,10 @@ import z from "zod";
 
 export const consentSubmissionSchema = z.object({
   agreeToPrivacy: z.boolean().optional(),
-  followUpRecommendation: z.string().optional(),
+  followUpRecommendation: z
+    .string()
+    .max(5000, "Coach input cannot exceed 5000 characters")
+    .optional(),
   phoneNumber: z.string().optional(),
   countryCode: z.string().optional(),
 });

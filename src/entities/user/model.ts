@@ -1,3 +1,5 @@
+import { BaseResponse } from "entities/models";
+
 export interface IUser {
   id: string;
   first_name: string;
@@ -260,3 +262,23 @@ export interface VerifyPasswordlessLogin {
 export interface AccessCodeRequest {
   access_code: string;
 }
+
+export interface User {
+  email: string;
+  name: string;
+  first_name: string;
+  last_name: string;
+  last_login: string | null;
+  last_activity: string | null;
+  roleID: number;
+  roleName: string;
+  onboarding_filled: boolean;
+}
+
+export interface LoginResponseData {
+  accessToken: string;
+  user: User;
+}
+
+export type LoginResponse = BaseResponse<LoginResponseData>;
+

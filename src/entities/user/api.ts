@@ -15,10 +15,12 @@ import {
   PasswordlessLoginRequest,
   SignUpDetails,
   AccessCodeRequest,
+  LoginResponse,
 } from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { FormState } from "entities/store/clientOnboardingSlice";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const userApi = createApi({
   reducerPath: "userApi",
@@ -36,7 +38,7 @@ export const userApi = createApi({
 
   endpoints: (builder) => ({
     login: builder.mutation<
-      { user: IUser; accessToken: string },
+      LoginResponse,
       { email: string; password: string }
     >({
       query: (body) => ({
@@ -47,7 +49,7 @@ export const userApi = createApi({
     }),
 
     forgotPassword: builder.mutation<
-      { success: boolean; message: string; email: string },
+      BaseResponse<{ success: boolean; email: string }>,
       string
     >({
       query: (email) => ({
@@ -58,7 +60,7 @@ export const userApi = createApi({
     }),
 
     setNewPassword: builder.mutation<
-      { message: string },
+      BaseResponse<any>,
       { email: string; token: string; new_password: string }
     >({
       query: (body) => ({
@@ -68,7 +70,10 @@ export const userApi = createApi({
       }),
     }),
 
-    registerUser: builder.mutation<any, SignUpDetails>({
+    registerUser: builder.mutation<
+      BaseResponse<any>,
+      SignUpDetails
+    >({
       query: (userInfo) => ({
         url: API_ROUTES.USER.SIGNUP,
         method: "POST",
@@ -77,7 +82,7 @@ export const userApi = createApi({
     }),
 
     verifyEmail: builder.mutation<
-      { user: IUser; accessToken: string },
+      BaseResponse<{ user: IUser; accessToken: string }>,
       { email: string; token: string }
     >({
       query: (body) => ({
@@ -88,7 +93,7 @@ export const userApi = createApi({
     }),
 
     verifyEmailPass: builder.mutation<
-      { user: IUser; accessToken: string },
+      BaseResponse<{ user: IUser; accessToken: string }>,
       { email: string; token: string }
     >({
       query: (body) => ({
@@ -104,11 +109,31 @@ export const userApi = createApi({
     >({
       query: ({ data, photo, licenseFiles = [] }) => {
         const formData = new FormData();
-        formData.append("onboarding_data", JSON.stringify(data));
-        if (photo) formData.append("headshot", photo);
-        licenseFiles.forEach(
-          (file) => file && formData.append("license_files", file)
-        );
+
+        Object.entries(data).forEach(([key, value]) => {
+          if (value === undefined || value === null) return;
+
+          if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+            return;
+          }
+
+          if (typeof value === "boolean") {
+            formData.append(key, value ? "true" : "false");
+            return;
+          }
+
+          formData.append(key, String(value));
+        });
+
+        if (photo) {
+          formData.append("headshot", photo);
+        }
+
+        licenseFiles.forEach((file) => {
+          if (file) formData.append("license_files", file);
+        });
+
         return {
           url: API_ROUTES.USER.ONBOARD_USER,
           method: "POST",
@@ -138,7 +163,7 @@ export const userApi = createApi({
       invalidatesTags: ["Onboarding"],
     }),
 
-    getOnboardingUser: builder.query<UserOnboardingInfo, void>({
+    getOnboardingUser: builder.query<BaseResponse<UserOnboardingInfo>, void>({
       query: () => API_ROUTES.USER.ONBOARD_USER,
       providesTags: ["Onboarding"],
     }),
@@ -167,12 +192,18 @@ export const userApi = createApi({
       providesTags: ["Onboarding"],
     }),
 
-    getUserProfile: builder.query<IUser, void>({
+    getUserProfile: builder.query<
+      BaseResponse<IUser>,
+      void
+    >({
       query: () => API_ROUTES.USER.PROFILE,
       providesTags: ["User"],
     }),
 
-    updateProfile: builder.mutation<IUser, Partial<IUser>>({
+    updateProfile: builder.mutation<
+      BaseResponse<IUser>,
+      Partial<IUser>
+    >({
       query: (body) => ({
         url: API_ROUTES.USER.PROFILE,
         method: "PUT",
@@ -181,7 +212,10 @@ export const userApi = createApi({
       invalidatesTags: ["User"],
     }),
 
-    deleteAccount: builder.mutation<{ success: boolean }, void>({
+    deleteAccount: builder.mutation<
+      BaseResponse<{ success: boolean }>,
+      void
+    >({
       query: () => ({
         url: API_ROUTES.USER.DELETE_ACCOUNT,
         method: "DELETE",
