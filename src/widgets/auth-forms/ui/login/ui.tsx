@@ -182,7 +182,7 @@ export const LoginForm = () => {
       else navigate("/content-manager/create");
     } catch (err: any) {
       const detail = err?.data?.detail;
-      console.log(err)
+      console.error(err)
       if (
         err?.status === 400 &&
         typeof detail === "string" &&
@@ -298,15 +298,15 @@ export const LoginForm = () => {
         code: formData.code,
       }).unwrap();
 
-      dispatch(setCredentials(response));
+      dispatch(setCredentials(response.data));
       toast({ title: "Login successful", description: "Welcome back!" });
 
-      if (response.user.roleName === "Client") {
+      if (response.data.user.roleName === "Client") {
         await redirectClient();
         return;
       }
 
-      if (response.user.roleName === "Coach") {
+      if (response.data.user.roleName === "Coach") {
         await redirectCoach();
         return;
       }
