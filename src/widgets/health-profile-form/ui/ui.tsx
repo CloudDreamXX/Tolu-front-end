@@ -76,7 +76,7 @@ export const baseFormSchema = basicInformationSchema
 
 type BaseValues = z.infer<typeof baseFormSchema>;
 
-const formSchema = baseFormSchema
+export const formSchema = baseFormSchema
   .refine(
     (data: BaseValues) => {
       if (data.medications === "other") {
@@ -886,9 +886,9 @@ export const HealthProfileForm = () => {
                   isEditing
                     ? () => setIsEditing(false)
                     : () => {
-                        setIsOpen(false);
-                        setConfirmOpen(true);
-                      }
+                      setIsOpen(false);
+                      setConfirmOpen(true);
+                    }
                 }
               >
                 Cancel

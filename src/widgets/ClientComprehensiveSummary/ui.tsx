@@ -10,7 +10,7 @@ import {
   LabResultFile,
 } from "entities/health-history";
 
-import { baseFormSchema, stripOther } from "widgets/health-profile-form";
+import { formSchema, stripOther } from "widgets/health-profile-form";
 
 import { Steps } from "features/steps/ui";
 import {
@@ -38,7 +38,7 @@ import { mapHealthHistoryToFormDefaults } from "widgets/library-small-chat/lib";
 import { FormValues } from "widgets/library-small-chat/components/health-history-form";
 import { LabFilePreview } from "widgets/health-profile-form/ui/metabolic-digestive-health-form/LabFilePreview";
 
-type BaseValues = z.infer<typeof baseFormSchema>;
+type BaseValues = z.infer<typeof formSchema>;
 
 const steps = [
   "Demographics",
@@ -88,7 +88,7 @@ export const ClientComprehensiveSummary = ({
   const [updateHealthHistory] = useUpdateCoachClientHealthHistoryMutation();
 
   const form = useForm<BaseValues>({
-    resolver: zodResolver(baseFormSchema),
+    resolver: zodResolver(formSchema),
     shouldUnregister: false,
     defaultValues: mapHealthHistoryToFormDefaults(
       healthHistoryData
@@ -226,8 +226,8 @@ export const ClientComprehensiveSummary = ({
   const SummaryRow = ({ label, value }: { label: string; value?: string }) => (
     <div className="space-y-1">
       <div className="font-medium text-base">{label}</div>
-      <p className="text-sm text-gray-900">
-        {value && String(value).trim() ? String(value) : "-"}
+      <p className="text-sm text-gray-900 whitespace-pre-wrap">
+        {value && String(value) ? String(value) : "-"}
       </p>
     </div>
   );
@@ -440,7 +440,26 @@ export const ClientComprehensiveSummary = ({
                         <Textarea
                           placeholder="Add your notes..."
                           containerClassName="rounded-[6px] py-[8px] px-[12px]"
-                          className="xl:text-[14px]"
+                          className="xl:text-[14px] whitespace-pre-wrap"
+                          onPaste={(e) => {
+                            e.preventDefault();
+
+                            let text = e.clipboardData.getData("text/plain");
+
+                            text = text.replace(/\r\n/g, "\n");
+
+                            text = text.replace(/\t/g, "    ");
+
+                            const start = e.currentTarget.selectionStart;
+                            const end = e.currentTarget.selectionEnd;
+
+                            const value =
+                              (field.value ?? "").slice(0, start) +
+                              text +
+                              (field.value ?? "").slice(end);
+
+                            field.onChange(value);
+                          }}
                           {...field}
                         />
                       </FormControl>
@@ -473,12 +492,16 @@ export const ClientComprehensiveSummary = ({
                     variant="brightblue"
                     size="sm"
                     onClick={async () => {
+                      const isValid = await form.trigger("followUpRecommendation");
+                      if (!isValid) return;
+
                       await handleSaveCoachInput();
                       setIsEditingCoachInput(false);
                     }}
                   >
                     Save
                   </Button>
+
                 </div>
               </>
             )}
