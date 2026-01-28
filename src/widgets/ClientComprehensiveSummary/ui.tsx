@@ -227,7 +227,7 @@ export const ClientComprehensiveSummary = ({
     <div className="space-y-1">
       <div className="font-medium text-base">{label}</div>
       <p className="text-sm text-gray-900 whitespace-pre-wrap">
-        {value && String(value).trim() ? String(value) : "-"}
+        {value && String(value) ? String(value) : "-"}
       </p>
     </div>
   );
@@ -440,19 +440,23 @@ export const ClientComprehensiveSummary = ({
                         <Textarea
                           placeholder="Add your notes..."
                           containerClassName="rounded-[6px] py-[8px] px-[12px]"
-                          className="xl:text-[14px]"
+                          className="xl:text-[14px] whitespace-pre-wrap"
                           onPaste={(e) => {
                             e.preventDefault();
 
-                            const text = e.clipboardData.getData("text/plain");
+                            let text = e.clipboardData.getData("text/plain");
+
+                            text = text.replace(/\r\n/g, "\n");
+
+                            text = text.replace(/\t/g, "    ");
 
                             const start = e.currentTarget.selectionStart;
                             const end = e.currentTarget.selectionEnd;
 
                             const value =
-                              field.value?.slice(0, start) +
+                              (field.value ?? "").slice(0, start) +
                               text +
-                              field.value?.slice(end);
+                              (field.value ?? "").slice(end);
 
                             field.onChange(value);
                           }}

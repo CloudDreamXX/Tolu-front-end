@@ -54,7 +54,10 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         ) : (
           <textarea
             value={value}
-            onChange={(e) => onValueChange?.(e.target.value)}
+            onChange={(e) => {
+              onValueChange?.(e.target.value);
+              props.onChange?.(e);
+            }}
             disabled={disabled}
             className={cn(
               "flex w-full text-[14px] md:text-[18px] xl:text-[18px] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-10 md:text-sm",
