@@ -121,7 +121,7 @@ export const LoginForm = () => {
   const redirectClient = async () => {
     const onboardingComplete = await getOnboardingStatusWithRetry();
 
-    if (onboardingComplete.onboarding_filled) {
+    if (onboardingComplete.data.onboarding_filled) {
       if (coachInviteToken)
         await acceptCoachInvite({ token: coachInviteToken }).unwrap();
       navigate("/library");
@@ -130,9 +130,9 @@ export const LoginForm = () => {
 
     try {
       const userInfo = await triggerGetOnboardClient().unwrap();
-      dispatch(setFromUserInfo(userInfo));
+      dispatch(setFromUserInfo(userInfo.data));
 
-      const clientData = mapOnboardClientToFormState(userInfo);
+      const clientData = mapOnboardClientToFormState(userInfo.data);
       const issue = findIncompleteClientField(clientData);
 
       if (coachInviteToken)
@@ -163,7 +163,7 @@ export const LoginForm = () => {
 
   const redirectCoach = async () => {
     const onboardingComplete = await getOnboardingStatusWithRetry();
-    if (onboardingComplete.onboarding_filled) {
+    if (onboardingComplete.data.onboarding_filled) {
       if (isMobileOrTablet) {
         navigate(`/content-manager/library/new_chat_${Date.now()}`);
       } else {

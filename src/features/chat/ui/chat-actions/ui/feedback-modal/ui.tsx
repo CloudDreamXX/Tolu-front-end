@@ -44,8 +44,8 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         device: "",
       };
       const res = await addContentFeedback(feedbackRequest).unwrap();
-      setNewRating(res.feedback.satisfaction_score);
-      setRating(res.feedback.satisfaction_score);
+      setNewRating(res.data.feedback.satisfaction_score);
+      setRating(res.data.feedback.satisfaction_score);
     } else {
       setNewRating(rating);
     }
@@ -108,9 +108,8 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                   size={"unstyled"}
                   key={star}
                   onClick={() => setRating(star)}
-                  className={`${
-                    star <= rating ? "text-yellow-400" : "text-gray-300"
-                  }`}
+                  className={`${star <= rating ? "text-yellow-400" : "text-gray-300"
+                    }`}
                 >
                   <MaterialIcon
                     iconName="star"

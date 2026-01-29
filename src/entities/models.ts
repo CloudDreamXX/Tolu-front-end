@@ -1,7 +1,9 @@
 export interface BaseResponse<T> {
+    status: string;
     message: string;
     data: T;
     meta?: any;
+    timestamp?: string;
 }
 
 export interface PaginationMeta {

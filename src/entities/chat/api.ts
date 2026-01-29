@@ -29,6 +29,7 @@ import {
 import { upsertMessages } from "./messagesSlice";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 const avatarCache = new Map<string, string | null>();
 
@@ -66,7 +67,7 @@ export const chatApi = createApi({
         method: "GET",
         params: { page: 1, limit: 50 },
       }),
-      transformResponse: (res: FetchAllChatsResponse) => res.map(toChatItem),
+      transformResponse: (res: FetchAllChatsResponse) => res.data.map(toChatItem),
       providesTags: ["Chat"],
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
@@ -105,7 +106,7 @@ export const chatApi = createApi({
         url: API_ROUTES.CHAT.FETCH_ONE.replace("{chat_id}", chatId),
       }),
       async transformResponse(res: FetchChatDetailsResponse) {
-        res.avatar_url = (await resolveAvatar(res.avatar_url)) ?? "";
+        res.data.avatar_url = (await resolveAvatar(res.data.avatar_url)) ?? "";
         return res;
       },
       providesTags: (_r, _e, chatId) => [{ type: "Details", id: chatId }],
@@ -120,7 +121,7 @@ export const chatApi = createApi({
     }),
 
     fetchChatMessages: builder.query<
-      FetchChatMessagesResponse,
+      BaseResponse<FetchChatMessagesResponse>,
       { chatId: string; page?: number; limit?: number }
     >({
       query: ({ chatId, page = 1, limit = 50 }) => ({
@@ -130,17 +131,17 @@ export const chatApi = createApi({
       providesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         queryFulfilled.then(({ data }) => {
-          if (data?.messages?.length)
+          if (data?.data.messages?.length)
             dispatch(
               upsertMessages(
-                data.messages.map((m) => ({ ...m, chat_id: arg.chatId }))
+                data.data.messages.map((m) => ({ ...m, chat_id: arg.chatId }))
               )
             );
         });
       },
     }),
 
-    sendMessage: builder.mutation<SendMessageResponse, SendMessagePayload>({
+    sendMessage: builder.mutation<BaseResponse<SendMessageResponse>, SendMessagePayload>({
       query: (payload) => ({
         url: API_ROUTES.CHAT.SEND_MESSAGE,
         method: "POST",
@@ -186,7 +187,7 @@ export const chatApi = createApi({
     }),
 
     updateMessage: builder.mutation<
-      UpdateMessageResponse,
+      BaseResponse<UpdateMessageResponse>,
       UpdateMessagePayload
     >({
       query: ({ chatId, messageId, content }) => ({
@@ -202,7 +203,7 @@ export const chatApi = createApi({
     }),
 
     createGroupChat: builder.mutation<
-      CreateChatGroupResponse,
+      BaseResponse<CreateChatGroupResponse>,
       CreateChatPayload
     >({
       query: (payload) => {
@@ -220,7 +221,7 @@ export const chatApi = createApi({
     }),
 
     updateGroupChat: builder.mutation<
-      UpdateGroupChatResponse,
+      BaseResponse<UpdateGroupChatResponse>,
       { chatId: string; payload: UpdateGroupChatPayload }
     >({
       query: ({ chatId, payload }) => {
@@ -241,7 +242,7 @@ export const chatApi = createApi({
     }),
 
     uploadChatFile: builder.mutation<
-      ChatFileUploadResponse,
+      BaseResponse<ChatFileUploadResponse>,
       { chatId: string; file?: File; libraryFiles?: string[] }
     >({
       query: ({ chatId, file, libraryFiles }) => {
@@ -289,7 +290,7 @@ export const chatApi = createApi({
     }),
 
     fetchAllFilesByChatId: builder.query<
-      FetchChatFilesResponse,
+      BaseResponse<FetchChatFilesResponse>,
       { chatId: string; page?: number; limit?: number }
     >({
       query: ({ chatId, page = 1, limit = 50 }) => ({
@@ -394,7 +395,7 @@ export const chatApi = createApi({
       },
     }),
 
-    sendChatNote: builder.mutation<ChatNoteResponse, SendChatNotePayload>({
+    sendChatNote: builder.mutation<BaseResponse<ChatNoteResponse>, SendChatNotePayload>({
       query: (payload) => {
         const formData = new FormData();
         formData.append("note_data", JSON.stringify(payload.noteData));
@@ -407,14 +408,14 @@ export const chatApi = createApi({
       },
     }),
 
-    getAllChatNotes: builder.query<GetAllChatNotesResponse, string>({
+    getAllChatNotes: builder.query<BaseResponse<GetAllChatNotesResponse>, string>({
       query: (chatId) => ({
         url: API_ROUTES.CHAT.GET_ALL_CHAT_NOTES.replace("{chat_id}", chatId),
       }),
     }),
 
     updateChatNote: builder.mutation<
-      ChatNoteResponse,
+      BaseResponse<ChatNoteResponse>,
       { noteId: string; payload: UpdateChatNotePayload }
     >({
       query: ({ noteId, payload }) => {
@@ -437,7 +438,7 @@ export const chatApi = createApi({
     }),
 
     addMessageReaction: builder.mutation<
-      ChatMessageModel,
+      BaseResponse<ChatMessageModel>,
       AddMessageReactionPayload
     >({
       query: ({ chatId, messageId, reaction }) => ({
@@ -452,7 +453,7 @@ export const chatApi = createApi({
     }),
 
     deleteMessageReaction: builder.mutation<
-      ChatMessageModel,
+      BaseResponse<ChatMessageModel>,
       AddMessageReactionPayload
     >({
       query: ({ chatId, messageId, reaction }) => ({

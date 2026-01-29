@@ -1,3 +1,5 @@
+import { BaseResponse, PaginatedResponse } from "entities/models";
+
 export interface MessageUser {
   id: string;
   email: string;
@@ -55,10 +57,10 @@ export interface SendMessagePayload {
   target_user_id?: string;
 }
 
-export type FetchAllChatsResponse = ServerChatItemModel[];
+export type FetchAllChatsResponse = PaginatedResponse<ServerChatItemModel[]>;
 
-export type CreateChatResponse = ServerChatItemModel;
-export type FetchChatDetailsResponse = DetailsChatItemModel;
+export type CreateChatResponse = BaseResponse<ServerChatItemModel>;
+export type FetchChatDetailsResponse = BaseResponse<DetailsChatItemModel>;
 
 export interface FetchChatMessagesResponse {
   messages: ChatMessageModel[];

@@ -651,7 +651,7 @@ export const HealthProfileForm = () => {
               <Section title="Demographics">
                 <SummaryRow
                   label="Age"
-                  value={String(client?.calculated_age) || ""}
+                  value={String(client?.data.calculated_age) || ""}
                 />
                 <SummaryRow label="Gender" value={resolvedGenderIdentity} />
                 {values.genderIdentity === "self_describe" && (
@@ -862,7 +862,7 @@ export const HealthProfileForm = () => {
                 {currentStep === 0 && (
                   <BasicInformationForm
                     form={form}
-                    age={client?.calculated_age || 0}
+                    age={client?.data.calculated_age || 0}
                   />
                 )}
                 {currentStep === 1 && <SocialFactorsForm form={form} />}

@@ -153,17 +153,17 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const [atBottom, setAtBottom] = useState(true);
 
   const dataForList = useMemo(() => {
-    const arr = (notes?.notes ?? []).slice();
+    const arr = (notes?.data.notes ?? []).slice();
     arr.sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
     return search
       ? arr.filter((n) =>
-          (n.content || "").toLowerCase().includes(search.toLowerCase())
-        )
+        (n.content || "").toLowerCase().includes(search.toLowerCase())
+      )
       : arr;
-  }, [notes?.notes, search]);
+  }, [notes?.data.notes, search]);
 
   const prevLenRef = useRef(0);
 

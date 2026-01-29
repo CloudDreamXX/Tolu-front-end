@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_ROUTES } from "shared/api";
 import { NotificationPreferences, Notifications, Notification } from "./model";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const notificationsApi = createApi({
   reducerPath: "notificationsApi",
@@ -19,7 +20,7 @@ export const notificationsApi = createApi({
   }),
   endpoints: (builder) => ({
     getNotifications: builder.query<
-      Notification[],
+      BaseResponse<Notification[]>,
       {
         page: number;
         limit: number;

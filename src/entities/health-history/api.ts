@@ -15,6 +15,7 @@ import {
   UpdateSupplementParams,
 } from "./model";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const healthHistoryApi = createApi({
   reducerPath: "healthHistoryApi",
@@ -33,8 +34,8 @@ export const healthHistoryApi = createApi({
   endpoints: (builder) => ({
     getUserHealthHistory: builder.query<HealthHistory, void>({
       query: () => API_ROUTES.HEALTH_HISTORY.GET,
-      transformResponse: (response: HealthHistoryResponse) =>
-        response.health_history,
+      transformResponse: (response: BaseResponse<HealthHistoryResponse>) =>
+        response.data.health_history,
     }),
 
     getCoachClientHealthHistory: builder.query<HealthHistory, string>({
@@ -43,8 +44,8 @@ export const healthHistoryApi = createApi({
           "{client_id}",
           clientId
         ),
-      transformResponse: (response: HealthHistoryResponse) =>
-        response.health_history,
+      transformResponse: (response: BaseResponse<HealthHistoryResponse>) =>
+        response.data.health_history,
     }),
 
     createHealthHistory: builder.mutation<
@@ -87,13 +88,13 @@ export const healthHistoryApi = createApi({
     }),
 
     updateCoachClientHealthHistory: builder.mutation<
-      {
+      BaseResponse<{
         message: string;
         health_history_id: string;
         user_id: string;
         updated_at: string;
         lab_files_count: number;
-      },
+      }>,
       {
         clientId: string;
         data: Partial<HealthHistoryPostData>;
@@ -131,11 +132,11 @@ export const healthHistoryApi = createApi({
         ),
         params: { limit, offset },
       }),
-      transformResponse: (response: { medications: Medication[] }) =>
-        response.medications,
+      transformResponse: (response: BaseResponse<{ medications: Medication[] }>) =>
+        response.data.medications,
     }),
 
-    createMedication: builder.mutation<Medication, CreateMedicationParams>({
+    createMedication: builder.mutation<BaseResponse<Medication>, CreateMedicationParams>({
       query: ({ medicationData, file }) => {
         const formData = new FormData();
 
@@ -153,7 +154,7 @@ export const healthHistoryApi = createApi({
       },
     }),
 
-    updateMedication: builder.mutation<Medication, UpdateMedicationParams>({
+    updateMedication: builder.mutation<BaseResponse<Medication>, UpdateMedicationParams>({
       query: ({ medicationId, medicationData, file }) => {
         const formData = new FormData();
 
@@ -211,11 +212,11 @@ export const healthHistoryApi = createApi({
         ),
         params: { limit, offset },
       }),
-      transformResponse: (response: { supplements: Supplement[] }) =>
-        response.supplements,
+      transformResponse: (response: BaseResponse<{ supplements: Supplement[] }>) =>
+        response.data.supplements,
     }),
 
-    createSupplement: builder.mutation<Supplement, CreateSupplementParams>({
+    createSupplement: builder.mutation<BaseResponse<Supplement>, CreateSupplementParams>({
       query: ({ supplementData, file }) => {
         const formData = new FormData();
 
@@ -233,7 +234,7 @@ export const healthHistoryApi = createApi({
       },
     }),
 
-    updateSupplement: builder.mutation<Supplement, UpdateSupplementParams>({
+    updateSupplement: builder.mutation<BaseResponse<Supplement>, UpdateSupplementParams>({
       query: ({ supplementId, supplementData, file }) => {
         const formData = new FormData();
 

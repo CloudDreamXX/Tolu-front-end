@@ -424,10 +424,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
         if (
           sessionData &&
-          sessionData.data?.search_results &&
-          sessionData.data?.search_results.length > 0
+          sessionData.data?.data.search_results &&
+          sessionData.data?.data.search_results.length > 0
         ) {
-          sessionData.data?.search_results.forEach((item) => {
+          sessionData.data?.data.search_results.forEach((item) => {
             if (item.query) {
               chatMessages.push({
                 id: `user-${item.id}`,
@@ -838,20 +838,22 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           newAbortController.signal
         );
       } else if (isSwitch(SWITCH_KEYS.RESEARCH)) {
-        await SearchService.aiCoachResearchStream(
+        const formData = SearchService.createSearchRequest(
+          message,
+          clientId,
+          images,
+          pdf,
+          documentId,
+          filesFromLibrary,
+          voiceFile ?? undefined,
           {
-            chat_message: JSON.stringify({
-              user_prompt: message,
-              is_new: !currentChatId,
-              chat_id: currentChatId,
-              text_quote: selectedText,
-            }),
-            libraryFiles: filesFromLibrary,
-            images,
-            pdf,
-            contentId: documentId,
-            clientId: clientId ?? undefined,
-          },
+            chatId: currentChatId,
+            textQuote: selectedText,
+          }
+        );
+
+        await SearchService.aiCoachResearchStream(
+          formData,
           processChunk,
           processFinal,
           (error) => {
@@ -862,45 +864,47 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           newAbortController.signal
         );
       } else if (isSwitch(SWITCH_KEYS.ASSISTANT)) {
-        await SearchService.aiCoachAssistantStream(
+        const formData = SearchService.createSearchRequest(
+          message,
+          clientId,
+          images,
+          pdf,
+          documentId,
+          filesFromLibrary,
+          voiceFile ?? undefined,
           {
-            chat_message: JSON.stringify({
-              user_prompt: message,
-              is_new: !currentChatId,
-              chat_id: currentChatId,
-              text_quote: selectedText,
-            }),
-            libraryFiles: filesFromLibrary,
-            images,
-            pdf,
-            contentId: documentId,
-            clientId: clientId ?? undefined,
-          },
+            chatId: currentChatId || null,
+            textQuote: selectedText,
+          }
+        );
+
+        await SearchService.aiCoachAssistantStream(
+          formData,
           processChunk,
           processFinal,
           (error) => {
             setIsSearching(false);
             setError(error.message);
-            console.error("Search error:", error);
           },
           newAbortController.signal
         );
       } else {
-        await SearchService.aiSearchStream(
+        const formData = SearchService.createSearchRequest(
+          voiceFile && !message.trim() ? "" : message,
+          clientId,
+          images,
+          pdf,
+          documentId,
+          undefined,                 // no libraryFiles here
+          voiceFile ?? undefined,
           {
-            chat_message: JSON.stringify({
-              user_prompt: voiceFile && !message.trim() ? undefined : message,
-              is_new: !currentChatId,
-              chat_id: currentChatId,
-              regenerate_id: null,
-              personalize: false,
-              text_quote: selectedText,
-            }),
-            ...(images && { images }),
-            ...(pdf && { pdf }),
-            contentId: documentId,
-            audio: voiceFile ? voiceFile : undefined,
-          },
+            chatId: currentChatId || null,
+            textQuote: selectedText,
+          }
+        );
+
+        await SearchService.aiSearchStream(
+          formData,
           processChunk,
           processFinal,
           (error) => {

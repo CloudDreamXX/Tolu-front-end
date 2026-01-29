@@ -12,6 +12,7 @@ import {
   SharedCoachContentByContentIdResponse,
   UserProfileUpdate,
 } from "./model";
+import { BaseResponse } from "entities/models";
 
 export const clientApi = createApi({
   reducerPath: "clientApi",
@@ -28,12 +29,12 @@ export const clientApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getInvitationDetails: builder.query<ClientInvitationInfo, string>({
+    getInvitationDetails: builder.query<BaseResponse<ClientInvitationInfo>, string>({
       query: (token) =>
         API_ROUTES.CLIENT.GET_INVITATION_DETAILS.replace("{token}", token),
     }),
     acceptCoachInvite: builder.mutation<
-      AcceptInviteResponse,
+      BaseResponse<AcceptInviteResponse>,
       AcceptInvitePayload
     >({
       query: (payload) => ({
@@ -43,7 +44,7 @@ export const clientApi = createApi({
       }),
     }),
     declineCoachInvite: builder.mutation<
-      AcceptInviteResponse,
+      BaseResponse<AcceptInviteResponse>,
       AcceptInvitePayload
     >({
       query: (payload) => ({
@@ -61,7 +62,7 @@ export const clientApi = createApi({
       }),
     }),
     getLibraryContent: builder.query<
-      FoldersResponse,
+      BaseResponse<FoldersResponse>,
       { page: number; page_size: number; folder_id: string | null }
     >({
       query: ({ page = 1, page_size = 10, folder_id = null }) => ({
@@ -91,7 +92,7 @@ export const clientApi = createApi({
     }),
 
     fetchSharedCoachContentByContentId: builder.query<
-      SharedCoachContentByContentIdResponse,
+      BaseResponse<SharedCoachContentByContentIdResponse>,
       string
     >({
       query: (contentId) =>
@@ -107,10 +108,10 @@ export const clientApi = createApi({
         body: payload,
       }),
     }),
-    getClientProfile: builder.query<Client, void>({
+    getClientProfile: builder.query<BaseResponse<Client>, void>({
       query: () => API_ROUTES.CLIENT.GET_PROFILE,
     }),
-    getCoaches: builder.query<GetCoachesResponse, void>({
+    getCoaches: builder.query<BaseResponse<GetCoachesResponse>, void>({
       query: () => API_ROUTES.CLIENT.GET_COACHES,
     }),
     getCoachProfile: builder.query<any, string>({

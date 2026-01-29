@@ -452,9 +452,9 @@ export const LibraryDocument = () => {
         <div class="relative h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden mb-4">
           <div class="absolute top-0 left-0 h-full bg-[#1C63DB] transition-all"
             style="width: ${Math.min(
-              100,
-              (correct_questions / total_questions) * 100
-            )}%;"></div>
+          100,
+          (correct_questions / total_questions) * 100
+        )}%;"></div>
         </div>
 
         <div class="divide-y border-t border-[#EAEAEA]">
@@ -468,11 +468,10 @@ export const LibraryDocument = () => {
                   Answer: ${String(q.answer).toUpperCase()}
                 </div>
               </div>
-              <div class="px-3 py-1 rounded-full text-xs font-medium ${
-                q.is_correct
+              <div class="px-3 py-1 rounded-full text-xs font-medium ${q.is_correct
                   ? "bg-emerald-100 text-emerald-700"
                   : "bg-red-100 text-red-700"
-              }">
+                }">
                 ${q.is_correct ? "Correct" : "Incorrect"}
               </div>
             </div>`
@@ -746,7 +745,7 @@ export const LibraryDocument = () => {
 
   useEffect(() => {
     if (coachesData) {
-      const uniqueCoaches = coachesData.coaches.filter(
+      const uniqueCoaches = coachesData.data.coaches.filter(
         (coach, index, self) =>
           index === self.findIndex((c) => c.coach_id === coach.coach_id)
       );
@@ -903,13 +902,13 @@ export const LibraryDocument = () => {
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -1215,12 +1214,12 @@ export const LibraryDocument = () => {
                         <AvatarFallback className="text-3xl bg-slate-300 ">
                           {creatorProfileData.detailed_profile.personal_info
                             .first_name !== "" &&
-                          creatorProfileData.detailed_profile.personal_info
-                            .first_name !== null &&
-                          creatorProfileData.detailed_profile.personal_info
-                            .last_name !== null &&
-                          creatorProfileData.detailed_profile.personal_info
-                            .last_name !== "" ? (
+                            creatorProfileData.detailed_profile.personal_info
+                              .first_name !== null &&
+                            creatorProfileData.detailed_profile.personal_info
+                              .last_name !== null &&
+                            creatorProfileData.detailed_profile.personal_info
+                              .last_name !== "" ? (
                             <div className="flex items-center">
                               <span>
                                 {creatorProfileData.detailed_profile.personal_info.first_name.slice(
@@ -1271,7 +1270,7 @@ export const LibraryDocument = () => {
               <ChatActions
                 initialStatus={selectedDocument?.readStatus}
                 initialRating={selectedDocument?.userRating}
-                onRegenerate={() => {}}
+                onRegenerate={() => { }}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}
@@ -1331,7 +1330,7 @@ export const LibraryDocument = () => {
                   <ChatActions
                     initialStatus={selectedDocument?.readStatus}
                     initialRating={selectedDocument?.rating}
-                    onRegenerate={() => {}}
+                    onRegenerate={() => { }}
                     isSearching={false}
                     hasMessages={messages.length >= 2}
                     onStatusChange={onStatusChange}

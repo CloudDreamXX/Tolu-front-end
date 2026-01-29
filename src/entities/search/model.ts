@@ -122,12 +122,13 @@ export interface SearchResultResponseItem {
   chat_id: string;
   query: string;
   answer: string;
-  liked: boolean;
+  liked: boolean | null;
   reported: number;
   feedback: string;
   active: boolean;
   created_at: string;
   chat_title: string;
+  content_id: string | null;
   text_quote: string | null;
   stored_files: {
     path: string;

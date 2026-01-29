@@ -45,7 +45,7 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
       setLoading(true);
       const res = await triggerFetchFiles({ chatId, page }).unwrap();
       setFileMessages((prev) => {
-        const updatedMessages = [...prev, ...res.files];
+        const updatedMessages = [...prev, ...res.data.files];
         return getUniqueMessages(updatedMessages);
       });
 
@@ -53,7 +53,7 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
         firstScrollRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
-      hasNext.current = res.has_next;
+      hasNext.current = res.data.has_next;
     } catch (error) {
       console.error("Error fetching messages:", error);
     } finally {
@@ -136,7 +136,7 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
               <FileMessageItem
                 key={message.id}
                 message={message}
-                avatar={chatDetails?.avatar_url}
+                avatar={chatDetails?.data.avatar_url}
               />
             ))}
             <div ref={firstScrollRef}></div>

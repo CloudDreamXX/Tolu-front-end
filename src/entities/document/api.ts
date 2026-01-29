@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_ROUTES } from "shared/api";
-import { IDocument, IDocumentResponse } from "./model";
+import { GetDocumentByIdResponse, IDocument, IDocumentResponse } from "./model";
 import { RootState } from "entities/store";
 
 export const documentsApi = createApi({
@@ -20,32 +20,43 @@ export const documentsApi = createApi({
   endpoints: (builder) => ({
     getDocumentById: builder.query<IDocument, string>({
       query: (id) => `${API_ROUTES.DOCUMENTS.DETAILS}/${id}`,
-      transformResponse: (response: IDocumentResponse) => {
+      transformResponse: (response: GetDocumentByIdResponse): IDocument => {
+        const doc = response.data;
+
         return {
-          ...response,
-          createdAt: response.created_at,
-          originalFolderId: response.original_folder_id,
-          originalFolderName: response.original_folder_name,
-          originalInstructions: response.original_instructions ?? null,
-          originalFiles: response.original_files,
+          id: doc.id,
+          title: doc.title,
+          aiTitle: doc.ai_title,
+          query: doc.query,
+          content: doc.content,
+          createdAt: doc.created_at,
+          creator_id: doc.creator_id,
+          creator_name: doc.creator_name,
+          published_date: doc.published_date,
+
+          originalFolderId: doc.original_folder_id,
+          originalFolderName: doc.original_folder_name,
+          originalInstructions: doc.original_instructions ?? null,
+          originalFiles: doc.original_files,
+
           sharedWith: {
-            totalShares: response.shared_with.total_shares,
-            clients: response.shared_with.clients,
+            totalShares: doc.shared_with.total_shares,
+            clients: doc.shared_with.clients,
           },
-          revenueGenerated: response.revenue_generated,
-          readCount: response.read_count,
-          savedCount: response.saved_count,
-          feedbackCount: response.feedback_count,
-          comments: response.comments,
-          socialMediaShares: response.social_media_shares,
-          chatId: response.chat_id,
-          status: response.status,
-          readStatus: response.read_status,
-          rating: response.rating,
-          userRating: response.user_rating,
-          userComments: response.user_comments,
-          thumbsDown: response.thumbs_down,
-          aiTitle: response.ai_title,
+
+          revenueGenerated: doc.revenue_generated,
+          readCount: doc.read_count,
+          savedCount: doc.saved_count,
+          feedbackCount: doc.feedback_count,
+          comments: doc.comments,
+          socialMediaShares: doc.social_media_shares,
+          chatId: doc.chat_id,
+          status: doc.status,
+          readStatus: doc.read_status,
+          rating: doc.rating,
+          userRating: doc.user_rating,
+          userComments: doc.user_comments,
+          thumbsDown: doc.thumbs_down,
         };
       },
     }),

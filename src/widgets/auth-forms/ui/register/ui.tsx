@@ -122,11 +122,11 @@ export const Register = () => {
       if (isClientInviteSuccess && data && !cancelled) {
         setFormData((prev) => ({
           ...prev,
-          firstName: data?.client?.first_name ?? "",
-          lastName: data?.client?.last_name ?? "",
-          name: data?.client?.full_name ?? "",
-          email: data?.client?.email ?? "",
-          phone: data?.client?.phone_number ?? "",
+          firstName: data?.data.client?.first_name ?? "",
+          lastName: data?.data.client?.last_name ?? "",
+          name: data?.data.client?.full_name ?? "",
+          email: data?.data.client?.email ?? "",
+          phone: data?.data.client?.phone_number ?? "",
           accountType: "client",
         }));
         setInviteSource("client");

@@ -157,7 +157,7 @@ const clientSlice = createSlice({
         clientApi.endpoints.getLibraryContent.matchFulfilled,
         (state, { payload }) => {
           state.loading = false;
-          state.folders = payload.folders;
+          state.folders = payload.data.folders;
         }
       )
       .addMatcher(

@@ -189,8 +189,3 @@ export interface QuizResult {
   questions: QuizQuestion[];
 }
 
-export interface QuizResultResponse {
-  status: string;
-  message: string;
-  data: QuizResult;
-}

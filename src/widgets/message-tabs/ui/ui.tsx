@@ -191,15 +191,15 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
       if (!chatId) return;
 
       if (chatDetails) {
-        setChat(chatDetails);
+        setChat(chatDetails.data);
         return;
       }
 
       if (isError) {
         try {
           const client =
-            clients && clients.clients
-              ? clients.clients.find((c) => c.client_id === chatId)
+            clients && clients.data.clients
+              ? clients.data.clients.find((c) => c.client_id === chatId)
               : undefined;
           if (client) {
             dispatch(
@@ -267,7 +267,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
     try {
       const { data: fullClient } = await getClientProfile(clientId);
-      setSelectedClient(fullClient ?? null);
+      setSelectedClient(fullClient?.data ?? null);
     } catch (e) {
       toast({
         variant: "destructive",
@@ -584,7 +584,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsContent value="profile">
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || ""}
-            onOpenChange={() => {}}
+            onOpenChange={() => { }}
           />
         </TabsContent>
         <TabsContent value="messages">
@@ -652,8 +652,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => {}}
-          onDelete={() => {}}
+          onEdit={() => { }}
+          onDelete={() => { }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />

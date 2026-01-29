@@ -10,10 +10,11 @@ import {
   ShareViaEmail,
   ShareWithCoach,
   LibraryContentStatus,
-  QuizResultResponse,
+  QuizResult,
 } from "./model";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const contentApi = createApi({
   reducerPath: "contentApi",
@@ -30,7 +31,7 @@ export const contentApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getContent: builder.query<ContentItemResponse, string>({
+    getContent: builder.query<BaseResponse<ContentItemResponse>, string>({
       query: (id) => `${API_ROUTES.CONTENT.RETRIEVE}/${id}`,
     }),
     duplicateContentById: builder.mutation<any, string>({
@@ -56,13 +57,13 @@ export const contentApi = createApi({
         body: status_data,
       }),
     }),
-    getQuizScore: builder.query<QuizResultResponse, string>({
+    getQuizScore: builder.query<BaseResponse<QuizResult>, string>({
       query: (content_id) => ({
         url: API_ROUTES.CONTENT.QUIZ_SCORE.replace("{content_id}", content_id),
         method: "GET",
       }),
     }),
-    addContentFeedback: builder.mutation<FeedbackResponse, Feedback>({
+    addContentFeedback: builder.mutation<BaseResponse<FeedbackResponse>, Feedback>({
       query: (feedback) => ({
         url: API_ROUTES.CONTENT.FEEDBACK,
         method: "POST",

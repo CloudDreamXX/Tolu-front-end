@@ -413,10 +413,10 @@ export const LibraryChat = () => {
 
         if (
           sessionData &&
-          sessionData?.data?.search_results &&
-          sessionData?.data?.search_results.length > 0
+          sessionData?.data?.data.search_results &&
+          sessionData?.data?.data.search_results.length > 0
         ) {
-          sessionData?.data?.search_results.forEach((item: any) => {
+          sessionData?.data?.data.search_results.forEach((item: any) => {
             if (item.query) {
               chatMessages.push({
                 id: `user-${item.id}`,
@@ -553,18 +553,21 @@ export const LibraryChat = () => {
     let accumulatedText = "";
 
     try {
-      await SearchService.aiSearchStream(
+      const formData = SearchService.createSearchRequest(
+        message,
+        clientId,
+        files,
+        undefined,
+        documentId,
+        undefined,
+        undefined,
         {
-          chat_message: JSON.stringify({
-            user_prompt: message,
-            is_new: currentChatId.startsWith("new_chat_"),
-            chat_id: currentChatId.startsWith("new_chat_")
-              ? undefined
-              : currentChatId,
-            regenerate_id: null,
-          }),
-          ...(files?.length > 0 ? { images: files } : {}),
-        },
+          chatId: currentChatId.startsWith("new_chat_") ? null : currentChatId,
+        }
+      );
+
+      await SearchService.aiSearchStream(
+        formData,
         (chunk: StreamChunk) => {
           if (chunk.reply) {
             accumulatedText += chunk.reply;
@@ -822,22 +825,22 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           });
         }
       } else if (isSwitch(SWITCH_KEYS.RESEARCH)) {
-        await SearchService.aiCoachResearchStream(
+        const formData = SearchService.createSearchRequest(
+          message,
+          clientId,
+          images,
+          pdf,
+          documentId,
+          filesFromLibrary,
+          undefined,
           {
-            chat_message: JSON.stringify({
-              user_prompt: message,
-              is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
-              chat_id: currentChatId.startsWith("new_chat_")
-                ? undefined
-                : currentChatId,
-              text_quote: textForInput,
-            }),
-            libraryFiles: filesFromLibrary,
-            images,
-            pdf,
-            contentId: documentId,
-            clientId: clientId ?? undefined,
-          },
+            chatId: currentChatId.startsWith("new_chat_") ? null : currentChatId,
+            textQuote: textForInput,
+          }
+        );
+
+        await SearchService.aiCoachResearchStream(
+          formData,
           processChunk,
           processFinalData,
           (error) => {
@@ -847,22 +850,22 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           }
         );
       } else if (isSwitch(SWITCH_KEYS.ASSISTANT)) {
-        await SearchService.aiCoachAssistantStream(
+        const formData = SearchService.createSearchRequest(
+          message,
+          clientId,
+          images,
+          pdf,
+          documentId,
+          filesFromLibrary,
+          undefined,
           {
-            chat_message: JSON.stringify({
-              user_prompt: message,
-              is_new: currentChatId.startsWith("new_chat_") || !currentChatId,
-              chat_id: currentChatId.startsWith("new_chat_")
-                ? undefined
-                : currentChatId,
-              text_quote: textForInput,
-            }),
-            libraryFiles: filesFromLibrary,
-            images,
-            pdf,
-            contentId: documentId,
-            clientId: clientId ?? undefined,
-          },
+            chatId: currentChatId.startsWith("new_chat_") ? null : currentChatId,
+            textQuote: textForInput,
+          }
+        );
+
+        await SearchService.aiCoachAssistantStream(
+          formData,
           processChunk,
           processFinalData,
           (error) => {
@@ -872,21 +875,21 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           }
         );
       } else {
-        await SearchService.aiSearchStream(
+        const formData = SearchService.createSearchRequest(
+          voiceFile && !message.trim() ? "" : message,
+          clientId,
+          images,
+          pdf,
+          documentId,
+          undefined,
+          voiceFile ?? undefined,
           {
-            chat_message: JSON.stringify({
-              user_prompt: voiceFile && !message.trim() ? undefined : message,
-              is_new: currentChatId.startsWith("new_chat_"),
-              chat_id: currentChatId.startsWith("new_chat_")
-                ? undefined
-                : currentChatId,
-              regenerate_id: null,
-              personalize: false,
-            }),
-            ...(images && { images }),
-            ...(pdf && { pdf }),
-            audio: voiceFile ? voiceFile : undefined,
-          },
+            chatId: currentChatId.startsWith("new_chat_") ? null : currentChatId,
+          }
+        );
+
+        await SearchService.aiSearchStream(
+          formData,
           processChunk,
           processFinalData,
           (error) => {
@@ -923,17 +926,22 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
     let accumulatedText = "";
 
     try {
-      await SearchService.aiSearchStream(
+      const formData = SearchService.createSearchRequest(
+        lastUserMessage.content,
+        clientId,
+        undefined,
+        undefined,
+        documentId,
+        undefined,
+        undefined,
         {
-          chat_message: JSON.stringify({
-            user_prompt: lastUserMessage.content,
-            is_new: currentChatId.startsWith("new_chat_"),
-            chat_id: currentChatId.startsWith("new_chat_")
-              ? undefined
-              : currentChatId,
-            regenerate_id: Date.now().toString(),
-          }),
-        },
+          chatId: currentChatId.startsWith("new_chat_") ? null : currentChatId,
+          regenerateId: Date.now().toString(),
+        }
+      );
+
+      await SearchService.aiSearchStream(
+        formData,
         (chunk: StreamChunk) => {
           if (chunk.reply) {
             accumulatedText += chunk.reply;

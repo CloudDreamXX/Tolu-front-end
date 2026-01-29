@@ -14,6 +14,7 @@ import {
 } from "entities/chat/api";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { Client, useGetManagedClientsQuery } from "entities/coach";
+import { BaseResponse } from "entities/models";
 import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -60,8 +61,8 @@ export const ContentManagerMessages: React.FC = () => {
   const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
 
   useEffect(() => {
-    if (data && data.clients) {
-      const activeClients = data.clients.filter(
+    if (data && data.data?.clients) {
+      const activeClients = data.data.clients.filter(
         (client) => client.status === "active"
       );
       setClientsData(activeClients);
@@ -124,7 +125,7 @@ export const ContentManagerMessages: React.FC = () => {
           },
           avatar_image: image ?? undefined,
         }).unwrap();
-        navigate(`/content-manager/messages/${resp.chat_id}`);
+        navigate(`/content-manager/messages/${resp.data.chat_id}`);
       } else {
         await updateGroupChatMutation({
           chatId:
@@ -189,7 +190,7 @@ export const ContentManagerMessages: React.FC = () => {
           selectedChat.type === "new_chat" ? selectedChat.id : undefined,
       }).unwrap();
 
-      return resp as ChatMessageModel;
+      return resp.data as ChatMessageModel;
     } catch (error) {
       console.error(error);
       toast({
@@ -210,7 +211,7 @@ export const ContentManagerMessages: React.FC = () => {
         chatId: selectedChat.id,
         page,
       }).unwrap();
-      return data;
+      return data.data;
     } catch (err) {
       console.error(err);
       if ((err as any).data.detail === "Access denied") {

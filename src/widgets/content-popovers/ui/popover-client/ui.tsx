@@ -143,8 +143,8 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
   const [revokeContent] = useRevokeContentMutation();
 
   useEffect(() => {
-    if (clientsData && clientsData.clients) {
-      const activeClients = clientsData.clients.filter(
+    if (clientsData && clientsData.data.clients) {
+      const activeClients = clientsData.data.clients.filter(
         (client) => client.status === "active"
       );
       setClients(activeClients);
@@ -336,12 +336,12 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
     try {
       const { data: fullClient } = await getClientProfile(clientId);
       if (fullClient) {
-        setSelectedFullClient(fullClient);
+        setSelectedFullClient(fullClient.data);
       }
 
       const { data: editClientInfo } = await getClientInfo(clientId);
-      if (editClientInfo && editClientInfo.client) {
-        setClientInfo(editClientInfo.client);
+      if (editClientInfo && editClientInfo.data.client) {
+        setClientInfo(editClientInfo.data.client);
       }
     } catch (e) {
       console.error("Error loading client profile", e);

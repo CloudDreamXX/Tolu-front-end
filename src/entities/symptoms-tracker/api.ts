@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { SymptomData, SymptomResponse, AiSuggestions } from "./model";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const symptomsTrackerApi = createApi({
   reducerPath: "symptomsTrackerApi",
@@ -60,11 +61,11 @@ export const symptomsTrackerApi = createApi({
         };
       },
     }),
-    getSymptomByDate: builder.query<SymptomResponse, string>({
+    getSymptomByDate: builder.query<BaseResponse<SymptomData[]>, string>({
       query: (date) =>
         API_ROUTES.SYMPTOMS_TRACKER.GET_SYMPTOMS.replace("{target_date}", date),
     }),
-    getAiSuggestions: builder.query<AiSuggestions, void>({
+    getAiSuggestions: builder.query<BaseResponse<AiSuggestions>, void>({
       query: () => API_ROUTES.SYMPTOMS_TRACKER.GET_SUGGESTIONS,
     }),
     deleteSymptom: builder.mutation<any, string>({

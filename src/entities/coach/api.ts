@@ -22,6 +22,7 @@ import {
 } from "./model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const coachApi = createApi({
   reducerPath: "coachApi",
@@ -36,7 +37,7 @@ export const coachApi = createApi({
 
   endpoints: (builder) => ({
     // === CLIENT MANAGEMENT ===
-    getManagedClients: builder.query<ClientsResponse, void>({
+    getManagedClients: builder.query<BaseResponse<ClientsResponse>, void>({
       query: () => API_ROUTES.COACH_ADMIN.GET_CLIENTS,
     }),
 
@@ -53,7 +54,7 @@ export const coachApi = createApi({
       },
     }),
 
-    getClientProfile: builder.query<ClientProfile, string>({
+    getClientProfile: builder.query<BaseResponse<ClientProfile>, string>({
       query: (clientId) =>
         API_ROUTES.COACH_ADMIN.GET_CLIENT_PROFILE.replace(
           "{client_id}",
@@ -79,7 +80,7 @@ export const coachApi = createApi({
       }),
     }),
 
-    getClientInfo: builder.query<GetClientInfoResponse, string>({
+    getClientInfo: builder.query<BaseResponse<GetClientInfoResponse>, string>({
       query: (clientId) =>
         API_ROUTES.COACH_ADMIN.GET_CLIENT_INFO.replace("{client_id}", clientId),
     }),
@@ -107,14 +108,14 @@ export const coachApi = createApi({
     }),
 
     // === SESSION ===
-    getSessionById: builder.query<ISessionResponse, string>({
+    getSessionById: builder.query<BaseResponse<ISessionResponse>, string>({
       query: (chatId) =>
         API_ROUTES.COACH_ADMIN.GET_SESSION.replace("{chat_id}", chatId),
     }),
 
     // === CONTENT SHARING & RATING ===
     rateContent: builder.mutation<
-      { content_id: boolean; message: string },
+      BaseResponse<{ content_id: boolean; message: string }>,
       RateContent
     >({
       query: (payload) => ({
@@ -132,7 +133,7 @@ export const coachApi = createApi({
       }),
     }),
 
-    getContentShares: builder.query<SharedContent, string>({
+    getContentShares: builder.query<BaseResponse<SharedContent>, string>({
       query: (contentId) =>
         API_ROUTES.COACH_ADMIN.GET_SHARED_ACCESS.replace(
           "{content_id}",
@@ -148,7 +149,7 @@ export const coachApi = createApi({
       }),
     }),
 
-    getAllUserContent: builder.query<ContentResponse, void>({
+    getAllUserContent: builder.query<BaseResponse<ContentResponse>, void>({
       query: () => API_ROUTES.COACH_ADMIN.SEARCH_CONTENT,
     }),
 
@@ -186,7 +187,7 @@ export const coachApi = createApi({
     }),
 
     // === COMPREHENSIVE CLIENT PROFILE ===
-    getComprehensiveClient: builder.query<ClientComprehensiveProfile, string>({
+    getComprehensiveClient: builder.query<BaseResponse<ClientComprehensiveProfile>, string>({
       query: (id) =>
         API_ROUTES.COACH_ADMIN.GET_COMPREHENSIVE_CLIENT.replace(
           "{client_id}",

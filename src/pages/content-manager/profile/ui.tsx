@@ -460,8 +460,8 @@ export const ContentManagerProfile = () => {
               </Button>
             </div>
             <div className="space-y-3">
-              {notifications?.length ? (
-                notifications.map((notification) => (
+              {notifications?.data.length ? (
+                notifications.data.map((notification) => (
                   <div
                     key={notification.id}
                     className="flex flex-col justify-between gap-[16px] p-3 border-b border-gray-200 rounded-md"

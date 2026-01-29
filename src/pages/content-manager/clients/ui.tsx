@@ -180,8 +180,8 @@ export const ContentManagerClients: React.FC = () => {
 
   const filteredClients = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return clientsData?.clients;
-    return clientsData?.clients.filter((c) => {
+    if (!q) return clientsData?.data.clients;
+    return clientsData?.data.clients.filter((c) => {
       const name = (c.name ?? "").toLowerCase();
       const status = (c.status ?? "").toLowerCase();
       return name.includes(q) || status.includes(q);
@@ -335,12 +335,12 @@ export const ContentManagerClients: React.FC = () => {
     try {
       const { data: fullClient } = await getClientProfile(clientId);
       if (fullClient) {
-        setSelectedClient(fullClient);
+        setSelectedClient(fullClient.data);
       }
 
       const { data: editClientInfo } = await getClientInfo(clientId);
-      if (editClientInfo && editClientInfo.client) {
-        setClientInfo(editClientInfo.client);
+      if (editClientInfo && editClientInfo.data.client) {
+        setClientInfo(editClientInfo.data.client);
       }
     } catch (e) {
       console.error("Error loading client profile", e);
@@ -469,8 +469,8 @@ export const ContentManagerClients: React.FC = () => {
     try {
       const { data: currentClientInfo } = await getClientInfo(clientId);
 
-      if (currentClientInfo && currentClientInfo.client) {
-        await handleInviteClient(currentClientInfo.client);
+      if (currentClientInfo && currentClientInfo.data.client) {
+        await handleInviteClient(currentClientInfo.data.client);
       }
       toast({
         title: "Invite resent successfully",
@@ -512,7 +512,7 @@ export const ContentManagerClients: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : clientsData && clientsData.clients && clientsData.clients.length === 0 ? (
+        ) : clientsData && clientsData.data.clients && clientsData.data.clients.length === 0 ? (
           <EmptyStateTolu
             text="Invite your clients to Tolu to deliver personalized education or insight unique to their personal health challenges."
             footer={

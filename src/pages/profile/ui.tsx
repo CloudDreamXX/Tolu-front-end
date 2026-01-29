@@ -112,7 +112,7 @@ export const ClientProfile = () => {
     const loadUser = async () => {
       if (!user) {
         const userInfo = await triggerGetOnboardClient().unwrap();
-        dispatch(setFromUserInfo(userInfo));
+        dispatch(setFromUserInfo(userInfo.data));
       }
     };
     loadUser();
@@ -120,10 +120,10 @@ export const ClientProfile = () => {
 
   useEffect(() => {
     if (u) {
-      setUser(u);
+      setUser(u.data);
       let objectUrl: string | null = null;
 
-      const filename = u?.photo_url?.split("/").pop() || "";
+      const filename = u?.data.photo_url?.split("/").pop() || "";
       if (!filename) return;
 
       const loadProfilePhoto = async () => {
@@ -658,8 +658,8 @@ export const ClientProfile = () => {
             </Button>
           </div>
           <div className="space-y-3">
-            {notifications?.length ? (
-              notifications.map((notification) => (
+            {notifications?.data.length ? (
+              notifications.data.map((notification) => (
                 <div
                   key={notification.id}
                   className="flex flex-col justify-between gap-[16px] p-3 border-b border-gray-200 rounded-md"
@@ -958,8 +958,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => {}}
-                  // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => { }}
+                // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -967,8 +967,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => {}}
-                  // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => { }}
+                // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>

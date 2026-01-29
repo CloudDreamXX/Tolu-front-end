@@ -115,7 +115,7 @@ export const LibraryClientContent = () => {
   const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
 
   const selectedCoach = useMemo(
-    () => coaches?.coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
+    () => coaches?.data.coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
     [coaches, selectedCoachId]
   );
 
@@ -135,7 +135,7 @@ export const LibraryClientContent = () => {
             if (f.subfolders?.length) collect(f.subfolders);
           });
         };
-        collect(response?.folders || []);
+        collect(response?.data.folders || []);
         setStatusMap(status);
       } catch (err) {
         console.error("Failed to fetch library content:", err);
@@ -212,15 +212,15 @@ export const LibraryClientContent = () => {
           folder_id: folderId,
         }).unwrap();
 
-        let returned = findFolderById(response?.folders ?? [], folderId);
+        let returned = findFolderById(response?.data.folders ?? [], folderId);
 
         if (
           !returned &&
           response &&
-          response.folders?.length === 1 &&
-          response.folders[0].id === folderId
+          response.data.folders?.length === 1 &&
+          response.data.folders[0].id === folderId
         ) {
-          returned = response.folders[0];
+          returned = response.data.folders[0];
         }
 
         if (!returned) {
@@ -522,13 +522,13 @@ export const LibraryClientContent = () => {
           }));
           const fn = getHeadshotFilename(
             coachProfileData?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -553,8 +553,8 @@ export const LibraryClientContent = () => {
   }, [photoUrls]);
 
   useEffect(() => {
-    if (!providersOpen || !coaches?.coaches.length) return;
-    coaches?.coaches.forEach((c) => {
+    if (!providersOpen || !coaches?.data.coaches.length) return;
+    coaches?.data.coaches.forEach((c) => {
       if (c.profile?.headshot_url && !photoUrls[c.coach_id]) {
         void fetchPhotoUrl(
           c.coach_id,
@@ -601,9 +601,9 @@ export const LibraryClientContent = () => {
                 <div className="p-4 text-sm text-muted-foreground">
                   Loading…
                 </div>
-              ) : coaches?.coaches.length ? (
+              ) : coaches?.data.coaches.length ? (
                 <ul className="p-2">
-                  {coaches?.coaches
+                  {coaches?.data.coaches
                     .filter(
                       (coach, index, self) =>
                         index ===
@@ -822,7 +822,7 @@ export const LibraryClientContent = () => {
 
                   <AccordionContent className="flex flex-col gap-4 pb-2">
                     {Array.isArray(folder.subfolders) &&
-                    folder.subfolders.length > 0 ? (
+                      folder.subfolders.length > 0 ? (
                       folder.subfolders.map((sub, sIdx) => {
                         const subKey = `sub-${sIdx}`;
                         const subOpen = (openSub[folder.id] || "") === subKey;

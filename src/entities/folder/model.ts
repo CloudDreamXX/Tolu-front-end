@@ -1,4 +1,5 @@
 import { TableRow } from "pages/content-manager/library/models";
+import { BaseResponse } from "entities/models";
 
 export interface IFileNamesResponse {
   path: string;
@@ -57,6 +58,8 @@ export interface IFolderItemResponse {
   description?: string;
   pagination: Pagination;
 }
+
+export type GetFolderItemResponse = BaseResponse<IFolderItemResponse>
 
 export interface IFolderResponse {
   [key: string]: IFolderItemResponse[];

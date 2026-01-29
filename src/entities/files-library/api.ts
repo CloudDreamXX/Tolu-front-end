@@ -11,6 +11,7 @@ import {
   UpdateFolderPayload,
 } from "./model";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const filesLibraryApi = createApi({
   reducerPath: "filesLibraryApi",
@@ -30,7 +31,7 @@ export const filesLibraryApi = createApi({
 
   endpoints: (builder) => ({
     fetchAllFiles: builder.query<
-      FetchAllFilesLibraryResponse,
+      BaseResponse<FetchAllFilesLibraryResponse>,
       FetchAllFilesLibraryPayload
     >({
       query: (params) => ({
@@ -40,7 +41,7 @@ export const filesLibraryApi = createApi({
       providesTags: ["Files"],
     }),
 
-    fetchFileLibrary: builder.query<FileLibraryResponse, string>({
+    fetchFileLibrary: builder.query<BaseResponse<FileLibraryResponse>, string>({
       query: (fileId) => ({
         url: API_ROUTES.FILES_LIBRARY.FETCH_ONE.replace("file_id", fileId),
       }),
@@ -81,7 +82,7 @@ export const filesLibraryApi = createApi({
       invalidatesTags: ["Files"],
     }),
 
-    createFolder: builder.mutation<FolderResponse, CreateFolderPayload>({
+    createFolder: builder.mutation<BaseResponse<FolderResponse>, CreateFolderPayload>({
       query: (body) => ({
         url: API_ROUTES.FILES_LIBRARY.CREATE_FOLDER,
         method: "POST",
@@ -90,7 +91,7 @@ export const filesLibraryApi = createApi({
       invalidatesTags: ["Folders"],
     }),
 
-    getFolder: builder.query<FolderResponse, string>({
+    getFolder: builder.query<BaseResponse<FolderResponse>, string>({
       query: (folderId) => ({
         url: API_ROUTES.FILES_LIBRARY.GET_FOLDER.replace(
           "{folder_id}",
@@ -101,7 +102,7 @@ export const filesLibraryApi = createApi({
     }),
 
     updateFolder: builder.mutation<
-      FolderResponse,
+      BaseResponse<FolderResponse>,
       { folderId: string; payload: UpdateFolderPayload }
     >({
       query: ({ folderId, payload }) => ({
@@ -116,7 +117,7 @@ export const filesLibraryApi = createApi({
     }),
 
     getFolderContents: builder.query<
-      FolderContentsResponse,
+      BaseResponse<FolderContentsResponse>,
       { folderId: string; page: string; per_page: string }
     >({
       query: ({ folderId, page, per_page }) => ({

@@ -11,6 +11,7 @@ import { ChatMessageModel } from "entities/chat";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store/lib";
 import { ChangePasswordRequest } from "entities/user";
+import { BaseResponse } from "entities/models";
 
 export const adminApi = createApi({
   reducerPath: "adminApi",
@@ -36,13 +37,13 @@ export const adminApi = createApi({
     "Requests",
   ],
   endpoints: (builder) => ({
-    getAllUsers: builder.query<UsersResponse, void>({
+    getAllUsers: builder.query<BaseResponse<UsersResponse>, void>({
       query: () => API_ROUTES.ADMIN.GET_ALL_USERS,
       providesTags: ["Users"],
     }),
 
     getFeedback: builder.query<
-      AdminGetFeedbackResponse,
+      BaseResponse<AdminGetFeedbackResponse>,
       {
         limit?: number;
         offset?: number;
@@ -57,13 +58,13 @@ export const adminApi = createApi({
       providesTags: ["Feedback"],
     }),
 
-    getAllChats: builder.query<AdminChatModel[], void>({
+    getAllChats: builder.query<BaseResponse<AdminChatModel[]>, void>({
       query: () => API_ROUTES.ADMIN.GET_ALL_CHATS,
       providesTags: ["Chats"],
     }),
 
     getMessagesByChatId: builder.query<
-      ChatMessageModel[],
+      BaseResponse<ChatMessageModel[]>,
       { chat_id: string; page?: number; page_size?: number }
     >({
       query: ({ chat_id, page = 1, page_size = 50 }) => ({
@@ -75,7 +76,7 @@ export const adminApi = createApi({
       ],
     }),
 
-    sendMessage: builder.mutation<SendMessageResponse, SendMessagePayload>({
+    sendMessage: builder.mutation<BaseResponse<SendMessageResponse>, SendMessagePayload>({
       query: (payload) => ({
         url: API_ROUTES.ADMIN.SEND_MESSAGE,
         method: "POST",
