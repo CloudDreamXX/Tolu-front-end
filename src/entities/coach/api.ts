@@ -301,6 +301,45 @@ export const {
 } = coachApi;
 
 export class CoachService {
+  private static buildCoachFormData(
+    userPrompt: string,
+    folderId: string,
+    images: File[] = [],
+    pdf?: File,
+    clientId?: string | null,
+    libraryFiles?: string[],
+    options?: {
+      chatId?: string | null;
+      chatTitle?: string | null;
+      regenerateId?: string | null;
+      textQuote?: string | null;
+    }
+  ): FormData {
+    const formData = new FormData();
+
+    formData.append("user_prompt", userPrompt);
+    formData.append("is_new", String(!options?.chatId));
+    formData.append("folder_id", folderId);
+
+    if (options?.chatId) formData.append("chat_id", options.chatId);
+    if (options?.chatTitle) formData.append("chat_title", options.chatTitle);
+    if (options?.regenerateId)
+      formData.append("regenerate_id", options.regenerateId);
+    if (options?.textQuote)
+      formData.append("text_quote", options.textQuote);
+
+    if (clientId) formData.append("client_id", clientId);
+
+    images.forEach((file) => formData.append("files", file));
+    if (pdf) formData.append("files", pdf);
+
+    libraryFiles?.forEach((id) =>
+      formData.append("library_files", id)
+    );
+
+    return formData;
+  }
+
   static async aiLearningSearch(
     chatMessage: AIChatMessage,
     folder_id: string,
@@ -310,117 +349,81 @@ export class CoachService {
     libraryFiles?: string[],
     signal?: AbortSignal,
     onChunk?: (data: any) => void,
-    onComplete?: (folderId: {
+    onComplete?: (data: {
       folderId: string;
       documentId: string;
       chatId: string;
     }) => void
-  ): Promise<{
-    folderId: string;
-    documentId: string;
-    chatId: string;
-  }> {
+  ): Promise<{ folderId: string; documentId: string; chatId: string }> {
     const endpoint =
-      import.meta.env.VITE_API_URL + API_ROUTES.COACH_ADMIN.AI_LEARNING_SEARCH;
+      import.meta.env.VITE_API_URL +
+      API_ROUTES.COACH_ADMIN.AI_LEARNING_SEARCH;
 
-    const formData = new FormData();
-    formData.append("chat_message", JSON.stringify(chatMessage));
-
-    formData.append("folder_id", folder_id);
-
-    if (images?.length) {
-      images.forEach((file) => {
-        formData.append("files", file);
-      });
-    }
-
-    if (pdf) {
-      formData.append("files", pdf);
-    }
-
-    if (client_id) {
-      formData.append("client_id", client_id);
-    }
-
-    if (libraryFiles && libraryFiles.length) {
-      formData.append("library_files", JSON.stringify(libraryFiles));
-    }
-
-    try {
-      const user = localStorage.getItem("persist:user");
-      const parsedUser = user ? JSON.parse(user) : null;
-      const token = parsedUser?.token.replace(/"/g, "") ?? null;
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          withCredentials: "true",
-        },
-        body: formData,
-        signal,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error. Status: ${response.status}`);
+    const formData = this.buildCoachFormData(
+      chatMessage.user_prompt ?? "",
+      folder_id,
+      images,
+      pdf,
+      client_id,
+      libraryFiles,
+      {
+        chatId: chatMessage.chat_id ?? null,
+        chatTitle: chatMessage.chat_title ?? undefined,
+        regenerateId: chatMessage.regenerate_id ?? undefined,
       }
+    );
 
-      if (
-        !response.headers.get("content-type")?.includes("text/event-stream")
-      ) {
-        const data = await response.json();
-        if (onComplete) onComplete(data);
-        return data;
-      }
+    const token = JSON.parse(
+      localStorage.getItem("persist:user") || "{}"
+    )?.token?.replace(/"/g, "");
 
-      const reader = response.body!.getReader();
-      const decoder = new TextDecoder();
-      let folderId = "";
-      let documentId = "";
-      let chatId = "";
-      let buffer = "";
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+      signal,
+    });
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        buffer += chunk;
-
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-
-        for (const line of lines) {
-          if (line.startsWith("data:")) {
-            try {
-              const jsonData = JSON.parse(line.substring(5).trim());
-
-              folderId = jsonData.folder_id;
-              documentId = jsonData.content_id;
-              chatId = jsonData.chat_id;
-
-              if (onChunk) onChunk(jsonData);
-            } catch (e) {
-              console.error("Error parsing SSE data:", e);
-            }
-          }
-        }
-      }
-
-      if (onComplete)
-        onComplete({
-          folderId,
-          documentId,
-          chatId,
-        });
-      return {
-        folderId,
-        documentId,
-        chatId,
-      };
-    } catch (error) {
-      console.error("Error processing stream:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`HTTP error. Status: ${response.status}`);
     }
+
+    if (!response.headers.get("content-type")?.includes("text/event-stream")) {
+      const data = await response.json();
+      onComplete?.(data);
+      return data;
+    }
+
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let folderId = "";
+    let documentId = "";
+    let chatId = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data:")) continue;
+
+        const json = JSON.parse(line.slice(5).trim());
+        folderId = json.folder_id;
+        documentId = json.content_id;
+        chatId = json.chat_id;
+
+        onChunk?.(json);
+      }
+    }
+
+    const result = { folderId, documentId, chatId };
+    onComplete?.(result);
+    return result;
   }
 
   static async aiLearningCardSearch(
@@ -432,7 +435,7 @@ export class CoachService {
     libraryFiles?: string[],
     signal?: AbortSignal,
     onChunk?: (data: any) => void,
-    onComplete?: (folderId: {
+    onComplete?: (data: {
       folderId: string;
       documentId: string;
       chatId: string;
@@ -442,103 +445,70 @@ export class CoachService {
       import.meta.env.VITE_API_URL +
       API_ROUTES.COACH_ADMIN.AI_LEARNING_CARD_SEARCH;
 
-    const formData = new FormData();
-    formData.append("chat_message", JSON.stringify(chatMessage));
-
-    formData.append("folder_id", folder_id);
-
-    if (images?.length) {
-      images.forEach((file) => {
-        formData.append("files", file);
-      });
-    }
-
-    if (pdf) {
-      formData.append("files", pdf);
-    }
-
-    if (client_id) {
-      formData.append("client_id", client_id);
-    }
-
-    if (libraryFiles && libraryFiles.length) {
-      formData.append("library_files", JSON.stringify(libraryFiles));
-    }
-
-    try {
-      const user = localStorage.getItem("persist:user");
-      const parsedUser = user ? JSON.parse(user) : null;
-      const token = parsedUser?.token.replace(/"/g, "") ?? null;
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          withCredentials: "true",
-        },
-        body: formData,
-        signal,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error. Status: ${response.status}`);
+    const formData = this.buildCoachFormData(
+      chatMessage.user_prompt ?? "",
+      folder_id,
+      images,
+      pdf,
+      client_id,
+      libraryFiles,
+      {
+        chatId: chatMessage.chat_id ?? null,
+        chatTitle: chatMessage.chat_title ?? undefined,
+        regenerateId: chatMessage.regenerate_id ?? undefined,
       }
+    );
 
-      if (
-        !response.headers.get("content-type")?.includes("text/event-stream")
-      ) {
-        const data = await response.json();
-        if (onComplete) onComplete(data);
-        return data;
-      }
+    const token = JSON.parse(
+      localStorage.getItem("persist:user") || "{}"
+    )?.token?.replace(/"/g, "");
 
-      const reader = response.body!.getReader();
-      const decoder = new TextDecoder();
-      let folderId = "";
-      let documentId = "";
-      let chatId = "";
-      let buffer = "";
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+      signal,
+    });
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        buffer += chunk;
-
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-
-        for (const line of lines) {
-          if (line.startsWith("data:")) {
-            try {
-              const jsonData = JSON.parse(line.substring(5).trim());
-
-              folderId = jsonData.folder_id;
-              documentId = jsonData.content_id;
-              chatId = jsonData.chat_id;
-
-              if (onChunk) onChunk(jsonData);
-            } catch (e) {
-              console.error("Error parsing SSE data:", e);
-            }
-          }
-        }
-      }
-
-      if (onComplete)
-        onComplete({
-          folderId,
-          documentId,
-          chatId,
-        });
-      return {
-        folderId,
-        documentId,
-        chatId,
-      };
-    } catch (error) {
-      console.error("Error processing stream:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`HTTP error. Status: ${response.status}`);
     }
+
+    if (!response.headers.get("content-type")?.includes("text/event-stream")) {
+      const data = await response.json();
+      onComplete?.(data);
+      return data;
+    }
+
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let folderId = "";
+    let documentId = "";
+    let chatId = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data:")) continue;
+
+        const json = JSON.parse(line.slice(5).trim());
+        folderId = json.folder_id;
+        documentId = json.content_id;
+        chatId = json.chat_id;
+
+        onChunk?.(json);
+      }
+    }
+
+    const result = { folderId, documentId, chatId };
+    onComplete?.(result);
+    return result;
   }
 }
