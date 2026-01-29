@@ -115,7 +115,7 @@ export const LibraryClientContent = () => {
   const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
 
   const selectedCoach = useMemo(
-    () => coaches?.data.coaches.find((c) => c.coach_id === selectedCoachId) ?? null,
+    () => coaches?.data?.coaches?.find((c) => c.coach_id === selectedCoachId) ?? null,
     [coaches, selectedCoachId]
   );
 
@@ -135,7 +135,7 @@ export const LibraryClientContent = () => {
             if (f.subfolders?.length) collect(f.subfolders);
           });
         };
-        collect(response?.data.folders || []);
+        collect(response?.data?.folders || []);
         setStatusMap(status);
       } catch (err) {
         console.error("Failed to fetch library content:", err);
@@ -553,8 +553,8 @@ export const LibraryClientContent = () => {
   }, [photoUrls]);
 
   useEffect(() => {
-    if (!providersOpen || !coaches?.data.coaches.length) return;
-    coaches?.data.coaches.forEach((c) => {
+    if (!providersOpen || !coaches?.data?.coaches?.length) return;
+    coaches?.data?.coaches?.forEach((c) => {
       if (c.profile?.headshot_url && !photoUrls[c.coach_id]) {
         void fetchPhotoUrl(
           c.coach_id,
@@ -601,7 +601,7 @@ export const LibraryClientContent = () => {
                 <div className="p-4 text-sm text-muted-foreground">
                   Loading…
                 </div>
-              ) : coaches?.data.coaches.length ? (
+              ) : coaches?.data?.coaches?.length ? (
                 <ul className="p-2">
                   {coaches?.data.coaches
                     .filter(

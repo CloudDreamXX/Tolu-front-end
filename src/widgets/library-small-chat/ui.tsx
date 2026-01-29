@@ -417,6 +417,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setIsLoadingSession(true);
     setError(null);
     const chatMessages: Message[] = [];
+    console.log(chatId)
 
     try {
       if (activeChatKey === "Create content") {

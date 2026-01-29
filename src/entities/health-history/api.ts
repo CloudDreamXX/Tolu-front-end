@@ -35,7 +35,7 @@ export const healthHistoryApi = createApi({
     getUserHealthHistory: builder.query<HealthHistory, void>({
       query: () => API_ROUTES.HEALTH_HISTORY.GET,
       transformResponse: (response: BaseResponse<HealthHistoryResponse>) =>
-        response.data.health_history,
+        response.data.health_history ? response.data.health_history : {} as HealthHistory,
     }),
 
     getCoachClientHealthHistory: builder.query<HealthHistory, string>({
@@ -45,7 +45,7 @@ export const healthHistoryApi = createApi({
           clientId
         ),
       transformResponse: (response: BaseResponse<HealthHistoryResponse>) =>
-        response.data.health_history,
+        response.data.health_history ? response.data.health_history : {} as HealthHistory,
     }),
 
     createHealthHistory: builder.mutation<

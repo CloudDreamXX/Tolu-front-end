@@ -43,6 +43,7 @@ export const ContentManagementDocument = () => {
     isLoading: isLoadingDocument,
     refetch,
   } = useGetDocumentByIdQuery(documentId!);
+  console.log(documentId)
   const { data: creator } = useGetCreatorProfileQuery(
     selectedDocument?.creator_id || ""
   );

@@ -231,18 +231,15 @@ export const userApi = createApi({
       BaseResponse<{ message: string }>,
       { data: FormState; token?: string }
     >({
-      query: ({ data, token }) => {
-        const formData = new FormData();
-        formData.append("onboarding_data", JSON.stringify(data));
-        return {
-          url: API_ROUTES.USER.ONBOARD_CLIENT,
-          method: "POST",
-          body: formData,
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        };
-      },
+      query: ({ data, token }) => ({
+        url: API_ROUTES.USER.ONBOARD_CLIENT,
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }),
       invalidatesTags: ["Onboarding"],
     }),
 

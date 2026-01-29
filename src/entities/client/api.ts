@@ -75,13 +75,24 @@ export const clientApi = createApi({
       }),
     }),
     updateUserProfile: builder.mutation<
-      any,
-      { payload: UserProfileUpdate; photo: File | null }
+      BaseResponse<any>,
+      {
+        payload: UserProfileUpdate;
+        photo?: File | null;
+      }
     >({
-      query: ({ payload, photo = null }) => {
+      query: ({ payload, photo }) => {
         const formData = new FormData();
-        formData.append("profile_data", JSON.stringify(payload));
-        if (photo) formData.append("photo", photo);
+
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
+        });
+
+        if (photo) {
+          formData.append("photo", photo);
+        }
 
         return {
           url: API_ROUTES.CLIENT.UPDATE_PROFILE,
@@ -90,7 +101,6 @@ export const clientApi = createApi({
         };
       },
     }),
-
     fetchSharedCoachContentByContentId: builder.query<
       BaseResponse<SharedCoachContentByContentIdResponse>,
       string

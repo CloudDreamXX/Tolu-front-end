@@ -61,7 +61,7 @@ export const Library = () => {
   }, [showPopup]);
 
   useEffect(() => {
-    if (invitations && invitations.invitations.length) {
+    if (invitations && invitations.data.length) {
       setAcceptInvitePopup(true);
     }
   }, [invitations]);

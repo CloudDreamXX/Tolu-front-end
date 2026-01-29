@@ -21,13 +21,42 @@ export const symptomsTrackerApi = createApi({
   endpoints: (builder) => ({
     addSymptoms: builder.mutation<
       any,
-      { data: SymptomData; photo: File | null; voice: File | null }
+      {
+        data: {
+          date: string;
+          mood_score: number;
+          notes?: string | null;
+          meal_details?: string | null;
+          symptoms?: string | null;
+          triggers?: string | null;
+          medications?: string | null;
+          supplements?: string | null;
+          sleep_quality?: string | null;
+          energy_level?: string | null;
+          stress_level?: string | null;
+        };
+        voice?: File | null;
+        photo?: File | null;
+      }
     >({
-      query: ({ data, photo, voice }) => {
+      query: ({ data, voice, photo }) => {
         const formData = new FormData();
-        formData.append("symptom_data", JSON.stringify(data));
+
+        formData.append("date", data.date);
+        formData.append("mood_score", String(data.mood_score));
+
+        if (data.notes) formData.append("notes", data.notes);
+        if (data.meal_details) formData.append("meal_details", data.meal_details);
+        if (data.symptoms) formData.append("symptoms", data.symptoms);
+        if (data.triggers) formData.append("triggers", data.triggers);
+        if (data.medications) formData.append("medications", data.medications);
+        if (data.supplements) formData.append("supplements", data.supplements);
+        if (data.sleep_quality) formData.append("sleep_quality", data.sleep_quality);
+        if (data.energy_level) formData.append("energy_level", data.energy_level);
+        if (data.stress_level) formData.append("stress_level", data.stress_level);
+
+        if (voice) formData.append("voice_note", voice);
         if (photo) formData.append("photo", photo);
-        if (voice) formData.append("audio_note", voice);
 
         return {
           url: API_ROUTES.SYMPTOMS_TRACKER.POST_SYMPTOMS,

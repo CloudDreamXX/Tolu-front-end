@@ -352,43 +352,36 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
 
     const sleepQuality = mapMoodToSleepQuality(moodValue);
 
-    const data: SymptomData = {
-      tracking_date: selectedDate,
-      user_notes: userNote,
-      symptoms: updatedSelectedSymptoms,
-      symptom_intensities: [],
-      duration_category: durationCategory,
-      suspected_triggers: updatedSelectedTriggers,
+    const payload = {
+      date: selectedDate,
+      mood_score: moodValue,
+
+      notes: userNote || null,
+      symptoms: updatedSelectedSymptoms.length
+        ? updatedSelectedSymptoms.join(", ")
+        : null,
+
+      triggers: updatedSelectedTriggers.length
+        ? updatedSelectedTriggers.join(", ")
+        : null,
+
+      meal_details: JSON.stringify({
+        breakfast: meal.breakfast,
+        lunch: meal.lunch,
+        dinner: meal.dinner,
+        examples: updatedSelectedMealExamples,
+      }),
+
       sleep_quality: sleepQuality,
-      sleep_hours: sleep.hours,
-      sleep_minutes: sleep.minutes,
-      times_woke_up: sleep.wokeUpTimes,
-      how_fell_asleep: sleep.fellBack,
-      meal_notes: updatedSelectedMealExamples.join(", "),
-      meal_details: [
-        {
-          meal_type: "breakfast",
-          food_items: meal.breakfast.food_items,
-          time: meal.breakfast.time,
-        },
-        {
-          meal_type: "lunch",
-          food_items: meal.lunch.food_items,
-          time: meal.lunch.time,
-        },
-        {
-          meal_type: "dinner",
-          food_items: meal.dinner.food_items,
-          time: meal.dinner.time,
-        },
-      ],
+      energy_level: null,
+      stress_level: null,
     };
 
     const photo = photoInputRef.current?.files?.[0] || null;
     const voice = voiceInputRef.current?.files?.[0] || null;
 
     try {
-      await addSymptoms({ data, photo, voice });
+      await addSymptoms({ data: payload, photo, voice });
       onClose();
       setSummaryView(true);
       toast({ title: "Symptoms were added successfully" });

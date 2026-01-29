@@ -141,7 +141,7 @@ export const ClientProfile = () => {
   }, [u]);
 
   useEffect(() => {
-    if (invitations && invitations.invitations.length) {
+    if (invitations && invitations.data.length) {
       setAcceptInvitePopup(true);
     }
   }, [invitations]);

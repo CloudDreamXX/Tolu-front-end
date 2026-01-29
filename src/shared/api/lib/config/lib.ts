@@ -136,7 +136,6 @@ export const API_ROUTES = {
     REVOKE_CONTENT_ACCESS: "/coach/revoke-content-access",
     CREATE_FOLDER: "/folders/create",
     SAVE_TO_FOLDER: "/folders/save-content",
-    GET_FOLDER_DETAILS: "/folders/{folder_id}/details",
     MOVE_FOLDER_CONTENT: "/folders/move-content",
     DELETE_FOLDER_CONTENT: "/folders/delete-content",
     DELETE_FOLDER: "/folders/delete-folder",

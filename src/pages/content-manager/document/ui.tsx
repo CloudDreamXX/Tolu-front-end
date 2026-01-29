@@ -123,7 +123,10 @@ export const ContentManagerDocument: React.FC = () => {
   const [statusPopup, setStatusPopup] = useState<boolean>(false);
 
   const [updateContentStatus] = useUpdateContentStatusMutation();
-  const { refetch } = useGetDocumentByIdQuery(documentId!);
+
+  const { refetch } = useGetDocumentByIdQuery(documentId!, {
+    skip: !documentId || documentId.startsWith("temp_"),
+  });
 
   const [widthPercent, setWidthPercent] = useState(30);
 
@@ -387,13 +390,13 @@ export const ContentManagerDocument: React.FC = () => {
             onComplete={onStatusCompleteHandler}
             currentStatus={
               selectedDocumentStatus as
-                | "Raw"
-                // | "Ready for Review"
-                // | "Waiting"
-                // | "Second Review Requested"
-                | "Ready to Publish"
-                | "Live"
-                | "Archived"
+              | "Raw"
+              // | "Ready for Review"
+              // | "Waiting"
+              // | "Second Review Requested"
+              | "Ready to Publish"
+              | "Live"
+              | "Archived"
             }
             handleMoveClick={handleMoveClick}
             contentId={selectedDocumentId}

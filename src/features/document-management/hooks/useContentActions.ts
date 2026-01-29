@@ -57,7 +57,10 @@ export const useContentActions = () => {
 
   const nav = useNavigate();
   const { refetch: refetchDocument } =
-    useGetDocumentByIdQuery(selectedDocumentId);
+    useGetDocumentByIdQuery(selectedDocumentId, {
+      skip: !selectedDocumentId || selectedDocumentId.startsWith("temp_"),
+    });
+  console.log(selectedDocumentId)
 
   const onStatusComplete = async (
     status:
@@ -79,7 +82,7 @@ export const useContentActions = () => {
       const res = await changeStatus(newStatus).unwrap();
       setIsMarkAsOpen(false);
       nav(
-        `/content-manager/library/folder/${res.content.folder_id}/document/${selectedDocumentId}`
+        `/content-manager/library/folder/${res.data.content.folder_id}/document/${selectedDocumentId}`
       );
       window.location.reload();
     } catch (error) {
