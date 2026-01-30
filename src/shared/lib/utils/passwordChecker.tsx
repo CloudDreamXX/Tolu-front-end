@@ -54,7 +54,7 @@ export function StrengthMeter({
   level: 0 | 1 | 2 | 3;
   label: string;
 }) {
-  const colors = ["#EF4444", "#F59E0B", "#3B82F6", "#10B981"]; // red, amber, blue, green
+  const colors = ["#EF4444", "#F59E0B", "#F59E0B", "#10B981"]; // red, amber, amber, green
   return (
     <div className="mt-2" aria-live="polite">
       <div

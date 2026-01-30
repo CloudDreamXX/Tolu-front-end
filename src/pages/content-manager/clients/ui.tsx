@@ -801,7 +801,7 @@ export const ContentManagerClients: React.FC = () => {
                         className="flex items-center justify-center 
                w-full min-w-0 max-w-full overflow-hidden
                text-[16px] font-semibold text-center
-               break-all whitespace-normal"
+               break-words whitespace-normal"
                       >
                         <Button
                           variant={"unstyled"}
