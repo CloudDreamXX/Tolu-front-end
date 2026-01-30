@@ -2,7 +2,6 @@ import {
     FormField,
     FormItem,
     FormLabel,
-    FormControl,
     FormMessage,
     Checkbox,
     Textarea,
@@ -103,7 +102,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
     return (
         <div className="space-y-8">
-            {/* MAIN CONCERNS */}
             <FormField
                 control={form.control}
                 name="mainConcerns"
@@ -132,7 +130,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
                 )}
             />
 
-            {/* PAST APPROACHES */}
             <FormField
                 control={form.control}
                 name="pastApproaches"
@@ -163,7 +160,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
                 )}
             />
 
-            {/* PRACTITIONERS & SURGERIES */}
             <FormField
                 control={form.control}
                 name="currentPractitioners"
@@ -190,7 +186,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
                 )}
             />
 
-            {/* ANTIBIOTICS */}
             {[
                 ["antibioticsInfancy", "Infancy / childhood"],
                 ["antibioticsTeen", "Teen years"],
@@ -211,7 +206,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
                 />
             ))}
 
-            {/* MEDS & SUPPLEMENTS */}
             <FormField
                 control={form.control}
                 name="currentMedications"
@@ -238,7 +232,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
                 )}
             />
 
-            {/* FOOD & DIET */}
             <FormField
                 control={form.control}
                 name="regularFoods"
@@ -281,7 +274,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
                 )}
             />
 
-            {/* HOME COOKED */}
             <FormField
                 control={form.control}
                 name="homeCookedPercent"
