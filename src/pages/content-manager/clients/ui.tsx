@@ -857,6 +857,7 @@ export const ContentManagerClients: React.FC = () => {
                     <Button
                       variant={"unstyled"}
                       size={"unstyled"}
+                      disabled={client.status !== "active"}
                       onClick={() => {
                         handleSelectClient(client.client_id);
                       }}
