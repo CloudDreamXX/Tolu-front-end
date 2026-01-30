@@ -102,7 +102,7 @@ export const ClientProfile = () => {
   const [triggerGetOnboardClient] = useLazyGetOnboardClientQuery();
   const [triggerDownloadProfilePhoto] = useLazyDownloadProfilePhotoQuery();
   const [signOut] = useSignOutMutation();
-  const [changePassword] = useChangePasswordMutation();
+  const [changePassword, { isLoading: isChangingPassword }] = useChangePasswordMutation();
   const [acceptInvitePopup, setAcceptInvitePopup] = useState<boolean>(false);
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [declineCoachInvite] = useDeclineCoachInviteMutation();
@@ -1005,6 +1005,7 @@ export const ClientProfile = () => {
         onSubmit={handleChangePassword}
         onForgot={() => nav("/forgot-password")}
         mode="change" //we have mode for 'create' and 'change'
+        isLoading={isChangingPassword}
       />
     </div>
   );

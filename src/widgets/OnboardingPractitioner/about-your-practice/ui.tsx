@@ -27,7 +27,7 @@ export const AboutYourPractice = () => {
   const [recentClients, setRecentClients] = useState("");
   const [targetClients, setTargetClients] = useState("");
   const [labsUsed, setLabsUsed] = useState("");
-  const [onboardUser] = useOnboardUserMutation();
+  const [onboardUser, { isLoading }] = useOnboardUserMutation();
 
   const state = useSelector((state: RootState) => state.coachOnboarding);
   const OTHER_OPTION = "Other (please specify)";

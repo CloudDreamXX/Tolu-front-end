@@ -26,7 +26,7 @@ export const Summary = () => {
     client.symptoms_severity || {}
   );
 
-  const [onboardClient] = useOnboardClientMutation();
+  const [onboardClient, { isLoading }] = useOnboardClientMutation();
 
   type FormState = RootState["clientOnboarding"];
   type FieldKey = keyof FormState;

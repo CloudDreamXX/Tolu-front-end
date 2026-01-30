@@ -13,7 +13,7 @@ export const NewPassword = () => {
   const [passwordError, setPasswordError] = useState("");
   const location = useLocation();
   const { token, email } = location.state || {};
-  const [setNewPassword] = useSetNewPasswordMutation();
+  const [setNewPassword, { isLoading }] = useSetNewPasswordMutation();
 
   const formDataChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setPasswordError("");
@@ -133,15 +133,17 @@ export const NewPassword = () => {
               variant={"unstyled"}
               size={"unstyled"}
               type="submit"
+              disabled={formData.newPassword.length < 8 || formData.newPasswordRepeat.length < 8 || !!passwordError || isLoading}
               className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
                 formData.newPassword.length >= 8 &&
                 formData.newPasswordRepeat.length >= 8 &&
-                !passwordError
+                !passwordError &&
+                !isLoading
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5F5F65]"
               }`}
             >
-              Create
+              {isLoading ? "Creating..." : "Create"}
             </Button>
           </div>
         </form>

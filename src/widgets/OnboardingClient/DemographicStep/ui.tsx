@@ -53,7 +53,7 @@ export const DemographicStep = () => {
       : clientOnboarding.weekly_meal_choice || []
   );
 
-  const [onboardClient] = useOnboardClientMutation();
+  const [onboardClient, { isLoading }] = useOnboardClientMutation();
 
   const [month, setMonth] = useState<Date>(
     localDate || new Date(selectedYear, 0, 1)

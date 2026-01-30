@@ -109,7 +109,7 @@ export const Register = () => {
 
   const [stage, setStage] = useState<"otp" | "select" | "form">("otp");
 
-  const [registerUser] = useRegisterUserMutation();
+  const [registerUser, { isLoading: isRegistering }] = useRegisterUserMutation();
 
   useEffect(() => {
     if (!token) return;
@@ -403,6 +403,7 @@ export const Register = () => {
             formData={formData}
             handleSubmit={handleSubmit}
             formDataChangeHandler={formDataChangeHandler}
+            isLoading={isRegistering}
           />
         )}
       </div>

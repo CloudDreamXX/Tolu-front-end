@@ -31,6 +31,7 @@ interface SignUpProps {
   };
   handleSubmit: (e: React.FormEvent) => void;
   formDataChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isLoading?: boolean;
 }
 
 const signUpSchema = z
@@ -58,6 +59,7 @@ export const SignUp: React.FC<SignUpProps> = ({
   handleSubmit,
   formData,
   formDataChangeHandler,
+  isLoading = false,
 }) => {
   const [errors, setErrors] = useState<
     Partial<Record<keyof typeof formData, string>>
@@ -65,7 +67,6 @@ export const SignUp: React.FC<SignUpProps> = ({
   const [showPassword, setShowPassword] = useState(true);
   const [showNewPassword, setShowNewPassword] = useState(true);
   const [formattedPhone, setFormattedPhone] = useState("");
-  const [loading, setLoading] = useState(false);
   const result = useMemo(
     () => checkPasswordStrength(formData.password),
     [formData.password]
@@ -156,14 +157,10 @@ export const SignUp: React.FC<SignUpProps> = ({
 
     if (!validationResult.success) return;
 
-    setLoading(true);
     try {
       await handleSubmit(e);
     } catch (err) {
-      console.error(err)
-      setLoading(false)
-    } finally {
-      setLoading(false);
+      console.error(err);
     }
   };
 
@@ -175,7 +172,7 @@ export const SignUp: React.FC<SignUpProps> = ({
     validationResult.success &&
     result.isValid &&
     agreeTerms &&
-    !loading;
+    !isLoading;
 
   return (
     <form
@@ -481,14 +478,14 @@ export const SignUp: React.FC<SignUpProps> = ({
           variant={"unstyled"}
           size={"unstyled"}
           type="submit"
-          disabled={!isFormValid || loading || !result.isValid || !agreeTerms}
+          disabled={!isFormValid || isLoading || !result.isValid || !agreeTerms}
           className={
-            !isFormValid || loading || !result.isValid || !agreeTerms
+            !isFormValid || isLoading || !result.isValid || !agreeTerms
               ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] text-[16px] font-semibold cursor-not-allowed"
               : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white text-[16px] font-semibold"
           }
         >
-          {loading ? (
+          {isLoading ? (
             <MaterialIcon
               iconName="progress_activity"
               size={20}

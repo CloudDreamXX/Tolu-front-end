@@ -135,11 +135,11 @@ export const ClientEditProfileModal = ({
               className="flex flex-col gap-3"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem id="gender-male" value="male" />
+                <RadioGroupItem id="gender-male" value="Male" />
                 <label htmlFor="gender-male">Male</label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem id="gender-female" value="female" />
+                <RadioGroupItem id="gender-female" value="Female" />
                 <label htmlFor="gender-female">Female</label>
               </div>
             </RadioGroup>

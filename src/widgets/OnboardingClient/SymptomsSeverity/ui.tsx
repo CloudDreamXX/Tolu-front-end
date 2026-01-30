@@ -58,7 +58,7 @@ export const SymptomsSeverity = () => {
     )
   );
 
-  const [onboardClient] = useOnboardClientMutation();
+  const [onboardClient, { isLoading }] = useOnboardClientMutation();
 
   const handleSliderChange = (symptom: string, value: number[]) => {
     setRatings((prev) => ({

@@ -19,7 +19,7 @@ export const Support = () => {
 
   const selectedSupport = clientOnboarding.support_network || [];
 
-  const [onboardClient] = useOnboardClientMutation();
+  const [onboardClient, { isLoading }] = useOnboardClientMutation();
 
   const handleInputChange = (value: string, checked: boolean) => {
     if (checked) {

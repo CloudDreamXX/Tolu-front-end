@@ -241,6 +241,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   e.preventDefault();
                   setIsMessagesOpen(!isMessagesOpen);
                   setSidebarOpen(true);
+                  nav("/messages");
                 }}
                 className={({ isActive }) =>
                   cn(

@@ -32,7 +32,7 @@ export const ProfileSetup = () => {
   );
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
-  const [onboardUser] = useOnboardUserMutation();
+  const [onboardUser, {isLoading}] = useOnboardUserMutation();
 
   const handleFile = (file: File) => {
     if (file) {
@@ -407,14 +407,14 @@ export const ProfileSetup = () => {
                 size={"unstyled"}
                 type="button"
                 onClick={() => nav("/invite-clients")}
-                disabled={!isFormValid}
+                disabled={!isFormValid || isLoading}
                 className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
-                  isFormValid
+                  isFormValid && !isLoading
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
                 }`}
               >
-                Next
+                {isLoading ? "Saving..." : "Next"}
               </Button>
             </div>
           )}
@@ -438,14 +438,14 @@ export const ProfileSetup = () => {
               variant={"unstyled"}
               size={"unstyled"}
               onClick={handleNext}
-              disabled={!isFormValid}
+              disabled={!isFormValid || isLoading}
               className={`flex w-full md:w-[250px] md:h-[44px] p-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px] font-semibold ${
-                isFormValid
+                isFormValid && !isLoading
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5f5f65] cursor-not-allowed"
               }`}
             >
-              Next
+              {isLoading ? "Saving..." : "Next"}
             </Button>
           </div>
         )}

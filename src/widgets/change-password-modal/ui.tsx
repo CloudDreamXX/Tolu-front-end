@@ -22,6 +22,7 @@ type ChangePasswordModalProps = {
   onSubmit?: (oldPass: string, newPass: string) => void;
   onForgot?: () => void;
   mode?: "change" | "create";
+  isLoading?: boolean;
 };
 
 export const ChangePasswordModal = ({
@@ -30,6 +31,7 @@ export const ChangePasswordModal = ({
   onSubmit,
   onForgot,
   mode = "change",
+  isLoading = false,
 }: ChangePasswordModalProps) => {
   const isCreate = mode === "create";
 
@@ -61,7 +63,8 @@ export const ChangePasswordModal = ({
     (isCreate ? true : current.length > 0) &&
     meetsPolicy &&
     match &&
-    result.isValid;
+    result.isValid &&
+    !isLoading;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -231,7 +234,7 @@ export const ChangePasswordModal = ({
             className="w-32 disabled:bg-[#D5DAE2] disabled:text-[#5F5F65] disabled:opacity-100"
             disabled={!canSubmit}
           >
-            {actionLabel}
+            {isLoading ? "Changing..." : actionLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

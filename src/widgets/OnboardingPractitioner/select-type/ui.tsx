@@ -25,7 +25,7 @@ export const SelectType = () => {
   const state = useSelector((state: RootState) => state.coachOnboarding);
   const practitionerTypes = state?.practitioner_types as string[] | undefined;
 
-  const [onboardUser] = useOnboardUserMutation();
+  const [onboardUser, {isLoading}] = useOnboardUserMutation();
 
   useEffect(() => {
     const initial = Array(titlesAndIcons.length).fill("");
@@ -215,14 +215,14 @@ export const SelectType = () => {
               size={"unstyled"}
               onClick={handleSubmit}
               type="submit"
-              disabled={!isSelected()}
+              disabled={!isSelected() || isLoading}
               className={`mt-[20px] flex items-center justify-center w-[250px] h-[44px] p-[16px] rounded-full ${
-                isSelected()
+                isSelected() && !isLoading
                   ? "bg-[#1C63DB] text-white"
                   : "bg-[#D5DAE2] text-[#5F5F65]"
               }`}
             >
-              Next
+              {isLoading ? "Saving..." : "Next"}
             </Button>
           </div>
         )}

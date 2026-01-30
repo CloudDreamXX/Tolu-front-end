@@ -8,12 +8,11 @@ import { useNavigate } from "react-router-dom";
 export const CheckInvite = () => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasPendingInvite, setHasPendingInvite] = useState<boolean | null>(
     null
   );
   const [responseMessage, setResponseMessage] = useState<string>("");
-  const [triggerCheckInvite] = useLazyCheckPendingInviteQuery();
+  const [triggerCheckInvite, { isLoading: isSubmitting }] = useLazyCheckPendingInviteQuery();
 
   const emailSchema = z.object({
     email: z.string().email("The email format is incorrect."),
@@ -39,8 +38,6 @@ export const CheckInvite = () => {
     }
 
     try {
-      setIsSubmitting(true);
-
       const { data, error } = await triggerCheckInvite(email);
 
       if (error) {
@@ -64,8 +61,6 @@ export const CheckInvite = () => {
         title: "Request Failed",
         description: error.message || "Failed to check pending invite.",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

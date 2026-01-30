@@ -30,9 +30,9 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "shared/ui/input-otp";
 import { useLazyGetUserProfileQuery } from "entities/user";
 
 export const LoginForm = () => {
-  const [login] = useLoginMutation();
-  const [requestPasswordlessLogin] = useRequestPasswordlessLoginMutation();
-  const [verifyPasswordlessLogin] = useVerifyPasswordlessLoginMutation();
+  const [login, { isLoading: isPasswordLoginLoading }] = useLoginMutation();
+  const [requestPasswordlessLogin, { isLoading: isRequestingCode }] = useRequestPasswordlessLoginMutation();
+  const [verifyPasswordlessLogin, { isLoading: isVerifyingCode }] = useVerifyPasswordlessLoginMutation();
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [requestNewInvite] = useRequestNewInviteMutation();
 
@@ -537,18 +537,24 @@ export const LoginForm = () => {
                 variant={"unstyled"}
                 size={"unstyled"}
                 type="submit"
+                disabled={
+                  (loginMode === "2fa" && !isCodeSent && (!formData.email || isRequestingCode)) ||
+                  (loginMode === "2fa" && isCodeSent && (!formData.code || formData.code.length < 6 || isVerifyingCode)) ||
+                  (loginMode === "password" && (!formData.email || !formData.password || isPasswordLoginLoading))
+                }
                 className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  (!isCodeSent && formData.email) ||
-                  (isCodeSent && formData.code)
+                  ((loginMode === "2fa" && !isCodeSent && formData.email && !isRequestingCode) ||
+                  (loginMode === "2fa" && isCodeSent && formData.code && formData.code.length >= 6 && !isVerifyingCode) ||
+                  (loginMode === "password" && formData.email && formData.password && !isPasswordLoginLoading))
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
                 }`}
               >
                 {loginMode === "2fa"
                   ? isCodeSent
-                    ? "Verify Code"
-                    : "Send Code"
-                  : "Log In"}
+                    ? (isVerifyingCode ? "Verifying..." : "Verify Code")
+                    : (isRequestingCode ? "Sending..." : "Send Code")
+                  : (isPasswordLoginLoading ? "Logging in..." : "Log In")}
               </Button>
             )}
 

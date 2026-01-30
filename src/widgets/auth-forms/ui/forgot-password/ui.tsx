@@ -8,7 +8,7 @@ export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const nav = useNavigate();
 
-  const [forgotPassword] = useForgotPasswordMutation();
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -88,13 +88,14 @@ export const ForgotPassword = () => {
                 variant={"unstyled"}
                 size={"unstyled"}
                 type="submit"
+                disabled={!email || isLoading}
                 className={`w-full md:w-[250px] h-[44px] py-[4px] px-[32px] flex items-center justify-center gap-[8px] rounded-full  text-[16px] font-semibold ${
-                  email
+                  email && !isLoading
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
                 }`}
               >
-                Send
+                {isLoading ? "Sending..." : "Send"}
               </Button>
             </div>
 

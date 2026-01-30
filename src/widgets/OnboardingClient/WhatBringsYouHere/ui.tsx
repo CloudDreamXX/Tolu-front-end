@@ -24,7 +24,7 @@ export const WhatBringsYouHere = () => {
   const [input, setInput] = useState("");
   const trimmedInput = input.trim();
 
-  const [onboardClient] = useOnboardClientMutation();
+  const [onboardClient, { isLoading }] = useOnboardClientMutation();
 
   useEffect(() => {
     const saved = clientOnboarding.main_transition_goal;

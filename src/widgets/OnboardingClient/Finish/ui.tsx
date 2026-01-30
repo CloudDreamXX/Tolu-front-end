@@ -14,7 +14,7 @@ export const FinishClientOnboarding = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const client = useSelector((state: RootState) => state.clientOnboarding);
   const nav = useNavigate();
-  const [onboardClient] = useOnboardClientMutation();
+  const [onboardClient, { isLoading }] = useOnboardClientMutation();
 
   useEffect(() => {
     const handleLast = async () => {
