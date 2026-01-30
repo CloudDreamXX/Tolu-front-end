@@ -861,7 +861,7 @@ export const ContentManagerClients: React.FC = () => {
                       onClick={() => {
                         handleSelectClient(client.client_id);
                       }}
-                      className={`${isWide ? "flex" : "hidden"} items-center justify-center text-[#000]`}
+                      className={`${isWide ? "flex" : "hidden"} items-center justify-center text-[#000] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                     >
                       <MaterialIcon iconName="visibility" fill={1} />
                     </Button>
