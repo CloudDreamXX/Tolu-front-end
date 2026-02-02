@@ -14,29 +14,30 @@ import {
 import { z } from "zod";
 
 export const birthBodySchema = z.object({
-    age: z.number().min(0),
-    birthDate: z.string().min(1),
-    genderAtBirth: z.string().min(1),
-    chosenGender: z.string().optional(),
+    age: z.string(),
+    birthDate: z.string(),
+    genderAtBirth: z.string(),
+    chosenGenderAfterBirth: z.string().optional(),
 
-    feedingType: z.enum(["Breastfed", "Bottle-fed"]),
-    birthMethod: z.enum(["Vaginal", "C-section"]),
+    breastfedOrBottle: z.string().optional(),
+    birthDeliveryMethod: z.string().optional(),
 
-    height: z.string().min(1),
-    bloodType: z.string().min(1),
+    height: z.string().optional(),
+    bloodType: z.string().optional(),
 
-    currentWeight: z.number().min(0),
-    idealWeight: z.number().optional(),
-    weightOneYearAgo: z.number().optional(),
-    birthWeight: z.number().optional(),
+    currentWeightLbs: z.string().optional(),
+    idealWeightLbs: z.string().optional(),
+    weightOneYearAgoLbs: z.string().optional(),
+    birthWeightLbs: z.string().optional(),
 
-    birthOrder: z.string().min(1),
-    familySituation: z.string().min(1),
+    birthOrderSiblings: z.string().optional(),
+    familyLivingSituation: z.string().optional(),
 
     partnerGenderAtBirth: z.string().optional(),
     partnerChosenGender: z.string().optional(),
     children: z.string().optional(),
-    exercise: z.string().min(1),
+
+    exerciseRecreation: z.string().optional(),
 });
 
 export const BirthBodyStep = ({ form }: { form: any }) => (

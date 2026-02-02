@@ -2,13 +2,13 @@ import { FormLabel, FormField, FormItem, FormControl, Textarea, FormMessage } fr
 import { z } from "zod";
 
 export const oralHealthSchema = z.object({
-    lastDentalVisit: z.string().min(1, "This field is required"),
-    dentalHealthDiscussion: z.string().min(1, "This field is required"),
-    oralRegimen: z.string().min(1, "This field is required"),
-    mercuryAmalgams: z.string().min(1, "This field is required"),
-    rootCanals: z.string().min(1, "This field is required"),
-    oralHealthConcerns: z.string().min(1, "This field is required"),
-    additionalOralNotes: z.string().min(1, "This field is required"),
+    lastDentistVisit: z.string(),
+    dentistHealthDiscussion: z.string(),
+    oralDentalRegimen: z.string(),
+    mercuryAmalgams: z.string(),
+    rootCanals: z.string(),
+    oralHealthConcerns: z.string(),
+    oralHealthAdditionalNotes: z.string().optional(),
 });
 
 export const OralHealthHistoryStep = ({ form }: { form: any }) => {
@@ -22,7 +22,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="lastDentalVisit"
+                name="lastDentistVisit"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -38,7 +38,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="dentalHealthDiscussion"
+                name="dentistHealthDiscussion"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -54,7 +54,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="oralRegimen"
+                name="oralDentalRegimen"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -118,7 +118,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="additionalOralNotes"
+                name="oralHealthAdditionalNotes"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>

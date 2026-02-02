@@ -1,16 +1,8 @@
 import { z } from "zod";
-import { HealthHistory, HealthHistoryPostData } from "entities/health-history";
+import { HealthHistory } from "entities/health-history";
 import { formSchema } from "./ui";
 
 type FormValues = z.infer<typeof formSchema>;
-
-const defaultMedicalCondition = {
-  status: "never" as const,
-};
-
-const defaultTraumaEvent = {
-  status: "no" as const,
-};
 
 export const mapHealthHistoryToFormDefaults = (
   healthHistory?: HealthHistory
@@ -18,124 +10,187 @@ export const mapHealthHistoryToFormDefaults = (
   if (!healthHistory) return {};
 
   return {
-    /* ==================== STRESSFUL EVENTS ==================== */
-    stressfulEvents: {
-      death_close_person:
-        healthHistory.trauma_death_family ?? defaultTraumaEvent.status,
-      sexual_physical_abuse:
-        healthHistory.trauma_sexual_physical_abuse ?? defaultTraumaEvent,
-      emotional_abuse:
-        healthHistory.trauma_emotional_neglect ?? defaultTraumaEvent,
-      discrimination:
-        healthHistory.trauma_discrimination ?? defaultTraumaEvent,
-      life_threatening_event:
-        healthHistory.trauma_life_threatening_accident ?? defaultTraumaEvent,
-      life_threatening_illness:
-        healthHistory.trauma_life_threatening_illness ?? defaultTraumaEvent,
-      weapon_threat:
-        healthHistory.trauma_robbery_mugging ?? defaultTraumaEvent,
-      witnessed_violence:
-        healthHistory.trauma_witness_violence ?? defaultTraumaEvent,
-    },
+    email: "",
+    fullName: "",
 
-    timeOffWork: healthHistory.work_school_time_off,
-    livedOutsideUS: healthHistory.lived_traveled_outside_us ?? "",
-    majorLifeChanges: healthHistory.recent_major_life_changes ?? "",
-    additionalNotes: healthHistory.trauma_additional_notes ?? "",
+    age: healthHistory.age ?? "",
+    birthDate: healthHistory.birth_date ?? "",
+    genderAtBirth: healthHistory.gender_at_birth ?? "",
+    chosenGenderAfterBirth: healthHistory.chosen_gender_after_birth ?? "",
 
-    /* ==================== MEDICAL STATUS ==================== */
-    conditions: {
-      /* Gastrointestinal */
-      ibs: healthHistory.condition_ibs ?? defaultMedicalCondition,
-      crohns: healthHistory.condition_crohns ?? defaultMedicalCondition,
-      ulcerative_colitis:
-        healthHistory.condition_ulcerative_colitis ?? defaultMedicalCondition,
-      gastritis_ulcer:
-        healthHistory.condition_gastritis_ulcer ?? defaultMedicalCondition,
-      gerd: healthHistory.condition_gerd ?? defaultMedicalCondition,
-      celiac: healthHistory.condition_celiac ?? defaultMedicalCondition,
+    breastfedOrBottle: healthHistory.breastfed_or_bottle,
+    birthDeliveryMethod: healthHistory.birth_delivery_method,
 
-      /* Hormonal / Metabolic */
-      hypothyroidism:
-        healthHistory.condition_hypothyroidism ?? defaultMedicalCondition,
-      hyperthyroidism:
-        healthHistory.condition_hyperthyroidism ?? defaultMedicalCondition,
-      hashimotos:
-        healthHistory.condition_hashimotos ?? defaultMedicalCondition,
-      pcos: healthHistory.condition_pcos ?? defaultMedicalCondition,
+    height: healthHistory.height ?? "",
+    bloodType: healthHistory.blood_type ?? "",
 
-      /* Cardiovascular */
-      heart_disease:
-        healthHistory.condition_heart_disease ?? defaultMedicalCondition,
-      hypertension:
-        healthHistory.condition_hypertension ?? defaultMedicalCondition,
+    currentWeightLbs: healthHistory.current_weight_lbs ?? "",
+    idealWeightLbs: healthHistory.ideal_weight_lbs ?? "",
+    weightOneYearAgoLbs: healthHistory.weight_one_year_ago_lbs ?? "",
+    birthWeightLbs: healthHistory.birth_weight_lbs ?? "",
 
-      /* Neurologic / Mood */
-      depression:
-        healthHistory.condition_depression ?? defaultMedicalCondition,
-      anxiety: healthHistory.condition_anxiety ?? defaultMedicalCondition,
-    },
+    birthOrderSiblings: healthHistory.birth_order_siblings ?? "",
+    familyLivingSituation: healthHistory.family_living_situation ?? "",
 
-    other_conditions_symptoms:
+    partnerGenderAtBirth: healthHistory.partner_gender_at_birth ?? "",
+    partnerChosenGender: healthHistory.partner_chosen_gender ?? "",
+    children: healthHistory.children ?? "",
+    exerciseRecreation: healthHistory.exercise_recreation ?? "",
+
+    mainHealthConcerns: healthHistory.main_health_concerns ?? "",
+    whenFirstExperienced: healthHistory.when_first_experienced ?? "",
+    howDealtWithConcerns: healthHistory.how_dealt_with_concerns ?? "",
+    successWithApproaches: healthHistory.success_with_approaches ?? "",
+    otherHealthPractitioners: healthHistory.other_health_practitioners ?? "",
+    surgicalProcedures: healthHistory.surgical_procedures ?? "",
+    antibioticsInfancyChildhood:
+      healthHistory.antibiotics_infancy_childhood ?? "",
+    antibioticsTeen: healthHistory.antibiotics_teen ?? "",
+    antibioticsAdult: healthHistory.antibiotics_adult ?? "",
+    currentMedications: healthHistory.current_medications ?? "",
+    currentSupplements: healthHistory.current_supplements ?? "",
+    familySimilarProblems: healthHistory.family_similar_problems ?? "",
+    foodsAvoidSymptoms: healthHistory.foods_avoid_symptoms ?? "",
+    immediateSymptomsAfterEating:
+      healthHistory.immediate_symptoms_after_eating ?? "",
+    delayedSymptomsAfterEating:
+      healthHistory.delayed_symptoms_after_eating ?? "",
+    foodCravings: healthHistory.food_cravings ?? "",
+    dietAtOnset: healthHistory.diet_at_onset ?? "",
+    knownFoodAllergies: healthHistory.known_food_allergies ?? "",
+    regularFoodConsumption:
+      healthHistory.regular_food_consumption ?? [],
+    specialDiet: healthHistory.special_diet ?? [],
+    homeCookedPercentage:
+      healthHistory.home_cooked_percentage ?? 0,
+    dietRelationshipNotes:
+      healthHistory.diet_relationship_notes ?? "",
+
+    bowelMovementFrequency:
+      healthHistory.bowel_movement_frequency,
+    bowelMovementConsistency:
+      healthHistory.bowel_movement_consistency ?? [],
+    bowelMovementColor:
+      healthHistory.bowel_movement_color ?? [],
+    intestinalGas: healthHistory.intestinal_gas ?? "",
+    foodPoisoningHistory:
+      healthHistory.food_poisoning_history ?? "",
+
+    traumaDeathFamily: healthHistory.trauma_death_family,
+    traumaDeathAccident: healthHistory.trauma_death_accident,
+    traumaSexualPhysicalAbuse:
+      healthHistory.trauma_sexual_physical_abuse,
+    traumaEmotionalNeglect:
+      healthHistory.trauma_emotional_neglect,
+    traumaDiscrimination:
+      healthHistory.trauma_discrimination,
+    traumaLifeThreateningAccident:
+      healthHistory.trauma_life_threatening_accident,
+    traumaLifeThreateningIllness:
+      healthHistory.trauma_life_threatening_illness,
+    traumaRobberyMugging:
+      healthHistory.trauma_robbery_mugging,
+    traumaWitnessViolence:
+      healthHistory.trauma_witness_violence,
+
+    livedTraveledOutsideUs:
+      healthHistory.lived_traveled_outside_us ?? "",
+    recentMajorLifeChanges:
+      healthHistory.recent_major_life_changes ?? "",
+    workSchoolTimeOff:
+      healthHistory.work_school_time_off ?? "does_not_apply",
+    traumaAdditionalNotes:
+      healthHistory.trauma_additional_notes ?? "",
+
+    conditionIbs: healthHistory.condition_ibs,
+    conditionCrohns: healthHistory.condition_crohns,
+    conditionUlcerativeColitis:
+      healthHistory.condition_ulcerative_colitis,
+    conditionGastritisUlcer:
+      healthHistory.condition_gastritis_ulcer,
+    conditionGerd: healthHistory.condition_gerd,
+    conditionCeliac: healthHistory.condition_celiac,
+
+    gastrointestinalDates:
+      healthHistory.gastrointestinal_dates ?? "",
+
+    chemicalToxicExposure:
+      healthHistory.chemical_toxic_exposure ?? "",
+    odorSensitivity:
+      healthHistory.odor_sensitivity ?? "",
+    secondhandSmokeExposure:
+      healthHistory.secondhand_smoke_exposure ?? "",
+    moldExposure:
+      healthHistory.mold_exposure ?? "",
+
+    otherConditionsSymptoms:
       healthHistory.other_conditions_symptoms ?? "",
 
-    /* ==================== ORAL HEALTH ==================== */
-    last_dentist_visit: healthHistory.last_dentist_visit ?? "",
-    dentist_health_discussion:
-      healthHistory.dentist_health_discussion ?? "",
-    oral_dental_regimen: healthHistory.oral_dental_regimen ?? "",
-    mercury_amalgams: healthHistory.mercury_amalgams ?? "",
-    root_canals: healthHistory.root_canals ?? "",
-    oral_health_concerns: healthHistory.oral_health_concerns ?? "",
-    oral_health_additional_notes:
-      healthHistory.oral_health_additional_notes ?? "",
+    freqMemoryImpairment:
+      healthHistory.freq_memory_impairment,
+    freqShortenedFocus:
+      healthHistory.freq_shortened_focus,
+    freqCoordinationBalance:
+      healthHistory.freq_coordination_balance,
+    freqLackInhibition:
+      healthHistory.freq_lack_inhibition,
+    freqPoorOrganization:
+      healthHistory.freq_poor_organization,
+    freqTimeManagement:
+      healthHistory.freq_time_management,
+    freqMoodInstability:
+      healthHistory.freq_mood_instability,
+    freqSpeechWordFinding:
+      healthHistory.freq_speech_word_finding,
+    freqBrainFog:
+      healthHistory.freq_brain_fog,
+    freqLowerEffectiveness:
+      healthHistory.freq_lower_effectiveness,
+    freqJudgmentProblems:
+      healthHistory.freq_judgment_problems,
 
-    /* ==================== LIFESTYLE ==================== */
-    junk_food_binge_dieting:
+    lastDentistVisit:
+      healthHistory.last_dentist_visit ?? "",
+    oralDentalRegimen:
+      healthHistory.oral_dental_regimen ?? "",
+
+    junkFoodBingeDieting:
       healthHistory.junk_food_binge_dieting ?? "",
-    substance_use_history:
+    substanceUseHistory:
       healthHistory.substance_use_history ?? "",
-    stress_handling: healthHistory.stress_handling ?? "",
+    stressHandling:
+      healthHistory.stress_handling ?? "",
 
-    /* ==================== SLEEP ==================== */
-    satisfied_with_sleep: healthHistory.satisfied_with_sleep ?? "no",
-    stay_awake_all_day: healthHistory.stay_awake_all_day ?? "no",
-    asleep_2am_4am: healthHistory.asleep_2am_4am ?? "no",
-    fall_asleep_under_30min:
+    satisfiedWithSleep:
+      healthHistory.satisfied_with_sleep ?? "no",
+    stayAwakeAllDay:
+      healthHistory.stay_awake_all_day ?? "no",
+    asleep2am4am:
+      healthHistory.asleep_2am_4am ?? "no",
+    fallAsleepUnder30min:
       healthHistory.fall_asleep_under_30min ?? "no",
-    sleep_6_8_hours: healthHistory.sleep_6_8_hours ?? "no",
+    sleep6to8Hours:
+      healthHistory.sleep_6_8_hours ?? "no",
 
-    /* ==================== WOMEN ==================== */
-    age_first_period: healthHistory.age_first_period ?? "",
-    menses_pms_pain: healthHistory.menses_pms_pain ?? "",
-    birth_control_pills: healthHistory.birth_control_pills ?? "",
+    ageFirstPeriod:
+      healthHistory.age_first_period ?? "",
+    mensesPmsPain:
+      healthHistory.menses_pms_pain ?? "",
+    birthControlPills:
+      healthHistory.birth_control_pills ?? "",
 
-    /* ==================== SEXUAL ==================== */
-    sexual_functioning_concerns:
+    sexualFunctioningConcerns:
       healthHistory.sexual_functioning_concerns ?? "",
-    sexual_partners_past_year:
+    sexualPartnersPastYear:
       healthHistory.sexual_partners_past_year ?? "",
 
-    /* ==================== MENTAL HEALTH ==================== */
-    general_moods: healthHistory.general_moods ?? "",
-    energy_level_scale:
-      healthHistory.energy_level_scale
-        ? Number(healthHistory.energy_level_scale)
-        : 5,
-    best_point_in_life: healthHistory.best_point_in_life ?? "",
+    generalMoods:
+      healthHistory.general_moods ?? "",
+    energyLevelScale: healthHistory.energy_level_scale ?? "",
 
-    /* ==================== OTHER ==================== */
-    role_in_wellness_plan:
-      healthHistory.role_in_wellness_plan ?? "",
-    family_friends_support:
-      healthHistory.family_friends_support ?? "",
-    supportive_person_dietary_change:
-      healthHistory.supportive_person_dietary_change ?? "",
-    other_useful_information:
-      healthHistory.other_useful_information ?? "",
-    health_goals_aspirations:
+    healthGoalsAspirations:
       healthHistory.health_goals_aspirations ?? "",
-    why_achieve_goals:
+    whyAchieveGoals:
       healthHistory.why_achieve_goals ?? "",
   };
 };
@@ -144,23 +199,9 @@ export const prune = (obj: Record<string, any>): Record<string, any> => {
   const out: Record<string, any> = {};
   for (const [k, v] of Object.entries(obj)) {
     if (v === null || v === undefined) continue;
-    if (typeof v === "string") {
-      const s = v.trim();
-      if (s === "") continue;
-      out[k] = s;
-      continue;
-    }
-    if (Array.isArray(v)) {
-      if (v.length === 0) continue;
-      out[k] = v;
-      continue;
-    }
-    if (typeof v === "object") {
-      const nested = prune(v);
-      if (Object.keys(nested).length === 0) continue;
-      out[k] = nested;
-      continue;
-    }
+    if (typeof v === "string" && v.trim() === "") continue;
+    if (Array.isArray(v) && v.length === 0) continue;
+    if (typeof v === "object" && Object.keys(prune(v)).length === 0) continue;
     out[k] = v;
   }
   return out;
@@ -168,7 +209,6 @@ export const prune = (obj: Record<string, any>): Record<string, any> => {
 
 export const mapFormValuesToHealthHistoryPayload = (
   values: Partial<FormValues>
-): Partial<HealthHistoryPostData> => {
+): Partial<HealthHistory> => {
   return prune(values as Record<string, any>);
 };
-

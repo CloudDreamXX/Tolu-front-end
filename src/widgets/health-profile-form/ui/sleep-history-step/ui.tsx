@@ -1,13 +1,18 @@
-import { Checkbox } from "@radix-ui/react-checkbox";
-import { FormLabel, FormField, FormItem, FormControl } from "shared/ui";
 import { z } from "zod";
+import {
+    FormLabel,
+    FormField,
+    FormItem,
+    FormControl,
+    Input,
+} from "shared/ui";
 
 export const sleepHistorySchema = z.object({
-    satisfiedWithSleep: z.enum(["yes", "no"]),
-    stayAwakeAllDay: z.enum(["yes", "no"]),
-    asleepBetween2And4: z.enum(["yes", "no"]),
-    fallAsleepUnder30: z.enum(["yes", "no"]),
-    sleep6to8Hours: z.enum(["yes", "no"]),
+    satisfiedWithSleep: z.string(),
+    stayAwakeAllDay: z.string(),
+    asleep2am4am: z.string(),
+    fallAsleepUnder30min: z.string(),
+    sleep6to8Hours: z.string(),
 });
 
 export const SleepHistoryStep = ({ form }: { form: any }) => {
@@ -21,11 +26,12 @@ export const SleepHistoryStep = ({ form }: { form: any }) => {
             label: "Do you stay awake all day without dozing?",
         },
         {
-            name: "asleepBetween2And4",
-            label: "Are you asleep (or trying to sleep) between 2:00 a.m. and 4:00 a.m.?",
+            name: "asleep2am4am",
+            label:
+                "Are you asleep (or trying to sleep) between 2:00 a.m. and 4:00 a.m.?",
         },
         {
-            name: "fallAsleepUnder30",
+            name: "fallAsleepUnder30min",
             label: "Do you fall asleep in less than 30 minutes?",
         },
         {
@@ -40,44 +46,23 @@ export const SleepHistoryStep = ({ form }: { form: any }) => {
                 Sleep History
             </FormLabel>
 
-            <div className="border rounded-lg overflow-hidden">
-                <div className="grid grid-cols-[1fr_80px_80px] bg-gray-50 px-4 py-2 text-sm font-medium">
-                    <span />
-                    <span className="text-center">Yes</span>
-                    <span className="text-center">No</span>
-                </div>
-
+            <div className="space-y-6">
                 {QUESTIONS.map((q) => (
                     <FormField
                         key={q.name}
                         control={form.control}
                         name={q.name}
                         render={({ field }) => (
-                            <FormItem className="grid grid-cols-[1fr_80px_80px] items-center gap-4 px-4 py-3 border-t">
-                                <span className="text-sm">
-                                    {q.label} *
-                                </span>
+                            <FormItem className="space-y-2">
+                                <FormLabel className="text-sm font-medium">
+                                    {q.label} <span className="text-red-500">*</span>
+                                </FormLabel>
 
                                 <FormControl>
-                                    <div className="flex justify-center">
-                                        <Checkbox
-                                            checked={field.value === "yes"}
-                                            onCheckedChange={() =>
-                                                field.onChange("yes")
-                                            }
-                                        />
-                                    </div>
-                                </FormControl>
-
-                                <FormControl>
-                                    <div className="flex justify-center">
-                                        <Checkbox
-                                            checked={field.value === "no"}
-                                            onCheckedChange={() =>
-                                                field.onChange("no")
-                                            }
-                                        />
-                                    </div>
+                                    <Input
+                                        placeholder="Your answer"
+                                        {...field}
+                                    />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -87,4 +72,3 @@ export const SleepHistoryStep = ({ form }: { form: any }) => {
         </div>
     );
 };
-

@@ -1096,8 +1096,7 @@ export const ContentManagerClients: React.FC = () => {
               onOpenChange={() => {
                 setConfirmDelete(false);
                 cleanState();
-              }}
-              asDialog
+              }} asDialog={true}
             />
           )}
 

@@ -10,49 +10,66 @@ import {
 } from "shared/ui";
 import { z } from "zod";
 
-export const stressfulEventsSchema = z.object({
-    stressfulEvents: z.record(z.enum(["yes", "no"])),
-    timeOffWork: z.enum([
-        "0-2 days",
-        "3-14 days",
-        "15+ days",
-        "does_not_apply",
-    ]),
+export const traumaEventSchema = z.object({
+    status: z.enum(["yes", "no"]),
+    dateFrom: z.string().optional(),
+    dateTo: z.union([z.string(), z.literal("current")]).optional(),
+});
 
-    livedOutsideUS: z.string().min(1, "This field is required"),
-    majorLifeChanges: z.string().optional(),
-    additionalNotes: z.string().optional(),
+export const stressfulEventsSchema = z.object({
+    traumaDeathFamily: traumaEventSchema.optional(),
+    traumaDeathAccident: traumaEventSchema.optional(),
+    traumaSexualPhysicalAbuse: traumaEventSchema.optional(),
+    traumaEmotionalNeglect: traumaEventSchema.optional(),
+    traumaDiscrimination: traumaEventSchema.optional(),
+    traumaLifeThreateningAccident: traumaEventSchema.optional(),
+    traumaLifeThreateningIllness: traumaEventSchema.optional(),
+    traumaRobberyMugging: traumaEventSchema.optional(),
+    traumaWitnessViolence: traumaEventSchema.optional(),
+
+    livedTraveledOutsideUs: z.string(),
+    recentMajorLifeChanges: z.string().optional(),
+    workSchoolTimeOff: z.string(),
+
+    traumaAdditionalNotes: z.string().optional(),
 });
 
 export const STRESSFUL_EVENTS = [
     {
-        key: "death_close_person",
+        name: "traumaDeathFamily",
         label:
             "Death of a family member, romantic partner, or very close friend (accident, homicide, or suicide)",
     },
     {
-        key: "sexual_physical_abuse",
+        name: "traumaDeathAccident",
+        label: "Death due to accident",
+    },
+    {
+        name: "traumaSexualPhysicalAbuse",
         label:
             "Sexual or physical abuse by a family member, romantic partner, stranger, or someone else",
     },
     {
-        key: "emotional_abuse",
+        name: "traumaEmotionalNeglect",
         label:
             "Emotional neglect or abuse (ridicule, bullying, being ignored, or put down)",
     },
-    { key: "discrimination", label: "Discrimination" },
+    { name: "traumaDiscrimination", label: "Discrimination" },
     {
-        key: "life_threatening_event",
+        name: "traumaLifeThreateningAccident",
         label:
             "Life-threatening accident or situation (military combat or living in a war zone)",
     },
-    { key: "life_threatening_illness", label: "Life-threatening illness" },
     {
-        key: "weapon_threat",
+        name: "traumaLifeThreateningIllness",
+        label: "Life-threatening illness",
+    },
+    {
+        name: "traumaRobberyMugging",
         label: "Physical force or weapon threatened or used against you",
     },
     {
-        key: "witnessed_violence",
+        name: "traumaWitnessViolence",
         label:
             "Witnessed murder, serious injury, or assault of another person",
     },
@@ -63,7 +80,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
         <div className="space-y-8">
             <FormField
                 control={form.control}
-                name="livedOutsideUS"
+                name="livedTraveledOutsideUs"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -80,12 +97,11 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="majorLifeChanges"
+                name="recentMajorLifeChanges"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
-                            Have you or your family recently experienced any major life
-                            changes?
+                            Have you or your family recently experienced any major life changes?
                         </FormLabel>
                         <FormControl>
                             <Textarea {...field} />
@@ -101,7 +117,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                 </FormLabel>
 
                 <div className="mt-4 border rounded-lg overflow-hidden">
-                    <div className="grid grid-cols-[1fr_80px_80px] bg-gray-50 px-4 py-2 text-sm font-medium">
+                    <div className="grid grid-cols-[1fr_80px_80px] bg-gray-50 px-4 py-2 text-sm font-medium gap-4">
                         <span />
                         <span className="text-center">Yes</span>
                         <span className="text-center">No</span>
@@ -109,9 +125,9 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
 
                     {STRESSFUL_EVENTS.map((event) => (
                         <FormField
-                            key={event.key}
+                            key={event.name}
                             control={form.control}
-                            name={`stressfulEvents.${event.key}`}
+                            name={`${event.name}.status`}
                             render={({ field }) => (
                                 <FormItem className="grid grid-cols-[1fr_80px_80px] items-center gap-4 px-4 py-3 border-t">
                                     <span className="text-sm text-gray-900">
@@ -122,9 +138,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                                         <div className="flex justify-center">
                                             <Checkbox
                                                 checked={field.value === "yes"}
-                                                onCheckedChange={() =>
-                                                    field.onChange("yes")
-                                                }
+                                                onCheckedChange={() => field.onChange("yes")}
                                             />
                                         </div>
                                     </FormControl>
@@ -133,9 +147,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                                         <div className="flex justify-center">
                                             <Checkbox
                                                 checked={field.value === "no"}
-                                                onCheckedChange={() =>
-                                                    field.onChange("no")
-                                                }
+                                                onCheckedChange={() => field.onChange("no")}
                                             />
                                         </div>
                                     </FormControl>
@@ -148,7 +160,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="timeOffWork"
+                name="workSchoolTimeOff"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -163,15 +175,10 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                                 { label: "More than 15 days", value: "15+ days" },
                                 { label: "Doesn't apply", value: "does_not_apply" },
                             ].map((opt) => (
-                                <div
-                                    key={opt.value}
-                                    className="flex items-center gap-3"
-                                >
+                                <div key={opt.value} className="flex items-center gap-3">
                                     <Checkbox
                                         checked={field.value === opt.value}
-                                        onCheckedChange={() =>
-                                            field.onChange(opt.value)
-                                        }
+                                        onCheckedChange={() => field.onChange(opt.value)}
                                     />
                                     <span className="text-sm">{opt.label}</span>
                                 </div>
@@ -185,12 +192,10 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="additionalNotes"
+                name="traumaAdditionalNotes"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            Is there anything else you’d like to share?
-                        </FormLabel>
+                        <FormLabel>Is there anything else you’d like to share?</FormLabel>
                         <FormControl>
                             <Textarea {...field} />
                         </FormControl>
@@ -200,3 +205,4 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
         </div>
     );
 };
+

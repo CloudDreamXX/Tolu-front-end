@@ -2,12 +2,9 @@ import { FormLabel, FormField, FormItem, FormControl, Textarea, FormMessage, Inp
 import { z } from "zod";
 
 export const mentalHealthSchema = z.object({
-    moodOverview: z.string().min(1, "This field is required"),
-    energyLevel: z
-        .number()
-        .min(1, "Must be between 1 and 10")
-        .max(10, "Must be between 1 and 10"),
-    feltBestPeriod: z.string().min(1, "This field is required"),
+    generalMoods: z.string(),
+    energyLevelScale: z.string(),
+    bestPointInLife: z.string(),
 });
 
 export const MentalHealthStatusStep = ({ form }: { form: any }) => {
@@ -21,7 +18,7 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="moodOverview"
+                name="generalMoods"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -37,7 +34,7 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="energyLevel"
+                name="energyLevelScale"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -61,7 +58,7 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="feltBestPeriod"
+                name="bestPointInLife"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>

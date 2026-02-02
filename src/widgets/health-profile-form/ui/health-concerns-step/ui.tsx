@@ -12,40 +12,37 @@ import {
 import { z } from "zod";
 
 export const healthConcernsSchema = z.object({
-    mainConcerns: z.string().min(1),
-    concernOnset: z.string().min(1),
+    mainHealthConcerns: z.string(),
+    whenFirstExperienced: z.string(),
 
-    pastApproaches: z.array(z.enum(["Doctors", "Self-care"])).min(1),
-    pastSuccess: z.string().min(1),
+    howDealtWithConcerns: z.string(),
+    successWithApproaches: z.string(),
 
-    currentPractitioners: z.string().min(1),
-    surgeries: z.string().min(1),
+    otherHealthPractitioners: z.string(),
+    surgicalProcedures: z.string(),
 
-    antibioticsInfancy: z.string().min(1),
-    antibioticsTeen: z.string().min(1),
-    antibioticsAdult: z.string().min(1),
+    antibioticsInfancyChildhood: z.string(),
+    antibioticsTeen: z.string(),
+    antibioticsAdult: z.string(),
 
-    currentMedications: z.string().min(1),
-    supplements: z.string().min(1),
+    currentMedications: z.string(),
+    currentSupplements: z.string(),
 
-    familyHistory: z.string().min(1),
+    familySimilarProblems: z.string(),
 
-    avoidedFoods: z.string().min(1),
-    immediateFoodSymptoms: z.string().min(1),
-    delayedFoodSymptoms: z.string().min(1),
-    foodCravings: z.string().min(1),
+    foodsAvoidSymptoms: z.string(),
+    immediateSymptomsAfterEating: z.string(),
+    delayedSymptomsAfterEating: z.string(),
+    foodCravings: z.string(),
 
-    dietAtOnset: z.string().min(1),
+    dietAtOnset: z.string(),
+    knownFoodAllergies: z.string().optional(),
 
-    regularFoods: z.array(z.string()).min(1),
-    specialDiets: z.array(z.string()).min(1),
-    specialDietOther: z.string().optional(),
+    regularFoodConsumption: z.array(z.string()),
+    specialDiet: z.array(z.string()),
 
-    homeCookedPercent: z.enum([
-        "10", "20", "30", "40", "50", "60", "70", "80", "90", "100"
-    ]),
-
-    additionalDietNotes: z.string().min(1),
+    homeCookedPercentage: z.number(),
+    dietRelationshipNotes: z.string(),
 });
 
 export const REGULAR_FOODS = [
@@ -98,18 +95,14 @@ const checkboxGroup =
     };
 
 export const HealthConcernsStep = ({ form }: { form: any }) => {
-    const specialDiets = form.watch("specialDiets") ?? [];
-
     return (
         <div className="space-y-8">
             <FormField
                 control={form.control}
-                name="mainConcerns"
+                name="mainHealthConcerns"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            What are your main health concerns? *
-                        </FormLabel>
+                        <FormLabel>What are your main health concerns? *</FormLabel>
                         <Textarea {...field} />
                         <FormMessage />
                     </FormItem>
@@ -118,12 +111,10 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="concernOnset"
+                name="whenFirstExperienced"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            When did you first experience these concerns? *
-                        </FormLabel>
+                        <FormLabel>When did you first experience these concerns? *</FormLabel>
                         <Textarea {...field} />
                         <FormMessage />
                     </FormItem>
@@ -132,16 +123,11 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="pastApproaches"
-                render={() => (
+                name="howDealtWithConcerns"
+                render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            How have you dealt with these concerns in the past? *
-                        </FormLabel>
-                        <div className="space-y-2">
-                            {checkboxGroup(form, "pastApproaches", "Doctors")}
-                            {checkboxGroup(form, "pastApproaches", "Self-care")}
-                        </div>
+                        <FormLabel>How have you dealt with these concerns in the past? *</FormLabel>
+                        <Textarea {...field} />
                         <FormMessage />
                     </FormItem>
                 )}
@@ -149,12 +135,22 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="pastSuccess"
+                name="successWithApproaches"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            Have you experienced any success with these approaches? *
-                        </FormLabel>
+                        <FormLabel>Have you experienced any success with these approaches? *</FormLabel>
+                        <Textarea {...field} />
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="otherHealthPractitioners"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Other health practitioners you’re seeing *</FormLabel>
                         <Textarea {...field} />
                     </FormItem>
                 )}
@@ -162,32 +158,17 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="currentPractitioners"
+                name="surgicalProcedures"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            What other health practitioners are you currently seeing? *
-                        </FormLabel>
-                        <Textarea {...field} />
-                    </FormItem>
-                )}
-            />
-
-            <FormField
-                control={form.control}
-                name="surgeries"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>
-                            Surgical procedures (date & description) *
-                        </FormLabel>
+                        <FormLabel>Surgical procedures (date & description) *</FormLabel>
                         <Textarea {...field} />
                     </FormItem>
                 )}
             />
 
             {[
-                ["antibioticsInfancy", "Infancy / childhood"],
+                ["antibioticsInfancyChildhood", "Infancy / childhood"],
                 ["antibioticsTeen", "Teen years"],
                 ["antibioticsAdult", "Adulthood"],
             ].map(([name, label]) => (
@@ -211,9 +192,7 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
                 name="currentMedications"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            Current medications *
-                        </FormLabel>
+                        <FormLabel>Current medications *</FormLabel>
                         <Textarea {...field} />
                     </FormItem>
                 )}
@@ -221,12 +200,10 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="supplements"
+                name="currentSupplements"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            Vitamins, minerals, herbs & supplements *
-                        </FormLabel>
+                        <FormLabel>Supplements *</FormLabel>
                         <Textarea {...field} />
                     </FormItem>
                 )}
@@ -234,15 +211,79 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="regularFoods"
+                name="familySimilarProblems"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Family members with similar problems *</FormLabel>
+                        <Textarea {...field} />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="foodsAvoidSymptoms"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Foods you avoid due to symptoms *</FormLabel>
+                        <Textarea {...field} />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="immediateSymptomsAfterEating"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Immediate symptoms after eating *</FormLabel>
+                        <Textarea {...field} />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="delayedSymptomsAfterEating"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Delayed symptoms after eating *</FormLabel>
+                        <Textarea {...field} />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="foodCravings"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Food cravings *</FormLabel>
+                        <Textarea {...field} />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="dietAtOnset"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Diet at symptom onset *</FormLabel>
+                        <Textarea {...field} />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="regularFoodConsumption"
                 render={() => (
                     <FormItem>
-                        <FormLabel>
-                            Which of the following foods do you consume regularly? *
-                        </FormLabel>
+                        <FormLabel>Foods consumed regularly *</FormLabel>
                         <div className="grid grid-cols-2 gap-3">
-                            {REGULAR_FOODS.map((f) =>
-                                checkboxGroup(form, "regularFoods", f)
+                            {REGULAR_FOODS.map((food) =>
+                                checkboxGroup(form, "regularFoodConsumption", food)
                             )}
                         </div>
                     </FormItem>
@@ -251,40 +292,28 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="specialDiets"
+                name="specialDiet"
                 render={() => (
                     <FormItem>
-                        <FormLabel>
-                            Are you currently on a special diet? *
-                        </FormLabel>
+                        <FormLabel>Special diet *</FormLabel>
                         <div className="grid grid-cols-2 gap-3">
-                            {SPECIAL_DIETS.map((d) =>
-                                checkboxGroup(form, "specialDiets", d)
+                            {SPECIAL_DIETS.map((diet) =>
+                                checkboxGroup(form, "specialDiet", diet)
                             )}
                         </div>
-
-                        {specialDiets.includes("Other") && (
-                            <Input
-                                className="mt-3"
-                                placeholder="Please specify"
-                                {...form.register("specialDietOther")}
-                            />
-                        )}
                     </FormItem>
                 )}
             />
 
             <FormField
                 control={form.control}
-                name="homeCookedPercent"
+                name="homeCookedPercentage"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            What percentage of your meals are home-cooked? *
-                        </FormLabel>
+                        <FormLabel>Home-cooked meals (%) *</FormLabel>
                         <RadioGroup
-                            value={field.value}
-                            onValueChange={field.onChange}
+                            value={String(field.value)}
+                            onValueChange={(v) => field.onChange(Number(v))}
                             className="grid grid-cols-5 gap-2"
                         >
                             {["10", "20", "30", "40", "50", "60", "70", "80", "90", "100"].map((p) => (
@@ -300,12 +329,10 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="additionalDietNotes"
+                name="dietRelationshipNotes"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>
-                            Anything else we should know about your diet or relationship with food? *
-                        </FormLabel>
+                        <FormLabel>Anything else about your diet or relationship with food? *</FormLabel>
                         <Textarea {...field} />
                     </FormItem>
                 )}
@@ -313,5 +340,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         </div>
     );
 };
+
 
 

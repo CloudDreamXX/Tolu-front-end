@@ -2,13 +2,13 @@ import { FormLabel, FormField, FormItem, FormControl, Input, FormMessage, Textar
 import { z } from "zod";
 
 export const womensHealthSchema = z.object({
-    ageFirstPeriod: z.string().min(1, "This field is required"),
-    menstrualHistory: z.string().min(1, "This field is required"),
-    lutealSymptoms: z.string().min(1, "This field is required"),
-    infectionsHistory: z.string().min(1, "This field is required"),
-    birthControlHistory: z.string().min(1, "This field is required"),
-    conceptionPregnancyIssues: z.string().min(1, "This field is required"),
-    hormoneTherapy: z.string().min(1, "This field is required"),
+    ageFirstPeriod: z.string(),
+    mensesPmsPain: z.string(),
+    cycleSecondHalfSymptoms: z.string(),
+    yeastUtiInfections: z.string(),
+    birthControlPills: z.string(),
+    conceptionPregnancyProblems: z.string(),
+    hormoneReplacementHerbs: z.string(),
 });
 
 export const WomensHealthStep = ({ form }: { form: any }) => {
@@ -38,7 +38,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="menstrualHistory"
+                name="mensesPmsPain"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -54,7 +54,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="lutealSymptoms"
+                name="cycleSecondHalfSymptoms"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -70,7 +70,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="infectionsHistory"
+                name="yeastUtiInfections"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -86,7 +86,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="birthControlHistory"
+                name="birthControlPills"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -102,7 +102,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="conceptionPregnancyIssues"
+                name="conceptionPregnancyProblems"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -118,7 +118,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="hormoneTherapy"
+                name="hormoneReplacementHerbs"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>

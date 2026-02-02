@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  HealthHistoryPostData,
+  HealthHistory,
   useCreateHealthHistoryMutation,
   useGetUserHealthHistoryQuery,
 } from "entities/health-history";
@@ -18,7 +18,6 @@ import {
 import * as z from "zod";
 import { prune, mapHealthHistoryToFormDefaults } from "./lib";
 import { usePageWidth } from "shared/lib";
-import { ConfirmCancelModal } from "widgets/ConfirmCancelModal";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { setHealthHistory } from "entities/health-history/lib";
 import { useDispatch } from "react-redux";
@@ -32,8 +31,17 @@ import { womensHealthSchema, WomensHealthStep } from "./womens-health-step";
 import { sexualHistorySchema, SexualHistoryStep } from "./sexual-history-step";
 import { mentalHealthSchema, MentalHealthStatusStep } from "./mental-health-step";
 import { otherInfoSchema, OtherStep } from "./other-info-step";
+import { basicInfoSchema, BasicInfoStep } from "./basic-info-step";
+import { birthBodySchema, BirthBodyStep } from "./birth-body-step";
+import { healthConcernsSchema, HealthConcernsStep } from "./health-concerns-step";
+import { bowelHealthSchema, BowelHealthStep } from "./bowel-health-step";
+import { HealthHistorySummary } from "widgets/HealthHistorySummary/ui";
 
 const steps = [
+  "Basic Info",
+  "Birth & Body",
+  "Health Concerns",
+  "Bowel Health",
   "Stressful Events",
   "Medical History",
   "Oral Health",
@@ -45,15 +53,20 @@ const steps = [
   "Other",
 ];
 
-export const formSchema = stressfulEventsSchema
-  .and(medicalHistorySchema)
-  .and(oralHealthSchema)
-  .and(lifestyleHistorySchema)
-  .and(sleepHistorySchema)
-  .and(womensHealthSchema)
-  .and(sexualHistorySchema)
-  .and(mentalHealthSchema)
-  .and(otherInfoSchema);
+export const formSchema =
+  basicInfoSchema
+    .and(birthBodySchema)
+    .and(healthConcernsSchema)
+    .and(bowelHealthSchema)
+    .and(stressfulEventsSchema)
+    .and(medicalHistorySchema)
+    .and(oralHealthSchema)
+    .and(lifestyleHistorySchema)
+    .and(sleepHistorySchema)
+    .and(womensHealthSchema)
+    .and(sexualHistorySchema)
+    .and(mentalHealthSchema)
+    .and(otherInfoSchema);
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -63,7 +76,8 @@ export const HealthProfileForm = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const [isSummary, setIsSummary] = useState(true);
 
   const { data: healthHistoryData, refetch } =
     useGetUserHealthHistoryQuery();
@@ -83,32 +97,123 @@ export const HealthProfileForm = () => {
   }, [healthHistoryData]);
 
   const stepFields: Array<(keyof FormValues)[]> = [
-    ["stressfulEvents", "timeOffWork", "livedOutsideUS"],
-    ["conditions", "conditionDates", "other_conditions_symptoms"],
-    ["last_dentist_visit", "oral_dental_regimen"],
-    ["junk_food_binge_dieting", "substance_use_history", "stress_handling"],
+    ["email", "fullName"],
+
     [
-      "satisfied_with_sleep",
-      "stay_awake_all_day",
-      "asleep_2am_4am",
-      "fall_asleep_under_30min",
-      "sleep_6_8_hours",
+      "age",
+      "birthDate",
+      "genderAtBirth",
+      "chosenGenderAfterBirth",
+      "breastfedOrBottle",
+      "birthDeliveryMethod",
+      "height",
+      "bloodType",
+      "currentWeightLbs",
+      "idealWeightLbs",
+      "weightOneYearAgoLbs",
+      "birthWeightLbs",
+      "birthOrderSiblings",
+      "familyLivingSituation",
+      "partnerGenderAtBirth",
+      "partnerChosenGender",
+      "children",
+      "exerciseRecreation",
     ],
+
     [
-      "age_first_period",
-      "menses_pms_pain",
-      "birth_control_pills",
+      "mainHealthConcerns",
+      "whenFirstExperienced",
+      "howDealtWithConcerns",
+      "successWithApproaches",
+      "otherHealthPractitioners",
+      "surgicalProcedures",
+      "antibioticsInfancyChildhood",
+      "antibioticsTeen",
+      "antibioticsAdult",
+      "currentMedications",
+      "currentSupplements",
+      "familySimilarProblems",
+      "foodsAvoidSymptoms",
+      "immediateSymptomsAfterEating",
+      "delayedSymptomsAfterEating",
+      "foodCravings",
+      "dietAtOnset",
+      "knownFoodAllergies",
+      "regularFoodConsumption",
+      "specialDiet",
+      "homeCookedPercentage",
+      "dietRelationshipNotes",
     ],
-    ["sexual_functioning_concerns", "sexual_partners_past_year"],
-    ["general_moods", "energy_level_scale"],
-    ["health_goals_aspirations", "why_achieve_goals"],
+
+    [
+      "bowelMovementFrequency",
+      "bowelMovementConsistency",
+      "bowelMovementColor",
+      "intestinalGas",
+      "foodPoisoningHistory",
+    ],
+
+    [
+      "traumaDeathFamily",
+      "traumaDeathAccident",
+      "traumaSexualPhysicalAbuse",
+      "traumaEmotionalNeglect",
+      "traumaDiscrimination",
+      "traumaLifeThreateningAccident",
+      "traumaLifeThreateningIllness",
+      "traumaRobberyMugging",
+      "traumaWitnessViolence",
+      "livedTraveledOutsideUs",
+      "recentMajorLifeChanges",
+      "workSchoolTimeOff",
+      "traumaAdditionalNotes",
+    ],
+
+    [
+      "conditionIbs",
+      "conditionCrohns",
+      "conditionUlcerativeColitis",
+      "conditionGastritisUlcer",
+      "conditionGerd",
+      "conditionCeliac",
+      "gastrointestinalDates",
+      "chemicalToxicExposure",
+      "odorSensitivity",
+      "secondhandSmokeExposure",
+      "moldExposure",
+      "otherConditionsSymptoms",
+      "freqMemoryImpairment",
+      "freqShortenedFocus",
+      "freqCoordinationBalance",
+      "freqLackInhibition",
+      "freqPoorOrganization",
+      "freqTimeManagement",
+      "freqMoodInstability",
+      "freqSpeechWordFinding",
+      "freqBrainFog",
+      "freqLowerEffectiveness",
+      "freqJudgmentProblems",
+    ],
+    ["lastDentistVisit", "oralDentalRegimen"],
+    ["junkFoodBingeDieting", "substanceUseHistory", "stressHandling"],
+    [
+      "satisfiedWithSleep",
+      "stayAwakeAllDay",
+      "asleep2am4am",
+      "fallAsleepUnder30min",
+      "sleep6to8Hours",
+    ],
+    ["ageFirstPeriod", "mensesPmsPain", "birthControlPills"],
+    ["sexualFunctioningConcerns", "sexualPartnersPastYear"],
+    ["generalMoods", "energyLevelScale"],
+    ["healthGoalsAspirations", "whyAchieveGoals"],
   ];
 
   const submitHealthHistory = async (
     values: FormValues,
     { partial = false }: { partial?: boolean } = {}
   ) => {
-    const payload = prune(values) as Partial<HealthHistoryPostData>;
+    const payload = prune(values) as Partial<HealthHistory>;
 
     await createHealthHistory({
       healthData: payload,
@@ -141,9 +246,8 @@ export const HealthProfileForm = () => {
   };
 
   const onDiscard = () => {
-    setConfirmOpen(false);
-    setIsOpen(false);
     setCurrentStep(0);
+    setIsSummary(true);
     form.reset(mapHealthHistoryToFormDefaults(healthHistoryData));
   };
 
@@ -159,7 +263,7 @@ export const HealthProfileForm = () => {
         <Button
           variant="brightblue"
           size={isMobile ? "sm" : "icon"}
-          className="rounded-full"
+          className="rounded-full h-[56px] w-[56px] flex items-center justify-center"
         >
           {isMobile ? "Health profile" : <MaterialIcon iconName="manage_accounts" />}
         </Button>
@@ -168,37 +272,51 @@ export const HealthProfileForm = () => {
       <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
         <DialogTitle>Your Health History</DialogTitle>
 
-        <Steps
+        {!isSummary && <Steps
           steps={steps}
           currentStep={currentStep}
           ordered
           onStepClick={goToStep}
-        />
+        />}
 
         <div className="flex-1 overflow-y-auto">
-          <Form {...form}>
-            {currentStep === 0 && <StressfulEventsStep form={form} />}
-            {currentStep === 1 && <MedicalHistoryStep form={form} />}
-            {currentStep === 2 && <OralHealthHistoryStep form={form} />}
-            {currentStep === 3 && <LifestyleHistoryStep form={form} />}
-            {currentStep === 4 && <SleepHistoryStep form={form} />}
-            {currentStep === 5 && <WomensHealthStep form={form} />}
-            {currentStep === 6 && <SexualHistoryStep form={form} />}
-            {currentStep === 7 && <MentalHealthStatusStep form={form} />}
-            {currentStep === 8 && <OtherStep form={form} />}
-          </Form>
+          {isSummary ? (
+            <HealthHistorySummary
+              data={healthHistoryData!}
+              onEditSection={(step) => {
+                setCurrentStep(step);
+                setIsSummary(false);
+              }}
+            />
+          ) : (
+            <Form {...form}>
+              {currentStep === 0 && <BasicInfoStep form={form} />}
+              {currentStep === 1 && <BirthBodyStep form={form} />}
+              {currentStep === 2 && <HealthConcernsStep form={form} />}
+              {currentStep === 3 && <BowelHealthStep form={form} />}
+              {currentStep === 4 && <StressfulEventsStep form={form} />}
+              {currentStep === 5 && <MedicalHistoryStep form={form} />}
+              {currentStep === 6 && <OralHealthHistoryStep form={form} />}
+              {currentStep === 7 && <LifestyleHistoryStep form={form} />}
+              {currentStep === 8 && <SleepHistoryStep form={form} />}
+              {currentStep === 9 && <WomensHealthStep form={form} />}
+              {currentStep === 10 && <SexualHistoryStep form={form} />}
+              {currentStep === 11 && <MentalHealthStatusStep form={form} />}
+              {currentStep === 12 && <OtherStep form={form} />}
+            </Form>
+          )}
         </div>
 
         <div className="flex justify-between gap-4">
           <Button
             variant="blue2"
-            onClick={() => setConfirmOpen(true)}
+            onClick={isSummary ? () => setIsOpen(false) : onDiscard}
           >
-            Cancel
+            {isSummary ? "Close" : "Cancel"}
           </Button>
 
           <div className="flex gap-4">
-            {currentStep > 0 && (
+            {!isSummary && currentStep > 0 && (
               <Button
                 variant="light-blue"
                 onClick={() => goToStep(currentStep - 1)}
@@ -210,24 +328,25 @@ export const HealthProfileForm = () => {
             <Button
               variant="brightblue"
               onClick={
-                currentStep === steps.length - 1
-                  ? handleSubmit
-                  : () => goToStep(currentStep + 1)
+                isSummary
+                  ? () => {
+                    setIsSummary(false);
+                    setCurrentStep(0);
+                  }
+                  : currentStep === steps.length - 1
+                    ? handleSubmit
+                    : () => goToStep(currentStep + 1)
               }
             >
-              {currentStep === steps.length - 1 ? "Submit" : "Next"}
+              {isSummary
+                ? "Edit"
+                : currentStep === steps.length - 1
+                  ? "Submit"
+                  : "Next"}
             </Button>
           </div>
         </div>
       </DialogContent>
-
-      {confirmOpen && (
-        <ConfirmCancelModal
-          title="Leave health history?"
-          description="Your progress has been saved. You can return anytime."
-          onCancel={() => setConfirmOpen(false)}
-          onDiscard={onDiscard} backTitle={""} continueTitle={""}        />
-      )}
     </Dialog>
   );
 };

@@ -12,40 +12,11 @@ import {
 import { z } from "zod";
 
 export const bowelHealthSchema = z.object({
-    bowelFrequency: z.enum([
-        "1-3_per_day",
-        "more_than_3_per_day",
-        "not_regular",
-    ]),
-
-    bowelConsistency: z.array(
-        z.enum([
-            "soft_well_formed",
-            "often_float",
-            "difficult_to_pass",
-            "diarrhea",
-            "thin_long_narrow",
-            "small_hard",
-            "loose_not_watery",
-            "alternating",
-        ])
-    ).min(1),
-
-    bowelColor: z.array(
-        z.enum([
-            "medium_brown",
-            "very_dark_black",
-            "greenish",
-            "blood_visible",
-            "variable",
-            "yellow_light_brown",
-            "chalky",
-            "greasy_shiny",
-        ])
-    ).min(1),
-
-    intestinalGas: z.string().min(1),
-    foodPoisoningHistory: z.string().min(1),
+    bowelMovementFrequency: z.string(),
+    bowelMovementConsistency: z.array(z.string()),
+    bowelMovementColor: z.array(z.string()),
+    intestinalGas: z.string(),
+    foodPoisoningHistory: z.string(),
 });
 
 export const BOWEL_FREQUENCY = [
@@ -107,7 +78,7 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
         <div className="space-y-8">
             <FormField
                 control={form.control}
-                name="bowelFrequency"
+                name="bowelMovementFrequency"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>Bowel Movement Frequency *</FormLabel>
@@ -130,13 +101,13 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="bowelConsistency"
+                name="bowelMovementConsistency"
                 render={() => (
                     <FormItem>
                         <FormLabel>Bowel Movement Consistency *</FormLabel>
                         <div className="grid grid-cols-2 gap-3">
                             {BOWEL_CONSISTENCY.map((opt) =>
-                                checkboxGroup(form, "bowelConsistency", opt.value)
+                                checkboxGroup(form, "bowelMovementConsistency", opt.value)
                             )}
                         </div>
                         <FormMessage />
@@ -146,13 +117,13 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="bowelColor"
+                name="bowelMovementColor"
                 render={() => (
                     <FormItem>
                         <FormLabel>Bowel Movement Color *</FormLabel>
                         <div className="grid grid-cols-2 gap-3">
                             {BOWEL_COLOR.map((opt) =>
-                                checkboxGroup(form, "bowelColor", opt.value)
+                                checkboxGroup(form, "bowelMovementColor", opt.value)
                             )}
                         </div>
                         <FormMessage />

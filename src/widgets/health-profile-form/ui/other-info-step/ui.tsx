@@ -2,12 +2,12 @@ import { FormLabel, FormField, FormItem, FormControl, Textarea, FormMessage } fr
 import { z } from "zod";
 
 export const otherInfoSchema = z.object({
-    wellnessRole: z.string().min(1, "This field is required"),
-    supportSystem: z.string().min(1, "This field is required"),
-    dietarySupportPerson: z.string().min(1, "This field is required"),
-    additionalHealthInfo: z.string().min(1, "This field is required"),
-    healthGoals: z.string().min(1, "This field is required"),
-    motivationReason: z.string().min(1, "This field is required"),
+    roleInWellnessPlan: z.string(),
+    familyFriendsSupport: z.string(),
+    supportivePersonDietaryChange: z.string(),
+    otherUsefulInformation: z.string(),
+    healthGoalsAspirations: z.string(),
+    whyAchieveGoals: z.string(),
 });
 
 export const OtherStep = ({ form }: { form: any }) => {
@@ -21,7 +21,7 @@ export const OtherStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="wellnessRole"
+                name="roleInWellnessPlan"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -37,7 +37,7 @@ export const OtherStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="supportSystem"
+                name="familyFriendsSupport"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -53,7 +53,7 @@ export const OtherStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="dietarySupportPerson"
+                name="supportivePersonDietaryChange"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -69,7 +69,7 @@ export const OtherStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="additionalHealthInfo"
+                name="otherUsefulInformation"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -85,7 +85,7 @@ export const OtherStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="healthGoals"
+                name="healthGoalsAspirations"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -101,7 +101,7 @@ export const OtherStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="motivationReason"
+                name="whyAchieveGoals"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>

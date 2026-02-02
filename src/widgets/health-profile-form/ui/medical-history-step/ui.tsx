@@ -1,175 +1,247 @@
-import { Checkbox } from "@radix-ui/react-checkbox";
-import { FormLabel, FormField, FormItem, FormControl, Input, Textarea, FormMessage } from "shared/ui";
+import { FormLabel, FormField, FormItem, FormControl, Input, Textarea, Checkbox } from "shared/ui";
 import { z } from "zod";
 import { CANCER, CARDIOVASCULAR, FREQUENCY_ITEMS, GASTROINTESTINAL, GENITAL_URINARY, HORMONES_METABOLIC, IMMUNE_INFLAMMATORY, MISCELLANEOUS, MUSCULOSKELETAL, NEUROLOGIC_MOOD, RESPIRATORY, SKIN } from "./lib";
 
 export const statusEnum = z.enum(["past", "now", "never"]);
 export const frequencyEnum = z.enum(["yes", "no", "sometimes"]);
 
+export const medicalConditionSchema = z.object({
+    status: z.enum(["past", "now", "never"]),
+    date: z.string().optional(),
+});
+
 export const medicalHistorySchema = z.object({
-    conditions: z.record(statusEnum),
-    conditionDates: z.record(z.string().optional()),
+    /* Gastrointestinal */
+    conditionIbs: medicalConditionSchema.optional(),
+    conditionCrohns: medicalConditionSchema.optional(),
+    conditionUlcerativeColitis: medicalConditionSchema.optional(),
+    conditionGastritisUlcer: medicalConditionSchema.optional(),
+    conditionGerd: medicalConditionSchema.optional(),
+    conditionCeliac: medicalConditionSchema.optional(),
 
-    otherConditions: z.string().min(1, "This field is required"),
+    gastrointestinalDates: z.string().optional(),
 
-    symptomFrequency: z.record(frequencyEnum),
+    /* Environmental */
+    chemicalToxicExposure: z.string().optional(),
+    odorSensitivity: z.string().optional(),
+    secondhandSmokeExposure: z.string().optional(),
+    moldExposure: z.string().optional(),
 
-    chemicalExposure: z.string().min(1, "This field is required"),
-    odorSensitivity: z.string().min(1, "This field is required"),
-    secondHandSmoke: z.string().min(1, "This field is required"),
-    moldExposure: z.string().min(1, "This field is required"),
+    otherConditionsSymptoms: z.string().optional(),
+
+    /* Frequency checks */
+    freqMemoryImpairment: z.string().optional(),
+    freqShortenedFocus: z.string().optional(),
+    freqCoordinationBalance: z.string().optional(),
+    freqLackInhibition: z.string().optional(),
+    freqPoorOrganization: z.string().optional(),
+    freqTimeManagement: z.string().optional(),
+    freqMoodInstability: z.string().optional(),
+    freqSpeechWordFinding: z.string().optional(),
+    freqBrainFog: z.string().optional(),
+    freqLowerEffectiveness: z.string().optional(),
+    freqJudgmentProblems: z.string().optional(),
 });
 
 const StatusTable = ({
     title,
     items,
+    datesField,
     form,
 }: {
     title: string;
-    items: string[];
+    items: { label: string; name: string }[];
+    datesField: string;
     form: any;
-}) => {
-    return (
-        <div className="space-y-4">
-            <FormLabel className="text-base font-medium">{title} *</FormLabel>
+}) => (
+    <div className="space-y-4">
+        <FormLabel className="text-base font-medium">
+            {title} <span className="text-red-500">*</span>
+        </FormLabel>
 
-            <div className="border rounded-lg overflow-hidden">
-                <div className="grid grid-cols-[1fr_80px_80px_80px] bg-gray-50 px-4 py-2 text-sm font-medium">
-                    <span />
-                    <span className="text-center">Past</span>
-                    <span className="text-center">Now</span>
-                    <span className="text-center">Never</span>
-                </div>
-
-                {items.map((label) => {
-                    const key = label.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-
-                    return (
-                        <FormField
-                            key={key}
-                            control={form.control}
-                            name={`conditions.${key}`}
-                            render={({ field }) => (
-                                <FormItem className="grid grid-cols-[1fr_80px_80px_80px] items-center gap-4 px-4 py-3 border-t">
-                                    <span className="text-sm">{label}</span>
-
-                                    {["past", "now", "never"].map((val) => (
-                                        <FormControl key={val}>
-                                            <div className="flex justify-center">
-                                                <Checkbox
-                                                    checked={field.value === val}
-                                                    onCheckedChange={() =>
-                                                        field.onChange(val)
-                                                    }
-                                                />
-                                            </div>
-                                        </FormControl>
-                                    ))}
-                                </FormItem>
-                            )}
-                        />
-                    );
-                })}
+        <div className="border rounded-lg overflow-hidden">
+            <div className="grid grid-cols-[1fr_80px_80px_80px] bg-gray-50 px-4 py-2 text-sm font-medium gap-4">
+                <span />
+                <span className="text-center">Past</span>
+                <span className="text-center">Now</span>
+                <span className="text-center">Never</span>
             </div>
 
-            <FormField
-                control={form.control}
-                name={`conditionDates.${title}`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="text-sm">
-                            If you had any of the conditions above, please provide the date. *
-                        </FormLabel>
-                        <FormControl>
-                            <Input type="date" {...field} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
+            {items.map(({ label, name }) => (
+                <FormField
+                    key={name}
+                    control={form.control}
+                    name={`${name}.status`}
+                    render={({ field }) => (
+                        <FormItem className="grid grid-cols-[1fr_80px_80px_80px] items-center gap-4 px-4 py-3 border-t">
+                            <span className="text-sm text-gray-900">{label}</span>
+
+                            {(["past", "now", "never"] as const).map((val) => (
+                                <FormControl key={val}>
+                                    <div className="flex justify-center">
+                                        <Checkbox
+                                            checked={field.value === val}
+                                            onCheckedChange={() => field.onChange(val)}
+                                        />
+                                    </div>
+                                </FormControl>
+                            ))}
+                        </FormItem>
+                    )}
+                />
+            ))}
         </div>
-    );
-};
+
+        <FormField
+            control={form.control}
+            name={datesField}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel className="text-sm">
+                        If you had any of the conditions above, please provide the date.
+                    </FormLabel>
+                    <FormControl>
+                        <Input type="date" {...field} />
+                    </FormControl>
+                </FormItem>
+            )}
+        />
+    </div>
+);
 
 const FrequencyTable = ({ form }: { form: any }) => (
     <div className="space-y-4">
         <FormLabel className="text-base font-medium">
-            Please check the frequency of the following: *
+            Please check the frequency of the following: <span className="text-red-500">*</span>
         </FormLabel>
 
         <div className="border rounded-lg overflow-hidden">
-            <div className="grid grid-cols-[1fr_80px_80px_110px] bg-gray-50 px-4 py-2 text-sm font-medium">
+            <div className="grid grid-cols-[1fr_80px_80px_110px] bg-gray-50 px-4 py-2 text-sm font-medium gap-4">
                 <span />
                 <span className="text-center">Yes</span>
                 <span className="text-center">No</span>
                 <span className="text-center">Sometimes</span>
             </div>
 
-            {FREQUENCY_ITEMS.map((label) => {
-                const key = label.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+            {FREQUENCY_ITEMS.map(({ label, name }) => (
+                <FormField
+                    key={name}
+                    control={form.control}
+                    name={name}
+                    render={({ field }) => (
+                        <FormItem className="grid grid-cols-[1fr_80px_80px_110px] items-center gap-4 px-4 py-3 border-t">
+                            <span className="text-sm text-gray-900">{label}</span>
 
-                return (
-                    <FormField
-                        key={key}
-                        control={form.control}
-                        name={`symptomFrequency.${key}`}
-                        render={({ field }) => (
-                            <FormItem className="grid grid-cols-[1fr_80px_80px_110px] items-center gap-4 px-4 py-3 border-t">
-                                <span className="text-sm">{label}</span>
-
-                                {["yes", "no", "sometimes"].map((val) => (
-                                    <FormControl key={val}>
-                                        <div className="flex justify-center">
-                                            <Checkbox
-                                                checked={field.value === val}
-                                                onCheckedChange={() =>
-                                                    field.onChange(val)
-                                                }
-                                            />
-                                        </div>
-                                    </FormControl>
-                                ))}
-                            </FormItem>
-                        )}
-                    />
-                );
-            })}
+                            {(["yes", "no", "sometimes"] as const).map((val) => (
+                                <FormControl key={val}>
+                                    <div className="flex justify-center">
+                                        <Checkbox
+                                            checked={field.value === val}
+                                            onCheckedChange={() => field.onChange(val)}
+                                        />
+                                    </div>
+                                </FormControl>
+                            ))}
+                        </FormItem>
+                    )}
+                />
+            ))}
         </div>
     </div>
 );
 
+
 export const MedicalHistoryStep = ({ form }: { form: any }) => {
     return (
-        <div className="space-y-10">
+        <div className="space-y-12">
             <StatusTable
                 title="Gastrointestinal"
                 items={GASTROINTESTINAL}
+                datesField="gastrointestinalDates"
                 form={form}
             />
 
-            <StatusTable title="Hormones / Metabolic" items={HORMONES_METABOLIC} form={form} />
-            <StatusTable title="Cardiovascular" items={CARDIOVASCULAR} form={form} />
-            <StatusTable title="Cancer" items={CANCER} form={form} />
-            <StatusTable title="Genital & Urinary Systems" items={GENITAL_URINARY} form={form} />
-            <StatusTable title="Musculoskeletal / Pain" items={MUSCULOSKELETAL} form={form} />
-            <StatusTable title="Immune / Inflammatory" items={IMMUNE_INFLAMMATORY} form={form} />
-            <StatusTable title="Respiratory Conditions" items={RESPIRATORY} form={form} />
-            <StatusTable title="Skin Conditions" items={SKIN} form={form} />
-            <StatusTable title="Neurologic / Mood" items={NEUROLOGIC_MOOD} form={form} />
-            <StatusTable title="Miscellaneous" items={MISCELLANEOUS} form={form} />
+            <StatusTable
+                title="Hormones / Metabolic"
+                items={HORMONES_METABOLIC}
+                datesField="hormonesMetabolicDates"
+                form={form}
+            />
 
+            <StatusTable
+                title="Cardiovascular"
+                items={CARDIOVASCULAR}
+                datesField="cardiovascularDates"
+                form={form}
+            />
+
+            <StatusTable
+                title="Cancer"
+                items={CANCER}
+                datesField="cancerDates"
+                form={form}
+            />
+
+            <StatusTable
+                title="Genital & Urinary Systems"
+                items={GENITAL_URINARY}
+                datesField="genitalUrinaryDates"
+                form={form}
+            />
+
+            <StatusTable
+                title="Musculoskeletal / Pain"
+                items={MUSCULOSKELETAL}
+                datesField="musculoskeletalDates"
+                form={form}
+            />
+
+            <StatusTable
+                title="Immune / Inflammatory"
+                items={IMMUNE_INFLAMMATORY}
+                datesField="immuneInflammatoryDates"
+                form={form}
+            />
+
+            <StatusTable
+                title="Respiratory Conditions"
+                items={RESPIRATORY}
+                datesField="respiratoryDates"
+                form={form}
+            />
+
+            <StatusTable
+                title="Skin Conditions"
+                items={SKIN}
+                datesField="skinConditionsDates"
+                form={form}
+            />
+
+            <StatusTable
+                title="Neurologic / Mood"
+                items={NEUROLOGIC_MOOD}
+                datesField="neurologicMoodDates"
+                form={form}
+            />
+
+            <StatusTable
+                title="Miscellaneous"
+                items={MISCELLANEOUS}
+                datesField="miscellaneousDates"
+                form={form}
+            />
 
             <FormField
                 control={form.control}
-                name="otherConditions"
+                name="otherConditionsSymptoms"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
-                            Is there any other conditions or symptoms that you might be experiencing? *
+                            Is there any other conditions or symptoms that you might be experiencing?
                         </FormLabel>
                         <FormControl>
                             <Textarea {...field} />
                         </FormControl>
-                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -178,33 +250,31 @@ export const MedicalHistoryStep = ({ form }: { form: any }) => {
 
             {[
                 {
-                    name: "chemicalExposure",
+                    name: "chemicalToxicExposure",
                     label:
-                        "Have you been exposed to chemical or toxic metals (lead, mercury, arsenic, aluminum)? *",
+                        "Have you been exposed to chemical or toxic metals (lead, mercury, arsenic, aluminum)?",
                 },
-                { name: "odorSensitivity", label: "Do odors affect you? *" },
+                { name: "odorSensitivity", label: "Do odors affect you?" },
                 {
-                    name: "secondHandSmoke",
-                    label:
-                        "Are you or have you been exposed to second-hand smoke? *",
+                    name: "secondhandSmokeExposure",
+                    label: "Are you or have you been exposed to second-hand smoke?",
                 },
                 {
                     name: "moldExposure",
                     label:
-                        "Are you currently or have you been exposed to mold? (If so, describe source and duration) *",
+                        "Are you currently or have you been exposed to mold? If so, describe the source and duration.",
                 },
-            ].map((q) => (
+            ].map(({ name, label }) => (
                 <FormField
-                    key={q.name}
+                    key={name}
                     control={form.control}
-                    name={q.name}
+                    name={name}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{q.label}</FormLabel>
+                            <FormLabel>{label}</FormLabel>
                             <FormControl>
                                 <Textarea {...field} />
                             </FormControl>
-                            <FormMessage />
                         </FormItem>
                     )}
                 />
@@ -212,3 +282,5 @@ export const MedicalHistoryStep = ({ form }: { form: any }) => {
         </div>
     );
 };
+
+

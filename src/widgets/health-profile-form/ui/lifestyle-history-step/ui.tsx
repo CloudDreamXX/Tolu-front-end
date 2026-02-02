@@ -2,9 +2,9 @@ import { FormLabel, FormField, FormItem, FormControl, Textarea, FormMessage } fr
 import { z } from "zod";
 
 export const lifestyleHistorySchema = z.object({
-    dietHistory: z.string().min(1, "This field is required"),
-    substanceUse: z.string().min(1, "This field is required"),
-    stressManagement: z.string().min(1, "This field is required"),
+    junkFoodBingeDieting: z.string(),
+    substanceUseHistory: z.string(),
+    stressHandling: z.string(),
 });
 
 export const LifestyleHistoryStep = ({ form }: { form: any }) => {
@@ -18,7 +18,7 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="dietHistory"
+                name="junkFoodBingeDieting"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -34,7 +34,7 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="substanceUse"
+                name="substanceUseHistory"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -50,7 +50,7 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="stressManagement"
+                name="stressHandling"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>

@@ -2,8 +2,8 @@ import { FormLabel, FormField, FormItem, FormControl, Textarea, FormMessage } fr
 import { z } from "zod";
 
 export const sexualHistorySchema = z.object({
-    sexualFunctionConcerns: z.string().min(1, "This field is required"),
-    sexualPartnersHistory: z.string().min(1, "This field is required"),
+    sexualFunctioningConcerns: z.string(),
+    sexualPartnersPastYear: z.string(),
 });
 
 export const SexualHistoryStep = ({ form }: { form: any }) => {
@@ -17,7 +17,7 @@ export const SexualHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="sexualFunctionConcerns"
+                name="sexualFunctioningConcerns"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
@@ -33,7 +33,7 @@ export const SexualHistoryStep = ({ form }: { form: any }) => {
 
             <FormField
                 control={form.control}
-                name="sexualPartnersHistory"
+                name="sexualPartnersPastYear"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
