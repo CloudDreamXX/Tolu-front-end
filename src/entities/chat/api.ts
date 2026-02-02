@@ -66,39 +66,48 @@ export const chatApi = createApi({
         method: "GET",
         params: { page: 1, limit: 50 },
       }),
-      transformResponse: (res: FetchAllChatsResponse) => res.map(toChatItem),
+
+      transformResponse: (res: FetchAllChatsResponse) =>
+        res.map(toChatItem),
+
       providesTags: ["Chat"],
+
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(setChats(data));
+
           const hydrated = await Promise.all(
             data.map(async (c) => {
-              let avatarUrl = c.avatar_url;
-              if (avatarUrl) {
+              let avatar_url = c.avatar_url;
+
+              if (avatar_url) {
                 try {
-                  const url = await resolveAvatar(avatarUrl);
-                  avatarUrl = url ?? "";
+                  avatar_url = (await resolveAvatar(avatar_url)) ?? "";
                 } catch {
-                  avatarUrl = "";
+                  avatar_url = "";
                 }
               }
-              return { ...c, avatar_url: avatarUrl };
+
+              return { ...c, avatar_url };
             })
           );
-          const hydratedRecord = hydrated.reduce<Record<string, ChatItemModel>>(
+
+          const record = hydrated.reduce<Record<string, ChatItemModel>>(
             (acc, chat) => {
               acc[chat.id] = chat;
               return acc;
             },
             {}
           );
-          dispatch(setChats(hydratedRecord));
-        } catch {
+
+          dispatch(setChats(record));
+        } catch (err) {
+          console.error("fetchAllChats error:", err);
           toast({ title: "Failed to fetch chats", variant: "destructive" });
         }
       },
     }),
+
 
     fetchChatDetailsById: builder.query<FetchChatDetailsResponse, string>({
       query: (chatId) => ({
