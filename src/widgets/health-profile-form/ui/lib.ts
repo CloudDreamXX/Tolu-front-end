@@ -1,8 +1,16 @@
 import { z } from "zod";
 import { HealthHistory, HealthHistoryPostData } from "entities/health-history";
-import { baseFormSchema } from "./ui";
+import { formSchema } from "./ui";
 
-type FormValues = z.infer<typeof baseFormSchema>;
+type FormValues = z.infer<typeof formSchema>;
+
+const defaultMedicalCondition = {
+  status: "never" as const,
+};
+
+const defaultTraumaEvent = {
+  status: "no" as const,
+};
 
 export const mapHealthHistoryToFormDefaults = (
   healthHistory?: HealthHistory
@@ -10,68 +18,125 @@ export const mapHealthHistoryToFormDefaults = (
   if (!healthHistory) return {};
 
   return {
-    age: healthHistory.age?.toString() || "",
-    gender: healthHistory.gender || "",
-    genderIdentity: healthHistory.gender_identity || "woman",
-    sexAssignedAtBirth: healthHistory.gender || "female",
-    race: healthHistory.ethnicity || "",
-    language: healthHistory.language || "",
-    country: healthHistory.location || "",
-    occupation: healthHistory.job || "",
-    ethnicity: healthHistory.ethnicity || "",
-    household: healthHistory.household || "",
-    education: healthHistory.education || "",
-    religion: healthHistory.religion || "",
+    /* ==================== STRESSFUL EVENTS ==================== */
+    stressfulEvents: {
+      death_close_person:
+        healthHistory.trauma_death_family ?? defaultTraumaEvent.status,
+      sexual_physical_abuse:
+        healthHistory.trauma_sexual_physical_abuse ?? defaultTraumaEvent,
+      emotional_abuse:
+        healthHistory.trauma_emotional_neglect ?? defaultTraumaEvent,
+      discrimination:
+        healthHistory.trauma_discrimination ?? defaultTraumaEvent,
+      life_threatening_event:
+        healthHistory.trauma_life_threatening_accident ?? defaultTraumaEvent,
+      life_threatening_illness:
+        healthHistory.trauma_life_threatening_illness ?? defaultTraumaEvent,
+      weapon_threat:
+        healthHistory.trauma_robbery_mugging ?? defaultTraumaEvent,
+      witnessed_violence:
+        healthHistory.trauma_witness_violence ?? defaultTraumaEvent,
+    },
 
-    healthConcerns: healthHistory.current_health_concerns || "",
-    medicalConditions: healthHistory.diagnosed_conditions || "None",
-    medications: healthHistory.medications || "None",
-    otherMedications: healthHistory.medications || "",
-    supplements: healthHistory.supplements || "None",
-    allergies: healthHistory.allergies_intolerances || "None",
-    familyHistory: healthHistory.family_health_history || "None",
+    timeOffWork: healthHistory.work_school_time_off,
+    livedOutsideUS: healthHistory.lived_traveled_outside_us ?? "",
+    majorLifeChanges: healthHistory.recent_major_life_changes ?? "",
+    additionalNotes: healthHistory.trauma_additional_notes ?? "",
 
-    dietType: healthHistory.diet_pattern || "",
-    dietDetails: healthHistory.specific_diet || "",
-    cookFrequency: healthHistory.cook_at_home || "",
-    takeoutFrequency: healthHistory.takeout_food || "",
-    decisionMaker: healthHistory.eat_decision || "",
-    commonFoods: healthHistory.kind_of_food || "",
+    /* ==================== MEDICAL STATUS ==================== */
+    conditions: {
+      /* Gastrointestinal */
+      ibs: healthHistory.condition_ibs ?? defaultMedicalCondition,
+      crohns: healthHistory.condition_crohns ?? defaultMedicalCondition,
+      ulcerative_colitis:
+        healthHistory.condition_ulcerative_colitis ?? defaultMedicalCondition,
+      gastritis_ulcer:
+        healthHistory.condition_gastritis_ulcer ?? defaultMedicalCondition,
+      gerd: healthHistory.condition_gerd ?? defaultMedicalCondition,
+      celiac: healthHistory.condition_celiac ?? defaultMedicalCondition,
 
-    exerciseHabits: healthHistory.exercise_habits || "light",
-    otherExerciseHabits: healthHistory.exercise_habits || "light",
+      /* Hormonal / Metabolic */
+      hypothyroidism:
+        healthHistory.condition_hypothyroidism ?? defaultMedicalCondition,
+      hyperthyroidism:
+        healthHistory.condition_hyperthyroidism ?? defaultMedicalCondition,
+      hashimotos:
+        healthHistory.condition_hashimotos ?? defaultMedicalCondition,
+      pcos: healthHistory.condition_pcos ?? defaultMedicalCondition,
 
-    sleepQuality: parseInt(healthHistory.sleep_quality || "1", 10),
-    stressLevels: parseInt(healthHistory.stress_levels || "1", 10),
-    energyLevels: parseInt(healthHistory.energy_levels || "2", 10),
+      /* Cardiovascular */
+      heart_disease:
+        healthHistory.condition_heart_disease ?? defaultMedicalCondition,
+      hypertension:
+        healthHistory.condition_hypertension ?? defaultMedicalCondition,
 
-    menstrualCycleStatus: healthHistory.menstrual_cycle_status || "",
-    menstrualOther: healthHistory.menstrual_cycle_status || "",
-    hormoneTherapy: healthHistory.hormone_replacement_therapy || "",
-    hormoneDetails: "",
-    hormoneDuration: "",
-    hormoneProvider: "",
-    fertilityConcerns: healthHistory.fertility_concerns || "not_applicable",
-    birthControlUse: healthHistory.birth_control_use || "not_applicable",
-    birthControlDetails: "",
+      /* Neurologic / Mood */
+      depression:
+        healthHistory.condition_depression ?? defaultMedicalCondition,
+      anxiety: healthHistory.condition_anxiety ?? defaultMedicalCondition,
+    },
 
-    bloodSugarConcern: healthHistory.blood_sugar_concerns || "",
-    bloodSugarOther: healthHistory.blood_sugar_concerns || "",
-    digestiveIssues: healthHistory.digestive_issues || "",
-    digestiveOther: healthHistory.digestive_issues || "",
+    other_conditions_symptoms:
+      healthHistory.other_conditions_symptoms ?? "",
 
-    recentLabTests: healthHistory.recent_lab_tests ? "Yes" : "No",
-    labTestFiles: healthHistory.lab_results_file,
+    /* ==================== ORAL HEALTH ==================== */
+    last_dentist_visit: healthHistory.last_dentist_visit ?? "",
+    dentist_health_discussion:
+      healthHistory.dentist_health_discussion ?? "",
+    oral_dental_regimen: healthHistory.oral_dental_regimen ?? "",
+    mercury_amalgams: healthHistory.mercury_amalgams ?? "",
+    root_canals: healthHistory.root_canals ?? "",
+    oral_health_concerns: healthHistory.oral_health_concerns ?? "",
+    oral_health_additional_notes:
+      healthHistory.oral_health_additional_notes ?? "",
 
-    goals: healthHistory.health_goals || "",
-    goalReason: healthHistory.why_these_goals || "",
-    urgency: healthHistory.desired_results_timeline || "",
-    healthApproach: healthHistory.health_approach_preference || "",
+    /* ==================== LIFESTYLE ==================== */
+    junk_food_binge_dieting:
+      healthHistory.junk_food_binge_dieting ?? "",
+    substance_use_history:
+      healthHistory.substance_use_history ?? "",
+    stress_handling: healthHistory.stress_handling ?? "",
 
-    agreeToPrivacy: healthHistory.privacy_consent || false,
-    followUpRecommendation: healthHistory.follow_up_recommendation || "",
-    countryCode: "",
-    phoneNumber: "",
+    /* ==================== SLEEP ==================== */
+    satisfied_with_sleep: healthHistory.satisfied_with_sleep ?? "no",
+    stay_awake_all_day: healthHistory.stay_awake_all_day ?? "no",
+    asleep_2am_4am: healthHistory.asleep_2am_4am ?? "no",
+    fall_asleep_under_30min:
+      healthHistory.fall_asleep_under_30min ?? "no",
+    sleep_6_8_hours: healthHistory.sleep_6_8_hours ?? "no",
+
+    /* ==================== WOMEN ==================== */
+    age_first_period: healthHistory.age_first_period ?? "",
+    menses_pms_pain: healthHistory.menses_pms_pain ?? "",
+    birth_control_pills: healthHistory.birth_control_pills ?? "",
+
+    /* ==================== SEXUAL ==================== */
+    sexual_functioning_concerns:
+      healthHistory.sexual_functioning_concerns ?? "",
+    sexual_partners_past_year:
+      healthHistory.sexual_partners_past_year ?? "",
+
+    /* ==================== MENTAL HEALTH ==================== */
+    general_moods: healthHistory.general_moods ?? "",
+    energy_level_scale:
+      healthHistory.energy_level_scale
+        ? Number(healthHistory.energy_level_scale)
+        : 5,
+    best_point_in_life: healthHistory.best_point_in_life ?? "",
+
+    /* ==================== OTHER ==================== */
+    role_in_wellness_plan:
+      healthHistory.role_in_wellness_plan ?? "",
+    family_friends_support:
+      healthHistory.family_friends_support ?? "",
+    supportive_person_dietary_change:
+      healthHistory.supportive_person_dietary_change ?? "",
+    other_useful_information:
+      healthHistory.other_useful_information ?? "",
+    health_goals_aspirations:
+      healthHistory.health_goals_aspirations ?? "",
+    why_achieve_goals:
+      healthHistory.why_achieve_goals ?? "",
   };
 };
 
@@ -104,65 +169,6 @@ export const prune = (obj: Record<string, any>): Record<string, any> => {
 export const mapFormValuesToHealthHistoryPayload = (
   values: Partial<FormValues>
 ): Partial<HealthHistoryPostData> => {
-  return prune({
-    age:
-      values.age !== undefined && values.age !== ""
-        ? Number(values.age)
-        : undefined,
-
-    gender_identity: values.genderIdentity,
-    gender: values.sexAssignedAtBirth,
-    ethnicity: values.ethnicity,
-    language: values.language,
-    location: values.country,
-    job: values.occupation,
-    household: values.household,
-    education: values.education,
-    religion: values.religion,
-
-    current_health_concerns: values.healthConcerns,
-    diagnosed_conditions: values.medicalConditions,
-    medications: values.medications,
-    supplements: values.supplements,
-    allergies_intolerances: values.allergies,
-    family_health_history: values.familyHistory,
-
-    diet_pattern: values.dietType,
-    specific_diet: values.dietDetails,
-    cook_at_home: values.cookFrequency,
-    takeout_food: values.takeoutFrequency,
-    eat_decision: values.decisionMaker,
-    kind_of_food: values.commonFoods,
-
-    exercise_habits: values.exerciseHabits,
-    sleep_quality:
-      values.sleepQuality !== undefined
-        ? String(values.sleepQuality)
-        : undefined,
-    stress_levels:
-      values.stressLevels !== undefined
-        ? String(values.stressLevels)
-        : undefined,
-    energy_levels:
-      values.energyLevels !== undefined
-        ? String(values.energyLevels)
-        : undefined,
-
-    menstrual_cycle_status: values.menstrualCycleStatus,
-    hormone_replacement_therapy: values.hormoneTherapy,
-    fertility_concerns: values.fertilityConcerns,
-    birth_control_use: values.birthControlUse,
-
-    blood_sugar_concerns: values.bloodSugarConcern,
-    digestive_issues: values.digestiveIssues,
-
-    health_goals: values.goals,
-    why_these_goals: values.goalReason,
-    desired_results_timeline: values.urgency,
-    health_approach_preference: values.healthApproach,
-
-    follow_up_recommendation: values.followUpRecommendation,
-    privacy_consent: values.agreeToPrivacy,
-  });
+  return prune(values as Record<string, any>);
 };
 
