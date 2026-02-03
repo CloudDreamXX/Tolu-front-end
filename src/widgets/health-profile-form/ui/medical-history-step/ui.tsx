@@ -121,56 +121,56 @@ const StatusTable = ({
                 {status === "yes" && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-2">
                     {/* Date From */}
-<FormField
-  control={form.control}
-  name={`${name}.fromDate`}
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel className="xl:text-[14px] xl:font-normal">
-        Date from
-      </FormLabel>
-      <CustomDateField
-        field={field}
-        placeholder="Select start date"
-      />
-    </FormItem>
-  )}
-/>
+                    <FormField
+                      control={form.control}
+                      name={`${name}.fromDate`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="xl:text-[14px] xl:font-normal">
+                            Date from
+                          </FormLabel>
+                          <CustomDateField
+                            field={field}
+                            placeholder="Select start date"
+                          />
+                        </FormItem>
+                      )}
+                    />
 
                     {/* Date To */}
-<FormField
-  control={form.control}
-  name={`${name}.toDate`}
-  render={({ field }) => {
-    const isCurrent = field.value === "current";
+                    <FormField
+                      control={form.control}
+                      name={`${name}.toDate`}
+                      render={({ field }) => {
+                        const isCurrent = field.value === "current";
 
-    return (
-      <FormItem className="flex gap-4 items-end">
-        <div className="flex flex-col gap-2 w-full">
-        <FormLabel className="xl:text-[14px] xl:font-normal">
-          Date to
-        </FormLabel>
+                        return (
+                          <FormItem className="flex gap-4 items-end">
+                            <div className="flex flex-col gap-2 w-full">
+                              <FormLabel className="xl:text-[14px] xl:font-normal">
+                                Date to
+                              </FormLabel>
 
-        <CustomDateField
-          field={field}
-          placeholder="Select end date"
-          disabled={isCurrent}
-        />
-        </div>
+                              <CustomDateField
+                                field={field}
+                                placeholder="Select end date"
+                                disabled={isCurrent}
+                              />
+                            </div>
 
-        <div className="flex items-center gap-2 pb-2">
-          <Checkbox
-            checked={isCurrent}
-            onCheckedChange={(checked) =>
-              field.onChange(checked ? "current" : "")
-            }
-          />
-          <span className="text-sm">Current</span>
-        </div>
-      </FormItem>
-    );
-  }}
-/>
+                            <div className="flex items-center gap-2 pb-2">
+                              <Checkbox
+                                checked={isCurrent}
+                                onCheckedChange={(checked) =>
+                                  field.onChange(checked ? "current" : "")
+                                }
+                              />
+                              <span className="text-sm">Current</span>
+                            </div>
+                          </FormItem>
+                        );
+                      }}
+                    />
                   </div>
                 )}
               </div>
@@ -235,17 +235,16 @@ export const CustomDateField = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-const parsedDate =
-  field.value && field.value !== "current"
-    ? new Date(field.value + "T00:00:00")
-    : null;
+  const parsedDate =
+    field.value && field.value !== "current"
+      ? new Date(field.value + "T00:00:00")
+      : null;
 
   const [displayMonth, setDisplayMonth] = useState<Date>(
     parsedDate ?? new Date()
   );
 
-  const selectedYear =
-    parsedDate?.getFullYear() ?? displayMonth.getFullYear();
+  const selectedYear = parsedDate?.getFullYear() ?? displayMonth.getFullYear();
 
   return (
     <Popover open={open && !disabled} onOpenChange={setOpen} modal={false}>
@@ -269,10 +268,7 @@ const parsedDate =
         </FormControl>
       </PopoverTrigger>
 
-      <PopoverContent
-        className="w-auto p-0 pointer-events-auto"
-        align="start"
-      >
+      <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
         {/* Year selector */}
         <div className="flex items-center gap-2 m-4 mb-2 text-sm">
           Choose a year:
@@ -294,12 +290,14 @@ const parsedDate =
             }}
             className="px-2 py-1 border rounded-md outline-none"
           >
-            {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i)
-              .map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
+            {Array.from(
+              { length: 100 },
+              (_, i) => new Date().getFullYear() - i
+            ).map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -320,9 +318,10 @@ const parsedDate =
 
             setDisplayMonth(clean);
             field.onChange(
-              `${clean.getFullYear()}-${String(
-                clean.getMonth() + 1
-              ).padStart(2, "0")}-${String(clean.getDate()).padStart(2, "0")}`
+              `${clean.getFullYear()}-${String(clean.getMonth() + 1).padStart(
+                2,
+                "0"
+              )}-${String(clean.getDate()).padStart(2, "0")}`
             );
 
             setOpen(false);
@@ -349,17 +348,9 @@ export const MedicalHistoryStep = ({ form }: { form: any }) => {
         form={form}
       />
 
-      <StatusTable
-        title="Cardiovascular"
-        items={CARDIOVASCULAR}
-        form={form}
-      />
+      <StatusTable title="Cardiovascular" items={CARDIOVASCULAR} form={form} />
 
-      <StatusTable
-        title="Cancer"
-        items={CANCER}
-        form={form}
-      />
+      <StatusTable title="Cancer" items={CANCER} form={form} />
 
       <StatusTable
         title="Genital & Urinary Systems"
@@ -385,11 +376,7 @@ export const MedicalHistoryStep = ({ form }: { form: any }) => {
         form={form}
       />
 
-      <StatusTable
-        title="Skin Conditions"
-        items={SKIN}
-        form={form}
-      />
+      <StatusTable title="Skin Conditions" items={SKIN} form={form} />
 
       <StatusTable
         title="Neurologic / Mood"
@@ -397,11 +384,7 @@ export const MedicalHistoryStep = ({ form }: { form: any }) => {
         form={form}
       />
 
-      <StatusTable
-        title="Miscellaneous"
-        items={MISCELLANEOUS}
-        form={form}
-      />
+      <StatusTable title="Miscellaneous" items={MISCELLANEOUS} form={form} />
 
       <FormField
         control={form.control}

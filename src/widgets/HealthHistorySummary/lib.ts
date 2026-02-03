@@ -90,11 +90,31 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
     step: 4,
     block: HEALTH_HISTORY_BLOCKS.STRESSFUL_EVENTS,
     fields: [
-      { key: "trauma_death_family", label: "Death in family", format: v => v?.status },
-      { key: "trauma_death_accident", label: "Accidental death", format: v => v?.status },
-      { key: "trauma_sexual_physical_abuse", label: "Sexual / physical abuse", format: v => v?.status },
-      { key: "trauma_emotional_neglect", label: "Emotional neglect", format: v => v?.status },
-      { key: "trauma_discrimination", label: "Discrimination", format: v => v?.status },
+      {
+        key: "trauma_death_family",
+        label: "Death in family",
+        format: (v) => v?.status,
+      },
+      {
+        key: "trauma_death_accident",
+        label: "Accidental death",
+        format: (v) => v?.status,
+      },
+      {
+        key: "trauma_sexual_physical_abuse",
+        label: "Sexual / physical abuse",
+        format: (v) => v?.status,
+      },
+      {
+        key: "trauma_emotional_neglect",
+        label: "Emotional neglect",
+        format: (v) => v?.status,
+      },
+      {
+        key: "trauma_discrimination",
+        label: "Discrimination",
+        format: (v) => v?.status,
+      },
       { key: "trauma_additional_notes", label: "Additional notes" },
     ],
   },
@@ -164,7 +184,10 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
     step: 10,
     block: HEALTH_HISTORY_BLOCKS.SEXUAL_HISTORY,
     fields: [
-      { key: "sexual_functioning_concerns", label: "Sexual functioning concerns" },
+      {
+        key: "sexual_functioning_concerns",
+        label: "Sexual functioning concerns",
+      },
       { key: "sexual_partners_past_year", label: "Partners past year" },
     ],
   },
@@ -191,5 +214,3 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
     ],
   },
 ];
-
-

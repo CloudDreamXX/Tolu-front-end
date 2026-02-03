@@ -1,6 +1,10 @@
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetHealthHistoryNotesQuery } from "entities/coach";
-import { HealthHistory, MedicalCondition, TraumaEvent } from "entities/health-history";
+import {
+  HealthHistory,
+  MedicalCondition,
+  TraumaEvent,
+} from "entities/health-history";
 import { useMemo } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
@@ -12,7 +16,13 @@ const SummaryRow = ({
   value,
 }: {
   label: string;
-  value?: string | number | string[] | TraumaEvent | MedicalCondition | undefined;
+  value?:
+    | string
+    | number
+    | string[]
+    | TraumaEvent
+    | MedicalCondition
+    | undefined;
 }) => (
   <div className="space-y-1">
     <div className="font-medium text-base">{label}</div>
@@ -57,10 +67,7 @@ export const HealthHistorySummary = ({
   );
 
   const notesByBlock = useMemo(() => {
-    const map: Record<
-      string,
-      { id: string; content: string }
-    > = {};
+    const map: Record<string, { id: string; content: string }> = {};
 
     notesData?.notes.forEach((n) => {
       map[n.block_name] = {
@@ -74,38 +81,36 @@ export const HealthHistorySummary = ({
 
   return (
     <div className="space-y-6">
-{HEALTH_HISTORY_SUMMARY.map((section) => (
-  <Section
-    key={section.block}
-    title={section.title}
-    onEdit={() => onEditSection(section.step)}
-  >
-    {section.fields.map((field) => {
-      const rawValue = data?.[field.key];
-      const value = field.format
-        ? field.format(rawValue)
-        : rawValue;
+      {HEALTH_HISTORY_SUMMARY.map((section) => (
+        <Section
+          key={section.block}
+          title={section.title}
+          onEdit={() => onEditSection(section.step)}
+        >
+          {section.fields.map((field) => {
+            const rawValue = data?.[field.key];
+            const value = field.format ? field.format(rawValue) : rawValue;
 
-      return (
-        <SummaryRow
-          key={String(field.key)}
-          label={field.label}
-          value={value}
-        />
-      );
-    })}
+            return (
+              <SummaryRow
+                key={String(field.key)}
+                label={field.label}
+                value={value}
+              />
+            );
+          })}
 
-    {clientId && data && (
-      <CoachBlockNote
-        clientId={clientId}
-        healthHistoryId={data.id}
-        blockName={section.block}
-        initialValue={notesByBlock[section.block]?.content}
-        noteId={notesByBlock[section.block]?.id}
-      />
-    )}
-  </Section>
-))}
+          {clientId && data && (
+            <CoachBlockNote
+              clientId={clientId}
+              healthHistoryId={data.id}
+              blockName={section.block}
+              initialValue={notesByBlock[section.block]?.content}
+              noteId={notesByBlock[section.block]?.id}
+            />
+          )}
+        </Section>
+      ))}
     </div>
   );
 };

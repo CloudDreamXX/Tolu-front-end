@@ -16,7 +16,11 @@ import {
   Form,
 } from "shared/ui";
 import * as z from "zod";
-import { prune, mapHealthHistoryToFormDefaults, mapFormValuesToHealthHistoryPayload } from "./lib";
+import {
+  prune,
+  mapHealthHistoryToFormDefaults,
+  mapFormValuesToHealthHistoryPayload,
+} from "./lib";
 import { usePageWidth } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { setHealthHistory } from "entities/health-history/lib";
@@ -227,7 +231,6 @@ export const HealthProfileForm = () => {
     { partial = false }: { partial?: boolean } = {}
   ) => {
     const payload = prune(values) as Partial<HealthHistory>;
-    console.log(mapFormValuesToHealthHistoryPayload(payload))
 
     await createHealthHistory({
       healthData: mapFormValuesToHealthHistoryPayload(payload),
@@ -351,9 +354,9 @@ export const HealthProfileForm = () => {
               onClick={
                 isSummary
                   ? () => {
-                    setIsSummary(false);
-                    setCurrentStep(0);
-                  }
+                      setIsSummary(false);
+                      setCurrentStep(0);
+                    }
                   : currentStep === steps.length - 1
                     ? handleSubmit
                     : () => goToStep(currentStep + 1)

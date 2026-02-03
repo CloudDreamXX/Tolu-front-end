@@ -331,23 +331,16 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
 const BirthDateField = ({ field }: { field: any }) => {
   const [open, setOpen] = useState(false);
 
-  const parsedDate = field.value
-    ? new Date(field.value + "T00:00:00")
-    : null;
+  const parsedDate = field.value ? new Date(field.value + "T00:00:00") : null;
 
   const [displayMonth, setDisplayMonth] = useState<Date>(
     parsedDate ?? new Date()
   );
 
-  const selectedYear =
-    parsedDate?.getFullYear() ?? displayMonth.getFullYear();
+  const selectedYear = parsedDate?.getFullYear() ?? displayMonth.getFullYear();
 
   return (
-    <Popover
-      open={open}
-      onOpenChange={setOpen}
-      modal={false}
-    >
+    <Popover open={open} onOpenChange={setOpen} modal={false}>
       <PopoverTrigger asChild>
         <FormControl>
           <Input
@@ -357,20 +350,17 @@ const BirthDateField = ({ field }: { field: any }) => {
             value={
               parsedDate
                 ? new Intl.DateTimeFormat("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                }).format(parsedDate)
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }).format(parsedDate)
                 : ""
             }
           />
         </FormControl>
       </PopoverTrigger>
 
-      <PopoverContent
-        className="w-auto p-0 pointer-events-auto"
-        align="start"
-      >
+      <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
         <div className="flex items-center gap-2 m-4 mb-2 text-sm">
           Choose a year:
           <select
@@ -391,12 +381,14 @@ const BirthDateField = ({ field }: { field: any }) => {
             }}
             className="px-2 py-1 border rounded-md outline-none"
           >
-            {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i)
-              .map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
+            {Array.from(
+              { length: 100 },
+              (_, i) => new Date().getFullYear() - i
+            ).map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -416,9 +408,10 @@ const BirthDateField = ({ field }: { field: any }) => {
 
             setDisplayMonth(clean);
             field.onChange(
-              `${clean.getFullYear()}-${String(
-                clean.getMonth() + 1
-              ).padStart(2, "0")}-${String(clean.getDate()).padStart(2, "0")}`
+              `${clean.getFullYear()}-${String(clean.getMonth() + 1).padStart(
+                2,
+                "0"
+              )}-${String(clean.getDate()).padStart(2, "0")}`
             );
 
             setOpen(false);
@@ -429,4 +422,3 @@ const BirthDateField = ({ field }: { field: any }) => {
     </Popover>
   );
 };
-
