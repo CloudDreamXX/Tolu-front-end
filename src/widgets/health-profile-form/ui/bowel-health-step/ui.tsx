@@ -46,7 +46,7 @@ export const BOWEL_COLOR = [
   { value: "greasy_shiny", label: "Greasy, shiny" },
 ];
 
-const checkboxGroup = (form: any, name: string, value: string) => {
+const checkboxGroup = (form: any, name: string, value: string, label: string) => {
   const vals = form.watch(name) ?? [];
   const checked = vals.includes(value);
 
@@ -61,7 +61,7 @@ const checkboxGroup = (form: any, name: string, value: string) => {
           )
         }
       />
-      <span className="text-sm">{value}</span>
+      <span className="text-sm">{label}</span>
     </div>
   );
 };
@@ -100,7 +100,7 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
             <FormLabel>Bowel Movement Consistency *</FormLabel>
             <div className="grid grid-cols-2 gap-3">
               {BOWEL_CONSISTENCY.map((opt) =>
-                checkboxGroup(form, "bowelMovementConsistency", opt.value)
+                checkboxGroup(form, "bowelMovementConsistency", opt.value, opt.label)
               )}
             </div>
             <FormMessage />
@@ -116,7 +116,7 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
             <FormLabel>Bowel Movement Color *</FormLabel>
             <div className="grid grid-cols-2 gap-3">
               {BOWEL_COLOR.map((opt) =>
-                checkboxGroup(form, "bowelMovementColor", opt.value)
+                checkboxGroup(form, "bowelMovementColor", opt.value, opt.label)
               )}
             </div>
             <FormMessage />

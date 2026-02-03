@@ -85,14 +85,20 @@ export const CoachBlockNote = ({
     <div className="mt-4">
       <p className="text-sm font-medium mb-1">Coach note</p>
 
-      <Textarea
-        containerClassName="w-full min-h-[80px] rounded-md border p-2 text-sm"
-        className="xl:text-sm"
-        placeholder="Add your private note for this section..."
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        disabled={(hasNote && !isEditing) || isLoading}
-      />
+{hasNote && !isEditing ? (
+  <p className="w-full rounded-md border p-2 text-sm bg-muted">
+    {value}
+  </p>
+) : (
+  <Textarea
+    containerClassName="w-full min-h-[80px] rounded-md border p-2 text-sm"
+    className="xl:text-sm"
+    placeholder="Add your private note for this section..."
+    value={value}
+    onChange={(e) => setValue(e.target.value)}
+    disabled={isLoading}
+  />
+)}
 
       <div className="mt-2 flex gap-2 w-full">
         {!hasNote && (
@@ -108,7 +114,7 @@ export const CoachBlockNote = ({
 
         {hasNote && !isEditing && (
           <>
-            <Button size="sm" onClick={() => setIsEditing(true)}>
+            <Button size="sm" variant={"ghost"} onClick={() => setIsEditing(true)}>
               Edit
             </Button>
             <Button
@@ -126,6 +132,7 @@ export const CoachBlockNote = ({
           <>
             <Button
               size="sm"
+              variant={"brightblue"}
               onClick={handleSave}
               disabled={isLoading || !value.trim()}
             >

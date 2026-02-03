@@ -6,6 +6,10 @@ import {
   Input,
   Textarea,
   Checkbox,
+  Calendar,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "shared/ui";
 import { z } from "zod";
 import {
@@ -22,13 +26,15 @@ import {
   RESPIRATORY,
   SKIN,
 } from "./lib";
+import { useState } from "react";
 
 export const frequencyEnum = z.enum(["yes", "no", "sometimes"]);
 export const statusEnum = z.enum(["yes", "no"]);
 
 export const medicalConditionSchema = z.object({
   status: statusEnum,
-  date: z.string().optional(),
+  fromDate: z.string().optional(),
+  toDate: z.string().optional(),
 });
 
 export const medicalHistorySchema = z.object({
@@ -67,12 +73,10 @@ export const medicalHistorySchema = z.object({
 const StatusTable = ({
   title,
   items,
-  datesField,
   form,
 }: {
   title: string;
   items: { label: string; name: string }[];
-  datesField: string;
   form: any;
 }) => (
   <div className="space-y-4">
@@ -92,40 +96,89 @@ const StatusTable = ({
           key={name}
           control={form.control}
           name={`${name}.status`}
-          render={({ field }) => (
-            <FormItem className="grid grid-cols-[1fr_80px_80px] items-center gap-4 px-4 py-3 border-t">
-              <span className="text-sm text-gray-900">{label}</span>
+          render={({ field }) => {
+            const status = field.value;
 
-              {(["yes", "no"] as const).map((val) => (
-                <FormControl key={val}>
-                  <div className="flex justify-center">
-                    <Checkbox
-                      checked={field.value === val}
-                      onCheckedChange={() => field.onChange(val)}
-                    />
+            return (
+              <div className="border-t px-4 py-3 space-y-3">
+                {/* Yes / No row */}
+                <div className="grid grid-cols-[1fr_80px_80px] items-center gap-4">
+                  <span className="text-sm text-gray-900">{label}</span>
+
+                  {(["yes", "no"] as const).map((val) => (
+                    <FormControl key={val}>
+                      <div className="flex justify-center">
+                        <Checkbox
+                          checked={status === val}
+                          onCheckedChange={() => field.onChange(val)}
+                        />
+                      </div>
+                    </FormControl>
+                  ))}
+                </div>
+
+                {/* Date range (only if Yes) */}
+                {status === "yes" && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-2">
+                    {/* Date From */}
+<FormField
+  control={form.control}
+  name={`${name}.fromDate`}
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel className="xl:text-[14px] xl:font-normal">
+        Date from
+      </FormLabel>
+      <CustomDateField
+        field={field}
+        placeholder="Select start date"
+      />
+    </FormItem>
+  )}
+/>
+
+                    {/* Date To */}
+<FormField
+  control={form.control}
+  name={`${name}.toDate`}
+  render={({ field }) => {
+    const isCurrent = field.value === "current";
+
+    return (
+      <FormItem className="flex gap-4 items-end">
+        <div className="flex flex-col gap-2 w-full">
+        <FormLabel className="xl:text-[14px] xl:font-normal">
+          Date to
+        </FormLabel>
+
+        <CustomDateField
+          field={field}
+          placeholder="Select end date"
+          disabled={isCurrent}
+        />
+        </div>
+
+        <div className="flex items-center gap-2 pb-2">
+          <Checkbox
+            checked={isCurrent}
+            onCheckedChange={(checked) =>
+              field.onChange(checked ? "current" : "")
+            }
+          />
+          <span className="text-sm">Current</span>
+        </div>
+      </FormItem>
+    );
+  }}
+/>
                   </div>
-                </FormControl>
-              ))}
-            </FormItem>
-          )}
+                )}
+              </div>
+            );
+          }}
         />
       ))}
     </div>
-
-    <FormField
-      control={form.control}
-      name={datesField}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel className="text-sm">
-            If you answered “Yes” above, please provide the date.
-          </FormLabel>
-          <FormControl>
-            <Input type="date" {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
   </div>
 );
 
@@ -171,83 +224,182 @@ const FrequencyTable = ({ form }: { form: any }) => (
   </div>
 );
 
+export const CustomDateField = ({
+  field,
+  placeholder,
+  disabled,
+}: {
+  field: any;
+  placeholder: string;
+  disabled?: boolean;
+}) => {
+  const [open, setOpen] = useState(false);
+
+const parsedDate =
+  field.value && field.value !== "current"
+    ? new Date(field.value + "T00:00:00")
+    : null;
+
+  const [displayMonth, setDisplayMonth] = useState<Date>(
+    parsedDate ?? new Date()
+  );
+
+  const selectedYear =
+    parsedDate?.getFullYear() ?? displayMonth.getFullYear();
+
+  return (
+    <Popover open={open && !disabled} onOpenChange={setOpen} modal={false}>
+      <PopoverTrigger asChild>
+        <FormControl>
+          <Input
+            readOnly
+            disabled={disabled}
+            placeholder={placeholder}
+            className="text-start"
+            value={
+              parsedDate
+                ? new Intl.DateTimeFormat("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }).format(parsedDate)
+                : ""
+            }
+          />
+        </FormControl>
+      </PopoverTrigger>
+
+      <PopoverContent
+        className="w-auto p-0 pointer-events-auto"
+        align="start"
+      >
+        {/* Year selector */}
+        <div className="flex items-center gap-2 m-4 mb-2 text-sm">
+          Choose a year:
+          <select
+            value={selectedYear}
+            onChange={(e) => {
+              const year = Number(e.target.value);
+              const month = displayMonth.getMonth();
+              const day = parsedDate?.getDate() ?? 1;
+
+              const d = new Date(year, month, day);
+              setDisplayMonth(d);
+
+              field.onChange(
+                `${year}-${String(month + 1).padStart(2, "0")}-${String(
+                  day
+                ).padStart(2, "0")}`
+              );
+            }}
+            className="px-2 py-1 border rounded-md outline-none"
+          >
+            {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i)
+              .map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+          </select>
+        </div>
+
+        {/* Calendar */}
+        <Calendar
+          mode="single"
+          selected={parsedDate ?? undefined}
+          month={displayMonth}
+          onMonthChange={setDisplayMonth}
+          onSelect={(date) => {
+            if (!date) return;
+
+            const clean = new Date(
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate()
+            );
+
+            setDisplayMonth(clean);
+            field.onChange(
+              `${clean.getFullYear()}-${String(
+                clean.getMonth() + 1
+              ).padStart(2, "0")}-${String(clean.getDate()).padStart(2, "0")}`
+            );
+
+            setOpen(false);
+          }}
+          initialFocus
+        />
+      </PopoverContent>
+    </Popover>
+  );
+};
+
 export const MedicalHistoryStep = ({ form }: { form: any }) => {
   return (
     <div className="space-y-12">
       <StatusTable
         title="Gastrointestinal"
         items={GASTROINTESTINAL}
-        datesField="gastrointestinalDates"
         form={form}
       />
 
       <StatusTable
         title="Hormones / Metabolic"
         items={HORMONES_METABOLIC}
-        datesField="hormonesMetabolicDates"
         form={form}
       />
 
       <StatusTable
         title="Cardiovascular"
         items={CARDIOVASCULAR}
-        datesField="cardiovascularDates"
         form={form}
       />
 
       <StatusTable
         title="Cancer"
         items={CANCER}
-        datesField="cancerDates"
         form={form}
       />
 
       <StatusTable
         title="Genital & Urinary Systems"
         items={GENITAL_URINARY}
-        datesField="genitalUrinaryDates"
         form={form}
       />
 
       <StatusTable
         title="Musculoskeletal / Pain"
         items={MUSCULOSKELETAL}
-        datesField="musculoskeletalDates"
         form={form}
       />
 
       <StatusTable
         title="Immune / Inflammatory"
         items={IMMUNE_INFLAMMATORY}
-        datesField="immuneInflammatoryDates"
         form={form}
       />
 
       <StatusTable
         title="Respiratory Conditions"
         items={RESPIRATORY}
-        datesField="respiratoryDates"
         form={form}
       />
 
       <StatusTable
         title="Skin Conditions"
         items={SKIN}
-        datesField="skinConditionsDates"
         form={form}
       />
 
       <StatusTable
         title="Neurologic / Mood"
         items={NEUROLOGIC_MOOD}
-        datesField="neurologicMoodDates"
         form={form}
       />
 
       <StatusTable
         title="Miscellaneous"
         items={MISCELLANEOUS}
-        datesField="miscellaneousDates"
         form={form}
       />
 
