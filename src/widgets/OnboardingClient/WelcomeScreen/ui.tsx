@@ -69,7 +69,7 @@ export const WelcomeScreen = () => {
           <Button
             variant={"unstyled"}
             size={"unstyled"}
-            onClick={() => nav("/about-you")}
+            onClick={() => nav("/library")}
             type="button"
             className="p-4 pl-6 flex gap-2 items-center w-full md:w-auto justify-center rounded-full bg-[#1C63DB] hover:bg-[#2e5aa7] transition"
           >

@@ -53,7 +53,10 @@ import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import SwitchDropdown from "./components/switch-dropdown/ui";
 import { pickPreferredMaleEnglishVoice } from "pages/library-chat/lib";
 import { ChatItemModel, useSendChatNoteMutation } from "entities/chat";
-import { useCreateMedicationMutation, useCreateSupplementMutation } from "entities/health-history/api";
+import {
+  useCreateMedicationMutation,
+  useCreateSupplementMutation,
+} from "entities/health-history/api";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -995,7 +998,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   const handleAddSelectionToNotes = async (text: string) => {
-    if (!clientId) return
+    if (!clientId) return;
 
     const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
 
@@ -1018,7 +1021,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   const handleAddSelectionToMedications = async (text: string) => {
-    if (!clientId) return
+    if (!clientId) return;
 
     const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
 
@@ -1027,7 +1030,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         medicationData: {
           title: "Medication from the chat",
           content: text,
-          chat_id: chatIdForNotes || ""
+          chat_id: chatIdForNotes || "",
         },
       }).unwrap();
 
@@ -1041,7 +1044,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   const handleAddSelectionToSupplements = async (text: string) => {
-    if (!clientId) return
+    if (!clientId) return;
 
     const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
 
@@ -1050,7 +1053,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         supplementData: {
           title: "Supplement from the chat",
           content: text,
-          chat_id: chatIdForNotes || ""
+          chat_id: chatIdForNotes || "",
         },
       }).unwrap();
 
@@ -1067,7 +1070,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     selection,
     onAddNote,
     onAddMedication,
-    onAddSupplement
+    onAddSupplement,
   }: {
     selection: { text: string; rect: DOMRect };
     onAddNote: (text: string) => void;
@@ -1200,10 +1203,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              {filesState.length + filesFromLibrary.length}
+                            </span>
+                          )}
                         </Button>
                       }
                     />
@@ -1227,10 +1230,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -1424,10 +1427,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {filesState.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />
@@ -1452,10 +1455,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  1
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                           </Button>
                         }
                         setInstruction={setInstruction}
@@ -1478,10 +1481,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {filesState.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />

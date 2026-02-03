@@ -102,7 +102,8 @@ export const ClientProfile = () => {
   const [triggerGetOnboardClient] = useLazyGetOnboardClientQuery();
   const [triggerDownloadProfilePhoto] = useLazyDownloadProfilePhotoQuery();
   const [signOut] = useSignOutMutation();
-  const [changePassword, { isLoading: isChangingPassword }] = useChangePasswordMutation();
+  const [changePassword, { isLoading: isChangingPassword }] =
+    useChangePasswordMutation();
   const [acceptInvitePopup, setAcceptInvitePopup] = useState<boolean>(false);
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [declineCoachInvite] = useDeclineCoachInviteMutation();

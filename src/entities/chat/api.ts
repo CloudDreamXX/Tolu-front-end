@@ -67,8 +67,7 @@ export const chatApi = createApi({
         params: { page: 1, limit: 50 },
       }),
 
-      transformResponse: (res: FetchAllChatsResponse) =>
-        res.map(toChatItem),
+      transformResponse: (res: FetchAllChatsResponse) => res.map(toChatItem),
 
       providesTags: ["Chat"],
 
@@ -107,7 +106,6 @@ export const chatApi = createApi({
         }
       },
     }),
-
 
     fetchChatDetailsById: builder.query<FetchChatDetailsResponse, string>({
       query: (chatId) => ({
@@ -199,15 +197,14 @@ export const chatApi = createApi({
       UpdateMessagePayload
     >({
       query: ({ chatId, messageId, content }) => ({
-        url: API_ROUTES.CHAT.UPDATE_MESSAGE
-          .replace("{chat_id}", chatId)
-          .replace("{message_id}", messageId),
+        url: API_ROUTES.CHAT.UPDATE_MESSAGE.replace(
+          "{chat_id}",
+          chatId
+        ).replace("{message_id}", messageId),
         method: "PUT",
         body: { content },
       }),
-      invalidatesTags: (_r, _e, arg) => [
-        { type: "Message", id: arg.chatId },
-      ],
+      invalidatesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
     }),
 
     createGroupChat: builder.mutation<

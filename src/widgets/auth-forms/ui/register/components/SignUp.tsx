@@ -13,7 +13,7 @@ import {
   StrengthMeter,
 } from "shared/lib/utils/passwordChecker";
 import { Button, Input } from "shared/ui";
-import { countries, states } from "widgets/OnboardingClient/DemographicStep";
+import { countries, states } from "widgets/couch-edit-profile-modal/lib";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { z } from "zod";
 
@@ -149,10 +149,13 @@ export const SignUp: React.FC<SignUpProps> = ({
     e.preventDefault();
 
     setTouched(
-      Object.keys(formData).reduce((acc, key) => {
-        acc[key as keyof typeof formData] = true;
-        return acc;
-      }, {} as Partial<Record<keyof typeof formData, boolean>>)
+      Object.keys(formData).reduce(
+        (acc, key) => {
+          acc[key as keyof typeof formData] = true;
+          return acc;
+        },
+        {} as Partial<Record<keyof typeof formData, boolean>>
+      )
     );
 
     if (!validationResult.success) return;
@@ -169,10 +172,7 @@ export const SignUp: React.FC<SignUpProps> = ({
   };
 
   const isFormValid =
-    validationResult.success &&
-    result.isValid &&
-    agreeTerms &&
-    !isLoading;
+    validationResult.success && result.isValid && agreeTerms && !isLoading;
 
   return (
     <form

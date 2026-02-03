@@ -12,7 +12,8 @@ export const CheckInvite = () => {
     null
   );
   const [responseMessage, setResponseMessage] = useState<string>("");
-  const [triggerCheckInvite, { isLoading: isSubmitting }] = useLazyCheckPendingInviteQuery();
+  const [triggerCheckInvite, { isLoading: isSubmitting }] =
+    useLazyCheckPendingInviteQuery();
 
   const emailSchema = z.object({
     email: z.string().email("The email format is incorrect."),

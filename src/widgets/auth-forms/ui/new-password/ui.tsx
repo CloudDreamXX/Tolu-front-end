@@ -133,7 +133,12 @@ export const NewPassword = () => {
               variant={"unstyled"}
               size={"unstyled"}
               type="submit"
-              disabled={formData.newPassword.length < 8 || formData.newPasswordRepeat.length < 8 || !!passwordError || isLoading}
+              disabled={
+                formData.newPassword.length < 8 ||
+                formData.newPasswordRepeat.length < 8 ||
+                !!passwordError ||
+                isLoading
+              }
               className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center  text-[16px] font-semibold ${
                 formData.newPassword.length >= 8 &&
                 formData.newPasswordRepeat.length >= 8 &&

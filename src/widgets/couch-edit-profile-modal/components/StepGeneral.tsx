@@ -5,9 +5,9 @@ import { useFilePicker } from "shared/hooks/useFilePicker";
 import { cn, phoneMask } from "shared/lib";
 import { Input } from "shared/ui";
 import { LanguagesMultiSelect } from "widgets/LanguagesMultiSelect/ui";
-import { languages } from "widgets/OnboardingClient/DemographicStep";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { timezoneOptions } from "widgets/OnboardingPractitioner/profile-setup";
+import { languages } from "../lib";
 
 interface StepGeneralProps {
   data: CoachOnboardingState;

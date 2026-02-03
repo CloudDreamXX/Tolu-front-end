@@ -32,7 +32,7 @@ export const ProfileSetup = () => {
   );
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
-  const [onboardUser, {isLoading}] = useOnboardUserMutation();
+  const [onboardUser, { isLoading }] = useOnboardUserMutation();
 
   const handleFile = (file: File) => {
     if (file) {

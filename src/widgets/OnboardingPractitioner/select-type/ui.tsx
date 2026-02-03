@@ -25,7 +25,7 @@ export const SelectType = () => {
   const state = useSelector((state: RootState) => state.coachOnboarding);
   const practitionerTypes = state?.practitioner_types as string[] | undefined;
 
-  const [onboardUser, {isLoading}] = useOnboardUserMutation();
+  const [onboardUser, { isLoading }] = useOnboardUserMutation();
 
   useEffect(() => {
     const initial = Array(titlesAndIcons.length).fill("");

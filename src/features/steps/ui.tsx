@@ -45,7 +45,7 @@ export const Steps: React.FC<StepsProps> = ({
 
   return (
     <div
-      className="flex items-center w-full p-2 overflow-y-auto border rounded-full md:gap-0"
+      className="flex items-center w-full p-2 overflow-x-auto overflow-y-hidden border rounded-full md:gap-0 min-h-[70px]"
       ref={containerRef}
     >
       {steps.map((step, index) => {
