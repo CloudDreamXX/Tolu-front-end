@@ -101,13 +101,13 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
 }
 
 export interface IContentMessage {
@@ -347,4 +347,20 @@ export interface UpdateFolderRequest {
   reviewer_ids?: string[];
   reviewer_ids_to_delete?: string[];
   files_to_delete?: number[];
+}
+
+export interface CoachHealthNote {
+  id: string;
+  health_history_id: string;
+  coach_id: string;
+  client_id: string;
+  block_name: string;
+  note_content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CoachHealthNotesResponse {
+  notes: CoachHealthNote[];
+  total: number;
 }

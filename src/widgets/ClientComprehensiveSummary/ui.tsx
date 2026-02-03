@@ -84,7 +84,7 @@ export const ClientComprehensiveSummary = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [viewMode, setViewMode] = useState<"summary" | "edit">("summary");
 
-  const { data: healthHistoryData, refetch } =
+  const { data: healthHistoryData, refetch, isLoading, isError } =
     useGetCoachClientHealthHistoryQuery(clientId);
 
   const [updateHealthHistory] =
@@ -242,6 +242,14 @@ export const ClientComprehensiveSummary = ({
     onOpenChange?.(false);
   };
 
+  if (isLoading) {
+    return <div>Loading…</div>;
+  }
+
+  if (isError) {
+    return <div>Unable to load health history</div>;
+  }
+
   const content =
     viewMode === "summary" ? (
       <div className="overflow-y-auto max-h-[calc(100vh-130px)]">
@@ -251,6 +259,7 @@ export const ClientComprehensiveSummary = ({
             setCurrentStep(step);
             setViewMode("edit");
           }}
+          clientId={clientId}
         />
       </div>
     ) : (

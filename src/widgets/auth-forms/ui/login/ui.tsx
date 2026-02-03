@@ -119,46 +119,13 @@ export const LoginForm = () => {
   };
 
   const redirectClient = async () => {
-    const onboardingComplete = await getOnboardingStatusWithRetry();
-
-    if (onboardingComplete.onboarding_filled) {
-      if (coachInviteToken)
-        await acceptCoachInvite({ token: coachInviteToken }).unwrap();
+    if (coachInviteToken) {
+      await acceptCoachInvite({ token: coachInviteToken }).unwrap();
       navigate("/library");
       return;
     }
 
-    try {
-      const userInfo = await triggerGetOnboardClient().unwrap();
-      dispatch(setFromUserInfo(userInfo));
-
-      const clientData = mapOnboardClientToFormState(userInfo);
-      const issue = findIncompleteClientField(clientData);
-
-      if (coachInviteToken)
-        await acceptCoachInvite({ token: coachInviteToken }).unwrap();
-
-      if (issue) {
-        navigate("/library", { state: { incomplete: true } });
-      } else {
-        navigate("/library");
-      }
-    } catch (err: any) {
-      const detail = err?.data?.detail;
-      if (
-        err?.status === 400 &&
-        typeof detail === "string" &&
-        detail.includes("No onboarding profile found")
-      ) {
-        navigate("/library", { state: { incomplete: true } });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Failed to load onboarding data",
-          description: detail || "An unexpected error occurred.",
-        });
-      }
-    }
+    navigate("/library");
   };
 
   const redirectCoach = async () => {
@@ -420,11 +387,10 @@ export const LoginForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={formDataChangeHandler}
-                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${
-                    loginError
+                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${loginError
                       ? "border border-[#FF1F0F]"
                       : "border border-[#DFDFDF]"
-                  }`}
+                    }`}
                 />
                 {loginError && (
                   <p className="text-[#FF1F0F] text-[14px]">{loginError}</p>
@@ -443,11 +409,10 @@ export const LoginForm = () => {
                     placeholder="Enter Password"
                     name="password"
                     onChange={formDataChangeHandler}
-                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${
-                      passwordError
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${passwordError
                         ? "border border-[#FF1F0F]"
                         : "border border-[#DFDFDF]"
-                    }`}
+                      }`}
                   />
                   {formData.password && (
                     <Button
@@ -523,11 +488,10 @@ export const LoginForm = () => {
               <Button
                 variant={"unstyled"}
                 size={"unstyled"}
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  formData.email && !loginError
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${formData.email && !loginError
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  }`}
                 onClick={handleRequestInvite}
               >
                 Request invite
@@ -537,12 +501,11 @@ export const LoginForm = () => {
                 variant={"unstyled"}
                 size={"unstyled"}
                 type="submit"
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  (!isCodeSent && formData.email) ||
-                  (isCodeSent && formData.code)
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${(!isCodeSent && formData.email) ||
+                    (isCodeSent && formData.code)
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  }`}
               >
                 {loginMode === "2fa"
                   ? isCodeSent

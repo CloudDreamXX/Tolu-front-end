@@ -1,6 +1,26 @@
+import { skipToken } from "@reduxjs/toolkit/query";
+import { useGetHealthHistoryNotesQuery } from "entities/coach";
 import { HealthHistory } from "entities/health-history";
+import { useMemo } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { Button } from "shared/ui";
+import { CoachBlockNote } from "widgets/ClientComprehensiveSummary/components/CoachBlockNote";
+
+export const HEALTH_HISTORY_BLOCKS = {
+    BASIC_INFO: "basic_info",
+    BIRTH_BODY: "birth_body",
+    HEALTH_CONCERNS: "health_concerns",
+    BOWEL_HEALTH: "bowel_health",
+    STRESSFUL_EVENTS: "stressful_events",
+    MEDICAL_HISTORY: "medical_history",
+    ORAL_HEALTH: "oral_health",
+    LIFESTYLE_HISTORY: "lifestyle_history",
+    SLEEP_HISTORY: "sleep_history",
+    WOMENS_HEALTH: "womens_health",
+    SEXUAL_HISTORY: "sexual_history",
+    MENTAL_HEALTH: "mental_health",
+    OTHER: "other",
+};
 
 const SummaryRow = ({
     label,
@@ -45,12 +65,33 @@ const Section = ({
 
 export const HealthHistorySummary = ({
     data,
+    clientId,
     onEditSection,
 }: {
     data: HealthHistory;
+    clientId?: string;
     onEditSection: (step: number) => void;
-}) => (
-    <div className="space-y-6">
+}) => {
+    const { data: notesData } = useGetHealthHistoryNotesQuery(
+        clientId && data?.id
+            ? { clientId, healthHistoryId: data.id }
+            : skipToken,
+        { skip: !clientId || !data?.id }
+    );
+
+    const note = notesData?.notes.find(
+        (n) => n.block_name === HEALTH_HISTORY_BLOCKS.BASIC_INFO
+    );
+
+    const notesByBlock = useMemo(() => {
+        const map: Record<string, string> = {};
+        notesData?.notes.forEach((n) => {
+            map[n.block_name] = n.note_content;
+        });
+        return map;
+    }, [notesData]);
+
+    return (<div className="space-y-6">
         <Section title="Basic Information" onEdit={() => onEditSection(0)}>
             <SummaryRow label="Age" value={data?.age} />
             <SummaryRow label="Birth date" value={data?.birth_date} />
@@ -59,6 +100,13 @@ export const HealthHistorySummary = ({
                 label="Chosen gender"
                 value={data?.chosen_gender_after_birth}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.BASIC_INFO}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.BASIC_INFO]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Birth & Body" onEdit={() => onEditSection(1)}>
@@ -86,6 +134,13 @@ export const HealthHistorySummary = ({
                 label="Weight 1 year ago (lbs)"
                 value={data?.weight_one_year_ago_lbs}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.BIRTH_BODY}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.BIRTH_BODY]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Health Concerns" onEdit={() => onEditSection(2)}>
@@ -109,6 +164,13 @@ export const HealthHistorySummary = ({
                 label="Other practitioners"
                 value={data?.other_health_practitioners}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.HEALTH_CONCERNS}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.HEALTH_CONCERNS]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Bowel Health" onEdit={() => onEditSection(3)}>
@@ -129,6 +191,13 @@ export const HealthHistorySummary = ({
                 label="Food poisoning history"
                 value={data?.food_poisoning_history}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.BOWEL_HEALTH}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.BOWEL_HEALTH]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Stressful Events" onEdit={() => onEditSection(4)}>
@@ -156,6 +225,13 @@ export const HealthHistorySummary = ({
                 label="Additional notes"
                 value={data?.trauma_additional_notes}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.STRESSFUL_EVENTS}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.STRESSFUL_EVENTS]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Medical History" onEdit={() => onEditSection(5)}>
@@ -180,6 +256,13 @@ export const HealthHistorySummary = ({
                 label="Other conditions"
                 value={data?.other_conditions_symptoms}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.MEDICAL_HISTORY}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.MEDICAL_HISTORY]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Oral Health" onEdit={() => onEditSection(6)}>
@@ -195,6 +278,13 @@ export const HealthHistorySummary = ({
                 label="Oral health concerns"
                 value={data?.oral_health_concerns}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.ORAL_HEALTH}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.ORAL_HEALTH]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Lifestyle History" onEdit={() => onEditSection(7)}>
@@ -210,6 +300,13 @@ export const HealthHistorySummary = ({
                 label="Stress handling"
                 value={data?.stress_handling}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.LIFESTYLE_HISTORY}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.LIFESTYLE_HISTORY]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Sleep History" onEdit={() => onEditSection(8)}>
@@ -225,6 +322,13 @@ export const HealthHistorySummary = ({
                 label="Sleep 6–8 hours"
                 value={data?.sleep_6_8_hours}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.SLEEP_HISTORY}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.SLEEP_HISTORY]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Women’s Health" onEdit={() => onEditSection(9)}>
@@ -244,6 +348,13 @@ export const HealthHistorySummary = ({
                 label="Pregnancy concerns"
                 value={data?.conception_pregnancy_problems}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.WOMENS_HEALTH}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.WOMENS_HEALTH]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Sexual History" onEdit={() => onEditSection(10)}>
@@ -255,6 +366,13 @@ export const HealthHistorySummary = ({
                 label="Partners past year"
                 value={data?.sexual_partners_past_year}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.SEXUAL_HISTORY}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.SEXUAL_HISTORY]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Mental Health" onEdit={() => onEditSection(11)}>
@@ -267,6 +385,13 @@ export const HealthHistorySummary = ({
                 label="Best point in life"
                 value={data?.best_point_in_life}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.MENTAL_HEALTH}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.MENTAL_HEALTH]}
+                noteId={note?.id}
+            />}
         </Section>
 
         <Section title="Goals & Support" onEdit={() => onEditSection(12)}>
@@ -282,6 +407,14 @@ export const HealthHistorySummary = ({
                 label="Support system"
                 value={data?.family_friends_support}
             />
+            {clientId && data && <CoachBlockNote
+                clientId={clientId}
+                healthHistoryId={data.id}
+                blockName={HEALTH_HISTORY_BLOCKS.OTHER}
+                initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.OTHER]}
+                noteId={note?.id}
+            />}
         </Section>
     </div>
-);
+    )
+}
