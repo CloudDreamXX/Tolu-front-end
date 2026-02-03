@@ -144,7 +144,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                     <div className="flex justify-center">
                       <Checkbox
                         checked={field.value === "no"}
-                        onCheckedChange={() => field.onChange("no")}
+                        onCheckedChange={() => field.onChange({ ...field.value, status: "no" })}
                       />
                     </div>
                   </FormControl>

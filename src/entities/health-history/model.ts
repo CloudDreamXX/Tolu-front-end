@@ -262,7 +262,7 @@ export type YesNo = "yes" | "no";
 export type YesNoSometimes = "yes" | "no" | "sometimes";
 
 export interface MedicalCondition {
-  status: "past" | "now" | "never";
+  status: "yes" | "no";
   date?: string; // YYYY-MM-DD
 }
 

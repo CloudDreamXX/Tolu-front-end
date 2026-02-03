@@ -254,9 +254,10 @@ export const HealthProfileForm = () => {
   };
 
   const handleSubmit = async () => {
-    const valid = await form.trigger();
+    const valid = await form.trigger(stepFields[currentStep] as any);
     if (!valid) return;
     await submitHealthHistory(form.getValues(), { partial: false });
+    setIsSummary(true);
   };
 
   const onDiscard = () => {

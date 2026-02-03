@@ -99,7 +99,6 @@ export const CoachBlockNote = ({
           <Button
             size="sm"
             variant={"brightblue"}
-            className="ml-auto"
             onClick={handleSave}
             disabled={isLoading || !value.trim()}
           >

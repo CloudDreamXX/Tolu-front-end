@@ -23,11 +23,11 @@ import {
   SKIN,
 } from "./lib";
 
-export const statusEnum = z.enum(["past", "now", "never"]);
 export const frequencyEnum = z.enum(["yes", "no", "sometimes"]);
+export const statusEnum = z.enum(["yes", "no"]);
 
 export const medicalConditionSchema = z.object({
-  status: z.enum(["past", "now", "never"]),
+  status: statusEnum,
   date: z.string().optional(),
 });
 
@@ -81,11 +81,10 @@ const StatusTable = ({
     </FormLabel>
 
     <div className="border rounded-lg overflow-hidden">
-      <div className="grid grid-cols-[1fr_80px_80px_80px] bg-gray-50 px-4 py-2 text-sm font-medium gap-4">
+      <div className="grid grid-cols-[1fr_80px_80px] bg-gray-50 px-4 py-2 text-sm font-medium gap-4">
         <span />
-        <span className="text-center">Past</span>
-        <span className="text-center">Now</span>
-        <span className="text-center">Never</span>
+        <span className="text-center">Yes</span>
+        <span className="text-center">No</span>
       </div>
 
       {items.map(({ label, name }) => (
@@ -94,10 +93,10 @@ const StatusTable = ({
           control={form.control}
           name={`${name}.status`}
           render={({ field }) => (
-            <FormItem className="grid grid-cols-[1fr_80px_80px_80px] items-center gap-4 px-4 py-3 border-t">
+            <FormItem className="grid grid-cols-[1fr_80px_80px] items-center gap-4 px-4 py-3 border-t">
               <span className="text-sm text-gray-900">{label}</span>
 
-              {(["past", "now", "never"] as const).map((val) => (
+              {(["yes", "no"] as const).map((val) => (
                 <FormControl key={val}>
                   <div className="flex justify-center">
                     <Checkbox
@@ -119,7 +118,7 @@ const StatusTable = ({
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-sm">
-            If you had any of the conditions above, please provide the date.
+            If you answered “Yes” above, please provide the date.
           </FormLabel>
           <FormControl>
             <Input type="date" {...field} />

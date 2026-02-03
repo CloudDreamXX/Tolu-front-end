@@ -56,7 +56,7 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
                 min={1}
                 max={10}
                 {...field}
-                onChange={(e) => field.onChange(Number(e.target.value))}
+                onChange={(e) => field.onChange(String(e.target.value))}
               />
             </FormControl>
             <FormMessage />
