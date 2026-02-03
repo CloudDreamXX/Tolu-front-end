@@ -64,7 +64,7 @@ export const HealthHistorySummary = ({
   clientId,
   onEditSection,
 }: {
-  data: HealthHistory;
+  data: HealthHistory | null;
   clientId?: string;
   onEditSection: (step: number) => void;
 }) => {
@@ -84,10 +84,11 @@ export const HealthHistorySummary = ({
     });
     return map;
   }, [notesData]);
+  console.log(data)
 
   return (
     <div className="space-y-6">
-      <Section title="Basic Information" onEdit={() => onEditSection(0)}>
+      <Section title="Birth & Body" onEdit={() => onEditSection(1)}>
         <SummaryRow label="Age" value={data?.age} />
         <SummaryRow label="Birth date" value={data?.birth_date} />
         <SummaryRow label="Gender at birth" value={data?.gender_at_birth} />
@@ -95,18 +96,6 @@ export const HealthHistorySummary = ({
           label="Chosen gender"
           value={data?.chosen_gender_after_birth}
         />
-        {clientId && data && (
-          <CoachBlockNote
-            clientId={clientId}
-            healthHistoryId={data.id}
-            blockName={HEALTH_HISTORY_BLOCKS.BASIC_INFO}
-            initialValue={notesByBlock[HEALTH_HISTORY_BLOCKS.BASIC_INFO]}
-            noteId={note?.id}
-          />
-        )}
-      </Section>
-
-      <Section title="Birth & Body" onEdit={() => onEditSection(1)}>
         <SummaryRow
           label="Breastfed or bottle"
           value={data?.breastfed_or_bottle}

@@ -28,11 +28,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-      open: true;
-      mode: "create" | "edit";
-      chat?: DetailsChatItemModel | null;
-      preselectedClients?: string[];
-    };
+    open: true;
+    mode: "create" | "edit";
+    chat?: DetailsChatItemModel | null;
+    preselectedClients?: string[];
+  };
 
 export const ContentManagerMessages: React.FC = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export const ContentManagerMessages: React.FC = () => {
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
   const { data } = useGetManagedClientsQuery();
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
 
   useEffect(() => {
     if (data && data.clients) {
@@ -87,39 +87,33 @@ export const ContentManagerMessages: React.FC = () => {
       return;
     }
 
-    if (routeMatch === "pending") {
-      // Still waiting for chats to load
+    if (routeMatch && routeMatch !== "pending") {
+      setSelectedChat(routeMatch);
       return;
     }
 
-    if (routeMatch) {
-      setSelectedChat(routeMatch);
-    } else if (routeChatId && chats.length > 0) {
-      // No existing chat found, create a new chat entry for this client
-      const client = clientsData.find((c) => c.client_id === routeChatId);
-      if (client) {
-        const newChat: ChatItemModel = {
-          id: routeChatId,
-          type: "new_chat",
+    const client = clientsData.find((c) => c.client_id === routeChatId);
+    if (!client) return;
+
+    setSelectedChat({
+      id: routeChatId,
+      type: "new_chat",
+      name: client.name || `${client.first_name} ${client.last_name}`,
+      avatar_url: "",
+      participants: [
+        {
+          id: client.client_id,
+          email: "",
           name: client.name || `${client.first_name} ${client.last_name}`,
-          avatar_url: "",
-          participants: [
-            {
-              id: client.client_id,
-              email: "",
-              name: client.name || `${client.first_name} ${client.last_name}`,
-              first_name: client.first_name,
-              last_name: client.last_name,
-            },
-          ],
-          lastMessage: null,
-          unreadCount: 0,
-          lastMessageAt: new Date().toISOString(),
-        };
-        setSelectedChat(newChat);
-      }
-    }
-  }, [routeMatch, routeChatId, chats.length, clientsData]);
+          first_name: client.first_name,
+          last_name: client.last_name,
+        },
+      ],
+      lastMessage: null,
+      unreadCount: 0,
+      lastMessageAt: new Date().toISOString(),
+    });
+  }, [routeChatId, routeMatch, clientsData]);
 
   useEffect(() => {
     handlerRef.current = (msg: ChatMessageModel) => {
@@ -167,8 +161,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-            groupModalOpen.mode === "edit" &&
-            groupModalOpen.chat
+              groupModalOpen.mode === "edit" &&
+              groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -334,11 +328,10 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
-            groupModalOpen.open && groupModalOpen.mode === "edit"
-              ? (groupModalOpen.chat?.chat_id ?? "new")
-              : "new"
-          }`}
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
+            ? (groupModalOpen.chat?.chat_id ?? "new")
+            : "new"
+            }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={
