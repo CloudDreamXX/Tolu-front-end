@@ -269,7 +269,7 @@ export interface MedicalCondition {
 export interface TraumaEvent {
   status: "yes" | "no";
   date_from?: string; // YYYY-MM-DD
-  date_to?: string;   // YYYY-MM-DD | "current"
+  date_to?: string; // YYYY-MM-DD | "current"
 }
 
 export interface LabResultFile {

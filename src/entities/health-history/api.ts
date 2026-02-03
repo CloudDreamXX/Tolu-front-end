@@ -85,42 +85,42 @@ export const healthHistoryApi = createApi({
       }),
     }),
 
-updateCoachClientHealthHistory: builder.mutation<
-  {
-    message: string;
-    health_history_id: string;
-    user_id: string;
-    updated_at: string;
-    lab_files_count: number;
-  },
-  {
-    clientId: string;
-    data: Partial<HealthHistoryResponse>;
-    labFiles?: File[];
-  }
->({
-  query: ({ clientId, data, labFiles }) => {
-    const formData = new FormData();
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, String(value));
+    updateCoachClientHealthHistory: builder.mutation<
+      {
+        message: string;
+        health_history_id: string;
+        user_id: string;
+        updated_at: string;
+        lab_files_count: number;
+      },
+      {
+        clientId: string;
+        data: Partial<HealthHistoryResponse>;
+        labFiles?: File[];
       }
-    });
+    >({
+      query: ({ clientId, data, labFiles }) => {
+        const formData = new FormData();
 
-    if (labFiles && labFiles.length > 0) {
-      labFiles.forEach((file) => {
-        formData.append("lab_file", file);
-      });
-    }
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
+        });
 
-    return {
-      url: API_ROUTES.HEALTH_HISTORY.EDIT.replace("{client_id}", clientId),
-      method: "PUT",
-      body: formData,
-    };
-  },
-}),
+        if (labFiles && labFiles.length > 0) {
+          labFiles.forEach((file) => {
+            formData.append("lab_file", file);
+          });
+        }
+
+        return {
+          url: API_ROUTES.HEALTH_HISTORY.EDIT.replace("{client_id}", clientId),
+          method: "PUT",
+          body: formData,
+        };
+      },
+    }),
 
     getMedicationsByChat: builder.query<Medication[], GetMedicationsParams>({
       query: ({ chatId, limit = 100, offset = 0 }) => ({

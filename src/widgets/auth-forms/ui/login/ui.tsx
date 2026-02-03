@@ -2,13 +2,11 @@ import {
   useAcceptCoachInviteMutation,
   useRequestNewInviteMutation,
 } from "entities/client";
-import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
 import {
   setCredentials,
   useLoginMutation,
   useRequestPasswordlessLoginMutation,
   useVerifyPasswordlessLoginMutation,
-  useLazyGetOnboardClientQuery,
   useLazyGetOnboardingStatusQuery,
   useLazyGetOnboardingUserQuery,
   setUserId,
@@ -23,21 +21,20 @@ import { z } from "zod";
 import { setCoachOnboardingData } from "entities/store/coachOnboardingSlice";
 import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboarding-finish/helpers";
 import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-type/helpers";
-import { mapOnboardClientToFormState } from "entities/store/helpers";
-import { findIncompleteClientField } from "widgets/OnboardingClient/DemographicStep/helpers";
 import { usePageWidth } from "shared/lib";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "shared/ui/input-otp";
 import { useLazyGetUserProfileQuery } from "entities/user";
 
 export const LoginForm = () => {
-  const [login] = useLoginMutation();
-  const [requestPasswordlessLogin] = useRequestPasswordlessLoginMutation();
-  const [verifyPasswordlessLogin] = useVerifyPasswordlessLoginMutation();
+  const [login, { isLoading: isPasswordLoginLoading }] = useLoginMutation();
+  const [requestPasswordlessLogin, { isLoading: isRequestingCode }] =
+    useRequestPasswordlessLoginMutation();
+  const [verifyPasswordlessLogin, { isLoading: isVerifyingCode }] =
+    useVerifyPasswordlessLoginMutation();
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [requestNewInvite] = useRequestNewInviteMutation();
 
   const [triggerGetOnboardingStatus] = useLazyGetOnboardingStatusQuery();
-  const [triggerGetOnboardClient] = useLazyGetOnboardClientQuery();
   const [triggerGetOnboardingUser] = useLazyGetOnboardingUserQuery();
   const [getUserProfile] = useLazyGetUserProfileQuery();
 
@@ -387,10 +384,11 @@ export const LoginForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={formDataChangeHandler}
-                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${loginError
+                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${
+                    loginError
                       ? "border border-[#FF1F0F]"
                       : "border border-[#DFDFDF]"
-                    }`}
+                  }`}
                 />
                 {loginError && (
                   <p className="text-[#FF1F0F] text-[14px]">{loginError}</p>
@@ -409,10 +407,11 @@ export const LoginForm = () => {
                     placeholder="Enter Password"
                     name="password"
                     onChange={formDataChangeHandler}
-                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${passwordError
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${
+                      passwordError
                         ? "border border-[#FF1F0F]"
                         : "border border-[#DFDFDF]"
-                      }`}
+                    }`}
                   />
                   {formData.password && (
                     <Button
@@ -488,10 +487,11 @@ export const LoginForm = () => {
               <Button
                 variant={"unstyled"}
                 size={"unstyled"}
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${formData.email && !loginError
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
+                  formData.email && !loginError
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                  }`}
+                }`}
                 onClick={handleRequestInvite}
               >
                 Request invite
@@ -501,17 +501,49 @@ export const LoginForm = () => {
                 variant={"unstyled"}
                 size={"unstyled"}
                 type="submit"
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${(!isCodeSent && formData.email) ||
-                    (isCodeSent && formData.code)
+                disabled={
+                  (loginMode === "2fa" &&
+                    !isCodeSent &&
+                    (!formData.email || isRequestingCode)) ||
+                  (loginMode === "2fa" &&
+                    isCodeSent &&
+                    (!formData.code ||
+                      formData.code.length < 6 ||
+                      isVerifyingCode)) ||
+                  (loginMode === "password" &&
+                    (!formData.email ||
+                      !formData.password ||
+                      isPasswordLoginLoading))
+                }
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
+                  (loginMode === "2fa" &&
+                    !isCodeSent &&
+                    formData.email &&
+                    !isRequestingCode) ||
+                  (loginMode === "2fa" &&
+                    isCodeSent &&
+                    formData.code &&
+                    formData.code.length >= 6 &&
+                    !isVerifyingCode) ||
+                  (loginMode === "password" &&
+                    formData.email &&
+                    formData.password &&
+                    !isPasswordLoginLoading)
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                  }`}
+                }`}
               >
                 {loginMode === "2fa"
                   ? isCodeSent
-                    ? "Verify Code"
-                    : "Send Code"
-                  : "Log In"}
+                    ? isVerifyingCode
+                      ? "Verifying..."
+                      : "Verify Code"
+                    : isRequestingCode
+                      ? "Sending..."
+                      : "Send Code"
+                  : isPasswordLoginLoading
+                    ? "Logging in..."
+                    : "Log In"}
               </Button>
             )}
 

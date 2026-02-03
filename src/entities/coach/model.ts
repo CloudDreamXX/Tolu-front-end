@@ -101,13 +101,13 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-  | "Raw"
-  | "Ready for Review"
-  | "Waiting"
-  | "Second Review Requested"
-  | "Ready to Publish"
-  | "Live"
-  | "Archived";
+    | "Raw"
+    | "Ready for Review"
+    | "Waiting"
+    | "Second Review Requested"
+    | "Ready to Publish"
+    | "Live"
+    | "Archived";
 }
 
 export interface IContentMessage {

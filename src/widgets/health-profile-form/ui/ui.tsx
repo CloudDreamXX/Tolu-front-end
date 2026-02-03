@@ -22,18 +22,33 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { setHealthHistory } from "entities/health-history/lib";
 import { useDispatch } from "react-redux";
 
-import { stressfulEventsSchema, StressfulEventsStep } from "./stressful-events-step";
-import { medicalHistorySchema, MedicalHistoryStep } from "./medical-history-step";
+import {
+  stressfulEventsSchema,
+  StressfulEventsStep,
+} from "./stressful-events-step";
+import {
+  medicalHistorySchema,
+  MedicalHistoryStep,
+} from "./medical-history-step";
 import { oralHealthSchema, OralHealthHistoryStep } from "./oral-health-step";
-import { lifestyleHistorySchema, LifestyleHistoryStep } from "./lifestyle-history-step";
+import {
+  lifestyleHistorySchema,
+  LifestyleHistoryStep,
+} from "./lifestyle-history-step";
 import { sleepHistorySchema, SleepHistoryStep } from "./sleep-history-step";
 import { womensHealthSchema, WomensHealthStep } from "./womens-health-step";
 import { sexualHistorySchema, SexualHistoryStep } from "./sexual-history-step";
-import { mentalHealthSchema, MentalHealthStatusStep } from "./mental-health-step";
+import {
+  mentalHealthSchema,
+  MentalHealthStatusStep,
+} from "./mental-health-step";
 import { otherInfoSchema, OtherStep } from "./other-info-step";
 import { basicInfoSchema, BasicInfoStep } from "./basic-info-step";
 import { birthBodySchema, BirthBodyStep } from "./birth-body-step";
-import { healthConcernsSchema, HealthConcernsStep } from "./health-concerns-step";
+import {
+  healthConcernsSchema,
+  HealthConcernsStep,
+} from "./health-concerns-step";
 import { bowelHealthSchema, BowelHealthStep } from "./bowel-health-step";
 import { HealthHistorySummary } from "widgets/HealthHistorySummary/ui";
 
@@ -53,20 +68,19 @@ const steps = [
   "Other",
 ];
 
-export const formSchema =
-  basicInfoSchema
-    .and(birthBodySchema)
-    .and(healthConcernsSchema)
-    .and(bowelHealthSchema)
-    .and(stressfulEventsSchema)
-    .and(medicalHistorySchema)
-    .and(oralHealthSchema)
-    .and(lifestyleHistorySchema)
-    .and(sleepHistorySchema)
-    .and(womensHealthSchema)
-    .and(sexualHistorySchema)
-    .and(mentalHealthSchema)
-    .and(otherInfoSchema);
+export const formSchema = basicInfoSchema
+  .and(birthBodySchema)
+  .and(healthConcernsSchema)
+  .and(bowelHealthSchema)
+  .and(stressfulEventsSchema)
+  .and(medicalHistorySchema)
+  .and(oralHealthSchema)
+  .and(lifestyleHistorySchema)
+  .and(sleepHistorySchema)
+  .and(womensHealthSchema)
+  .and(sexualHistorySchema)
+  .and(mentalHealthSchema)
+  .and(otherInfoSchema);
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -79,8 +93,7 @@ export const HealthProfileForm = () => {
 
   const [isSummary, setIsSummary] = useState(true);
 
-  const { data: healthHistoryData, refetch } =
-    useGetUserHealthHistoryQuery();
+  const { data: healthHistoryData, refetch } = useGetUserHealthHistoryQuery();
 
   const [createHealthHistory] = useCreateHealthHistoryMutation();
 
@@ -265,19 +278,25 @@ export const HealthProfileForm = () => {
           size={isMobile ? "sm" : "icon"}
           className="rounded-full h-[56px] w-[56px] flex items-center justify-center"
         >
-          {isMobile ? "Health profile" : <MaterialIcon iconName="manage_accounts" />}
+          {isMobile ? (
+            "Health profile"
+          ) : (
+            <MaterialIcon iconName="manage_accounts" />
+          )}
         </Button>
       </DialogTrigger>
 
       <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
         <DialogTitle>Your Health History</DialogTitle>
 
-        {!isSummary && <Steps
-          steps={steps}
-          currentStep={currentStep}
-          ordered
-          onStepClick={goToStep}
-        />}
+        {!isSummary && (
+          <Steps
+            steps={steps}
+            currentStep={currentStep}
+            ordered
+            onStepClick={goToStep}
+          />
+        )}
 
         <div className="flex-1 overflow-y-auto">
           {isSummary ? (
@@ -330,9 +349,9 @@ export const HealthProfileForm = () => {
               onClick={
                 isSummary
                   ? () => {
-                    setIsSummary(false);
-                    setCurrentStep(0);
-                  }
+                      setIsSummary(false);
+                      setCurrentStep(0);
+                    }
                   : currentStep === steps.length - 1
                     ? handleSubmit
                     : () => goToStep(currentStep + 1)

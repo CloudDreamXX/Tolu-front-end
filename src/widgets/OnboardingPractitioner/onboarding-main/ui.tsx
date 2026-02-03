@@ -32,7 +32,7 @@ export const OnboardingMain = () => {
 
   const allOptions = useMemo(() => customButtons.flat(), [customButtons]);
 
-  const [onboardUser] = useOnboardUserMutation();
+  const [onboardUser, { isLoading }] = useOnboardUserMutation();
 
   useEffect(() => {
     const saved = (state?.primary_niches ?? []) as string[];
@@ -181,16 +181,17 @@ export const OnboardingMain = () => {
                 <Button
                   variant={"unstyled"}
                   size={"unstyled"}
+                  disabled={isNextDisabled || isLoading}
                   className={
-                    !isNextDisabled
+                    !isNextDisabled && !isLoading
                       ? "bg-[#1C63DB] flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full text-[16px]  font-semibold text-white"
                       : "flex w-full md:w-[250px] md:h-[44px] py-[16px] md:py-[4px] md:px-[32px] justify-center items-center gap-[8px] rounded-full bg-[#D5DAE2] text-[16px]  font-semibold text-[#5F5F65] cursor-not-allowed"
                   }
-                  tabIndex={isNextDisabled ? -1 : 0}
-                  aria-disabled={isNextDisabled}
+                  tabIndex={isNextDisabled || isLoading ? -1 : 0}
+                  aria-disabled={isNextDisabled || isLoading}
                   onClick={handleNext}
                 >
-                  Next
+                  {isLoading ? "Saving..." : "Next"}
                 </Button>
               </TooltipTrigger>
 

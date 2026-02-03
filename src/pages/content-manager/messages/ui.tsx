@@ -28,11 +28,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-    open: true;
-    mode: "create" | "edit";
-    chat?: DetailsChatItemModel | null;
-    preselectedClients?: string[];
-  };
+      open: true;
+      mode: "create" | "edit";
+      chat?: DetailsChatItemModel | null;
+      preselectedClients?: string[];
+    };
 
 export const ContentManagerMessages: React.FC = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export const ContentManagerMessages: React.FC = () => {
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
   const { data } = useGetManagedClientsQuery();
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
 
   useEffect(() => {
     if (data && data.clients) {
@@ -69,7 +69,11 @@ export const ContentManagerMessages: React.FC = () => {
   }, [data, setClientsData]);
 
   const routeMatch = useMemo(() => {
-    if (!routeChatId || !chats.length) return null;
+    if (!routeChatId || !chats.length) {
+      // If we have a routeChatId but no chats yet, still allow creation of new chat
+      if (routeChatId) return "pending";
+      return null;
+    }
     return (
       chats.find((c) => c.participants?.[0]?.id === routeChatId) ||
       chats.find((c) => c.id === routeChatId) ||
@@ -78,10 +82,44 @@ export const ContentManagerMessages: React.FC = () => {
   }, [routeChatId, chats]);
 
   useEffect(() => {
+    if (!routeChatId) {
+      setSelectedChat(null);
+      return;
+    }
+
+    if (routeMatch === "pending") {
+      // Still waiting for chats to load
+      return;
+    }
+
     if (routeMatch) {
       setSelectedChat(routeMatch);
+    } else if (routeChatId && chats.length > 0) {
+      // No existing chat found, create a new chat entry for this client
+      const client = clientsData.find((c) => c.client_id === routeChatId);
+      if (client) {
+        const newChat: ChatItemModel = {
+          id: routeChatId,
+          type: "new_chat",
+          name: client.name || `${client.first_name} ${client.last_name}`,
+          avatar_url: "",
+          participants: [
+            {
+              id: client.client_id,
+              email: "",
+              name: client.name || `${client.first_name} ${client.last_name}`,
+              first_name: client.first_name,
+              last_name: client.last_name,
+            },
+          ],
+          lastMessage: null,
+          unreadCount: 0,
+          lastMessageAt: new Date().toISOString(),
+        };
+        setSelectedChat(newChat);
+      }
     }
-  }, [routeMatch, setSelectedChat]);
+  }, [routeMatch, routeChatId, chats.length, clientsData]);
 
   useEffect(() => {
     handlerRef.current = (msg: ChatMessageModel) => {
@@ -129,8 +167,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-              groupModalOpen.mode === "edit" &&
-              groupModalOpen.chat
+            groupModalOpen.mode === "edit" &&
+            groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -205,6 +243,11 @@ export const ContentManagerMessages: React.FC = () => {
     page: number
   ): Promise<FetchChatMessagesResponse | undefined> => {
     if (!selectedChat) return;
+
+    if (selectedChat.type === "new_chat") {
+      return undefined;
+    }
+
     try {
       const data = await fetchChatMessagesTrigger({
         chatId: selectedChat.id,
@@ -291,10 +334,11 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
-            ? (groupModalOpen.chat?.chat_id ?? "new")
-            : "new"
-            }`}
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
+            groupModalOpen.open && groupModalOpen.mode === "edit"
+              ? (groupModalOpen.chat?.chat_id ?? "new")
+              : "new"
+          }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={

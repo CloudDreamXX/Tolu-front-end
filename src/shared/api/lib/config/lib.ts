@@ -158,10 +158,8 @@ export const API_ROUTES = {
     DOWNLOAD_LICENSE: "/coach/license/{filename}",
     DELETE_LICENSE: "/coach/license/{filename}",
     GET_CLIENT_COACHES: "/coach/client/{client_id}/coaches",
-    ADD_NOTE:
-      "/clients/{client_id}/health-history/{health_history_id}/notes",
-    GET_NOTES:
-      "/clients/{client_id}/health-history/{health_history_id}/notes",
+    ADD_NOTE: "/clients/{client_id}/health-history/{health_history_id}/notes",
+    GET_NOTES: "/clients/{client_id}/health-history/{health_history_id}/notes",
     GET_NOTE:
       "/clients/{client_id}/health-history/{health_history_id}/notes/{note_id}",
     UPDATE_NOTE:

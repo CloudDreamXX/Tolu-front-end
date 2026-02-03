@@ -61,12 +61,13 @@ export const Steps: React.FC<StepsProps> = ({
               type="button"
               disabled={disabled}
               onClick={() => onStepClick(index)}
-              className={`flex items-center justify-center w-10 h-10 transition-all rounded-full  ${isCompleted
-                ? "w-10 bg-[#BCE2C8] border border-[#062] text-[#062] shrink-0"
-                : isCurrent
-                  ? `px-4 ${stepWidth || ""} w-fit bg-gray-100 border border-gray-300 text-black text-[12px] md:text-[16px] font-medium`
-                  : "w-10 border border-gray-300 text-gray-600 shrink-0"
-                }`}
+              className={`flex items-center justify-center w-10 h-10 transition-all rounded-full  ${
+                isCompleted
+                  ? "w-10 bg-[#BCE2C8] border border-[#062] text-[#062] shrink-0"
+                  : isCurrent
+                    ? `px-4 ${stepWidth || ""} w-fit bg-gray-100 border border-gray-300 text-black text-[12px] md:text-[16px] font-medium`
+                    : "w-10 border border-gray-300 text-gray-600 shrink-0"
+              }`}
             >
               {isCompleted ? (
                 <MaterialIcon iconName="check" className="w-6 h-6" />

@@ -272,9 +272,10 @@ export const coachApi = createApi({
       { clientId: string; healthHistoryId: string }
     >({
       query: ({ clientId, healthHistoryId }) =>
-        API_ROUTES.COACH_ADMIN.GET_NOTES
-          .replace("{client_id}", clientId)
-          .replace("{health_history_id}", healthHistoryId),
+        API_ROUTES.COACH_ADMIN.GET_NOTES.replace(
+          "{client_id}",
+          clientId
+        ).replace("{health_history_id}", healthHistoryId),
 
       providesTags: (_result, _error, { healthHistoryId }) => [
         { type: "CoachHealthNotes", id: healthHistoryId },
@@ -286,8 +287,7 @@ export const coachApi = createApi({
       { clientId: string; healthHistoryId: string; noteId: string }
     >({
       query: ({ clientId, healthHistoryId, noteId }) =>
-        API_ROUTES.COACH_ADMIN.GET_NOTE
-          .replace("{client_id}", clientId)
+        API_ROUTES.COACH_ADMIN.GET_NOTE.replace("{client_id}", clientId)
           .replace("{health_history_id}", healthHistoryId)
           .replace("{note_id}", noteId),
     }),
@@ -307,9 +307,10 @@ export const coachApi = createApi({
         formData.append("note_content", noteContent);
 
         return {
-          url: API_ROUTES.COACH_ADMIN.ADD_NOTE
-            .replace("{client_id}", clientId)
-            .replace("{health_history_id}", healthHistoryId),
+          url: API_ROUTES.COACH_ADMIN.ADD_NOTE.replace(
+            "{client_id}",
+            clientId
+          ).replace("{health_history_id}", healthHistoryId),
           method: "POST",
           body: formData,
         };
@@ -334,8 +335,10 @@ export const coachApi = createApi({
         formData.append("note_content", noteContent);
 
         return {
-          url: API_ROUTES.COACH_ADMIN.UPDATE_NOTE
-            .replace("{client_id}", clientId)
+          url: API_ROUTES.COACH_ADMIN.UPDATE_NOTE.replace(
+            "{client_id}",
+            clientId
+          )
             .replace("{health_history_id}", healthHistoryId)
             .replace("{note_id}", noteId),
           method: "PUT",
@@ -353,8 +356,7 @@ export const coachApi = createApi({
       { clientId: string; healthHistoryId: string; noteId: string }
     >({
       query: ({ clientId, healthHistoryId, noteId }) => ({
-        url: API_ROUTES.COACH_ADMIN.DELETE_NOTE
-          .replace("{client_id}", clientId)
+        url: API_ROUTES.COACH_ADMIN.DELETE_NOTE.replace("{client_id}", clientId)
           .replace("{health_history_id}", healthHistoryId)
           .replace("{note_id}", noteId),
         method: "DELETE",
@@ -374,8 +376,10 @@ export const coachApi = createApi({
       }
     >({
       query: ({ clientId, healthHistoryId, blockName }) => ({
-        url: API_ROUTES.COACH_ADMIN.DELETE_NOTE_BY_BLOCK
-          .replace("{client_id}", clientId)
+        url: API_ROUTES.COACH_ADMIN.DELETE_NOTE_BY_BLOCK.replace(
+          "{client_id}",
+          clientId
+        )
           .replace("{health_history_id}", healthHistoryId)
           .replace("{block_name}", blockName),
         method: "DELETE",

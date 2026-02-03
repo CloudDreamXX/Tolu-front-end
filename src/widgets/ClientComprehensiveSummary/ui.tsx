@@ -10,29 +10,65 @@ import {
 } from "entities/health-history";
 
 import { Steps } from "features/steps/ui";
+import { Button, Dialog, DialogContent, DialogTitle, Form } from "shared/ui";
+
 import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Form,
-} from "shared/ui";
+  basicInfoSchema,
+  BasicInfoStep,
+} from "widgets/health-profile-form/ui/basic-info-step";
+import {
+  birthBodySchema,
+  BirthBodyStep,
+} from "widgets/health-profile-form/ui/birth-body-step";
+import {
+  bowelHealthSchema,
+  BowelHealthStep,
+} from "widgets/health-profile-form/ui/bowel-health-step";
+import {
+  healthConcernsSchema,
+  HealthConcernsStep,
+} from "widgets/health-profile-form/ui/health-concerns-step";
+import {
+  lifestyleHistorySchema,
+  LifestyleHistoryStep,
+} from "widgets/health-profile-form/ui/lifestyle-history-step";
+import {
+  medicalHistorySchema,
+  MedicalHistoryStep,
+} from "widgets/health-profile-form/ui/medical-history-step";
+import {
+  mentalHealthSchema,
+  MentalHealthStatusStep,
+} from "widgets/health-profile-form/ui/mental-health-step";
+import {
+  oralHealthSchema,
+  OralHealthHistoryStep,
+} from "widgets/health-profile-form/ui/oral-health-step";
+import {
+  otherInfoSchema,
+  OtherStep,
+} from "widgets/health-profile-form/ui/other-info-step";
+import {
+  sexualHistorySchema,
+  SexualHistoryStep,
+} from "widgets/health-profile-form/ui/sexual-history-step";
+import {
+  sleepHistorySchema,
+  SleepHistoryStep,
+} from "widgets/health-profile-form/ui/sleep-history-step";
+import {
+  stressfulEventsSchema,
+  StressfulEventsStep,
+} from "widgets/health-profile-form/ui/stressful-events-step";
+import {
+  womensHealthSchema,
+  WomensHealthStep,
+} from "widgets/health-profile-form/ui/womens-health-step";
 
-import { basicInfoSchema, BasicInfoStep } from "widgets/health-profile-form/ui/basic-info-step";
-import { birthBodySchema, BirthBodyStep } from "widgets/health-profile-form/ui/birth-body-step";
-import { bowelHealthSchema, BowelHealthStep } from "widgets/health-profile-form/ui/bowel-health-step";
-import { healthConcernsSchema, HealthConcernsStep } from "widgets/health-profile-form/ui/health-concerns-step";
-import { lifestyleHistorySchema, LifestyleHistoryStep } from "widgets/health-profile-form/ui/lifestyle-history-step";
-import { medicalHistorySchema, MedicalHistoryStep } from "widgets/health-profile-form/ui/medical-history-step";
-import { mentalHealthSchema, MentalHealthStatusStep } from "widgets/health-profile-form/ui/mental-health-step";
-import { oralHealthSchema, OralHealthHistoryStep } from "widgets/health-profile-form/ui/oral-health-step";
-import { otherInfoSchema, OtherStep } from "widgets/health-profile-form/ui/other-info-step";
-import { sexualHistorySchema, SexualHistoryStep } from "widgets/health-profile-form/ui/sexual-history-step";
-import { sleepHistorySchema, SleepHistoryStep } from "widgets/health-profile-form/ui/sleep-history-step";
-import { stressfulEventsSchema, StressfulEventsStep } from "widgets/health-profile-form/ui/stressful-events-step";
-import { womensHealthSchema, WomensHealthStep } from "widgets/health-profile-form/ui/womens-health-step";
-
-import { mapHealthHistoryToFormDefaults, prune } from "widgets/health-profile-form/ui/lib";
+import {
+  mapHealthHistoryToFormDefaults,
+  prune,
+} from "widgets/health-profile-form/ui/lib";
 import { HealthHistorySummary } from "widgets/HealthHistorySummary/ui";
 
 const steps = [
@@ -51,20 +87,19 @@ const steps = [
   "Other",
 ];
 
-export const formSchema =
-  basicInfoSchema
-    .and(birthBodySchema)
-    .and(healthConcernsSchema)
-    .and(bowelHealthSchema)
-    .and(stressfulEventsSchema)
-    .and(medicalHistorySchema)
-    .and(oralHealthSchema)
-    .and(lifestyleHistorySchema)
-    .and(sleepHistorySchema)
-    .and(womensHealthSchema)
-    .and(sexualHistorySchema)
-    .and(mentalHealthSchema)
-    .and(otherInfoSchema);
+export const formSchema = basicInfoSchema
+  .and(birthBodySchema)
+  .and(healthConcernsSchema)
+  .and(bowelHealthSchema)
+  .and(stressfulEventsSchema)
+  .and(medicalHistorySchema)
+  .and(oralHealthSchema)
+  .and(lifestyleHistorySchema)
+  .and(sleepHistorySchema)
+  .and(womensHealthSchema)
+  .and(sexualHistorySchema)
+  .and(mentalHealthSchema)
+  .and(otherInfoSchema);
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -84,11 +119,14 @@ export const ClientComprehensiveSummary = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [viewMode, setViewMode] = useState<"summary" | "edit">("summary");
 
-  const { data: healthHistoryData, refetch, isLoading, isError } =
-    useGetCoachClientHealthHistoryQuery(clientId);
+  const {
+    data: healthHistoryData,
+    refetch,
+    isLoading,
+    isError,
+  } = useGetCoachClientHealthHistoryQuery(clientId);
 
-  const [updateHealthHistory] =
-    useUpdateCoachClientHealthHistoryMutation();
+  const [updateHealthHistory] = useUpdateCoachClientHealthHistoryMutation();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -315,7 +353,6 @@ export const ClientComprehensiveSummary = ({
         </div>
       </>
     );
-
 
   if (!asDialog) {
     return <div className="space-y-6">{content}</div>;

@@ -1,74 +1,63 @@
 import { z } from "zod";
-import {
-    FormLabel,
-    FormField,
-    FormItem,
-    FormControl,
-    Input,
-} from "shared/ui";
+import { FormLabel, FormField, FormItem, FormControl, Input } from "shared/ui";
 
 export const sleepHistorySchema = z.object({
-    satisfiedWithSleep: z.string(),
-    stayAwakeAllDay: z.string(),
-    asleep2am4am: z.string(),
-    fallAsleepUnder30min: z.string(),
-    sleep6to8Hours: z.string(),
+  satisfiedWithSleep: z.string(),
+  stayAwakeAllDay: z.string(),
+  asleep2am4am: z.string(),
+  fallAsleepUnder30min: z.string(),
+  sleep6to8Hours: z.string(),
 });
 
 export const SleepHistoryStep = ({ form }: { form: any }) => {
-    const QUESTIONS = [
-        {
-            name: "satisfiedWithSleep",
-            label: "Are you satisfied with your sleep?",
-        },
-        {
-            name: "stayAwakeAllDay",
-            label: "Do you stay awake all day without dozing?",
-        },
-        {
-            name: "asleep2am4am",
-            label:
-                "Are you asleep (or trying to sleep) between 2:00 a.m. and 4:00 a.m.?",
-        },
-        {
-            name: "fallAsleepUnder30min",
-            label: "Do you fall asleep in less than 30 minutes?",
-        },
-        {
-            name: "sleep6to8Hours",
-            label: "Do you sleep between 6 and 8 hours per night?",
-        },
-    ];
+  const QUESTIONS = [
+    {
+      name: "satisfiedWithSleep",
+      label: "Are you satisfied with your sleep?",
+    },
+    {
+      name: "stayAwakeAllDay",
+      label: "Do you stay awake all day without dozing?",
+    },
+    {
+      name: "asleep2am4am",
+      label:
+        "Are you asleep (or trying to sleep) between 2:00 a.m. and 4:00 a.m.?",
+    },
+    {
+      name: "fallAsleepUnder30min",
+      label: "Do you fall asleep in less than 30 minutes?",
+    },
+    {
+      name: "sleep6to8Hours",
+      label: "Do you sleep between 6 and 8 hours per night?",
+    },
+  ];
 
-    return (
-        <div className="space-y-8">
-            <FormLabel className="text-base font-medium">
-                Sleep History
-            </FormLabel>
+  return (
+    <div className="space-y-8">
+      <FormLabel className="text-base font-medium">Sleep History</FormLabel>
 
-            <div className="space-y-6">
-                {QUESTIONS.map((q) => (
-                    <FormField
-                        key={q.name}
-                        control={form.control}
-                        name={q.name}
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel className="text-sm font-medium">
-                                    {q.label} <span className="text-red-500">*</span>
-                                </FormLabel>
+      <div className="space-y-6">
+        {QUESTIONS.map((q) => (
+          <FormField
+            key={q.name}
+            control={form.control}
+            name={q.name}
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel className="text-sm font-medium">
+                  {q.label} <span className="text-red-500">*</span>
+                </FormLabel>
 
-                                <FormControl>
-                                    <Input
-                                        placeholder="Your answer"
-                                        {...field}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                ))}
-            </div>
-        </div>
-    );
+                <FormControl>
+                  <Input placeholder="Your answer" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
