@@ -30,6 +30,24 @@ type SummarySection<T> = {
   fields: SummaryField<T>[];
 };
 
+const formatMedicalHistoryField = (value: HealthHistory[keyof HealthHistory]) => {
+  if (!value) return "-";
+
+  if (typeof value === "object" && "status" in value) {
+    const statusText = value.status === "yes" ? "Yes" : value.status === "no" ? "No" : "-";
+    const fromDate = (value as any).fromDate;
+    const toDate = (value as any).toDate;
+
+    if (fromDate || toDate) {
+      return `${statusText}${fromDate ? ` from ${fromDate}` : ""}${toDate ? ` to ${toDate}` : ""}`;
+    }
+
+    return statusText;
+  }
+
+  return String(value);
+};
+
 export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
  {
     title: "Birth & Body",
@@ -182,132 +200,77 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
       ...GASTROINTESTINAL.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Hormones / Metabolic
       ...HORMONES_METABOLIC.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Cardiovascular
       ...CARDIOVASCULAR.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Cancer
       ...CANCER.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Genital & Urinary
       ...GENITAL_URINARY.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Musculoskeletal / Pain
       ...MUSCULOSKELETAL.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Immune / Inflammatory
       ...IMMUNE_INFLAMMATORY.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Respiratory
       ...RESPIRATORY.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Skin
       ...SKIN.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Neurologic / Mood
       ...NEUROLOGIC_MOOD.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Miscellaneous
       ...MISCELLANEOUS.map((item) => ({
         key: item.name as keyof HealthHistory,
         label: item.label,
-        format: (v: HealthHistory[keyof HealthHistory]) =>
-          v && typeof v === "object" && "status" in v
-            ? v.status === "yes"
-              ? `Yes`
-              : "No"
-            : "-",
+        format: formatMedicalHistoryField,
       })),
 
       // Other text fields

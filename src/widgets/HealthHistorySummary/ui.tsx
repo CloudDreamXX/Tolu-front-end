@@ -89,6 +89,7 @@ export const HealthHistorySummary = ({
         >
           {section.fields.map((field) => {
             const rawValue = data?.[field.key];
+            console.log("rawValue", field.key, rawValue);
             const value = field.format ? field.format(rawValue) : rawValue;
 
             return (
