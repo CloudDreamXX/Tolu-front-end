@@ -193,6 +193,8 @@ export const API_ROUTES = {
     GET_SYMPTOMS: "/symptom-tracker/{target_date}",
     GET_SUGGESTIONS: "/symptom-tracker/ai-suggestions/",
     DELETE_SYMPTOM: "/symptom-tracker/symptoms/{symptom_id}/",
+    GET_SYMPTOMS_COACH:
+      "/symptom-tracker/coach/{client_id}/{target_date}",
   },
   CHAT: {
     FETCH_ALL: "/chats",

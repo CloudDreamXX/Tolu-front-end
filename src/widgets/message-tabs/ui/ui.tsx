@@ -44,6 +44,7 @@ import { useLocation } from "react-router-dom";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { MedicationsTab } from "./medications-tab";
 import { SupplementsTab } from "./supplements-tab";
+import { CoachDailyJournal } from "./journals-tab";
 
 type TabItem = {
   id: string;
@@ -584,7 +585,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsContent value="profile">
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || location.pathname.split("/").pop()!}
-            onOpenChange={() => {}}
+            onOpenChange={() => { }}
             asDialog={false}
           />
         </TabsContent>
@@ -645,6 +646,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             </div>
           )}
         </TabsContent>
+        <TabsContent value="journals">
+          <CoachDailyJournal clientId={receiver?.user.id || location.pathname.split("/").pop()!} />
+        </TabsContent>
       </Tabs>
 
       {selectedClient && (
@@ -653,8 +657,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => {}}
-          onDelete={() => {}}
+          onEdit={() => { }}
+          onDelete={() => { }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
