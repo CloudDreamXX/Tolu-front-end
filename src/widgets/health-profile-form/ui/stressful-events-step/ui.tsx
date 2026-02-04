@@ -11,7 +11,10 @@ import { z } from "zod";
 export const traumaEventSchema = z.object({
   status: z.enum(["yes", "no"]).optional(),
   dateFrom: z.string().optional().optional(),
-  dateTo: z.union([z.string(), z.literal("current")]).optional().optional(),
+  dateTo: z
+    .union([z.string(), z.literal("current")])
+    .optional()
+    .optional(),
 });
 
 export const stressfulEventsSchema = z.object({
@@ -133,7 +136,11 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                     <div className="flex justify-center">
                       <Checkbox
                         checked={field.value === "yes"}
-                        onCheckedChange={field.value === "yes" ? () => field.onChange("") : () => field.onChange("yes")}
+                        onCheckedChange={
+                          field.value === "yes"
+                            ? () => field.onChange("")
+                            : () => field.onChange("yes")
+                        }
                       />
                     </div>
                   </FormControl>
@@ -142,7 +149,11 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                     <div className="flex justify-center">
                       <Checkbox
                         checked={field.value === "no"}
-                        onCheckedChange={field.value === "no" ? () => field.onChange("") : () => field.onChange("no")}
+                        onCheckedChange={
+                          field.value === "no"
+                            ? () => field.onChange("")
+                            : () => field.onChange("no")
+                        }
                       />
                     </div>
                   </FormControl>
@@ -179,7 +190,6 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                 </div>
               ))}
             </div>
-
           </FormItem>
         )}
       />

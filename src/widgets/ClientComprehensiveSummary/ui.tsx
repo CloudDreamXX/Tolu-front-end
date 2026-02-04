@@ -14,7 +14,6 @@ import { Button, Dialog, DialogContent, DialogTitle, Form } from "shared/ui";
 
 import {
   basicInfoSchema,
-  BasicInfoStep,
 } from "widgets/health-profile-form/ui/basic-info-step";
 import {
   birthBodySchema,
@@ -221,7 +220,11 @@ export const ClientComprehensiveSummary = ({
 
           <div className="flex gap-4">
             {currentStep > 0 && (
-              <Button type="button" variant="blue2" onClick={() => goToStep(currentStep - 1)}>
+              <Button
+                type="button"
+                variant="blue2"
+                onClick={() => goToStep(currentStep - 1)}
+              >
                 Back
               </Button>
             )}

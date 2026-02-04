@@ -17,7 +17,6 @@ export const mentalHealthSchema = z.object({
 export const MentalHealthStatusStep = ({ form }: { form: any }) => {
   return (
     <div className="space-y-8">
-
       <FormField
         control={form.control}
         name="generalMoods"

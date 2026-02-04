@@ -241,7 +241,11 @@ const StatusTable = ({
                       <div className="flex justify-center">
                         <Checkbox
                           checked={status === val}
-                          onCheckedChange={status === val ? () => field.onChange("") : () => field.onChange(val)}
+                          onCheckedChange={
+                            status === val
+                              ? () => field.onChange("")
+                              : () => field.onChange(val)
+                          }
                         />
                       </div>
                     </FormControl>
@@ -366,12 +370,12 @@ export const CustomDateField = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-const parsedDate =
-  field.value === "current"
-    ? new Date()
-    : field.value
-      ? new Date(field.value + "T00:00:00")
-      : null;
+  const parsedDate =
+    field.value === "current"
+      ? new Date()
+      : field.value
+        ? new Date(field.value + "T00:00:00")
+        : null;
 
   const [displayMonth, setDisplayMonth] = useState<Date>(
     parsedDate ?? new Date()

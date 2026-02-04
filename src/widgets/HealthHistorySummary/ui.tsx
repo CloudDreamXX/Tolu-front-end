@@ -17,12 +17,12 @@ const SummaryRow = ({
 }: {
   label: string;
   value?:
-    | string
-    | number
-    | string[]
-    | TraumaEvent
-    | MedicalCondition
-    | undefined;
+  | string
+  | number
+  | string[]
+  | TraumaEvent
+  | MedicalCondition
+  | undefined;
 }) => (
   <div className="space-y-1">
     <div className="font-medium text-base">{label}</div>
@@ -89,7 +89,6 @@ export const HealthHistorySummary = ({
         >
           {section.fields.map((field) => {
             const rawValue = data?.[field.key];
-            console.log("rawValue", field.key, rawValue);
             const value = field.format ? field.format(rawValue) : rawValue;
 
             return (

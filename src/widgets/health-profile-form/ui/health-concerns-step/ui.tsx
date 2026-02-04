@@ -105,7 +105,8 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              What are your main health concerns? (Describe in detail, including the severity of the symptoms) *
+              What are your main health concerns? (Describe in detail, including
+              the severity of the symptoms) *
             </FormLabel>
             <Textarea {...field} />
           </FormItem>
@@ -130,14 +131,18 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
       <FormField
         control={form.control}
         name="howDealtWithConcerns"
-        render={({ field }) => (
+        render={() => (
           <FormItem>
-            <FormLabel>How have you dealt with these concerns in the past? *</FormLabel>
+            <FormLabel>
+              How have you dealt with these concerns in the past? *
+            </FormLabel>
             <div className="flex flex-col gap-2">
               {["Doctors", "Self-care"].map((option) => (
                 <div key={option} className="flex items-center gap-2">
                   <Checkbox
-                    checked={(form.watch("howDealtWithConcerns") ?? "").includes(option)}
+                    checked={(
+                      form.watch("howDealtWithConcerns") ?? ""
+                    ).includes(option)}
                     onCheckedChange={() => {
                       const vals = form.watch("howDealtWithConcerns") || [];
                       form.setValue(
@@ -162,7 +167,9 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         name="successWithApproaches"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Have you experienced any success with these approaches? *</FormLabel>
+            <FormLabel>
+              Have you experienced any success with these approaches? *
+            </FormLabel>
             <Textarea {...field} />
           </FormItem>
         )}
@@ -175,7 +182,8 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              What other health practitioners are you currently seeing? List name, specialty and phone # below. *
+              What other health practitioners are you currently seeing? List
+              name, specialty and phone # below. *
             </FormLabel>
             <Textarea {...field} />
           </FormItem>
@@ -189,7 +197,8 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Please list the date and description of any surgical procedures you have had (including breast reduction or augmentation). *
+              Please list the date and description of any surgical procedures
+              you have had (including breast reduction or augmentation). *
             </FormLabel>
             <Textarea {...field} />
           </FormItem>
@@ -208,7 +217,9 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
           name={name}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>How often did you take antibiotics {label}? *</FormLabel>
+              <FormLabel>
+                How often did you take antibiotics {label}? *
+              </FormLabel>
               <Textarea {...field} />
             </FormItem>
           )}
@@ -233,7 +244,10 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         name="currentSupplements"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>List all vitamins, minerals, herbs and nutritional supplements you are now taking. *</FormLabel>
+            <FormLabel>
+              List all vitamins, minerals, herbs and nutritional supplements you
+              are now taking. *
+            </FormLabel>
             <Textarea {...field} />
           </FormItem>
         )}
@@ -245,7 +259,9 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         name="familySimilarProblems"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Have any other family members had similar problems (describe)? *</FormLabel>
+            <FormLabel>
+              Have any other family members had similar problems (describe)? *
+            </FormLabel>
             <Textarea {...field} />
           </FormItem>
         )}
@@ -258,7 +274,8 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Are there any foods that you avoid because of the way they make you feel? If yes, please name the food and the symptom. *
+              Are there any foods that you avoid because of the way they make
+              you feel? If yes, please name the food and the symptom. *
             </FormLabel>
             <Textarea {...field} />
           </FormItem>
@@ -272,7 +289,8 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Do you have symptoms immediately after eating like bloating, gas, sneezing or hives? If so, please explain. *
+              Do you have symptoms immediately after eating like bloating, gas,
+              sneezing or hives? If so, please explain. *
             </FormLabel>
             <Textarea {...field} />
           </FormItem>
@@ -286,7 +304,9 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Are you aware of any delayed symptoms after eating certain foods such as fatigue, muscle aches, sinus congestion, etc? If so, please explain. *
+              Are you aware of any delayed symptoms after eating certain foods
+              such as fatigue, muscle aches, sinus congestion, etc? If so,
+              please explain. *
             </FormLabel>
             <Textarea {...field} />
           </FormItem>
@@ -299,7 +319,9 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         name="foodCravings"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Are there foods that you crave? If so, please explain. *</FormLabel>
+            <FormLabel>
+              Are there foods that you crave? If so, please explain. *
+            </FormLabel>
             <Textarea {...field} />
           </FormItem>
         )}
@@ -311,7 +333,9 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         name="dietAtOnset"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Describe your diet at the onset of your health concerns. *</FormLabel>
+            <FormLabel>
+              Describe your diet at the onset of your health concerns. *
+            </FormLabel>
             <Textarea {...field} />
           </FormItem>
         )}
@@ -323,7 +347,9 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         name="knownFoodAllergies"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Do you have any known food allergies or sensitivities? *</FormLabel>
+            <FormLabel>
+              Do you have any known food allergies or sensitivities? *
+            </FormLabel>
             <Textarea {...field} />
           </FormItem>
         )}
@@ -335,7 +361,9 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         name="regularFoodConsumption"
         render={() => (
           <FormItem>
-            <FormLabel>Which of the following foods do you consume regularly? *</FormLabel>
+            <FormLabel>
+              Which of the following foods do you consume regularly? *
+            </FormLabel>
             <div className="grid grid-cols-2 gap-3">
               {REGULAR_FOODS.map((food) =>
                 checkboxGroup(form, "regularFoodConsumption", food)
@@ -367,13 +395,26 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         name="homeCookedPercentage"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>What percentage of your meals are home-cooked? *</FormLabel>
+            <FormLabel>
+              What percentage of your meals are home-cooked? *
+            </FormLabel>
             <RadioGroup
               value={String(field.value)}
               onValueChange={(v) => field.onChange(Number(v))}
               className="grid grid-cols-5 gap-2"
             >
-              {["10","20","30","40","50","60","70","80","90","100"].map((p) => (
+              {[
+                "10",
+                "20",
+                "30",
+                "40",
+                "50",
+                "60",
+                "70",
+                "80",
+                "90",
+                "100",
+              ].map((p) => (
                 <div key={p} className="flex items-center gap-2">
                   <RadioGroupItem value={p} />
                   <span>{p}%</span>
@@ -391,7 +432,8 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Is there anything else I should know about your current diet, history or relationship to food? *
+              Is there anything else I should know about your current diet,
+              history or relationship to food? *
             </FormLabel>
             <Textarea {...field} />
           </FormItem>

@@ -4,7 +4,6 @@ import {
   FormItem,
   FormLabel,
   FormControl,
-  FormMessage,
   Input,
   Select,
   SelectTrigger,
@@ -332,10 +331,10 @@ const BirthDateField = ({ field }: { field: any }) => {
             value={
               parsedDate
                 ? new Intl.DateTimeFormat("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  }).format(parsedDate)
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }).format(parsedDate)
                 : ""
             }
           />

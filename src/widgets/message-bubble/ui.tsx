@@ -181,10 +181,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const initials = author
     ? author.split(" ").length > 1
       ? author
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
+        .split(" ")
+        .map((word) => word[0].toUpperCase())
+        .slice(0, 2)
+        .join("")
       : author.slice(0, 2).toUpperCase()
     : "UN";
 
@@ -361,7 +361,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
         <div
           className={cn(
-            "flex flex-col-reverse md:flex-col md:gap-1.5 min-w-0 py-2 lg:max-w-[70%] items-end",
+            "flex flex-col-reverse md:flex-col md:gap-1.5 min-w-0 py-2 lg:max-w-[70%]",
             isOwn && isMobile ? "items-end" : undefined
           )}
         >

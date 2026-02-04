@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   HealthHistory,
   useCreateHealthHistoryMutation,
@@ -47,7 +46,7 @@ import {
   MentalHealthStatusStep,
 } from "./mental-health-step";
 import { otherInfoSchema, OtherStep } from "./other-info-step";
-import { basicInfoSchema, BasicInfoStep } from "./basic-info-step";
+import { basicInfoSchema } from "./basic-info-step";
 import { birthBodySchema, BirthBodyStep } from "./birth-body-step";
 import {
   healthConcernsSchema,

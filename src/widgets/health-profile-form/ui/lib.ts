@@ -43,7 +43,8 @@ export const mapHealthHistoryToFormDefaults = (
     traumaSexualPhysicalAbuse: healthHistory.trauma_sexual_physical_abuse,
     traumaEmotionalNeglect: healthHistory.trauma_emotional_neglect,
     traumaDiscrimination: healthHistory.trauma_discrimination,
-    traumaLifeThreateningAccident: healthHistory.trauma_life_threatening_accident,
+    traumaLifeThreateningAccident:
+      healthHistory.trauma_life_threatening_accident,
     traumaLifeThreateningIllness: healthHistory.trauma_life_threatening_illness,
     traumaRobberyMugging: healthHistory.trauma_robbery_mugging,
     traumaWitnessViolence: healthHistory.trauma_witness_violence,
@@ -55,15 +56,18 @@ export const mapHealthHistoryToFormDefaults = (
     successWithApproaches: healthHistory.success_with_approaches ?? "",
     otherHealthPractitioners: healthHistory.other_health_practitioners ?? "",
     surgicalProcedures: healthHistory.surgical_procedures ?? "",
-    antibioticsInfancyChildhood: healthHistory.antibiotics_infancy_childhood ?? "",
+    antibioticsInfancyChildhood:
+      healthHistory.antibiotics_infancy_childhood ?? "",
     antibioticsTeen: healthHistory.antibiotics_teen ?? "",
     antibioticsAdult: healthHistory.antibiotics_adult ?? "",
     currentMedications: healthHistory.current_medications ?? "",
     currentSupplements: healthHistory.current_supplements ?? "",
     familySimilarProblems: healthHistory.family_similar_problems ?? "",
     foodsAvoidSymptoms: healthHistory.foods_avoid_symptoms ?? "",
-    immediateSymptomsAfterEating: healthHistory.immediate_symptoms_after_eating ?? "",
-    delayedSymptomsAfterEating: healthHistory.delayed_symptoms_after_eating ?? "",
+    immediateSymptomsAfterEating:
+      healthHistory.immediate_symptoms_after_eating ?? "",
+    delayedSymptomsAfterEating:
+      healthHistory.delayed_symptoms_after_eating ?? "",
     foodCravings: healthHistory.food_cravings ?? "",
     dietAtOnset: healthHistory.diet_at_onset ?? "",
     knownFoodAllergies: healthHistory.known_food_allergies ?? "",
@@ -132,13 +136,15 @@ export const mapHealthHistoryToFormDefaults = (
     conditionOvarianCancer: healthHistory.condition_ovarian_cancer,
     conditionProstateCancer: healthHistory.condition_prostate_cancer,
     conditionSkinCancerMelanoma: healthHistory.condition_skin_cancer_melanoma,
-    conditionSkinCancerSquamousBasal: healthHistory.condition_skin_cancer_squamous_basal,
+    conditionSkinCancerSquamousBasal:
+      healthHistory.condition_skin_cancer_squamous_basal,
     cancerDates: healthHistory.cancer_dates ?? "",
 
     // Genital / Urinary
     conditionKidneyStones: healthHistory.condition_kidney_stones,
     conditionGout: healthHistory.condition_gout,
-    conditionInterstitialCystitis: healthHistory.condition_interstitial_cystitis,
+    conditionInterstitialCystitis:
+      healthHistory.condition_interstitial_cystitis,
     conditionFrequentUti: healthHistory.condition_frequent_uti,
     conditionSexualDysfunction: healthHistory.condition_sexual_dysfunction,
     conditionFrequentYeast: healthHistory.condition_frequent_yeast,
@@ -160,8 +166,10 @@ export const mapHealthHistoryToFormDefaults = (
     conditionMctd: healthHistory.condition_mctd,
     conditionPoorImmune: healthHistory.condition_poor_immune,
     conditionFoodAllergiesImmune: healthHistory.condition_food_allergies_immune,
-    conditionEnvironmentalAllergies: healthHistory.condition_environmental_allergies,
-    conditionChemicalSensitivities: healthHistory.condition_chemical_sensitivities,
+    conditionEnvironmentalAllergies:
+      healthHistory.condition_environmental_allergies,
+    conditionChemicalSensitivities:
+      healthHistory.condition_chemical_sensitivities,
     conditionLatexAllergy: healthHistory.condition_latex_allergy,
     conditionHepatitis: healthHistory.condition_hepatitis,
     conditionLyme: healthHistory.condition_lyme,
@@ -185,8 +193,10 @@ export const mapHealthHistoryToFormDefaults = (
     conditionHives: healthHistory.condition_hives,
     conditionRashUndiagnosed: healthHistory.condition_rash_undiagnosed,
     conditionAcne: healthHistory.condition_acne,
-    conditionSkinCancerMelanomaDup: healthHistory.condition_skin_cancer_melanoma_dup,
-    conditionSkinCancerSquamousBasalDup: healthHistory.condition_skin_cancer_squamous_basal_dup,
+    conditionSkinCancerMelanomaDup:
+      healthHistory.condition_skin_cancer_melanoma_dup,
+    conditionSkinCancerSquamousBasalDup:
+      healthHistory.condition_skin_cancer_squamous_basal_dup,
     skinConditionsDates: healthHistory.skin_conditions_dates ?? "",
 
     // Neurologic / Mood
@@ -198,7 +208,8 @@ export const mapHealthHistoryToFormDefaults = (
     conditionMigraines: healthHistory.condition_migraines,
     conditionAddAdhd: healthHistory.condition_add_adhd,
     conditionAutism: healthHistory.condition_autism,
-    conditionMildCognitiveImpairment: healthHistory.condition_mild_cognitive_impairment,
+    conditionMildCognitiveImpairment:
+      healthHistory.condition_mild_cognitive_impairment,
     conditionMemoryProblems: healthHistory.condition_memory_problems,
     conditionParkinsons: healthHistory.condition_parkinsons,
     conditionMultipleSclerosis: healthHistory.condition_multiple_sclerosis,
@@ -262,7 +273,8 @@ export const mapHealthHistoryToFormDefaults = (
     cycleSecondHalfSymptoms: healthHistory.cycle_second_half_symptoms ?? "",
     yeastUtiInfections: healthHistory.yeast_uti_infections ?? "",
     birthControlPills: healthHistory.birth_control_pills ?? "",
-    conceptionPregnancyProblems: healthHistory.conception_pregnancy_problems ?? "",
+    conceptionPregnancyProblems:
+      healthHistory.conception_pregnancy_problems ?? "",
     hormoneReplacementHerbs: healthHistory.hormone_replacement_herbs ?? "",
 
     // Sexual Health
@@ -277,7 +289,8 @@ export const mapHealthHistoryToFormDefaults = (
     // Support / Wellness
     roleInWellnessPlan: healthHistory.role_in_wellness_plan ?? "",
     familyFriendsSupport: healthHistory.family_friends_support ?? "",
-    supportivePersonDietaryChange: healthHistory.supportive_person_dietary_change ?? "",
+    supportivePersonDietaryChange:
+      healthHistory.supportive_person_dietary_change ?? "",
     otherUsefulInformation: healthHistory.other_useful_information ?? "",
     healthGoalsAspirations: healthHistory.health_goals_aspirations ?? "",
     whyAchieveGoals: healthHistory.why_achieve_goals ?? "",
@@ -288,7 +301,6 @@ export const mapHealthHistoryToFormDefaults = (
     stressHandling: healthHistory.stress_handling ?? "",
   };
 };
-
 
 export const prune = (obj: Record<string, any>): Record<string, any> => {
   const out: Record<string, any> = {};
@@ -484,7 +496,8 @@ export const FORM_TO_API_FIELD_MAP: Record<string, keyof HealthHistory> = {
   conditionRashUndiagnosed: "condition_rash_undiagnosed",
   conditionAcne: "condition_acne",
   conditionSkinCancerMelanomaDup: "condition_skin_cancer_melanoma_dup",
-  conditionSkinCancerSquamousBasalDup: "condition_skin_cancer_squamous_basal_dup",
+  conditionSkinCancerSquamousBasalDup:
+    "condition_skin_cancer_squamous_basal_dup",
   skinConditionsDates: "skin_conditions_dates",
 
   // Neurologic / mood
