@@ -335,7 +335,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
     step: 6,
     block: HEALTH_HISTORY_BLOCKS.LIFESTYLE_HISTORY,
     fields: [
-      { key: "exercise_recreation", label: "Exercise / recreation" },
+      { key: "junk_food_binge_dieting", label: "Junk food binge dieting" },
       { key: "substance_use_history", label: "Substance use" },
       { key: "stress_handling", label: "Stress handling" },
     ],
