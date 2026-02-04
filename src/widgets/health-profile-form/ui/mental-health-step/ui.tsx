@@ -17,11 +17,6 @@ export const mentalHealthSchema = z.object({
 export const MentalHealthStatusStep = ({ form }: { form: any }) => {
   return (
     <div className="space-y-8">
-      <div>
-        <FormLabel className="text-base font-medium">
-          Mental Health Status
-        </FormLabel>
-      </div>
 
       <FormField
         control={form.control}

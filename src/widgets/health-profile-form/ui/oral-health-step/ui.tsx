@@ -20,11 +20,6 @@ export const oralHealthSchema = z.object({
 export const OralHealthHistoryStep = ({ form }: { form: any }) => {
   return (
     <div className="space-y-8">
-      <div>
-        <FormLabel className="text-base font-medium">
-          Oral Health History
-        </FormLabel>
-      </div>
 
       <FormField
         control={form.control}

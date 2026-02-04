@@ -16,11 +16,6 @@ export const lifestyleHistorySchema = z.object({
 export const LifestyleHistoryStep = ({ form }: { form: any }) => {
   return (
     <div className="space-y-8">
-      <div>
-        <FormLabel className="text-base font-medium">
-          Lifestyle History
-        </FormLabel>
-      </div>
 
       <FormField
         control={form.control}

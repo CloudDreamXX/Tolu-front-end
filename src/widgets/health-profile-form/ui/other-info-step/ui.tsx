@@ -19,9 +19,6 @@ export const otherInfoSchema = z.object({
 export const OtherStep = ({ form }: { form: any }) => {
   return (
     <div className="space-y-8">
-      <div>
-        <FormLabel className="text-base font-medium">Other</FormLabel>
-      </div>
 
       <FormField
         control={form.control}

@@ -15,9 +15,6 @@ export const sexualHistorySchema = z.object({
 export const SexualHistoryStep = ({ form }: { form: any }) => {
   return (
     <div className="space-y-8">
-      <div>
-        <FormLabel className="text-base font-medium">Sexual History</FormLabel>
-      </div>
 
       <FormField
         control={form.control}

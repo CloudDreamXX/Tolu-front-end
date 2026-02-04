@@ -36,7 +36,6 @@ export const SleepHistoryStep = ({ form }: { form: any }) => {
 
   return (
     <div className="space-y-8">
-      <FormLabel className="text-base font-medium">Sleep History</FormLabel>
 
       <div className="space-y-6">
         {QUESTIONS.map((q) => (

@@ -21,9 +21,6 @@ export const womensHealthSchema = z.object({
 export const WomensHealthStep = ({ form }: { form: any }) => {
   return (
     <div className="space-y-8">
-      <div>
-        <FormLabel className="text-base font-medium">For Women Only</FormLabel>
-      </div>
 
       <FormField
         control={form.control}
