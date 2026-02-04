@@ -38,36 +38,167 @@ export const medicalConditionSchema = z.object({
 });
 
 export const medicalHistorySchema = z.object({
-  /* Gastrointestinal */
+  // Gastrointestinal
   conditionIbs: medicalConditionSchema.optional(),
   conditionCrohns: medicalConditionSchema.optional(),
   conditionUlcerativeColitis: medicalConditionSchema.optional(),
   conditionGastritisUlcer: medicalConditionSchema.optional(),
   conditionGerd: medicalConditionSchema.optional(),
   conditionCeliac: medicalConditionSchema.optional(),
-
+  conditionSibo: medicalConditionSchema.optional(),
+  conditionGutInfections: medicalConditionSchema.optional(),
+  conditionDysbiosis: medicalConditionSchema.optional(),
+  conditionLeakyGut: medicalConditionSchema.optional(),
+  conditionFoodAllergies: medicalConditionSchema.optional(),
+  conditionGallstones: medicalConditionSchema.optional(),
+  conditionAbsorptionIssues: medicalConditionSchema.optional(),
   gastrointestinalDates: z.string().optional(),
 
-  /* Environmental */
+  // Hormones / Metabolic
+  conditionType1Diabetes: medicalConditionSchema.optional(),
+  conditionType2Diabetes: medicalConditionSchema.optional(),
+  conditionHypoglycemia: medicalConditionSchema.optional(),
+  conditionMetabolicSyndrome: medicalConditionSchema.optional(),
+  conditionInsulinResistance: medicalConditionSchema.optional(),
+  conditionHypothyroidism: medicalConditionSchema.optional(),
+  conditionHyperthyroidism: medicalConditionSchema.optional(),
+  conditionHashimotos: medicalConditionSchema.optional(),
+  conditionGravesDisease: medicalConditionSchema.optional(),
+  conditionEndocrineProblems: medicalConditionSchema.optional(),
+  conditionPcos: medicalConditionSchema.optional(),
+  conditionInfertility: medicalConditionSchema.optional(),
+  conditionWeightGain: medicalConditionSchema.optional(),
+  conditionWeightLoss: medicalConditionSchema.optional(),
+  conditionWeightFluctuations: medicalConditionSchema.optional(),
+  conditionEatingDisorder: medicalConditionSchema.optional(),
+  hormonesMetabolicDates: z.string().optional(),
+
+  // Cardiovascular
+  conditionHeartAttack: medicalConditionSchema.optional(),
+  conditionHeartDisease: medicalConditionSchema.optional(),
+  conditionStroke: medicalConditionSchema.optional(),
+  conditionElevatedCholesterol: medicalConditionSchema.optional(),
+  conditionArrhythmia: medicalConditionSchema.optional(),
+  conditionHypertension: medicalConditionSchema.optional(),
+  conditionRheumaticFever: medicalConditionSchema.optional(),
+  conditionMitralValveProlapse: medicalConditionSchema.optional(),
+  cardiovascularDates: z.string().optional(),
+
+  // Cancer
+  conditionLungCancer: medicalConditionSchema.optional(),
+  conditionBreastCancer: medicalConditionSchema.optional(),
+  conditionColonCancer: medicalConditionSchema.optional(),
+  conditionOvarianCancer: medicalConditionSchema.optional(),
+  conditionProstateCancer: medicalConditionSchema.optional(),
+  conditionSkinCancerMelanoma: medicalConditionSchema.optional(),
+  conditionSkinCancerSquamousBasal: medicalConditionSchema.optional(),
+  cancerDates: z.string().optional(),
+
+  // Genital / Urinary
+  conditionKidneyStones: medicalConditionSchema.optional(),
+  conditionGout: medicalConditionSchema.optional(),
+  conditionInterstitialCystitis: medicalConditionSchema.optional(),
+  conditionFrequentUti: medicalConditionSchema.optional(),
+  conditionSexualDysfunction: medicalConditionSchema.optional(),
+  conditionFrequentYeast: medicalConditionSchema.optional(),
+  genitalUrinaryDates: z.string().optional(),
+
+  // Musculoskeletal
+  conditionOsteoarthritis: medicalConditionSchema.optional(),
+  conditionFibromyalgia: medicalConditionSchema.optional(),
+  conditionChronicPain: medicalConditionSchema.optional(),
+  conditionSoreMusclesJoints: medicalConditionSchema.optional(),
+  musculoskeletalDates: z.string().optional(),
+
+  // Immune / Inflammatory
+  conditionChronicFatigue: medicalConditionSchema.optional(),
+  conditionRheumatoidArthritis: medicalConditionSchema.optional(),
+  conditionLupus: medicalConditionSchema.optional(),
+  conditionRaynauds: medicalConditionSchema.optional(),
+  conditionPsoriasis: medicalConditionSchema.optional(),
+  conditionMctd: medicalConditionSchema.optional(),
+  conditionPoorImmune: medicalConditionSchema.optional(),
+  conditionFoodAllergiesImmune: medicalConditionSchema.optional(),
+  conditionEnvironmentalAllergies: medicalConditionSchema.optional(),
+  conditionChemicalSensitivities: medicalConditionSchema.optional(),
+  conditionLatexAllergy: medicalConditionSchema.optional(),
+  conditionHepatitis: medicalConditionSchema.optional(),
+  conditionLyme: medicalConditionSchema.optional(),
+  conditionChronicInfections: medicalConditionSchema.optional(),
+  immuneInflammatoryDates: z.string().optional(),
+
+  // Respiratory
+  conditionAsthma: medicalConditionSchema.optional(),
+  conditionChronicSinusitis: medicalConditionSchema.optional(),
+  conditionBronchitis: medicalConditionSchema.optional(),
+  conditionEmphysema: medicalConditionSchema.optional(),
+  conditionPneumonia: medicalConditionSchema.optional(),
+  conditionSleepApnea: medicalConditionSchema.optional(),
+  conditionFrequentColdsFlus: medicalConditionSchema.optional(),
+  respiratoryDates: z.string().optional(),
+
+  // Skin
+  conditionEczema: medicalConditionSchema.optional(),
+  conditionPsoriasisSkin: medicalConditionSchema.optional(),
+  conditionDermatitis: medicalConditionSchema.optional(),
+  conditionHives: medicalConditionSchema.optional(),
+  conditionRashUndiagnosed: medicalConditionSchema.optional(),
+  conditionAcne: medicalConditionSchema.optional(),
+  conditionSkinCancerMelanomaDup: medicalConditionSchema.optional(),
+  conditionSkinCancerSquamousBasalDup: medicalConditionSchema.optional(),
+  skinConditionsDates: z.string().optional(),
+
+  // Neurologic / Mood
+  conditionDepression: medicalConditionSchema.optional(),
+  conditionAnxiety: medicalConditionSchema.optional(),
+  conditionBipolar: medicalConditionSchema.optional(),
+  conditionSchizophrenia: medicalConditionSchema.optional(),
+  conditionHeadaches: medicalConditionSchema.optional(),
+  conditionMigraines: medicalConditionSchema.optional(),
+  conditionAddAdhd: medicalConditionSchema.optional(),
+  conditionAutism: medicalConditionSchema.optional(),
+  conditionMildCognitiveImpairment: medicalConditionSchema.optional(),
+  conditionMemoryProblems: medicalConditionSchema.optional(),
+  conditionParkinsons: medicalConditionSchema.optional(),
+  conditionMultipleSclerosis: medicalConditionSchema.optional(),
+  conditionAls: medicalConditionSchema.optional(),
+  conditionSeizures: medicalConditionSchema.optional(),
+  conditionAlzheimers: medicalConditionSchema.optional(),
+  conditionConcussionTbi: medicalConditionSchema.optional(),
+  neurologicMoodDates: z.string().optional(),
+
+  // Miscellaneous
+  conditionAnemia: medicalConditionSchema.optional(),
+  conditionChickenPox: medicalConditionSchema.optional(),
+  conditionGermanMeasles: medicalConditionSchema.optional(),
+  conditionMeasles: medicalConditionSchema.optional(),
+  conditionMononucleosis: medicalConditionSchema.optional(),
+  conditionMumps: medicalConditionSchema.optional(),
+  conditionWhoopingCough: medicalConditionSchema.optional(),
+  conditionTuberculosis: medicalConditionSchema.optional(),
+  conditionGeneticVariants: medicalConditionSchema.optional(),
+  miscellaneousDates: z.string().optional(),
+
+  otherConditionsSymptoms: z.string().optional(),
+
+  // Frequency
+  freqMemoryImpairment: frequencyEnum.optional(),
+  freqShortenedFocus: frequencyEnum.optional(),
+  freqCoordinationBalance: frequencyEnum.optional(),
+  freqLackInhibition: frequencyEnum.optional(),
+  freqPoorOrganization: frequencyEnum.optional(),
+  freqTimeManagement: frequencyEnum.optional(),
+  freqMoodInstability: frequencyEnum.optional(),
+  freqSpeechWordFinding: frequencyEnum.optional(),
+  freqBrainFog: frequencyEnum.optional(),
+  freqLowerEffectiveness: frequencyEnum.optional(),
+  freqJudgmentProblems: frequencyEnum.optional(),
+
+  // Environmental exposures
   chemicalToxicExposure: z.string().optional(),
   odorSensitivity: z.string().optional(),
   secondhandSmokeExposure: z.string().optional(),
   moldExposure: z.string().optional(),
-
-  otherConditionsSymptoms: z.string().optional(),
-
-  /* Frequency checks */
-  freqMemoryImpairment: z.string().optional(),
-  freqShortenedFocus: z.string().optional(),
-  freqCoordinationBalance: z.string().optional(),
-  freqLackInhibition: z.string().optional(),
-  freqPoorOrganization: z.string().optional(),
-  freqTimeManagement: z.string().optional(),
-  freqMoodInstability: z.string().optional(),
-  freqSpeechWordFinding: z.string().optional(),
-  freqBrainFog: z.string().optional(),
-  freqLowerEffectiveness: z.string().optional(),
-  freqJudgmentProblems: z.string().optional(),
 });
 
 const StatusTable = ({
@@ -110,7 +241,7 @@ const StatusTable = ({
                       <div className="flex justify-center">
                         <Checkbox
                           checked={status === val}
-                          onCheckedChange={() => field.onChange(val)}
+                          onCheckedChange={status === val ? () => field.onChange("") : () => field.onChange(val)}
                         />
                       </div>
                     </FormControl>
@@ -235,8 +366,10 @@ export const CustomDateField = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  const parsedDate =
-    field.value && field.value !== "current"
+const parsedDate =
+  field.value === "current"
+    ? new Date()
+    : field.value
       ? new Date(field.value + "T00:00:00")
       : null;
 
@@ -254,7 +387,7 @@ export const CustomDateField = ({
             readOnly
             disabled={disabled}
             placeholder={placeholder}
-            className="text-start"
+            className="text-start w-[200px]"
             value={
               parsedDate
                 ? new Intl.DateTimeFormat("en-US", {

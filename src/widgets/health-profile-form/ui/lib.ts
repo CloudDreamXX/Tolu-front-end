@@ -183,6 +183,18 @@ export const FORM_TO_API_FIELD_MAP: Record<string, keyof HealthHistory> = {
   recentMajorLifeChanges: "recent_major_life_changes",
   workSchoolTimeOff: "work_school_time_off",
 
+  // Trauma
+  traumaDeathFamily: "trauma_death_family",
+  traumaDeathAccident: "trauma_death_accident",
+  traumaSexualPhysicalAbuse: "trauma_sexual_physical_abuse",
+  traumaEmotionalNeglect: "trauma_emotional_neglect",
+  traumaDiscrimination: "trauma_discrimination",
+  traumaLifeThreateningAccident: "trauma_life_threatening_accident",
+  traumaLifeThreateningIllness: "trauma_life_threatening_illness",
+  traumaRobberyMugging: "trauma_robbery_mugging",
+  traumaWitnessViolence: "trauma_witness_violence",
+  traumaAdditionalNotes: "trauma_additional_notes",
+
   // Health concerns
   mainHealthConcerns: "main_health_concerns",
   whenFirstExperienced: "when_first_experienced",
@@ -190,8 +202,6 @@ export const FORM_TO_API_FIELD_MAP: Record<string, keyof HealthHistory> = {
   successWithApproaches: "success_with_approaches",
   otherHealthPractitioners: "other_health_practitioners",
   surgicalProcedures: "surgical_procedures",
-
-  // Meds / antibiotics
   antibioticsInfancyChildhood: "antibiotics_infancy_childhood",
   antibioticsTeen: "antibiotics_teen",
   antibioticsAdult: "antibiotics_adult",
@@ -211,34 +221,169 @@ export const FORM_TO_API_FIELD_MAP: Record<string, keyof HealthHistory> = {
   homeCookedPercentage: "home_cooked_percentage",
   dietRelationshipNotes: "diet_relationship_notes",
 
-  // Bowel health
+  // Bowel
   bowelMovementFrequency: "bowel_movement_frequency",
   bowelMovementConsistency: "bowel_movement_consistency",
   bowelMovementColor: "bowel_movement_color",
   intestinalGas: "intestinal_gas",
   foodPoisoningHistory: "food_poisoning_history",
 
-  // Trauma
-  traumaDeathFamily: "trauma_death_family",
-  traumaDeathAccident: "trauma_death_accident",
-  traumaSexualPhysicalAbuse: "trauma_sexual_physical_abuse",
-  traumaEmotionalNeglect: "trauma_emotional_neglect",
-  traumaDiscrimination: "trauma_discrimination",
-  traumaLifeThreateningAccident: "trauma_life_threatening_accident",
-  traumaLifeThreateningIllness: "trauma_life_threatening_illness",
-  traumaRobberyMugging: "trauma_robbery_mugging",
-  traumaWitnessViolence: "trauma_witness_violence",
-  traumaAdditionalNotes: "trauma_additional_notes",
-
-  // Medical history summaries
+  // Gastrointestinal conditions
+  conditionIbs: "condition_ibs",
+  conditionCrohns: "condition_crohns",
+  conditionUlcerativeColitis: "condition_ulcerative_colitis",
+  conditionGastritisUlcer: "condition_gastritis_ulcer",
+  conditionGerd: "condition_gerd",
+  conditionCeliac: "condition_celiac",
+  conditionSibo: "condition_sibo",
+  conditionGutInfections: "condition_gut_infections",
+  conditionDysbiosis: "condition_dysbiosis",
+  conditionLeakyGut: "condition_leaky_gut",
+  conditionFoodAllergies: "condition_food_allergies",
+  conditionGallstones: "condition_gallstones",
+  conditionAbsorptionIssues: "condition_absorption_issues",
   gastrointestinalDates: "gastrointestinal_dates",
+
+  // Hormones & metabolic
+  conditionType1Diabetes: "condition_type1_diabetes",
+  conditionType2Diabetes: "condition_type2_diabetes",
+  conditionHypoglycemia: "condition_hypoglycemia",
+  conditionMetabolicSyndrome: "condition_metabolic_syndrome",
+  conditionInsulinResistance: "condition_insulin_resistance",
+  conditionHypothyroidism: "condition_hypothyroidism",
+  conditionHyperthyroidism: "condition_hyperthyroidism",
+  conditionHashimotos: "condition_hashimotos",
+  conditionGravesDisease: "condition_graves_disease",
+  conditionEndocrineProblems: "condition_endocrine_problems",
+  conditionPcos: "condition_pcos",
+  conditionInfertility: "condition_infertility",
+  conditionWeightGain: "condition_weight_gain",
+  conditionWeightLoss: "condition_weight_loss",
+  conditionWeightFluctuations: "condition_weight_fluctuations",
+  conditionEatingDisorder: "condition_eating_disorder",
   hormonesMetabolicDates: "hormones_metabolic_dates",
+
+  // Cardiovascular
+  conditionHeartAttack: "condition_heart_attack",
+  conditionHeartDisease: "condition_heart_disease",
+  conditionStroke: "condition_stroke",
+  conditionElevatedCholesterol: "condition_elevated_cholesterol",
+  conditionArrhythmia: "condition_arrhythmia",
+  conditionHypertension: "condition_hypertension",
+  conditionRheumaticFever: "condition_rheumatic_fever",
+  conditionMitralValveProlapse: "condition_mitral_valve_prolapse",
   cardiovascularDates: "cardiovascular_dates",
+
+  // Cancer
+  conditionLungCancer: "condition_lung_cancer",
+  conditionBreastCancer: "condition_breast_cancer",
+  conditionColonCancer: "condition_colon_cancer",
+  conditionOvarianCancer: "condition_ovarian_cancer",
+  conditionProstateCancer: "condition_prostate_cancer",
+  conditionSkinCancerMelanoma: "condition_skin_cancer_melanoma",
+  conditionSkinCancerSquamousBasal: "condition_skin_cancer_squamous_basal",
   cancerDates: "cancer_dates",
+
+  // Genitourinary
+  conditionKidneyStones: "condition_kidney_stones",
+  conditionGout: "condition_gout",
+  conditionInterstitialCystitis: "condition_interstitial_cystitis",
+  conditionFrequentUti: "condition_frequent_uti",
+  conditionSexualDysfunction: "condition_sexual_dysfunction",
+  conditionFrequentYeast: "condition_frequent_yeast",
+  genitalUrinaryDates: "genital_urinary_dates",
+
+  // Musculoskeletal
+  conditionOsteoarthritis: "condition_osteoarthritis",
+  conditionFibromyalgia: "condition_fibromyalgia",
+  conditionChronicPain: "condition_chronic_pain",
+  conditionSoreMusclesJoints: "condition_sore_muscles_joints",
+  musculoskeletalDates: "musculoskeletal_dates",
+
+  // Immune & inflammatory
+  conditionChronicFatigue: "condition_chronic_fatigue",
+  conditionRheumatoidArthritis: "condition_rheumatoid_arthritis",
+  conditionLupus: "condition_lupus",
+  conditionRaynauds: "condition_raynauds",
+  conditionPsoriasis: "condition_psoriasis",
+  conditionMctd: "condition_mctd",
+  conditionPoorImmune: "condition_poor_immune",
+  conditionFoodAllergiesImmune: "condition_food_allergies_immune",
+  conditionEnvironmentalAllergies: "condition_environmental_allergies",
+  conditionChemicalSensitivities: "condition_chemical_sensitivities",
+  conditionLatexAllergy: "condition_latex_allergy",
+  conditionHepatitis: "condition_hepatitis",
+  conditionLyme: "condition_lyme",
+  conditionChronicInfections: "condition_chronic_infections",
+  immuneInflammatoryDates: "immune_inflammatory_dates",
+
+  // Respiratory
+  conditionAsthma: "condition_asthma",
+  conditionChronicSinusitis: "condition_chronic_sinusitis",
+  conditionBronchitis: "condition_bronchitis",
+  conditionEmphysema: "condition_emphysema",
+  conditionPneumonia: "condition_pneumonia",
+  conditionSleepApnea: "condition_sleep_apnea",
+  conditionFrequentColdsFlus: "condition_frequent_colds_flus",
+  respiratoryDates: "respiratory_dates",
+
+  // Skin
+  conditionEczema: "condition_eczema",
+  conditionPsoriasisSkin: "condition_psoriasis_skin",
+  conditionDermatitis: "condition_dermatitis",
+  conditionHives: "condition_hives",
+  conditionRashUndiagnosed: "condition_rash_undiagnosed",
+  conditionAcne: "condition_acne",
+  conditionSkinCancerMelanomaDup: "condition_skin_cancer_melanoma_dup",
+  conditionSkinCancerSquamousBasalDup: "condition_skin_cancer_squamous_basal_dup",
+  skinConditionsDates: "skin_conditions_dates",
+
+  // Neurologic / mood
+  conditionDepression: "condition_depression",
+  conditionAnxiety: "condition_anxiety",
+  conditionBipolar: "condition_bipolar",
+  conditionSchizophrenia: "condition_schizophrenia",
+  conditionHeadaches: "condition_headaches",
+  conditionMigraines: "condition_migraines",
+  conditionAddAdhd: "condition_add_adhd",
+  conditionAutism: "condition_autism",
+  conditionMildCognitiveImpairment: "condition_mild_cognitive_impairment",
+  conditionMemoryProblems: "condition_memory_problems",
+  conditionParkinsons: "condition_parkinsons",
+  conditionMultipleSclerosis: "condition_multiple_sclerosis",
+  conditionAls: "condition_als",
+  conditionSeizures: "condition_seizures",
+  conditionAlzheimers: "condition_alzheimers",
+  conditionConcussionTbi: "condition_concussion_tbi",
   neurologicMoodDates: "neurologic_mood_dates",
+
+  // Miscellaneous
+  conditionAnemia: "condition_anemia",
+  conditionChickenPox: "condition_chicken_pox",
+  conditionGermanMeasles: "condition_german_measles",
+  conditionMeasles: "condition_measles",
+  conditionMononucleosis: "condition_mononucleosis",
+  conditionMumps: "condition_mumps",
+  conditionWhoopingCough: "condition_whooping_cough",
+  conditionTuberculosis: "condition_tuberculosis",
+  conditionGeneticVariants: "condition_genetic_variants",
+  miscellaneousDates: "miscellaneous_dates",
   otherConditionsSymptoms: "other_conditions_symptoms",
 
-  // Environmental
+  // Cognitive / focus
+  freqMemoryImpairment: "freq_memory_impairment",
+  freqShortenedFocus: "freq_shortened_focus",
+  freqCoordinationBalance: "freq_coordination_balance",
+  freqLackInhibition: "freq_lack_inhibition",
+  freqPoorOrganization: "freq_poor_organization",
+  freqTimeManagement: "freq_time_management",
+  freqMoodInstability: "freq_mood_instability",
+  freqSpeechWordFinding: "freq_speech_word_finding",
+  freqBrainFog: "freq_brain_fog",
+  freqLowerEffectiveness: "freq_lower_effectiveness",
+  freqJudgmentProblems: "freq_judgment_problems",
+
+  // Environmental exposures
   chemicalToxicExposure: "chemical_toxic_exposure",
   odorSensitivity: "odor_sensitivity",
   secondhandSmokeExposure: "secondhand_smoke_exposure",
@@ -246,7 +391,10 @@ export const FORM_TO_API_FIELD_MAP: Record<string, keyof HealthHistory> = {
 
   // Oral health
   lastDentistVisit: "last_dentist_visit",
+  dentistHealthDiscussion: "dentist_health_discussion",
   oralDentalRegimen: "oral_dental_regimen",
+  mercuryAmalgams: "mercury_amalgams",
+  rootCanals: "root_canals",
   oralHealthConcerns: "oral_health_concerns",
   oralHealthAdditionalNotes: "oral_health_additional_notes",
 
@@ -263,8 +411,11 @@ export const FORM_TO_API_FIELD_MAP: Record<string, keyof HealthHistory> = {
   // Women’s health
   ageFirstPeriod: "age_first_period",
   mensesPmsPain: "menses_pms_pain",
+  cycleSecondHalfSymptoms: "cycle_second_half_symptoms",
+  yeastUtiInfections: "yeast_uti_infections",
   birthControlPills: "birth_control_pills",
   conceptionPregnancyProblems: "conception_pregnancy_problems",
+  hormoneReplacementHerbs: "hormone_replacement_herbs",
 
   // Sexual / mental health
   sexualFunctioningConcerns: "sexual_functioning_concerns",
@@ -273,10 +424,17 @@ export const FORM_TO_API_FIELD_MAP: Record<string, keyof HealthHistory> = {
   energyLevelScale: "energy_level_scale",
   bestPointInLife: "best_point_in_life",
 
-  // Goals & support
+  // Support / goals
+  roleInWellnessPlan: "role_in_wellness_plan",
   familyFriendsSupport: "family_friends_support",
+  supportivePersonDietaryChange: "supportive_person_dietary_change",
+  otherUsefulInformation: "other_useful_information",
   healthGoalsAspirations: "health_goals_aspirations",
   whyAchieveGoals: "why_achieve_goals",
+
+  // Metadata
+  createdAt: "created_at",
+  updatedAt: "updated_at",
 };
 
 export const mapFormValuesToHealthHistoryPayload = (

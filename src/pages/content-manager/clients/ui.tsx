@@ -834,7 +834,7 @@ export const ContentManagerClients: React.FC = () => {
                         Status
                       </div>
                       <div className="w-full text-[16px] flex items-center justify-center">
-                        {client.status === "waiting to accept invite" ? (
+                        {client.status === "pending" ? (
                           <div className="flex flex-col items-center justify-center ">
                             Pending
                             <Button

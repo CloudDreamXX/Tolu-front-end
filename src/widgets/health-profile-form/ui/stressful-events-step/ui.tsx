@@ -133,7 +133,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                     <div className="flex justify-center">
                       <Checkbox
                         checked={field.value === "yes"}
-                        onCheckedChange={() => field.onChange("yes")}
+                        onCheckedChange={field.value === "yes" ? () => field.onChange("") : () => field.onChange("yes")}
                       />
                     </div>
                   </FormControl>
@@ -142,9 +142,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
                     <div className="flex justify-center">
                       <Checkbox
                         checked={field.value === "no"}
-                        onCheckedChange={() =>
-                          field.onChange({ ...field.value, status: "no" })
-                        }
+                        onCheckedChange={field.value === "no" ? () => field.onChange("") : () => field.onChange("no")}
                       />
                     </div>
                   </FormControl>

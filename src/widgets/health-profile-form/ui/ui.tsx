@@ -57,11 +57,11 @@ import { bowelHealthSchema, BowelHealthStep } from "./bowel-health-step";
 import { HealthHistorySummary } from "widgets/HealthHistorySummary/ui";
 
 const steps = [
-  "Basic Info",
+  // "Basic Info",
   "Birth & Body",
+  "Stressful Events",
   "Health Concerns",
   "Bowel Health",
-  "Stressful Events",
   "Medical History",
   "Oral Health",
   "Lifestyle History",
@@ -172,7 +172,7 @@ export const HealthProfileForm = () => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6 overflow-y-auto">
+      <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
         <DialogTitle>Your Health History</DialogTitle>
 
         {!isSummary && (
@@ -184,7 +184,7 @@ export const HealthProfileForm = () => {
           />
         )}
 
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto">
           {isSummary ? (
             <HealthHistorySummary
               data={healthHistoryData!}
@@ -195,19 +195,19 @@ export const HealthProfileForm = () => {
             />
           ) : (
             <Form {...form}>
-              {currentStep === 0 && <BasicInfoStep form={form} />}
-              {currentStep === 1 && <BirthBodyStep form={form} />}
+              {/* {currentStep === 0 && <BasicInfoStep form={form} />} */}
+              {currentStep === 0 && <BirthBodyStep form={form} />}
+              {currentStep === 1 && <StressfulEventsStep form={form} />}
               {currentStep === 2 && <HealthConcernsStep form={form} />}
               {currentStep === 3 && <BowelHealthStep form={form} />}
-              {currentStep === 4 && <StressfulEventsStep form={form} />}
-              {currentStep === 5 && <MedicalHistoryStep form={form} />}
-              {currentStep === 6 && <OralHealthHistoryStep form={form} />}
-              {currentStep === 7 && <LifestyleHistoryStep form={form} />}
-              {currentStep === 8 && <SleepHistoryStep form={form} />}
-              {currentStep === 9 && <WomensHealthStep form={form} />}
-              {currentStep === 10 && <SexualHistoryStep form={form} />}
-              {currentStep === 11 && <MentalHealthStatusStep form={form} />}
-              {currentStep === 12 && <OtherStep form={form} />}
+              {currentStep === 4 && <MedicalHistoryStep form={form} />}
+              {currentStep === 5 && <OralHealthHistoryStep form={form} />}
+              {currentStep === 6 && <LifestyleHistoryStep form={form} />}
+              {currentStep === 7 && <SleepHistoryStep form={form} />}
+              {currentStep === 8 && <WomensHealthStep form={form} />}
+              {currentStep === 9 && <SexualHistoryStep form={form} />}
+              {currentStep === 10 && <MentalHealthStatusStep form={form} />}
+              {currentStep === 11 && <OtherStep form={form} />}
             </Form>
           )}
         </div>

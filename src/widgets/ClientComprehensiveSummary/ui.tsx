@@ -72,7 +72,7 @@ import {
 import { HealthHistorySummary } from "widgets/HealthHistorySummary/ui";
 
 const steps = [
-  "Basic Info",
+  // "Basic Info",
   "Birth & Body",
   "Health Concerns",
   "Bowel Health",
@@ -140,119 +140,11 @@ export const ClientComprehensiveSummary = ({
     }
   }, [healthHistoryData]);
 
-  const stepFields: Array<(keyof FormValues)[]> = [
-    ["email", "fullName"],
-    [
-      "age",
-      "birthDate",
-      "genderAtBirth",
-      "chosenGenderAfterBirth",
-      "breastfedOrBottle",
-      "birthDeliveryMethod",
-      "height",
-      "bloodType",
-      "currentWeightLbs",
-      "idealWeightLbs",
-      "weightOneYearAgoLbs",
-      "birthWeightLbs",
-      "birthOrderSiblings",
-      "familyLivingSituation",
-      "partnerGenderAtBirth",
-      "partnerChosenGender",
-      "children",
-      "exerciseRecreation",
-    ],
-    [
-      "mainHealthConcerns",
-      "whenFirstExperienced",
-      "howDealtWithConcerns",
-      "successWithApproaches",
-      "otherHealthPractitioners",
-      "surgicalProcedures",
-      "antibioticsInfancyChildhood",
-      "antibioticsTeen",
-      "antibioticsAdult",
-      "currentMedications",
-      "currentSupplements",
-      "familySimilarProblems",
-      "foodsAvoidSymptoms",
-      "immediateSymptomsAfterEating",
-      "delayedSymptomsAfterEating",
-      "foodCravings",
-      "dietAtOnset",
-      "knownFoodAllergies",
-      "regularFoodConsumption",
-      "specialDiet",
-      "homeCookedPercentage",
-      "dietRelationshipNotes",
-    ],
-    [
-      "bowelMovementFrequency",
-      "bowelMovementConsistency",
-      "bowelMovementColor",
-      "intestinalGas",
-      "foodPoisoningHistory",
-    ],
-    [
-      "traumaDeathFamily",
-      "traumaDeathAccident",
-      "traumaSexualPhysicalAbuse",
-      "traumaEmotionalNeglect",
-      "traumaDiscrimination",
-      "traumaLifeThreateningAccident",
-      "traumaLifeThreateningIllness",
-      "traumaRobberyMugging",
-      "traumaWitnessViolence",
-      "livedTraveledOutsideUs",
-      "recentMajorLifeChanges",
-      "workSchoolTimeOff",
-      "traumaAdditionalNotes",
-    ],
-    [
-      "conditionIbs",
-      "conditionCrohns",
-      "conditionUlcerativeColitis",
-      "conditionGastritisUlcer",
-      "conditionGerd",
-      "conditionCeliac",
-      "gastrointestinalDates",
-      "chemicalToxicExposure",
-      "odorSensitivity",
-      "secondhandSmokeExposure",
-      "moldExposure",
-      "otherConditionsSymptoms",
-      "freqMemoryImpairment",
-      "freqShortenedFocus",
-      "freqCoordinationBalance",
-      "freqLackInhibition",
-      "freqPoorOrganization",
-      "freqTimeManagement",
-      "freqMoodInstability",
-      "freqSpeechWordFinding",
-      "freqBrainFog",
-      "freqLowerEffectiveness",
-      "freqJudgmentProblems",
-    ],
-    ["lastDentistVisit", "oralDentalRegimen"],
-    ["junkFoodBingeDieting", "substanceUseHistory", "stressHandling"],
-    [
-      "satisfiedWithSleep",
-      "stayAwakeAllDay",
-      "asleep2am4am",
-      "fallAsleepUnder30min",
-      "sleep6to8Hours",
-    ],
-    ["ageFirstPeriod", "mensesPmsPain", "birthControlPills"],
-    ["sexualFunctioningConcerns", "sexualPartnersPastYear"],
-    ["generalMoods", "energyLevelScale"],
-    ["healthGoalsAspirations", "whyAchieveGoals"],
-  ];
-
   const savePartial = async () => {
     const payload = prune(form.getValues()) as Partial<HealthHistory>;
     await updateHealthHistory({
       clientId,
-      data: { health_history: payload },
+      data: payload,
     }).unwrap();
     await refetch();
   };
@@ -307,9 +199,9 @@ export const ClientComprehensiveSummary = ({
           <Form {...form}>
             {/* {currentStep === 0 && <BasicInfoStep form={form} />} */}
             {currentStep === 0 && <BirthBodyStep form={form} />}
-            {currentStep === 1 && <HealthConcernsStep form={form} />}
-            {currentStep === 2 && <BowelHealthStep form={form} />}
-            {currentStep === 3 && <StressfulEventsStep form={form} />}
+            {currentStep === 1 && <StressfulEventsStep form={form} />}
+            {currentStep === 2 && <HealthConcernsStep form={form} />}
+            {currentStep === 3 && <BowelHealthStep form={form} />}
             {currentStep === 4 && <MedicalHistoryStep form={form} />}
             {currentStep === 5 && <OralHealthHistoryStep form={form} />}
             {currentStep === 6 && <LifestyleHistoryStep form={form} />}
@@ -322,19 +214,20 @@ export const ClientComprehensiveSummary = ({
         </div>
 
         <div className="flex justify-between gap-4">
-          <Button variant="light-blue" onClick={handleCancelEdit}>
+          <Button type="button" variant="light-blue" onClick={handleCancelEdit}>
             Cancel
           </Button>
 
           <div className="flex gap-4">
             {currentStep > 0 && (
-              <Button variant="blue2" onClick={() => goToStep(currentStep - 1)}>
+              <Button type="button" variant="blue2" onClick={() => goToStep(currentStep - 1)}>
                 Back
               </Button>
             )}
 
             <Button
               variant="brightblue"
+              type="button"
               onClick={
                 currentStep === steps.length - 1
                   ? handleSubmit

@@ -95,11 +95,10 @@ export const healthHistoryApi = createApi({
       },
       {
         clientId: string;
-        data: Partial<HealthHistoryResponse>;
-        labFiles?: File[];
+        data: HealthHistory;
       }
     >({
-      query: ({ clientId, data, labFiles }) => {
+      query: ({ clientId, data }) => {
         const formData = new FormData();
 
         Object.entries(data).forEach(([key, value]) => {
@@ -107,12 +106,6 @@ export const healthHistoryApi = createApi({
             formData.append(key, String(value));
           }
         });
-
-        if (labFiles && labFiles.length > 0) {
-          labFiles.forEach((file) => {
-            formData.append("lab_file", file);
-          });
-        }
 
         return {
           url: API_ROUTES.HEALTH_HISTORY.EDIT.replace("{client_id}", clientId),
