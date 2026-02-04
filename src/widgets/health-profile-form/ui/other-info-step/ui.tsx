@@ -4,17 +4,16 @@ import {
   FormItem,
   FormControl,
   Textarea,
-  FormMessage,
 } from "shared/ui";
 import { z } from "zod";
 
 export const otherInfoSchema = z.object({
-  roleInWellnessPlan: z.string(),
-  familyFriendsSupport: z.string(),
-  supportivePersonDietaryChange: z.string(),
-  otherUsefulInformation: z.string(),
-  healthGoalsAspirations: z.string(),
-  whyAchieveGoals: z.string(),
+  roleInWellnessPlan: z.string().optional(),
+  familyFriendsSupport: z.string().optional(),
+  supportivePersonDietaryChange: z.string().optional(),
+  otherUsefulInformation: z.string().optional(),
+  healthGoalsAspirations: z.string().optional(),
+  whyAchieveGoals: z.string().optional(),
 });
 
 export const OtherStep = ({ form }: { form: any }) => {
@@ -35,7 +34,6 @@ export const OtherStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -53,7 +51,6 @@ export const OtherStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -70,7 +67,6 @@ export const OtherStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -87,7 +83,6 @@ export const OtherStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -101,7 +96,6 @@ export const OtherStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -118,7 +112,6 @@ export const OtherStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />

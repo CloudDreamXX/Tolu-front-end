@@ -4,14 +4,13 @@ import {
   FormItem,
   FormControl,
   Textarea,
-  FormMessage,
 } from "shared/ui";
 import { z } from "zod";
 
 export const lifestyleHistorySchema = z.object({
-  junkFoodBingeDieting: z.string(),
-  substanceUseHistory: z.string(),
-  stressHandling: z.string(),
+  junkFoodBingeDieting: z.string().optional(),
+  substanceUseHistory: z.string().optional(),
+  stressHandling: z.string().optional(),
 });
 
 export const LifestyleHistoryStep = ({ form }: { form: any }) => {
@@ -36,7 +35,6 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -53,7 +51,6 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -67,7 +64,6 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />

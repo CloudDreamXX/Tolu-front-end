@@ -2,7 +2,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
   Checkbox,
   Textarea,
   RadioGroup,
@@ -11,37 +10,36 @@ import {
 import { z } from "zod";
 
 export const healthConcernsSchema = z.object({
-  mainHealthConcerns: z.string(),
-  whenFirstExperienced: z.string(),
+  mainHealthConcerns: z.string().optional(),
+  whenFirstExperienced: z.string().optional(),
 
-  howDealtWithConcerns: z.string(),
-  successWithApproaches: z.string(),
+  howDealtWithConcerns: z.string().optional(),
+  successWithApproaches: z.string().optional(),
 
-  otherHealthPractitioners: z.string(),
-  surgicalProcedures: z.string(),
+  otherHealthPractitioners: z.string().optional(),
+  surgicalProcedures: z.string().optional(),
 
-  antibioticsInfancyChildhood: z.string(),
-  antibioticsTeen: z.string(),
-  antibioticsAdult: z.string(),
+  antibioticsInfancyChildhood: z.string().optional(),
+  antibioticsTeen: z.string().optional(),
+  antibioticsAdult: z.string().optional(),
+  currentMedications: z.string().optional(),
+  currentSupplements: z.string().optional(),
 
-  currentMedications: z.string(),
-  currentSupplements: z.string(),
+  familySimilarProblems: z.string().optional(),
 
-  familySimilarProblems: z.string(),
+  foodsAvoidSymptoms: z.string().optional(),
+  immediateSymptomsAfterEating: z.string().optional(),
+  delayedSymptomsAfterEating: z.string().optional(),
+  foodCravings: z.string().optional(),
 
-  foodsAvoidSymptoms: z.string(),
-  immediateSymptomsAfterEating: z.string(),
-  delayedSymptomsAfterEating: z.string(),
-  foodCravings: z.string(),
-
-  dietAtOnset: z.string(),
+  dietAtOnset: z.string().optional(),
   knownFoodAllergies: z.string().optional(),
 
-  regularFoodConsumption: z.array(z.string()),
-  specialDiet: z.array(z.string()),
+  regularFoodConsumption: z.array(z.string()).optional(),
+  specialDiet: z.array(z.string()).optional(),
 
-  homeCookedPercentage: z.number(),
-  dietRelationshipNotes: z.string(),
+  homeCookedPercentage: z.number().optional(),
+  dietRelationshipNotes: z.string().optional(),
 });
 
 export const REGULAR_FOODS = [
@@ -100,7 +98,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>What are your main health concerns? *</FormLabel>
             <Textarea {...field} />
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -114,7 +111,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
               When did you first experience these concerns? *
             </FormLabel>
             <Textarea {...field} />
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -128,7 +124,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
               How have you dealt with these concerns in the past? *
             </FormLabel>
             <Textarea {...field} />
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -142,7 +137,6 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
               Have you experienced any success with these approaches? *
             </FormLabel>
             <Textarea {...field} />
-            <FormMessage />
           </FormItem>
         )}
       />

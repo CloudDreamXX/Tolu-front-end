@@ -19,9 +19,9 @@ import {
 import { z } from "zod";
 
 export const birthBodySchema = z.object({
-  age: z.string(),
-  birthDate: z.string(),
-  genderAtBirth: z.string(),
+  age: z.string().optional(),
+  birthDate: z.string().optional(),
+  genderAtBirth: z.string().optional(),
   chosenGenderAfterBirth: z.string().optional(),
 
   breastfedOrBottle: z.string().optional(),
@@ -58,7 +58,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input type="number" {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -71,7 +70,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>Birth date *</FormLabel>
             <BirthDateField field={field} />
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -93,7 +91,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
                 <SelectItem value="Intersex">Intersex</SelectItem>
               </SelectContent>
             </Select>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -108,7 +105,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -123,7 +119,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -138,7 +133,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -153,7 +147,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -168,7 +161,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -183,7 +175,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -198,7 +189,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -213,7 +203,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -228,7 +217,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -245,7 +233,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -260,7 +247,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -275,7 +261,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -290,7 +275,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -305,7 +289,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -320,7 +303,6 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input {...field} placeholder="e.g. yoga, walking, gym" />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />

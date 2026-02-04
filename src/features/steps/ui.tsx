@@ -55,7 +55,7 @@ export const Steps: React.FC<StepsProps> = ({
         return (
           <React.Fragment key={index}>
             <Button
-              variant={"unstyled"}
+              variant="ghost"
               size={"unstyled"}
               ref={(el) => (stepRefs.current[index] = el)}
               type="button"

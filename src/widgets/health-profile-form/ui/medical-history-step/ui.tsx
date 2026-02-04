@@ -32,7 +32,7 @@ export const frequencyEnum = z.enum(["yes", "no", "sometimes"]);
 export const statusEnum = z.enum(["yes", "no"]);
 
 export const medicalConditionSchema = z.object({
-  status: statusEnum,
+  status: statusEnum.optional(),
   fromDate: z.string().optional(),
   toDate: z.string().optional(),
 });

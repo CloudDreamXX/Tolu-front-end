@@ -2,7 +2,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
   RadioGroup,
   RadioGroupItem,
   Checkbox,
@@ -11,11 +10,11 @@ import {
 import { z } from "zod";
 
 export const bowelHealthSchema = z.object({
-  bowelMovementFrequency: z.string(),
-  bowelMovementConsistency: z.array(z.string()),
-  bowelMovementColor: z.array(z.string()),
-  intestinalGas: z.string(),
-  foodPoisoningHistory: z.string(),
+  bowelMovementFrequency: z.string().optional(),
+  bowelMovementConsistency: z.array(z.string()).optional(),
+  bowelMovementColor: z.array(z.string()).optional(),
+  intestinalGas: z.string().optional(),
+  foodPoisoningHistory: z.string().optional(),
 });
 
 export const BOWEL_FREQUENCY = [
@@ -92,7 +91,6 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
                 </div>
               ))}
             </RadioGroup>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -113,7 +111,6 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
                 )
               )}
             </div>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -129,7 +126,6 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
                 checkboxGroup(form, "bowelMovementColor", opt.value, opt.label)
               )}
             </div>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -141,7 +137,6 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>Do you experience intestinal gas? *</FormLabel>
             <Textarea {...field} />
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -156,7 +151,6 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
               {...field}
               placeholder="Where were you, how was it treated, and did you fully recover?"
             />
-            <FormMessage />
           </FormItem>
         )}
       />

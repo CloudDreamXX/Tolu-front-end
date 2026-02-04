@@ -4,13 +4,12 @@ import {
   FormItem,
   FormControl,
   Textarea,
-  FormMessage,
 } from "shared/ui";
 import { z } from "zod";
 
 export const sexualHistorySchema = z.object({
-  sexualFunctioningConcerns: z.string(),
-  sexualPartnersPastYear: z.string(),
+  sexualFunctioningConcerns: z.string().optional(),
+  sexualPartnersPastYear: z.string().optional(),
 });
 
 export const SexualHistoryStep = ({ form }: { form: any }) => {
@@ -33,7 +32,6 @@ export const SexualHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -50,7 +48,6 @@ export const SexualHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />

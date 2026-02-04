@@ -4,15 +4,14 @@ import {
   FormItem,
   FormControl,
   Textarea,
-  FormMessage,
   Input,
 } from "shared/ui";
 import { z } from "zod";
 
 export const mentalHealthSchema = z.object({
-  generalMoods: z.string(),
-  energyLevelScale: z.string(),
-  bestPointInLife: z.string(),
+  generalMoods: z.string().optional(),
+  energyLevelScale: z.string().optional(),
+  bestPointInLife: z.string().optional(),
 });
 
 export const MentalHealthStatusStep = ({ form }: { form: any }) => {
@@ -36,7 +35,6 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -59,7 +57,6 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
                 onChange={(e) => field.onChange(String(e.target.value))}
               />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -75,7 +72,6 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />

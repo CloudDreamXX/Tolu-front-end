@@ -4,17 +4,16 @@ import {
   FormItem,
   FormControl,
   Textarea,
-  FormMessage,
 } from "shared/ui";
 import { z } from "zod";
 
 export const oralHealthSchema = z.object({
-  lastDentistVisit: z.string(),
-  dentistHealthDiscussion: z.string(),
-  oralDentalRegimen: z.string(),
-  mercuryAmalgams: z.string(),
-  rootCanals: z.string(),
-  oralHealthConcerns: z.string(),
+  lastDentistVisit: z.string().optional(),
+  dentistHealthDiscussion: z.string().optional(),
+  oralDentalRegimen: z.string().optional(),
+  mercuryAmalgams: z.string().optional(),
+  rootCanals: z.string().optional(),
+  oralHealthConcerns: z.string().optional(),
   oralHealthAdditionalNotes: z.string().optional(),
 });
 
@@ -39,7 +38,6 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -57,7 +55,6 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -75,7 +72,6 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -92,7 +88,6 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -108,7 +103,6 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -125,7 +119,6 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -142,7 +135,6 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />

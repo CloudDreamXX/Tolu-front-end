@@ -2,11 +2,11 @@ import { z } from "zod";
 import { FormLabel, FormField, FormItem, FormControl, Input } from "shared/ui";
 
 export const sleepHistorySchema = z.object({
-  satisfiedWithSleep: z.string(),
-  stayAwakeAllDay: z.string(),
-  asleep2am4am: z.string(),
-  fallAsleepUnder30min: z.string(),
-  sleep6to8Hours: z.string(),
+  satisfiedWithSleep: z.string().optional(),
+  stayAwakeAllDay: z.string().optional(),
+  asleep2am4am: z.string().optional(),
+  fallAsleepUnder30min: z.string().optional(),
+  sleep6to8Hours: z.string().optional(),
 });
 
 export const SleepHistoryStep = ({ form }: { form: any }) => {

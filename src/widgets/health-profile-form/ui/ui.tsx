@@ -72,21 +72,21 @@ const steps = [
   "Other",
 ];
 
-export const formSchema = basicInfoSchema
-  .and(birthBodySchema)
-  .and(healthConcernsSchema)
-  .and(bowelHealthSchema)
-  .and(stressfulEventsSchema)
-  .and(medicalHistorySchema)
-  .and(oralHealthSchema)
-  .and(lifestyleHistorySchema)
-  .and(sleepHistorySchema)
-  .and(womensHealthSchema)
-  .and(sexualHistorySchema)
-  .and(mentalHealthSchema)
-  .and(otherInfoSchema);
+// export const formSchema = basicInfoSchema
+//   .and(birthBodySchema)
+//   .and(healthConcernsSchema)
+//   .and(bowelHealthSchema)
+//   .and(stressfulEventsSchema)
+//   .and(medicalHistorySchema)
+//   .and(oralHealthSchema)
+//   .and(lifestyleHistorySchema)
+//   .and(sleepHistorySchema)
+//   .and(womensHealthSchema)
+//   .and(sexualHistorySchema)
+//   .and(mentalHealthSchema)
+//   .and(otherInfoSchema);
 
-type FormValues = z.infer<typeof formSchema>;
+// type FormValues = z.infer<typeof formSchema>;
 
 export const HealthProfileForm = () => {
   const { isMobile } = usePageWidth();
@@ -101,8 +101,9 @@ export const HealthProfileForm = () => {
 
   const [createHealthHistory] = useCreateHealthHistoryMutation();
 
+  type FormValues = Record<string, any>;
+
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
     shouldUnregister: false,
     defaultValues: mapHealthHistoryToFormDefaults(healthHistoryData),
   });
@@ -112,119 +113,6 @@ export const HealthProfileForm = () => {
       form.reset(mapHealthHistoryToFormDefaults(healthHistoryData));
     }
   }, [healthHistoryData]);
-
-  const stepFields: Array<(keyof FormValues)[]> = [
-    ["email", "fullName"],
-
-    [
-      "age",
-      "birthDate",
-      "genderAtBirth",
-      "chosenGenderAfterBirth",
-      "breastfedOrBottle",
-      "birthDeliveryMethod",
-      "height",
-      "bloodType",
-      "currentWeightLbs",
-      "idealWeightLbs",
-      "weightOneYearAgoLbs",
-      "birthWeightLbs",
-      "birthOrderSiblings",
-      "familyLivingSituation",
-      "partnerGenderAtBirth",
-      "partnerChosenGender",
-      "children",
-      "exerciseRecreation",
-    ],
-
-    [
-      "mainHealthConcerns",
-      "whenFirstExperienced",
-      "howDealtWithConcerns",
-      "successWithApproaches",
-      "otherHealthPractitioners",
-      "surgicalProcedures",
-      "antibioticsInfancyChildhood",
-      "antibioticsTeen",
-      "antibioticsAdult",
-      "currentMedications",
-      "currentSupplements",
-      "familySimilarProblems",
-      "foodsAvoidSymptoms",
-      "immediateSymptomsAfterEating",
-      "delayedSymptomsAfterEating",
-      "foodCravings",
-      "dietAtOnset",
-      "knownFoodAllergies",
-      "regularFoodConsumption",
-      "specialDiet",
-      "homeCookedPercentage",
-      "dietRelationshipNotes",
-    ],
-
-    [
-      "bowelMovementFrequency",
-      "bowelMovementConsistency",
-      "bowelMovementColor",
-      "intestinalGas",
-      "foodPoisoningHistory",
-    ],
-
-    [
-      "traumaDeathFamily",
-      "traumaDeathAccident",
-      "traumaSexualPhysicalAbuse",
-      "traumaEmotionalNeglect",
-      "traumaDiscrimination",
-      "traumaLifeThreateningAccident",
-      "traumaLifeThreateningIllness",
-      "traumaRobberyMugging",
-      "traumaWitnessViolence",
-      "livedTraveledOutsideUs",
-      "recentMajorLifeChanges",
-      "workSchoolTimeOff",
-      "traumaAdditionalNotes",
-    ],
-
-    [
-      "conditionIbs",
-      "conditionCrohns",
-      "conditionUlcerativeColitis",
-      "conditionGastritisUlcer",
-      "conditionGerd",
-      "conditionCeliac",
-      "gastrointestinalDates",
-      "chemicalToxicExposure",
-      "odorSensitivity",
-      "secondhandSmokeExposure",
-      "moldExposure",
-      "otherConditionsSymptoms",
-      "freqMemoryImpairment",
-      "freqShortenedFocus",
-      "freqCoordinationBalance",
-      "freqLackInhibition",
-      "freqPoorOrganization",
-      "freqTimeManagement",
-      "freqMoodInstability",
-      "freqSpeechWordFinding",
-      "freqBrainFog",
-      "freqLowerEffectiveness",
-      "freqJudgmentProblems",
-    ],
-    ["lastDentistVisit", "oralDentalRegimen"],
-    ["junkFoodBingeDieting", "substanceUseHistory", "stressHandling"],
-    [
-      "satisfiedWithSleep",
-      "stayAwakeAllDay",
-      "asleep2am4am",
-      "fallAsleepUnder30min",
-      "sleep6to8Hours",
-    ],
-    ["ageFirstPeriod", "mensesPmsPain", "birthControlPills"],
-    ["sexualFunctioningConcerns", "sexualPartnersPastYear"],
-    ["generalMoods", "energyLevelScale"],
-    ["healthGoalsAspirations", "whyAchieveGoals"],
-  ];
 
   const submitHealthHistory = async (
     values: FormValues,
@@ -249,16 +137,11 @@ export const HealthProfileForm = () => {
   const goToStep = async (nextStep: number) => {
     if (nextStep === currentStep) return;
 
-    const valid = await form.trigger(stepFields[currentStep] as any);
-    if (!valid) return;
-
     await submitHealthHistory(form.getValues(), { partial: true });
     setCurrentStep(nextStep);
   };
 
   const handleSubmit = async () => {
-    const valid = await form.trigger(stepFields[currentStep] as any);
-    if (!valid) return;
     await submitHealthHistory(form.getValues(), { partial: false });
     setIsSummary(true);
   };
@@ -291,7 +174,7 @@ export const HealthProfileForm = () => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
+      <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6 overflow-y-auto">
         <DialogTitle>Your Health History</DialogTitle>
 
         {!isSummary && (
@@ -303,7 +186,7 @@ export const HealthProfileForm = () => {
           />
         )}
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1">
           {isSummary ? (
             <HealthHistorySummary
               data={healthHistoryData!}
@@ -333,6 +216,7 @@ export const HealthProfileForm = () => {
 
         <div className="flex justify-between gap-4">
           <Button
+            type="button"
             variant="blue2"
             onClick={isSummary ? () => setIsOpen(false) : onDiscard}
           >
@@ -342,6 +226,7 @@ export const HealthProfileForm = () => {
           <div className="flex gap-4">
             {!isSummary && currentStep > 0 && (
               <Button
+                type="button"
                 variant="light-blue"
                 onClick={() => goToStep(currentStep - 1)}
               >
@@ -350,13 +235,14 @@ export const HealthProfileForm = () => {
             )}
 
             <Button
+              type="button"
               variant="brightblue"
               onClick={
                 isSummary
                   ? () => {
-                      setIsSummary(false);
-                      setCurrentStep(0);
-                    }
+                    setIsSummary(false);
+                    setCurrentStep(0);
+                  }
                   : currentStep === steps.length - 1
                     ? handleSubmit
                     : () => goToStep(currentStep + 1)

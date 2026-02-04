@@ -9,8 +9,8 @@ import {
 import { z } from "zod";
 
 export const basicInfoSchema = z.object({
-  email: z.string().email("Invalid email"),
-  fullName: z.string().min(1, "Full name is required"),
+  email: z.string().optional(),
+  fullName: z.string().optional(),
 });
 
 export const BasicInfoStep = ({ form }: { form: any }) => (

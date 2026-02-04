@@ -3,16 +3,15 @@ import {
   FormItem,
   FormLabel,
   FormControl,
-  FormMessage,
   Checkbox,
   Textarea,
 } from "shared/ui";
 import { z } from "zod";
 
 export const traumaEventSchema = z.object({
-  status: z.enum(["yes", "no"]),
-  dateFrom: z.string().optional(),
-  dateTo: z.union([z.string(), z.literal("current")]).optional(),
+  status: z.enum(["yes", "no"]).optional(),
+  dateFrom: z.string().optional().optional(),
+  dateTo: z.union([z.string(), z.literal("current")]).optional().optional(),
 });
 
 export const stressfulEventsSchema = z.object({
@@ -26,9 +25,9 @@ export const stressfulEventsSchema = z.object({
   traumaRobberyMugging: traumaEventSchema.optional(),
   traumaWitnessViolence: traumaEventSchema.optional(),
 
-  livedTraveledOutsideUs: z.string(),
+  livedTraveledOutsideUs: z.string().optional(),
   recentMajorLifeChanges: z.string().optional(),
-  workSchoolTimeOff: z.string(),
+  workSchoolTimeOff: z.string().optional(),
 
   traumaAdditionalNotes: z.string().optional(),
 });
@@ -88,7 +87,6 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -184,7 +182,6 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
               ))}
             </div>
 
-            <FormMessage />
           </FormItem>
         )}
       />

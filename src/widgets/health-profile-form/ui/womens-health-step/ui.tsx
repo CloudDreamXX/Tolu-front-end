@@ -4,19 +4,18 @@ import {
   FormItem,
   FormControl,
   Input,
-  FormMessage,
   Textarea,
 } from "shared/ui";
 import { z } from "zod";
 
 export const womensHealthSchema = z.object({
-  ageFirstPeriod: z.string(),
-  mensesPmsPain: z.string(),
-  cycleSecondHalfSymptoms: z.string(),
-  yeastUtiInfections: z.string(),
-  birthControlPills: z.string(),
-  conceptionPregnancyProblems: z.string(),
-  hormoneReplacementHerbs: z.string(),
+  ageFirstPeriod: z.string().optional(),
+  mensesPmsPain: z.string().optional(),
+  cycleSecondHalfSymptoms: z.string().optional(),
+  yeastUtiInfections: z.string().optional(),
+  birthControlPills: z.string().optional(),
+  conceptionPregnancyProblems: z.string().optional(),
+  hormoneReplacementHerbs: z.string().optional(),
 });
 
 export const WomensHealthStep = ({ form }: { form: any }) => {
@@ -37,7 +36,6 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
             <FormControl>
               <Input type="number" {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -54,7 +52,6 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -71,7 +68,6 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -88,7 +84,6 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -105,7 +100,6 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -121,7 +115,6 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -138,7 +131,6 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
             <FormControl>
               <Textarea {...field} />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
