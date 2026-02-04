@@ -86,7 +86,9 @@ export const CoachBlockNote = ({
       <p className="text-sm font-medium mb-1">Coach note</p>
 
       {hasNote && !isEditing ? (
-        <p className="w-full rounded-md border p-2 text-sm bg-muted">{value}</p>
+        <p className="w-full rounded-md border p-2 text-sm bg-muted whitespace-pre-wrap break-words">
+          {value}
+        </p>
       ) : (
         <Textarea
           containerClassName="w-full min-h-[80px] rounded-md border p-2 text-sm"
