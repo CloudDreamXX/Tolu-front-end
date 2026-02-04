@@ -30,6 +30,9 @@ type SummarySection<T> = {
   fields: SummaryField<T>[];
 };
 
+const toSnakeCase = (str: string) =>
+  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+
 const formatMedicalHistoryField = (value: HealthHistory[keyof HealthHistory]) => {
   if (!value) return "-";
 
@@ -49,7 +52,7 @@ const formatMedicalHistoryField = (value: HealthHistory[keyof HealthHistory]) =>
 };
 
 export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
- {
+  {
     title: "Birth & Body",
     step: 0,
     block: HEALTH_HISTORY_BLOCKS.BIRTH_BODY,
@@ -75,7 +78,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
     ],
   },
 
-    {
+  {
     title: "Stressful Events",
     step: 1,
     block: HEALTH_HISTORY_BLOCKS.STRESSFUL_EVENTS,
@@ -132,7 +135,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
     ],
   },
 
-{
+  {
     title: "Health Concerns",
     step: 2,
     block: HEALTH_HISTORY_BLOCKS.HEALTH_CONCERNS,
@@ -198,77 +201,77 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
     fields: [
       // Gastrointestinal
       ...GASTROINTESTINAL.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Hormones / Metabolic
       ...HORMONES_METABOLIC.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Cardiovascular
       ...CARDIOVASCULAR.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Cancer
       ...CANCER.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Genital & Urinary
       ...GENITAL_URINARY.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Musculoskeletal / Pain
       ...MUSCULOSKELETAL.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Immune / Inflammatory
       ...IMMUNE_INFLAMMATORY.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Respiratory
       ...RESPIRATORY.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Skin
       ...SKIN.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Neurologic / Mood
       ...NEUROLOGIC_MOOD.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
 
       // Miscellaneous
       ...MISCELLANEOUS.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: formatMedicalHistoryField,
       })),
@@ -278,7 +281,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
 
       // Frequency checks
       ...FREQUENCY_ITEMS.map((item) => ({
-        key: item.name as keyof HealthHistory,
+        key: toSnakeCase(item.name) as keyof HealthHistory,
         label: item.label,
         format: (v: HealthHistory[keyof HealthHistory]) => (v ?? "-") as string,
       })),
@@ -293,8 +296,8 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
 
   {
     title: "Oral Health History",
-    step: 5, 
-    block: "ORAL_HEALTH", 
+    step: 5,
+    block: "ORAL_HEALTH",
     fields: [
       {
         key: "last_dentist_visit",
@@ -341,7 +344,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
   {
     title: "Sleep History",
     step: 7,
-    block: "SLEEP_HISTORY", 
+    block: "SLEEP_HISTORY",
     fields: [
       { key: "satisfied_with_sleep", label: "Are you satisfied with your sleep?" },
       { key: "stay_awake_all_day", label: "Do you stay awake all day without dozing?" },
@@ -390,17 +393,17 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
     ],
   },
 
-{
-  title: "Goals & Support",
-  step: 11,
-  block: HEALTH_HISTORY_BLOCKS.OTHER,
-  fields: [
-    { key: "role_in_wellness_plan", label: "What role do you play in your wellness plan?" },
-    { key: "family_friends_support", label: "Do you think family and friends will be supportive of you making health and lifestyle changes to improve your quality of life? Explain, if no." },
-    { key: "supportive_person_dietary_change", label: "Who in your family or on your health care team will be most supportive of you making dietary change?" },
-    { key: "other_useful_information", label: "Please describe any other information you think would be useful in helping to address your health concern(s)." },
-    { key: "health_goals_aspirations", label: "What are your health goals and aspirations?" },
-    { key: "why_achieve_goals", label: "Though it may seem odd, please consider why you might want to achieve that for yourself." },
-  ],
-}
+  {
+    title: "Goals & Support",
+    step: 11,
+    block: HEALTH_HISTORY_BLOCKS.OTHER,
+    fields: [
+      { key: "role_in_wellness_plan", label: "What role do you play in your wellness plan?" },
+      { key: "family_friends_support", label: "Do you think family and friends will be supportive of you making health and lifestyle changes to improve your quality of life? Explain, if no." },
+      { key: "supportive_person_dietary_change", label: "Who in your family or on your health care team will be most supportive of you making dietary change?" },
+      { key: "other_useful_information", label: "Please describe any other information you think would be useful in helping to address your health concern(s)." },
+      { key: "health_goals_aspirations", label: "What are your health goals and aspirations?" },
+      { key: "why_achieve_goals", label: "Though it may seem odd, please consider why you might want to achieve that for yourself." },
+    ],
+  }
 ];
