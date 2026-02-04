@@ -258,9 +258,6 @@ export const ClientComprehensiveSummary = ({
   };
 
   const goToStep = async (nextStep: number) => {
-    const valid = await form.trigger(stepFields[currentStep] as any);
-    if (!valid) return;
-
     await savePartial();
     setCurrentStep(nextStep);
   };
@@ -272,9 +269,6 @@ export const ClientComprehensiveSummary = ({
   };
 
   const handleSubmit = async () => {
-    const valid = await form.trigger();
-    if (!valid) return;
-
     await savePartial();
     setCurrentStep(0);
     onOpenChange?.(false);
@@ -311,19 +305,19 @@ export const ClientComprehensiveSummary = ({
 
         <div className="flex-1 overflow-y-auto max-h-[65vh]">
           <Form {...form}>
-            {currentStep === 0 && <BasicInfoStep form={form} />}
-            {currentStep === 1 && <BirthBodyStep form={form} />}
-            {currentStep === 2 && <HealthConcernsStep form={form} />}
-            {currentStep === 3 && <BowelHealthStep form={form} />}
-            {currentStep === 4 && <StressfulEventsStep form={form} />}
-            {currentStep === 5 && <MedicalHistoryStep form={form} />}
-            {currentStep === 6 && <OralHealthHistoryStep form={form} />}
-            {currentStep === 7 && <LifestyleHistoryStep form={form} />}
-            {currentStep === 8 && <SleepHistoryStep form={form} />}
-            {currentStep === 9 && <WomensHealthStep form={form} />}
-            {currentStep === 10 && <SexualHistoryStep form={form} />}
-            {currentStep === 11 && <MentalHealthStatusStep form={form} />}
-            {currentStep === 12 && <OtherStep form={form} />}
+            {/* {currentStep === 0 && <BasicInfoStep form={form} />} */}
+            {currentStep === 0 && <BirthBodyStep form={form} />}
+            {currentStep === 1 && <HealthConcernsStep form={form} />}
+            {currentStep === 2 && <BowelHealthStep form={form} />}
+            {currentStep === 3 && <StressfulEventsStep form={form} />}
+            {currentStep === 4 && <MedicalHistoryStep form={form} />}
+            {currentStep === 5 && <OralHealthHistoryStep form={form} />}
+            {currentStep === 6 && <LifestyleHistoryStep form={form} />}
+            {currentStep === 7 && <SleepHistoryStep form={form} />}
+            {currentStep === 8 && <WomensHealthStep form={form} />}
+            {currentStep === 9 && <SexualHistoryStep form={form} />}
+            {currentStep === 10 && <MentalHealthStatusStep form={form} />}
+            {currentStep === 11 && <OtherStep form={form} />}
           </Form>
         </div>
 

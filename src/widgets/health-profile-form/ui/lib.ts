@@ -1,6 +1,8 @@
+import { z } from "zod";
 import { HealthHistory } from "entities/health-history";
+import { formSchema } from "./ui";
 
-type FormValues = Record<string, any>;
+type FormValues = z.infer<typeof formSchema>;
 
 export const mapHealthHistoryToFormDefaults = (
   healthHistory?: HealthHistory

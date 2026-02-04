@@ -72,21 +72,21 @@ const steps = [
   "Other",
 ];
 
-// export const formSchema = basicInfoSchema
-//   .and(birthBodySchema)
-//   .and(healthConcernsSchema)
-//   .and(bowelHealthSchema)
-//   .and(stressfulEventsSchema)
-//   .and(medicalHistorySchema)
-//   .and(oralHealthSchema)
-//   .and(lifestyleHistorySchema)
-//   .and(sleepHistorySchema)
-//   .and(womensHealthSchema)
-//   .and(sexualHistorySchema)
-//   .and(mentalHealthSchema)
-//   .and(otherInfoSchema);
+export const formSchema = basicInfoSchema
+  .and(birthBodySchema)
+  .and(healthConcernsSchema)
+  .and(bowelHealthSchema)
+  .and(stressfulEventsSchema)
+  .and(medicalHistorySchema)
+  .and(oralHealthSchema)
+  .and(lifestyleHistorySchema)
+  .and(sleepHistorySchema)
+  .and(womensHealthSchema)
+  .and(sexualHistorySchema)
+  .and(mentalHealthSchema)
+  .and(otherInfoSchema);
 
-// type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
 export const HealthProfileForm = () => {
   const { isMobile } = usePageWidth();
@@ -100,8 +100,6 @@ export const HealthProfileForm = () => {
   const { data: healthHistoryData, refetch } = useGetUserHealthHistoryQuery();
 
   const [createHealthHistory] = useCreateHealthHistoryMutation();
-
-  type FormValues = Record<string, any>;
 
   const form = useForm<FormValues>({
     shouldUnregister: false,
