@@ -66,6 +66,7 @@ import {
 } from "widgets/health-profile-form/ui/womens-health-step";
 
 import {
+  mapFormValuesToHealthHistoryPayload,
   mapHealthHistoryToFormDefaults,
   prune,
 } from "widgets/health-profile-form/ui/lib";
@@ -144,7 +145,7 @@ export const ClientComprehensiveSummary = ({
     const payload = prune(form.getValues()) as Partial<HealthHistory>;
     await updateHealthHistory({
       clientId,
-      data: payload,
+      data: mapFormValuesToHealthHistoryPayload(payload),
     }).unwrap();
     await refetch();
   };
