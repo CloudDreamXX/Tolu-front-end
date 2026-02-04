@@ -1,3 +1,11 @@
+## [1.12.0] - 2026-02-04
+
+### New feature
+
+- Update client health history with new form.
+- Skip client onboarding.
+- Add coach note for each block of client's health history.
+
 ## [1.11.0] - 2026-01-22
 
 ### New feature
