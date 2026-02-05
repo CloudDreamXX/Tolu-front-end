@@ -47,6 +47,10 @@ const detectContentType = (text: string): "html" | "markdown" | "plain" => {
   return "plain";
 };
 
+const convertMarkdownBoldToHtml = (text: string) => {
+  return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+};
+
 export const smartRender = async (text: string) => {
   try {
     const relevantContentIndex = text.indexOf("Relevant content");
@@ -61,9 +65,11 @@ export const smartRender = async (text: string) => {
       "$1"
     );
 
-    const preprocessedText = withoutCodeFences
-      .replace(/^##\s?/gm, "")
-      .replace(/\ud83d\udcda/g, "");
+    const preprocessedText = convertMarkdownBoldToHtml(
+      withoutCodeFences
+        .replace(/^##\s?/gm, "")
+        .replace(/\ud83d\udcda/g, "")
+    );
 
     const sanitizedText = sanitizeHtml(preprocessedText, {
       allowedTags: [

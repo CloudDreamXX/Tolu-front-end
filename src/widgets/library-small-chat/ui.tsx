@@ -570,7 +570,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setStreamingText("");
     setChatTitle("");
     setError(null);
-    setClientId(null);
 
     dispatch(clearActiveChatHistory());
 
