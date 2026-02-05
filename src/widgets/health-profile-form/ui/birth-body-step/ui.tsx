@@ -114,7 +114,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="breastfedOrBottle"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Were you breastfed or bottle-fed? *</FormLabel>
+            <FormLabel>Were you breastfed or bottle? *</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>

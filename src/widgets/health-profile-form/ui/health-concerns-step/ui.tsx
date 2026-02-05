@@ -8,6 +8,7 @@ import {
   RadioGroupItem,
 } from "shared/ui";
 import { z } from "zod";
+import { useState, useEffect } from "react";
 
 export const healthConcernsSchema = z.object({
   mainHealthConcerns: z.string().optional(),
@@ -96,6 +97,16 @@ const checkboxGroup = (form: any, name: string, value: string) => {
 };
 
 export const HealthConcernsStep = ({ form }: { form: any }) => {
+  const [otherDiet, setOtherDiet] = useState("");
+  const specialDiet = form.watch("specialDiet") ?? [];
+  const isOtherSelected = specialDiet.includes("Other");
+
+  useEffect(() => {
+    if (!isOtherSelected) {
+      setOtherDiet("");
+    }
+  }, [isOtherSelected]);
+
   return (
     <div className="space-y-8">
       {/* Main health concerns */}
@@ -374,20 +385,31 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
       />
 
       {/* Special diet */}
-      <FormField
-        control={form.control}
-        name="specialDiet"
-        render={() => (
-          <FormItem>
-            <FormLabel>Are you currently on a special diet? *</FormLabel>
-            <div className="grid grid-cols-2 gap-3">
-              {SPECIAL_DIETS.map((diet) =>
-                checkboxGroup(form, "specialDiet", diet)
-              )}
-            </div>
-          </FormItem>
+      <FormItem>
+        <FormLabel>Are you currently on a special diet? *</FormLabel>
+        <div className="grid grid-cols-2 gap-3">
+          {SPECIAL_DIETS.map((diet) => checkboxGroup(form, "specialDiet", diet))}
+        </div>
+        {isOtherSelected && (
+          <div className="flex flex-col mt-4 gap-2">
+            <FormLabel className="mt-4">Please specify your other diet</FormLabel>
+            <Textarea
+              value={otherDiet}
+              onChange={e => setOtherDiet(e.target.value)}
+              onBlur={() => {
+                if (otherDiet.trim()) {
+                  // Replace 'Other' with the typed value only on blur
+                  const filtered = specialDiet.filter((d: string) => d !== "Other");
+                  if (!filtered.includes(otherDiet.trim())) {
+                    form.setValue("specialDiet", [...filtered, otherDiet.trim()]);
+                  }
+                }
+              }}
+              placeholder="Type your diet..."
+            />
+          </div>
         )}
-      />
+      </FormItem>
 
       {/* Home-cooked meals */}
       <FormField
