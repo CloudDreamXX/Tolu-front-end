@@ -438,7 +438,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                         >
                           <AvatarImage src={undefined} alt={"undefined"} />
                           <AvatarFallback className="text-[10px] font-medium">
-                            {p.user.name.slice(0, 2).toUpperCase()}
+                            {`${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}`}
                           </AvatarFallback>
                         </Avatar>
                       ))}
@@ -585,7 +585,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsContent value="profile">
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || location.pathname.split("/").pop()!}
-            onOpenChange={() => {}}
+            onOpenChange={() => { }}
             asDialog={false}
           />
         </TabsContent>
@@ -659,8 +659,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => {}}
-          onDelete={() => {}}
+          onEdit={() => { }}
+          onDelete={() => { }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
