@@ -45,7 +45,7 @@ export const SleepHistoryStep = ({ form }: { form: any }) => {
             render={({ field }) => (
               <FormItem className="space-y-2">
                 <FormLabel className="text-sm font-medium">
-                  {q.label} <span className="text-red-500">*</span>
+                  {q.label}
                 </FormLabel>
 
                 <FormControl>

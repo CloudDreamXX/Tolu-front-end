@@ -208,9 +208,10 @@ export const NEUROLOGIC_MOOD = [
   { label: "Seizures", name: "conditionSeizures" },
   { label: "Alzheimer’s", name: "conditionAlzheimers" },
   {
-    label: "Concussion / Traumatic Brain Injury",
+    label: "Concussion / Traumatic",
     name: "conditionConcussionTbi",
   },
+  { label: "Brain Injury", name: "conditionBrainInjury" },
 ];
 
 export const MISCELLANEOUS = [

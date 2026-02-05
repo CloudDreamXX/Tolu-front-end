@@ -24,7 +24,7 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               How are your moods in general? Do you experience more anxiety,
-              depression or anger than you would like? *
+              depression or anger than you would like?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -40,7 +40,7 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               On a scale of 1–10, one being the worst and 10 being the best,
-              describe your usual level of energy. *
+              describe your usual level of energy.
             </FormLabel>
             <FormControl>
               <Input
@@ -61,7 +61,7 @@ export const MentalHealthStatusStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              At what point in your life did you feel best? Why? *
+              At what point in your life did you feel best? Why?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />

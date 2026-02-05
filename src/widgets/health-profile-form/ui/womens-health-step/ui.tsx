@@ -27,7 +27,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              How old were you when you first got your period? *
+              How old were you when you first got your period?
             </FormLabel>
             <FormControl>
               <Input type="number" {...field} />
@@ -43,7 +43,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               How are/were your menses? Do/did you have PMS? Painful periods? If
-              so, explain. *
+              so, explain.
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -59,7 +59,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               In the second half of your cycle do you experience any symptoms of
-              breast tenderness, water retention or irritability? *
+              breast tenderness, water retention or irritability?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -75,7 +75,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Have you experienced any yeast infections or urinary tract
-              infections? Are they regular? *
+              infections? Are they regular?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -91,7 +91,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Have you/do you still take birth control pills? If so, please list
-              length of time and type. *
+              length of time and type.
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -106,7 +106,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Have you had any problems with conception or pregnancy? *
+              Have you had any problems with conception or pregnancy?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -122,7 +122,7 @@ export const WomensHealthStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Are you taking any hormone replacement therapy or hormonal
-              supportive herbs? If so, please list again here. *
+              supportive herbs? If so, please list again here.
             </FormLabel>
             <FormControl>
               <Textarea {...field} />

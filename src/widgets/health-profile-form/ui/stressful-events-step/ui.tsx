@@ -81,7 +81,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Have you lived or traveled outside of the United States? If so,
-              when and where? *
+              when and where?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -113,7 +113,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               How much time have you had to take off from work or school in the
-              last year? *
+              last year?
             </FormLabel>
 
             <div className="space-y-3 mt-3">
@@ -139,7 +139,7 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
       <div>
         <FormLabel className="text-base font-medium">
           Have you experienced one or more of these stressful life events or
-          traumas in your life? *
+          traumas in your life?
         </FormLabel>
 
         <div className="mt-4 border rounded-lg overflow-hidden">

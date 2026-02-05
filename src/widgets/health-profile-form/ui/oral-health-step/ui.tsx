@@ -27,7 +27,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               How long since you last visited the dentist? What was the reason
-              for that visit? *
+              for that visit?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -44,7 +44,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormLabel>
               In the past 12 months has a dentist or hygienist talked to you
               about your oral health, blood sugar or other health concerns?
-              (Explain.) *
+              (Explain.)
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -61,7 +61,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
             <FormLabel>
               What is your current oral and dental regimen? (Please note whether
               this regimen is once or twice daily or occasionally and what kind
-              of toothpaste you use.) *
+              of toothpaste you use.)
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -77,7 +77,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Do you have any mercury amalgams? (If no, were they removed? If
-              so, how?) *
+              so, how?)
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -92,7 +92,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Have you had any root canals? (If yes, how many and when?) *
+              Have you had any root canals? (If yes, how many and when?)
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -108,7 +108,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Do you have any concerns about your oral or dental health? (gums
-              bleed after flossing, receding gums) *
+              bleed after flossing, receding gums)
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -124,7 +124,7 @@ export const OralHealthHistoryStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Is there anything else about your current oral or dental health or
-              health history that you’d like us to know? *
+              health history that you’d like us to know?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />

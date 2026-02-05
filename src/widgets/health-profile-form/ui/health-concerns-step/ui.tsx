@@ -418,7 +418,7 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              What percentage of your meals are home-cooked? *
+              What percentage of your meals are home-cooked?
             </FormLabel>
             <RadioGroup
               value={String(field.value)}
@@ -455,7 +455,7 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Is there anything else I should know about your current diet,
-              history or relationship to food? *
+              history or relationship to food?
             </FormLabel>
             <Textarea {...field} />
           </FormItem>

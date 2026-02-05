@@ -78,7 +78,7 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
         name="bowelMovementFrequency"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Bowel Movement Frequency *</FormLabel>
+            <FormLabel>Bowel Movement Frequency</FormLabel>
             <RadioGroup
               value={field.value}
               onValueChange={field.onChange}
@@ -100,7 +100,7 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
         name="bowelMovementConsistency"
         render={() => (
           <FormItem>
-            <FormLabel>Bowel Movement Consistency *</FormLabel>
+            <FormLabel>Bowel Movement Consistency</FormLabel>
             <div className="grid grid-cols-2 gap-3">
               {BOWEL_CONSISTENCY.map((opt) =>
                 checkboxGroup(
@@ -120,7 +120,7 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
         name="bowelMovementColor"
         render={() => (
           <FormItem>
-            <FormLabel>Bowel Movement Color *</FormLabel>
+            <FormLabel>Bowel Movement Color</FormLabel>
             <div className="grid grid-cols-2 gap-3">
               {BOWEL_COLOR.map((opt) =>
                 checkboxGroup(form, "bowelMovementColor", opt.value, opt.label)
@@ -135,7 +135,7 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
         name="intestinalGas"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Do you experience intestinal gas? *</FormLabel>
+            <FormLabel>Do you experience intestinal gas? If so, please explain if it is excessive, occasional, odorous etc.</FormLabel>
             <Textarea {...field} />
           </FormItem>
         )}
@@ -146,7 +146,7 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
         name="foodPoisoningHistory"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Have you ever had food poisoning? *</FormLabel>
+            <FormLabel>Have you ever had food poisoning? If yes, please describe in detail, including 1) Where were you 2) What did you treat it with, and 3) If you feel like you fully recovered from it. </FormLabel>
             <Textarea
               {...field}
               placeholder="Where were you, how was it treated, and did you fully recover?"
