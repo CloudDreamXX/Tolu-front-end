@@ -15,12 +15,10 @@ import {
   useMarkNotificationAsReadMutation,
 } from "entities/notifications";
 import { RootState } from "entities/store";
-import { setFromUserInfo } from "entities/store/clientOnboardingSlice";
 import {
   useSignOutMutation,
   useChangePasswordMutation,
   useLazyDownloadProfilePhotoQuery,
-  useLazyGetOnboardClientQuery,
 } from "entities/user";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,9 +43,9 @@ import { ClientProfileData } from "widgets/client-edit-profile-modal/types";
 import { Card } from "./components/Card";
 import { DailyJournalOverview } from "./components/DailyJournalOverview/ui";
 import { Field } from "./components/Field";
-import { OnboardingInfo } from "./components/OnboardingInfo";
 import { Switch } from "./components/Switch";
 import { AcceptInviteBanner } from "pages/library/ui/AcceptInviteBanner";
+import { HealthProfileForm } from "widgets/health-profile-form";
 
 export const ClientProfile = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -76,12 +74,10 @@ export const ClientProfile = () => {
   const nav = useNavigate();
   const tabs = [
     { id: "journal", label: "Daily Journal" },
-    { id: "intake", label: "Intake form" },
+    { id: "healthHistory", label: "Health History" },
   ] as const;
 
   const [tab, setTab] = useState(0);
-
-  const dispatch = useDispatch();
 
   const { data: notifications, refetch: refetchNotifications } =
     useGetNotificationsQuery({
@@ -99,7 +95,6 @@ export const ClientProfile = () => {
   const [updateUserProfile] = useUpdateUserProfileMutation();
   const { data: u, refetch: refetchUserProfile } = useGetClientProfileQuery();
 
-  const [triggerGetOnboardClient] = useLazyGetOnboardClientQuery();
   const [triggerDownloadProfilePhoto] = useLazyDownloadProfilePhotoQuery();
   const [signOut] = useSignOutMutation();
   const [changePassword, { isLoading: isChangingPassword }] =
@@ -108,16 +103,6 @@ export const ClientProfile = () => {
   const [acceptCoachInvite] = useAcceptCoachInviteMutation();
   const [declineCoachInvite] = useDeclineCoachInviteMutation();
   const { data: invitations } = useGetPendingInvitationsQuery();
-
-  useEffect(() => {
-    const loadUser = async () => {
-      if (!user) {
-        const userInfo = await triggerGetOnboardClient().unwrap();
-        dispatch(setFromUserInfo(userInfo));
-      }
-    };
-    loadUser();
-  }, [user]);
 
   useEffect(() => {
     if (u) {
@@ -948,7 +933,7 @@ export const ClientProfile = () => {
             {tabs[tab].id === "journal" ? (
               <DailyJournalOverview date={user.last_symptoms_date} />
             ) : (
-              <OnboardingInfo embedded />
+              <HealthProfileForm asDialog={false} className="h-[90vh] overflow-auto flex-none" />
             )}
           </Card>
         </div>
@@ -959,8 +944,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => {}}
-                  // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => { }}
+                // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -968,8 +953,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => {}}
-                  // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => { }}
+                // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>

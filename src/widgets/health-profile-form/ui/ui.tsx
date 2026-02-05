@@ -20,7 +20,7 @@ import {
   mapHealthHistoryToFormDefaults,
   mapFormValuesToHealthHistoryPayload,
 } from "./lib";
-import { usePageWidth } from "shared/lib";
+import { cn, usePageWidth } from "shared/lib";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { setHealthHistory } from "entities/health-history/lib";
 import { useDispatch } from "react-redux";
@@ -87,7 +87,12 @@ export const formSchema = basicInfoSchema
 
 type FormValues = z.infer<typeof formSchema>;
 
-export const HealthProfileForm = () => {
+type HealthProfileFormProps = {
+  asDialog?: boolean;
+  className?: string;
+};
+
+export const HealthProfileForm = ({ asDialog = true, className }: HealthProfileFormProps) => {
   const { isMobile } = usePageWidth();
   const dispatch = useDispatch();
 
@@ -149,6 +154,97 @@ export const HealthProfileForm = () => {
     form.reset(mapHealthHistoryToFormDefaults(healthHistoryData));
   };
 
+  const Content = (
+    <>
+      {!isSummary && (
+        <Steps
+          steps={steps}
+          currentStep={currentStep}
+          ordered
+          onStepClick={goToStep}
+        />
+      )}
+
+      <div className={cn("flex-1 overflow-y-auto", className)}>
+        {isSummary ? (
+          <HealthHistorySummary
+            data={healthHistoryData!}
+            onEditSection={(step) => {
+              setCurrentStep(step);
+              setIsSummary(false);
+            }}
+          />
+        ) : (
+          <Form {...form}>
+            {currentStep === 0 && <BirthBodyStep form={form} />}
+            {currentStep === 1 && <StressfulEventsStep form={form} />}
+            {currentStep === 2 && <HealthConcernsStep form={form} />}
+            {currentStep === 3 && <BowelHealthStep form={form} />}
+            {currentStep === 4 && <MedicalHistoryStep form={form} />}
+            {currentStep === 5 && <OralHealthHistoryStep form={form} />}
+            {currentStep === 6 && <LifestyleHistoryStep form={form} />}
+            {currentStep === 7 && <SleepHistoryStep form={form} />}
+            {currentStep === 8 && <WomensHealthStep form={form} />}
+            {currentStep === 9 && <SexualHistoryStep form={form} />}
+            {currentStep === 10 && <MentalHealthStatusStep form={form} />}
+            {currentStep === 11 && <OtherStep form={form} />}
+          </Form>
+        )}
+      </div>
+
+      <div className="flex justify-between gap-4">
+        <Button
+          type="button"
+          variant="blue2"
+          onClick={isSummary ? () => setIsOpen(false) : onDiscard}
+        >
+          {isSummary ? "Close" : "Cancel"}
+        </Button>
+
+        <div className="flex gap-4">
+          {!isSummary && currentStep > 0 && (
+            <Button
+              type="button"
+              variant="light-blue"
+              onClick={() => goToStep(currentStep - 1)}
+            >
+              Back
+            </Button>
+          )}
+
+          <Button
+            type="button"
+            variant="brightblue"
+            onClick={
+              isSummary
+                ? () => {
+                  setIsSummary(false);
+                  setCurrentStep(0);
+                }
+                : currentStep === steps.length - 1
+                  ? handleSubmit
+                  : () => goToStep(currentStep + 1)
+            }
+          >
+            {isSummary
+              ? "Edit"
+              : currentStep === steps.length - 1
+                ? "Submit"
+                : "Next"}
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+
+  if (!asDialog) {
+    return (
+      <div className="flex flex-col gap-6">
+        {Content}
+      </div>
+    );
+  }
+
   return (
     <Dialog
       open={isOpen}
@@ -163,97 +259,14 @@ export const HealthProfileForm = () => {
           size={isMobile ? "sm" : "icon"}
           className="rounded-full h-[56px] w-[56px] flex items-center justify-center"
         >
-          {isMobile ? (
-            "Health profile"
-          ) : (
-            <MaterialIcon iconName="manage_accounts" />
-          )}
+          {isMobile ? "Health profile" : <MaterialIcon iconName="manage_accounts" />}
         </Button>
       </DialogTrigger>
 
       <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
         <DialogTitle>Your Health History</DialogTitle>
-
-        {!isSummary && (
-          <Steps
-            steps={steps}
-            currentStep={currentStep}
-            ordered
-            onStepClick={goToStep}
-          />
-        )}
-
-        <div className="flex-1 overflow-y-auto">
-          {isSummary ? (
-            <HealthHistorySummary
-              data={healthHistoryData!}
-              onEditSection={(step) => {
-                setCurrentStep(step);
-                setIsSummary(false);
-              }}
-            />
-          ) : (
-            <Form {...form}>
-              {/* {currentStep === 0 && <BasicInfoStep form={form} />} */}
-              {currentStep === 0 && <BirthBodyStep form={form} />}
-              {currentStep === 1 && <StressfulEventsStep form={form} />}
-              {currentStep === 2 && <HealthConcernsStep form={form} />}
-              {currentStep === 3 && <BowelHealthStep form={form} />}
-              {currentStep === 4 && <MedicalHistoryStep form={form} />}
-              {currentStep === 5 && <OralHealthHistoryStep form={form} />}
-              {currentStep === 6 && <LifestyleHistoryStep form={form} />}
-              {currentStep === 7 && <SleepHistoryStep form={form} />}
-              {currentStep === 8 && <WomensHealthStep form={form} />}
-              {currentStep === 9 && <SexualHistoryStep form={form} />}
-              {currentStep === 10 && <MentalHealthStatusStep form={form} />}
-              {currentStep === 11 && <OtherStep form={form} />}
-            </Form>
-          )}
-        </div>
-
-        <div className="flex justify-between gap-4">
-          <Button
-            type="button"
-            variant="blue2"
-            onClick={isSummary ? () => setIsOpen(false) : onDiscard}
-          >
-            {isSummary ? "Close" : "Cancel"}
-          </Button>
-
-          <div className="flex gap-4">
-            {!isSummary && currentStep > 0 && (
-              <Button
-                type="button"
-                variant="light-blue"
-                onClick={() => goToStep(currentStep - 1)}
-              >
-                Back
-              </Button>
-            )}
-
-            <Button
-              type="button"
-              variant="brightblue"
-              onClick={
-                isSummary
-                  ? () => {
-                    setIsSummary(false);
-                    setCurrentStep(0);
-                  }
-                  : currentStep === steps.length - 1
-                    ? handleSubmit
-                    : () => goToStep(currentStep + 1)
-              }
-            >
-              {isSummary
-                ? "Edit"
-                : currentStep === steps.length - 1
-                  ? "Submit"
-                  : "Next"}
-            </Button>
-          </div>
-        </div>
+        {Content}
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
