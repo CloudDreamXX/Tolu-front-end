@@ -20,7 +20,7 @@ export const BasicInfoStep = ({ form }: { form: any }) => (
       name="email"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Email *</FormLabel>
+          <FormLabel>Email</FormLabel>
           <FormControl>
             <Input {...field} placeholder="you@example.com" />
           </FormControl>
@@ -34,7 +34,7 @@ export const BasicInfoStep = ({ form }: { form: any }) => (
       name="fullName"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>What is your full name? *</FormLabel>
+          <FormLabel>What is your full name?</FormLabel>
           <FormControl>
             <Input {...field} placeholder="Full name" />
           </FormControl>

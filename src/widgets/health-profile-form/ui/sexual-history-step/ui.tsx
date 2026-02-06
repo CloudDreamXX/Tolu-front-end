@@ -23,7 +23,7 @@ export const SexualHistoryStep = ({ form }: { form: any }) => {
             <FormLabel>
               Do you have any concerns or issues with your sexual functioning
               that you’d like to share with us (pain with intercourse, dryness,
-              libido issues, erectile dysfunction)? *
+              libido issues, erectile dysfunction)?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -39,7 +39,7 @@ export const SexualHistoryStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               In the past year, have your sexual partners been men, women, or
-              both? And how many partners have you had in the past year? *
+              both? And how many partners have you had in the past year?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />

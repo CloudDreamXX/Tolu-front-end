@@ -95,7 +95,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
   },
 
   {
-    title: "Stressful Events",
+    title: "History",
     step: 1,
     block: HEALTH_HISTORY_BLOCKS.STRESSFUL_EVENTS,
     fields: [
@@ -208,7 +208,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
   },
 
   {
-    title: "Bowel Health",
+    title: "Intestinal Status",
     step: 3,
     block: HEALTH_HISTORY_BLOCKS.BOWEL_HEALTH,
     fields: [
@@ -229,7 +229,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
   },
 
   {
-    title: "Medical History",
+    title: "Medical Status",
     step: 4,
     block: HEALTH_HISTORY_BLOCKS.MEDICAL_HISTORY,
     fields: [
@@ -423,7 +423,7 @@ export const HEALTH_HISTORY_SUMMARY: SummarySection<HealthHistory>[] = [
   },
 
   {
-    title: "Women’s Health",
+    title: "For Woman only",
     step: 8,
     block: HEALTH_HISTORY_BLOCKS.WOMENS_HEALTH,
     fields: [

@@ -24,7 +24,7 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
             <FormLabel>
               Have you had periods of eating junk food, binge eating or dieting?
               List any known diet that you have been on for a significant amount
-              of time. *
+              of time.
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -40,7 +40,7 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Have you used or abused alcohol, drugs, meds, tobacco or caffeine?
-              Do you still? *
+              Do you still?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -54,7 +54,7 @@ export const LifestyleHistoryStep = ({ form }: { form: any }) => {
         name="stressHandling"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>How do you handle stress? *</FormLabel>
+            <FormLabel>How do you handle stress?</FormLabel>
             <FormControl>
               <Textarea {...field} />
             </FormControl>

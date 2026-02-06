@@ -53,7 +53,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="age"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Age *</FormLabel>
+            <FormLabel>Age</FormLabel>
             <FormControl>
               <Input type="number" {...field} />
             </FormControl>
@@ -67,7 +67,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="birthDate"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Birth date *</FormLabel>
+            <FormLabel>Birth date</FormLabel>
             <BirthDateField field={field} />
           </FormItem>
         )}
@@ -79,7 +79,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="genderAtBirth"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Gender at birth *</FormLabel>
+            <FormLabel>Gender at birth</FormLabel>
             <Select onValueChange={field.onChange} value={field.value}>
               <SelectTrigger>
                 <SelectValue placeholder="Select" />
@@ -114,7 +114,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="breastfedOrBottle"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Were you breastfed or bottle-fed? *</FormLabel>
+            <FormLabel>Were you breastfed or bottle?</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -128,7 +128,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="birthDeliveryMethod"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Were you born vaginally or C sectioned? *</FormLabel>
+            <FormLabel>Were you born vaginally or C sectioned?</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -142,7 +142,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="height"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Height *</FormLabel>
+            <FormLabel>Height</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -156,7 +156,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="bloodType"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Blood type *</FormLabel>
+            <FormLabel>Blood type</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -170,7 +170,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="currentWeightLbs"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Current weight (lbs) *</FormLabel>
+            <FormLabel>Current weight (lbs)</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -227,7 +227,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Birth Order (please list ages of biological siblings) *
+              Birth Order (please list ages of biological siblings) 
             </FormLabel>
             <FormControl>
               <Input {...field} />
@@ -242,7 +242,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="familyLivingSituation"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Family / Living Situation *</FormLabel>
+            <FormLabel>Family / Living Situation</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -256,7 +256,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="partnerGenderAtBirth"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Partner’s gender at birth *</FormLabel>
+            <FormLabel>Partner’s gender at birth</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -284,7 +284,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="children"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Children *</FormLabel>
+            <FormLabel>Children</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -298,7 +298,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         name="exerciseRecreation"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Exercise / Recreation *</FormLabel>
+            <FormLabel>Exercise / Recreation</FormLabel>
             <FormControl>
               <Input {...field} placeholder="e.g. yoga, walking, gym" />
             </FormControl>

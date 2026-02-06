@@ -165,6 +165,7 @@ export const medicalHistorySchema = z.object({
   conditionSeizures: medicalConditionSchema.optional(),
   conditionAlzheimers: medicalConditionSchema.optional(),
   conditionConcussionTbi: medicalConditionSchema.optional(),
+  conditionBrainInjury: medicalConditionSchema.optional(),
   neurologicMoodDates: z.string().optional(),
 
   // Miscellaneous
@@ -212,7 +213,7 @@ const StatusTable = ({
 }) => (
   <div className="space-y-4">
     <FormLabel className="text-base font-medium">
-      {title} <span className="text-red-500">*</span>
+      {title}
     </FormLabel>
 
     <div className="border rounded-lg overflow-hidden">
@@ -321,7 +322,6 @@ const FrequencyTable = ({ form }: { form: any }) => (
   <div className="space-y-4">
     <FormLabel className="text-base font-medium">
       Please check the frequency of the following:{" "}
-      <span className="text-red-500">*</span>
     </FormLabel>
 
     <div className="border rounded-lg overflow-hidden">
@@ -395,10 +395,10 @@ export const CustomDateField = ({
             value={
               parsedDate
                 ? new Intl.DateTimeFormat("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  }).format(parsedDate)
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }).format(parsedDate)
                 : ""
             }
           />
@@ -555,7 +555,7 @@ export const MedicalHistoryStep = ({ form }: { form: any }) => {
         {
           name: "moldExposure",
           label:
-            "Are you currently or have you been exposed to mold? If so, describe the source and duration.",
+            "Are you currently or have you been exposed to mold? (If so, what is/was the source of the exposure, and for how long have you been/were you exposed to mold if known?)",
         },
       ].map(({ name, label }) => (
         <FormField

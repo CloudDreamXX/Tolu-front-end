@@ -98,6 +98,8 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const handleDelete = async (id: string) => {
     try {
       await deleteNote(id).unwrap();
+      setTitle("");
+      setInput("");
       refetch();
     } catch {
       toast({ title: "Failed to delete note", variant: "destructive" });
@@ -160,8 +162,8 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
     );
     return search
       ? arr.filter((n) =>
-          (n.content || "").toLowerCase().includes(search.toLowerCase())
-        )
+        (n.content || "").toLowerCase().includes(search.toLowerCase())
+      )
       : arr;
   }, [notes?.notes, search]);
 
