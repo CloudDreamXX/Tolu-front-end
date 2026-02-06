@@ -68,7 +68,7 @@ export const chatApi = createApi({
         params: { page: 1, limit: 50 },
       }),
 
-      transformResponse: (res: FetchAllChatsResponse) => res.map(toChatItem),
+      transformResponse: (res: FetchAllChatsResponse) => res.data.map(toChatItem),
 
       providesTags: ["Chat"],
 
