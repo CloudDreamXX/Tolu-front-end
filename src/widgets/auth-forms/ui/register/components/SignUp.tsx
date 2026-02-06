@@ -13,7 +13,7 @@ import {
   StrengthMeter,
 } from "shared/lib/utils/passwordChecker";
 import { Button, Input } from "shared/ui";
-import { countries, states } from "widgets/OnboardingClient/DemographicStep";
+import { countries, states } from "widgets/couch-edit-profile-modal/lib";
 import { SearchableSelect } from "widgets/OnboardingPractitioner/components/SearchableSelect";
 import { z } from "zod";
 
@@ -31,6 +31,7 @@ interface SignUpProps {
   };
   handleSubmit: (e: React.FormEvent) => void;
   formDataChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isLoading?: boolean;
 }
 
 const signUpSchema = z
@@ -58,6 +59,7 @@ export const SignUp: React.FC<SignUpProps> = ({
   handleSubmit,
   formData,
   formDataChangeHandler,
+  isLoading = false,
 }) => {
   const [errors, setErrors] = useState<
     Partial<Record<keyof typeof formData, string>>
@@ -65,13 +67,42 @@ export const SignUp: React.FC<SignUpProps> = ({
   const [showPassword, setShowPassword] = useState(true);
   const [showNewPassword, setShowNewPassword] = useState(true);
   const [formattedPhone, setFormattedPhone] = useState("");
-  const [loading, setLoading] = useState(false);
   const result = useMemo(
     () => checkPasswordStrength(formData.password),
     [formData.password]
   );
   const [agreeTerms, setAgreeTerms] = useState(false);
   const { isMobile } = usePageWidth();
+
+  const [touched, setTouched] = useState<
+    Partial<Record<keyof typeof formData, boolean>>
+  >({});
+
+  const markTouched = (field: keyof typeof formData) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const validationResult = useMemo(() => {
+    return signUpSchema.safeParse(formData);
+  }, [formData]);
+
+  useEffect(() => {
+    if (validationResult.success) {
+      setErrors({});
+      return;
+    }
+
+    const fieldErrors: Partial<Record<keyof typeof formData, string>> = {};
+
+    validationResult.error.errors.forEach(({ path, message }) => {
+      const key = path[0] as keyof typeof formData;
+      if (touched[key]) {
+        fieldErrors[key] = message;
+      }
+    });
+
+    setErrors(fieldErrors);
+  }, [validationResult, touched]);
 
   const formatPhoneNumber = (val: string) => {
     const digits = val.replace(/\D/g, "");
@@ -116,24 +147,23 @@ export const SignUp: React.FC<SignUpProps> = ({
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    const result = signUpSchema.safeParse(formData);
 
-    if (!result.success) {
-      const fieldErrors: Partial<Record<keyof typeof formData, string>> = {};
-      result.error.errors.forEach(({ path, message }) => {
-        const key = path[0] as keyof typeof formData;
-        fieldErrors[key] = message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-    setErrors({});
-    setLoading(true);
+    setTouched(
+      Object.keys(formData).reduce(
+        (acc, key) => {
+          acc[key as keyof typeof formData] = true;
+          return acc;
+        },
+        {} as Partial<Record<keyof typeof formData, boolean>>
+      )
+    );
+
+    if (!validationResult.success) return;
+
     try {
       await handleSubmit(e);
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -141,18 +171,8 @@ export const SignUp: React.FC<SignUpProps> = ({
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
-  const isFormValid = () => {
-    const valid =
-      Object.values(errors).every((error) => !error) &&
-      formData.accountType.length > 0 &&
-      formData.firstName.length > 0 &&
-      formData.lastName.length > 0 &&
-      formData.email.length > 0 &&
-      formData.phone.length > 0 &&
-      formData.password.length > 0 &&
-      formData.newPassword.length > 0;
-    return valid;
-  };
+  const isFormValid =
+    validationResult.success && result.isValid && agreeTerms && !isLoading;
 
   return (
     <form
@@ -180,7 +200,7 @@ export const SignUp: React.FC<SignUpProps> = ({
               value={formData.firstName}
               onChange={(e) => {
                 formDataChangeHandler(e);
-                clearError("firstName");
+                markTouched("firstName");
               }}
               className={
                 errors.firstName
@@ -205,7 +225,7 @@ export const SignUp: React.FC<SignUpProps> = ({
               value={formData.lastName}
               onChange={(e) => {
                 formDataChangeHandler(e);
-                clearError("lastName");
+                markTouched("lastName");
               }}
               className={
                 errors.lastName
@@ -232,7 +252,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             value={formData.email}
             onChange={(e) => {
               formDataChangeHandler(e);
-              clearError("email");
+              markTouched("email");
             }}
             className={
               errors.email
@@ -256,7 +276,10 @@ export const SignUp: React.FC<SignUpProps> = ({
             placeholder="Enter Phone Number"
             name="phone"
             value={formattedPhone}
-            onChange={onPhoneChange}
+            onChange={(e) => {
+              onPhoneChange(e);
+              markTouched("phone");
+            }}
             className={
               errors.phone
                 ? "px-[16px] py-[11px] flex items-center h-[44px] self-stretch gap-[10px] rounded-[8px] border-[1px] border-[#FF1F0F] bg-white outline-none"
@@ -282,8 +305,7 @@ export const SignUp: React.FC<SignUpProps> = ({
               value={formData.password}
               onChange={(e) => {
                 formDataChangeHandler(e);
-                clearError("password");
-                clearError("newPassword");
+                markTouched("password");
               }}
               className={
                 errors.password
@@ -342,7 +364,7 @@ export const SignUp: React.FC<SignUpProps> = ({
               value={formData.newPassword}
               onChange={(e) => {
                 formDataChangeHandler(e);
-                clearError("newPassword");
+                markTouched("newPassword");
               }}
               className={
                 errors.newPassword
@@ -381,7 +403,7 @@ export const SignUp: React.FC<SignUpProps> = ({
                 target: { name: "country", value },
               } as React.ChangeEvent<HTMLInputElement>;
               formDataChangeHandler(syntheticEvent);
-              clearError("country");
+              markTouched("country");
             }}
             placeholder="Select your country"
             labelStyle="self-stretch text-[#5f5f65] text-[16px] font-semibold"
@@ -456,14 +478,14 @@ export const SignUp: React.FC<SignUpProps> = ({
           variant={"unstyled"}
           size={"unstyled"}
           type="submit"
-          disabled={!isFormValid() || loading || !result.isValid || !agreeTerms}
+          disabled={!isFormValid || isLoading || !result.isValid || !agreeTerms}
           className={
-            !isFormValid() || loading || !result.isValid || !agreeTerms
+            !isFormValid || isLoading || !result.isValid || !agreeTerms
               ? "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#D5DAE2] text-[#5f5f65] text-[16px] font-semibold cursor-not-allowed"
               : "flex w-full md:w-[250px] h-[44px] p-[16px] justify-center items-center rounded-full bg-[#1C63DB] text-white text-[16px] font-semibold"
           }
         >
-          {loading ? (
+          {isLoading ? (
             <MaterialIcon
               iconName="progress_activity"
               size={20}

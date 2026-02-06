@@ -1,0 +1,74 @@
+import {
+  FormLabel,
+  FormField,
+  FormItem,
+  FormControl,
+  Textarea,
+  Input,
+} from "shared/ui";
+import { z } from "zod";
+
+export const mentalHealthSchema = z.object({
+  generalMoods: z.string().optional(),
+  energyLevelScale: z.string().optional(),
+  bestPointInLife: z.string().optional(),
+});
+
+export const MentalHealthStatusStep = ({ form }: { form: any }) => {
+  return (
+    <div className="space-y-8">
+      <FormField
+        control={form.control}
+        name="generalMoods"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>
+              How are your moods in general? Do you experience more anxiety,
+              depression or anger than you would like?
+            </FormLabel>
+            <FormControl>
+              <Textarea {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="energyLevelScale"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>
+              On a scale of 1–10, one being the worst and 10 being the best,
+              describe your usual level of energy.
+            </FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                {...field}
+                onChange={(e) => field.onChange(String(e.target.value))}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="bestPointInLife"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>
+              At what point in your life did you feel best? Why?
+            </FormLabel>
+            <FormControl>
+              <Textarea {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};

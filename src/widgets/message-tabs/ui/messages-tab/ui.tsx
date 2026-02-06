@@ -26,7 +26,10 @@ import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { DaySeparator, NewMessagesSeparator } from "../components/Separator";
 import { VirtuosoHeader } from "../components/VirtuosoHeader";
-import { useCreateMedicationMutation, useCreateSupplementMutation } from "entities/health-history";
+import {
+  useCreateMedicationMutation,
+  useCreateSupplementMutation,
+} from "entities/health-history";
 
 function uniqById(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
@@ -616,7 +619,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     selection,
     onAddNote,
     onAddMedication,
-    onAddSupplement
+    onAddSupplement,
   }: {
     selection: { text: string; rect: DOMRect };
     onAddNote: (text: string) => void;
@@ -777,10 +780,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                           />
                           {(files.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {files.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              {files.length + filesFromLibrary.length}
+                            </span>
+                          )}
                         </Button>
                       }
                     />

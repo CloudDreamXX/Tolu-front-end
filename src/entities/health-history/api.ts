@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_ROUTES } from "shared/api";
 import {
   HealthHistory,
-  HealthHistoryPostData,
   HealthHistoryResponse,
   GetLabReportRequest,
   CreateMedicationParams,
@@ -51,7 +50,7 @@ export const healthHistoryApi = createApi({
     createHealthHistory: builder.mutation<
       any,
       {
-        healthData: HealthHistoryPostData;
+        healthData: HealthHistory;
         labFiles?: File[];
         clientId?: string | null;
       }
@@ -97,24 +96,18 @@ export const healthHistoryApi = createApi({
       }>,
       {
         clientId: string;
-        data: Partial<HealthHistoryPostData>;
+        data: HealthHistory;
         labFiles?: File[];
       }
     >({
       query: ({ clientId, data, labFiles }) => {
         const formData = new FormData();
 
-        Object.entries(data).forEach(([key, value]) => {
-          if (value !== undefined && value !== null) {
-            formData.append(key, String(value));
-          }
-        });
+        formData.append("health_data", JSON.stringify(data));
 
-        if (labFiles && labFiles.length > 0) {
-          labFiles.forEach((file) => {
-            formData.append("lab_file", file);
-          });
-        }
+        labFiles?.forEach((file) => {
+          formData.append("lab_file", file);
+        });
 
         return {
           url: API_ROUTES.HEALTH_HISTORY.EDIT.replace("{client_id}", clientId),

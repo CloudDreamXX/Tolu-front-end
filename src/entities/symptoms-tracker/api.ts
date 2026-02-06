@@ -106,6 +106,16 @@ export const symptomsTrackerApi = createApi({
         method: "DELETE",
       }),
     }),
+    getSymptomsByDateForCoach: builder.query<
+      SymptomResponse,
+      { clientId: string; targetDate: string }
+    >({
+      query: ({ clientId, targetDate }) =>
+        API_ROUTES.SYMPTOMS_TRACKER.GET_SYMPTOMS_COACH.replace(
+          "{client_id}",
+          clientId
+        ).replace("{target_date}", targetDate),
+    }),
   }),
 });
 
@@ -115,4 +125,5 @@ export const {
   useGetSymptomByDateQuery,
   useGetAiSuggestionsQuery,
   useDeleteSymptomMutation,
+  useGetSymptomsByDateForCoachQuery,
 } = symptomsTrackerApi;

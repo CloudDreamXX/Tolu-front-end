@@ -1,592 +1,260 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import {
+  HealthHistory,
   useGetCoachClientHealthHistoryQuery,
   useUpdateCoachClientHealthHistoryMutation,
-  HealthHistoryPostData,
-  LabResultFile,
 } from "entities/health-history";
 
-import { formSchema, stripOther } from "widgets/health-profile-form";
-
 import { Steps } from "features/steps/ui";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Button,
-  Form,
-  FormField,
-  FormControl,
-  FormItem,
-  Textarea,
-} from "shared/ui";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { BasicInformationForm } from "widgets/health-profile-form/ui/basic-information-form";
-import { DrivesAndGoalsForm } from "widgets/health-profile-form/ui/drives-and-goals";
-import { HealthStatusHistoryForm } from "widgets/health-profile-form/ui/health-status-history-form";
-import { prune } from "widgets/health-profile-form/ui/lib";
-import { LifestyleHabitsForm } from "widgets/health-profile-form/ui/lifestyle-habits-form";
-import { MetabolicDigestiveHealthForm } from "widgets/health-profile-form/ui/metabolic-digestive-health-form";
-import { NutritionHabitsForm } from "widgets/health-profile-form/ui/nutrition-habits-form";
-import { SocialFactorsForm } from "widgets/health-profile-form/ui/social-factors";
-import { WomensHealthForm } from "widgets/health-profile-form/ui/womens-health";
-import { mapHealthHistoryToFormDefaults } from "widgets/library-small-chat/lib";
-import { FormValues } from "widgets/library-small-chat/components/health-history-form";
-import { LabFilePreview } from "widgets/health-profile-form/ui/metabolic-digestive-health-form/LabFilePreview";
+import { Button, Dialog, DialogContent, DialogTitle, Form } from "shared/ui";
 
-type BaseValues = z.infer<typeof formSchema>;
+import {
+  basicInfoSchema,
+} from "widgets/health-profile-form/ui/basic-info-step";
+import {
+  birthBodySchema,
+  BirthBodyStep,
+} from "widgets/health-profile-form/ui/birth-body-step";
+import {
+  bowelHealthSchema,
+  BowelHealthStep,
+} from "widgets/health-profile-form/ui/bowel-health-step";
+import {
+  healthConcernsSchema,
+  HealthConcernsStep,
+} from "widgets/health-profile-form/ui/health-concerns-step";
+import {
+  lifestyleHistorySchema,
+  LifestyleHistoryStep,
+} from "widgets/health-profile-form/ui/lifestyle-history-step";
+import {
+  medicalHistorySchema,
+  MedicalHistoryStep,
+} from "widgets/health-profile-form/ui/medical-history-step";
+import {
+  mentalHealthSchema,
+  MentalHealthStatusStep,
+} from "widgets/health-profile-form/ui/mental-health-step";
+import {
+  oralHealthSchema,
+  OralHealthHistoryStep,
+} from "widgets/health-profile-form/ui/oral-health-step";
+import {
+  otherInfoSchema,
+  OtherStep,
+} from "widgets/health-profile-form/ui/other-info-step";
+import {
+  sexualHistorySchema,
+  SexualHistoryStep,
+} from "widgets/health-profile-form/ui/sexual-history-step";
+import {
+  sleepHistorySchema,
+  SleepHistoryStep,
+} from "widgets/health-profile-form/ui/sleep-history-step";
+import {
+  stressfulEventsSchema,
+  StressfulEventsStep,
+} from "widgets/health-profile-form/ui/stressful-events-step";
+import {
+  womensHealthSchema,
+  WomensHealthStep,
+} from "widgets/health-profile-form/ui/womens-health-step";
+
+import {
+  mapFormValuesToHealthHistoryPayload,
+  mapHealthHistoryToFormDefaults,
+  prune,
+} from "widgets/health-profile-form/ui/lib";
+import { HealthHistorySummary } from "widgets/HealthHistorySummary/ui";
 
 const steps = [
-  "Demographics",
-  "Social Factors",
-  "Health Status & History",
-  "Lifestyle & Habits",
-  "Nutrition Habits",
-  "Women’s Health",
-  "Metabolic & Digestive Health",
-  "Drives & Goals",
+  // "Basic Info",
+  "Birth & Body",
+  "History",
+  "Health Concerns",
+  "Intestinal Status",
+  "Medical Status",
+  "Oral Health History",
+  "Lifestyle History",
+  "Sleep History",
+  "For Woman only",
+  "Sexual History",
+  "Mental Health",
+  "Other",
 ];
 
-const GI_LABELS: Record<string, string> = {
-  woman: "Woman",
-  man: "Man",
-  nonbinary_genderqueer_expansive:
-    "Non-binary / genderqueer / gender expansive",
-  self_describe: "Prefer to self-describe",
-  prefer_not_to_say: "Prefer not to say",
-};
+export const formSchema = basicInfoSchema
+  .and(birthBodySchema)
+  .and(healthConcernsSchema)
+  .and(bowelHealthSchema)
+  .and(stressfulEventsSchema)
+  .and(medicalHistorySchema)
+  .and(oralHealthSchema)
+  .and(lifestyleHistorySchema)
+  .and(sleepHistorySchema)
+  .and(womensHealthSchema)
+  .and(sexualHistorySchema)
+  .and(mentalHealthSchema)
+  .and(otherInfoSchema);
 
-const SAB_LABELS: Record<string, string> = {
-  female: "Female",
-  male: "Male",
-  intersex: "Intersex",
-  prefer_not_to_say: "Prefer not to say",
-};
+type FormValues = z.infer<typeof formSchema>;
 
-const split = (s?: string) =>
-  (s ?? "")
-    .split(",")
-    .map((t) => t.trim())
-    .filter(Boolean);
+type Props = {
+  clientId: string;
+  asDialog?: boolean;
+  open?: boolean;
+  onOpenChange?: (v: boolean) => void;
+};
 
 export const ClientComprehensiveSummary = ({
   clientId,
-  onOpenChange,
   asDialog = false,
-}: {
-  clientId: string;
-  onOpenChange?: (v: boolean) => void;
-  asDialog?: boolean;
-}) => {
-  const { data: healthHistoryData, refetch } =
-    useGetCoachClientHealthHistoryQuery(clientId);
+  open = true,
+  onOpenChange,
+}: Props) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [viewMode, setViewMode] = useState<"summary" | "edit">("summary");
+
+  const {
+    data: healthHistoryData,
+    refetch,
+    isLoading,
+    isError,
+  } = useGetCoachClientHealthHistoryQuery(clientId);
 
   const [updateHealthHistory] = useUpdateCoachClientHealthHistoryMutation();
 
-  const form = useForm<BaseValues>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     shouldUnregister: false,
-    defaultValues: mapHealthHistoryToFormDefaults(
-      healthHistoryData
-    ) as Partial<FormValues>,
+    defaultValues: mapHealthHistoryToFormDefaults(healthHistoryData),
   });
 
   useEffect(() => {
     if (healthHistoryData) {
-      form.reset(
-        mapHealthHistoryToFormDefaults(healthHistoryData) as Partial<FormValues>
-      );
+      form.reset(mapHealthHistoryToFormDefaults(healthHistoryData));
     }
   }, [healthHistoryData]);
 
-  const values = useWatch({
-    control: form.control,
-  });
-
-  const followUpRecommendation = useWatch({
-    control: form.control,
-    name: "followUpRecommendation",
-  });
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [isEditingCoachInput, setIsEditingCoachInput] = useState(false);
-
-  const [currentStep, setCurrentStep] = useState(0);
-
-  const [preview, setPreview] = useState<{
-    open: boolean;
-    file?: LabResultFile;
-  }>({
-    open: false,
-    file: undefined,
-  });
-
-  const openPreview = (file: LabResultFile) => setPreview({ open: true, file });
-  const closePreview = () => setPreview({ open: false, file: undefined });
-
-  const mapToApi = (v: BaseValues): HealthHistoryPostData => {
-    const genderForApi =
-      v.genderIdentity === "self_describe" && v.genderSelfDescribe?.trim()
-        ? v.genderSelfDescribe.trim()
-        : v.genderIdentity;
-
-    return {
-      age: Number(v.age),
-      gender: v.sexAssignedAtBirth,
-      gender_identity: genderForApi,
-      location: v.country,
-      language: v.language,
-      ethnicity: v.ethnicity,
-      household: v.household,
-      job: v.occupation,
-      education: v.education,
-      religion: v.religion,
-
-      current_health_concerns: v.healthConcerns,
-      diagnosed_conditions: v.medicalConditions,
-      medications:
-        v.medications === "other" ? v.otherMedications : v.medications,
-      supplements: v.supplements,
-      allergies_intolerances: v.allergies,
-      family_health_history: v.familyHistory,
-
-      specific_diet: v.dietDetails,
-      exercise_habits:
-        v.exerciseHabits === "other" ? v.otherExerciseHabits : v.exerciseHabits,
-
-      eat_decision: v.decisionMaker,
-      cook_at_home: v.cookFrequency,
-      takeout_food: v.takeoutFrequency,
-      kind_of_food: v.commonFoods,
-      diet_pattern: v.dietType,
-
-      sleep_quality: String(v.sleepQuality),
-      stress_levels: String(v.stressLevels),
-      energy_levels: String(v.energyLevels),
-
-      menstrual_cycle_status: v.menstrualCycleStatus,
-      hormone_replacement_therapy: v.hormoneTherapy,
-      fertility_concerns: v.fertilityConcerns,
-      birth_control_use: v.birthControlUse,
-
-      blood_sugar_concerns: v.bloodSugarConcern,
-      digestive_issues: v.digestiveIssues,
-
-      health_goals: v.goals,
-      why_these_goals: v.goalReason,
-      desired_results_timeline: v.urgency,
-      health_approach_preference: v.healthApproach,
-
-      privacy_consent: v.agreeToPrivacy,
-      follow_up_recommendation: v.followUpRecommendation,
-    };
-  };
-
-  const handleSaveCoachInput = async () => {
-    const followUpMethod = form.getValues("followUpRecommendation");
-
+  const savePartial = async () => {
+    const payload = prune(form.getValues()) as Partial<HealthHistory>;
     await updateHealthHistory({
       clientId,
-      data: prune({
-        follow_up_recommendation: followUpMethod,
-      }),
+      data: mapFormValuesToHealthHistoryPayload(payload),
     }).unwrap();
-
     await refetch();
   };
 
-  const handleSave = async () => {
-    const payload = prune(mapToApi(form.getValues()));
-
-    await updateHealthHistory({
-      clientId,
-      data: payload,
-    }).unwrap();
-
-    await refetch();
-    setIsEditing(false);
+  const goToStep = async (nextStep: number) => {
+    await savePartial();
+    setCurrentStep(nextStep);
   };
 
-  const resolvedGenderIdentity = values.genderIdentity
-    ? (GI_LABELS[values.genderIdentity] ?? values.genderIdentity)
-    : "";
+  const handleCancelEdit = () => {
+    form.reset(mapHealthHistoryToFormDefaults(healthHistoryData));
+    setCurrentStep(0);
+    setViewMode("summary");
+  };
 
-  const resolvedSexAtBirth = values.gender
-    ? (SAB_LABELS[values.gender] ?? values.gender)
-    : "";
+  const handleSubmit = async () => {
+    await savePartial();
+    setCurrentStep(0);
+    onOpenChange?.(false);
+  };
 
-  const languagesSel = split(values.language).join(", ");
+  if (isLoading) {
+    return <div>Loading…</div>;
+  }
 
-  const fmtBool = (v: any) => (typeof v === "boolean" ? (v ? "Yes" : "No") : v);
+  if (isError) {
+    return <div>Unable to load health history</div>;
+  }
 
-  const SummaryRow = ({ label, value }: { label: string; value?: string }) => (
-    <div className="space-y-1">
-      <div className="font-medium text-base">{label}</div>
-      <p className="text-sm text-gray-900 whitespace-pre-wrap">
-        {value && String(value) ? String(value) : "-"}
-      </p>
-    </div>
-  );
-
-  const Section = ({
-    title,
-    children,
-    button,
-  }: {
-    title: string;
-    children: React.ReactNode;
-    button?: React.ReactNode;
-  }) => (
-    <div className="space-y-4 border-b border-[#EAEAEA] pb-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-[18px] font-medium">{title}</h3>
-        {button
-          ? button
-          : !isEditing && (
-            <Button
-              variant="unstyled"
-              size="unstyled"
-              onClick={() => {
-                setIsEditing(true);
-                setCurrentStep(steps.indexOf(title));
-              }}
-            >
-              <MaterialIcon iconName="edit" />
-            </Button>
-          )}
+  const content =
+    viewMode === "summary" ? (
+      <div className="overflow-y-auto max-h-[calc(100vh-130px)]">
+        <HealthHistorySummary
+          data={healthHistoryData!}
+          onEditSection={(step) => {
+            setCurrentStep(step);
+            setViewMode("edit");
+          }}
+          clientId={clientId}
+        />
       </div>
-      <div className="space-y-2">{children}</div>
-    </div>
-  );
+    ) : (
+      <>
+        <Steps
+          steps={steps}
+          currentStep={currentStep}
+          ordered
+          onStepClick={goToStep}
+        />
 
-  const content = (
-    <>
-      {!isEditing ? (
-        <div className="space-y-6">
-          <Section title="Demographics">
-            <SummaryRow label="Age" value={values.age} />
-            <SummaryRow label="Gender" value={resolvedGenderIdentity} />
-            <SummaryRow
-              label="Sex assigned at birth"
-              value={resolvedSexAtBirth}
-            />
-            <SummaryRow label="Language" value={languagesSel} />
-            <SummaryRow label="Country of Residence" value={values.country} />
-          </Section>
+        <div className="flex-1 overflow-y-auto max-h-[65vh]">
+          <Form {...form}>
+            {/* {currentStep === 0 && <BasicInfoStep form={form} />} */}
+            {currentStep === 0 && <BirthBodyStep form={form} />}
+            {currentStep === 1 && <StressfulEventsStep form={form} />}
+            {currentStep === 2 && <HealthConcernsStep form={form} />}
+            {currentStep === 3 && <BowelHealthStep form={form} />}
+            {currentStep === 4 && <MedicalHistoryStep form={form} />}
+            {currentStep === 5 && <OralHealthHistoryStep form={form} />}
+            {currentStep === 6 && <LifestyleHistoryStep form={form} />}
+            {currentStep === 7 && <SleepHistoryStep form={form} />}
+            {currentStep === 8 && <WomensHealthStep form={form} />}
+            {currentStep === 9 && <SexualHistoryStep form={form} />}
+            {currentStep === 10 && <MentalHealthStatusStep form={form} />}
+            {currentStep === 11 && <OtherStep form={form} />}
+          </Form>
+        </div>
 
-          <Section title="Health Status & History">
-            <SummaryRow
-              label="Current health concerns"
-              value={stripOther(values.healthConcerns)}
-            />
-            <SummaryRow
-              label="Medical conditions"
-              value={stripOther(values.medicalConditions)}
-            />
-            <SummaryRow
-              label="Medications"
-              value={stripOther(values.medications)}
-            />
-            <SummaryRow
-              label="Supplements"
-              value={stripOther(values.supplements)}
-            />
-            <SummaryRow
-              label="Family health history"
-              value={stripOther(values.familyHistory)}
-            />
-          </Section>
+        <div className="flex justify-between gap-4">
+          <Button type="button" variant="light-blue" onClick={handleCancelEdit}>
+            Cancel
+          </Button>
 
-          <Section title="Lifestyle & Habits">
-            <SummaryRow label="Exercise habits" value={values.exerciseHabits} />
-            <SummaryRow
-              label="Sleep quality"
-              value={String(values.sleepQuality) || ""}
-            />
-            <SummaryRow
-              label="Stress levels"
-              value={String(values.stressLevels) || ""}
-            />
-            <SummaryRow
-              label="Energy levels"
-              value={String(values.energyLevels) || ""}
-            />
-          </Section>
-
-          <Section title="Nutrition Habits">
-            <SummaryRow
-              label="Decision maker"
-              value={values.decisionMaker ?? ""}
-            />
-            <SummaryRow
-              label="Cook at home frequency"
-              value={values.cookFrequency ?? ""}
-            />
-            <SummaryRow
-              label="Takeout frequency"
-              value={values.takeoutFrequency ?? ""}
-            />
-            <SummaryRow
-              label="Common foods"
-              value={stripOther(values.commonFoods) ?? ""}
-            />
-            <SummaryRow
-              label="Specific diet"
-              value={values.dietDetails ?? ""}
-            />
-          </Section>
-
-          <Section title="Women’s Health">
-            <SummaryRow
-              label="Menstrual cycle status"
-              value={values.menstrualCycleStatus ?? ""}
-            />
-            <SummaryRow
-              label="Hormone Replacement Therapy"
-              value={fmtBool(values.hormoneTherapy) as string}
-            />
-            <SummaryRow
-              label="Fertility concerns"
-              value={values.fertilityConcerns ?? ""}
-            />
-            <SummaryRow
-              label="Birth control use"
-              value={values.birthControlUse ?? ""}
-            />
-          </Section>
-
-          <Section title="Metabolic & Digestive Health">
-            <SummaryRow
-              label="Blood sugar concerns"
-              value={stripOther(values.bloodSugarConcern) ?? ""}
-            />
-            <SummaryRow
-              label="Digestive issues"
-              value={stripOther(values.digestiveIssues) ?? ""}
-            />
-            <SummaryRow
-              label="Recent lab tests"
-              value={values.recentLabTests ?? ""}
-            />
-            {values.labTestFiles?.map((file) => (
-              <div
-                key={file.filename}
-                className={
-                  "px-3 py-1 flex items-center justify-between border border-[#DBDEE1] rounded-[8px]"
-                }
-              >
-                <div className="flex items-center w-full gap-3 md:w-1/3">
-                  <MaterialIcon iconName="picture_as_pdf" />
-                  <span className="text-[14px] text-[#1D1D1F]">
-                    {file.original_filename}
-                  </span>
-                </div>
-
-                <Button
-                  variant={"unstyled"}
-                  size={"unstyled"}
-                  onClick={() => openPreview(file)}
-                  className="flex items-center justify-center p-2 rounded hover:bg-black/5"
-                  title="View"
-                  aria-label="View"
-                >
-                  <MaterialIcon iconName="visibility" fill={1} />
-                </Button>
-              </div>
-            ))}
-          </Section>
-
-          <Section title="Drives & Goals">
-            <SummaryRow label="Goals" value={values.goals} />
-            <SummaryRow label="Why these goals" value={values.goalReason} />
-            <SummaryRow label="Urgency" value={values.urgency} />
-            <SummaryRow label="Health approach" value={values.healthApproach} />
-          </Section>
-          {/* <Section title="Coach Input" button={<Button
-            variant="unstyled"
-            size="unstyled"
-            onClick={() => setIsEditingCoachInput(true)}
-          >
-            <MaterialIcon iconName="edit" />
-          </Button>}> */}
-          <div className="space-y-4 border-b border-[#EAEAEA] pb-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[18px] font-medium">Coach Input</h3>
+          <div className="flex gap-4">
+            {currentStep > 0 && (
               <Button
-                variant="unstyled"
-                size="unstyled"
-                onClick={() => setIsEditingCoachInput(true)}
+                type="button"
+                variant="blue2"
+                onClick={() => goToStep(currentStep - 1)}
               >
-                <MaterialIcon iconName="edit" />
+                Back
               </Button>
-            </div>
-            <div className="space-y-2"></div>
-            {!isEditingCoachInput ? (
-              <>
-                <SummaryRow label="" value={followUpRecommendation} />
-              </>
-            ) : (
-              <>
-                <FormField
-                  control={form.control}
-                  name="followUpRecommendation"
-                  render={({ field, fieldState }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Add your notes..."
-                          containerClassName="rounded-[6px] py-[8px] px-[12px]"
-                          className="xl:text-[14px] whitespace-pre-wrap"
-                          onPaste={(e) => {
-                            e.preventDefault();
-
-                            let text = e.clipboardData.getData("text/plain");
-
-                            text = text.replace(/\r\n/g, "\n");
-
-                            text = text.replace(/\t/g, "    ");
-
-                            const start = e.currentTarget.selectionStart;
-                            const end = e.currentTarget.selectionEnd;
-
-                            const value =
-                              (field.value ?? "").slice(0, start) +
-                              text +
-                              (field.value ?? "").slice(end);
-
-                            field.onChange(value);
-                          }}
-                          {...field}
-                        />
-                      </FormControl>
-
-                      {fieldState.error && (
-                        <p className="text-sm text-red-600 mt-1">
-                          {fieldState.error.message}
-                        </p>
-                      )}
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex justify-end gap-2 mt-3">
-                  <Button
-                    variant="light-blue"
-                    size="sm"
-                    onClick={() => {
-                      form.setValue(
-                        "followUpRecommendation",
-                        healthHistoryData?.follow_up_recommendation ?? ""
-                      );
-                      setIsEditingCoachInput(false);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-
-                  <Button
-                    variant="brightblue"
-                    size="sm"
-                    onClick={async () => {
-                      const isValid = await form.trigger("followUpRecommendation");
-                      if (!isValid) return;
-
-                      await handleSaveCoachInput();
-                      setIsEditingCoachInput(false);
-                    }}
-                  >
-                    Save
-                  </Button>
-
-                </div>
-              </>
             )}
-          </div>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-[24px] overflow-y-auto">
-          <Steps
-            steps={steps}
-            ordered
-            currentStep={currentStep}
-            onStepClick={setCurrentStep}
-          />
 
-          {currentStep === 0 && (
-            <BasicInformationForm form={form} age={Number(values?.age) || 0} />
-          )}
-          {currentStep === 1 && <SocialFactorsForm form={form} />}
-          {currentStep === 2 && <HealthStatusHistoryForm form={form} />}
-          {currentStep === 3 && <LifestyleHabitsForm form={form} />}
-          {currentStep === 4 && <NutritionHabitsForm form={form} />}
-          {currentStep === 5 && <WomensHealthForm form={form} />}
-          {currentStep === 6 && <MetabolicDigestiveHealthForm form={form} />}
-          {currentStep === 7 && <DrivesAndGoalsForm form={form} />}
-
-          <div className="flex justify-between mt-4">
-            <Button variant="light-blue" onClick={() => setIsEditing(false)}>
-              Cancel
-            </Button>
-            <Button variant="brightblue" onClick={handleSave}>
-              Save
+            <Button
+              variant="brightblue"
+              type="button"
+              onClick={
+                currentStep === steps.length - 1
+                  ? handleSubmit
+                  : () => goToStep(currentStep + 1)
+              }
+            >
+              {currentStep === steps.length - 1 ? "Save" : "Next"}
             </Button>
           </div>
         </div>
-      )}
-    </>
-  );
-
-  if (asDialog) {
-    return (
-      <Dialog open onOpenChange={onOpenChange}>
-        <DialogContent className="min-h-[80vh] h-[90vh] md:max-w-3xl rounded-[18px] overflow-y-auto">
-          <DialogTitle>Client Health Summary</DialogTitle>
-          <Form {...form}>{content}</Form>
-        </DialogContent>
-      </Dialog>
+      </>
     );
+
+  if (!asDialog) {
+    return <div className="space-y-6">{content}</div>;
   }
 
   return (
-    <div className="w-full rounded-[18px] border border-[#EAEAEA] p-6 overflow-y-auto max-h-[calc(100vh-130px)]">
-      <Form {...form}>{content}</Form>
-
-      {/* Preview modal */}
-      {preview.open && preview.file && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center">
-          <div className="bg-white w-full h-full rounded-[16px] shadow-xl overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4">
-              <h2 className="text-[18px] font-bold">
-                Preview{" "}
-                <span className="text-[#1D1D1F]">
-                  “{preview.file.filename}”
-                </span>
-              </h2>
-              <Button
-                variant={"unstyled"}
-                size={"unstyled"}
-                className="p-1 rounded hover:bg-black/5"
-                onClick={closePreview}
-              >
-                <MaterialIcon iconName="close" fill={1} />
-              </Button>
-            </div>
-
-            <div className="relative flex-1 bg-[#F7F7F8] rounded-[8px] mx-[5px] md:mx-[40px] mb-[24px] px-[5px] md:px-6 py-6 overflow-auto">
-              <div className="mx-auto w-full bg-white rounded-[12px] shadow p-6 space-y-5">
-                <LabFilePreview
-                  filename={preview.file.filename}
-                  className="min-h-[600px]"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
+        <DialogTitle>Client Health History</DialogTitle>
+        {content}
+      </DialogContent>
+    </Dialog>
   );
 };

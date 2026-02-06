@@ -1,4 +1,8 @@
-import { ChatMessageModel, useDeleteMessageMutation, useUpdateMessageMutation } from "entities/chat";
+import {
+  ChatMessageModel,
+  useDeleteMessageMutation,
+  useUpdateMessageMutation,
+} from "entities/chat";
 import React, { useEffect, useRef, useState } from "react";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
@@ -49,8 +53,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   const [addReaction] = useAddMessageReactionMutation();
   const [deleteReaction] = useDeleteMessageReactionMutation();
-  const [deleteMessage] =
-    useDeleteMessageMutation();
+  const [deleteMessage] = useDeleteMessageMutation();
   const [updateMessage] = useUpdateMessageMutation();
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -138,8 +141,22 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             )}
           />
           <div className="flex items-center justify-end gap-[4px]">
-            <Button variant={"light-blue"} className=" h-7" size={"sm"} onClick={() => handleCancelEdit()}>Cancel</Button>
-            <Button variant={"brightblue"} className="h-7" size={"sm"} onClick={() => handleSaveEdit()}>Save</Button>
+            <Button
+              variant={"light-blue"}
+              className=" h-7"
+              size={"sm"}
+              onClick={() => handleCancelEdit()}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={"brightblue"}
+              className="h-7"
+              size={"sm"}
+              onClick={() => handleSaveEdit()}
+            >
+              Save
+            </Button>
           </div>
         </>
       );
@@ -311,7 +328,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         chatId,
         messageId: id,
       }).unwrap();
-      setConfirmDelete(false)
+      setConfirmDelete(false);
 
       toast({
         title: "Message deleted successfully",
@@ -344,7 +361,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
         <div
           className={cn(
-            "flex flex-col-reverse md:flex-col md:gap-1.5 min-w-0 py-2 lg:max-w-[70%] items-end",
+            "flex flex-col-reverse md:flex-col md:gap-1.5 min-w-0 py-2 lg:max-w-[70%]",
             isOwn && isMobile ? "items-end" : undefined
           )}
         >
@@ -411,22 +428,21 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             )}
 
             {isOwn && (
-              <div
-                className="absolute -top-2 -right-4"
-                data-message-menu
-              >
-                {!isEditing && <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMenuOpen((prev) => !prev);
-                  }}
-                  className="rounded-full bg-white border shadow
+              <div className="absolute -top-2 -right-4" data-message-menu>
+                {!isEditing && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuOpen((prev) => !prev);
+                    }}
+                    className="rounded-full bg-white border shadow
         w-6 h-6 flex items-center justify-center
         hover:bg-[#ECEFF4]"
-                  title="Message actions"
-                >
-                  <MaterialIcon iconName="more_vert" size={20} />
-                </button>}
+                    title="Message actions"
+                  >
+                    <MaterialIcon iconName="more_vert" size={20} />
+                  </button>
+                )}
 
                 {menuOpen && (
                   <div
@@ -456,7 +472,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             flex items-center gap-[8px]
             text-[#FF1F0F]"
                     >
-                      <MaterialIcon iconName="delete" className="text-[#FF1F0F]" />
+                      <MaterialIcon
+                        iconName="delete"
+                        className="text-[#FF1F0F]"
+                      />
                       Delete
                     </button>
                   </div>
@@ -473,7 +492,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 text="This action cannot be undone."
               />
             )}
-
           </div>
         </div>
       </div>

@@ -5,6 +5,8 @@ import {
   ClientDetails,
   ClientProfile,
   ClientsResponse,
+  CoachHealthNote,
+  CoachHealthNotesResponse,
   ComprehensiveProfile,
   ContentResponse,
   FmpShareRequest,
@@ -26,6 +28,7 @@ import { BaseResponse } from "entities/models";
 
 export const coachApi = createApi({
   reducerPath: "coachApi",
+  tagTypes: ["CoachHealthNotes"],
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers, { getState }) => {
@@ -265,6 +268,128 @@ export const coachApi = createApi({
         };
       },
     }),
+    getHealthHistoryNotes: builder.query<
+      CoachHealthNotesResponse,
+      { clientId: string; healthHistoryId: string }
+    >({
+      query: ({ clientId, healthHistoryId }) =>
+        API_ROUTES.COACH_ADMIN.GET_NOTES.replace(
+          "{client_id}",
+          clientId
+        ).replace("{health_history_id}", healthHistoryId),
+
+      providesTags: (_result, _error, { healthHistoryId }) => [
+        { type: "CoachHealthNotes", id: healthHistoryId },
+      ],
+    }),
+
+    getHealthHistoryNote: builder.query<
+      CoachHealthNote,
+      { clientId: string; healthHistoryId: string; noteId: string }
+    >({
+      query: ({ clientId, healthHistoryId, noteId }) =>
+        API_ROUTES.COACH_ADMIN.GET_NOTE.replace("{client_id}", clientId)
+          .replace("{health_history_id}", healthHistoryId)
+          .replace("{note_id}", noteId),
+    }),
+
+    addHealthHistoryNote: builder.mutation<
+      CoachHealthNote,
+      {
+        clientId: string;
+        healthHistoryId: string;
+        blockName: string;
+        noteContent: string;
+      }
+    >({
+      query: ({ clientId, healthHistoryId, blockName, noteContent }) => {
+        const formData = new FormData();
+        formData.append("block_name", blockName);
+        formData.append("note_content", noteContent);
+
+        return {
+          url: API_ROUTES.COACH_ADMIN.ADD_NOTE.replace(
+            "{client_id}",
+            clientId
+          ).replace("{health_history_id}", healthHistoryId),
+          method: "POST",
+          body: formData,
+        };
+      },
+
+      invalidatesTags: (_r, _e, { healthHistoryId }) => [
+        { type: "CoachHealthNotes", id: healthHistoryId },
+      ],
+    }),
+
+    updateHealthHistoryNote: builder.mutation<
+      CoachHealthNote,
+      {
+        clientId: string;
+        healthHistoryId: string;
+        noteId: string;
+        noteContent: string;
+      }
+    >({
+      query: ({ clientId, healthHistoryId, noteId, noteContent }) => {
+        const formData = new FormData();
+        formData.append("note_content", noteContent);
+
+        return {
+          url: API_ROUTES.COACH_ADMIN.UPDATE_NOTE.replace(
+            "{client_id}",
+            clientId
+          )
+            .replace("{health_history_id}", healthHistoryId)
+            .replace("{note_id}", noteId),
+          method: "PUT",
+          body: formData,
+        };
+      },
+
+      invalidatesTags: (_r, _e, { healthHistoryId }) => [
+        { type: "CoachHealthNotes", id: healthHistoryId },
+      ],
+    }),
+
+    deleteHealthHistoryNote: builder.mutation<
+      { message: string },
+      { clientId: string; healthHistoryId: string; noteId: string }
+    >({
+      query: ({ clientId, healthHistoryId, noteId }) => ({
+        url: API_ROUTES.COACH_ADMIN.DELETE_NOTE.replace("{client_id}", clientId)
+          .replace("{health_history_id}", healthHistoryId)
+          .replace("{note_id}", noteId),
+        method: "DELETE",
+      }),
+
+      invalidatesTags: (_r, _e, { healthHistoryId }) => [
+        { type: "CoachHealthNotes", id: healthHistoryId },
+      ],
+    }),
+
+    deleteHealthHistoryNoteByBlock: builder.mutation<
+      { message: string },
+      {
+        clientId: string;
+        healthHistoryId: string;
+        blockName: string;
+      }
+    >({
+      query: ({ clientId, healthHistoryId, blockName }) => ({
+        url: API_ROUTES.COACH_ADMIN.DELETE_NOTE_BY_BLOCK.replace(
+          "{client_id}",
+          clientId
+        )
+          .replace("{health_history_id}", healthHistoryId)
+          .replace("{block_name}", blockName),
+        method: "DELETE",
+      }),
+
+      invalidatesTags: (_r, _e, { healthHistoryId }) => [
+        { type: "CoachHealthNotes", id: healthHistoryId },
+      ],
+    }),
   }),
 });
 
@@ -298,6 +423,12 @@ export const {
   useLazyDownloadLicenseFileQuery,
   useDeleteLicenseFileMutation,
   useEditFolderMutation,
+  useGetHealthHistoryNotesQuery,
+  useAddHealthHistoryNoteMutation,
+  useGetHealthHistoryNoteQuery,
+  useUpdateHealthHistoryNoteMutation,
+  useDeleteHealthHistoryNoteMutation,
+  useDeleteHealthHistoryNoteByBlockMutation,
 } = coachApi;
 
 export class CoachService {

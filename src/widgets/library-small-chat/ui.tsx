@@ -53,7 +53,10 @@ import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import SwitchDropdown from "./components/switch-dropdown/ui";
 import { pickPreferredMaleEnglishVoice } from "pages/library-chat/lib";
 import { ChatItemModel, useSendChatNoteMutation } from "entities/chat";
-import { useCreateMedicationMutation, useCreateSupplementMutation } from "entities/health-history/api";
+import {
+  useCreateMedicationMutation,
+  useCreateSupplementMutation,
+} from "entities/health-history/api";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -568,7 +571,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setStreamingText("");
     setChatTitle("");
     setError(null);
-    setClientId(null);
 
     dispatch(clearActiveChatHistory());
 
@@ -859,7 +861,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processFinal,
           (error) => {
             setIsSearching(false);
-            setError(error.message);
+            let errorMsg = error?.message || "AI search failed. Please try again.";
+            setError(errorMsg);
+            toast({ title: errorMsg, variant: "destructive" });
             console.error("Search error:", error);
           },
           newAbortController.signal
@@ -885,7 +889,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processFinal,
           (error) => {
             setIsSearching(false);
-            setError(error.message);
+            let errorMsg = error?.message || "AI search failed. Please try again.";
+            setError(errorMsg);
+            toast({ title: errorMsg, variant: "destructive" });
+            console.error("Search error:", error);
           },
           newAbortController.signal
         );
@@ -910,7 +917,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processFinal,
           (error) => {
             setIsSearching(false);
-            setError(error.message);
+            let errorMsg = error?.message || "AI search failed. Please try again.";
+            setError(errorMsg);
+            toast({ title: errorMsg, variant: "destructive" });
             console.error("Search error:", error);
           },
           isSwitch(SWITCH_KEYS.LEARN),
@@ -918,7 +927,18 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         );
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Search failed");
+      let errorMsg = "Search failed. Please try again.";
+      if (error instanceof Error) {
+        if (error.message.includes("NetworkError") || error.message.includes("Failed to fetch")) {
+          errorMsg = "Network error. Please check your connection and try again.";
+        } else {
+          errorMsg = error.message;
+        }
+      } else if (typeof error === "string") {
+        errorMsg = error;
+      }
+      setError(errorMsg);
+      toast({ title: errorMsg, variant: "destructive" });
       console.error("Search error:", error);
     } finally {
       setIsSearching(false);
@@ -1000,7 +1020,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   const handleAddSelectionToNotes = async (text: string) => {
-    if (!clientId) return
+    if (!clientId) return;
 
     const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
 
@@ -1023,7 +1043,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   const handleAddSelectionToMedications = async (text: string) => {
-    if (!clientId) return
+    if (!clientId) return;
 
     const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
 
@@ -1032,7 +1052,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         medicationData: {
           title: "Medication from the chat",
           content: text,
-          chat_id: chatIdForNotes || ""
+          chat_id: chatIdForNotes || "",
         },
       }).unwrap();
 
@@ -1046,7 +1066,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   const handleAddSelectionToSupplements = async (text: string) => {
-    if (!clientId) return
+    if (!clientId) return;
 
     const chatIdForNotes = findChatIdByParticipantId(chats, clientId);
 
@@ -1055,7 +1075,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         supplementData: {
           title: "Supplement from the chat",
           content: text,
-          chat_id: chatIdForNotes || ""
+          chat_id: chatIdForNotes || "",
         },
       }).unwrap();
 
@@ -1072,7 +1092,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     selection,
     onAddNote,
     onAddMedication,
-    onAddSupplement
+    onAddSupplement,
   }: {
     selection: { text: string; rect: DOMRect };
     onAddNote: (text: string) => void;

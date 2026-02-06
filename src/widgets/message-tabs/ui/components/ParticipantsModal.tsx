@@ -29,11 +29,11 @@ export const ParticipantsModal: React.FC<{
                     {p.user.name
                       ? p.user.name.split(" ").length > 1
                         ? p.user.name
-                            .split(" ")
-                            .map((word) => word[0].toUpperCase())
-                            .slice(0, 2)
-                            .join("")
-                        : p.user.name.slice(0, 2).toUpperCase()
+                          .split(" ")
+                          .map((word) => word[0].toUpperCase())
+                          .slice(0, 2)
+                          .join("")
+                        : `${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}`
                       : "UN"}
                   </AvatarFallback>
                 </Avatar>

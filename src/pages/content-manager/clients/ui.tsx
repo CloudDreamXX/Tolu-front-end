@@ -801,7 +801,7 @@ export const ContentManagerClients: React.FC = () => {
                         className="flex items-center justify-center 
                w-full min-w-0 max-w-full overflow-hidden
                text-[16px] font-semibold text-center
-               break-all whitespace-normal"
+               break-words whitespace-normal"
                       >
                         <Button
                           variant={"unstyled"}
@@ -832,7 +832,7 @@ export const ContentManagerClients: React.FC = () => {
                         Status
                       </div>
                       <div className="w-full text-[16px] flex items-center justify-center">
-                        {client.status === "waiting to accept invite" ? (
+                        {client.status === "pending" ? (
                           <div className="flex flex-col items-center justify-center ">
                             Pending
                             <Button
@@ -857,10 +857,11 @@ export const ContentManagerClients: React.FC = () => {
                     <Button
                       variant={"unstyled"}
                       size={"unstyled"}
+                      disabled={client.status !== "active"}
                       onClick={() => {
                         handleSelectClient(client.client_id);
                       }}
-                      className={`${isWide ? "flex" : "hidden"} items-center justify-center text-[#000]`}
+                      className={`${isWide ? "flex" : "hidden"} items-center justify-center text-[#000] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                     >
                       <MaterialIcon iconName="visibility" fill={1} />
                     </Button>
@@ -1013,8 +1014,8 @@ export const ContentManagerClients: React.FC = () => {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                    ? "border-[#1C63DB] text-[#1C63DB]"
-                    : "border-[#DBDEE1]"
+                      ? "border-[#1C63DB] text-[#1C63DB]"
+                      : "border-[#DBDEE1]"
                     }`}
                 >
                   {page}
@@ -1097,7 +1098,7 @@ export const ContentManagerClients: React.FC = () => {
                 setConfirmDelete(false);
                 cleanState();
               }}
-              asDialog
+              asDialog={true}
             />
           )}
 

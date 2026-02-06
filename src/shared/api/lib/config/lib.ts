@@ -157,6 +157,16 @@ export const API_ROUTES = {
     DOWNLOAD_LICENSE: "/coach/license/{filename}",
     DELETE_LICENSE: "/coach/license/{filename}",
     GET_CLIENT_COACHES: "/coach/client/{client_id}/coaches",
+    ADD_NOTE: "/clients/{client_id}/health-history/{health_history_id}/notes",
+    GET_NOTES: "/clients/{client_id}/health-history/{health_history_id}/notes",
+    GET_NOTE:
+      "/clients/{client_id}/health-history/{health_history_id}/notes/{note_id}",
+    UPDATE_NOTE:
+      "/clients/{client_id}/health-history/{health_history_id}/notes/{note_id}",
+    DELETE_NOTE:
+      "/clients/{client_id}/health-history/{health_history_id}/notes/{note_id}",
+    DELETE_NOTE_BY_BLOCK:
+      "/clients/{client_id}/health-history/{health_history_id}/notes/block/{block_name}",
   },
   DOCUMENTS: {
     DETAILS: "/content/retrieve",
@@ -182,6 +192,7 @@ export const API_ROUTES = {
     GET_SYMPTOMS: "/symptom-tracker/{target_date}",
     GET_SUGGESTIONS: "/symptom-tracker/ai-suggestions/",
     DELETE_SYMPTOM: "/symptom-tracker/symptoms/{symptom_id}/",
+    GET_SYMPTOMS_COACH: "/symptom-tracker/coach/{client_id}/{target_date}",
   },
   CHAT: {
     FETCH_ALL: "/chats",

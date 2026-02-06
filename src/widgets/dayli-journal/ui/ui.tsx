@@ -913,6 +913,55 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                     {mealExample}
                   </Button>
                 ))}
+              {summaryView ? (
+                <div className="flex flex-col gap-4">
+                  {meal.breakfast.food_items && (
+                    <MealSummary
+                      title="Breakfast"
+                      food={meal.breakfast.food_items}
+                      time={meal.breakfast.time}
+                    />
+                  )}
+
+                  {meal.lunch.food_items && (
+                    <MealSummary
+                      title="Lunch"
+                      food={meal.lunch.food_items}
+                      time={meal.lunch.time}
+                    />
+                  )}
+
+                  {meal.dinner.food_items && (
+                    <MealSummary
+                      title="Dinner"
+                      food={meal.dinner.food_items}
+                      time={meal.dinner.time}
+                    />
+                  )}
+
+                  {meal.notes && (
+                    <div className="text-sm text-[#5F5F65]">
+                      <span className="font-medium text-[#1D1D1F]">Notes:</span>{" "}
+                      {meal.notes}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                MEAL_EXAMPLES.map((mealExample) => (
+                  <Button
+                    variant="ghost"
+                    key={mealExample}
+                    onClick={() => handleSelect("mealExample", mealExample)}
+                    className={cn(
+                      "flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base",
+                      selectedMealExamples.includes(mealExample) &&
+                      "bg-[#D1E8FF]"
+                    )}
+                  >
+                    {mealExample}
+                  </Button>
+                ))
+              )}
             </div>
           </div>
 
@@ -1216,5 +1265,26 @@ const BlockWrapper = ({
     )}
   >
     {children}
+  </div>
+);
+
+const MealSummary = ({
+  title,
+  food,
+  time,
+}: {
+  title: string;
+  food: string;
+  time?: string;
+}) => (
+  <div className="flex items-start gap-3">
+    <MaterialIcon iconName="lightbulb" />
+    <div className="flex flex-col">
+      <span className="font-medium text-[#1D1D1F]">{title}</span>
+      <span className="text-sm text-[#5F5F65]">
+        {food}
+        {time ? ` • ${time}` : ""}
+      </span>
+    </div>
   </div>
 );

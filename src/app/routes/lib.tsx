@@ -24,17 +24,7 @@ import { Register } from "widgets/auth-forms";
 import { CheckEmail } from "widgets/auth-forms/ui/check-email";
 import { ForgotPassword } from "widgets/auth-forms/ui/forgot-password";
 import { NewPassword } from "widgets/auth-forms/ui/new-password";
-// import { Barriers } from "widgets/OnboardingClient/Barriers";
-// import { ChooseTest } from "widgets/OnboardingClient/ChooseTest";
-import { DemographicStep } from "widgets/OnboardingClient/DemographicStep";
-import { FinishClientOnboarding } from "widgets/OnboardingClient/Finish";
-// import { PersonalityType } from "widgets/OnboardingClient/PersonalityType";
-// import { Readiness } from "widgets/OnboardingClient/Readiness";
-import { Summary } from "widgets/OnboardingClient/Summary";
-// import { Support } from "widgets/OnboardingClient/Support";
-// import { Values } from "widgets/OnboardingClient/Values";
 import { WelcomeScreen } from "widgets/OnboardingClient/WelcomeScreen";
-// import { WhatBringsYouHere } from "widgets/OnboardingClient/WhatBringsYouHere";
 import { AboutYourPractice } from "widgets/OnboardingPractitioner/about-your-practice";
 import { InviteClients } from "widgets/OnboardingPractitioner/invite-clients";
 import { OnboardingFinish } from "widgets/OnboardingPractitioner/onboarding-finish";
@@ -50,7 +40,6 @@ import { AdminMessages } from "pages/admin-messages";
 import { ContentManagement } from "pages/content-management";
 import { ContentManagementDocument } from "pages/content-management-document";
 import { usePageWidth } from "shared/lib";
-import { SymptomsSeverity } from "widgets/OnboardingClient/SymptomsSeverity";
 import { CheckInvite } from "widgets/auth-forms/ui/check-invite";
 import { AdminProfile } from "pages/admin-profile";
 import { AdminRequests } from "pages/admin-requests";
@@ -82,21 +71,6 @@ export const AppRoutes = () => {
       <Route path="/new-password" element={<NewPassword />} />
       <Route path="/invite-clients" element={<InviteClients />} />
       <Route path="/onboarding-finish" element={<OnboardingFinish />} />
-      {/* <Route
-        path="/welcome/client/personal-story"
-        element={<OnboardingHealthProfile />}
-      /> */}
-      <Route path="/about-you" element={<DemographicStep />} />
-      <Route path="/symptoms-severity" element={<SymptomsSeverity />} />
-      {/* <Route path="/what-brings-you-here" element={<WhatBringsYouHere />} /> */}
-      {/* <Route path="/values" element={<Values />} />
-      <Route path="/barriers" element={<Barriers />} /> */}
-      {/* <Route path="/support" element={<Support />} /> */}
-      {/* <Route path="/personality-type" element={<PersonalityType />} /> */}
-      {/* <Route path="/choose-test" element={<ChooseTest />} /> */}
-      {/* <Route path="/readiness" element={<Readiness />} /> */}
-      <Route path="/summary" element={<Summary />} />
-      <Route path="/finish" element={<FinishClientOnboarding />} />
       <Route
         path="/content/:documentId"
         element={<RedirectContentToLibrary />}

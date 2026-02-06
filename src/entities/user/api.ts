@@ -227,27 +227,6 @@ export const userApi = createApi({
       providesTags: ["Onboarding"],
     }),
 
-    onboardClient: builder.mutation<
-      BaseResponse<{ message: string }>,
-      { data: FormState; token?: string }
-    >({
-      query: ({ data, token }) => ({
-        url: API_ROUTES.USER.ONBOARD_CLIENT,
-        method: "POST",
-        body: data,
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      }),
-      invalidatesTags: ["Onboarding"],
-    }),
-
-    getOnboardClient: builder.query<BaseResponse<ClientOnboardingResponse>, void>({
-      query: () => API_ROUTES.USER.ONBOARD_CLIENT,
-      providesTags: ["Onboarding"],
-    }),
-
     getUserProfile: builder.query<
       BaseResponse<IUser>,
       void
@@ -402,9 +381,6 @@ export const {
   useUpdateUserMutation,
   useGetOnboardingUserQuery,
   useLazyGetOnboardingUserQuery,
-  useOnboardClientMutation,
-  useLazyGetOnboardClientQuery,
-  useGetOnboardClientQuery,
   useGetUserProfileQuery,
   useLazyGetUserProfileQuery,
   useUpdateProfileMutation,

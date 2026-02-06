@@ -44,6 +44,7 @@ import { useLocation } from "react-router-dom";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { MedicationsTab } from "./medications-tab";
 import { SupplementsTab } from "./supplements-tab";
+import { CoachDailyJournal } from "./journals-tab";
 
 type TabItem = {
   id: string;
@@ -437,7 +438,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                         >
                           <AvatarImage src={undefined} alt={"undefined"} />
                           <AvatarFallback className="text-[10px] font-medium">
-                            {p.user.name.slice(0, 2).toUpperCase()}
+                            {`${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}`}
                           </AvatarFallback>
                         </Avatar>
                       ))}
@@ -585,6 +586,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <ClientComprehensiveSummary
             clientId={receiver?.user.id || ""}
             onOpenChange={() => { }}
+            clientId={receiver?.user.id || location.pathname.split("/").pop()!}
+            onOpenChange={() => { }}
+            asDialog={false}
           />
         </TabsContent>
         <TabsContent value="messages">
@@ -643,6 +647,11 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               No providers yet.
             </div>
           )}
+        </TabsContent>
+        <TabsContent value="journals">
+          <CoachDailyJournal
+            clientId={receiver?.user.id || location.pathname.split("/").pop()!}
+          />
         </TabsContent>
       </Tabs>
 
