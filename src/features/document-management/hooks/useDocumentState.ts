@@ -83,7 +83,7 @@ export const useDocumentState = () => {
     if (!documentId) return;
     try {
       const response = await getContentShares(documentId).unwrap();
-      setSharedClients(response.data.shares);
+      setSharedClients(response.data.shares || []);
     } catch (err) {
       console.error("Error fetching shared clients:", err);
     }
@@ -105,7 +105,7 @@ export const useDocumentState = () => {
     if (!isNewDocument && !isTemporaryDocument && documentId) {
       const fetchShared = async () => {
         const response = await getContentShares(documentId).unwrap();
-        setSharedClients(response.data.shares);
+        setSharedClients(response.data.shares || []);
       };
       fetchShared();
     }

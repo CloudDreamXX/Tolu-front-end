@@ -254,13 +254,48 @@ export const coachApi = createApi({
     // === FOLDERS ===
     editFolder: builder.mutation<
       { success: boolean; message: string },
-      { payload: UpdateFolderRequest; files?: File[] }
+      {
+        folder_id: string;
+        new_name?: string | null;
+        parent_folder_id?: string | null;
+        status?: string | null;
+        instructions?: string | null;
+        files?: File[];
+        reviewer_ids?: string[] | null;
+        reviewer_ids_to_delete?: string[] | null;
+        files_to_delete?: number[] | null;
+      }
     >({
-      query: ({ payload, files = [] }) => {
+      query: ({
+        folder_id,
+        new_name,
+        parent_folder_id,
+        status,
+        instructions,
+        files = [],
+        reviewer_ids,
+        reviewer_ids_to_delete,
+        files_to_delete,
+      }) => {
         const form = new FormData();
-        form.append("edit_data", JSON.stringify(payload));
+        // All fields as FormData
+        form.append("folder_id", folder_id);
+        if (typeof new_name === "string") form.append("new_name", new_name);
+        if (typeof parent_folder_id === "string") form.append("parent_folder_id", parent_folder_id);
+        if (typeof status === "string") form.append("status", status);
+        if (typeof instructions === "string") form.append("instructions", instructions);
+        if (Array.isArray(reviewer_ids)) {
+          reviewer_ids.forEach((id) => id && form.append("reviewer_ids", id));
+        }
+        if (Array.isArray(files_to_delete)) {
+          files_to_delete.forEach((id) =>
+            typeof id === "number" ? form.append("files_to_delete", id.toString()) : undefined
+          );
+        }
+        if (Array.isArray(reviewer_ids_to_delete)) {
+          reviewer_ids_to_delete.forEach((id) => id && form.append("reviewer_ids_to_delete", id));
+        }
         files.forEach((f) => form.append("files", f));
-
         return {
           url: API_ROUTES.COACH_ADMIN.EDIT_FOLDER,
           method: "PUT",

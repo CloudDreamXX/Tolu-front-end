@@ -33,6 +33,7 @@ import {
 
 function uniqById(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
+  if (!Array.isArray(messages)) return [];
   return messages.filter((msg) => {
     if (seen.has(msg.id)) return false;
     seen.add(msg.id);
@@ -165,11 +166,9 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const handleAddSelectionToNotes = async (text: string) => {
     try {
       await sendNote({
-        noteData: {
-          title: "Note from messages",
-          content: text,
-          chat_id: chat.chat_id,
-        },
+        chat_id: chat.chat_id,
+        title: "Note from messages",
+        content: text,
       }).unwrap();
 
       toast({ title: "Added to notes" });
@@ -780,10 +779,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                           />
                           {(files.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {files.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />

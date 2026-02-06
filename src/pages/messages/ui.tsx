@@ -80,6 +80,7 @@ export const ClientMessages = () => {
         chatId: routeChatId,
         page,
       }).unwrap();
+      console.log(data)
       return data.data;
     } catch {
       toast({

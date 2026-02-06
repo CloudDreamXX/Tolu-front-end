@@ -33,8 +33,8 @@ export const healthHistoryApi = createApi({
   endpoints: (builder) => ({
     getUserHealthHistory: builder.query<HealthHistory, void>({
       query: () => API_ROUTES.HEALTH_HISTORY.GET,
-      transformResponse: (response: BaseResponse<HealthHistoryResponse>) =>
-        response.data.health_history ? response.data.health_history : {} as HealthHistory,
+      transformResponse: (response: BaseResponse<HealthHistory>) =>
+        response.data ? response.data : {} as HealthHistory,
     }),
 
     getCoachClientHealthHistory: builder.query<HealthHistory, string>({
@@ -56,24 +56,16 @@ export const healthHistoryApi = createApi({
       }
     >({
       query: ({ healthData, labFiles, clientId }) => {
-        const formData = new FormData();
-
-        formData.append("health_data", JSON.stringify(healthData));
-
-        if (labFiles && labFiles.length > 0) {
-          labFiles.forEach((file) => {
-            formData.append("lab_file", file);
-          });
-        }
-
+        const payload: any = {
+          health_data: healthData,
+        };
         if (clientId !== undefined) {
-          formData.append("client_id", clientId ?? "");
+          payload.client_id = clientId ?? "";
         }
-
         return {
           url: API_ROUTES.HEALTH_HISTORY.POST,
           method: "POST",
-          body: formData,
+          body: payload,
         };
       },
     }),

@@ -614,9 +614,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <SupplementsTab chat={chat} search={search} />
         </TabsContent>
         <TabsContent value="providers">
-          {clientCoaches && clientCoaches.coaches.length ? (
+          {clientCoaches && clientCoaches.data.coaches.length ? (
             <ul className="p-2">
-              {clientCoaches.coaches.map((c: any) => {
+              {clientCoaches.data.coaches.map((c: any) => {
                 return (
                   <li
                     key={c.coach_id}

@@ -66,22 +66,18 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
         await updateNote({
           noteId: editingId,
           payload: {
-            noteData: {
-              title,
-              content: input,
-              remove_file: items.length === 0,
-            },
+            title,
+            content: input,
+            remove_file: items.length === 0,
             file: items[0]?.file,
           },
         }).unwrap();
         setEditingId(null);
       } else {
         await sendNote({
-          noteData: {
-            title,
-            content: input,
-            chat_id: chat.chat_id,
-          },
+          chat_id: chat.chat_id,
+          title,
+          content: input,
           file: items[0]?.file,
         }).unwrap();
       }
@@ -155,7 +151,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const [atBottom, setAtBottom] = useState(true);
 
   const dataForList = useMemo(() => {
-    const arr = (notes?.data.notes ?? []).slice();
+    const arr = (notes?.data ?? []).slice();
     arr.sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
@@ -165,7 +161,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
         (n.content || "").toLowerCase().includes(search.toLowerCase())
       )
       : arr;
-  }, [notes?.data.notes, search]);
+  }, [notes?.data, search]);
 
   const prevLenRef = useRef(0);
 

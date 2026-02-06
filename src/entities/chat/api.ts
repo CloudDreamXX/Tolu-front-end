@@ -14,9 +14,10 @@ import {
   CreateChatPayload,
   FetchAllChatsResponse,
   FetchChatDetailsResponse,
-  FetchChatFilesResponse,
   FetchChatMessagesResponse,
-  GetAllChatNotesResponse,
+
+  FileMessage,
+
   SendChatNotePayload,
   SendMessagePayload,
   SendMessageResponse,
@@ -136,12 +137,19 @@ export const chatApi = createApi({
         params: { page, limit },
       }),
       providesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
+      transformResponse: (res: any) => {
+        if (Array.isArray(res.data)) {
+          return { ...res, data: { messages: res.data, total: res.data.length, page: 1, limit: 50, has_next: false, has_prev: false } };
+        }
+        return res;
+      },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         queryFulfilled.then(({ data }) => {
-          if (data?.data.messages?.length)
+          const messages = data?.data?.messages || data?.data || [];
+          if (messages.length)
             dispatch(
               upsertMessages(
-                data.data.messages.map((m) => ({ ...m, chat_id: arg.chatId }))
+                messages.map((m: any) => ({ ...m, chat_id: arg.chatId }))
               )
             );
         });
@@ -296,7 +304,7 @@ export const chatApi = createApi({
     }),
 
     fetchAllFilesByChatId: builder.query<
-      BaseResponse<FetchChatFilesResponse>,
+      BaseResponse<FileMessage[]>,
       { chatId: string; page?: number; limit?: number }
     >({
       query: ({ chatId, page = 1, limit = 50 }) => ({
@@ -333,6 +341,7 @@ export const chatApi = createApi({
             API_ROUTES.CHAT.UPLOADED_FILE.replace("{filename}", fileUrl),
             { signal }
           );
+          console.log(res)
           const blob = await res.blob();
           const url = URL.createObjectURL(blob);
           dispatch(clearDownloadProgress(fileUrl));
@@ -404,7 +413,10 @@ export const chatApi = createApi({
     sendChatNote: builder.mutation<BaseResponse<ChatNoteResponse>, SendChatNotePayload>({
       query: (payload) => {
         const formData = new FormData();
-        formData.append("note_data", JSON.stringify(payload.noteData));
+        if (payload.chat_id) formData.append("chat_id", payload.chat_id);
+        if (payload.target_user_id) formData.append("target_user_id", payload.target_user_id);
+        if (payload.title) formData.append("title", payload.title);
+        if (payload.content) formData.append("content", payload.content);
         if (payload.file) formData.append("file", payload.file);
         return {
           url: API_ROUTES.CHAT.SEND_CHAT_NOTE,
@@ -414,7 +426,7 @@ export const chatApi = createApi({
       },
     }),
 
-    getAllChatNotes: builder.query<BaseResponse<GetAllChatNotesResponse>, string>({
+    getAllChatNotes: builder.query<BaseResponse<ChatNoteResponse[]>, string>({
       query: (chatId) => ({
         url: API_ROUTES.CHAT.GET_ALL_CHAT_NOTES.replace("{chat_id}", chatId),
       }),
@@ -426,7 +438,9 @@ export const chatApi = createApi({
     >({
       query: ({ noteId, payload }) => {
         const formData = new FormData();
-        formData.append("note_data", JSON.stringify(payload.noteData));
+        if (payload.title) formData.append("title", payload.title);
+        if (payload.content) formData.append("content", payload.content);
+        if (typeof payload.remove_file !== "undefined") formData.append("remove_file", String(payload.remove_file));
         if (payload.file) formData.append("file", payload.file);
         return {
           url: API_ROUTES.CHAT.UPDATE_CHAT_NOTE.replace("{note_id}", noteId),

@@ -179,8 +179,11 @@ export const foldersApi = createApi({
       query: (id) => ({
         url: API_ROUTES.FOLDERS.GET_FOLDER.replace("{id}", `${id}`),
       }),
-      transformResponse: (response: { folder: GetFolderItemResponse }) =>
-        serializeFolder(response.folder.data),
+      transformResponse: (response: any) => {
+        const folder = response?.data?.folder;
+        if (!folder) throw new Error("Folder not found in response");
+        return serializeFolder(folder);
+      },
       providesTags: ["Folders"],
     }),
 

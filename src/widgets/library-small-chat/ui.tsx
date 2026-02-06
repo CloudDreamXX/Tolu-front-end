@@ -1026,11 +1026,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     try {
       await sendNote({
-        noteData: {
-          title: "Note from the chat",
-          content: text,
-          chat_id: chatIdForNotes || "",
-        },
+        chat_id: chatIdForNotes || "",
+        title: "Note from the chat",
+        content: text,
       }).unwrap();
 
       toast({ title: "Added to notes" });

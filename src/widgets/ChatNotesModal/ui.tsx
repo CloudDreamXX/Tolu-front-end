@@ -29,14 +29,14 @@ export const ChatNotesModal: React.FC<Props> = ({ chatId, onClose }) => {
         Failed to load notes. Please try again.
       </p>
     );
-  } else if (!data || data.data.notes.length === 0) {
+  } else if (!data || data.data?.length === 0) {
     content = (
       <p className="text-sm text-[#5F5F65]">
         This client does not have any notes yet.
       </p>
     );
   } else {
-    content = data.data.notes.map((item) => (
+    content = data.data?.map((item) => (
       <div className="flex justify-between gap-3 p-3 bg-white border border-gray-200 shadow-sm rounded-xl">
         <div className="w-full">
           {item.title && (
