@@ -52,7 +52,6 @@ export const searchApi = createApi({
           }`;
       },
       transformResponse: (response: BaseResponse<SearchHistoryResponse[]>) => {
-        console.log(response)
         return response.data.map((item) => ({
           ...item,
           chatId: item.chat_id,

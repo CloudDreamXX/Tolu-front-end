@@ -106,14 +106,14 @@ export const LibraryDocument = () => {
     selectedDocument?.creator_id || ""
   );
   const shouldLoadPhoto =
-    !!creatorProfileData?.creator_id &&
-    !!creatorProfileData?.detailed_profile?.personal_info?.headshot_url;
+    !!creatorProfileData?.data?.creator_id &&
+    !!creatorProfileData?.data?.detailed_profile?.personal_info?.headshot_url;
 
   const { data: creatorPhotoData } = useGetCreatorPhotoQuery(
     {
-      id: creatorProfileData?.creator_id || "",
+      id: creatorProfileData?.data?.creator_id || "",
       filename:
-        creatorProfileData?.detailed_profile?.personal_info?.headshot_url
+        creatorProfileData?.data?.detailed_profile?.personal_info?.headshot_url
           ?.split("/")
           .pop() || "",
     },
@@ -121,6 +121,7 @@ export const LibraryDocument = () => {
       skip: !shouldLoadPhoto,
     }
   );
+
   const [updateStatus] = useUpdateStatusMutation();
   const { data: healthHistoryData, error: healthHistoryError } =
     useGetUserHealthHistoryQuery();
@@ -134,7 +135,7 @@ export const LibraryDocument = () => {
     refetch: refetchCoaches,
     isLoading: isLoadingCoaches,
   } = useGetCoachesQuery();
-  const [getCoachProfile, { data: coachProfileData }] =
+  const [getCoachProfile] =
     useLazyGetCoachProfileQuery();
   const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
 
@@ -745,7 +746,7 @@ export const LibraryDocument = () => {
 
   useEffect(() => {
     if (coachesData) {
-      const uniqueCoaches = coachesData.data.coaches.filter(
+      const uniqueCoaches = coachesData.data.filter(
         (coach, index, self) =>
           index === self.findIndex((c) => c.coach_id === coach.coach_id)
       );
@@ -891,32 +892,34 @@ export const LibraryDocument = () => {
   const handleOpenCoach = useCallback(
     async (coach: CoachListItem) => {
       setSelectedCoachId(coach.coach_id);
-      setCoachDialogOpen(true);
 
       try {
-        if (!coachProfiles[coach.coach_id]) {
-          getCoachProfile(coach.coach_id);
+        let profile = coachProfiles[coach.coach_id];
+        if (!profile) {
+          const res = await getCoachProfile(coach.coach_id).unwrap();
+          profile = res.data;
           setCoachProfiles((p) => ({
             ...p,
-            [coach.coach_id]: coachProfileData,
+            [coach.coach_id]: profile,
           }));
           const fn = getHeadshotFilename(
-            coachProfileData?.detailed_profile?.headshot_url ??
+            profile?.detailed_profile?.headshot_url ??
             coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
-            coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
+            profile?.detailed_profile?.headshot_url ??
             coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
+        setCoachDialogOpen(true);
       } catch (e) {
         console.error("Failed to load coach profile:", e);
       }
     },
-    [coachProfiles, fetchPhotoUrl]
+    [coachProfiles, fetchPhotoUrl, getCoachProfile]
   );
 
   const onProvidersOpenChange = useCallback(
@@ -1212,42 +1215,36 @@ export const LibraryDocument = () => {
                       <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
                         <AvatarImage src={creatorPhoto || undefined} />
                         <AvatarFallback className="text-3xl bg-slate-300 ">
-                          {creatorProfileData.detailed_profile.personal_info
-                            .first_name !== "" &&
-                            creatorProfileData.detailed_profile.personal_info
-                              .first_name !== null &&
-                            creatorProfileData.detailed_profile.personal_info
-                              .last_name !== null &&
-                            creatorProfileData.detailed_profile.personal_info
-                              .last_name !== "" ? (
-                            <div className="flex items-center">
-                              <span>
-                                {creatorProfileData.detailed_profile.personal_info.first_name.slice(
-                                  0,
-                                  1
-                                )}
-                              </span>
-                              <span>
-                                {creatorProfileData.detailed_profile.personal_info.last_name.slice(
-                                  0,
-                                  1
-                                )}
-                              </span>
-                            </div>
-                          ) : (
-                            creatorProfileData.basic_info.name.slice(0, 1)
-                          )}
+                          {(() => {
+                            const pi = creatorProfileData.data?.detailed_profile?.personal_info;
+                            const first = pi && typeof pi.first_name === 'string' && pi.first_name.trim() ? pi.first_name.trim() : null;
+                            const last = pi && typeof pi.last_name === 'string' && pi.last_name.trim() ? pi.last_name.trim() : null;
+                            if (first && last) {
+                              return (
+                                <div className="flex items-center">
+                                  <span>{first.slice(0, 1)}</span>
+                                  <span>{last.slice(0, 1)}</span>
+                                </div>
+                              );
+                            } else if (first) {
+                              return first.slice(0, 1);
+                            } else if (creatorProfileData.data?.basic_info.name) {
+                              return creatorProfileData.data.basic_info.name.slice(0, 1);
+                            } else {
+                              return "C";
+                            }
+                          })()}
                         </AvatarFallback>
                       </Avatar>
                     )}
 
                     <div className="text-[18px] text-[#111827] text-center font-semibold">
-                      {creatorProfileData?.basic_info.name}
+                      {creatorProfileData?.data?.basic_info.name}
                     </div>
                   </div>
                   <div className="text-[16px] text-[#5F5F65] whitespace-pre-line w-full">
                     Bio: <br />{" "}
-                    {creatorProfileData?.detailed_profile.personal_info.bio ||
+                    {creatorProfileData?.data?.detailed_profile.personal_info.bio ||
                       "No bio provided."}
                   </div>
                 </div>
@@ -1348,7 +1345,7 @@ export const LibraryDocument = () => {
           <SharePopup
             contentId={documentId}
             onClose={() => setSharePopup(false)}
-            coachId={creatorProfileData?.creator_id || ""}
+            coachId={creatorProfileData?.data?.creator_id || ""}
           />
         )}
 

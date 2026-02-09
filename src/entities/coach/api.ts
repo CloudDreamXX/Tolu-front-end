@@ -556,6 +556,16 @@ export class CoachService {
 
     if (!response.headers.get("content-type")?.includes("text/event-stream")) {
       const data = await response.json();
+      // If the response is not an event-stream, try to extract from data.data
+      if (data && data.data) {
+        const result = {
+          folderId: data.data.folder_id,
+          documentId: data.data.content_id,
+          chatId: data.data.chat_id,
+        };
+        onComplete?.(result);
+        return result;
+      }
       onComplete?.(data);
       return data;
     }
@@ -566,6 +576,7 @@ export class CoachService {
     let folderId = "";
     let documentId = "";
     let chatId = "";
+    let lastData: any = null;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -579,15 +590,33 @@ export class CoachService {
         if (!line.startsWith("data:")) continue;
 
         const json = JSON.parse(line.slice(5).trim());
-        folderId = json.folder_id;
-        documentId = json.content_id;
-        chatId = json.chat_id;
-
+        // If this is the final message with status and data, extract from json.data
+        if (json.status === "success" && json.data) {
+          folderId = json.data.folder_id;
+          documentId = json.data.content_id;
+          chatId = json.data.chat_id;
+          lastData = json;
+        } else {
+          // For streaming chunks, fallback to old keys if present
+          folderId = json.folder_id || folderId;
+          documentId = json.content_id || documentId;
+          chatId = json.chat_id || chatId;
+        }
         onChunk?.(json);
       }
     }
 
-    const result = { folderId, documentId, chatId };
+    // Prefer the final data object if available
+    let result;
+    if (lastData && lastData.data) {
+      result = {
+        folderId: lastData.data.folder_id,
+        documentId: lastData.data.content_id,
+        chatId: lastData.data.chat_id,
+      };
+    } else {
+      result = { folderId, documentId, chatId };
+    }
     onComplete?.(result);
     return result;
   }
@@ -642,6 +671,16 @@ export class CoachService {
 
     if (!response.headers.get("content-type")?.includes("text/event-stream")) {
       const data = await response.json();
+      // If the response is not an event-stream, try to extract from data.data
+      if (data && data.data) {
+        const result = {
+          folderId: data.data.folder_id,
+          documentId: data.data.content_id,
+          chatId: data.data.chat_id,
+        };
+        onComplete?.(result);
+        return result;
+      }
       onComplete?.(data);
       return data;
     }
@@ -652,6 +691,7 @@ export class CoachService {
     let folderId = "";
     let documentId = "";
     let chatId = "";
+    let lastData: any = null;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -665,15 +705,33 @@ export class CoachService {
         if (!line.startsWith("data:")) continue;
 
         const json = JSON.parse(line.slice(5).trim());
-        folderId = json.folder_id;
-        documentId = json.content_id;
-        chatId = json.chat_id;
-
+        // If this is the final message with status and data, extract from json.data
+        if (json.status === "success" && json.data) {
+          folderId = json.data.folder_id;
+          documentId = json.data.content_id;
+          chatId = json.data.chat_id;
+          lastData = json;
+        } else {
+          // For streaming chunks, fallback to old keys if present
+          folderId = json.folder_id || folderId;
+          documentId = json.content_id || documentId;
+          chatId = json.chat_id || chatId;
+        }
         onChunk?.(json);
       }
     }
 
-    const result = { folderId, documentId, chatId };
+    // Prefer the final data object if available
+    let result;
+    if (lastData && lastData.data) {
+      result = {
+        folderId: lastData.data.folder_id,
+        documentId: lastData.data.content_id,
+        chatId: lastData.data.chat_id,
+      };
+    } else {
+      result = { folderId, documentId, chatId };
+    }
     onComplete?.(result);
     return result;
   }

@@ -341,7 +341,6 @@ export const chatApi = createApi({
             API_ROUTES.CHAT.UPLOADED_FILE.replace("{filename}", fileUrl),
             { signal }
           );
-          console.log(res)
           const blob = await res.blob();
           const url = URL.createObjectURL(blob);
           dispatch(clearDownloadProgress(fileUrl));

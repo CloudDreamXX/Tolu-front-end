@@ -141,7 +141,6 @@ export const PopoverClient: React.FC<IPopoverClientProps> = ({
     useGetManagedClientsQuery();
   const [shareContent] = useShareContentMutation();
   const [revokeContent] = useRevokeContentMutation();
-  console.log(clientsData)
 
   useEffect(() => {
     if (clientsData && clientsData.data.clients) {

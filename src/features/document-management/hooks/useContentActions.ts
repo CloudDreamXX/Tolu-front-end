@@ -60,7 +60,6 @@ export const useContentActions = () => {
     useGetDocumentByIdQuery(selectedDocumentId, {
       skip: !selectedDocumentId || selectedDocumentId.startsWith("temp_"),
     });
-  console.log(selectedDocumentId)
 
   const onStatusComplete = async (
     status:

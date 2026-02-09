@@ -189,6 +189,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
       }
     }
   }, [data]);
+  console.log(data)
 
   const handleFileChange = (
     type: "photo" | "voice",
@@ -352,26 +353,39 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
 
     const sleepQuality = mapMoodToSleepQuality(moodValue);
 
+    // Format meal_details as an array of objects per backend requirements
+    const mealDetailsArr = [
+      {
+        meal_type: "breakfast",
+        food_items: meal.breakfast.food_items,
+        time: meal.breakfast.time || null,
+      },
+      {
+        meal_type: "lunch",
+        food_items: meal.lunch.food_items,
+        time: meal.lunch.time || null,
+      },
+      {
+        meal_type: "dinner",
+        food_items: meal.dinner.food_items,
+        time: meal.dinner.time || null,
+      },
+      ...updatedSelectedMealExamples.map((example) => ({
+        meal_type: "examples",
+        food_items: example,
+        time: null,
+      })),
+    ];
+
     const payload = {
       date: selectedDate,
       mood_score: moodValue,
-
       notes: userNote || null,
-      symptoms: updatedSelectedSymptoms.length
-        ? updatedSelectedSymptoms.join(", ")
-        : null,
-
-      triggers: updatedSelectedTriggers.length
-        ? updatedSelectedTriggers.join(", ")
-        : null,
-
-      meal_details: JSON.stringify({
-        breakfast: meal.breakfast,
-        lunch: meal.lunch,
-        dinner: meal.dinner,
-        examples: updatedSelectedMealExamples,
-      }),
-
+      symptoms: updatedSelectedSymptoms.length ? updatedSelectedSymptoms : [],
+      triggers: updatedSelectedTriggers.length ? updatedSelectedTriggers : [],
+      meal_details: mealDetailsArr,
+      medications: null,
+      supplements: null,
       sleep_quality: sleepQuality,
       energy_level: null,
       stress_level: null,

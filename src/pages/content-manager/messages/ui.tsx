@@ -252,7 +252,6 @@ export const ContentManagerMessages: React.FC = () => {
         chatId: selectedChat.id,
         page,
       }).unwrap();
-      console.log(data)
       return data.data;
     } catch (err) {
       console.error(err);

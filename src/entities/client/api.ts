@@ -6,6 +6,8 @@ import {
   AcceptInviteResponse,
   Client,
   ClientInvitationInfo,
+  CoachListItem,
+  Folder,
   FoldersResponse,
   GetCoachesResponse,
   RequestInvitePayload,
@@ -62,7 +64,7 @@ export const clientApi = createApi({
       }),
     }),
     getLibraryContent: builder.query<
-      BaseResponse<FoldersResponse>,
+      BaseResponse<Folder[]>,
       { page: number; page_size: number; folder_id: string | null }
     >({
       query: ({ page = 1, page_size = 10, folder_id = null }) => ({
@@ -121,7 +123,7 @@ export const clientApi = createApi({
     getClientProfile: builder.query<BaseResponse<Client>, void>({
       query: () => API_ROUTES.CLIENT.GET_PROFILE,
     }),
-    getCoaches: builder.query<BaseResponse<GetCoachesResponse>, void>({
+    getCoaches: builder.query<BaseResponse<CoachListItem[]>, void>({
       query: () => API_ROUTES.CLIENT.GET_COACHES,
     }),
     getCoachProfile: builder.query<any, string>({

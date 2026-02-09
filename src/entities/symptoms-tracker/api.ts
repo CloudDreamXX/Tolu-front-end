@@ -26,11 +26,11 @@ export const symptomsTrackerApi = createApi({
           date: string;
           mood_score: number;
           notes?: string | null;
-          meal_details?: string | null;
-          symptoms?: string | null;
-          triggers?: string | null;
-          medications?: string | null;
-          supplements?: string | null;
+          meal_details?: any;
+          symptoms?: any;
+          triggers?: any;
+          medications?: any;
+          supplements?: any;
           sleep_quality?: string | null;
           energy_level?: string | null;
           stress_level?: string | null;
@@ -46,11 +46,30 @@ export const symptomsTrackerApi = createApi({
         formData.append("mood_score", String(data.mood_score));
 
         if (data.notes) formData.append("notes", data.notes);
-        if (data.meal_details) formData.append("meal_details", data.meal_details);
-        if (data.symptoms) formData.append("symptoms", data.symptoms);
-        if (data.triggers) formData.append("triggers", data.triggers);
-        if (data.medications) formData.append("medications", data.medications);
-        if (data.supplements) formData.append("supplements", data.supplements);
+        if (data.meal_details) formData.append("meal_details", JSON.stringify(data.meal_details));
+
+        if (Array.isArray(data.symptoms)) {
+          formData.append("symptoms", JSON.stringify(data.symptoms));
+        } else if (data.symptoms) {
+          try {
+            const arr = JSON.parse(data.symptoms);
+            formData.append("symptoms", JSON.stringify(arr));
+          } catch {
+            formData.append("symptoms", JSON.stringify([data.symptoms]));
+          }
+        }
+        if (Array.isArray(data.triggers)) {
+          formData.append("triggers", JSON.stringify(data.triggers));
+        } else if (data.triggers) {
+          try {
+            const arr = JSON.parse(data.triggers);
+            formData.append("triggers", JSON.stringify(arr));
+          } catch {
+            formData.append("triggers", JSON.stringify([data.triggers]));
+          }
+        }
+        if (data.medications) formData.append("medications", JSON.stringify(data.medications));
+        if (data.supplements) formData.append("supplements", JSON.stringify(data.supplements));
         if (data.sleep_quality) formData.append("sleep_quality", data.sleep_quality);
         if (data.energy_level) formData.append("energy_level", data.energy_level);
         if (data.stress_level) formData.append("stress_level", data.stress_level);

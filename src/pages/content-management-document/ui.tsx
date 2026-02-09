@@ -43,19 +43,18 @@ export const ContentManagementDocument = () => {
     isLoading: isLoadingDocument,
     refetch,
   } = useGetDocumentByIdQuery(documentId!);
-  console.log(documentId)
   const { data: creator } = useGetCreatorProfileQuery(
     selectedDocument?.creator_id || ""
   );
   const { data: creatorPhotoBlob } = useGetCreatorPhotoQuery(
     {
-      id: creator?.creator_id || "",
+      id: creator?.data?.creator_id || "",
       filename:
-        creator?.detailed_profile?.personal_info?.headshot_url
+        creator?.data?.detailed_profile?.personal_info?.headshot_url
           ?.split("/")
           .pop() || "",
     },
-    { skip: !creator?.creator_id }
+    { skip: !creator?.data?.creator_id }
   );
   const [renderedContent, setRenderedContent] = useState<JSX.Element | null>(
     null
@@ -169,49 +168,50 @@ export const ContentManagementDocument = () => {
             >
               <div className="flex flex-col items-center justify-center gap-3">
                 {creator &&
-                  creator.detailed_profile &&
-                  creator.detailed_profile.personal_info && (
+                  creator.data &&
+                  creator.data.detailed_profile &&
+                  creator.data.detailed_profile.personal_info && (
                     <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
                       <AvatarImage src={creatorPhoto || undefined} />
                       <AvatarFallback className="text-3xl bg-slate-300 ">
-                        {creator.detailed_profile.personal_info.first_name !==
+                        {creator.data.detailed_profile.personal_info.first_name !==
                           "" &&
-                        creator.detailed_profile.personal_info.first_name !==
+                          creator.data.detailed_profile.personal_info.first_name !==
                           null &&
-                        creator.detailed_profile.personal_info.last_name !==
+                          creator.data.detailed_profile.personal_info.last_name !==
                           null &&
-                        creator.detailed_profile.personal_info.last_name !==
+                          creator.data.detailed_profile.personal_info.last_name !==
                           "" ? (
                           <div className="flex items-center">
                             <span>
-                              {creator.detailed_profile.personal_info.first_name.slice(
+                              {creator.data.detailed_profile.personal_info.first_name.slice(
                                 0,
                                 1
                               )}
                             </span>
                             <span>
-                              {creator.detailed_profile.personal_info.last_name.slice(
+                              {creator.data.detailed_profile.personal_info.last_name.slice(
                                 0,
                                 1
                               )}
                             </span>
                           </div>
                         ) : (
-                          creator.basic_info.name.slice(0, 1)
+                          creator.data.basic_info.name.slice(0, 1)
                         )}
                       </AvatarFallback>
                     </Avatar>
                   )}
 
                 <div className="text-[18px] text-[#111827] text-center font-semibold">
-                  {creator?.basic_info.name}
+                  {creator?.data?.basic_info.name}
                 </div>
               </div>
               <div className="text-[16px] text-[#5F5F65] whitespace-pre-line w-full">
                 Bio: <br />{" "}
-                {(creator?.detailed_profile &&
-                  creator?.detailed_profile.personal_info &&
-                  creator.detailed_profile.personal_info.bio) ||
+                {(creator?.data?.detailed_profile &&
+                  creator?.data?.detailed_profile.personal_info &&
+                  creator.data.detailed_profile.personal_info.bio) ||
                   "No bio provided."}
               </div>
             </div>

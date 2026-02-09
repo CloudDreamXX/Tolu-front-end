@@ -98,7 +98,7 @@ export const contentApi = createApi({
     getAllHashtags: builder.query<any, void>({
       query: () => API_ROUTES.CONTENT.GET_ALL_HASHTAGS,
     }),
-    getCreatorProfile: builder.query<CreatorProfile, string>({
+    getCreatorProfile: builder.query<BaseResponse<CreatorProfile>, string>({
       query: (id) =>
         `${API_ROUTES.CONTENT.GET_CREATOR_PROFILE.replace("{creator_id}", id)}`,
     }),

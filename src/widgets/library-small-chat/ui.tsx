@@ -397,13 +397,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     fetchChat();
   }, []);
 
+  // Fix: After sending a new message, load session with the actual chatId
   useEffect(() => {
-    const fetchChat = async () => {
-      if (lastChatId) {
-        await loadExistingSession(lastChatId);
-      }
-    };
-    fetchChat();
+    if (!lastChatId) return;
+    loadExistingSession(lastChatId);
   }, [lastChatId]);
 
   useEffect(() => {
@@ -678,6 +675,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       const processFinal = (finalData: any) => {
         setIsSearching(false);
         if (deleteSelectedText) deleteSelectedText();
+        console.log("Final data received:", finalData);
 
         const chatId =
           finalData?.chat_id ||
@@ -987,7 +985,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       isSearching
     )
       return;
-    handleNewMessage(message);
+    handleNewMessage(message).then((newChatId) => {
+      if (newChatId) {
+        loadExistingSession(newChatId);
+      }
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

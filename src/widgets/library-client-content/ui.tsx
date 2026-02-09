@@ -10,7 +10,7 @@ import {
 import { ContentStatus, useUpdateStatusMutation } from "entities/content";
 import { RootState } from "entities/store";
 import { LibraryCard } from "features/library-card";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -115,7 +115,7 @@ export const LibraryClientContent = () => {
   const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
 
   const selectedCoach = useMemo(
-    () => coaches?.data?.coaches?.find((c) => c.coach_id === selectedCoachId) ?? null,
+    () => coaches?.data?.find((c) => c.coach_id === selectedCoachId) ?? null,
     [coaches, selectedCoachId]
   );
 
@@ -135,7 +135,7 @@ export const LibraryClientContent = () => {
             if (f.subfolders?.length) collect(f.subfolders);
           });
         };
-        collect(response?.data?.folders || []);
+        collect(response?.data || []);
         setStatusMap(status);
       } catch (err) {
         console.error("Failed to fetch library content:", err);
@@ -212,15 +212,15 @@ export const LibraryClientContent = () => {
           folder_id: folderId,
         }).unwrap();
 
-        let returned = findFolderById(response?.data.folders ?? [], folderId);
+        let returned = findFolderById(response?.data ?? [], folderId);
 
         if (
           !returned &&
           response &&
-          response.data.folders?.length === 1 &&
-          response.data.folders[0].id === folderId
+          response.data?.length === 1 &&
+          response.data[0].id === folderId
         ) {
-          returned = response.data.folders[0];
+          returned = response.data[0];
         }
 
         if (!returned) {
@@ -521,13 +521,13 @@ export const LibraryClientContent = () => {
             [coach.coach_id]: res,
           }));
           const fn = getHeadshotFilename(
-            coachProfileData?.detailed_profile?.headshot_url ??
+            res?.data?.detailed_profile?.headshot_url ??
             coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
-            coachProfiles[coach.coach_id]?.detailed_profile?.headshot_url ??
+            coachProfiles[coach.coach_id]?.data?.detailed_profile?.headshot_url ??
             coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
@@ -553,8 +553,8 @@ export const LibraryClientContent = () => {
   }, [photoUrls]);
 
   useEffect(() => {
-    if (!providersOpen || !coaches?.data?.coaches?.length) return;
-    coaches?.data?.coaches?.forEach((c) => {
+    if (!providersOpen || !coaches?.data?.length) return;
+    coaches?.data?.forEach((c) => {
       if (c.profile?.headshot_url && !photoUrls[c.coach_id]) {
         void fetchPhotoUrl(
           c.coach_id,
@@ -601,9 +601,9 @@ export const LibraryClientContent = () => {
                 <div className="p-4 text-sm text-muted-foreground">
                   Loading…
                 </div>
-              ) : coaches?.data?.coaches?.length ? (
+              ) : coaches?.data?.length ? (
                 <ul className="p-2">
-                  {coaches?.data.coaches
+                  {coaches?.data
                     .filter(
                       (coach, index, self) =>
                         index ===
@@ -668,8 +668,8 @@ export const LibraryClientContent = () => {
                   />
                 ) : (
                   (
-                    (coachProfileData?.basic_info?.first_name &&
-                      `${coachProfileData?.basic_info?.first_name.slice(0, 1)}${coachProfileData?.basic_info?.last_name.slice(0, 1)}`) ||
+                    (coachProfileData?.data?.basic_info?.first_name &&
+                      `${coachProfileData?.data?.basic_info?.first_name.slice(0, 1)}${coachProfileData?.data?.basic_info?.last_name.slice(0, 1)}`) ||
                     selectedCoach?.basic_info?.name ||
                     "C"
                   )
@@ -680,8 +680,8 @@ export const LibraryClientContent = () => {
 
               <div className="min-w-0">
                 <div className="text-base font-semibold truncate">
-                  {(coachProfileData?.basic_info?.first_name &&
-                    `${coachProfileData?.basic_info?.first_name} ${coachProfileData?.basic_info?.last_name}`) ||
+                  {(coachProfileData?.data?.basic_info?.first_name &&
+                    `${coachProfileData?.data?.basic_info?.first_name} ${coachProfileData?.data?.basic_info?.last_name}`) ||
                     selectedCoach?.basic_info?.name ||
                     "Coach"}
                 </div>
@@ -698,39 +698,62 @@ export const LibraryClientContent = () => {
 
             <div className="p-4 space-y-3 text-sm">
               <p className="leading-relaxed">
-                {coachProfiles[selectedCoachId!]?.detailed_profile?.bio ||
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.bio ||
                   selectedCoach?.profile?.bio ||
                   "No bio provided."}
               </p>
 
               <div className="grid grid-cols-2 gap-y-1 gap-x-3">
                 <span className="text-muted-foreground">Email:</span>
-                {coachProfiles[selectedCoachId!]?.basic_info?.email || "—"}
+                {coachProfiles[selectedCoachId!]?.data?.basic_info?.email || "—"}
 
                 <span className="text-muted-foreground">Phone:</span>
-                {(coachProfiles[selectedCoachId!]?.basic_info?.phone &&
-                  phoneMask(
-                    coachProfiles[selectedCoachId!]?.basic_info?.phone
-                  )) ||
-                  "—"}
+                {(coachProfiles[selectedCoachId!]?.data?.basic_info?.phone &&
+                  phoneMask(coachProfiles[selectedCoachId!]?.data?.basic_info?.phone)) || "—"}
 
                 <span className="text-muted-foreground">Timezone:</span>
-                {coachProfiles[selectedCoachId!]?.detailed_profile?.timezone ||
-                  "—"}
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.timezone || "—"}
 
                 <span className="text-muted-foreground">Languages:</span>
                 {(
-                  coachProfiles[selectedCoachId!]?.detailed_profile
-                    ?.languages || []
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.languages || []
                 ).join(", ") || "—"}
 
+                <span className="text-muted-foreground">Expertise:</span>
+                {(
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.expertise_areas || []
+                ).join(", ") || "—"}
+
+                <span className="text-muted-foreground">Certifications:</span>
+                {(
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.certifications || []
+                ).length > 0
+                  ? coachProfiles[selectedCoachId!]?.data?.detailed_profile?.certifications.map((c: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined, idx: Key | null | undefined) => (
+                    <div key={idx} className="truncate text-xs text-blue-700">{c}</div>
+                  ))
+                  : "—"}
+
+                <span className="text-muted-foreground">Practitioner Types:</span>
+                {(
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.practitioner_info?.types || []
+                ).join(", ") || "—"}
+
+                <span className="text-muted-foreground">Niches:</span>
+                {(
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.practitioner_info?.niches || []
+                ).join(", ") || "—"}
+
+                <span className="text-muted-foreground">School:</span>
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.practitioner_info?.school || "—"}
+
+                <span className="text-muted-foreground">Practice Software:</span>
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.business_info?.practice_software || "—"}
+
                 <span className="text-muted-foreground">Experience:</span>
-                {coachProfiles[selectedCoachId!]?.detailed_profile
-                  ?.years_experience ?? "—"}
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.years_experience ?? "—"}
 
                 <span className="text-muted-foreground">Working duration:</span>
-                {coachProfiles[selectedCoachId!]?.relationship_details
-                  ?.working_duration || "—"}
+                {coachProfiles[selectedCoachId!]?.data?.relationship_details?.working_duration || "—"}
               </div>
             </div>
 
