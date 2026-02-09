@@ -56,16 +56,30 @@ export const healthHistoryApi = createApi({
       }
     >({
       query: ({ healthData, labFiles, clientId }) => {
-        const payload: any = {
-          health_data: healthData,
-        };
-        if (clientId !== undefined) {
-          payload.client_id = clientId ?? "";
+        const formData = new FormData();
+        // Append each healthData field as a separate form entry (all as strings)
+        Object.entries(healthData).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            // If value is an object or array, stringify it
+            if (typeof value === "object") {
+              formData.append(key, JSON.stringify(value));
+            } else {
+              formData.append(key, String(value));
+            }
+          }
+        });
+        // Attach lab files if present
+        if (labFiles && labFiles.length > 0) {
+          labFiles.forEach((file) => {
+            formData.append("lab_file", file);
+          });
         }
+        // Build URL with client_id as query param if present
+        const url = clientId ? `${API_ROUTES.HEALTH_HISTORY.POST}?client_id=${encodeURIComponent(clientId)}` : API_ROUTES.HEALTH_HISTORY.POST;
         return {
-          url: API_ROUTES.HEALTH_HISTORY.POST,
+          url,
           method: "POST",
-          body: payload,
+          body: formData,
         };
       },
     }),
@@ -94,13 +108,22 @@ export const healthHistoryApi = createApi({
     >({
       query: ({ clientId, data, labFiles }) => {
         const formData = new FormData();
-
-        formData.append("health_data", JSON.stringify(data));
-
-        labFiles?.forEach((file) => {
-          formData.append("lab_file", file);
+        // Append each data field as a separate form entry (all as strings)
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            if (typeof value === "object") {
+              formData.append(key, JSON.stringify(value));
+            } else {
+              formData.append(key, String(value));
+            }
+          }
         });
-
+        // Attach lab files if present
+        if (labFiles && labFiles.length > 0) {
+          labFiles.forEach((file) => {
+            formData.append("lab_file", file);
+          });
+        }
         return {
           url: API_ROUTES.HEALTH_HISTORY.EDIT.replace("{client_id}", clientId),
           method: "PUT",
