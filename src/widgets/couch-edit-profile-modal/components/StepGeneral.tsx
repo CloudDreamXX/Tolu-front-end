@@ -32,8 +32,6 @@ export const StepGeneral = ({
     setDataState((prevState) => ({ ...prevState, [key]: value }));
   };
 
-  console.log(data)
-
   return (
     <div className="flex flex-col gap-4">
       {/* First & Last Name */}

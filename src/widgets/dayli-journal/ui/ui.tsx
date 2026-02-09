@@ -189,7 +189,6 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
       }
     }
   }, [data]);
-  console.log(data)
 
   const handleFileChange = (
     type: "photo" | "voice",

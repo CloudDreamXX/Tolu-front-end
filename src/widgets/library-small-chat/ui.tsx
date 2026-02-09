@@ -417,7 +417,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     setIsLoadingSession(true);
     setError(null);
     const chatMessages: Message[] = [];
-    console.log(chatId)
 
     try {
       if (activeChatKey === "Create content") {
@@ -675,7 +674,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       const processFinal = (finalData: any) => {
         setIsSearching(false);
         if (deleteSelectedText) deleteSelectedText();
-        console.log("Final data received:", finalData);
 
         const chatId =
           finalData?.chat_id ||
