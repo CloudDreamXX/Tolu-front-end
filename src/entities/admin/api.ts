@@ -5,6 +5,7 @@ import {
   ManageContentData,
   SendMessagePayload,
   SendMessageResponse,
+  User,
   UsersResponse,
 } from "./model";
 import { ChatMessageModel } from "entities/chat";
@@ -37,7 +38,7 @@ export const adminApi = createApi({
     "Requests",
   ],
   endpoints: (builder) => ({
-    getAllUsers: builder.query<BaseResponse<UsersResponse>, void>({
+    getAllUsers: builder.query<BaseResponse<User[]>, void>({
       query: () => API_ROUTES.ADMIN.GET_ALL_USERS,
       providesTags: ["Users"],
     }),
