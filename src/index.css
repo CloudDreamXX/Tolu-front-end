@@ -282,13 +282,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-left: 1.5rem;
 }
 
-/* .richtext li[data-list="bullet"] {
+.richtext li[data-list="bullet"] {
   list-style-type: disc !important;
 }
 
 .richtext li[data-list="ordered"] {
   list-style-type: decimal !important;
-} */
+}
 
 .richtext li {
   display: list-item !important;
