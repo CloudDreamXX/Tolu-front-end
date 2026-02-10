@@ -1,3 +1,5 @@
+import { BaseResponse } from "entities/models";
+
 export interface IDocumentResponse {
   id: string;
   title: string;
@@ -31,6 +33,8 @@ export interface IDocumentResponse {
   user_comments: string;
   thumbs_down: boolean;
 }
+
+export type GetDocumentByIdResponse = BaseResponse<IDocumentResponse>;
 
 export interface IDocument {
   id: string;

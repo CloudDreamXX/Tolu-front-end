@@ -6,12 +6,15 @@ import {
   AcceptInviteResponse,
   Client,
   ClientInvitationInfo,
+  CoachListItem,
+  Folder,
   FoldersResponse,
   GetCoachesResponse,
   RequestInvitePayload,
   SharedCoachContentByContentIdResponse,
   UserProfileUpdate,
 } from "./model";
+import { BaseResponse } from "entities/models";
 
 export const clientApi = createApi({
   reducerPath: "clientApi",
@@ -28,12 +31,12 @@ export const clientApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getInvitationDetails: builder.query<ClientInvitationInfo, string>({
+    getInvitationDetails: builder.query<BaseResponse<ClientInvitationInfo>, string>({
       query: (token) =>
         API_ROUTES.CLIENT.GET_INVITATION_DETAILS.replace("{token}", token),
     }),
     acceptCoachInvite: builder.mutation<
-      AcceptInviteResponse,
+      BaseResponse<AcceptInviteResponse>,
       AcceptInvitePayload
     >({
       query: (payload) => ({
@@ -43,7 +46,7 @@ export const clientApi = createApi({
       }),
     }),
     declineCoachInvite: builder.mutation<
-      AcceptInviteResponse,
+      BaseResponse<AcceptInviteResponse>,
       AcceptInvitePayload
     >({
       query: (payload) => ({
@@ -61,7 +64,7 @@ export const clientApi = createApi({
       }),
     }),
     getLibraryContent: builder.query<
-      FoldersResponse,
+      BaseResponse<Folder[]>,
       { page: number; page_size: number; folder_id: string | null }
     >({
       query: ({ page = 1, page_size = 10, folder_id = null }) => ({
@@ -74,13 +77,24 @@ export const clientApi = createApi({
       }),
     }),
     updateUserProfile: builder.mutation<
-      any,
-      { payload: UserProfileUpdate; photo: File | null }
+      BaseResponse<any>,
+      {
+        payload: UserProfileUpdate;
+        photo?: File | null;
+      }
     >({
-      query: ({ payload, photo = null }) => {
+      query: ({ payload, photo }) => {
         const formData = new FormData();
-        formData.append("profile_data", JSON.stringify(payload));
-        if (photo) formData.append("photo", photo);
+
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
+        });
+
+        if (photo) {
+          formData.append("photo", photo);
+        }
 
         return {
           url: API_ROUTES.CLIENT.UPDATE_PROFILE,
@@ -89,9 +103,8 @@ export const clientApi = createApi({
         };
       },
     }),
-
     fetchSharedCoachContentByContentId: builder.query<
-      SharedCoachContentByContentIdResponse,
+      BaseResponse<SharedCoachContentByContentIdResponse>,
       string
     >({
       query: (contentId) =>
@@ -107,10 +120,10 @@ export const clientApi = createApi({
         body: payload,
       }),
     }),
-    getClientProfile: builder.query<Client, void>({
+    getClientProfile: builder.query<BaseResponse<Client>, void>({
       query: () => API_ROUTES.CLIENT.GET_PROFILE,
     }),
-    getCoaches: builder.query<GetCoachesResponse, void>({
+    getCoaches: builder.query<BaseResponse<CoachListItem[]>, void>({
       query: () => API_ROUTES.CLIENT.GET_COACHES,
     }),
     getCoachProfile: builder.query<any, string>({

@@ -29,7 +29,7 @@ export const AdminMessages: React.FC = () => {
 
   useEffect(() => {
     if (chatsData) {
-      const mappedChats: ChatItemModel[] = chatsData.map((item) => ({
+      const mappedChats: ChatItemModel[] = chatsData.data.map((item) => ({
         id: item.id,
         name: item.name,
         lastMessageAt: item.last_message_time,
@@ -80,7 +80,7 @@ export const AdminMessages: React.FC = () => {
     }).unwrap();
 
     return {
-      id: response.admin_chat_id,
+      id: response.data.admin_chat_id,
       chat_id: selectedChat.id,
       content,
       created_at: new Date().toISOString(),
@@ -113,11 +113,11 @@ export const AdminMessages: React.FC = () => {
     }).unwrap();
 
     return {
-      messages: data,
-      total: data.length,
+      messages: data.data,
+      total: data.data.length,
       page,
-      limit: pageSize ?? data.length,
-      has_next: data.length === (pageSize ?? data.length),
+      limit: pageSize ?? data.data.length,
+      has_next: data.data.length === (pageSize ?? data.data.length),
       has_prev: page > 1,
     };
   };

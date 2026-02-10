@@ -87,8 +87,8 @@ export const useDocumentCreation = () => {
           await loadConversation(documentId);
 
           const response = await getContentShares(realDocumentId).unwrap();
-          if (response.shares) {
-            setSharedClients(response.shares);
+          if (response.data.shares) {
+            setSharedClients(response.data.shares);
           }
           setIsCreatingDocument(false);
           navigate(

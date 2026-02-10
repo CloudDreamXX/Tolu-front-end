@@ -61,8 +61,8 @@ export const useDocumentState = () => {
     setLoadingConversation(true);
     try {
       const response = await getSessionById(chatId).unwrap();
-      if (response?.search_results) {
-        setConversation(response.search_results);
+      if (response?.data.search_results) {
+        setConversation(response.data.search_results);
       }
     } catch (error) {
       console.error("Error loading conversation:", error);
@@ -83,7 +83,7 @@ export const useDocumentState = () => {
     if (!documentId) return;
     try {
       const response = await getContentShares(documentId).unwrap();
-      setSharedClients(response.shares);
+      setSharedClients(response.data.shares || []);
     } catch (err) {
       console.error("Error fetching shared clients:", err);
     }
@@ -105,7 +105,7 @@ export const useDocumentState = () => {
     if (!isNewDocument && !isTemporaryDocument && documentId) {
       const fetchShared = async () => {
         const response = await getContentShares(documentId).unwrap();
-        setSharedClients(response.shares);
+        setSharedClients(response.data.shares || []);
       };
       fetchShared();
     }

@@ -15,10 +15,12 @@ import {
   PasswordlessLoginRequest,
   SignUpDetails,
   AccessCodeRequest,
+  LoginResponse,
 } from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
 import { FormState } from "entities/store/clientOnboardingSlice";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const userApi = createApi({
   reducerPath: "userApi",
@@ -36,7 +38,7 @@ export const userApi = createApi({
 
   endpoints: (builder) => ({
     login: builder.mutation<
-      { user: IUser; accessToken: string },
+      LoginResponse,
       { email: string; password: string }
     >({
       query: (body) => ({
@@ -47,7 +49,7 @@ export const userApi = createApi({
     }),
 
     forgotPassword: builder.mutation<
-      { success: boolean; message: string; email: string },
+      BaseResponse<{ success: boolean; email: string }>,
       string
     >({
       query: (email) => ({
@@ -58,7 +60,7 @@ export const userApi = createApi({
     }),
 
     setNewPassword: builder.mutation<
-      { message: string },
+      BaseResponse<any>,
       { email: string; token: string; new_password: string }
     >({
       query: (body) => ({
@@ -68,7 +70,10 @@ export const userApi = createApi({
       }),
     }),
 
-    registerUser: builder.mutation<any, SignUpDetails>({
+    registerUser: builder.mutation<
+      BaseResponse<any>,
+      SignUpDetails
+    >({
       query: (userInfo) => ({
         url: API_ROUTES.USER.SIGNUP,
         method: "POST",
@@ -77,7 +82,7 @@ export const userApi = createApi({
     }),
 
     verifyEmail: builder.mutation<
-      { user: IUser; accessToken: string },
+      BaseResponse<{ user: IUser; accessToken: string }>,
       { email: string; token: string }
     >({
       query: (body) => ({
@@ -88,7 +93,7 @@ export const userApi = createApi({
     }),
 
     verifyEmailPass: builder.mutation<
-      { user: IUser; accessToken: string },
+      BaseResponse<{ user: IUser; accessToken: string }>,
       { email: string; token: string }
     >({
       query: (body) => ({
@@ -104,11 +109,31 @@ export const userApi = createApi({
     >({
       query: ({ data, photo, licenseFiles = [] }) => {
         const formData = new FormData();
-        formData.append("onboarding_data", JSON.stringify(data));
-        if (photo) formData.append("headshot", photo);
-        licenseFiles.forEach(
-          (file) => file && formData.append("license_files", file)
-        );
+
+        Object.entries(data).forEach(([key, value]) => {
+          if (value === undefined || value === null) return;
+
+          if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+            return;
+          }
+
+          if (typeof value === "boolean") {
+            formData.append(key, value ? "true" : "false");
+            return;
+          }
+
+          formData.append(key, String(value));
+        });
+
+        if (photo) {
+          formData.append("headshot", photo);
+        }
+
+        licenseFiles.forEach((file) => {
+          if (file) formData.append("license_files", file);
+        });
+
         return {
           url: API_ROUTES.USER.ONBOARD_USER,
           method: "POST",
@@ -120,15 +145,74 @@ export const userApi = createApi({
 
     updateUser: builder.mutation<
       any,
-      { data: CoachOnboardingState; photo?: File; licenseFiles?: File[] }
+      {
+        data: CoachOnboardingState;
+        photo?: File;
+        licenseFiles?: File[];
+      }
     >({
       query: ({ data, photo, licenseFiles = [] }) => {
         const formData = new FormData();
-        formData.append("onboarding_data", JSON.stringify(data));
-        if (photo) formData.append("headshot", photo);
-        licenseFiles.forEach(
-          (file) => file && formData.append("license_files", file)
-        );
+
+        if (photo) {
+          formData.append("headshot", photo);
+        }
+
+        licenseFiles.forEach((file) => {
+          if (file) formData.append("license_files", file);
+        });
+
+        const appendIfDefined = (key: string, value: any) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
+        };
+
+        appendIfDefined("coach_admin_privacy_accepted", data.coach_admin_privacy_accepted);
+        appendIfDefined("independent_contractor_accepted", data.independent_contractor_accepted);
+        appendIfDefined("content_licensing_accepted", data.content_licensing_accepted);
+        appendIfDefined("affiliate_terms_accepted", data.affiliate_terms_accepted);
+        appendIfDefined("confidentiality_accepted", data.confidentiality_accepted);
+        appendIfDefined("terms_of_use_accepted", data.terms_of_use_accepted);
+        appendIfDefined("media_release_accepted", data.media_release_accepted);
+        appendIfDefined("two_factor_enabled", data.two_factor_enabled);
+
+        appendIfDefined("practitioner_types", data.practitioner_types);
+        appendIfDefined("primary_niches", data.primary_niches);
+        appendIfDefined("business_challenges", data.business_challenges);
+        appendIfDefined("languages", JSON.stringify(data.languages));
+        appendIfDefined("certifications", data.certifications);
+        appendIfDefined("expertise_areas", JSON.stringify(data.expertise_areas));
+        appendIfDefined("content_specialties", data.content_specialties);
+
+        appendIfDefined("first_name", data.first_name);
+        appendIfDefined("last_name", data.last_name);
+        appendIfDefined("gender", data.gender);
+        appendIfDefined("bio", data.bio);
+        appendIfDefined("timezone", data.timezone);
+        appendIfDefined("alternate_name", data.alternate_name);
+        appendIfDefined("display_credentials", data.display_credentials);
+        appendIfDefined("location", data.location);
+        appendIfDefined("school", data.school);
+        appendIfDefined("recent_client_count", data.recent_client_count);
+        appendIfDefined("target_client_count", data.target_client_count);
+        appendIfDefined("uses_labs_supplements", data.uses_labs_supplements);
+        appendIfDefined("uses_ai", data.uses_ai);
+        appendIfDefined("practice_management_software", data.practice_management_software);
+        appendIfDefined("supplement_dispensing_method", data.supplement_dispensing_method);
+        appendIfDefined("biometrics_monitoring_method", data.biometrics_monitoring_method);
+        appendIfDefined("lab_ordering_method", data.lab_ordering_method);
+        appendIfDefined("supplement_ordering_method", data.supplement_ordering_method);
+        appendIfDefined("personal_story", data.personal_story);
+        appendIfDefined("two_factor_method", data.two_factor_method);
+        appendIfDefined("security_questions", data.security_questions);
+        appendIfDefined("security_answers", data.security_answers);
+
+        appendIfDefined("age", data.age);
+        appendIfDefined("years_experience", data.years_experience);
+
+        appendIfDefined("dob", data.dob);
+
         return {
           url: API_ROUTES.USER.ONBOARD_USER,
           method: "PUT",
@@ -138,17 +222,23 @@ export const userApi = createApi({
       invalidatesTags: ["Onboarding"],
     }),
 
-    getOnboardingUser: builder.query<UserOnboardingInfo, void>({
+    getOnboardingUser: builder.query<BaseResponse<UserOnboardingInfo>, void>({
       query: () => API_ROUTES.USER.ONBOARD_USER,
       providesTags: ["Onboarding"],
     }),
 
-    getUserProfile: builder.query<IUser, void>({
+    getUserProfile: builder.query<
+      BaseResponse<IUser>,
+      void
+    >({
       query: () => API_ROUTES.USER.PROFILE,
       providesTags: ["User"],
     }),
 
-    updateProfile: builder.mutation<IUser, Partial<IUser>>({
+    updateProfile: builder.mutation<
+      BaseResponse<IUser>,
+      Partial<IUser>
+    >({
       query: (body) => ({
         url: API_ROUTES.USER.PROFILE,
         method: "PUT",
@@ -157,7 +247,10 @@ export const userApi = createApi({
       invalidatesTags: ["User"],
     }),
 
-    deleteAccount: builder.mutation<{ success: boolean }, void>({
+    deleteAccount: builder.mutation<
+      BaseResponse<{ success: boolean }>,
+      void
+    >({
       query: () => ({
         url: API_ROUTES.USER.DELETE_ACCOUNT,
         method: "DELETE",
@@ -184,7 +277,7 @@ export const userApi = createApi({
       query: (email) => API_ROUTES.USER.EXIST.replace("{email}", email),
     }),
 
-    getMenopauseSymptoms: builder.query<SymptomsResponse, void>({
+    getMenopauseSymptoms: builder.query<BaseResponse<SymptomsResponse>, void>({
       query: () => API_ROUTES.MENOPAUSE.GET_SYMPTOMS,
       providesTags: ["Menopause"],
     }),
@@ -201,7 +294,7 @@ export const userApi = createApi({
       invalidatesTags: ["Menopause"],
     }),
 
-    getMenopauseRecommendations: builder.query<RecommendationsResponse, void>({
+    getMenopauseRecommendations: builder.query<BaseResponse<RecommendationsResponse>, void>({
       query: () => API_ROUTES.MENOPAUSE.GET_RECOMMENDATIONS,
       providesTags: ["Menopause"],
     }),
@@ -219,11 +312,11 @@ export const userApi = createApi({
         API_ROUTES.USER.GET_REFERRAL_INVITATION.replace("{token}", token),
     }),
 
-    getOnboardingStatus: builder.query<OnboardingStatus, void>({
+    getOnboardingStatus: builder.query<BaseResponse<OnboardingStatus>, void>({
       query: () => API_ROUTES.USER.GET_ONBOARDING_STATUS,
     }),
 
-    checkPendingInvite: builder.query<CheckInviteResponse, string>({
+    checkPendingInvite: builder.query<BaseResponse<CheckInviteResponse>, string>({
       query: (email) =>
         `${API_ROUTES.USER.CHECK_PENDING_INVITE}?email=${encodeURIComponent(email)}`,
     }),

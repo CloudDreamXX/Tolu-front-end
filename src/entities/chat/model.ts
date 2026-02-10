@@ -1,3 +1,5 @@
+import { BaseResponse, PaginatedResponse } from "entities/models";
+
 export interface MessageUser {
   id: string;
   email: string;
@@ -55,10 +57,10 @@ export interface SendMessagePayload {
   target_user_id?: string;
 }
 
-export type FetchAllChatsResponse = ServerChatItemModel[];
+export type FetchAllChatsResponse = PaginatedResponse<ServerChatItemModel[]>;
 
-export type CreateChatResponse = ServerChatItemModel;
-export type FetchChatDetailsResponse = DetailsChatItemModel;
+export type CreateChatResponse = BaseResponse<ServerChatItemModel>;
+export type FetchChatDetailsResponse = BaseResponse<DetailsChatItemModel>;
 
 export interface FetchChatMessagesResponse {
   messages: ChatMessageModel[];
@@ -151,25 +153,25 @@ export interface UpdateGroupChatPayload {
 
 export type WebSocketMessage =
   | {
-      type: "new_message";
-      data: ChatMessageModel;
-    }
+    type: "new_message";
+    data: ChatMessageModel;
+  }
   | {
-      type: "message_deleted";
-      data: { messageId: string };
-    }
+    type: "message_deleted";
+    data: { messageId: string };
+  }
   | {
-      type: "chat_updated";
-      data: ChatUpdatedPayload;
-    }
+    type: "chat_updated";
+    data: ChatUpdatedPayload;
+  }
   | {
-      type: "pong";
-      data: any;
-    }
+    type: "pong";
+    data: any;
+  }
   | {
-      type: "content_share";
-      data: any;
-    };
+    type: "content_share";
+    data: any;
+  };
 
 export interface ChatUpdatedPayload {
   chat_id: string;
@@ -200,13 +202,11 @@ export interface FetchChatFilesResponse {
 }
 
 export interface SendChatNotePayload {
-  noteData: {
-    chat_id?: string;
-    target_user_id?: string;
-    title: string;
-    content?: string;
-  };
-  file?: File;
+  chat_id?: string | null;
+  target_user_id?: string | null;
+  title?: string | null;
+  content: string;
+  file?: File | null;
 }
 
 export interface ChatNoteResponse {
@@ -231,12 +231,10 @@ export interface GetAllChatNotesResponse {
 }
 
 export interface UpdateChatNotePayload {
-  noteData: {
-    title: string;
-    content: string;
-    remove_file?: boolean;
-  };
-  file?: File;
+  title?: string | null;
+  content?: string | null;
+  remove_file?: boolean;
+  file?: File | null;
 }
 
 export interface AddMessageReactionPayload {

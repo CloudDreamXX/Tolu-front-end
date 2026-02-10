@@ -127,8 +127,8 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
       };
       const response = await createFolder(newFolder).unwrap();
 
-      setFolderId?.(response.folder.id);
-      setSelectedFolder(response.folder.id);
+      setFolderId?.(response.data.folder.id);
+      setSelectedFolder(response.data.folder.id);
       toast({ title: "Folder created successfully" });
       setCreatePopup(false);
       await refetchFolders();
@@ -265,11 +265,10 @@ export const PopoverFolder: React.FC<PopoverFolderProps> = ({
                 <Button
                   variant={"unstyled"}
                   size={"unstyled"}
-                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${
-                    selectedFolder === subfolder.id
+                  className={`flex flex-row rounded-[10px] shadow-lg justify-between w-full py-2 px-[14px] gap-2 ${selectedFolder === subfolder.id
                       ? "bg-blue-50 border border-blue-200"
                       : "bg-white"
-                  }`}
+                    }`}
                   key={subfolder.id}
                   onClick={() => toggleFolderSelection(subfolder)}
                 >

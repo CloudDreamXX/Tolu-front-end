@@ -57,7 +57,7 @@ export const ContentManagerLibrary: React.FC = () => {
   const [deleteContent] = useDeleteContentMutation();
 
   const { data: allContentResponse } = useGetAllUserContentQuery();
-  const allContent = allContentResponse?.content ?? [];
+  const allContent = allContentResponse?.data.content ?? [];
 
   useEffect(() => {
     const timer = setTimeout(() => {

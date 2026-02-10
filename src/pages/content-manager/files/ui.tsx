@@ -117,7 +117,7 @@ export const FilesLibrary = () => {
     if (viewingFolder?.id) {
       const refreshedFolder = findViewingFolderInFiles(
         viewingFolder?.id,
-        files
+        files?.data
       );
       setViewingFolder(refreshedFolder);
     }
@@ -331,7 +331,7 @@ export const FilesLibrary = () => {
         </div>
 
         <div>
-          {files?.total_files === 0 ? (
+          {files?.data.total_files === 0 ? (
             <EmptyStateTolu
               text="To deep research a knowledge source upload files to your File Library and ask Tolu to conduct a research or create an inspired content."
               footer={
@@ -404,7 +404,7 @@ export const FilesLibrary = () => {
         <div className="flex flex-wrap gap-2">
           {!viewingFolder ? (
             <>
-              {filterBySearch(files?.root_folders).map((folder) => (
+              {filterBySearch(files?.data.root_folders).map((folder) => (
                 <Button
                   variant={"unstyled"}
                   size={"unstyled"}
@@ -458,7 +458,7 @@ export const FilesLibrary = () => {
                 </Button>
               ))}
 
-              {filterBySearch(files?.root_files).map((file) => (
+              {filterBySearch(files?.data.root_files).map((file) => (
                 <FileLibrary
                   key={file.id}
                   fileLibrary={file}
@@ -485,9 +485,9 @@ export const FilesLibrary = () => {
                 </Button>
                 <div className="flex flex-col gap-[8px] mb-[24px] justify-start">
                   <h2 className="text-2xl font-bold">
-                    {folderContents?.current_folder.name}
+                    {folderContents?.data.current_folder.name}
                   </h2>
-                  <p>{folderContents?.current_folder.description}</p>
+                  <p>{folderContents?.data.current_folder.description}</p>
                 </div>
               </div>
 
@@ -586,14 +586,14 @@ export const FilesLibrary = () => {
         <UpdateFolderPopup
           onClose={() => setUpdatePopup(false)}
           onComplete={handleFolderUpdate}
-          folder={folderContents}
+          folder={folderContents?.data}
           mode="Update"
         />
       )}
       {movePopup && (
         <MoveFilesPopup
           folders={
-            viewingFolder ? viewingFolder.subfolders : files?.root_folders
+            viewingFolder ? viewingFolder.subfolders : files?.data.root_folders
           }
           onClose={() => setMovePopup(false)}
           onMove={handleMoveFiles}

@@ -106,10 +106,10 @@ export const ClientProfile = () => {
 
   useEffect(() => {
     if (u) {
-      setUser(u);
+      setUser(u.data);
       let objectUrl: string | null = null;
 
-      const filename = u?.photo_url?.split("/").pop() || "";
+      const filename = u?.data.photo_url?.split("/").pop() || "";
       if (!filename) return;
 
       const loadProfilePhoto = async () => {
@@ -127,7 +127,7 @@ export const ClientProfile = () => {
   }, [u]);
 
   useEffect(() => {
-    if (invitations && invitations.invitations.length) {
+    if (invitations && invitations.data.length) {
       setAcceptInvitePopup(true);
     }
   }, [invitations]);
@@ -644,8 +644,8 @@ export const ClientProfile = () => {
             </Button>
           </div>
           <div className="space-y-3">
-            {notifications?.length ? (
-              notifications.map((notification) => (
+            {notifications?.data.length ? (
+              notifications.data.map((notification) => (
                 <div
                   key={notification.id}
                   className="flex flex-col justify-between gap-[16px] p-3 border-b border-gray-200 rounded-md"
