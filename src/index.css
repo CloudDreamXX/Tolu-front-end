@@ -116,7 +116,7 @@ li::marker {
 
 .prose .ql-editor p,
 .prose .ql-editor li,
-.prose .ql-editor li > p {
+.prose .ql-editor li>p {
   margin: 0;
 }
 
@@ -230,7 +230,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (max-width: 640px) {
-  .scroll-area-viewport > div {
+  .scroll-area-viewport>div {
     display: block !important;
   }
 }
@@ -270,25 +270,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .richtext ul,
 .richtext ul li {
-  list-style-type: disc !important;
+  /* list-style-type: disc !important; */
   list-style-position: outside !important;
   margin-left: 1.5rem;
 }
 
 .richtext ol,
 .richtext ol li {
-  list-style-type: decimal !important;
+  /* list-style-type: decimal !important; */
   list-style-position: outside !important;
   margin-left: 1.5rem;
 }
 
-.richtext li[data-list="bullet"] {
+/* .richtext li[data-list="bullet"] {
   list-style-type: disc !important;
 }
 
 .richtext li[data-list="ordered"] {
   list-style-type: decimal !important;
-}
+} */
 
 .richtext li {
   display: list-item !important;
@@ -322,6 +322,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (max-width: 767px) {
+
   input,
   textarea,
   select,
@@ -336,7 +337,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0 !important;
 }
 
-.docx-wrapper > section.docx {
+.docx-wrapper>section.docx {
   margin-bottom: 0 !important;
 }
 
