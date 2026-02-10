@@ -1309,12 +1309,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             </div>
 
             <div className="flex items-center gap-[18px]">
-              {activeChatKey !== "Create content" && (
-                <HistoryPopup
-                  fromPath={location.state?.from?.pathname ?? null}
-                  smallChat
-                />
-              )}
+              <HistoryPopup
+                fromPath={location.state?.from?.pathname ?? null}
+                smallChat
+              />
               <Button
                 variant={"brightblue"}
                 onClick={handleNewChatOpen}

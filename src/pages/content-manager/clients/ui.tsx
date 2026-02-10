@@ -83,6 +83,7 @@ export const ContentManagerClients: React.FC = () => {
     focus_areas: [],
     permission_type: "",
   });
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
@@ -336,6 +337,8 @@ export const ContentManagerClients: React.FC = () => {
       const { data: fullClient } = await getClientProfile(clientId);
       if (fullClient) {
         setSelectedClient(fullClient.data);
+      } else {
+        setSelectedClientId(clientId);
       }
 
       const { data: editClientInfo } = await getClientInfo(clientId);
@@ -353,10 +356,10 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (!selectedClient) return;
+    if (!selectedClient || !selectedClientId) return;
 
     try {
-      await deleteClient(selectedClient.client_info.id);
+      await deleteClient(selectedClient.client_info.id ? selectedClient.client_info.id : selectedClientId);
       refetchClients();
       toast({
         title: "Deleted successfully",
@@ -1014,8 +1017,8 @@ export const ContentManagerClients: React.FC = () => {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
                     }`}
                 >
                   {page}
