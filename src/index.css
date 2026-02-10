@@ -270,14 +270,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .richtext ul,
 .richtext ul li {
-  /* list-style-type: disc !important; */
+  list-style-type: disc !important;
   list-style-position: outside !important;
   margin-left: 1.5rem;
 }
 
 .richtext ol,
 .richtext ol li {
-  /* list-style-type: decimal !important; */
+  list-style-type: decimal !important;
   list-style-position: outside !important;
   margin-left: 1.5rem;
 }
