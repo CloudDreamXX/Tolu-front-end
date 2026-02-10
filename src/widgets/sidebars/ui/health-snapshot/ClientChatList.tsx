@@ -35,7 +35,38 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
   return (
     <>
       {chatList.map((chat) => {
-        const reciver = chat.participants[0];
+        const receiver = chat.participants[0];
+
+        const initials = (() => {
+          const user = receiver;
+          if (!user) return "UN";
+
+          if (user.first_name && user.last_name) {
+            return (
+              `${user.first_name?.[0] ?? ""}${user.last_name?.[0] ?? ""}`.toUpperCase() ||
+              "UN"
+            );
+          }
+
+          if (user.first_name) {
+            return (user.first_name.slice(0, 2) || "UN").toUpperCase();
+          }
+
+          if (user.name) {
+            const parts = user.name.trim().split(" ").filter(Boolean);
+            if (parts.length > 1) {
+              return (
+                parts
+                  .map((p) => p[0]?.toUpperCase() ?? "")
+                  .slice(0, 2)
+                  .join("") || "UN"
+              );
+            }
+            return (parts[0]?.slice(0, 2) || "UN").toUpperCase();
+          }
+
+          return "UN";
+        })();
 
         return (
           <Button
@@ -53,11 +84,7 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
               <Avatar className="w-10 h-10 ">
                 <AvatarImage src={chat.avatar_url} />
                 <AvatarFallback className="bg-slate-300">
-                  {reciver.name
-                    ?.split(" ")
-                    .map((part) => part[0])
-                    .join("")
-                    .toUpperCase()}
+                  {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
@@ -72,10 +99,13 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
             </div>
             <div className="relative ml-3">
               <h3 className="text-sm font-semibold text-left truncate hover:underline text-nowrap max-w-40">
-                {chat.name ?? reciver.name}
+                {chat.name || receiver.first_name &&
+                  receiver.last_name &&
+                  `${receiver.first_name} ${receiver.last_name}` || receiver.name ||
+                  receiver.name}
               </h3>
               <p className="text-xs text-left text-gray-500 truncate max-w-32">
-                @{chat.name || reciver.email}
+                @{chat.name || receiver.email}
               </p>
             </div>
           </Button>
