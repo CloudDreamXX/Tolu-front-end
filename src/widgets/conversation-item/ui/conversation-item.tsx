@@ -242,17 +242,31 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     smartRender(pair.content).then((node) => {
       if (cancelled) return;
 
-      const element = React.isValidElement(node) ? node : <div>{node}</div>;
 
+      const element = React.isValidElement(node) ? node : <div>{node}</div>;
       const html =
         element.props?.dangerouslySetInnerHTML?.__html ??
         (typeof element.props?.children === "string"
           ? element.props.children
           : "");
 
+      let addRichtext = true;
+      try {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+        const lis = tempDiv.querySelectorAll("li");
+        addRichtext = !Array.from(lis).some((li) => {
+          const text = li.textContent?.trim() || "";
+          // Check for '● ' marker, bullet, dash, star, or number at start
+          return /^([●\-\*]|\d+[.)])/.test(text);
+        });
+      } catch (e) {
+        addRichtext = true;
+      }
+
       setRenderedContent(
         <div
-          className="prose-sm prose max-w-none richtext"
+          className={`prose-sm prose max-w-none${addRichtext ? " richtext" : ""}`}
           dangerouslySetInnerHTML={{ __html: html }}
         />
       );

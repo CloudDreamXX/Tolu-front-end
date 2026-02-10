@@ -598,10 +598,9 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             avatar={chat.chat_type === "group" ? undefined : chat.avatar_url}
             isOwn={item.msg.sender?.email === profile?.email}
             author={
-              item.msg.sender?.name ||
               (item.msg.sender?.first_name &&
                 item.msg.sender?.last_name &&
-                `${item.msg.sender?.first_name} ${item.msg.sender?.last_name}`) ||
+                `${item.msg.sender?.first_name} ${item.msg.sender?.last_name}`) || item.msg.sender?.name ||
               "Unknown User"
             }
             chatId={chat.chat_id}

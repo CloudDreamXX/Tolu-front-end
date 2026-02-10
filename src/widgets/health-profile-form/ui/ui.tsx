@@ -257,13 +257,13 @@ export const HealthProfileForm = ({ asDialog = true, className }: HealthProfileF
         <Button
           variant="brightblue"
           size={isMobile ? "sm" : "icon"}
-          className="rounded-full h-[56px] w-[56px] flex items-center justify-center"
+          className="rounded-full text-[12px] xl:text-[14px] md:h-[56px] md:w-[56px] flex items-center justify-center"
         >
           {isMobile ? "Health profile" : <MaterialIcon iconName="manage_accounts" />}
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
+      <DialogContent showMobileBack={false} className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
         <DialogTitle>Your Health History</DialogTitle>
         {Content}
       </DialogContent>
