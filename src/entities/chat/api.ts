@@ -221,10 +221,16 @@ export const chatApi = createApi({
       CreateChatPayload
     >({
       query: (payload) => {
+        // payload: { name, description, participant_ids, avatar_image }
         const formData = new FormData();
-        formData.append("request", JSON.stringify(payload.request));
-        if (payload.avatar_image)
+        formData.append("name", payload.request.name);
+        formData.append("description", payload.request.description ?? "");
+        (payload.request.participant_ids || []).forEach((id) => {
+          formData.append("participant_ids", id);
+        });
+        if (payload.avatar_image) {
           formData.append("avatar_image", payload.avatar_image);
+        }
         return {
           url: API_ROUTES.CHAT.CREATE_GROUP_CHAT,
           method: "POST",

@@ -96,6 +96,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
       await deleteNote(id).unwrap();
       setTitle("");
       setInput("");
+      setEditingId(null);
       refetch();
     } catch {
       toast({ title: "Failed to delete note", variant: "destructive" });

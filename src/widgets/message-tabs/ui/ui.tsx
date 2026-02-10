@@ -324,6 +324,15 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     );
 
   const initials = (() => {
+    if (chat?.name) {
+      return chat.name
+        .split(" ")
+        .filter(Boolean)
+        .map((p) => p[0]?.toUpperCase() ?? "")
+        .slice(0, 2)
+        .join("")
+    }
+
     const user = receiver?.user;
     if (!user) return "UN";
 

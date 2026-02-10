@@ -41,6 +41,17 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   classname,
 }) => {
   const initials = (() => {
+    if (item.type === "group") {
+      return item.name
+        ? item.name
+          .split(" ")
+          .filter(Boolean)
+          .map((p) => p[0]?.toUpperCase() ?? "")
+          .slice(0, 2)
+          .join("")
+        : "GR";
+    }
+
     const user = item?.participants?.[0];
     if (!user) return "UN";
 
@@ -94,9 +105,9 @@ export const ChatItem: React.FC<ChatItemProps> = ({
           </div>
           <div className="flex">
             <span className="font-semibold text-[18px] text-[#1D1D1F]">
-              {item.participants[0]?.first_name &&
+              {item.name || (item.participants[0]?.first_name &&
                 item.participants[0]?.last_name &&
-                `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}` || item.name ||
+                `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`) ||
                 item.participants[0]?.name}
             </span>
           </div>

@@ -227,13 +227,10 @@ export const healthHistoryApi = createApi({
     createSupplement: builder.mutation<BaseResponse<Supplement>, CreateSupplementParams>({
       query: ({ supplementData, file }) => {
         const formData = new FormData();
-
         formData.append("supplement_data", JSON.stringify(supplementData));
-
         if (file) {
           formData.append("file", file);
         }
-
         return {
           url: API_ROUTES.HEALTH_HISTORY.ADD_SUPPLEMENT,
           method: "POST",
@@ -245,19 +242,10 @@ export const healthHistoryApi = createApi({
     updateSupplement: builder.mutation<BaseResponse<Supplement>, UpdateSupplementParams>({
       query: ({ supplementId, supplementData, file }) => {
         const formData = new FormData();
-
-        formData.append(
-          "supplement_data",
-          JSON.stringify({
-            remove_file: false,
-            ...supplementData,
-          })
-        );
-
+        formData.append("supplement_data", JSON.stringify(supplementData));
         if (file) {
           formData.append("file", file);
         }
-
         return {
           url: API_ROUTES.HEALTH_HISTORY.UPDATE_SUPPLEMENT.replace(
             "{supplement_id}",
