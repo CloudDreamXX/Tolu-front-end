@@ -412,14 +412,14 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               </div>
             ) : (
               <>
-                {!isMobile && chat.chat_type !== "group" && (
+                {/* {!isMobile && chat.chat_type !== "group" && (
                   <Button
                     onClick={() => handleSelectClient(receiver?.user.id)}
                     variant="blue2"
                   >
                     View Profile
                   </Button>
-                )}
+                )} */}
 
                 {!isMobile && chat.chat_type === "group" && (
                   <Button
