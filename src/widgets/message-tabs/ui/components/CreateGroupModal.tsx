@@ -1,4 +1,4 @@
-import { DetailsChatItemModel } from "entities/chat";
+import { DetailsChatItemModel, useGetUploadedChatAvatarUrlQuery } from "entities/chat";
 import { Client } from "entities/coach";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "shared/lib";
@@ -62,6 +62,17 @@ export const CreateGroupModal = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const file = files?.[0] ?? null;
 
+  const hasOldAvatar = !file && chat?.avatar_url;
+
+  const avatarFilename = chat?.avatar_url && typeof chat.avatar_url === "string"
+    ? chat.avatar_url.split('/').pop() || ""
+    : "";
+
+  const { data: oldAvatarUrlData } = useGetUploadedChatAvatarUrlQuery(
+    { fileUrl: avatarFilename },
+    { skip: !hasOldAvatar || !avatarFilename }
+  );
+
   useEffect(() => {
     if (!file) return;
 
@@ -73,67 +84,41 @@ export const CreateGroupModal = ({
     };
   }, [file]);
 
-  // Resolve avatar URL for display
   const avatarObjectUrlRef = useRef<string | null>(null);
   useEffect(() => {
     if (file) return;
 
-    let isCancelled = false;
-
-    const resolveAvatarUrl = async () => {
-      if (!isEdit || !chat?.avatar_url) {
-        if (avatarObjectUrlRef.current) {
-          URL.revokeObjectURL(avatarObjectUrlRef.current);
-          avatarObjectUrlRef.current = null;
-        }
-        setPreviewUrl(null);
-        return;
+    if (!isEdit || !chat?.avatar_url) {
+      if (avatarObjectUrlRef.current) {
+        URL.revokeObjectURL(avatarObjectUrlRef.current);
+        avatarObjectUrlRef.current = null;
       }
+      setPreviewUrl(null);
+      return;
+    }
 
-      // If it's a Blob, create object URL
-      if (typeof chat.avatar_url === "object" && chat.avatar_url && (chat.avatar_url as Blob).size !== undefined) {
-        if (avatarObjectUrlRef.current) {
-          URL.revokeObjectURL(avatarObjectUrlRef.current);
-        }
-        const url = URL.createObjectURL(chat.avatar_url);
-        avatarObjectUrlRef.current = url;
-        if (!isCancelled) {
-          setPreviewUrl(url);
-        }
-        return;
+    // Handle Blob objects
+    if (typeof chat.avatar_url === "object" && chat.avatar_url && (chat.avatar_url as Blob).size !== undefined) {
+      if (avatarObjectUrlRef.current) {
+        URL.revokeObjectURL(avatarObjectUrlRef.current);
       }
+      const url = URL.createObjectURL(chat.avatar_url);
+      avatarObjectUrlRef.current = url;
+      setPreviewUrl(url);
+      return;
+    }
 
-      // If it's a string path, resolve it using getAvatarUrl
-      if (typeof chat.avatar_url === "string") {
-        try {
-          if (avatarObjectUrlRef.current) {
-            URL.revokeObjectURL(avatarObjectUrlRef.current);
-            avatarObjectUrlRef.current = null;
-          }
-          const resolvedUrl = await getAvatarUrl(chat.avatar_url);
-          if (!isCancelled && resolvedUrl) {
-            avatarObjectUrlRef.current = resolvedUrl;
-            setPreviewUrl(resolvedUrl);
-          }
-        } catch (error) {
-          console.error("Failed to resolve avatar URL:", error);
-          if (!isCancelled) {
-            setPreviewUrl(null);
-          }
-        }
-      }
-    };
-
-    resolveAvatarUrl();
+    if (oldAvatarUrlData) {
+      setPreviewUrl(oldAvatarUrlData);
+    }
 
     return () => {
-      isCancelled = true;
       if (avatarObjectUrlRef.current) {
         URL.revokeObjectURL(avatarObjectUrlRef.current);
         avatarObjectUrlRef.current = null;
       }
     };
-  }, [file, isEdit, chat?.avatar_url]);
+  }, [file, isEdit, chat?.avatar_url, oldAvatarUrlData]);
 
   const localSave = () => {
     if (!isEdit) {
@@ -177,6 +162,8 @@ export const CreateGroupModal = ({
     });
   };
 
+  console.log(chat?.avatar_url)
+
   return (
     <div
       className={cn(
@@ -194,7 +181,7 @@ export const CreateGroupModal = ({
           "relative bg-[#F2F4F6] md:bg-[#F9FAFB] md:rounded-[18px] md:shadow-xl",
           "px-[16px] py-[24px] md:p-[24px] top-0 bottom-0 h-full md:min-h-auto md:max-h-[90vh]",
           "w-full md:h-fit md:w-[720px] lg:w-[800px] text-left md:mx-[16px]",
-          "overflow-hidden flex flex-col gap-[24px]"
+          "overflow-x-hidden overflow-y-auto flex flex-col gap-[24px]"
         )}
         onClick={(e) => e.stopPropagation()}
       >
