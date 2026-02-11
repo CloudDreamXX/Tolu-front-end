@@ -339,7 +339,6 @@ export const Register = () => {
   const handleCodeSend = async () => {
     try {
       const res = await accessCodeRequest({ access_code: otpCode }).unwrap();
-      console.log(res)
 
       if (res.status === "success") {
         setFormData({

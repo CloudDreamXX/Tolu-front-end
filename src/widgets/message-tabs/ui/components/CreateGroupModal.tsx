@@ -6,6 +6,7 @@ import { Button, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { getAvatarUrl } from "../../helpers";
 
 interface CreateGroupModalProps {
   open: boolean;
@@ -58,7 +59,7 @@ export const CreateGroupModal = ({
   const [selectedOption, setSelectedOption] = useState<string[]>(
     chat?.participants.map((p) => (p?.user.first_name && p?.user.last_name ? `${p?.user.first_name} ${p?.user.last_name}` : p?.user.name)) || []
   );
-  const [previewUrl, setPreviewUrl] = useState<string | null>(chat?.avatar_url || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const file = files?.[0] ?? null;
 
   useEffect(() => {
@@ -72,45 +73,67 @@ export const CreateGroupModal = ({
     };
   }, [file]);
 
-  // Manage object URL for Blob avatar_url
+  // Resolve avatar URL for display
   const avatarObjectUrlRef = useRef<string | null>(null);
   useEffect(() => {
     if (file) return;
 
-    let next: string | null = null;
-    if (isEdit && chat?.avatar_url) {
-      if (typeof chat.avatar_url === "object" && chat.avatar_url && (chat.avatar_url as Blob).size !== undefined) {
-        // Revoke previous object URL if any
-        if (avatarObjectUrlRef.current) {
-          URL.revokeObjectURL(avatarObjectUrlRef.current);
-        }
-        next = URL.createObjectURL(chat.avatar_url);
-        avatarObjectUrlRef.current = next;
-      } else {
-        next = chat.avatar_url;
-        // Revoke previous object URL if any
+    let isCancelled = false;
+
+    const resolveAvatarUrl = async () => {
+      if (!isEdit || !chat?.avatar_url) {
         if (avatarObjectUrlRef.current) {
           URL.revokeObjectURL(avatarObjectUrlRef.current);
           avatarObjectUrlRef.current = null;
         }
+        setPreviewUrl(null);
+        return;
       }
-    } else {
-      // Revoke previous object URL if any
-      if (avatarObjectUrlRef.current) {
-        URL.revokeObjectURL(avatarObjectUrlRef.current);
-        avatarObjectUrlRef.current = null;
+
+      // If it's a Blob, create object URL
+      if (typeof chat.avatar_url === "object" && chat.avatar_url && (chat.avatar_url as Blob).size !== undefined) {
+        if (avatarObjectUrlRef.current) {
+          URL.revokeObjectURL(avatarObjectUrlRef.current);
+        }
+        const url = URL.createObjectURL(chat.avatar_url);
+        avatarObjectUrlRef.current = url;
+        if (!isCancelled) {
+          setPreviewUrl(url);
+        }
+        return;
       }
-    }
-    setPreviewUrl((prev) => (prev === next ? prev : next));
+
+      // If it's a string path, resolve it using getAvatarUrl
+      if (typeof chat.avatar_url === "string") {
+        try {
+          if (avatarObjectUrlRef.current) {
+            URL.revokeObjectURL(avatarObjectUrlRef.current);
+            avatarObjectUrlRef.current = null;
+          }
+          const resolvedUrl = await getAvatarUrl(chat.avatar_url);
+          if (!isCancelled && resolvedUrl) {
+            avatarObjectUrlRef.current = resolvedUrl;
+            setPreviewUrl(resolvedUrl);
+          }
+        } catch (error) {
+          console.error("Failed to resolve avatar URL:", error);
+          if (!isCancelled) {
+            setPreviewUrl(null);
+          }
+        }
+      }
+    };
+
+    resolveAvatarUrl();
+
     return () => {
-      // Only revoke on unmount
+      isCancelled = true;
       if (avatarObjectUrlRef.current) {
         URL.revokeObjectURL(avatarObjectUrlRef.current);
         avatarObjectUrlRef.current = null;
       }
     };
   }, [file, isEdit, chat?.avatar_url]);
-  console.log(selectedOption)
 
   const localSave = () => {
     if (!isEdit) {
