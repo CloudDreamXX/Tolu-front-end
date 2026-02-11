@@ -1,3 +1,16 @@
+## [1.13.0] - 2026-02-11
+
+### New feature
+
+- Rewrite all api responses to return the same model.
+- Rewrite payloads to use json fields instead of json as string.
+- Fix creating and updating group chat.
+- Fix chat selection on client side.
+- Fix mark as action.
+- Fix search input to filter chats.
+- Fix participants name and initials.
+- Add chat history for Create content bot.
+
 ## [1.12.0] - 2026-02-04
 
 ### New feature
