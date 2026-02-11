@@ -1,6 +1,6 @@
 import { DetailsChatItemModel } from "entities/chat";
 import { Client } from "entities/coach";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "shared/lib";
 import { Button, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
@@ -56,9 +56,9 @@ export const CreateGroupModal = ({
     accept: ["image/png", "image/jpeg", "application/pdf", ".pdf", "video/mp4"],
   });
   const [selectedOption, setSelectedOption] = useState<string[]>(
-    chat?.participants.map((p) => p.user.name || "") || []
+    chat?.participants.map((p) => (p?.user.first_name && p?.user.last_name ? `${p?.user.first_name} ${p?.user.last_name}` : p?.user.name)) || []
   );
-  const [previewUrl, setPreviewUrl] = useState<string | null>();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(chat?.avatar_url || null);
   const file = files?.[0] ?? null;
 
   useEffect(() => {
@@ -72,12 +72,45 @@ export const CreateGroupModal = ({
     };
   }, [file]);
 
+  // Manage object URL for Blob avatar_url
+  const avatarObjectUrlRef = useRef<string | null>(null);
   useEffect(() => {
     if (file) return;
 
-    const next = isEdit && chat?.avatar_url ? chat.avatar_url : null;
+    let next: string | null = null;
+    if (isEdit && chat?.avatar_url) {
+      if (typeof chat.avatar_url === "object" && chat.avatar_url && (chat.avatar_url as Blob).size !== undefined) {
+        // Revoke previous object URL if any
+        if (avatarObjectUrlRef.current) {
+          URL.revokeObjectURL(avatarObjectUrlRef.current);
+        }
+        next = URL.createObjectURL(chat.avatar_url);
+        avatarObjectUrlRef.current = next;
+      } else {
+        next = chat.avatar_url;
+        // Revoke previous object URL if any
+        if (avatarObjectUrlRef.current) {
+          URL.revokeObjectURL(avatarObjectUrlRef.current);
+          avatarObjectUrlRef.current = null;
+        }
+      }
+    } else {
+      // Revoke previous object URL if any
+      if (avatarObjectUrlRef.current) {
+        URL.revokeObjectURL(avatarObjectUrlRef.current);
+        avatarObjectUrlRef.current = null;
+      }
+    }
     setPreviewUrl((prev) => (prev === next ? prev : next));
+    return () => {
+      // Only revoke on unmount
+      if (avatarObjectUrlRef.current) {
+        URL.revokeObjectURL(avatarObjectUrlRef.current);
+        avatarObjectUrlRef.current = null;
+      }
+    };
   }, [file, isEdit, chat?.avatar_url]);
+  console.log(selectedOption)
 
   const localSave = () => {
     if (!isEdit) {
@@ -103,7 +136,12 @@ export const CreateGroupModal = ({
 
     const namesToRemove =
       chat?.participants
-        .filter((p) => !selectedOption.includes(p.user.name || ""))
+        .filter((p) => {
+          const displayName = p?.user.first_name && p?.user.last_name
+            ? `${p?.user.first_name} ${p?.user.last_name}`
+            : p?.user.name;
+          return !selectedOption.includes(displayName);
+        })
         .map((p) => p.user.id) || [];
 
     onSubmit({
@@ -171,15 +209,15 @@ export const CreateGroupModal = ({
             className={cn(
               "mt-1 text-center rounded-lg w-52 h-52 flex flex-col items-center justify-center gap-[2px]",
               dragOver ? "bg-blue-50" : "bg-white",
-              previewUrl
+              previewUrl || chat?.avatar_url
                 ? "undefined"
                 : "border-blue-500 p-6 border-dashed border-2"
             )}
           >
-            {previewUrl ? (
+            {previewUrl || chat?.avatar_url ? (
               <div className="relative w-full h-full group">
                 <img
-                  src={previewUrl}
+                  src={previewUrl || chat?.avatar_url}
                   alt="Preview"
                   className="object-cover w-full h-full rounded-lg"
                 />

@@ -1,5 +1,6 @@
 import { ChatItemModel } from "entities/chat";
 import { ChatItem } from "features/chat-item";
+import { useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import {
   Button,
@@ -28,6 +29,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
   onCreateGroup,
   title = "Inbox",
 }) => {
+  const [search, setSearch] = useState("");
   const unreadCount = chats.reduce((count, chat) => {
     return count + (chat.unreadCount || 0);
   }, 0);
@@ -106,6 +108,8 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             placeholder="Search"
             className="rounded-full "
             icon={<MaterialIcon iconName="search" size={16} />}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
           />
         </div>
       </div>
@@ -124,7 +128,16 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
           </TabsList>
           <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-160px)]">
             <TabsContent value="clients" className="mt-0">
-              {chats.length === 0 ? (
+              {chats.filter(item => {
+                if (item.name && typeof item.name === "string") {
+                  return item.name.toLowerCase().includes(search.toLowerCase());
+                }
+                return item.participants.some(p =>
+                  (p.first_name && p.first_name.toLowerCase().includes(search.toLowerCase())) ||
+                  (p.last_name && p.last_name.toLowerCase().includes(search.toLowerCase())) ||
+                  (p.name && p.name.toLowerCase().includes(search.toLowerCase()))
+                );
+              }).length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
                   <p className="font-semibold">No client conversations</p>
                   <p className="text-sm">
@@ -132,19 +145,30 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                   </p>
                 </div>
               ) : (
-                chats.map((item) => (
-                  <ChatItem
-                    key={item.id}
-                    item={item}
-                    onClick={() => onChatClick(item)}
-                    classname={selectedChat?.id === item.id ? "bg-white" : ""}
-                  />
-                ))
+                chats
+                  .filter(item => {
+                    if (item.name && typeof item.name === "string") {
+                      return item.name.toLowerCase().includes(search.toLowerCase());
+                    }
+                    return item.participants.some(p =>
+                      (p.first_name && p.first_name.toLowerCase().includes(search.toLowerCase())) ||
+                      (p.last_name && p.last_name.toLowerCase().includes(search.toLowerCase())) ||
+                      (p.name && p.name.toLowerCase().includes(search.toLowerCase()))
+                    );
+                  })
+                  .map((item) => (
+                    <ChatItem
+                      key={item.id}
+                      item={item}
+                      onClick={() => onChatClick(item)}
+                      classname={selectedChat?.id === item.id ? "bg-white" : ""}
+                    />
+                  ))
               )}
             </TabsContent>
 
             <TabsContent value="coaches" className="hidden mt-0">
-              {chats.filter((item) => item.type === "coach").length === 0 ? (
+              {chats.filter((item) => item.type === "coach" && item.name && item.name.toLowerCase().includes(search.toLowerCase())).length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
                   <p className="font-semibold">No coach conversations</p>
                   <p className="text-sm">
@@ -153,7 +177,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                 </div>
               ) : (
                 chats
-                  .filter((item) => item.type === "coach")
+                  .filter((item) => item.type === "coach" && item.name && item.name.toLowerCase().includes(search.toLowerCase()))
                   .map((item) => (
                     <ChatItem
                       key={item.id}

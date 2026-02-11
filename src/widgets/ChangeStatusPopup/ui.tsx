@@ -17,13 +17,13 @@ interface ChangeStatusPopupProps {
       | "Archived"
   ) => Promise<void>;
   currentStatus:
-    | "Raw"
-    // | "Ready for Review"
-    // | "Waiting"
-    // | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  // | "Ready for Review"
+  // | "Waiting"
+  // | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
   handleMoveClick?: (id: string, subfolderId: string) => Promise<void>;
   contentId?: string;
 }
@@ -128,9 +128,9 @@ export const ChangeStatusPopup: React.FC<ChangeStatusPopupProps> = ({
           <MaterialIcon iconName="done_all" />
           Mark as
         </h3>
-        <p className="text-[14px] text-[#5F5F65] font-[500]">
+        {/* <p className="text-[14px] text-[#5F5F65] font-[500]">
           Lorem ipsum dolor sit amet consectetur. Convallis ut rutrum diam quam.
-        </p>
+        </p> */}
 
         {subfoldersOpen ? (
           <ChooseSubfolderPanel

@@ -172,7 +172,7 @@ export const ContentManagerSidebar: React.FC = () => {
         )}
       >
         <ScrollArea className="h-[calc(100vh-64px)] bg-white ">
-          <div className={cn("flex flex-col gap-8 h-full pr-4")}>
+          <div className={cn("flex flex-col gap-8 h-full")}>
             <div className="flex flex-col items-center text-center">
               <h2
                 className={cn(
@@ -229,7 +229,7 @@ export const ContentManagerSidebar: React.FC = () => {
         <Button
           variant={"unstyled"}
           size={"unstyled"}
-          onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
+          onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
           className={`flex gap-4 items-center ${sidebarOpen ? "px-4 justify-between" : "justify-center"}`}
         >
           <Avatar className="mr-[20px]">

@@ -246,9 +246,17 @@ export const chatApi = createApi({
     >({
       query: ({ chatId, payload }) => {
         const formData = new FormData();
-        formData.append("request", JSON.stringify(payload.request));
-        if (payload.avatar_image)
+        formData.append("name", payload.request.name);
+        formData.append("description", payload.request.description ?? "");
+        (payload.request.add_participant_ids || []).forEach((id) => {
+          formData.append("add_participant_ids", id);
+        });
+        (payload.request.remove_participant_ids || []).forEach((id) => {
+          formData.append("remove_participant_ids", id);
+        });
+        if (payload.avatar_image) {
           formData.append("avatar_image", payload.avatar_image);
+        }
         return {
           url: API_ROUTES.CHAT.UPDATE_GROUP_CHAT.replace("{chat_id}", chatId),
           method: "PUT",
