@@ -26,10 +26,10 @@ export const ClientMessages = () => {
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
 
   useEffect(() => {
-    if (firstChatId) {
+    if (!routeChatId && firstChatId) {
       nav(`/messages/${firstChatId}`, { replace: true });
     }
-  }, [firstChatId, nav]);
+  }, [routeChatId, firstChatId, nav]);
 
   if (chats.length === 0) {
     return (
@@ -59,7 +59,7 @@ export const ClientMessages = () => {
         chat_id: routeChatId,
       }).unwrap();
 
-      return resp as ChatMessageModel;
+      return resp.data as ChatMessageModel;
     } catch (error) {
       console.error(error);
       toast({
@@ -80,7 +80,7 @@ export const ClientMessages = () => {
         chatId: routeChatId,
         page,
       }).unwrap();
-      return data;
+      return data.data;
     } catch {
       toast({
         variant: "destructive",

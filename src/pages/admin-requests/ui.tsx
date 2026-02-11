@@ -62,11 +62,11 @@ export const AdminRequests = () => {
           <div className="px-4 py-6 text-red-500">Failed to load requests.</div>
         )}
 
-        {!isLoading && data?.requests?.length === 0 && (
+        {!isLoading && data?.data?.length === 0 && (
           <div className="px-4 py-6 text-gray-500">No requests found.</div>
         )}
 
-        {data?.requests?.map((req: any) => (
+        {data?.data?.map((req: any) => (
           <div
             key={req.id}
             className="grid grid-cols-2 px-4 py-4 border-t border-gray-200 items-center"

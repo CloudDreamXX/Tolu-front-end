@@ -83,6 +83,7 @@ export const ContentManagerClients: React.FC = () => {
     focus_areas: [],
     permission_type: "",
   });
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
@@ -180,8 +181,8 @@ export const ContentManagerClients: React.FC = () => {
 
   const filteredClients = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return clientsData?.clients;
-    return clientsData?.clients.filter((c) => {
+    if (!q) return clientsData?.data.clients;
+    return clientsData?.data.clients.filter((c) => {
       const name = (c.name ?? "").toLowerCase();
       const status = (c.status ?? "").toLowerCase();
       return name.includes(q) || status.includes(q);
@@ -335,12 +336,14 @@ export const ContentManagerClients: React.FC = () => {
     try {
       const { data: fullClient } = await getClientProfile(clientId);
       if (fullClient) {
-        setSelectedClient(fullClient);
+        setSelectedClient(fullClient.data);
+      } else {
+        setSelectedClientId(clientId);
       }
 
       const { data: editClientInfo } = await getClientInfo(clientId);
-      if (editClientInfo && editClientInfo.client) {
-        setClientInfo(editClientInfo.client);
+      if (editClientInfo && editClientInfo.data.client) {
+        setClientInfo(editClientInfo.data.client);
       }
     } catch (e) {
       console.error("Error loading client profile", e);
@@ -353,10 +356,10 @@ export const ContentManagerClients: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (!selectedClient) return;
+    if (!selectedClient || !selectedClientId) return;
 
     try {
-      await deleteClient(selectedClient.client_info.id);
+      await deleteClient(selectedClient.client_info.id ? selectedClient.client_info.id : selectedClientId);
       refetchClients();
       toast({
         title: "Deleted successfully",
@@ -469,8 +472,8 @@ export const ContentManagerClients: React.FC = () => {
     try {
       const { data: currentClientInfo } = await getClientInfo(clientId);
 
-      if (currentClientInfo && currentClientInfo.client) {
-        await handleInviteClient(currentClientInfo.client);
+      if (currentClientInfo && currentClientInfo.data.client) {
+        await handleInviteClient(currentClientInfo.data.client);
       }
       toast({
         title: "Invite resent successfully",
@@ -512,9 +515,7 @@ export const ContentManagerClients: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : clientsData &&
-          clientsData.clients &&
-          clientsData.clients.length === 0 ? (
+        ) : clientsData && clientsData.data.clients && clientsData.data.clients.length === 0 ? (
           <EmptyStateTolu
             text="Invite your clients to Tolu to deliver personalized education or insight unique to their personal health challenges."
             footer={
@@ -884,9 +885,8 @@ export const ContentManagerClients: React.FC = () => {
                       variant="unstyled"
                       size="unstyled"
                       disabled={client.status !== "active"}
-                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${
-                        client.status !== "active" ? "opacity-[0.5]" : ""
-                      }`}
+                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${client.status !== "active" ? "opacity-[0.5]" : ""
+                        }`}
                       onClick={() => {
                         const chatId = getChatIdByClientId(client.client_id);
                         setNotesChatId(chatId);
@@ -1016,11 +1016,10 @@ export const ContentManagerClients: React.FC = () => {
                   size={"unstyled"}
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                    currentPage === page
-                      ? "border-[#1C63DB] text-[#1C63DB]"
-                      : "border-[#DBDEE1]"
-                  }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
+                    ? "border-[#1C63DB] text-[#1C63DB]"
+                    : "border-[#DBDEE1]"
+                    }`}
                 >
                   {page}
                 </Button>

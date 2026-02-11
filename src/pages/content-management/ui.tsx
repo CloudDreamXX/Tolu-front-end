@@ -103,12 +103,12 @@ export const ContentManagement = () => {
   const [isCardsTab, setIsCardsTab] = useState(false);
 
   useEffect(() => {
-    if (!resp) return;
+    if (!resp?.data) return;
     const built =
       CATEGORY_KEYS.map((k) => ({
         key: String(k),
         label: CATEGORY_LABEL[k],
-        folders: (resp[k] as Folder[]) || [],
+        folders: (resp.data.folders[k] as Folder[]) || [],
       })) || [];
     setGroups(built);
     setFilteredGroups(built);
@@ -202,7 +202,7 @@ export const ContentManagement = () => {
         }).unwrap();
 
         const allRoots = CATEGORY_KEYS.flatMap(
-          (k) => (res[k] as Folder[]) || []
+          (k) => (res.data.folders[k] as Folder[]) || []
         );
         let returned = findFolderById(allRoots, folderId);
         if (!returned && allRoots.length === 1 && allRoots[0].id === folderId) {

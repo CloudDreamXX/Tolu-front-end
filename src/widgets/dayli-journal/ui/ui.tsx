@@ -160,9 +160,9 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     setSelectedMealExamples(
       rec.meal_notes
         ? rec.meal_notes
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
         : []
     );
     setSummaryView(true);
@@ -323,9 +323,9 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
     setSelectedMealExamples(
       rec.meal_notes
         ? rec.meal_notes
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
         : []
     );
     setMealExampleValue("");
@@ -352,43 +352,49 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
 
     const sleepQuality = mapMoodToSleepQuality(moodValue);
 
-    const data: SymptomData = {
-      tracking_date: selectedDate,
-      user_notes: userNote,
-      symptoms: updatedSelectedSymptoms,
-      symptom_intensities: [],
-      duration_category: durationCategory,
-      suspected_triggers: updatedSelectedTriggers,
+    // Format meal_details as an array of objects per backend requirements
+    const mealDetailsArr = [
+      {
+        meal_type: "breakfast",
+        food_items: meal.breakfast.food_items,
+        time: meal.breakfast.time || null,
+      },
+      {
+        meal_type: "lunch",
+        food_items: meal.lunch.food_items,
+        time: meal.lunch.time || null,
+      },
+      {
+        meal_type: "dinner",
+        food_items: meal.dinner.food_items,
+        time: meal.dinner.time || null,
+      },
+      ...updatedSelectedMealExamples.map((example) => ({
+        meal_type: "examples",
+        food_items: example,
+        time: null,
+      })),
+    ];
+
+    const payload = {
+      date: selectedDate,
+      mood_score: moodValue,
+      notes: userNote || null,
+      symptoms: updatedSelectedSymptoms.length ? updatedSelectedSymptoms : [],
+      triggers: updatedSelectedTriggers.length ? updatedSelectedTriggers : [],
+      meal_details: mealDetailsArr,
+      medications: null,
+      supplements: null,
       sleep_quality: sleepQuality,
-      sleep_hours: sleep.hours,
-      sleep_minutes: sleep.minutes,
-      times_woke_up: sleep.wokeUpTimes,
-      how_fell_asleep: sleep.fellBack,
-      meal_notes: updatedSelectedMealExamples.join(", "),
-      meal_details: [
-        {
-          meal_type: "breakfast",
-          food_items: meal.breakfast.food_items,
-          time: meal.breakfast.time,
-        },
-        {
-          meal_type: "lunch",
-          food_items: meal.lunch.food_items,
-          time: meal.lunch.time,
-        },
-        {
-          meal_type: "dinner",
-          food_items: meal.dinner.food_items,
-          time: meal.dinner.time,
-        },
-      ],
+      energy_level: null,
+      stress_level: null,
     };
 
     const photo = photoInputRef.current?.files?.[0] || null;
     const voice = voiceInputRef.current?.files?.[0] || null;
 
     try {
-      await addSymptoms({ data, photo, voice });
+      await addSymptoms({ data: payload, photo, voice });
       onClose();
       setSummaryView(true);
       toast({ title: "Symptoms were added successfully" });
@@ -498,14 +504,12 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
       />
 
       <div
-        className={`flex flex-col ${
-          summaryView ? "bg-white" : "bg-[#F2F4F6] gap-6"
-        } px-4 md:px-6 py-8 overflow-y-auto lg:max-h-[calc(100vh-288px)] md:max-h-[calc(100vh-235px)]`}
+        className={`flex flex-col ${summaryView ? "bg-white" : "bg-[#F2F4F6] gap-6"
+          } px-4 md:px-6 py-8 overflow-y-auto lg:max-h-[calc(100vh-288px)] md:max-h-[calc(100vh-235px)]`}
       >
         <div
-          className={`flex items-center flex-col gap-[16px] md:gap-0 md:flex-row justify-between ${
-            summaryView ? "pb-[24px] border-b" : ""
-          }`}
+          className={`flex items-center flex-col gap-[16px] md:gap-0 md:flex-row justify-between ${summaryView ? "pb-[24px] border-b" : ""
+            }`}
         >
           <h1 className="text-2xl font-semibold text-[#1D1D1F]">
             {summaryView ? "Daily Journal Overview" : "Log your journal"}
@@ -640,26 +644,26 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <div className="flex flex-wrap gap-2">
             {summaryView
               ? selectedSymptoms.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
-                  >
-                    {item}
-                  </div>
-                ))
+                <div
+                  key={item}
+                  className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                >
+                  {item}
+                </div>
+              ))
               : SYMPTOMS.map((symptom) => (
-                  <Button
-                    variant="ghost"
-                    key={symptom}
-                    onClick={() => handleSelect("symptom", symptom)}
-                    className={cn(
-                      "flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base",
-                      selectedSymptoms.includes(symptom) && "bg-[#D1E8FF]"
-                    )}
-                  >
-                    {symptom}
-                  </Button>
-                ))}
+                <Button
+                  variant="ghost"
+                  key={symptom}
+                  onClick={() => handleSelect("symptom", symptom)}
+                  className={cn(
+                    "flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base",
+                    selectedSymptoms.includes(symptom) && "bg-[#D1E8FF]"
+                  )}
+                >
+                  {symptom}
+                </Button>
+              ))}
           </div>
 
           {!summaryView && (
@@ -715,26 +719,26 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <div className="flex flex-wrap gap-2">
             {summaryView
               ? selectedTriggers.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
-                  >
-                    {item}
-                  </div>
-                ))
+                <div
+                  key={item}
+                  className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                >
+                  {item}
+                </div>
+              ))
               : SUSPECTED_TRIGGERS.map((trigger) => (
-                  <Button
-                    variant="ghost"
-                    key={trigger}
-                    onClick={() => handleSelect("trigger", trigger)}
-                    className={cn(
-                      "flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base",
-                      selectedTriggers.includes(trigger) && "bg-[#D1E8FF]"
-                    )}
-                  >
-                    {trigger}
-                  </Button>
-                ))}
+                <Button
+                  variant="ghost"
+                  key={trigger}
+                  onClick={() => handleSelect("trigger", trigger)}
+                  className={cn(
+                    "flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base",
+                    selectedTriggers.includes(trigger) && "bg-[#D1E8FF]"
+                  )}
+                >
+                  {trigger}
+                </Button>
+              ))}
           </div>
 
           {!summaryView && (
@@ -899,6 +903,29 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
           <div className="flex flex-col gap-2 text-[#1D1D1F]">
             {!summaryView && <label className="font-medium">Examples:</label>}
             <div className="flex flex-wrap gap-2">
+              {summaryView
+                ? selectedMealExamples.map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center justify-center px-4 py-[9px] bg-[#F3F7FD] rounded-md text-base"
+                  >
+                    {item}
+                  </div>
+                ))
+                : MEAL_EXAMPLES.map((mealExample) => (
+                  <Button
+                    variant="ghost"
+                    key={mealExample}
+                    onClick={() => handleSelect("mealExample", mealExample)}
+                    className={cn(
+                      "flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base",
+                      selectedMealExamples.includes(mealExample) &&
+                      "bg-[#D1E8FF]"
+                    )}
+                  >
+                    {mealExample}
+                  </Button>
+                ))}
               {summaryView ? (
                 <div className="flex flex-col gap-4">
                   {meal.breakfast.food_items && (
@@ -941,7 +968,7 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
                     className={cn(
                       "flex items-center justify-center p-4 bg-[#F3F7FD] rounded-md text-base",
                       selectedMealExamples.includes(mealExample) &&
-                        "bg-[#D1E8FF]"
+                      "bg-[#D1E8FF]"
                     )}
                   >
                     {mealExample}
@@ -1220,12 +1247,12 @@ export const DailyJournal: React.FC<DayliJournalProps> = ({
               addSymptomsMode
                 ? handleSubmit
                 : () => {
-                    if (!selectedRecordId) {
-                      handleSubmit();
-                      return;
-                    }
-                    handleEdit(selectedRecordId);
+                  if (!selectedRecordId) {
+                    handleSubmit();
+                    return;
                   }
+                  handleEdit(selectedRecordId);
+                }
             }
             className="w-[128px]"
           >

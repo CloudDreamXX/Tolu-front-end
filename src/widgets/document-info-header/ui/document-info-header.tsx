@@ -29,16 +29,20 @@ export const DocumentInfoHeader: React.FC<DocumentInfoHeaderProps> = ({
 
   const handleInstructionsSave = async (instruction: string) => {
     try {
-      if (document) {
-        const payload: UpdateFolderRequest = {
-          folder_id: document?.originalFolderId,
-          instructions: instruction,
-        };
-        await editFolder({ payload }).unwrap();
+      if (!document || !document.originalFolderId) {
         toast({
-          title: "Folder's instruction saved successfully",
+          variant: "destructive",
+          title: "Cannot save instructions: Folder ID is missing.",
         });
+        return;
       }
+      await editFolder({
+        folder_id: document.originalFolderId,
+        instructions: instruction,
+      }).unwrap();
+      toast({
+        title: "Folder's instruction saved successfully",
+      });
     } catch (error) {
       console.error(error);
       toast({

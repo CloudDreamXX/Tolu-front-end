@@ -192,15 +192,15 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
       if (!chatId) return;
 
       if (chatDetails) {
-        setChat(chatDetails);
+        setChat(chatDetails.data);
         return;
       }
 
       if (isError) {
         try {
           const client =
-            clients && clients.clients
-              ? clients.clients.find((c) => c.client_id === chatId)
+            clients && clients.data.clients
+              ? clients.data.clients.find((c) => c.client_id === chatId)
               : undefined;
           if (client) {
             dispatch(
@@ -268,7 +268,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
     try {
       const { data: fullClient } = await getClientProfile(clientId);
-      setSelectedClient(fullClient ?? null);
+      setSelectedClient(fullClient?.data ?? null);
     } catch (e) {
       toast({
         variant: "destructive",
@@ -324,6 +324,15 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     );
 
   const initials = (() => {
+    if (chat?.name) {
+      return chat.name
+        .split(" ")
+        .filter(Boolean)
+        .map((p) => p[0]?.toUpperCase() ?? "")
+        .slice(0, 2)
+        .join("")
+    }
+
     const user = receiver?.user;
     if (!user) return "UN";
 
@@ -584,8 +593,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
         <TabsContent value="profile">
           <ClientComprehensiveSummary
-            clientId={receiver?.user.id || location.pathname.split("/").pop()!}
             onOpenChange={() => { }}
+            clientId={receiver?.user.id || location.pathname.split("/").pop()!}
             asDialog={false}
           />
         </TabsContent>
@@ -614,9 +623,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <SupplementsTab chat={chat} search={search} />
         </TabsContent>
         <TabsContent value="providers">
-          {clientCoaches && clientCoaches.coaches.length ? (
+          {clientCoaches && clientCoaches.data.coaches.length ? (
             <ul className="p-2">
-              {clientCoaches.coaches.map((c: any) => {
+              {clientCoaches.data.coaches.map((c: any) => {
                 return (
                   <li
                     key={c.coach_id}

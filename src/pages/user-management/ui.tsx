@@ -32,7 +32,7 @@ export const UserManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const { data, isLoading, error, refetch } = useGetAllUsersQuery();
-  const usersData: User[] = data?.users ?? [];
+  const usersData: User[] = data?.data ?? [];
   const [isFiltersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<UserFilters>(defaultFilters);
   const [draftFilters, setDraftFilters] = useState<UserFilters>(defaultFilters);
@@ -397,11 +397,10 @@ export const UserManagement: React.FC = () => {
               size={"unstyled"}
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
-                page === pageNumber
-                  ? "border-[#1C63DB] text-[#1C63DB]"
-                  : "border-[#DBDEE1] text-black"
-              }`}
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
+                ? "border-[#1C63DB] text-[#1C63DB]"
+                : "border-[#DBDEE1] text-black"
+                }`}
             >
               {pageNumber}
             </Button>

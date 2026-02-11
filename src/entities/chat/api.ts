@@ -14,9 +14,10 @@ import {
   CreateChatPayload,
   FetchAllChatsResponse,
   FetchChatDetailsResponse,
-  FetchChatFilesResponse,
   FetchChatMessagesResponse,
-  GetAllChatNotesResponse,
+
+  FileMessage,
+
   SendChatNotePayload,
   SendMessagePayload,
   SendMessageResponse,
@@ -29,6 +30,7 @@ import {
 import { upsertMessages } from "./messagesSlice";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 const avatarCache = new Map<string, string | null>();
 
@@ -67,7 +69,7 @@ export const chatApi = createApi({
         params: { page: 1, limit: 50 },
       }),
 
-      transformResponse: (res: FetchAllChatsResponse) => res.map(toChatItem),
+      transformResponse: (res: FetchAllChatsResponse) => res.data.map(toChatItem),
 
       providesTags: ["Chat"],
 
@@ -112,7 +114,7 @@ export const chatApi = createApi({
         url: API_ROUTES.CHAT.FETCH_ONE.replace("{chat_id}", chatId),
       }),
       async transformResponse(res: FetchChatDetailsResponse) {
-        res.avatar_url = (await resolveAvatar(res.avatar_url)) ?? "";
+        res.data.avatar_url = (await resolveAvatar(res.data.avatar_url)) ?? "";
         return res;
       },
       providesTags: (_r, _e, chatId) => [{ type: "Details", id: chatId }],
@@ -127,7 +129,7 @@ export const chatApi = createApi({
     }),
 
     fetchChatMessages: builder.query<
-      FetchChatMessagesResponse,
+      BaseResponse<FetchChatMessagesResponse>,
       { chatId: string; page?: number; limit?: number }
     >({
       query: ({ chatId, page = 1, limit = 50 }) => ({
@@ -135,19 +137,26 @@ export const chatApi = createApi({
         params: { page, limit },
       }),
       providesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
+      transformResponse: (res: any) => {
+        if (Array.isArray(res.data)) {
+          return { ...res, data: { messages: res.data, total: res.data.length, page: 1, limit: 50, has_next: false, has_prev: false } };
+        }
+        return res;
+      },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         queryFulfilled.then(({ data }) => {
-          if (data?.messages?.length)
+          const messages = data?.data?.messages || data?.data || [];
+          if (messages.length)
             dispatch(
               upsertMessages(
-                data.messages.map((m) => ({ ...m, chat_id: arg.chatId }))
+                messages.map((m: any) => ({ ...m, chat_id: arg.chatId }))
               )
             );
         });
       },
     }),
 
-    sendMessage: builder.mutation<SendMessageResponse, SendMessagePayload>({
+    sendMessage: builder.mutation<BaseResponse<SendMessageResponse>, SendMessagePayload>({
       query: (payload) => ({
         url: API_ROUTES.CHAT.SEND_MESSAGE,
         method: "POST",
@@ -193,7 +202,7 @@ export const chatApi = createApi({
     }),
 
     updateMessage: builder.mutation<
-      UpdateMessageResponse,
+      BaseResponse<UpdateMessageResponse>,
       UpdateMessagePayload
     >({
       query: ({ chatId, messageId, content }) => ({
@@ -208,14 +217,20 @@ export const chatApi = createApi({
     }),
 
     createGroupChat: builder.mutation<
-      CreateChatGroupResponse,
+      BaseResponse<CreateChatGroupResponse>,
       CreateChatPayload
     >({
       query: (payload) => {
+        // payload: { name, description, participant_ids, avatar_image }
         const formData = new FormData();
-        formData.append("request", JSON.stringify(payload.request));
-        if (payload.avatar_image)
+        formData.append("name", payload.request.name);
+        formData.append("description", payload.request.description ?? "");
+        (payload.request.participant_ids || []).forEach((id) => {
+          formData.append("participant_ids", id);
+        });
+        if (payload.avatar_image) {
           formData.append("avatar_image", payload.avatar_image);
+        }
         return {
           url: API_ROUTES.CHAT.CREATE_GROUP_CHAT,
           method: "POST",
@@ -226,14 +241,22 @@ export const chatApi = createApi({
     }),
 
     updateGroupChat: builder.mutation<
-      UpdateGroupChatResponse,
+      BaseResponse<UpdateGroupChatResponse>,
       { chatId: string; payload: UpdateGroupChatPayload }
     >({
       query: ({ chatId, payload }) => {
         const formData = new FormData();
-        formData.append("request", JSON.stringify(payload.request));
-        if (payload.avatar_image)
+        formData.append("name", payload.request.name);
+        formData.append("description", payload.request.description ?? "");
+        (payload.request.add_participant_ids || []).forEach((id) => {
+          formData.append("add_participant_ids", id);
+        });
+        (payload.request.remove_participant_ids || []).forEach((id) => {
+          formData.append("remove_participant_ids", id);
+        });
+        if (payload.avatar_image) {
           formData.append("avatar_image", payload.avatar_image);
+        }
         return {
           url: API_ROUTES.CHAT.UPDATE_GROUP_CHAT.replace("{chat_id}", chatId),
           method: "PUT",
@@ -247,7 +270,7 @@ export const chatApi = createApi({
     }),
 
     uploadChatFile: builder.mutation<
-      ChatFileUploadResponse,
+      BaseResponse<ChatFileUploadResponse>,
       { chatId: string; file?: File; libraryFiles?: string[] }
     >({
       query: ({ chatId, file, libraryFiles }) => {
@@ -295,7 +318,7 @@ export const chatApi = createApi({
     }),
 
     fetchAllFilesByChatId: builder.query<
-      FetchChatFilesResponse,
+      BaseResponse<FileMessage[]>,
       { chatId: string; page?: number; limit?: number }
     >({
       query: ({ chatId, page = 1, limit = 50 }) => ({
@@ -400,10 +423,13 @@ export const chatApi = createApi({
       },
     }),
 
-    sendChatNote: builder.mutation<ChatNoteResponse, SendChatNotePayload>({
+    sendChatNote: builder.mutation<BaseResponse<ChatNoteResponse>, SendChatNotePayload>({
       query: (payload) => {
         const formData = new FormData();
-        formData.append("note_data", JSON.stringify(payload.noteData));
+        if (payload.chat_id) formData.append("chat_id", payload.chat_id);
+        if (payload.target_user_id) formData.append("target_user_id", payload.target_user_id);
+        if (payload.title) formData.append("title", payload.title);
+        if (payload.content) formData.append("content", payload.content);
         if (payload.file) formData.append("file", payload.file);
         return {
           url: API_ROUTES.CHAT.SEND_CHAT_NOTE,
@@ -413,19 +439,21 @@ export const chatApi = createApi({
       },
     }),
 
-    getAllChatNotes: builder.query<GetAllChatNotesResponse, string>({
+    getAllChatNotes: builder.query<BaseResponse<ChatNoteResponse[]>, string>({
       query: (chatId) => ({
         url: API_ROUTES.CHAT.GET_ALL_CHAT_NOTES.replace("{chat_id}", chatId),
       }),
     }),
 
     updateChatNote: builder.mutation<
-      ChatNoteResponse,
+      BaseResponse<ChatNoteResponse>,
       { noteId: string; payload: UpdateChatNotePayload }
     >({
       query: ({ noteId, payload }) => {
         const formData = new FormData();
-        formData.append("note_data", JSON.stringify(payload.noteData));
+        if (payload.title) formData.append("title", payload.title);
+        if (payload.content) formData.append("content", payload.content);
+        if (typeof payload.remove_file !== "undefined") formData.append("remove_file", String(payload.remove_file));
         if (payload.file) formData.append("file", payload.file);
         return {
           url: API_ROUTES.CHAT.UPDATE_CHAT_NOTE.replace("{note_id}", noteId),
@@ -443,7 +471,7 @@ export const chatApi = createApi({
     }),
 
     addMessageReaction: builder.mutation<
-      ChatMessageModel,
+      BaseResponse<ChatMessageModel>,
       AddMessageReactionPayload
     >({
       query: ({ chatId, messageId, reaction }) => ({
@@ -458,7 +486,7 @@ export const chatApi = createApi({
     }),
 
     deleteMessageReaction: builder.mutation<
-      ChatMessageModel,
+      BaseResponse<ChatMessageModel>,
       AddMessageReactionPayload
     >({
       query: ({ chatId, messageId, reaction }) => ({

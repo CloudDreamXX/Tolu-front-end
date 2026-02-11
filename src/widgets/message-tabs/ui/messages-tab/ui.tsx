@@ -33,6 +33,7 @@ import {
 
 function uniqById(messages: ChatMessageModel[]): ChatMessageModel[] {
   const seen = new Set<string>();
+  if (!Array.isArray(messages)) return [];
   return messages.filter((msg) => {
     if (seen.has(msg.id)) return false;
     seen.add(msg.id);
@@ -165,11 +166,9 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const handleAddSelectionToNotes = async (text: string) => {
     try {
       await sendNote({
-        noteData: {
-          title: "Note from messages",
-          content: text,
-          chat_id: chat.chat_id,
-        },
+        chat_id: chat.chat_id,
+        title: "Note from messages",
+        content: text,
       }).unwrap();
 
       toast({ title: "Added to notes" });
@@ -358,15 +357,15 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           chatId: chat.chat_id,
           file: file,
         }).unwrap();
-        if (response?.type === "file_upload") {
+        if (response?.data.type === "file_upload") {
           const newMsg: ChatMessageModel = {
-            id: response.message_id || "",
-            content: response.file_name || "",
+            id: response.data.message_id || "",
+            content: response.data.file_name || "",
             chat_id: chat.chat_id,
             created_at: new Date().toISOString(),
-            file_url: response.file_url || "",
-            file_name: response.file_name || "",
-            file_size: response.file_size || 0,
+            file_url: response.data.file_url || "",
+            file_name: response.data.file_name || "",
+            file_size: response.data.file_size || 0,
             file_type: "file_upload",
             sender: {
               id: profile!.id,
@@ -400,13 +399,13 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
         });
 
         if (
-          response?.data?.type === "library_files" &&
-          response.data.messages &&
-          response.data.messages?.length
+          response?.data?.data.type === "library_files" &&
+          response.data.data.messages &&
+          response.data.data.messages?.length
         ) {
           setMessages((prev) => {
             const filtered = prev.filter((m) => !m.id.startsWith("tmp-lib"));
-            return [...filtered, ...(response.data?.messages || [])];
+            return [...filtered, ...(response.data?.data.messages || [])];
           });
         }
       } catch (e) {

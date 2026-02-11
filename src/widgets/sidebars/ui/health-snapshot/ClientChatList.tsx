@@ -75,9 +75,9 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
             key={chat.id}
             className="flex pl-8 mb-4"
             onClick={() => {
+              nav(`/messages/${chat.id}`);
               onPopupClose?.();
               onCloseSideBar?.();
-              nav(`/messages/${chat.id}`);
             }}
           >
             <div className="relative">

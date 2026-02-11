@@ -10,6 +10,7 @@ import {
   NewFolder,
   ContentToMove,
   FolderToDelete,
+  GetFolderItemResponse,
 } from "./model";
 import { RootState } from "entities/store";
 
@@ -176,10 +177,13 @@ export const foldersApi = createApi({
 
     getFolder: builder.query<IFolder, string>({
       query: (id) => ({
-        url: API_ROUTES.FOLDERS.GET_FOLDER.replace("{id}", id),
+        url: API_ROUTES.FOLDERS.GET_FOLDER.replace("{id}", `${id}`),
       }),
-      transformResponse: (response: { folder: IFolderItemResponse }) =>
-        serializeFolder(response.folder),
+      transformResponse: (response: any) => {
+        const folder = response?.data?.folder;
+        if (!folder) throw new Error("Folder not found in response");
+        return serializeFolder(folder);
+      },
       providesTags: ["Folders"],
     }),
 

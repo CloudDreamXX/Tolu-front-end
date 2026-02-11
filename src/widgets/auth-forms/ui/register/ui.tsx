@@ -22,9 +22,9 @@ const isAlreadyAccepted = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   const email = String(
     err?.response?.data?.detail?.email ?? err?.response?.data?.email ?? ""
@@ -38,9 +38,9 @@ const isAuthRevoked = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   return (
     status === 403 ||
@@ -65,9 +65,9 @@ const isAlreadyRegistered = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
 
   return status === 409 || msg.includes("already exists");
@@ -123,11 +123,11 @@ export const Register = () => {
       if (isClientInviteSuccess && data && !cancelled) {
         setFormData((prev) => ({
           ...prev,
-          firstName: data?.client?.first_name ?? "",
-          lastName: data?.client?.last_name ?? "",
-          name: data?.client?.full_name ?? "",
-          email: data?.client?.email ?? "",
-          phone: data?.client?.phone_number ?? "",
+          firstName: data?.data.client?.first_name ?? "",
+          lastName: data?.data.client?.last_name ?? "",
+          name: data?.data.client?.full_name ?? "",
+          email: data?.data.client?.email ?? "",
+          phone: data?.data.client?.phone_number ?? "",
           accountType: "client",
         }));
         setInviteSource("client");
@@ -280,12 +280,12 @@ export const Register = () => {
         access_code: otpCode,
       }).unwrap();
 
-      if (res?.user && res.accessToken) {
+      if (res?.data.user && res.data.accessToken) {
         dispatch(
-          setCredentials({ user: res.user, accessToken: res.accessToken })
+          setCredentials({ user: res.data.user, accessToken: res.data.accessToken })
         );
 
-        if (res.user.roleID === 3) {
+        if (res.data.user.roleID === 3) {
           navigate("/welcome/client", {
             state: {
               inviteSource: inviteSource,
@@ -297,7 +297,7 @@ export const Register = () => {
         return;
       }
 
-      if (!res.accessToken) {
+      if (!res.data?.accessToken) {
         toast({ title: "Register successful", description: "Welcome!" });
         navigate("/verify-email");
       }
@@ -339,24 +339,19 @@ export const Register = () => {
   const handleCodeSend = async () => {
     try {
       const res = await accessCodeRequest({ access_code: otpCode }).unwrap();
+      console.log(res)
 
-      if (res.success) {
+      if (res.status === "success") {
         setFormData({
           ...formData,
-          email: res.email,
-          firstName: res.first_name,
-          lastName: res.last_name,
+          email: res.data.email,
+          firstName: res.data.first_name,
+          lastName: res.data.last_name,
           accountType:
-            res.account_type === "Individual/Women" ? "client" : "coach",
-          phone: res.phone_number,
+            res.data.account_type === "Individual/Women" ? "client" : "coach",
+          phone: res.data.phone_number,
         });
         setStage("form");
-      } else {
-        toast({
-          title: "Invalid access code",
-          description: "Please check your code or send a request again.",
-          variant: "destructive",
-        });
       }
     } catch (err) {
       console.error("Error sending access code:", err);

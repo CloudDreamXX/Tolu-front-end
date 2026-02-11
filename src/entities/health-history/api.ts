@@ -14,6 +14,7 @@ import {
   UpdateSupplementParams,
 } from "./model";
 import { RootState } from "entities/store";
+import { BaseResponse } from "entities/models";
 
 export const healthHistoryApi = createApi({
   reducerPath: "healthHistoryApi",
@@ -32,8 +33,8 @@ export const healthHistoryApi = createApi({
   endpoints: (builder) => ({
     getUserHealthHistory: builder.query<HealthHistory, void>({
       query: () => API_ROUTES.HEALTH_HISTORY.GET,
-      transformResponse: (response: HealthHistoryResponse) =>
-        response.health_history,
+      transformResponse: (response: BaseResponse<HealthHistory>) =>
+        response.data ? response.data : {} as HealthHistory,
     }),
 
     getCoachClientHealthHistory: builder.query<HealthHistory, string>({
@@ -42,8 +43,8 @@ export const healthHistoryApi = createApi({
           "{client_id}",
           clientId
         ),
-      transformResponse: (response: HealthHistoryResponse) =>
-        response.health_history,
+      transformResponse: (response: BaseResponse<HealthHistoryResponse>) =>
+        response.data.health_history ? response.data.health_history : {} as HealthHistory,
     }),
 
     createHealthHistory: builder.mutation<
@@ -56,21 +57,27 @@ export const healthHistoryApi = createApi({
     >({
       query: ({ healthData, labFiles, clientId }) => {
         const formData = new FormData();
-
-        formData.append("health_data", JSON.stringify(healthData));
-
+        // Append each healthData field as a separate form entry (all as strings)
+        Object.entries(healthData).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            // If value is an object or array, stringify it
+            if (typeof value === "object") {
+              formData.append(key, JSON.stringify(value));
+            } else {
+              formData.append(key, String(value));
+            }
+          }
+        });
+        // Attach lab files if present
         if (labFiles && labFiles.length > 0) {
           labFiles.forEach((file) => {
             formData.append("lab_file", file);
           });
         }
-
-        if (clientId !== undefined) {
-          formData.append("client_id", clientId ?? "");
-        }
-
+        // Build URL with client_id as query param if present
+        const url = clientId ? `${API_ROUTES.HEALTH_HISTORY.POST}?client_id=${encodeURIComponent(clientId)}` : API_ROUTES.HEALTH_HISTORY.POST;
         return {
-          url: API_ROUTES.HEALTH_HISTORY.POST,
+          url,
           method: "POST",
           body: formData,
         };
@@ -86,13 +93,13 @@ export const healthHistoryApi = createApi({
     }),
 
     updateCoachClientHealthHistory: builder.mutation<
-      {
+      BaseResponse<{
         message: string;
         health_history_id: string;
         user_id: string;
         updated_at: string;
         lab_files_count: number;
-      },
+      }>,
       {
         clientId: string;
         data: HealthHistory;
@@ -101,13 +108,22 @@ export const healthHistoryApi = createApi({
     >({
       query: ({ clientId, data, labFiles }) => {
         const formData = new FormData();
-
-        formData.append("health_data", JSON.stringify(data));
-
-        labFiles?.forEach((file) => {
-          formData.append("lab_file", file);
+        // Append each data field as a separate form entry (all as strings)
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            if (typeof value === "object") {
+              formData.append(key, JSON.stringify(value));
+            } else {
+              formData.append(key, String(value));
+            }
+          }
         });
-
+        // Attach lab files if present
+        if (labFiles && labFiles.length > 0) {
+          labFiles.forEach((file) => {
+            formData.append("lab_file", file);
+          });
+        }
         return {
           url: API_ROUTES.HEALTH_HISTORY.EDIT.replace("{client_id}", clientId),
           method: "PUT",
@@ -124,11 +140,11 @@ export const healthHistoryApi = createApi({
         ),
         params: { limit, offset },
       }),
-      transformResponse: (response: { medications: Medication[] }) =>
-        response.medications,
+      transformResponse: (response: BaseResponse<{ medications: Medication[] }>) =>
+        response.data.medications,
     }),
 
-    createMedication: builder.mutation<Medication, CreateMedicationParams>({
+    createMedication: builder.mutation<BaseResponse<Medication>, CreateMedicationParams>({
       query: ({ medicationData, file }) => {
         const formData = new FormData();
 
@@ -146,7 +162,7 @@ export const healthHistoryApi = createApi({
       },
     }),
 
-    updateMedication: builder.mutation<Medication, UpdateMedicationParams>({
+    updateMedication: builder.mutation<BaseResponse<Medication>, UpdateMedicationParams>({
       query: ({ medicationId, medicationData, file }) => {
         const formData = new FormData();
 
@@ -204,20 +220,17 @@ export const healthHistoryApi = createApi({
         ),
         params: { limit, offset },
       }),
-      transformResponse: (response: { supplements: Supplement[] }) =>
-        response.supplements,
+      transformResponse: (response: BaseResponse<{ supplements: Supplement[] }>) =>
+        response.data.supplements,
     }),
 
-    createSupplement: builder.mutation<Supplement, CreateSupplementParams>({
+    createSupplement: builder.mutation<BaseResponse<Supplement>, CreateSupplementParams>({
       query: ({ supplementData, file }) => {
         const formData = new FormData();
-
         formData.append("supplement_data", JSON.stringify(supplementData));
-
         if (file) {
           formData.append("file", file);
         }
-
         return {
           url: API_ROUTES.HEALTH_HISTORY.ADD_SUPPLEMENT,
           method: "POST",
@@ -226,22 +239,13 @@ export const healthHistoryApi = createApi({
       },
     }),
 
-    updateSupplement: builder.mutation<Supplement, UpdateSupplementParams>({
+    updateSupplement: builder.mutation<BaseResponse<Supplement>, UpdateSupplementParams>({
       query: ({ supplementId, supplementData, file }) => {
         const formData = new FormData();
-
-        formData.append(
-          "supplement_data",
-          JSON.stringify({
-            remove_file: false,
-            ...supplementData,
-          })
-        );
-
+        formData.append("supplement_data", JSON.stringify(supplementData));
         if (file) {
           formData.append("file", file);
         }
-
         return {
           url: API_ROUTES.HEALTH_HISTORY.UPDATE_SUPPLEMENT.replace(
             "{supplement_id}",

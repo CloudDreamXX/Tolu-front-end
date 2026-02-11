@@ -8,6 +8,7 @@ import {
   SearchResultResponseItem,
 } from "./model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { BaseResponse } from "entities/models";
 import { RootState } from "entities/store";
 
 export interface StreamChunk {
@@ -47,12 +48,11 @@ export const searchApi = createApi({
         if (params.managed_client_id)
           searchParams.append("managed_client_id", params.managed_client_id);
 
-        return `/searched-result/history${
-          searchParams.toString() ? `?${searchParams.toString()}` : ""
-        }`;
+        return `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""
+          }`;
       },
-      transformResponse: (response: { history: SearchHistoryResponse[] }) => {
-        return response.history.map((item) => ({
+      transformResponse: (response: BaseResponse<SearchHistoryResponse[]>) => {
+        return response.data.map((item) => ({
           ...item,
           chatId: item.chat_id,
           chatTitle: item.chat_title,
@@ -65,8 +65,9 @@ export const searchApi = createApi({
 
     getSession: builder.query<SearchResultResponseItem[], string>({
       query: (chatId) => `/session/${chatId}`,
-      transformResponse: (response: SearchResultResponse) =>
-        response.search_results,
+      transformResponse: (
+        response: BaseResponse<SearchResultResponseItem[]>
+      ) => response.data,
       providesTags: ["SearchSession"],
     }),
   }),
@@ -80,7 +81,7 @@ export const {
 
 export class SearchService {
   static async aiSearchStream(
-    searchData: AiSearchRequest,
+    formData: FormData,
     onChunk: (chunk: StreamChunk) => void,
     onComplete: (finalData: {
       searched_result_id: string;
@@ -92,16 +93,6 @@ export class SearchService {
     signal?: AbortSignal
   ): Promise<void> {
     try {
-      const formData = this.createSearchRequest(
-        searchData.chat_message,
-        undefined,
-        searchData.images,
-        searchData.pdf,
-        searchData.contentId,
-        undefined,
-        searchData.audio
-      );
-
       const user = localStorage.getItem("persist:user");
       const token = user ? JSON.parse(user)?.token?.replace(/"/g, "") : null;
 
@@ -192,7 +183,7 @@ export class SearchService {
   }
 
   static async aiCoachResearchStream(
-    searchData: AIChatMessageResearch,
+    formData: FormData,
     onChunk: (chunk: StreamChunk) => void,
     onComplete: (finalData: {
       searched_result_id: string;
@@ -203,15 +194,6 @@ export class SearchService {
     signal?: AbortSignal
   ): Promise<void> {
     try {
-      const formData = this.createSearchRequest(
-        searchData.chat_message,
-        searchData.clientId,
-        searchData.images,
-        searchData.pdf,
-        searchData.contentId,
-        searchData.libraryFiles
-      );
-
       const user = localStorage.getItem("persist:user");
       const token = user ? JSON.parse(user)?.token?.replace(/"/g, "") : null;
 
@@ -294,7 +276,7 @@ export class SearchService {
   }
 
   static async aiCoachAssistantStream(
-    searchData: AIChatMessageResearch,
+    formData: FormData,
     onChunk: (chunk: StreamChunk) => void,
     onComplete: (finalData: {
       searched_result_id: string;
@@ -305,15 +287,6 @@ export class SearchService {
     signal?: AbortSignal
   ): Promise<void> {
     try {
-      const formData = this.createSearchRequest(
-        searchData.chat_message,
-        searchData.clientId,
-        searchData.images,
-        searchData.pdf,
-        searchData.contentId,
-        searchData.libraryFiles
-      );
-
       const user = localStorage.getItem("persist:user");
       const token = user ? JSON.parse(user)?.token?.replace(/"/g, "") : null;
 
@@ -396,41 +369,68 @@ export class SearchService {
   }
 
   static createSearchRequest(
-    message: string,
-    clientId?: string,
-    imageFiles?: File[],
-    pdfFile?: File,
-    contentId?: string,
+    userPrompt: string,
+    clientId?: string | null,
+    images?: File[],
+    pdf?: File | null,
+    contentId?: string | null,
     libraryFiles?: string[],
-    audio?: File
-  ) {
+    audio?: File,
+    options?: {
+      chatId?: string | null;
+      chatTitle?: string | null;
+      regenerateId?: string | null;
+      textQuote?: string | null;
+    }
+  ): FormData {
     const formData = new FormData();
-    formData.append("chat_message", message);
 
-    if (audio) {
-      formData.append("audio", audio);
+    formData.append("user_prompt", userPrompt);
+
+    formData.append("is_new", String(!options?.chatId));
+
+    if (options?.chatId) {
+      formData.append("chat_id", options.chatId);
+    }
+
+    if (options?.chatTitle) {
+      formData.append("chat_title", options.chatTitle);
+    }
+
+    if (options?.regenerateId) {
+      formData.append("regenerate_id", options.regenerateId);
+    }
+
+    if (options?.textQuote) {
+      formData.append("text_quote", options.textQuote);
     }
 
     if (clientId) {
       formData.append("client_id", clientId);
     }
 
-    if (imageFiles && imageFiles.length) {
-      imageFiles.forEach((file) => {
-        formData.append("files", file, file.name);
-      });
-    }
-
-    if (pdfFile) {
-      formData.append("files", pdfFile, pdfFile.name);
-    }
-
     if (contentId) {
       formData.append("content_id", contentId);
     }
 
-    if (libraryFiles && libraryFiles.length) {
-      formData.append("library_files", JSON.stringify(libraryFiles));
+    if (images?.length) {
+      images.forEach((file) => {
+        formData.append("files", file);
+      });
+    }
+
+    if (pdf) {
+      formData.append("files", pdf);
+    }
+
+    if (audio) {
+      formData.append("files", audio);
+    }
+
+    if (libraryFiles?.length) {
+      libraryFiles.forEach((id) => {
+        formData.append("library_files", id);
+      });
     }
 
     return formData;
