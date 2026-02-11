@@ -22,9 +22,9 @@ const isAlreadyAccepted = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   const email = String(
     err?.response?.data?.detail?.email ?? err?.response?.data?.email ?? ""
@@ -38,9 +38,9 @@ const isAuthRevoked = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
   return (
     status === 403 ||
@@ -65,9 +65,9 @@ const isAlreadyRegistered = (err: any) => {
   );
   const msg = String(
     err?.response?.data?.detail ??
-      err?.response?.data?.message ??
-      err?.message ??
-      ""
+    err?.response?.data?.message ??
+    err?.message ??
+    ""
   ).toLowerCase();
 
   return status === 409 || msg.includes("already exists");
@@ -339,24 +339,19 @@ export const Register = () => {
   const handleCodeSend = async () => {
     try {
       const res = await accessCodeRequest({ access_code: otpCode }).unwrap();
+      console.log(res)
 
-      if (res.success) {
+      if (res.status === "success") {
         setFormData({
           ...formData,
-          email: res.email,
-          firstName: res.first_name,
-          lastName: res.last_name,
+          email: res.data.email,
+          firstName: res.data.first_name,
+          lastName: res.data.last_name,
           accountType:
-            res.account_type === "Individual/Women" ? "client" : "coach",
-          phone: res.phone_number,
+            res.data.account_type === "Individual/Women" ? "client" : "coach",
+          phone: res.data.phone_number,
         });
         setStage("form");
-      } else {
-        toast({
-          title: "Invalid access code",
-          description: "Please check your code or send a request again.",
-          variant: "destructive",
-        });
       }
     } catch (err) {
       console.error("Error sending access code:", err);
