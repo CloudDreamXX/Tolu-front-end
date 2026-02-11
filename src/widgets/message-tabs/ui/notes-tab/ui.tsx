@@ -23,7 +23,6 @@ interface NotesTabProps {
 
 export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const profile = useSelector((state: RootState) => state.user.user);
-  const isToluAdmin = chat?.participants.some((p) => p.role === "admin");
 
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
   const {
@@ -247,106 +246,104 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
         )}
       </div>
 
-      {!isToluAdmin && (
-        <div className="pt-2">
-          <Input
-            placeholder="Note title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mb-2 md:text-[18px] rounded-[18px]"
-          />
+      <div className="pt-2">
+        <Input
+          placeholder="Note title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="mb-2 md:text-[18px] rounded-[18px]"
+        />
 
-          <Textarea
-            placeholder={`Write note...`}
-            className={cn("resize-none min-h-[80px]")}
-            containerClassName={cn(
-              "px-4 py-3",
-              dragOver ? "border-2 border-dashed border-blue-500" : undefined
-            )}
-            value={input}
-            onValueChange={setInput}
-            onKeyDown={handleKeyPress}
-            {...getDropzoneProps()}
-            onClick={() => ({})}
-            footer={
-              <div className="flex flex-col w-full">
-                {files.length > 0 && (
-                  <div className="mt-1">
-                    <p className="text-sm font-medium text-[#1D1D1F]">
-                      Attached Files:
-                    </p>
-                    <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
-                      {items.map((item) => (
-                        <div key={item.id} className="flex items-center gap-3">
-                          {item.isVideo && item.previewUrl && (
-                            <video
-                              src={item.previewUrl}
-                              className="w-[80px] h-[50px] rounded object-cover"
-                              controls
-                            />
-                          )}
+        <Textarea
+          placeholder={`Write note...`}
+          className={cn("resize-none min-h-[80px]")}
+          containerClassName={cn(
+            "px-4 py-3",
+            dragOver ? "border-2 border-dashed border-blue-500" : undefined
+          )}
+          value={input}
+          onValueChange={setInput}
+          onKeyDown={handleKeyPress}
+          {...getDropzoneProps()}
+          onClick={() => ({})}
+          footer={
+            <div className="flex flex-col w-full">
+              {files.length > 0 && (
+                <div className="mt-1">
+                  <p className="text-sm font-medium text-[#1D1D1F]">
+                    Attached Files:
+                  </p>
+                  <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
+                    {items.map((item) => (
+                      <div key={item.id} className="flex items-center gap-3">
+                        {item.isVideo && item.previewUrl && (
+                          <video
+                            src={item.previewUrl}
+                            className="w-[80px] h-[50px] rounded object-cover"
+                            controls
+                          />
+                        )}
 
-                          {item.isImage && item.previewUrl && (
-                            <img
-                              src={item.previewUrl}
-                              className="w-[50px] h-[50px] rounded object-cover"
-                            />
-                          )}
+                        {item.isImage && item.previewUrl && (
+                          <img
+                            src={item.previewUrl}
+                            className="w-[50px] h-[50px] rounded object-cover"
+                          />
+                        )}
 
-                          <div className="flex flex-col items-start">
-                            <span className="text-sm text-[#4B5563] truncate max-w-20">
-                              {item.file.name}
-                            </span>
-                            <span className="text-xs text-[#6B7280]">
-                              {(item.file.size / 1024).toFixed(1)} KB
-                            </span>
-                          </div>
-
-                          <Button
-                            variant="unstyled"
-                            size="unstyled"
-                            onClick={() => remove(item.id)}
-                            className="text-red-500"
-                          >
-                            <MaterialIcon iconName="delete" fill={1} />
-                          </Button>
+                        <div className="flex flex-col items-start">
+                          <span className="text-sm text-[#4B5563] truncate max-w-20">
+                            {item.file.name}
+                          </span>
+                          <span className="text-xs text-[#6B7280]">
+                            {(item.file.size / 1024).toFixed(1)} KB
+                          </span>
                         </div>
-                      ))}
-                    </div>
+
+                        <Button
+                          variant="unstyled"
+                          size="unstyled"
+                          onClick={() => remove(item.id)}
+                          className="text-red-500"
+                        >
+                          <MaterialIcon iconName="delete" fill={1} />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                )}
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-4">
-                    <Input {...getInputProps()} className="hidden" />
-                    <Button value={"ghost"} className="p-0" onClick={open}>
-                      <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
-                    </Button>
-                  </div>
-                  <Button
-                    onClick={handleSend}
-                    disabled={isSending || isUpdating}
-                    variant={isMobileOrTablet ? "brightblue" : "blue"}
-                    className="rounded-full flex justify-center items-center
-                      lg:w-[128px]"
-                  >
-                    {isSending || isUpdating ? (
-                      <MaterialIcon
-                        iconName="progress_activity"
-                        className="animate-spin"
-                      />
-                    ) : (
-                      <>
-                        <MaterialIcon iconName="send" />
-                        {editingId ? "Update" : "Add"}
-                      </>
-                    )}
+                </div>
+              )}
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-4">
+                  <Input {...getInputProps()} className="hidden" />
+                  <Button value={"ghost"} className="p-0" onClick={open}>
+                    <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
                   </Button>
                 </div>
+                <Button
+                  onClick={handleSend}
+                  disabled={isSending || isUpdating}
+                  variant={isMobileOrTablet ? "brightblue" : "blue"}
+                  className="rounded-full flex justify-center items-center
+                      lg:w-[128px]"
+                >
+                  {isSending || isUpdating ? (
+                    <MaterialIcon
+                      iconName="progress_activity"
+                      className="animate-spin"
+                    />
+                  ) : (
+                    <>
+                      <MaterialIcon iconName="send" />
+                      {editingId ? "Update" : "Add"}
+                    </>
+                  )}
+                </Button>
               </div>
-            }
-          />
-        </div>
-      )}
+            </div>
+          }
+        />
+      </div>
     </>
   );
 };
