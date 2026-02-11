@@ -168,7 +168,7 @@ export const ContentManagerSidebar: React.FC = () => {
         className={cn(
           "transition-all duration-300 pr-1",
           "flex flex-col h-full ",
-          sidebarOpen ? "w-[300px]" : "w-[81px]"
+          sidebarOpen ? "min-w-[300px] max-w-[450px]" : "w-[81px]"
         )}
       >
         <ScrollArea className="h-[calc(100vh-64px)] bg-white ">

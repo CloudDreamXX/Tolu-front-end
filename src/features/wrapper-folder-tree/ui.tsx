@@ -103,7 +103,7 @@ export const WrapperFolderTree = ({
     if (
       containerRef.current &&
       containerRef.current.scrollTop + containerRef.current.clientHeight >=
-        containerRef.current.scrollHeight &&
+      containerRef.current.scrollHeight &&
       hasMore
     ) {
       setPage((prev) => prev + 1);
@@ -113,7 +113,7 @@ export const WrapperFolderTree = ({
   const FolderSkeletonRow = () => {
     const getRandomWidth = () => {
       const min = 60;
-      const max = 180;
+      const max = 150;
       return Math.floor(Math.random() * (max - min + 1)) + min;
     };
 
