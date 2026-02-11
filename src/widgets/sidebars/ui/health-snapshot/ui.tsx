@@ -240,7 +240,9 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   e.preventDefault();
                   setIsMessagesOpen(!isMessagesOpen);
                   setSidebarOpen(true);
-                  nav("/messages");
+                  if (!window.location.pathname.match(/^\/messages(\/.*)?$/) || window.location.pathname === "/messages") {
+                    nav("/messages");
+                  }
                 }}
                 className={({ isActive }) =>
                   cn(

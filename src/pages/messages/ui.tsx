@@ -26,10 +26,10 @@ export const ClientMessages = () => {
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
 
   useEffect(() => {
-    if (firstChatId) {
+    if (!routeChatId && firstChatId) {
       nav(`/messages/${firstChatId}`, { replace: true });
     }
-  }, [firstChatId, nav]);
+  }, [routeChatId, firstChatId, nav]);
 
   if (chats.length === 0) {
     return (
