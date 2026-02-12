@@ -108,15 +108,19 @@ export interface PaginatedResponse<T> {
 
 While most endpoints follow the `BaseResponse<T>` or `PaginatedResponse<T>` pattern, some endpoints have variations:
 
-1. **Chat Messages** (`fetchChatMessages`): Returns pagination object directly without BaseResponse wrapper
+1. **Chat Messages** (`fetchChatMessages`): Returns `BaseResponse<FetchChatMessagesResponse>` where the data contains pagination fields
    ```json
    {
-     "messages": [...],
-     "total": 100,
-     "page": 1,
-     "limit": 50,
-     "has_next": true,
-     "has_prev": false
+     "status": "success",
+     "message": "Messages retrieved successfully",
+     "data": {
+       "messages": [...],
+       "total": 100,
+       "page": 1,
+       "limit": 50,
+       "has_next": true,
+       "has_prev": false
+     }
    }
    ```
 
@@ -923,17 +927,28 @@ Allows a prospective client to request a new invite from a coach or the Tolu Hea
 
 ### **Decline Coach Invite**
 
-**Endpoint:** `DELETE /client/invites/{invitation_token}`  
+**Endpoint:** `POST /client/decline-coach-invite`  
 **Hook:** `useDeclineCoachInviteMutation`
 
 **Purpose:**  
 Allows a client to decline a coach invitation.
 
+**Request Example:**
+```json
+{
+  "invitation_token": "inv_token_123"
+}
+```
+
 **Response:**
 ```json
 {
   "status": "success",
-  "message": "Invitation declined successfully"
+  "message": "Invitation declined successfully",
+  "data": {
+    "invitation_id": "inv_001",
+    "status": "declined"
+  }
 }
 ```
 
@@ -1980,7 +1995,7 @@ This section documents all Admin-only API endpoints that provide access to user 
 All requests are made via the adminApi slice (src/entities/admin/lib.ts), using RTK Query with secure JWT-based authentication.
 
 **Note on Admin Endpoint Paths:**  
-Admin endpoints in the implementation use paths like `admin/users` without a leading slash, but they are called relative to the API base URL. The full URL becomes `{API_BASE_URL}/admin/users`.
+Admin endpoints are shown with leading slashes in this documentation (e.g., `/admin/users`) for clarity, but the implementation uses relative paths without leading slashes (e.g., `admin/users`). Both formats are equivalent when combined with the API base URL. The full URL becomes `{API_BASE_URL}/admin/users`.
 
 ### **Get All Users**
 
@@ -3735,13 +3750,13 @@ Allows a coach to update a client’s profile data — such as name, email, time
 }
 ```
 
-### **Get Client Profile**
+### **Get Client Profile (Coach View)**
 
 **Endpoint:** `GET /coach/client/{client_id}/profile`  
 **Hook:** `useGetClientProfileQuery`
 
 **Purpose:**  
-Retrieves a client's public profile information for the coach to review.
+Retrieves a specific client's profile information from the coach's perspective. Used by coaches to review client details in their management dashboard.
 
 **Response Example:**
 ```json
