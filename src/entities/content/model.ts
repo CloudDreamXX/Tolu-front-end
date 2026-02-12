@@ -65,15 +65,12 @@ export interface Feedback {
 }
 
 export interface FeedbackResponse {
-  message: string;
-  feedback: {
-    id: string;
-    satisfaction_score: number;
-    comments: string;
-    content_preference: string;
-    created_at: string;
-  };
-}
+  id: string;
+  satisfaction_score: number;
+  comments: string;
+  content_preference: string;
+  created_at: string;
+};
 
 export interface ContentHashtags {
   content_id: string;
