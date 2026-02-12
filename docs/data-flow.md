@@ -104,6 +104,30 @@ export interface PaginatedResponse<T> {
 }
 ```
 
+**Important Notes on Response Formats:**
+
+While most endpoints follow the `BaseResponse<T>` or `PaginatedResponse<T>` pattern, some endpoints have variations:
+
+1. **Chat Messages** (`fetchChatMessages`): Returns pagination object directly without BaseResponse wrapper
+   ```json
+   {
+     "messages": [...],
+     "total": 100,
+     "page": 1,
+     "limit": 50,
+     "has_next": true,
+     "has_prev": false
+   }
+   ```
+
+2. **File Downloads**: Blob endpoints return binary data directly (Blob), not JSON responses
+
+3. **Streaming Endpoints**: AI endpoints like `/ai-personalized-search/` and `/ai-coach-research/` return Server-Sent Events (SSE), not JSON
+
+4. **Legacy Endpoints**: Some older endpoints may return direct arrays or objects without wrappers
+
+5. **FormData Uploads**: Endpoints accepting `multipart/form-data` serialize JSON fields as strings within FormData
+
 ## Architecture Overview
 
 User Interface (React Components)
@@ -646,6 +670,109 @@ multipart/form-data
 }
 ```
 
+### **Get User Profile (Generic)**
+
+**Endpoint:** `GET /user/profile`  
+**Hook:** `useGetUserProfileQuery`
+
+**Purpose:**  
+Retrieves the current authenticated user's profile information (works for all roles).
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "User profile retrieved successfully",
+  "data": {
+    "id": "user_123",
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john@example.com",
+    "role": "client",
+    "created_at": "2026-01-01T10:00:00Z"
+  }
+}
+```
+
+### **Update Profile (Generic)**
+
+**Endpoint:** `PUT /user/profile`  
+**Hook:** `useUpdateProfileMutation`
+
+**Purpose:**  
+Updates user profile information for any authenticated user.
+
+**Request Example:**
+multipart/form-data with profile_data JSON and optional photo
+
+### **Change Password (User)**
+
+**Endpoint:** `POST /user/change-password`  
+**Hook:** `useChangePasswordMutation`
+
+**Purpose:**  
+Allows any authenticated user to change their password.
+
+**Request Example:**
+```json
+{
+  "old_password": "OldPass123!",
+  "new_password": "NewPass123!"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Password changed successfully"
+}
+```
+
+### **Delete Account**
+
+**Endpoint:** `DELETE /user/account`  
+**Hook:** `useDeleteAccountMutation`
+
+**Purpose:**  
+Allows a user to permanently delete their own account.
+
+**Request:** Empty body or user confirmation token
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Account deleted successfully"
+}
+```
+
+### **Check User Existence**
+
+**Endpoint:** `GET /user/check-existence?email={email}`  
+**Hook:** `useCheckUserExistenceQuery`
+
+**Purpose:**  
+Checks if a user with the given email already exists in the system.
+
+**Response:**
+```json
+{
+  "success": true,
+  "exists": true
+}
+```
+
+### **Download Profile Photo**
+
+**Endpoint:** `GET /uploads/{user_id}/profile_photo.{ext}`  
+**Hook:** `useDownloadProfilePhotoQuery`
+
+**Purpose:**  
+Downloads a user's profile photo.
+
+**Returns:** Binary image data (Blob)
+
 ### **Super Admin Profile Data**
 
 Super admin has abillity to change his password on the profile page.
@@ -794,6 +921,192 @@ Allows a prospective client to request a new invite from a coach or the Tolu Hea
 }
 ```
 
+### **Decline Coach Invite**
+
+**Endpoint:** `DELETE /client/invites/{invitation_token}`  
+**Hook:** `useDeclineCoachInviteMutation`
+
+**Purpose:**  
+Allows a client to decline a coach invitation.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Invitation declined successfully"
+}
+```
+
+### **Get Shared Content by ID**
+
+**Endpoint:** `GET /client/shared-content/{content_id}`  
+**Hook:** `useGetSharedContentByIdQuery`
+
+**Purpose:**  
+Retrieves shared content that a coach has shared with the client.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Shared content retrieved successfully",
+  "data": {
+    "content_id": "content_001",
+    "title": "Nutrition Guide",
+    "shared_by": "coach_001",
+    "shared_at": "2026-01-15T10:00:00Z"
+  }
+}
+```
+
+### **Get Library Content**
+
+**Endpoint:** `GET /client/library`  
+**Hook:** `useGetLibraryContentQuery`
+
+**Purpose:**  
+Retrieves all content available in the client's personal library.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Library content retrieved successfully",
+  "data": [
+    {
+      "id": "content_001",
+      "title": "Stress Management Tips",
+      "type": "article",
+      "added_at": "2026-01-10T10:00:00Z"
+    }
+  ]
+}
+```
+
+### **Get Client Profile (Client View)**
+
+**Endpoint:** `GET /client/profile`  
+**Hook:** `useGetClientProfileQuery`
+
+**Purpose:**  
+Retrieves the current client's own profile information.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Client profile retrieved successfully",
+  "data": {
+    "id": "client_123",
+    "first_name": "Anna",
+    "last_name": "Smith",
+    "email": "anna@example.com"
+  }
+}
+```
+
+### **Get Coaches**
+
+**Endpoint:** `GET /client/coaches`  
+**Hook:** `useGetCoachesQuery`
+
+**Purpose:**  
+Retrieves all coaches currently working with the client.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Coaches retrieved successfully",
+  "data": [
+    {
+      "id": "coach_001",
+      "name": "Dr. Jane Smith",
+      "email": "jane@example.com",
+      "specialty": "Nutritionist"
+    }
+  ]
+}
+```
+
+### **Get Coach Profile (Client View)**
+
+**Endpoint:** `GET /client/coach/{coach_id}/profile`  
+**Hook:** `useGetCoachProfileQuery`
+
+**Purpose:**  
+Retrieves a specific coach's profile from the client's perspective.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Coach profile retrieved successfully",
+  "data": {
+    "id": "coach_001",
+    "name": "Dr. Jane Smith",
+    "specialty": "Nutritionist",
+    "bio": "15 years experience in holistic health"
+  }
+}
+```
+
+### **Download Coach Photo**
+
+**Endpoint:** `GET /client/coach/{coach_id}/photo/{filename}`  
+**Hook:** `useDownloadCoachPhotoQuery`
+
+**Purpose:**  
+Downloads a coach's profile photo.
+
+**Returns:** Binary image data (Blob)
+
+### **Get Pending Invitations**
+
+**Endpoint:** `GET /client/pending-invitations`  
+**Hook:** `useGetPendingInvitationsQuery`
+
+**Purpose:**  
+Retrieves all pending coach invitations for the client.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Pending invitations retrieved successfully",
+  "data": [
+    {
+      "invitation_id": "inv_001",
+      "coach_name": "Dr. Jane Smith",
+      "invited_at": "2026-01-10T10:00:00Z",
+      "status": "pending"
+    }
+  ]
+}
+```
+
+### **Update User Profile (Client)**
+
+**Endpoint:** `PUT /client/profile`  
+**Hook:** `useUpdateUserProfileMutation`
+
+**Purpose:**  
+Updates the client's profile information including photo upload.
+
+**Request Example:**
+multipart/form-data with profile_data JSON and optional profile_photo file
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Profile updated successfully",
+  "data": {
+    "updated_at": "2026-02-12T10:30:00Z"
+  }
+}
+```
+
 ## **AI-Powered Content and Search Flows:**
 
 This section describes how the AI content creation and search functionality works within the Tolu Health Frontend.
@@ -885,6 +1198,78 @@ Before upload, files are validated via SearchService.prepareFilesForSearch():
 - Max file size: 30 MB
 - Max image count: 10
 - Unsupported or oversize files are skipped with descriptive error messages.
+
+### **Get Search History**
+
+**Endpoint:** `GET /searched-result/history`  
+**Hook:** `useGetSearchHistoryQuery`
+
+**Purpose:**  
+Retrieves the user's search history with optional filtering by client or managed client.
+
+**Request Example:**
+```json
+{
+  "client_id": "client_123",
+  "managed_client_id": "client_456"
+}
+```
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Search history retrieved successfully",
+  "data": [
+    {
+      "id": "search_001",
+      "query": "stress management techniques",
+      "timestamp": "2026-02-12T10:00:00Z",
+      "results_count": 15
+    }
+  ]
+}
+```
+
+### **Get Session Details**
+
+**Endpoint:** `GET /session/{chat_id}`  
+**Hook:** `useGetSessionQuery`
+
+**Purpose:**  
+Retrieves detailed information about an AI search or coaching session, including search results and conversation history.
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Session retrieved successfully",
+  "data": {
+    "session_id": "session_001",
+    "chat_id": "chat_001",
+    "search_results": [
+      {
+        "title": "Stress Management Guide",
+        "snippet": "Effective techniques for managing stress...",
+        "url": "https://example.com/stress-guide"
+      }
+    ],
+    "created_at": "2026-02-10T09:00:00Z"
+  }
+}
+```
+
+### **AI Coach Assistant (Streaming)**
+
+**Endpoint:** `POST /ai-coach-assistant/`  
+**Purpose:**  
+Streaming AI assistant for coaches with enhanced context and capabilities.
+
+**Request Example:**
+multipart/form-data with chat_message, optional files
+
+**Response:**  
+Server-Sent Events (SSE) stream with incremental AI-generated content.
 
 ## **Content and Document Management Flows:**
 
@@ -1469,10 +1854,133 @@ Deletes a note from a chat thread.
 **Purpose:**  
 Removes an entire chat (group or direct).
 
+### **Update Message**
+
+**Endpoint:** `PUT /chats/{chat_id}/messages/{message_id}`  
+**Hook:** `useUpdateMessageMutation`
+
+**Purpose:**  
+Updates the content of an existing chat message.
+
+**Request Example:**
+```json
+{
+  "chatId": "chat_001",
+  "messageId": "msg_123",
+  "content": "Updated message content"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Message updated successfully",
+  "data": {
+    "id": "msg_123",
+    "chat_id": "chat_001",
+    "content": "Updated message content",
+    "updated_at": "2026-02-12T10:30:00Z"
+  }
+}
+```
+
+### **Add Message Reaction**
+
+**Endpoint:** `POST /chats/{chat_id}/messages/{message_id}/reactions`  
+**Hook:** `useAddMessageReactionMutation`
+
+**Purpose:**  
+Adds an emoji reaction to a chat message.
+
+**Request Example:**
+```json
+{
+  "chatId": "chat_001",
+  "messageId": "msg_123",
+  "reaction": "👍"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Reaction added successfully",
+  "data": {
+    "id": "reaction_001",
+    "message_id": "msg_123",
+    "reaction": "👍",
+    "user": {
+      "id": "user_001",
+      "name": "John Doe"
+    },
+    "created_at": "2026-02-12T10:30:00Z"
+  }
+}
+```
+
+### **Delete Message Reaction**
+
+**Endpoint:** `DELETE /chats/{chat_id}/messages/{message_id}/reactions`  
+**Hook:** `useDeleteMessageReactionMutation`
+
+**Purpose:**  
+Removes a reaction from a chat message.
+
+**Request Example:**
+```json
+{
+  "chatId": "chat_001",
+  "messageId": "msg_123"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Reaction removed successfully"
+}
+```
+
+### **Get Uploaded Chat File**
+
+**Endpoint:** `GET /uploads/chat_files/{filename}`  
+**Hook:** `useGetUploadedChatFileQuery`
+
+**Purpose:**  
+Downloads an uploaded chat file as a Blob for display or download.
+
+**Returns:** Binary file data (Blob)
+
+### **Get Uploaded Note File**
+
+**Endpoint:** `GET /chat-notes/uploads/{file_uuid}`  
+**Hook:** `useGetUploadedNoteFileQuery`
+
+**Purpose:**  
+Downloads a file attached to a chat note.
+
+**Returns:** Binary file data (Blob)
+
+### **Get Uploaded Chat Avatar**
+
+**Endpoint:** `GET /uploads/chat_avatars/{filename}`  
+**Hook:** `useGetUploadedChatAvatarUrlQuery`
+
+**Purpose:**  
+Downloads a chat/group avatar image.
+
+**Returns:** Image URL or Blob data
+
 ## **Admin Management Flows:**
 
 This section documents all Admin-only API endpoints that provide access to user management, feedback insights, chat moderation, folder structures, and unpublished content oversight.
 All requests are made via the adminApi slice (src/entities/admin/lib.ts), using RTK Query with secure JWT-based authentication.
+
+**Note on Admin Endpoint Paths:**  
+Admin endpoints in the implementation use paths like `admin/users` without a leading slash, but they are called relative to the API base URL. The full URL becomes `{API_BASE_URL}/admin/users`.
 
 ### **Get All Users**
 
@@ -1785,6 +2293,77 @@ Allows an admin to approve, reject, or unpublish a specific content item, option
 **Purpose:**  
 Allows admin to delete a user.
 
+### **Get All Access Requests**
+
+**Endpoint:** `GET /admin/access-requests`  
+**Hook:** `useGetAllAccessRequestsQuery`
+
+**Purpose:**  
+Retrieves all pending access requests for admin review.
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Access requests retrieved successfully",
+  "data": [
+    {
+      "request_id": "req_001",
+      "email": "coach@example.com",
+      "name": "Jane Doe",
+      "requested_at": "2026-01-15T10:00:00Z",
+      "status": "pending"
+    }
+  ]
+}
+```
+
+### **Approve Access Request**
+
+**Endpoint:** `POST /admin/access-requests/approve`  
+**Hook:** `useApproveRequestMutation`
+
+**Purpose:**  
+Approves a pending access request.
+
+**Request Example:**
+```json
+{
+  "request_id": "req_001"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Access request approved successfully"
+}
+```
+
+### **Deny Access Request**
+
+**Endpoint:** `POST /admin/access-requests/deny`  
+**Hook:** `useDenyRequestMutation`
+
+**Purpose:**  
+Denies a pending access request.
+
+**Request Example:**
+```json
+{
+  "request_id": "req_001"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Access request denied"
+}
+```
+
 ## **Client Health History Flows:**
 
 This section describes how a client’s health history data is created, retrieved, and managed through the Tolu Health frontend and backend API.
@@ -1901,6 +2480,322 @@ Supports optional client_id for admin or coach access.
 
 **Response:**
 Returns the binary file (PDF or image) for secure download or inline preview.
+
+### **Update Coach Client Health History**
+
+**Endpoint:** `PUT /coach/client/{client_id}/health-history`  
+**Hook:** `useUpdateCoachClientHealthHistoryMutation`
+
+**Purpose:**  
+Allows a coach to update a client's health history information.
+
+**Request Example:**
+multipart/form-data with health_data JSON and optional lab_file
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Health history updated successfully",
+  "data": {
+    "id": "hh_001",
+    "updated_at": "2026-02-12T10:30:00Z"
+  }
+}
+```
+
+### **Get Coach Client Health History**
+
+**Endpoint:** `GET /coach/client/{client_id}/health-history`  
+**Hook:** `useGetCoachClientHealthHistoryQuery`
+
+**Purpose:**  
+Retrieves a specific client's health history for the authenticated coach.
+
+**Response:** Same structure as Get User Health History
+
+## **Medication Management:**
+
+This section describes how clients and coaches can track medications including dosage, frequency, and related files.
+
+### **Get Medications by Chat**
+
+**Endpoint:** `GET /medications/{chat_id}`  
+**Hook:** `useGetMedicationsByChatQuery`
+
+**Purpose:**  
+Retrieves all medications associated with a specific client chat.
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Medications retrieved successfully",
+  "data": {
+    "medications": [
+      {
+        "id": "med_001",
+        "chat_id": "chat_001",
+        "medication_name": "Metformin",
+        "dosage": "500mg",
+        "frequency": "Twice daily",
+        "start_date": "2026-01-01",
+        "end_date": null,
+        "notes": "Take with meals",
+        "file_uuid": "file_abc123",
+        "file_name": "prescription.pdf",
+        "created_at": "2026-01-01T09:00:00Z"
+      }
+    ]
+  }
+}
+```
+
+### **Create Medication**
+
+**Endpoint:** `POST /medications`  
+**Hook:** `useCreateMedicationMutation`
+
+**Purpose:**  
+Creates a new medication record for a client.
+
+**Request Example:**
+multipart/form-data
+
+```json
+{
+  "medication_data": {
+    "chat_id": "chat_001",
+    "medication_name": "Metformin",
+    "dosage": "500mg",
+    "frequency": "Twice daily",
+    "start_date": "2026-01-01",
+    "notes": "Take with meals"
+  },
+  "file": (binary file - prescription image/PDF)
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Medication created successfully",
+  "data": {
+    "id": "med_001",
+    "medication_name": "Metformin",
+    "file_uuid": "file_abc123"
+  }
+}
+```
+
+### **Update Medication**
+
+**Endpoint:** `PUT /medications/{medication_id}`  
+**Hook:** `useUpdateMedicationMutation`
+
+**Purpose:**  
+Updates an existing medication record.
+
+**Request Example:**
+multipart/form-data with medication_data JSON and optional file
+
+### **Delete Medication**
+
+**Endpoint:** `DELETE /medications/{medication_id}`  
+**Hook:** `useDeleteMedicationMutation`
+
+**Purpose:**  
+Deletes a medication record.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Medication deleted successfully"
+}
+```
+
+### **Serve Medication File**
+
+**Endpoint:** `GET /medications/uploads/{file_uuid}`  
+**Hook:** `useServeMedicationFileQuery`
+
+**Purpose:**  
+Downloads a medication-related file (prescription, label photo, etc.).
+
+**Returns:** Binary file data (Blob)
+
+## **Supplement Management:**
+
+This section describes how clients and coaches can track dietary supplements.
+
+### **Get Supplements by Chat**
+
+**Endpoint:** `GET /supplements/{chat_id}`  
+**Hook:** `useGetSupplementsByChatQuery`
+
+**Purpose:**  
+Retrieves all supplements associated with a specific client chat.
+
+**Response:** Similar structure to medications
+
+### **Create Supplement**
+
+**Endpoint:** `POST /supplements`  
+**Hook:** `useCreateSupplementMutation`
+
+**Purpose:**  
+Creates a new supplement record for a client.
+
+**Request Example:**
+multipart/form-data
+
+```json
+{
+  "supplement_data": {
+    "chat_id": "chat_001",
+    "supplement_name": "Vitamin D3",
+    "dosage": "2000 IU",
+    "frequency": "Once daily",
+    "start_date": "2026-01-01",
+    "notes": "Take in morning"
+  },
+  "file": (binary file - supplement label)
+}
+```
+
+### **Update Supplement**
+
+**Endpoint:** `PUT /supplements/{supplement_id}`  
+**Hook:** `useUpdateSupplementMutation`
+
+**Purpose:**  
+Updates an existing supplement record.
+
+### **Delete Supplement**
+
+**Endpoint:** `DELETE /supplements/{supplement_id}`  
+**Hook:** `useDeleteSupplementMutation`
+
+**Purpose:**  
+Deletes a supplement record.
+
+### **Serve Supplement File**
+
+**Endpoint:** `GET /supplements/uploads/{file_uuid}`  
+**Hook:** `useServeSupplementFileQuery`
+
+**Purpose:**  
+Downloads a supplement-related file.
+
+**Returns:** Binary file data (Blob)
+
+## **Coach Health History Notes:**
+
+This section describes how coaches can add contextual notes to specific sections of a client's health history.
+
+### **Get Health History Notes**
+
+**Endpoint:** `GET /clients/{client_id}/health-history/{health_history_id}/notes`  
+**Hook:** `useGetHealthHistoryNotesQuery`
+
+**Purpose:**  
+Retrieves all coach notes for a client's health history.
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Notes retrieved successfully",
+  "data": {
+    "notes": [
+      {
+        "id": "note_001",
+        "block_name": "diagnosed_conditions",
+        "note_content": "Client managing hypertension well with medication",
+        "created_at": "2026-01-15T10:00:00Z",
+        "updated_at": "2026-01-15T10:00:00Z"
+      }
+    ]
+  }
+}
+```
+
+### **Get Health History Note**
+
+**Endpoint:** `GET /clients/{client_id}/health-history/{health_history_id}/notes/{note_id}`  
+**Hook:** `useGetHealthHistoryNoteQuery`
+
+**Purpose:**  
+Retrieves a single coach note by ID.
+
+### **Add Health History Note**
+
+**Endpoint:** `POST /clients/{client_id}/health-history/{health_history_id}/notes`  
+**Hook:** `useAddHealthHistoryNoteMutation`
+
+**Purpose:**  
+Creates a new coach note for a specific health history block.
+
+**Request Example:**
+multipart/form-data
+
+```json
+{
+  "block_name": "diagnosed_conditions",
+  "note_content": "Client managing hypertension well with medication"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Note added successfully",
+  "data": {
+    "id": "note_001",
+    "block_name": "diagnosed_conditions",
+    "note_content": "Client managing hypertension well...",
+    "created_at": "2026-01-15T10:00:00Z"
+  }
+}
+```
+
+### **Update Health History Note**
+
+**Endpoint:** `PUT /clients/{client_id}/health-history/{health_history_id}/notes/{note_id}`  
+**Hook:** `useUpdateHealthHistoryNoteMutation`
+
+**Purpose:**  
+Updates an existing coach note.
+
+**Request Example:**
+multipart/form-data with note_content
+
+### **Delete Health History Note**
+
+**Endpoint:** `DELETE /clients/{client_id}/health-history/{health_history_id}/notes/{note_id}`  
+**Hook:** `useDeleteHealthHistoryNoteMutation`
+
+**Purpose:**  
+Deletes a specific coach note.
+
+### **Delete Health History Notes by Block**
+
+**Endpoint:** `DELETE /clients/{client_id}/health-history/{health_history_id}/notes/block/{block_name}`  
+**Hook:** `useDeleteHealthHistoryNoteByBlockMutation`
+
+**Purpose:**  
+Deletes all coach notes associated with a specific health history block (e.g., all notes for "diagnosed_conditions").
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "All notes for block deleted successfully"
+}
+```
 
 ## **Symptoms Tracker Flows:**
 
@@ -2050,6 +2945,33 @@ Provides AI-powered symptom and trigger recommendations based on previously logg
     "lack of sleep",
     "high sugar intake",
     "stressful events"
+  ]
+}
+```
+
+### **Get Symptoms by Date for Coach**
+
+**Endpoint:** `GET /coach/client/{client_id}/symptoms/{date}`  
+**Hook:** `useGetSymptomsByDateForCoachQuery`
+
+**Purpose:**  
+Allows coaches to view a client's symptom entries for a specific date.
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Symptoms retrieved successfully",
+  "data": [
+    {
+      "id": "symptom_001",
+      "client_id": "client_123",
+      "tracking_date": "2026-02-12",
+      "symptoms": ["fatigue", "headache"],
+      "severity": 7,
+      "triggers": ["lack of sleep"],
+      "notes": "Woke up feeling tired"
+    }
   ]
 }
 ```
@@ -2810,6 +3732,135 @@ Allows a coach to update a client’s profile data — such as name, email, time
     "updated_at": "2026-02-12T10:30:00Z"
   },
   "timestamp": "2026-02-12T10:30:00Z"
+}
+```
+
+### **Get Client Profile**
+
+**Endpoint:** `GET /coach/client/{client_id}/profile`  
+**Hook:** `useGetClientProfileQuery`
+
+**Purpose:**  
+Retrieves a client's public profile information for the coach to review.
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Client profile retrieved successfully",
+  "data": {
+    "id": "client_123",
+    "first_name": "Anna",
+    "last_name": "Smith",
+    "email": "anna@example.com",
+    "photo_url": "/uploads/client_123.jpg",
+    "timezone": "Europe/London"
+  }
+}
+```
+
+### **Get Client Coaches**
+
+**Endpoint:** `GET /client/{client_id}/coaches`  
+**Hook:** `useGetClientCoachesQuery`
+
+**Purpose:**  
+Retrieves all coaches associated with a specific client.
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Coaches retrieved successfully",
+  "data": [
+    {
+      "id": "coach_001",
+      "name": "Dr. Jane Smith",
+      "email": "jane@example.com",
+      "specialty": "Nutritionist"
+    }
+  ]
+}
+```
+
+### **Get Session by ID**
+
+**Endpoint:** `GET /session/{chat_id}`  
+**Hook:** `useGetSessionByIdQuery`
+
+**Purpose:**  
+Retrieves detailed information about an AI coaching session or search results.
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "message": "Session retrieved successfully",
+  "data": {
+    "session_id": "session_001",
+    "chat_id": "chat_001",
+    "search_results": [],
+    "created_at": "2026-01-15T10:00:00Z"
+  }
+}
+```
+
+### **Update Comprehensive Client**
+
+**Endpoint:** `PUT /coach/client/{client_id}/comprehensive-update`  
+**Hook:** `useUpdateComprehensiveClientMutation`
+
+**Purpose:**  
+Updates a client's comprehensive profile including multiple data sections at once.
+
+**Request Example:**
+multipart/form-data with comprehensive_data JSON
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Client profile updated successfully",
+  "data": {
+    "client_id": "client_123",
+    "updated_at": "2026-02-12T10:30:00Z"
+  }
+}
+```
+
+### **Get Lab File**
+
+**Endpoint:** `GET /coach/client/{client_id}/lab-file/{file_name}`  
+**Hook:** `useGetLabFileQuery`
+
+**Purpose:**  
+Downloads a specific lab file for a client.
+
+**Returns:** Binary file data (Blob)
+
+### **Download License File**
+
+**Endpoint:** `GET /coach/license/{filename}`  
+**Hook:** `useDownloadLicenseFileQuery`
+
+**Purpose:**  
+Downloads the coach's license or certification file.
+
+**Returns:** Binary file data (Blob)
+
+### **Delete License File**
+
+**Endpoint:** `DELETE /coach/license/{filename}`  
+**Hook:** `useDeleteLicenseFileMutation`
+
+**Purpose:**  
+Deletes a coach's uploaded license file.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "License file deleted successfully"
 }
 ```
 
