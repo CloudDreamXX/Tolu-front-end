@@ -44,6 +44,66 @@ All network requests are handled through RTK Query’s fetchBaseQuery, configure
 - Authorization is automatically handled through prepareHeaders.
 - Tokens are stored securely in Redux state and localStorage.
 
+### Standard Response Models
+
+All API responses follow standardized TypeScript interfaces for consistency:
+
+**BaseResponse<T>** - Standard response wrapper for most endpoints:
+```typescript
+export interface BaseResponse<T> {
+    status: string;        // "success" | "error"
+    message: string;       // Human-readable status message
+    data: T;              // Actual response payload
+    meta?: any;           // Optional metadata
+    timestamp?: string;   // ISO 8601 timestamp
+}
+```
+
+**PaginatedResponse<T>** - Used for paginated list endpoints:
+```typescript
+export interface PaginationMeta {
+    total: number;   // Total number of items
+    limit: number;   // Items per page
+    offset: number;  // Current offset
+}
+
+export interface PaginatedResponse<T> {
+    message: string;
+    data: T;                      // Array of items
+    pagination: PaginationMeta;
+}
+```
+
+**Example BaseResponse:**
+```json
+{
+  "status": "success",
+  "message": "User profile retrieved successfully",
+  "data": {
+    "id": "123",
+    "email": "user@example.com",
+    "name": "John Doe"
+  },
+  "timestamp": "2026-02-12T10:30:00Z"
+}
+```
+
+**Example PaginatedResponse:**
+```json
+{
+  "message": "Clients retrieved successfully",
+  "data": [
+    { "id": "1", "name": "Client A" },
+    { "id": "2", "name": "Client B" }
+  ],
+  "pagination": {
+    "total": 50,
+    "limit": 10,
+    "offset": 0
+  }
+}
+```
+
 ## Architecture Overview
 
 User Interface (React Components)
@@ -141,21 +201,28 @@ And then he receives access token to log into his account
 
 ```json
 {
-  "user": {
-    "id": "123",
-    "first_name": "Jane",
-    "last_name": "Doe",
-    "name": "Jane Doe",
-    "email": "user@example.com",
-    "role": "coach"
+  "status": "success",
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": "123",
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "name": "Jane Doe",
+      "email": "user@example.com",
+      "role": "coach"
+    },
+    "accessToken": "jwt_token_here"
   },
-  "accessToken": "jwt_token_here"
+  "timestamp": "2026-02-12T10:30:00Z"
 }
 ```
 
 Frontend Action:
 The setCredentials reducer stores both the user object and accessToken.
 Future API calls automatically attach Authorization: Bearer <token>.
+
+> **Note:** All authentication endpoints return responses wrapped in the `BaseResponse<T>` format, where `T` is the specific data type for that endpoint (e.g., login returns user + token, verification returns status confirmation).
 
 ## **Registration Flow**
 
@@ -1514,22 +1581,30 @@ Fetches all chat threads accessible by the admin, including their metadata and u
 **Response Example:**
 
 ```json
-[
-  {
-    "id": "chat_001",
-    "name": "Client Support",
-    "chat_type": "group",
-    "last_message_time": "2025-01-04T09:00:00Z",
-    "unread_count": 3
-  },
-  {
-    "id": "chat_002",
-    "name": "Private Message: Anna Smith",
-    "chat_type": "direct",
-    "last_message_time": "2025-01-05T12:15:00Z",
-    "unread_count": 0
+{
+  "message": "Chats retrieved successfully",
+  "data": [
+    {
+      "id": "chat_001",
+      "name": "Client Support",
+      "chat_type": "group",
+      "last_message_time": "2025-01-04T09:00:00Z",
+      "unread_count": 3
+    },
+    {
+      "id": "chat_002",
+      "name": "Private Message: Anna Smith",
+      "chat_type": "direct",
+      "last_message_time": "2025-01-05T12:15:00Z",
+      "unread_count": 0
+    }
+  ],
+  "pagination": {
+    "total": 50,
+    "limit": 10,
+    "offset": 0
   }
-]
+}
 ```
 
 ### **Get Messages by Chat ID**
@@ -2202,17 +2277,22 @@ Retrieves detailed metadata for a specific uploaded file.
 
 ```json
 {
-  "id": "file_001",
-  "user_id": "coach_123",
-  "filename": "Wellness Summary.pdf",
-  "original_filename": "summary.pdf",
-  "description": "Client wellness progress report",
-  "file_type": "pdf",
-  "file_extension": "pdf",
-  "size": 240000,
-  "upload_date": "2025-01-19T08:30:00Z",
-  "created_at": "2025-01-19T08:30:00Z",
-  "updated_at": "2025-01-19T08:45:00Z"
+  "status": "success",
+  "message": "File retrieved successfully",
+  "data": {
+    "id": "file_001",
+    "user_id": "coach_123",
+    "filename": "Wellness Summary.pdf",
+    "original_filename": "summary.pdf",
+    "description": "Client wellness progress report",
+    "file_type": "pdf",
+    "file_extension": "pdf",
+    "size": 240000,
+    "upload_date": "2025-01-19T08:30:00Z",
+    "created_at": "2025-01-19T08:30:00Z",
+    "updated_at": "2025-01-19T08:45:00Z"
+  },
+  "timestamp": "2026-02-12T10:30:00Z"
 }
 ```
 
@@ -2492,8 +2572,13 @@ Submits a new FMP tracker entry for a client, recording daily lifestyle and heal
 
 ```json
 {
-  "success": true,
-  "message": "Tracker record created successfully."
+  "status": "success",
+  "message": "Tracker record created successfully",
+  "data": {
+    "tracker_id": "trk_123",
+    "created_at": "2026-02-12T10:30:00Z"
+  },
+  "timestamp": "2026-02-12T10:30:00Z"
 }
 ```
 
@@ -2518,8 +2603,13 @@ Shares an existing tracker entry with a client or another practitioner for colla
 
 ```json
 {
-  "success": true,
-  "message": "Tracker shared successfully."
+  "status": "success",
+  "message": "Tracker shared successfully",
+  "data": {
+    "share_id": "share_456",
+    "shared_at": "2026-02-12T10:30:00Z"
+  },
+  "timestamp": "2026-02-12T10:30:00Z"
 }
 ```
 
@@ -2714,8 +2804,12 @@ Allows a coach to update a client’s profile data — such as name, email, time
 
 ```json
 {
-  "success": true,
-  "message": "Client information updated successfully."
+  "status": "success",
+  "message": "Client information updated successfully",
+  "data": {
+    "updated_at": "2026-02-12T10:30:00Z"
+  },
+  "timestamp": "2026-02-12T10:30:00Z"
 }
 ```
 
@@ -2740,10 +2834,57 @@ Renames a chat session (for example, an AI learning thread or a client conversat
 
 ```json
 {
-  "success": true,
-  "message": "Chat title updated."
+  "status": "success",
+  "message": "Chat title updated",
+  "data": {
+    "chat_id": "chat_001",
+    "new_title": "Stress Management Coaching - Week 3",
+    "updated_at": "2026-02-12T10:30:00Z"
+  },
+  "timestamp": "2026-02-12T10:30:00Z"
 }
 ```
+
+---
+
+## Response Format Summary
+
+Throughout this documentation, all API endpoints follow one of two standardized response formats:
+
+### 1. **BaseResponse<T>** (Most Endpoints)
+Used for single-item operations (create, update, delete, get by ID):
+```typescript
+{
+  status: "success" | "error",
+  message: string,
+  data: T,
+  meta?: any,
+  timestamp?: string
+}
+```
+
+### 2. **PaginatedResponse<T>** (List Endpoints)
+Used for endpoints returning lists with pagination:
+```typescript
+{
+  message: string,
+  data: T[],
+  pagination: {
+    total: number,
+    limit: number,
+    offset: number
+  }
+}
+```
+
+**Key Points:**
+- All success responses include a `status: "success"` or appropriate success message
+- Error responses follow the same structure with `status: "error"` and error details in `message`
+- Timestamps are in ISO 8601 format
+- Pagination metadata is always included for list endpoints
+- The `data` field contains the actual response payload specific to each endpoint
+
+---
 
 ## Security and Compliance
 
