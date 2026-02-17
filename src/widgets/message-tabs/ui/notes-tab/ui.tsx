@@ -5,9 +5,10 @@ import {
   useSendChatNoteMutation,
   useUpdateChatNoteMutation,
 } from "entities/chat/api";
+import { upsertChat } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
@@ -23,6 +24,7 @@ interface NotesTabProps {
 
 export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const profile = useSelector((state: RootState) => state.user.user);
+  const dispatch = useDispatch();
 
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
   const {
@@ -43,13 +45,17 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [title, setTitle] = useState("");
+  const [createdChatId, setCreatedChatId] = useState<string | null>(null);
+
+  const isNewChat = chat.chat_type === "new_chat";
+  const actualChatId = createdChatId || chat.chat_id;
 
   const {
     data: notes,
     isLoading,
     refetch,
-  } = useGetAllChatNotesQuery(chat.chat_id, {
-    skip: !chat.chat_id,
+  } = useGetAllChatNotesQuery(actualChatId, {
+    skip: !actualChatId || (isNewChat && !createdChatId),
     refetchOnMountOrArgChange: true,
   });
 
@@ -73,19 +79,67 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
         }).unwrap();
         setEditingId(null);
       } else {
-        await sendNote({
-          chat_id: chat.chat_id,
+        // Send note with chat_id for existing chats or target_user_id for new chats
+        const notePayload: any = {
           title,
           content: input,
-          file: items[0]?.file,
-        }).unwrap();
+        };
+
+        if (isNewChat && !createdChatId) {
+          const participant = chat.participants[0];
+          const targetUserId = participant?.user?.user_id;
+          if (targetUserId) {
+            notePayload.target_user_id = targetUserId;
+          } else {
+            console.error('No target_user_id found! Participant:', participant);
+          }
+        } else {
+          if (actualChatId) {
+            notePayload.chat_id = actualChatId;
+          } else {
+            console.error('No chat_id found!');
+          }
+        }
+
+        if (items[0]?.file) {
+          notePayload.file = items[0].file;
+        }
+
+        const noteResponse = await sendNote(notePayload).unwrap();
+
+        if (isNewChat && !createdChatId) {
+          const chatIdFromNote = noteResponse.data.chat_id;
+          setCreatedChatId(chatIdFromNote);
+
+          const participant = chat.participants[0];
+          const chatName = participant.user.first_name && participant.user.last_name
+            ? `${participant.user.first_name} ${participant.user.last_name}`
+            : participant.user.name;
+
+          dispatch(upsertChat({
+            id: chatIdFromNote,
+            type: "direct",
+            lastMessageAt: noteResponse.data.created_at,
+            unreadCount: 0,
+            lastMessage: null,
+            name: chatName,
+            avatar_url: "",
+            participants: chat.participants.map(p => ({
+              user_id: p.user.user_id,
+              email: p.user.email,
+              name: p.user.name,
+              first_name: p.user.first_name,
+              last_name: p.user.last_name,
+            })),
+          }));
+        }
       }
 
       setInput("");
       setTitle("");
       clear();
       refetch();
-    } catch {
+    } catch (error) {
       toast({ title: "Failed to save note", variant: "destructive" });
     }
   };
@@ -255,7 +309,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
         />
 
         <Textarea
-          placeholder={`Write note...`}
+          placeholder="Write note..."
           className={cn("resize-none min-h-[80px]")}
           containerClassName={cn(
             "px-4 py-3",

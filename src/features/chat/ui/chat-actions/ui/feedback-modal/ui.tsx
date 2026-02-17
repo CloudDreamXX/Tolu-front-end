@@ -44,8 +44,9 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         device: "",
       };
       const res = await addContentFeedback(feedbackRequest).unwrap();
-      setNewRating(res.data.feedback.satisfaction_score);
-      setRating(res.data.feedback.satisfaction_score);
+      setNewRating(res.data.satisfaction_score);
+      setRating(res.data.satisfaction_score);
+      onOpenChange(false);
     } else {
       setNewRating(rating);
     }

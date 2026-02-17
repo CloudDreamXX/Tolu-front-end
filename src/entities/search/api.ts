@@ -335,17 +335,19 @@ export class SearchService {
           }
 
           try {
-            const parsed: StreamChunk = JSON.parse(jsonLine);
+            const parsed: any = JSON.parse(jsonLine);
 
             if (parsed.message === "Stream completed" || parsed.done) {
-              if (parsed.searched_result_id && parsed.chat_id) {
+              // Check if data is nested (ai-coach-assistant format)
+              const data = parsed.data || parsed;
+              
+              if (data.searched_result_id && data.chat_id) {
                 onComplete({
-                  searched_result_id: parsed.searched_result_id,
-                  chat_id: parsed.chat_id,
-                  chat_title: parsed.chat_title ?? null,
+                  searched_result_id: data.searched_result_id,
+                  chat_id: data.chat_id,
+                  chat_title: data.chat_title ?? null,
                 });
-              }
-              if (parsed.done) {
+              } else if (parsed.done) {
                 onComplete({
                   searched_result_id: new Date().toISOString(),
                   chat_id: new Date().toISOString(),

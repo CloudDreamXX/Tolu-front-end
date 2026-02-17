@@ -265,14 +265,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
                 </span>
               </NavLink>
               {isMessagesOpen && (
-                <ClientChatList
-                  onCloseSideBar={() => {
-                    if (isNarrow) {
-                      setSidebarOpen(false);
-                    }
-                    setIsMessagesOpen(false);
-                  }}
-                />
+                <ClientChatList />
               )}
             </div>
           </div>

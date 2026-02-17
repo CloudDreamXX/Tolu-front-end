@@ -659,7 +659,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       const isLearn = isSwitch(SWITCH_KEYS.LEARN);
 
       const processChunk = (chunk: StreamChunk) => {
-        if (!chunk.reply) return;
+        if (!chunk.reply) {
+          return;
+        }
 
         if (isLearn && chunk.reply.includes("Relevant Content")) {
           str = chunk.reply;
