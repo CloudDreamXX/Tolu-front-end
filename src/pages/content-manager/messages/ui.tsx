@@ -22,6 +22,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 import { toast, usePageWidth } from "shared/lib";
+import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
 import { MessageSidebar } from "widgets/message-sidebar";
 import { MessageTabs } from "widgets/message-tabs/ui";
 import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroupModal";
@@ -57,6 +58,9 @@ export const ContentManagerMessages: React.FC = () => {
   const [sendMessageMutation] = useSendMessageMutation();
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
   const { data } = useGetManagedClientsQuery();
+  const [widthPercent, setWidthPercent] = useState(30);
+
+  const safeWidthPercent = Math.min(50, Math.max(10, widthPercent));
 
   const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
 
@@ -305,23 +309,29 @@ export const ContentManagerMessages: React.FC = () => {
             Please wait, we are loading the information...
           </div>
         )}
+        <div className="flex" style={{ width: isMobileOrTablet ? "100%" : `${100 - safeWidthPercent}%` }}>
+          <MessageSidebar
+            chats={chats}
+            isLoadingChats={isLoading}
+            onChatClick={chatItemClick}
+            selectedChat={selectedChat}
+            onCreateGroup={openCreateGroup}
+          />
 
-        <MessageSidebar
-          chats={chats}
-          isLoadingChats={isLoading}
-          onChatClick={chatItemClick}
-          selectedChat={selectedChat}
-          onCreateGroup={openCreateGroup}
-        />
-
-        <MessageTabs
-          chatId={selectedChat?.id || undefined}
-          goBackMobile={() => setSelectedChat(null)}
-          clientsData={clientsData}
-          onEditGroup={openEditGroup}
-          onCreateGroup={openCreateGroup}
-          sendMessage={sendMessage}
-          loadMessages={loadMessages}
+          <MessageTabs
+            chatId={selectedChat?.id || undefined}
+            goBackMobile={() => setSelectedChat(null)}
+            clientsData={clientsData}
+            onEditGroup={openEditGroup}
+            onCreateGroup={openCreateGroup}
+            sendMessage={sendMessage}
+            loadMessages={loadMessages}
+          />
+        </div>
+        <ResizableLibraryChat
+          widthPercent={widthPercent > 50 ? 50 : widthPercent < 10 ? 10 : widthPercent || 30}
+          setWidthPercent={setWidthPercent}
+          isCoach
         />
       </>
     );

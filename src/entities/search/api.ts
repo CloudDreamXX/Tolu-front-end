@@ -340,7 +340,7 @@ export class SearchService {
             if (parsed.message === "Stream completed" || parsed.done) {
               // Check if data is nested (ai-coach-assistant format)
               const data = parsed.data || parsed;
-              
+
               if (data.searched_result_id && data.chat_id) {
                 onComplete({
                   searched_result_id: data.searched_result_id,
@@ -426,7 +426,7 @@ export class SearchService {
     }
 
     if (audio) {
-      formData.append("files", audio);
+      formData.append("audio", audio);
     }
 
     if (libraryFiles?.length) {

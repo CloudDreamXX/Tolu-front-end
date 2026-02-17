@@ -41,7 +41,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
           <div className="w-full h-[10px] rounded-[24px] skeleton-gradient" />
           <div className="w-full h-[10px] rounded-[24px] skeleton-gradient" />
         </div>
-        <div className="flex flex-col ">
+        <div className="flex flex-col">
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
@@ -69,7 +69,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
   };
 
   return (
-    <aside className="flex flex-col w-fit overflow-x-hidden p-[24px] overflow-y-auto h-screen">
+    <aside className="flex flex-col w-[116px] overflow-x-hidden p-[24px] overflow-y-auto h-screen">
       {isLoadingChats && (
         <div className="xl:hidden flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <span className="inline-flex h-5 w-5 items-center justify-center">
