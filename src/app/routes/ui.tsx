@@ -51,7 +51,7 @@ export const MainLayout: React.FC<{
   return (
     <div className="flex flex-row w-full h-full min-h-screen xl:h-screen">
       <div
-        className={`hidden xl:block relative h-full xl:h-screen px-[16px] py-8`}
+        className={`hidden xl:block relative h-full xl:h-screen px-[16px] py-[24px]`}
       >
         {getSideBar(mainLocation)}
       </div>

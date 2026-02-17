@@ -161,7 +161,7 @@ export const ContentManagerMessages: React.FC = () => {
           },
           avatar_image: image ?? undefined,
         }).unwrap();
-        navigate(`/content-manager/messages/${resp.data.chat_id}`);
+        navigate(`/clients/${resp.data.chat_id}`);
       } else {
         await updateGroupChatMutation({
           chatId:
@@ -204,10 +204,10 @@ export const ContentManagerMessages: React.FC = () => {
 
   const chatItemClick = (chatItem: ChatItemModel) => {
     if (selectedChat === chatItem) {
-      navigate(`/content-manager/messages`);
+      navigate(`/clients`);
       setSelectedChat(null);
     } else {
-      navigate(`/content-manager/messages/${chatItem.id}`);
+      navigate(`/clients/${chatItem.id}`);
     }
   };
 

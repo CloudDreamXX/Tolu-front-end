@@ -69,7 +69,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
   };
 
   return (
-    <aside className="lg:w-[360px] lg:min-w-[360px] border border-[#DBDEE1] border-l-0 flex flex-col w-full ">
+    <aside className="flex flex-col w-fit overflow-x-hidden p-[24px] overflow-y-auto h-screen">
       {isLoadingChats && (
         <div className="xl:hidden flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <span className="inline-flex h-5 w-5 items-center justify-center">
@@ -81,52 +81,12 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
           Please wait, we are loading the information...
         </div>
       )}
-      <div className="px-4 py-6 pb-0 md:p-6 md:pb-0 lg:p-8 lg:pb-0">
-        <div className="flex items-center justify-between pb-4">
-          <div className="flex items-center justify-center text-[24px]  md:text-[20px] font-bold text-[#1D1D1F] gap-2">
-            {title}
-            {unreadCount > 0 && (
-              <span className="w-[24px] h-[24px] md:w-[26px] md:h-[26px] leading-[22px] bg-white border lg:border-2 flex items-center justify-center border-[#1C63DB] text-[15px] md:text-base text-[#1C63DB] rounded-sm">
-                {unreadCount}
-              </span>
-            )}
-          </div>
-          {onCreateGroup && (
-            <Button
-              variant={"unstyled"}
-              size={"unstyled"}
-              className="w-[40px] md:w-[44px] h-[40px] md:h-[44px] rounded-full bg-blue-500 flex items-center justify-center"
-              onClick={() => onCreateGroup()}
-            >
-              <MaterialIcon iconName="add" className="text-white" />
-            </Button>
-          )}
-        </div>
-
-        <div className="pb-4 md:pb-6">
-          <Input
-            placeholder="Search"
-            className="rounded-full "
-            icon={<MaterialIcon iconName="search" size={16} />}
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
 
       {isLoadingChats ? (
         <SidebarLoadingSkeleton />
       ) : (
-        <Tabs defaultValue="clients" className="w-full">
-          <TabsList className="hidden w-full grid-cols-2 p-0 bg-transparent border-none shadow-none place-items-center">
-            <TabsTrigger value="clients" className="text-lg">
-              Clients
-            </TabsTrigger>
-            <TabsTrigger value="coaches" className="text-lg">
-              Coaches
-            </TabsTrigger>
-          </TabsList>
-          <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-160px)]">
+        <Tabs defaultValue="clients" className="w-fit h-full">
+          <ScrollArea className="h-full bg-white rounded-[16px] w-fit pt-[16px]">
             <TabsContent value="clients" className="mt-0">
               {chats.filter(item => {
                 if (item.name && typeof item.name === "string") {
@@ -161,7 +121,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                       key={item.id}
                       item={item}
                       onClick={() => onChatClick(item)}
-                      classname={selectedChat?.id === item.id ? "bg-white" : ""}
+                      classname={selectedChat?.id === item.id ? "bg-[#1C63DB] opacity-[70%] text-white" : ""}
                     />
                   ))
               )}
@@ -183,7 +143,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                       key={item.id}
                       item={item}
                       onClick={() => onChatClick(item)}
-                      classname={selectedChat?.id === item.id ? "bg-white" : ""}
+                      classname={selectedChat?.id === item.id ? "bg-[#1C63DB] opacity-[70%] text-white" : ""}
                     />
                   ))
               )}

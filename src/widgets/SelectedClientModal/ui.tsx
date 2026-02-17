@@ -375,7 +375,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         custom_message: "",
       };
       await updateHealthHistory(data).unwrap();
-      nav(`/content-manager/messages/${clientId}`);
+      nav(`/clients/${clientId}`);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -423,7 +423,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           {/* <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
             <Button variant={"unstyled"} size={"unstyled"}
               className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]"
-              onClick={() => nav(`/content-manager/messages/${clientId}`)}
+              onClick={() => nav(`/clients/${clientId}`)}
             >
               <MaterialIcon iconName="forum" fill={1} />
               Chat
@@ -453,8 +453,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "healthProfile"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
               }`}
             onClick={() => setActiveTab("healthProfile")}
           >
@@ -464,8 +464,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "foodMoodPoop"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
               }`}
             onClick={() => setActiveTab("foodMoodPoop")}
           >
@@ -475,8 +475,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "clientStory"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
               }`}
             onClick={() => setActiveTab("clientStory")}
           >
@@ -486,8 +486,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "symptoms"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
               }`}
             onClick={() => setActiveTab("symptoms")}
           >
@@ -497,8 +497,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "lifestyleSkills"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
               }`}
             onClick={() => setActiveTab("lifestyleSkills")}
           >
@@ -508,8 +508,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "medicationsAndSupplements"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
               }`}
             onClick={() => setActiveTab("medicationsAndSupplements")}
           >
@@ -528,8 +528,8 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className={`w-full px-[24px] py-[10px] rounded-full font-semibold text-[14px] text-nowrap ${activeTab === "labs"
-                ? "bg-[#F2F4F6] text-[#000000]"
-                : "text-[#000000]"
+              ? "bg-[#F2F4F6] text-[#000000]"
+              : "text-[#000000]"
               }`}
             onClick={() => setActiveTab("labs")}
           >
@@ -650,7 +650,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className="w-full md:hidden p-[16px] py-[10px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center"
-            onClick={() => nav(`/content-manager/messages/${clientId}`)}
+            onClick={() => nav(`/clients/${clientId}`)}
           >
             <MaterialIcon iconName="forum" fill={1} />
             Chat

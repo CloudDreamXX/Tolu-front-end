@@ -151,7 +151,7 @@ export const ContentManagerSidebar: React.FC = () => {
           className={cn(
             "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
             "transition-all duration-300",
-            sidebarOpen ? "left-[296px]" : "left-[76px]"
+            sidebarOpen ? "left-[247px]" : "left-[88px]"
           )}
         >
           <MaterialIcon
@@ -166,25 +166,19 @@ export const ContentManagerSidebar: React.FC = () => {
 
       <div
         className={cn(
-          "transition-all duration-300 pr-1",
+          "transition-all duration-300",
           "flex flex-col h-full ",
-          sidebarOpen ? "min-w-[300px] max-w-[450px]" : "w-[81px]"
+          sidebarOpen ? "min-w-[239px] max-w-[250px]" : "w-[81px]"
         )}
       >
         <ScrollArea className="h-[calc(100vh-64px)] bg-white ">
           <div className={cn("flex flex-col gap-8 h-full")}>
             <div className="flex flex-col items-center text-center">
               <h2
-                className={cn(
-                  "font-bold ",
-                  sidebarOpen ? "text-[40px]" : "text-[27px]"
-                )}
+                className={"font-bold text-[24px] text-[#1C63DB]"}
               >
-                Tolu AI
+                Tolu Health
               </h2>
-              {sidebarOpen && (
-                <h3 className="text-[24px] font-semibold ">Creator Studio</h3>
-              )}
             </div>
             <div
               className={cn(
@@ -197,8 +191,8 @@ export const ContentManagerSidebar: React.FC = () => {
                 className="w-full"
                 onClick={handleCreateWithTolu}
               >
-                <MaterialIcon iconName={"stars_2"} fill={1} />
-                {sidebarOpen && "Create with Tolu"}
+                {!sidebarOpen && <MaterialIcon iconName={"stars_2"} fill={1} />}
+                {sidebarOpen && "Ask Tolu"}
               </Button>
               <div
                 className={cn(
@@ -230,12 +224,12 @@ export const ContentManagerSidebar: React.FC = () => {
           variant={"unstyled"}
           size={"unstyled"}
           onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
-          className={`flex gap-4 items-center ${sidebarOpen ? "px-4 justify-between" : "justify-center"}`}
+          className={`flex gap-4 items-center justify-center gap-[18px] ${sidebarOpen ? "px-4" : ""}`}
         >
-          <Avatar className="mr-[20px]">
+          {!sidebarOpen && <Avatar>
             <AvatarImage src={user?.photo} alt="Avatar" />
             <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
+          </Avatar>}
           {sidebarOpen && (
             <p className="text-[#1D1D1F] hover:text-[#1C63DB] my-0 text-[16px]/[22px] font-semibold">
               {user?.first_name ? user?.first_name : user?.name}{" "}

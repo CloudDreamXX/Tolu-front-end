@@ -47,7 +47,7 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
           )
         }
       >
-        {item.icon}
+        {isNarrow && item.icon}
         {!isNarrow && item.title}
       </NavLink>
     );
@@ -70,7 +70,7 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
             setOpen((prev) => !prev);
           }}
         >
-          {item.icon}
+          {isNarrow && item.icon}
           {!isNarrow && item.title}
           {!hideArrow &&
             !isNarrow &&
@@ -84,17 +84,17 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
           <div className="pl-6">
             {isValidElement(item.content)
               ? cloneElement(item.content, {
-                  onChildrenItemClick: () => {
-                    if (
-                      !location.pathname.startsWith(
-                        "/content-manager/library/folder/"
-                      )
-                    ) {
-                      setOpenSidebar?.(false);
-                    }
-                    onClick?.();
-                  },
-                })
+                onChildrenItemClick: () => {
+                  if (
+                    !location.pathname.startsWith(
+                      "/content-manager/library/folder/"
+                    )
+                  ) {
+                    setOpenSidebar?.(false);
+                  }
+                  onClick?.();
+                },
+              })
               : item.content}
           </div>
         )}

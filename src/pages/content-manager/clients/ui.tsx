@@ -813,7 +813,7 @@ export const ContentManagerClients: React.FC = () => {
                           onClick={() => {
                             if (client.status !== "active") return;
                             navigate(
-                              `/content-manager/messages/${client.client_id}`,
+                              `/clients/${client.client_id}`,
                               { state: { id: "profile" } }
                             );
                           }}
@@ -875,7 +875,7 @@ export const ContentManagerClients: React.FC = () => {
                       disabled={client.status !== "active"}
                       onClick={() => {
                         navigate(
-                          `/content-manager/messages/${client.client_id}`
+                          `/clients/${client.client_id}`
                         );
                       }}
                     >
@@ -960,7 +960,7 @@ export const ContentManagerClients: React.FC = () => {
                           onClick={() => {
                             if (client.status !== "active") return;
                             navigate(
-                              `/content-manager/messages/${client.client_id}`
+                              `/clients/${client.client_id}`
                             );
                           }}
                           disabled={client.status !== "active"}

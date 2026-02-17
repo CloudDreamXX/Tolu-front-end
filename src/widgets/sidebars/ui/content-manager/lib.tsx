@@ -9,7 +9,7 @@ export const sideBarContent: SideBarItem[] = [
     icon: <MaterialIcon iconName="person_search" fill={1} />,
   },
   {
-    title: "Library",
+    title: "Research",
     content: <WrapperFolderTree />,
     icon: <MaterialIcon iconName="web_stories" fill={1} />,
   },
@@ -29,11 +29,6 @@ export const sideBarContent: SideBarItem[] = [
   //   link: "/",
   //   icon: <MaterialIcon iconName="groups" fill={1} />,
   // },
-  {
-    title: "Messages",
-    link: "/content-manager/messages",
-    icon: <MaterialIcon iconName="forum" fill={1} />,
-  },
   {
     title: "Files Library",
     link: "/content-manager/files",

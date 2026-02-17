@@ -423,7 +423,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       if (!newMsg) throw new Error("Failed to send message");
 
       if (chat.chat_type === "new_chat") {
-        nav(`/content-manager/messages/${newMsg.chat_id}`);
+        nav(`/clients/${newMsg.chat_id}`);
         refetchChats();
       }
 

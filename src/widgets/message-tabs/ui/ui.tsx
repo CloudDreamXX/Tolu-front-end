@@ -181,7 +181,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     if (!chatId) {
       setChat(null);
       setSelectedClient(null);
-      setActiveTab("clientInfo");
+      setActiveTab("profile");
       setSearch("");
       setSelectedOption([]);
     }
@@ -519,20 +519,23 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         )}
       </div>
 
-      <Tabs defaultValue={defaultTab}>
-        <TabsList className="border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden">
+      <Tabs
+        defaultValue={defaultTab}
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
+        <TabsList className="p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden">
           {visibleTabs.map((tab) => (
             <div key={tab.id} className="relative group">
               <TabsTrigger value={tab.id} className="min-w-[120px]">
                 {tab.id === "messages" && isClient ? "Chat" : tab.label}
               </TabsTrigger>
 
-              {!isClient && (
+              {!isClient && activeTab === tab.id && (
                 <Button
                   size="icon"
                   variant="unstyled"
-                  className="absolute z-50 hover:bg-transparent text-[#737373] hover:text-black rounded-full p-[1px] -right-3 -top-2
-               opacity-0 group-hover:opacity-100"
+                  className="absolute z-50 hover:bg-transparent text-[#B3BCC8] hover:text-black rounded-full p-[1px] -right-[4px] -top-[4px]"
                   onClick={(e) => {
                     e.stopPropagation();
                     setPinnedTabs((prev) => {

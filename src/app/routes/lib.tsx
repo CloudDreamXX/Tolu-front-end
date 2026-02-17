@@ -6,11 +6,10 @@ import {
   ContentManagerCreatePage,
   ContentManagerDocument,
   ContentManagerFolder,
+  ContentManagerMessages,
   ContentManagerPublished,
   FilesLibrary,
 } from "pages/content-manager";
-import { ContentManagerClients } from "pages/content-manager/clients";
-import { ContentManagerMessages } from "pages/content-manager/messages";
 import { ContentManagerProfile } from "pages/content-manager/profile";
 import { HealthSnapshot } from "pages/health-snapshot";
 import { Library } from "pages/library";
@@ -91,11 +90,11 @@ export const AppRoutes = () => {
           element={<ContentManagerCreatePage />}
         />
         <Route
-          path="/content-manager/messages"
+          path="/clients"
           element={<ContentManagerMessages />}
         />
         <Route
-          path="/content-manager/messages/:chatId"
+          path="/clients/:chatId"
           element={<ContentManagerMessages />}
         />
         <Route
@@ -114,7 +113,6 @@ export const AppRoutes = () => {
           path="/content-manager/published"
           element={<ContentManagerPublished />}
         />
-        <Route path="/clients" element={<ContentManagerClients />} />
         <Route
           path="/content-manager/archived"
           element={<ContentManagerArchived />}
