@@ -424,7 +424,7 @@ export class SearchService {
     }
 
     if (audio) {
-      formData.append("files", audio);
+      formData.append("audio", audio);
     }
 
     if (libraryFiles?.length) {

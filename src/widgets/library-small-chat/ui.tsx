@@ -613,10 +613,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         type: f.type,
       }));
 
+    let userPrompt = message;
+    if (voiceFile && !message.trim() && filesState.length === 0) {
+      userPrompt = "Audio attached";
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       type: "user",
-      content: message,
+      content: userPrompt,
       timestamp: new Date(),
       images: imagePreviews,
       pdfs: pdfPreviews,
@@ -654,7 +659,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       const isLearn = isSwitch(SWITCH_KEYS.LEARN);
 
       const processChunk = (chunk: StreamChunk) => {
-        if (!chunk.reply) return;
+        if (!chunk.reply) {
+          return;
+        }
 
         if (isLearn && chunk.reply.includes("Relevant Content")) {
           str = chunk.reply;
@@ -712,10 +719,15 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         }
       };
 
+      let userPrompt = message;
+      if (voiceFile && !message.trim() && filesState.length === 0) {
+        userPrompt = "Audio attached";
+      }
+
       if (isSwitch(SWITCH_KEYS.CARD)) {
         const res = await CoachService.aiLearningCardSearch(
           {
-            user_prompt: message,
+            user_prompt: userPrompt,
             is_new: !currentChatId,
             chat_id: currentChatId,
             regenerate_id: null,
@@ -752,7 +764,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       } else if (isSwitch(SWITCH_KEYS.CREATE)) {
         const res = await CoachService.aiLearningSearch(
           {
-            user_prompt: message,
+            user_prompt: userPrompt,
             is_new: !currentChatId,
             chat_id: currentChatId,
             regenerate_id: null,
@@ -789,7 +801,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       } else if (isSwitch(SWITCH_KEYS.CASE)) {
         const res = await CoachService.aiLearningSearch(
           {
-            user_prompt: message,
+            user_prompt: userPrompt,
             is_new: !currentChatId,
             chat_id: currentChatId,
             regenerate_id: null,
@@ -822,7 +834,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       } else if (isSwitch(SWITCH_KEYS.CONTENT) && documentId) {
         await ClientService.aiPersonalizedSearch(
           JSON.stringify({
-            user_prompt: message,
+            user_prompt: userPrompt,
             is_new: !currentChatId,
             chat_id: currentChatId,
             regenerate_id: null,
@@ -838,7 +850,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         );
       } else if (isSwitch(SWITCH_KEYS.RESEARCH)) {
         const formData = SearchService.createSearchRequest(
-          message,
+          userPrompt,
           clientId,
           images,
           pdf,
@@ -866,7 +878,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         );
       } else if (isSwitch(SWITCH_KEYS.ASSISTANT)) {
         const formData = SearchService.createSearchRequest(
-          message,
+          userPrompt,
           clientId,
           images,
           pdf,
@@ -894,7 +906,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         );
       } else {
         const formData = SearchService.createSearchRequest(
-          voiceFile && !message.trim() ? "" : message,
+          voiceFile && !userPrompt.trim() ? "" : userPrompt,
           clientId,
           images,
           pdf,
@@ -1345,17 +1357,19 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <MessageLoadingSkeleton />
             ) : chatState.length ? (
-              <MessageList
-                messages={chatState}
-                isSearching={isSearching}
-                streamingText={streamingText}
-                error={error}
-                isHistoryPopup
-                onReadAloud={handleReadAloud}
-                isReadingAloud={isReadingAloud}
-                currentChatId={sourceId || undefined}
-                selectedSwitch={selectedSwitch}
-              />
+              <>
+                <MessageList
+                  messages={chatState}
+                  isSearching={isSearching}
+                  streamingText={streamingText}
+                  error={error}
+                  isHistoryPopup
+                  onReadAloud={handleReadAloud}
+                  isReadingAloud={isReadingAloud}
+                  currentChatId={sourceId || undefined}
+                  selectedSwitch={selectedSwitch}
+                />
+              </>
             ) : (
               <div></div>
             )}
