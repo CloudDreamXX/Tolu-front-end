@@ -150,7 +150,7 @@ export const CreateGroupModal = ({
             : p?.user.name;
           return !selectedOption.includes(displayName);
         })
-        .map((p) => p.user.id) || [];
+        .map((p) => p.user.id!) || [];
 
     onSubmit({
       mode,
@@ -158,11 +158,9 @@ export const CreateGroupModal = ({
       image: files[0] || null,
       description: groupDescription,
       add_participant: namesToAdd,
-      remove_participant: namesToRemove,
+      remove_participant: namesToRemove ? namesToRemove : undefined,
     });
   };
-
-  console.log(chat?.avatar_url)
 
   return (
     <div

@@ -1,7 +1,8 @@
 import { BaseResponse, PaginatedResponse } from "entities/models";
 
 export interface MessageUser {
-  id: string;
+  user_id?: string;
+  id?: string;
   email: string;
   name: string;
   first_name: string;
