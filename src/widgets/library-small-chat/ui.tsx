@@ -614,8 +614,16 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       }));
 
     let userPrompt = message;
-    if (voiceFile && !message.trim() && filesState.length === 0) {
-      userPrompt = "Audio attached";
+    const hasAudio = !!voiceFile;
+    const hasFiles = filesState.length > 0;
+    if (!message.trim()) {
+      if (hasAudio && !hasFiles) {
+        userPrompt = "Audio attached";
+      } else if (!hasAudio && hasFiles) {
+        userPrompt = "File attached";
+      } else if (hasAudio && hasFiles) {
+        userPrompt = "Audio attached, File attached";
+      }
     }
 
     const userMessage: Message = {
