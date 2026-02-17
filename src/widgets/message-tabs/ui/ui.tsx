@@ -367,164 +367,14 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   if (!chat) return null;
 
   return (
-    <main className="flex flex-col w-full h-full px-4 py-6 md:p-6 lg:p-8 min-h-screen">
-      <div className="flex flex-col border-x-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center ">
-            {isMobileOrTablet && (
-              <Button
-                variant="ghost"
-                className="p-1 mr-3"
-                onClick={goBackMobile}
-              >
-                <MaterialIcon iconName="keyboard_arrow_left" />
-              </Button>
-            )}
-            <div className="relative mr-3">
-              <Avatar className="w-10 h-10 ">
-                <AvatarImage src={chat.avatar_url} />
-                <AvatarFallback className="bg-slate-300">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-semibold text-[18px] text-[#1D1D1F]">
-                {chat.name ||
-                  (receiver?.user.first_name &&
-                    receiver?.user.last_name &&
-                    `${receiver?.user.first_name} ${receiver?.user.last_name}`) ||
-                  receiver?.user.name ||
-                  "Unknown name"}
-              </span>
-              <span className="font-semibold text-muted-foreground text-[14px]">
-                {chat.description || receiver?.user.email || ""}
-              </span>
-            </div>
-          </div>
-          <div
-            className={cn(
-              "flex items-center gap-3",
-              isClient ? "lg:w-[360px] hidden md:flex" : undefined
-            )}
-          >
-            {isClient ? (
-              <div className="hidden w-full lg:block">
-                <Input
-                  placeholder="Search"
-                  icon={<MaterialIcon iconName="search" size={16} />}
-                  className="rounded-lg"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-            ) : (
-              <>
-                {/* {!isMobile && chat.chat_type !== "group" && (
-                  <Button
-                    onClick={() => handleSelectClient(receiver?.user.id)}
-                    variant="blue2"
-                  >
-                    View Profile
-                  </Button>
-                )} */}
-
-                {!isMobile && chat.chat_type === "group" && (
-                  <Button
-                    variant="ghost"
-                    className="p-2 bg-white border hover:bg-white"
-                    onClick={() => setParticipantsModalOpen(true)}
-                  >
-                    <div className="flex items-center">
-                      {chat.participants.slice(0, 3).map((p, i) => (
-                        <Avatar
-                          key={p.user.id}
-                          className={cn(
-                            "ring-1 ring-black/5 border-white rounded-full shadow-sm w-6 h-6 -ml-1 border-[1.5px]",
-                            i === 0 && "ml-0"
-                          )}
-                        >
-                          <AvatarImage src={undefined} alt={"undefined"} />
-                          <AvatarFallback className="text-[10px] font-medium">
-                            {`${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}`}
-                          </AvatarFallback>
-                        </Avatar>
-                      ))}
-                    </div>
-
-                    <span className="text-sm font-semibold text-[#1D1D1F]">
-                      {chat.participants.length}
-                    </span>
-                  </Button>
-                )}
-              </>
-            )}
-
-            {(isMobile || (!isClient && chat.chat_type === "group")) && (
-              <DropdownMenu
-                open={isDropdownOpen}
-                onOpenChange={setIsDropdownOpen}
-              >
-                <DropdownMenuTrigger>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="border-none rounded-full hover:bg-white w-[28px] h-[28px] md:w-[32px] md:h-[32px]"
-                  >
-                    <MaterialIcon iconName="more_vert" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {isMobile && (
-                    <DropdownMenuItem
-                      className="text-[#1D1D1F]"
-                      onClick={() => handleSelectClient(receiver?.user.id)}
-                    >
-                      <MaterialIcon iconName="person" className="mr-2" />
-                      Profile
-                    </DropdownMenuItem>
-                  )}
-                  {!isClient && chat.chat_type === "group" && (
-                    <DropdownMenuItem
-                      className="text-[#1D1D1F]"
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        onEditGroup?.(chat);
-                      }}
-                    >
-                      <MaterialIcon iconName="edit" className="mr-2" />
-                      Edit
-                    </DropdownMenuItem>
-                  )}
-                  {/* <DropdownMenuItem className="text-red-600">
-                  <MaterialIcon iconName="delete" fill={1} className="mr-2" />
-                  Delete
-                </DropdownMenuItem> */}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </div>
-        {isClient && (
-          <div className="hidden my-4 sm:block lg:hidden">
-            <Input
-              placeholder="Search"
-              icon={<MaterialIcon iconName="search" size={16} />}
-              className="rounded-full"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        )}
-      </div>
+    <main className="flex flex-col w-full lg:w-[calc(100%-116px)] h-full px-4 py-6 md:p-6 lg:p-8 min-h-screen">
 
       <Tabs
         defaultValue={defaultTab}
         value={activeTab}
         onValueChange={setActiveTab}
       >
-        <TabsList className="p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden">
+        <TabsList className={isClient ? "border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden" : "p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden"}>
           {visibleTabs.map((tab) => (
             <div key={tab.id} className="relative group">
               <TabsTrigger value={tab.id} className="min-w-[120px]">
@@ -554,25 +404,25 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
           {!isClient && (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild className="ml-auto">
                 <Button variant="unstyled">
-                  <MaterialIcon iconName="more_vert" className="rotate-90" />
+                  <MaterialIcon iconName="more_vert" />
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
                 align="end"
                 sideOffset={8}
-                className="bg-[#F2F4F6] border p-2 shadow-lg"
+                className="bg-white rounded-[16px] p-[16px] shadow-lg min-w-[215px] mt-[8px]"
               >
                 {overflowTabs.map((tab) => (
                   <DropdownMenuItem
                     key={tab.id}
-                    className="flex items-center justify-between gap-2"
+                    className="flex items-center justify-between gap-2 p-[4px] pl-[16px]"
                   >
                     <TabsTrigger
                       value={tab.id}
-                      className="flex-1 justify-start rounded-none"
+                      className="flex-1 justify-start rounded-none p-0 hover:bg-transparent data-[state=active]:bg-transparent"
                     >
                       {tab.label}
                     </TabsTrigger>
@@ -593,6 +443,157 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             </DropdownMenu>
           )}
         </TabsList>
+
+        <div className="flex flex-col border-x-0 my-[24px]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center ">
+              {isMobileOrTablet && (
+                <Button
+                  variant="ghost"
+                  className="p-1 mr-3"
+                  onClick={goBackMobile}
+                >
+                  <MaterialIcon iconName="keyboard_arrow_left" />
+                </Button>
+              )}
+              <div className="relative mr-3">
+                <Avatar className="w-10 h-10 ">
+                  <AvatarImage src={chat.avatar_url} />
+                  <AvatarFallback className="bg-[#1B63DB] opacity-[70%] text-white">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-[16px] text-[#1D1D1F]">
+                  {chat.name ||
+                    (receiver?.user.first_name &&
+                      receiver?.user.last_name &&
+                      `${receiver?.user.first_name} ${receiver?.user.last_name}`) ||
+                    receiver?.user.name ||
+                    "Unknown name"}
+                </span>
+                <span className="text-muted-foreground text-[12px]">
+                  {chat.description || receiver?.user.email || ""}
+                </span>
+              </div>
+            </div>
+            <div
+              className={cn(
+                "flex items-center gap-3",
+                isClient ? "lg:w-[360px] hidden md:flex" : undefined
+              )}
+            >
+              {isClient ? (
+                <div className="hidden w-full lg:block">
+                  <Input
+                    placeholder="Search"
+                    icon={<MaterialIcon iconName="search" size={16} />}
+                    className="rounded-lg"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+              ) : (
+                <>
+                  {/* {!isMobile && chat.chat_type !== "group" && (
+                  <Button
+                    onClick={() => handleSelectClient(receiver?.user.id)}
+                    variant="blue2"
+                  >
+                    View Profile
+                  </Button>
+                )} */}
+
+                  {!isMobile && chat.chat_type === "group" && (
+                    <Button
+                      variant="ghost"
+                      className="p-2 bg-white border hover:bg-white"
+                      onClick={() => setParticipantsModalOpen(true)}
+                    >
+                      <div className="flex items-center">
+                        {chat.participants.slice(0, 3).map((p, i) => (
+                          <Avatar
+                            key={p.user.id}
+                            className={cn(
+                              "ring-1 ring-black/5 border-white rounded-full shadow-sm w-6 h-6 -ml-1 border-[1.5px]",
+                              i === 0 && "ml-0"
+                            )}
+                          >
+                            <AvatarImage src={undefined} alt={"undefined"} />
+                            <AvatarFallback className="text-[10px] font-medium">
+                              {`${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}`}
+                            </AvatarFallback>
+                          </Avatar>
+                        ))}
+                      </div>
+
+                      <span className="text-sm font-semibold text-[#1D1D1F]">
+                        {chat.participants.length}
+                      </span>
+                    </Button>
+                  )}
+                </>
+              )}
+
+              {(isMobile || (!isClient && chat.chat_type === "group")) && (
+                <DropdownMenu
+                  open={isDropdownOpen}
+                  onOpenChange={setIsDropdownOpen}
+                >
+                  <DropdownMenuTrigger>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="border-none rounded-full hover:bg-white w-[28px] h-[28px] md:w-[32px] md:h-[32px]"
+                    >
+                      <MaterialIcon iconName="more_vert" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {isMobile && (
+                      <DropdownMenuItem
+                        className="text-[#1D1D1F]"
+                        onClick={() => handleSelectClient(receiver?.user.id)}
+                      >
+                        <MaterialIcon iconName="person" className="mr-2" />
+                        Profile
+                      </DropdownMenuItem>
+                    )}
+                    {!isClient && chat.chat_type === "group" && (
+                      <DropdownMenuItem
+                        className="text-[#1D1D1F]"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onEditGroup?.(chat);
+                        }}
+                      >
+                        <MaterialIcon iconName="edit" className="mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                    )}
+                    {/* <DropdownMenuItem className="text-red-600">
+                  <MaterialIcon iconName="delete" fill={1} className="mr-2" />
+                  Delete
+                </DropdownMenuItem> */}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+          </div>
+          {isClient && (
+            <div className="hidden my-4 sm:block lg:hidden">
+              <Input
+                placeholder="Search"
+                icon={<MaterialIcon iconName="search" size={16} />}
+                className="rounded-full"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          )}
+        </div>
 
         <TabsContent value="profile">
           <ClientComprehensiveSummary

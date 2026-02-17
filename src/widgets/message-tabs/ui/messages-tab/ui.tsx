@@ -500,7 +500,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   const containerStyleLg = {
-    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 316px)`,
+    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 364px)`,
   };
 
   let currentStyle = containerStyleLg;

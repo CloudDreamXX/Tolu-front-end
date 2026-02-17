@@ -1,5 +1,5 @@
 import { ChatItemModel } from "entities/chat";
-import { cn } from "shared/lib";
+import { cn, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { toUserTZ } from "../../widgets/message-tabs/helpers";
 
@@ -40,6 +40,8 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   onClick,
   classname,
 }) => {
+  const { isMobileOrTablet } = usePageWidth();
+
   const initials = (() => {
     if (item.type === "group") {
       return item.name
@@ -91,7 +93,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
     >
       <div className="flex justify-between ">
         <div className="flex items-center ">
-          <div className="relative">
+          <div className={isMobileOrTablet ? "relative mr-3" : "relative"}>
             <Avatar className="w-10 h-10 ">
               <AvatarImage src={item.avatar_url} />
               <AvatarFallback className={cn("bg-slate-300", classname)}>
@@ -100,16 +102,16 @@ export const ChatItem: React.FC<ChatItemProps> = ({
             </Avatar>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
           </div>
-          {/* <div className="flex">
+          {isMobileOrTablet && <div className="flex">
             <span className="font-semibold text-[18px] text-[#1D1D1F]">
               {item.name || (item.participants[0]?.first_name &&
                 item.participants[0]?.last_name &&
                 `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`) ||
                 item.participants[0]?.name}
             </span>
-          </div> */}
+          </div>}
         </div>
-        {/* <div className="flex flex-col h-fit">
+        {isMobileOrTablet && <div className="flex flex-col h-fit">
           <p className="text-muted-foreground text-[14px] font-semibold self-start text-nowrap">
             {timeAgo(toUserTZ(item.lastMessage?.created_at ?? "") ?? "")}
           </p>
@@ -117,11 +119,11 @@ export const ChatItem: React.FC<ChatItemProps> = ({
           <p className="text-blue-500 text-[14px] self-end mt-2">
             {item.unreadCount ? `(${item.unreadCount})` : ""}
           </p>
-        </div> */}
+        </div>}
       </div>
-      {/* <p className="text-muted-foreground text-[14px] font-normal max-w-[250px] truncate">
+      {isMobileOrTablet && <p className="text-muted-foreground text-[14px] font-normal max-w-[250px] truncate">
         {item.lastMessage?.content || "There are no messages ..."}
-      </p> */}
+      </p>}
     </Button>
   );
 };

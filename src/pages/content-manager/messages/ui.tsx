@@ -310,13 +310,15 @@ export const ContentManagerMessages: React.FC = () => {
           </div>
         )}
         <div className="flex" style={{ width: isMobileOrTablet ? "100%" : `${100 - safeWidthPercent}%` }}>
-          <MessageSidebar
-            chats={chats}
-            isLoadingChats={isLoading}
-            onChatClick={chatItemClick}
-            selectedChat={selectedChat}
-            onCreateGroup={openCreateGroup}
-          />
+          <div>
+            <MessageSidebar
+              chats={chats}
+              isLoadingChats={isLoading}
+              onChatClick={chatItemClick}
+              selectedChat={selectedChat}
+              onCreateGroup={openCreateGroup}
+            />
+          </div>
 
           <MessageTabs
             chatId={selectedChat?.id || undefined}
@@ -328,11 +330,13 @@ export const ContentManagerMessages: React.FC = () => {
             loadMessages={loadMessages}
           />
         </div>
-        <ResizableLibraryChat
-          widthPercent={widthPercent > 50 ? 50 : widthPercent < 10 ? 10 : widthPercent || 30}
-          setWidthPercent={setWidthPercent}
-          isCoach
-        />
+        {!isMobileOrTablet && (
+          <ResizableLibraryChat
+            widthPercent={widthPercent > 50 ? 50 : widthPercent < 10 ? 10 : widthPercent || 30}
+            setWidthPercent={setWidthPercent}
+            isCoach
+          />
+        )}
       </>
     );
   })();
