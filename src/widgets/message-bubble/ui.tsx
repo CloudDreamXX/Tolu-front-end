@@ -100,9 +100,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     <div
       className={cn(
         "rounded-lg  p-2 text-base text-[#1D1D1F] flex flex-wrap gap-2 w-fit",
+        "bg-[rgba(255,255,255,0.4)] border border-[#ECEFF4]",
         isOwn
-          ? "bg-[#AAC6EC] rounded-tr-none"
-          : "bg-white border border-[#DBDEE1] rounded-tl-none",
+          ? "rounded-tr-none"
+          : "rounded-tl-none",
         className
       )}
     >
@@ -167,9 +168,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         className={cn(
           "inline-block rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F]",
           "max-w-full overflow-hidden break-words whitespace-pre-wrap",
-          isOwn
-            ? "bg-[#AAC6EC] rounded-tr-none"
-            : "bg-white border border-[#DBDEE1] rounded-tl-none",
+          "bg-[rgba(255,255,255,0.4)] border border-[#ECEFF4]",
+          isOwn ? "rounded-tr-none" : "rounded-tl-none",
           className
         )}
       >

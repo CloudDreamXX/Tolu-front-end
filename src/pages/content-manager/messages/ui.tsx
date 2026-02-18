@@ -14,6 +14,9 @@ import {
 } from "entities/chat/api";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { Client, useGetManagedClientsQuery, useInviteClientMutation } from "entities/coach";
+import { useLazyGetClientInfoQuery } from "entities/coach";
+import { useDeleteClientMutation } from "entities/coach";
+import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
 import { RootState } from "entities/store";
 import { useLazyCheckUserExistenceQuery } from "entities/user";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -41,6 +44,8 @@ type GroupModalState =
 
 
 export const ContentManagerMessages: React.FC = () => {
+  const [deleteClient] = useDeleteClientMutation();
+  const [confirmDelete, setConfirmDelete] = useState(false);
   // Upload client list logic
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -93,6 +98,55 @@ export const ContentManagerMessages: React.FC = () => {
 
   const [selectedChat, setSelectedChat] = useState<ChatItemModel | null>(null);
   const [clientsData, setClientsData] = useState<Client[]>([]);
+  const [allClients, setAllClients] = useState<Client[]>([]);
+  const [deleting, setDeleting] = useState(false);
+  const [getClientInfo] = useLazyGetClientInfoQuery();
+  const [resendLoading, setResendLoading] = useState(false);
+
+  const handleResendInvite = async (clientId: string) => {
+    setResendLoading(true);
+    try {
+      const { data: currentClientInfo } = await getClientInfo(clientId);
+      if (currentClientInfo && currentClientInfo.data.client) {
+        await inviteClient({ payload: currentClientInfo.data.client });
+      }
+      toast({ title: "Invite resent successfully" });
+    } catch (e) {
+      console.error("Failed to resend invite", e);
+      toast({
+        variant: "destructive",
+        title: "Failed to resend invite",
+        description: "Please try again.",
+      });
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
+  const selectedClientId = selectedChat && selectedChat.type === "new_chat"
+    ? selectedChat.id
+    : selectedChat && selectedChat.participants && selectedChat.participants.length === 1
+      ? selectedChat.participants[0].id
+      : null;
+
+  const handleDeleteClient = async () => {
+    if (!selectedClientId) return;
+    setDeleting(true);
+    try {
+      await deleteClient(selectedClientId).unwrap();
+      toast({ title: "Client deleted successfully" });
+      setSelectedChat(null);
+      setConfirmDelete(false);
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Failed to delete client",
+        description: "An error occurred while deleting the client. Please try again.",
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
   const [groupModalOpen, setGroupModalOpen] = useState<GroupModalState>({ open: false });
   const [searchChats, setSearchChats] = useState("");
   const [addClientModal, setAddClientModal] = useState(false);
@@ -108,84 +162,11 @@ export const ContentManagerMessages: React.FC = () => {
     focus_areas: [],
     permission_type: "",
   });
-  // inviteSuccessPopup: false | 'add' | 'upload'
   const [inviteSuccessPopup, setInviteSuccessPopup] = useState<false | 'add' | 'upload'>(false);
   const [pendingInvitePayload, setPendingInvitePayload] = useState(null as typeof newClient | null);
   const [confirmExistingUser, setConfirmExistingUser] = useState(false);
-  const updateClient = (field: string, value: any) => setNewClient((prev) => ({ ...prev, [field]: value }));
-  const handleAddClientCancel = () => {
-    setAddClientModal(false);
-    setNewClient({
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone_number: "",
-      is_primary_coach: false,
-      focus_areas: [],
-      permission_type: "",
-    });
-  };
   const [inviteClient] = useInviteClientMutation();
   const [checkUserExistence] = useLazyCheckUserExistenceQuery();
-  const handleAddClientSave = async () => {
-    try {
-      const email = newClient.email?.trim();
-      if (!email) return;
-      const { success: exists } = await checkUserExistence(email).unwrap();
-      if (exists) {
-        setPendingInvitePayload(newClient);
-        setConfirmExistingUser(true);
-        return;
-      } else {
-        await inviteClient({ payload: newClient });
-        setInviteSuccessPopup('add');
-        setAddClientModal(false);
-        setNewClient({
-          first_name: "",
-          last_name: "",
-          email: "",
-          phone_number: "",
-          is_primary_coach: false,
-          focus_areas: [],
-          permission_type: "",
-        });
-      }
-    } catch (error) {
-      console.error("Invite error:", error);
-      toast({
-        variant: "destructive",
-        title: "Failed to invite client",
-        description: "Please try again.",
-      });
-    }
-  };
-  const handleConfirmInviteExisting = async () => {
-    if (!pendingInvitePayload) return;
-    try {
-      await inviteClient({ payload: pendingInvitePayload });
-      setInviteSuccessPopup("add");
-      setConfirmExistingUser(false);
-      setPendingInvitePayload(null);
-      setAddClientModal(false);
-      setNewClient({
-        first_name: "",
-        last_name: "",
-        email: "",
-        phone_number: "",
-        is_primary_coach: false,
-        focus_areas: [],
-        permission_type: "",
-      });
-    } catch (error) {
-      console.error("Failed to invite existing user", error);
-      toast({
-        variant: "destructive",
-        title: "Failed to invite client",
-        description: "Failed to invite client. Please try again.",
-      });
-    }
-  };
-
   const token = useSelector((state: RootState) => state.user?.token);
 
   const { isLoading } = useFetchAllChatsQuery(undefined, { skip: !token });
@@ -202,12 +183,10 @@ export const ContentManagerMessages: React.FC = () => {
 
   useEffect(() => {
     if (data && data.data?.clients) {
-      const activeClients = data.data.clients.filter(
-        (client) => client.status === "active"
-      );
-      setClientsData(activeClients);
+      setAllClients(data.data.clients);
+      setClientsData(data.data.clients.filter((client) => client.status === "active"));
     }
-  }, [data, setClientsData]);
+  }, [data]);
 
   const routeMatch = useMemo(() => {
     if (!routeChatId || !chats.length) {
@@ -268,6 +247,115 @@ export const ContentManagerMessages: React.FC = () => {
     ChatSocketService.on("new_message", stableListener);
     return () => ChatSocketService.off("new_message", stableListener);
   }, []);
+
+  // Auto-select first client on page load if none selected and no route param
+  useEffect(() => {
+    if (
+      allClients.length > 0 &&
+      !routeChatId &&
+      !selectedChat
+    ) {
+      const firstClient = allClients[0];
+      const chatExists = chats.some(
+        chat => chat.participants && chat.participants.length === 1 && chat.participants[0].id === firstClient.client_id
+      );
+      if (!chatExists) {
+        setSelectedChat({
+          id: firstClient.client_id,
+          type: "new_chat",
+          name: firstClient.name || `${firstClient.first_name} ${firstClient.last_name}`,
+          avatar_url: "",
+          participants: [
+            {
+              id: firstClient.client_id,
+              email: "",
+              name: firstClient.name || `${firstClient.first_name} ${firstClient.last_name}`,
+              first_name: firstClient.first_name,
+              last_name: firstClient.last_name,
+            },
+          ],
+          lastMessage: null,
+          unreadCount: 0,
+          lastMessageAt: "",
+        });
+      }
+      navigate(`/clients/${firstClient.client_id}`);
+    }
+  }, [allClients, routeChatId]);
+
+  const updateClient = (field: string, value: any) => setNewClient((prev) => ({ ...prev, [field]: value }));
+
+  const handleAddClientCancel = () => {
+    setAddClientModal(false);
+    setNewClient({
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone_number: "",
+      is_primary_coach: false,
+      focus_areas: [],
+      permission_type: "",
+    });
+  };
+
+  const handleAddClientSave = async () => {
+    try {
+      const email = newClient.email?.trim();
+      if (!email) return;
+      const { success: exists } = await checkUserExistence(email).unwrap();
+      if (exists) {
+        setPendingInvitePayload(newClient);
+        setConfirmExistingUser(true);
+        return;
+      } else {
+        await inviteClient({ payload: newClient });
+        setInviteSuccessPopup('add');
+        setAddClientModal(false);
+        setNewClient({
+          first_name: "",
+          last_name: "",
+          email: "",
+          phone_number: "",
+          is_primary_coach: false,
+          focus_areas: [],
+          permission_type: "",
+        });
+      }
+    } catch (error) {
+      console.error("Invite error:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to invite client",
+        description: "Please try again.",
+      });
+    }
+  };
+  const handleConfirmInviteExisting = async () => {
+    if (!pendingInvitePayload) return;
+    try {
+      await inviteClient({ payload: pendingInvitePayload });
+      setInviteSuccessPopup("add");
+      setConfirmExistingUser(false);
+      setPendingInvitePayload(null);
+      setAddClientModal(false);
+      setNewClient({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone_number: "",
+        is_primary_coach: false,
+        focus_areas: [],
+        permission_type: "",
+      });
+    } catch (error) {
+      console.error("Failed to invite existing user", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to invite client",
+        description: "Failed to invite client. Please try again.",
+      });
+    }
+  };
 
   const onSubmit = async ({
     mode,
@@ -343,10 +431,12 @@ export const ContentManagerMessages: React.FC = () => {
   const closeGroup = () => setGroupModalOpen({ open: false });
 
   const chatItemClick = (chatItem: ChatItemModel) => {
-    if (selectedChat === chatItem) {
+    // Always allow navigation and selection, even for pending clients
+    if (selectedChat && selectedChat.id === chatItem.id) {
       navigate(`/clients`);
       setSelectedChat(null);
     } else {
+      setSelectedChat(chatItem);
       navigate(`/clients/${chatItem.id}`);
     }
   };
@@ -406,16 +496,53 @@ export const ContentManagerMessages: React.FC = () => {
     }
   };
 
-  const filteredChats = chats.filter(item => {
-    if (item.name && typeof item.name === "string") {
-      return item.name.toLowerCase().includes(searchChats.toLowerCase());
-    }
-    return item.participants.some(p =>
-      (p.first_name && p.first_name.toLowerCase().includes(searchChats.toLowerCase())) ||
-      (p.last_name && p.last_name.toLowerCase().includes(searchChats.toLowerCase())) ||
-      (p.name && p.name.toLowerCase().includes(searchChats.toLowerCase()))
+  // Merge all clients (active + pending) with chats for sidebar
+  const sidebarClients: ChatItemModel[] = useMemo(() => {
+    if (!allClients) return [];
+    // Map chats by client id for quick lookup
+    const chatMap = new Map(
+      chats
+        .filter(chat => chat.participants && chat.participants.length === 1)
+        .map(chat => [chat.participants[0].id, chat])
     );
-  });
+    // For each client, if chat exists, use chat, else create a pseudo-chat item
+    return allClients
+      .filter(client => ["active", "pending"].includes((client.status || "").toLowerCase()))
+      .map(client => {
+        const chat = chatMap.get(client.client_id);
+        if (chat) return chat;
+        // Pseudo-chat item for clients without chat
+        return {
+          id: client.client_id,
+          type: "new_chat",
+          name: client.name || `${client.first_name} ${client.last_name}`,
+          avatar_url: "",
+          participants: [
+            {
+              id: client.client_id,
+              email: "",
+              name: client.name || `${client.first_name} ${client.last_name}`,
+              first_name: client.first_name,
+              last_name: client.last_name,
+            },
+          ],
+          lastMessage: null,
+          unreadCount: 0,
+          lastMessageAt: "",
+          status: client.status,
+        };
+      })
+      .filter(item => {
+        if (item.name && typeof item.name === "string") {
+          return item.name.toLowerCase().includes(searchChats.toLowerCase());
+        }
+        return item.participants.some(p =>
+          (p.first_name && p.first_name.toLowerCase().includes(searchChats.toLowerCase())) ||
+          (p.last_name && p.last_name.toLowerCase().includes(searchChats.toLowerCase())) ||
+          (p.name && p.name.toLowerCase().includes(searchChats.toLowerCase()))
+        );
+      });
+  }, [allClients, chats, searchChats]);
 
   const content = (() => {
     if (isMobileOrTablet) {
@@ -434,7 +561,7 @@ export const ContentManagerMessages: React.FC = () => {
       }
       return (
         <MessageSidebar
-          chats={filteredChats}
+          chats={sidebarClients}
           isLoadingChats={isLoading}
           onChatClick={chatItemClick}
           selectedChat={selectedChat}
@@ -469,9 +596,38 @@ export const ContentManagerMessages: React.FC = () => {
               />
             </div>
             <div className="flex items-center gap-[24px] mr-[24px] mt-[24px]">
-              <Button variant={"ghost"}>
-                <MaterialIcon iconName="more_vert" className="rotate-[90deg]" />
-              </Button>
+              {selectedClientId && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant={"ghost"}>
+                      <MaterialIcon iconName="more_vert" className="rotate-[90deg]" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setConfirmDelete(true)}>
+                      Delete
+                    </DropdownMenuItem>
+                    {/* Resend Invite for pending clients */}
+                    {(() => {
+                      const client = allClients.find(c => c.client_id === selectedClientId);
+                      if (client && client.status && client.status.toLowerCase() === "pending") {
+                        return (
+                          <DropdownMenuItem onClick={() => handleResendInvite(client.client_id)} disabled={resendLoading}>
+                            {resendLoading ? "Resending..." : "Resend Invite"}
+                          </DropdownMenuItem>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              {confirmDelete && (
+                <ConfirmDeleteModal
+                  onCancel={() => setConfirmDelete(false)}
+                  onDelete={handleDeleteClient}
+                />
+              )}
               <Button variant="brightblue" className="rounded-full w-[32px] h-[32px]">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -509,7 +665,7 @@ export const ContentManagerMessages: React.FC = () => {
           <div className="flex">
             <div>
               <MessageSidebar
-                chats={filteredChats}
+                chats={sidebarClients}
                 isLoadingChats={isLoading}
                 onChatClick={chatItemClick}
                 selectedChat={selectedChat}

@@ -1435,7 +1435,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       setMessage(e.target.value);
                     }}
                     onKeyDown={handleKeyPress}
-                    className={`w-full ${isCoach ? "h-[115px] py-[16px] bg-transparent" : "max-h-[46px] py-[11px]"} text-[14px] font-medium resize-none placeholder:text-black focus:outline-none focus:ring-0 focus:border-transparent`}
+                    className={`w-full placeholder:text-[#B3BCC8] ${isCoach ? "h-[115px] py-[10px] bg-transparent" : "max-h-[46px] py-[11px]"} text-[14px] font-medium resize-none focus:outline-none focus:ring-0 focus:border-transparent`}
                     style={{
                       WebkitTextSizeAdjust: "100%",
                       textSizeAdjust: "100%",

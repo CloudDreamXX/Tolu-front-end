@@ -748,7 +748,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             placeholder={`Message ${receiver?.user.first_name ? receiver?.user.first_name : ""} ${receiver?.user.last_name ? receiver?.user.last_name : ""}`}
             className={cn(
               "resize-none min-h-[80px]",
-              isClient ? "" : "xl:text-[16px] placeholder-[#B3BCC8]"
+              isClient ? "" : "xl:text-[16px] placeholder:text-[#B3BCC8]"
             )}
             containerClassName={cn(
               "px-4 py-3",

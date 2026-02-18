@@ -46,6 +46,7 @@ import { MedicationsTab } from "./medications-tab";
 import { SupplementsTab } from "./supplements-tab";
 import { CoachDailyJournal } from "./journals-tab";
 import { useGetCoachClientHealthHistoryQuery } from "entities/health-history";
+import { Dock, DockIcon } from "shared/ui/dock";
 
 type TabItem = {
   id: string;
@@ -515,32 +516,35 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         onValueChange={setActiveTab}
       >
         <TabsList className={isClient ? "border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden" : "p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden"}>
-          {visibleTabs.map((tab) => (
-            <div key={tab.id} className="relative group">
-              <TabsTrigger value={tab.id} className="min-w-[120px]">
-                {tab.id === "messages" && isClient ? "Chat" : tab.label}
-              </TabsTrigger>
+          <Dock className="w-full mt-0 border-none flex items-center justify-start gap-0">
+            {visibleTabs.map((tab) => (
+              <DockIcon key={tab.id} className="relative group min-w-[120px] w-[120px] ">
+                <TabsTrigger value={tab.id} className="min-w-[120px]">
+                  {tab.id === "messages" && isClient ? "Chat" : tab.label}
+                </TabsTrigger>
 
-              {!isClient && activeTab === tab.id && (
-                <Button
-                  size="icon"
-                  variant="unstyled"
-                  className="absolute z-50 hover:bg-transparent text-[#B3BCC8] hover:text-black rounded-full p-[1px] -right-[4px] -top-[4px]"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setPinnedTabs((prev) => {
-                      if (prev.length <= 3) {
-                        return prev;
-                      }
-                      return prev.filter((id) => id !== tab.id);
-                    });
-                  }}
-                >
-                  <MaterialIcon iconName="close" size={14} />
-                </Button>
-              )}
-            </div>
-          ))}
+
+                {!isClient && activeTab === tab.id && (
+                  <Button
+                    size="icon"
+                    variant="unstyled"
+                    className="absolute z-50 hover:bg-transparent text-[#B3BCC8] hover:text-black rounded-full p-[1px] -right-[4px] -top-[4px]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPinnedTabs((prev) => {
+                        if (prev.length <= 3) {
+                          return prev;
+                        }
+                        return prev.filter((id) => id !== tab.id);
+                      });
+                    }}
+                  >
+                    <MaterialIcon iconName="close" size={14} />
+                  </Button>
+                )}
+              </DockIcon>
+            ))}
+          </Dock>
 
           {!isClient && (
             <DropdownMenu>
@@ -556,28 +560,30 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 className="bg-white rounded-[16px] p-[16px] shadow-lg min-w-[215px] mt-[8px]"
               >
                 {overflowTabs.map((tab) => (
-                  <DropdownMenuItem
-                    key={tab.id}
-                    className="flex items-center justify-between gap-2 p-[4px] pl-[16px]"
-                  >
-                    <TabsTrigger
-                      value={tab.id}
-                      className="flex-1 justify-start rounded-none p-0 hover:bg-transparent data-[state=active]:bg-transparent"
+                  <DockIcon>
+                    <DropdownMenuItem
+                      key={tab.id}
+                      className="flex items-center justify-between gap-2 p-[4px] pl-[16px]"
                     >
-                      {tab.label}
-                    </TabsTrigger>
+                      <TabsTrigger
+                        value={tab.id}
+                        className="flex-1 justify-start rounded-none p-0 hover:bg-transparent data-[state=active]:bg-transparent"
+                      >
+                        {tab.label}
+                      </TabsTrigger>
 
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPinnedTabs((prev) => [...prev, tab.id]);
-                      }}
-                    >
-                      <MaterialIcon iconName="push_pin" size={16} />
-                    </Button>
-                  </DropdownMenuItem>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPinnedTabs((prev) => [...prev, tab.id]);
+                        }}
+                      >
+                        <MaterialIcon iconName="push_pin" size={16} />
+                      </Button>
+                    </DropdownMenuItem>
+                  </DockIcon>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
