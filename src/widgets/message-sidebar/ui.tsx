@@ -2,36 +2,41 @@
 import { ChatItemModel } from "entities/chat";
 import { ChatItem, timeAgo } from "features/chat-item";
 import { Popover, PopoverTrigger, PopoverContent } from "shared/ui";
-import { useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { ScrollArea } from "shared/ui";
 import { Dock, DockIcon } from "shared/ui/dock";
 
-function SidebarClientPopover({ item, onClick, selected }: { item: ChatItemModel; onClick: () => void; selected: boolean }) {
-  const [open, setOpen] = useState(false);
-
-  const name = item?.participants?.[0]?.first_name ? `${item.participants[0].first_name} ${item.participants[0].last_name}` : item?.participants?.[0]?.name ? item.participants[0].name : item.name;
+function SidebarClientPopover({
+  item,
+  open,
+  setOpen
+}: {
+  item: ChatItemModel;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) {
+  const name = item?.participants?.[0]?.first_name
+    ? `${item.participants[0].first_name} ${item.participants[0].last_name}`
+    : item?.participants?.[0]?.name
+    ? item.participants[0].name
+    : item.name;
   const email = item.participants?.[0]?.email;
   const lastActivity = item.lastMessageAt;
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <div
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-        >
-          <ChatItem
-            item={item}
-            onClick={onClick}
-            classname={selected ? "bg-[#1C63DB] opacity-[70%] text-white" : ""}
-          />
-        </div>
-      </PopoverTrigger>
-      <PopoverContent side="right" align="start" arrow={false} sideOffset={8} className="min-w-[195px] max-w-[350px] border-none">
+      <PopoverContent
+        side="right"
+        align="start"
+        arrow={false}
+        sideOffset={8}
+        className="min-w-[195px] max-w-[350px] border-none"
+      >
         <div className="flex flex-col gap-2">
           <div className="font-semibold text-base text-black">{name}</div>
           <div className="text-sm text-[#5F5F65]">{email}</div>
-          <div className="text-sm text-[#5F5F65]">Last activity: {lastActivity ? timeAgo(lastActivity) : "—"}</div>
+          <div className="text-sm text-[#5F5F65]">
+            Last activity: {lastActivity ? timeAgo(lastActivity) : "—"}
+          </div>
         </div>
       </PopoverContent>
     </Popover>
@@ -87,11 +92,14 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
     );
   };
 
-  // Pagination logic for sidebar Dock
-  const DOCK_PAGE_SIZE = 15;
-  const [dockPage, setDockPage] = useState(0);
-  const totalPages = Math.ceil(chats.length / DOCK_PAGE_SIZE);
-  const paginatedChats = chats.slice(dockPage * DOCK_PAGE_SIZE, (dockPage + 1) * DOCK_PAGE_SIZE);
+  const scrollViewportRef = useRef<HTMLDivElement | null>(null);
+  const setScrollViewportRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const viewport = node.querySelector('.scroll-area-viewport') as HTMLDivElement | null;
+    if (viewport) scrollViewportRef.current = viewport;
+  }, []);
+
+  const [popoverOpenId, setPopoverOpenId] = useState<string | null>(null);
 
   return (
     <aside className="flex flex-col w-full lg:w-[116px] overflow-x-hidden p-[24px] overflow-y-auto h-[calc(100vh-65px)]">
@@ -110,7 +118,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
       {isLoadingChats ? (
         <SidebarLoadingSkeleton />
       ) : (
-        <ScrollArea className="h-full bg-white rounded-[16px] w-full lg:w-fit overflow-y-auto scrollbar-hidden">
+        <ScrollArea className="pb-[30px] h-full bg-white rounded-[16px] w-full lg:w-fit overflow-y-auto scrollbar-thin relative" ref={setScrollViewportRef}>
           <Dock className="relative h-full flex flex-col border-none mt-0 p-[16px] rounded-[16px]" iconSize={40} iconMagnification={60} iconDistance={100}>
             {chats.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
@@ -120,22 +128,62 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                 </p>
               </div>
             ) : (
-              paginatedChats.map((item) => (
-                <DockIcon size={40} magnification={60} distance={100} key={item.id}>
-                  <SidebarClientPopover
-                    item={item}
-                    onClick={() => onChatClick(item)}
-                    selected={selectedChat?.id === item.id}
-                  />
+              chats.map((item) => (
+                <DockIcon size={40} magnification={60} distance={100} key={item.id} className="hover:scale-[1.3] transition-transform duration-500">
+                  <Popover
+                    open={popoverOpenId === item.id}
+                    onOpenChange={(open) => setPopoverOpenId(open ? item.id : null)}
+                  >
+                    <PopoverTrigger asChild>
+                      <div
+                        onMouseEnter={() => setPopoverOpenId(item.id)}
+                        onMouseLeave={() => setPopoverOpenId(null)}
+                      >
+                        <ChatItem
+                          item={item}
+                          onClick={() => onChatClick(item)}
+                          classname={selectedChat?.id === item.id ? "bg-[#1C63DB] opacity-[70%] text-white" : ""}
+                        />
+                      </div>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      side="right"
+                      align="start"
+                      arrow={false}
+                      sideOffset={8}
+                      className="min-w-[195px] max-w-[350px] border-none"
+                    >
+                      <div className="flex flex-col gap-2">
+                        <div className="font-semibold text-base text-black">
+                          {item?.participants?.[0]?.first_name
+                            ? `${item.participants[0].first_name} ${item.participants[0].last_name}`
+                            : item?.participants?.[0]?.name
+                            ? item.participants[0].name
+                            : item.name}
+                        </div>
+                        <div className="text-sm text-[#5F5F65]">
+                          {item.participants?.[0]?.email}
+                        </div>
+                        <div className="text-sm text-[#5F5F65]">
+                          Last activity: {item.lastMessageAt ? timeAgo(item.lastMessageAt) : "—"}
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </DockIcon>
               ))
             )}
           </Dock>
-          {totalPages > 1 && (
+          {chats.length > 10 && (
             <button
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 bg-white border shadow-md rounded-b-[16px] w-full p-1 mt-2 flex items-center justify-center"
-              onClick={() => setDockPage((prev) => (prev + 1) % totalPages)}
-              aria-label="Next chat page"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 bg-white border shadow-md rounded-b-[16px] w-full p-1 flex items-center justify-center"
+              onClick={() => {
+                const viewport = scrollViewportRef.current;
+                if (viewport) {
+                  viewport.scrollBy({ top: 200, behavior: 'smooth' });
+                }
+              }}
+              aria-label="Scroll chat list down"
               type="button"
             >
               <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M8 10l4 4 4-4" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>

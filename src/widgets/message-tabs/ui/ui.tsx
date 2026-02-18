@@ -515,15 +515,24 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         value={activeTab}
         onValueChange={setActiveTab}
       >
-        <TabsList className={isClient ? "border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden" : "p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden"}>
-          <Dock className="w-full mt-0 border-none flex items-center justify-start gap-0">
+          <Dock className={isClient ? "border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden" : "p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden w-full mt-0 border-none flex items-center justify-start gap-0"} >
             {visibleTabs.map((tab) => (
-              <DockIcon key={tab.id} className="relative group min-w-[120px] w-[120px] ">
-                <TabsTrigger value={tab.id} className="min-w-[120px]">
+              <DockIcon
+                key={tab.id}
+                className={cn(
+                  "relative group min-w-[120px] w-[120px] cursor-pointer transition-colors duration-500",
+                  activeTab === tab.id ? "bg-gray-100 text-blue-600" : ""
+                )}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span
+                  className={cn(
+                    "min-w-[120px] flex items-center justify-center h-full transition-transform duration-500",
+                    "group-hover:scale-[1.1]",
+                  )}
+                >
                   {tab.id === "messages" && isClient ? "Chat" : tab.label}
-                </TabsTrigger>
-
-
+                </span>
                 {!isClient && activeTab === tab.id && (
                   <Button
                     size="icon"
@@ -544,9 +553,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 )}
               </DockIcon>
             ))}
-          </Dock>
-
-          {!isClient && (
+                      {!isClient && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="ml-auto">
                 <Button variant="unstyled">
@@ -588,7 +595,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-        </TabsList>
+          </Dock>
 
         {!isClient && <div className="flex flex-col border-x-0 my-[24px]">
           <div className="flex items-center justify-between">
