@@ -424,7 +424,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
         if (
           sessionData &&
-          sessionData.data?.data.search_results &&
+          sessionData.data &&
           sessionData.data?.data.search_results.length > 0
         ) {
           sessionData.data?.data.search_results.forEach((item) => {
@@ -500,7 +500,20 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         );
 
         if (sessionData && sessionData.length > 0) {
-          sessionData.forEach((item) => {
+          for (const item of sessionData) {
+            let audioUrl: string | undefined = undefined;
+            if (Array.isArray(item.stored_files) && item.stored_files.length > 0) {
+              const audioFile = item.stored_files.find(f => f.content_type === "audio/mp3");
+              if (audioFile && audioFile.path) {
+                try {
+                  const res = await fetch(audioFile.path);
+                  const blob = await res.blob();
+                  audioUrl = URL.createObjectURL(blob);
+                } catch (e) {
+                  console.error("Failed to fetch audio file", e);
+                }
+              }
+            }
             if (item.query) {
               chatMessages.push({
                 id: `user-${item.id}`,
@@ -509,6 +522,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 timestamp: new Date(item.created_at),
                 images: imagePreviews,
                 pdfs: pdfPreviews,
+                audio: audioUrl,
               });
             }
 
@@ -528,9 +542,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 content,
                 timestamp: new Date(item.created_at),
                 document,
+                audio: audioUrl,
               });
             }
-          });
+          }
         }
 
         if (chatMessages.length > 0) {
@@ -1301,7 +1316,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 handleSwitchChange={handleSwitchChange}
                 selectedSwitch={selectedSwitch}
               />
-              {subTitleSwitch(selectedSwitch as SwitchValue) && (
+              {!isCoach && subTitleSwitch(selectedSwitch as SwitchValue) && (
                 <p
                   className={`text-[#1C63DB] text-[16px] lg:text-[14px] 2xl:text-[18px] my-0`}
                 >
@@ -1408,7 +1423,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               selectedSwitch={selectedSwitch}
               setNewMessage={setMessage}
               textarea={
-                <div className="flex items-center mb-[10px] h-[48px] border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base">
+                <div
+                  className={`flex mb-[10px] ${isCoach ? "h-[120px]" : "h-[48px] items-center"} border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base ${isCoach ? '' : ''}`}
+                  style={isCoach ? { backgroundColor: 'rgba(28, 99, 219, 0.05)' } : {}}
+                >
                   <textarea
                     placeholder={"How can I help you today?"}
                     value={message}
@@ -1417,12 +1435,28 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       setMessage(e.target.value);
                     }}
                     onKeyDown={handleKeyPress}
-                    className="w-full py-[11px] max-h-[46px] text-[14px] font-medium resize-none placeholder:text-black focus:outline-none focus:ring-0 focus:border-transparent"
+                    className={`w-full ${isCoach ? "h-[115px] py-[16px] bg-transparent" : "max-h-[46px] py-[11px]"} text-[14px] font-medium resize-none placeholder:text-black focus:outline-none focus:ring-0 focus:border-transparent`}
                     style={{
                       WebkitTextSizeAdjust: "100%",
                       textSizeAdjust: "100%",
                     }}
                   />
+                  {isCoach && (
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (window.speechSynthesis) {
+                          const utterance = new window.SpeechSynthesisUtterance(message);
+                          utterance.lang = 'en-US';
+                          window.speechSynthesis.speak(utterance);
+                        }
+                      }}
+                      className="h-[44px] w-[44px] p-0 rounded-full text-black mr-2 text-[#1C63DB]"
+                      title="Read text"
+                    >
+                      <MaterialIcon iconName="mic" size={24} />
+                    </Button>
+                  )}
                   <Button
                     onClick={() => {
                       handleNewMessage(message);
@@ -1433,7 +1467,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
                       (!voiceFile && message === "")
                     }
-                    className="h-[44px] w-[44px] p-0 rounded-full text-black disabled:opacity-[0.5] disabled:cursor-not-allowed"
+                    className={`h-[44px] w-[44px] p-0 rounded-full text-black disabled:opacity-[0.5] disabled:cursor-not-allowed`}
                   >
                     <MaterialIcon iconName="send" fill={1} size={24} />
                   </Button>

@@ -137,7 +137,7 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({
   const containerStyleLg = {
     height: isClient
       ? `calc(100vh - ${316 + filesDivHeight}px)`
-      : `calc(100vh - ${360 + filesDivHeight}px)`,
+      : `calc(100vh - ${260 + filesDivHeight}px)`,
   };
 
   let currentStyle = containerStyleLg;
@@ -169,8 +169,8 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({
     );
     return search
       ? arr.filter((n) =>
-          (n.content || "").toLowerCase().includes(search.toLowerCase())
-        )
+        (n.content || "").toLowerCase().includes(search.toLowerCase())
+      )
       : arr;
   }, [supplements, search]);
 

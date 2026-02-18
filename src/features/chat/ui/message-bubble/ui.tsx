@@ -14,6 +14,7 @@ export interface Message {
     url: string;
     type: string;
   }[];
+  audio?: string;
 }
 
 interface MessageBubbleProps {
@@ -39,6 +40,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const isContentManager =
     location.pathname.includes("content-manager") ||
     location.pathname.includes("clients");
+  console.log(message)
 
   const cleanedContent = message.content
     .replace(/Conversational Response/g, "")

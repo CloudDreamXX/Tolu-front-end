@@ -19,7 +19,6 @@ import {
   ShareContentData,
   SharedContent,
   Status,
-  UpdateFolderRequest,
   UpdateHealthHistoryRequest,
 } from "./model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -48,11 +47,21 @@ export const coachApi = createApi({
       { success: boolean; message: string },
       { payload: InviteClientPayload | null; file?: File }
     >({
-      query: ({ payload }) => {
+      query: ({ payload, file }) => {
+        if (file) {
+          const formData = new FormData();
+          formData.append('file', file);
+          return {
+            url: API_ROUTES.COACH_ADMIN.POST_CLIENT,
+            method: "POST",
+            body: formData,
+          };
+        }
         return {
           url: API_ROUTES.COACH_ADMIN.POST_CLIENT,
           method: "POST",
           body: payload,
+          headers: { 'Content-Type': 'application/json' },
         };
       },
     }),

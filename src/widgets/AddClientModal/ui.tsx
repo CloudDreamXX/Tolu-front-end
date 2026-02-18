@@ -72,11 +72,10 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
         <Button
           variant={"unstyled"}
           size={"unstyled"}
-          className={`w-full md:w-[144px] h-[40px] rounded-[1000px] text-[16px] font-semibold ${
-            isSaveDisabled
-              ? "bg-[#D5DAE2] text-[#5F5F65]"
-              : "bg-[#1C63DB] text-white"
-          }`}
+          className={`w-full md:w-[144px] h-[40px] rounded-[1000px] text-[16px] font-semibold ${isSaveDisabled
+            ? "bg-[#D5DAE2] text-[#5F5F65]"
+            : "bg-[#1C63DB] text-white"
+            }`}
           onClick={onSave}
           disabled={isSaveDisabled}
         >
@@ -101,9 +100,9 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
         </span>
 
         <div className="flex gap-[24px] items-center mb-[16px] md:mb-[24px]">
-          <div className="flex items-center gap-[8px]">
+          <div className="flex items-center gap-[8px] text-black">
             <MaterialIcon iconName="account_circle" size={24} />
-            <h2 className="text-[20px] font-[700]">Add new client</h2>
+            <h2 className="text-[20px] font-[700] text-black">Add new client</h2>
           </div>
           <span
             className="absolute z-20 visible cursor-pointer md:hidden top-6 right-4"
@@ -168,9 +167,8 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 const cleaned = raw.replace(/[+\-()\s]/g, "");
                 updateClient("phone_number", cleaned);
               }}
-              className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${
-                noPhoneNumber ? "bg-gray-100" : ""
-              }`}
+              className={`placeholder-custom w-full outline-none border border-[#DBDEE1] rounded-[1000px] px-[12px] py-[12.5px] text-[14px] text-[#1D1D1F] font-semibold ${noPhoneNumber ? "bg-gray-100" : ""
+                }`}
               disabled={noPhoneNumber}
             />
             <div className="flex gap-[8px] items-center mt-[8px] text-[12px] text-[#5F5F65]">

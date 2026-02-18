@@ -500,7 +500,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   const containerStyleLg = {
-    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 364px)`,
+    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 420px)`,
   };
 
   let currentStyle = containerStyleLg;
@@ -727,110 +727,128 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       </div>
 
       <div className="pt-2">
-        <Textarea
-          placeholder={`Message ${receiver?.user.first_name ? receiver?.user.first_name : ""} ${receiver?.user.last_name ? receiver?.user.last_name : ""}`}
-          className={cn("resize-none min-h-[80px]")}
-          containerClassName={cn(
-            "px-4 py-3",
-            dragOver ? "border-2 border-dashed border-blue-500" : undefined
+        <div className="relative">
+          {!isClient && (
+            <Button
+              type="button"
+              className="absolute top-2 right-2 z-10 w-10 h-10 p-0 rounded-full text-[#1C63DB] bg-white"
+              title="Read text"
+              onClick={() => {
+                if (window.speechSynthesis) {
+                  const utterance = new window.SpeechSynthesisUtterance(input);
+                  utterance.lang = 'en-US';
+                  window.speechSynthesis.speak(utterance);
+                }
+              }}
+            >
+              <MaterialIcon iconName="mic" size={22} />
+            </Button>
           )}
-          value={input}
-          onValueChange={setInput}
-          onKeyDown={handleKeyPress}
-          {...getDropzoneProps()}
-          onClick={() => ({})}
-          footer={
-            <div className="flex flex-col w-full text-[#1D1D1F]">
-              <div className="flex items-center justify-between w-full ">
-                <div className="flex items-center gap-4">
-                  <Input {...getInputProps()} className="hidden" />
-                  {isClient ? (
-                    <label
-                      className={`relative items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800 hidden md:flex`}
-                    >
-                      <Button
-                        variant="ghost"
-                        className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
-                        onClick={open}
+          <Textarea
+            placeholder={`Message ${receiver?.user.first_name ? receiver?.user.first_name : ""} ${receiver?.user.last_name ? receiver?.user.last_name : ""}`}
+            className={cn(
+              "resize-none min-h-[80px]",
+              isClient ? "" : "xl:text-[16px] placeholder-[#B3BCC8]"
+            )}
+            containerClassName={cn(
+              "px-4 py-3",
+              dragOver ? "border-2 border-dashed border-blue-500" : undefined,
+              isClient ? "" : "rounded-[8px] border-[#ECEFF4]"
+            )}
+            value={input}
+            onValueChange={setInput}
+            onKeyDown={handleKeyPress}
+            {...getDropzoneProps()}
+            onClick={() => ({})}
+            footer={
+              <div className="flex flex-col w-full text-[#1D1D1F]">
+                <div className="flex items-center justify-between w-full ">
+                  <div className="flex items-center gap-4">
+                    {/* <Input {...getInputProps()} className="hidden" /> */}
+                    {isClient ? (
+                      <label
+                        className={`relative items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800 hidden md:flex`}
                       >
-                        <MaterialIcon iconName="attach_file" />
-                      </Button>
-                      {files.length > 0 && (
-                        <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
-                          {files.length > 99 ? "99+" : files.length}
-                        </span>
-                      )}
-                    </label>
-                  ) : (
-                    <PopoverAttach
-                      files={files}
-                      setFiles={setFiles}
-                      title="Attach files"
-                      customTrigger={
                         <Button
                           variant="ghost"
-                          className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-10 h-10 hover:bg-secondary/80"
+                          className={`relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80`}
+                          onClick={open}
                         >
-                          <MaterialIcon
-                            iconName="attach_file"
-                            size={24}
-                            fill={1}
-                          />
-                          {(files.length > 0 ||
-                            filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {files.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                          <MaterialIcon iconName="attach_file" />
                         </Button>
-                      }
-                    />
-                  )}
-
-                  <div className="relative">
-                    <Button
-                      value={"ghost"}
-                      className="p-0"
-                      onClick={(e) => {
-                        setEmojiModalOpen(true);
-                        e.stopPropagation();
-                      }}
-                    >
-                      <MaterialIcon
-                        iconName="sentiment_satisfied"
-                        className="text-[#1D1D1F]"
+                        {files.length > 0 && (
+                          <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
+                            {files.length > 99 ? "99+" : files.length}
+                          </span>
+                        )}
+                      </label>
+                    ) : (
+                      <PopoverAttach
+                        files={files}
+                        setFiles={setFiles}
+                        title="Attach files"
+                        customTrigger={
+                          <Button
+                            variant="ghost"
+                            className="relative text-[#1D1D1F] rounded-full w-10 h-10 hover:bg-secondary/80"
+                          >
+                            <MaterialIcon iconName="add" />
+                            {(files.length > 0 ||
+                              filesFromLibrary.length > 0) && (
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {files.length + filesFromLibrary.length}
+                                </span>
+                              )}
+                          </Button>
+                        }
                       />
-                    </Button>
-
-                    {emojiModalOpen && (
-                      <div className="absolute mb-2 bottom-full -left-[80px]">
-                        <Picker
-                          data={data}
-                          onEmojiSelect={(emoji: { native: string }) => {
-                            setInput((prev) => prev + emoji.native);
-                          }}
-                          onClickOutside={() => setEmojiModalOpen(false)}
-                          theme="light"
-                          previewPosition="none"
-                          skinTonePosition="none"
-                        />
-                      </div>
                     )}
+
+                    <div className="relative">
+                      <Button
+                        value={"ghost"}
+                        className="p-0"
+                        onClick={(e) => {
+                          setEmojiModalOpen(true);
+                          e.stopPropagation();
+                        }}
+                      >
+                        <MaterialIcon
+                          iconName="sentiment_satisfied"
+                          className="text-[#1D1D1F]"
+                        />
+                      </Button>
+
+                      {emojiModalOpen && (
+                        <div className="absolute mb-2 bottom-full -left-[80px]">
+                          <Picker
+                            data={data}
+                            onEmojiSelect={(emoji: { native: string }) => {
+                              setInput((prev) => prev + emoji.native);
+                            }}
+                            onClickOutside={() => setEmojiModalOpen(false)}
+                            theme="light"
+                            previewPosition="none"
+                            skinTonePosition="none"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
+                  <Button
+                    onClick={sendAll}
+                    disabled={sending}
+                    variant={"brightblue"}
+                    className="rounded-full flex justify-center items-center
+             w-[42px] h-[42px] lg:w-[96px] lg:h-[33px]"
+                  >
+                    {renderSend()}
+                  </Button>
                 </div>
-                <Button
-                  onClick={sendAll}
-                  disabled={sending}
-                  variant={isMobileOrTablet ? "brightblue" : "blue"}
-                  className="rounded-full flex justify-center items-center
-             w-[42px] h-[42px] lg:w-[128px]"
-                >
-                  {renderSend()}
-                </Button>
               </div>
-            </div>
-          }
-        />
+            }
+          />
+        </div>
       </div>
 
       {selectedTextRange && !isClient && (

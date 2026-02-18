@@ -60,7 +60,7 @@ export const CoachDailyJournal = ({ clientId }: Props) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full overflow-y-auto h-[calc(100vh-156px)]">
+    <div className="flex flex-col gap-6 w-full overflow-y-auto h-[calc(100vh-260px)]">
       {/* Date picker */}
       <CalendarBlock
         selectedDate={selectedDate}

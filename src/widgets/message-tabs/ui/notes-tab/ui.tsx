@@ -180,7 +180,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
   const containerStyleLg = {
     height: isClient
       ? `calc(100vh - ${316 + filesDivHeight}px)`
-      : `calc(100vh - ${360 + filesDivHeight}px)`,
+      : `calc(100vh - ${465 + filesDivHeight}px)`,
   };
 
   let currentStyle = containerStyleLg;

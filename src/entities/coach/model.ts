@@ -101,13 +101,13 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
 }
 
 export interface IContentMessage {
@@ -364,3 +364,30 @@ export interface CoachHealthNotesResponse {
   notes: CoachHealthNote[];
   total: number;
 }
+
+export interface SessionStoredFile {
+  id: string;
+  size: number;
+  source: string;
+  filename: string;
+  uploaded_at: string;
+  content_type: string;
+}
+
+export interface SessionDataItem {
+  id: string;
+  user_id: string;
+  chat_id: string;
+  query: string;
+  answer: string;
+  liked: boolean | null;
+  reported: number;
+  feedback: string;
+  active: boolean;
+  created_at: string;
+  chat_title: string;
+  content_id: string | null;
+  text_quote: string | null;
+  stored_files: SessionStoredFile[];
+}
+

@@ -40,11 +40,12 @@ import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { RecommendedTab } from "./recommended-tab";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { MedicationsTab } from "./medications-tab";
 import { SupplementsTab } from "./supplements-tab";
 import { CoachDailyJournal } from "./journals-tab";
+import { useGetCoachClientHealthHistoryQuery } from "entities/health-history";
 
 type TabItem = {
   id: string;
@@ -98,6 +99,8 @@ interface MessageTabsProps {
   showAddClient?: boolean;
   hideFiles?: boolean;
   hideNotes?: boolean;
+  activeTab?: string;
+  setActiveTab?: (tab: string) => void;
 }
 
 export const MessageTabs: React.FC<MessageTabsProps> = ({
@@ -111,6 +114,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   showAddClient = true,
   hideFiles = false,
   hideNotes = false,
+  activeTab: controlledActiveTab,
+  setActiveTab: controlledSetActiveTab,
 }) => {
   const { isMobile, isMobileOrTablet } = usePageWidth();
   const profile = useSelector((state: RootState) => state.user.user);
@@ -134,7 +139,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     null
   );
   const isClient = profile?.roleName === "Client";
-  const [activeTab, setActiveTab] = useState<string>(isClient ? "messages" : "profile");
+  const [internalActiveTab, setInternalActiveTab] = useState<string>(isClient ? "messages" : "profile");
+  const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
+  const setActiveTab = controlledSetActiveTab !== undefined ? controlledSetActiveTab : setInternalActiveTab;
   const [search, setSearch] = useState<string>("");
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -300,27 +307,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     skip: !receiverUserId,
   });
 
-  if (!chatId && showAddClient)
-    return (
-      <main className="w-full p-8">
-        <div className="flex gap-2">
-          <MaterialIcon iconName="person" />
-          <span className="text-xl font-bold">Add Client(s)</span>
-        </div>
-        <MultiSelectField
-          className="mt-[4px] md:rounded-sm"
-          options={clientsData.map((c) => ({
-            label:
-              c.first_name && c.last_name
-                ? `${c.first_name} ${c.last_name}`
-                : c.first_name || c.name,
-          }))}
-          selected={selectedOption}
-          onChange={setSelectedOption}
-          onSave={onSaveClients}
-        />
-      </main>
-    );
+  const {
+    data: healthHistoryData,
+  } = useGetCoachClientHealthHistoryQuery(receiver?.user.id || location.pathname.split("/").pop()!, {});
+
 
   const initials = (() => {
     if (chat?.name) {
@@ -366,7 +356,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   if (!chat) return null;
 
   return (
-    <main className={`flex flex-col w-full ${isClient ? "" : "lg:w-[calc(100%-116px)]"} h-full px-4 py-6 md:p-6 lg:p-8 min-h-screen`}>
+    <main className={`flex flex-col w-full ${isClient ? "min-h-screen" : "lg:w-[calc(100%-116px)] h-[calc(100vh-65px)]"} h-full px-4 py-6 md:p-6 lg:p-[24px]`}>
 
       {isClient && <div className="flex flex-col border-x-0 my-[24px]">
         <div className="flex items-center justify-between">
@@ -628,6 +618,14 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                   {chat.description || receiver?.user.email || ""}
                 </span>
               </div>
+              {chat.participants.length <= 2 && <div className="flex flex-col ml-[25px]">
+                <span className="font-semibold text-[16px] text-[#1D1D1F]">
+                  Age
+                </span>
+                <span className="text-muted-foreground text-[12px]">
+                  {healthHistoryData?.age ?? "-"}
+                </span>
+              </div>}
             </div>
             <div
               className={cn(

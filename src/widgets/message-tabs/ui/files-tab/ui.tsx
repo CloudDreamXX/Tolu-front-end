@@ -123,7 +123,7 @@ export const FilesTab: React.FC<FilesTabProps> = ({ chatId }) => {
         "pr-3 overflow-auto custom-message-scroll",
         isClient
           ? "h-[calc(100vh-215.5px)] md:h-[calc(100vh-333px)] lg:h-[calc(100vh-160px)]"
-          : "h-[calc(100vh-229px)] md:h-[calc(100vh-253px)] lg:h-[calc(100vh-240px)]"
+          : "h-[calc(100vh-229px)] md:h-[calc(100vh-253px)] lg:h-[calc(100vh-260px)]"
       )}
     >
       {fileMessages.length === 0 ? (
