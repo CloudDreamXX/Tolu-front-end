@@ -367,7 +367,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   if (!chat) return null;
 
   return (
-    <main className="flex flex-col w-full lg:w-[calc(100%-116px)] h-full px-4 py-6 md:p-6 lg:p-8 min-h-screen">
+    <main className={`flex flex-col w-full ${isClient ? "" : "lg:w-[calc(100%-116px)]"} h-full px-4 py-6 md:p-6 lg:p-8 min-h-screen`}>
 
       {isClient && <div className="flex flex-col border-x-0 my-[24px]">
         <div className="flex items-center justify-between">
