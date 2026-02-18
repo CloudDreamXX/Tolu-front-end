@@ -133,7 +133,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(
     null
   );
-  const [activeTab, setActiveTab] = useState<string>("healthProfile");
+  const isClient = profile?.roleName === "Client";
+  const [activeTab, setActiveTab] = useState<string>(isClient ? "messages" : "profile");
   const [search, setSearch] = useState<string>("");
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -144,8 +145,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     "notes",
     "files",
   ]);
-
-  const isClient = profile?.roleName === "Client";
 
   const pinned = new Set(pinnedTabs);
 
