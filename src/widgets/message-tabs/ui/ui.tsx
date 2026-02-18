@@ -182,13 +182,13 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
   const location = useLocation();
 
-  const defaultTab = location.state?.id ?? "messages";
+  const defaultTab = isClient ? "messages" : (location.state?.id ?? "profile");
 
   useEffect(() => {
     if (!chatId) {
       setChat(null);
       setSelectedClient(null);
-      setActiveTab("profile");
+      setActiveTab(isClient ? "messages" : "profile");
       setSearch("");
       setSelectedOption([]);
     }
@@ -510,12 +510,24 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         )}
       </div>}
 
+
       <Tabs
         defaultValue={defaultTab}
         value={activeTab}
         onValueChange={setActiveTab}
       >
-          <Dock className={isClient ? "border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden" : "p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden w-full mt-0 border-none flex items-center justify-start gap-0"} >
+        {isClient ? (
+          <TabsList className="border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden">
+            {visibleTabs.map((tab) => (
+              <div key={tab.id} className="relative group">
+                <TabsTrigger value={tab.id} className="min-w-[120px]">
+                  {tab.id === "messages" && isClient ? "Chat" : tab.label}
+                </TabsTrigger>
+              </div>
+            ))}
+          </TabsList>
+        ) : (
+          <Dock className="mt-0 p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden w-full mt-0 border-none flex items-center justify-start gap-0">
             {visibleTabs.map((tab) => (
               <DockIcon
                 key={tab.id}
@@ -531,9 +543,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                     "group-hover:scale-[1.1]",
                   )}
                 >
-                  {tab.id === "messages" && isClient ? "Chat" : tab.label}
+                  {tab.label}
                 </span>
-                {!isClient && activeTab === tab.id && (
+                {activeTab === tab.id && (
                   <Button
                     size="icon"
                     variant="unstyled"
@@ -553,49 +565,44 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 )}
               </DockIcon>
             ))}
-                      {!isClient && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="ml-auto">
                 <Button variant="unstyled">
                   <MaterialIcon iconName="more_vert" />
                 </Button>
               </DropdownMenuTrigger>
-
               <DropdownMenuContent
                 align="end"
                 sideOffset={8}
                 className="bg-white rounded-[16px] p-[16px] shadow-lg min-w-[215px] mt-[8px]"
               >
                 {overflowTabs.map((tab) => (
-                  <DockIcon>
-                    <DropdownMenuItem
-                      key={tab.id}
-                      className="flex items-center justify-between gap-2 p-[4px] pl-[16px]"
+                  <DropdownMenuItem
+                    key={tab.id}
+                    className="flex items-center justify-between gap-2 p-[4px] pl-[16px]"
+                  >
+                    <TabsTrigger
+                      value={tab.id}
+                      className="flex-1 justify-start rounded-none p-0 hover:bg-transparent data-[state=active]:bg-transparent"
                     >
-                      <TabsTrigger
-                        value={tab.id}
-                        className="flex-1 justify-start rounded-none p-0 hover:bg-transparent data-[state=active]:bg-transparent"
-                      >
-                        {tab.label}
-                      </TabsTrigger>
-
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setPinnedTabs((prev) => [...prev, tab.id]);
-                        }}
-                      >
-                        <MaterialIcon iconName="push_pin" size={16} />
-                      </Button>
-                    </DropdownMenuItem>
-                  </DockIcon>
+                      {tab.label}
+                    </TabsTrigger>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPinnedTabs((prev) => [...prev, tab.id]);
+                      }}
+                    >
+                      <MaterialIcon iconName="push_pin" size={16} />
+                    </Button>
+                  </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
           </Dock>
+        )}
 
         {!isClient && <div className="flex flex-col border-x-0 my-[24px]">
           <div className="flex items-center justify-between">
