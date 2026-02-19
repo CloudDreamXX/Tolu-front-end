@@ -18,6 +18,7 @@ import { LibraryChatInput } from "entities/search";
 import {
   SearchService,
   StreamChunk,
+  useLazyGetAudioFileQuery,
   useLazyGetSessionQuery,
 } from "entities/search/api";
 import { RootState } from "entities/store";
@@ -412,6 +413,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
   const [getSessionById] = useLazyGetSessionByIdQuery();
   const [getSearchSession] = useLazyGetSessionQuery();
+  const [getAudioFile] = useLazyGetAudioFileQuery();
 
   const loadExistingSession = async (chatId: string) => {
     setIsLoadingSession(true);
@@ -509,13 +511,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               const audioFile = item.stored_files.find(
                 (f) => f.content_type === "audio/mp3"
               );
-              if (audioFile && audioFile.path) {
+              if (audioFile && audioFile.filename) {
                 try {
-                  const res = await fetch(audioFile.path);
-                  const blob = await res.blob();
-                  audioUrl = URL.createObjectURL(blob);
+                  const audioResult = await getAudioFile(audioFile.filename).unwrap();
+                  if (audioResult && audioResult.url) {
+                    audioUrl = audioResult.url;
+                  }
                 } catch (e) {
-                  console.error("Failed to fetch audio file", e);
+                  console.error("Failed to fetch audio file via API", e);
                 }
               }
             }
