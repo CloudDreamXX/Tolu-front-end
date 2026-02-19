@@ -6,8 +6,6 @@ import {
   PopoverContent,
   Tabs,
   TabsContent,
-  TabsList,
-  TabsTrigger,
 } from "shared/ui";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ScrollArea } from "shared/ui";
@@ -66,20 +64,20 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
 
   const scrollViewportRef = useRef<HTMLDivElement | null>(null);
   const [canScrollUp, setCanScrollUp] = useState(false);
-  const [canScrollDown, setCanScrollDown] = useState(false);
+  // const [canScrollDown, setCanScrollDown] = useState(false);
 
   const updateScrollState = useCallback(() => {
     const viewport = scrollViewportRef.current;
     if (!viewport) {
       setCanScrollUp(false);
-      setCanScrollDown(false);
+      // setCanScrollDown(false);
       return;
     }
 
     const threshold = 1;
-    const { scrollTop, scrollHeight, clientHeight } = viewport;
+    const { scrollTop } = viewport;
     setCanScrollUp(scrollTop > threshold);
-    setCanScrollDown(scrollTop + clientHeight < scrollHeight - threshold);
+    // setCanScrollDown(scrollTop + clientHeight < scrollHeight - threshold);
   }, []);
 
   const setScrollViewportRef = useCallback(
@@ -104,9 +102,6 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
     if (!viewport) return;
 
     const handleScroll = () => updateScrollState();
-    const preventNativeScroll = (event: Event) => {
-      event.preventDefault();
-    };
 
     viewport.addEventListener("scroll", handleScroll, { passive: true });
     // viewport.addEventListener("wheel", preventNativeScroll, {
