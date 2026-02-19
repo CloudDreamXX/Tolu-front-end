@@ -93,6 +93,7 @@ export const SymptomCheckCalendarModal: React.FC<SymptomCheckModalProps> = ({
   const onPick = (d: Date) => {
     setSelected(d);
     handleDateChange(d);
+    onClose();
   };
 
   const jumpToToday = () => {

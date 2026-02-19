@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { SymptomData, SymptomResponse, AiSuggestions } from "./model";
+import { SymptomData, AiSuggestions } from "./model";
 import { API_ROUTES } from "shared/api";
 import { RootState } from "entities/store";
 import { BaseResponse } from "entities/models";
@@ -126,7 +126,7 @@ export const symptomsTrackerApi = createApi({
       }),
     }),
     getSymptomsByDateForCoach: builder.query<
-      SymptomResponse,
+      SymptomData[],
       { clientId: string; targetDate: string }
     >({
       query: ({ clientId, targetDate }) =>
