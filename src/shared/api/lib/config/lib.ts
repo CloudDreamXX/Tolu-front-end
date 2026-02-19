@@ -124,6 +124,7 @@ export const API_ROUTES = {
   COACH_ADMIN: {
     GET_CLIENTS: "/coach/managed-clients",
     POST_CLIENT: "/coach-invite-client",
+    POST_CLIENT_FILE: "/coach-invite-clients-bulk",
     GET_CLIENT_PROFILE: "/coach/client/{client_id}/profile",
     DELETE_CLIENT: "/coach/client/{client_id}",
     GET_CLIENT_INFO: "/coach/managed-client/get-info/{client_id}",

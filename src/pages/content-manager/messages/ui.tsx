@@ -13,7 +13,7 @@ import {
   useLazyFetchChatMessagesQuery,
 } from "entities/chat/api";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
-import { Client, useGetManagedClientsQuery, useInviteClientMutation } from "entities/coach";
+import { Client, useGetManagedClientsQuery, useImportClientsMutation, useInviteClientMutation } from "entities/coach";
 import { useLazyGetClientInfoQuery } from "entities/coach";
 import { useDeleteClientMutation } from "entities/coach";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
@@ -46,49 +46,10 @@ type GroupModalState =
 export const ContentManagerMessages: React.FC = () => {
   const [deleteClient] = useDeleteClientMutation();
   const [confirmDelete, setConfirmDelete] = useState(false);
-  // Upload client list logic
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFileSize, setUploadedFileSize] = useState<string | null>(null);
-
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) await handleFile(file);
-  };
-
-  const handleDrop = async (e: React.DragEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setDragOver(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      await handleFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleFile = async (file: File) => {
-    if (!file) return;
-    setUploadedFileName(file.name);
-    setUploadedFileSize(`${(file.size / 1024).toFixed(0)} KB`);
-    try {
-      // Use FormData for file upload
-      const formData = new FormData();
-      formData.append('file', file);
-      // The inviteClient mutation expects { payload: null, file }
-      await inviteClient({ payload: null, file }).unwrap();
-      setInviteSuccessPopup('upload');
-    } catch (error) {
-      console.error("Error importing clients", error);
-      toast({
-        variant: "destructive",
-        title: "Failed to import clients",
-        description: "An error occurred during import. Please try again.",
-      });
-    }
-  };
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -102,26 +63,6 @@ export const ContentManagerMessages: React.FC = () => {
   const [deleting, setDeleting] = useState(false);
   const [getClientInfo] = useLazyGetClientInfoQuery();
   const [resendLoading, setResendLoading] = useState(false);
-
-  const handleResendInvite = async (clientId: string) => {
-    setResendLoading(true);
-    try {
-      const { data: currentClientInfo } = await getClientInfo(clientId);
-      if (currentClientInfo && currentClientInfo.data.client) {
-        await inviteClient({ payload: currentClientInfo.data.client });
-      }
-      toast({ title: "Invite resent successfully" });
-    } catch (e) {
-      console.error("Failed to resend invite", e);
-      toast({
-        variant: "destructive",
-        title: "Failed to resend invite",
-        description: "Please try again.",
-      });
-    } finally {
-      setResendLoading(false);
-    }
-  };
 
   const selectedClientId = selectedChat && selectedChat.type === "new_chat"
     ? selectedChat.id
@@ -162,10 +103,10 @@ export const ContentManagerMessages: React.FC = () => {
     focus_areas: [],
     permission_type: "",
   });
-  const [inviteSuccessPopup, setInviteSuccessPopup] = useState<false | 'add' | 'upload'>(false);
   const [pendingInvitePayload, setPendingInvitePayload] = useState(null as typeof newClient | null);
   const [confirmExistingUser, setConfirmExistingUser] = useState(false);
   const [inviteClient] = useInviteClientMutation();
+  const [importClients] = useImportClientsMutation();
   const [checkUserExistence] = useLazyCheckUserExistenceQuery();
   const token = useSelector((state: RootState) => state.user?.token);
 
@@ -248,7 +189,6 @@ export const ContentManagerMessages: React.FC = () => {
     return () => ChatSocketService.off("new_message", stableListener);
   }, []);
 
-  // Auto-select first client on page load if none selected and no route param
   useEffect(() => {
     if (
       allClients.length > 0 &&
@@ -283,7 +223,80 @@ export const ContentManagerMessages: React.FC = () => {
     }
   }, [allClients, routeChatId]);
 
+  useEffect(() => {
+    if (!importClientsPopup) {
+      requestAnimationFrame(() => {
+        if (document.body.style.pointerEvents === "none") {
+          document.body.style.pointerEvents = "auto";
+        }
+      });
+    }
+
+    return () => {
+      if (document.body.style.pointerEvents === "none") {
+        document.body.style.pointerEvents = "auto";
+      }
+    };
+  }, [importClientsPopup]);
+
   const updateClient = (field: string, value: any) => setNewClient((prev) => ({ ...prev, [field]: value }));
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) await handleFile(file);
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      await handleFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFile = async (file: File) => {
+    if (!file) return;
+    setUploadedFileName(file.name);
+    setUploadedFileSize(`${(file.size / 1024).toFixed(0)} KB`);
+    try {
+      await importClients({ file }).unwrap();
+      setImportClientsPopup(false);
+      setUploadedFileName(null);
+      setUploadedFileSize(null);
+      toast({ title: "Clients imported successfully" });
+    } catch (error) {
+      console.error("Error importing clients", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to import clients",
+        description: "An error occurred during import. Please try again.",
+      });
+    }
+  };
+
+  const handleResendInvite = async (clientId: string) => {
+    setResendLoading(true);
+    try {
+      const { data: currentClientInfo } = await getClientInfo(clientId);
+      if (currentClientInfo && currentClientInfo.data.client) {
+        await inviteClient({ payload: currentClientInfo.data.client });
+      }
+      toast({ title: "Invite resent successfully" });
+    } catch (e) {
+      console.error("Failed to resend invite", e);
+      toast({
+        variant: "destructive",
+        title: "Failed to resend invite",
+        description: "Please try again.",
+      });
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const handleAddClientCancel = () => {
     setAddClientModal(false);
@@ -309,7 +322,7 @@ export const ContentManagerMessages: React.FC = () => {
         return;
       } else {
         await inviteClient({ payload: newClient });
-        setInviteSuccessPopup('add');
+        toast({ title: "Client invited successfully" });
         setAddClientModal(false);
         setNewClient({
           first_name: "",
@@ -334,7 +347,7 @@ export const ContentManagerMessages: React.FC = () => {
     if (!pendingInvitePayload) return;
     try {
       await inviteClient({ payload: pendingInvitePayload });
-      setInviteSuccessPopup("add");
+      toast({ title: "Client invited successfully" });
       setConfirmExistingUser(false);
       setPendingInvitePayload(null);
       setAddClientModal(false);
@@ -431,7 +444,6 @@ export const ContentManagerMessages: React.FC = () => {
   const closeGroup = () => setGroupModalOpen({ open: false });
 
   const chatItemClick = (chatItem: ChatItemModel) => {
-    // Always allow navigation and selection, even for pending clients
     if (selectedChat && selectedChat.id === chatItem.id) {
       navigate(`/clients`);
       setSelectedChat(null);
@@ -607,7 +619,6 @@ export const ContentManagerMessages: React.FC = () => {
                     <DropdownMenuItem onClick={() => setConfirmDelete(true)}>
                       Delete
                     </DropdownMenuItem>
-                    {/* Resend Invite for pending clients */}
                     {(() => {
                       const client = allClients.find(c => c.client_id === selectedClientId);
                       if (client && client.status && client.status.toLowerCase() === "pending") {
@@ -650,7 +661,6 @@ export const ContentManagerMessages: React.FC = () => {
                       <DropdownMenuItem onClick={() => setActiveTab("medications")}>Add Medication</DropdownMenuItem></>}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                {/* AddClientModal */}
                 {addClientModal && (
                   <AddClientModal
                     client={newClient}
@@ -725,31 +735,6 @@ export const ContentManagerMessages: React.FC = () => {
         />
       )}
 
-      {/* Invite Success Popup */}
-      {inviteSuccessPopup && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
-          <div className="bg-white rounded-lg p-8 flex flex-col items-center gap-4 shadow-xl">
-            <span className="text-green-600 text-4xl">
-              <MaterialIcon iconName="check_circle" />
-            </span>
-            <div className="text-lg font-semibold">
-              {inviteSuccessPopup === 'add' ? 'Client invited successfully!' : 'Clients uploaded successfully!'}
-            </div>
-            <Button variant="brightblue" onClick={() => {
-              setInviteSuccessPopup(false);
-              if (inviteSuccessPopup === 'upload') {
-                setImportClientsPopup(false);
-                setUploadedFileName(null);
-                setUploadedFileSize(null);
-              }
-            }}>
-              Close
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Confirm Existing User Dialog */}
       {confirmExistingUser && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
           <div className="bg-white rounded-lg p-8 flex flex-col items-center gap-4 shadow-xl">
@@ -765,7 +750,6 @@ export const ContentManagerMessages: React.FC = () => {
           </div>
         </div>
       )}
-      {/* Upload Client List Dialog (moved outside dropdown) */}
       <Dialog open={importClientsPopup} onOpenChange={setImportClientsPopup}>
         <DialogTrigger asChild>
           <span />
