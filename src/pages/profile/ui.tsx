@@ -21,7 +21,7 @@ import {
   useLazyDownloadProfilePhotoQuery,
 } from "entities/user";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { useFilePicker } from "shared/hooks/useFilePicker";
@@ -933,7 +933,10 @@ export const ClientProfile = () => {
             {tabs[tab].id === "journal" ? (
               <DailyJournalOverview date={user.last_symptoms_date} />
             ) : (
-              <HealthProfileForm asDialog={false} className="h-[90vh] overflow-auto flex-none" />
+              <HealthProfileForm
+                asDialog={false}
+                className="h-[90vh] overflow-auto flex-none"
+              />
             )}
           </Card>
         </div>
@@ -944,8 +947,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setEmailNotif(!emailNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setEmailNotif(!emailNotif)}
                 />
                 <span className={"text-blue-600"}>Email notifications</span>
               </div>
@@ -953,8 +956,8 @@ export const ClientProfile = () => {
               <div className="flex items-center gap-2.5 pointer-events-none">
                 <Switch
                   checked={true}
-                  onChange={() => { }}
-                // onChange={() => setPushNotif(!pushNotif)}
+                  onChange={() => {}}
+                  // onChange={() => setPushNotif(!pushNotif)}
                 />
                 <span className={"text-blue-600"}>Push notifications</span>
               </div>

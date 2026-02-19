@@ -89,14 +89,8 @@ export const AppRoutes = () => {
           path="/content-manager/create"
           element={<ContentManagerCreatePage />}
         />
-        <Route
-          path="/clients"
-          element={<ContentManagerMessages />}
-        />
-        <Route
-          path="/clients/:chatId"
-          element={<ContentManagerMessages />}
-        />
+        <Route path="/clients" element={<ContentManagerMessages />} />
+        <Route path="/clients/:chatId" element={<ContentManagerMessages />} />
         <Route
           path="/content-manager/ai-generated"
           element={<ContentManagerAiGenerated />}

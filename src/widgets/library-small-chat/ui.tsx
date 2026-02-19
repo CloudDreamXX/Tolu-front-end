@@ -502,8 +502,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         if (sessionData && sessionData.length > 0) {
           for (const item of sessionData) {
             let audioUrl: string | undefined = undefined;
-            if (Array.isArray(item.stored_files) && item.stored_files.length > 0) {
-              const audioFile = item.stored_files.find(f => f.content_type === "audio/mp3");
+            if (
+              Array.isArray(item.stored_files) &&
+              item.stored_files.length > 0
+            ) {
+              const audioFile = item.stored_files.find(
+                (f) => f.content_type === "audio/mp3"
+              );
               if (audioFile && audioFile.path) {
                 try {
                   const res = await fetch(audioFile.path);
@@ -884,7 +889,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processFinal,
           (error) => {
             setIsSearching(false);
-            let errorMsg = error?.message || "AI search failed. Please try again.";
+            const errorMsg =
+              error?.message || "AI search failed. Please try again.";
             setError(errorMsg);
             toast({ title: errorMsg, variant: "destructive" });
             console.error("Search error:", error);
@@ -912,7 +918,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processFinal,
           (error) => {
             setIsSearching(false);
-            let errorMsg = error?.message || "AI search failed. Please try again.";
+            const errorMsg =
+              error?.message || "AI search failed. Please try again.";
             setError(errorMsg);
             toast({ title: errorMsg, variant: "destructive" });
             console.error("Search error:", error);
@@ -926,7 +933,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           images,
           pdf,
           documentId,
-          undefined,                 // no libraryFiles here
+          undefined, // no libraryFiles here
           voiceFile ?? undefined,
           {
             chatId: currentChatId || null,
@@ -940,7 +947,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           processFinal,
           (error) => {
             setIsSearching(false);
-            let errorMsg = error?.message || "AI search failed. Please try again.";
+            const errorMsg =
+              error?.message || "AI search failed. Please try again.";
             setError(errorMsg);
             toast({ title: errorMsg, variant: "destructive" });
             console.error("Search error:", error);
@@ -952,8 +960,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     } catch (error) {
       let errorMsg = "Search failed. Please try again.";
       if (error instanceof Error) {
-        if (error.message.includes("NetworkError") || error.message.includes("Failed to fetch")) {
-          errorMsg = "Network error. Please check your connection and try again.";
+        if (
+          error.message.includes("NetworkError") ||
+          error.message.includes("Failed to fetch")
+        ) {
+          errorMsg =
+            "Network error. Please check your connection and try again.";
         } else {
           errorMsg = error.message;
         }
@@ -1250,10 +1262,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              {filesState.length + filesFromLibrary.length}
+                            </span>
+                          )}
                         </Button>
                       }
                     />
@@ -1277,10 +1289,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                              1
+                            </span>
+                          )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -1424,8 +1436,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               setNewMessage={setMessage}
               textarea={
                 <div
-                  className={`flex mb-[10px] ${isCoach ? "h-[120px]" : "h-[48px] items-center"} border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base ${isCoach ? '' : ''}`}
-                  style={isCoach ? { backgroundColor: 'rgba(28, 99, 219, 0.05)' } : {}}
+                  className={`flex mb-[10px] ${isCoach ? "h-[120px]" : "h-[48px] items-center"} border-0 md:border border-[#1C63DB] rounded-lg px-[16px] focus:outline-none focus:ring-0 focus:border-transparent text-base sm:text-base md:text-base lg:text-base ${isCoach ? "" : ""}`}
+                  style={
+                    isCoach
+                      ? { backgroundColor: "rgba(28, 99, 219, 0.05)" }
+                      : {}
+                  }
                 >
                   <textarea
                     placeholder={"How can I help you today?"}
@@ -1446,8 +1462,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       type="button"
                       onClick={() => {
                         if (window.speechSynthesis) {
-                          const utterance = new window.SpeechSynthesisUtterance(message);
-                          utterance.lang = 'en-US';
+                          const utterance = new window.SpeechSynthesisUtterance(
+                            message
+                          );
+                          utterance.lang = "en-US";
                           window.speechSynthesis.speak(utterance);
                         }
                       }}
@@ -1491,10 +1509,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {filesState.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />
@@ -1519,10 +1537,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  1
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                           </Button>
                         }
                         setInstruction={setInstruction}
@@ -1545,10 +1563,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {filesState.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />

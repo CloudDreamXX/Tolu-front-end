@@ -3,7 +3,6 @@ import { API_ROUTES } from "shared/api";
 import {
   ChangePasswordRequest,
   CheckInviteResponse,
-  ClientOnboardingResponse,
   IUser,
   MenopauseSubmissionRequest,
   OnboardingStatus,
@@ -18,7 +17,6 @@ import {
   LoginResponse,
 } from "./model";
 import { CoachOnboardingState } from "entities/store/coachOnboardingSlice";
-import { FormState } from "entities/store/clientOnboardingSlice";
 import { RootState } from "entities/store";
 import { BaseResponse } from "entities/models";
 
@@ -37,16 +35,15 @@ export const userApi = createApi({
   tagTypes: ["User", "Onboarding", "Menopause"],
 
   endpoints: (builder) => ({
-    login: builder.mutation<
-      LoginResponse,
-      { email: string; password: string }
-    >({
-      query: (body) => ({
-        url: API_ROUTES.USER.LOGIN,
-        method: "POST",
-        body,
-      }),
-    }),
+    login: builder.mutation<LoginResponse, { email: string; password: string }>(
+      {
+        query: (body) => ({
+          url: API_ROUTES.USER.LOGIN,
+          method: "POST",
+          body,
+        }),
+      }
+    ),
 
     forgotPassword: builder.mutation<
       BaseResponse<{ success: boolean; email: string }>,
@@ -70,10 +67,7 @@ export const userApi = createApi({
       }),
     }),
 
-    registerUser: builder.mutation<
-      BaseResponse<any>,
-      SignUpDetails
-    >({
+    registerUser: builder.mutation<BaseResponse<any>, SignUpDetails>({
       query: (userInfo) => ({
         url: API_ROUTES.USER.SIGNUP,
         method: "POST",
@@ -168,11 +162,26 @@ export const userApi = createApi({
           }
         };
 
-        appendIfDefined("coach_admin_privacy_accepted", data.coach_admin_privacy_accepted);
-        appendIfDefined("independent_contractor_accepted", data.independent_contractor_accepted);
-        appendIfDefined("content_licensing_accepted", data.content_licensing_accepted);
-        appendIfDefined("affiliate_terms_accepted", data.affiliate_terms_accepted);
-        appendIfDefined("confidentiality_accepted", data.confidentiality_accepted);
+        appendIfDefined(
+          "coach_admin_privacy_accepted",
+          data.coach_admin_privacy_accepted
+        );
+        appendIfDefined(
+          "independent_contractor_accepted",
+          data.independent_contractor_accepted
+        );
+        appendIfDefined(
+          "content_licensing_accepted",
+          data.content_licensing_accepted
+        );
+        appendIfDefined(
+          "affiliate_terms_accepted",
+          data.affiliate_terms_accepted
+        );
+        appendIfDefined(
+          "confidentiality_accepted",
+          data.confidentiality_accepted
+        );
         appendIfDefined("terms_of_use_accepted", data.terms_of_use_accepted);
         appendIfDefined("media_release_accepted", data.media_release_accepted);
         appendIfDefined("two_factor_enabled", data.two_factor_enabled);
@@ -182,7 +191,10 @@ export const userApi = createApi({
         appendIfDefined("business_challenges", data.business_challenges);
         appendIfDefined("languages", JSON.stringify(data.languages));
         appendIfDefined("certifications", data.certifications);
-        appendIfDefined("expertise_areas", JSON.stringify(data.expertise_areas));
+        appendIfDefined(
+          "expertise_areas",
+          JSON.stringify(data.expertise_areas)
+        );
         appendIfDefined("content_specialties", data.content_specialties);
 
         appendIfDefined("first_name", data.first_name);
@@ -198,11 +210,23 @@ export const userApi = createApi({
         appendIfDefined("target_client_count", data.target_client_count);
         appendIfDefined("uses_labs_supplements", data.uses_labs_supplements);
         appendIfDefined("uses_ai", data.uses_ai);
-        appendIfDefined("practice_management_software", data.practice_management_software);
-        appendIfDefined("supplement_dispensing_method", data.supplement_dispensing_method);
-        appendIfDefined("biometrics_monitoring_method", data.biometrics_monitoring_method);
+        appendIfDefined(
+          "practice_management_software",
+          data.practice_management_software
+        );
+        appendIfDefined(
+          "supplement_dispensing_method",
+          data.supplement_dispensing_method
+        );
+        appendIfDefined(
+          "biometrics_monitoring_method",
+          data.biometrics_monitoring_method
+        );
         appendIfDefined("lab_ordering_method", data.lab_ordering_method);
-        appendIfDefined("supplement_ordering_method", data.supplement_ordering_method);
+        appendIfDefined(
+          "supplement_ordering_method",
+          data.supplement_ordering_method
+        );
         appendIfDefined("personal_story", data.personal_story);
         appendIfDefined("two_factor_method", data.two_factor_method);
         appendIfDefined("security_questions", data.security_questions);
@@ -227,18 +251,12 @@ export const userApi = createApi({
       providesTags: ["Onboarding"],
     }),
 
-    getUserProfile: builder.query<
-      BaseResponse<IUser>,
-      void
-    >({
+    getUserProfile: builder.query<BaseResponse<IUser>, void>({
       query: () => API_ROUTES.USER.PROFILE,
       providesTags: ["User"],
     }),
 
-    updateProfile: builder.mutation<
-      BaseResponse<IUser>,
-      Partial<IUser>
-    >({
+    updateProfile: builder.mutation<BaseResponse<IUser>, Partial<IUser>>({
       query: (body) => ({
         url: API_ROUTES.USER.PROFILE,
         method: "PUT",
@@ -247,10 +265,7 @@ export const userApi = createApi({
       invalidatesTags: ["User"],
     }),
 
-    deleteAccount: builder.mutation<
-      BaseResponse<{ success: boolean }>,
-      void
-    >({
+    deleteAccount: builder.mutation<BaseResponse<{ success: boolean }>, void>({
       query: () => ({
         url: API_ROUTES.USER.DELETE_ACCOUNT,
         method: "DELETE",
@@ -294,7 +309,10 @@ export const userApi = createApi({
       invalidatesTags: ["Menopause"],
     }),
 
-    getMenopauseRecommendations: builder.query<BaseResponse<RecommendationsResponse>, void>({
+    getMenopauseRecommendations: builder.query<
+      BaseResponse<RecommendationsResponse>,
+      void
+    >({
       query: () => API_ROUTES.MENOPAUSE.GET_RECOMMENDATIONS,
       providesTags: ["Menopause"],
     }),
@@ -316,7 +334,10 @@ export const userApi = createApi({
       query: () => API_ROUTES.USER.GET_ONBOARDING_STATUS,
     }),
 
-    checkPendingInvite: builder.query<BaseResponse<CheckInviteResponse>, string>({
+    checkPendingInvite: builder.query<
+      BaseResponse<CheckInviteResponse>,
+      string
+    >({
       query: (email) =>
         `${API_ROUTES.USER.CHECK_PENDING_INVITE}?email=${encodeURIComponent(email)}`,
     }),

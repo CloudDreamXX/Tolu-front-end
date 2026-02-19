@@ -91,13 +91,13 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
           if (targetUserId) {
             notePayload.target_user_id = targetUserId;
           } else {
-            console.error('No target_user_id found! Participant:', participant);
+            console.error("No target_user_id found! Participant:", participant);
           }
         } else {
           if (actualChatId) {
             notePayload.chat_id = actualChatId;
           } else {
-            console.error('No chat_id found!');
+            console.error("No chat_id found!");
           }
         }
 
@@ -112,26 +112,29 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
           setCreatedChatId(chatIdFromNote);
 
           const participant = chat.participants[0];
-          const chatName = participant.user.first_name && participant.user.last_name
-            ? `${participant.user.first_name} ${participant.user.last_name}`
-            : participant.user.name;
+          const chatName =
+            participant.user.first_name && participant.user.last_name
+              ? `${participant.user.first_name} ${participant.user.last_name}`
+              : participant.user.name;
 
-          dispatch(upsertChat({
-            id: chatIdFromNote,
-            type: "direct",
-            lastMessageAt: noteResponse.data.created_at,
-            unreadCount: 0,
-            lastMessage: null,
-            name: chatName,
-            avatar_url: "",
-            participants: chat.participants.map(p => ({
-              user_id: p.user.user_id,
-              email: p.user.email,
-              name: p.user.name,
-              first_name: p.user.first_name,
-              last_name: p.user.last_name,
-            })),
-          }));
+          dispatch(
+            upsertChat({
+              id: chatIdFromNote,
+              type: "direct",
+              lastMessageAt: noteResponse.data.created_at,
+              unreadCount: 0,
+              lastMessage: null,
+              name: chatName,
+              avatar_url: "",
+              participants: chat.participants.map((p) => ({
+                user_id: p.user.user_id,
+                email: p.user.email,
+                name: p.user.name,
+                first_name: p.user.first_name,
+                last_name: p.user.last_name,
+              })),
+            })
+          );
         }
       }
 
@@ -140,6 +143,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
       clear();
       refetch();
     } catch (error) {
+      console.error("Error saving note:", error);
       toast({ title: "Failed to save note", variant: "destructive" });
     }
   };
@@ -212,8 +216,8 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
     );
     return search
       ? arr.filter((n) =>
-        (n.content || "").toLowerCase().includes(search.toLowerCase())
-      )
+          (n.content || "").toLowerCase().includes(search.toLowerCase())
+        )
       : arr;
   }, [notes?.data, search]);
 

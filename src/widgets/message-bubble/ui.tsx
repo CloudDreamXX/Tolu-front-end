@@ -101,9 +101,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       className={cn(
         "rounded-lg  p-2 text-base text-[#1D1D1F] flex flex-wrap gap-2 w-fit",
         "bg-[rgba(255,255,255,0.4)] border border-[#ECEFF4]",
-        isOwn
-          ? "rounded-tr-none"
-          : "rounded-tl-none",
+        isOwn ? "rounded-tr-none" : "rounded-tl-none",
         className
       )}
     >
@@ -181,10 +179,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const initials = author
     ? author.split(" ").length > 1
       ? author
-        .split(" ")
-        .map((word) => word[0].toUpperCase())
-        .slice(0, 2)
-        .join("")
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
       : author.slice(0, 2).toUpperCase()
     : "UN";
 

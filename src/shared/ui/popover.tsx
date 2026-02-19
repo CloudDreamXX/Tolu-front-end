@@ -14,7 +14,7 @@ type PopoverContentOwnProps = {
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content> &
-  PopoverContentOwnProps
+    PopoverContentOwnProps
 >(
   (
     {
@@ -44,11 +44,13 @@ const PopoverContent = React.forwardRef<
         {...props}
       >
         {children}
-        {arrow && <PopoverPrimitive.Arrow
-          className="fill-white stroke-[#1C63DB]"
-          width={16}
-          height={8}
-        />}
+        {arrow && (
+          <PopoverPrimitive.Arrow
+            className="fill-white stroke-[#1C63DB]"
+            width={16}
+            height={8}
+          />
+        )}
       </PopoverPrimitive.Content>
     </PopoverPrimitive.Portal>
   )

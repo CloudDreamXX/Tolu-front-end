@@ -33,20 +33,18 @@ import {
   TabsList,
   TabsTrigger,
 } from "shared/ui";
-import { MultiSelectField } from "widgets/MultiSelectField";
 import { SelectedClientModal } from "widgets/SelectedClientModal";
 import { ParticipantsModal } from "./components/ParticipantsModal";
 import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { RecommendedTab } from "./recommended-tab";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { MedicationsTab } from "./medications-tab";
 import { SupplementsTab } from "./supplements-tab";
 import { CoachDailyJournal } from "./journals-tab";
 import { useGetCoachClientHealthHistoryQuery } from "entities/health-history";
-import { Dock, DockIcon } from "shared/ui/dock";
 
 type TabItem = {
   id: string;
@@ -107,12 +105,9 @@ interface MessageTabsProps {
 export const MessageTabs: React.FC<MessageTabsProps> = ({
   chatId,
   goBackMobile,
-  clientsData = [],
-  onCreateGroup,
   onEditGroup,
   sendMessage,
   loadMessages,
-  showAddClient = true,
   hideFiles = false,
   hideNotes = false,
   activeTab: controlledActiveTab,
@@ -140,11 +135,16 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     null
   );
   const isClient = profile?.roleName === "Client";
-  const [internalActiveTab, setInternalActiveTab] = useState<string>(isClient ? "messages" : "profile");
-  const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
-  const setActiveTab = controlledSetActiveTab !== undefined ? controlledSetActiveTab : setInternalActiveTab;
+  const [internalActiveTab, setInternalActiveTab] = useState<string>(
+    isClient ? "messages" : "profile"
+  );
+  const activeTab =
+    controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
+  const setActiveTab =
+    controlledSetActiveTab !== undefined
+      ? controlledSetActiveTab
+      : setInternalActiveTab;
   const [search, setSearch] = useState<string>("");
-  const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
   const [pinnedTabs, setPinnedTabs] = useState<string[]>([
@@ -155,6 +155,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   ]);
 
   const pinned = new Set(pinnedTabs);
+  const isGroupChat =
+    (chat?.participants && chat?.participants?.length > 2) ||
+    chat?.chat_type === "group";
 
   const availableTabs = useMemo(() => {
     if (isClient) {
@@ -165,12 +168,13 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     }
 
     return ALL_TABS.filter((tab) => {
+      if (isGroupChat && tab.id === "profile") return false;
       if (tab.requiresFiles && hideFiles) return false;
       if (tab.requiresNotes && hideNotes) return false;
       if (tab.requiresRecommended && !isClient) return false;
       return true;
     });
-  }, [isClient, hideFiles, hideNotes]);
+  }, [isClient, hideFiles, hideNotes, isGroupChat]);
 
   const visibleTabs = isClient
     ? availableTabs
@@ -182,7 +186,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
   const location = useLocation();
 
-  const defaultTab = isClient ? "messages" : (location.state?.id ?? "profile");
+  const defaultTab =
+    isClient || isGroupChat ? "messages" : (location.state?.id ?? "profile");
 
   useEffect(() => {
     if (!chatId) {
@@ -190,9 +195,14 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
       setSelectedClient(null);
       setActiveTab(isClient ? "messages" : "profile");
       setSearch("");
-      setSelectedOption([]);
     }
   }, [chatId]);
+
+  useEffect(() => {
+    if (isGroupChat && activeTab === "profile") {
+      setActiveTab("messages");
+    }
+  }, [isGroupChat, activeTab, setActiveTab]);
 
   useEffect(() => {
     const initasync = async () => {
@@ -285,18 +295,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     }
   };
 
-  const onSaveClients = () => {
-    if (selectedOption.length < 2) {
-      toast({
-        variant: "destructive",
-        title: "No clients selected",
-        description: "Please select at least two clients.",
-      });
-    } else {
-      onCreateGroup?.(selectedOption);
-    }
-  };
-
   const receiver = useMemo(
     () => chat?.participants?.find((p) => p.user.email !== profile?.email),
     [chat, profile?.email]
@@ -308,10 +306,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     skip: !receiverUserId,
   });
 
-  const {
-    data: healthHistoryData,
-  } = useGetCoachClientHealthHistoryQuery(receiver?.user.id || location.pathname.split("/").pop()!, {});
-
+  const { data: healthHistoryData } = useGetCoachClientHealthHistoryQuery(
+    receiver?.user.id || location.pathname.split("/").pop()!,
+    {}
+  );
 
   const initials = (() => {
     if (chat?.name) {
@@ -320,7 +318,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         .filter(Boolean)
         .map((p) => p[0]?.toUpperCase() ?? "")
         .slice(0, 2)
-        .join("")
+        .join("");
     }
 
     const user = receiver?.user;
@@ -357,249 +355,11 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   if (!chat) return null;
 
   return (
-    <main className={`flex flex-col w-full ${isClient ? "min-h-screen" : "lg:w-[calc(100%-116px)] h-[calc(100vh-65px)]"} h-full px-4 py-6 md:p-6 lg:p-[24px]`}>
-
-      {isClient && <div className="flex flex-col border-x-0 my-[24px]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center ">
-            {isMobileOrTablet && (
-              <Button
-                variant="ghost"
-                className="p-1 mr-3"
-                onClick={goBackMobile}
-              >
-                <MaterialIcon iconName="keyboard_arrow_left" />
-              </Button>
-            )}
-            <div className="relative mr-3">
-              <Avatar className="w-10 h-10 ">
-                <AvatarImage src={chat.avatar_url} />
-                <AvatarFallback className="bg-[#1B63DB] opacity-[70%] text-white">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-semibold text-[16px] text-[#1D1D1F]">
-                {chat.name ||
-                  (receiver?.user.first_name &&
-                    receiver?.user.last_name &&
-                    `${receiver?.user.first_name} ${receiver?.user.last_name}`) ||
-                  receiver?.user.name ||
-                  "Unknown name"}
-              </span>
-              <span className="text-muted-foreground text-[12px]">
-                {chat.description || receiver?.user.email || ""}
-              </span>
-            </div>
-          </div>
-          <div
-            className={cn(
-              "flex items-center gap-3",
-              isClient ? "lg:w-[360px] hidden md:flex" : undefined
-            )}
-          >
-            {isClient ? (
-              <div className="hidden w-full lg:block">
-                <Input
-                  placeholder="Search"
-                  icon={<MaterialIcon iconName="search" size={16} />}
-                  className="rounded-lg"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-            ) : (
-              <>
-                {/* {!isMobile && chat.chat_type !== "group" && (
-                  <Button
-                    onClick={() => handleSelectClient(receiver?.user.id)}
-                    variant="blue2"
-                  >
-                    View Profile
-                  </Button>
-                )} */}
-
-                {!isMobile && chat.chat_type === "group" && (
-                  <Button
-                    variant="ghost"
-                    className="p-2 bg-white border hover:bg-white"
-                    onClick={() => setParticipantsModalOpen(true)}
-                  >
-                    <div className="flex items-center">
-                      {chat.participants.slice(0, 3).map((p, i) => (
-                        <Avatar
-                          key={p.user.id}
-                          className={cn(
-                            "ring-1 ring-black/5 border-white rounded-full shadow-sm w-6 h-6 -ml-1 border-[1.5px]",
-                            i === 0 && "ml-0"
-                          )}
-                        >
-                          <AvatarImage src={undefined} alt={"undefined"} />
-                          <AvatarFallback className="text-[10px] font-medium">
-                            {`${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}`}
-                          </AvatarFallback>
-                        </Avatar>
-                      ))}
-                    </div>
-
-                    <span className="text-sm font-semibold text-[#1D1D1F]">
-                      {chat.participants.length}
-                    </span>
-                  </Button>
-                )}
-              </>
-            )}
-
-            {(isMobile || (!isClient && chat.chat_type === "group")) && (
-              <DropdownMenu
-                open={isDropdownOpen}
-                onOpenChange={setIsDropdownOpen}
-              >
-                <DropdownMenuTrigger>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="border-none rounded-full hover:bg-white w-[28px] h-[28px] md:w-[32px] md:h-[32px]"
-                  >
-                    <MaterialIcon iconName="more_vert" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {isMobile && (
-                    <DropdownMenuItem
-                      className="text-[#1D1D1F]"
-                      onClick={() => handleSelectClient(receiver?.user.id)}
-                    >
-                      <MaterialIcon iconName="person" className="mr-2" />
-                      Profile
-                    </DropdownMenuItem>
-                  )}
-                  {!isClient && chat.chat_type === "group" && (
-                    <DropdownMenuItem
-                      className="text-[#1D1D1F]"
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        onEditGroup?.(chat);
-                      }}
-                    >
-                      <MaterialIcon iconName="edit" className="mr-2" />
-                      Edit
-                    </DropdownMenuItem>
-                  )}
-                  {/* <DropdownMenuItem className="text-red-600">
-                  <MaterialIcon iconName="delete" fill={1} className="mr-2" />
-                  Delete
-                </DropdownMenuItem> */}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </div>
-        {isClient && (
-          <div className="hidden my-4 sm:block lg:hidden">
-            <Input
-              placeholder="Search"
-              icon={<MaterialIcon iconName="search" size={16} />}
-              className="rounded-full"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        )}
-      </div>}
-
-
-      <Tabs
-        defaultValue={defaultTab}
-        value={activeTab}
-        onValueChange={setActiveTab}
-      >
-        {isClient ? (
-          <TabsList className="border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden">
-            {visibleTabs.map((tab) => (
-              <div key={tab.id} className="relative group">
-                <TabsTrigger value={tab.id} className="min-w-[120px]">
-                  {tab.id === "messages" && isClient ? "Chat" : tab.label}
-                </TabsTrigger>
-              </div>
-            ))}
-          </TabsList>
-        ) : (
-          <Dock className="mt-0 p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden w-full mt-0 border-none flex items-center justify-start gap-0">
-            {visibleTabs.map((tab) => (
-              <DockIcon
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "relative min-w-[120px] w-[120px] flex items-center justify-center rounded-xl transition-colors duration-200",
-                  activeTab === tab.id
-                    ? "bg-gray-100 text-blue-600"
-                    : ""
-                )}
-              >
-                <span className="pointer-events-none select-none">
-                  {tab.label}
-                </span>
-
-                {activeTab === tab.id && (
-                  <Button
-                    size="icon"
-                    variant="unstyled"
-                    className="absolute z-50 text-[#B3BCC8] hover:text-black rounded-full p-[1px] -right-[4px] -top-[4px]"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPinnedTabs((prev) =>
-                        prev.length <= 3 ? prev : prev.filter((id) => id !== tab.id)
-                      );
-                    }}
-                  >
-                    <MaterialIcon iconName="close" size={14} />
-                  </Button>
-                )}
-              </DockIcon>
-            ))}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="ml-auto">
-                <Button variant="unstyled">
-                  <MaterialIcon iconName="more_vert" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                sideOffset={8}
-                className="bg-white rounded-[16px] p-[16px] shadow-lg min-w-[215px] mt-[8px]"
-              >
-                {overflowTabs.map((tab) => (
-                  <DropdownMenuItem
-                    key={tab.id}
-                    className="flex items-center justify-between gap-2 p-[4px] pl-[16px]"
-                  >
-                    <TabsTrigger
-                      value={tab.id}
-                      className="flex-1 justify-start rounded-none p-0 hover:bg-transparent data-[state=active]:bg-transparent"
-                    >
-                      {tab.label}
-                    </TabsTrigger>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPinnedTabs((prev) => [...prev, tab.id]);
-                      }}
-                    >
-                      <MaterialIcon iconName="push_pin" size={16} />
-                    </Button>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </Dock>
-        )}
-
-        {!isClient && <div className="flex flex-col border-x-0 my-[24px]">
+    <main
+      className={`flex flex-col w-full ${isClient ? "min-h-screen" : "lg:w-[calc(100%-116px)] h-[calc(100vh-65px)]"} h-full px-4 py-6 md:p-6 lg:p-[24px]`}
+    >
+      {isClient && (
+        <div className="flex flex-col border-x-0 my-[24px]">
           <div className="flex items-center justify-between">
             <div className="flex items-center ">
               {isMobileOrTablet && (
@@ -633,14 +393,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                   {chat.description || receiver?.user.email || ""}
                 </span>
               </div>
-              {chat.participants.length <= 2 && <div className="flex flex-col ml-[25px]">
-                <span className="font-semibold text-[16px] text-[#1D1D1F]">
-                  Age
-                </span>
-                <span className="text-muted-foreground text-[12px]">
-                  {healthHistoryData?.age ?? "-"}
-                </span>
-              </div>}
             </div>
             <div
               className={cn(
@@ -756,7 +508,258 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               />
             </div>
           )}
-        </div>}
+        </div>
+      )}
+
+      <Tabs
+        defaultValue={defaultTab}
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
+        {isClient ? (
+          <TabsList className="border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden">
+            {visibleTabs.map((tab) => (
+              <div key={tab.id} className="relative group">
+                <TabsTrigger value={tab.id} className="min-w-[120px]">
+                  {tab.id === "messages" && isClient ? "Chat" : tab.label}
+                </TabsTrigger>
+              </div>
+            ))}
+          </TabsList>
+        ) : (
+          <TabsList className="mt-0 p-[8px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden border-none flex items-center justify-start gap-0">
+            {visibleTabs.map((tab) => (
+              <div
+                key={tab.id}
+                className="relative min-w-[120px] w-[120px] flex items-center justify-center"
+              >
+                <TabsTrigger
+                  value={tab.id}
+                  className="w-full rounded-xl transition-colors duration-200 data-[state=active]:bg-gray-100 data-[state=active]:text-blue-600"
+                >
+                  {tab.label}
+                </TabsTrigger>
+
+                {activeTab === tab.id && (
+                  <Button
+                    size="icon"
+                    variant="unstyled"
+                    className="absolute z-50 text-[#B3BCC8] hover:text-black rounded-full p-[1px] -right-[4px] -top-[4px]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPinnedTabs((prev) =>
+                        prev.length <= 3
+                          ? prev
+                          : prev.filter((id) => id !== tab.id)
+                      );
+                    }}
+                  >
+                    <MaterialIcon iconName="close" size={14} />
+                  </Button>
+                )}
+              </div>
+            ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="ml-auto">
+                <Button variant="unstyled">
+                  <MaterialIcon iconName="more_vert" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                sideOffset={8}
+                className="bg-white rounded-[16px] p-[16px] shadow-lg min-w-[215px] mt-[8px]"
+              >
+                {overflowTabs.map((tab) => (
+                  <DropdownMenuItem
+                    key={tab.id}
+                    className="flex items-center justify-between gap-2 p-[4px] pl-[16px]"
+                  >
+                    <TabsTrigger
+                      value={tab.id}
+                      className="flex-1 justify-start rounded-none p-0 hover:bg-transparent data-[state=active]:bg-transparent"
+                    >
+                      {tab.label}
+                    </TabsTrigger>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPinnedTabs((prev) => [...prev, tab.id]);
+                      }}
+                    >
+                      <MaterialIcon iconName="push_pin" size={16} />
+                    </Button>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TabsList>
+        )}
+
+        {!isClient && (
+          <div className="flex flex-col border-x-0 my-[24px]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center ">
+                {isMobileOrTablet && (
+                  <Button
+                    variant="ghost"
+                    className="p-1 mr-3"
+                    onClick={goBackMobile}
+                  >
+                    <MaterialIcon iconName="keyboard_arrow_left" />
+                  </Button>
+                )}
+                <div className="relative mr-3">
+                  <Avatar className="w-10 h-10 ">
+                    <AvatarImage src={chat.avatar_url} />
+                    <AvatarFallback className="bg-[#1B63DB] opacity-[70%] text-white">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-[16px] text-[#1D1D1F]">
+                    {chat.name ||
+                      (receiver?.user.first_name &&
+                        receiver?.user.last_name &&
+                        `${receiver?.user.first_name} ${receiver?.user.last_name}`) ||
+                      receiver?.user.name ||
+                      "Unknown name"}
+                  </span>
+                  <span className="text-muted-foreground text-[12px]">
+                    {chat.description || receiver?.user.email || ""}
+                  </span>
+                </div>
+                {chat.participants.length <= 2 && (
+                  <div className="flex flex-col ml-[25px]">
+                    <span className="font-semibold text-[16px] text-[#1D1D1F]">
+                      Age
+                    </span>
+                    <span className="text-muted-foreground text-[12px]">
+                      {healthHistoryData?.age ?? "-"}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div
+                className={cn(
+                  "flex items-center gap-3",
+                  isClient ? "lg:w-[360px] hidden md:flex" : undefined
+                )}
+              >
+                {isClient ? (
+                  <div className="hidden w-full lg:block">
+                    <Input
+                      placeholder="Search"
+                      icon={<MaterialIcon iconName="search" size={16} />}
+                      className="rounded-lg"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {/* {!isMobile && chat.chat_type !== "group" && (
+                  <Button
+                    onClick={() => handleSelectClient(receiver?.user.id)}
+                    variant="blue2"
+                  >
+                    View Profile
+                  </Button>
+                )} */}
+
+                    {!isMobile && chat.chat_type === "group" && (
+                      <Button
+                        variant="ghost"
+                        className="p-2 bg-white border hover:bg-white"
+                        onClick={() => setParticipantsModalOpen(true)}
+                      >
+                        <div className="flex items-center">
+                          {chat.participants.slice(0, 3).map((p, i) => (
+                            <Avatar
+                              key={p.user.id}
+                              className={cn(
+                                "ring-1 ring-black/5 border-white rounded-full shadow-sm w-6 h-6 -ml-1 border-[1.5px]",
+                                i === 0 && "ml-0"
+                              )}
+                            >
+                              <AvatarImage src={undefined} alt={"undefined"} />
+                              <AvatarFallback className="text-[10px] font-medium">
+                                {`${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}`}
+                              </AvatarFallback>
+                            </Avatar>
+                          ))}
+                        </div>
+
+                        <span className="text-sm font-semibold text-[#1D1D1F]">
+                          {chat.participants.length}
+                        </span>
+                      </Button>
+                    )}
+                  </>
+                )}
+
+                {(isMobile || (!isClient && chat.chat_type === "group")) && (
+                  <DropdownMenu
+                    open={isDropdownOpen}
+                    onOpenChange={setIsDropdownOpen}
+                  >
+                    <DropdownMenuTrigger>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="border-none rounded-full hover:bg-white w-[28px] h-[28px] md:w-[32px] md:h-[32px]"
+                      >
+                        <MaterialIcon iconName="more_vert" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {isMobile && (
+                        <DropdownMenuItem
+                          className="text-[#1D1D1F]"
+                          onClick={() => handleSelectClient(receiver?.user.id)}
+                        >
+                          <MaterialIcon iconName="person" className="mr-2" />
+                          Profile
+                        </DropdownMenuItem>
+                      )}
+                      {!isClient && chat.chat_type === "group" && (
+                        <DropdownMenuItem
+                          className="text-[#1D1D1F]"
+                          onClick={() => {
+                            setIsDropdownOpen(false);
+                            onEditGroup?.(chat);
+                          }}
+                        >
+                          <MaterialIcon iconName="edit" className="mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                      )}
+                      {/* <DropdownMenuItem className="text-red-600">
+                  <MaterialIcon iconName="delete" fill={1} className="mr-2" />
+                  Delete
+                </DropdownMenuItem> */}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
+            </div>
+            {isClient && (
+              <div className="hidden my-4 sm:block lg:hidden">
+                <Input
+                  placeholder="Search"
+                  icon={<MaterialIcon iconName="search" size={16} />}
+                  className="rounded-full"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+            )}
+          </div>
+        )}
 
         <TabsContent value="profile">
           <ClientComprehensiveSummary

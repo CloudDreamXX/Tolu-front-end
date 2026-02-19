@@ -50,7 +50,7 @@ export const coachApi = createApi({
       query: ({ payload, file }) => {
         if (file) {
           const formData = new FormData();
-          formData.append('file', file);
+          formData.append("file", file);
           return {
             url: API_ROUTES.COACH_ADMIN.POST_CLIENT,
             method: "POST",
@@ -61,7 +61,7 @@ export const coachApi = createApi({
           url: API_ROUTES.COACH_ADMIN.POST_CLIENT,
           method: "POST",
           body: payload,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         };
       },
     }),
@@ -73,7 +73,7 @@ export const coachApi = createApi({
       query: ({ file }) => {
         if (file) {
           const formData = new FormData();
-          formData.append('file', file);
+          formData.append("file", file);
           return {
             url: API_ROUTES.COACH_ADMIN.POST_CLIENT_FILE,
             method: "POST",
@@ -83,7 +83,7 @@ export const coachApi = createApi({
         return {
           url: API_ROUTES.COACH_ADMIN.POST_CLIENT_FILE,
           method: "POST",
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         };
       },
     }),
@@ -221,7 +221,10 @@ export const coachApi = createApi({
     }),
 
     // === COMPREHENSIVE CLIENT PROFILE ===
-    getComprehensiveClient: builder.query<BaseResponse<ClientComprehensiveProfile>, string>({
+    getComprehensiveClient: builder.query<
+      BaseResponse<ClientComprehensiveProfile>,
+      string
+    >({
       query: (id) =>
         API_ROUTES.COACH_ADMIN.GET_COMPREHENSIVE_CLIENT.replace(
           "{client_id}",
@@ -312,19 +315,25 @@ export const coachApi = createApi({
         // All fields as FormData
         form.append("folder_id", folder_id);
         if (typeof new_name === "string") form.append("new_name", new_name);
-        if (typeof parent_folder_id === "string") form.append("parent_folder_id", parent_folder_id);
+        if (typeof parent_folder_id === "string")
+          form.append("parent_folder_id", parent_folder_id);
         if (typeof status === "string") form.append("status", status);
-        if (typeof instructions === "string") form.append("instructions", instructions);
+        if (typeof instructions === "string")
+          form.append("instructions", instructions);
         if (Array.isArray(reviewer_ids)) {
           reviewer_ids.forEach((id) => id && form.append("reviewer_ids", id));
         }
         if (Array.isArray(files_to_delete)) {
           files_to_delete.forEach((id) =>
-            typeof id === "number" ? form.append("files_to_delete", id.toString()) : undefined
+            typeof id === "number"
+              ? form.append("files_to_delete", id.toString())
+              : undefined
           );
         }
         if (Array.isArray(reviewer_ids_to_delete)) {
-          reviewer_ids_to_delete.forEach((id) => id && form.append("reviewer_ids_to_delete", id));
+          reviewer_ids_to_delete.forEach(
+            (id) => id && form.append("reviewer_ids_to_delete", id)
+          );
         }
         files.forEach((f) => form.append("files", f));
         return {
@@ -523,17 +532,14 @@ export class CoachService {
     if (options?.chatTitle) formData.append("chat_title", options.chatTitle);
     if (options?.regenerateId)
       formData.append("regenerate_id", options.regenerateId);
-    if (options?.textQuote)
-      formData.append("text_quote", options.textQuote);
+    if (options?.textQuote) formData.append("text_quote", options.textQuote);
 
     if (clientId) formData.append("client_id", clientId);
 
     images.forEach((file) => formData.append("files", file));
     if (pdf) formData.append("files", pdf);
 
-    libraryFiles?.forEach((id) =>
-      formData.append("library_files", id)
-    );
+    libraryFiles?.forEach((id) => formData.append("library_files", id));
 
     return formData;
   }
@@ -554,8 +560,7 @@ export class CoachService {
     }) => void
   ): Promise<{ folderId: string; documentId: string; chatId: string }> {
     const endpoint =
-      import.meta.env.VITE_API_URL +
-      API_ROUTES.COACH_ADMIN.AI_LEARNING_SEARCH;
+      import.meta.env.VITE_API_URL + API_ROUTES.COACH_ADMIN.AI_LEARNING_SEARCH;
 
     const formData = this.buildCoachFormData(
       chatMessage.user_prompt ?? "",

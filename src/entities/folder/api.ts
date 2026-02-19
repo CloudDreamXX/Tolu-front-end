@@ -10,7 +10,6 @@ import {
   NewFolder,
   ContentToMove,
   FolderToDelete,
-  GetFolderItemResponse,
 } from "./model";
 import { RootState } from "entities/store";
 

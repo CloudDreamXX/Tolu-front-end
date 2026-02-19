@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
-import { Button, Input, Textarea } from "shared/ui";
+import { Button, Textarea } from "shared/ui";
 import { PopoverAttach } from "widgets/content-popovers";
 import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
@@ -77,7 +77,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     items,
     files,
     open,
-    getInputProps,
     remove,
     getDropzoneProps,
     dragOver,
@@ -600,7 +599,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             author={
               (item.msg.sender?.first_name &&
                 item.msg.sender?.last_name &&
-                `${item.msg.sender?.first_name} ${item.msg.sender?.last_name}`) || item.msg.sender?.name ||
+                `${item.msg.sender?.first_name} ${item.msg.sender?.last_name}`) ||
+              item.msg.sender?.name ||
               "Unknown User"
             }
             chatId={chat.chat_id}
@@ -736,7 +736,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
               onClick={() => {
                 if (window.speechSynthesis) {
                   const utterance = new window.SpeechSynthesisUtterance(input);
-                  utterance.lang = 'en-US';
+                  utterance.lang = "en-US";
                   window.speechSynthesis.speak(utterance);
                 }
               }}
@@ -795,10 +795,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                             <MaterialIcon iconName="add" />
                             {(files.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {files.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />

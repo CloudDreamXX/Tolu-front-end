@@ -169,8 +169,8 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
     );
     return search
       ? arr.filter((n) =>
-        (n.content || "").toLowerCase().includes(search.toLowerCase())
-      )
+          (n.content || "").toLowerCase().includes(search.toLowerCase())
+        )
       : arr;
   }, [medications, search]);
 

@@ -33,7 +33,7 @@ export const CheckInvite = () => {
     if (!parsedData.success) {
       setEmailError(
         parsedData.error.errors.find((e) => e.path[0] === "email")?.message ??
-        ""
+          ""
       );
       return;
     }
@@ -105,10 +105,11 @@ export const CheckInvite = () => {
                   placeholder="Enter Email"
                   name="email"
                   onChange={handleEmailChange}
-                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none w-full ${emailError
+                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] bg-white outline-none focus-visible:outline-none w-full ${
+                    emailError
                       ? "border border-[#FF1F0F]"
                       : "border border-[#DFDFDF] focus:border-[#1C63DB]"
-                    }`}
+                  }`}
                 />
                 {emailError && (
                   <p className="text-[#FF1F0F] text-[14px] font-medium px-[4px] pt-[4px]">
@@ -144,10 +145,11 @@ export const CheckInvite = () => {
                 size={"unstyled"}
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${email && !emailError && !isSubmitting
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
+                  email && !emailError && !isSubmitting
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                  }`}
+                }`}
               >
                 {isSubmitting ? "Checking..." : "Check Invite"}
               </Button>

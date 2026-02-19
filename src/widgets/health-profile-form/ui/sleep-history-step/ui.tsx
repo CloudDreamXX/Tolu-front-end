@@ -44,9 +44,7 @@ export const SleepHistoryStep = ({ form }: { form: any }) => {
             name={q.name}
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel className="text-sm font-medium">
-                  {q.label}
-                </FormLabel>
+                <FormLabel className="text-sm font-medium">{q.label}</FormLabel>
 
                 <FormControl>
                   <Input placeholder="Your answer" {...field} />

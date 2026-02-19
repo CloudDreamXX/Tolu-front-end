@@ -63,7 +63,8 @@ export const STRESSFUL_EVENTS = [
   },
   {
     name: "traumaRobberyMugging",
-    label: "Physical force or weapon threatened or used against you in a robbery or mugging",
+    label:
+      "Physical force or weapon threatened or used against you in a robbery or mugging",
   },
   {
     name: "traumaWitnessViolence",
@@ -195,7 +196,10 @@ export const StressfulEventsStep = ({ form }: { form: any }) => {
         name="traumaAdditionalNotes"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Is there anything else you’d like to share about these stressfull events or traumas?</FormLabel>
+            <FormLabel>
+              Is there anything else you’d like to share about these stressfull
+              events or traumas?
+            </FormLabel>
             <FormControl>
               <Textarea {...field} />
             </FormControl>

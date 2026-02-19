@@ -359,7 +359,11 @@ export const ContentManagerClients: React.FC = () => {
     if (!selectedClient || !selectedClientId) return;
 
     try {
-      await deleteClient(selectedClient.client_info.id ? selectedClient.client_info.id : selectedClientId);
+      await deleteClient(
+        selectedClient.client_info.id
+          ? selectedClient.client_info.id
+          : selectedClientId
+      );
       refetchClients();
       toast({
         title: "Deleted successfully",
@@ -515,7 +519,9 @@ export const ContentManagerClients: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : clientsData && clientsData.data.clients && clientsData.data.clients.length === 0 ? (
+        ) : clientsData &&
+          clientsData.data.clients &&
+          clientsData.data.clients.length === 0 ? (
           <EmptyStateTolu
             text="Invite your clients to Tolu to deliver personalized education or insight unique to their personal health challenges."
             footer={
@@ -812,10 +818,9 @@ export const ContentManagerClients: React.FC = () => {
                           className={`w-full ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                           onClick={() => {
                             if (client.status !== "active") return;
-                            navigate(
-                              `/clients/${client.client_id}`,
-                              { state: { id: "profile" } }
-                            );
+                            navigate(`/clients/${client.client_id}`, {
+                              state: { id: "profile" },
+                            });
                           }}
                           disabled={client.status !== "active"}
                         >
@@ -874,9 +879,7 @@ export const ContentManagerClients: React.FC = () => {
                       className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                       disabled={client.status !== "active"}
                       onClick={() => {
-                        navigate(
-                          `/clients/${client.client_id}`
-                        );
+                        navigate(`/clients/${client.client_id}`);
                       }}
                     >
                       <MaterialIcon iconName="forum" fill={1} />
@@ -885,8 +888,9 @@ export const ContentManagerClients: React.FC = () => {
                       variant="unstyled"
                       size="unstyled"
                       disabled={client.status !== "active"}
-                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${client.status !== "active" ? "opacity-[0.5]" : ""
-                        }`}
+                      className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${
+                        client.status !== "active" ? "opacity-[0.5]" : ""
+                      }`}
                       onClick={() => {
                         const chatId = getChatIdByClientId(client.client_id);
                         setNotesChatId(chatId);
@@ -959,9 +963,7 @@ export const ContentManagerClients: React.FC = () => {
                           className={`w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                           onClick={() => {
                             if (client.status !== "active") return;
-                            navigate(
-                              `/clients/${client.client_id}`
-                            );
+                            navigate(`/clients/${client.client_id}`);
                           }}
                           disabled={client.status !== "active"}
                         >
@@ -1016,10 +1018,11 @@ export const ContentManagerClients: React.FC = () => {
                   size={"unstyled"}
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${currentPage === page
-                    ? "border-[#1C63DB] text-[#1C63DB]"
-                    : "border-[#DBDEE1]"
-                    }`}
+                  className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                    currentPage === page
+                      ? "border-[#1C63DB] text-[#1C63DB]"
+                      : "border-[#DBDEE1]"
+                  }`}
                 >
                   {page}
                 </Button>

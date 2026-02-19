@@ -1,8 +1,4 @@
-import {
-  useEditFolderMutation,
-  Share,
-  UpdateFolderRequest,
-} from "entities/coach";
+import { useEditFolderMutation, Share } from "entities/coach";
 import { IDocument } from "entities/document";
 import { ClientsInfo, FilesInfo, InstructionInfo } from "entities/folder";
 import { EngagementInfo } from "entities/folder/ui/engagement-info";

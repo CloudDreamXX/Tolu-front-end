@@ -174,9 +174,7 @@ export const ContentManagerSidebar: React.FC = () => {
         <ScrollArea className="h-[calc(100vh-64px)] bg-white ">
           <div className={cn("flex flex-col gap-8 h-full")}>
             <div className="flex flex-col items-center text-center">
-              <h2
-                className={"font-bold text-[24px] text-[#1C63DB]"}
-              >
+              <h2 className={"font-bold text-[24px] text-[#1C63DB]"}>
                 Tolu Health
               </h2>
             </div>
@@ -223,13 +221,15 @@ export const ContentManagerSidebar: React.FC = () => {
         <Button
           variant={"unstyled"}
           size={"unstyled"}
-          onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
+          onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
           className={`flex gap-4 items-center justify-center gap-[18px] ${sidebarOpen ? "px-4" : ""}`}
         >
-          {!sidebarOpen && <Avatar>
-            <AvatarImage src={user?.photo} alt="Avatar" />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>}
+          {!sidebarOpen && (
+            <Avatar>
+              <AvatarImage src={user?.photo} alt="Avatar" />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+          )}
           {sidebarOpen && (
             <p className="text-[#1D1D1F] hover:text-[#1C63DB] my-0 text-[16px]/[22px] font-semibold">
               {user?.first_name ? user?.first_name : user?.name}{" "}

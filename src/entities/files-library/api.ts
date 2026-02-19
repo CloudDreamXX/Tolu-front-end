@@ -82,7 +82,10 @@ export const filesLibraryApi = createApi({
       invalidatesTags: ["Files"],
     }),
 
-    createFolder: builder.mutation<BaseResponse<FolderResponse>, CreateFolderPayload>({
+    createFolder: builder.mutation<
+      BaseResponse<FolderResponse>,
+      CreateFolderPayload
+    >({
       query: (body) => ({
         url: API_ROUTES.FILES_LIBRARY.CREATE_FOLDER,
         method: "POST",

@@ -8,8 +8,6 @@ import {
   ClientInvitationInfo,
   CoachListItem,
   Folder,
-  FoldersResponse,
-  GetCoachesResponse,
   RequestInvitePayload,
   SharedCoachContentByContentIdResponse,
   UserProfileUpdate,
@@ -31,7 +29,10 @@ export const clientApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getInvitationDetails: builder.query<BaseResponse<ClientInvitationInfo>, string>({
+    getInvitationDetails: builder.query<
+      BaseResponse<ClientInvitationInfo>,
+      string
+    >({
       query: (token) =>
         API_ROUTES.CLIENT.GET_INVITATION_DETAILS.replace("{token}", token),
     }),

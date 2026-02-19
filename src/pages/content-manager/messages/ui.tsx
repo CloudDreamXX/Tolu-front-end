@@ -13,7 +13,12 @@ import {
   useLazyFetchChatMessagesQuery,
 } from "entities/chat/api";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
-import { Client, useGetManagedClientsQuery, useImportClientsMutation, useInviteClientMutation } from "entities/coach";
+import {
+  Client,
+  useGetManagedClientsQuery,
+  useImportClientsMutation,
+  useInviteClientMutation,
+} from "entities/coach";
 import { useLazyGetClientInfoQuery } from "entities/coach";
 import { useDeleteClientMutation } from "entities/coach";
 import { ConfirmDeleteModal } from "widgets/ConfirmDeleteModal";
@@ -26,7 +31,12 @@ import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 import { toast, usePageWidth } from "shared/lib";
 import { Button, Dialog, DialogContent, DialogTrigger, Input } from "shared/ui";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "shared/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "shared/ui/dropdown-menu";
 import { AddClientModal } from "widgets/AddClientModal/ui";
 import { ResizableLibraryChat } from "widgets/library-small-chat/components/ResizableSmallChat";
 import { MessageSidebar } from "widgets/message-sidebar";
@@ -36,12 +46,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-    open: true;
-    mode: "create" | "edit";
-    chat?: DetailsChatItemModel | null;
-    preselectedClients?: string[];
-  };
-
+      open: true;
+      mode: "create" | "edit";
+      chat?: DetailsChatItemModel | null;
+      preselectedClients?: string[];
+    };
 
 export const ContentManagerMessages: React.FC = () => {
   const [deleteClient] = useDeleteClientMutation();
@@ -60,35 +69,39 @@ export const ContentManagerMessages: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<ChatItemModel | null>(null);
   const [clientsData, setClientsData] = useState<Client[]>([]);
   const [allClients, setAllClients] = useState<Client[]>([]);
-  const [deleting, setDeleting] = useState(false);
   const [getClientInfo] = useLazyGetClientInfoQuery();
   const [resendLoading, setResendLoading] = useState(false);
 
-  const selectedClientId = selectedChat && selectedChat.type === "new_chat"
-    ? selectedChat.id
-    : selectedChat && selectedChat.participants && selectedChat.participants.length === 1
-      ? selectedChat.participants[0].id
-      : null;
+  const selectedClientId =
+    selectedChat && selectedChat.type === "new_chat"
+      ? selectedChat.id
+      : selectedChat &&
+          selectedChat.participants &&
+          selectedChat.participants.length === 1
+        ? selectedChat.participants[0].id
+        : null;
 
   const handleDeleteClient = async () => {
     if (!selectedClientId) return;
-    setDeleting(true);
+
     try {
       await deleteClient(selectedClientId).unwrap();
       toast({ title: "Client deleted successfully" });
       setSelectedChat(null);
       setConfirmDelete(false);
     } catch (err) {
+      console.error(err);
       toast({
         variant: "destructive",
         title: "Failed to delete client",
-        description: "An error occurred while deleting the client. Please try again.",
+        description:
+          "An error occurred while deleting the client. Please try again.",
       });
-    } finally {
-      setDeleting(false);
     }
   };
-  const [groupModalOpen, setGroupModalOpen] = useState<GroupModalState>({ open: false });
+  const [groupModalOpen, setGroupModalOpen] = useState<GroupModalState>({
+    open: false,
+  });
   const [searchChats, setSearchChats] = useState("");
   const [addClientModal, setAddClientModal] = useState(false);
   const [importClientsPopup, setImportClientsPopup] = useState(false);
@@ -103,7 +116,9 @@ export const ContentManagerMessages: React.FC = () => {
     focus_areas: [],
     permission_type: "",
   });
-  const [pendingInvitePayload, setPendingInvitePayload] = useState(null as typeof newClient | null);
+  const [pendingInvitePayload, setPendingInvitePayload] = useState(
+    null as typeof newClient | null
+  );
   const [confirmExistingUser, setConfirmExistingUser] = useState(false);
   const [inviteClient] = useInviteClientMutation();
   const [importClients] = useImportClientsMutation();
@@ -120,12 +135,14 @@ export const ContentManagerMessages: React.FC = () => {
 
   const safeWidthPercent = Math.min(50, Math.max(10, widthPercent));
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
 
   useEffect(() => {
     if (data && data.data?.clients) {
       setAllClients(data.data.clients);
-      setClientsData(data.data.clients.filter((client) => client.status === "active"));
+      setClientsData(
+        data.data.clients.filter((client) => client.status === "active")
+      );
     }
   }, [data]);
 
@@ -190,26 +207,29 @@ export const ContentManagerMessages: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      allClients.length > 0 &&
-      !routeChatId &&
-      !selectedChat
-    ) {
+    if (allClients.length > 0 && !routeChatId && !selectedChat) {
       const firstClient = allClients[0];
       const chatExists = chats.some(
-        chat => chat.participants && chat.participants.length === 1 && chat.participants[0].id === firstClient.client_id
+        (chat) =>
+          chat.participants &&
+          chat.participants.length === 1 &&
+          chat.participants[0].id === firstClient.client_id
       );
       if (!chatExists) {
         setSelectedChat({
           id: firstClient.client_id,
           type: "new_chat",
-          name: firstClient.name || `${firstClient.first_name} ${firstClient.last_name}`,
+          name:
+            firstClient.name ||
+            `${firstClient.first_name} ${firstClient.last_name}`,
           avatar_url: "",
           participants: [
             {
               id: firstClient.client_id,
               email: "",
-              name: firstClient.name || `${firstClient.first_name} ${firstClient.last_name}`,
+              name:
+                firstClient.name ||
+                `${firstClient.first_name} ${firstClient.last_name}`,
               first_name: firstClient.first_name,
               last_name: firstClient.last_name,
             },
@@ -239,7 +259,8 @@ export const ContentManagerMessages: React.FC = () => {
     };
   }, [importClientsPopup]);
 
-  const updateClient = (field: string, value: any) => setNewClient((prev) => ({ ...prev, [field]: value }));
+  const updateClient = (field: string, value: any) =>
+    setNewClient((prev) => ({ ...prev, [field]: value }));
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -391,14 +412,16 @@ export const ContentManagerMessages: React.FC = () => {
           request: {
             name,
             description,
-            participant_ids:
-              (add_participant?.filter((n) => typeof n === "string" && n.trim() !== "") || [])
-                .map((n) => {
-                  const found = clientsData.find(
-                    (c) => `${c.first_name} ${c.last_name}`.trim() === n.trim()
-                  );
-                  return found?.client_id || "";
-                }),
+            participant_ids: (
+              add_participant?.filter(
+                (n) => typeof n === "string" && n.trim() !== ""
+              ) || []
+            ).map((n) => {
+              const found = clientsData.find(
+                (c) => `${c.first_name} ${c.last_name}`.trim() === n.trim()
+              );
+              return found?.client_id || "";
+            }),
           },
           avatar_image: image ?? undefined,
         }).unwrap();
@@ -407,8 +430,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-              groupModalOpen.mode === "edit" &&
-              groupModalOpen.chat
+            groupModalOpen.mode === "edit" &&
+            groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -514,13 +537,15 @@ export const ContentManagerMessages: React.FC = () => {
     // Map chats by client id for quick lookup
     const chatMap = new Map(
       chats
-        .filter(chat => chat.participants && chat.participants.length === 1)
-        .map(chat => [chat.participants[0].id, chat])
+        .filter((chat) => chat.participants && chat.participants.length === 1)
+        .map((chat) => [chat.participants[0].id, chat])
     );
     // For each client, if chat exists, use chat, else create a pseudo-chat item
     return allClients
-      .filter(client => ["active", "pending"].includes((client.status || "").toLowerCase()))
-      .map(client => {
+      .filter((client) =>
+        ["active", "pending"].includes((client.status || "").toLowerCase())
+      )
+      .map((client) => {
         const chat = chatMap.get(client.client_id);
         if (chat) return chat;
         // Pseudo-chat item for clients without chat
@@ -544,14 +569,17 @@ export const ContentManagerMessages: React.FC = () => {
           status: client.status,
         };
       })
-      .filter(item => {
+      .filter((item) => {
         if (item.name && typeof item.name === "string") {
           return item.name.toLowerCase().includes(searchChats.toLowerCase());
         }
-        return item.participants.some(p =>
-          (p.first_name && p.first_name.toLowerCase().includes(searchChats.toLowerCase())) ||
-          (p.last_name && p.last_name.toLowerCase().includes(searchChats.toLowerCase())) ||
-          (p.name && p.name.toLowerCase().includes(searchChats.toLowerCase()))
+        return item.participants.some(
+          (p) =>
+            (p.first_name &&
+              p.first_name.toLowerCase().includes(searchChats.toLowerCase())) ||
+            (p.last_name &&
+              p.last_name.toLowerCase().includes(searchChats.toLowerCase())) ||
+            (p.name && p.name.toLowerCase().includes(searchChats.toLowerCase()))
         );
       });
   }, [allClients, chats, searchChats]);
@@ -595,15 +623,22 @@ export const ContentManagerMessages: React.FC = () => {
             Please wait, we are loading the information...
           </div>
         )}
-        <div className="flex flex-col" style={{ width: isMobileOrTablet ? "100%" : `${100 - safeWidthPercent}%` }}>
+        <div
+          className="flex flex-col"
+          style={{
+            width: isMobileOrTablet ? "100%" : `${100 - safeWidthPercent}%`,
+          }}
+        >
           <div className="flex justify-between items-center">
             <div className="w-[316px] ml-[24px] mt-[24px]">
               <Input
                 type="text"
-                icon={<MaterialIcon iconName="search" className="text-[5F5F65]" />}
+                icon={
+                  <MaterialIcon iconName="search" className="text-[5F5F65]" />
+                }
                 placeholder="Search"
                 value={searchChats}
-                onChange={e => setSearchChats(e.target.value)}
+                onChange={(e) => setSearchChats(e.target.value)}
                 className="w-full rounded-[1000px] border border-[#D6D7D9] px-[12px] py-[10px] pl-[40px] text-[14px]"
               />
             </div>
@@ -612,7 +647,10 @@ export const ContentManagerMessages: React.FC = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant={"ghost"}>
-                      <MaterialIcon iconName="more_vert" className="rotate-[90deg]" />
+                      <MaterialIcon
+                        iconName="more_vert"
+                        className="rotate-[90deg]"
+                      />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -620,10 +658,19 @@ export const ContentManagerMessages: React.FC = () => {
                       Delete
                     </DropdownMenuItem>
                     {(() => {
-                      const client = allClients.find(c => c.client_id === selectedClientId);
-                      if (client && client.status && client.status.toLowerCase() === "pending") {
+                      const client = allClients.find(
+                        (c) => c.client_id === selectedClientId
+                      );
+                      if (
+                        client &&
+                        client.status &&
+                        client.status.toLowerCase() === "pending"
+                      ) {
                         return (
-                          <DropdownMenuItem onClick={() => handleResendInvite(client.client_id)} disabled={resendLoading}>
+                          <DropdownMenuItem
+                            onClick={() => handleResendInvite(client.client_id)}
+                            disabled={resendLoading}
+                          >
                             {resendLoading ? "Resending..." : "Resend Invite"}
                           </DropdownMenuItem>
                         );
@@ -639,10 +686,16 @@ export const ContentManagerMessages: React.FC = () => {
                   onDelete={handleDeleteClient}
                 />
               )}
-              <Button variant="brightblue" className="rounded-full w-[32px] h-[32px]">
+              <Button
+                variant="brightblue"
+                className="rounded-full w-[32px] h-[32px]"
+              >
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="brightblue" className="rounded-full w-[32px] h-[32px]">
+                    <Button
+                      variant="brightblue"
+                      className="rounded-full w-[32px] h-[32px]"
+                    >
                       <MaterialIcon iconName="add" className="text-white" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -650,15 +703,35 @@ export const ContentManagerMessages: React.FC = () => {
                     <DropdownMenuItem onClick={() => setAddClientModal(true)}>
                       Add Client
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setImportClientsPopup(true)}>
+                    <DropdownMenuItem
+                      onClick={() => setImportClientsPopup(true)}
+                    >
                       Upload Client CSV
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setGroupModalOpen({ open: true, mode: "create" })}>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setGroupModalOpen({ open: true, mode: "create" })
+                      }
+                    >
                       Create New Chat
                     </DropdownMenuItem>
-                    {selectedChat && <><DropdownMenuItem onClick={() => setActiveTab("notes")}>Add Note</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab("supplements")}>Add Supplement</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab("medications")}>Add Medication</DropdownMenuItem></>}
+                    {selectedChat && (
+                      <>
+                        <DropdownMenuItem onClick={() => setActiveTab("notes")}>
+                          Add Note
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setActiveTab("supplements")}
+                        >
+                          Add Supplement
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setActiveTab("medications")}
+                        >
+                          Add Medication
+                        </DropdownMenuItem>
+                      </>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
                 {addClientModal && (
@@ -698,7 +771,13 @@ export const ContentManagerMessages: React.FC = () => {
         </div>
         {!isMobileOrTablet && (
           <ResizableLibraryChat
-            widthPercent={widthPercent > 50 ? 50 : widthPercent < 10 ? 10 : widthPercent || 30}
+            widthPercent={
+              widthPercent > 50
+                ? 50
+                : widthPercent < 10
+                  ? 10
+                  : widthPercent || 30
+            }
             setWidthPercent={setWidthPercent}
             isCoach
           />
@@ -713,10 +792,11 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
-            ? (groupModalOpen.chat?.chat_id ?? "new")
-            : "new"
-            }`}
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
+            groupModalOpen.open && groupModalOpen.mode === "edit"
+              ? (groupModalOpen.chat?.chat_id ?? "new")
+              : "new"
+          }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={
@@ -738,12 +818,20 @@ export const ContentManagerMessages: React.FC = () => {
       {confirmExistingUser && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
           <div className="bg-white rounded-lg p-8 flex flex-col items-center gap-4 shadow-xl">
-            <div className="text-lg font-semibold">This email already exists. Invite anyway?</div>
+            <div className="text-lg font-semibold">
+              This email already exists. Invite anyway?
+            </div>
             <div className="flex gap-4">
-              <Button variant="unstyled" onClick={() => setConfirmExistingUser(false)}>
+              <Button
+                variant="unstyled"
+                onClick={() => setConfirmExistingUser(false)}
+              >
                 Cancel
               </Button>
-              <Button variant="brightblue" onClick={handleConfirmInviteExisting}>
+              <Button
+                variant="brightblue"
+                onClick={handleConfirmInviteExisting}
+              >
                 Invite
               </Button>
             </div>
@@ -757,21 +845,37 @@ export const ContentManagerMessages: React.FC = () => {
         <DialogContent className="max-w-3xl gap-6 left-[50%] bottom-auto top-[50%] rounded-[18px] z-[999] grid translate-x-[-50%] translate-y-[-50%] mx-[16px]">
           {uploadedFileName ? (
             <div className="w-full max-w-[330px]">
-              <p className="text-left text-black text-base font-medium mb-[8px]">Import CSV/XLSX</p>
+              <p className="text-left text-black text-base font-medium mb-[8px]">
+                Import CSV/XLSX
+              </p>
               <div className="w-full relative border border-[#1C63DB] rounded-[8px] px-[16px] py-[12px] flex items-center gap-3">
                 <MaterialIcon iconName="docs" fill={1} />
                 <div className="flex flex-col leading-[1.2]">
-                  <p className="text-[14px] text-black font-semibold">{uploadedFileName}</p>
-                  <p className="text-[12px] text-[#5F5F65]">{uploadedFileSize}</p>
+                  <p className="text-[14px] text-black font-semibold">
+                    {uploadedFileName}
+                  </p>
+                  <p className="text-[12px] text-[#5F5F65]">
+                    {uploadedFileSize}
+                  </p>
                 </div>
-                <Button variant={"unstyled"} size={"unstyled"} onClick={() => { setUploadedFileName(null); setUploadedFileSize(null); }} className="absolute top-[6px] right-[6px]">
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
+                  onClick={() => {
+                    setUploadedFileName(null);
+                    setUploadedFileSize(null);
+                  }}
+                  className="absolute top-[6px] right-[6px]"
+                >
                   <MaterialIcon iconName="close" size={16} />
                 </Button>
               </div>
             </div>
           ) : (
             <div className="w-full">
-              <p className="text-left text-black text-base font-medium mb-[8px]">Import CSV/XLSX</p>
+              <p className="text-left text-black text-base font-medium mb-[8px]">
+                Import CSV/XLSX
+              </p>
               <Button
                 variant={"unstyled"}
                 size={"unstyled"}
@@ -779,13 +883,26 @@ export const ContentManagerMessages: React.FC = () => {
                 aria-label="Upload client list"
                 className={`w-full border ${dragOver ? "border-[#0057C2]" : "border-dashed border-[#1C63DB]"} rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
                 onClick={handleUploadClick}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { handleUploadClick(); } }}
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleUploadClick();
+                  }
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
               >
-                <MaterialIcon iconName="cloud_upload" fill={1} className="text-[#1C63DB] p-2 border rounded-xl" />
-                <div className="text-[#1C63DB] text-[14px] font-semibold">Click or drag to upload</div>
+                <MaterialIcon
+                  iconName="cloud_upload"
+                  fill={1}
+                  className="text-[#1C63DB] p-2 border rounded-xl"
+                />
+                <div className="text-[#1C63DB] text-[14px] font-semibold">
+                  Click or drag to upload
+                </div>
                 <p className="text-[#5F5F65] text-[14px] mt-[4px]">CSV/XLSX</p>
               </Button>
             </div>

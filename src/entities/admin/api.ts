@@ -6,7 +6,6 @@ import {
   SendMessagePayload,
   SendMessageResponse,
   User,
-  UsersResponse,
 } from "./model";
 import { ChatMessageModel } from "entities/chat";
 import { API_ROUTES } from "shared/api";
@@ -77,7 +76,10 @@ export const adminApi = createApi({
       ],
     }),
 
-    sendMessage: builder.mutation<BaseResponse<SendMessageResponse>, SendMessagePayload>({
+    sendMessage: builder.mutation<
+      BaseResponse<SendMessageResponse>,
+      SendMessagePayload
+    >({
       query: (payload) => ({
         url: API_ROUTES.ADMIN.SEND_MESSAGE,
         method: "POST",

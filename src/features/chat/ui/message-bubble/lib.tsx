@@ -66,9 +66,7 @@ export const smartRender = async (text: string) => {
     );
 
     const preprocessedText = convertMarkdownBoldToHtml(
-      withoutCodeFences
-        .replace(/^##\s?/gm, "")
-        .replace(/\ud83d\udcda/g, "")
+      withoutCodeFences.replace(/^##\s?/gm, "").replace(/\ud83d\udcda/g, "")
     );
 
     const sanitizedText = sanitizeHtml(preprocessedText, {
