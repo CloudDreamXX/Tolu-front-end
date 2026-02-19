@@ -228,7 +228,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             className={`relative h-full w-[64px] flex flex-col border-none mt-0 p-[16px] rounded-[16px] pb-[60px]`}
             iconSize={40}
             iconMagnification={60}
-            iconDistance={100}
+            iconDistance={60}
           >
             {chats.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
