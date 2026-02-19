@@ -90,7 +90,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
     if (viewport) {
       scrollViewportRef.current = viewport;
       viewport.classList.add("no-scrollbar");
-      viewport.style.overflowY = "hidden";
+      viewport.style.overflowY = "auto";
       viewport.style.overflowX = "hidden";
       updateScrollState();
     }
@@ -106,12 +106,12 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
     };
 
     viewport.addEventListener("scroll", handleScroll, { passive: true });
-    viewport.addEventListener("wheel", preventNativeScroll, {
-      passive: false,
-    });
-    viewport.addEventListener("touchmove", preventNativeScroll, {
-      passive: false,
-    });
+    // viewport.addEventListener("wheel", preventNativeScroll, {
+    //   passive: false,
+    // });
+    // viewport.addEventListener("touchmove", preventNativeScroll, {
+    //   passive: false,
+    // });
     const resizeObserver = new ResizeObserver(handleScroll);
     resizeObserver.observe(viewport);
 
@@ -124,8 +124,8 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
 
     return () => {
       viewport.removeEventListener("scroll", handleScroll);
-      viewport.removeEventListener("wheel", preventNativeScroll);
-      viewport.removeEventListener("touchmove", preventNativeScroll);
+      // viewport.removeEventListener("wheel", preventNativeScroll);
+      // viewport.removeEventListener("touchmove", preventNativeScroll);
       resizeObserver.disconnect();
     };
   }, [chats.length, updateScrollState]);
@@ -225,7 +225,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
           ref={setScrollViewportRef}
         >
           <Dock
-            className={`relative h-full flex flex-col border-none mt-0 p-[16px] rounded-[16px]`}
+            className={`relative h-full flex flex-col border-none mt-0 p-[16px] rounded-[16px] pb-[60px]`}
             iconSize={40}
             iconMagnification={60}
             iconDistance={100}
@@ -323,29 +323,29 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             </button>
           )}
 
-          {canScrollDown && (
-            <button
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 bg-white border shadow-md rounded-b-[16px] w-full p-1 flex items-center justify-center"
-              onClick={() => {
-                const viewport = scrollViewportRef.current;
-                if (viewport) {
-                  viewport.scrollBy({ top: 200, behavior: "smooth" });
-                }
-              }}
-              aria-label="Scroll chat list down"
-              type="button"
-            >
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path
-                  d="M8 10l4 4 4-4"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          )}
+          {/* {canScrollDown && ( */}
+          <button
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 bg-white border shadow-md rounded-b-[16px] w-full p-1 flex items-center justify-center"
+            onClick={() => {
+              const viewport = scrollViewportRef.current;
+              if (viewport) {
+                viewport.scrollBy({ top: 200, behavior: "smooth" });
+              }
+            }}
+            aria-label="Scroll chat list down"
+            type="button"
+          >
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path
+                d="M8 10l4 4 4-4"
+                stroke="black"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          {/* )} */}
         </ScrollArea>
       )}
     </aside>

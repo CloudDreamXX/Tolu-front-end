@@ -103,6 +103,28 @@ li::marker {
   display: none;
 }
 
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+.show-scrollbar {
+  scrollbar-width: thin;
+}
+
+.show-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.show-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
 .ql-editor {
   font-family: "Inter", sans-serif;
   white-space: pre-wrap;
