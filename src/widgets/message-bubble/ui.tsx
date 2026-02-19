@@ -179,10 +179,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const initials = author
     ? author.split(" ").length > 1
       ? author
-          .split(" ")
-          .map((word) => word[0].toUpperCase())
-          .slice(0, 2)
-          .join("")
+        .split(" ")
+        .map((word) => word[0].toUpperCase())
+        .slice(0, 2)
+        .join("")
       : author.slice(0, 2).toUpperCase()
     : "UN";
 
@@ -254,14 +254,22 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
-    const spaceRight = viewportWidth - rect.left;
-    const spaceLeft = rect.right;
+    const spaceWhenAlignedLeft = viewportWidth - rect.left;
+    const spaceWhenAlignedRight = rect.right;
+
+    const preferredHorizontal = isOwn ? "right" : "left";
+    const canUsePreferred =
+      preferredHorizontal === "right"
+        ? spaceWhenAlignedRight >= pickerWidth
+        : spaceWhenAlignedLeft >= pickerWidth;
+
+    const fallbackHorizontal =
+      spaceWhenAlignedRight > spaceWhenAlignedLeft ? "right" : "left";
 
     setPickerPosition({
       vertical:
         spaceBelow < pickerHeight && spaceAbove > spaceBelow ? "top" : "bottom",
-      horizontal:
-        spaceRight < pickerWidth && spaceLeft > spaceRight ? "right" : "left",
+      horizontal: canUsePreferred ? preferredHorizontal : fallbackHorizontal,
     });
 
     setEmojiModalOpen((prev) => !prev);

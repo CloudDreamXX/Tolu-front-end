@@ -225,7 +225,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
           ref={setScrollViewportRef}
         >
           <Dock
-            className={`relative h-full flex flex-col border-none mt-0 p-[16px] rounded-[16px] pb-[60px]`}
+            className={`relative h-full w-[64px] flex flex-col border-none mt-0 p-[16px] rounded-[16px] pb-[60px]`}
             iconSize={40}
             iconMagnification={60}
             iconDistance={100}
@@ -240,9 +240,6 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             ) : (
               chats.map((item) => (
                 <DockIcon
-                  size={40}
-                  magnification={60}
-                  distance={100}
                   key={item.id}
                   className="hover:scale-[1.3] transition-transform duration-500"
                 >

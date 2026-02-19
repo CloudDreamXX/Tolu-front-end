@@ -94,6 +94,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [page, setPage] = useState<number>(1);
   const [atBottom, setAtBottom] = useState(true);
   const [emojiModalOpen, setEmojiModalOpen] = useState(false);
+  const [isAttachPopoverOpen, setIsAttachPopoverOpen] = useState(false);
 
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -787,18 +788,21 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                         files={files}
                         setFiles={setFiles}
                         title="Attach files"
+                        onOpenChange={setIsAttachPopoverOpen}
                         customTrigger={
                           <Button
                             variant="ghost"
                             className="relative text-[#1D1D1F] rounded-full w-10 h-10 hover:bg-secondary/80"
                           >
-                            <MaterialIcon iconName="add" />
+                            <MaterialIcon
+                              iconName={isAttachPopoverOpen ? "close" : "add"}
+                            />
                             {(files.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {files.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {files.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />

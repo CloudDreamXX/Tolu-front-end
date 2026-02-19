@@ -41,6 +41,7 @@ interface PopoverAttachProps {
   fileExtensions?: string[];
   maxFiles?: number;
   hideFromLibrary?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const PopoverAttach: React.FC<PopoverAttachProps> = ({
@@ -65,6 +66,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   ],
   maxFiles = 10,
   hideFromLibrary = false,
+  onOpenChange,
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
@@ -425,7 +427,13 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+    <Popover
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        onOpenChange?.(open);
+      }}
+    >
       <PopoverTrigger asChild disabled={disabled}>
         {customTrigger ?? (
           <Button
@@ -450,11 +458,11 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[358px] md:w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB] max-h-[500px] overflow-y-auto">
+      <PopoverContent arrow={false} className="w-[358px] md:w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB] max-h-[500px] overflow-y-auto">
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <MaterialIcon iconName="attach_file" />
           {attachedFiles.length > 0 ||
-          (existingFiles && existingFiles?.length > 0)
+            (existingFiles && existingFiles?.length > 0)
             ? "Sources"
             : (title ?? "Attach files to folder")}
         </h4>
