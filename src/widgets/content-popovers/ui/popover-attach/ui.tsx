@@ -458,11 +458,14 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent arrow={false} className="w-[358px] md:w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB] max-h-[500px] overflow-y-auto">
+      <PopoverContent
+        arrow={false}
+        className="w-[358px] md:w-[720px] xl:w-[742px] p-6 flex flex-col gap-3 rounded-2xl bg-[#F9FAFB] max-h-[500px] overflow-y-auto"
+      >
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <MaterialIcon iconName="attach_file" />
           {attachedFiles.length > 0 ||
-            (existingFiles && existingFiles?.length > 0)
+          (existingFiles && existingFiles?.length > 0)
             ? "Sources"
             : (title ?? "Attach files to folder")}
         </h4>

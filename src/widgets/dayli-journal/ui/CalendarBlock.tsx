@@ -72,7 +72,10 @@ export const CalendarBlock: React.FC<Props> = ({
                       day.toISOString().split("T")[0] === selectedDate,
                   }
                 )}
-                onClick={() => handleDateChange(day)}
+                onClick={() => {
+                  handleDateChange(day);
+                  setOpenCalendarModal(false);
+                }}
               >
                 {day.getDate()}
               </p>

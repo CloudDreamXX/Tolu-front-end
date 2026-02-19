@@ -170,7 +170,7 @@ export const ContentManagerMessages: React.FC = () => {
       return;
     }
 
-    const client = clientsData.find((c) => c.client_id === routeChatId);
+    const client = allClients.find((c) => c.client_id === routeChatId);
     if (!client) return;
 
     setSelectedChat({
@@ -191,7 +191,7 @@ export const ContentManagerMessages: React.FC = () => {
       unreadCount: 0,
       lastMessageAt: new Date().toISOString(),
     });
-  }, [routeChatId, routeMatch, clientsData]);
+  }, [routeChatId, routeMatch, allClients]);
 
   useEffect(() => {
     handlerRef.current = (msg: ChatMessageModel) => {
@@ -759,7 +759,7 @@ export const ContentManagerMessages: React.FC = () => {
             <MessageTabs
               chatId={selectedChat?.id || undefined}
               goBackMobile={() => setSelectedChat(null)}
-              clientsData={clientsData}
+              clientsData={allClients}
               onEditGroup={openEditGroup}
               onCreateGroup={openCreateGroup}
               sendMessage={sendMessage}
@@ -811,7 +811,7 @@ export const ContentManagerMessages: React.FC = () => {
           }
           onSubmit={onSubmit}
           onClose={closeGroup}
-          clientsData={clientsData}
+          clientsData={allClients}
         />
       )}
 

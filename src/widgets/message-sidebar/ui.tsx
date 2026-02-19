@@ -6,8 +6,6 @@ import {
   PopoverContent,
   Tabs,
   TabsContent,
-  TabsList,
-  TabsTrigger,
 } from "shared/ui";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ScrollArea } from "shared/ui";
@@ -66,44 +64,44 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
 
   const scrollViewportRef = useRef<HTMLDivElement | null>(null);
   const [canScrollUp, setCanScrollUp] = useState(false);
-  const [canScrollDown, setCanScrollDown] = useState(false);
+  // const [canScrollDown, setCanScrollDown] = useState(false);
 
   const updateScrollState = useCallback(() => {
     const viewport = scrollViewportRef.current;
     if (!viewport) {
       setCanScrollUp(false);
-      setCanScrollDown(false);
+      // setCanScrollDown(false);
       return;
     }
 
     const threshold = 1;
-    const { scrollTop, scrollHeight, clientHeight } = viewport;
+    const { scrollTop } = viewport;
     setCanScrollUp(scrollTop > threshold);
-    setCanScrollDown(scrollTop + clientHeight < scrollHeight - threshold);
+    // setCanScrollDown(scrollTop + clientHeight < scrollHeight - threshold);
   }, []);
 
-  const setScrollViewportRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return;
-    const viewport = node.querySelector(
-      ".scroll-area-viewport"
-    ) as HTMLDivElement | null;
-    if (viewport) {
-      scrollViewportRef.current = viewport;
-      viewport.classList.add("no-scrollbar");
-      viewport.style.overflowY = "auto";
-      viewport.style.overflowX = "hidden";
-      updateScrollState();
-    }
-  }, [updateScrollState]);
+  const setScrollViewportRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) return;
+      const viewport = node.querySelector(
+        ".scroll-area-viewport"
+      ) as HTMLDivElement | null;
+      if (viewport) {
+        scrollViewportRef.current = viewport;
+        viewport.classList.add("no-scrollbar");
+        viewport.style.overflowY = "auto";
+        viewport.style.overflowX = "hidden";
+        updateScrollState();
+      }
+    },
+    [updateScrollState]
+  );
 
   useEffect(() => {
     const viewport = scrollViewportRef.current;
     if (!viewport) return;
 
     const handleScroll = () => updateScrollState();
-    const preventNativeScroll = (event: Event) => {
-      event.preventDefault();
-    };
 
     viewport.addEventListener("scroll", handleScroll, { passive: true });
     // viewport.addEventListener("wheel", preventNativeScroll, {
@@ -135,7 +133,9 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
   const coachChats = chats.filter((item) => item.type === "coach");
 
   return (
-    <aside className={`flex flex-col w-full lg:w-[116px] overflow-x-hidden p-[24px] no-scrollbar ${isMobileOrTablet ? "h-[calc(100vh-110px)]" : "h-[calc(100vh-65px)]"}`}>
+    <aside
+      className={`flex flex-col w-full lg:w-[116px] overflow-x-hidden p-[24px] no-scrollbar ${isMobileOrTablet ? "h-[calc(100vh-110px)]" : "h-[calc(100vh-65px)]"}`}
+    >
       {isLoadingChats && (
         <div className="xl:hidden flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <span className="inline-flex h-5 w-5 items-center justify-center">
@@ -228,7 +228,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             className={`relative h-full w-[64px] flex flex-col border-none mt-0 p-[16px] rounded-[16px] pb-[60px]`}
             iconSize={40}
             iconMagnification={60}
-            iconDistance={100}
+            iconDistance={60}
           >
             {chats.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
