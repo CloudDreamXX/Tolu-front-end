@@ -18,8 +18,8 @@ function SidebarClientPopover({
   const name = item?.participants?.[0]?.first_name
     ? `${item.participants[0].first_name} ${item.participants[0].last_name}`
     : item?.participants?.[0]?.name
-    ? item.participants[0].name
-    : item.name;
+      ? item.participants[0].name
+      : item.name;
   const email = item.participants?.[0]?.email;
   const lastActivity = item.lastMessageAt;
   return (
@@ -158,8 +158,8 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                           {item?.participants?.[0]?.first_name
                             ? `${item.participants[0].first_name} ${item.participants[0].last_name}`
                             : item?.participants?.[0]?.name
-                            ? item.participants[0].name
-                            : item.name}
+                              ? item.participants[0].name
+                              : item.name}
                         </div>
                         <div className="text-sm text-[#5F5F65]">
                           {item.participants?.[0]?.email}

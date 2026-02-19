@@ -531,33 +531,28 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             {visibleTabs.map((tab) => (
               <DockIcon
                 key={tab.id}
-                className={cn(
-                  "relative group min-w-[120px] w-[120px] cursor-pointer transition-colors duration-500",
-                  activeTab === tab.id ? "bg-gray-100 text-blue-600" : ""
-                )}
                 onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "relative min-w-[120px] w-[120px] flex items-center justify-center rounded-xl transition-colors duration-200",
+                  activeTab === tab.id
+                    ? "bg-gray-100 text-blue-600"
+                    : ""
+                )}
               >
-                <span
-                  className={cn(
-                    "min-w-[120px] flex items-center justify-center h-full transition-transform duration-500",
-                    "group-hover:scale-[1.1]",
-                  )}
-                >
+                <span className="pointer-events-none select-none">
                   {tab.label}
                 </span>
+
                 {activeTab === tab.id && (
                   <Button
                     size="icon"
                     variant="unstyled"
-                    className="absolute z-50 hover:bg-transparent text-[#B3BCC8] hover:text-black rounded-full p-[1px] -right-[4px] -top-[4px]"
+                    className="absolute z-50 text-[#B3BCC8] hover:text-black rounded-full p-[1px] -right-[4px] -top-[4px]"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setPinnedTabs((prev) => {
-                        if (prev.length <= 3) {
-                          return prev;
-                        }
-                        return prev.filter((id) => id !== tab.id);
-                      });
+                      setPinnedTabs((prev) =>
+                        prev.length <= 3 ? prev : prev.filter((id) => id !== tab.id)
+                      );
                     }}
                   >
                     <MaterialIcon iconName="close" size={14} />
