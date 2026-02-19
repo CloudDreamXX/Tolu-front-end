@@ -82,19 +82,22 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
     setCanScrollDown(scrollTop + clientHeight < scrollHeight - threshold);
   }, []);
 
-  const setScrollViewportRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return;
-    const viewport = node.querySelector(
-      ".scroll-area-viewport"
-    ) as HTMLDivElement | null;
-    if (viewport) {
-      scrollViewportRef.current = viewport;
-      viewport.classList.add("no-scrollbar");
-      viewport.style.overflowY = "auto";
-      viewport.style.overflowX = "hidden";
-      updateScrollState();
-    }
-  }, [updateScrollState]);
+  const setScrollViewportRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) return;
+      const viewport = node.querySelector(
+        ".scroll-area-viewport"
+      ) as HTMLDivElement | null;
+      if (viewport) {
+        scrollViewportRef.current = viewport;
+        viewport.classList.add("no-scrollbar");
+        viewport.style.overflowY = "auto";
+        viewport.style.overflowX = "hidden";
+        updateScrollState();
+      }
+    },
+    [updateScrollState]
+  );
 
   useEffect(() => {
     const viewport = scrollViewportRef.current;
@@ -135,7 +138,9 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
   const coachChats = chats.filter((item) => item.type === "coach");
 
   return (
-    <aside className={`flex flex-col w-full lg:w-[116px] overflow-x-hidden p-[24px] no-scrollbar ${isMobileOrTablet ? "h-[calc(100vh-110px)]" : "h-[calc(100vh-65px)]"}`}>
+    <aside
+      className={`flex flex-col w-full lg:w-[116px] overflow-x-hidden p-[24px] no-scrollbar ${isMobileOrTablet ? "h-[calc(100vh-110px)]" : "h-[calc(100vh-65px)]"}`}
+    >
       {isLoadingChats && (
         <div className="xl:hidden flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-[50%] translate-x-[-50%] xl:translate-x-[-25%]">
           <span className="inline-flex h-5 w-5 items-center justify-center">

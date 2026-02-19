@@ -132,7 +132,7 @@ export const symptomsTrackerApi = createApi({
       }),
     }),
     getSymptomsByDateForCoach: builder.query<
-      SymptomResponse,
+      SymptomData[],
       { clientId: string; targetDate: string }
     >({
       query: ({ clientId, targetDate }) =>
