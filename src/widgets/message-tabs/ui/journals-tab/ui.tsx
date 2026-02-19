@@ -32,13 +32,13 @@ export const CoachDailyJournal = ({ clientId }: Props) => {
     });
 
   useEffect(() => {
-    if (!data?.data?.length) {
+    if (!data?.length) {
       setRecords([]);
       setSelectedRecordId(null);
       return;
     }
 
-    const sorted = [...data.data].sort(
+    const sorted = [...data].sort(
       (a, b) =>
         new Date(b.created_at || "").getTime() -
         new Date(a.created_at || "").getTime()
