@@ -514,9 +514,13 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               if (audioFile && audioFile.id) {
                 try {
                   const audioResult = await getAudioFile(audioFile.id).unwrap();
-                  if (audioResult) {
-                    const blob = await audioResult.blob();
-                    audioUrl = URL.createObjectURL(blob);
+                  if (audioResult instanceof Blob) {
+                    audioUrl = URL.createObjectURL(audioResult);
+                  } else if (
+                    audioResult &&
+                    (audioResult as any).data instanceof Blob
+                  ) {
+                    audioUrl = URL.createObjectURL((audioResult as any).data);
                   }
                 } catch (e) {
                   console.error("Failed to fetch audio file via API", e);
