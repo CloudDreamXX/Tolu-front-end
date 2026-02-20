@@ -23,7 +23,10 @@ export const CalendarBlock: React.FC<Props> = ({
     selectedDate ? new Date(selectedDate) : new Date()
   );
 
-  const weekDays = useMemo(() => getWeekRangeByDate(weekAnchorDate), [weekAnchorDate]);
+  const weekDays = useMemo(
+    () => getWeekRangeByDate(weekAnchorDate),
+    [weekAnchorDate]
+  );
   const daysWithData = useMemo(() => new Set(datesWithData), [datesWithData]);
 
   useEffect(() => {
@@ -55,15 +58,15 @@ export const CalendarBlock: React.FC<Props> = ({
           <p className="text-lg font-bold text-[#1D1D1F] flex-1">
             {selectedDate
               ? new Date(selectedDate).toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-              })
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })
               : today.toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-              })}
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })}
           </p>
           {selectedDate === today.toISOString().split("T")[0] && (
             <p className="text-[#1C63DB] text-sm font-semibold">Today</p>
@@ -88,7 +91,7 @@ export const CalendarBlock: React.FC<Props> = ({
             <MaterialIcon iconName="keyboard_arrow_left" />
           </button>
 
-          {weekDays.map((day) => (
+          {weekDays.map((day) =>
             (() => {
               const dayKey = toDateKey(day);
               const isSelected = dayKey === selectedDate;
@@ -130,7 +133,7 @@ export const CalendarBlock: React.FC<Props> = ({
                 </div>
               );
             })()
-          ))}
+          )}
 
           <button
             type="button"

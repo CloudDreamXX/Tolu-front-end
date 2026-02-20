@@ -49,32 +49,35 @@ All network requests are handled through RTK Query’s fetchBaseQuery, configure
 All API responses follow standardized TypeScript interfaces for consistency:
 
 **BaseResponse<T>** - Standard response wrapper for most endpoints:
+
 ```typescript
 export interface BaseResponse<T> {
-    status: string;        // "success" | "error"
-    message: string;       // Human-readable status message
-    data: T;              // Actual response payload
-    meta?: any;           // Optional metadata
-    timestamp?: string;   // ISO 8601 timestamp
+  status: string; // "success" | "error"
+  message: string; // Human-readable status message
+  data: T; // Actual response payload
+  meta?: any; // Optional metadata
+  timestamp?: string; // ISO 8601 timestamp
 }
 ```
 
 **PaginatedResponse<T>** - Used for paginated list endpoints:
+
 ```typescript
 export interface PaginationMeta {
-    total: number;   // Total number of items
-    limit: number;   // Items per page
-    offset: number;  // Current offset
+  total: number; // Total number of items
+  limit: number; // Items per page
+  offset: number; // Current offset
 }
 
 export interface PaginatedResponse<T> {
-    message: string;
-    data: T;                      // Array of items
-    pagination: PaginationMeta;
+  message: string;
+  data: T; // Array of items
+  pagination: PaginationMeta;
 }
 ```
 
 **Example BaseResponse:**
+
 ```json
 {
   "status": "success",
@@ -89,6 +92,7 @@ export interface PaginatedResponse<T> {
 ```
 
 **Example PaginatedResponse:**
+
 ```json
 {
   "message": "Clients retrieved successfully",
@@ -109,6 +113,7 @@ export interface PaginatedResponse<T> {
 While most endpoints follow the `BaseResponse<T>` or `PaginatedResponse<T>` pattern, some endpoints have variations:
 
 1. **Chat Messages** (`fetchChatMessages`): Returns `BaseResponse<FetchChatMessagesResponse>` where the data contains pagination fields
+
    ```json
    {
      "status": "success",
@@ -683,6 +688,7 @@ multipart/form-data
 Retrieves the current authenticated user's profile information (works for all roles).
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -718,6 +724,7 @@ multipart/form-data with profile_data JSON and optional photo
 Allows any authenticated user to change their password.
 
 **Request Example:**
+
 ```json
 {
   "old_password": "OldPass123!",
@@ -726,6 +733,7 @@ Allows any authenticated user to change their password.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -744,6 +752,7 @@ Allows a user to permanently delete their own account.
 **Request:** Empty body or user confirmation token
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -760,6 +769,7 @@ Allows a user to permanently delete their own account.
 Checks if a user with the given email already exists in the system.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -934,6 +944,7 @@ Allows a prospective client to request a new invite from a coach or the Tolu Hea
 Allows a client to decline a coach invitation.
 
 **Request Example:**
+
 ```json
 {
   "invitation_token": "inv_token_123"
@@ -941,6 +952,7 @@ Allows a client to decline a coach invitation.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -961,6 +973,7 @@ Allows a client to decline a coach invitation.
 Retrieves shared content that a coach has shared with the client.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -983,6 +996,7 @@ Retrieves shared content that a coach has shared with the client.
 Retrieves all content available in the client's personal library.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1007,6 +1021,7 @@ Retrieves all content available in the client's personal library.
 Retrieves the current client's own profile information.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1029,6 +1044,7 @@ Retrieves the current client's own profile information.
 Retrieves all coaches currently working with the client.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1053,6 +1069,7 @@ Retrieves all coaches currently working with the client.
 Retrieves a specific coach's profile from the client's perspective.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1085,6 +1102,7 @@ Downloads a coach's profile photo.
 Retrieves all pending coach invitations for the client.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1112,6 +1130,7 @@ Updates the client's profile information including photo upload.
 multipart/form-data with profile_data JSON and optional profile_photo file
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1223,6 +1242,7 @@ Before upload, files are validated via SearchService.prepareFilesForSearch():
 Retrieves the user's search history with optional filtering by client or managed client.
 
 **Request Example:**
+
 ```json
 {
   "client_id": "client_123",
@@ -1231,6 +1251,7 @@ Retrieves the user's search history with optional filtering by client or managed
 ```
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -1255,6 +1276,7 @@ Retrieves the user's search history with optional filtering by client or managed
 Retrieves detailed information about an AI search or coaching session, including search results and conversation history.
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -1878,6 +1900,7 @@ Removes an entire chat (group or direct).
 Updates the content of an existing chat message.
 
 **Request Example:**
+
 ```json
 {
   "chatId": "chat_001",
@@ -1887,6 +1910,7 @@ Updates the content of an existing chat message.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1909,6 +1933,7 @@ Updates the content of an existing chat message.
 Adds an emoji reaction to a chat message.
 
 **Request Example:**
+
 ```json
 {
   "chatId": "chat_001",
@@ -1918,6 +1943,7 @@ Adds an emoji reaction to a chat message.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1944,6 +1970,7 @@ Adds an emoji reaction to a chat message.
 Removes a reaction from a chat message.
 
 **Request Example:**
+
 ```json
 {
   "chatId": "chat_001",
@@ -1952,6 +1979,7 @@ Removes a reaction from a chat message.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -2317,6 +2345,7 @@ Allows admin to delete a user.
 Retrieves all pending access requests for admin review.
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -2342,6 +2371,7 @@ Retrieves all pending access requests for admin review.
 Approves a pending access request.
 
 **Request Example:**
+
 ```json
 {
   "request_id": "req_001"
@@ -2349,6 +2379,7 @@ Approves a pending access request.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -2365,6 +2396,7 @@ Approves a pending access request.
 Denies a pending access request.
 
 **Request Example:**
+
 ```json
 {
   "request_id": "req_001"
@@ -2372,6 +2404,7 @@ Denies a pending access request.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -2508,6 +2541,7 @@ Allows a coach to update a client's health history information.
 multipart/form-data with health_data JSON and optional lab_file
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -2542,6 +2576,7 @@ This section describes how clients and coaches can track medications including d
 Retrieves all medications associated with a specific client chat.
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -2592,6 +2627,7 @@ multipart/form-data
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -2624,6 +2660,7 @@ multipart/form-data with medication_data JSON and optional file
 Deletes a medication record.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -2719,6 +2756,7 @@ This section describes how coaches can add contextual notes to specific sections
 Retrieves all coach notes for a client's health history.
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -2764,6 +2802,7 @@ multipart/form-data
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -2805,6 +2844,7 @@ Deletes a specific coach note.
 Deletes all coach notes associated with a specific health history block (e.g., all notes for "diagnosed_conditions").
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -2973,6 +3013,7 @@ Provides AI-powered symptom and trigger recommendations based on previously logg
 Allows coaches to view a client's symptom entries for a specific date.
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -3759,6 +3800,7 @@ Allows a coach to update a client’s profile data — such as name, email, time
 Retrieves a specific client's profile information from the coach's perspective. Used by coaches to review client details in their management dashboard.
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -3783,6 +3825,7 @@ Retrieves a specific client's profile information from the coach's perspective. 
 Retrieves all coaches associated with a specific client.
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -3807,6 +3850,7 @@ Retrieves all coaches associated with a specific client.
 Retrieves detailed information about an AI coaching session or search results.
 
 **Response Example:**
+
 ```json
 {
   "status": "success",
@@ -3832,6 +3876,7 @@ Updates a client's comprehensive profile including multiple data sections at onc
 multipart/form-data with comprehensive_data JSON
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -3872,6 +3917,7 @@ Downloads the coach's license or certification file.
 Deletes a coach's uploaded license file.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -3918,7 +3964,9 @@ Renames a chat session (for example, an AI learning thread or a client conversat
 Throughout this documentation, all API endpoints follow one of two standardized response formats:
 
 ### 1. **BaseResponse<T>** (Most Endpoints)
+
 Used for single-item operations (create, update, delete, get by ID):
+
 ```typescript
 {
   status: "success" | "error",
@@ -3930,7 +3978,9 @@ Used for single-item operations (create, update, delete, get by ID):
 ```
 
 ### 2. **PaginatedResponse<T>** (List Endpoints)
+
 Used for endpoints returning lists with pagination:
+
 ```typescript
 {
   message: string,
@@ -3944,6 +3994,7 @@ Used for endpoints returning lists with pagination:
 ```
 
 **Key Points:**
+
 - All success responses include a `status: "success"` or appropriate success message
 - Error responses follow the same structure with `status: "error"` and error details in `message`
 - Timestamps are in ISO 8601 format

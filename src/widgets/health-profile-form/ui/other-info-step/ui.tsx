@@ -24,9 +24,7 @@ export const OtherStep = ({ form }: { form: any }) => {
         name="roleInWellnessPlan"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>
-              What role do you play in your wellness plan? 
-            </FormLabel>
+            <FormLabel>What role do you play in your wellness plan?</FormLabel>
             <FormControl>
               <Textarea {...field} />
             </FormControl>
@@ -42,7 +40,7 @@ export const OtherStep = ({ form }: { form: any }) => {
             <FormLabel>
               Do you think family and friends will be supportive of you making
               health and lifestyle changes to improve your quality of life?
-              Explain, if no. 
+              Explain, if no.
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -58,7 +56,7 @@ export const OtherStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Who in your family or on your health care team will be most
-              supportive of you making dietary change? 
+              supportive of you making dietary change?
             </FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -74,7 +72,7 @@ export const OtherStep = ({ form }: { form: any }) => {
           <FormItem>
             <FormLabel>
               Please describe any other information you think would be useful in
-              helping to address your health concern(s). 
+              helping to address your health concern(s).
             </FormLabel>
             <FormControl>
               <Textarea {...field} />

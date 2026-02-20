@@ -212,9 +212,7 @@ const StatusTable = ({
   form: any;
 }) => (
   <div className="space-y-4">
-    <FormLabel className="text-base font-medium">
-      {title}
-    </FormLabel>
+    <FormLabel className="text-base font-medium">{title}</FormLabel>
 
     <div className="border rounded-lg overflow-hidden">
       <div className="grid grid-cols-[1fr_80px_80px] bg-gray-50 px-4 py-2 text-sm font-medium gap-4">
@@ -395,10 +393,10 @@ export const CustomDateField = ({
             value={
               parsedDate
                 ? new Intl.DateTimeFormat("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                }).format(parsedDate)
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }).format(parsedDate)
                 : ""
             }
           />

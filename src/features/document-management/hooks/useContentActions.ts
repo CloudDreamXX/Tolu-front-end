@@ -56,10 +56,12 @@ export const useContentActions = () => {
   const { refetch: refetchFolders } = useGetFoldersQuery();
 
   const nav = useNavigate();
-  const { refetch: refetchDocument } =
-    useGetDocumentByIdQuery(selectedDocumentId, {
+  const { refetch: refetchDocument } = useGetDocumentByIdQuery(
+    selectedDocumentId,
+    {
       skip: !selectedDocumentId || selectedDocumentId.startsWith("temp_"),
-    });
+    }
+  );
 
   const onStatusComplete = async (
     status:

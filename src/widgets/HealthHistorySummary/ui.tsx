@@ -17,12 +17,12 @@ const SummaryRow = ({
 }: {
   label: string;
   value?:
-  | string
-  | number
-  | string[]
-  | TraumaEvent
-  | MedicalCondition
-  | undefined;
+    | string
+    | number
+    | string[]
+    | TraumaEvent
+    | MedicalCondition
+    | undefined;
 }) => (
   <div className="space-y-1">
     <div className="font-medium text-base">{label}</div>

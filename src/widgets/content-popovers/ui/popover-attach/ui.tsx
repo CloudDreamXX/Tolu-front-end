@@ -278,7 +278,8 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   const renderUploadFromLibrary = () => {
     const allFiles = [
       ...(filesLibrary?.data.root_files || []),
-      ...(filesLibrary?.data.root_folders?.flatMap((folder) => folder.files) || []),
+      ...(filesLibrary?.data.root_folders?.flatMap((folder) => folder.files) ||
+        []),
       ...(filesLibrary?.data.root_folders?.flatMap(
         (folder) =>
           folder.subfolders?.flatMap((subfolder) => subfolder.files) || []
@@ -453,7 +454,7 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         <h4 className="flex flex-row items-center gap-2 text-[16px] md:text-[18px] xl:text-[20px] font-bold">
           <MaterialIcon iconName="attach_file" />
           {attachedFiles.length > 0 ||
-            (existingFiles && existingFiles?.length > 0)
+          (existingFiles && existingFiles?.length > 0)
             ? "Sources"
             : (title ?? "Attach files to folder")}
         </h4>

@@ -34,7 +34,7 @@ export const healthHistoryApi = createApi({
     getUserHealthHistory: builder.query<HealthHistory, void>({
       query: () => API_ROUTES.HEALTH_HISTORY.GET,
       transformResponse: (response: BaseResponse<HealthHistory>) =>
-        response.data ? response.data : {} as HealthHistory,
+        response.data ? response.data : ({} as HealthHistory),
     }),
 
     getCoachClientHealthHistory: builder.query<HealthHistory, string>({
@@ -44,7 +44,9 @@ export const healthHistoryApi = createApi({
           clientId
         ),
       transformResponse: (response: BaseResponse<HealthHistoryResponse>) =>
-        response.data.health_history ? response.data.health_history : {} as HealthHistory,
+        response.data.health_history
+          ? response.data.health_history
+          : ({} as HealthHistory),
     }),
 
     createHealthHistory: builder.mutation<
@@ -75,7 +77,9 @@ export const healthHistoryApi = createApi({
           });
         }
         // Build URL with client_id as query param if present
-        const url = clientId ? `${API_ROUTES.HEALTH_HISTORY.POST}?client_id=${encodeURIComponent(clientId)}` : API_ROUTES.HEALTH_HISTORY.POST;
+        const url = clientId
+          ? `${API_ROUTES.HEALTH_HISTORY.POST}?client_id=${encodeURIComponent(clientId)}`
+          : API_ROUTES.HEALTH_HISTORY.POST;
         return {
           url,
           method: "POST",
@@ -140,11 +144,15 @@ export const healthHistoryApi = createApi({
         ),
         params: { limit, offset },
       }),
-      transformResponse: (response: BaseResponse<{ medications: Medication[] }>) =>
-        response.data.medications,
+      transformResponse: (
+        response: BaseResponse<{ medications: Medication[] }>
+      ) => response.data.medications,
     }),
 
-    createMedication: builder.mutation<BaseResponse<Medication>, CreateMedicationParams>({
+    createMedication: builder.mutation<
+      BaseResponse<Medication>,
+      CreateMedicationParams
+    >({
       query: ({ medicationData, file }) => {
         const formData = new FormData();
 
@@ -162,7 +170,10 @@ export const healthHistoryApi = createApi({
       },
     }),
 
-    updateMedication: builder.mutation<BaseResponse<Medication>, UpdateMedicationParams>({
+    updateMedication: builder.mutation<
+      BaseResponse<Medication>,
+      UpdateMedicationParams
+    >({
       query: ({ medicationId, medicationData, file }) => {
         const formData = new FormData();
 
@@ -220,11 +231,15 @@ export const healthHistoryApi = createApi({
         ),
         params: { limit, offset },
       }),
-      transformResponse: (response: BaseResponse<{ supplements: Supplement[] }>) =>
-        response.data.supplements,
+      transformResponse: (
+        response: BaseResponse<{ supplements: Supplement[] }>
+      ) => response.data.supplements,
     }),
 
-    createSupplement: builder.mutation<BaseResponse<Supplement>, CreateSupplementParams>({
+    createSupplement: builder.mutation<
+      BaseResponse<Supplement>,
+      CreateSupplementParams
+    >({
       query: ({ supplementData, file }) => {
         const formData = new FormData();
         formData.append("supplement_data", JSON.stringify(supplementData));
@@ -239,7 +254,10 @@ export const healthHistoryApi = createApi({
       },
     }),
 
-    updateSupplement: builder.mutation<BaseResponse<Supplement>, UpdateSupplementParams>({
+    updateSupplement: builder.mutation<
+      BaseResponse<Supplement>,
+      UpdateSupplementParams
+    >({
       query: ({ supplementId, supplementData, file }) => {
         const formData = new FormData();
         formData.append("supplement_data", JSON.stringify(supplementData));

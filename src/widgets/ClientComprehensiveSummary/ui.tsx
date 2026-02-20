@@ -12,9 +12,7 @@ import {
 import { Steps } from "features/steps/ui";
 import { Button, Dialog, DialogContent, DialogTitle, Form } from "shared/ui";
 
-import {
-  basicInfoSchema,
-} from "widgets/health-profile-form/ui/basic-info-step";
+import { basicInfoSchema } from "widgets/health-profile-form/ui/basic-info-step";
 import {
   birthBodySchema,
   BirthBodyStep,

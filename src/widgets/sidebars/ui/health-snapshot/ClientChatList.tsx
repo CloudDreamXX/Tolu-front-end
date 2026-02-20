@@ -99,9 +99,11 @@ export const ClientChatList: React.FC<ClientChatListProps> = ({
             </div>
             <div className="relative ml-3">
               <h3 className="text-sm font-semibold text-left truncate hover:underline text-nowrap max-w-40">
-                {chat.name || receiver.first_name &&
-                  receiver.last_name &&
-                  `${receiver.first_name} ${receiver.last_name}` || receiver.name ||
+                {chat.name ||
+                  (receiver.first_name &&
+                    receiver.last_name &&
+                    `${receiver.first_name} ${receiver.last_name}`) ||
+                  receiver.name ||
                   receiver.name}
               </h3>
               <p className="text-xs text-left text-gray-500 truncate max-w-32">

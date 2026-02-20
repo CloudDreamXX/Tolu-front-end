@@ -15,9 +15,7 @@ import {
   FetchAllChatsResponse,
   FetchChatDetailsResponse,
   FetchChatMessagesResponse,
-
   FileMessage,
-
   SendChatNotePayload,
   SendMessagePayload,
   SendMessageResponse,
@@ -69,7 +67,8 @@ export const chatApi = createApi({
         params: { page: 1, limit: 50 },
       }),
 
-      transformResponse: (res: FetchAllChatsResponse) => res.data.map(toChatItem),
+      transformResponse: (res: FetchAllChatsResponse) =>
+        res.data.map(toChatItem),
 
       providesTags: ["Chat"],
 
@@ -139,7 +138,17 @@ export const chatApi = createApi({
       providesTags: (_r, _e, arg) => [{ type: "Message", id: arg.chatId }],
       transformResponse: (res: any) => {
         if (Array.isArray(res.data)) {
-          return { ...res, data: { messages: res.data, total: res.data.length, page: 1, limit: 50, has_next: false, has_prev: false } };
+          return {
+            ...res,
+            data: {
+              messages: res.data,
+              total: res.data.length,
+              page: 1,
+              limit: 50,
+              has_next: false,
+              has_prev: false,
+            },
+          };
         }
         return res;
       },
@@ -156,7 +165,10 @@ export const chatApi = createApi({
       },
     }),
 
-    sendMessage: builder.mutation<BaseResponse<SendMessageResponse>, SendMessagePayload>({
+    sendMessage: builder.mutation<
+      BaseResponse<SendMessageResponse>,
+      SendMessagePayload
+    >({
       query: (payload) => ({
         url: API_ROUTES.CHAT.SEND_MESSAGE,
         method: "POST",
@@ -423,11 +435,15 @@ export const chatApi = createApi({
       },
     }),
 
-    sendChatNote: builder.mutation<BaseResponse<ChatNoteResponse>, SendChatNotePayload>({
+    sendChatNote: builder.mutation<
+      BaseResponse<ChatNoteResponse>,
+      SendChatNotePayload
+    >({
       query: (payload) => {
         const formData = new FormData();
         if (payload.chat_id) formData.append("chat_id", payload.chat_id);
-        if (payload.target_user_id) formData.append("target_user_id", payload.target_user_id);
+        if (payload.target_user_id)
+          formData.append("target_user_id", payload.target_user_id);
         if (payload.title) formData.append("title", payload.title);
         if (payload.content) formData.append("content", payload.content);
         if (payload.file) formData.append("file", payload.file);
@@ -453,7 +469,8 @@ export const chatApi = createApi({
         const formData = new FormData();
         if (payload.title) formData.append("title", payload.title);
         if (payload.content) formData.append("content", payload.content);
-        if (typeof payload.remove_file !== "undefined") formData.append("remove_file", String(payload.remove_file));
+        if (typeof payload.remove_file !== "undefined")
+          formData.append("remove_file", String(payload.remove_file));
         if (payload.file) formData.append("file", payload.file);
         return {
           url: API_ROUTES.CHAT.UPDATE_CHAT_NOTE.replace("{note_id}", noteId),

@@ -64,7 +64,7 @@ jobs:
 
       # Added 'success() || failure()' so this runs even if ESLint fails!
       - name: Run TypeScript type checking
-        if: success() || failure() 
+        if: success() || failure()
         run: npm run typecheck
 
       # Update or create the PR comment with the results
@@ -82,13 +82,13 @@ jobs:
             const runUrl = `${process.env.GITHUB_SERVER_URL}/${owner}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
             let bodyText = `## Lint & Type Check: ${emoji} ${statusText} ${emoji}\n\n`;
-            
+
             if (jobStatus === "success") {
               bodyText += "All lint and type checks passed successfully! 🎉\n\n";
             } else {
               bodyText += "**Action Required:** Please check the logs and fix the lint or TypeScript errors before merging this PR.\n\n";
             }
-            
+
             bodyText += `🔍 [View Full Action Logs Here](${runUrl})`;
 
             // Check if we already have a comment from the bot on this PR
@@ -97,7 +97,7 @@ jobs:
               repo,
               issue_number,
             });
-            
+
             const botComment = comments.find(comment => 
               comment.user.type === 'Bot' && comment.body.includes('## Lint & Type Check:')
             );

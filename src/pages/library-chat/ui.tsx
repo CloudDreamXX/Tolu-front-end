@@ -834,7 +834,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           filesFromLibrary,
           undefined,
           {
-            chatId: currentChatId.startsWith("new_chat_") ? null : currentChatId,
+            chatId: currentChatId.startsWith("new_chat_")
+              ? null
+              : currentChatId,
             textQuote: textForInput,
           }
         );
@@ -859,7 +861,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           filesFromLibrary,
           undefined,
           {
-            chatId: currentChatId.startsWith("new_chat_") ? null : currentChatId,
+            chatId: currentChatId.startsWith("new_chat_")
+              ? null
+              : currentChatId,
             textQuote: textForInput,
           }
         );
@@ -884,7 +888,9 @@ This case is being used to create a ${protocol} aimed at ${goal}.`;
           undefined,
           voiceFile ?? undefined,
           {
-            chatId: currentChatId.startsWith("new_chat_") ? null : currentChatId,
+            chatId: currentChatId.startsWith("new_chat_")
+              ? null
+              : currentChatId,
           }
         );
 

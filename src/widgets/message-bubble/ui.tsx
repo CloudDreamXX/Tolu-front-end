@@ -181,10 +181,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const initials = author
     ? author.split(" ").length > 1
       ? author
-        .split(" ")
-        .map((word) => word[0].toUpperCase())
-        .slice(0, 2)
-        .join("")
+          .split(" ")
+          .map((word) => word[0].toUpperCase())
+          .slice(0, 2)
+          .join("")
       : author.slice(0, 2).toUpperCase()
     : "UN";
 

@@ -174,14 +174,14 @@ export const ContentManagementDocument = () => {
                     <Avatar className="object-cover w-[80px] h-[80px] rounded-full">
                       <AvatarImage src={creatorPhoto || undefined} />
                       <AvatarFallback className="text-3xl bg-slate-300 ">
-                        {creator.data.detailed_profile.personal_info.first_name !==
-                          "" &&
-                          creator.data.detailed_profile.personal_info.first_name !==
-                          null &&
-                          creator.data.detailed_profile.personal_info.last_name !==
-                          null &&
-                          creator.data.detailed_profile.personal_info.last_name !==
-                          "" ? (
+                        {creator.data.detailed_profile.personal_info
+                          .first_name !== "" &&
+                        creator.data.detailed_profile.personal_info
+                          .first_name !== null &&
+                        creator.data.detailed_profile.personal_info
+                          .last_name !== null &&
+                        creator.data.detailed_profile.personal_info
+                          .last_name !== "" ? (
                           <div className="flex items-center">
                             <span>
                               {creator.data.detailed_profile.personal_info.first_name.slice(

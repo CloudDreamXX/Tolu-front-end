@@ -70,7 +70,7 @@ export interface FeedbackResponse {
   comments: string;
   content_preference: string;
   created_at: string;
-};
+}
 
 export interface ContentHashtags {
   content_id: string;
@@ -185,4 +185,3 @@ export interface QuizResult {
   score_percent: number;
   questions: QuizQuestion[];
 }
-
