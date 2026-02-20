@@ -98,6 +98,7 @@ export const NotesTab: React.FC<NotesTabProps> = ({ chat, search }) => {
             notePayload.chat_id = actualChatId;
           } else {
             console.error("No chat_id found!");
+            console.error("No chat_id found!");
           }
         }
 
