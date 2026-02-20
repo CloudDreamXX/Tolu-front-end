@@ -8,6 +8,9 @@ on:
       - "**.tsx"
       - "**.js"
       - "**.jsx"
+      - "**.css"
+      - "**.md"
+      - "**.yml"
       - ".eslintrc.*"
       - "package.json"
       - "package-lock.json"
@@ -19,17 +22,17 @@ permissions:
 
 jobs:
   lint:
-    name: Run ESLint
+    name: Run ESLint & Typecheck
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
@@ -40,11 +43,13 @@ jobs:
       # Get changed files to only lint files that have changed
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v42
         with:
           files: |
             **/*.ts
             **/*.tsx
+            **/*.js
+            **/*.jsx
 
       - name: Run ESLint on changed files
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -57,30 +62,59 @@ jobs:
         if: steps.changed-files.outputs.any_changed != 'true'
         run: npm run lint
 
+      # Added 'success() || failure()' so this runs even if ESLint fails!
       - name: Run TypeScript type checking
+        if: success() || failure()
         run: npm run typecheck
 
-      # Add comment to the PR with the results
+      # Update or create the PR comment with the results
       - name: Comment PR
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: always()
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
 
-            const eslintResult = "${{ job.status }}";
-            const emoji = eslintResult === "success" ? "✅" : "❌";
-            const status = eslintResult === "success" ? "passed" : "failed";
+            const jobStatus = "${{ job.status }}";
+            const emoji = jobStatus === "success" ? "✅" : "❌";
+            const statusText = jobStatus === "success" ? "PASSED" : "FAILED";
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${owner}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
-            github.rest.issues.createComment({
-              issue_number,
+            let bodyText = `## Lint & Type Check: ${emoji} ${statusText} ${emoji}\n\n`;
+
+            if (jobStatus === "success") {
+              bodyText += "All lint and type checks passed successfully! 🎉\n\n";
+            } else {
+              bodyText += "**Action Required:** Please check the logs and fix the lint or TypeScript errors before merging this PR.\n\n";
+            }
+
+            bodyText += `🔍 [View Full Action Logs Here](${runUrl})`;
+
+            // Check if we already have a comment from the bot on this PR
+            const { data: comments } = await github.rest.issues.listComments({
               owner,
               repo,
-              body: `## Lint Check: ${emoji} ${status.toUpperCase()} ${emoji}
-              
-              ${eslintResult !== "success" ? "Please fix the lint errors before merging this PR." : "All lint checks passed successfully!"}
-              
-              [View Logs](${process.env.GITHUB_SERVER_URL}/${owner}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID})
-              `
+              issue_number,
             });
+
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && comment.body.includes('## Lint & Type Check:')
+            );
+
+            // Update existing comment to prevent spam, or create a new one
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: botComment.id,
+                body: bodyText
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number,
+                owner,
+                repo,
+                body: bodyText
+              });
+            }

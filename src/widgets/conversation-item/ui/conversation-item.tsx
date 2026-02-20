@@ -257,7 +257,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         addRichtext = !Array.from(lis).some((li) => {
           const text = li.textContent?.trim() || "";
           // Check for '● ' marker, bullet, dash, star, or number at start
-          return /^([●\-\*]|\d+[.)])/.test(text);
+          return /^([●*-]|\d+[.)])/.test(text);
         });
       } catch (e) {
         console.error(e);

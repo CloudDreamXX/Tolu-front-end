@@ -22,6 +22,8 @@ export const CoachDailyJournal = ({ clientId }: Props) => {
   };
 
   const [selectedDate, setSelectedDate] = useState<string>(getFormattedDate());
+  const [visibleWeekDates, setVisibleWeekDates] = useState<string[]>([]);
+  const [weekDatesWithData, setWeekDatesWithData] = useState<string[]>([]);
   const [records, setRecords] = useState<SymptomData[]>([]);
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
 
@@ -30,6 +32,8 @@ export const CoachDailyJournal = ({ clientId }: Props) => {
       clientId: clientId,
       targetDate: selectedDate,
     });
+  const [fetchSymptomsByDateForCoach] =
+    symptomsTrackerApi.endpoints.getSymptomsByDateForCoach.useLazyQuery();
 
   useEffect(() => {
     if (!data?.length) {
@@ -48,6 +52,47 @@ export const CoachDailyJournal = ({ clientId }: Props) => {
     setSelectedRecordId(sorted[0].id || null);
   }, [data]);
 
+  useEffect(() => {
+    if (!clientId || visibleWeekDates.length === 0) {
+      setWeekDatesWithData([]);
+      return;
+    }
+
+    let isActive = true;
+
+    const loadWeekIndicators = async () => {
+      const results = await Promise.all(
+        visibleWeekDates.map(async (targetDate) => {
+          const request = fetchSymptomsByDateForCoach(
+            {
+              clientId,
+              targetDate,
+            },
+            true
+          );
+
+          try {
+            const dayData = await request.unwrap();
+            return dayData?.length ? targetDate : null;
+          } catch {
+            return null;
+          } finally {
+            request.unsubscribe();
+          }
+        })
+      );
+
+      if (!isActive) return;
+      setWeekDatesWithData(results.filter(Boolean) as string[]);
+    };
+
+    loadWeekIndicators();
+
+    return () => {
+      isActive = false;
+    };
+  }, [clientId, fetchSymptomsByDateForCoach, visibleWeekDates]);
+
   const selectedRecord =
     records.find((r) => r.id === selectedRecordId) || records[0];
 
@@ -64,6 +109,8 @@ export const CoachDailyJournal = ({ clientId }: Props) => {
       {/* Date picker */}
       <CalendarBlock
         selectedDate={selectedDate}
+        datesWithData={weekDatesWithData}
+        onWeekDatesChange={setVisibleWeekDates}
         handleDateChange={(date) => {
           const formatted = new Date(
             date.getTime() - date.getTimezoneOffset() * 60000
