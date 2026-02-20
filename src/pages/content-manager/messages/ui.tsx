@@ -46,11 +46,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-      open: true;
-      mode: "create" | "edit";
-      chat?: DetailsChatItemModel | null;
-      preselectedClients?: string[];
-    };
+    open: true;
+    mode: "create" | "edit";
+    chat?: DetailsChatItemModel | null;
+    preselectedClients?: string[];
+  };
 
 export const ContentManagerMessages: React.FC = () => {
   const [deleteClient] = useDeleteClientMutation();
@@ -76,8 +76,8 @@ export const ContentManagerMessages: React.FC = () => {
     selectedChat && selectedChat.type === "new_chat"
       ? selectedChat.id
       : selectedChat &&
-          selectedChat.participants &&
-          selectedChat.participants.length === 1
+        selectedChat.participants &&
+        selectedChat.participants.length === 1
         ? selectedChat.participants[0].id
         : null;
 
@@ -135,7 +135,7 @@ export const ContentManagerMessages: React.FC = () => {
 
   const safeWidthPercent = Math.min(50, Math.max(10, widthPercent));
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
 
   useEffect(() => {
     if (data && data.data?.clients) {
@@ -152,9 +152,19 @@ export const ContentManagerMessages: React.FC = () => {
       if (routeChatId) return "pending";
       return null;
     }
+
+    const chatById = chats.find((c) => c.id === routeChatId);
+    if (chatById) {
+      return chatById;
+    }
+
     return (
-      chats.find((c) => c.participants?.[0]?.id === routeChatId) ||
-      chats.find((c) => c.id === routeChatId) ||
+      chats.find(
+        (c) =>
+          c.type !== "group" &&
+          c.participants?.length === 1 &&
+          c.participants[0].id === routeChatId
+      ) ||
       null
     );
   }, [routeChatId, chats]);
@@ -430,8 +440,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-            groupModalOpen.mode === "edit" &&
-            groupModalOpen.chat
+              groupModalOpen.mode === "edit" &&
+              groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -466,15 +476,36 @@ export const ContentManagerMessages: React.FC = () => {
 
   const closeGroup = () => setGroupModalOpen({ open: false });
 
+  const getRouteIdForChat = (chatItem: ChatItemModel) => {
+    if (chatItem.type === "group") {
+      return chatItem.id;
+    }
+
+    if (chatItem.participants && chatItem.participants.length === 1) {
+      return chatItem.participants[0].id || chatItem.id;
+    }
+
+    return chatItem.id;
+  };
+
   const chatItemClick = (chatItem: ChatItemModel) => {
-    if (selectedChat && selectedChat.id === chatItem.id) {
+    const selectedRouteId = selectedChat ? getRouteIdForChat(selectedChat) : null;
+    const targetRouteId = getRouteIdForChat(chatItem);
+
+    if (selectedRouteId && selectedRouteId === targetRouteId) {
+      setActiveTab(undefined);
       navigate(`/clients`);
       setSelectedChat(null);
     } else {
+      setActiveTab(undefined);
       setSelectedChat(chatItem);
-      navigate(`/clients/${chatItem.id}`);
+      navigate(`/clients/${targetRouteId}`);
     }
   };
+
+  useEffect(() => {
+    setActiveTab(undefined);
+  }, [routeChatId]);
 
   const sendMessage = async (
     content: string
@@ -589,6 +620,7 @@ export const ContentManagerMessages: React.FC = () => {
       if (selectedChat) {
         return (
           <MessageTabs
+            key={selectedChat.id}
             chatId={selectedChat.id}
             goBackMobile={() => setSelectedChat(null)}
             clientsData={clientsData}
@@ -757,6 +789,7 @@ export const ContentManagerMessages: React.FC = () => {
             </div>
 
             <MessageTabs
+              key={selectedChat?.id || "no-chat"}
               chatId={selectedChat?.id || undefined}
               goBackMobile={() => setSelectedChat(null)}
               clientsData={allClients}
@@ -792,11 +825,10 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
-            groupModalOpen.open && groupModalOpen.mode === "edit"
-              ? (groupModalOpen.chat?.chat_id ?? "new")
-              : "new"
-          }`}
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
+            ? (groupModalOpen.chat?.chat_id ?? "new")
+            : "new"
+            }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={
