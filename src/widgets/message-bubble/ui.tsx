@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { FileItem } from "widgets/file-item";
-import { toUserTZ } from "widgets/message-tabs/helpers";
+import { getAvatarUrl, toUserTZ } from "widgets/message-tabs/helpers";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import {
@@ -61,6 +61,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
+  const [avatarSrc, setAvatarSrc] = useState("");
 
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const [pickerPosition, setPickerPosition] = useState<{
@@ -79,6 +80,27 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   useEffect(() => {
     setEditedContent(message.content);
   }, [message.content]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const resolveAvatar = async () => {
+      if (!avatar) {
+        if (isMounted) setAvatarSrc("");
+        return;
+      }
+
+      const filename = avatar.split("/").pop() || avatar;
+      const resolved = await getAvatarUrl(filename);
+      if (isMounted) setAvatarSrc(resolved);
+    };
+
+    resolveAvatar();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [avatar]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -355,7 +377,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         {!isMobile && !isOwn && (
           <div className="relative mr-3">
             <Avatar className="w-10 h-10 ">
-              <AvatarImage src={avatar} />
+              <AvatarImage src={avatarSrc} />
               <AvatarFallback className="bg-slate-300">
                 {initials}
               </AvatarFallback>
@@ -456,17 +478,19 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
           z-50 w-[160px] gap-[6px] bg-white w-fit flex flex-col items-start rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
                   >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMenuOpen(false);
-                        setIsEditing(true);
-                      }}
-                      className="w-full px-[14px] py-[10px] flex items-center gap-[8px]"
-                    >
-                      <MaterialIcon iconName="edit" />
-                      Edit
-                    </button>
+                    {!message.content.startsWith("Shared") && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMenuOpen(false);
+                          setIsEditing(true);
+                        }}
+                        className="w-full px-[14px] py-[10px] flex items-center gap-[8px]"
+                      >
+                        <MaterialIcon iconName="edit" />
+                        Edit
+                      </button>
+                    )}
 
                     <button
                       onClick={(e) => {

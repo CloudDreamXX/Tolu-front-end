@@ -349,6 +349,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   z-index: 20;
 }
 
+.editor-wrap [data-pc-section="toolbar"] {
+  display: none !important;
+}
+
 .editor-wrap .ql-container,
 .editor-wrap .p-editor-content {
   max-height: 60vh;

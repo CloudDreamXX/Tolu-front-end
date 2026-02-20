@@ -1,7 +1,8 @@
 import { ChatItemModel } from "entities/chat";
+import { useEffect, useState } from "react";
 import { cn, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
-import { toUserTZ } from "../../widgets/message-tabs/helpers";
+import { getAvatarUrl, toUserTZ } from "../../widgets/message-tabs/helpers";
 
 export const timeAgo = (date: string | Date | null) => {
   if (!date) return "—";
@@ -41,6 +42,30 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   classname,
 }) => {
   const { isMobileOrTablet } = usePageWidth();
+  const [avatarSrc, setAvatarSrc] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const resolveAvatar = async () => {
+      const rawAvatar = item.avatar_url;
+      if (!rawAvatar) {
+        if (isMounted) setAvatarSrc("");
+        return;
+      }
+
+      const filename = rawAvatar.split("/").pop() || rawAvatar;
+      const resolved = await getAvatarUrl(filename);
+      if (!isMounted) return;
+      setAvatarSrc(resolved);
+    };
+
+    resolveAvatar();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [item.avatar_url]);
 
   const initials = (() => {
     if (item.type === "group") {
@@ -97,7 +122,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
         <div className="flex items-center ">
           <div className={isMobileOrTablet ? "relative mr-3" : "relative"}>
             <Avatar className="w-10 h-10 ">
-              <AvatarImage src={item.avatar_url} />
+              <AvatarImage src={avatarSrc} />
               <AvatarFallback className={cn("bg-slate-300", classname)}>
                 {initials}
               </AvatarFallback>

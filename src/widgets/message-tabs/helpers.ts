@@ -4,19 +4,16 @@ export const getAvatarUrl = async (fileUrl: string | null): Promise<string> => {
   if (!fileUrl) return "";
 
   try {
-    const response = await fetch(
-      API_ROUTES.CHAT.UPLOADED_AVATAR.replace("{filename}", fileUrl)
+    const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(
+      /\/$/,
+      ""
     );
+    const normalizedFileName = (fileUrl.split("/").pop() || fileUrl)
+      .split("?")[0]
+      .replace(/\.[a-z0-9]+$/i, "");
+    const encodedFilename = encodeURIComponent(normalizedFileName);
 
-    if (!response.ok) {
-      console.error(
-        `Failed to fetch avatar: ${response.status} ${response.statusText}`
-      );
-      return "";
-    }
-
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
+    return `${baseUrl}${API_ROUTES.CHAT.UPLOADED_AVATAR.replace("{filename}", encodedFilename)}`;
   } catch (error) {
     console.error("Error fetching avatar:", error);
     return "";
