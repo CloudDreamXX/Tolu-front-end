@@ -86,6 +86,7 @@ export const ContentManagerMessages: React.FC = () => {
 
     try {
       await deleteClient(selectedClientId).unwrap();
+      await refetchManagedClients();
       toast({ title: "Client deleted successfully" });
       setSelectedChat(null);
       setConfirmDelete(false);
@@ -130,7 +131,7 @@ export const ContentManagerMessages: React.FC = () => {
   const [updateGroupChatMutation] = useUpdateGroupChatMutation();
   const [sendMessageMutation] = useSendMessageMutation();
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
-  const { data } = useGetManagedClientsQuery();
+  const { data, refetch: refetchManagedClients } = useGetManagedClientsQuery();
   const [widthPercent, setWidthPercent] = useState(30);
 
   const safeWidthPercent = Math.min(50, Math.max(10, widthPercent));
@@ -314,6 +315,7 @@ export const ContentManagerMessages: React.FC = () => {
       const { data: currentClientInfo } = await getClientInfo(clientId);
       if (currentClientInfo && currentClientInfo.data.client) {
         await inviteClient({ payload: currentClientInfo.data.client });
+        await refetchManagedClients();
       }
       toast({ title: "Invite resent successfully" });
     } catch (e) {
@@ -352,6 +354,7 @@ export const ContentManagerMessages: React.FC = () => {
         return;
       } else {
         await inviteClient({ payload: newClient });
+        await refetchManagedClients();
         toast({ title: "Client invited successfully" });
         setAddClientModal(false);
         setNewClient({
@@ -377,6 +380,7 @@ export const ContentManagerMessages: React.FC = () => {
     if (!pendingInvitePayload) return;
     try {
       await inviteClient({ payload: pendingInvitePayload });
+      await refetchManagedClients();
       toast({ title: "Client invited successfully" });
       setConfirmExistingUser(false);
       setPendingInvitePayload(null);
