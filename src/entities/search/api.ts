@@ -45,9 +45,8 @@ export const searchApi = createApi({
         if (params.managed_client_id)
           searchParams.append("managed_client_id", params.managed_client_id);
 
-        return `/searched-result/history${
-          searchParams.toString() ? `?${searchParams.toString()}` : ""
-        }`;
+        return `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""
+          }`;
       },
       transformResponse: (response: BaseResponse<SearchHistoryResponse[]>) => {
         return response.data.map((item) => ({
@@ -68,9 +67,12 @@ export const searchApi = createApi({
       providesTags: ["SearchSession"],
     }),
 
-    getAudioFile: builder.query<any, string>({
-      query: (fileId) => `/audio/${fileId}`,
-      transformResponse: (response: any) => response.data,
+    getAudioFile: builder.query<Blob, string>({
+      query: (fileId) => ({
+        url: `/audio/${fileId}`,
+        responseHandler: (response) => response.blob(),
+      }),
+      transformResponse: (response: Blob) => response,
     }),
   }),
 });
