@@ -46,11 +46,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-      open: true;
-      mode: "create" | "edit";
-      chat?: DetailsChatItemModel | null;
-      preselectedClients?: string[];
-    };
+    open: true;
+    mode: "create" | "edit";
+    chat?: DetailsChatItemModel | null;
+    preselectedClients?: string[];
+  };
 
 export const ContentManagerMessages: React.FC = () => {
   const [deleteClient] = useDeleteClientMutation();
@@ -76,8 +76,8 @@ export const ContentManagerMessages: React.FC = () => {
     selectedChat && selectedChat.type === "new_chat"
       ? selectedChat.id
       : selectedChat &&
-          selectedChat.participants &&
-          selectedChat.participants.length === 1
+        selectedChat.participants &&
+        selectedChat.participants.length === 1
         ? selectedChat.participants[0].id
         : null;
 
@@ -86,6 +86,7 @@ export const ContentManagerMessages: React.FC = () => {
 
     try {
       await deleteClient(selectedClientId).unwrap();
+      await refetchManagedClients();
       toast({ title: "Client deleted successfully" });
       setSelectedChat(null);
       setConfirmDelete(false);
@@ -130,12 +131,12 @@ export const ContentManagerMessages: React.FC = () => {
   const [updateGroupChatMutation] = useUpdateGroupChatMutation();
   const [sendMessageMutation] = useSendMessageMutation();
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
-  const { data } = useGetManagedClientsQuery();
+  const { data, refetch: refetchManagedClients } = useGetManagedClientsQuery();
   const [widthPercent, setWidthPercent] = useState(30);
 
   const safeWidthPercent = Math.min(50, Math.max(10, widthPercent));
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
 
   useEffect(() => {
     if (data && data.data?.clients) {
@@ -314,6 +315,7 @@ export const ContentManagerMessages: React.FC = () => {
       const { data: currentClientInfo } = await getClientInfo(clientId);
       if (currentClientInfo && currentClientInfo.data.client) {
         await inviteClient({ payload: currentClientInfo.data.client });
+        await refetchManagedClients();
       }
       toast({ title: "Invite resent successfully" });
     } catch (e) {
@@ -352,6 +354,7 @@ export const ContentManagerMessages: React.FC = () => {
         return;
       } else {
         await inviteClient({ payload: newClient });
+        await refetchManagedClients();
         toast({ title: "Client invited successfully" });
         setAddClientModal(false);
         setNewClient({
@@ -377,6 +380,7 @@ export const ContentManagerMessages: React.FC = () => {
     if (!pendingInvitePayload) return;
     try {
       await inviteClient({ payload: pendingInvitePayload });
+      await refetchManagedClients();
       toast({ title: "Client invited successfully" });
       setConfirmExistingUser(false);
       setPendingInvitePayload(null);
@@ -439,8 +443,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-            groupModalOpen.mode === "edit" &&
-            groupModalOpen.chat
+              groupModalOpen.mode === "edit" &&
+              groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -826,11 +830,10 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
-            groupModalOpen.open && groupModalOpen.mode === "edit"
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
               ? (groupModalOpen.chat?.chat_id ?? "new")
               : "new"
-          }`}
+            }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={
