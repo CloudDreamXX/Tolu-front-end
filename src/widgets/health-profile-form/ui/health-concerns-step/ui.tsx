@@ -388,20 +388,29 @@ export const HealthConcernsStep = ({ form }: { form: any }) => {
       <FormItem>
         <FormLabel>Are you currently on a special diet? *</FormLabel>
         <div className="grid grid-cols-2 gap-3">
-          {SPECIAL_DIETS.map((diet) => checkboxGroup(form, "specialDiet", diet))}
+          {SPECIAL_DIETS.map((diet) =>
+            checkboxGroup(form, "specialDiet", diet)
+          )}
         </div>
         {isOtherSelected && (
           <div className="flex flex-col mt-4 gap-2">
-            <FormLabel className="mt-4">Please specify your other diet</FormLabel>
+            <FormLabel className="mt-4">
+              Please specify your other diet
+            </FormLabel>
             <Textarea
               value={otherDiet}
-              onChange={e => setOtherDiet(e.target.value)}
+              onChange={(e) => setOtherDiet(e.target.value)}
               onBlur={() => {
                 if (otherDiet.trim()) {
                   // Replace 'Other' with the typed value only on blur
-                  const filtered = specialDiet.filter((d: string) => d !== "Other");
+                  const filtered = specialDiet.filter(
+                    (d: string) => d !== "Other"
+                  );
                   if (!filtered.includes(otherDiet.trim())) {
-                    form.setValue("specialDiet", [...filtered, otherDiet.trim()]);
+                    form.setValue("specialDiet", [
+                      ...filtered,
+                      otherDiet.trim(),
+                    ]);
                   }
                 }
               }}

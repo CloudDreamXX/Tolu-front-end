@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_ROUTES } from "shared/api";
-import { GetDocumentByIdResponse, IDocument, IDocumentResponse } from "./model";
+import { GetDocumentByIdResponse, IDocument } from "./model";
 import { RootState } from "entities/store";
 
 export const documentsApi = createApi({

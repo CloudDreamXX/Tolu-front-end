@@ -59,7 +59,7 @@ export interface IFolderItemResponse {
   pagination: Pagination;
 }
 
-export type GetFolderItemResponse = BaseResponse<IFolderItemResponse>
+export type GetFolderItemResponse = BaseResponse<IFolderItemResponse>;
 
 export interface IFolderResponse {
   [key: string]: IFolderItemResponse[];

@@ -135,8 +135,7 @@ export const LibraryDocument = () => {
     refetch: refetchCoaches,
     isLoading: isLoadingCoaches,
   } = useGetCoachesQuery();
-  const [getCoachProfile] =
-    useLazyGetCoachProfileQuery();
+  const [getCoachProfile] = useLazyGetCoachProfileQuery();
   const [downloadCoachPhoto] = useLazyDownloadCoachPhotoQuery();
 
   const { data: quizScore, refetch: refetchQuizScore } = useGetQuizScoreQuery(
@@ -453,9 +452,9 @@ export const LibraryDocument = () => {
         <div class="relative h-[4px] w-full bg-[#E0F0FF] rounded-full overflow-hidden mb-4">
           <div class="absolute top-0 left-0 h-full bg-[#1C63DB] transition-all"
             style="width: ${Math.min(
-          100,
-          (correct_questions / total_questions) * 100
-        )}%;"></div>
+              100,
+              (correct_questions / total_questions) * 100
+            )}%;"></div>
         </div>
 
         <div class="divide-y border-t border-[#EAEAEA]">
@@ -469,10 +468,11 @@ export const LibraryDocument = () => {
                   Answer: ${String(q.answer).toUpperCase()}
                 </div>
               </div>
-              <div class="px-3 py-1 rounded-full text-xs font-medium ${q.is_correct
+              <div class="px-3 py-1 rounded-full text-xs font-medium ${
+                q.is_correct
                   ? "bg-emerald-100 text-emerald-700"
                   : "bg-red-100 text-red-700"
-                }">
+              }">
                 ${q.is_correct ? "Correct" : "Incorrect"}
               </div>
             </div>`
@@ -904,13 +904,13 @@ export const LibraryDocument = () => {
           }));
           const fn = getHeadshotFilename(
             profile?.detailed_profile?.headshot_url ??
-            coach.profile?.headshot_url
+              coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
             profile?.detailed_profile?.headshot_url ??
-            coach.profile?.headshot_url
+              coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -1216,9 +1216,21 @@ export const LibraryDocument = () => {
                         <AvatarImage src={creatorPhoto || undefined} />
                         <AvatarFallback className="text-3xl bg-slate-300 ">
                           {(() => {
-                            const pi = creatorProfileData.data?.detailed_profile?.personal_info;
-                            const first = pi && typeof pi.first_name === 'string' && pi.first_name.trim() ? pi.first_name.trim() : null;
-                            const last = pi && typeof pi.last_name === 'string' && pi.last_name.trim() ? pi.last_name.trim() : null;
+                            const pi =
+                              creatorProfileData.data?.detailed_profile
+                                ?.personal_info;
+                            const first =
+                              pi &&
+                              typeof pi.first_name === "string" &&
+                              pi.first_name.trim()
+                                ? pi.first_name.trim()
+                                : null;
+                            const last =
+                              pi &&
+                              typeof pi.last_name === "string" &&
+                              pi.last_name.trim()
+                                ? pi.last_name.trim()
+                                : null;
                             if (first && last) {
                               return (
                                 <div className="flex items-center">
@@ -1228,8 +1240,13 @@ export const LibraryDocument = () => {
                               );
                             } else if (first) {
                               return first.slice(0, 1);
-                            } else if (creatorProfileData.data?.basic_info.name) {
-                              return creatorProfileData.data.basic_info.name.slice(0, 1);
+                            } else if (
+                              creatorProfileData.data?.basic_info.name
+                            ) {
+                              return creatorProfileData.data.basic_info.name.slice(
+                                0,
+                                1
+                              );
                             } else {
                               return "C";
                             }
@@ -1244,8 +1261,8 @@ export const LibraryDocument = () => {
                   </div>
                   <div className="text-[16px] text-[#5F5F65] whitespace-pre-line w-full">
                     Bio: <br />{" "}
-                    {creatorProfileData?.data?.detailed_profile.personal_info.bio ||
-                      "No bio provided."}
+                    {creatorProfileData?.data?.detailed_profile.personal_info
+                      .bio || "No bio provided."}
                   </div>
                 </div>
               )}
@@ -1267,7 +1284,7 @@ export const LibraryDocument = () => {
               <ChatActions
                 initialStatus={selectedDocument?.readStatus}
                 initialRating={selectedDocument?.userRating}
-                onRegenerate={() => { }}
+                onRegenerate={() => {}}
                 isSearching={false}
                 hasMessages={messages.length >= 2}
                 onStatusChange={onStatusChange}
@@ -1327,7 +1344,7 @@ export const LibraryDocument = () => {
                   <ChatActions
                     initialStatus={selectedDocument?.readStatus}
                     initialRating={selectedDocument?.rating}
-                    onRegenerate={() => { }}
+                    onRegenerate={() => {}}
                     isSearching={false}
                     hasMessages={messages.length >= 2}
                     onStatusChange={onStatusChange}

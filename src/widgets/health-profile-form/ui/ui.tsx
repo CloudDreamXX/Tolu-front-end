@@ -92,7 +92,10 @@ type HealthProfileFormProps = {
   className?: string;
 };
 
-export const HealthProfileForm = ({ asDialog = true, className }: HealthProfileFormProps) => {
+export const HealthProfileForm = ({
+  asDialog = true,
+  className,
+}: HealthProfileFormProps) => {
   const { isMobile } = usePageWidth();
   const dispatch = useDispatch();
 
@@ -218,9 +221,9 @@ export const HealthProfileForm = ({ asDialog = true, className }: HealthProfileF
             onClick={
               isSummary
                 ? () => {
-                  setIsSummary(false);
-                  setCurrentStep(0);
-                }
+                    setIsSummary(false);
+                    setCurrentStep(0);
+                  }
                 : currentStep === steps.length - 1
                   ? handleSubmit
                   : () => goToStep(currentStep + 1)
@@ -238,11 +241,7 @@ export const HealthProfileForm = ({ asDialog = true, className }: HealthProfileF
   );
 
   if (!asDialog) {
-    return (
-      <div className="flex flex-col gap-6">
-        {Content}
-      </div>
-    );
+    return <div className="flex flex-col gap-6">{Content}</div>;
   }
 
   return (
@@ -259,14 +258,21 @@ export const HealthProfileForm = ({ asDialog = true, className }: HealthProfileF
           size={isMobile ? "sm" : "icon"}
           className="rounded-full text-[12px] xl:text-[14px] md:h-[56px] md:w-[56px] flex items-center justify-center"
         >
-          {isMobile ? "Health profile" : <MaterialIcon iconName="manage_accounts" />}
+          {isMobile ? (
+            "Health profile"
+          ) : (
+            <MaterialIcon iconName="manage_accounts" />
+          )}
         </Button>
       </DialogTrigger>
 
-      <DialogContent showMobileBack={false} className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6">
+      <DialogContent
+        showMobileBack={false}
+        className="md:max-w-3xl max-h-[90vh] flex flex-col gap-6"
+      >
         <DialogTitle>Your Health History</DialogTitle>
         {Content}
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

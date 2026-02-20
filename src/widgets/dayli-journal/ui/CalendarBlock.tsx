@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn } from "shared/lib";
 import { Button } from "shared/ui";
@@ -7,14 +7,38 @@ import { SymptomCheckCalendarModal } from "widgets/MenopauseModals/SymptomCheckC
 type Props = {
   selectedDate: string;
   handleDateChange: (date: Date) => void;
+  datesWithData?: string[];
+  onWeekDatesChange?: (weekDates: string[]) => void;
 };
 
 export const CalendarBlock: React.FC<Props> = ({
   selectedDate,
   handleDateChange,
+  datesWithData = [],
+  onWeekDatesChange,
 }) => {
   const today = new Date();
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
+  const [weekAnchorDate, setWeekAnchorDate] = useState<Date>(() =>
+    selectedDate ? new Date(selectedDate) : new Date()
+  );
+
+  const weekDays = useMemo(
+    () => getWeekRangeByDate(weekAnchorDate),
+    [weekAnchorDate]
+  );
+  const daysWithData = useMemo(() => new Set(datesWithData), [datesWithData]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      setWeekAnchorDate(new Date(selectedDate));
+    }
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (!onWeekDatesChange) return;
+    onWeekDatesChange(weekDays.map((day) => toDateKey(day)));
+  }, [onWeekDatesChange, weekDays]);
 
   useEffect(() => {
     if (openCalendarModal) {
@@ -51,36 +75,80 @@ export const CalendarBlock: React.FC<Props> = ({
             <MaterialIcon iconName="calendar_today" fill={1} />
           </Button>
         </div>
-        <div className="flex self-stretch w-full">
-          {getCurrentWeekRange().map((day) => (
-            <div
-              key={day.getDay()}
-              className="flex flex-col items-center w-full gap-1"
-            >
-              <p className="text-sm font-medium text-[#5F5F65] flex-1">
-                {day.toLocaleDateString("en-US", { weekday: "short" })}
-              </p>
-              <p
-                className={cn(
-                  "font-medium text-[#1D1D1F] flex-1 min-h-[34px] flex justify-center items-center w-full rounded-full text-center cursor-pointer hover:bg-[#ECEFF4] hover:text-[#1D1D1F]",
-                  {
-                    "text-[#B3BCC8]": day.getDate() > today.getDate(),
-                    "text-[#1D1D1F]": day.getDate() < today.getDate(),
-                  },
-                  {
-                    "bg-[#1C63DB] text-white":
-                      day.toISOString().split("T")[0] === selectedDate,
-                  }
-                )}
-                onClick={() => {
-                  handleDateChange(day);
-                  setOpenCalendarModal(false);
-                }}
-              >
-                {day.getDate()}
-              </p>
-            </div>
-          ))}
+        <div className="flex self-stretch w-full items-center">
+          <button
+            type="button"
+            className="mr-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-[#ECEFF4]"
+            onClick={() =>
+              setWeekAnchorDate((prev) => {
+                const next = new Date(prev);
+                next.setDate(prev.getDate() - 7);
+                return next;
+              })
+            }
+            aria-label="Previous week"
+          >
+            <MaterialIcon iconName="keyboard_arrow_left" />
+          </button>
+
+          {weekDays.map((day) =>
+            (() => {
+              const dayKey = toDateKey(day);
+              const isSelected = dayKey === selectedDate;
+              const hasData = daysWithData.has(dayKey);
+              return (
+                <div
+                  key={dayKey}
+                  className="flex flex-col items-center w-full gap-1"
+                >
+                  <p className="text-sm font-medium text-[#5F5F65] flex-1">
+                    {day.toLocaleDateString("en-US", { weekday: "short" })}
+                  </p>
+                  <p
+                    className={cn(
+                      "relative font-medium text-[#1D1D1F] flex-1 min-h-[34px] flex justify-center items-center w-full rounded-full text-center cursor-pointer hover:bg-[#ECEFF4] hover:text-[#1D1D1F]",
+                      {
+                        "text-[#B3BCC8]": day > today,
+                        "text-[#1D1D1F]": day < today,
+                      },
+                      {
+                        "bg-[#1C63DB] text-white": isSelected,
+                      }
+                    )}
+                    onClick={() => {
+                      handleDateChange(day);
+                      setOpenCalendarModal(false);
+                    }}
+                  >
+                    {day.getDate()}
+                    {hasData && (
+                      <span
+                        className={cn(
+                          "absolute right-[30px] top-[8px] h-[6px] w-[6px] rounded-full",
+                          isSelected ? "bg-white" : "bg-[#1C63DB]"
+                        )}
+                      />
+                    )}
+                  </p>
+                </div>
+              );
+            })()
+          )}
+
+          <button
+            type="button"
+            className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-[#ECEFF4]"
+            onClick={() =>
+              setWeekAnchorDate((prev) => {
+                const next = new Date(prev);
+                next.setDate(prev.getDate() + 7);
+                return next;
+              })
+            }
+            aria-label="Next week"
+          >
+            <MaterialIcon iconName="keyboard_arrow_right" />
+          </button>
         </div>
       </div>
 
@@ -93,11 +161,15 @@ export const CalendarBlock: React.FC<Props> = ({
   );
 };
 
-const getCurrentWeekRange = () => {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - dayOfWeek);
+const toDateKey = (date: Date) => {
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return localDate.toISOString().split("T")[0];
+};
+
+const getWeekRangeByDate = (date: Date) => {
+  const dayOfWeek = date.getDay();
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(date.getDate() - dayOfWeek);
 
   const weekDays = [];
   for (let i = 0; i < 7; i++) {

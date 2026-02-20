@@ -1,10 +1,7 @@
 import {
-  AIChatMessageResearch,
-  AiSearchRequest,
   SearchHistoryItem,
   SearchHistoryParams,
   SearchHistoryResponse,
-  SearchResultResponse,
   SearchResultResponseItem,
 } from "./model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -48,8 +45,9 @@ export const searchApi = createApi({
         if (params.managed_client_id)
           searchParams.append("managed_client_id", params.managed_client_id);
 
-        return `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""
-          }`;
+        return `/searched-result/history${
+          searchParams.toString() ? `?${searchParams.toString()}` : ""
+        }`;
       },
       transformResponse: (response: BaseResponse<SearchHistoryResponse[]>) => {
         return response.data.map((item) => ({
@@ -65,9 +63,8 @@ export const searchApi = createApi({
 
     getSession: builder.query<SearchResultResponseItem[], string>({
       query: (chatId) => `/session/${chatId}`,
-      transformResponse: (
-        response: BaseResponse<SearchResultResponseItem[]>
-      ) => response.data,
+      transformResponse: (response: BaseResponse<SearchResultResponseItem[]>) =>
+        response.data,
       providesTags: ["SearchSession"],
     }),
   }),
@@ -340,7 +337,7 @@ export class SearchService {
             if (parsed.message === "Stream completed" || parsed.done) {
               // Check if data is nested (ai-coach-assistant format)
               const data = parsed.data || parsed;
-              
+
               if (data.searched_result_id && data.chat_id) {
                 onComplete({
                   searched_result_id: data.searched_result_id,

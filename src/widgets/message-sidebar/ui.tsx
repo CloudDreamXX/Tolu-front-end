@@ -109,7 +109,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             className="rounded-full "
             icon={<MaterialIcon iconName="search" size={16} />}
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
@@ -128,14 +128,22 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
           </TabsList>
           <ScrollArea className="h-[calc(100vh-261px)] md:h-[calc(100vh-302px)] lg:h-[calc(100vh-160px)]">
             <TabsContent value="clients" className="mt-0">
-              {chats.filter(item => {
+              {chats.filter((item) => {
                 if (item.name && typeof item.name === "string") {
                   return item.name.toLowerCase().includes(search.toLowerCase());
                 }
-                return item.participants.some(p =>
-                  (p.first_name && p.first_name.toLowerCase().includes(search.toLowerCase())) ||
-                  (p.last_name && p.last_name.toLowerCase().includes(search.toLowerCase())) ||
-                  (p.name && p.name.toLowerCase().includes(search.toLowerCase()))
+                return item.participants.some(
+                  (p) =>
+                    (p.first_name &&
+                      p.first_name
+                        .toLowerCase()
+                        .includes(search.toLowerCase())) ||
+                    (p.last_name &&
+                      p.last_name
+                        .toLowerCase()
+                        .includes(search.toLowerCase())) ||
+                    (p.name &&
+                      p.name.toLowerCase().includes(search.toLowerCase()))
                 );
               }).length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
@@ -146,14 +154,24 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                 </div>
               ) : (
                 chats
-                  .filter(item => {
+                  .filter((item) => {
                     if (item.name && typeof item.name === "string") {
-                      return item.name.toLowerCase().includes(search.toLowerCase());
+                      return item.name
+                        .toLowerCase()
+                        .includes(search.toLowerCase());
                     }
-                    return item.participants.some(p =>
-                      (p.first_name && p.first_name.toLowerCase().includes(search.toLowerCase())) ||
-                      (p.last_name && p.last_name.toLowerCase().includes(search.toLowerCase())) ||
-                      (p.name && p.name.toLowerCase().includes(search.toLowerCase()))
+                    return item.participants.some(
+                      (p) =>
+                        (p.first_name &&
+                          p.first_name
+                            .toLowerCase()
+                            .includes(search.toLowerCase())) ||
+                        (p.last_name &&
+                          p.last_name
+                            .toLowerCase()
+                            .includes(search.toLowerCase())) ||
+                        (p.name &&
+                          p.name.toLowerCase().includes(search.toLowerCase()))
                     );
                   })
                   .map((item) => (
@@ -168,7 +186,12 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             </TabsContent>
 
             <TabsContent value="coaches" className="hidden mt-0">
-              {chats.filter((item) => item.type === "coach" && item.name && item.name.toLowerCase().includes(search.toLowerCase())).length === 0 ? (
+              {chats.filter(
+                (item) =>
+                  item.type === "coach" &&
+                  item.name &&
+                  item.name.toLowerCase().includes(search.toLowerCase())
+              ).length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
                   <p className="font-semibold">No coach conversations</p>
                   <p className="text-sm">
@@ -177,7 +200,12 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                 </div>
               ) : (
                 chats
-                  .filter((item) => item.type === "coach" && item.name && item.name.toLowerCase().includes(search.toLowerCase()))
+                  .filter(
+                    (item) =>
+                      item.type === "coach" &&
+                      item.name &&
+                      item.name.toLowerCase().includes(search.toLowerCase())
+                  )
                   .map((item) => (
                     <ChatItem
                       key={item.id}

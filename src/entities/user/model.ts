@@ -281,4 +281,3 @@ export interface LoginResponseData {
 }
 
 export type LoginResponse = BaseResponse<LoginResponseData>;
-

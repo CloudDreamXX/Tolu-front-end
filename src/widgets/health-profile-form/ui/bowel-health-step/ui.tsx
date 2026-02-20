@@ -135,7 +135,10 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
         name="intestinalGas"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Do you experience intestinal gas? If so, please explain if it is excessive, occasional, odorous etc.</FormLabel>
+            <FormLabel>
+              Do you experience intestinal gas? If so, please explain if it is
+              excessive, occasional, odorous etc.
+            </FormLabel>
             <Textarea {...field} />
           </FormItem>
         )}
@@ -146,7 +149,11 @@ export const BowelHealthStep = ({ form }: { form: any }) => {
         name="foodPoisoningHistory"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Have you ever had food poisoning? If yes, please describe in detail, including 1) Where were you 2) What did you treat it with, and 3) If you feel like you fully recovered from it. </FormLabel>
+            <FormLabel>
+              Have you ever had food poisoning? If yes, please describe in
+              detail, including 1) Where were you 2) What did you treat it with,
+              and 3) If you feel like you fully recovered from it.{" "}
+            </FormLabel>
             <Textarea
               {...field}
               placeholder="Where were you, how was it treated, and did you fully recover?"

@@ -26,20 +26,23 @@ export const ParticipantsModal: React.FC<{
                 <Avatar className="ring-1 ring-black/5 border-white rounded-full shadow-sm w-8 h-8 border-[1.5px]">
                   <AvatarImage src={undefined} alt={p.user.name} />
                   <AvatarFallback className="text-[11px] font-medium">
-                    {p.user.first_name && p.user.last_name ? `${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}` :
-                      p.user.name.split(" ").length > 1
+                    {p.user.first_name && p.user.last_name
+                      ? `${p.user.first_name.slice(0, 1).toUpperCase()}${p.user.last_name.slice(0, 1).toUpperCase()}`
+                      : p.user.name.split(" ").length > 1
                         ? p.user.name
-                          .split(" ")
-                          .map((word) => word[0].toUpperCase())
-                          .slice(0, 2)
-                          .join("")
+                            .split(" ")
+                            .map((word) => word[0].toUpperCase())
+                            .slice(0, 2)
+                            .join("")
                         : "UN"}
-
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-[#111827] truncate">
-                    {(p?.user.first_name && p?.user.last_name && `${p?.user.first_name} ${p?.user.last_name}`) || p?.user.name}
+                    {(p?.user.first_name &&
+                      p?.user.last_name &&
+                      `${p?.user.first_name} ${p?.user.last_name}`) ||
+                      p?.user.name}
                   </div>
                 </div>
               </li>

@@ -1,4 +1,7 @@
-import { DetailsChatItemModel, useGetUploadedChatAvatarUrlQuery } from "entities/chat";
+import {
+  DetailsChatItemModel,
+  useGetUploadedChatAvatarUrlQuery,
+} from "entities/chat";
 import { Client } from "entities/coach";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "shared/lib";
@@ -6,7 +9,6 @@ import { Button, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { getAvatarUrl } from "../../helpers";
 
 interface CreateGroupModalProps {
   open: boolean;
@@ -57,16 +59,21 @@ export const CreateGroupModal = ({
     accept: ["image/png", "image/jpeg", "application/pdf", ".pdf", "video/mp4"],
   });
   const [selectedOption, setSelectedOption] = useState<string[]>(
-    chat?.participants.map((p) => (p?.user.first_name && p?.user.last_name ? `${p?.user.first_name} ${p?.user.last_name}` : p?.user.name)) || []
+    chat?.participants.map((p) =>
+      p?.user.first_name && p?.user.last_name
+        ? `${p?.user.first_name} ${p?.user.last_name}`
+        : p?.user.name
+    ) || []
   );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const file = files?.[0] ?? null;
 
   const hasOldAvatar = !file && chat?.avatar_url;
 
-  const avatarFilename = chat?.avatar_url && typeof chat.avatar_url === "string"
-    ? chat.avatar_url.split('/').pop() || ""
-    : "";
+  const avatarFilename =
+    chat?.avatar_url && typeof chat.avatar_url === "string"
+      ? chat.avatar_url.split("/").pop() || ""
+      : "";
 
   const { data: oldAvatarUrlData } = useGetUploadedChatAvatarUrlQuery(
     { fileUrl: avatarFilename },
@@ -98,7 +105,11 @@ export const CreateGroupModal = ({
     }
 
     // Handle Blob objects
-    if (typeof chat.avatar_url === "object" && chat.avatar_url && (chat.avatar_url as Blob).size !== undefined) {
+    if (
+      typeof chat.avatar_url === "object" &&
+      chat.avatar_url &&
+      (chat.avatar_url as Blob).size !== undefined
+    ) {
       if (avatarObjectUrlRef.current) {
         URL.revokeObjectURL(avatarObjectUrlRef.current);
       }
@@ -145,9 +156,10 @@ export const CreateGroupModal = ({
     const namesToRemove =
       chat?.participants
         .filter((p) => {
-          const displayName = p?.user.first_name && p?.user.last_name
-            ? `${p?.user.first_name} ${p?.user.last_name}`
-            : p?.user.name;
+          const displayName =
+            p?.user.first_name && p?.user.last_name
+              ? `${p?.user.first_name} ${p?.user.last_name}`
+              : p?.user.name;
           return !selectedOption.includes(displayName);
         })
         .map((p) => p.user.id!) || [];

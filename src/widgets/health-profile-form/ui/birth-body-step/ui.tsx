@@ -227,7 +227,7 @@ export const BirthBodyStep = ({ form }: { form: any }) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Birth Order (please list ages of biological siblings) 
+              Birth Order (please list ages of biological siblings)
             </FormLabel>
             <FormControl>
               <Input {...field} />
@@ -331,10 +331,10 @@ const BirthDateField = ({ field }: { field: any }) => {
             value={
               parsedDate
                 ? new Intl.DateTimeFormat("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                }).format(parsedDate)
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }).format(parsedDate)
                 : ""
             }
           />

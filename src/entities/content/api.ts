@@ -63,7 +63,10 @@ export const contentApi = createApi({
         method: "GET",
       }),
     }),
-    addContentFeedback: builder.mutation<BaseResponse<FeedbackResponse>, Feedback>({
+    addContentFeedback: builder.mutation<
+      BaseResponse<FeedbackResponse>,
+      Feedback
+    >({
       query: (feedback) => ({
         url: API_ROUTES.CONTENT.FEEDBACK,
         method: "POST",

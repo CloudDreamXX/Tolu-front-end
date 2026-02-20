@@ -38,9 +38,14 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
           const msg = await verifyEmail({ email, token }).unwrap();
           if (msg.data.user && msg.data.accessToken) {
             dispatch(
-              setCredentials({ user: msg.data.user, accessToken: msg.data.accessToken })
+              setCredentials({
+                user: msg.data.user,
+                accessToken: msg.data.accessToken,
+              })
             );
-            nav(msg.data.user.roleID === 3 ? "/welcome/client" : "/select-type");
+            nav(
+              msg.data.user.roleID === 3 ? "/welcome/client" : "/select-type"
+            );
           }
         }
 

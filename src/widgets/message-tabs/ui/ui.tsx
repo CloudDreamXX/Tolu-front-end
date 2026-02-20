@@ -330,7 +330,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         .filter(Boolean)
         .map((p) => p[0]?.toUpperCase() ?? "")
         .slice(0, 2)
-        .join("")
+        .join("");
     }
 
     const user = receiver?.user;
@@ -593,7 +593,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
         <TabsContent value="profile">
           <ClientComprehensiveSummary
-            onOpenChange={() => { }}
+            onOpenChange={() => {}}
             clientId={receiver?.user.id || location.pathname.split("/").pop()!}
             asDialog={false}
           />
@@ -668,8 +668,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => { }}
-          onDelete={() => { }}
+          onEdit={() => {}}
+          onDelete={() => {}}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />

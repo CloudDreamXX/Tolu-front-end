@@ -14,7 +14,6 @@ import {
 } from "entities/chat/api";
 import { applyIncomingMessage, chatsSelectors } from "entities/chat/chatsSlice";
 import { Client, useGetManagedClientsQuery } from "entities/coach";
-import { BaseResponse } from "entities/models";
 import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,11 +28,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-    open: true;
-    mode: "create" | "edit";
-    chat?: DetailsChatItemModel | null;
-    preselectedClients?: string[];
-  };
+      open: true;
+      mode: "create" | "edit";
+      chat?: DetailsChatItemModel | null;
+      preselectedClients?: string[];
+    };
 
 export const ContentManagerMessages: React.FC = () => {
   const navigate = useNavigate();
@@ -58,7 +57,7 @@ export const ContentManagerMessages: React.FC = () => {
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
   const { data } = useGetManagedClientsQuery();
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
 
   useEffect(() => {
     if (data && data.data?.clients) {
@@ -150,14 +149,16 @@ export const ContentManagerMessages: React.FC = () => {
           request: {
             name,
             description,
-            participant_ids:
-              (add_participant?.filter((n) => typeof n === "string" && n.trim() !== "") || [])
-                .map((n) => {
-                  const found = clientsData.find(
-                    (c) => `${c.first_name} ${c.last_name}`.trim() === n.trim()
-                  );
-                  return found?.client_id || "";
-                }),
+            participant_ids: (
+              add_participant?.filter(
+                (n) => typeof n === "string" && n.trim() !== ""
+              ) || []
+            ).map((n) => {
+              const found = clientsData.find(
+                (c) => `${c.first_name} ${c.last_name}`.trim() === n.trim()
+              );
+              return found?.client_id || "";
+            }),
           },
           avatar_image: image ?? undefined,
         }).unwrap();
@@ -166,8 +167,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-              groupModalOpen.mode === "edit" &&
-              groupModalOpen.chat
+            groupModalOpen.mode === "edit" &&
+            groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -333,10 +334,11 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
-            ? (groupModalOpen.chat?.chat_id ?? "new")
-            : "new"
-            }`}
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
+            groupModalOpen.open && groupModalOpen.mode === "edit"
+              ? (groupModalOpen.chat?.chat_id ?? "new")
+              : "new"
+          }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={

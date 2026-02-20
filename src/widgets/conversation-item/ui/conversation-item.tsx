@@ -242,7 +242,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     smartRender(pair.content).then((node) => {
       if (cancelled) return;
 
-
       const element = React.isValidElement(node) ? node : <div>{node}</div>;
       const html =
         element.props?.dangerouslySetInnerHTML?.__html ??
@@ -258,9 +257,10 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         addRichtext = !Array.from(lis).some((li) => {
           const text = li.textContent?.trim() || "";
           // Check for '● ' marker, bullet, dash, star, or number at start
-          return /^([●\-\*]|\d+[.)])/.test(text);
+          return /^([●*-]|\d+[.)])/.test(text);
         });
       } catch (e) {
+        console.error(e);
         addRichtext = true;
       }
 

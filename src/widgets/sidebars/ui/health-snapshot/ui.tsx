@@ -29,7 +29,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const chatList = useSelector(chatsSelectors.selectAll);
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
   const [signOut] = useSignOutMutation();
   const { data: invitations } = useGetPendingInvitationsQuery();
 
@@ -182,8 +182,9 @@ export const HealthSnapshotSidebar: React.FC = () => {
         )}
       >
         <div
-          className={`flex flex-col justify-between h-full overflow-y-hidden ${sidebarOpen ? "w-[268px]" : "w-[81px] items-center"
-            } `}
+          className={`flex flex-col justify-between h-full overflow-y-hidden ${
+            sidebarOpen ? "w-[268px]" : "w-[81px] items-center"
+          } `}
         >
           <div className="flex flex-col gap-[32px]">
             <NavLink
@@ -240,7 +241,10 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   e.preventDefault();
                   setIsMessagesOpen(!isMessagesOpen);
                   setSidebarOpen(true);
-                  if (!window.location.pathname.match(/^\/messages(\/.*)?$/) || window.location.pathname === "/messages") {
+                  if (
+                    !window.location.pathname.match(/^\/messages(\/.*)?$/) ||
+                    window.location.pathname === "/messages"
+                  ) {
                     nav("/messages");
                   }
                 }}
@@ -264,16 +268,14 @@ export const HealthSnapshotSidebar: React.FC = () => {
                   {unreadMessagesCount > 99 ? "99+" : unreadMessagesCount}
                 </span>
               </NavLink>
-              {isMessagesOpen && (
-                <ClientChatList />
-              )}
+              {isMessagesOpen && <ClientChatList />}
             </div>
           </div>
 
           <Button
             variant={"unstyled"}
             size={"unstyled"}
-            onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
+            onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
             className={`flex gap-4 items-center justify-between relative ${sidebarOpen ? "pl-4" : ""}`}
           >
             {invitations && invitations.data.length > 0 && (

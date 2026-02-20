@@ -397,10 +397,11 @@ export const UserManagement: React.FC = () => {
               size={"unstyled"}
               key={pageNumber}
               onClick={() => setPage(pageNumber)}
-              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${page === pageNumber
-                ? "border-[#1C63DB] text-[#1C63DB]"
-                : "border-[#DBDEE1] text-black"
-                }`}
+              className={`flex items-center justify-center p-[10px] w-[40px] h-[40px] bg-white border rounded-[8px] ${
+                page === pageNumber
+                  ? "border-[#1C63DB] text-[#1C63DB]"
+                  : "border-[#DBDEE1] text-black"
+              }`}
             >
               {pageNumber}
             </Button>

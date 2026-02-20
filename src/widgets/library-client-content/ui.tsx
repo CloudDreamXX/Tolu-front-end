@@ -10,7 +10,18 @@ import {
 import { ContentStatus, useUpdateStatusMutation } from "entities/content";
 import { RootState } from "entities/store";
 import { LibraryCard } from "features/library-card";
-import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
@@ -522,13 +533,13 @@ export const LibraryClientContent = () => {
           }));
           const fn = getHeadshotFilename(
             res?.data?.detailed_profile?.headshot_url ??
-            coach.profile?.headshot_url
+              coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
           const fn = getHeadshotFilename(
-            coachProfiles[coach.coach_id]?.data?.detailed_profile?.headshot_url ??
-            coach.profile?.headshot_url
+            coachProfiles[coach.coach_id]?.data?.detailed_profile
+              ?.headshot_url ?? coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         }
@@ -705,55 +716,96 @@ export const LibraryClientContent = () => {
 
               <div className="grid grid-cols-2 gap-y-1 gap-x-3">
                 <span className="text-muted-foreground">Email:</span>
-                {coachProfiles[selectedCoachId!]?.data?.basic_info?.email || "—"}
+                {coachProfiles[selectedCoachId!]?.data?.basic_info?.email ||
+                  "—"}
 
                 <span className="text-muted-foreground">Phone:</span>
                 {(coachProfiles[selectedCoachId!]?.data?.basic_info?.phone &&
-                  phoneMask(coachProfiles[selectedCoachId!]?.data?.basic_info?.phone)) || "—"}
+                  phoneMask(
+                    coachProfiles[selectedCoachId!]?.data?.basic_info?.phone
+                  )) ||
+                  "—"}
 
                 <span className="text-muted-foreground">Timezone:</span>
-                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.timezone || "—"}
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                  ?.timezone || "—"}
 
                 <span className="text-muted-foreground">Languages:</span>
                 {(
-                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.languages || []
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                    ?.languages || []
                 ).join(", ") || "—"}
 
                 <span className="text-muted-foreground">Expertise:</span>
                 {(
-                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.expertise_areas || []
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                    ?.expertise_areas || []
                 ).join(", ") || "—"}
 
                 <span className="text-muted-foreground">Certifications:</span>
                 {(
-                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.certifications || []
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                    ?.certifications || []
                 ).length > 0
-                  ? coachProfiles[selectedCoachId!]?.data?.detailed_profile?.certifications.map((c: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined, idx: Key | null | undefined) => (
-                    <div key={idx} className="truncate text-xs text-blue-700">{c}</div>
-                  ))
+                  ? coachProfiles[
+                      selectedCoachId!
+                    ]?.data?.detailed_profile?.certifications.map(
+                      (
+                        c:
+                          | string
+                          | number
+                          | boolean
+                          | ReactElement<
+                              any,
+                              string | JSXElementConstructor<any>
+                            >
+                          | Iterable<ReactNode>
+                          | ReactPortal
+                          | null
+                          | undefined,
+                        idx: Key | null | undefined
+                      ) => (
+                        <div
+                          key={idx}
+                          className="truncate text-xs text-blue-700"
+                        >
+                          {c}
+                        </div>
+                      )
+                    )
                   : "—"}
 
-                <span className="text-muted-foreground">Practitioner Types:</span>
+                <span className="text-muted-foreground">
+                  Practitioner Types:
+                </span>
                 {(
-                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.practitioner_info?.types || []
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                    ?.practitioner_info?.types || []
                 ).join(", ") || "—"}
 
                 <span className="text-muted-foreground">Niches:</span>
                 {(
-                  coachProfiles[selectedCoachId!]?.data?.detailed_profile?.practitioner_info?.niches || []
+                  coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                    ?.practitioner_info?.niches || []
                 ).join(", ") || "—"}
 
                 <span className="text-muted-foreground">School:</span>
-                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.practitioner_info?.school || "—"}
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                  ?.practitioner_info?.school || "—"}
 
-                <span className="text-muted-foreground">Practice Software:</span>
-                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.business_info?.practice_software || "—"}
+                <span className="text-muted-foreground">
+                  Practice Software:
+                </span>
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                  ?.business_info?.practice_software || "—"}
 
                 <span className="text-muted-foreground">Experience:</span>
-                {coachProfiles[selectedCoachId!]?.data?.detailed_profile?.years_experience ?? "—"}
+                {coachProfiles[selectedCoachId!]?.data?.detailed_profile
+                  ?.years_experience ?? "—"}
 
                 <span className="text-muted-foreground">Working duration:</span>
-                {coachProfiles[selectedCoachId!]?.data?.relationship_details?.working_duration || "—"}
+                {coachProfiles[selectedCoachId!]?.data?.relationship_details
+                  ?.working_duration || "—"}
               </div>
             </div>
 
@@ -845,7 +897,7 @@ export const LibraryClientContent = () => {
 
                   <AccordionContent className="flex flex-col gap-4 pb-2">
                     {Array.isArray(folder.subfolders) &&
-                      folder.subfolders.length > 0 ? (
+                    folder.subfolders.length > 0 ? (
                       folder.subfolders.map((sub, sIdx) => {
                         const subKey = `sub-${sIdx}`;
                         const subOpen = (openSub[folder.id] || "") === subKey;

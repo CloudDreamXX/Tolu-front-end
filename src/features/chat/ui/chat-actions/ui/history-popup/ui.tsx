@@ -160,9 +160,9 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
 
       {
         isOpen &&
-        (isMdUp
-          ? DesktopLayer // no portal: md/xl stays exactly as before
-          : createPortal(MobileLayer, document.body)) // portal only on mobile
+          (isMdUp
+            ? DesktopLayer // no portal: md/xl stays exactly as before
+            : createPortal(MobileLayer, document.body)) // portal only on mobile
       }
     </div>
   );
