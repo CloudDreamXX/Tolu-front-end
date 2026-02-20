@@ -3,6 +3,14 @@ name: Lint Code
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - "**.ts"
+      - "**.tsx"
+      - "**.js"
+      - "**.jsx"
+      - ".eslintrc.*"
+      - "package.json"
+      - "package-lock.json"
 
 permissions:
   contents: read
