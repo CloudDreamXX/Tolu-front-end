@@ -1392,17 +1392,19 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             {loading || isLoading || isSwitchLoading || isLoadingSession ? (
               <MessageLoadingSkeleton />
             ) : chatState.length ? (
-              <MessageList
-                messages={chatState}
-                isSearching={isSearching}
-                streamingText={streamingText}
-                error={error}
-                isHistoryPopup
-                onReadAloud={handleReadAloud}
-                isReadingAloud={isReadingAloud}
-                currentChatId={sourceId || undefined}
-                selectedSwitch={selectedSwitch}
-              />
+              <>
+                <MessageList
+                  messages={chatState}
+                  isSearching={isSearching}
+                  streamingText={streamingText}
+                  error={error}
+                  isHistoryPopup
+                  onReadAloud={handleReadAloud}
+                  isReadingAloud={isReadingAloud}
+                  currentChatId={sourceId || undefined}
+                  selectedSwitch={selectedSwitch}
+                />
+              </>
             ) : (
               <div></div>
             )}
