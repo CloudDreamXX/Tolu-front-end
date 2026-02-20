@@ -45,8 +45,9 @@ export const searchApi = createApi({
         if (params.managed_client_id)
           searchParams.append("managed_client_id", params.managed_client_id);
 
-        return `/searched-result/history${searchParams.toString() ? `?${searchParams.toString()}` : ""
-          }`;
+        return `/searched-result/history${
+          searchParams.toString() ? `?${searchParams.toString()}` : ""
+        }`;
       },
       transformResponse: (response: BaseResponse<SearchHistoryResponse[]>) => {
         return response.data.map((item) => ({
