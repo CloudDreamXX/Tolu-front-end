@@ -46,11 +46,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-    open: true;
-    mode: "create" | "edit";
-    chat?: DetailsChatItemModel | null;
-    preselectedClients?: string[];
-  };
+      open: true;
+      mode: "create" | "edit";
+      chat?: DetailsChatItemModel | null;
+      preselectedClients?: string[];
+    };
 
 export const ContentManagerMessages: React.FC = () => {
   const [deleteClient] = useDeleteClientMutation();
@@ -76,8 +76,8 @@ export const ContentManagerMessages: React.FC = () => {
     selectedChat && selectedChat.type === "new_chat"
       ? selectedChat.id
       : selectedChat &&
-        selectedChat.participants &&
-        selectedChat.participants.length === 1
+          selectedChat.participants &&
+          selectedChat.participants.length === 1
         ? selectedChat.participants[0].id
         : null;
 
@@ -136,7 +136,7 @@ export const ContentManagerMessages: React.FC = () => {
 
   const safeWidthPercent = Math.min(50, Math.max(10, widthPercent));
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
 
   useEffect(() => {
     if (data && data.data?.clients) {
@@ -443,8 +443,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-              groupModalOpen.mode === "edit" &&
-              groupModalOpen.chat
+            groupModalOpen.mode === "edit" &&
+            groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -830,10 +830,11 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
+            groupModalOpen.open && groupModalOpen.mode === "edit"
               ? (groupModalOpen.chat?.chat_id ?? "new")
               : "new"
-            }`}
+          }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={
