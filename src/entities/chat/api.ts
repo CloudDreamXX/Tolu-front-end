@@ -286,12 +286,27 @@ export const chatApi = createApi({
       { chatId: string; file?: File; libraryFiles?: string[] }
     >({
       query: ({ chatId, file, libraryFiles }) => {
+        const normalizedLibraryFiles = (libraryFiles || []).filter(Boolean);
+
+        if (!file && normalizedLibraryFiles.length > 0) {
+          return {
+            url: API_ROUTES.CHAT.UPLOAD_FILE.replace("{chat_id}", chatId),
+            method: "POST",
+            body: {
+              library_files: JSON.stringify(normalizedLibraryFiles),
+            },
+          };
+        }
+
         const formData = new FormData();
         if (file) {
           formData.append("file", file);
         }
-        if (libraryFiles) {
-          formData.append("library_files", JSON.stringify(libraryFiles));
+        if (normalizedLibraryFiles.length > 0) {
+          formData.append(
+            "library_files",
+            JSON.stringify(normalizedLibraryFiles)
+          );
         }
         return {
           url: API_ROUTES.CHAT.UPLOAD_FILE.replace("{chat_id}", chatId),
