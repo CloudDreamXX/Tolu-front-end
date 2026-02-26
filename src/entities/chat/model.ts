@@ -98,7 +98,6 @@ export interface UploadChatFileResponse {
 }
 
 export interface ChatFileUploadResponse {
-  success: boolean;
   type: string;
   files_count?: number;
   messages?: ChatMessageModel[];

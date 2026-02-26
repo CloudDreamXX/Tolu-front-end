@@ -13,11 +13,15 @@ import {
   useFetchAllChatsQuery,
   useUploadChatFileMutation,
 } from "entities/chat/api";
+import { setFilesFromLibrary } from "entities/client/lib";
+import { useLazyDownloadFileLibraryQuery } from "entities/files-library/api";
+import { fileKeyFromUrl } from "entities/chat/helpers";
 import { applyIncomingMessage, updateChat } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { API_ROUTES } from "shared/api";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
@@ -69,6 +73,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     skip: !token,
   });
   const [uploadFile] = useUploadChatFileMutation();
+  const [downloadLibraryFile] = useLazyDownloadFileLibraryQuery();
   const nav = useNavigate();
   const dispatch = useDispatch();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
@@ -162,6 +167,29 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [sendNote] = useSendChatNoteMutation();
   const [createMedication] = useCreateMedicationMutation();
   const [createSupplement] = useCreateSupplementMutation();
+
+  const preloadUploadedFilePreview = useCallback(
+    (message?: ChatMessageModel | null) => {
+      const fileUrl = message?.file_url;
+      if (!fileUrl) return;
+
+      const fileKey = fileKeyFromUrl(fileUrl);
+      if (!fileKey) return;
+
+      const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(
+        /\/$/,
+        ""
+      );
+
+      void fetch(
+        `${baseUrl}${API_ROUTES.CHAT.UPLOADED_FILE.replace("{filename}", fileKey)}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        }
+      );
+    },
+    [token]
+  );
 
   const handleAddSelectionToNotes = async (text: string) => {
     try {
@@ -358,15 +386,19 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           file: file,
         }).unwrap();
         if (response?.data.type === "file_upload") {
+          const uploadedMessage = response.data.messages?.[0];
+
+          preloadUploadedFilePreview(uploadedMessage);
+
           const newMsg: ChatMessageModel = {
-            id: response.data.message_id || "",
-            content: response.data.file_name || "",
+            id: uploadedMessage?.id || "",
+            content: uploadedMessage?.file_name || "",
             chat_id: chat.chat_id,
             created_at: new Date().toISOString(),
-            file_url: response.data.file_url || "",
-            file_name: response.data.file_name || "",
-            file_size: response.data.file_size || 0,
-            file_type: "file_upload",
+            file_url: uploadedMessage?.file_url || "",
+            file_name: uploadedMessage?.file_name || "",
+            file_size: uploadedMessage?.file_size || 0,
+            file_type: uploadedMessage?.file_type || file.type,
             sender: {
               id: profile!.id,
               email: profile!.email,
@@ -392,22 +424,47 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
     if (filesFromLibrary.length > 0) {
       try {
-        const response = await uploadFile({
-          chatId: chat.chat_id,
-          file: undefined,
-          libraryFiles: filesFromLibrary,
-        });
+        const uploadedLibraryMessages: ChatMessageModel[] = [];
 
-        if (
-          response?.data?.data.type === "library_files" &&
-          response.data.data.messages &&
-          response.data.data.messages?.length
-        ) {
-          setMessages((prev) => {
-            const filtered = prev.filter((m) => !m.id.startsWith("tmp-lib"));
-            return [...filtered, ...(response.data?.data.messages || [])];
+        for (const libraryFileId of filesFromLibrary) {
+          const downloadResult = await downloadLibraryFile({
+            fileId: libraryFileId,
           });
+
+          if (!("data" in downloadResult) || !downloadResult.data) {
+            continue;
+          }
+
+          const blob = downloadResult.data;
+          const extFromType = blob.type.split("/")[1] || "bin";
+          const fileFromLibrary = new File(
+            [blob],
+            `library-${libraryFileId}.${extFromType}`,
+            {
+              type: blob.type || "application/octet-stream",
+            }
+          );
+
+          const response = await uploadFile({
+            chatId: chat.chat_id,
+            file: fileFromLibrary,
+          }).unwrap();
+
+          if (response?.data.type === "file_upload") {
+            const uploadedMessage = response.data.messages?.[0];
+
+            if (uploadedMessage) {
+              preloadUploadedFilePreview(uploadedMessage);
+              uploadedLibraryMessages.push(uploadedMessage);
+            }
+          }
         }
+
+        if (uploadedLibraryMessages.length > 0) {
+          setMessages((prev) => [...prev, ...uploadedLibraryMessages]);
+        }
+
+        dispatch(setFilesFromLibrary([]));
       } catch (e) {
         console.error("library file upload failed", e);
       }
