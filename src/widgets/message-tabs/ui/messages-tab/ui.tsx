@@ -13,11 +13,13 @@ import {
   useFetchAllChatsQuery,
   useUploadChatFileMutation,
 } from "entities/chat/api";
+import { fileKeyFromUrl } from "entities/chat/helpers";
 import { applyIncomingMessage, updateChat } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { API_ROUTES } from "shared/api";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Textarea } from "shared/ui";
@@ -109,6 +111,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
 
+  console.log(messages)
+
   const listData: ListItem[] = useMemo(() => {
     const sorted = [...messages]
       .sort(
@@ -162,6 +166,29 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [sendNote] = useSendChatNoteMutation();
   const [createMedication] = useCreateMedicationMutation();
   const [createSupplement] = useCreateSupplementMutation();
+
+  const preloadUploadedFilePreview = useCallback(
+    (message?: ChatMessageModel | null) => {
+      const fileUrl = message?.file_url;
+      if (!fileUrl) return;
+
+      const fileKey = fileKeyFromUrl(fileUrl);
+      if (!fileKey) return;
+
+      const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(
+        /\/$/,
+        ""
+      );
+
+      void fetch(
+        `${baseUrl}${API_ROUTES.CHAT.UPLOADED_FILE.replace("{filename}", fileKey)}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        }
+      );
+    },
+    [token]
+  );
 
   const handleAddSelectionToNotes = async (text: string) => {
     try {
@@ -358,15 +385,19 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           file: file,
         }).unwrap();
         if (response?.data.type === "file_upload") {
+          const uploadedMessage = response.data.messages?.[0];
+
+          preloadUploadedFilePreview(uploadedMessage);
+
           const newMsg: ChatMessageModel = {
-            id: response.data.message_id || "",
-            content: response.data.file_name || "",
+            id: uploadedMessage?.id || "",
+            content: uploadedMessage?.file_name || "",
             chat_id: chat.chat_id,
             created_at: new Date().toISOString(),
-            file_url: response.data.file_url || "",
-            file_name: response.data.file_name || "",
-            file_size: response.data.file_size || 0,
-            file_type: "file_upload",
+            file_url: uploadedMessage?.file_url || "",
+            file_name: uploadedMessage?.file_name || "",
+            file_size: uploadedMessage?.file_size || 0,
+            file_type: uploadedMessage?.file_type || file.type,
             sender: {
               id: profile!.id,
               email: profile!.email,
@@ -403,6 +434,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           response.data.data.messages &&
           response.data.data.messages?.length
         ) {
+          response.data.data.messages.forEach((msg) =>
+            preloadUploadedFilePreview(msg)
+          );
+
           setMessages((prev) => {
             const filtered = prev.filter((m) => !m.id.startsWith("tmp-lib"));
             return [...filtered, ...(response.data?.data.messages || [])];
@@ -799,10 +834,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                             />
                             {(files.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {files.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {files.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
