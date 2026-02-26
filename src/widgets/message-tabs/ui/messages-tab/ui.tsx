@@ -13,6 +13,8 @@ import {
   useFetchAllChatsQuery,
   useUploadChatFileMutation,
 } from "entities/chat/api";
+import { setFilesFromLibrary } from "entities/client/lib";
+import { useLazyDownloadFileLibraryQuery } from "entities/files-library/api";
 import { fileKeyFromUrl } from "entities/chat/helpers";
 import { applyIncomingMessage, updateChat } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
@@ -71,6 +73,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     skip: !token,
   });
   const [uploadFile] = useUploadChatFileMutation();
+  const [downloadLibraryFile] = useLazyDownloadFileLibraryQuery();
   const nav = useNavigate();
   const dispatch = useDispatch();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
@@ -421,26 +424,47 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
     if (filesFromLibrary.length > 0) {
       try {
-        const response = await uploadFile({
-          chatId: chat.chat_id,
-          file: undefined,
-          libraryFiles: filesFromLibrary,
-        });
+        const uploadedLibraryMessages: ChatMessageModel[] = [];
 
-        if (
-          response?.data?.data.type === "library_files" &&
-          response.data.data.messages &&
-          response.data.data.messages?.length
-        ) {
-          response.data.data.messages.forEach((msg) =>
-            preloadUploadedFilePreview(msg)
+        for (const libraryFileId of filesFromLibrary) {
+          const downloadResult = await downloadLibraryFile({
+            fileId: libraryFileId,
+          });
+
+          if (!("data" in downloadResult) || !downloadResult.data) {
+            continue;
+          }
+
+          const blob = downloadResult.data;
+          const extFromType = blob.type.split("/")[1] || "bin";
+          const fileFromLibrary = new File(
+            [blob],
+            `library-${libraryFileId}.${extFromType}`,
+            {
+              type: blob.type || "application/octet-stream",
+            }
           );
 
-          setMessages((prev) => {
-            const filtered = prev.filter((m) => !m.id.startsWith("tmp-lib"));
-            return [...filtered, ...(response.data?.data.messages || [])];
-          });
+          const response = await uploadFile({
+            chatId: chat.chat_id,
+            file: fileFromLibrary,
+          }).unwrap();
+
+          if (response?.data.type === "file_upload") {
+            const uploadedMessage = response.data.messages?.[0];
+
+            if (uploadedMessage) {
+              preloadUploadedFilePreview(uploadedMessage);
+              uploadedLibraryMessages.push(uploadedMessage);
+            }
+          }
         }
+
+        if (uploadedLibraryMessages.length > 0) {
+          setMessages((prev) => [...prev, ...uploadedLibraryMessages]);
+        }
+
+        dispatch(setFilesFromLibrary([]));
       } catch (e) {
         console.error("library file upload failed", e);
       }
@@ -832,10 +856,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                             />
                             {(files.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {files.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {files.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
