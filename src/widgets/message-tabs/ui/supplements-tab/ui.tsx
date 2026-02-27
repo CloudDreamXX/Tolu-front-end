@@ -69,15 +69,31 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({
   const [deleteSupplement] = useDeleteSupplementMutation();
 
   const handleSend = async () => {
-    if (!title.trim() || !input.trim()) return;
+    const trimmedContent = input.trim();
+    const trimmedTitle = title.trim();
+    const chatId = chat.chat_id?.trim();
+    const recipient = chat.participants.find(
+      (participant) =>
+        (participant.user.user_id || participant.user.id) !== profile?.id
+    )?.user;
+    const targetUserId = recipient?.user_id || recipient?.id;
+
+    if (!trimmedContent) return;
+    if (!chatId && !targetUserId) {
+      toast({
+        title: "Unable to determine recipient",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       if (editingId) {
         await updateSupplement({
           supplementId: editingId,
           supplementData: {
-            title,
-            content: input,
+            ...(trimmedTitle ? { title: trimmedTitle } : {}),
+            content: trimmedContent,
             remove_file: items.length === 0,
           },
           file: items[0]?.file,
@@ -87,9 +103,12 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({
       } else {
         await createSupplement({
           supplementData: {
-            chat_id: chat.chat_id,
-            title,
-            content: input,
+            ...(chatId ? { chat_id: chatId } : {}),
+            ...(!chatId && targetUserId
+              ? { target_user_id: targetUserId }
+              : {}),
+            ...(trimmedTitle ? { title: trimmedTitle } : {}),
+            content: trimmedContent,
           },
           file: items[0]?.file,
         }).unwrap();
@@ -137,7 +156,7 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({
   const containerStyleLg = {
     height: isClient
       ? `calc(100vh - ${316 + filesDivHeight}px)`
-      : `calc(100vh - ${260 + filesDivHeight}px)`,
+      : `calc(100vh - ${470 + filesDivHeight}px)`,
   };
 
   let currentStyle = containerStyleLg;
