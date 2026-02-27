@@ -188,8 +188,8 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({
     );
     return search
       ? arr.filter((n) =>
-        (n.content || "").toLowerCase().includes(search.toLowerCase())
-      )
+          (n.content || "").toLowerCase().includes(search.toLowerCase())
+        )
       : arr;
   }, [supplements, search]);
 
