@@ -156,7 +156,16 @@ export const healthHistoryApi = createApi({
       query: ({ medicationData, file }) => {
         const formData = new FormData();
 
-        formData.append("medication_data", JSON.stringify(medicationData));
+        if (medicationData.chat_id) {
+          formData.append("chat_id", medicationData.chat_id);
+        }
+        if (medicationData.target_user_id) {
+          formData.append("target_user_id", medicationData.target_user_id);
+        }
+        if (medicationData.title) {
+          formData.append("title", medicationData.title);
+        }
+        formData.append("content", medicationData.content);
 
         if (file) {
           formData.append("file", file);
@@ -177,12 +186,15 @@ export const healthHistoryApi = createApi({
       query: ({ medicationId, medicationData, file }) => {
         const formData = new FormData();
 
+        if (medicationData.title !== undefined) {
+          formData.append("title", medicationData.title);
+        }
+        if (medicationData.content !== undefined) {
+          formData.append("content", medicationData.content);
+        }
         formData.append(
-          "medication_data",
-          JSON.stringify({
-            remove_file: false,
-            ...medicationData,
-          })
+          "remove_file",
+          String(medicationData.remove_file ?? false)
         );
 
         if (file) {
@@ -242,10 +254,22 @@ export const healthHistoryApi = createApi({
     >({
       query: ({ supplementData, file }) => {
         const formData = new FormData();
-        formData.append("supplement_data", JSON.stringify(supplementData));
+
+        if (supplementData.chat_id) {
+          formData.append("chat_id", supplementData.chat_id);
+        }
+        if (supplementData.target_user_id) {
+          formData.append("target_user_id", supplementData.target_user_id);
+        }
+        if (supplementData.title) {
+          formData.append("title", supplementData.title);
+        }
+        formData.append("content", supplementData.content);
+
         if (file) {
           formData.append("file", file);
         }
+
         return {
           url: API_ROUTES.HEALTH_HISTORY.ADD_SUPPLEMENT,
           method: "POST",
@@ -260,7 +284,18 @@ export const healthHistoryApi = createApi({
     >({
       query: ({ supplementId, supplementData, file }) => {
         const formData = new FormData();
-        formData.append("supplement_data", JSON.stringify(supplementData));
+
+        if (supplementData.title !== undefined) {
+          formData.append("title", supplementData.title);
+        }
+        if (supplementData.content !== undefined) {
+          formData.append("content", supplementData.content);
+        }
+        formData.append(
+          "remove_file",
+          String(supplementData.remove_file ?? false)
+        );
+
         if (file) {
           formData.append("file", file);
         }
