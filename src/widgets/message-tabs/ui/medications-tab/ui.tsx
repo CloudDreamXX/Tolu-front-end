@@ -137,7 +137,7 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
   const containerStyleLg = {
     height: isClient
       ? `calc(100vh - ${316 + filesDivHeight}px)`
-      : `calc(100vh - ${360 + filesDivHeight}px)`,
+      : `calc(100vh - ${470 + filesDivHeight}px)`,
   };
 
   let currentStyle = containerStyleLg;
