@@ -19,7 +19,6 @@ import { toast } from "shared/lib/hooks/use-toast";
 import { Button, Input } from "shared/ui";
 import { z } from "zod";
 import { setCoachOnboardingData } from "entities/store/coachOnboardingSlice";
-import { findFirstIncompleteStep } from "widgets/OnboardingPractitioner/onboarding-finish/helpers";
 import { mapUserToCoachOnboarding } from "widgets/OnboardingPractitioner/select-type/helpers";
 import { usePageWidth } from "shared/lib";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "shared/ui/input-otp";
@@ -141,9 +140,10 @@ export const LoginForm = () => {
       const coachData = mapUserToCoachOnboarding(coach.data);
       dispatch(setCoachOnboardingData(coachData));
 
-      const issue = findFirstIncompleteStep(coachData);
-      if (issue) navigate(issue.route);
-      else navigate("/content-manager/create");
+      // const issue = findFirstIncompleteStep(coachData);
+      // if (issue) navigate(issue.route);
+      // else
+      navigate("/content-manager/create");
     } catch (err: any) {
       const detail = err?.data?.detail;
       console.error(err);
@@ -152,9 +152,12 @@ export const LoginForm = () => {
         typeof detail === "string" &&
         detail.includes("No onboarding profile found")
       ) {
-        navigate("/content-manager/create", {
-          state: { incompleteRoute: "/select-type" },
-        });
+        navigate(
+          "/content-manager/create"
+          //   {
+          //   state: { incompleteRoute: "/select-type" },
+          // }
+        );
       } else {
         toast({
           variant: "destructive",

@@ -316,9 +316,9 @@ export const ClientProfile = () => {
 
   const handleConfirmAcceptInvite = async () => {
     try {
-      if (invitations?.invitations[0].invitation_token) {
+      if (invitations?.data[0].invitation_token) {
         await acceptCoachInvite({
-          token: invitations.invitations[0].invitation_token,
+          token: invitations.data[0].invitation_token,
         }).unwrap();
         setAcceptInvitePopup(false);
         toast({
@@ -337,9 +337,9 @@ export const ClientProfile = () => {
 
   const handleConfirmDeclineInvite = async () => {
     try {
-      if (invitations?.invitations[0].invitation_token) {
+      if (invitations?.data[0].invitation_token) {
         await declineCoachInvite({
-          token: invitations.invitations[0].invitation_token,
+          token: invitations.data[0].invitation_token,
         }).unwrap();
         setAcceptInvitePopup(false);
         toast({
@@ -609,9 +609,9 @@ export const ClientProfile = () => {
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 md:gap-6 overflow-y-auto">
-      {acceptInvitePopup && invitations?.invitations?.length > 0 && (
+      {acceptInvitePopup && invitations?.data?.length > 0 && (
         <AcceptInviteBanner
-          coachName={invitations.invitations[0].coach_name}
+          coachName={invitations.data[0].coach_name}
           onCancelConfirmed={handleConfirmDeclineInvite}
           onAccept={handleConfirmAcceptInvite}
         />

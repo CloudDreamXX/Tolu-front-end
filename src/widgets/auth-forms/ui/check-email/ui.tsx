@@ -44,7 +44,9 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
               })
             );
             nav(
-              msg.data.user.roleID === 3 ? "/welcome/client" : "/select-type"
+              msg.data.user.roleID === 3
+                ? "/welcome/client"
+                : "/content-manager/create"
             );
           }
         }
