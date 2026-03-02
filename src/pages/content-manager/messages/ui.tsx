@@ -53,6 +53,7 @@ type GroupModalState =
     };
 
 export const ContentManagerMessages: React.FC = () => {
+  const ACTIVE_TAB_STORAGE_KEY = "content-manager-messages-active-tab";
   const [deleteClient] = useDeleteClientMutation();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -106,7 +107,11 @@ export const ContentManagerMessages: React.FC = () => {
   const [searchChats, setSearchChats] = useState("");
   const [addClientModal, setAddClientModal] = useState(false);
   const [importClientsPopup, setImportClientsPopup] = useState(false);
-  const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
+  const [activeTab, setActiveTab] = useState<string | undefined>(() => {
+    if (typeof window === "undefined") return undefined;
+    return localStorage.getItem(ACTIVE_TAB_STORAGE_KEY) ?? undefined;
+  });
+  const isInitialRouteEffect = useRef(true);
 
   const [newClient, setNewClient] = useState({
     first_name: "",
@@ -195,6 +200,7 @@ export const ContentManagerMessages: React.FC = () => {
           name: client.name || `${client.first_name} ${client.last_name}`,
           first_name: client.first_name,
           last_name: client.last_name,
+          client_age: null,
         },
       ],
       lastMessage: null,
@@ -509,8 +515,23 @@ export const ContentManagerMessages: React.FC = () => {
   };
 
   useEffect(() => {
+    if (isInitialRouteEffect.current) {
+      isInitialRouteEffect.current = false;
+      return;
+    }
     setActiveTab(undefined);
   }, [routeChatId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (activeTab) {
+      localStorage.setItem(ACTIVE_TAB_STORAGE_KEY, activeTab);
+      return;
+    }
+
+    localStorage.removeItem(ACTIVE_TAB_STORAGE_KEY);
+  }, [activeTab]);
 
   const sendMessage = async (
     content: string
@@ -583,7 +604,18 @@ export const ContentManagerMessages: React.FC = () => {
       )
       .map((client) => {
         const chat = chatMap.get(client.client_id);
-        if (chat) return chat;
+        if (chat)
+          return {
+            ...chat,
+            participants: chat.participants.map((participant) =>
+              participant.id === client.client_id
+                ? {
+                    ...participant,
+                    client_age: participant.client_age,
+                  }
+                : participant
+            ),
+          };
         // Pseudo-chat item for clients without chat
         return {
           id: client.client_id,
@@ -597,6 +629,7 @@ export const ContentManagerMessages: React.FC = () => {
               name: client.name || `${client.first_name} ${client.last_name}`,
               first_name: client.first_name,
               last_name: client.last_name,
+              client_age: null,
             },
           ],
           lastMessage: null,
@@ -650,14 +683,16 @@ export const ContentManagerMessages: React.FC = () => {
     return (
       <>
         {isLoading && (
-          <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit absolute z-50 top-[56px] left-1/2 -translate-x-1/2 xl:-translate-x-1/4">
-            <span className="inline-flex items-center justify-center w-5 h-5">
-              <MaterialIcon
-                iconName="progress_activity"
-                className="text-blue-600 animate-spin"
-              />
-            </span>
-            Please wait, we are loading the information...
+          <div className="fixed inset-x-0 top-0 z-50 flex justify-center pt-[56px] pointer-events-none">
+            <div className="flex gap-[12px] px-[20px] py-[10px] bg-white text-[#1B2559] text-[16px] border border-[#1C63DB] rounded-[10px] w-fit">
+              <span className="inline-flex items-center justify-center w-5 h-5">
+                <MaterialIcon
+                  iconName="progress_activity"
+                  className="text-blue-600 animate-spin"
+                />
+              </span>
+              Please wait, we are loading the information...
+            </div>
           </div>
         )}
         <div

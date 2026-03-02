@@ -1,4 +1,5 @@
 import { ChatItemModel } from "entities/chat";
+import { useLazyGetCoachClientHealthHistoryQuery } from "entities/health-history";
 import { ChatItem, timeAgo } from "features/chat-item";
 import {
   Popover,
@@ -7,7 +8,7 @@ import {
   Tabs,
   TabsContent,
 } from "shared/ui";
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { ScrollArea } from "shared/ui";
 import { Dock, DockIcon } from "shared/ui/dock";
 import { usePageWidth } from "shared/lib";
@@ -27,6 +28,11 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
   onChatClick,
 }) => {
   const { isMobileOrTablet } = usePageWidth();
+  const [getCoachClientHealthHistory] =
+    useLazyGetCoachClientHealthHistoryQuery();
+  const [clientHealthHistoryAges, setClientHealthHistoryAges] = useState<
+    Record<string, number | null>
+  >({});
 
   const SidebarLoadingSkeleton = () => {
     return (
@@ -129,6 +135,67 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
   }, [chats.length, updateScrollState]);
 
   const [popoverOpenId, setPopoverOpenId] = useState<string | null>(null);
+  const clientIds = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          chats
+            .map((chat) => chat.participants?.[0]?.id)
+            .filter((id): id is string => Boolean(id))
+        )
+      ),
+    [chats]
+  );
+
+  useEffect(() => {
+    const missingClientIds = clientIds.filter(
+      (clientId) => !(clientId in clientHealthHistoryAges)
+    );
+
+    if (!missingClientIds.length) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    const fetchMissingAges = async () => {
+      const fetchedAges = await Promise.all(
+        missingClientIds.map(async (clientId) => {
+          try {
+            const healthHistory = await getCoachClientHealthHistory(
+              clientId,
+              true
+            ).unwrap();
+            const parsedAge = Number(healthHistory?.age);
+            const age =
+              Number.isFinite(parsedAge) && parsedAge > 0 ? parsedAge : null;
+
+            return { clientId, age };
+          } catch {
+            return { clientId, age: null };
+          }
+        })
+      );
+
+      if (isCancelled) {
+        return;
+      }
+
+      setClientHealthHistoryAges((prev) => {
+        const next = { ...prev };
+        fetchedAges.forEach(({ clientId, age }) => {
+          next[clientId] = age;
+        });
+        return next;
+      });
+    };
+
+    fetchMissingAges();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [clientIds, clientHealthHistoryAges, getCoachClientHealthHistory]);
   const clientChats = chats.filter((item) => item.type !== "coach");
   const coachChats = chats.filter((item) => item.type === "coach");
 
@@ -274,11 +341,21 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
                     >
                       <div className="flex flex-col gap-2">
                         <div className="font-semibold text-base text-black">
-                          {item?.participants?.[0]?.first_name
-                            ? `${item.participants[0].first_name} ${item.participants[0].last_name}`
-                            : item?.participants?.[0]?.name
-                              ? item.participants[0].name
-                              : item.name}
+                          {(() => {
+                            const participant = item?.participants?.[0];
+                            const displayName = participant?.first_name
+                              ? `${participant.first_name} ${participant.last_name}`
+                              : participant?.name
+                                ? participant.name
+                                : item.name;
+                            const age = participant?.id
+                              ? clientHealthHistoryAges[participant.id]
+                              : undefined;
+
+                            return age != null
+                              ? `${displayName}, ${age}`
+                              : displayName;
+                          })()}
                         </div>
                         <div className="text-sm text-[#5F5F65]">
                           {item.participants?.[0]?.email}

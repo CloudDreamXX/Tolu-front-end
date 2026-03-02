@@ -7,6 +7,7 @@ export interface MessageUser {
   name: string;
   first_name: string;
   last_name: string;
+  client_age?: number | null;
 }
 
 export interface ChatItemModel {

@@ -338,6 +338,7 @@ export const healthHistoryApi = createApi({
 export const {
   useGetUserHealthHistoryQuery,
   useGetCoachClientHealthHistoryQuery,
+  useLazyGetCoachClientHealthHistoryQuery,
   useCreateHealthHistoryMutation,
   useGetLabReportQuery,
   useUpdateCoachClientHealthHistoryMutation,

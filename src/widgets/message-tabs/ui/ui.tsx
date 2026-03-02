@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
 import {
@@ -39,7 +39,7 @@ import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { RecommendedTab } from "./recommended-tab";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { MedicationsTab } from "./medications-tab";
 import { SupplementsTab } from "./supplements-tab";
@@ -116,6 +116,12 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const { isMobile, isMobileOrTablet } = usePageWidth();
   const profile = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryTab = useMemo(() => {
+    const tab = new URLSearchParams(location.search).get("tab");
+    return tab || undefined;
+  }, [location.search]);
 
   const {
     refetch,
@@ -135,15 +141,35 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     null
   );
   const isClient = profile?.roleName === "Client";
-  const [internalActiveTab, setInternalActiveTab] = useState<string>(
-    isClient ? "messages" : "profile"
+  const [internalActiveTab, setInternalActiveTab] = useState<string>(() => {
+    return queryTab ?? (isClient ? "messages" : "profile");
+  });
+  const isControlled =
+    controlledActiveTab !== undefined && controlledSetActiveTab !== undefined;
+  const activeTab = isControlled ? controlledActiveTab : internalActiveTab;
+  const setActiveTab = isControlled
+    ? controlledSetActiveTab
+    : setInternalActiveTab;
+  const setActiveTabWithLocation = useCallback(
+    (tab: string) => {
+      setActiveTab(tab);
+
+      const params = new URLSearchParams(location.search);
+      if (params.get("tab") === tab) {
+        return;
+      }
+
+      params.set("tab", tab);
+      navigate(
+        {
+          pathname: location.pathname,
+          search: `?${params.toString()}`,
+        },
+        { replace: true, state: location.state }
+      );
+    },
+    [location.pathname, location.search, location.state, navigate, setActiveTab]
   );
-  const activeTab =
-    controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
-  const setActiveTab =
-    controlledSetActiveTab !== undefined
-      ? controlledSetActiveTab
-      : setInternalActiveTab;
   const [search, setSearch] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
@@ -184,25 +210,36 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     ? []
     : availableTabs.filter((t) => !pinned.has(t.id));
 
-  const location = useLocation();
-
   const defaultTab =
-    isClient || isGroupChat ? "messages" : (location.state?.id ?? "profile");
+    queryTab ||
+    (isClient || isGroupChat ? "messages" : (location.state?.id ?? "profile"));
+
+  useEffect(() => {
+    if (!queryTab) {
+      return;
+    }
+
+    const isTabAvailable = availableTabs.some((tab) => tab.id === queryTab);
+    if (!isTabAvailable || activeTab === queryTab) {
+      return;
+    }
+
+    setActiveTab(queryTab);
+  }, [activeTab, availableTabs, queryTab, setActiveTab]);
 
   useEffect(() => {
     if (!chatId) {
       setChat(null);
       setSelectedClient(null);
-      setActiveTab(isClient ? "messages" : "profile");
       setSearch("");
     }
   }, [chatId]);
 
   useEffect(() => {
     if (isGroupChat && activeTab === "profile") {
-      setActiveTab("messages");
+      setActiveTabWithLocation("messages");
     }
-  }, [isGroupChat, activeTab, setActiveTab]);
+  }, [isGroupChat, activeTab, setActiveTabWithLocation]);
 
   useEffect(() => {
     const initasync = async () => {
@@ -514,7 +551,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
       <Tabs
         defaultValue={defaultTab}
         value={activeTab}
-        onValueChange={setActiveTab}
+        onValueChange={setActiveTabWithLocation}
       >
         {isClient ? (
           <TabsList className="border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden">
