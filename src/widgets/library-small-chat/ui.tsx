@@ -1100,7 +1100,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         supplementData: {
           title: "Supplement from the chat",
           content: text,
-          chat_id: chatIdForNotes || "",
+          ...(chatIdForNotes
+            ? { chat_id: chatIdForNotes }
+            : { target_user_id: clientId }),
         },
       }).unwrap();
 
