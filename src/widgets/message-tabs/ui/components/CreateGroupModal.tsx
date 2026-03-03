@@ -119,9 +119,57 @@ export const CreateGroupModal = ({
       return;
     }
 
+<<<<<<< HEAD
     if (oldAvatarUrlData) {
       setPreviewUrl(oldAvatarUrlData);
     }
+=======
+    const resolveAvatar = async () => {
+      const rawAvatar = chat.avatar_url;
+      if (typeof rawAvatar !== "string") return;
+
+      const filename = rawAvatar.split("/").pop() || rawAvatar;
+      console.log("Resolving avatar URL for filename:", filename);
+      const resolved = await getAvatarUrl(filename);
+
+      if (!resolved) {
+        if (isMounted) setPreviewUrl(null);
+        return;
+      }
+
+      try {
+        const persistedUser = localStorage.getItem("persist:user");
+        const parsedUser = persistedUser ? JSON.parse(persistedUser) : null;
+        const token = parsedUser?.token?.replace(/"/g, "") ?? "";
+
+        const response = await fetch(resolved, {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
+
+        if (!response.ok) {
+          if (isMounted) setPreviewUrl(resolved);
+          return;
+        }
+
+        const blob = await response.blob();
+
+        if (!isMounted) return;
+
+        if (avatarObjectUrlRef.current) {
+          URL.revokeObjectURL(avatarObjectUrlRef.current);
+          avatarObjectUrlRef.current = null;
+        }
+
+        const blobUrl = URL.createObjectURL(blob);
+        avatarObjectUrlRef.current = blobUrl;
+        setPreviewUrl(blobUrl);
+      } catch {
+        if (isMounted) setPreviewUrl(resolved);
+      }
+    };
+
+    resolveAvatar();
+>>>>>>> 590e1db0 (fixes)
 
     return () => {
       if (avatarObjectUrlRef.current) {

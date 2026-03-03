@@ -2,11 +2,19 @@ import { API_ROUTES } from "shared/api";
 
 export const getAvatarUrl = async (fileUrl: string | null): Promise<string> => {
   if (!fileUrl) return "";
+  console.log("Fetching avatar for file URL:", fileUrl);
 
   try {
     const response = await fetch(
       API_ROUTES.CHAT.UPLOADED_AVATAR.replace("{filename}", fileUrl)
     );
+<<<<<<< HEAD
+=======
+    const normalizedFileName = (fileUrl.split("/").pop() || fileUrl)
+      .split("?")[0]
+      .split("#")[0];
+    const encodedFilename = encodeURIComponent(normalizedFileName);
+>>>>>>> 590e1db0 (fixes)
 
     if (!response.ok) {
       console.error(

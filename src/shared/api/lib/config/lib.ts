@@ -203,7 +203,7 @@ export const API_ROUTES = {
     UPDATE_GROUP_CHAT: "/chats/{chat_id}",
     UPLOAD_FILE: "/chats/{chat_id}/upload",
     UPLOADED_FILE: "/uploads/chat_files/{filename}",
-    UPLOADED_AVATAR: "/uploads/chat_avatars/{filename}",
+    UPLOADED_AVATAR: "/static/uploads/chat_avatars/{filename}",
     FETCH_CHAT_MESSAGES: "/chats/{chat_id}/messages",
     FETCH_CHAT_FILES: "/chats/{chat_id}/files",
     DELETE_MESSAGE: "/chats/{chat_id}/messages/{message_id}",
