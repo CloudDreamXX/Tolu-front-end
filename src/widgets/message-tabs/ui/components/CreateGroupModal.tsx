@@ -1,12 +1,10 @@
-import {
-  DetailsChatItemModel,
-  useGetUploadedChatAvatarUrlQuery,
-} from "entities/chat";
+import { DetailsChatItemModel } from "entities/chat";
 import { Client } from "entities/coach";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "shared/lib";
 import { Button, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
+import { getAvatarUrl } from "widgets/message-tabs/helpers";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
@@ -68,18 +66,6 @@ export const CreateGroupModal = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const file = files?.[0] ?? null;
 
-  const hasOldAvatar = !file && chat?.avatar_url;
-
-  const avatarFilename =
-    chat?.avatar_url && typeof chat.avatar_url === "string"
-      ? chat.avatar_url.split("/").pop() || ""
-      : "";
-
-  const { data: oldAvatarUrlData } = useGetUploadedChatAvatarUrlQuery(
-    { fileUrl: avatarFilename },
-    { skip: !hasOldAvatar || !avatarFilename }
-  );
-
   useEffect(() => {
     if (!file) return;
 
@@ -94,6 +80,8 @@ export const CreateGroupModal = ({
   const avatarObjectUrlRef = useRef<string | null>(null);
   useEffect(() => {
     if (file) return;
+
+    let isMounted = true;
 
     if (!isEdit || !chat?.avatar_url) {
       if (avatarObjectUrlRef.current) {
@@ -119,17 +107,11 @@ export const CreateGroupModal = ({
       return;
     }
 
-<<<<<<< HEAD
-    if (oldAvatarUrlData) {
-      setPreviewUrl(oldAvatarUrlData);
-    }
-=======
     const resolveAvatar = async () => {
       const rawAvatar = chat.avatar_url;
       if (typeof rawAvatar !== "string") return;
 
       const filename = rawAvatar.split("/").pop() || rawAvatar;
-      console.log("Resolving avatar URL for filename:", filename);
       const resolved = await getAvatarUrl(filename);
 
       if (!resolved) {
@@ -169,15 +151,15 @@ export const CreateGroupModal = ({
     };
 
     resolveAvatar();
->>>>>>> 590e1db0 (fixes)
 
     return () => {
+      isMounted = false;
       if (avatarObjectUrlRef.current) {
         URL.revokeObjectURL(avatarObjectUrlRef.current);
         avatarObjectUrlRef.current = null;
       }
     };
-  }, [file, isEdit, chat?.avatar_url, oldAvatarUrlData]);
+  }, [file, isEdit, chat?.avatar_url]);
 
   const localSave = () => {
     if (!isEdit) {
