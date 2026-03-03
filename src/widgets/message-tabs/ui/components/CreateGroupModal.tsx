@@ -112,7 +112,6 @@ export const CreateGroupModal = ({
       if (typeof rawAvatar !== "string") return;
 
       const filename = rawAvatar.split("/").pop() || rawAvatar;
-      console.log("Resolving avatar URL for filename:", filename);
       const resolved = await getAvatarUrl(filename);
 
       if (!resolved) {
