@@ -2,6 +2,7 @@ import { API_ROUTES } from "shared/api";
 
 export const getAvatarUrl = async (fileUrl: string | null): Promise<string> => {
   if (!fileUrl) return "";
+  console.log("Fetching avatar for file URL:", fileUrl);
 
   try {
     const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(
@@ -10,7 +11,7 @@ export const getAvatarUrl = async (fileUrl: string | null): Promise<string> => {
     );
     const normalizedFileName = (fileUrl.split("/").pop() || fileUrl)
       .split("?")[0]
-      .replace(/\.[a-z0-9]+$/i, "");
+      .split("#")[0];
     const encodedFilename = encodeURIComponent(normalizedFileName);
 
     return `${baseUrl}${API_ROUTES.CHAT.UPLOADED_AVATAR.replace("{filename}", encodedFilename)}`;

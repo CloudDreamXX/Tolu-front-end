@@ -2009,7 +2009,7 @@ Downloads a file attached to a chat note.
 
 ### **Get Uploaded Chat Avatar**
 
-**Endpoint:** `GET /uploads/chat_avatars/{filename}`  
+**Endpoint:** `GET /static/uploads/chat_avatars/{filename}`  
 **Hook:** `useGetUploadedChatAvatarUrlQuery`
 
 **Purpose:**  
